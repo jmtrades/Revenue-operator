@@ -1,0 +1,177 @@
+/**
+ * processWebhookJob: normalize -> upsert lead/conv/msg -> emit event -> enqueue decisionJob
+ */
+
+import { getDb } from "@/lib/db/queries";
+import { processEvent } from "@/lib/event-engine";
+import { enqueue } from "@/lib/queue";
+import { redact } from "@/lib/redact";
+import { isOptOut, mergeSettings } from "@/lib/autopilot";
+import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
+
+export interface RawWebhookPayload {
+  workspace_id: string;
+  channel: string;
+  external_lead_id: string;
+  thread_id?: string;
+  email?: string;
+  phone?: string;
+  name?: string;
+  company?: string;
+  message: string;
+  external_message_id?: string;
+}
+
+export async function processWebhookJob(webhookId: string): Promise<{ decisionLeadId: string | null; decisionWorkspaceId: string | null } | void> {
+  const db = getDb();
+  const { data: raw, error: fetchErr } = await db
+    .from("raw_webhook_events")
+    .select("*")
+    .eq("id", webhookId)
+    .single();
+
+  if (fetchErr || !raw || raw.processed) {
+    if (fetchErr) console.error("[processWebhook] fetch error", redact({ webhookId, err: String(fetchErr) }));
+    return undefined;
+  }
+
+  const body = raw.payload as RawWebhookPayload;
+  const { workspace_id, channel, external_lead_id, thread_id, email, phone, name, company, message, external_message_id } = body;
+
+  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).single();
+  if (!ws) {
+    throw new Error(`Workspace ${workspace_id} not found`);
+  }
+
+  try {
+    const { data: lead, error: leadError } = await db
+      .from("leads")
+      .upsert(
+        {
+          workspace_id,
+          external_id: external_lead_id,
+          channel,
+          email: email ?? null,
+          phone: phone ?? null,
+          name: name ?? null,
+          company: company ?? null,
+          last_activity_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "workspace_id,external_id" }
+      )
+      .select()
+      .single();
+
+    if (leadError || !lead) {
+      throw new Error(`Lead upsert failed: ${leadError?.message ?? "unknown"}`);
+    }
+
+    const { data: conversation, error: convError } = await db
+      .from("conversations")
+      .upsert(
+        {
+          lead_id: lead.id,
+          channel,
+          external_thread_id: thread_id ?? null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "lead_id,channel,external_thread_id" }
+      )
+      .select()
+      .single();
+
+    if (convError || !conversation) {
+      throw new Error(`Conversation upsert failed: ${convError?.message ?? "unknown"}`);
+    }
+
+    await db.from("messages").insert({
+      conversation_id: conversation.id,
+      role: "user",
+      content: message,
+      external_id: external_message_id ?? null,
+    });
+
+    const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).single();
+    const settings = mergeSettings(settingsRow);
+    const optOut = isOptOut(message, settings);
+    if (optOut) {
+      await db.from("leads").update({ opt_out: true, updated_at: new Date().toISOString() }).eq("id", lead.id);
+      await incrementMetric(workspace_id, METRIC_KEYS.OPT_OUT);
+      await db.from("messages").insert({
+        conversation_id: conversation.id,
+        role: "assistant",
+        content: "You've been unsubscribed. You won't receive further messages.",
+        metadata: { type: "compliance_confirmation" },
+      });
+      await db
+        .from("raw_webhook_events")
+        .update({ processed: true, processed_at: new Date().toISOString() })
+        .eq("id", webhookId);
+      return { decisionLeadId: null, decisionWorkspaceId: null };
+    }
+
+    const currentState = ((lead as { state?: string }).state ?? "NEW") as import("@/lib/types").LeadState;
+
+    const decision = processEvent({
+      workspaceId: workspace_id,
+      leadId: lead.id,
+      eventType: "message_received",
+      entityType: "lead",
+      entityId: lead.id,
+      payload: { message, channel },
+      triggerSource: "webhook",
+      currentState: currentState as import("@/lib/types").LeadState,
+    });
+
+    const { data: eventRow } = await db.from("events").insert({
+      workspace_id,
+      event_type: "message_received",
+      entity_type: "lead",
+      entity_id: lead.id,
+      payload: { message, decision },
+      trigger_source: "webhook",
+    }).select("id").single();
+
+    await db.from("leads").update({
+      state: decision.newState,
+      updated_at: new Date().toISOString(),
+      last_activity_at: new Date().toISOString(),
+    }).eq("id", lead.id);
+
+    await db.from("automation_states").upsert({
+      lead_id: lead.id,
+      state: decision.newState,
+      allowed_actions: decision.allowedActions,
+      last_event_type: "message_received",
+      last_event_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "lead_id" });
+
+    await db
+      .from("raw_webhook_events")
+      .update({ processed: true, processed_at: new Date().toISOString() })
+      .eq("id", webhookId);
+
+    if (decision.shouldGenerateResponse && decision.allowedActions.length > 0) {
+      await enqueue({
+        type: "decision",
+        leadId: lead.id,
+        workspaceId: workspace_id,
+        eventId: (eventRow as { id: string })?.id ?? lead.id,
+      });
+      return { decisionLeadId: lead.id, decisionWorkspaceId: workspace_id };
+    }
+    return { decisionLeadId: null, decisionWorkspaceId: null };
+  } catch (err) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    await db
+      .from("raw_webhook_events")
+      .update({
+        error: errMsg,
+        retry_count: (raw.retry_count ?? 0) + 1,
+      })
+      .eq("id", webhookId);
+    throw err;
+  }
+}
