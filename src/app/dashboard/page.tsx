@@ -1,59 +1,79 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
-interface OverviewData {
-  workspace_status: string;
-  pause_reason: string | null;
-  preview_mode?: boolean;
-  lead_count: number;
-  active_deals: number;
-  today_events: Array<{ event_type: string; entity_type: string; payload: unknown; created_at: string }>;
-  today_actions: Array<{ action: string; entity_id: string; payload: unknown; created_at: string }>;
+interface CommandCenterData {
+  operator_status: string;
+  last_action: string | null;
+  next_action: string | null;
+  today_booked: number;
+  today_recovered: number;
+  hot_leads: Array<{ lead_id: string; name?: string; email?: string; company?: string; probability: number; value_cents: number }>;
+  at_risk: Array<{ id: string; name?: string; company?: string; state?: string }>;
+  activity: Array<{ what: string; who: string; when: string; why?: string }>;
 }
 
-export default function OverviewPage() {
-  const { workspaceId } = useWorkspace();
-  const [data, setData] = useState<OverviewData | null>(null);
-  const [reliability, setReliability] = useState<{ response_under_60s_rate: number; followup_execution_rate: number } | null>(null);
+export default function HomePage() {
+  const { workspaceId, workspaces, loadWorkspaces } = useWorkspace();
+  const [data, setData] = useState<CommandCenterData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [setupStep, setSetupStep] = useState(1);
+  const [showWizard, setShowWizard] = useState(false);
 
   useEffect(() => {
-    if (!workspaceId) {
-      setData(null);
-      return;
-    }
+    loadWorkspaces();
+  }, [loadWorkspaces]);
+
+  useEffect(() => {
+    if (!workspaceId || workspaces.length === 0) return;
     setLoading(true);
-    setError(null);
-    fetch(`/api/overview?workspace_id=${encodeURIComponent(workspaceId)}`)
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to load overview");
-        return r.json();
-      })
-      .then(setData)
-      .catch((e) => setError(e instanceof Error ? e.message : "Error"))
-      .finally(() => setLoading(false));
-  }, [workspaceId]);
-
-  useEffect(() => {
-    if (!workspaceId) return;
-    fetch(`/api/reports/reliability?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`)
       .then((r) => r.json())
-      .then((d) => setReliability(d))
-      .catch(() => setReliability(null));
-  }, [workspaceId]);
+      .then(setData)
+      .catch(() => setData(null))
+      .finally(() => setLoading(false));
+  }, [workspaceId, workspaces.length]);
 
-  if (!workspaceId) {
+  if (workspaces.length === 0) {
     return (
-      <div className="p-8">
-        <p className="text-stone-500">Select a workspace to view the overview.</p>
+      <div className="min-h-[80vh] flex items-center justify-center p-8">
+        <div className="max-w-lg text-center">
+          <h1 className="text-2xl font-semibold text-stone-50">Your AI operator is ready.</h1>
+          <p className="text-stone-400 mt-2">
+            Connect a lead source and it will start replying and following up automatically.
+          </p>
+          <ul className="mt-6 text-left space-y-2 text-stone-300">
+            <li>• Replies instantly to every lead</li>
+            <li>• Follows up until they answer</li>
+            <li>• Recovers ghosted prospects</li>
+          </ul>
+          <Link
+            href="/dashboard/settings"
+            className="mt-8 inline-block px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 font-medium text-stone-950"
+          >
+            Connect your first lead source
+          </Link>
+        </div>
       </div>
     );
   }
 
-  if (loading) {
+  if (!workspaceId) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center p-8">
+        <div className="max-w-lg text-center">
+          <h1 className="text-2xl font-semibold text-stone-50">Your AI operator is ready.</h1>
+          <p className="text-stone-400 mt-2">
+            Select an account to view your command center.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading || !data) {
     return (
       <div className="p-8">
         <p className="text-stone-500">Loading…</p>
@@ -61,84 +81,114 @@ export default function OverviewPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="p-8">
-        <div className="p-4 rounded-lg bg-red-950/50 border border-red-800 text-red-300">{error}</div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-8 max-w-5xl">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold text-stone-50">Overview</h1>
+        <h1 className="text-2xl font-semibold text-stone-50">Command Center</h1>
         <p className="text-stone-400 mt-1">
-          What happened · Why it happened · What will happen next
+          What it&apos;s doing · Why · What&apos;s next
         </p>
       </header>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
-        <MetricCard label="Workspace Status" value={data?.workspace_status ?? "—"} />
-        <MetricCard label="Leads" value={data?.lead_count ?? 0} />
-        <MetricCard label="Active Deals" value={data?.active_deals ?? 0} />
-        {data?.pause_reason && (
-          <div className="p-4 rounded-xl bg-amber-950/50 border border-amber-800">
-            <p className="text-sm font-medium text-amber-400">Paused</p>
-            <p className="text-xs text-amber-200/80 mt-0.5">{data.pause_reason}</p>
-          </div>
-        )}
-        {reliability && (
-          <div className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
-            <p className="text-sm font-medium text-stone-400">SLA Reliability</p>
-            <p className="text-lg font-semibold text-stone-50 mt-1">
-              {(reliability.response_under_60s_rate ?? 0).toFixed(1)}% &lt;60s · {(reliability.followup_execution_rate ?? 0).toFixed(1)}% follow-ups
-            </p>
-          </div>
-        )}
+      <div className="mb-8 p-4 rounded-xl bg-stone-900/80 border border-stone-800 flex flex-wrap items-center gap-4">
+        <div>
+          <p className="text-xs text-stone-500">Operator</p>
+          <p className={`font-medium ${data.operator_status === "Running" ? "text-emerald-400" : data.operator_status === "Paused" ? "text-amber-400" : "text-stone-400"}`}>
+            {data.operator_status}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-stone-500">Last action</p>
+          <p className="text-stone-300">{data.last_action ?? "—"}</p>
+        </div>
+        <div>
+          <p className="text-xs text-stone-500">Next</p>
+          <p className="text-stone-300">{data.next_action ?? "—"}</p>
+        </div>
+        <div>
+          <p className="text-xs text-stone-500">Today</p>
+          <p className="text-stone-300">{data.today_booked} booked · {data.today_recovered} recovered</p>
+        </div>
       </div>
 
-      <section className="mb-10">
-        <h2 className="text-lg font-medium text-stone-300 mb-4">Today&apos;s Events</h2>
-        <div className="space-y-2">
-          {(data?.today_events ?? []).length === 0 ? (
-            <p className="text-stone-500 text-sm">No events today</p>
+      <div className="grid gap-8 lg:grid-cols-2">
+        <section>
+          <h2 className="text-lg font-medium text-stone-300 mb-3">Hot now</h2>
+          <p className="text-sm text-stone-500 mb-3">Leads likely to book</p>
+          {data.hot_leads.length === 0 ? (
+            <div className="p-4 rounded-xl bg-stone-900/60 border border-stone-800">
+              <p className="text-stone-500 text-sm">No hot leads yet.</p>
+              <Link href="/dashboard/leads" className="mt-2 inline-block text-amber-400 text-sm hover:underline">
+                View all leads →
+              </Link>
+            </div>
           ) : (
-            data?.today_events.map((e, i) => (
-              <div key={i} className="p-3 rounded-lg bg-stone-900/80 border border-stone-800 text-sm">
-                <span className="font-medium text-stone-200">{e.event_type}</span>
-                <span className="text-stone-500 ml-2">{e.entity_type}</span>
-                <span className="text-stone-500 ml-2">{new Date(e.created_at).toLocaleTimeString()}</span>
-              </div>
-            ))
+            <div className="space-y-2">
+              {data.hot_leads.map((l) => (
+                <div key={l.lead_id} className="p-3 rounded-xl bg-stone-900/80 border border-stone-800 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-stone-200">{l.name || l.email || l.company || "Unknown"}</p>
+                    <p className="text-xs text-stone-500">{Math.round(l.probability * 100)}% likely</p>
+                  </div>
+                  <Link
+                    href={`/dashboard/leads/${l.lead_id}`}
+                    className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 text-sm font-medium"
+                  >
+                    Run plan
+                  </Link>
+                </div>
+              ))}
+            </div>
           )}
-        </div>
-      </section>
+        </section>
 
-      <section>
-        <h2 className="text-lg font-medium text-stone-300 mb-4">Today&apos;s Actions</h2>
-        <div className="space-y-2">
-          {(data?.today_actions ?? []).length === 0 ? (
-            <p className="text-stone-500 text-sm">No actions today</p>
+        <section>
+          <h2 className="text-lg font-medium text-stone-300 mb-3">At risk</h2>
+          <p className="text-sm text-stone-500 mb-3">Going quiet — recover before they ghost</p>
+          {data.at_risk.length === 0 ? (
+            <div className="p-4 rounded-xl bg-stone-900/60 border border-stone-800">
+              <p className="text-stone-500 text-sm">No at-risk leads.</p>
+            </div>
           ) : (
-            data?.today_actions.map((a, i) => (
-              <div key={i} className="p-3 rounded-lg bg-stone-900/80 border border-stone-800 text-sm">
-                <span className="font-medium text-amber-400">{a.action}</span>
-                <span className="text-stone-500 ml-2">{new Date(a.created_at).toLocaleTimeString()}</span>
-              </div>
-            ))
+            <div className="space-y-2">
+              {data.at_risk.map((l) => (
+                <div key={l.id} className="p-3 rounded-xl bg-stone-900/80 border border-stone-800 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-stone-200">{l.name || "Unknown"}</p>
+                    <p className="text-xs text-stone-500">{l.state ?? "—"}</p>
+                  </div>
+                  <Link
+                    href={`/dashboard/leads/${l.id}`}
+                    className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 text-sm font-medium"
+                  >
+                    Recover
+                  </Link>
+                </div>
+              ))}
+            </div>
           )}
-        </div>
-      </section>
-    </div>
-  );
-}
+        </section>
+      </div>
 
-function MetricCard({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="p-6 rounded-xl bg-stone-900/80 border border-stone-800">
-      <p className="text-sm font-medium text-stone-400">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-stone-50">{value}</p>
+      <section className="mt-8">
+        <h2 className="text-lg font-medium text-stone-300 mb-3">Activity</h2>
+        <p className="text-sm text-stone-500 mb-3">Recent operator actions</p>
+        {data.activity.length === 0 ? (
+          <div className="p-4 rounded-xl bg-stone-900/60 border border-stone-800">
+            <p className="text-stone-500 text-sm">No recent activity.</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {data.activity.map((a, i) => (
+              <div key={i} className="p-3 rounded-xl bg-stone-900/80 border border-stone-800 text-sm">
+                <span className="font-medium text-amber-400">{a.what}</span>
+                <span className="text-stone-500"> · {a.who}</span>
+                <span className="text-stone-500"> · {new Date(a.when).toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
