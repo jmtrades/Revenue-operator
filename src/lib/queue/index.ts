@@ -10,7 +10,13 @@ export type JobPayload =
   | { type: "no_reply"; leadId: string }
   | { type: "no_show_reminder"; leadId: string }
   | { type: "reactivation"; leadId: string }
-  | { type: "billing"; workspaceId: string };
+  | { type: "billing"; workspaceId: string }
+  | { type: "zoom_webhook"; webhookId: string; workspaceId: string; meetingId: string; meetingUuid: string; event: string }
+  | { type: "fetch_zoom_recording"; callSessionId: string; workspaceId: string; meetingId: string }
+  | { type: "analyze_call"; callSessionId: string; workspaceId: string }
+  | { type: "execute_post_call_plan"; callSessionId: string; workspaceId: string; leadId: string }
+  | { type: "calendar_call_ended"; callSessionId: string }
+  | { type: "post_call_unknown_checkin"; leadId: string; workspaceId: string; callSessionId: string };
 
 let redisClient: import("ioredis").Redis | null = null;
 
@@ -50,8 +56,8 @@ export async function enqueue(payload: JobPayload): Promise<string> {
   return (inserted as { id?: string })?.id ?? jobId;
 }
 
-/** Process one job. Returns job payload or null if empty. */
-export async function dequeue(): Promise<{ id: string; payload: JobPayload } | null> {
+/** Process one job with advisory lock. Returns job payload or null if empty. */
+export async function dequeue(workerId?: string): Promise<{ id: string; payload: JobPayload } | null> {
   const redis = await getRedis();
   if (redis) {
     const raw = await redis.rpop(QUEUE_NAME);
@@ -61,10 +67,13 @@ export async function dequeue(): Promise<{ id: string; payload: JobPayload } | n
   }
 
   const db = getDb();
+  const wId = workerId ?? `worker-${crypto.randomUUID().slice(0, 8)}`;
+
   const { data: row } = await db
     .from("job_queue")
     .select("id, payload, job_type")
     .eq("status", "pending")
+    .is("locked_by", null)
     .order("created_at", { ascending: true })
     .limit(1)
     .single();
@@ -72,10 +81,21 @@ export async function dequeue(): Promise<{ id: string; payload: JobPayload } | n
   if (!row) return null;
   const r = row as { id: string; payload: unknown; job_type: string };
 
-  await db
+  const { data: locked } = await db
     .from("job_queue")
-    .update({ status: "processing", attempts: 1 })
-    .eq("id", r.id);
+    .update({
+      status: "processing",
+      locked_by: wId,
+      locked_at: new Date().toISOString(),
+      attempts: 1,
+    })
+    .eq("id", r.id)
+    .eq("status", "pending")
+    .is("locked_by", null)
+    .select("id")
+    .single();
+
+  if (!locked) return null;
 
   const payload = (typeof r.payload === "object" && r.payload !== null ? r.payload : {}) as JobPayload;
   if (!payload.type) (payload as { type: string }).type = r.job_type;
@@ -96,13 +116,20 @@ export async function toDLQ(jobId: string, error: string): Promise<void> {
     .eq("id", jobId);
 }
 
-/** Mark job completed (DB-backed queue only). */
-export async function complete(jobId: string): Promise<void> {
+/** Mark job completed (DB-backed queue only). Idempotent via completion_id. */
+export async function complete(jobId: string, completionId?: string): Promise<void> {
   try {
     const db = getDb();
+    const cid = completionId ?? crypto.randomUUID();
     await db
       .from("job_queue")
-      .update({ status: "completed", processed_at: new Date().toISOString() })
+      .update({
+        status: "completed",
+        processed_at: new Date().toISOString(),
+        completion_id: cid,
+        locked_by: null,
+        locked_at: null,
+      })
       .eq("id", jobId);
   } catch {
     // Redis jobs have no DB row

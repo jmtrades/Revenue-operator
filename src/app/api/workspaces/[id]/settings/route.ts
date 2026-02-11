@@ -24,6 +24,7 @@ export async function GET(
   }
   return NextResponse.json(data ?? {
     risk_level: "balanced",
+    preview_mode: false,
     business_hours: { start: "09:00", end: "17:00", timezone: "UTC", days: [1, 2, 3, 4, 5] },
     forbidden_phrases: [],
     vip_rules: { exclude_from_messaging: false, exclude_from_calls: false, domains: [] },

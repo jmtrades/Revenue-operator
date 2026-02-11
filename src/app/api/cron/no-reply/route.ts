@@ -6,10 +6,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { processEvent } from "@/lib/event-engine";
+import { scheduleReactivationAttempts } from "@/lib/reactivation/engine";
+import { enqueue } from "@/lib/queue";
 
 export const dynamic = "force-dynamic";
 
-// Auth: use CRON_SECRET in production
 const CRON_SECRET = process.env.CRON_SECRET;
 
 export async function GET(request: NextRequest) {
@@ -23,7 +24,6 @@ export async function GET(request: NextRequest) {
   const db = getDb();
 
   try {
-    // Find leads inactive for 3+ days in CONTACTED/ENGAGED/QUALIFIED/BOOKED
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 3);
     const cutoffIso = cutoff.toISOString();
@@ -34,31 +34,28 @@ export async function GET(request: NextRequest) {
       .in("state", ["CONTACTED", "ENGAGED", "QUALIFIED", "BOOKED"])
       .lt("last_activity_at", cutoffIso);
 
-    if (!stale?.length) {
-      return NextResponse.json({ ok: true, processed: 0 });
-    }
-
-    let processed = 0;
-    for (const lead of stale) {
+    let transitioned = 0;
+    for (const lead of stale ?? []) {
+      const l = lead as { id: string; workspace_id: string; state: string };
       const decision = processEvent({
-        workspaceId: lead.workspace_id,
-        leadId: lead.id,
+        workspaceId: l.workspace_id,
+        leadId: l.id,
         eventType: "no_reply_timeout",
         entityType: "lead",
-        entityId: lead.id,
+        entityId: l.id,
         payload: {},
         triggerSource: "cron",
-        currentState: lead.state as "CONTACTED" | "ENGAGED" | "QUALIFIED" | "BOOKED",
+        currentState: l.state as "CONTACTED" | "ENGAGED" | "QUALIFIED" | "BOOKED",
       });
 
       if (decision.transitionOccurred) {
         await db.from("leads").update({
           state: decision.newState,
           updated_at: new Date().toISOString(),
-        }).eq("id", lead.id);
+        }).eq("id", l.id);
 
         await db.from("automation_states").upsert({
-          lead_id: lead.id,
+          lead_id: l.id,
           state: decision.newState,
           allowed_actions: decision.allowedActions,
           last_event_type: "no_reply_timeout",
@@ -67,19 +64,23 @@ export async function GET(request: NextRequest) {
         }, { onConflict: "lead_id" });
 
         await db.from("events").insert({
-          workspace_id: lead.workspace_id,
+          workspace_id: l.workspace_id,
           event_type: "no_reply_timeout",
           entity_type: "lead",
-          entity_id: lead.id,
+          entity_id: l.id,
           payload: { decision },
           trigger_source: "cron",
         });
 
-        processed++;
+        if (decision.newState === "REACTIVATE") {
+          await enqueue({ type: "reactivation", leadId: l.id });
+        }
+        transitioned++;
       }
     }
 
-    return NextResponse.json({ ok: true, processed });
+    const scheduled = await scheduleReactivationAttempts();
+    return NextResponse.json({ ok: true, transitioned, scheduled });
   } catch (err) {
     console.error("No-reply cron error:", err);
     return NextResponse.json(

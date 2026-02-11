@@ -13,7 +13,7 @@ export async function GET(
   if (!conv) return NextResponse.json({ messages: [] });
   const { data: msgs } = await db
     .from("messages")
-    .select("role, content, created_at")
+    .select("role, content, created_at, metadata")
     .eq("conversation_id", (conv as { id: string }).id)
     .order("created_at", { ascending: true });
   return NextResponse.json({ messages: msgs ?? [] });

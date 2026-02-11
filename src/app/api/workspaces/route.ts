@@ -1,11 +1,18 @@
 export const dynamic = "force-dynamic";
 
 /**
- * Create workspace - for onboarding
+ * List workspaces (GET) or create workspace (POST)
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+
+export async function GET() {
+  const db = getDb();
+  const { data, error } = await db.from("workspaces").select("id, name, created_at").order("created_at", { ascending: false });
+  if (error) return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
+  return NextResponse.json({ workspaces: data ?? [] });
+}
 
 export async function POST(request: NextRequest) {
   let body: { name: string; owner_id: string };

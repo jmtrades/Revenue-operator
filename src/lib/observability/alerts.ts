@@ -9,6 +9,7 @@ const OPT_OUT_RATE_THRESHOLD = 0.05;
 const DELIVERY_FAILURE_RATE_THRESHOLD = 0.1;
 const FALLBACK_RATE_THRESHOLD = 0.3;
 const DLQ_SIZE_THRESHOLD = 100;
+const REPLY_RATE_COLLAPSE_THRESHOLD = 0.5;
 
 export async function checkWorkspaceAlerts(workspaceId: string): Promise<string[]> {
   const db = getDb();
@@ -55,9 +56,22 @@ export async function checkWorkspaceAlerts(workspaceId: string): Promise<string[
   const { count: dlqCount } = await db
     .from("job_queue")
     .select("id", { count: "exact", head: true })
-    .eq("status", "failed");
+    .in("status", ["failed", "dlq"]);
   if ((dlqCount ?? 0) > DLQ_SIZE_THRESHOLD) {
     alerts.push(`dlq_size ${dlqCount} exceeds ${DLQ_SIZE_THRESHOLD}`);
+  }
+
+  const replyRate = total > 0 ? delivered / total : 1;
+  const { data: baselineRow } = await db
+    .from("reply_rate_baseline")
+    .select("baseline_value")
+    .eq("workspace_id", workspaceId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+  const baseline = (baselineRow as { baseline_value?: number })?.baseline_value ?? 0.8;
+  if (baseline > 0 && replyRate < baseline * REPLY_RATE_COLLAPSE_THRESHOLD) {
+    alerts.push(`reply_rate_collapse ${(replyRate * 100).toFixed(1)}% vs baseline ${(baseline * 100).toFixed(1)}%`);
   }
 
   return alerts;
