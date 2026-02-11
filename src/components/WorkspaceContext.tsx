@@ -27,10 +27,17 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     const data = await res.json();
     const list = data.workspaces ?? [];
     setWorkspaces(list);
+
+    const urlWid = typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("workspace_id")
+      : null;
     const saved = typeof window !== "undefined" ? sessionStorage.getItem("revenue_workspace_id") : null;
-    if (saved && list.some((w: Workspace) => w.id === saved)) {
-      setWorkspaceIdState(saved);
-      setWorkspaceName(list.find((w: Workspace) => w.id === saved)?.name ?? "");
+    const candidate = urlWid ?? saved;
+
+    if (candidate && list.some((w: Workspace) => w.id === candidate)) {
+      setWorkspaceIdState(candidate);
+      setWorkspaceName(list.find((w: Workspace) => w.id === candidate)?.name ?? "");
+      if (typeof window !== "undefined") sessionStorage.setItem("revenue_workspace_id", candidate);
     } else if (list.length > 0 && !workspaceId) {
       setWorkspaceIdState(list[0].id);
       setWorkspaceName(list[0].name);

@@ -45,6 +45,6 @@ export async function GET(
       details: r.details ?? {},
       created_at: r.created_at,
     },
-    message: `Operator waiting because: ${label.toLowerCase()}.`,
+    message: `Team waiting because: ${label.toLowerCase()}.`,
   });
 }

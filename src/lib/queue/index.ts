@@ -36,6 +36,25 @@ async function getRedis(): Promise<import("ioredis").Redis | null> {
 const QUEUE_NAME = "ro:jobs";
 const DLQ_NAME = "ro:dlq";
 
+/** Enqueue decision job only if no active plan with future next_action_at (anti-duplicate). */
+export async function enqueueDecision(
+  leadId: string,
+  workspaceId: string,
+  eventId?: string
+): Promise<string | null> {
+  const { shouldEnqueueDecision } = await import("@/lib/plans/lead-plan");
+  const check = await shouldEnqueueDecision(workspaceId, leadId);
+  if (!check.enqueue && check.reason === "plan_scheduled") {
+    return null;
+  }
+  return enqueue({
+    type: "decision",
+    leadId,
+    workspaceId,
+    eventId: eventId ?? leadId,
+  });
+}
+
 /** Enqueue job. Uses Redis if available, else DB. */
 export async function enqueue(payload: JobPayload): Promise<string> {
   const redis = await getRedis();

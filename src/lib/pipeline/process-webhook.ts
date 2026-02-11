@@ -4,12 +4,13 @@
 
 import { getDb } from "@/lib/db/queries";
 import { processEvent } from "@/lib/event-engine";
-import { enqueue } from "@/lib/queue";
+import { enqueue, enqueueDecision } from "@/lib/queue";
 import { redact } from "@/lib/redact";
 import { isOptOut, mergeSettings } from "@/lib/autopilot";
 import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
 import { emitOutboundEvent } from "@/lib/outbound-events";
 import { recordCommitmentSignal } from "@/lib/commitment";
+import { recordLeadReaction } from "@/lib/lead-memory";
 
 export interface RawWebhookPayload {
   workspace_id: string;
@@ -94,6 +95,23 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       external_id: external_message_id ?? null,
     });
 
+    const { stopSequence } = await import("@/lib/sequences/engine");
+    const { cancelLeadPlan } = await import("@/lib/plans/lead-plan");
+    await stopSequence(workspace_id, lead.id, "user_reply").catch(() => {});
+    await cancelLeadPlan(workspace_id, lead.id, "user_reply").catch(() => {});
+
+    const { data: lastAssistant } = await db
+      .from("messages")
+      .select("metadata")
+      .eq("conversation_id", conversation.id)
+      .eq("role", "assistant")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+    const lastAction = (lastAssistant as { metadata?: { action?: string } })?.metadata?.action ?? "message";
+    const outcome = message.length > 50 ? message.slice(0, 50) + "…" : message;
+    recordLeadReaction(lead.id, workspace_id, lastAction, outcome).catch(() => {});
+
     const msgLower = message.toLowerCase();
     if (msgLower.includes("confirmed") || msgLower.includes("yes") || msgLower.includes("i'll be there") || msgLower.includes("see you")) {
       recordCommitmentSignal(lead.id, "confirmation_reply").catch(() => {});
@@ -173,12 +191,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       .eq("id", webhookId);
 
     if (decision.shouldGenerateResponse && decision.allowedActions.length > 0) {
-      await enqueue({
-        type: "decision",
-        leadId: lead.id,
-        workspaceId: workspace_id,
-        eventId: (eventRow as { id: string })?.id ?? lead.id,
-      });
+      await enqueueDecision(lead.id, workspace_id, (eventRow as { id: string })?.id ?? lead.id);
       return { decisionLeadId: lead.id, decisionWorkspaceId: workspace_id };
     }
     return { decisionLeadId: null, decisionWorkspaceId: null };

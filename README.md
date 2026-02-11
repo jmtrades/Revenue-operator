@@ -81,6 +81,7 @@ Disputes an invoice line within the 7-day window. Sets status to `disputed`.
 - `GET /api/cron/no-reply` – ghost recovery
 - `GET /api/cron/billing` – attribution billing
 - `GET /api/cron/learning` – learning job (qualification thresholds, timing intervals, prediction weights)
+- `GET /api/cron/renewal-reminder` – 24h before renewal: sends reminder email (run hourly)
 
 ### Dashboard APIs
 

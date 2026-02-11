@@ -4,17 +4,29 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
+const TEAM_ROLES = [
+  { id: "qualifier", label: "Qualifier", desc: "Replies and qualifies" },
+  { id: "setter", label: "Setter", desc: "Schedules calls" },
+  { id: "show_manager", label: "Show Manager", desc: "Reminders and no-shows" },
+  { id: "follow_up_manager", label: "Follow-up Manager", desc: "Keeps leads engaged" },
+  { id: "revival_manager", label: "Revival Manager", desc: "Reaches cold prospects" },
+  { id: "full_autopilot", label: "Full department", desc: "All roles" },
+] as const;
+
 export default function SettingsPage() {
   const { workspaceId } = useWorkspace();
   const [riskLevel, setRiskLevel] = useState<"safe" | "balanced" | "aggressive">("balanced");
   const [previewMode, setPreviewMode] = useState(false);
   const [escalationEnabled, setEscalationEnabled] = useState(false);
   const [callAwareEnabled, setCallAwareEnabled] = useState(true);
+  const [hiredRoles, setHiredRoles] = useState<string[]>(["full_autopilot"]);
+  const [communicationStyle, setCommunicationStyle] = useState<"direct" | "consultative" | "high_urgency">("consultative");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [saved, setSaved] = useState(false);
   const [zoomHealth, setZoomHealth] = useState<{ connected: boolean; token_valid?: boolean } | null>(null);
   const [zoomDisconnecting, setZoomDisconnecting] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [responsibilityLevel, setResponsibilityLevel] = useState<"monitor" | "handle" | "guarantee">("handle");
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -25,6 +37,11 @@ export default function SettingsPage() {
         setPreviewMode(d.preview_mode ?? false);
         setEscalationEnabled(d.escalation_rules?.enabled ?? false);
         setCallAwareEnabled(d.call_aware_enabled ?? true);
+        setHiredRoles(Array.isArray(d.hired_roles) && d.hired_roles.length ? d.hired_roles : ["full_autopilot"]);
+        const style = d.communication_style;
+        setCommunicationStyle(style === "direct" || style === "high_urgency" ? style : "consultative");
+        const rl = d.responsibility_level;
+        setResponsibilityLevel(rl === "monitor" || rl === "guarantee" ? rl : "handle");
       })
       .catch(() => {});
     fetch(`/api/workspaces/${workspaceId}/webhook-config`)
@@ -47,6 +64,9 @@ export default function SettingsPage() {
         preview_mode: previewMode,
         escalation_rules: { enabled: escalationEnabled },
         call_aware_enabled: callAwareEnabled,
+        hired_roles: hiredRoles,
+        communication_style: communicationStyle,
+        responsibility_level: responsibilityLevel,
       }),
     });
     if (webhookUrl) {
@@ -62,15 +82,100 @@ export default function SettingsPage() {
   return (
     <div className="p-8 max-w-xl mx-auto">
       <h1 className="text-2xl font-semibold text-stone-50 mb-2">Settings</h1>
-      <p className="text-stone-500 text-sm mb-6">Configure your operator</p>
+      <p className="text-stone-500 text-sm mb-6">Your department</p>
       {!workspaceId ? (
         <p className="text-stone-500">Select an account.</p>
       ) : (
         <div className="space-y-6">
           <section className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
+            <h2 className="text-sm font-medium text-stone-400 mb-3">Your team</h2>
+            <p className="text-stone-300 text-sm mb-3">Who handles your leads</p>
+            <div className="space-y-2">
+              {TEAM_ROLES.map((r) => (
+                <div
+                  key={r.id}
+                  className="flex items-center justify-between p-2 rounded-lg bg-stone-800/60"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-stone-200">{r.label}</p>
+                    <p className="text-xs text-stone-500">{r.desc}</p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={hiredRoles.includes(r.id)}
+                    onChange={() => {
+                      if (r.id === "full_autopilot") {
+                        setHiredRoles(["full_autopilot"]);
+                      } else {
+                        setHiredRoles((prev) => {
+                          const w = prev.filter((x) => x !== "full_autopilot");
+                          if (prev.includes(r.id)) return w.filter((x) => x !== r.id).length ? w.filter((x) => x !== r.id) : ["full_autopilot"];
+                          const next = [...w, r.id];
+                          return next.length >= 5 ? ["full_autopilot"] : next;
+                        });
+                      }
+                    }}
+                    className="rounded border-stone-600"
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
+            <h2 className="text-sm font-medium text-stone-400 mb-3">Responsibility coverage</h2>
+            <p className="text-stone-300 text-sm mb-3">What gets handled for you</p>
+            <div className="space-y-2 mb-3">
+              {[
+                { id: "monitor" as const, label: "Monitor", desc: "Visibility and risk detection only" },
+                { id: "handle" as const, label: "Handle", desc: "Follow-ups and recovery" },
+                { id: "guarantee" as const, label: "Guarantee", desc: "Booking and attendance protection" },
+              ].map((t) => (
+                <div key={t.id} className="flex items-center justify-between p-2 rounded-lg bg-stone-800/60">
+                  <div>
+                    <p className="text-sm font-medium text-stone-200">{t.label}</p>
+                    <p className="text-xs text-stone-500">{t.desc}</p>
+                  </div>
+                  <input
+                    type="radio"
+                    name="responsibility"
+                    checked={responsibilityLevel === t.id}
+                    onChange={() => setResponsibilityLevel(t.id)}
+                    className="border-stone-600"
+                  />
+                </div>
+              ))}
+            </div>
+            {responsibilityLevel !== "guarantee" && (
+              <Link
+                href="/dashboard/continue-protection"
+                className="text-amber-400 hover:text-amber-300 text-sm font-medium"
+              >
+                Increase responsibility coverage →
+              </Link>
+            )}
+          </section>
+
+          <section className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
+            <h2 className="text-sm font-medium text-stone-400 mb-3">Protection continuity</h2>
+            <p className="text-stone-300 text-sm mb-2">
+              Keep conversations protected. Protection continues automatically after trial.
+            </p>
+            <p className="text-stone-500 text-xs mb-3">
+              Pause protection anytime — no need to cancel a subscription.
+            </p>
+            <Link
+              href="/dashboard/continue-protection"
+              className="inline-block px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-medium text-sm"
+            >
+              Keep protection active
+            </Link>
+          </section>
+
+          <section className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
             <h2 className="text-sm font-medium text-stone-400 mb-3">Connect lead source</h2>
             <p className="text-stone-300 text-sm mb-3">
-              Operator can reply and follow up automatically once connected.
+              Your team will handle conversations once connected.
             </p>
             {zoomHealth?.connected && (
               <div className="mb-3 p-3 rounded-lg bg-stone-800/80 text-sm">
@@ -100,10 +205,23 @@ export default function SettingsPage() {
           </section>
 
           <section className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
-            <h2 className="text-sm font-medium text-stone-400 mb-3">Operator behaviour</h2>
+            <h2 className="text-sm font-medium text-stone-400 mb-3">Behaviour</h2>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs text-stone-500 mb-1">Response style</label>
+                <label className="block text-xs text-stone-500 mb-1">Communication style</label>
+                <select
+                  value={communicationStyle}
+                  onChange={(e) => setCommunicationStyle(e.target.value as typeof communicationStyle)}
+                  className="w-full px-3 py-2 rounded bg-stone-900 border border-stone-700 text-stone-200"
+                >
+                  <option value="direct">Direct — short, clear, to the point</option>
+                  <option value="consultative">Consultative — warm, ask questions, suggest options</option>
+                  <option value="high_urgency">High urgency — action-oriented, time-sensitive</option>
+                </select>
+                <p className="text-xs text-stone-500 mt-1">All messages follow this style consistently</p>
+              </div>
+              <div>
+                <label className="block text-xs text-stone-500 mb-1">Risk level</label>
                 <select
                   value={riskLevel}
                   onChange={(e) => setRiskLevel(e.target.value as typeof riskLevel)}
@@ -123,7 +241,7 @@ export default function SettingsPage() {
                   className="rounded border-stone-600"
                 />
                 <label htmlFor="preview" className="text-sm text-stone-300">
-                  Preview mode – show what it would send without sending
+                  Preview — team drafts responses without sending
                 </label>
               </div>
               <div className="flex items-center gap-3">
@@ -135,7 +253,7 @@ export default function SettingsPage() {
                   className="rounded border-stone-600"
                 />
                 <label htmlFor="escalation" className="text-sm text-stone-300">
-                  Suggest instead of send for high-value or sensitive replies
+                  Ask for your approval before sending high-value or sensitive replies
                 </label>
               </div>
               <div className="flex items-center gap-3">
@@ -147,7 +265,7 @@ export default function SettingsPage() {
                   className="rounded border-stone-600"
                 />
                 <label htmlFor="callAware" className="text-sm text-stone-300">
-                  Process closing calls and suggest follow-ups
+                  Handle post-call follow-ups
                 </label>
               </div>
             </div>

@@ -18,6 +18,9 @@ export async function GET(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .single();
 
+  const { data: settingsRow } = await db.from("settings").select("weekly_call_target").eq("workspace_id", workspaceId).single();
+  const weeklyCallTarget = (settingsRow as { weekly_call_target?: number })?.weekly_call_target ?? null;
+
   const { data: zoomAccount } = await db.from("zoom_accounts").select("id").eq("workspace_id", workspaceId).single();
 
   const current = (state as { step?: string; opportunities_found?: number; simulated_actions_count?: number; activated_at?: string; zoom_connected?: boolean; zoom_webhook_verified?: boolean }) ?? {};
@@ -52,11 +55,16 @@ export async function GET(req: NextRequest) {
     step,
     opportunities_found: current.opportunities_found ?? 0,
     simulated_actions_count: current.simulated_actions_count ?? 0,
+    weekly_call_target: weeklyCallTarget,
     zoom_configured: zoomConfigured,
     zoom_connected: !!zoomAccount || (current.zoom_connected ?? false),
     zoom_webhook_verified: current.zoom_webhook_verified ?? false,
     activated_at: current.activated_at ?? null,
-    ready_to_activate: (current.opportunities_found ?? 0) > 0 && (current.simulated_actions_count ?? 0) >= 3,
+    ready_to_activate:
+      (current.opportunities_found ?? 0) > 0 &&
+      (current.simulated_actions_count ?? 0) >= 3 &&
+      weeklyCallTarget != null &&
+      weeklyCallTarget >= 1,
     top_recoverable_leads: topRecoverable,
     recoverable_revenue_cents: recoverableRevenueCents,
   });
@@ -66,7 +74,7 @@ export async function POST(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
 
-  let body: { action?: string; lead_id?: string } = {};
+  let body: { action?: string; lead_id?: string; weekly_call_target?: number } = {};
   try {
     body = await req.json();
   } catch {
@@ -136,7 +144,7 @@ export async function POST(req: NextRequest) {
     const { enqueue } = await import("@/lib/queue");
     await enqueue({ type: "decision", leadId, workspaceId, eventId: leadId });
     return NextResponse.json({
-      message: "Recovery triggered. Operator will process lead safely.",
+      message: "Recovery triggered. Your team will process the lead.",
       lead_id: leadId,
     });
   }
@@ -166,6 +174,21 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  if (action === "set_target") {
+    const target = body.weekly_call_target as number | undefined;
+    if (target == null || typeof target !== "number" || target < 1 || target > 100) {
+      return NextResponse.json({ error: "weekly_call_target required (1-100)" }, { status: 400 });
+    }
+    await db.from("settings").upsert(
+      { workspace_id: workspaceId, weekly_call_target: target, updated_at: new Date().toISOString() },
+      { onConflict: "workspace_id" }
+    );
+    return NextResponse.json({
+      weekly_call_target: target,
+      message: `Target set: ${target} calls per week.`,
+    });
+  }
+
   if (action === "activate") {
     await db.from("activation_states").upsert(
       {
@@ -177,10 +200,16 @@ export async function POST(req: NextRequest) {
       { onConflict: "workspace_id" }
     );
 
+    const { runSyntheticProtectionBootstrap } = await import("@/lib/bootstrap/synthetic-protection");
+    await runSyntheticProtectionBootstrap(workspaceId);
+
+    const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
+    sendActivationConfirmationEmail(workspaceId).catch(() => {});
+
     return NextResponse.json({
       step: "activated",
       activated_at: new Date().toISOString(),
-      message: "Workspace activated. Operator is now live.",
+      message: "Workspace activated. Protection is live.",
     });
   }
 

@@ -5,6 +5,8 @@
 import { getDb } from "@/lib/db/queries";
 
 export type InactionReason =
+  | "decision_no_intervention"
+  | "low_confidence"
   | "low_probability"
   | "outside_business_hours"
   | "cooldown_active"
@@ -15,7 +17,10 @@ export type InactionReason =
   | "workspace_paused"
   | "no_allowed_actions"
   | "vip_excluded"
-  | "channel_unavailable";
+  | "channel_unavailable"
+  | "no_role_for_action"
+  | "autonomy_ramp"
+  | "feature_disabled";
 
 export async function recordInaction(
   leadId: string,

@@ -1,0 +1,227 @@
+/**
+ * Deterministic Sequence Engine — Controlled cadences.
+ * No freeform scheduling. Sequences define steps with delays and template keys.
+ */
+
+import { getDb } from "@/lib/db/queries";
+import type { DealStateVector } from "@/lib/engines/perception";
+import { setLeadPlan } from "@/lib/plans/lead-plan";
+
+export interface SequenceStep {
+  step: number;
+  delay_hours: number;
+  intervention_type: string;
+  template_key: string;
+  stop_on_reply: boolean;
+}
+
+export interface Sequence {
+  id: string;
+  workspace_id: string;
+  name: string;
+  purpose: "followup" | "revival" | "attendance";
+  is_default: boolean;
+  steps: SequenceStep[];
+}
+
+const DEFAULT_FOLLOWUP_STEPS: SequenceStep[] = [
+  { step: 1, delay_hours: 4, intervention_type: "clarify", template_key: "followup_1", stop_on_reply: true },
+  { step: 2, delay_hours: 24, intervention_type: "reassurance", template_key: "followup_2", stop_on_reply: true },
+  { step: 3, delay_hours: 72, intervention_type: "revive", template_key: "followup_3", stop_on_reply: true },
+];
+
+const DEFAULT_REVIVAL_STEPS: SequenceStep[] = [
+  { step: 1, delay_hours: 24, intervention_type: "revive", template_key: "revival_1", stop_on_reply: true },
+  { step: 2, delay_hours: 72, intervention_type: "revive", template_key: "revival_2", stop_on_reply: true },
+];
+
+const DEFAULT_ATTENDANCE_STEPS: SequenceStep[] = [
+  { step: 1, delay_hours: 2, intervention_type: "reminder", template_key: "reminder_1", stop_on_reply: true },
+  { step: 2, delay_hours: 24, intervention_type: "prep_info", template_key: "prep_1", stop_on_reply: true },
+];
+
+/** Choose sequence based on state vector and settings. Ensures a sequence exists (creates default if none). */
+export async function chooseSequence(
+  stateVector: DealStateVector,
+  _settings: Record<string, unknown>
+): Promise<Sequence> {
+  const db = getDb();
+  const state = stateVector.state;
+  const purpose = state === "BOOKED"
+    ? "attendance"
+    : state === "REACTIVATE" || stateVector.engagement_decay_hours > 72
+      ? "revival"
+      : "followup";
+
+  const { data: seq } = await db
+    .from("sequences")
+    .select("*")
+    .eq("workspace_id", stateVector.workspace_id)
+    .eq("purpose", purpose)
+    .limit(1)
+    .single();
+
+  if (seq) {
+    return seq as Sequence;
+  }
+
+  const defaultSteps =
+    purpose === "attendance"
+      ? DEFAULT_ATTENDANCE_STEPS
+      : purpose === "revival"
+        ? DEFAULT_REVIVAL_STEPS
+        : DEFAULT_FOLLOWUP_STEPS;
+
+  const { data: created } = await db
+    .from("sequences")
+    .insert({
+      workspace_id: stateVector.workspace_id,
+      name: `Default ${purpose}`,
+      purpose,
+      is_default: true,
+      steps: defaultSteps,
+    })
+    .select("id, workspace_id, name, purpose, is_default, steps")
+    .single();
+
+  if (created && (created as { id: string }).id) {
+    return created as Sequence;
+  }
+  const { data: fallback } = await db
+    .from("sequences")
+    .select("*")
+    .eq("workspace_id", stateVector.workspace_id)
+    .eq("purpose", purpose)
+    .limit(1)
+    .single();
+  if (fallback) return fallback as Sequence;
+  return {
+    id: "",
+    workspace_id: stateVector.workspace_id,
+    name: `Default ${purpose}`,
+    purpose,
+    is_default: true,
+    steps: defaultSteps,
+  } as Sequence;
+}
+
+/** Start a sequence for a lead. When sequenceId is empty, only sets lead_plan (no sequence_run). */
+export async function startSequence(
+  workspaceId: string,
+  leadId: string,
+  sequenceId: string | null,
+  sequence: Sequence
+): Promise<void> {
+  const step = sequence.steps[0];
+  if (!step) return;
+
+  const nextAt = new Date();
+  nextAt.setHours(nextAt.getHours() + step.delay_hours);
+
+  if (sequenceId) {
+    const db = getDb();
+    const { data: existing } = await db
+      .from("sequence_runs")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .eq("lead_id", leadId)
+      .single();
+
+    if (existing) {
+      await db
+        .from("sequence_runs")
+        .update({
+          sequence_id: sequenceId,
+          current_step: 1,
+          status: "running",
+          stopped_reason: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("workspace_id", workspaceId)
+        .eq("lead_id", leadId);
+    } else {
+      await db.from("sequence_runs").insert({
+        workspace_id: workspaceId,
+        lead_id: leadId,
+        sequence_id: sequenceId,
+        current_step: 1,
+        status: "running",
+      });
+    }
+  }
+
+  await setLeadPlan(workspaceId, leadId, {
+    next_action_type: step.intervention_type,
+    next_action_at: nextAt.toISOString(),
+    sequence_id: sequenceId,
+    sequence_step: 1,
+  });
+}
+
+/** Advance sequence on no-reply timeout or scheduled tick */
+export async function advanceSequence(
+  workspaceId: string,
+  leadId: string
+): Promise<{ advanced: boolean; nextStep?: SequenceStep; nextActionAt?: string }> {
+  const db = getDb();
+  const { data: run } = await db
+    .from("sequence_runs")
+    .select("*")
+    .eq("workspace_id", workspaceId)
+    .eq("lead_id", leadId)
+    .eq("status", "running")
+    .single();
+
+  if (!run) return { advanced: false };
+
+  const r = run as { sequence_id: string; current_step: number };
+  const { data: seq } = await db.from("sequences").select("steps").eq("id", r.sequence_id).single();
+  const steps = ((seq as { steps?: SequenceStep[] })?.steps ?? []) as SequenceStep[];
+  const nextStepIndex = steps.findIndex((s) => s.step === r.current_step + 1);
+  if (nextStepIndex < 0) {
+    await db
+      .from("sequence_runs")
+      .update({ status: "completed", updated_at: new Date().toISOString() })
+      .eq("workspace_id", workspaceId)
+      .eq("lead_id", leadId);
+    return { advanced: true };
+  }
+
+  const nextStep = steps[nextStepIndex];
+  const nextAt = new Date();
+  nextAt.setHours(nextAt.getHours() + nextStep.delay_hours);
+
+  await db
+    .from("sequence_runs")
+    .update({
+      current_step: r.current_step + 1,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("workspace_id", workspaceId)
+    .eq("lead_id", leadId);
+
+  await setLeadPlan(workspaceId, leadId, {
+    next_action_type: nextStep.intervention_type,
+    next_action_at: nextAt.toISOString(),
+    sequence_id: r.sequence_id,
+    sequence_step: nextStep.step,
+  });
+
+  return { advanced: true, nextStep, nextActionAt: nextAt.toISOString() };
+}
+
+/** Stop sequence on reply, opt-out, escalation hold, booked, etc. */
+export async function stopSequence(
+  workspaceId: string,
+  leadId: string,
+  reason: string
+): Promise<void> {
+  const db = getDb();
+  const { cancelLeadPlan } = await import("@/lib/plans/lead-plan");
+  await cancelLeadPlan(workspaceId, leadId, reason);
+  await db
+    .from("sequence_runs")
+    .update({ status: "stopped", stopped_reason: reason, updated_at: new Date().toISOString() })
+    .eq("workspace_id", workspaceId)
+    .eq("lead_id", leadId);
+}

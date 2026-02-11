@@ -22,7 +22,7 @@ export function PreviewBanner({ workspaceId }: { workspaceId: string }) {
     <div className="bg-amber-600/20 border-b border-amber-600/40 px-4 py-2 text-center text-sm text-amber-200">
       <span className="font-medium">Preview Mode</span>
       {" — "}
-      Operator runs full pipeline but messages are not sent. For demos and trust building.
+      Your team drafts all responses but nothing is sent. For demos and trust building.
     </div>
   );
 }

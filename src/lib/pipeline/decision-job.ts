@@ -20,10 +20,15 @@ import { getSafeResponse, getEscalationHoldingMessage, detectSensitiveIntent } f
 import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
 import { sendOutbound } from "@/lib/delivery/provider";
 import { isPreviewMode } from "@/lib/preview-mode";
+import { shouldSimulateOnly, shouldRequireApproval, isFeatureEnabled, isRampComplete } from "@/lib/autonomy";
 import { recordInaction } from "@/lib/inaction-reasons";
+import { logRestraint } from "@/lib/trust/log-restraint";
+import { narrativeForAction } from "@/lib/trust/build-narrative";
+import { confidenceToLabel } from "@/lib/trust/confidence-language";
 import { checkEscalation, logEscalation, getAssignedUserId, isLeadInEscalationHold } from "@/lib/escalation";
 import type { LeadState } from "@/lib/types";
 import { ALLOWED_ACTIONS_BY_STATE } from "@/lib/types";
+import { resolveRole, ROLE_CONFIDENCE_THRESHOLDS, ROLE_SAFE_FALLBACK, type RoleId } from "@/lib/roles";
 import { redact } from "@/lib/redact";
 
 const SAFE_FALLBACK_MESSAGES: Record<string, string> = {
@@ -56,12 +61,25 @@ export async function runDecisionJob(
     .single();
 
   const settings = mergeSettings(settingsRow as Partial<import("@/lib/autopilot").WorkspaceSettings> | undefined);
+  const communicationStyle =
+    ((settingsRow as { communication_style?: string })?.communication_style as "direct" | "consultative" | "high_urgency") ?? "consultative";
 
   const state = lead.state as LeadState;
   const allowedActions = ALLOWED_ACTIONS_BY_STATE[state] ?? [];
 
   if (allowedActions.length === 0) {
     await recordInaction(leadId, workspaceId, "no_allowed_actions", { state });
+    return;
+  }
+
+  const previewMode = await isPreviewMode(workspaceId);
+  const simulateOnly = await shouldSimulateOnly(workspaceId);
+  const forceSimulate = previewMode || simulateOnly;
+  const rampOk = await isRampComplete(workspaceId);
+
+  // Autonomy ramp: restrict until day N
+  if (!rampOk) {
+    await recordInaction(leadId, workspaceId, "autonomy_ramp", { state });
     return;
   }
 
@@ -88,8 +106,6 @@ export async function runDecisionJob(
   const convId = (convRow as { id?: string })?.id;
   if (!convId) return;
 
-  const previewMode = await isPreviewMode(workspaceId);
-
   let reasoning: Record<string, unknown> = {};
   try {
     const { data: messages } = await db
@@ -106,6 +122,7 @@ export async function runDecisionJob(
       lastMessage: lastUserMsg,
       workspaceId,
       leadId,
+      communication_style: communicationStyle,
     });
     message = result.message;
     confidence = result.confidence;
@@ -129,12 +146,26 @@ export async function runDecisionJob(
         const route = await getBookingRoute(dealId);
         if (route.tier === "clarify_nurture") {
           action = "qualification_question";
-          const qualResult = await fillSlots("qualification_question", { leadName: lead.name ?? undefined, company: lead.company ?? undefined, lastMessage: lastUserMsg, workspaceId, leadId });
+          const qualResult = await fillSlots("qualification_question", {
+            leadName: lead.name ?? undefined,
+            company: lead.company ?? undefined,
+            lastMessage: lastUserMsg,
+            workspaceId,
+            leadId,
+            communication_style: communicationStyle,
+          });
           message = qualResult.message;
           reasoning = { ...reasoning, booking_route: route };
         } else if (route.tier === "triage_call" && action === "booking") {
           action = "call_invite";
-          const invResult = await fillSlots("call_invite", { leadName: lead.name ?? undefined, company: lead.company ?? undefined, lastMessage: lastUserMsg, workspaceId, leadId });
+          const invResult = await fillSlots("call_invite", {
+            leadName: lead.name ?? undefined,
+            company: lead.company ?? undefined,
+            lastMessage: lastUserMsg,
+            workspaceId,
+            leadId,
+            communication_style: communicationStyle,
+          });
           message = invResult.message;
           reasoning = { ...reasoning, booking_route: route };
         } else {
@@ -153,7 +184,39 @@ export async function runDecisionJob(
     message = SAFE_FALLBACK_MESSAGES[action] ?? SAFE_FALLBACK_MESSAGES.clarifying_question;
   }
 
+  const hiredRoles = ((settingsRow as { hired_roles?: string[] })?.hired_roles ?? ["full_autopilot"]) as RoleId[];
+  const roleResolved = resolveRole(state, action, hiredRoles);
+  if (!roleResolved) {
+    await recordInaction(leadId, workspaceId, "no_role_for_action", { state, action });
+    return;
+  }
+  const { role: roleId, label: roleLabel } = roleResolved;
+  const roleThreshold = ROLE_CONFIDENCE_THRESHOLDS[roleId];
+  if (confidence < roleThreshold) {
+    const fallbackAction = ROLE_SAFE_FALLBACK[roleId];
+    action = allowedActions.includes(fallbackAction) ? fallbackAction : getSafeFallback(settings, allowedActions);
+    message = SAFE_FALLBACK_MESSAGES[action] ?? SAFE_FALLBACK_MESSAGES.clarifying_question;
+  }
+
+  // Feature flags: map action to feature
+  const actionToFeature: Record<string, import("@/lib/autonomy").AutonomyFeature> = {
+    follow_up: "followups",
+    booking: "booking",
+    call_invite: "booking",
+    confirmation: "confirmations",
+    winback: "winback",
+    qualification_question: "triage",
+    clarifying_question: "triage",
+  };
+  const feature = actionToFeature[action] ?? "followups";
+  const featureEnabled = await isFeatureEnabled(workspaceId, feature);
+  if (!featureEnabled) {
+    await recordInaction(leadId, workspaceId, "feature_disabled", { feature });
+    return;
+  }
+
   if (!isWithinBusinessHours(settings)) {
+    await logRestraint(workspaceId, leadId, "outside_business_hours");
     await recordInaction(leadId, workspaceId, "outside_business_hours");
     return;
   }
@@ -161,6 +224,7 @@ export async function runDecisionJob(
   const { data: wsRow } = await db.from("workspaces").select("created_at, status").eq("id", workspaceId).single();
   const ws = wsRow as { created_at?: string; status?: string } | undefined;
   if (ws?.status === "paused") {
+    await logRestraint(workspaceId, leadId, "workspace_paused");
     await recordInaction(leadId, workspaceId, "workspace_paused");
     return;
   }
@@ -175,6 +239,7 @@ export async function runDecisionJob(
       .eq("workspace_id", workspaceId)
       .gte("sent_at", todayStart.toISOString());
     if ((warmupToday ?? 0) >= warmupLimit) {
+      await logRestraint(workspaceId, leadId, "warmup_limit", { warmupToday, warmupLimit });
       await recordInaction(leadId, workspaceId, "warmup_limit", { warmupToday, warmupLimit });
       return;
     }
@@ -201,6 +266,7 @@ export async function runDecisionJob(
     .eq("lead_id", leadId)
     .gte("sent_at", todayStart.toISOString());
   if (!passesStageLimit(state, outboundToday ?? 0)) {
+    await logRestraint(workspaceId, leadId, "stage_limit", { state, outboundToday });
     await recordInaction(leadId, workspaceId, "stage_limit", { state, outboundToday });
     return;
   }
@@ -219,6 +285,7 @@ export async function runDecisionJob(
   const lastAt = lastOutbound?.sent_at ? new Date(lastOutbound.sent_at) : null;
   const attemptCount = (totalOutbound ?? 0) + 1;
   if (!passesCooldownLadder(lastAt, attemptCount)) {
+    await logRestraint(workspaceId, leadId, "cooldown_active", { attemptCount });
     await recordInaction(leadId, workspaceId, "cooldown_active", { attemptCount });
     return;
   }
@@ -272,6 +339,11 @@ export async function runDecisionJob(
   const { data: dealRow } = await db.from("deals").select("value_cents").eq("lead_id", leadId).neq("status", "lost").limit(1).single();
   const dealValue = (dealRow as { value_cents?: number })?.value_cents ?? 0;
 
+  const needsApproval = !forceSimulate && (await shouldRequireApproval(workspaceId, action, {
+    isSensitive: !!sensitive,
+    dealValueCents: dealValue,
+  }));
+
   const escalationCheck = await checkEscalation(workspaceId, leadId, {
     dealValueCents: dealValue,
     isVip: lead.is_vip ?? false,
@@ -280,7 +352,8 @@ export async function runDecisionJob(
     policySensitiveDetected: !!sensitive,
   });
 
-  if (escalationCheck.shouldEscalate && escalationCheck.reason && !previewMode) {
+  if (!forceSimulate && ((escalationCheck.shouldEscalate && escalationCheck.reason) || needsApproval)) {
+    const escReason = escalationCheck.reason ?? "autonomy_assist_approval_required";
     const assignedUserId = await getAssignedUserId(workspaceId, leadId);
     const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).single();
     const timeoutHours = (escRules as { escalation_rules?: { escalation_timeout_hours?: number }; escalation_timeout_hours?: number })?.escalation_rules?.escalation_timeout_hours
@@ -288,7 +361,7 @@ export async function runDecisionJob(
       ?? 24;
     const holdUntil = new Date();
     holdUntil.setHours(holdUntil.getHours() + timeoutHours);
-    const escalationId = await logEscalation(workspaceId, leadId, escalationCheck.reason, action, message, assignedUserId ?? undefined, holdUntil);
+    const escalationId = await logEscalation(workspaceId, leadId, escReason, action, message, assignedUserId ?? undefined, holdUntil);
 
     const holdingMessage = getEscalationHoldingMessage();
     await db.from("messages").insert({
@@ -297,7 +370,7 @@ export async function runDecisionJob(
       content: holdingMessage,
       confidence_score: 1,
       approved_by_human: false,
-      metadata: { action: "escalation_holding", escalation_reason: escalationCheck.reason, reasoning },
+      metadata: { action: "escalation_holding", escalation_reason: escReason, reasoning },
     });
 
     if (escalationId) {
@@ -336,18 +409,29 @@ export async function runDecisionJob(
       intent_classification: reasoning,
       status: "pending",
     });
+    const escNarrative = narrativeForAction(action, { lastUserMsg, state, policyReason: policy.reason, reasoning });
     await db.from("action_logs").insert({
       workspace_id: workspaceId,
       entity_type: "lead",
       entity_id: leadId,
       action: "escalation_suggest",
-      actor: "system",
-      payload: { escalation_reason: escalationCheck.reason, proposed_action: action, reasoning, hold_until: holdUntil.toISOString() },
+      actor: roleLabel,
+      role: roleId,
+      payload: {
+        escalation_reason: escReason,
+        proposed_action: action,
+        reasoning,
+        hold_until: holdUntil.toISOString(),
+        noticed: escNarrative.noticed,
+        decision: escNarrative.decision,
+        expected: escNarrative.expected,
+        confidence_label: confidenceToLabel(confidence),
+      },
     });
     return;
   }
 
-  const metadata = { action, policy_reason: policy.reason, reasoning, ...(previewMode ? { simulated: true } : {}) };
+  const metadata = { action, policy_reason: policy.reason, reasoning, ...(forceSimulate ? { simulated: true } : {}) };
 
   await db.from("messages").insert({
     conversation_id: convId,
@@ -358,14 +442,27 @@ export async function runDecisionJob(
     metadata,
   });
 
-  if (previewMode) {
+  const narrative = narrativeForAction(action, { lastUserMsg, state, policyReason: policy.reason, reasoning });
+  const confidenceLabel = confidenceToLabel(confidence);
+  if (forceSimulate) {
     await db.from("action_logs").insert({
       workspace_id: workspaceId,
       entity_type: "lead",
       entity_id: leadId,
       action: "simulated_send_message",
-      actor: "system",
-      payload: { action, confidence, policy_reason: policy.reason, reasoning, simulated: true },
+      actor: roleLabel,
+      role: roleId,
+      payload: {
+        action,
+        confidence,
+        policy_reason: policy.reason,
+        reasoning,
+        simulated: true,
+        noticed: narrative.noticed,
+        decision: narrative.decision,
+        expected: narrative.expected,
+        confidence_label: confidenceLabel,
+      },
     });
     return;
   }
@@ -409,7 +506,17 @@ export async function runDecisionJob(
     entity_type: "lead",
     entity_id: leadId,
     action: "send_message",
-    actor: "system",
-    payload: { action, confidence, policy_reason: policy.reason, reasoning },
+    actor: roleLabel,
+    role: roleId,
+    payload: {
+      action,
+      confidence,
+      policy_reason: policy.reason,
+      reasoning,
+      noticed: narrative.noticed,
+      decision: narrative.decision,
+      expected: narrative.expected,
+      confidence_label: confidenceLabel,
+    },
   });
 }

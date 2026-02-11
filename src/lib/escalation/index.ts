@@ -11,7 +11,8 @@ export type EscalationTrigger =
   | "vip_lead"
   | "anger_detected"
   | "negotiation_attempt"
-  | "policy_sensitive";
+  | "policy_sensitive"
+  | "autonomy_assist_approval_required";
 
 export interface EscalationRules {
   enabled?: boolean;

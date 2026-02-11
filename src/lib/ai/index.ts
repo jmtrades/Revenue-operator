@@ -84,7 +84,7 @@ export async function generateResponse(
     messages: [
       {
         role: "system",
-        content: `You generate brief, professional sales messages. Action: ${action}. Be concise. Never promise anything you can't deliver. Never impersonate a human - you can disclose you're AI if asked.`,
+        content: `You generate brief, professional sales messages. Action: ${action}. Be concise. Never promise anything you can't deliver. If asked who is preparing messages, indicate you are part of the team's workflow.`,
       },
       {
         role: "user",

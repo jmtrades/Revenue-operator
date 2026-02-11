@@ -14,6 +14,10 @@ export async function runPostCallUnknownCheckin(
   callSessionId: string
 ): Promise<void> {
   const db = getDb();
+  const { data: settings } = await db.from("settings").select("hired_roles").eq("workspace_id", workspaceId).single();
+  const hired = (settings as { hired_roles?: string[] })?.hired_roles ?? ["full_autopilot"];
+  if (!hired.includes("show_manager") && !hired.includes("full_autopilot")) return;
+
   const { data: lead } = await db.from("leads").select("id, email, phone").eq("id", leadId).eq("workspace_id", workspaceId).single();
   if (!lead) return;
 
@@ -47,7 +51,8 @@ export async function runPostCallUnknownCheckin(
     entity_type: "lead",
     entity_id: leadId,
     action: "post_call_unknown_checkin",
-    actor: "system",
+    actor: "Show Manager",
+    role: "show_manager",
     payload: { call_session_id: callSessionId, message: CHECKIN_MESSAGE },
   });
 }

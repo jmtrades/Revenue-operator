@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { ConversationProgressIndicator } from "@/components/ConversationProgressIndicator";
+import { leadStateToProgress } from "@/lib/progress/conversation-progress";
 
 interface Lead {
   id: string;
@@ -86,8 +88,11 @@ export default function LeadsPage() {
               className="block p-4 rounded-xl bg-stone-900/80 border border-stone-800 hover:border-stone-700 transition-colors"
             >
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="font-medium text-stone-200">{l.name || l.email || l.company || "Unknown"}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <p className="font-medium text-stone-200">{l.name || l.email || l.company || "Unknown"}</p>
+                    <ConversationProgressIndicator stage={leadStateToProgress(l.state)} compact />
+                  </div>
                   <p className="text-sm text-stone-500">{l.company ?? l.email ?? "—"}</p>
                 </div>
                 <div className="flex items-center gap-3">

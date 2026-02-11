@@ -87,7 +87,7 @@ export default function RevenuePage() {
 
           {impactPreview && (
             <section className="mb-10 p-4 rounded-xl bg-amber-950/30 border border-amber-800/50">
-              <h2 className="text-lg font-medium text-amber-200 mb-2">Impact Preview (if operator disabled last 7 days)</h2>
+              <h2 className="text-lg font-medium text-amber-200 mb-2">Impact Preview (if your team were paused last 7 days)</h2>
               <div className="grid gap-4 sm:grid-cols-3">
                 <p className="text-sm">Lost bookings: <span className="font-semibold">{impactPreview.lost_bookings}</span></p>
                 <p className="text-sm">Lost revenue: <span className="font-semibold">${(impactPreview.lost_revenue_cents / 100).toLocaleString()}</span></p>
@@ -128,8 +128,7 @@ export default function RevenuePage() {
 
           <footer className="mt-16 pt-8 border-t border-stone-800 text-sm text-stone-500">
             <p>
-              All metrics derived from event data. AI assists perception and wording only—state
-              transitions are rule-based.
+              All metrics from your team&apos;s activity.
             </p>
           </footer>
         </>
