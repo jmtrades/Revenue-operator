@@ -3,28 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
-import { PreviewBanner } from "@/components/PreviewBanner";
+import { TrialBanner } from "@/components/TrialBanner";
 
 const nav = [
-  { href: "/dashboard", label: "Overview" },
-  { href: "/dashboard/conversations", label: "Conversations" },
-  { href: "/dashboard/pipeline", label: "Pipeline" },
+  { href: "/dashboard", label: "Home" },
+  { href: "/dashboard/leads", label: "Leads" },
   { href: "/dashboard/calls", label: "Calls" },
-  { href: "/dashboard/revenue", label: "Revenue" },
   { href: "/dashboard/reports", label: "Reports" },
-  { href: "/dashboard/activation", label: "Activation" },
   { href: "/dashboard/settings", label: "Settings" },
-  { href: "/dashboard/admin", label: "Admin" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <WorkspaceProvider>
       <div className="min-h-screen bg-stone-950 flex">
-        <aside className="w-56 border-r border-stone-800 flex flex-col shrink-0">
+        <aside className="w-52 border-r border-stone-800 flex flex-col shrink-0">
           <div className="p-4 border-b border-stone-800">
             <h1 className="text-lg font-semibold text-stone-50">Revenue Operator</h1>
-            <p className="text-xs text-stone-500 mt-0.5">Decision layer</p>
+            <p className="text-xs text-stone-500 mt-0.5">Automatic follow-up</p>
           </div>
           <WorkspaceSelect />
           <nav className="flex-1 p-2 space-y-0.5">
@@ -34,7 +30,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </nav>
         </aside>
         <main className="flex-1 overflow-auto flex flex-col">
-          <DashboardMain>{children}</DashboardMain>
+          <TrialBanner />
+          <div className="flex-1 overflow-auto">{children}</div>
         </main>
       </div>
     </WorkspaceProvider>
@@ -45,14 +42,14 @@ function WorkspaceSelect() {
   const { workspaceId, workspaces, setWorkspaceId, loadWorkspaces } = useWorkspace();
   return (
     <div className="p-3">
-      <label className="block text-xs font-medium text-stone-400 mb-1">Workspace</label>
+      <label className="block text-xs font-medium text-stone-400 mb-1">Account</label>
       <select
         value={workspaceId}
         onChange={(e) => setWorkspaceId(e.target.value)}
         onFocus={loadWorkspaces}
         className="w-full px-2 py-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50"
       >
-        <option value="">Select…</option>
+        <option value="">Select account…</option>
         {workspaces.map((w) => (
           <option key={w.id} value={w.id}>{w.name}</option>
         ))}
@@ -61,19 +58,9 @@ function WorkspaceSelect() {
   );
 }
 
-function DashboardMain({ children }: { children: React.ReactNode }) {
-  const { workspaceId } = useWorkspace();
-  return (
-    <>
-      <PreviewBanner workspaceId={workspaceId} />
-      <div className="flex-1 overflow-auto">{children}</div>
-    </>
-  );
-}
-
 function NavLink({ href, label }: { href: string; label: string }) {
   const pathname = usePathname();
-  const active = pathname === href;
+  const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
   return (
     <Link
       href={href}

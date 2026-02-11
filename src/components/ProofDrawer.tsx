@@ -64,7 +64,7 @@ export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
   return (
     <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-stone-900 border-l border-stone-800 shadow-2xl z-50 flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-stone-800">
-        <h2 className="text-lg font-semibold text-stone-100">Evidence Chain</h2>
+        <h2 className="text-lg font-semibold text-stone-100">Why we suggested this</h2>
         <button
           onClick={onClose}
           className="p-2 rounded-lg hover:bg-stone-800 text-stone-400 hover:text-stone-100"
