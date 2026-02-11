@@ -32,6 +32,28 @@ export default function HomePage() {
     fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`)
       .then((r) => r.json())
       .then(setData)
+      .then((d) => {
+        if (d.error) return setData(null);
+        const isEmpty = (d.hot_leads?.length ?? 0) === 0 && (d.at_risk?.length ?? 0) === 0 && (d.activity?.length ?? 0) === 0;
+        if (isEmpty) {
+          const now = new Date();
+          setData({
+            ...d,
+            hot_leads: d.hot_leads?.length ? d.hot_leads : [
+              { lead_id: "preview-1", name: "Sarah", company: "Acme Ltd", probability: 0.72, value_cents: 50000 },
+              { lead_id: "preview-2", name: "James", email: "james@co.uk", probability: 0.61, value_cents: 25000 },
+            ],
+            at_risk: d.at_risk?.length ? d.at_risk : [
+              { id: "preview-1", name: "Mike", company: "TechCorp", state: "No reply 3 days" },
+            ],
+            activity: d.activity?.length ? d.activity : [
+              { what: "Followed up", who: "Sarah", when: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString() },
+              { what: "Booked call", who: "James", when: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString() },
+              { what: "Recovered ghosted lead", who: "Mike", when: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString() },
+            ],
+          });
+        } else setData(d);
+      })
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [workspaceId, workspaces.length]);
@@ -40,20 +62,15 @@ export default function HomePage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-8">
         <div className="max-w-lg text-center">
-          <h1 className="text-2xl font-semibold text-stone-50">Your AI operator is ready.</h1>
+          <h1 className="text-2xl font-semibold text-stone-50">Operator is ready.</h1>
           <p className="text-stone-400 mt-2">
             Connect a lead source and it will start replying and following up automatically.
           </p>
-          <ul className="mt-6 text-left space-y-2 text-stone-300">
-            <li>• Replies instantly to every lead</li>
-            <li>• Follows up until they answer</li>
-            <li>• Recovers ghosted prospects</li>
-          </ul>
           <Link
-            href="/dashboard/settings"
+            href="/dashboard/onboarding"
             className="mt-8 inline-block px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 font-medium text-stone-950"
           >
-            Connect your first lead source
+            Get started
           </Link>
         </div>
       </div>
@@ -64,7 +81,7 @@ export default function HomePage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-8">
         <div className="max-w-lg text-center">
-          <h1 className="text-2xl font-semibold text-stone-50">Your AI operator is ready.</h1>
+          <h1 className="text-2xl font-semibold text-stone-50">Operator is ready.</h1>
           <p className="text-stone-400 mt-2">
             Select an account to view your command center.
           </p>
@@ -106,7 +123,7 @@ export default function HomePage() {
           <p className="text-stone-300">{data.next_action ?? "—"}</p>
         </div>
         <div>
-          <p className="text-xs text-stone-500">Today</p>
+          <p className="text-xs text-stone-500">Today&apos;s impact</p>
           <p className="text-stone-300">{data.today_booked} booked · {data.today_recovered} recovered</p>
         </div>
       </div>
@@ -131,10 +148,10 @@ export default function HomePage() {
                     <p className="text-xs text-stone-500">{Math.round(l.probability * 100)}% likely</p>
                   </div>
                   <Link
-                    href={`/dashboard/leads/${l.lead_id}`}
+                    href={l.lead_id.startsWith("preview-") ? "/dashboard/leads" : `/dashboard/leads/${l.lead_id}`}
                     className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 text-sm font-medium"
                   >
-                    Run plan
+                    {l.lead_id.startsWith("preview-") ? "View leads" : "Run plan"}
                   </Link>
                 </div>
               ))}
@@ -158,10 +175,10 @@ export default function HomePage() {
                     <p className="text-xs text-stone-500">{l.state ?? "—"}</p>
                   </div>
                   <Link
-                    href={`/dashboard/leads/${l.id}`}
+                    href={l.id.startsWith("preview-") ? "/dashboard/leads" : `/dashboard/leads/${l.id}`}
                     className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 text-sm font-medium"
                   >
-                    Recover
+                    {l.id.startsWith("preview-") ? "View leads" : "Recover"}
                   </Link>
                 </div>
               ))}

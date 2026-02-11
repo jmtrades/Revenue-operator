@@ -17,8 +17,11 @@ export async function GET(req: NextRequest) {
   }
 
   let workspaceId: string;
+  let returnTo = "activation";
   try {
-    workspaceId = JSON.parse(Buffer.from(state, "base64url").toString()).workspaceId;
+    const parsed = JSON.parse(Buffer.from(state, "base64url").toString());
+    workspaceId = parsed.workspaceId;
+    returnTo = parsed.returnTo ?? "activation";
   } catch {
     return NextResponse.redirect(new URL("/dashboard/activation?error=zoom_invalid_state", req.url));
   }
@@ -96,5 +99,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard/activation?error=zoom_store_failed", req.url));
   }
 
-  return NextResponse.redirect(new URL(`/dashboard/activation?zoom_connected=1&workspace_id=${workspaceId}`, req.url));
+  const base = returnTo === "onboarding" ? "/dashboard/onboarding" : "/dashboard/activation";
+  return NextResponse.redirect(new URL(`${base}?zoom_connected=1&workspace_id=${workspaceId}`, req.url));
 }
