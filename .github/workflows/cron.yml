@@ -9,6 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://YOURDOMAIN.com/api/cron/process-queue
-          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://YOURDOMAIN.com/api/cron/calendar-ended
-          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://YOURDOMAIN.com/api/cron/zoom-refresh
+          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://recall-touch.com/api/cron/process-queue
+          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://recall-touch.com/api/cron/calendar-ended
+          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://recall-touch.com/api/cron/zoom-refresh
