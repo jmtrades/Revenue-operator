@@ -13,7 +13,12 @@ Production-grade autonomous revenue infrastructure. Deterministic workflow engin
 
 ```bash
 cp .env.example .env.local
-# Fill Supabase + OpenAI keys
+# Fill required environment variables:
+# - NEXT_PUBLIC_APP_URL=https://recall-touch.com (application URL)
+# - NEXT_PUBLIC_SUPABASE_URL (Supabase project URL)
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY (Supabase anon key)
+# - SUPABASE_SERVICE_ROLE_KEY (Supabase service role key)
+# - OPENAI_API_KEY (OpenAI API key)
 
 npm install
 npm run build
@@ -121,6 +126,7 @@ Supabase: run migrations via Dashboard SQL or `supabase db push`.
 
 ## Production Checklist
 
+- [ ] `NEXT_PUBLIC_APP_URL` set to `https://recall-touch.com` (application URL)
 - [ ] `revenue_operator` schema exposed in Supabase
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` set
 - [ ] `OPENAI_API_KEY` set
