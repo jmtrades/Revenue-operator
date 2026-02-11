@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
@@ -19,7 +19,7 @@ const PREVIEW_ACTIONS = [
   { text: "Recovered ghosted prospect after 2 days", delay: 1600 },
 ];
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { workspaceId, workspaces, loadWorkspaces } = useWorkspace();
@@ -28,6 +28,7 @@ export default function OnboardingPage() {
   const [connected, setConnected] = useState(false);
   const [previewItems, setPreviewItems] = useState<typeof PREVIEW_ACTIONS>([]);
   const [activating, setActivating] = useState(false);
+  const [showConnected, setShowConnected] = useState(false);
 
   useEffect(() => {
     loadWorkspaces();
@@ -63,8 +64,6 @@ export default function OnboardingPage() {
       </div>
     );
   }
-
-  const [showConnected, setShowConnected] = useState(false);
 
   const handleStep2Connect = () => {
     setConnected(true);
@@ -244,5 +243,13 @@ export default function OnboardingPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center p-8"><p className="text-stone-500">Loading…</p></div>}>
+      <OnboardingContent />
+    </Suspense>
   );
 }

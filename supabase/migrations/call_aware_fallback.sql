@@ -76,3 +76,4 @@ CREATE TABLE IF NOT EXISTS revenue_operator.calendar_events (
 CREATE INDEX IF NOT EXISTS calendar_events_workspace_end ON revenue_operator.calendar_events (workspace_id, end_at);
 
 COMMIT;
+npm run build
