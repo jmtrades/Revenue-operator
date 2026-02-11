@@ -14,7 +14,7 @@ Production-grade autonomous revenue infrastructure. Deterministic workflow engin
 ```bash
 cp .env.example .env.local
 # Fill required environment variables:
-# - NEXT_PUBLIC_APP_URL=https://recall-touch.com (application URL)
+# - NEXT_PUBLIC_APP_URL (optional, defaults to https://recall-touch.com)
 # - NEXT_PUBLIC_SUPABASE_URL (Supabase project URL)
 # - NEXT_PUBLIC_SUPABASE_ANON_KEY (Supabase anon key)
 # - SUPABASE_SERVICE_ROLE_KEY (Supabase service role key)
@@ -126,7 +126,7 @@ Supabase: run migrations via Dashboard SQL or `supabase db push`.
 
 ## Production Checklist
 
-- [ ] `NEXT_PUBLIC_APP_URL` set to `https://recall-touch.com` (application URL)
+- [ ] `NEXT_PUBLIC_APP_URL` (optional, defaults to https://recall-touch.com if not set)
 - [ ] `revenue_operator` schema exposed in Supabase
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` set
 - [ ] `OPENAI_API_KEY` set
