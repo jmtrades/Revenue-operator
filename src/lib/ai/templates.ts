@@ -6,6 +6,8 @@
 import OpenAI from "openai";
 import { buildMessage, containsRestrictedTopic, type TemplateSlots } from "@/lib/templates";
 import { parseAIContract } from "@/lib/ai/contract";
+import { checkDrift, logDriftAlert, getSafeMessageOnDrift } from "@/lib/message-drift";
+import { getMemoryContextForReasoning } from "@/lib/business-memory";
 
 function getOpenAI(): OpenAI {
   const key = process.env.OPENAI_API_KEY;
@@ -19,19 +21,23 @@ export interface SlotFillResult {
   message: string;
   intent?: string;
   sentiment?: string;
+  risk_flags?: string[];
+  explanation?: string;
 }
 
 const FALLBACK_MESSAGE = "Thanks for reaching out. Could you tell me a bit more about what you're looking for?";
 
 async function callAI(action: string, context: Record<string, unknown>): Promise<string> {
   const openai = getOpenAI();
+  let memoryContext = "";
+  if (context.workspaceId && typeof context.workspaceId === "string") {
+    memoryContext = await getMemoryContextForReasoning(context.workspaceId);
+  }
+  const systemContent = `Return strict JSON only. Schema: {"intent":"string","entities":{},"sentiment":"positive|neutral|negative|mixed","confidence":0-1,"risk_flags":[],"recommended_action":"string","explanation":"brief reason","slot_values":{"greeting":"","context_line":"","question_1":"","question_2":"","cta":""}}. Fill slot_values for action. risk_flags: anger, confusion_repeated, unsupported_question, pricing_negotiation, opt_out_signal. No pricing/guarantees/legal/medical advice.${memoryContext ? ` ${memoryContext}` : ""}`;
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-      {
-        role: "system",
-        content: `Return strict JSON only. Schema: {"intent":"string","entities":{},"sentiment":"positive|neutral|negative|mixed","confidence":0-1,"recommended_action":"string","slot_values":{"greeting":"","context_line":"","question_1":"","question_2":"","cta":""}}. Fill slot_values for action. No pricing/guarantees/legal/medical advice.`,
-      },
+      { role: "system", content: systemContent },
       { role: "user", content: `Action: ${action}. Context: ${JSON.stringify(context)}` },
     ],
     response_format: { type: "json_object" },
@@ -41,19 +47,26 @@ async function callAI(action: string, context: Record<string, unknown>): Promise
 
 export async function fillSlots(
   action: string,
-  context: { leadName?: string; company?: string; lastMessage?: string }
+  context: { leadName?: string; company?: string; lastMessage?: string; workspaceId?: string; leadId?: string }
 ): Promise<SlotFillResult> {
   let raw = "";
   for (let attempt = 0; attempt < 2; attempt++) {
     raw = await callAI(action, context);
     const parsed = parseAIContract(raw);
     if (parsed.success) {
-      const { recommended_action, confidence, slot_values, intent, sentiment } = parsed.data;
+      const { recommended_action, confidence, slot_values, intent, sentiment, risk_flags, explanation } = parsed.data;
       const slots = slot_values as TemplateSlots;
-      const useAction = recommended_action && ["greeting", "question", "clarifying_question", "follow_up", "booking"].includes(recommended_action) ? recommended_action : action;
+      const useAction = recommended_action && ["greeting", "question", "clarifying_question", "follow_up", "booking", "call_invite"].includes(recommended_action) ? recommended_action : action;
       let message = buildMessage(useAction, slots);
       if (containsRestrictedTopic(message)) message = FALLBACK_MESSAGE;
-      return { slots, confidence, message, intent, sentiment };
+      const { driftScore, useSafeMode } = checkDrift(message, useAction);
+      if (useSafeMode) {
+        if (context.workspaceId) {
+          await logDriftAlert(context.workspaceId, context.leadId ?? null, driftScore, message);
+        }
+        message = getSafeMessageOnDrift();
+      }
+      return { slots, confidence, message, intent, sentiment, risk_flags: risk_flags ?? [], explanation };
     }
   }
   return { slots: {}, confidence: 0.5, message: FALLBACK_MESSAGE };

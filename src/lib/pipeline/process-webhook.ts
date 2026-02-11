@@ -8,6 +8,8 @@ import { enqueue } from "@/lib/queue";
 import { redact } from "@/lib/redact";
 import { isOptOut, mergeSettings } from "@/lib/autopilot";
 import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
+import { emitOutboundEvent } from "@/lib/outbound-events";
+import { recordCommitmentSignal } from "@/lib/commitment";
 
 export interface RawWebhookPayload {
   workspace_id: string;
@@ -92,6 +94,14 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       external_id: external_message_id ?? null,
     });
 
+    const msgLower = message.toLowerCase();
+    if (msgLower.includes("confirmed") || msgLower.includes("yes") || msgLower.includes("i'll be there") || msgLower.includes("see you")) {
+      recordCommitmentSignal(lead.id, "confirmation_reply").catch(() => {});
+    }
+    if (msgLower.includes("reschedule") || msgLower.includes("cancel") || msgLower.includes("can't make it")) {
+      recordCommitmentSignal(lead.id, "reschedule_resistance").catch(() => {});
+    }
+
     const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).single();
     const settings = mergeSettings(settingsRow);
     const optOut = isOptOut(message, settings);
@@ -138,6 +148,15 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       updated_at: new Date().toISOString(),
       last_activity_at: new Date().toISOString(),
     }).eq("id", lead.id);
+
+    if (decision.transitionOccurred && decision.newState !== currentState) {
+      if (decision.newState === "QUALIFIED") {
+        emitOutboundEvent(workspace_id, "lead_qualified", { lead_id: lead.id, from_state: currentState }, lead.id).catch(() => {});
+      }
+      if (decision.newState === "REACTIVATE") {
+        emitOutboundEvent(workspace_id, "lead_reactivated", { lead_id: lead.id, from_state: currentState }, lead.id).catch(() => {});
+      }
+    }
 
     await db.from("automation_states").upsert({
       lead_id: lead.id,

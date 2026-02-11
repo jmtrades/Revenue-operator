@@ -1,6 +1,6 @@
 /**
  * AI Contract: strict JSON schema.
- * intent, entities, sentiment, confidence, recommended_action, slot_values
+ * intent, entities, sentiment, confidence, risk_flags, recommended_action, explanation, slot_values
  * Reject invalid, retry once, then fallback.
  */
 
@@ -11,7 +11,9 @@ export const AIContractSchema = z.object({
   entities: z.record(z.string(), z.unknown()).optional().default({}),
   sentiment: z.enum(["positive", "neutral", "negative", "mixed"]).optional().default("neutral"),
   confidence: z.number().min(0).max(1),
+  risk_flags: z.array(z.string()).optional().default([]),
   recommended_action: z.string(),
+  explanation: z.string().optional().default(""),
   slot_values: z.object({
     greeting: z.string().optional(),
     context_line: z.string().optional(),
@@ -22,6 +24,16 @@ export const AIContractSchema = z.object({
 });
 
 export type AIContract = z.infer<typeof AIContractSchema>;
+
+export const REASONING_RISK_FLAGS = [
+  "anger",
+  "confusion_repeated",
+  "unsupported_question",
+  "pricing_negotiation",
+  "opt_out_signal",
+  "competitor_mention",
+  "legal_sensitivity",
+] as const;
 
 export function parseAIContract(raw: string): { success: true; data: AIContract } | { success: false; error: string } {
   try {

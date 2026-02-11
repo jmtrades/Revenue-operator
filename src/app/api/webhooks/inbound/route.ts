@@ -8,8 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
-import { processWebhookJob } from "@/lib/pipeline/process-webhook";
-import { runDecisionJob } from "@/lib/pipeline/decision-job";
+import { burstDrain } from "@/lib/queue/burst-drain";
 import { withContext } from "@/lib/logger";
 import { verifyWebhookSignature, isTimestampFresh } from "@/lib/security/webhook-signature";
 import { claimReplayNonce } from "@/lib/security/replay";
@@ -137,15 +136,8 @@ export async function POST(request: NextRequest) {
     const webhookId = (inserted as { id: string }).id;
     await enqueue({ type: "process_webhook", webhookId });
 
-    const hasRedis = !!process.env.REDIS_URL;
-    if (!hasRedis) {
-      const result = await processWebhookJob(webhookId);
-      if (result?.decisionLeadId && result?.decisionWorkspaceId) {
-        await runDecisionJob(result.decisionLeadId, result.decisionWorkspaceId);
-      }
-    }
-
-    return NextResponse.json({ ok: true, webhook_id: webhookId });
+    const { processed } = await burstDrain();
+    return NextResponse.json({ ok: true, webhook_id: webhookId, burst_processed: processed });
   } catch (err) {
     log.error("webhook error", { err: String(err) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
