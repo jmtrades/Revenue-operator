@@ -8,6 +8,7 @@ const ZOOM_AUTH_URL = "https://zoom.us/oauth/authorize";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
+  const returnTo = req.nextUrl.searchParams.get("return_to") || "activation";
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
 
   const clientId = process.env.ZOOM_CLIENT_ID;
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Zoom not configured" }, { status: 503 });
   }
 
-  const state = Buffer.from(JSON.stringify({ workspaceId })).toString("base64url");
+  const state = Buffer.from(JSON.stringify({ workspaceId, returnTo })).toString("base64url");
   const params = new URLSearchParams({
     response_type: "code",
     client_id: clientId,
