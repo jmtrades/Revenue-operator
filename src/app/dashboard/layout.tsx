@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
 import { TrialBanner } from "@/components/TrialBanner";
+import { RenewalReminderBanner } from "@/components/RenewalReminderBanner";
+import { ConfidenceContractBanner } from "@/components/ConfidenceContractBanner";
+import { FirstVisitOverlay } from "@/components/FirstVisitOverlay";
 
 const nav = [
   { href: "/dashboard", label: "Home" },
@@ -20,7 +23,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <aside className="w-52 border-r border-stone-800 flex flex-col shrink-0">
           <div className="p-4 border-b border-stone-800">
             <h1 className="text-lg font-semibold text-stone-50">Revenue Operator</h1>
-            <p className="text-xs text-stone-500 mt-0.5">Automatic follow-up</p>
+            <p className="text-xs text-stone-500 mt-0.5">Sales operations</p>
           </div>
           <WorkspaceSelect />
           <nav className="flex-1 p-2 space-y-0.5">
@@ -31,6 +34,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </aside>
         <main className="flex-1 overflow-auto flex flex-col">
           <TrialBanner />
+          <RenewalReminderBanner />
+          <ConfidenceContractBanner />
+          <FirstVisitOverlay />
           <div className="flex-1 overflow-auto">{children}</div>
         </main>
       </div>

@@ -46,6 +46,10 @@ export async function runCalendarCallEndedJob(callSessionId: string): Promise<vo
   const leadId = s.lead_id ?? s.matched_lead_id ?? null;
   if (!leadId) return;
 
+  const { data: settingsRow } = await db.from("settings").select("hired_roles").eq("workspace_id", s.workspace_id).single();
+  const hired = (settingsRow as { hired_roles?: string[] })?.hired_roles ?? ["full_autopilot"];
+  if (!hired.includes("show_manager") && !hired.includes("full_autopilot")) return;
+
   const hasTranscript = Boolean(s.transcript_text && s.transcript_text.trim().length >= 50);
   if (hasTranscript) return;
 
@@ -104,7 +108,8 @@ export async function runCalendarCallEndedJob(callSessionId: string): Promise<vo
     entity_type: "lead",
     entity_id: leadId,
     action: "call_show_inference",
-    actor: "system",
+    actor: "Show Manager",
+    role: "show_manager",
     payload: { call_session_id: callSessionId, show_status: result.status, confidence: result.confidence, reason: result.reason },
   });
 

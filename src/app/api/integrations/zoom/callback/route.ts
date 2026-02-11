@@ -88,17 +88,25 @@ export async function GET(req: NextRequest) {
       {
         workspace_id: workspaceId,
         zoom_connected: true,
+        step: "activated",
+        activated_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
       { onConflict: "workspace_id" }
     );
 
     await db.from("settings").update({ call_aware_enabled: true }).eq("workspace_id", workspaceId);
+
+    const { runSyntheticProtectionBootstrap } = await import("@/lib/bootstrap/synthetic-protection");
+    await runSyntheticProtectionBootstrap(workspaceId);
+
+    const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
+    sendActivationConfirmationEmail(workspaceId).catch(() => {});
   } catch (err) {
     console.error("[zoom callback] store error", err);
     return NextResponse.redirect(new URL("/dashboard/activation?error=zoom_store_failed", req.url));
   }
 
-  const base = returnTo === "onboarding" ? "/dashboard/onboarding" : "/dashboard/activation";
+  const base = returnTo === "onboarding" ? "/dashboard" : "/dashboard/activation";
   return NextResponse.redirect(new URL(`${base}?zoom_connected=1&workspace_id=${workspaceId}`, req.url));
 }

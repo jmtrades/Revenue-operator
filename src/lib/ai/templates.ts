@@ -8,6 +8,7 @@ import { buildMessage, containsRestrictedTopic, type TemplateSlots } from "@/lib
 import { parseAIContract } from "@/lib/ai/contract";
 import { checkDrift, logDriftAlert, getSafeMessageOnDrift } from "@/lib/message-drift";
 import { getMemoryContextForReasoning } from "@/lib/business-memory";
+import { getLeadMemoryContextForReasoning } from "@/lib/lead-memory";
 
 function getOpenAI(): OpenAI {
   const key = process.env.OPENAI_API_KEY;
@@ -27,13 +28,25 @@ export interface SlotFillResult {
 
 const FALLBACK_MESSAGE = "Thanks for reaching out. Could you tell me a bit more about what you're looking for?";
 
+const STYLE_INSTRUCTIONS: Record<string, string> = {
+  direct: "Tone: short, clear, no hedging. Get to the point. Minimal filler.",
+  consultative: "Tone: warm, collaborative. Ask questions. Suggest options. Help them decide.",
+  high_urgency: "Tone: action-oriented, time-sensitive. Emphasise next steps. Create gentle urgency.",
+};
+
 async function callAI(action: string, context: Record<string, unknown>): Promise<string> {
   const openai = getOpenAI();
   let memoryContext = "";
   if (context.workspaceId && typeof context.workspaceId === "string") {
     memoryContext = await getMemoryContextForReasoning(context.workspaceId);
   }
-  const systemContent = `Return strict JSON only. Schema: {"intent":"string","entities":{},"sentiment":"positive|neutral|negative|mixed","confidence":0-1,"risk_flags":[],"recommended_action":"string","explanation":"brief reason","slot_values":{"greeting":"","context_line":"","question_1":"","question_2":"","cta":""}}. Fill slot_values for action. risk_flags: anger, confusion_repeated, unsupported_question, pricing_negotiation, opt_out_signal. No pricing/guarantees/legal/medical advice.${memoryContext ? ` ${memoryContext}` : ""}`;
+  if (context.leadId && typeof context.leadId === "string") {
+    const leadMemory = await getLeadMemoryContextForReasoning(context.leadId);
+    if (leadMemory) memoryContext = memoryContext ? `${memoryContext}. ${leadMemory}` : leadMemory;
+  }
+  const style = (context.communication_style as string) ?? "consultative";
+  const styleInstruction = STYLE_INSTRUCTIONS[style] ?? STYLE_INSTRUCTIONS.consultative;
+  const systemContent = `Return strict JSON only. Schema: {"intent":"string","entities":{},"sentiment":"positive|neutral|negative|mixed","confidence":0-1,"risk_flags":[],"recommended_action":"string","explanation":"brief reason","slot_values":{"greeting":"","context_line":"","question_1":"","question_2":"","cta":""}}. Fill slot_values for action. ${styleInstruction}. risk_flags: anger, confusion_repeated, unsupported_question, pricing_negotiation, opt_out_signal. No pricing/guarantees/legal/medical advice.${memoryContext ? ` ${memoryContext}` : ""}`;
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
@@ -47,7 +60,14 @@ async function callAI(action: string, context: Record<string, unknown>): Promise
 
 export async function fillSlots(
   action: string,
-  context: { leadName?: string; company?: string; lastMessage?: string; workspaceId?: string; leadId?: string }
+  context: {
+    leadName?: string;
+    company?: string;
+    lastMessage?: string;
+    workspaceId?: string;
+    leadId?: string;
+    communication_style?: "direct" | "consultative" | "high_urgency";
+  }
 ): Promise<SlotFillResult> {
   let raw = "";
   for (let attempt = 0; attempt < 2; attempt++) {

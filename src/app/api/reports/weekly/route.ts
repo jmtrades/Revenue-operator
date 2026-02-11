@@ -23,6 +23,13 @@ export async function GET(req: NextRequest) {
     .gte("created_at", weekStart.toISOString());
 
   const callsBooked = deals?.filter((d) => (d as { status: string }).status === "booked" || (d as { status: string }).status === "open").length ?? 0;
+  const { count: secured } = await db
+    .from("events")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", workspaceId)
+    .eq("event_type", "booking_created")
+    .gte("created_at", weekStart.toISOString());
+
   const wonDeals = deals?.filter((d) => (d as { status: string }).status === "won") ?? [];
   const revenueInfluencedCents = wonDeals.reduce((s, d) => s + ((d as { value_cents?: number }).value_cents ?? 0), 0);
 
@@ -40,6 +47,22 @@ export async function GET(req: NextRequest) {
   });
 
   const timeSavedEstimate = (callsBooked + recoveries.size) * 15;
+  const securedCount = secured ?? callsBooked;
+
+  const { data: sent } = await db
+    .from("action_logs")
+    .select("entity_id")
+    .eq("workspace_id", workspaceId)
+    .in("action", ["send_message", "simulated_send_message"])
+    .gte("created_at", weekStart.toISOString());
+  const leadsTouched = new Set((sent ?? []).map((s: { entity_id: string }) => s.entity_id)).size;
+
+  const removal_impact = {
+    lost_conversations_estimate: Math.max(0, Math.floor(leadsTouched * 0.6)),
+    lost_attendance_estimate: securedCount ?? 0,
+    lost_opportunities_estimate: callsBooked + recoveries.size,
+    message: "If coverage were removed this week, these outcomes would not have occurred.",
+  };
 
   const report = {
     period_start: weekStart.toISOString(),
@@ -48,6 +71,12 @@ export async function GET(req: NextRequest) {
     revenue_influenced_cents: revenueInfluencedCents,
     time_saved_minutes: timeSavedEstimate,
     recoveries: recoveries.size,
+    removal_impact,
+    weekly_recap: {
+      secured: securedCount,
+      expected_without_intervention: 0,
+      delta: securedCount,
+    },
   };
 
   return NextResponse.json(report);

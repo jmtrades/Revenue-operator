@@ -45,7 +45,7 @@ export async function GET(
 
   const policyReasoning = actions?.flatMap((a: { payload?: { policy_reason?: string } }) => (a.payload?.policy_reason ? [a.payload.policy_reason] : [])) ?? [];
 
-  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("workspace_id, state").eq("id", leadId).single();
   const workspaceId = (lead as { workspace_id?: string })?.workspace_id;
 
   let call_analysis: Array<{ call_session_id: string; analysis_json?: Record<string, unknown>; confidence?: number; created_at?: string; consent?: unknown; analysis_source?: string | null }> = [];
@@ -88,6 +88,25 @@ export async function GET(
   }
 
   const commitmentScore = await getCommitmentScore(leadId);
+
+  let stability: { plan?: object; cooldown?: object; sequence?: object } | null = null;
+  if (workspaceId) {
+    const { getActiveLeadPlan } = await import("@/lib/plans/lead-plan");
+    const { canInterveneNow } = await import("@/lib/stability/cooldowns");
+    const plan = await getActiveLeadPlan(workspaceId, leadId);
+    const cooldownCheck = await canInterveneNow(workspaceId, leadId, "follow_up", (lead as { state: string }).state as import("@/lib/types").LeadState);
+    const { data: run } = await db.from("sequence_runs").select("sequence_id, current_step, status").eq("workspace_id", workspaceId).eq("lead_id", leadId).eq("status", "running").single();
+    let sequenceName: string | undefined;
+    if (run && (run as { sequence_id?: string }).sequence_id) {
+      const { data: seq } = await db.from("sequences").select("name").eq("id", (run as { sequence_id: string }).sequence_id).single();
+      sequenceName = (seq as { name?: string })?.name;
+    }
+    stability = {
+      plan: plan ? { next_action_type: plan.next_action_type, next_action_at: plan.next_action_at, sequence_step: plan.sequence_step } : undefined,
+      cooldown: !cooldownCheck.allowed ? { reason: cooldownCheck.reason, cooldown_until: cooldownCheck.cooldown_until } : undefined,
+      sequence: run ? { current_step: (run as { current_step: number }).current_step, sequence_name: sequenceName } : undefined,
+    };
+  }
   let counterfactual: { baseline_conversion: number; impact: string } | null = null;
   let billingImpact: { amount_cents: number; status: string } | null = null;
 
@@ -121,6 +140,7 @@ export async function GET(
     policy_reasoning: policyReasoning,
     counterfactual,
     billing_impact: billingImpact,
+    stability,
     call_analysis,
     call_inference,
     commitment_score: commitmentScore,

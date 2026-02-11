@@ -16,6 +16,10 @@ export async function executePostCallPlan(
   leadId: string
 ): Promise<void> {
   const db = getDb();
+  const { data: settings } = await db.from("settings").select("hired_roles").eq("workspace_id", workspaceId).single();
+  const hired = (settings as { hired_roles?: string[] })?.hired_roles ?? ["full_autopilot"];
+  if (!hired.includes("follow_up_manager") && !hired.includes("full_autopilot")) return;
+
   const { data: analysisRow } = await db
     .from("call_analysis")
     .select("analysis_json")
@@ -57,7 +61,8 @@ export async function executePostCallPlan(
     entity_type: "lead",
     entity_id: leadId,
     action: "post_call_analysis",
-    actor: "system",
+    actor: "Follow-up Manager",
+    role: "follow_up_manager",
     payload: { call_session_id: callSessionId, next_best_action: nextAction, plan },
   });
 

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { dequeue } from "@/lib/queue";
 import { processWebhookJob } from "@/lib/pipeline/process-webhook";
-import { runDecisionJob } from "@/lib/pipeline/decision-job";
+import { runDecisionJobWithEngines } from "@/lib/pipeline/decision-with-engines";
 import { runReactivationJob } from "@/lib/reactivation/run-job";
 import { checkWorkspaceAlerts, maybeAutoPause } from "@/lib/observability/alerts";
 import { processWebhookDeliveries } from "@/lib/outbound-events";
@@ -35,7 +35,7 @@ async function processPayload(payload: {
     const result = await processWebhookJob(payload.webhookId);
     if (result?.decisionLeadId && result?.decisionWorkspaceId) {
       workspaceId = result.decisionWorkspaceId;
-      await runDecisionJob(result.decisionLeadId, result.decisionWorkspaceId);
+      await runDecisionJobWithEngines(result.decisionLeadId, result.decisionWorkspaceId);
     }
   } else if (payload.type === "zoom_webhook" && payload.webhookId && payload.workspaceId && payload.meetingId && payload.meetingUuid) {
     workspaceId = payload.workspaceId;
@@ -55,11 +55,11 @@ async function processPayload(payload: {
     const { data: lead } = await db.from("leads").select("workspace_id").eq("id", payload.leadId).single();
     if (lead) {
       workspaceId = (lead as { workspace_id: string }).workspace_id;
-      await runDecisionJob(payload.leadId, workspaceId);
+      await runDecisionJobWithEngines(payload.leadId, workspaceId);
     }
   } else if (payload.type === "decision" && payload.leadId && payload.workspaceId) {
     workspaceId = payload.workspaceId;
-    await runDecisionJob(payload.leadId, payload.workspaceId);
+    await runDecisionJobWithEngines(payload.leadId, payload.workspaceId);
   } else if (payload.type === "reactivation" && payload.leadId) {
     await runReactivationJob(payload.leadId);
   }
@@ -81,6 +81,18 @@ export async function GET(request: NextRequest) {
   }
 
   await processWebhookDeliveries().catch(() => {});
+
+  const { enqueueDecision } = await import("@/lib/queue");
+  const db = (await import("@/lib/db/queries")).getDb();
+  const { data: duePlans } = await db
+    .from("lead_plans")
+    .select("workspace_id, lead_id")
+    .eq("status", "active")
+    .lte("next_action_at", new Date().toISOString());
+  for (const p of duePlans ?? []) {
+    const plan = p as { workspace_id: string; lead_id: string };
+    await enqueueDecision(plan.lead_id, plan.workspace_id);
+  }
 
   const job = await dequeue();
   if (job) {
