@@ -19,6 +19,7 @@ export default function HomePage() {
   const { workspaceId, workspaces, loadWorkspaces } = useWorkspace();
   const [data, setData] = useState<CommandCenterData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [emptyHint, setEmptyHint] = useState("");
   const [setupStep, setSetupStep] = useState(1);
   const [showWizard, setShowWizard] = useState(false);
 
@@ -29,30 +30,24 @@ export default function HomePage() {
   useEffect(() => {
     if (!workspaceId || workspaces.length === 0) return;
     setLoading(true);
+    setEmptyHint("");
     fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`)
       .then((r) => r.json())
-      .then(setData)
-      .then((d) => {
-        if (d.error) return setData(null);
-        const isEmpty = (d.hot_leads?.length ?? 0) === 0 && (d.at_risk?.length ?? 0) === 0 && (d.activity?.length ?? 0) === 0;
+      .then((d: Record<string, unknown> & Partial<CommandCenterData>) => {
+        if (d?.error) {
+          setData(null);
+          return;
+        }
+        setData(d as CommandCenterData);
+        const isEmpty =
+          (d.hot_leads?.length ?? 0) === 0 &&
+          (d.at_risk?.length ?? 0) === 0 &&
+          (d.activity?.length ?? 0) === 0;
         if (isEmpty) {
-          const now = new Date();
-          setData({
-            ...d,
-            hot_leads: d.hot_leads?.length ? d.hot_leads : [
-              { lead_id: "preview-1", name: "Sarah", company: "Acme Ltd", probability: 0.72, value_cents: 50000 },
-              { lead_id: "preview-2", name: "James", email: "james@co.uk", probability: 0.61, value_cents: 25000 },
-            ],
-            at_risk: d.at_risk?.length ? d.at_risk : [
-              { id: "preview-1", name: "Mike", company: "TechCorp", state: "No reply 3 days" },
-            ],
-            activity: d.activity?.length ? d.activity : [
-              { what: "Followed up", who: "Sarah", when: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString() },
-              { what: "Booked call", who: "James", when: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString() },
-              { what: "Recovered ghosted lead", who: "Mike", when: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString() },
-            ],
-          });
-        } else setData(d);
+          setEmptyHint(
+            "No activity yet. Connect a lead source and the operator will start working automatically."
+          );
+        }
       })
       .catch(() => setData(null))
       .finally(() => setLoading(false));
@@ -134,7 +129,7 @@ export default function HomePage() {
           <p className="text-sm text-stone-500 mb-3">Leads likely to book</p>
           {data.hot_leads.length === 0 ? (
             <div className="p-4 rounded-xl bg-stone-900/60 border border-stone-800">
-              <p className="text-stone-500 text-sm">No hot leads yet.</p>
+              <p className="text-stone-500 text-sm">{emptyHint || "No hot leads yet."}</p>
               <Link href="/dashboard/leads" className="mt-2 inline-block text-amber-400 text-sm hover:underline">
                 View all leads →
               </Link>
