@@ -12,10 +12,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://recall-touch.com";
+
 export const metadata: Metadata = {
   title: "Revenue Operator",
   description: "Production-grade autonomous revenue infrastructure. Deterministic workflow engine with AI for perception and phrasing only.",
-  metadataBase: new URL("https://recall-touch.com"),
+  metadataBase: new URL(appUrl),
 };
 
 export default function RootLayout({
