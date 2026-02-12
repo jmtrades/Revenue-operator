@@ -19,6 +19,12 @@ export default function PerformancePage() {
   } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setTick((x) => x + 1), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -38,7 +44,7 @@ export default function PerformancePage() {
       })
       .catch((e) => setError(e instanceof Error ? e.message : "Error"))
       .finally(() => setLoading(false));
-  }, [workspaceId]);
+  }, [workspaceId, tick]);
 
   if (!workspaceId) {
     return (
@@ -57,8 +63,8 @@ export default function PerformancePage() {
   return (
     <div className="p-8 max-w-3xl">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Performance</h1>
-        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>Business outcomes — what we&apos;re securing for you</p>
+        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Outcomes</h1>
+        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>What we secured for you</p>
       </header>
 
       {error && (

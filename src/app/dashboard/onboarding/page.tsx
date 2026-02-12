@@ -12,6 +12,7 @@ function OnboardingContent() {
   const [activating, setActivating] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneEnabled, setPhoneEnabled] = useState(true);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const activateAndRedirect = useCallback(async (workspaceId: string) => {
     setActivating(true);
@@ -32,7 +33,10 @@ function OnboardingContent() {
       // continue
     }
     setActivating(false);
-    router.push(`/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}`);
+    setShowConfirmation(true);
+    setTimeout(() => {
+      router.push(`/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}`);
+    }, 3000);
   }, [router, phoneEnabled, phoneNumber]);
 
   useEffect(() => {
@@ -75,48 +79,52 @@ function OnboardingContent() {
     );
   }
 
+  if (showConfirmation) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <div className="max-w-md w-full text-center">
+          <div className="p-6 rounded-xl border" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+            <p className="text-sm mb-2" style={{ color: "var(--text-primary)" }}>
+              Nothing has been sent to anyone yet.
+            </p>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              We&apos;re only observing timing patterns first.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center p-8">
-      <div className="max-w-md w-full">
-        <h1 className="text-xl font-semibold text-stone-50 mb-2">Connect your sources</h1>
-        <p className="text-stone-400 text-sm mb-6">
-          That&apos;s it. We protect your calendar — follow-ups, reminders, revivals. You take the calls.
+    <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+      <div className="max-w-md w-full text-center">
+        <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Let&apos;s watch your conversations</h1>
+        <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
+          Takes about 10 seconds
         </p>
         {wid ? (
           <div className="space-y-3">
-            <p className="text-xs mb-2" style={{ color: "var(--text-muted)" }}>Protect conversations on your existing number (recommended)</p>
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Your phone for forwarding calls"
-              className="w-full px-4 py-3 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 mb-2"
-            />
-            <label className="flex items-center gap-2 text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
-              <input type="checkbox" checked={phoneEnabled} onChange={(e) => setPhoneEnabled(e.target.checked)} />
-              Enable protection
-            </label>
             <button
               onClick={handleConnect}
               disabled={activating}
-              className="w-full py-3 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:opacity-50 font-medium text-stone-950"
+              className="w-full py-3.5 rounded-lg font-medium"
+              style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
             >
               Connect calendar
             </button>
             <button
               onClick={handleSkip}
               disabled={activating}
-              className="w-full py-3 rounded-lg bg-stone-700 hover:bg-stone-600 disabled:opacity-50 text-stone-200 font-medium"
+              className="w-full py-3 rounded-lg font-medium"
+              style={{ background: "var(--surface)", color: "var(--text-secondary)", borderColor: "var(--border)", borderWidth: "1px" }}
             >
-              {activating ? "Starting…" : "Skip for now"}
+              {activating ? "Starting…" : "Do this later"}
             </button>
           </div>
         ) : (
-          <p className="text-stone-500">Select or create an account first.</p>
+          <p style={{ color: "var(--text-muted)" }}>Preparing…</p>
         )}
-        <p className="text-stone-500 text-xs mt-4 text-center">
-          Protection starts immediately once connected. You&apos;ll see activity within seconds.
-        </p>
       </div>
     </div>
   );

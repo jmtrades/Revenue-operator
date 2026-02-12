@@ -1,12 +1,21 @@
 /**
- * Trial start: create user + workspace from email
+ * Trial start: create user + workspace from email.
+ * Sets session cookie so user never has to enter email again.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { createSessionCookie } from "@/lib/auth/session";
 import { randomUUID } from "crypto";
+
+function jsonWithSession(body: { workspace_id: string }, userId: string, workspaceId: string) {
+  const res = NextResponse.json(body);
+  const cookie = createSessionCookie({ userId, workspaceId });
+  if (cookie) res.headers.set("Set-Cookie", cookie);
+  return res;
+}
 
 export async function POST(req: NextRequest) {
   let body: { email: string; hired_roles?: string[]; business_type?: string };
@@ -42,7 +51,8 @@ export async function POST(req: NextRequest) {
     if (uid) {
       const { data: ws } = await db.from("workspaces").select("id").eq("owner_id", uid).order("created_at", { ascending: false }).limit(1).single();
       if (ws) {
-        return NextResponse.json({ workspace_id: (ws as { id: string }).id });
+        const wid = (ws as { id: string }).id;
+        return jsonWithSession({ workspace_id: wid }, uid, wid);
       }
       const wsId = randomUUID();
       const hiredRoles = Array.isArray(body.hired_roles) && body.hired_roles.length ? body.hired_roles : ["full_autopilot"];
@@ -62,7 +72,7 @@ export async function POST(req: NextRequest) {
         hired_roles: hiredRoles,
         business_type: businessType,
       });
-      return NextResponse.json({ workspace_id: wsId });
+      return jsonWithSession({ workspace_id: wsId }, uid, wsId);
     }
     return NextResponse.json({ error: "Failed to create trial" }, { status: 500 });
   }
@@ -98,5 +108,5 @@ export async function POST(req: NextRequest) {
   const { runSyntheticProtectionBootstrap } = await import("@/lib/bootstrap/synthetic-protection");
   await runSyntheticProtectionBootstrap(workspaceId);
 
-  return NextResponse.json({ workspace_id: workspaceId });
+  return jsonWithSession({ workspace_id: workspaceId }, userId, workspaceId);
 }

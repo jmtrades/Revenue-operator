@@ -13,6 +13,7 @@ import { withContext } from "@/lib/logger";
 import { verifyWebhookSignature, isTimestampFresh } from "@/lib/security/webhook-signature";
 import { claimReplayNonce } from "@/lib/security/replay";
 import { checkInboundRateLimit, incrementInboundRateLimit } from "@/lib/security/rate-limit";
+import { logWebhookFailure } from "@/lib/reliability/logging";
 import { createHash } from "crypto";
 
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
@@ -97,6 +98,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  let inserted: { id: string } | null = null;
   try {
     const { data: existing } = await db
       .from("raw_webhook_events")
@@ -110,7 +112,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true, idempotent: true });
     }
 
-    const { data: inserted, error } = await db
+    const { data: insertedData, error } = await db
       .from("raw_webhook_events")
       .insert({
         dedupe_key: dedupeKey,
@@ -129,17 +131,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to store event" }, { status: 500 });
     }
 
-    if (!inserted) return NextResponse.json({ ok: true });
+    if (!insertedData) return NextResponse.json({ ok: true });
 
+    inserted = insertedData as { id: string };
     await incrementInboundRateLimit(workspace_id, ip);
 
-    const webhookId = (inserted as { id: string }).id;
+    const webhookId = inserted.id;
     await enqueue({ type: "process_webhook", webhookId });
 
     const { processed } = await burstDrain();
     return NextResponse.json({ ok: true, webhook_id: webhookId, burst_processed: processed });
   } catch (err) {
     log.error("webhook error", { err: String(err) });
+    logWebhookFailure("inbound", err, workspace_id);
+    // Queue retry silently - don't alter UI state
+    try {
+      if (inserted?.id) {
+        await enqueue({ type: "process_webhook", webhookId: inserted.id });
+      }
+    } catch {
+      // Silent retry queue failure
+    }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

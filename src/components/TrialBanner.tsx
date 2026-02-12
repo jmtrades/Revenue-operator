@@ -92,8 +92,9 @@ export function TrialBanner() {
           <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
             {renewalDate && `Renewal on ${renewalDate}. `}
             {hasProtections
-              ? `${ap!.conversations_being_warmed + ap!.followups_scheduled_24h + ap!.attendance_protections + ap!.recoveries_running} protection${(ap!.conversations_being_warmed + ap!.followups_scheduled_24h + ap!.attendance_protections + ap!.recoveries_running) !== 1 ? "s" : ""} running. Pause anytime.`
-              : "Protection continues when active. Pause anytime."}
+              ? `${ap!.conversations_being_warmed + ap!.followups_scheduled_24h + ap!.attendance_protections + ap!.recoveries_running} protection${(ap!.conversations_being_warmed + ap!.followups_scheduled_24h + ap!.attendance_protections + ap!.recoveries_running) !== 1 ? "s" : ""} running. Pause anytime. `
+              : "Protection continues when active. Pause anytime. "}
+            We&apos;ll remind you before any charge.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -119,8 +120,9 @@ export function TrialBanner() {
           <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
             {renewalDate ? `Renewal on ${renewalDate}. ` : ""}
             {hasExpectation
-              ? `We expect ${ew!.low}–${ew!.high} conversations per week.`
-              : "Activity appears in Activity as we work."}
+              ? `We expect ${ew!.low}–${ew!.high} conversations per week. `
+              : "Activity appears in Activity as we work. "}
+            We&apos;ll remind you before any charge.
           </p>
         </div>
         <button onClick={() => setDismissed(true)} className="shrink-0" style={{ color: "var(--text-muted)" }}>×</button>
@@ -132,7 +134,7 @@ export function TrialBanner() {
     return (
       <div className="px-4 py-2 flex items-center justify-between text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <span style={{ color: "var(--text-primary)" }}>
-          Activity appears in Overview as we work.
+          Activity appears in Overview as we work. We&apos;ll remind you before any charge.
         </span>
         <button onClick={() => setDismissed(true)} style={{ color: "var(--text-muted)" }}>×</button>
       </div>

@@ -77,25 +77,15 @@ export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
           <>
             {outcomes.length > 0 && (
               <section>
-                <h3 className="text-sm font-medium text-stone-400 mb-2">Why this mattered</h3>
-                <p className="text-stone-300 text-sm mb-3">
-                  This prevented the conversation from going cold.
-                </p>
+                <h3 className="text-sm font-medium text-stone-400 mb-2">What we did</h3>
                 <div className="space-y-2">
                   {outcomes.slice(-5).map((o, i) => (
                     <div key={i} className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                      <span className="text-emerald-400">{o.text}</span>
+                      <span className="text-stone-300">{o.text}</span>
                       <span className="text-stone-500 text-xs ml-2">{new Date(o.when).toLocaleDateString()}</span>
                     </div>
                   ))}
                 </div>
-              </section>
-            )}
-
-            {data.counterfactual?.impact && (
-              <section>
-                <h3 className="text-sm font-medium text-stone-400 mb-2">What would have happened</h3>
-                <p className="text-stone-300 text-sm">{data.counterfactual.impact}</p>
               </section>
             )}
 

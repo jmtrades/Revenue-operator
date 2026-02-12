@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { PageHeader, EmptyState, LoadingState } from "@/components/ui";
+import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface Conversation {
   lead_id: string;
@@ -46,14 +48,29 @@ export default function ConversationsPage() {
     setLoading(true);
     setError(null);
     Promise.all([
-      fetch(`/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
-      fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
+      fetchWithFallback(`/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`, {
+        cacheKey: `conversations-${workspaceId}`,
+      }),
+      fetchWithFallback(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`, {
+        cacheKey: `command-center-${workspaceId}`,
+      }),
     ])
-      .then(([convRes, ccRes]) => {
-        setConversations(convRes.conversations ?? []);
-        setCommandCenter(ccRes?.error ? null : ccRes);
+      .then(([convResult, ccResult]) => {
+        if (convResult.data) {
+          setConversations((convResult.data as { conversations?: Conversation[] }).conversations ?? []);
+        }
+        if (ccResult.data && !(ccResult.data as { error?: unknown }).error) {
+          setCommandCenter(ccResult.data);
+        }
+        // Keep previous state on error
+        if (convResult.error || ccResult.error) {
+          setError("Still monitoring — retrying in the background");
+        }
       })
-      .catch((e) => setError(e instanceof Error ? e.message : "Error"))
+      .catch(() => {
+        // Keep previous state
+        setError("Still monitoring — retrying in the background");
+      })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -126,65 +143,61 @@ export default function ConversationsPage() {
     futureWorkText: string;
   }) {
     return (
-      <Link
-        href={`/dashboard/leads/${leadId}`}
-        className="block p-4 rounded-xl transition-opacity hover:opacity-90"
+      <div
+        className="p-4 rounded-xl"
         style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
       >
         <p className="font-medium" style={{ color: "var(--text-primary)" }}>{name}</p>
         {company && <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{company}</p>}
         <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>Current responsibility: {handling}</p>
         <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Next planned touch: {futureWorkText}</p>
-      </Link>
+        <Link
+          href={`/dashboard/leads/${leadId}`}
+          className="mt-3 inline-block text-sm font-medium"
+          style={{ color: "var(--meaning-blue)" }}
+        >
+          See conversation
+        </Link>
+      </div>
     );
   }
 
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-6xl">
-        <header className="mb-8">
-          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Conversations</h1>
-          <p className="mt-1" style={{ color: "var(--text-secondary)" }}>What we&apos;re maintaining for each conversation</p>
-        </header>
-        <div className="py-12 px-6 rounded-xl text-center" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-          <p className="font-medium" style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Maintaining continuity</p>
-        </div>
+        <PageHeader title="Conversations" subtitle="What we're maintaining for each conversation" />
+        <EmptyState icon="watch" title="We're ready — conversations will appear here when they start." subtitle="Maintaining continuity" />
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-6xl">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Conversations</h1>
-        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>What we&apos;re maintaining for each conversation</p>
-      </header>
+      <PageHeader title="Conversations" subtitle="What we're maintaining for each conversation" />
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg" style={{ background: "rgba(231, 76, 60, 0.1)", borderColor: "var(--meaning-red)", borderWidth: "1px", color: "var(--meaning-red)" }}>
-          {error}
+        <div className="mb-6 p-4 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-secondary)" }}>
+          <span className="inline-block w-2 h-2 rounded-full animate-pulse mr-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
+          Still monitoring — retrying in the background
         </div>
       )}
 
-      {loading ? (
-        <div className="py-12 px-6 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-          <p style={{ color: "var(--text-primary)" }}>Watching over</p>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Continuity monitoring in progress.</p>
+      {/* Live system guarantee: Always show monitoring */}
+      {!loading && readyToBook.length === 0 && inProgress.length === 0 && cooling.length === 0 && (
+        <div className="mb-6 py-2 px-4 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
+          <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
+          <span style={{ color: "var(--text-muted)" }}>We&apos;re ready — conversations will appear here when they start.</span>
         </div>
+      )}
+      {loading ? (
+        <LoadingState message="Watching over" submessage="Continuity monitoring in progress." />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <h2 className="text-sm font-medium mb-4" style={{ color: "var(--meaning-green)" }}>Ready for call</h2>
             <div className="space-y-3">
               {readyToBook.length === 0 ? (
-                <div className="py-6 px-4 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                  <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-                  <p style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
-                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Preparing upcoming calls. All protected.</p>
-                </div>
+                <EmptyState icon="pulse" title="Watching for new conversations" subtitle="Preparing upcoming calls. All protected." className="py-6 px-4" />
               ) : (
                 readyToBook.map((l) => (
                   <LeadCard
@@ -203,11 +216,7 @@ export default function ConversationsPage() {
             <h2 className="text-sm font-medium mb-4" style={{ color: "var(--meaning-amber)" }}>Being maintained</h2>
             <div className="space-y-3">
               {inProgress.length === 0 ? (
-                <div className="py-6 px-4 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                  <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-                  <p style={{ color: "var(--text-primary)" }}>Maintaining engagement</p>
-                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Keeping conversations active. No interventions needed.</p>
-                </div>
+                <EmptyState icon="watch" title="Maintaining engagement" subtitle="Keeping conversations active. No interventions needed." className="py-6 px-4" />
               ) : (
                 inProgress.map((l) => (
                   <LeadCard
@@ -226,11 +235,7 @@ export default function ConversationsPage() {
             <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)" }}>Cooling — intervention planned</h2>
             <div className="space-y-3">
               {cooling.length === 0 ? (
-                <div className="py-6 px-4 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                  <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-                  <p style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
-                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Scanning cooling conversations. All protected.</p>
-                </div>
+                <EmptyState icon="pulse" title="Watching for new conversations" subtitle="Scanning cooling conversations. All protected." className="py-6 px-4" />
               ) : (
                 cooling.map((c) => (
                   <LeadCard

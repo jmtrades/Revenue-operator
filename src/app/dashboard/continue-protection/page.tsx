@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { PageHeader, Card, CardHeader, CardBody, EmptyState, LoadingState } from "@/components/ui";
 
 interface ContinuationContext {
   active_conversations: Array<{ id: string; name: string; company?: string }>;
@@ -36,20 +37,16 @@ export default function ContinueProtectionPage() {
 
   if (!workspaceId) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 max-w-xl mx-auto">
-        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-        <p style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
-        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Maintaining continuity</p>
+      <div className="p-8 max-w-xl mx-auto">
+        <EmptyState title="Watching for new conversations" subtitle="Maintaining continuity" icon="watch" />
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 max-w-xl mx-auto">
-        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-        <p style={{ color: "var(--text-primary)" }}>Watching over</p>
-        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Preparing continuity context. We maintain; you take the calls.</p>
+      <div className="p-8 max-w-xl mx-auto">
+        <LoadingState message="Watching over" submessage="We maintain; you take the calls." />
       </div>
     );
   }
@@ -63,64 +60,73 @@ export default function ContinueProtectionPage() {
 
   return (
     <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
-      <h1 className="text-2xl font-semibold mb-2">Continue coverage</h1>
-      <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-        Coverage continues automatically. We maintain your conversations. You take the calls.
+      <PageHeader title="Keep protection active" subtitle="Coverage continues automatically. We maintain your conversations. You take the calls." />
+      <p className="text-sm mb-2" style={{ color: "var(--text-primary)" }}>
+        Protection will continue automatically after your trial.
+      </p>
+      <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
+        £0 today — trial ends in 14 days — pause anytime before renewal
       </p>
 
       <div className="space-y-4 mb-8">
-        <div className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
-          <h2 className="text-sm font-medium text-stone-400 mb-2">Active conversations</h2>
-          {activeCount > 0 ? (
-            <p className="text-stone-300 text-sm">
-              {activeCount} conversation{activeCount !== 1 ? "s" : ""} currently being protected
-            </p>
-          ) : (
-            <p className="text-stone-500 text-sm">Watching over. Maintaining readiness for new conversations.</p>
-          )}
-          {ctx && ctx.active_conversations.length > 0 && (
-            <ul className="mt-2 space-y-1 text-xs text-stone-500">
-              {ctx.active_conversations.slice(0, 5).map((c) => (
-                <li key={c.id}>{c.name}{c.company ? ` · ${c.company}` : ""}</li>
-              ))}
-              {ctx.active_conversations.length > 5 && (
-                <li>+{ctx.active_conversations.length - 5} more</li>
-              )}
-            </ul>
-          )}
-        </div>
+        <Card>
+          <CardHeader>Active conversations</CardHeader>
+          <CardBody>
+            {activeCount > 0 ? (
+              <p className="text-sm" style={{ color: "var(--text-primary)" }}>
+                {activeCount} conversation{activeCount !== 1 ? "s" : ""} currently being protected
+              </p>
+            ) : (
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Watching over. Maintaining readiness for new conversations.</p>
+            )}
+            {ctx && ctx.active_conversations.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
+                {ctx.active_conversations.slice(0, 5).map((c) => (
+                  <li key={c.id}>{c.name}{c.company ? ` · ${c.company}` : ""}</li>
+                ))}
+                {ctx.active_conversations.length > 5 && (
+                  <li>+{ctx.active_conversations.length - 5} more</li>
+                )}
+              </ul>
+            )}
+          </CardBody>
+        </Card>
 
-        <div className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
-          <h2 className="text-sm font-medium text-stone-400 mb-2">Scheduled follow-ups</h2>
-          {followUpsCount > 0 ? (
-            <p className="text-stone-300 text-sm">
-              {followUpsCount} follow-up{followUpsCount !== 1 ? "s" : ""} queued
-              {ctx?.scheduled_follow_ups?.next_at && (
-                <span className="text-stone-500"> · Next in ~{Math.max(1, Math.ceil((new Date(ctx.scheduled_follow_ups.next_at!).getTime() - Date.now()) / 60000))} min</span>
-              )}
-            </p>
-          ) : (
-            <p className="text-stone-500 text-sm">Maintaining engagement intervals. Follow-ups will appear as planned.</p>
-          )}
-        </div>
+        <Card>
+          <CardHeader>Scheduled follow-ups</CardHeader>
+          <CardBody>
+            {followUpsCount > 0 ? (
+              <p className="text-sm" style={{ color: "var(--text-primary)" }}>
+                {followUpsCount} follow-up{followUpsCount !== 1 ? "s" : ""} queued
+                {ctx?.scheduled_follow_ups?.next_at && (
+                  <span style={{ color: "var(--text-muted)" }}> · Next in ~{Math.max(1, Math.ceil((new Date(ctx.scheduled_follow_ups.next_at).getTime() - Date.now()) / 60000))} min</span>
+                )}
+              </p>
+            ) : (
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Maintaining engagement intervals. Follow-ups will appear as planned.</p>
+            )}
+          </CardBody>
+        </Card>
 
-        <div className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
-          <h2 className="text-sm font-medium text-stone-400 mb-2">Pending confirmations</h2>
-          {confirmationsCount > 0 ? (
-            <p className="text-stone-300 text-sm">
-              {confirmationsCount} attendance confirmation{confirmationsCount !== 1 ? "s" : ""} pending
-            </p>
-          ) : (
-            <p className="text-stone-500 text-sm">Confirming upcoming attendance. Protect booked calls.</p>
-          )}
-          {ctx && ctx.pending_confirmations.length > 0 && (
-            <ul className="mt-2 space-y-1 text-xs text-stone-500">
-              {ctx.pending_confirmations.slice(0, 3).map((c) => (
-                <li key={c.id}>{c.name} · {new Date(c.call_at).toLocaleString()}</li>
-              ))}
-            </ul>
-          )}
-        </div>
+        <Card>
+          <CardHeader>Pending confirmations</CardHeader>
+          <CardBody>
+            {confirmationsCount > 0 ? (
+              <p className="text-sm" style={{ color: "var(--text-primary)" }}>
+                {confirmationsCount} attendance confirmation{confirmationsCount !== 1 ? "s" : ""} pending
+              </p>
+            ) : (
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Confirming upcoming attendance. Protecting booked calls.</p>
+            )}
+            {ctx && ctx.pending_confirmations.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
+                {ctx.pending_confirmations.slice(0, 3).map((c) => (
+                  <li key={c.id}>{c.name} · {new Date(c.call_at).toLocaleString()}</li>
+                ))}
+              </ul>
+            )}
+          </CardBody>
+        </Card>
       </div>
 
       <div className="p-4 rounded-xl mb-6" style={{ background: "rgba(243, 156, 18, 0.1)", borderColor: "var(--meaning-amber)", borderWidth: "1px" }}>
@@ -166,7 +172,7 @@ export default function ContinueProtectionPage() {
           className="px-6 py-3 rounded-lg font-medium"
           style={{ background: "var(--meaning-green)", color: "#0E1116" }}
         >
-          {checkoutLoading ? "Preparing…" : "Keep coverage active"}
+          {checkoutLoading ? "Preparing…" : "Keep protection active"}
         </button>
         <Link
           href="/dashboard"

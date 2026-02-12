@@ -1,17 +1,43 @@
 @import "tailwindcss";
 
+/* Design system: banking-grade monitoring / operations console */
 :root {
-  --background: #0E1116;
-  --surface: #151A21;
-  --card: #1B212A;
-  --border: #2A313C;
-  --text-primary: #E6EDF3;
-  --text-secondary: #9BA6B2;
-  --text-muted: #6B7480;
-  --meaning-green: #2ECC71;
-  --meaning-amber: #F39C12;
-  --meaning-red: #E74C3C;
-  --meaning-blue: #4DA3FF;
+  /* Surfaces */
+  --background: #0c0f13;
+  --surface: #141922;
+  --card: #1a202c;
+  --border: #2d3548;
+  --border-subtle: #232a38;
+  /* Text */
+  --text-primary: #e8ecf1;
+  --text-secondary: #a0aab8;
+  --text-muted: #6b7685;
+  /* Accent + semantic */
+  --accent: #4da3ff;
+  --accent-hover: #6bb3ff;
+  --meaning-green: #2ecc71;
+  --meaning-amber: #f39c12;
+  --meaning-red: #e74c3c;
+  --meaning-blue: #4da3ff;
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
+  /* Spacing scale (for consistency) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
 }
 
 @theme inline {
@@ -21,10 +47,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  font-size: 15px;
+}
+
 body {
   background: var(--background);
   color: var(--text-primary);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 

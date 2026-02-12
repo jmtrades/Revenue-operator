@@ -27,6 +27,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url().optional(),
   EMAIL_FROM: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
+  SESSION_SECRET: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

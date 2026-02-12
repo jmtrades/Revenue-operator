@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -8,11 +8,32 @@ export default function ActivatePage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+  const [progressStep, setProgressStep] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/session", { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.session?.userId && data?.session?.workspaceId) {
+          router.replace("/dashboard/live");
+          return;
+        }
+        setCheckingSession(false);
+      })
+      .catch(() => setCheckingSession(false));
+  }, [router]);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
     setSubmitting(true);
+    setProgressStep(0);
+    
+    // Progress animation steps
+    setTimeout(() => setProgressStep(1), 600);
+    setTimeout(() => setProgressStep(2), 1200);
+    
     try {
       const res = await fetch("/api/trial/start", {
         method: "POST",
@@ -26,7 +47,7 @@ export default function ActivatePage() {
       const data = await res.json();
       const workspaceId = data.workspace_id;
       if (!workspaceId) {
-        router.push("/dashboard/onboarding");
+        setTimeout(() => router.push("/dashboard/onboarding"), 1800);
         return;
       }
       if (typeof window !== "undefined") {
@@ -51,21 +72,46 @@ export default function ActivatePage() {
         window.location.href = checkoutData.checkout_url;
         return;
       }
-      router.push(`/dashboard/onboarding?workspace_id=${workspaceId}`);
+      setTimeout(() => router.push(`/dashboard/onboarding?workspace_id=${workspaceId}`), 1800);
     } catch {
-      router.push("/dashboard/onboarding");
+      setTimeout(() => router.push("/dashboard/onboarding"), 1800);
     } finally {
-      setSubmitting(false);
+      // Keep progress visible during redirect
     }
   };
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Restoring your conversations…</p>
+      </div>
+    );
+  }
+
+  if (submitting && progressStep !== null) {
+    const steps = ["Creating workspace", "Preparing protection", "Securing conversations"];
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <div className="max-w-md w-full text-center">
+          {steps.slice(0, progressStep + 1).map((step, i) => (
+            <div key={i} className="mb-3 flex items-center justify-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full" style={{ background: "var(--meaning-green)" }} aria-hidden />
+              <p className="text-sm" style={{ color: "var(--text-primary)" }}>{step}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
         <div className="max-w-md w-full">
-          <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>More calls on your calendar</h1>
+          <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Start protection</h1>
           <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-            We maintain continuity — follow-ups, reminders, recoveries. You take the calls.
+            We maintain continuity — reply, follow up, recover — so people show up. You take the calls.
           </p>
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <input
@@ -81,11 +127,11 @@ export default function ActivatePage() {
               disabled={submitting}
               className="w-full py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 font-medium text-stone-950"
             >
-              {submitting ? "Starting…" : "Start protection"}
+              {submitting ? "Starting…" : "Start 14-day protection"}
             </button>
           </form>
           <p className="text-xs mt-4 text-center" style={{ color: "var(--text-muted)" }}>
-            Card required. You won&apos;t be charged until day 14. Cancel anytime before renewal.
+            £0 today — trial ends in 14 days — pause anytime before renewal
           </p>
         </div>
       </div>
