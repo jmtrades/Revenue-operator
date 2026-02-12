@@ -261,7 +261,7 @@ export default function SettingsPage() {
                     type="text"
                     value={businessContext.pricing_range}
                     onChange={(e) => setBusinessContext({ ...businessContext, pricing_range: e.target.value })}
-                    placeholder="e.g., Starts at £500"
+                    placeholder="e.g., Starts at $500"
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />

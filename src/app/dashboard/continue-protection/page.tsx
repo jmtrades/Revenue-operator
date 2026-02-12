@@ -65,7 +65,7 @@ export default function ContinueProtectionPage() {
         Protection will continue automatically after your trial.
       </p>
       <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
-        £0 today — trial ends in 14 days — pause anytime before renewal
+        $0 today — trial ends in 14 days — pause anytime before renewal
       </p>
 
       <div className="space-y-4 mb-8">

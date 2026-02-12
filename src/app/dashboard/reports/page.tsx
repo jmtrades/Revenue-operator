@@ -91,8 +91,8 @@ export default function ReportsPage() {
               />
               <ProofStatement
                 statement="Revenue influenced"
-                detail={revenue > 0 ? `£${revenue.toLocaleString()} from conversations we prepared.` : "Revenue builds as deals close."}
-                value={revenue > 0 ? `£${revenue.toLocaleString()}` : "—"}
+                detail={revenue > 0 ? `$${revenue.toLocaleString()} from conversations we prepared.` : "Revenue builds as deals close."}
+                value={revenue > 0 ? `$${revenue.toLocaleString()}` : "—"}
               />
             </div>
           </section>

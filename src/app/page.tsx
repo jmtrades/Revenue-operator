@@ -72,7 +72,7 @@ export default function LandingPage() {
           Start 14-day protection
         </Link>
         <p className="mt-3 text-stone-500 text-sm text-center">
-          £0 today · Nothing to configure · Takes ~10 seconds
+          $0 today · Nothing to configure · Takes ~10 seconds
         </p>
         <div className="mt-6 max-w-md mx-auto px-4 py-3 rounded-lg border border-stone-800 bg-stone-900/30">
           <p className="text-xs text-stone-400 text-center leading-relaxed">
@@ -120,17 +120,17 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto grid sm:grid-cols-3 gap-6">
           <div className="p-6 rounded-xl bg-stone-900/60 border border-stone-800 text-center">
             <p className="font-medium text-stone-200">Starter</p>
-            <p className="text-2xl font-semibold text-stone-50 mt-1">£299<span className="text-base font-normal text-stone-500">/mo</span></p>
+            <p className="text-2xl font-semibold text-stone-50 mt-1">$299<span className="text-base font-normal text-stone-500">/mo</span></p>
             <p className="text-stone-400 text-sm mt-2">Low volume</p>
           </div>
           <div className="p-6 rounded-xl bg-stone-900/60 border border-stone-800 text-center">
             <p className="font-medium text-stone-200">Growth</p>
-            <p className="text-2xl font-semibold text-stone-50 mt-1">£799<span className="text-base font-normal text-stone-500">/mo</span></p>
+            <p className="text-2xl font-semibold text-stone-50 mt-1">$799<span className="text-base font-normal text-stone-500">/mo</span></p>
             <p className="text-stone-400 text-sm mt-2">Consistent inbound</p>
           </div>
           <div className="p-6 rounded-xl bg-stone-900/60 border border-stone-800 text-center">
             <p className="font-medium text-stone-200">Scale</p>
-            <p className="text-2xl font-semibold text-stone-50 mt-1">£1,999<span className="text-base font-normal text-stone-500">/mo</span></p>
+            <p className="text-2xl font-semibold text-stone-50 mt-1">$1,999<span className="text-base font-normal text-stone-500">/mo</span></p>
             <p className="text-stone-400 text-sm mt-2">High inbound</p>
           </div>
         </div>
