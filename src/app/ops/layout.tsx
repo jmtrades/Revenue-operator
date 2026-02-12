@@ -50,7 +50,12 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
           </button>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto flex flex-col">
+        <div className="flex-1">{children}</div>
+        <footer className="py-2 px-4 border-t border-stone-800 text-center text-xs text-stone-600">
+          Staff only · Internal
+        </footer>
+      </main>
     </div>
   );
 }

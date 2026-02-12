@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     payment_method_types: ["card"],
     line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
     subscription_data: {
-      trial_period_days: 0,
+      trial_period_days: 14,
       metadata: { workspace_id: workspaceId },
     },
     success_url: successUrl,

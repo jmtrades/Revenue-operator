@@ -36,8 +36,10 @@ export default function ContinueProtectionPage() {
 
   if (!workspaceId) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center p-8">
-        <p className="text-stone-500">Select where we maintain conversations.</p>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 max-w-xl mx-auto">
+        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
+        <p style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
+        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Maintaining continuity</p>
       </div>
     );
   }

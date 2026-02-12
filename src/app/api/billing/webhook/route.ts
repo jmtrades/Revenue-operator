@@ -37,13 +37,19 @@ export async function POST(req: NextRequest) {
       const workspaceId = session.metadata?.workspace_id;
       if (workspaceId) {
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-        const sub = await stripe.subscriptions.retrieve(session.subscription as string) as Stripe.Subscription;
-        const periodEnd = (sub as { current_period_end?: number }).current_period_end;
-        const renewalAt = periodEnd ? new Date(periodEnd * 1000) : null;
+        const sub = await stripe.subscriptions.retrieve(session.subscription as string);
+        const isTrialing = sub.status === "trialing";
+        const trialEnd = (sub as Stripe.Subscription & { trial_end?: number }).trial_end;
+        const periodEnd = (sub as Stripe.Subscription & { current_period_end?: number }).current_period_end;
+        const renewalAt = isTrialing && trialEnd
+          ? new Date(trialEnd * 1000)
+          : periodEnd
+            ? new Date(periodEnd * 1000)
+            : null;
         await db
           .from("workspaces")
           .update({
-            billing_status: "active",
+            billing_status: isTrialing ? "trial" : "active",
             protection_renewal_at: renewalAt?.toISOString() ?? null,
             stripe_subscription_id: sub.id,
             status: "active",

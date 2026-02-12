@@ -72,7 +72,7 @@ export function HeartbeatBar() {
       >
         <div className="flex items-center gap-3">
           <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse" style={{ background: "var(--meaning-green)" }} aria-hidden />
-          <span style={{ color: "var(--text-muted)" }}>We&apos;re ready. Select where we maintain conversations.</span>
+          <span style={{ color: "var(--text-muted)" }}>Watching for new conversations</span>
         </div>
       </div>
     );

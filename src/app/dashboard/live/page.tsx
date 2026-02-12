@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { useWorkspace } from "@/components/WorkspaceContext";
 import { isLiveCompleted, setLiveCompleted } from "@/lib/live-gate";
 
 const FEED_ITEMS: { text: string; delaySec: number }[] = [
@@ -17,10 +18,23 @@ const FEED_ITEMS: { text: string; delaySec: number }[] = [
 function LivePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const workspaceId = searchParams.get("workspace_id") ?? "";
+  const { workspaceId: contextWid, workspaces, loading } = useWorkspace();
+  const urlWid = searchParams.get("workspace_id") ?? "";
+  const workspaceId = urlWid || contextWid || "";
   const [phase, setPhase] = useState<"feed" | "fade" | "ready">("feed");
   const [feedIndex, setFeedIndex] = useState(0);
   const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    if (!loading && workspaces.length === 0) {
+      router.replace("/activate");
+      return;
+    }
+    if (contextWid && !urlWid) {
+      router.replace(`/dashboard/live?workspace_id=${encodeURIComponent(contextWid)}`);
+      return;
+    }
+  }, [loading, workspaces.length, contextWid, urlWid, router]);
 
   useEffect(() => {
     if (workspaceId && isLiveCompleted(workspaceId)) {
@@ -60,6 +74,7 @@ function LivePageContent() {
   if (!workspaceId) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
         <p style={{ color: "var(--text-muted)" }}>Preparing…</p>
       </div>
     );

@@ -15,6 +15,7 @@ export default function SettingsPage() {
   const [zoomHealth, setZoomHealth] = useState<{ connected: boolean; token_valid?: boolean } | null>(null);
   const [zoomDisconnecting, setZoomDisconnecting] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [billingStatus, setBillingStatus] = useState<{ billing_status?: string; renewal_at?: string | null } | null>(null);
   const [coverageFlags, setCoverageFlags] = useState({
     continuity_messaging: true,
     booking_protection: true,
@@ -53,6 +54,12 @@ export default function SettingsPage() {
       .then((r) => r.ok ? r.json() : Promise.resolve({ connected: false }))
       .then(setZoomHealth)
       .catch(() => setZoomHealth({ connected: false }));
+    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`)
+      .then((r) => r.ok ? r.json() : Promise.resolve(null))
+      .then((d: { error?: string; renewal_at?: string | null; billing_status?: string } | null) =>
+        d?.error ? null : setBillingStatus(d)
+      )
+      .catch(() => setBillingStatus(null));
   }, [workspaceId]);
 
   const save = async () => {
@@ -83,7 +90,11 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-semibold mb-2">Preferences</h1>
       <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>How we work for you</p>
       {!workspaceId ? (
-        <p style={{ color: "var(--text-muted)" }}>Select where we maintain conversations.</p>
+        <div className="py-12 px-6 rounded-xl text-center" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
+          <p className="font-medium" style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
+          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Maintaining continuity</p>
+        </div>
       ) : (
         <div className="space-y-6">
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
@@ -136,9 +147,17 @@ export default function SettingsPage() {
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
             <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Coverage</h2>
-            <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
-              Coverage continues automatically. Pause protection anytime. Resume when ready.
-            </p>
+            {billingStatus?.billing_status === "active" ? (
+              <p className="text-sm mb-2" style={{ color: "var(--meaning-green)" }}>Billing active</p>
+            ) : billingStatus?.renewal_at ? (
+              <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
+                Trial ends on {new Date(billingStatus.renewal_at).toLocaleDateString()}. Cancel before renewal.
+              </p>
+            ) : (
+              <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
+                Coverage continues automatically. Pause protection anytime. Resume when ready.
+              </p>
+            )}
             <div className="flex gap-2">
               <Link
                 href="/dashboard/continue-protection"
