@@ -48,44 +48,6 @@ interface RiskSurfaceData {
   risk_surface_summary: string;
 }
 
-const DEMO_BY_INDUSTRY: Record<string, { hot: Array<{ name: string; company: string }>; atRisk: Array<{ name: string; company: string }>; recovered: Array<{ name: string; company: string }> }> = {
-  saas: { hot: [{ name: "Sarah", company: "CloudStack Inc" }, { name: "James", company: "DevTools Ltd" }], atRisk: [{ name: "Mike", company: "SaaS Metrics" }], recovered: [{ name: "Sarah", company: "CloudStack Inc" }] },
-  agency: { hot: [{ name: "Emma", company: "Brand Partners" }], atRisk: [{ name: "Lisa", company: "Media Agency" }], recovered: [{ name: "Emma", company: "Brand Partners" }] },
-  ecommerce: { hot: [{ name: "Alex", company: "Retail Direct" }], atRisk: [{ name: "Taylor", company: "D2C Brand" }], recovered: [{ name: "Alex", company: "Retail Direct" }] },
-  consulting: { hot: [{ name: "Morgan", company: "Strategy Partners" }], atRisk: [{ name: "Riley", company: "Consulting Co" }], recovered: [{ name: "Morgan", company: "Strategy Partners" }] },
-  other: { hot: [{ name: "Sarah", company: "Acme Ltd" }], atRisk: [{ name: "Mike", company: "TechCorp" }], recovered: [{ name: "Sarah", company: "Acme Ltd" }] },
-};
-
-function getDemoData(businessType?: string | null): Partial<CommandCenterData> {
-  const industry = DEMO_BY_INDUSTRY[businessType ?? "other"] ?? DEMO_BY_INDUSTRY.other;
-  const hot = industry.hot;
-  const atRisk = industry.atRisk;
-  const recovered = industry.recovered;
-  return {
-    operator_status: "Active",
-    last_action: "Followed up (2 min ago)",
-    next_action: "Follow-up in 12 min",
-    today_booked: 2,
-    today_recovered: 1,
-    target_tracking: { target: 12, secured: 5, gap: 7 },
-    performance_status: { status: "behind", adjustment: "Increasing follow-ups to maintain weekly goal" },
-    system_strategy: "Increasing follow-ups to maintain weekly goal",
-    pipeline_forecast: { likely_bookings: 2, revivals_in_progress: 1, attendance_confirmations_pending: 3 },
-    commitment_ledger: { active_follow_ups_scheduled: 5, recovery_paths_running: 1, attendance_confirmations_pending: 3 },
-    silence_protection: { protected: true, unattended_count: 0, status: "green", label: "All conversations protected" },
-    removal_simulator: { if_paused_today: { touches_lost: 5, conversations_going_cold: 4, attendance_at_risk: 3 } },
-    calendar_confidence: 72,
-    hot_leads: hot.map((h, i) => ({ lead_id: `demo-${i}`, name: h.name, company: h.company })),
-    at_risk: atRisk.map((a, i) => ({ id: `demo-at-${i}`, name: a.name, company: a.company })),
-    recovered: recovered.map((r, i) => ({ id: `demo-rec-${i}`, name: r.name, company: r.company })),
-    activity: [
-      { what: "Preparing response", who: hot[0].name ?? "Sarah", when: new Date().toISOString() },
-      { what: "Scheduling follow-up", who: hot[1]?.name ?? "James", when: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
-      { what: "Confirming attendance", who: recovered[0].name ?? "Sarah", when: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString() },
-      { what: "Recovering cooling conversation", who: atRisk[0].name ?? "Mike", when: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), effort_preserved: true },
-    ],
-  };
-}
 
 function toResponsibilityItem(a: CommandCenterData["activity"][0]): { text: string; recency: string } {
   const who = a.who && a.who !== "System" ? a.who : "";
@@ -108,56 +70,6 @@ function toResponsibilityItem(a: CommandCenterData["activity"][0]): { text: stri
   return { text, recency };
 }
 
-function ContinuityMonitoringPanel({
-  routines,
-  idleRoutines,
-  responsibilityItems,
-  lastActivityMs,
-}: {
-  routines: string[];
-  idleRoutines: string[];
-  responsibilityItems: string[];
-  lastActivityMs: number | null;
-}) {
-  const [idx, setIdx] = useState(0);
-  const idle = lastActivityMs === null || lastActivityMs > 30 * 60 * 1000;
-  const activeRoutines = idle ? idleRoutines : routines;
-  useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % activeRoutines.length), 4000);
-    return () => clearInterval(t);
-  }, [activeRoutines.length]);
-  const display = !idle && responsibilityItems.length > 0 ? responsibilityItems : [activeRoutines[idx]];
-  return (
-    <section className="mb-10">
-      <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>What we&apos;re doing now</h2>
-      <div className="space-y-2">
-        {display.map((line, i) => (
-          <div
-            key={`${i}-${idx}`}
-            className="py-3 px-4 rounded-lg transition-opacity duration-300"
-            style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
-          >
-            <span style={{ color: "var(--text-primary)" }}>{line}</span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-const ROTATING_ROUTINES = [
-  "Watching reply timing",
-  "Maintaining engagement",
-  "Confirming attendance",
-  "Recovering quiet conversations",
-  "Protecting booked calls",
-];
-
-const IDLE_MONITORING_ROUTINES = [
-  "Watching reply windows",
-  "Checking attendance timing",
-  "Monitoring cooling conversations",
-];
 
 function parseNextOutreachMinutes(nextAction: string | null): number | null {
   if (!nextAction) return null;
@@ -172,63 +84,105 @@ export default function OverviewPage() {
   const { workspaceId, workspaces } = useWorkspace();
   const [data, setData] = useState<CommandCenterData | null>(null);
   const [riskSurface, setRiskSurface] = useState<RiskSurfaceData | null>(null);
+  const [revenueSignals, setRevenueSignals] = useState<{
+    conversations_likely_quiet: number;
+    follow_ups_missed: number;
+    calls_unconfirmed: number;
+    quiet_time_sensitivity: string | null;
+    missed_time_sensitivity: string | null;
+    unconfirmed_time_sensitivity: string | null;
+    has_data: boolean;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isDemoMode, setIsDemoMode] = useState(false);
   const [tick, setTick] = useState(0);
-  const [monitoringHeartbeat, setMonitoringHeartbeat] = useState<string | null>(null);
-  const [invisibleWork, setInvisibleWork] = useState<string | null>(null);
   const [showContinuity, setShowContinuity] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [showFirstTimeMessage, setShowFirstTimeMessage] = useState(false);
+  const [monitoringState, setMonitoringState] = useState<string>("");
 
   useEffect(() => {
     const t = setInterval(() => setTick((x) => x + 1), 60_000);
     return () => clearInterval(t);
   }, []);
 
-  // Invisible work presence: rotate maintenance lines every 4-8 minutes
+  // Fetch revenue signals
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetchWithFallback<{
+      conversations_likely_quiet: number;
+      follow_ups_missed: number;
+      calls_unconfirmed: number;
+      quiet_time_sensitivity: string | null;
+      missed_time_sensitivity: string | null;
+      unconfirmed_time_sensitivity: string | null;
+      has_data: boolean;
+    }>(`/api/revenue-signals`)
+      .then((result) => {
+        if (result.data && !result.error) {
+          // Ensure all fields are present
+          setRevenueSignals({
+            conversations_likely_quiet: result.data.conversations_likely_quiet ?? 0,
+            follow_ups_missed: result.data.follow_ups_missed ?? 0,
+            calls_unconfirmed: result.data.calls_unconfirmed ?? 0,
+            quiet_time_sensitivity: result.data.quiet_time_sensitivity ?? null,
+            missed_time_sensitivity: result.data.missed_time_sensitivity ?? null,
+            unconfirmed_time_sensitivity: result.data.unconfirmed_time_sensitivity ?? null,
+            has_data: result.data.has_data ?? false,
+          });
+        }
+      })
+      .catch(() => {});
+    
+    // Refresh every 5 minutes
+    const interval = setInterval(() => {
+      fetchWithFallback<{
+        conversations_likely_quiet: number;
+        follow_ups_missed: number;
+        calls_unconfirmed: number;
+        quiet_time_sensitivity: string | null;
+        missed_time_sensitivity: string | null;
+        unconfirmed_time_sensitivity: string | null;
+        has_data: boolean;
+      }>(`/api/revenue-signals`)
+        .then((result) => {
+          if (result.data && !result.error) {
+            // Ensure all fields are present
+            setRevenueSignals({
+              conversations_likely_quiet: result.data.conversations_likely_quiet ?? 0,
+              follow_ups_missed: result.data.follow_ups_missed ?? 0,
+              calls_unconfirmed: result.data.calls_unconfirmed ?? 0,
+              quiet_time_sensitivity: result.data.quiet_time_sensitivity ?? null,
+              missed_time_sensitivity: result.data.missed_time_sensitivity ?? null,
+              unconfirmed_time_sensitivity: result.data.unconfirmed_time_sensitivity ?? null,
+              has_data: result.data.has_data ?? false,
+            });
+          }
+        })
+        .catch(() => {});
+    }, 5 * 60_000);
+    return () => clearInterval(interval);
+  }, [workspaceId]);
+
+  // Rotating monitoring state (slow - every 6+ seconds)
   useEffect(() => {
     if (!workspaceId || !data) return;
-    const maintenanceLines = [
-      "Monitoring timing windows",
-      "Keeping response continuity",
-      "Maintaining engagement pace",
-      "Watching attendance stability",
-      "Protecting booked conversations",
-      "Checking reply timing",
+    const states = [
+      "We're watching reply timing",
+      "We're protecting upcoming calls",
+      "We're checking conversation gaps",
     ];
-    const interval = 240_000 + Math.random() * 240_000; // 4-8 minutes
-    const timer = setInterval(() => {
-      const line = maintenanceLines[Math.floor(Math.random() * maintenanceLines.length)] ?? maintenanceLines[0]!;
-      setInvisibleWork(line);
-      setTimeout(() => setInvisibleWork(null), 3000); // Fade out after 3 seconds
-    }, interval);
-    return () => clearInterval(timer);
+    let currentIdx = 0;
+    const interval = setInterval(() => {
+      setMonitoringState(states[currentIdx] ?? states[0]!);
+      currentIdx = (currentIdx + 1) % states.length;
+    }, 6000 + Math.random() * 2000); // 6-8 seconds
+    return () => clearInterval(interval);
   }, [workspaceId, data]);
 
-  // Real monitoring heartbeat: insert evaluation entry within 60-180 seconds
-  useEffect(() => {
-    if (!workspaceId || !data) return;
-    const delay = 60_000 + Math.random() * 120_000; // 60-180 seconds
-    const timer = setTimeout(() => {
-      const heartbeats = [
-        "Checked conversation timing — nothing needed",
-        "Verified reply window — still active",
-        "Monitoring attendance timing — stable",
-        "Checked engagement windows — maintained",
-        "Verified continuity — stable",
-      ];
-      setMonitoringHeartbeat(heartbeats[Math.floor(Math.random() * heartbeats.length)] ?? heartbeats[0]!);
-      // Clear after showing
-      setTimeout(() => setMonitoringHeartbeat(null), 10_000);
-    }, delay);
-    return () => clearTimeout(timer);
-  }, [workspaceId, data]);
 
   useEffect(() => {
     if (!workspaceId || workspaces.length === 0) return;
     setLoading(true);
-    setIsDemoMode(false);
     setShowContinuity(false);
     setApiError(null);
     
@@ -252,16 +206,9 @@ export default function OverviewPage() {
             (d.at_risk?.length ?? 0) === 0 &&
             (d.recovered?.length ?? 0) === 0 &&
             (d.activity?.length ?? 0) === 0;
-          if (isEmpty) {
-            setIsDemoMode(true);
-            setData({ ...getDemoData((d as { business_type?: string }).business_type), ...d } as CommandCenterData);
-          } else {
-            setData({ ...d, recovered: d.recovered ?? [] } as CommandCenterData);
-          }
+          setData({ ...d, recovered: d.recovered ?? [] } as CommandCenterData);
         } else if (!data) {
-          // No cache and no previous data - show demo mode
-          setIsDemoMode(true);
-          setData(getDemoData() as CommandCenterData);
+          // No cache and no previous data - keep null, show monitoring state
         }
         // If we have previous data, keep it
         return;
@@ -269,24 +216,11 @@ export default function OverviewPage() {
       
       const d = result.data;
       if (!d) {
-        if (!data) {
-          setIsDemoMode(true);
-          setData(getDemoData() as CommandCenterData);
-        }
+        // Keep previous data or null
         return;
       }
       
-      const isEmpty =
-        (d.hot_leads?.length ?? 0) === 0 &&
-        (d.at_risk?.length ?? 0) === 0 &&
-        (d.recovered?.length ?? 0) === 0 &&
-        (d.activity?.length ?? 0) === 0;
-      if (isEmpty) {
-        setIsDemoMode(true);
-        setData({ ...getDemoData((d as { business_type?: string }).business_type), ...d } as CommandCenterData);
-      } else {
-        setData({ ...d, recovered: d.recovered ?? [] } as CommandCenterData);
-      }
+      setData({ ...d, recovered: d.recovered ?? [] } as CommandCenterData);
     }).finally(() => {
       clearTimeout(latencyTimer);
       setShowContinuity(false);
@@ -345,8 +279,8 @@ export default function OverviewPage() {
       <div className="min-h-[80vh] flex items-center justify-center p-8">
         <div className="max-w-lg text-center">
           <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>We&apos;re ready — conversations will appear here when they start.</h1>
-          <p className="mt-2" style={{ color: "var(--text-secondary)" }}>Maintaining continuity. Connect sources to see activity.</p>
+          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>We&apos;re watching for conversations.</h1>
+          <p className="mt-2" style={{ color: "var(--text-secondary)" }}>This usually takes a few seconds once activity exists.</p>
         </div>
       </div>
     );
@@ -356,16 +290,10 @@ export default function OverviewPage() {
     return (
       <div className="p-8 max-w-3xl mx-auto" style={{ color: "var(--text-primary)" }}>
         <section className="text-center py-12 px-4 rounded-xl mb-10" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-          <p className="text-lg font-medium" style={{ color: "var(--text-primary)" }}>Watching over</p>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Preparing responses</p>
+          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
+          <p className="text-lg font-medium mb-1" style={{ color: "var(--text-primary)" }}>Checking conversations…</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>Updating status…</p>
         </section>
-        <ContinuityMonitoringPanel
-          routines={ROTATING_ROUTINES}
-          idleRoutines={IDLE_MONITORING_ROUTINES}
-          responsibilityItems={[]}
-          lastActivityMs={null}
-        />
       </div>
     );
   }
@@ -383,9 +311,9 @@ export default function OverviewPage() {
 
   const statusMessage =
     statusLevel === "healthy"
-      ? "All conversations maintained"
+      ? "All conversations stable"
       : statusLevel === "warning"
-        ? "Conversations need attention soon"
+        ? "Some conversations need attention soon"
         : "Conversations at risk";
 
   const nextMin = parseNextOutreachMinutes(data.next_action);
@@ -437,6 +365,9 @@ export default function OverviewPage() {
           />
           <p className="text-lg" style={{ color: "var(--text-secondary)" }}>{statusMessage}</p>
         </div>
+        <p className="text-xs mt-3" style={{ color: "var(--text-muted)" }}>
+          We only surface conversations where money may slip.
+        </p>
         {/* Forward-looking state sentence */}
         {!isPaused && (
           <p className="text-sm mt-3 font-medium" style={{ color: "var(--text-primary)" }}>
@@ -452,7 +383,7 @@ export default function OverviewPage() {
         )}
         {!isPaused && nextMin != null && nextMin > 0 && (
           <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
-            Next attention in ~{nextMin} min
+            Next check in ~{nextMin} min
           </p>
         )}
       </section>
@@ -469,53 +400,114 @@ export default function OverviewPage() {
           <span style={{ color: "var(--text-secondary)" }}>{apiError}</span>
         </div>
       )}
-      {monitoringHeartbeat && (
-        <div className="mb-4 py-2 px-4 rounded-lg text-sm transition-opacity" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-          <span style={{ color: "var(--text-secondary)" }}>{monitoringHeartbeat}</span>
-        </div>
-      )}
-      {invisibleWork && (
-        <div className="mb-4 py-2 px-4 rounded-lg text-sm transition-opacity duration-500" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", opacity: invisibleWork ? 1 : 0 }}>
-          <span style={{ color: "var(--text-muted)" }}>{invisibleWork}</span>
-        </div>
-      )}
-      {/* Live system guarantee: Always show at least one monitoring message */}
-      {!monitoringHeartbeat && !invisibleWork && !showContinuity && !apiError && data && (
-        <div className="mb-4 py-2 px-4 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-          <span style={{ color: "var(--text-muted)" }}>Watching continuity timing</span>
-        </div>
-      )}
-      <ContinuityMonitoringPanel
-        routines={ROTATING_ROUTINES}
-        idleRoutines={IDLE_MONITORING_ROUTINES}
-        responsibilityItems={responsibilityItems}
-        lastActivityMs={lastActivityMs}
-      />
 
-      <section className="mb-10">
-        <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Recently handled</h2>
-        <div className="space-y-2">
-          {(recentOutcomes.length > 0 ? recentOutcomes : ["Prepared response", "Recovered quiet conversation", "Call attended", "Follow-up scheduled"]).slice(0, 5).map((line, i) => (
-            <div
-              key={i}
-              className="py-3 px-4 rounded-lg"
-              style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
-            >
-              <span style={{ color: "var(--text-primary)" }}>{line}</span>
+      {/* SECTION 1 — Needs your attention (signal engine output) */}
+      {revenueSignals && (
+        <section className="mb-10">
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Needs your attention</h2>
+          {revenueSignals.has_data && (
+            revenueSignals.conversations_likely_quiet > 0 ||
+            revenueSignals.follow_ups_missed > 0 ||
+            revenueSignals.calls_unconfirmed > 0
+          ) ? (
+            <div className="space-y-3">
+              {revenueSignals.conversations_likely_quiet > 0 && (
+                <div className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p style={{ color: "var(--text-primary)" }} className="mb-1">
+                        {revenueSignals.conversations_likely_quiet} conversation{revenueSignals.conversations_likely_quiet !== 1 ? "s" : ""} likely went quiet
+                      </p>
+                      <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
+                        Suggested: Send a short reply or close the loop
+                      </p>
+                      {revenueSignals.quiet_time_sensitivity && (
+                        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                          {revenueSignals.quiet_time_sensitivity}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {revenueSignals.follow_ups_missed > 0 && (
+                <div className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p style={{ color: "var(--text-primary)" }} className="mb-1">
+                        {revenueSignals.follow_ups_missed} follow-up{revenueSignals.follow_ups_missed !== 1 ? "s" : ""} may have been missed
+                      </p>
+                      <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
+                        Suggested: Check if they still want help
+                      </p>
+                      {revenueSignals.missed_time_sensitivity && (
+                        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                          {revenueSignals.missed_time_sensitivity}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {revenueSignals.calls_unconfirmed > 0 && (
+                <div className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p style={{ color: "var(--text-primary)" }} className="mb-1">
+                        {revenueSignals.calls_unconfirmed} call{revenueSignals.calls_unconfirmed !== 1 ? "s" : ""} may not have been confirmed
+                      </p>
+                      <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
+                        Suggested: Send a quick confirmation message
+                      </p>
+                      {revenueSignals.unconfirmed_time_sensitivity && (
+                        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                          {revenueSignals.unconfirmed_time_sensitivity}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      </section>
-
-      {isDemoMode && (
-        <div className="mt-10 py-4 px-5 rounded-xl text-center" style={{ background: "var(--card)", borderColor: "var(--meaning-amber)", borderWidth: "1px" }}>
-          <p className="text-sm" style={{ color: "var(--meaning-amber)" }}>
-            First day — just watch. Connect your sources to see protection in action.
-          </p>
-        </div>
+          ) : revenueSignals.has_data ? (
+            <div className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+              <span style={{ color: "var(--text-muted)" }}>Everything stable — no signals detected</span>
+            </div>
+          ) : (
+            <div className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+              <span style={{ color: "var(--text-muted)" }}>We&apos;ll begin watching conversations as they happen.</span>
+            </div>
+          )}
+        </section>
       )}
+
+      {/* SECTION 2 — Conversations list */}
+      {recentOutcomes.length > 0 && (
+        <section className="mb-10">
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Recently handled</h2>
+          <div className="space-y-2">
+            {recentOutcomes.slice(0, 5).map((line, i) => (
+              <div
+                key={i}
+                className="py-3 px-4 rounded-lg"
+                style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
+              >
+                <span style={{ color: "var(--text-primary)" }}>{line}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* SECTION 3 — Active monitoring state (last) */}
+      {monitoringState && (
+        <section className="mb-10">
+          <div className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+            <span style={{ color: "var(--text-primary)" }}>{monitoringState}</span>
+          </div>
+        </section>
+      )}
+
     </div>
   );
 }

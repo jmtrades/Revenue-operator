@@ -11,6 +11,7 @@ import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
 import { emitOutboundEvent } from "@/lib/outbound-events";
 import { recordCommitmentSignal } from "@/lib/commitment";
 import { recordLeadReaction } from "@/lib/lead-memory";
+import { resolveConversationState, getConversationContext } from "@/lib/conversation-state/resolver";
 
 export interface RawWebhookPayload {
   workspace_id: string;
@@ -88,12 +89,33 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       throw new Error(`Conversation upsert failed: ${convError?.message ?? "unknown"}`);
     }
 
-    await db.from("messages").insert({
+    const { data: insertedMessage } = await db.from("messages").insert({
       conversation_id: conversation.id,
       role: "user",
       content: message,
       external_id: external_message_id ?? null,
+    }).select("id").single();
+
+    // Resolve conversation state BEFORE decision engine
+    const conversationContext = await getConversationContext(lead.id, conversation.id);
+    const stateResult = await resolveConversationState({
+      ...conversationContext,
+      message, // Use the new message
     });
+
+    // Store conversation state in message metadata
+    if (insertedMessage) {
+      await db
+        .from("messages")
+        .update({
+          metadata: {
+            conversation_state: stateResult.state,
+            state_confidence: stateResult.confidence,
+            state_reasoning_tags: stateResult.reasoning_tags,
+          },
+        })
+        .eq("id", (insertedMessage as { id: string }).id);
+    }
 
     const { stopSequence } = await import("@/lib/sequences/engine");
     const { cancelLeadPlan } = await import("@/lib/plans/lead-plan");
@@ -158,12 +180,19 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       currentState: currentState as import("@/lib/types").LeadState,
     });
 
+    // Store conversation state in event payload for decision engine
     const { data: eventRow } = await db.from("events").insert({
       workspace_id,
       event_type: "message_received",
       entity_type: "lead",
       entity_id: lead.id,
-      payload: { message, decision },
+      payload: {
+        message,
+        decision,
+        conversation_state: stateResult.state,
+        state_confidence: stateResult.confidence,
+        state_reasoning_tags: stateResult.reasoning_tags,
+      },
       trigger_source: "webhook",
     }).select("id").single();
 

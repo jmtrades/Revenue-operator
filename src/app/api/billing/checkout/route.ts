@@ -37,8 +37,8 @@ export async function POST(req: NextRequest) {
   const stripe = new Stripe(stripeKey);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://localhost:3000";
-  const successUrl = body.success_url ?? `${baseUrl}/dashboard?checkout=success`;
-  const cancelUrl = body.cancel_url ?? `${baseUrl}/dashboard/continue-protection`;
+  const successUrl = body.success_url ?? `${baseUrl}/connect?checkout=success`;
+  const cancelUrl = body.cancel_url ?? `${baseUrl}/activate`;
 
   let customerId = (ws as { stripe_customer_id?: string | null }).stripe_customer_id;
   if (!customerId) {

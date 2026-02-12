@@ -22,10 +22,13 @@ function isOpsAuthRoute(pathname: string): boolean {
 }
 
 function isPublicRoute(pathname: string): boolean {
-  if (pathname === "/" || pathname === "/activate") return true;
+  if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
   if (pathname.startsWith("/api/trial/start")) return true;
   if (pathname.startsWith("/api/billing/webhook")) return true;
   if (pathname.startsWith("/api/webhooks/")) return true;
+  if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;
+  if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
+  if (pathname.startsWith("/api/conversations/") && pathname.includes("/messages")) return true;
   if (pathname === "/api/auth/session" || pathname === "/api/auth/logout") return true;
   if (pathname === "/api/health") return true;
   return false;

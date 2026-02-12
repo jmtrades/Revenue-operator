@@ -16,7 +16,6 @@ import { DailySummaryBanner } from "@/components/DailySummaryBanner";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { HeartbeatBar } from "@/components/HeartbeatBar";
 import { SavedTodayBar } from "@/components/SavedTodayBar";
-import { isLiveCompleted, isValueCompleted } from "@/lib/live-gate";
 
 const nav = [
   { href: "/dashboard", label: "Overview" },
@@ -106,34 +105,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         <TrialBanner />
         <RenewalReminderBanner />
         <ConfidenceContractBanner />
-        <LiveGate />
         <div className="flex-1 overflow-auto">{children}</div>
       </main>
     </div>
   );
 }
 
-function LiveGate() {
-  const pathname = usePathname();
-  const { workspaceId } = useWorkspace();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (pathname === "/dashboard/live" || pathname === "/dashboard/value") return;
-    if (!pathname.startsWith("/dashboard")) return;
-    if (pathname === "/dashboard/onboarding") return;
-    if (!workspaceId) return;
-    if (!isLiveCompleted(workspaceId)) {
-      router.replace(`/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}`);
-      return;
-    }
-    if (!isValueCompleted(workspaceId)) {
-      router.replace(`/dashboard/value?workspace_id=${encodeURIComponent(workspaceId)}`);
-    }
-  }, [pathname, workspaceId, router]);
-
-  return null;
-}
 
 function WorkspaceSelect() {
   const router = useRouter();

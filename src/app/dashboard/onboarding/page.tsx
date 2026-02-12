@@ -10,9 +10,6 @@ function OnboardingContent() {
   const searchParams = useSearchParams();
   const { workspaceId, workspaces, loadWorkspaces } = useWorkspace();
   const [activating, setActivating] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [phoneEnabled, setPhoneEnabled] = useState(true);
-  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const activateAndRedirect = useCallback(async (workspaceId: string) => {
     setActivating(true);
@@ -22,22 +19,12 @@ function OnboardingContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "activate" }),
       });
-      if (phoneEnabled && phoneNumber.trim()) {
-        await fetch(`/api/workspaces/${workspaceId}/phone-continuity`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mode: "proxy", forwarding_number: phoneNumber.trim() }),
-        });
-      }
     } catch {
       // continue
     }
     setActivating(false);
-    setShowConfirmation(true);
-    setTimeout(() => {
-      router.push(`/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}`);
-    }, 3000);
-  }, [router, phoneEnabled, phoneNumber]);
+    router.push(`/dashboard?workspace_id=${encodeURIComponent(workspaceId)}`);
+  }, [router]);
 
   useEffect(() => {
     loadWorkspaces();
@@ -79,29 +66,12 @@ function OnboardingContent() {
     );
   }
 
-  if (showConfirmation) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <div className="max-w-md w-full text-center">
-          <div className="p-6 rounded-xl border" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <p className="text-sm mb-2" style={{ color: "var(--text-primary)" }}>
-              Nothing has been sent to anyone yet.
-            </p>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              We&apos;re only observing timing patterns first.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
       <div className="max-w-md w-full text-center">
-        <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Let&apos;s watch your conversations</h1>
+        <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Connect your calendar</h1>
         <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
-          Takes about 10 seconds
+          Connect your calendar so we can watch your conversations.
         </p>
         {wid ? (
           <div className="space-y-3">
@@ -119,7 +89,7 @@ function OnboardingContent() {
               className="w-full py-3 rounded-lg font-medium"
               style={{ background: "var(--surface)", color: "var(--text-secondary)", borderColor: "var(--border)", borderWidth: "1px" }}
             >
-              {activating ? "Starting…" : "Do this later"}
+              {activating ? "Connecting…" : "Skip for now"}
             </button>
           </div>
         ) : (
