@@ -36,12 +36,7 @@ function LivePageContent() {
     }
   }, [loading, workspaces.length, contextWid, urlWid, router]);
 
-  useEffect(() => {
-    if (workspaceId && isLiveCompleted(workspaceId)) {
-      router.replace(`/dashboard/value?workspace_id=${encodeURIComponent(workspaceId)}`);
-      return;
-    }
-  }, [workspaceId, router]);
+  // Removed value page redirect - go directly to dashboard
 
   useEffect(() => {
     if (phase !== "feed") return;
@@ -69,7 +64,7 @@ function LivePageContent() {
 
   const handleContinue = () => {
     setLiveCompleted(workspaceId);
-    router.push(workspaceId ? `/dashboard/value?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/value");
+    router.push(workspaceId ? `/dashboard?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard");
   };
 
   if (!workspaceId) {

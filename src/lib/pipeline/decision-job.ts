@@ -637,6 +637,39 @@ export async function runDecisionJob(
       to
     );
 
+    // Log reply_sent activation event (first reply only)
+    if (sendResult.status === "sent") {
+      try {
+        const { count } = await db
+          .from("outbound_messages")
+          .select("*", { count: "exact", head: true })
+          .eq("workspace_id", workspaceId)
+          .eq("status", "sent");
+        
+        if (count === 1) {
+          // First sent reply for this workspace
+          const { data: workspace } = await db
+            .from("workspaces")
+            .select("owner_id")
+            .eq("id", workspaceId)
+            .single();
+          
+          try {
+            await db.from("activation_events").insert({
+              workspace_id: workspaceId,
+              user_id: (workspace as { owner_id?: string })?.owner_id || null,
+              step: "reply_sent",
+              metadata: {},
+            });
+          } catch {
+            // Non-blocking
+          }
+        }
+      } catch {
+        // Non-blocking
+      }
+    }
+
     // Schedule next action based on playbook (if state-driven flow was used)
     const nextActionAt = (reasoning as { _next_action_at?: Date })._next_action_at;
     const conversationStateFromReasoning = (reasoning as { conversation_state?: string }).conversation_state;

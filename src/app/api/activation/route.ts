@@ -200,8 +200,7 @@ export async function POST(req: NextRequest) {
       { onConflict: "workspace_id" }
     );
 
-    const { runSyntheticProtectionBootstrap } = await import("@/lib/bootstrap/synthetic-protection");
-    await runSyntheticProtectionBootstrap(workspaceId);
+    // Synthetic protection bootstrap removed - only show real activity
 
     const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
     sendActivationConfirmationEmail(workspaceId).catch(() => {});

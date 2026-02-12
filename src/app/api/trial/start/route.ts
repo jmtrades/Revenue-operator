@@ -13,7 +13,12 @@ import { randomUUID } from "crypto";
 function jsonWithSession(body: { workspace_id: string }, userId: string, workspaceId: string) {
   const res = NextResponse.json(body);
   const cookie = createSessionCookie({ userId, workspaceId });
-  if (cookie) res.headers.set("Set-Cookie", cookie);
+  if (cookie) {
+    res.headers.set("Set-Cookie", cookie);
+  } else {
+    // Session secret missing - include workspace_id in response for fallback
+    return NextResponse.json({ ...body, session_disabled: true });
+  }
   return res;
 }
 
@@ -71,6 +76,8 @@ export async function POST(req: NextRequest) {
         risk_level: "balanced",
         hired_roles: hiredRoles,
         business_type: businessType,
+        autonomy_mode: "act", // Full automation - system acts automatically
+        responsibility_level: "guarantee", // Allows full autonomy
       });
       return jsonWithSession({ workspace_id: wsId }, uid, wsId);
     }
@@ -98,6 +105,8 @@ export async function POST(req: NextRequest) {
     risk_level: "balanced",
     hired_roles: hiredRoles,
     business_type: businessType,
+    autonomy_mode: "act", // Full automation - system acts automatically
+    responsibility_level: "guarantee", // Allows full autonomy
   });
 
   await db.from("activation_states").upsert(
@@ -105,8 +114,19 @@ export async function POST(req: NextRequest) {
     { onConflict: "workspace_id" }
   );
 
-  const { runSyntheticProtectionBootstrap } = await import("@/lib/bootstrap/synthetic-protection");
-  await runSyntheticProtectionBootstrap(workspaceId);
+  // Log signup activation event
+  try {
+    await db.from("activation_events").insert({
+      workspace_id: workspaceId,
+      user_id: userId,
+      step: "signup",
+      metadata: {},
+    });
+  } catch {
+    // Non-blocking
+  }
+
+  // Synthetic protection bootstrap removed - only show real activity
 
   return jsonWithSession({ workspace_id: workspaceId }, userId, workspaceId);
 }

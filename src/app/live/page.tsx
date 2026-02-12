@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { WorkspaceGate } from "@/components/WorkspaceGate";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface TimelineStep {
@@ -37,9 +38,25 @@ function LivePageContent() {
     }
   }, [loading, workspaces.length, contextWid, urlWid, router]);
 
-  // Auto-simulate if no activity after 10s
+  // Show prompt if no activity after 45s (production only - no auto-simulate)
+  const [showPrompt, setShowPrompt] = useState(false);
+  const isProduction = typeof window !== "undefined" && window.location.hostname !== "localhost";
+
   useEffect(() => {
-    if (!workspaceId || autoSimulated) return;
+    if (!workspaceId || autoSimulated || !isProduction) return;
+
+    const timer = setTimeout(() => {
+      if (messages.length === 0) {
+        setShowPrompt(true);
+      }
+    }, 45000);
+
+    return () => clearTimeout(timer);
+  }, [workspaceId, autoSimulated, messages.length, isProduction]);
+
+  // Auto-simulate only in dev
+  useEffect(() => {
+    if (!workspaceId || autoSimulated || isProduction) return;
 
     const timer = setTimeout(async () => {
       // Check if we have any conversations
@@ -47,7 +64,7 @@ function LivePageContent() {
       const checkData = await checkRes.json();
       
       if (!checkData.activity || checkData.activity.length === 0) {
-        // Auto-simulate
+        // Auto-simulate in dev only
         try {
           await fetch("/api/dev/simulate-inbound", { method: "POST" });
           setAutoSimulated(true);
@@ -58,7 +75,7 @@ function LivePageContent() {
     }, 10000);
 
     return () => clearTimeout(timer);
-  }, [workspaceId, autoSimulated]);
+  }, [workspaceId, autoSimulated, isProduction]);
 
   // Poll for conversation events
   useEffect(() => {
@@ -128,6 +145,11 @@ function LivePageContent() {
                   message: firstAssistantMsg.content,
                 });
                 setIsReady(true);
+                
+                // Auto-redirect after 3 seconds
+                setTimeout(() => {
+                  router.push(workspaceId ? `/dashboard?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard");
+                }, 3000);
               } else if (userMessages.length > 0) {
                 // Inbound exists but no outbound yet
                 steps.push({
@@ -191,7 +213,7 @@ function LivePageContent() {
           <div className="space-y-4 mb-6">
             {timeline.length > 0 ? (
               timeline.map((step, i) => (
-                <div key={step.id} className="flex items-start gap-3">
+                <div key={step.id || i} className="flex items-start gap-3">
                   <div className="shrink-0 mt-1">
                     {step.completed ? (
                       <span className="inline-block w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "var(--meaning-green)" }}>
@@ -213,6 +235,11 @@ function LivePageContent() {
                   </div>
                 </div>
               ))
+            ) : showPrompt ? (
+              <div className="text-center py-8 p-4 rounded-lg" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
+                <p className="text-sm mb-2" style={{ color: "var(--text-primary)" }}>Text the number from your phone to see it work.</p>
+                <p className="text-xs" style={{ color: "var(--text-muted)" }}>Send: &quot;Hi, I&apos;m interested&quot;</p>
+              </div>
             ) : (
               <div className="text-center py-8" style={{ color: "var(--text-muted)" }}>
                 <p className="text-sm">Waiting for message…</p>
@@ -222,26 +249,33 @@ function LivePageContent() {
 
           {/* Chat bubbles if messages exist */}
           {messages.length > 0 && (
-            <div className="space-y-3 mb-6 max-h-[300px] overflow-y-auto">
-              {messages.map((msg: { role: string; content: string; created_at: string }, i: number) => (
-                <div
-                  key={i}
-                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                >
+            <>
+              <div className="space-y-3 mb-4 max-h-[300px] overflow-y-auto">
+                {messages.map((msg: { role: string; content: string; created_at: string }, i: number) => (
                   <div
-                    className="max-w-[80%] p-3 rounded-lg text-sm"
-                    style={{
-                      background: msg.role === "user" ? "var(--meaning-blue)" : "var(--surface)",
-                      color: msg.role === "user" ? "#fff" : "var(--text-primary)",
-                      borderColor: "var(--border)",
-                      borderWidth: msg.role === "assistant" ? "1px" : "0",
-                    }}
+                    key={i}
+                    className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                   >
-                    {msg.content}
+                    <div
+                      className="max-w-[80%] p-3 rounded-lg text-sm"
+                      style={{
+                        background: msg.role === "user" ? "var(--meaning-blue)" : "var(--surface)",
+                        color: msg.role === "user" ? "#fff" : "var(--text-primary)",
+                        borderColor: "var(--border)",
+                        borderWidth: msg.role === "assistant" ? "1px" : "0",
+                      }}
+                    >
+                      {msg.content}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+              {isReady && messages.some((m: { role: string }) => m.role === "assistant") && (
+                <p className="text-xs text-center mb-4" style={{ color: "var(--text-muted)" }}>
+                  You can step in at any time — nothing is locked.
+                </p>
+              )}
+            </>
           )}
 
           {isReady && (
@@ -271,7 +305,9 @@ export default function LivePage() {
         <p style={{ color: "var(--text-muted)" }}>Preparing…</p>
       </div>
     }>
-      <LivePageContent />
+      <WorkspaceGate>
+        <LivePageContent />
+      </WorkspaceGate>
     </Suspense>
   );
 }

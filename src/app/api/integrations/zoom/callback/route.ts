@@ -97,8 +97,7 @@ export async function GET(req: NextRequest) {
 
     await db.from("settings").update({ call_aware_enabled: true }).eq("workspace_id", workspaceId);
 
-    const { runSyntheticProtectionBootstrap } = await import("@/lib/bootstrap/synthetic-protection");
-    await runSyntheticProtectionBootstrap(workspaceId);
+    // Synthetic protection bootstrap removed - only show real activity
 
     const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
     sendActivationConfirmationEmail(workspaceId).catch(() => {});

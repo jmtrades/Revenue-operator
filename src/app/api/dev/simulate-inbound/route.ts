@@ -14,6 +14,15 @@ import { enqueue } from "@/lib/queue";
 import { burstDrain } from "@/lib/queue/burst-drain";
 
 export async function POST(req: NextRequest) {
+  // Security: Block in production unless DEV_SIM_SECRET is provided
+  const isProduction = process.env.NODE_ENV === "production";
+  const devSecret = req.headers.get("authorization")?.replace("Bearer ", "");
+  const expectedSecret = process.env.DEV_SIM_SECRET;
+
+  if (isProduction && (!expectedSecret || devSecret !== expectedSecret)) {
+    return NextResponse.json({ error: "Not available in production" }, { status: 403 });
+  }
+
   const session = getSession(req);
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -26,13 +26,8 @@ export default function ActivatePage() {
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || submitting) return; // Prevent double submission
     setSubmitting(true);
-    setProgressStep(0);
-    
-    // Progress animation steps
-    setTimeout(() => setProgressStep(1), 600);
-    setTimeout(() => setProgressStep(2), 1200);
     
     try {
       const res = await fetch("/api/trial/start", {
@@ -44,19 +39,18 @@ export default function ActivatePage() {
           business_type: null,
         }),
       });
+      
+      if (!res.ok) {
+        throw new Error("Failed to start trial");
+      }
+      
       const data = await res.json();
       const workspaceId = data.workspace_id;
+      
       if (!workspaceId) {
-        setTimeout(() => router.push("/connect"), 1800);
-        return;
+        throw new Error("No workspace ID returned");
       }
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem("revenue_last_workspace_id", workspaceId);
-        } catch {
-          // ignore
-        }
-      }
+      
       const base = typeof window !== "undefined" ? window.location.origin : "";
       const checkoutRes = await fetch("/api/billing/checkout", {
         method: "POST",
@@ -67,17 +61,25 @@ export default function ActivatePage() {
           cancel_url: `${base}/activate`,
         }),
       });
+      
+      if (!checkoutRes.ok) {
+        throw new Error("Failed to create checkout");
+      }
+      
       const checkoutData = await checkoutRes.json();
       if (checkoutData.checkout_url) {
+        // Immediate redirect to Stripe - no delay
         window.location.href = checkoutData.checkout_url;
         return;
       }
-      // After checkout success, go directly to connect page
-      setTimeout(() => router.push(`/connect?workspace_id=${workspaceId}`), 1800);
-    } catch {
-      setTimeout(() => router.push("/connect"), 1800);
-    } finally {
-      // Keep progress visible during redirect
+      
+      // Fallback: go to connect if checkout URL missing
+      router.push(`/connect?workspace_id=${encodeURIComponent(workspaceId)}`);
+    } catch (error) {
+      console.error("[activate] Error:", error);
+      setSubmitting(false); // Allow retry on error
+      // Show error state - user can retry
+      // Don't throw - let user see error and retry
     }
   };
 
@@ -94,7 +96,7 @@ export default function ActivatePage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Connecting your workspace…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Preparing checkout…</p>
       </div>
     );
   }

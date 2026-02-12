@@ -37,8 +37,7 @@ export async function GET(req: NextRequest) {
   }
 
   const startTime = Date.now();
-  const { runSyntheticProtectionBootstrap } = await import("@/lib/bootstrap/synthetic-protection");
-  await runSyntheticProtectionBootstrap(workspaceId);
+  // Synthetic protection bootstrap removed - only show real activity
 
   const { ensureWeeklyExpectation, computeProjectionImpact } = await import("@/lib/forecast/expectation");
   const expectedWeekly = await ensureWeeklyExpectation(workspaceId);
@@ -212,7 +211,8 @@ export async function GET(req: NextRequest) {
     const created_at = (a as { created_at: string }).created_at;
     const p = ((a as { payload?: unknown }).payload ?? {}) as Record<string, unknown>;
     const innerAction = p.action as string | undefined;
-    if ((action === "send_message" || action === "simulated_send_message") && innerAction) {
+    // Only show real messages, filter out simulated
+    if (action === "send_message" && innerAction && !(p as { simulated?: boolean })?.simulated) {
       if (["recovery", "win_back", "reminder", "prep_info", "booking", "call_invite", "follow_up"].includes(innerAction)) {
         if (!actionsByLead[aid]) actionsByLead[aid] = [];
         actionsByLead[aid].push({ action: innerAction, created_at });
@@ -395,7 +395,7 @@ export async function GET(req: NextRequest) {
     .from("action_logs")
     .select("created_at")
     .eq("workspace_id", workspaceId)
-    .in("action", ["send_message", "simulated_send_message"])
+    .eq("action", "send_message")
     .order("created_at", { ascending: false })
     .limit(1)
     .single();
@@ -412,9 +412,10 @@ export async function GET(req: NextRequest) {
     const nextMins = nextScheduled
       ? Math.max(0, Math.ceil((new Date((nextScheduled as { created_at: string }).created_at).getTime() - Date.now()) / 60000))
       : 30;
-    const monitorCount = Math.max(1, hotLeads.length + atRisk.length);
+    // Show real count only - no fallback to "1" to avoid fake numbers
+    const monitorCount = hotLeads.length + atRisk.length;
     const monitoringEntries = [
-      { what: `Watching over ${monitorCount} active lead${monitorCount !== 1 ? "s" : ""}`, who: "System", when: new Date().toISOString(), is_monitoring: true },
+      { what: monitorCount > 0 ? `Watching over ${monitorCount} active lead${monitorCount !== 1 ? "s" : ""}` : "Monitoring conversations", who: "System", when: new Date().toISOString(), is_monitoring: true },
       { what: `Next check in ~${nextMins} min`, who: "System", when: new Date().toISOString(), is_monitoring: true },
       { what: "Checking conversations", who: "System", when: new Date().toISOString(), is_monitoring: true },
     ];
@@ -428,11 +429,11 @@ export async function GET(req: NextRequest) {
     .gte("created_at", todayStart.toISOString());
 
   const todayReplies = (todayActions ?? []).filter(
-    (a: { action: string }) => a.action === "send_message" || a.action === "simulated_send_message"
+    (a: { action: string; payload?: { simulated?: boolean } }) => a.action === "send_message" && !a.payload?.simulated
   ).length;
 
   const todayActionPayloads = (todayActions ?? []).filter(
-    (a: { action: string }) => a.action === "send_message" || a.action === "simulated_send_message"
+    (a: { action: string; payload?: { simulated?: boolean } }) => a.action === "send_message" && !a.payload?.simulated
   ).map((a: { payload?: { action?: string } }) => (a.payload as { action?: string })?.action);
   const hasReengagementActions = todayActionPayloads.some((p: string | undefined) => p === "recovery" || p === "win_back" || p === "offer");
   const hasAttendanceActions = todayActionPayloads.some((p: string | undefined) => p === "reminder" || p === "prep_info");
@@ -747,7 +748,7 @@ export async function GET(req: NextRequest) {
     .from("action_logs")
     .select("entity_id")
     .eq("workspace_id", workspaceId)
-    .in("action", ["send_message", "simulated_send_message"])
+    .eq("action", "send_message")
     .gte("created_at", sevenDaysAgo.toISOString());
   const leadsTouched = new Set((recentSent ?? []).map((a: { entity_id: string }) => a.entity_id)).size;
 

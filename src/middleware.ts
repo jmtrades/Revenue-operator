@@ -24,8 +24,10 @@ function isOpsAuthRoute(pathname: string): boolean {
 function isPublicRoute(pathname: string): boolean {
   if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
   if (pathname.startsWith("/api/trial/start")) return true;
+  if (pathname.startsWith("/api/billing/checkout")) return true;
   if (pathname.startsWith("/api/billing/webhook")) return true;
   if (pathname.startsWith("/api/webhooks/")) return true;
+  if (pathname.startsWith("/api/webhooks/inbound-generic")) return true;
   if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;
   if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
   if (pathname.startsWith("/api/conversations/") && pathname.includes("/messages")) return true;
@@ -66,11 +68,21 @@ export function middleware(req: NextRequest) {
   const session = getSessionFromCookie(cookieHeader);
 
   // No session: redirect dashboard to activate, API to 401
+  // BUT: if workspace_id is in query params, allow access (for post-checkout redirects)
   if (!session) {
+    const workspaceIdParam = req.nextUrl.searchParams.get("workspace_id");
     if (pathname.startsWith("/dashboard")) {
+      // Allow dashboard access if workspace_id is in URL (post-checkout flow)
+      if (workspaceIdParam) {
+        return NextResponse.next();
+      }
       return NextResponse.redirect(new URL("/activate", req.url));
     }
     if (pathname.startsWith("/api/")) {
+      // Allow API access if workspace_id is in query (for connect/live pages)
+      if (workspaceIdParam && (pathname.includes("/command-center") || pathname.includes("/integrations"))) {
+        return NextResponse.next();
+      }
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return NextResponse.next();

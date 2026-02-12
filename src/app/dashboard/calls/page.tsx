@@ -85,7 +85,7 @@ export default function CalendarPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-3xl">
-        <PageHeader title="Calendar" subtitle="Attendance confidence and preparation state." />
+        <PageHeader title="Calendar" subtitle="Upcoming calls and attendance status." />
         <EmptyState icon="watch" title="Watching for new conversations" subtitle="Maintaining continuity" />
       </div>
     );
@@ -117,11 +117,7 @@ export default function CalendarPage() {
                     {c.lead?.company && c.lead?.company !== name && (
                       <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{c.lead.company}</p>
                     )}
-                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
-                      <span>Attendance confidence: {confidence}</span>
-                      <span>Preparation state: {prep}</span>
-                    </div>
-                    <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
+                    <p className="text-xs mt-3" style={{ color: "var(--text-muted)" }}>
                       {new Date(c.call_started_at).toLocaleString()}
                     </p>
                     {confidence === "Low" && (

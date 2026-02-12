@@ -254,6 +254,45 @@ export default function OverviewPage() {
     }
   }, [workspaceId, data]);
 
+  // Log dashboard_viewed_next_day activation event
+  useEffect(() => {
+    if (!workspaceId || !data) return;
+    
+    const checkAndLog = async () => {
+      try {
+        // Use workspace data from context or fetch
+        const workspacesRes = await fetch("/api/workspaces");
+        const workspacesData = await workspacesRes.json();
+        const workspace = (workspacesData.workspaces || []).find((w: { id: string }) => w.id === workspaceId);
+        const createdAt = workspace?.created_at;
+        if (!createdAt) return;
+        
+        const signupTime = new Date(createdAt).getTime();
+        const now = Date.now();
+        const hoursSinceSignup = (now - signupTime) / (1000 * 60 * 60);
+        
+        // If viewed between 12-48 hours after signup
+        if (hoursSinceSignup >= 12 && hoursSinceSignup <= 48) {
+          // Check if already logged
+          const checkRes = await fetch(`/api/activation-events?workspace_id=${encodeURIComponent(workspaceId)}&step=dashboard_viewed_next_day`);
+          const checkData = await checkRes.json();
+          
+          if (!checkData.exists) {
+            await fetch("/api/activation-events", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ step: "dashboard_viewed_next_day", workspace_id: workspaceId }),
+            });
+          }
+        }
+      } catch {
+        // Non-blocking
+      }
+    };
+    
+    checkAndLog();
+  }, [workspaceId, data]);
+
   if (workspaces.length === 0) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-8">
@@ -327,9 +366,10 @@ export default function OverviewPage() {
         data.active_protections.attendance_protections +
         data.active_protections.recoveries_running
       : 0);
+  // Show real count only - no fallback to "1" to avoid fake numbers
   const displayMaintained = Math.max(
     (data.hot_leads?.length ?? 0) + (data.at_risk?.length ?? 0) + (data.recovered?.length ?? 0),
-    (data.coverage?.active_conversations ?? 0) || maintainedCount || 1
+    (data.coverage?.active_conversations ?? 0) || maintainedCount || 0
   );
   const activityList = data.activity ?? [];
   const responsibilityItems = activityList.slice(0, 8).map((a) => {
@@ -352,7 +392,11 @@ export default function OverviewPage() {
     <div className="p-8 max-w-3xl mx-auto" style={{ color: "var(--text-primary)" }}>
       <section className="text-center py-12 px-4 rounded-xl mb-10" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
         <h1 className="text-3xl font-semibold tracking-tight mb-2">
-          We are maintaining {isPaused ? 0 : displayMaintained} conversation{displayMaintained !== 1 ? "s" : ""} for you
+          {displayMaintained === 0 && !isPaused ? (
+            "We're watching for conversations"
+          ) : (
+            `We are maintaining ${isPaused ? 0 : displayMaintained} conversation${displayMaintained !== 1 ? "s" : ""} for you`
+          )}
         </h1>
         <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>
           Nothing will be sent without fitting the conversation.
@@ -478,6 +522,17 @@ export default function OverviewPage() {
               <span style={{ color: "var(--text-muted)" }}>We&apos;ll begin watching conversations as they happen.</span>
             </div>
           )}
+        </section>
+      )}
+
+      {/* Empty state retention message */}
+      {displayMaintained === 0 && !isPaused && recentOutcomes.length === 0 && (
+        <section className="mb-10">
+          <div className="py-4 px-4 rounded-lg text-center" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+            <p className="text-sm" style={{ color: "var(--text-primary)" }}>
+              We&apos;ll handle the next message instantly — you don&apos;t need to stay here.
+            </p>
+          </div>
         </section>
       )}
 

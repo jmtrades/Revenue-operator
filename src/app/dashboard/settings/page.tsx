@@ -28,6 +28,9 @@ export default function SettingsPage() {
     notifications: true,
   });
   const [showBusinessContext, setShowBusinessContext] = useState(false);
+  const [showSources, setShowSources] = useState(false);
+  const [twilioPhone, setTwilioPhone] = useState<string | null>(null);
+  const [inboundWebhookUrl, setInboundWebhookUrl] = useState("");
   const [businessContext, setBusinessContext] = useState({
     business_name: "",
     offer_summary: "",
@@ -120,6 +123,20 @@ export default function SettingsPage() {
         }
       })
       .catch(() => {});
+    // Fetch Twilio phone number
+    fetch("/api/integrations/twilio/auto-provision", { method: "POST" })
+      .then((r) => r.ok ? r.json() : Promise.resolve(null))
+      .then((d: { phone_number?: string } | null) => {
+        if (d?.phone_number) {
+          setTwilioPhone(d.phone_number);
+        }
+      })
+      .catch(() => {});
+    // Build inbound webhook URL
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    if (baseUrl && workspaceId) {
+      setInboundWebhookUrl(`${baseUrl}/api/webhooks/inbound-generic?workspace_id=${encodeURIComponent(workspaceId)}`);
+    }
   }, [workspaceId]);
 
   useEffect(() => {
@@ -279,6 +296,85 @@ export default function SettingsPage() {
                   <label htmlFor="discounts_allowed" className="text-sm" style={{ color: "var(--text-secondary)" }}>
                     Allow discounts in negotiations
                   </label>
+                </div>
+              </div>
+            )}
+          </section>
+
+          <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Sources</h2>
+            <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>
+              Connect where your leads come from
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowSources(!showSources)}
+              className="text-sm mb-3"
+              style={{ color: "var(--meaning-blue)" }}
+            >
+              {showSources ? "−" : "+"} {showSources ? "Hide" : "Show"} sources
+            </button>
+            {showSources && (
+              <div className="space-y-4 mt-4">
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>SMS</label>
+                  {twilioPhone ? (
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-mono" style={{ color: "var(--text-primary)" }}>{twilioPhone}</p>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>Active</span>
+                    </div>
+                  ) : (
+                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>Not connected</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Email</label>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>Coming soon</p>
+                </div>
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Webhook URL (for CRMs)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={inboundWebhookUrl}
+                      className="flex-1 px-3 py-2 rounded text-xs font-mono"
+                      style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(inboundWebhookUrl);
+                        setSaved(true);
+                        setTimeout(() => setSaved(false), 2000);
+                      }}
+                      className="px-3 py-2 rounded text-xs"
+                      style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <details className="mt-2">
+                    <summary className="text-xs cursor-pointer" style={{ color: "var(--text-muted)" }}>Payload schema</summary>
+                    <pre className="mt-2 p-3 rounded text-xs overflow-x-auto" style={{ background: "var(--surface)", color: "var(--text-secondary)" }}>
+{`POST ${inboundWebhookUrl}
+Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
+
+{
+  "lead": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890",
+    "company": "Acme Corp"
+  },
+  "message": {
+    "content": "Hi, I'm interested",
+    "channel": "sms"
+  },
+  "workspace_id": "${workspaceId}"
+}`}
+                    </pre>
+                  </details>
                 </div>
               </div>
             )}

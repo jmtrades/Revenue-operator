@@ -30,7 +30,7 @@ function OnboardingContent() {
     loadWorkspaces();
   }, [loadWorkspaces]);
 
-  const wid = workspaceId || searchParams.get("workspace_id") || workspaces[0]?.id;
+  const wid = workspaceId || searchParams.get("workspace_id") || (workspaces.length > 0 ? workspaces[0]?.id : null);
 
   useEffect(() => {
     if (!wid) return;
