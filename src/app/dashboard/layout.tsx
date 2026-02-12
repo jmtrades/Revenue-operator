@@ -104,7 +104,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         <CoverageLimitedBanner />
         <TrialBanner />
         <RenewalReminderBanner />
-        <ConfidenceContractBanner />
+        {/* ConfidenceContractBanner removed - exposes AI logic, breaks trust */}
         <div className="flex-1 overflow-auto">{children}</div>
       </main>
     </div>
@@ -116,7 +116,7 @@ function WorkspaceSelect() {
   const router = useRouter();
   const pathname = usePathname();
   const { workspaceId, workspaces, loading, error, setWorkspaceId, retry } = useWorkspace();
-  const effectiveId = workspaceId || workspaces[0]?.id || "";
+  const effectiveId = workspaceId || (workspaces.length > 0 ? workspaces[0]?.id : "") || "";
 
   const handleChange = (id: string) => {
     setWorkspaceId(id);

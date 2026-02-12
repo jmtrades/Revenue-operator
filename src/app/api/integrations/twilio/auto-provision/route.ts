@@ -93,11 +93,32 @@ export async function POST(req: NextRequest) {
       console.warn("[twilio-auto-provision] Failed to purchase number, using proxy", error);
     }
 
-    // Fallback: use existing proxy number if available
+    // Fallback: use proxy number if purchase failed
     if (!phoneNumber) {
       const proxyNumber = process.env.TWILIO_PROXY_NUMBER;
       if (proxyNumber) {
         phoneNumber = proxyNumber;
+        // Still configure webhooks even with proxy
+        try {
+          const updateUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
+          const updateParams = new URLSearchParams({
+            PhoneNumber: proxyNumber,
+            SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
+            SmsMethod: "POST",
+            StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
+            StatusCallbackMethod: "POST",
+          });
+          await fetch(updateUrl, {
+            method: "POST",
+            headers: {
+              Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: updateParams.toString(),
+          });
+        } catch {
+          // Proxy number may not be configurable, continue anyway
+        }
       }
     }
 

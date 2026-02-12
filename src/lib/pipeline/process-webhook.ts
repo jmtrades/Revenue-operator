@@ -96,6 +96,31 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       external_id: external_message_id ?? null,
     }).select("id").single();
 
+    // Log inbound_received activation event (first message only)
+    try {
+      const { count } = await db
+        .from("messages")
+        .select("*", { count: "exact", head: true })
+        .eq("conversation_id", conversation.id)
+        .eq("role", "user");
+      
+      if (count === 1) {
+        // First inbound message for this workspace
+        try {
+          await db.from("activation_events").insert({
+            workspace_id,
+            user_id: (ws as { owner_id?: string })?.owner_id || null,
+            step: "inbound_received",
+            metadata: {},
+          });
+        } catch {
+          // Non-blocking
+        }
+      }
+    } catch {
+      // Non-blocking
+    }
+
     // Resolve conversation state BEFORE decision engine
     const conversationContext = await getConversationContext(lead.id, conversation.id);
     const stateResult = await resolveConversationState({

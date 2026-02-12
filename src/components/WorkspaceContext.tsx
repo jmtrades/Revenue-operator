@@ -73,12 +73,21 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      if (list.length === 0) {
+        setWorkspaceIdState("");
+        setWorkspaceName("");
+        return;
+      }
+
       const match = candidate && list.some((w) => w.id === candidate)
         ? list.find((w) => w.id === candidate)!
         : list[0];
-      setWorkspaceIdState(match.id);
-      setWorkspaceName(match.name ?? "");
-      persistWorkspaceId(match.id);
+      
+      if (match) {
+        setWorkspaceIdState(match.id);
+        setWorkspaceName(match.name ?? "");
+        persistWorkspaceId(match.id);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Connection issue");
       setWorkspaces([]);

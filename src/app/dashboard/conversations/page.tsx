@@ -96,7 +96,7 @@ export default function ConversationsPage() {
       displayName: c.lead_name ?? c.lead_email ?? c.company ?? "—",
       company: c.company,
       last_activity_at: c.last_activity_at,
-      warmth_score: Math.max(0, 100 - Math.min(100, (now - new Date(c.last_activity_at).getTime()) / (24 * 60 * 60 * 1000) * 10)),
+      // warmth_score removed - exposes AI logic, breaks trust
     }))
     .slice(0, 20);
 
