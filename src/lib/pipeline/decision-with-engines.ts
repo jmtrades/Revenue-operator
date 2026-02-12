@@ -89,6 +89,16 @@ export async function runDecisionJobWithEngines(
     .single();
   if (!lead) return;
 
+  if ((lead as { opt_out?: boolean }).opt_out) {
+    await logRestraint(workspaceId, leadId, "opt_out", {
+      reason_code: "opt_out",
+      ...buildLossPreventionPayload(revenueState, decision.intervention_type, decision.reason_code ?? "opt_out", 0),
+    });
+    const recheckAt = (() => { const t = new Date(); t.setDate(t.getDate() + 30); return t; })();
+    await setLeadPlan(workspaceId, leadId, { next_action_type: "observe", next_action_at: recheckAt.toISOString() });
+    return;
+  }
+
   const { data: convRow } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).single();
   const convId = (convRow as { id?: string })?.id;
   if (!convId) {

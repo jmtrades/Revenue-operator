@@ -43,7 +43,7 @@ export default function PerformancePage() {
   if (!workspaceId) {
     return (
       <div className="p-8">
-        <p style={{ color: "var(--text-muted)" }}>Select an account.</p>
+        <p style={{ color: "var(--text-muted)" }}>Select where we maintain conversations.</p>
       </div>
     );
   }

@@ -37,7 +37,7 @@ export default function ContinueProtectionPage() {
   if (!workspaceId) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-8">
-        <p className="text-stone-500">Select an account.</p>
+        <p className="text-stone-500">Select where we maintain conversations.</p>
       </div>
     );
   }

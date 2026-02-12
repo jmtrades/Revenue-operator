@@ -124,7 +124,7 @@ export default function LeadViewPage() {
     <div className="min-h-screen p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
       <div className="max-w-2xl mx-auto">
         <Link href="/dashboard/conversations" className="text-sm mb-4 inline-block" style={{ color: "var(--text-muted)" }}>
-          ← Back to conversations
+          ← Conversations
         </Link>
 
         <div className="p-4 rounded-xl mb-6" style={{ background: workspacePaused ? "rgba(243, 156, 18, 0.1)" : "rgba(46, 204, 113, 0.1)", borderColor: workspacePaused ? "var(--meaning-amber)" : "var(--meaning-green)", borderWidth: "1px" }}>
@@ -193,7 +193,7 @@ export default function LeadViewPage() {
           )}
           {risks.length > 0 && (
             <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Risk signals</h2>
+              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Risks to attendance</h2>
               <ul className="py-3 px-4 rounded-lg space-y-2" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 {risks.map((r, i) => (
                   <li key={i} className="list-disc list-inside" style={{ color: "var(--text-primary)" }}>{r}</li>
@@ -203,7 +203,7 @@ export default function LeadViewPage() {
           )}
           {preCallBrief?.recommended_strategy && (
             <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Suggested approach for the call</h2>
+              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Suggested approach</h2>
               <p className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--meaning-blue)", borderWidth: "1px", color: "var(--text-primary)" }}>
                 {preCallBrief.recommended_strategy}
               </p>
@@ -235,18 +235,18 @@ export default function LeadViewPage() {
                   className="px-4 py-2 rounded-lg font-medium"
                   style={{ background: "var(--meaning-green)", color: "#0E1116" }}
                 >
-                  Request follow-up
+                  Add follow-up touch
                 </button>
                 <button
                   onClick={() => setProofOpen(true)}
                   className="px-4 py-2 rounded-lg"
                   style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                 >
-                  View details
+                  See what we&apos;ve done
                 </button>
               </div>
               <section>
-                <h3 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Conversation</h3>
+                <h3 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Message thread</h3>
                 {messages.length === 0 ? (
                   <p className="text-sm" style={{ color: "var(--text-muted)" }}>No messages yet</p>
                 ) : (

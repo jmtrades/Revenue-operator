@@ -120,7 +120,7 @@ export function TrialBanner() {
             {renewalDate ? `Renewal on ${renewalDate}. ` : ""}
             {hasExpectation
               ? `We expect ${ew!.low}–${ew!.high} conversations per week.`
-              : "Check Overview for your projection."}
+              : "Activity appears in Activity as we work."}
           </p>
         </div>
         <button onClick={() => setDismissed(true)} className="shrink-0" style={{ color: "var(--text-muted)" }}>×</button>

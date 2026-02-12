@@ -1,5 +1,6 @@
 /**
- * Stripe webhook: subscription created/updated/deleted
+ * Stripe webhook: subscription created/updated/deleted.
+ * Signature verified; handlers are idempotent (replay = same DB state).
  */
 
 export const dynamic = "force-dynamic";

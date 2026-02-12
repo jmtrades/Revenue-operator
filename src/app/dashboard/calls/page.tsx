@@ -54,19 +54,19 @@ export default function CalendarPage() {
     (a, b) => new Date(a.call_started_at).getTime() - new Date(b.call_started_at).getTime()
   );
 
-  function callStability(c: CalendarCall): "Low" | "Medium" | "High" {
+  function attendanceConfidence(c: CalendarCall): "Low" | "Medium" | "High" {
     if (noShows.some((n) => n.session_id === c.session_id)) return "Low";
     if (confirmationNeeded.some((n) => n.session_id === c.session_id)) return "Medium";
     return "High";
   }
 
   function stabilityPct(c: CalendarCall): number {
-    const s = callStability(c);
+    const s = attendanceConfidence(c);
     return s === "High" ? 100 : s === "Medium" ? 60 : 25;
   }
 
-  function preparationState(c: CalendarCall): "Prepared" | "Confirming" | "Monitoring" | "Recovering" {
-    if (noShows.some((n) => n.session_id === c.session_id)) return "Recovering";
+  function preparationState(c: CalendarCall): "Prepared" | "Confirming" | "Monitoring" {
+    if (noShows.some((n) => n.session_id === c.session_id)) return "Monitoring";
     if (confirmationNeeded.some((n) => n.session_id === c.session_id)) return "Confirming";
     if (highConfidence.some((h) => h.session_id === c.session_id)) return "Prepared";
     return "Monitoring";
@@ -75,7 +75,7 @@ export default function CalendarPage() {
   if (!workspaceId) {
     return (
       <div className="p-8">
-        <p style={{ color: "var(--text-muted)" }}>Select an account.</p>
+        <p style={{ color: "var(--text-muted)" }}>Select where we maintain conversations.</p>
       </div>
     );
   }
@@ -83,8 +83,8 @@ export default function CalendarPage() {
   return (
     <div className="p-8 max-w-3xl">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Calendar</h1>
-        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>Calls arrive prepared. We maintain attendance confidence.</p>
+        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Calls</h1>
+        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>Attendance confidence and preparation state.</p>
       </header>
 
       {loading ? (
@@ -99,19 +99,16 @@ export default function CalendarPage() {
           style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
         >
           <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-          <p style={{ color: "var(--text-primary)" }}>Protecting booked calls</p>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>No calls in the next 48 hours. We prepare each one when booked.</p>
-          <Link href="/dashboard/settings" className="mt-4 inline-block text-sm" style={{ color: "var(--meaning-blue)" }}>
-            Connect calendar →
-          </Link>
+          <p style={{ color: "var(--text-primary)" }}>Protecting upcoming calls</p>
+          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>We prepare each call when it lands on your calendar.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {allCalls.map((c) => {
-            const stability = callStability(c);
+            const confidence = attendanceConfidence(c);
             const prep = preparationState(c);
             const pct = stabilityPct(c);
-            const barColor = stability === "High" ? "var(--meaning-green)" : stability === "Medium" ? "var(--meaning-amber)" : "var(--meaning-red)";
+            const barColor = confidence === "High" ? "var(--meaning-green)" : confidence === "Medium" ? "var(--meaning-amber)" : "var(--meaning-red)";
             const name = c.lead?.name ?? c.lead?.company ?? "—";
             return (
               <div
@@ -127,12 +124,12 @@ export default function CalendarPage() {
                     )}
                     <div className="mt-3">
                       <div className="flex justify-between text-xs mb-1 flex-wrap gap-1" style={{ color: "var(--text-muted)" }}>
-                        <span>Call stability: {stability}</span>
+                        <span>Attendance confidence: {confidence}</span>
                         <span className="flex items-center gap-1">
                           {rescueIds.has(c.session_id) && (
-                            <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: "rgba(243, 156, 18, 0.2)", color: "var(--meaning-amber)" }}>Rescue in progress</span>
+                            <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: "rgba(243, 156, 18, 0.2)", color: "var(--meaning-amber)" }}>Recovering</span>
                           )}
-                          {prep}
+                          <span>Preparation: {prep}</span>
                         </span>
                       </div>
                       <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
@@ -151,9 +148,6 @@ export default function CalendarPage() {
                     View details
                   </Link>
                 </div>
-                <p className="text-xs mt-2" style={{ color: "var(--text-secondary)" }}>
-                  Calls arrive prepared. We maintain attendance confidence.
-                </p>
               </div>
             );
           })}
