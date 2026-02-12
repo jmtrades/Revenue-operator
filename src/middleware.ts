@@ -26,6 +26,7 @@ function isPublicRoute(pathname: string): boolean {
   if (pathname.startsWith("/api/trial/start")) return true;
   if (pathname.startsWith("/api/billing/checkout")) return true;
   if (pathname.startsWith("/api/billing/webhook")) return true;
+  if (pathname.startsWith("/api/billing/")) return true;
   if (pathname.startsWith("/api/webhooks/")) return true;
   if (pathname.startsWith("/api/webhooks/inbound-generic")) return true;
   if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;

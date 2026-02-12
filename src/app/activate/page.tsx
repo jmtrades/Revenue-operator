@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function ActivatePage() {
+function ActivatePageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
-  const [progressStep, setProgressStep] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState("Preparing checkout…");
 
   useEffect(() => {
     fetch("/api/auth/session", { credentials: "include" })
@@ -24,13 +26,28 @@ export default function ActivatePage() {
       .catch(() => setCheckingSession(false));
   }, [router]);
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || submitting) return; // Prevent double submission
+  // Check for canceled param
+  useEffect(() => {
+    if (searchParams.get("canceled") === "1") {
+      setError("No problem — protection didn't start.");
+    }
+  }, [searchParams]);
+
+  const startProtection = async () => {
+    if (!email.trim() || submitting) return;
+    
     setSubmitting(true);
+    setError(null);
+    setLoadingMessage("Preparing checkout…");
+    
+    // Show "Opening secure checkout" after 1200ms
+    const loadingTimer = setTimeout(() => {
+      setLoadingMessage("Opening secure checkout…");
+    }, 1200);
     
     try {
-      const res = await fetch("/api/trial/start", {
+      // Step 1: Create workspace
+      const trialRes = await fetch("/api/trial/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -40,47 +57,70 @@ export default function ActivatePage() {
         }),
       });
       
-      if (!res.ok) {
-        throw new Error("Failed to start trial");
+      if (!trialRes.ok) {
+        const trialData = await trialRes.json().catch(() => ({}));
+        throw new Error(trialData.error || "Failed to start trial");
       }
       
-      const data = await res.json();
-      const workspaceId = data.workspace_id;
+      const trialData = await trialRes.json();
+      const workspaceId = trialData.workspace_id;
       
       if (!workspaceId) {
         throw new Error("No workspace ID returned");
       }
       
+      // Step 2: Create checkout session
       const base = typeof window !== "undefined" ? window.location.origin : "";
       const checkoutRes = await fetch("/api/billing/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          email: email.trim(),
           workspace_id: workspaceId,
-          success_url: `${base}/connect?workspace_id=${encodeURIComponent(workspaceId)}`,
-          cancel_url: `${base}/activate`,
         }),
       });
       
       if (!checkoutRes.ok) {
-        throw new Error("Failed to create checkout");
-      }
-      
-      const checkoutData = await checkoutRes.json();
-      if (checkoutData.checkout_url) {
-        // Immediate redirect to Stripe - no delay
-        window.location.href = checkoutData.checkout_url;
+        const checkoutError = await checkoutRes.json().catch(() => ({}));
+        
+        if (checkoutError.error === "STRIPE_NOT_CONFIGURED") {
+          setError("Payment setup isn't complete yet.");
+        } else {
+          setError(checkoutError.error || checkoutError.message || "We couldn't start checkout.");
+        }
+        setSubmitting(false);
+        clearTimeout(loadingTimer);
         return;
       }
       
-      // Fallback: go to connect if checkout URL missing
-      router.push(`/connect?workspace_id=${encodeURIComponent(workspaceId)}`);
+      const checkoutData = await checkoutRes.json();
+      
+      if (!checkoutData.url && !checkoutData.checkout_url) {
+        setError("Checkout unavailable");
+        setSubmitting(false);
+        clearTimeout(loadingTimer);
+        return;
+      }
+      
+      const checkoutUrl = checkoutData.url || checkoutData.checkout_url;
+      
+      // Redirect to Stripe
+      clearTimeout(loadingTimer);
+      window.location.href = checkoutUrl;
+      window.location.assign(checkoutUrl); // Fallback
+      
     } catch (error) {
+      clearTimeout(loadingTimer);
       console.error("[activate] Error:", error);
-      setSubmitting(false); // Allow retry on error
-      // Show error state - user can retry
-      // Don't throw - let user see error and retry
+      const errorMessage = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      setError(errorMessage);
+      setSubmitting(false);
     }
+  };
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await startProtection();
   };
 
   if (checkingSession) {
@@ -96,7 +136,7 @@ export default function ActivatePage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Preparing checkout…</p>
+        <p className="text-sm" style={{ color: "var(--text-primary)" }}>{loadingMessage}</p>
       </div>
     );
   }
@@ -126,8 +166,22 @@ export default function ActivatePage() {
               {submitting ? "Starting…" : "Start 14-day protection"}
             </button>
           </form>
+          
+          {error && (
+            <div className="mt-4 p-4 rounded-lg" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
+              <p className="text-sm mb-3" style={{ color: "var(--text-primary)" }}>{error}</p>
+              <button
+                onClick={startProtection}
+                className="w-full py-2 px-4 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
+                style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
+              >
+                Try again
+              </button>
+            </div>
+          )}
+          
           <p className="text-xs mt-4 text-center" style={{ color: "var(--text-muted)" }}>
-            £0 today — trial ends in 14 days — pause anytime before renewal
+            $0 today — trial ends in 14 days — pause anytime before renewal
           </p>
         </div>
       </div>
@@ -137,5 +191,18 @@ export default function ActivatePage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function ActivatePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Loading…</p>
+      </div>
+    }>
+      <ActivatePageContent />
+    </Suspense>
   );
 }
