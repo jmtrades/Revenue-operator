@@ -45,7 +45,7 @@ export default function ReportsPage() {
   if (!workspaceId) {
     return (
       <div className="p-8">
-        <p style={{ color: "var(--text-muted)" }}>Select an account.</p>
+        <p style={{ color: "var(--text-muted)" }}>Select where we maintain conversations.</p>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function ReportsPage() {
             <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Assurance</h2>
             <div className="space-y-4">
               <ProofStatement
-                statement="Risk surface incidents prevented this week"
+                statement="Incidents prevented this week"
                 detail={riskIncidentsPrevented > 0 ? `Protecting ${riskIncidentsPrevented} exposure${riskIncidentsPrevented !== 1 ? "s" : ""} from becoming losses.` : "No exposures this week. Continuity maintained."}
                 value={riskIncidentsPrevented}
               />
@@ -126,7 +126,7 @@ export default function ReportsPage() {
                       )}
                     </div>
                     <Link href={`/dashboard/leads/${m.lead_id}`} className="text-sm shrink-0" style={{ color: "var(--meaning-blue)" }}>
-                      View details
+                      See context
                     </Link>
                   </div>
                 ))}

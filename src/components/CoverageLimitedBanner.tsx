@@ -40,7 +40,7 @@ export function CoverageLimitedBanner() {
             className="px-3 py-1.5 rounded-lg text-xs font-medium"
             style={{ background: "var(--meaning-blue)", color: "#fff" }}
           >
-            Enable protection
+            Add phone
           </Link>
           <button
             type="button"

@@ -109,13 +109,13 @@ function toResponsibilityItem(a: CommandCenterData["activity"][0]): { text: stri
 function ContinuityMonitoringPanel({ routines, responsibilityItems }: { routines: string[]; responsibilityItems: string[] }) {
   const [idx, setIdx] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % routines.length), 5000);
+    const t = setInterval(() => setIdx((i) => (i + 1) % routines.length), 4000);
     return () => clearInterval(t);
   }, [routines.length]);
   const display = responsibilityItems.length > 0 ? responsibilityItems : [routines[idx]];
   return (
     <section className="mb-10">
-      <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Continuity monitoring</h2>
+      <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>What we&apos;re doing now</h2>
       <div className="space-y-2">
         {display.map((line, i) => (
           <div
@@ -137,9 +137,8 @@ const ROTATING_ROUTINES = [
   "Checking reply windows",
   "Maintaining engagement intervals",
   "Confirming upcoming attendance",
-  "Scanning cooling conversations",
+  "Recovering cooling conversations",
   "Protecting booked calls",
-  "Verifying response timing",
 ];
 
 function parseNextOutreachMinutes(nextAction: string | null): number | null {
@@ -229,8 +228,8 @@ export default function OverviewPage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-8">
         <div className="max-w-lg text-center">
-          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Select an account</h1>
-          <p className="mt-2" style={{ color: "var(--text-secondary)" }}>Select an account to view status.</p>
+          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>We&apos;re ready</h1>
+          <p className="mt-2" style={{ color: "var(--text-secondary)" }}>Select where we maintain conversations.</p>
         </div>
       </div>
     );
@@ -288,20 +287,6 @@ export default function OverviewPage() {
   const weekStatus = data.performance_status?.status ?? "on_track";
   const weekStatusLabel = weekStatus === "ahead" ? "Ahead" : weekStatus === "behind" ? "Behind" : "On track";
 
-  const humanStrategy = (() => {
-    const adj = data.performance_status?.adjustment ?? data.system_strategy ?? "";
-    if (adj.includes("Increasing") || adj.includes("increasing")) return adj;
-    if (adj.includes("Reducing") || adj.includes("reducing")) return adj;
-    if (data.performance_status?.status === "ahead") return "Reducing outreach — ahead of target";
-    if (data.performance_status?.status === "behind") return "Increasing follow-ups to maintain weekly goal";
-    if (data.system_strategy) {
-      const s = String(data.system_strategy);
-      if (s.includes("Balanced") || s.includes("On pace")) return "Maintaining steady pace";
-      return s;
-    }
-    return "Maintaining steady pace";
-  })();
-
   const responsibilityItems = (data.activity ?? []).slice(0, 8).map((a) => {
     const { text, recency } = toResponsibilityItem(a);
     return `${text} — ${recency}`;
@@ -309,57 +294,51 @@ export default function OverviewPage() {
 
   const pulseColor = statusLevel === "healthy" ? "var(--meaning-green)" : statusLevel === "warning" ? "var(--meaning-amber)" : "var(--meaning-red)";
 
+  const recentOutcomes = (data.activity ?? []).slice(0, 5).map((a) => {
+    const { text } = toResponsibilityItem(a);
+    return text;
+  });
+
   return (
     <div className="p-8 max-w-3xl mx-auto" style={{ color: "var(--text-primary)" }}>
       <section className="text-center py-12 px-4 rounded-xl mb-10" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-        <p className="text-sm mb-1" style={{ color: "var(--text-muted)" }}>
-          Conversations currently maintained: {isPaused ? "0" : displayMaintained}
-        </p>
+        <h1 className="text-3xl font-semibold tracking-tight mb-2">
+          We are maintaining {isPaused ? 0 : displayMaintained} conversation{displayMaintained !== 1 ? "s" : ""} for you
+        </h1>
         <div className="flex items-center justify-center gap-2 mb-2">
           <span
             className="inline-block w-3 h-3 rounded-full animate-pulse"
             style={{ background: pulseColor }}
             aria-hidden
           />
-          <h1 className="text-2xl font-semibold tracking-tight">{statusMessage}</h1>
+          <p className="text-lg" style={{ color: "var(--text-secondary)" }}>{statusMessage}</p>
         </div>
         {!isPaused && nextMin != null && nextMin > 0 && (
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            Next attention in ~{nextMin} minutes
+            Next attention in ~{nextMin} min
           </p>
         )}
       </section>
 
       <ContinuityMonitoringPanel routines={ROTATING_ROUTINES} responsibilityItems={responsibilityItems} />
 
-      {riskSurface && (riskSurface.conversations_at_risk.length > 0 || riskSurface.calendar_at_risk.some((c) => c.rescue_needed || c.missing_confirmation)) && (
-        <section className="mb-10">
-          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Risk surface</h2>
-          <div
-            className="p-5 rounded-xl space-y-3"
-            style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
-          >
-            <p className="text-sm" style={{ color: "var(--text-primary)" }}>{riskSurface.risk_surface_summary}</p>
-            <div className="space-y-2">
-              {riskSurface.conversations_at_risk.slice(0, 3).map((r) => (
-                <div key={r.lead_id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: "var(--surface)" }}>
-                  <span style={{ color: "var(--text-primary)" }}>{r.name}</span>
-                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>{r.risk_reason} · {r.recommended_protection}</span>
-                </div>
-              ))}
-              {riskSurface.calendar_at_risk.filter((c) => c.rescue_needed || c.missing_confirmation).slice(0, 2).map((c) => (
-                <div key={c.call_id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: "var(--surface)" }}>
-                  <span style={{ color: "var(--text-primary)" }}>{c.lead_name}</span>
-                  <span className="text-xs" style={{ color: "var(--meaning-amber)" }}>{c.rescue_needed ? "Rescue in progress" : "Confirmation needed"}</span>
-                </div>
-              ))}
+      <section className="mb-10">
+        <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Recently changed</h2>
+        <div className="space-y-2">
+          {(recentOutcomes.length > 0 ? recentOutcomes : ["Call scheduled", "Conversation recovered", "Attendance confirmed"]).slice(0, 5).map((line, i) => (
+            <div
+              key={i}
+              className="py-3 px-4 rounded-lg"
+              style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
+            >
+              <span style={{ color: "var(--text-primary)" }}>{line}</span>
             </div>
-          </div>
-        </section>
-      )}
+          ))}
+        </div>
+      </section>
 
       <section className="mb-10">
-        <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Calendar impact</h2>
+        <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>This week</h2>
         <div
           className="p-5 rounded-xl"
           style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
@@ -367,7 +346,7 @@ export default function OverviewPage() {
           <div className="grid grid-cols-3 gap-6 text-center">
             <div>
               <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>{todayCalls}</p>
-              <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Today — calls likely to attend</p>
+              <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Today — expected conversations</p>
             </div>
             <div>
               <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>{tomorrowConfirmations}</p>
@@ -382,20 +361,10 @@ export default function OverviewPage() {
               >
                 {weekStatusLabel}
               </p>
-              <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>This week</p>
+              <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>On track</p>
             </div>
           </div>
         </div>
-      </section>
-
-      <section>
-        <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Strategy today</h2>
-        <p
-          className="py-3 px-4 rounded-lg"
-          style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
-        >
-          {humanStrategy.startsWith("Maintaining") ? "Balanced" : humanStrategy.startsWith("Increasing") ? "Increasing recovery" : humanStrategy.startsWith("Reducing") ? "Reducing pressure" : humanStrategy}
-        </p>
       </section>
 
       {data.removal_simulator && !isPaused && (

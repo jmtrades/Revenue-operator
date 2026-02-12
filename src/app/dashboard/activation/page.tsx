@@ -85,7 +85,7 @@ export default function ActivationPage() {
           {state?.activated_at && (
             <div className="flex items-center gap-2 text-emerald-400">
               <span className="inline-block w-3 h-3 rounded-full bg-emerald-500" />
-              Protection is live. <Link href="/dashboard" className="text-amber-400 hover:text-amber-300">View dashboard →</Link>
+              Protection is live. <Link href={workspaceId ? `/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard"} className="text-amber-400 hover:text-amber-300">Go to overview →</Link>
             </div>
           )}
 

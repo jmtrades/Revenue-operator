@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { ProofDrawer } from "@/components/ProofDrawer";
 
 interface Conversation {
   lead_id: string;
@@ -34,10 +33,8 @@ export default function ConversationsPage() {
     hot_leads?: CommandCenterLead[];
     at_risk?: CommandCenterLead[];
   } | null>(null);
-  const [riskSurface, setRiskSurface] = useState<{ conversations_at_risk: Array<{ lead_id: string; risk_type: string }> } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [proofLeadId, setProofLeadId] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -51,12 +48,10 @@ export default function ConversationsPage() {
     Promise.all([
       fetch(`/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
       fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
-      fetch(`/api/risk-surface?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
     ])
-      .then(([convRes, ccRes, riskRes]) => {
+      .then(([convRes, ccRes]) => {
         setConversations(convRes.conversations ?? []);
         setCommandCenter(ccRes?.error ? null : ccRes);
-        setRiskSurface(riskRes?.error ? null : riskRes);
       })
       .catch((e) => setError(e instanceof Error ? e.message : "Error"))
       .finally(() => setLoading(false));
@@ -69,16 +64,6 @@ export default function ConversationsPage() {
 
   const hotIds = new Set((commandCenter?.hot_leads ?? []).map((h) => h.lead_id ?? h.id).filter(Boolean));
   const atRiskIds = new Set((commandCenter?.at_risk ?? []).map((a) => a.lead_id ?? a.id).filter(Boolean));
-  const _hotMap = (commandCenter?.hot_leads ?? []).reduce(
-    (acc, h) => { acc[h.lead_id ?? h.id ?? ""] = h; return acc; },
-    {} as Record<string, CommandCenterLead>
-  );
-  const _atRiskMap = (commandCenter?.at_risk ?? []).reduce(
-    (acc, a) => { acc[a.lead_id ?? a.id ?? ""] = a; return acc; },
-    {} as Record<string, CommandCenterLead>
-  );
-  const riskLeadIds = new Set((riskSurface?.conversations_at_risk ?? []).map((r) => r.lead_id));
-
   const readyToBook = (commandCenter?.hot_leads ?? []).map((h) => {
     const id = h.lead_id ?? h.id ?? "";
     return { ...h, lead_id: id, displayName: h.name ?? h.email ?? h.company ?? "—" };
@@ -129,79 +114,35 @@ export default function ConversationsPage() {
 
   function LeadCard({
     leadId,
-    riskLeadIds,
     name,
     company,
-    warmth,
     handling,
     futureWorkText,
-    onProof,
-    column: _column,
   }: {
     leadId: string;
     name: string;
     company?: string | null;
-    warmth: number;
     handling: string;
     futureWorkText: string;
-    onProof?: () => void;
-    column: "ready" | "inprogress" | "cooling";
-    riskLeadIds?: Set<string>;
   }) {
     return (
-      <div
-        className="p-4 rounded-xl"
+      <Link
+        href={`/dashboard/leads/${leadId}`}
+        className="block p-4 rounded-xl transition-opacity hover:opacity-90"
         style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
       >
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="font-medium" style={{ color: "var(--text-primary)" }}>{name}</p>
-              {riskLeadIds?.has(leadId) && (
-                <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: "rgba(243, 156, 18, 0.2)", color: "var(--meaning-amber)" }}>At risk</span>
-              )}
-            </div>
-            {company && <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{company}</p>}
-          </div>
-          {onProof && (
-            <button
-              onClick={(e) => { e.preventDefault(); onProof(); }}
-              className="text-xs px-2 py-1 rounded"
-              style={{ color: "var(--text-muted)", background: "transparent" }}
-            >
-              Proof
-            </button>
-          )}
-        </div>
-        <p className="text-xs mb-2" style={{ color: "var(--text-muted)" }}>Relationship built: {Math.round(warmth)}%</p>
-        <div className="mb-2">
-          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
-            <div
-              className="h-full rounded-full transition-all"
-              style={{
-                width: `${Math.min(100, Math.max(0, warmth))}%`,
-                background: warmth >= 60 ? "var(--meaning-green)" : warmth >= 30 ? "var(--meaning-amber)" : "var(--text-muted)",
-              }}
-            />
-          </div>
-        </div>
-        <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Current responsibility: {handling}</p>
-        <p className="text-xs" style={{ color: "var(--text-muted)" }}>Next planned touch: {futureWorkText}</p>
-        <Link
-          href={`/dashboard/leads/${leadId}`}
-          className="mt-3 inline-block text-sm font-medium"
-          style={{ color: "var(--meaning-blue)" }}
-        >
-          View details
-        </Link>
-      </div>
+        <p className="font-medium" style={{ color: "var(--text-primary)" }}>{name}</p>
+        {company && <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{company}</p>}
+        <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>Current responsibility: {handling}</p>
+        <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Next planned touch: {futureWorkText}</p>
+      </Link>
     );
   }
 
   if (!workspaceId) {
     return (
       <div className="p-8">
-        <p style={{ color: "var(--text-muted)" }}>Select an account.</p>
+        <p style={{ color: "var(--text-muted)" }}>Select where we maintain conversations.</p>
       </div>
     );
   }
@@ -233,22 +174,18 @@ export default function ConversationsPage() {
               {readyToBook.length === 0 ? (
                 <div className="py-6 px-4 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
                   <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-                  <p style={{ color: "var(--text-primary)" }}>Preparing</p>
-                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Warming conversations. Call readiness building.</p>
+                  <p style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
+                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Preparing upcoming calls. All protected.</p>
                 </div>
               ) : (
                 readyToBook.map((l) => (
                   <LeadCard
                     key={l.lead_id}
                     leadId={l.lead_id}
-                    riskLeadIds={riskLeadIds}
                     name={l.displayName}
                     company={l.company}
-                    warmth={l.warmth_score ?? 70}
                     handling={handlingState(l, "ready")}
                     futureWorkText={futureWork(l, "ready")}
-                    onProof={() => setProofLeadId(l.lead_id)}
-                    column="ready"
                   />
                 ))
               )}
@@ -260,22 +197,18 @@ export default function ConversationsPage() {
               {inProgress.length === 0 ? (
                 <div className="py-6 px-4 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
                   <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-                  <p style={{ color: "var(--text-primary)" }}>Recovering</p>
-                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Keeping engagement. No interventions needed right now.</p>
+                  <p style={{ color: "var(--text-primary)" }}>Maintaining engagement</p>
+                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Keeping conversations active. No interventions needed.</p>
                 </div>
               ) : (
                 inProgress.map((l) => (
                   <LeadCard
                     key={l.lead_id}
                     leadId={l.lead_id}
-                    riskLeadIds={riskLeadIds}
                     name={l.displayName}
                     company={l.company}
-                    warmth={l.warmth_score ?? 45}
                     handling={handlingState(l, "inprogress")}
                     futureWorkText={futureWork(l, "inprogress")}
-                    onProof={() => setProofLeadId(l.lead_id)}
-                    column="inprogress"
                   />
                 ))
               )}
@@ -287,7 +220,7 @@ export default function ConversationsPage() {
               {cooling.length === 0 ? (
                 <div className="py-6 px-4 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
                   <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-                  <p style={{ color: "var(--text-primary)" }}>Watching</p>
+                  <p style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
                   <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Scanning cooling conversations. All protected.</p>
                 </div>
               ) : (
@@ -295,14 +228,10 @@ export default function ConversationsPage() {
                   <LeadCard
                     key={c.lead_id}
                     leadId={c.lead_id}
-                    riskLeadIds={riskLeadIds}
                     name={c.displayName}
                     company={c.company}
-                    warmth={c.warmth_score}
                     handling="Watching"
                     futureWorkText="—"
-                    onProof={() => setProofLeadId(c.lead_id)}
-                    column="cooling"
                   />
                 ))
               )}
@@ -311,7 +240,6 @@ export default function ConversationsPage() {
         </div>
       )}
 
-      <ProofDrawer leadId={proofLeadId ?? ""} isOpen={!!proofLeadId} onClose={() => setProofLeadId(null)} />
     </div>
   );
 }

@@ -2,36 +2,14 @@
 
 import { useEffect, useState } from "react";
 
-type TabId = "events" | "messages" | "actions" | "policy" | "counterfactual" | "billing" | "call" | "stability";
-
 interface ProofData {
   actions: Array<{ action: string; payload: unknown; created_at: string }>;
-  messages: Array<{ role: string; content: string; reasoning?: unknown; policy_reasoning?: string; created_at: string }>;
-  events: Array<{ event_type: string; payload: unknown; created_at: string }>;
-  policy_reasoning?: string[];
-  counterfactual?: { baseline_conversion: number; impact: string };
-  billing_impact?: { amount_cents: number; status: string };
-  call_analysis?: Array<{
-    call_session_id: string;
-    analysis_json?: Record<string, unknown>;
-    confidence?: number;
-    created_at?: string;
-    consent?: { consent_granted?: boolean; consent_mode?: string };
-  }>;
-  call_inference?: Array<{
-    call_session_id: string;
-    show_status?: string | null;
-    show_confidence?: number | null;
-    show_reason?: string | null;
-    wrapup_used?: boolean;
-    transcript_available?: boolean;
-  }>;
+  messages: Array<{ role: string; content: string; created_at: string }>;
+  counterfactual?: { impact: string };
   stability?: {
-    plan?: { next_action_type: string; next_action_at: string; sequence_step?: number };
-    cooldown?: { reason: string; cooldown_until?: string };
-    sequence?: { current_step: number; sequence_name?: string };
+    plan?: { next_action_type: string; next_action_at: string };
+    cooldown?: { cooldown_until?: string };
   };
-  learning_sources?: Array<"lead_specific" | "workspace_history" | "network_pattern">;
 }
 
 interface ProofDrawerProps {
@@ -40,33 +18,42 @@ interface ProofDrawerProps {
   onClose: () => void;
 }
 
-const TABS: { id: TabId; label: string }[] = [
-  { id: "events", label: "Events" },
-  { id: "messages", label: "Messages" },
-  { id: "actions", label: "Actions" },
-  { id: "call", label: "Call" },
-  { id: "policy", label: "Policy" },
-  { id: "stability", label: "Stability" },
-  { id: "counterfactual", label: "Counterfactual" },
-  { id: "billing", label: "Billing" },
-];
+function toOutcomeLabel(action: string): string {
+  const a = action.toLowerCase();
+  if (a.includes("follow") || a.includes("outreach")) return "Follow-up scheduled";
+  if (a.includes("confirm") || a.includes("attendance")) return "Attendance confirmed";
+  if (a.includes("recover") || a.includes("re-engag")) return "Conversation recovered";
+  if (a.includes("reply") || a.includes("response")) return "Response prepared";
+  if (a.includes("restraint") || a.includes("hold")) return "Held back — next touch planned";
+  return "Conversation kept active";
+}
 
 export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
   const [data, setData] = useState<ProofData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState<TabId>("events");
 
   useEffect(() => {
     if (!isOpen || !leadId) return;
     setLoading(true);
     fetch(`/api/leads/${leadId}/proof`)
       .then((r) => r.json())
-      .then(setData)
+      .then((d) => {
+        setData(d);
+        return d;
+      })
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [leadId, isOpen]);
 
   if (!isOpen) return null;
+
+  const outcomes = (data?.actions ?? [])
+    .filter((a) => !String(a.action || "").toLowerCase().includes("internal"))
+    .slice(-10)
+    .map((a) => ({
+      text: toOutcomeLabel(a.action),
+      when: a.created_at,
+    }));
 
   return (
     <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-stone-900 border-l border-stone-800 shadow-2xl z-50 flex flex-col">
@@ -81,214 +68,55 @@ export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
           </svg>
         </button>
       </div>
-      <div className="flex gap-1 px-2 py-1 border-b border-stone-800 overflow-x-auto">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`px-2 py-1.5 rounded text-xs font-medium shrink-0 ${tab === t.id ? "bg-amber-600/20 text-amber-400" : "text-stone-400 hover:text-stone-200"}`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6">
         {loading ? (
-          <p className="text-stone-500">Loading evidence…</p>
+          <p className="text-stone-500">Preparing…</p>
         ) : !data ? (
-          <p className="text-stone-500">No evidence available</p>
+          <p className="text-stone-500">No proof available yet.</p>
         ) : (
           <>
-            {tab === "actions" && data.actions.length > 0 && (
+            {outcomes.length > 0 && (
               <section>
-                <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Actions</h3>
+                <h3 className="text-sm font-medium text-stone-400 mb-2">Why this mattered</h3>
+                <p className="text-stone-300 text-sm mb-3">
+                  This prevented the conversation from going cold.
+                </p>
                 <div className="space-y-2">
-                  {data.actions.map((a, i) => (
+                  {outcomes.slice(-5).map((o, i) => (
                     <div key={i} className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                      <span className="font-medium text-amber-400">{a.action}</span>
-                      <span className="text-stone-500 ml-2">{new Date(a.created_at).toLocaleString()}</span>
-                      {a.payload != null && typeof a.payload === "object" && Object.keys(a.payload).length > 0 ? (
-                        <pre className="mt-1 text-xs text-stone-400 overflow-x-auto">{JSON.stringify(a.payload, null, 2)}</pre>
-                      ) : null}
+                      <span className="text-emerald-400">{o.text}</span>
+                      <span className="text-stone-500 text-xs ml-2">{new Date(o.when).toLocaleDateString()}</span>
                     </div>
                   ))}
                 </div>
               </section>
             )}
-            {tab === "messages" && data.messages.length > 0 && (
+
+            {data.counterfactual?.impact && (
               <section>
-                <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Messages & Reasoning</h3>
-                <div className="space-y-2">
-                  {data.messages.map((m, i) => (
-                    <div key={i} className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                      <span className="font-medium text-stone-300">{m.role}:</span>
-                      <p className="text-stone-400 mt-0.5">{m.content}</p>
-                      {m.reasoning != null ? (
-                        <div className="mt-2 pt-2 border-t border-stone-700">
-                          <span className="text-xs text-amber-400">Reasoning:</span>
-                          <pre className="text-xs text-stone-500 mt-0.5 whitespace-pre-wrap">
-                            {typeof m.reasoning === "string" ? m.reasoning : JSON.stringify(m.reasoning, null, 2)}
-                          </pre>
-                        </div>
-                      ) : null}
-                      <span className="text-xs text-stone-500">{new Date(m.created_at).toLocaleString()}</span>
-                    </div>
-                  ))}
-                </div>
+                <h3 className="text-sm font-medium text-stone-400 mb-2">What would have happened</h3>
+                <p className="text-stone-300 text-sm">{data.counterfactual.impact}</p>
               </section>
             )}
-            {tab === "events" && data.events.length > 0 && (
+
+            {(data.stability?.plan || data.stability?.cooldown?.cooldown_until) && (
               <section>
-                <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Events</h3>
-                <div className="space-y-2">
-                  {data.events.map((e, i) => (
-                    <div key={i} className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                      <span className="font-medium text-stone-300">{e.event_type}</span>
-                      <span className="text-stone-500 ml-2">{new Date(e.created_at).toLocaleString()}</span>
-                      {e.payload != null && typeof e.payload === "object" && Object.keys(e.payload).length > 0 ? (
-                        <pre className="mt-1 text-xs text-stone-400 overflow-x-auto">{JSON.stringify(e.payload, null, 2)}</pre>
-                      ) : null}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-            {tab === "stability" && (
-              <section>
-                <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Active plan & constraints</h3>
-                <div className="space-y-3">
-                  {data.stability?.plan ? (
-                    <div className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                      <p className="text-amber-400 font-medium">Next action: {data.stability.plan.next_action_type}</p>
-                      <p className="text-stone-500 text-xs mt-1">Planned at: {new Date(data.stability.plan.next_action_at).toLocaleString()}</p>
-                      {data.stability.plan.sequence_step != null && (
-                        <p className="text-stone-400 text-xs mt-0.5">Sequence step {data.stability.plan.sequence_step}</p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-stone-500 text-sm">No active plan</p>
-                  )}
-                  {data.stability?.cooldown ? (
-                    <div className="p-3 rounded-lg bg-amber-900/20 border border-amber-800/50 text-sm">
-                      <p className="text-amber-400 font-medium">Held back: {data.stability.cooldown.reason}</p>
-                      {data.stability.cooldown.cooldown_until && (
-                        <p className="text-stone-500 text-xs mt-1">Acts again at: {new Date(data.stability.cooldown.cooldown_until).toLocaleString()}</p>
-                      )}
-                    </div>
-                  ) : null}
-                  {data.stability?.sequence ? (
-                    <div className="p-3 rounded-lg bg-blue-900/20 border border-blue-800/50 text-sm">
-                      <p className="text-blue-400 font-medium">{data.stability.sequence.sequence_name ?? "Sequence"} running</p>
-                      <p className="text-stone-500 text-xs mt-1">Step {data.stability.sequence.current_step}</p>
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-            )}
-            {tab === "policy" && (
-              <section>
-                <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Policy Reasoning</h3>
-                <div className="space-y-2">
-                  {(data.policy_reasoning?.length ?? 0) > 0
-                    ? data.policy_reasoning!.map((r, i) => (
-                        <div key={i} className="p-3 rounded-lg bg-stone-800/80 text-sm text-stone-300">{r}</div>
-                      ))
-                    : <p className="text-stone-500 text-sm">No policy reasoning recorded</p>}
-                </div>
-              </section>
-            )}
-            {tab === "counterfactual" && (
-              <section>
-                <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Counterfactual</h3>
-                {data.counterfactual ? (
-                  <div className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                    <p className="text-stone-300">{data.counterfactual.impact}</p>
-                    <p className="text-xs text-stone-500 mt-1">Baseline: {(data.counterfactual.baseline_conversion * 100).toFixed(1)}%</p>
-                  </div>
-                ) : (
-                  <p className="text-stone-500 text-sm">No counterfactual data</p>
+                <h3 className="text-sm font-medium text-stone-400 mb-2">Next planned touch</h3>
+                {data.stability?.plan && (
+                  <p className="text-stone-300 text-sm">
+                    {data.stability.plan.next_action_type} at {new Date(data.stability.plan.next_action_at).toLocaleString()}
+                  </p>
                 )}
-                {data.learning_sources && data.learning_sources.length > 0 && (
-                  <div className="mt-4 p-3 rounded-lg bg-sky-950/30 border border-sky-800/50 text-sm">
-                    <h4 className="text-xs font-medium text-sky-400 uppercase tracking-wide mb-1">Learning sources (internal)</h4>
-                    <p className="text-stone-300 text-xs">
-                      {data.learning_sources.map((s) => s.replace(/_/g, " ")).join(", ")}
-                    </p>
-                  </div>
+                {data.stability?.cooldown?.cooldown_until && !data.stability?.plan && (
+                  <p className="text-stone-300 text-sm">
+                    Next touch at {new Date(data.stability.cooldown.cooldown_until).toLocaleString()}
+                  </p>
                 )}
               </section>
             )}
-            {tab === "call" && (
-              <section>
-                {(data.call_inference?.length ?? 0) > 0 && (
-                  <div className="mb-4">
-                    <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Call Inference</h3>
-                    <div className="space-y-2">
-                      {data.call_inference!.map((inf, i) => (
-                        <div key={i} className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                          <p className="text-stone-500 text-xs">Session {inf.call_session_id.slice(0, 8)}…</p>
-                          <p className="text-amber-400 font-medium mt-1">
-                            Show: {inf.show_status ?? "—"} {inf.show_confidence != null ? `(${Math.round((inf.show_confidence ?? 0) * 100)}%)` : ""}
-                          </p>
-                          {inf.show_reason && <p className="text-stone-400 mt-0.5">{inf.show_reason}</p>}
-                          <p className="text-stone-500 text-xs mt-1">
-                            Wrap-up used: {inf.wrapup_used ? "Yes" : "No"} · Transcript available: {inf.transcript_available ? "Yes" : "No"}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {(data.call_analysis?.length ?? 0) > 0 && (
-                  <>
-                    <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Call Analysis</h3>
-                    <div className="space-y-3">
-                  {data.call_analysis!.map((a, i) => {
-                    const ana = a.analysis_json ?? {};
-                    const consent = a.consent as { consent_granted?: boolean; consent_mode?: string } | undefined;
-                    const canShowQuotes = consent?.consent_granted !== false && consent?.consent_mode !== "off";
-                    return (
-                      <div key={i} className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                        <p className="text-stone-500 text-xs">{a.created_at ? new Date(a.created_at).toLocaleString() : ""}</p>
-                        {ana.outcome != null ? <p className="text-amber-400 font-medium mt-1">Outcome: {String(ana.outcome)}</p> : null}
-                        {ana.summary != null ? <p className="text-stone-300 mt-1">{String(ana.summary)}</p> : null}
-                        {canShowQuotes && ana.objections && Array.isArray(ana.objections) ? (
-                          <div className="mt-2">
-                            <span className="text-stone-500 text-xs">Key quotes (objections):</span>
-                            <ul className="list-disc list-inside text-stone-400 mt-0.5">
-                              {(ana.objections as Array<{ quote?: string }>).filter((o) => o.quote).map((o, j) => (
-                                <li key={j}>&quot;{o.quote}&quot;</li>
-                              ))}
-                            </ul>
-                          </div>
-                        ) : null}
-                        {ana.followup_plan && Array.isArray(ana.followup_plan) ? (
-                          <div className="mt-2">
-                            <span className="text-stone-500 text-xs">Follow-up plan:</span>
-                            <pre className="text-xs text-stone-400 mt-0.5 overflow-x-auto">
-                              {JSON.stringify(ana.followup_plan, null, 2)}
-                            </pre>
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-                  </>
-                )}
-                {(data.call_analysis?.length ?? 0) === 0 && (data.call_inference?.length ?? 0) === 0 && (
-                  <p className="text-stone-500 text-sm">No call data</p>
-                )}
-              </section>
-            )}
-            {tab === "billing" && data.billing_impact && (
-              <section>
-                <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Billing Impact</h3>
-                <div className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                  <p className="text-stone-300">${(data.billing_impact.amount_cents / 100).toLocaleString()}</p>
-                  <p className="text-xs text-stone-500">Status: {data.billing_impact.status}</p>
-                </div>
-              </section>
+
+            {outcomes.length === 0 && !data.counterfactual && !data.stability?.plan && !data.stability?.cooldown?.cooldown_until && (
+              <p className="text-stone-500 text-sm">We&apos;re maintaining this conversation. Activity will appear as we work.</p>
             )}
           </>
         )}

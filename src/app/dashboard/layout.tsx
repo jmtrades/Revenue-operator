@@ -1,32 +1,45 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
 import { TrialBanner } from "@/components/TrialBanner";
 import { RenewalReminderBanner } from "@/components/RenewalReminderBanner";
 import { CoverageLimitedBanner } from "@/components/CoverageLimitedBanner";
 import { ConfidenceContractBanner } from "@/components/ConfidenceContractBanner";
-import { FirstVisitOverlay } from "@/components/FirstVisitOverlay";
 import { HeartbeatBar } from "@/components/HeartbeatBar";
 
 const nav = [
-  { href: "/dashboard", label: "Overview" },
+  { href: "/dashboard", label: "Activity" },
   { href: "/dashboard/conversations", label: "Conversations" },
-  { href: "/dashboard/calls", label: "Calendar" },
-  { href: "/dashboard/revenue", label: "Performance" },
-  { href: "/dashboard/reports", label: "Reports" },
-  { href: "/dashboard/settings", label: "Settings" },
+  { href: "/dashboard/calls", label: "Calls" },
+  { href: "/dashboard/revenue", label: "Results" },
+  { href: "/dashboard/reports", label: "Proof" },
+  { href: "/dashboard/settings", label: "Preferences" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLivePage = pathname === "/dashboard/live";
+
+  if (isLivePage) {
+    return (
+      <WorkspaceProvider>
+        <div className="min-h-screen" style={{ background: "var(--background)" }}>
+          {children}
+        </div>
+      </WorkspaceProvider>
+    );
+  }
+
   return (
     <WorkspaceProvider>
       <div className="min-h-screen flex" style={{ background: "var(--background)" }}>
         <aside className="w-52 border-r flex flex-col shrink-0" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
           <div className="p-5 border-b" style={{ borderColor: "var(--border)" }}>
-            <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Revenue supervision</p>
-            <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Your conversations are being watched over</p>
+            <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Revenue Continuity</p>
+            <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>We maintain. You take the calls.</p>
           </div>
           <WorkspaceSelect />
           <nav className="flex-1 p-3 space-y-1">
@@ -41,12 +54,40 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <TrialBanner />
           <RenewalReminderBanner />
           <ConfidenceContractBanner />
-          <FirstVisitOverlay />
+          <LiveGate />
           <div className="flex-1 overflow-auto">{children}</div>
         </main>
       </div>
     </WorkspaceProvider>
   );
+}
+
+function LiveGate() {
+  const pathname = usePathname();
+  const { workspaceId } = useWorkspace();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (pathname === "/dashboard/live") return;
+    if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/live")) {
+      if (workspaceId && !isLiveCompleted(workspaceId)) {
+        router.replace(`/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}`);
+      }
+    }
+  }, [pathname, workspaceId, router]);
+
+  return null;
+}
+
+function isLiveCompleted(wid: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const global = localStorage.getItem("revenue_live_completed");
+    const workspace = wid ? localStorage.getItem(`revenue_live_workspace_${wid}`) : null;
+    return global === "1" || workspace === "1";
+  } catch {
+    return false;
+  }
 }
 
 function WorkspaceSelect() {
@@ -61,7 +102,7 @@ function WorkspaceSelect() {
         className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-1"
         style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text-primary)", borderWidth: "1px" }}
       >
-        <option value="">Select account…</option>
+        <option value="">Select where we maintain…</option>
         {workspaces.map((w) => (
           <option key={w.id} value={w.id}>{w.name}</option>
         ))}

@@ -4,29 +4,17 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
-const TEAM_ROLES = [
-  { id: "qualifier", label: "Qualifier", desc: "Replies and qualifies" },
-  { id: "setter", label: "Setter", desc: "Schedules calls" },
-  { id: "show_manager", label: "Show Manager", desc: "Reminders and no-shows" },
-  { id: "follow_up_manager", label: "Follow-up Manager", desc: "Keeps conversations engaged" },
-  { id: "revival_manager", label: "Revival Manager", desc: "Reaches cold prospects" },
-  { id: "full_autopilot", label: "Full department", desc: "All roles" },
-] as const;
-
 export default function SettingsPage() {
   const { workspaceId } = useWorkspace();
-  const [riskLevel, setRiskLevel] = useState<"safe" | "balanced" | "aggressive">("balanced");
   const [previewMode, setPreviewMode] = useState(false);
   const [escalationEnabled, setEscalationEnabled] = useState(false);
   const [callAwareEnabled, setCallAwareEnabled] = useState(true);
-  const [hiredRoles, setHiredRoles] = useState<string[]>(["full_autopilot"]);
-  const [communicationStyle, setCommunicationStyle] = useState<"direct" | "consultative" | "high_urgency">("consultative");
+  const [communicationStyle, setCommunicationStyle] = useState<"direct" | "consultative">("consultative");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [saved, setSaved] = useState(false);
   const [zoomHealth, setZoomHealth] = useState<{ connected: boolean; token_valid?: boolean } | null>(null);
   const [zoomDisconnecting, setZoomDisconnecting] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [responsibilityLevel, setResponsibilityLevel] = useState<"monitor" | "handle" | "guarantee">("handle");
   const [coverageFlags, setCoverageFlags] = useState({
     continuity_messaging: true,
     booking_protection: true,
@@ -40,15 +28,11 @@ export default function SettingsPage() {
     fetch(`/api/workspaces/${workspaceId}/settings`)
       .then((r) => r.json())
       .then((d) => {
-        setRiskLevel(d.risk_level ?? "balanced");
         setPreviewMode(d.preview_mode ?? false);
         setEscalationEnabled(d.escalation_rules?.enabled ?? false);
         setCallAwareEnabled(d.call_aware_enabled ?? true);
-        setHiredRoles(Array.isArray(d.hired_roles) && d.hired_roles.length ? d.hired_roles : ["full_autopilot"]);
         const style = d.communication_style;
-        setCommunicationStyle(style === "direct" || style === "high_urgency" ? style : "consultative");
-        const rl = d.responsibility_level;
-        setResponsibilityLevel(rl === "monitor" || rl === "guarantee" ? rl : "handle");
+        setCommunicationStyle(style === "direct" ? "direct" : "consultative");
         const cf = d.coverage_flags;
         if (cf && typeof cf === "object") {
           setCoverageFlags({
@@ -77,13 +61,10 @@ export default function SettingsPage() {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        risk_level: riskLevel,
         preview_mode: previewMode,
         escalation_rules: { enabled: escalationEnabled },
         call_aware_enabled: callAwareEnabled,
-        hired_roles: hiredRoles,
         communication_style: communicationStyle,
-        responsibility_level: responsibilityLevel,
         coverage_flags: coverageFlags,
       }),
     });
@@ -99,10 +80,10 @@ export default function SettingsPage() {
 
   return (
     <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
-      <h1 className="text-2xl font-semibold mb-2">Settings</h1>
+      <h1 className="text-2xl font-semibold mb-2">Preferences</h1>
       <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>How we work for you</p>
       {!workspaceId ? (
-        <p style={{ color: "var(--text-muted)" }}>Select an account.</p>
+        <p style={{ color: "var(--text-muted)" }}>Select where we maintain conversations.</p>
       ) : (
         <div className="space-y-6">
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
@@ -116,7 +97,6 @@ export default function SettingsPage() {
             >
               <option value="direct">Direct — short and clear</option>
               <option value="consultative">Consultative — warm, asks questions</option>
-              <option value="high_urgency">Action-oriented — time-sensitive</option>
             </select>
           </section>
 
@@ -152,67 +132,6 @@ export default function SettingsPage() {
                 </div>
               ))}
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setCoverageFlags({ continuity_messaging: true, booking_protection: false, attendance_protection: true, post_call_continuity: true, notifications: true })}
-                className="px-2 py-1 rounded text-xs"
-                style={{ background: "var(--surface)", color: "var(--text-muted)" }}
-              >
-                Solo closer
-              </button>
-              <button
-                type="button"
-                onClick={() => setCoverageFlags({ continuity_messaging: true, booking_protection: true, attendance_protection: true, post_call_continuity: true, notifications: true })}
-                className="px-2 py-1 rounded text-xs"
-                style={{ background: "var(--surface)", color: "var(--text-muted)" }}
-              >
-                Agency
-              </button>
-              <button
-                type="button"
-                onClick={() => setCoverageFlags({ continuity_messaging: true, booking_protection: true, attendance_protection: true, post_call_continuity: false, notifications: true })}
-                className="px-2 py-1 rounded text-xs"
-                style={{ background: "var(--surface)", color: "var(--text-muted)" }}
-              >
-                SaaS
-              </button>
-            </div>
-          </section>
-
-          <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Protection scope</h2>
-            <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>What we are responsible for</p>
-            <div className="space-y-2 mb-3">
-              {[
-                { id: "monitor" as const, label: "Monitor", desc: "Visibility and risk detection only" },
-                { id: "handle" as const, label: "Handle", desc: "Follow-ups and recovery" },
-                { id: "guarantee" as const, label: "Guarantee", desc: "Booking and attendance protection" },
-              ].map((t) => (
-                <div key={t.id} className="flex items-center justify-between p-2 rounded-lg bg-stone-800/60">
-                  <div>
-                    <p className="text-sm font-medium text-stone-200">{t.label}</p>
-                    <p className="text-xs text-stone-500">{t.desc}</p>
-                  </div>
-                  <input
-                    type="radio"
-                    name="responsibility"
-                    checked={responsibilityLevel === t.id}
-                    onChange={() => setResponsibilityLevel(t.id)}
-                    className="border-stone-600"
-                  />
-                </div>
-              ))}
-            </div>
-            {responsibilityLevel !== "guarantee" && (
-            <Link
-              href="/dashboard/continue-protection"
-              className="text-sm font-medium"
-              style={{ color: "var(--meaning-blue)" }}
-            >
-              Increase coverage →
-            </Link>
-            )}
           </section>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>

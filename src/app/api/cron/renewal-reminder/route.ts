@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     const subject = "Protection renews in ~24 hours";
     const body = `Your Revenue Operator protection renews in about 24 hours.
 
-Ongoing work will continue automatically. To pause protection instead, visit your dashboard settings.
+Ongoing work will continue automatically. To pause protection instead, open Preferences in the overview.
 
 Protection continues automatically. Pause protection anytime — no need to cancel a subscription.`;
 

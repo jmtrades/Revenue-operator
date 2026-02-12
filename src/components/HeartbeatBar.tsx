@@ -54,17 +54,29 @@ export function HeartbeatBar() {
     return () => clearInterval(interval);
   }, [workspaceId]);
 
-  if (!workspaceId) return null;
-
   const statusMessage =
     statusLevel === "risk"
       ? "Conversations at risk"
       : statusLevel === "warning"
-        ? "Conversations need attention soon"
+        ? "Some need attention soon"
         : maintained > 0
           ? "All conversations maintained"
-          : "Watching over";
+          : "Watching for new conversations";
   const pulseColor = statusLevel === "healthy" ? "var(--meaning-green)" : statusLevel === "warning" ? "var(--meaning-amber)" : "var(--meaning-red)";
+
+  if (!workspaceId) {
+    return (
+      <div
+        className="px-4 py-2 flex items-center justify-between gap-4 text-sm shrink-0"
+        style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)" }}
+      >
+        <div className="flex items-center gap-3">
+          <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse" style={{ background: "var(--meaning-green)" }} aria-hidden />
+          <span style={{ color: "var(--text-muted)" }}>We&apos;re ready. Select where we maintain conversations.</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

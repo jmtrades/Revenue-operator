@@ -32,7 +32,7 @@ function OnboardingContent() {
       // continue
     }
     setActivating(false);
-    router.push(`/dashboard?workspace_id=${workspaceId}`);
+    router.push(`/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}`);
   }, [router, phoneEnabled, phoneNumber]);
 
   useEffect(() => {

@@ -107,6 +107,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard/activation?error=zoom_store_failed", req.url));
   }
 
-  const base = returnTo === "onboarding" ? "/dashboard" : "/dashboard/activation";
+  const base = returnTo === "onboarding" ? "/dashboard/live" : "/dashboard/activation";
   return NextResponse.redirect(new URL(`${base}?zoom_connected=1&workspace_id=${workspaceId}`, req.url));
 }
