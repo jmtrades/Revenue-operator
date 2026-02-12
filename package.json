@@ -9,8 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.7.0",
@@ -25,6 +24,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

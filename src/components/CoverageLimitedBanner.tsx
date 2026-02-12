@@ -17,11 +17,27 @@ export function CoverageLimitedBanner() {
       .catch(() => setCoverage("limited"));
   }, [workspaceId]);
 
+  if (coverage === "full") {
+    return (
+      <div
+        className="py-1.5 px-4 text-xs"
+        style={{
+          background: "var(--surface)",
+          borderColor: "var(--border)",
+          borderBottomWidth: "1px",
+          color: "var(--text-muted)",
+        }}
+      >
+        <span>Coverage: Phone continuity active</span>
+      </div>
+    );
+  }
+
   if (coverage !== "limited" || dismissed) return null;
 
   return (
     <div
-      className="py-2.5 px-4 text-sm"
+      className="py-2 px-4 text-sm"
       style={{
         background: "var(--surface)",
         borderColor: "var(--border)",
@@ -31,8 +47,7 @@ export function CoverageLimitedBanner() {
     >
       <div className="max-w-3xl mx-auto flex items-center justify-between gap-4 flex-wrap">
         <span>
-          <span className="font-medium" style={{ color: "var(--text-primary)" }}>Coverage limited.</span>{" "}
-          Calendar and post-call continuity active. Enable phone protection to maintain conversations on your existing number.
+          Add your number to maintain conversations from personal phone threads.
         </span>
         <div className="flex items-center gap-2">
           <Link
@@ -40,7 +55,7 @@ export function CoverageLimitedBanner() {
             className="px-3 py-1.5 rounded-lg text-xs font-medium"
             style={{ background: "var(--meaning-blue)", color: "#fff" }}
           >
-            Add phone
+            Add number
           </Link>
           <button
             type="button"

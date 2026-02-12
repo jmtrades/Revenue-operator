@@ -141,8 +141,16 @@ export default function ConversationsPage() {
 
   if (!workspaceId) {
     return (
-      <div className="p-8">
-        <p style={{ color: "var(--text-muted)" }}>Select where we maintain conversations.</p>
+      <div className="p-8 max-w-6xl">
+        <header className="mb-8">
+          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Conversations</h1>
+          <p className="mt-1" style={{ color: "var(--text-secondary)" }}>What we&apos;re maintaining for each conversation</p>
+        </header>
+        <div className="py-12 px-6 rounded-xl text-center" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
+          <p className="font-medium" style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
+          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Maintaining continuity</p>
+        </div>
       </div>
     );
   }

@@ -228,8 +228,9 @@ export default function OverviewPage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-8">
         <div className="max-w-lg text-center">
-          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>We&apos;re ready</h1>
-          <p className="mt-2" style={{ color: "var(--text-secondary)" }}>Select where we maintain conversations.</p>
+          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
+          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Watching for new conversations</h1>
+          <p className="mt-2" style={{ color: "var(--text-secondary)" }}>Maintaining continuity. Connect sources to see activity.</p>
         </div>
       </div>
     );

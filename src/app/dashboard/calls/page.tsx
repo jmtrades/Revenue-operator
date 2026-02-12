@@ -75,7 +75,7 @@ export default function CalendarPage() {
   if (!workspaceId) {
     return (
       <div className="p-8">
-        <p style={{ color: "var(--text-muted)" }}>Select where we maintain conversations.</p>
+        <p style={{ color: "var(--text-muted)" }}>Watching for new conversations. Maintaining continuity.</p>
       </div>
     );
   }

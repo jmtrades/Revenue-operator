@@ -24,12 +24,34 @@ export default function ActivatePage() {
         }),
       });
       const data = await res.json();
-      if (data.workspace_id) {
-        if (typeof window !== "undefined") sessionStorage.setItem("revenue_workspace_id", data.workspace_id);
-        router.push(`/dashboard/onboarding?workspace_id=${data.workspace_id}`);
+      const workspaceId = data.workspace_id;
+      if (!workspaceId) {
+        router.push("/dashboard/onboarding");
         return;
       }
-      router.push("/dashboard/onboarding");
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("revenue_last_workspace_id", workspaceId);
+        } catch {
+          // ignore
+        }
+      }
+      const base = typeof window !== "undefined" ? window.location.origin : "";
+      const checkoutRes = await fetch("/api/billing/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workspace_id: workspaceId,
+          success_url: `${base}/dashboard/onboarding?workspace_id=${encodeURIComponent(workspaceId)}`,
+          cancel_url: `${base}/activate`,
+        }),
+      });
+      const checkoutData = await checkoutRes.json();
+      if (checkoutData.checkout_url) {
+        window.location.href = checkoutData.checkout_url;
+        return;
+      }
+      router.push(`/dashboard/onboarding?workspace_id=${workspaceId}`);
     } catch {
       router.push("/dashboard/onboarding");
     } finally {
@@ -63,7 +85,7 @@ export default function ActivatePage() {
             </button>
           </form>
           <p className="text-xs mt-4 text-center" style={{ color: "var(--text-muted)" }}>
-            No credit card. Connect your calendar next.
+            Card required. You won&apos;t be charged until day 14. Cancel anytime before renewal.
           </p>
         </div>
       </div>
