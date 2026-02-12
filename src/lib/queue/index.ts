@@ -36,7 +36,7 @@ async function getRedis(): Promise<import("ioredis").Redis | null> {
 const QUEUE_NAME = "ro:jobs";
 const DLQ_NAME = "ro:dlq";
 
-/** Enqueue decision job only if no active plan with future next_action_at (anti-duplicate). */
+/** Enqueue decision job only if no active plan with future next_action_at and no duplicate pending job. */
 export async function enqueueDecision(
   leadId: string,
   workspaceId: string,
@@ -46,6 +46,20 @@ export async function enqueueDecision(
   const check = await shouldEnqueueDecision(workspaceId, leadId);
   if (!check.enqueue && check.reason === "plan_scheduled") {
     return null;
+  }
+  const redis = await getRedis();
+  if (!redis) {
+    const db = getDb();
+    const { data: rows } = await db
+      .from("job_queue")
+      .select("id, payload")
+      .eq("status", "pending")
+      .eq("job_type", "decision")
+      .limit(50);
+    const hasDuplicate = (rows ?? []).some(
+      (r: { payload?: { leadId?: string } }) => (r.payload as { leadId?: string })?.leadId === leadId
+    );
+    if (hasDuplicate) return null;
   }
   return enqueue({
     type: "decision",

@@ -27,23 +27,22 @@ function fillSlotsDeterministic(
       slots.question_1 = "Could you tell me a bit more about what you're looking for?";
       break;
     case "follow_up":
-      slots.context_line = `Following up on our last exchange`;
-      slots.question_1 = "Any questions I can help with?";
+      slots.context_line = "Just following up";
+      slots.question_1 = "No rush — let me know if you'd like me to keep this open.";
       break;
     case "qualification_question":
       slots.context_line = "To make sure we're a good fit";
       slots.question_1 = "What's the main challenge you're trying to solve?";
-      slots.question_2 = "What would success look like for you?";
       break;
     case "booking":
       slots.greeting = `Hi ${name}`;
-      slots.context_line = "I'd be happy to help";
-      slots.cta = "Would you like to schedule a quick call?";
+      slots.context_line = "Happy to help";
+      slots.cta = "Would you like to schedule a call?";
       break;
     case "call_invite":
       slots.greeting = `Hi ${name}`;
-      slots.context_line = "A call would be the fastest way to move forward";
-      slots.cta = "Here are some times that work:";
+      slots.context_line = "A call might help move this forward";
+      slots.cta = "Here are some times that work.";
       break;
     case "reminder":
       slots.greeting = `Hi ${name}`;
@@ -57,16 +56,19 @@ function fillSlotsDeterministic(
     case "recovery":
     case "win_back":
       slots.greeting = `Hi ${name}`;
-      slots.context_line = company ? `We noticed things have been quiet with ${company}` : "We noticed things have been quiet";
-      slots.question_1 = "Still interested in exploring options?";
+      slots.context_line = "Just following up — no rush at all.";
+      slots.question_1 = "Let me know if you'd like me to keep this open.";
+      break;
+    case "defer":
+      slots.context_line = "Happy to leave this here — just let me know if you'd like to continue.";
       break;
     case "offer":
       slots.context_line = "We have an option that might help";
       slots.cta = "Worth a quick chat?";
       break;
     case "next_step":
-      slots.context_line = "Ready for the next step";
-      slots.cta = "Would you like to schedule a call?";
+      slots.context_line = "Keeping this open for you";
+      slots.cta = "Would you like to schedule a call when you're ready?";
       break;
     case "question":
       slots.context_line = "Thanks for reaching out";
@@ -76,9 +78,11 @@ function fillSlotsDeterministic(
       slots.greeting = `Hi ${name}`;
       slots.question_1 = "Could you tell me a bit more about what you're looking for?";
   }
-
   return slots;
 }
+
+/** Low-confidence safe defer. Coordinator tone, no pressure. */
+export const DEFER_MESSAGE = "Happy to leave this here — just let me know if you'd like to continue.";
 
 /** Build deterministic message from intervention. No AI. */
 export function buildMessageFromIntervention(

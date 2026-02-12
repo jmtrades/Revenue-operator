@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
@@ -10,6 +10,30 @@ function OnboardingContent() {
   const searchParams = useSearchParams();
   const { workspaceId, workspaces, loadWorkspaces } = useWorkspace();
   const [activating, setActivating] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneEnabled, setPhoneEnabled] = useState(true);
+
+  const activateAndRedirect = useCallback(async (workspaceId: string) => {
+    setActivating(true);
+    try {
+      await fetch(`/api/activation?workspace_id=${encodeURIComponent(workspaceId)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "activate" }),
+      });
+      if (phoneEnabled && phoneNumber.trim()) {
+        await fetch(`/api/workspaces/${workspaceId}/phone-continuity`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mode: "proxy", forwarding_number: phoneNumber.trim() }),
+        });
+      }
+    } catch {
+      // continue
+    }
+    setActivating(false);
+    router.push(`/dashboard?workspace_id=${workspaceId}`);
+  }, [router, phoneEnabled, phoneNumber]);
 
   useEffect(() => {
     loadWorkspaces();
@@ -23,22 +47,7 @@ function OnboardingContent() {
       activateAndRedirect(wid);
       return;
     }
-  }, [wid, searchParams]);
-
-  const activateAndRedirect = async (workspaceId: string) => {
-    setActivating(true);
-    try {
-      await fetch(`/api/activation?workspace_id=${encodeURIComponent(workspaceId)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "activate" }),
-      });
-    } catch {
-      // continue
-    }
-    setActivating(false);
-    router.push(`/dashboard?workspace_id=${workspaceId}`);
-  };
+  }, [wid, searchParams, activateAndRedirect]);
 
   const handleConnect = () => {
     if (!wid) return;
@@ -54,12 +63,12 @@ function OnboardingContent() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-8">
         <div className="max-w-lg text-center">
-          <h1 className="text-2xl font-semibold text-stone-50">Get started</h1>
+          <h1 className="text-2xl font-semibold text-stone-50">Protection ready</h1>
           <p className="text-stone-400 mt-2">
-            Create an account to begin coverage. Sign up or contact us.
+            Create an account to begin watching over your conversations.
           </p>
           <Link href="/activate" className="mt-6 inline-block text-amber-400 hover:underline">
-            Begin coverage
+            Start protection
           </Link>
         </div>
       </div>
@@ -69,12 +78,24 @@ function OnboardingContent() {
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-8">
       <div className="max-w-md w-full">
-        <h1 className="text-xl font-semibold text-stone-50 mb-2">Connect your pipeline</h1>
+        <h1 className="text-xl font-semibold text-stone-50 mb-2">Connect your sources</h1>
         <p className="text-stone-400 text-sm mb-6">
           That&apos;s it. We protect your calendar — follow-ups, reminders, revivals. You take the calls.
         </p>
         {wid ? (
           <div className="space-y-3">
+            <p className="text-xs mb-2" style={{ color: "var(--text-muted)" }}>Protect conversations on your existing number (recommended)</p>
+            <input
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="Your phone for forwarding calls"
+              className="w-full px-4 py-3 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 mb-2"
+            />
+            <label className="flex items-center gap-2 text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
+              <input type="checkbox" checked={phoneEnabled} onChange={(e) => setPhoneEnabled(e.target.checked)} />
+              Enable protection
+            </label>
             <button
               onClick={handleConnect}
               disabled={activating}

@@ -1,11 +1,12 @@
 /**
  * Decision Engine — Pure intervention authority.
- * Consumes deal_state_vector. Outputs intervention_decision only.
+ * Consumes deal_state_vector and optional strategy_state. Outputs intervention_decision only.
  * No message construction. No AI.
  */
 
 import { getDb } from "@/lib/db/queries";
 import type { DealStateVector } from "@/lib/engines/perception";
+import type { WorkspaceStrategyState } from "@/lib/strategy/planner";
 import { ALLOWED_ACTIONS_BY_STATE } from "@/lib/types";
 import type { LeadState } from "@/lib/types";
 import {
@@ -66,7 +67,8 @@ const INTERVENTION_REASON_CODES: Record<string, string> = {
 export async function decideIntervention(
   workspaceId: string,
   leadId: string,
-  stateVector: DealStateVector
+  stateVector: DealStateVector,
+  strategyState?: WorkspaceStrategyState | null
 ): Promise<InterventionDecision> {
   const db = getDb();
   const state = stateVector.state as LeadState;
@@ -133,6 +135,44 @@ export async function decideIntervention(
       confidence: 0,
       reason_code: INTERVENTION_REASON_CODES.paused,
     };
+  }
+
+  let effectiveAllowedActions = allowedActions;
+  const { isLowPressureMode } = await import("@/lib/human-safety/disinterest-detector");
+  const lowPressure = await isLowPressureMode(workspaceId, leadId);
+  if (lowPressure) {
+    const passiveOnly = ["follow_up", "clarifying_question"];
+    effectiveAllowedActions = allowedActions.filter((a) => passiveOnly.includes(a));
+    if (effectiveAllowedActions.length === 0) {
+      return {
+        intervene: false,
+        intervention_type: null,
+        timing: "deferred",
+        channel_priority: [],
+        confidence: 0,
+        reason_code: "low_pressure_mode",
+      };
+    }
+    const { data: lastOut } = await db
+      .from("outbound_messages")
+      .select("sent_at")
+      .eq("lead_id", leadId)
+      .not("sent_at", "is", null)
+      .order("sent_at", { ascending: false })
+      .limit(1)
+      .single();
+    const lastSentAt = (lastOut as { sent_at?: string })?.sent_at ? new Date((lastOut as { sent_at: string }).sent_at) : null;
+    const seventyTwoHoursAgo = new Date(Date.now() - 72 * 60 * 60 * 1000);
+    if (lastSentAt && lastSentAt > seventyTwoHoursAgo) {
+      return {
+        intervene: false,
+        intervention_type: null,
+        timing: "scheduled",
+        channel_priority: [],
+        confidence: 0,
+        reason_code: "low_pressure_72h",
+      };
+    }
   }
 
   if (!isWithinBusinessHours(settings)) {
@@ -230,7 +270,7 @@ export async function decideIntervention(
     };
   }
 
-  let interventionType: InterventionType = allowedActions[0] as InterventionType;
+  let interventionType: InterventionType = effectiveAllowedActions[0] as InterventionType;
   let confidence = 0.8;
   let reasonCode = INTERVENTION_REASON_CODES.ready_follow_up;
 
@@ -239,21 +279,28 @@ export async function decideIntervention(
     confidence = 0.85;
     reasonCode = INTERVENTION_REASON_CODES.silence_risk;
   } else if (state === "REACTIVATE" || stateVector.engagement_decay_hours > 72) {
-    interventionType = allowedActions.includes("win_back") ? "win_back" : (allowedActions.includes("recovery") ? "recovery" : "follow_up") as InterventionType;
-    confidence = 0.75;
+    const agg = strategyState?.aggressiveness_level ?? "balanced";
+    const recoveryConfidence = agg === "conservative" ? 0.85 : agg === "aggressive" ? 0.65 : 0.75;
+    if (strategyState?.recovery_priority === "low" && agg === "conservative") {
+      interventionType = "follow_up" as InterventionType;
+      confidence = 0.7;
+    } else {
+      interventionType = effectiveAllowedActions.includes("win_back") ? "win_back" : (effectiveAllowedActions.includes("recovery") ? "recovery" : "follow_up") as InterventionType;
+      confidence = recoveryConfidence;
+    }
     reasonCode = INTERVENTION_REASON_CODES.decay_recovery;
   } else if (state === "BOOKED" && stateVector.attendance_probability > 0) {
-    interventionType = allowedActions.includes("reminder") ? "reminder" : (allowedActions.includes("prep_info") ? "prep_info" : "follow_up") as InterventionType;
+    interventionType = effectiveAllowedActions.includes("reminder") ? "reminder" : (effectiveAllowedActions.includes("prep_info") ? "prep_info" : "follow_up") as InterventionType;
     confidence = 0.8;
     reasonCode = INTERVENTION_REASON_CODES.attendance_protection;
   } else if ((state === "QUALIFIED" || state === "ENGAGED") && stateVector.deal_probability > 0.6) {
     const { data: dealRow } = await db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1).single();
     const dealId = (dealRow as { id?: string })?.id;
-    if (dealId && allowedActions.includes("booking")) {
+    if (dealId && effectiveAllowedActions.includes("booking")) {
       const route = await getBookingRoute(dealId);
       if (route.tier === "clarify_nurture") {
         interventionType = "qualification_question";
-      } else if (route.tier === "triage_call" && allowedActions.includes("call_invite")) {
+      } else if (route.tier === "triage_call" && effectiveAllowedActions.includes("call_invite")) {
         interventionType = "call_invite";
       } else {
         interventionType = "booking";
@@ -286,8 +333,26 @@ export async function decideIntervention(
     };
   }
 
+  const agg = strategyState?.aggressiveness_level ?? "balanced";
+  const actThreshold = agg === "conservative" ? 0.85 : agg === "aggressive" ? 0.7 : 0.8;
+  if (agg === "conservative" && confidence < actThreshold) {
+    confidence = Math.min(confidence + 0.05, actThreshold);
+  }
+
+  try {
+    const { getBlendedExpectation } = await import("@/lib/network/behavioral-blend");
+    const blend = await getBlendedExpectation(workspaceId, leadId, {
+      stage: state,
+      messageType: interventionType,
+      hoursSinceLastMessage: stateVector.engagement_decay_hours ?? 24,
+    });
+    confidence = Math.min(0.95, confidence + (blend.expected_success - 0.5) * 0.08);
+  } catch {
+    // Non-blocking: blend failure does not affect decision
+  }
+
   const channelPriority = [channel];
-  const timing = confidence >= 0.8 ? "immediate" : "scheduled";
+  const timing = confidence >= actThreshold ? "immediate" : "scheduled";
 
   return {
     intervene: true,

@@ -45,9 +45,9 @@ export default function ActivationPage() {
   return (
     <div className="p-8 max-w-2xl">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold text-stone-50">Connect your pipeline</h1>
-        <p className="text-stone-400 mt-1">
-          One step: connect. We protect your calendar — follow-ups, reminders, revivals.
+        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Connect your calendar</h1>
+        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>
+          One step: connect. We maintain continuity — follow-ups, reminders, recoveries.
         </p>
       </header>
 
@@ -77,7 +77,7 @@ export default function ActivationPage() {
             ) : (
               <>
                 <p className="text-stone-500">Zoom is not configured. We work with calendar events without it.</p>
-                <p className="text-stone-500 text-xs mt-1">Connect your pipeline via webhook or integrations.</p>
+                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Connect via webhook or integrations.</p>
               </>
             )}
           </div>

@@ -46,12 +46,15 @@ export async function POST(req: NextRequest) {
       }
       const wsId = randomUUID();
       const hiredRoles = Array.isArray(body.hired_roles) && body.hired_roles.length ? body.hired_roles : ["full_autopilot"];
+      const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
       await db.from("workspaces").insert({
         id: wsId,
         name: "My workspace",
         owner_id: uid,
         autonomy_level: "assisted",
         kill_switch: false,
+        billing_status: "trial",
+        protection_renewal_at: trialEnd.toISOString(),
       });
       await db.from("settings").insert({
         workspace_id: wsId,
@@ -65,12 +68,15 @@ export async function POST(req: NextRequest) {
   }
 
   const workspaceId = randomUUID();
+  const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
   const { error: wsErr } = await db.from("workspaces").insert({
     id: workspaceId,
     name: "My workspace",
     owner_id: userId,
     autonomy_level: "assisted",
     kill_switch: false,
+    billing_status: "trial",
+    protection_renewal_at: trialEnd.toISOString(),
   });
 
   if (wsErr) {

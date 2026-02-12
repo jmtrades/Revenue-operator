@@ -116,7 +116,13 @@ export async function computeDealStateVector(
       .single();
     if (upcomingSession) {
       nextSessionAt = (upcomingSession as { call_started_at?: string })?.call_started_at ?? null;
-      attendanceProbability = 0.7;
+    }
+    try {
+      const { getDealOutcome } = await import("@/lib/outcomes/model");
+      const outcome = await getDealOutcome(workspaceId, leadId);
+      attendanceProbability = outcome?.stage === "booked" ? outcome.probability : 0.65;
+    } catch {
+      attendanceProbability = 0.65;
     }
   }
 

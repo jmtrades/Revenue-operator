@@ -20,7 +20,7 @@ export async function processZoomWebhook(
 
   const payload = (raw as { payload?: { payload?: { object?: Record<string, unknown> } } }).payload?.payload?.object ?? {};
   const participantEmails: string[] = [];
-  let participantNames: string[] = [];
+  const participantNames: string[] = [];
 
   try {
     const participants = await getPastMeetingParticipants(workspaceId, meetingId);

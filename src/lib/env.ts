@@ -14,6 +14,19 @@ const envSchema = z.object({
   REDIS_URL: z.string().url().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PRICE_ID: z.string().optional(),
+  BASE_URL: z.string().url().optional(),
+  ENCRYPTION_KEY: z.string().optional(),
+  ZOOM_CLIENT_ID: z.string().optional(),
+  ZOOM_CLIENT_SECRET: z.string().optional(),
+  ZOOM_WEBHOOK_SECRET: z.string().optional(),
+  TWILIO_ACCOUNT_SID: z.string().optional(),
+  TWILIO_AUTH_TOKEN: z.string().optional(),
+  TWILIO_PHONE_NUMBER: z.string().optional(),
+  TWILIO_PROXY_NUMBER: z.string().optional(),
+  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+  EMAIL_FROM: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { computeDealStateVector } from "@/lib/engines/perception";
+import { computeRevenueState } from "@/lib/revenue-state";
 
 export async function GET(
   req: NextRequest,
@@ -19,5 +20,6 @@ export async function GET(
   const vector = await computeDealStateVector(workspaceId, leadId);
   if (!vector) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
-  return NextResponse.json(vector);
+  const revenueState = computeRevenueState(vector);
+  return NextResponse.json({ ...vector, revenue_state: revenueState });
 }

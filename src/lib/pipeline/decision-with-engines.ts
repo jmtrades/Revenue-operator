@@ -6,8 +6,8 @@
 import { getDb } from "@/lib/db/queries";
 import { computeDealStateVector } from "@/lib/engines/perception";
 import { decideIntervention } from "@/lib/engines/decision";
-import { buildMessageFromIntervention } from "@/lib/engines/execution";
-import { runDecisionJob } from "@/lib/pipeline/decision-job";
+import { buildMessageFromIntervention, DEFER_MESSAGE } from "@/lib/engines/execution";
+import { computeRevenueState, buildLossPreventionPayload } from "@/lib/revenue-state";
 import { redact } from "@/lib/redact";
 import { checkPolicy, mergeSettings } from "@/lib/autopilot";
 import { detectSensitiveIntent, getSafeResponse, getEscalationHoldingMessage } from "@/lib/safe-responses";
@@ -27,29 +27,55 @@ const SAFE_FALLBACK_MESSAGES: Record<string, string> = {
 
 /**
  * Run decision using engine pipeline (Perception -> Decision -> Execution).
- * Falls back to legacy when USE_LEGACY_DECISION=1.
- * Engine path: deterministic templates only. No raw LLM text sent.
+ * Deterministic templates only. No free-form AI generation.
  */
 export async function runDecisionJobWithEngines(
   leadId: string,
   workspaceId: string
 ): Promise<void> {
-  if (process.env.USE_LEGACY_DECISION === "1") {
-    await runDecisionJob(leadId, workspaceId);
-    return;
-  }
-
   const stateVector = await computeDealStateVector(workspaceId, leadId);
   if (!stateVector) {
     console.error("[decisionJob] lead not found", redact({ leadId }));
     return;
   }
 
-  const decision = await decideIntervention(workspaceId, leadId, stateVector);
+  const revenueState = computeRevenueState(stateVector);
+
+  if (stateVector.state === "BOOKED") {
+    try {
+      const { protectAttendance } = await import("@/lib/outcomes/attendance");
+      await protectAttendance(leadId);
+    } catch {
+      // Non-blocking
+    }
+  }
+  if (["SHOWED", "QUALIFIED", "ENGAGED"].includes(stateVector.state)) {
+    try {
+      const { monitorDealHealth } = await import("@/lib/outcomes/deal-health");
+      await monitorDealHealth(leadId);
+    } catch {
+      // Non-blocking
+    }
+  }
+
+  const { getWorkspaceStrategy } = await import("@/lib/strategy/planner");
+  const strategyState = await getWorkspaceStrategy(workspaceId);
+  const decision = await decideIntervention(workspaceId, leadId, stateVector, strategyState);
   if (!decision.intervene || !decision.intervention_type) {
     const { recordInaction } = await import("@/lib/inaction-reasons");
     await recordInaction(leadId, workspaceId, "decision_no_intervention", {
       reason_code: decision.reason_code,
+    });
+    const recheckAt = revenueState.transition_toward_risk_at
+      ? new Date(revenueState.transition_toward_risk_at)
+      : (() => {
+          const t = new Date();
+          t.setHours(t.getHours() + 12);
+          return t;
+        })();
+    await setLeadPlan(workspaceId, leadId, {
+      next_action_type: "recheck",
+      next_action_at: recheckAt.toISOString(),
     });
     return;
   }
@@ -65,26 +91,72 @@ export async function runDecisionJobWithEngines(
 
   const { data: convRow } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).single();
   const convId = (convRow as { id?: string })?.id;
-  if (!convId) return;
+  if (!convId) {
+    const recheckAt = revenueState.transition_toward_risk_at
+      ? new Date(revenueState.transition_toward_risk_at)
+      : (() => { const t = new Date(); t.setHours(t.getHours() + 12); return t; })();
+    await setLeadPlan(workspaceId, leadId, { next_action_type: "recheck", next_action_at: recheckAt.toISOString() });
+    return;
+  }
 
   const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspaceId).single();
   const settings = mergeSettings(settingsRow as Parameters<typeof mergeSettings>[0]);
 
+  const coverageFlags = (settingsRow as { coverage_flags?: Record<string, boolean> })?.coverage_flags;
+  const { isCoverageEnabled } = await import("@/lib/coverage-flags");
+  if (!isCoverageEnabled(coverageFlags, decision.intervention_type)) {
+    const covLossPayload = buildLossPreventionPayload(
+      revenueState,
+      decision.intervention_type,
+      decision.reason_code,
+      0
+    );
+    await logRestraint(workspaceId, leadId, "coverage_not_enabled", {
+      reason_code: decision.reason_code,
+      ...covLossPayload,
+    });
+    const { recordInaction } = await import("@/lib/inaction-reasons");
+    await recordInaction(leadId, workspaceId, "coverage_not_enabled", {
+      intervention_type: decision.intervention_type,
+      reason_code: decision.reason_code,
+    });
+    const recheckAt = revenueState.transition_toward_risk_at
+      ? new Date(revenueState.transition_toward_risk_at)
+      : (() => {
+          const t = new Date();
+          t.setHours(t.getHours() + 24);
+          return t;
+        })();
+    await setLeadPlan(workspaceId, leadId, {
+      next_action_type: "recheck",
+      next_action_at: recheckAt.toISOString(),
+    });
+    return;
+  }
+
   const stage = (lead as { state: import("@/lib/types").LeadState }).state;
   const cooldownCheck = await canInterveneNow(workspaceId, leadId, decision.intervention_type, stage);
   if (!cooldownCheck.allowed) {
+    const coolLossPayload = buildLossPreventionPayload(
+      revenueState,
+      decision.intervention_type,
+      decision.reason_code,
+      0
+    );
     await logRestraint(workspaceId, leadId, cooldownCheck.reason ?? "cooldown", {
       cooldown_until: cooldownCheck.cooldown_until,
       reason_code: decision.reason_code,
+      ...coolLossPayload,
     });
-    if (cooldownCheck.cooldown_until) {
-      const observeAt = new Date(cooldownCheck.cooldown_until);
-      observeAt.setMinutes(observeAt.getMinutes() + 5);
-      await setLeadPlan(workspaceId, leadId, {
-        next_action_type: "observe",
-        next_action_at: observeAt.toISOString(),
-      });
-    }
+    const observeAt = cooldownCheck.cooldown_until
+      ? (() => { const t = new Date(cooldownCheck.cooldown_until!); t.setMinutes(t.getMinutes() + 5); return t; })()
+      : revenueState.transition_toward_risk_at
+        ? new Date(revenueState.transition_toward_risk_at)
+        : (() => { const t = new Date(); t.setHours(t.getHours() + 6); return t; })();
+    await setLeadPlan(workspaceId, leadId, {
+      next_action_type: "observe",
+      next_action_at: observeAt.toISOString(),
+    });
     return;
   }
 
@@ -92,12 +164,55 @@ export async function runDecisionJobWithEngines(
   const minSchedule = Number((settingsRow as { min_confidence_to_schedule?: number })?.min_confidence_to_schedule ?? 0.45);
   if (decision.confidence < minAct) {
     if (decision.confidence >= minSchedule) {
-      const observeAt = new Date();
-      observeAt.setHours(observeAt.getHours() + 4);
+      const observeAt = revenueState.transition_toward_risk_at
+        ? new Date(revenueState.transition_toward_risk_at)
+        : (() => {
+            const t = new Date();
+            t.setHours(t.getHours() + 4);
+            return t;
+          })();
+      const channel = (convRow as { channel?: string })?.channel ?? "web";
+      const { count: totalOutbound } = await db.from("outbound_messages").select("id", { count: "exact", head: true }).eq("lead_id", leadId);
+      const attemptCount = (totalOutbound ?? 0) + 1;
+      const { sendOutbound } = await import("@/lib/delivery/provider");
+      const { recordIntervention, hashMessage } = await import("@/lib/stability/cooldowns");
+      await db.from("messages").insert({
+        conversation_id: convId,
+        role: "assistant",
+        content: DEFER_MESSAGE,
+        confidence_score: decision.confidence,
+        approved_by_human: false,
+        metadata: { action: "defer", reason_code: decision.reason_code },
+      });
+      const { data: om } = await db
+        .from("outbound_messages")
+        .insert({
+          workspace_id: workspaceId,
+          lead_id: leadId,
+          conversation_id: convId,
+          content: DEFER_MESSAGE,
+          channel,
+          status: "queued",
+          attempt_count: attemptCount,
+        })
+        .select("id")
+        .single();
+      if (om) {
+        const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
+        await sendOutbound((om as { id: string }).id, workspaceId, leadId, convId, channel, DEFER_MESSAGE, to);
+      }
+      await recordIntervention(workspaceId, leadId, "clarifying_question", hashMessage(DEFER_MESSAGE));
       await setLeadPlan(workspaceId, leadId, {
         next_action_type: "observe",
         next_action_at: observeAt.toISOString(),
       });
+      const lossPayload = buildLossPreventionPayload(
+        revenueState,
+        decision.intervention_type,
+        decision.reason_code,
+        0,
+        { intervention_type_override: "NO_ACTION" }
+      );
       await db.from("action_logs").insert({
         workspace_id: workspaceId,
         entity_type: "lead",
@@ -110,6 +225,8 @@ export async function runDecisionJobWithEngines(
           min_to_act: minAct,
           reason_code: decision.reason_code,
           scheduled_observe_at: observeAt.toISOString(),
+          defer_message_sent: true,
+          ...lossPayload,
         },
       });
       return;
@@ -120,8 +237,13 @@ export async function runDecisionJobWithEngines(
       min_to_act: minAct,
       reason_code: decision.reason_code,
     });
-    const recheckAt = new Date();
-    recheckAt.setHours(recheckAt.getHours() + 36);
+    const recheckAt = revenueState.transition_toward_risk_at
+      ? new Date(revenueState.transition_toward_risk_at)
+      : (() => {
+          const t = new Date();
+          t.setHours(t.getHours() + 36);
+          return t;
+        })();
     await setLeadPlan(workspaceId, leadId, {
       next_action_type: "recheck",
       next_action_at: recheckAt.toISOString(),
@@ -168,6 +290,17 @@ export async function runDecisionJobWithEngines(
   if (!roleResolved) {
     const { recordInaction } = await import("@/lib/inaction-reasons");
     await recordInaction(leadId, workspaceId, "no_role_for_action", { state: (lead as { state: string }).state, action: decision.intervention_type });
+    const recheckAt = revenueState.transition_toward_risk_at
+      ? new Date(revenueState.transition_toward_risk_at)
+      : (() => {
+          const t = new Date();
+          t.setHours(t.getHours() + 12);
+          return t;
+        })();
+    await setLeadPlan(workspaceId, leadId, {
+      next_action_type: "recheck",
+      next_action_at: recheckAt.toISOString(),
+    });
     return;
   }
   const roleLabel = roleResolved.label ?? "System";
@@ -210,6 +343,8 @@ export async function runDecisionJobWithEngines(
       const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
       await sendOutbound((omH as { id: string }).id, workspaceId, leadId, convId, channel, holdingMessage, to);
     }
+    const escHoldRecheck = (() => { const t = new Date(); t.setHours(t.getHours() + 4); return t; })();
+    await setLeadPlan(workspaceId, leadId, { next_action_type: "observe", next_action_at: escHoldRecheck.toISOString() });
     return;
   }
 
@@ -285,6 +420,13 @@ export async function runDecisionJobWithEngines(
       status: "pending",
     });
     const escNarrative = narrativeForAction(decision.intervention_type, { lastUserMsg, state: (lead as { state: string }).state, policyReason: policy.reason, reasoning: { reason_code: decision.reason_code } });
+    const escLossPayload = buildLossPreventionPayload(
+      revenueState,
+      decision.intervention_type,
+      decision.reason_code,
+      dealValue,
+      { intervention_type_override: "HUMAN_ALERT" }
+    );
     await db.from("action_logs").insert({
       workspace_id: workspaceId,
       entity_type: "lead",
@@ -301,12 +443,23 @@ export async function runDecisionJobWithEngines(
         decision: escNarrative.decision,
         expected: escNarrative.expected,
         confidence_label: confidenceToLabel(decision.confidence),
+        ...escLossPayload,
       },
     });
+    const escRecheck = revenueState.transition_toward_risk_at
+      ? new Date(revenueState.transition_toward_risk_at)
+      : (() => { const t = new Date(); t.setHours(t.getHours() + (timeoutHours ?? 24)); return t; })();
+    await setLeadPlan(workspaceId, leadId, { next_action_type: "observe", next_action_at: escRecheck.toISOString() });
     return;
   }
 
   if (forceSimulate) {
+    const simLossPayload = buildLossPreventionPayload(
+      revenueState,
+      decision.intervention_type,
+      decision.reason_code,
+      dealValue
+    );
     await db.from("action_logs").insert({
       workspace_id: workspaceId,
       entity_type: "lead",
@@ -319,8 +472,13 @@ export async function runDecisionJobWithEngines(
         confidence: decision.confidence,
         reason_code: decision.reason_code,
         simulated: true,
+        ...simLossPayload,
       },
     });
+    const simRecheck = revenueState.transition_toward_risk_at
+      ? new Date(revenueState.transition_toward_risk_at)
+      : (() => { const t = new Date(); t.setHours(t.getHours() + 4); return t; })();
+    await setLeadPlan(workspaceId, leadId, { next_action_type: "observe", next_action_at: simRecheck.toISOString() });
     return;
   }
 
@@ -361,15 +519,28 @@ export async function runDecisionJobWithEngines(
 
   await recordIntervention(workspaceId, leadId, decision.intervention_type, hashMessage(message));
 
+  try {
+    const { recordRiskIncidentPrevented } = await import("@/lib/risk-surface/record-incident");
+    await recordRiskIncidentPrevented(workspaceId, decision.reason_code, { leadId, detail: { intervention_type: decision.intervention_type } });
+  } catch {
+    // Non-blocking
+  }
+
   const { data: plan } = await db.from("lead_plans").select("sequence_id").eq("workspace_id", workspaceId).eq("lead_id", leadId).eq("status", "active").single();
   if (plan && (plan as { sequence_id?: string }).sequence_id) {
     const { advanceSequence } = await import("@/lib/sequences/engine");
-    await advanceSequence(workspaceId, leadId);
+    await advanceSequence(workspaceId, leadId, strategyState);
   } else {
     const { completeLeadPlan } = await import("@/lib/plans/lead-plan");
     await completeLeadPlan(workspaceId, leadId);
   }
 
+  const sendLossPayload = buildLossPreventionPayload(
+    revenueState,
+    decision.intervention_type,
+    decision.reason_code,
+    dealValue
+  );
   await db.from("action_logs").insert({
     workspace_id: workspaceId,
     entity_type: "lead",
@@ -383,6 +554,7 @@ export async function runDecisionJobWithEngines(
       policy_reason: policy.reason,
       reason_code: decision.reason_code,
       confidence_label: confidenceToLabel(decision.confidence),
+      ...sendLossPayload,
     },
   });
 }

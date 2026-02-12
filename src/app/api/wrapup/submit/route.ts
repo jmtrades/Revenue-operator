@@ -82,6 +82,12 @@ export async function POST(req: NextRequest) {
       await db.from("call_analysis").update({ analysis_json: analysisJson, analysis_source: "wrap_up" }).eq("call_session_id", consumed.callSessionId);
     }
     await enqueue({ type: "execute_post_call_plan", callSessionId: consumed.callSessionId, workspaceId: consumed.workspaceId, leadId });
+    try {
+      const { recordCloserFeedback } = await import("@/lib/outcomes/closer-feedback");
+      await recordCloserFeedback(consumed.workspaceId, leadId, "showed");
+    } catch {
+      // Non-blocking
+    }
   }
 
   return NextResponse.json({ ok: true });
