@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { PageHeader, Card, CardHeader, CardBody, EmptyState } from "@/components/ui";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const { workspaceId } = useWorkspace();
+  const [sessionEmail, setSessionEmail] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [escalationEnabled, setEscalationEnabled] = useState(false);
   const [callAwareEnabled, setCallAwareEnabled] = useState(true);
@@ -62,6 +66,13 @@ export default function SettingsPage() {
       .catch(() => setBillingStatus(null));
   }, [workspaceId]);
 
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((d: { session?: { email?: string } | null }) => setSessionEmail(d?.session?.email ?? null))
+      .catch(() => setSessionEmail(null));
+  }, []);
+
   const save = async () => {
     if (!workspaceId) return;
     const res = await fetch(`/api/workspaces/${workspaceId}/settings`, {
@@ -87,16 +98,32 @@ export default function SettingsPage() {
 
   return (
     <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
-      <h1 className="text-2xl font-semibold mb-2">Preferences</h1>
-      <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>How we work for you</p>
+      <PageHeader title="Preferences" subtitle="How we work for you" />
       {!workspaceId ? (
-        <div className="py-12 px-6 rounded-xl text-center" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-          <p className="font-medium" style={{ color: "var(--text-primary)" }}>Watching for new conversations</p>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Maintaining continuity</p>
-        </div>
+        <EmptyState title="Watching for new conversations" subtitle="Maintaining continuity" icon="watch" />
       ) : (
         <div className="space-y-6">
+          {sessionEmail && (
+            <Card>
+              <CardHeader>Account</CardHeader>
+              <CardBody>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  Signed in as <span style={{ color: "var(--text-primary)" }}>{sessionEmail}</span>
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+                    router.replace("/activate");
+                  }}
+                  className="mt-2 text-sm font-medium"
+                  style={{ color: "var(--meaning-blue)" }}
+                >
+                  Log out
+                </button>
+              </CardBody>
+            </Card>
+          )}
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
             <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>How we sound</h2>
             <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>Tone when we maintain continuity</p>

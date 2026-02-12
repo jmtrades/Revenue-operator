@@ -59,12 +59,12 @@ export async function GET(request: NextRequest) {
   const results: Array<{ workspaceId: string; email: string; sent: boolean }> = [];
 
   for (const { workspaceId, ownerEmail, renewalAt } of toNotify) {
-    const subject = "Protection renews in ~24 hours";
-    const body = `Your Revenue Operator protection renews in about 24 hours.
+    const subject = "Protection is continuing — nothing will be interrupted";
+    const body = `Protection is continuing automatically tomorrow. Nothing will be interrupted.
 
-Ongoing work will continue automatically. To pause protection instead, open Preferences in the overview.
+All conversations will keep being maintained. You only take the calls.
 
-Protection continues automatically. Pause protection anytime — no need to cancel a subscription.`;
+To pause protection instead, open Preferences in the overview.`;
 
     try {
       if (process.env.RESEND_API_KEY) {

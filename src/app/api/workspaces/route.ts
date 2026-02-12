@@ -1,14 +1,28 @@
 export const dynamic = "force-dynamic";
 
 /**
- * List workspaces (GET) or create workspace (POST)
+ * List workspaces (GET) or create workspace (POST).
+ * GET requires session; returns only workspaces for the logged-in user.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { getSession } from "@/lib/auth/request-session";
+import { isSessionEnabled } from "@/lib/auth/session";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const db = getDb();
+  if (isSessionEnabled()) {
+    const session = getSession(req);
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { data, error } = await db
+      .from("workspaces")
+      .select("id, name, created_at")
+      .eq("owner_id", session.userId)
+      .order("created_at", { ascending: false });
+    if (error) return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
+    return NextResponse.json({ workspaces: data ?? [] });
+  }
   const { data, error } = await db.from("workspaces").select("id, name, created_at").order("created_at", { ascending: false });
   if (error) return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
   return NextResponse.json({ workspaces: data ?? [] });

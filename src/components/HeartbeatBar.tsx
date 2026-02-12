@@ -62,6 +62,7 @@ export function HeartbeatBar() {
         : maintained > 0
           ? "All conversations maintained"
           : "Watching for new conversations";
+  const nextLine = nextMin != null && nextMin > 0 ? `Next attention in ~${nextMin} min` : null;
   const pulseColor = statusLevel === "healthy" ? "var(--meaning-green)" : statusLevel === "warning" ? "var(--meaning-amber)" : "var(--meaning-red)";
 
   if (!workspaceId) {
@@ -80,18 +81,25 @@ export function HeartbeatBar() {
 
   return (
     <div
-      className="px-4 py-2 flex items-center justify-between gap-4 text-sm shrink-0"
+      className="px-4 py-2.5 flex items-center justify-between gap-4 text-sm shrink-0"
       style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)" }}
     >
       <div className="flex items-center gap-3">
         <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse" style={{ background: pulseColor }} aria-hidden />
         <span style={{ color: "var(--text-primary)" }}>{statusMessage}</span>
-        <span style={{ color: "var(--text-muted)" }}>·</span>
-        <span style={{ color: "var(--text-muted)" }}>{maintained} conversation{maintained !== 1 ? "s" : ""} maintained</span>
+        {nextLine && (
+          <>
+            <span style={{ color: "var(--text-muted)" }}>·</span>
+            <span style={{ color: "var(--text-secondary)" }}>{nextLine}</span>
+          </>
+        )}
+        {!nextLine && maintained > 0 && (
+          <>
+            <span style={{ color: "var(--text-muted)" }}>·</span>
+            <span style={{ color: "var(--text-muted)" }}>{maintained} conversation{maintained !== 1 ? "s" : ""} maintained</span>
+          </>
+        )}
       </div>
-      {nextMin != null && nextMin > 0 && (
-        <span style={{ color: "var(--text-secondary)" }}>Next attention in ~{nextMin} min</span>
-      )}
     </div>
   );
 }

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { PageHeader, LoadingState, EmptyState } from "@/components/ui";
+import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface CalendarCall {
   session_id: string;
@@ -35,14 +37,28 @@ export default function CalendarPage() {
     }
     setLoading(true);
     Promise.all([
-      fetch(`/api/calendar-risk?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
-      fetch(`/api/risk-surface?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
+      fetchWithFallback(`/api/calendar-risk?workspace_id=${encodeURIComponent(workspaceId)}`, {
+        cacheKey: `calendar-risk-${workspaceId}`,
+      }),
+      fetchWithFallback(`/api/risk-surface?workspace_id=${encodeURIComponent(workspaceId)}`, {
+        cacheKey: `risk-surface-${workspaceId}`,
+      }),
     ])
-      .then(([d, risk]) => {
-        setData(d?.next_48h ? { next_48h: d.next_48h, total_calls: d.total_calls } : null);
-        setRiskSurface(risk?.error ? null : risk);
+      .then(([dResult, riskResult]) => {
+        if (dResult.data) {
+          const d = dResult.data as { next_48h?: CalendarRiskData["next_48h"]; total_calls?: number };
+          if (d.next_48h) {
+            setData({ next_48h: d.next_48h, total_calls: d.total_calls });
+          }
+        }
+        if (riskResult.data && !(riskResult.data as { error?: unknown }).error) {
+          setRiskSurface(riskResult.data as { calendar_at_risk: Array<{ call_id: string; rescue_needed: boolean }> });
+        }
+        // Keep previous state on error
       })
-      .catch(() => { setData(null); setRiskSurface(null); })
+      .catch(() => {
+        // Keep previous state
+      })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -60,11 +76,6 @@ export default function CalendarPage() {
     return "High";
   }
 
-  function stabilityPct(c: CalendarCall): number {
-    const s = attendanceConfidence(c);
-    return s === "High" ? 100 : s === "Medium" ? 60 : 25;
-  }
-
   function preparationState(c: CalendarCall): "Prepared" | "Confirming" | "Monitoring" {
     if (noShows.some((n) => n.session_id === c.session_id)) return "Monitoring";
     if (confirmationNeeded.some((n) => n.session_id === c.session_id)) return "Confirming";
@@ -74,41 +85,33 @@ export default function CalendarPage() {
 
   if (!workspaceId) {
     return (
-      <div className="p-8">
-        <p style={{ color: "var(--text-muted)" }}>Watching for new conversations. Maintaining continuity.</p>
+      <div className="p-8 max-w-3xl">
+        <PageHeader title="Calendar" subtitle="Attendance confidence and preparation state." />
+        <EmptyState icon="watch" title="Watching for new conversations" subtitle="Maintaining continuity" />
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-3xl">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Calls</h1>
-        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>Attendance confidence and preparation state.</p>
-      </header>
+      <PageHeader title="Calendar" subtitle="Attendance confidence and preparation state." />
 
+      {/* Live system guarantee: Always show monitoring */}
+      {!loading && allCalls.length === 0 && (
+        <div className="mb-4 py-2 px-4 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
+          <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
+          <span style={{ color: "var(--text-muted)" }}>Protecting upcoming attendance</span>
+        </div>
+      )}
       {loading ? (
-        <div className="py-12 px-6 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-          <p style={{ color: "var(--text-primary)" }}>Watching over</p>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Protecting booked calls. Continuity monitoring in progress.</p>
-        </div>
+        <LoadingState message="Watching over" submessage="Protecting booked calls. Continuity monitoring in progress." />
       ) : allCalls.length === 0 ? (
-        <div
-          className="py-12 px-6 rounded-xl"
-          style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
-        >
-          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-          <p style={{ color: "var(--text-primary)" }}>Protecting upcoming calls</p>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>We prepare each call when it lands on your calendar.</p>
-        </div>
+        <EmptyState icon="pulse" title="Protecting upcoming attendance" subtitle="We prepare each call when it lands on your calendar." />
       ) : (
         <div className="space-y-4">
           {allCalls.map((c) => {
             const confidence = attendanceConfidence(c);
             const prep = preparationState(c);
-            const pct = stabilityPct(c);
-            const barColor = confidence === "High" ? "var(--meaning-green)" : confidence === "Medium" ? "var(--meaning-amber)" : "var(--meaning-red)";
             const name = c.lead?.name ?? c.lead?.company ?? "—";
             return (
               <div
@@ -122,23 +125,23 @@ export default function CalendarPage() {
                     {c.lead?.company && c.lead?.company !== name && (
                       <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{c.lead.company}</p>
                     )}
-                    <div className="mt-3">
-                      <div className="flex justify-between text-xs mb-1 flex-wrap gap-1" style={{ color: "var(--text-muted)" }}>
-                        <span>Attendance confidence: {confidence}</span>
-                        <span className="flex items-center gap-1">
-                          {rescueIds.has(c.session_id) && (
-                            <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: "rgba(243, 156, 18, 0.2)", color: "var(--meaning-amber)" }}>Recovering</span>
-                          )}
-                          <span>Preparation: {prep}</span>
-                        </span>
-                      </div>
-                      <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
-                        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: barColor }} />
-                      </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
+                      <span>Attendance confidence: {confidence}</span>
+                      <span className="flex items-center gap-1">
+                        {rescueIds.has(c.session_id) && (
+                          <span className="px-1.5 py-0.5 rounded" style={{ background: "rgba(243, 156, 18, 0.2)", color: "var(--meaning-amber)" }}>Recovering</span>
+                        )}
+                        <span>Preparation: {prep}</span>
+                      </span>
                     </div>
                     <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
                       {new Date(c.call_started_at).toLocaleString()}
                     </p>
+                    {new Date(c.call_started_at).getTime() - Date.now() < 24 * 60 * 60 * 1000 && (
+                      <p className="text-xs mt-2" style={{ color: "var(--meaning-green)", opacity: 0.8 }}>
+                        This conversation has been kept warm
+                      </p>
+                    )}
                   </div>
                   <Link
                     href={`/dashboard/leads/${c.lead_id}`}

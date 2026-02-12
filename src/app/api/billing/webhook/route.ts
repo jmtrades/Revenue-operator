@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { logWebhookFailure } from "@/lib/reliability/logging";
 import Stripe from "stripe";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (e) {
-    console.error("[stripe webhook]", e);
+    logWebhookFailure("stripe", e);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -99,6 +100,22 @@ export async function POST(req: NextRequest) {
             status: "paused",
             paused_at: new Date().toISOString(),
             pause_reason: "Coverage ended",
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", workspaceId);
+      }
+      break;
+    }
+    case "invoice.payment_failed": {
+      const invoice = event.data.object as Stripe.Invoice;
+      const workspaceId = invoice.metadata?.workspace_id;
+      if (workspaceId) {
+        // Don't pause immediately - give grace period
+        // Set flag for UI to show soft message
+        await db
+          .from("workspaces")
+          .update({
+            billing_status: "payment_failed",
             updated_at: new Date().toISOString(),
           })
           .eq("id", workspaceId);

@@ -4,7 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ProofDrawer } from "@/components/ProofDrawer";
-import { ReadinessProofDrawer } from "@/components/ReadinessProofDrawer";
+import { LoadingState } from "@/components/ui";
+import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface Lead {
   id: string;
@@ -42,12 +43,10 @@ export default function LeadViewPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [preCallBrief, setPreCallBrief] = useState<PreCallBrief | null>(null);
-  const [readiness, setReadiness] = useState<{ conversation_readiness_score?: number } | null>(null);
   const [workspacePaused, setWorkspacePaused] = useState(false);
   const [callContinuity, setCallContinuity] = useState<{ status: "Prepared" | "Waiting" | "Recovering" } | null>(null);
   const [loading, setLoading] = useState(true);
   const [proofOpen, setProofOpen] = useState(false);
-  const [readinessProofOpen, setReadinessProofOpen] = useState(false);
   const [controlOpen, setControlOpen] = useState(false);
   const [now, setNow] = useState(() => Date.now());
 
@@ -59,59 +58,76 @@ export default function LeadViewPage() {
   useEffect(() => {
     if (!id) return;
     Promise.all([
-      fetch(`/api/leads/${id}`).then((r) => r.json()),
-      fetch(`/api/leads/${id}/messages`).then((r) => r.json()),
+      fetchWithFallback(`/api/leads/${id}`, { cacheKey: `lead-${id}` }),
+      fetchWithFallback(`/api/leads/${id}/messages`, { cacheKey: `lead-messages-${id}` }),
     ])
-      .then(([l, m]) => {
-        setLead(l.error ? null : l);
-        setMessages(m.messages ?? []);
-        setDeals(l.deals ?? []);
+      .then(([lResult, mResult]) => {
+        if (lResult.data && !(lResult.data as { error?: unknown }).error) {
+          const leadData = lResult.data as Lead & { deals?: Deal[] };
+          setLead(leadData);
+          setDeals(leadData.deals ?? []);
+        }
+        if (mResult.data) {
+          const msgData = mResult.data as { messages?: Message[] };
+          setMessages(msgData.messages ?? []);
+        }
+        // Keep previous state on error
       })
-      .catch(() => setLead(null))
+      .catch(() => {
+        // Keep previous state
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
   useEffect(() => {
-    if (!id || !lead?.workspace_id) return;
-    fetch(`/api/leads/${id}/readiness?workspace_id=${lead.workspace_id}`)
-      .then((r) => r.json())
-      .then((d) => (d.error ? null : setReadiness(d)))
-      .catch(() => setReadiness(null));
-  }, [id, lead?.workspace_id]);
-
-  useEffect(() => {
     if (!lead?.workspace_id) return;
-    fetch(`/api/overview?workspace_id=${encodeURIComponent(lead.workspace_id)}`)
-      .then((r) => r.json())
-      .then((d) => setWorkspacePaused(d.workspace_status === "paused"))
-      .catch(() => setWorkspacePaused(false));
+    fetchWithFallback(`/api/overview?workspace_id=${encodeURIComponent(lead.workspace_id)}`, {
+      cacheKey: `overview-${lead.workspace_id}`,
+    }).then((result) => {
+      if (result.data) {
+        setWorkspacePaused((result.data as { workspace_status?: string }).workspace_status === "paused");
+      }
+    });
   }, [lead?.workspace_id]);
 
   useEffect(() => {
     if (!id || !lead?.workspace_id) return;
-    fetch(`/api/leads/${id}/call-continuity?workspace_id=${encodeURIComponent(lead.workspace_id)}`)
-      .then((r) => r.json())
-      .then((d) => (d.error ? null : setCallContinuity(d)))
-      .catch(() => setCallContinuity(null));
+    fetchWithFallback<{ status: "Prepared" | "Waiting" | "Recovering" }>(`/api/leads/${id}/call-continuity?workspace_id=${encodeURIComponent(lead.workspace_id)}`, {
+      cacheKey: `call-continuity-${id}`,
+    }).then((result) => {
+      if (result.data && !(result.data as { error?: unknown }).error) {
+        setCallContinuity(result.data as { status: "Prepared" | "Waiting" | "Recovering" });
+      }
+      // Keep previous state on error
+    });
   }, [id, lead?.workspace_id]);
 
   useEffect(() => {
     if (!id || !lead) return;
     const dealId = deals?.length && deals[0] ? (deals[0] as Deal).id : undefined;
-    fetch(`/api/leads/${id}/pre-call-brief${dealId ? `?deal_id=${dealId}` : ""}`)
-      .then((r) => r.json())
-      .then((d) => (!d.error ? setPreCallBrief(d) : null))
-      .catch(() => setPreCallBrief(null));
+    fetchWithFallback<PreCallBrief>(`/api/leads/${id}/pre-call-brief${dealId ? `?deal_id=${dealId}` : ""}`, {
+      cacheKey: `pre-call-brief-${id}-${dealId ?? "none"}`,
+    }).then((result) => {
+      if (result.data && !(result.data as { error?: unknown }).error) {
+        setPreCallBrief(result.data);
+      }
+      // Keep previous state on error
+    });
   }, [id, lead, deals]);
 
   if (loading) return (
     <div className="p-8 max-w-2xl mx-auto">
-      <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-      <p style={{ color: "var(--text-primary)" }}>Watching over</p>
-      <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Preparing your brief. Continuity monitoring in progress.</p>
+      <LoadingState message="Watching over" submessage="Preparing your brief. Continuity monitoring in progress." />
     </div>
   );
-  if (!lead) return <div className="p-8" style={{ color: "var(--meaning-red)" }}>Not found</div>;
+  if (!lead) return (
+    <div className="p-8 max-w-2xl mx-auto">
+      <div className="p-4 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-secondary)" }}>
+        <span className="inline-block w-2 h-2 rounded-full animate-pulse mr-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
+        Still monitoring — retrying in the background
+      </div>
+    </div>
+  );
 
   const displayName = lead.name || lead.email || lead.company || "Unknown";
   const risks = [...(preCallBrief?.risks ?? []), ...(preCallBrief?.hesitations ?? []).map((h) => `Hesitation: ${h}`)];
@@ -127,16 +143,13 @@ export default function LeadViewPage() {
           ← Conversations
         </Link>
 
-        <div className="p-4 rounded-xl mb-6" style={{ background: workspacePaused ? "rgba(243, 156, 18, 0.1)" : "rgba(46, 204, 113, 0.1)", borderColor: workspacePaused ? "var(--meaning-amber)" : "var(--meaning-green)", borderWidth: "1px" }}>
-          {workspacePaused ? (
-            <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-              This conversation took {daysBuilt} day{daysBuilt !== 1 ? "s" : ""} to build. Momentum fades if continuity stops.
-            </p>
-          ) : (
-            <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-              You only take the call. We maintain this conversation.
-            </p>
-          )}
+        <div className="p-4 rounded-xl mb-6" style={{ background: workspacePaused ? "rgba(243, 156, 18, 0.1)" : "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>
+            You only take the call. We maintain this conversation.
+          </p>
+          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+            Messages stay natural and low-pressure.
+          </p>
         </div>
 
         <div className="mb-8">
@@ -158,26 +171,18 @@ export default function LeadViewPage() {
                 >
                   {callContinuity.status}
                 </span>
+                {callContinuity.status === "Prepared" && (
+                  <p className="text-xs mt-2" style={{ color: "var(--meaning-green)", opacity: 0.8 }}>
+                    This conversation has been kept warm
+                  </p>
+                )}
               </p>
             </section>
           )}
 
-          <section>
-            <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Current responsibility</h2>
-            <p className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-              {readiness?.conversation_readiness_score != null
-                ? (readiness.conversation_readiness_score >= 70 ? "Preparing for call" : readiness.conversation_readiness_score >= 40 ? "Keeping engagement" : "Maintaining continuity")
-                : "Maintaining continuity"}
-              {readiness?.conversation_readiness_score != null && (
-                <button onClick={() => setReadinessProofOpen(true)} className="ml-2 text-xs" style={{ color: "var(--meaning-blue)" }}>
-                  ({readiness.conversation_readiness_score}% call readiness)
-                </button>
-              )}
-            </p>
-          </section>
           {preCallBrief?.context && (
             <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Conversation understanding</h2>
+              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Context</h2>
               <p className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 {preCallBrief.context}
               </p>
@@ -185,7 +190,7 @@ export default function LeadViewPage() {
           )}
           {preCallBrief?.motivation && (
             <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Motivation signals</h2>
+              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Motivation</h2>
               <p className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 {preCallBrief.motivation}
               </p>
@@ -193,7 +198,7 @@ export default function LeadViewPage() {
           )}
           {risks.length > 0 && (
             <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Risks to attendance</h2>
+              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Risks</h2>
               <ul className="py-3 px-4 rounded-lg space-y-2" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 {risks.map((r, i) => (
                   <li key={i} className="list-disc list-inside" style={{ color: "var(--text-primary)" }}>{r}</li>
@@ -242,13 +247,13 @@ export default function LeadViewPage() {
                   className="px-4 py-2 rounded-lg"
                   style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                 >
-                  See what we&apos;ve done
+                  What we did
                 </button>
               </div>
               <section>
                 <h3 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Message thread</h3>
                 {messages.length === 0 ? (
-                  <p className="text-sm" style={{ color: "var(--text-muted)" }}>No messages yet</p>
+                  <p className="text-sm" style={{ color: "var(--text-muted)" }}>Watching for new messages</p>
                 ) : (
                   <div className="space-y-3">
                     {messages.map((m, i) => (
@@ -265,9 +270,6 @@ export default function LeadViewPage() {
         </div>
       </div>
       <ProofDrawer leadId={id} isOpen={proofOpen} onClose={() => setProofOpen(false)} />
-      {lead?.workspace_id && (
-        <ReadinessProofDrawer leadId={id} workspaceId={lead.workspace_id} isOpen={readinessProofOpen} onClose={() => setReadinessProofOpen(false)} />
-      )}
     </div>
   );
 }

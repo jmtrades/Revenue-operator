@@ -7,12 +7,12 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { isLiveCompleted, setLiveCompleted } from "@/lib/live-gate";
 
 const FEED_ITEMS: { text: string; delaySec: number }[] = [
-  { text: "Conversation detected", delaySec: 0 },
-  { text: "Context understood", delaySec: 3 },
-  { text: "Response prepared", delaySec: 6 },
-  { text: "Follow-up scheduled", delaySec: 9 },
-  { text: "Attendance protected", delaySec: 12 },
-  { text: "Conversation stabilised", delaySec: 15 },
+  { text: "New inquiry noticed", delaySec: 0 },
+  { text: "Prepared a reply you can send", delaySec: 2 },
+  { text: "Follow-up scheduled", delaySec: 5 },
+  { text: "Conversation moved toward a call", delaySec: 7 },
+  { text: "Attendance confirmed", delaySec: 10 },
+  { text: "Conversation stabilised", delaySec: 13 },
 ];
 
 function LivePageContent() {
@@ -38,7 +38,7 @@ function LivePageContent() {
 
   useEffect(() => {
     if (workspaceId && isLiveCompleted(workspaceId)) {
-      router.replace(`/dashboard?workspace_id=${encodeURIComponent(workspaceId)}`);
+      router.replace(`/dashboard/value?workspace_id=${encodeURIComponent(workspaceId)}`);
       return;
     }
   }, [workspaceId, router]);
@@ -48,7 +48,8 @@ function LivePageContent() {
     const interval = setInterval(() => {
       setElapsed((e) => {
         const next = e + 1;
-        if (next >= 18) {
+        // Wait 2 seconds after final item (at 13s) before showing ready
+        if (next >= 15) {
           setPhase("fade");
           return next;
         }
@@ -66,9 +67,9 @@ function LivePageContent() {
     }
   }, [phase]);
 
-  const handleGoToOverview = () => {
+  const handleContinue = () => {
     setLiveCompleted(workspaceId);
-    router.push(workspaceId ? `/dashboard?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard");
+    router.push(workspaceId ? `/dashboard/value?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/value");
   };
 
   if (!workspaceId) {
@@ -86,46 +87,70 @@ function LivePageContent() {
       style={{
         background: "var(--background)",
         color: "var(--text-primary)",
-        opacity: phase === "fade" ? 0.7 : 1,
+        opacity: phase === "fade" ? 0.85 : 1,
       }}
     >
-      <div className="max-w-md w-full text-center">
-        <h1 className="text-2xl font-semibold mb-2">Conversations are now being maintained</h1>
-        <p className="text-sm mb-10" style={{ color: "var(--text-secondary)" }}>Watch what happens</p>
+      <div className="max-w-md w-full">
+        <div
+          className="rounded-xl border p-8 text-center"
+          style={{
+            background: "var(--card)",
+            borderColor: "var(--border)",
+            borderWidth: "1px",
+            boxShadow: "var(--shadow-md)",
+          }}
+        >
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-full animate-pulse"
+              style={{ background: "var(--meaning-green)" }}
+              aria-hidden
+            />
+            <span className="text-xs font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
+              Active
+            </span>
+          </div>
+          <h1 className="text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
+            Conversations are now being maintained
+          </h1>
+          <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
+            Watch what happens
+          </p>
 
-        <div className="space-y-3 min-h-[200px] flex flex-col items-center">
-          {phase === "feed" &&
-            FEED_ITEMS.slice(0, feedIndex).map((item, i) => (
-              <div
-                key={i}
-                className="w-full py-3 px-4 rounded-lg text-left text-sm flex items-center gap-2 transition-opacity duration-300"
-                style={{
-                  background: "rgba(46, 204, 113, 0.1)",
-                  borderColor: "rgba(46, 204, 113, 0.3)",
-                  borderWidth: "1px",
-                  color: "var(--meaning-green)",
-                }}
-              >
-                <span className="shrink-0">✔</span>
-                {item.text}
-              </div>
-            ))}
+          <div className="space-y-3 min-h-[200px] text-left">
+            {phase === "feed" &&
+              FEED_ITEMS.slice(0, feedIndex).map((item, i) => (
+                <div
+                  key={i}
+                  className="py-3.5 px-4 rounded-lg text-sm flex items-center gap-3 transition-opacity duration-300"
+                  style={{
+                    background: "var(--surface)",
+                    borderColor: "var(--border)",
+                    borderWidth: "1px",
+                    color: "var(--meaning-green)",
+                  }}
+                >
+                  <span className="shrink-0">✔</span>
+                  {item.text}
+                </div>
+              ))}
+            {phase === "ready" && (
+              <p className="text-base font-medium py-4" style={{ color: "var(--text-primary)" }}>
+                We&apos;ll keep doing this automatically
+              </p>
+            )}
+          </div>
+
           {phase === "ready" && (
-            <p className="text-lg font-medium" style={{ color: "var(--text-primary)" }}>
-              We&apos;ll keep doing this automatically
-            </p>
+            <button
+              onClick={handleContinue}
+              className="mt-10 w-full py-3.5 rounded-lg font-medium transition-opacity hover:opacity-90"
+              style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
+            >
+              Continue
+            </button>
           )}
         </div>
-
-        {phase === "ready" && (
-          <button
-            onClick={handleGoToOverview}
-            className="mt-10 w-full py-3.5 rounded-lg font-medium"
-            style={{ background: "var(--meaning-green)", color: "#0E1116" }}
-          >
-            Go to overview
-          </button>
-        )}
       </div>
     </div>
   );

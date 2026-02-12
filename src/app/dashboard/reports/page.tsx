@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { PageHeader, LoadingState } from "@/components/ui";
 
 interface Miss {
   lead_id: string;
@@ -24,6 +25,12 @@ export default function ReportsPage() {
   } | null>(null);
   const [misses, setMisses] = useState<{ misses: Miss[]; summary?: { recovery_scheduled: number } } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setTick((x) => x + 1), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -40,7 +47,7 @@ export default function ReportsPage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [workspaceId]);
+  }, [workspaceId, tick]);
 
   if (!workspaceId) {
     return (
@@ -58,17 +65,10 @@ export default function ReportsPage() {
 
   return (
     <div className="p-8 max-w-3xl">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Reports</h1>
-        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>Proof of what we&apos;re securing for you</p>
-      </header>
+      <PageHeader title="Outcomes" subtitle="What we're securing for you" />
 
       {loading ? (
-        <div className="py-12 px-6 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-          <p style={{ color: "var(--text-primary)" }}>Watching over</p>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Preparing proof of continuity. Monitoring in progress.</p>
-        </div>
+        <LoadingState message="Watching over" submessage="Preparing. Monitoring in progress." />
       ) : (
         <div className="space-y-8">
           <section>

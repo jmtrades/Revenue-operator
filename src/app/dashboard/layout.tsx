@@ -4,26 +4,34 @@ import { Suspense, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
+import { LoadingScreen } from "@/components/ui";
 import { TrialBanner } from "@/components/TrialBanner";
 import { RenewalReminderBanner } from "@/components/RenewalReminderBanner";
 import { CoverageLimitedBanner } from "@/components/CoverageLimitedBanner";
 import { ConfidenceContractBanner } from "@/components/ConfidenceContractBanner";
+import { ProtectionPausedBanner } from "@/components/ProtectionPausedBanner";
+import { BillingFailureBanner } from "@/components/BillingFailureBanner";
+import { ReassuranceAnchor } from "@/components/ReassuranceAnchor";
+import { DailySummaryBanner } from "@/components/DailySummaryBanner";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { HeartbeatBar } from "@/components/HeartbeatBar";
+import { SavedTodayBar } from "@/components/SavedTodayBar";
+import { isLiveCompleted, isValueCompleted } from "@/lib/live-gate";
 
 const nav = [
-  { href: "/dashboard", label: "Activity" },
+  { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/conversations", label: "Conversations" },
-  { href: "/dashboard/calls", label: "Calls" },
-  { href: "/dashboard/revenue", label: "Results" },
-  { href: "/dashboard/reports", label: "Proof" },
+  { href: "/dashboard/calls", label: "Calendar" },
+  { href: "/dashboard/reports", label: "Outcomes" },
   { href: "/dashboard/settings", label: "Preferences" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLivePage = pathname === "/dashboard/live";
+  const isValuePage = pathname === "/dashboard/value";
 
-  if (isLivePage) {
+  if (isLivePage || isValuePage) {
     return (
       <WorkspaceProvider>
         <div className="min-h-screen" style={{ background: "var(--background)" }}>
@@ -43,14 +51,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 }
 
 function DashboardShellFallback() {
-  return (
-    <div className="min-h-screen flex" style={{ background: "var(--background)" }}>
-      <aside className="w-52 border-r shrink-0" style={{ borderColor: "var(--border)", background: "var(--surface)" }} />
-      <main className="flex-1 flex items-center justify-center p-8">
-        <p style={{ color: "var(--text-muted)" }}>Loading…</p>
-      </main>
-    </div>
-  );
+  return <LoadingScreen message="Restoring your conversations…" />;
 }
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -75,9 +76,13 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     router.replace("/activate");
   }, [loading, workspaces.length, pathname, router]);
 
+  if (loading) {
+    return <LoadingScreen message="Restoring your conversations…" />;
+  }
+
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--background)" }}>
-      <aside className="w-52 border-r flex flex-col shrink-0" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
+    <div className="min-h-screen flex flex-col md:flex-row" style={{ background: "var(--background)" }}>
+      <aside className="w-full md:w-52 border-b md:border-b-0 md:border-r flex flex-col shrink-0" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
         <div className="p-4 border-b" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Revenue Continuity</p>
           <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>We maintain. You take the calls.</p>
@@ -89,8 +94,14 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
       </aside>
-      <main className="flex-1 overflow-auto flex flex-col">
+      <main className="flex-1 overflow-auto flex flex-col min-w-0">
         <HeartbeatBar />
+        <SavedTodayBar />
+        <OfflineBanner />
+        <ReassuranceAnchor />
+        <DailySummaryBanner />
+        <BillingFailureBanner />
+        <ProtectionPausedBanner />
         <CoverageLimitedBanner />
         <TrialBanner />
         <RenewalReminderBanner />
@@ -108,26 +119,20 @@ function LiveGate() {
   const router = useRouter();
 
   useEffect(() => {
-    if (pathname === "/dashboard/live") return;
-    if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/live")) {
-      if (workspaceId && !isLiveCompleted(workspaceId)) {
-        router.replace(`/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}`);
-      }
+    if (pathname === "/dashboard/live" || pathname === "/dashboard/value") return;
+    if (!pathname.startsWith("/dashboard")) return;
+    if (pathname === "/dashboard/onboarding") return;
+    if (!workspaceId) return;
+    if (!isLiveCompleted(workspaceId)) {
+      router.replace(`/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}`);
+      return;
+    }
+    if (!isValueCompleted(workspaceId)) {
+      router.replace(`/dashboard/value?workspace_id=${encodeURIComponent(workspaceId)}`);
     }
   }, [pathname, workspaceId, router]);
 
   return null;
-}
-
-function isLiveCompleted(wid: string): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    const global = localStorage.getItem("revenue_live_completed");
-    const workspace = wid ? localStorage.getItem(`revenue_live_workspace_${wid}`) : null;
-    return global === "1" || workspace === "1";
-  } catch {
-    return false;
-  }
 }
 
 function WorkspaceSelect() {

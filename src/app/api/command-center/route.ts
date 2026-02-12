@@ -22,10 +22,21 @@ import {
   getDailyOperationalCycles,
 } from "@/lib/operational/presence";
 
+// Performance guard: cache slow responses
+const CACHE_TTL_MS = 30_000; // 30 seconds
+const cache = new Map<string, { data: unknown; expires: number }>();
+
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
 
+  // Check cache first
+  const cached = cache.get(workspaceId);
+  if (cached && cached.expires > Date.now()) {
+    return NextResponse.json(cached.data);
+  }
+
+  const startTime = Date.now();
   const { runSyntheticProtectionBootstrap } = await import("@/lib/bootstrap/synthetic-protection");
   await runSyntheticProtectionBootstrap(workspaceId);
 
@@ -394,7 +405,7 @@ export async function GET(req: NextRequest) {
     const monitoringEntries = [
       { what: `Watching over ${monitorCount} active lead${monitorCount !== 1 ? "s" : ""}`, who: "System", when: new Date().toISOString(), is_monitoring: true },
       { what: `Next check in ~${nextMins} min`, who: "System", when: new Date().toISOString(), is_monitoring: true },
-      { what: "Pipeline health checked", who: "System", when: new Date().toISOString(), is_monitoring: true },
+      { what: "Checking conversations", who: "System", when: new Date().toISOString(), is_monitoring: true },
     ];
     activity.unshift(...monitoringEntries);
   }
@@ -474,7 +485,7 @@ export async function GET(req: NextRequest) {
   const loss_clock = isPaused
     ? {
         missed_this_week: lossClockRaw?.missed_this_week ?? 0,
-        stability_degradation: "Pipeline momentum stalls when paused. Leads go cold. Recovery becomes harder.",
+        stability_degradation: "Continuity stalls when paused. Conversations go cold. Recovery becomes harder.",
       }
     : null;
 
@@ -540,7 +551,7 @@ export async function GET(req: NextRequest) {
     follow_up_manager: "Follow-up",
     show_manager: "Show management",
     revival_manager: "Revival",
-    full_autopilot: "Full pipeline",
+    full_autopilot: "Conversations",
   };
   for (const [leadId, { role }] of Object.entries(lastRoleByLead)) {
     role_ownership.push({
@@ -809,7 +820,7 @@ export async function GET(req: NextRequest) {
     message: "Pausing today removes protection immediately. These outcomes would not occur.",
   };
 
-  return NextResponse.json({
+  const response = {
     operator_status: operatorStatus,
     heartbeat_visible: true,
     last_action: lastAction ? actionToImpact((lastAction as { action: string }).action, lastActionPayload) + ` (${new Date((lastAction as { created_at: string }).created_at).toLocaleTimeString()})` : null,
@@ -856,5 +867,20 @@ export async function GET(req: NextRequest) {
     projection_impact,
     system_strategy,
     revenue_trajectory,
-  });
+  };
+
+  // Performance guard: if response took > 4 seconds, cache it
+  const elapsed = Date.now() - startTime;
+  if (elapsed > 4000) {
+    cache.set(workspaceId, {
+      data: response,
+      expires: Date.now() + CACHE_TTL_MS,
+    });
+    // Clean old cache entries
+    for (const [key, value] of cache.entries()) {
+      if (value.expires < Date.now()) cache.delete(key);
+    }
+  }
+
+  return NextResponse.json(response);
 }
