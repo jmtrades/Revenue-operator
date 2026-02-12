@@ -65,7 +65,6 @@ export default function CalendarPage() {
   const noShows = data?.next_48h?.likely_no_shows ?? [];
   const confirmationNeeded = data?.next_48h?.confirmation_needed ?? [];
   const highConfidence = data?.next_48h?.high_confidence ?? [];
-  const rescueIds = new Set((riskSurface?.calendar_at_risk ?? []).filter((c) => c.rescue_needed).map((c) => c.call_id));
   const allCalls = [...noShows, ...confirmationNeeded, ...highConfidence].sort(
     (a, b) => new Date(a.call_started_at).getTime() - new Date(b.call_started_at).getTime()
   );
@@ -96,17 +95,10 @@ export default function CalendarPage() {
     <div className="p-8 max-w-3xl">
       <PageHeader title="Calendar" subtitle="Attendance confidence and preparation state." />
 
-      {/* Live system guarantee: Always show monitoring */}
-      {!loading && allCalls.length === 0 && (
-        <div className="mb-4 py-2 px-4 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-          <span style={{ color: "var(--text-muted)" }}>Protecting upcoming attendance</span>
-        </div>
-      )}
       {loading ? (
-        <LoadingState message="Watching over" submessage="Protecting booked calls. Continuity monitoring in progress." />
+        <LoadingState message="Checking conversations…" submessage="Updating status…" />
       ) : allCalls.length === 0 ? (
-        <EmptyState icon="pulse" title="Protecting upcoming attendance" subtitle="We prepare each call when it lands on your calendar." />
+        <EmptyState icon="pulse" title="We'll show conversations here when they appear." subtitle="Everything is quiet right now." />
       ) : (
         <div className="space-y-4">
           {allCalls.map((c) => {
@@ -127,19 +119,14 @@ export default function CalendarPage() {
                     )}
                     <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
                       <span>Attendance confidence: {confidence}</span>
-                      <span className="flex items-center gap-1">
-                        {rescueIds.has(c.session_id) && (
-                          <span className="px-1.5 py-0.5 rounded" style={{ background: "rgba(243, 156, 18, 0.2)", color: "var(--meaning-amber)" }}>Recovering</span>
-                        )}
-                        <span>Preparation: {prep}</span>
-                      </span>
+                      <span>Preparation state: {prep}</span>
                     </div>
                     <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
                       {new Date(c.call_started_at).toLocaleString()}
                     </p>
-                    {new Date(c.call_started_at).getTime() - Date.now() < 24 * 60 * 60 * 1000 && (
-                      <p className="text-xs mt-2" style={{ color: "var(--meaning-green)", opacity: 0.8 }}>
-                        This conversation has been kept warm
+                    {confidence === "Low" && (
+                      <p className="text-xs mt-2" style={{ color: "var(--meaning-amber)" }}>
+                        Confirmation recommended
                       </p>
                     )}
                   </div>

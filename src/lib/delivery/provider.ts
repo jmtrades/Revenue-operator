@@ -14,14 +14,49 @@ const RETRY_DELAYS_MS = [60_000, 5 * 60_000, 30 * 60_000];
 async function sendViaTwilio(
   channel: string,
   to: string,
-  body: string
+  body: string,
+  workspaceId?: string
 ): Promise<{ sid: string } | { error: string }> {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const fromSms = process.env.TWILIO_PHONE_NUMBER;
+  if (channel !== "sms") {
+    return { error: "Channel not SMS" };
+  }
 
-  if (!accountSid || !authToken || !fromSms || channel !== "sms") {
-    return { error: "Twilio not configured or channel not SMS" };
+  const db = getDb();
+  let accountSid: string | null = null;
+  let authToken: string | null = null;
+  let fromSms: string | null = null;
+
+  // Try workspace-specific config first
+  if (workspaceId) {
+    const { data: phoneConfig } = await db
+      .from("phone_configs")
+      .select("twilio_account_sid, proxy_number, twilio_phone_sid")
+      .eq("workspace_id", workspaceId)
+      .eq("status", "active")
+      .single();
+
+    if (phoneConfig) {
+      const config = phoneConfig as { twilio_account_sid?: string | null; proxy_number?: string | null; twilio_phone_sid?: string | null };
+      accountSid = config.twilio_account_sid ?? null;
+      fromSms = config.proxy_number ?? config.twilio_phone_sid ?? null;
+      
+      // For workspace-specific accounts, we'd need to store auth token securely
+      // For now, fall back to global if account SID matches
+      if (accountSid === process.env.TWILIO_ACCOUNT_SID) {
+        authToken = process.env.TWILIO_AUTH_TOKEN ?? null;
+      }
+    }
+  }
+
+  // Fall back to global env vars if workspace config not found
+  if (!accountSid || !authToken || !fromSms) {
+    accountSid = process.env.TWILIO_ACCOUNT_SID ?? null;
+    authToken = process.env.TWILIO_AUTH_TOKEN ?? null;
+    fromSms = process.env.TWILIO_PHONE_NUMBER ?? null;
+  }
+
+  if (!accountSid || !authToken || !fromSms) {
+    return { error: "Twilio not configured" };
   }
 
   const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
@@ -121,7 +156,7 @@ export async function sendOutbound(
     if (ch === "web") {
       result = { sid: `web-${messageId}` };
     } else if (ch === "sms" && to.phone) {
-      result = await sendViaTwilio("sms", to.phone, safeContent);
+      result = await sendViaTwilio("sms", to.phone, safeContent, workspaceId);
     } else {
       result = { error: "Email provider not implemented" };
     }

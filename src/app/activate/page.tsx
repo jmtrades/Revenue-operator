@@ -16,7 +16,7 @@ export default function ActivatePage() {
       .then((r) => r.json())
       .then((data) => {
         if (data?.session?.userId && data?.session?.workspaceId) {
-          router.replace("/dashboard/live");
+          router.replace("/dashboard");
           return;
         }
         setCheckingSession(false);
@@ -47,7 +47,7 @@ export default function ActivatePage() {
       const data = await res.json();
       const workspaceId = data.workspace_id;
       if (!workspaceId) {
-        setTimeout(() => router.push("/dashboard/onboarding"), 1800);
+        setTimeout(() => router.push("/connect"), 1800);
         return;
       }
       if (typeof window !== "undefined") {
@@ -63,7 +63,7 @@ export default function ActivatePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspace_id: workspaceId,
-          success_url: `${base}/dashboard/onboarding?workspace_id=${encodeURIComponent(workspaceId)}`,
+          success_url: `${base}/connect?workspace_id=${encodeURIComponent(workspaceId)}`,
           cancel_url: `${base}/activate`,
         }),
       });
@@ -72,9 +72,10 @@ export default function ActivatePage() {
         window.location.href = checkoutData.checkout_url;
         return;
       }
-      setTimeout(() => router.push(`/dashboard/onboarding?workspace_id=${workspaceId}`), 1800);
+      // After checkout success, go directly to connect page
+      setTimeout(() => router.push(`/connect?workspace_id=${workspaceId}`), 1800);
     } catch {
-      setTimeout(() => router.push("/dashboard/onboarding"), 1800);
+      setTimeout(() => router.push("/connect"), 1800);
     } finally {
       // Keep progress visible during redirect
     }
@@ -89,18 +90,11 @@ export default function ActivatePage() {
     );
   }
 
-  if (submitting && progressStep !== null) {
-    const steps = ["Creating workspace", "Preparing protection", "Securing conversations"];
+  if (submitting) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <div className="max-w-md w-full text-center">
-          {steps.slice(0, progressStep + 1).map((step, i) => (
-            <div key={i} className="mb-3 flex items-center justify-center gap-2">
-              <span className="inline-block w-2 h-2 rounded-full" style={{ background: "var(--meaning-green)" }} aria-hidden />
-              <p className="text-sm" style={{ color: "var(--text-primary)" }}>{step}</p>
-            </div>
-          ))}
-        </div>
+        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Connecting your workspace…</p>
       </div>
     );
   }

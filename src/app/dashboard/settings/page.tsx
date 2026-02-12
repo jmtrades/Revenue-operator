@@ -27,6 +27,31 @@ export default function SettingsPage() {
     post_call_continuity: true,
     notifications: true,
   });
+  const [showBusinessContext, setShowBusinessContext] = useState(false);
+  const [businessContext, setBusinessContext] = useState({
+    business_name: "",
+    offer_summary: "",
+    ideal_customer: "",
+    disqualifiers: "",
+    pricing_range: "",
+    booking_link: "",
+    faq: [] as Array<{ q: string; a: string }>,
+    tone_guidelines: { style: "calm", formality: "professional" },
+    compliance_notes: [] as string[],
+    timezone: "UTC",
+    business_hours: {
+      monday: { start: "09:00", end: "17:00" },
+      tuesday: { start: "09:00", end: "17:00" },
+      wednesday: { start: "09:00", end: "17:00" },
+      thursday: { start: "09:00", end: "17:00" },
+      friday: { start: "09:00", end: "17:00" },
+    },
+    negotiation_rules: {
+      discounts_allowed: false,
+      deposit_required: false,
+      payment_terms: null as string | null,
+    },
+  });
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -64,6 +89,37 @@ export default function SettingsPage() {
         d?.error ? null : setBillingStatus(d)
       )
       .catch(() => setBillingStatus(null));
+    fetch(`/api/workspaces/${workspaceId}/business-context`)
+      .then((r) => r.ok ? r.json() : Promise.resolve(null))
+      .then((d) => {
+        if (d && !d.error) {
+          setBusinessContext({
+            business_name: d.business_name ?? "",
+            offer_summary: d.offer_summary ?? "",
+            ideal_customer: d.ideal_customer ?? "",
+            disqualifiers: d.disqualifiers ?? "",
+            pricing_range: d.pricing_range ?? "",
+            booking_link: d.booking_link ?? "",
+            faq: Array.isArray(d.faq) ? d.faq : [],
+            tone_guidelines: d.tone_guidelines ?? { style: "calm", formality: "professional" },
+            compliance_notes: Array.isArray(d.compliance_notes) ? d.compliance_notes : [],
+            timezone: d.timezone ?? "UTC",
+            business_hours: d.business_hours ?? {
+              monday: { start: "09:00", end: "17:00" },
+              tuesday: { start: "09:00", end: "17:00" },
+              wednesday: { start: "09:00", end: "17:00" },
+              thursday: { start: "09:00", end: "17:00" },
+              friday: { start: "09:00", end: "17:00" },
+            },
+            negotiation_rules: d.negotiation_rules ?? {
+              discounts_allowed: false,
+              deposit_required: false,
+              payment_terms: null,
+            },
+          });
+        }
+      })
+      .catch(() => {});
   }, [workspaceId]);
 
   useEffect(() => {
@@ -93,6 +149,16 @@ export default function SettingsPage() {
         body: JSON.stringify({ endpoint_url: webhookUrl }),
       });
     }
+    // Save business context
+    await fetch(`/api/workspaces/${workspaceId}/business-context`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...businessContext,
+        pricing_range: businessContext.pricing_range || null,
+        booking_link: businessContext.booking_link || null,
+      }),
+    }).catch(() => {});
     setSaved(res.ok);
   };
 
@@ -124,6 +190,100 @@ export default function SettingsPage() {
               </CardBody>
             </Card>
           )}
+          <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Business context</h2>
+            <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>
+              Help us match your tone and offer. This makes replies more accurate.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowBusinessContext(!showBusinessContext)}
+              className="text-sm mb-3"
+              style={{ color: "var(--meaning-blue)" }}
+            >
+              {showBusinessContext ? "−" : "+"} {showBusinessContext ? "Hide" : "Show"} business context
+            </button>
+            {showBusinessContext && (
+              <div className="space-y-4 mt-4">
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Business name</label>
+                  <input
+                    type="text"
+                    value={businessContext.business_name}
+                    onChange={(e) => setBusinessContext({ ...businessContext, business_name: e.target.value })}
+                    placeholder="Your business name"
+                    className="w-full px-3 py-2 rounded text-sm"
+                    style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>What you offer (1-2 lines)</label>
+                  <textarea
+                    value={businessContext.offer_summary}
+                    onChange={(e) => setBusinessContext({ ...businessContext, offer_summary: e.target.value })}
+                    placeholder="Brief description of your service or product"
+                    rows={2}
+                    className="w-full px-3 py-2 rounded text-sm"
+                    style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Ideal customer</label>
+                  <input
+                    type="text"
+                    value={businessContext.ideal_customer}
+                    onChange={(e) => setBusinessContext({ ...businessContext, ideal_customer: e.target.value })}
+                    placeholder="Who this is for"
+                    className="w-full px-3 py-2 rounded text-sm"
+                    style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Pricing (optional)</label>
+                  <input
+                    type="text"
+                    value={businessContext.pricing_range}
+                    onChange={(e) => setBusinessContext({ ...businessContext, pricing_range: e.target.value })}
+                    placeholder="e.g., Starts at £500"
+                    className="w-full px-3 py-2 rounded text-sm"
+                    style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>
+                    Booking link <span style={{ color: "var(--text-muted)" }}>(recommended)</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={businessContext.booking_link}
+                    onChange={(e) => setBusinessContext({ ...businessContext, booking_link: e.target.value })}
+                    placeholder="https://calendly.com/..."
+                    className="w-full px-3 py-2 rounded text-sm"
+                    style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="discounts_allowed"
+                    checked={businessContext.negotiation_rules.discounts_allowed}
+                    onChange={(e) =>
+                      setBusinessContext({
+                        ...businessContext,
+                        negotiation_rules: { ...businessContext.negotiation_rules, discounts_allowed: e.target.checked },
+                      })
+                    }
+                    className="rounded"
+                    style={{ accentColor: "var(--meaning-blue)" }}
+                  />
+                  <label htmlFor="discounts_allowed" className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                    Allow discounts in negotiations
+                  </label>
+                </div>
+              </div>
+            )}
+          </section>
+
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
             <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>How we sound</h2>
             <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>Tone when we maintain continuity</p>

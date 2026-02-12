@@ -58,11 +58,11 @@ export function HeartbeatBar() {
     statusLevel === "risk"
       ? "Conversations at risk"
       : statusLevel === "warning"
-        ? "Some need attention soon"
+        ? "Some conversations need attention soon"
         : maintained > 0
-          ? "All conversations maintained"
+          ? "All conversations stable"
           : "Watching for new conversations";
-  const nextLine = nextMin != null && nextMin > 0 ? `Next attention in ~${nextMin} min` : null;
+  const nextLine = nextMin != null && nextMin > 0 ? `Next check in ~${nextMin} min` : null;
   const pulseColor = statusLevel === "healthy" ? "var(--meaning-green)" : statusLevel === "warning" ? "var(--meaning-amber)" : "var(--meaning-red)";
 
   if (!workspaceId) {

@@ -122,6 +122,17 @@ export async function GET(req: NextRequest) {
       contribution: "Recovering to protect contribution toward target",
     }));
 
+  // Get recent conversations for live page
+  const { data: recentConversations } = await db
+    .from("conversations")
+    .select("id, lead_id, created_at, updated_at")
+    .eq("workspace_id", workspaceId)
+    .order("updated_at", { ascending: false })
+    .limit(5);
+
+  const recentConvIds = (recentConversations ?? []).map((c: { id: string }) => c.id);
+  const recentConvLeadIds = [...new Set((recentConversations ?? []).map((c: { lead_id: string }) => c.lead_id))];
+
   const { data: recentActions } = await db
     .from("action_logs")
     .select("action, entity_id, payload, created_at, role")
@@ -867,6 +878,12 @@ export async function GET(req: NextRequest) {
     projection_impact,
     system_strategy,
     revenue_trajectory,
+    recent_conversations: (recentConversations ?? []).map((c: { id: string; lead_id: string; created_at: string; updated_at: string }) => ({
+      id: c.id,
+      lead_id: c.lead_id,
+      created_at: c.created_at,
+      updated_at: c.updated_at,
+    })),
   };
 
   // Performance guard: if response took > 4 seconds, cache it

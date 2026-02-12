@@ -30,6 +30,7 @@ import type { LeadState } from "@/lib/types";
 import { ALLOWED_ACTIONS_BY_STATE } from "@/lib/types";
 import { resolveRole, ROLE_CONFIDENCE_THRESHOLDS, ROLE_SAFE_FALLBACK, type RoleId } from "@/lib/roles";
 import { redact } from "@/lib/redact";
+import { setLeadPlan } from "@/lib/plans/lead-plan";
 
 const SAFE_FALLBACK_MESSAGES: Record<string, string> = {
   clarifying_question: "Thanks for reaching out. Could you tell me a bit more about what you're looking for?",
@@ -110,31 +111,164 @@ export async function runDecisionJob(
   try {
     const { data: messages } = await db
       .from("messages")
-      .select("content, role")
+      .select("content, role, metadata")
       .eq("conversation_id", convId)
       .order("created_at", { ascending: false })
       .limit(5);
 
-    lastUserMsg = (messages ?? []).find((m: { role: string }) => m.role === "user")?.content ?? "";
-    const result = await fillSlots(action, {
-      leadName: lead.name ?? undefined,
-      company: lead.company ?? undefined,
-      lastMessage: lastUserMsg,
-      workspaceId,
-      leadId,
-      communication_style: communicationStyle,
-    });
-    message = result.message;
-    confidence = result.confidence;
-    reasoning = { risk_flags: result.risk_flags, explanation: result.explanation };
-    const sensitive = detectSensitiveIntent(result.risk_flags ?? [], lastUserMsg);
+    const lastUserMessage = (messages ?? []).find((m: { role: string }) => m.role === "user");
+    lastUserMsg = lastUserMessage?.content ?? "";
+
+    // Get conversation state from latest message metadata (state-driven, not wording-driven)
+    const conversationState = (lastUserMessage as { metadata?: { conversation_state?: string } })?.metadata?.conversation_state as
+      | "NEW_INTEREST"
+      | "CLARIFICATION"
+      | "CONSIDERING"
+      | "SOFT_OBJECTION"
+      | "HARD_OBJECTION"
+      | "DRIFT"
+      | "COMMITMENT"
+      | "POST_BOOKING"
+      | undefined;
+
+    // NEW FLOW: state → playbook → objection → template v2
+    if (conversationState) {
+      // Get business context
+      const { data: businessContextRow } = await db
+        .from("workspace_business_context")
+        .select("*")
+        .eq("workspace_id", workspaceId)
+        .single();
+
+      const businessContext = businessContextRow
+        ? {
+            business_name: (businessContextRow as { business_name?: string }).business_name ?? "",
+            offer_summary: (businessContextRow as { offer_summary?: string }).offer_summary ?? "",
+            ideal_customer: (businessContextRow as { ideal_customer?: string }).ideal_customer ?? "",
+            disqualifiers: (businessContextRow as { disqualifiers?: string }).disqualifiers ?? "",
+            pricing_range: (businessContextRow as { pricing_range?: string | null }).pricing_range ?? null,
+            booking_link: (businessContextRow as { booking_link?: string | null }).booking_link ?? null,
+            tone_guidelines: (businessContextRow as { tone_guidelines?: Record<string, unknown> }).tone_guidelines ?? { style: "calm", formality: "professional" },
+            negotiation_rules: (businessContextRow as { negotiation_rules?: Record<string, unknown> }).negotiation_rules ?? {
+              discounts_allowed: false,
+              deposit_required: false,
+              payment_terms: null,
+            },
+          }
+        : {
+            business_name: "",
+            offer_summary: "",
+            ideal_customer: "",
+            disqualifiers: "",
+            pricing_range: null,
+            booking_link: null,
+            tone_guidelines: { style: "calm", formality: "professional" },
+            negotiation_rules: { discounts_allowed: false, deposit_required: false, payment_terms: null },
+          };
+
+      // Get playbook for state
+      const { getPlaybookForState, calculateNextActionAt } = await import("@/lib/playbooks");
+      const { data: leadRow } = await db.from("leads").select("created_at, last_activity_at").eq("id", leadId).single();
+      const leadCreated = leadRow ? new Date((leadRow as { created_at?: string }).created_at ?? Date.now()) : new Date();
+      const lastActivity = leadRow ? new Date((leadRow as { last_activity_at?: string }).last_activity_at ?? Date.now()) : new Date();
+      const conversationAgeHours = (Date.now() - leadCreated.getTime()) / (1000 * 60 * 60);
+
+      const playbook = getPlaybookForState(conversationState, businessContext, {
+        leadName: lead.name ?? undefined,
+        company: lead.company ?? undefined,
+        state: lead.state as string,
+        lastMessage: lastUserMsg,
+        conversationAgeHours,
+      });
+
+      // Detect objection if present
+      const { detectObjectionType, getObjectionResponseSlots } = await import("@/lib/objections/library");
+      const objectionType = detectObjectionType(lastUserMsg, conversationState);
+      const objectionSlots = objectionType ? getObjectionResponseSlots(objectionType, businessContext, conversationState) : null;
+
+      // Build message using template v2
+      const { buildMessage, validateMessage } = await import("@/lib/templates/v2");
+      const { data: convChannel } = await db.from("conversations").select("channel").eq("id", convId).single();
+      const channel = ((convChannel as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
+
+      message = buildMessage({
+        state: conversationState,
+        playbook,
+        objectionType: objectionType ?? undefined,
+        objectionSlots: objectionSlots ?? undefined,
+        businessContext,
+        leadContext: {
+          leadName: lead.name ?? undefined,
+          company: lead.company ?? undefined,
+          lastMessage: lastUserMsg,
+        },
+        channel,
+      });
+
+      // Validate message
+      const validation = validateMessage(message, playbook);
+      if (!validation.valid) {
+        console.warn("[decision-job] Message validation failed", { reason: validation.reason, message });
+        // Fallback to safe message
+        message = "Thanks for reaching out. How can I help?";
+      }
+
+      // Update action based on playbook recommendation
+      const playbookActionMap: Record<string, string> = {
+        acknowledge: "greeting",
+        clarify: "clarifying_question",
+        qualify: "qualification_question",
+        objection_handle: "follow_up",
+        reengage: "follow_up",
+        book: "booking",
+        confirm: "confirmation",
+        defer: "follow_up",
+      };
+      const recommendedAction = playbookActionMap[playbook.recommended_next_action_type] ?? action;
+      if (allowedActions.includes(recommendedAction)) {
+        action = recommendedAction;
+      }
+
+      confidence = 0.85; // High confidence for state-driven templates
+      reasoning = {
+        conversation_state: conversationState,
+        playbook: playbook.primary_goal,
+        objection_type: objectionType,
+        template_set: playbook.template_set_id,
+      };
+
+      // Calculate next action timing for scheduling
+      const isLowPressure = lead.state === "REACTIVATE" || conversationAgeHours > 72;
+      const nextActionAt = calculateNextActionAt(playbook, isLowPressure);
+      reasoning.next_action_at = nextActionAt.toISOString();
+      
+      // Store next action timing for later scheduling
+      (reasoning as { _next_action_at?: Date })._next_action_at = nextActionAt;
+    } else {
+      // Fallback to old flow if no state available
+      const result = await fillSlots(action, {
+        leadName: lead.name ?? undefined,
+        company: lead.company ?? undefined,
+        lastMessage: lastUserMsg,
+        workspaceId,
+        leadId,
+        communication_style: communicationStyle,
+      });
+      message = result.message;
+      confidence = result.confidence;
+      reasoning = { risk_flags: result.risk_flags, explanation: result.explanation };
+    }
+
+    // Safety checks
+    const riskFlags = (reasoning as { risk_flags?: string[] }).risk_flags ?? [];
+    const sensitive = detectSensitiveIntent(riskFlags, lastUserMsg);
     if (sensitive) {
       message = getSafeResponse(sensitive);
       reasoning = { ...reasoning, sensitive_type: sensitive };
-    } else if (result.risk_flags?.includes("opt_out_signal")) {
+    } else if (riskFlags.includes("opt_out_signal")) {
       message = "You've been unsubscribed. You won't receive further messages.";
       reasoning = { ...reasoning, sensitive_type: "opt_out" };
-    } else if (result.risk_flags?.includes("anger")) {
+    } else if (riskFlags.includes("anger")) {
       message = getSafeResponse("anger");
       reasoning = { ...reasoning, sensitive_type: "anger" };
     }
@@ -502,6 +636,27 @@ export async function runDecisionJob(
       message,
       to
     );
+
+    // Schedule next action based on playbook (if state-driven flow was used)
+    const nextActionAt = (reasoning as { _next_action_at?: Date })._next_action_at;
+    const conversationStateFromReasoning = (reasoning as { conversation_state?: string }).conversation_state;
+    if (nextActionAt && conversationStateFromReasoning) {
+      const playbookActionMap: Record<string, string> = {
+        NEW_INTEREST: "observe",
+        CLARIFICATION: "observe",
+        CONSIDERING: "observe",
+        SOFT_OBJECTION: "follow_up",
+        HARD_OBJECTION: "follow_up",
+        DRIFT: "follow_up",
+        COMMITMENT: "confirm",
+        POST_BOOKING: "observe",
+      };
+      const nextActionType = playbookActionMap[conversationStateFromReasoning] ?? "observe";
+      await setLeadPlan(workspaceId, leadId, {
+        next_action_type: nextActionType,
+        next_action_at: nextActionAt.toISOString(),
+      }).catch(() => {});
+    }
     if (sendResult.status === "failed" && sendResult.error) {
       await db.from("outbound_messages").update({ delivery_error: sendResult.error }).eq("id", (om as { id: string }).id);
     }

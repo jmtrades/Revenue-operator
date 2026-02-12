@@ -153,8 +153,9 @@ export default function LeadViewPage() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold">{displayName}</h1>
-          {lead.company && <p className="mt-1" style={{ color: "var(--text-muted)" }}>{lead.company}</p>}
+          <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Here&apos;s what matters before the call</h1>
+          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>{displayName}</p>
+          {lead.company && <p className="text-sm" style={{ color: "var(--text-muted)" }}>{lead.company}</p>}
         </div>
 
         <div className="space-y-6">
@@ -198,7 +199,7 @@ export default function LeadViewPage() {
           )}
           {risks.length > 0 && (
             <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Risks</h2>
+              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Concern signals</h2>
               <ul className="py-3 px-4 rounded-lg space-y-2" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 {risks.map((r, i) => (
                   <li key={i} className="list-disc list-inside" style={{ color: "var(--text-primary)" }}>{r}</li>
@@ -228,7 +229,7 @@ export default function LeadViewPage() {
             className="text-sm font-medium"
             style={{ color: "var(--meaning-amber)" }}
           >
-            {controlOpen ? "Hide control" : "Take control"}
+            {controlOpen ? "Hide control" : "Open conversation"}
           </button>
           {controlOpen && (
             <div className="mt-4 space-y-4">

@@ -149,8 +149,8 @@ export default function ConversationsPage() {
       >
         <p className="font-medium" style={{ color: "var(--text-primary)" }}>{name}</p>
         {company && <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{company}</p>}
-        <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>Current responsibility: {handling}</p>
-        <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Next planned touch: {futureWorkText}</p>
+        <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>Current situation: {handling}</p>
+        <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Next action timing: {futureWorkText}</p>
         <Link
           href={`/dashboard/leads/${leadId}`}
           className="mt-3 inline-block text-sm font-medium"
@@ -182,22 +182,22 @@ export default function ConversationsPage() {
         </div>
       )}
 
-      {/* Live system guarantee: Always show monitoring */}
+      {/* Empty state */}
       {!loading && readyToBook.length === 0 && inProgress.length === 0 && cooling.length === 0 && (
         <div className="mb-6 py-2 px-4 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
           <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
-          <span style={{ color: "var(--text-muted)" }}>We&apos;re ready — conversations will appear here when they start.</span>
+          <span style={{ color: "var(--text-muted)" }}>We&apos;ll show conversations here when they appear.</span>
         </div>
       )}
       {loading ? (
-        <LoadingState message="Watching over" submessage="Continuity monitoring in progress." />
+        <LoadingState message="Checking conversations…" submessage="Updating status…" />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--meaning-green)" }}>Ready for call</h2>
+            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--meaning-green)" }}>Needs reply</h2>
             <div className="space-y-3">
               {readyToBook.length === 0 ? (
-                <EmptyState icon="pulse" title="Watching for new conversations" subtitle="Preparing upcoming calls. All protected." className="py-6 px-4" />
+                <EmptyState icon="pulse" title="We'll show conversations here when they appear." subtitle="Everything is quiet right now." className="py-6 px-4" />
               ) : (
                 readyToBook.map((l) => (
                   <LeadCard
@@ -213,10 +213,10 @@ export default function ConversationsPage() {
             </div>
           </div>
           <div>
-            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--meaning-amber)" }}>Being maintained</h2>
+            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--meaning-amber)" }}>Active</h2>
             <div className="space-y-3">
               {inProgress.length === 0 ? (
-                <EmptyState icon="watch" title="Maintaining engagement" subtitle="Keeping conversations active. No interventions needed." className="py-6 px-4" />
+                <EmptyState icon="watch" title="We'll show conversations here when they appear." subtitle="Everything is quiet right now." className="py-6 px-4" />
               ) : (
                 inProgress.map((l) => (
                   <LeadCard
@@ -232,10 +232,10 @@ export default function ConversationsPage() {
             </div>
           </div>
           <div>
-            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)" }}>Cooling — intervention planned</h2>
+            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)" }}>At risk</h2>
             <div className="space-y-3">
               {cooling.length === 0 ? (
-                <EmptyState icon="pulse" title="Watching for new conversations" subtitle="Scanning cooling conversations. All protected." className="py-6 px-4" />
+                <EmptyState icon="pulse" title="We'll show conversations here when they appear." subtitle="Everything is quiet right now." className="py-6 px-4" />
               ) : (
                 cooling.map((c) => (
                   <LeadCard
