@@ -11,7 +11,7 @@ const STEPS = [
   { delaySec: 2, action: "inbound_detected", actor: "Qualifier", role: "qualifier", payload: { noticed: "New conversation detected.", decision: "Preparing response.", expected: "Response ready for review." } },
   { delaySec: 5, action: "response_prepared", actor: "Qualifier", role: "qualifier", payload: { noticed: "Inbound message received.", decision: "Response prepared.", expected: "Follow-up scheduled." } },
   { delaySec: 9, action: "follow_up_scheduled", actor: "Follow-up Manager", role: "follow_up_manager", payload: { noticed: "Touchpoint scheduled.", decision: "Next step in 24h.", expected: "Booking window opens." } },
-  { delaySec: 14, action: "booking_projected", actor: "Setter", role: "setter", payload: { noticed: "Pipeline opportunity identified.", decision: "Booking path prepared.", expected: "Calendar protection when booked." } },
+  { delaySec: 14, action: "booking_projected", actor: "Setter", role: "setter", payload: { noticed: "Booking opportunity identified.", decision: "Booking path prepared.", expected: "Calendar protection when booked." } },
   { delaySec: 20, action: "calendar_protection_active", actor: "Show Manager", role: "show_manager", payload: { noticed: "Protection cycle active.", decision: "Attendance confirmation scheduled.", expected: "Conversation maintained." } },
 ] as const;
 

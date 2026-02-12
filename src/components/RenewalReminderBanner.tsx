@@ -27,11 +27,11 @@ export function RenewalReminderBanner() {
   if (hoursUntil > 24 || hoursUntil < 0) return null;
 
   return (
-    <div className="bg-sky-950/50 border-b border-sky-800/50 px-4 py-2 flex items-center justify-between text-sm">
-      <span className="text-sky-200">
-        Protection renews in ~{hoursUntil}h. Ongoing work continues automatically. Pause protection anytime if you need to stop.
+    <div className="px-4 py-2 flex items-center justify-between text-sm" style={{ background: "rgba(77, 163, 255, 0.1)", borderBottom: "1px solid var(--meaning-blue)" }}>
+      <span style={{ color: "var(--text-primary)" }}>
+        Protection renews in ~{hoursUntil}h. We continue automatically. Pause anytime if you need to stop.
       </span>
-      <button onClick={() => setDismissed(true)} className="text-sky-400 hover:text-sky-200">×</button>
+      <button onClick={() => setDismissed(true)} style={{ color: "var(--text-muted)" }}>×</button>
     </div>
   );
 }

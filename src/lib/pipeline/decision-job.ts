@@ -1,5 +1,5 @@
 /**
- * decisionJob: read state -> AI classification -> choose action -> template-slot message
+ * decisionJob: read state -> classify intent -> choose action -> template-slot message
  * -> safety check -> execute send (or safe fallback) -> log. NEVER block on approval.
  */
 
@@ -174,7 +174,7 @@ export async function runDecisionJob(
       }
     }
   } catch (err) {
-    console.error("[decisionJob] AI fillSlots failed", redact({ leadId, err: String(err) }));
+    console.error("[decisionJob] template fill failed", redact({ leadId, err: String(err) }));
     action = getSafeFallback(settings, allowedActions);
     message = SAFE_FALLBACK_MESSAGES[action] ?? SAFE_FALLBACK_MESSAGES.clarifying_question;
   }
@@ -212,6 +212,14 @@ export async function runDecisionJob(
   const featureEnabled = await isFeatureEnabled(workspaceId, feature);
   if (!featureEnabled) {
     await recordInaction(leadId, workspaceId, "feature_disabled", { feature });
+    return;
+  }
+
+  const { isCoverageEnabled } = await import("@/lib/coverage-flags");
+  const coverageFlags = (settingsRow as { coverage_flags?: Record<string, boolean> })?.coverage_flags;
+  if (!isCoverageEnabled(coverageFlags, action)) {
+    await logRestraint(workspaceId, leadId, "coverage_not_enabled", { action });
+    await recordInaction(leadId, workspaceId, "coverage_not_enabled", { action });
     return;
   }
 
@@ -500,6 +508,13 @@ export async function runDecisionJob(
   }
 
   await incrementMetric(workspaceId, policy.allowed ? METRIC_KEYS.REPLIES_SENT : METRIC_KEYS.FALLBACK_USED);
+
+  try {
+    const { recordRiskIncidentPrevented } = await import("@/lib/risk-surface/record-incident");
+    await recordRiskIncidentPrevented(workspaceId, action, { leadId, detail: { action } });
+  } catch {
+    // Non-blocking
+  }
 
   await db.from("action_logs").insert({
     workspace_id: workspaceId,

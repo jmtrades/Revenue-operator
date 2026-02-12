@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
 
   const userMsgs = (msgs ?? []) as { conversation_id: string; created_at: string }[];
   const replyMsgs = (replies ?? []) as { conversation_id: string; created_at: string }[];
-  let delays: number[] = [];
+  const delays: number[] = [];
   for (const u of userMsgs) {
     const r = replyMsgs.find((x) => x.conversation_id === u.conversation_id && x.created_at > u.created_at);
     if (r) {

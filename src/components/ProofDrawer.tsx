@@ -31,6 +31,7 @@ interface ProofData {
     cooldown?: { reason: string; cooldown_until?: string };
     sequence?: { current_step: number; sequence_name?: string };
   };
+  learning_sources?: Array<"lead_specific" | "workspace_history" | "network_pattern">;
 }
 
 interface ProofDrawerProps {
@@ -70,7 +71,7 @@ export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
   return (
     <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-stone-900 border-l border-stone-800 shadow-2xl z-50 flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-stone-800">
-        <h2 className="text-lg font-semibold text-stone-100">Why your team did this</h2>
+        <h2 className="text-lg font-semibold text-stone-100">What we&apos;re maintaining for this conversation</h2>
         <button
           onClick={onClose}
           className="p-2 rounded-lg hover:bg-stone-800 text-stone-400 hover:text-stone-100"
@@ -196,13 +197,25 @@ export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
                 </div>
               </section>
             )}
-            {tab === "counterfactual" && data.counterfactual && (
+            {tab === "counterfactual" && (
               <section>
                 <h3 className="text-sm font-medium text-stone-400 uppercase tracking-wide mb-2">Counterfactual</h3>
-                <div className="p-3 rounded-lg bg-stone-800/80 text-sm">
-                  <p className="text-stone-300">{data.counterfactual.impact}</p>
-                  <p className="text-xs text-stone-500 mt-1">Baseline: {(data.counterfactual.baseline_conversion * 100).toFixed(1)}%</p>
-                </div>
+                {data.counterfactual ? (
+                  <div className="p-3 rounded-lg bg-stone-800/80 text-sm">
+                    <p className="text-stone-300">{data.counterfactual.impact}</p>
+                    <p className="text-xs text-stone-500 mt-1">Baseline: {(data.counterfactual.baseline_conversion * 100).toFixed(1)}%</p>
+                  </div>
+                ) : (
+                  <p className="text-stone-500 text-sm">No counterfactual data</p>
+                )}
+                {data.learning_sources && data.learning_sources.length > 0 && (
+                  <div className="mt-4 p-3 rounded-lg bg-sky-950/30 border border-sky-800/50 text-sm">
+                    <h4 className="text-xs font-medium text-sky-400 uppercase tracking-wide mb-1">Learning sources (internal)</h4>
+                    <p className="text-stone-300 text-xs">
+                      {data.learning_sources.map((s) => s.replace(/_/g, " ")).join(", ")}
+                    </p>
+                  </div>
+                )}
               </section>
             )}
             {tab === "call" && (

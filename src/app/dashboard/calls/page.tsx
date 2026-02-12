@@ -4,128 +4,156 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
-interface CallSession {
-  id: string;
-  lead_id?: string | null;
-  matched_lead?: { id: string; name?: string; email?: string; company?: string } | null;
-  outcome?: string | null;
-  analysis_outcome?: string | null;
-  next_best_action?: string | null;
-  followup_plan?: Array<{ when_hours_from_now: number; action_type: string }>;
-  started_at: string;
-  call_ended_at?: string | null;
-  provider?: string;
-  show_status?: string | null;
-  show_reason?: string | null;
-  analysis_source?: string | null;
+interface CalendarCall {
+  session_id: string;
+  lead_id: string;
+  probability: number;
+  call_started_at: string;
+  lead?: { name?: string; company?: string };
 }
 
-function humanAction(s: string): string {
-  return (s ?? "").replace(/_/g, " ");
-}
-
-function humanOutcome(s: string): string {
-  const map: Record<string, string> = {
-    hot_delay: "Interested, needs timing",
-    info_gap: "Needs more info",
-    trust_gap: "Building trust",
-    lost_politely: "Not a fit",
+interface CalendarRiskData {
+  next_48h?: {
+    likely_no_shows: CalendarCall[];
+    confirmation_needed: CalendarCall[];
+    high_confidence: CalendarCall[];
   };
-  return map[s] ?? s.replace(/_/g, " ");
+  total_calls?: number;
 }
 
-export default function CallsPage() {
+export default function CalendarPage() {
   const { workspaceId } = useWorkspace();
-  const [calls, setCalls] = useState<CallSession[]>([]);
+  const [data, setData] = useState<CalendarRiskData | null>(null);
+  const [riskSurface, setRiskSurface] = useState<{ calendar_at_risk: Array<{ call_id: string; rescue_needed: boolean }> } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [sending, setSending] = useState<string | null>(null);
 
   useEffect(() => {
     if (!workspaceId) {
-      setCalls([]);
+      setData(null);
+      setRiskSurface(null);
       return;
     }
     setLoading(true);
-    fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`)
-      .then((r) => r.json())
-      .then((d) => setCalls(d.calls ?? []))
-      .catch(() => setCalls([]))
+    Promise.all([
+      fetch(`/api/calendar-risk?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
+      fetch(`/api/risk-surface?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
+    ])
+      .then(([d, risk]) => {
+        setData(d?.next_48h ? { next_48h: d.next_48h, total_calls: d.total_calls } : null);
+        setRiskSurface(risk?.error ? null : risk);
+      })
+      .catch(() => { setData(null); setRiskSurface(null); })
       .finally(() => setLoading(false));
   }, [workspaceId]);
+
+  const noShows = data?.next_48h?.likely_no_shows ?? [];
+  const confirmationNeeded = data?.next_48h?.confirmation_needed ?? [];
+  const highConfidence = data?.next_48h?.high_confidence ?? [];
+  const rescueIds = new Set((riskSurface?.calendar_at_risk ?? []).filter((c) => c.rescue_needed).map((c) => c.call_id));
+  const allCalls = [...noShows, ...confirmationNeeded, ...highConfidence].sort(
+    (a, b) => new Date(a.call_started_at).getTime() - new Date(b.call_started_at).getTime()
+  );
+
+  function callStability(c: CalendarCall): "Low" | "Medium" | "High" {
+    if (noShows.some((n) => n.session_id === c.session_id)) return "Low";
+    if (confirmationNeeded.some((n) => n.session_id === c.session_id)) return "Medium";
+    return "High";
+  }
+
+  function stabilityPct(c: CalendarCall): number {
+    const s = callStability(c);
+    return s === "High" ? 100 : s === "Medium" ? 60 : 25;
+  }
+
+  function preparationState(c: CalendarCall): "Prepared" | "Confirming" | "Monitoring" | "Recovering" {
+    if (noShows.some((n) => n.session_id === c.session_id)) return "Recovering";
+    if (confirmationNeeded.some((n) => n.session_id === c.session_id)) return "Confirming";
+    if (highConfidence.some((h) => h.session_id === c.session_id)) return "Prepared";
+    return "Monitoring";
+  }
 
   if (!workspaceId) {
     return (
       <div className="p-8">
-        <p className="text-stone-500">Select an account.</p>
+        <p style={{ color: "var(--text-muted)" }}>Select an account.</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-8 max-w-3xl">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold text-stone-50">Calls</h1>
-        <p className="text-stone-400 mt-1">
-          Show rate · Follow-ups · Next actions
-        </p>
+        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Calendar</h1>
+        <p className="mt-1" style={{ color: "var(--text-secondary)" }}>Calls arrive prepared. We maintain attendance confidence.</p>
       </header>
 
       {loading ? (
-        <p className="text-stone-500">Loading…</p>
-      ) : calls.length === 0 ? (
-        <div className="p-8 rounded-xl bg-stone-900/60 border border-stone-800 text-center">
-          <p className="text-stone-400">No calls yet.</p>
-          <p className="text-stone-500 text-sm mt-1">Calls appear when you connect Zoom or add calendar events.</p>
-          <Link href="/dashboard/settings" className="mt-4 inline-block text-amber-400 text-sm hover:underline">
-            Settings →
+        <div className="py-12 px-6 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
+          <p style={{ color: "var(--text-primary)" }}>Watching over</p>
+          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Protecting booked calls. Continuity monitoring in progress.</p>
+        </div>
+      ) : allCalls.length === 0 ? (
+        <div
+          className="py-12 px-6 rounded-xl"
+          style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
+        >
+          <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-green)" }} aria-hidden />
+          <p style={{ color: "var(--text-primary)" }}>Protecting booked calls</p>
+          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>No calls in the next 48 hours. We prepare each one when booked.</p>
+          <Link href="/dashboard/settings" className="mt-4 inline-block text-sm" style={{ color: "var(--meaning-blue)" }}>
+            Connect calendar →
           </Link>
         </div>
       ) : (
         <div className="space-y-4">
-          {calls.map((c) => {
-            const leadId = c.matched_lead?.id ?? c.lead_id;
+          {allCalls.map((c) => {
+            const stability = callStability(c);
+            const prep = preparationState(c);
+            const pct = stabilityPct(c);
+            const barColor = stability === "High" ? "var(--meaning-green)" : stability === "Medium" ? "var(--meaning-amber)" : "var(--meaning-red)";
+            const name = c.lead?.name ?? c.lead?.company ?? "—";
             return (
-              <div key={c.id} className="p-4 rounded-xl bg-stone-900/80 border border-stone-800">
-                <div className="flex flex-wrap items-start justify-between gap-4">
+              <div
+                key={c.session_id}
+                className="p-5 rounded-xl"
+                style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}
+              >
+                <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-medium text-stone-200">
-                      {c.matched_lead ? (c.matched_lead.name || c.matched_lead.email || c.matched_lead.company || "Unknown") : "Unmatched"}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <span className={`px-2 py-0.5 rounded text-xs ${
-                        c.show_status === "showed" ? "bg-emerald-900/50 text-emerald-400" :
-                        c.show_status === "no_show" ? "bg-red-900/50 text-red-400" : "bg-stone-700 text-stone-400"
-                      }`}>
-                        {c.show_status === "showed" ? "Showed" : c.show_status === "no_show" ? "No-show" : "Unknown"}
-                      </span>
-                      {(c.analysis_outcome || c.outcome) && (
-                        <span className="px-2 py-0.5 rounded text-xs bg-stone-700 text-stone-400">
-                          {humanOutcome((c.analysis_outcome || c.outcome) as string)}
+                    <p className="font-medium" style={{ color: "var(--text-primary)" }}>{name}</p>
+                    {c.lead?.company && c.lead?.company !== name && (
+                      <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{c.lead.company}</p>
+                    )}
+                    <div className="mt-3">
+                      <div className="flex justify-between text-xs mb-1 flex-wrap gap-1" style={{ color: "var(--text-muted)" }}>
+                        <span>Call stability: {stability}</span>
+                        <span className="flex items-center gap-1">
+                          {rescueIds.has(c.session_id) && (
+                            <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: "rgba(243, 156, 18, 0.2)", color: "var(--meaning-amber)" }}>Rescue in progress</span>
+                          )}
+                          {prep}
                         </span>
-                      )}
+                      </div>
+                      <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+                        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: barColor }} />
+                      </div>
                     </div>
-                    {c.show_reason && <p className="text-xs text-stone-500 mt-1">{c.show_reason}</p>}
-                    {c.next_best_action && (
-                      <p className="text-amber-400 text-sm mt-2">Suggested follow-up: {humanAction(c.next_best_action)}</p>
-                    )}
+                    <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
+                      {new Date(c.call_started_at).toLocaleString()}
+                    </p>
                   </div>
-                  <div className="text-right text-sm text-stone-500">
-                    <p>{new Date(c.started_at).toLocaleString()}</p>
-                    {leadId && (
-                      <button
-                        onClick={async () => {
-                          setSending(c.id);
-                          await fetch(`/api/leads/${leadId}/run-plan`, { method: "POST" });
-                          setSending(null);
-                        }}
-                        disabled={!!sending}
-                        className="mt-2 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-stone-950 text-sm font-medium"
-                      >
-                        {sending === c.id ? "Sending…" : "Send now"}
-                      </button>
-                    )}
-                  </div>
+                  <Link
+                    href={`/dashboard/leads/${c.lead_id}`}
+                    className="text-sm font-medium shrink-0"
+                    style={{ color: "var(--meaning-blue)" }}
+                  >
+                    View details
+                  </Link>
                 </div>
+                <p className="text-xs mt-2" style={{ color: "var(--text-secondary)" }}>
+                  Calls arrive prepared. We maintain attendance confidence.
+                </p>
               </div>
             );
           })}

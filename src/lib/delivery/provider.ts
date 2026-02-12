@@ -45,6 +45,50 @@ async function sendViaTwilio(
   return { error: json.error_message ?? json.message ?? "Unknown Twilio error" };
 }
 
+/** Human-safety layer runs last before send. Can override content. */
+async function applySafetyLayer(
+  content: string,
+  workspaceId: string,
+  leadId: string,
+  conversationId: string,
+  channel: string
+): Promise<string> {
+  try {
+    const { enforceHumanAcceptability } = await import("@/lib/human-safety");
+    const { isLowPressureMode } = await import("@/lib/human-safety/disinterest-detector");
+    const db = (await import("@/lib/db/queries")).getDb();
+
+    const [{ data: lastMsg }, lowPressure] = await Promise.all([
+      db
+        .from("messages")
+        .select("content")
+        .eq("conversation_id", conversationId)
+        .eq("role", "user")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single(),
+      isLowPressureMode(workspaceId, leadId),
+    ]);
+
+    const lastUserMessage = (lastMsg as { content?: string })?.content;
+    const leadUsedEmoji = /[\u{1F300}-\u{1F9FF}]/u.test(lastUserMessage ?? "");
+
+    const result = enforceHumanAcceptability(content, {
+      leadId,
+      workspaceId,
+      confidence: 1, // Already passed pipeline gating
+      lastUserMessage,
+      leadUsedEmoji,
+      lowPressureMode: lowPressure,
+      channel,
+    });
+
+    return result.safeMessage;
+  } catch {
+    return content;
+  }
+}
+
 export async function sendOutbound(
   messageId: string,
   workspaceId: string,
@@ -55,6 +99,12 @@ export async function sendOutbound(
   to: { email?: string; phone?: string }
 ): Promise<{ status: MessageStatus; externalId?: string; error?: string }> {
   const db = getDb();
+
+  // Safety runs LAST before send
+  const safeContent = await applySafetyLayer(content, workspaceId, leadId, conversationId, channel);
+  if (safeContent !== content) {
+    await db.from("outbound_messages").update({ content: safeContent }).eq("id", messageId);
+  }
 
   const fallbackOrder: string[] =
     channel === "sms"
@@ -71,7 +121,7 @@ export async function sendOutbound(
     if (ch === "web") {
       result = { sid: `web-${messageId}` };
     } else if (ch === "sms" && to.phone) {
-      result = await sendViaTwilio("sms", to.phone, content);
+      result = await sendViaTwilio("sms", to.phone, safeContent);
     } else {
       result = { error: "Email provider not implemented" };
     }

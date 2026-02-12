@@ -29,9 +29,9 @@ export interface SlotFillResult {
 const FALLBACK_MESSAGE = "Thanks for reaching out. Could you tell me a bit more about what you're looking for?";
 
 const STYLE_INSTRUCTIONS: Record<string, string> = {
-  direct: "Tone: short, clear, no hedging. Get to the point. Minimal filler.",
-  consultative: "Tone: warm, collaborative. Ask questions. Suggest options. Help them decide.",
-  high_urgency: "Tone: action-oriented, time-sensitive. Emphasise next steps. Create gentle urgency.",
+  direct: "Tone: short, clear, neutral. No hedging. No persuasion. Minimal filler.",
+  consultative: "Tone: neutral, professional. Ask one question. No emotional inference.",
+  high_urgency: "Tone: neutral, clear. Emphasise next steps only. No urgency pressure.",
 };
 
 async function callAI(action: string, context: Record<string, unknown>): Promise<string> {

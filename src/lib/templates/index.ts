@@ -44,6 +44,7 @@ export const ACTION_TEMPLATES: Record<string, { slots: (keyof TemplateSlots)[]; 
   upsell: { slots: ["context_line", "cta"], maxLength: 200 },
   win_back: { slots: ["greeting", "context_line", "cta"], maxLength: 200 },
   offer: { slots: ["context_line", "cta"], maxLength: 200 },
+  defer: { slots: ["context_line"], maxLength: 100 },
 };
 
 /** Build message from slots. Enforce structure. */

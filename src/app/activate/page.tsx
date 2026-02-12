@@ -41,9 +41,9 @@ export default function ActivatePage() {
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
         <div className="max-w-md w-full">
-          <h1 className="text-xl font-semibold text-stone-50 mb-2">More calls on your calendar</h1>
-          <p className="text-stone-400 text-sm mb-6">
-            We protect your pipeline — follow-ups, reminders, revivals. You take the calls.
+          <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>More calls on your calendar</h1>
+          <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+            We maintain continuity — follow-ups, reminders, recoveries. You take the calls.
           </p>
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <input
@@ -59,11 +59,11 @@ export default function ActivatePage() {
               disabled={submitting}
               className="w-full py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 font-medium text-stone-950"
             >
-              {submitting ? "Starting…" : "Connect pipeline"}
+              {submitting ? "Starting…" : "Start protection"}
             </button>
           </form>
-          <p className="text-stone-500 text-xs mt-4 text-center">
-            No credit card. You&apos;ll connect your pipeline next.
+          <p className="text-xs mt-4 text-center" style={{ color: "var(--text-muted)" }}>
+            No credit card. Connect your calendar next.
           </p>
         </div>
       </div>

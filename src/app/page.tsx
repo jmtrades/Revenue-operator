@@ -5,8 +5,8 @@ import { useState, useEffect } from "react";
 
 const FEED_ITEMS = [
   "Call booked",
-  "Lead showed up",
-  "Recovered lead scheduled",
+  "Call attended",
+  "Recovered conversation scheduled",
   "Another conversation on the calendar",
 ];
 
@@ -65,7 +65,7 @@ export default function LandingPage() {
           More real conversations on your calendar
         </h1>
         <p className="mt-4 text-lg text-stone-400 text-center max-w-xl">
-          We reply, follow up, and revive so leads show up. You watch your calendar change.
+          We maintain continuity so people show up. You watch your calendar change.
         </p>
         <Link
           href="/activate"
@@ -87,7 +87,7 @@ export default function LandingPage() {
             <li>• Pauses when uncertain</li>
           </ul>
           <p className="text-sm text-stone-400 mt-3 pt-3 border-t border-stone-800">
-            You can intervene anytime. After connecting, you only need to take calls. First week: behaves conservatively while learning. Prioritizes qualified conversations, not volume.
+            You can intervene anytime. After connecting, you only take calls. First week: behaves conservatively while learning. Prioritizes qualified conversations, not volume.
           </p>
         </div>
 
@@ -100,9 +100,9 @@ export default function LandingPage() {
           <div className="p-6 rounded-xl bg-red-950/20 border border-red-900/50">
             <p className="text-sm font-medium text-red-300 mb-4">Without us</p>
             <ul className="space-y-2 text-stone-400">
-              <li>• Empty slots</li>
+              <li>• Unfilled appointments</li>
               <li>• No-shows</li>
-              <li>• Ghosted leads</li>
+              <li>• Conversations that go quiet</li>
               <li>• &quot;I&apos;ll think about it&quot;</li>
               <li>• Fewer real conversations</li>
             </ul>
@@ -112,8 +112,8 @@ export default function LandingPage() {
             <ul className="space-y-2 text-stone-300">
               <li>• More calls booked</li>
               <li>• Fewer no-shows</li>
-              <li>• Cold leads back on your calendar</li>
-              <li>• Leads actually show up</li>
+              <li>• Cooling conversations back on your calendar</li>
+              <li>• People actually show up</li>
               <li>• More real conversations</li>
             </ul>
           </div>
@@ -125,11 +125,11 @@ export default function LandingPage() {
         <div className="max-w-xl mx-auto space-y-6">
           <div className="flex gap-4 items-start">
             <span className="w-8 h-8 rounded-full bg-amber-600/30 text-amber-400 flex items-center justify-center text-sm font-medium shrink-0">1</span>
-            <p className="text-stone-300">Lead expresses interest</p>
+            <p className="text-stone-300">Someone reaches out</p>
           </div>
           <div className="flex gap-4 items-start">
             <span className="w-8 h-8 rounded-full bg-amber-600/30 text-amber-400 flex items-center justify-center text-sm font-medium shrink-0">2</span>
-            <p className="text-stone-300">We reply, follow up, revive—so they get to the calendar</p>
+            <p className="text-stone-300">We maintain continuity—reply, follow up, recover—so they reach your calendar</p>
           </div>
           <div className="flex gap-4 items-start">
             <span className="w-8 h-8 rounded-full bg-amber-600/30 text-amber-400 flex items-center justify-center text-sm font-medium shrink-0">3</span>
@@ -144,8 +144,8 @@ export default function LandingPage() {
 
       <section className="py-16 px-6 border-t border-stone-800 bg-stone-900/30">
         <h2 className="text-xl font-semibold text-stone-50 text-center mb-4">14 days to see your calendar change</h2>
-        <p className="text-stone-400 text-center max-w-xl mx-auto mb-2">
-          More calls booked. Fewer empty slots. We handle the outreach so leads show up.
+          <p className="text-stone-400 text-center max-w-xl mx-auto mb-2">
+          More calls booked. More attendance. We maintain continuity so you take the calls.
         </p>
         <p className="text-stone-500 text-sm text-center max-w-lg mx-auto mb-8">
           Built-in operating rules protect your reputation. First week runs in cautious mode.
@@ -162,7 +162,7 @@ export default function LandingPage() {
 
       <section className="py-16 px-6 border-t border-stone-800">
         <h2 className="text-xl font-semibold text-stone-50 text-center mb-4">Pricing</h2>
-        <p className="text-stone-400 text-center max-w-lg mx-auto mb-8 text-sm">Responsibility coverage: we assume pipeline continuity. You choose the level.</p>
+        <p className="text-stone-400 text-center max-w-lg mx-auto mb-8 text-sm">Responsibility coverage: we assume conversation continuity. You choose the level.</p>
         <div className="max-w-3xl mx-auto grid sm:grid-cols-3 gap-6">
           <div className="p-6 rounded-xl bg-stone-900/60 border border-stone-800">
             <p className="font-medium text-stone-200">Starter</p>
@@ -186,7 +186,7 @@ export default function LandingPage() {
           <ul className="grid sm:grid-cols-2 gap-3 text-sm text-stone-300">
             <li className="flex items-start gap-2">
               <span className="text-emerald-500 shrink-0">✓</span>
-              Will not message uninterested leads
+              Will not message uninterested people
             </li>
             <li className="flex items-start gap-2">
               <span className="text-emerald-500 shrink-0">✓</span>
@@ -217,7 +217,7 @@ export default function LandingPage() {
           </div>
           <div>
             <p className="font-medium text-stone-200">What about the first week?</p>
-            <p className="text-stone-400 text-sm mt-1">Behaves conservatively while learning your pipeline. Ramps up as confidence grows.</p>
+            <p className="text-stone-400 text-sm mt-1">Behaves conservatively while learning your patterns. Ramps up as confidence grows.</p>
           </div>
           <div>
             <p className="font-medium text-stone-200">Can I see what&apos;s happening?</p>
@@ -228,7 +228,7 @@ export default function LandingPage() {
 
       <footer className="py-8 px-6 border-t border-stone-800 text-center">
         <p className="text-stone-500 text-sm">Revenue Operator</p>
-        <p className="text-stone-600 text-xs mt-1">Pipeline continuity infrastructure</p>
+        <p className="text-stone-600 text-xs mt-1">Revenue continuity infrastructure</p>
       </footer>
     </div>
   );

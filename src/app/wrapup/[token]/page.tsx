@@ -1,22 +1,18 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function WrapupPage() {
   const params = useParams();
-  const router = useRouter();
-  const token = params.token as string;
-  const [status, setStatus] = useState<"loading" | "form" | "invalid" | "used" | "expired" | "done">("loading");
+  const token = params.token as string | undefined;
+  const [status, setStatus] = useState<"loading" | "form" | "invalid" | "used" | "expired" | "done">(() => (!token ? "invalid" : "loading"));
   const [outcome, setOutcome] = useState<"interested" | "thinking" | "not_fit" | "">("");
   const [objectionText, setObjectionText] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      setStatus("invalid");
-      return;
-    }
+    if (!token) return;
     fetch(`/api/wrapup/verify?token=${encodeURIComponent(token)}`)
       .then((r) => r.json())
       .then((d) => {

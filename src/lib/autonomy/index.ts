@@ -30,7 +30,7 @@ const DEFAULT_AUTONOMY: AutonomySettings = {
   autonomy_ramp_day: 0,
 };
 
-let _cache: Map<string, { s: AutonomySettings; at: number }> = new Map();
+const _cache: Map<string, { s: AutonomySettings; at: number }> = new Map();
 const CACHE_TTL_MS = 60_000;
 
 /** Responsibility tier gates max autonomy: monitor->observe, handle->assist, guarantee->act */

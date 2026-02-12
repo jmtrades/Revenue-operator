@@ -20,7 +20,8 @@ export type InactionReason =
   | "channel_unavailable"
   | "no_role_for_action"
   | "autonomy_ramp"
-  | "feature_disabled";
+  | "feature_disabled"
+  | "coverage_not_enabled";
 
 export async function recordInaction(
   leadId: string,

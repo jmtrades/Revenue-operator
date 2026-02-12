@@ -26,12 +26,19 @@ All actions pass through:
 
 ```bash
 cp .env.example .env.local
-# Fill Supabase + OpenAI keys
+# Fill Supabase + OpenAI keys (Zoom, Stripe, Twilio optional)
 
 npm install
 npm run build
 npm run dev
 ```
+
+## Vercel Deployment
+
+1. **Connect repo** → Vercel Dashboard
+2. **Environment variables** → Add all from `.env.example`
+3. **Migrations** → Run `supabase/migrations/*.sql` in order (Dashboard SQL or `supabase db push`)
+4. **Cron** → Vercel Cron or external: `process-queue` every 1 min, `no-reply` daily, `calendar-ended` every 5 min, `renewal-reminder` hourly
 
 ## Security
 
@@ -75,13 +82,21 @@ Content-Type: application/json
 
 Disputes an invoice line within the 7-day window. Sets status to `disputed`.
 
-### Cron
+### Cron (use `Authorization: Bearer <CRON_SECRET>`)
 
-- `GET /api/cron/process-queue` – process one job (runs alert checks and may auto-pause)
-- `GET /api/cron/no-reply` – ghost recovery
-- `GET /api/cron/billing` – attribution billing
-- `GET /api/cron/learning` – learning job (qualification thresholds, timing intervals, prediction weights)
-- `GET /api/cron/renewal-reminder` – 24h before renewal: sends reminder email (run hourly)
+| Route | Schedule | Purpose |
+|-------|----------|---------|
+| `/api/cron/process-queue` | Every 1 min | Process decision jobs, alert checks |
+| `/api/cron/no-reply` | Daily | Ghost recovery |
+| `/api/cron/calendar-ended` | Every 5 min | Calendar post-call fallback |
+| `/api/cron/billing` | Monthly | Attribution billing |
+| `/api/cron/learning` | Daily | Qualification thresholds, timing |
+| `/api/cron/renewal-reminder` | Hourly | 24h before renewal reminder |
+| `/api/cron/zoom-refresh` | Every 6h | Refresh Zoom tokens |
+
+### Risk Surface
+
+- `GET /api/risk-surface?workspace_id=` – operational exposure: conversations at risk, calendar at risk, revenue at risk, protection actions queued
 
 ### Dashboard APIs
 
@@ -179,9 +194,21 @@ npm run test
 - Call consent and escalation triggers
 - Dispute flow
 
+## Migrations
+
+Apply in order:
+1. `supabase/setup-revenue-operator.sql` – base schema
+2. `supabase/migrations/final_adoption_upgrade.sql`
+3. `supabase/migrations/call_aware_zoom.sql`
+4. `supabase/migrations/call_aware_fallback.sql`
+5. `supabase/migrations/final_polish.sql`
+6. `supabase/migrations/risk_surface_phone_billing_coverage.sql` – risk surface, phone_configs, billing columns, coverage_flags
+
+Supabase: run via Dashboard SQL Editor or `supabase db push`.
+
 ## Migration (Final Hardening)
 
-Apply migrations in order. The `revenue_operator_final_hardening_v2` migration adds:
+The `revenue_operator_final_hardening_v2` migration adds:
 
 - `replay_defense(workspace_id, signature, timestamp_ms)` – UNIQUE constraint
 - `channel_capabilities` – default rows for email, sms, whatsapp, web

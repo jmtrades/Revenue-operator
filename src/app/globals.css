@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0E1116;
+  --surface: #151A21;
+  --card: #1B212A;
+  --border: #2A313C;
+  --text-primary: #E6EDF3;
+  --text-secondary: #9BA6B2;
+  --text-muted: #6B7480;
+  --meaning-green: #2ECC71;
+  --meaning-amber: #F39C12;
+  --meaning-red: #E74C3C;
+  --meaning-blue: #4DA3FF;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+  .text-meaning-green { color: var(--meaning-green); }
+  .text-meaning-amber { color: var(--meaning-amber); }
+  .text-meaning-red { color: var(--meaning-red); }
+  .text-meaning-blue { color: var(--meaning-blue); }
+  .bg-meaning-green { background-color: var(--meaning-green); }
+  .bg-meaning-amber { background-color: var(--meaning-amber); }
+  .bg-meaning-red { background-color: var(--meaning-red); }
+  .bg-meaning-blue { background-color: var(--meaning-blue); }
+  .border-meaning-green { border-color: var(--meaning-green); }
+  .border-meaning-amber { border-color: var(--meaning-amber); }
+  .border-meaning-red { border-color: var(--meaning-red); }
+  .border-meaning-blue { border-color: var(--meaning-blue); }
 }

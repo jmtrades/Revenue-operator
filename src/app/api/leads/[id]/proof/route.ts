@@ -89,6 +89,17 @@ export async function GET(
 
   const commitmentScore = await getCommitmentScore(leadId);
 
+  let learning_sources: Array<"lead_specific" | "workspace_history" | "network_pattern"> | undefined;
+  if (workspaceId) {
+    try {
+      const { computeReadiness } = await import("@/lib/readiness/engine");
+      const readiness = await computeReadiness(workspaceId, leadId);
+      learning_sources = readiness.learning_provenance?.learning_sources;
+    } catch {
+      // Non-blocking
+    }
+  }
+
   let stability: { plan?: object; cooldown?: object; sequence?: object } | null = null;
   if (workspaceId) {
     const { getActiveLeadPlan } = await import("@/lib/plans/lead-plan");
@@ -136,6 +147,7 @@ export async function GET(
   return NextResponse.json({
     actions: actions ?? [],
     messages,
+    learning_sources,
     events: events ?? [],
     policy_reasoning: policyReasoning,
     counterfactual,

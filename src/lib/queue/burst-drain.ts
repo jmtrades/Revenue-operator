@@ -5,7 +5,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { processWebhookJob } from "@/lib/pipeline/process-webhook";
-import { runDecisionJob } from "@/lib/pipeline/decision-job";
+import { runDecisionJobWithEngines } from "@/lib/pipeline/decision-with-engines";
 import { runReactivationJob } from "@/lib/reactivation/run-job";
 import { checkWorkspaceAlerts, maybeAutoPause } from "@/lib/observability/alerts";
 import { processZoomWebhook, fetchRecordingAndTranscript, runAnalyzeCall } from "@/lib/zoom/pipeline";
@@ -65,7 +65,7 @@ async function processPayload(payload: JobPayload): Promise<void> {
   if (payload.type === "process_webhook" && payload.webhookId) {
     const result = await processWebhookJob(payload.webhookId);
     if (result?.decisionLeadId && result?.decisionWorkspaceId) {
-      await runDecisionJob(result.decisionLeadId, result.decisionWorkspaceId);
+      await runDecisionJobWithEngines(result.decisionLeadId, result.decisionWorkspaceId);
     }
   } else if (payload.type === "zoom_webhook" && payload.webhookId && payload.workspaceId && payload.meetingId && payload.meetingUuid) {
     await processZoomWebhook(payload.webhookId, payload.workspaceId, payload.meetingId, payload.meetingUuid);
@@ -82,9 +82,9 @@ async function processPayload(payload: JobPayload): Promise<void> {
   } else if (payload.type === "no_show_reminder" && payload.leadId) {
     const db = getDb();
     const { data: lead } = await db.from("leads").select("workspace_id").eq("id", payload.leadId).single();
-    if (lead) await runDecisionJob(payload.leadId, (lead as { workspace_id: string }).workspace_id);
+    if (lead) await runDecisionJobWithEngines(payload.leadId, (lead as { workspace_id: string }).workspace_id);
   } else if (payload.type === "decision" && payload.leadId && payload.workspaceId) {
-    await runDecisionJob(payload.leadId, payload.workspaceId);
+    await runDecisionJobWithEngines(payload.leadId, payload.workspaceId);
     const alerts = await checkWorkspaceAlerts(payload.workspaceId);
     if (alerts.length > 0) {
       await maybeAutoPause(payload.workspaceId);

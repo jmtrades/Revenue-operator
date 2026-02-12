@@ -6,6 +6,7 @@
 import { getDb } from "@/lib/db/queries";
 import type { DealStateVector } from "@/lib/engines/perception";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
+import { getSequenceDelayMultiplier, type WorkspaceStrategyState } from "@/lib/strategy/planner";
 
 export interface SequenceStep {
   step: number;
@@ -110,13 +111,17 @@ export async function startSequence(
   workspaceId: string,
   leadId: string,
   sequenceId: string | null,
-  sequence: Sequence
+  sequence: Sequence,
+  strategyState?: WorkspaceStrategyState | null
 ): Promise<void> {
   const step = sequence.steps[0];
   if (!step) return;
 
+  const mult = strategyState ? getSequenceDelayMultiplier(strategyState.aggressiveness_level) : 1;
+  const delayHours = Math.max(1, step.delay_hours * mult);
+
   const nextAt = new Date();
-  nextAt.setHours(nextAt.getHours() + step.delay_hours);
+  nextAt.setHours(nextAt.getHours() + delayHours);
 
   if (sequenceId) {
     const db = getDb();
@@ -161,7 +166,8 @@ export async function startSequence(
 /** Advance sequence on no-reply timeout or scheduled tick */
 export async function advanceSequence(
   workspaceId: string,
-  leadId: string
+  leadId: string,
+  strategyState?: WorkspaceStrategyState | null
 ): Promise<{ advanced: boolean; nextStep?: SequenceStep; nextActionAt?: string }> {
   const db = getDb();
   const { data: run } = await db
@@ -188,8 +194,30 @@ export async function advanceSequence(
   }
 
   const nextStep = steps[nextStepIndex];
-  const nextAt = new Date();
-  nextAt.setHours(nextAt.getHours() + nextStep.delay_hours);
+  const { getWorkspaceStrategy } = await import("@/lib/strategy/planner");
+  const strategy = strategyState ?? (await getWorkspaceStrategy(workspaceId));
+  const mult = getSequenceDelayMultiplier(strategy.aggressiveness_level);
+  let nextAt: Date;
+  try {
+    const { computeDealStateVector } = await import("@/lib/engines/perception");
+    const { computeRevenueState } = await import("@/lib/revenue-state");
+    const vector = await computeDealStateVector(workspaceId, leadId);
+    if (vector) {
+      const rev = computeRevenueState(vector);
+      if (rev.transition_toward_risk_at) {
+        nextAt = new Date(rev.transition_toward_risk_at);
+      } else {
+        nextAt = new Date();
+        nextAt.setHours(nextAt.getHours() + Math.max(1, nextStep.delay_hours * mult));
+      }
+    } else {
+      nextAt = new Date();
+      nextAt.setHours(nextAt.getHours() + Math.max(1, nextStep.delay_hours * mult));
+    }
+  } catch {
+    nextAt = new Date();
+    nextAt.setHours(nextAt.getHours() + Math.max(1, nextStep.delay_hours * mult));
+  }
 
   await db
     .from("sequence_runs")

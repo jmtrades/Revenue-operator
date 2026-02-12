@@ -14,19 +14,23 @@ interface ContinuationContext {
 export default function ContinueProtectionPage() {
   const { workspaceId } = useWorkspace();
   const [context, setContext] = useState<ContinuationContext | null>(null);
+  const [billingStatus, setBillingStatus] = useState<{ renewal_at?: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [step, setStep] = useState<"interstitial" | "payment">("interstitial");
 
   useEffect(() => {
     if (!workspaceId) return;
     setLoading(true);
-    fetch(`/api/billing/continuation-context?workspace_id=${encodeURIComponent(workspaceId)}`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.error) setContext(null);
-        else setContext(d);
+    Promise.all([
+      fetch(`/api/billing/continuation-context?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
+      fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
+    ])
+      .then(([ctx, status]) => {
+        setContext(ctx?.error ? null : ctx);
+        setBillingStatus(status?.error ? null : status);
       })
-      .catch(() => setContext(null))
+      .catch(() => { setContext(null); setBillingStatus(null); })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -40,36 +44,14 @@ export default function ContinueProtectionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center p-8">
-        <p className="text-stone-500">Loading…</p>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 max-w-xl mx-auto">
+        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
+        <p style={{ color: "var(--text-primary)" }}>Watching over</p>
+        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>Preparing continuity context. We maintain; you take the calls.</p>
       </div>
     );
   }
 
-  if (step === "payment") {
-    return (
-      <div className="p-8 max-w-xl mx-auto">
-        <h1 className="text-2xl font-semibold text-stone-50 mb-2">Allow ongoing work to continue</h1>
-        <p className="text-stone-400 text-sm mb-6">
-          Enter payment details. Protection continues automatically. Pause protection anytime.
-        </p>
-        <div className="p-6 rounded-xl bg-stone-900/80 border border-stone-800">
-          <p className="text-stone-500 text-sm text-center">
-            Payment form will appear here when Stripe is configured.
-          </p>
-          <p className="text-stone-600 text-xs text-center mt-2">
-            For now, protection is active. <Link href="/dashboard" className="text-amber-400 hover:underline">Return to dashboard</Link>
-          </p>
-        </div>
-        <button
-          onClick={() => setStep("interstitial")}
-          className="mt-6 text-stone-500 text-sm hover:text-stone-300"
-        >
-          ← Back
-        </button>
-      </div>
-    );
-  }
 
   const ctx = context as ContinuationContext | null;
   const activeCount = ctx?.summary?.active_count ?? 0;
@@ -78,10 +60,10 @@ export default function ContinueProtectionPage() {
   const hasWork = activeCount > 0 || followUpsCount > 0 || confirmationsCount > 0;
 
   return (
-    <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-2xl font-semibold text-stone-50 mb-2">Keep protection active</h1>
-      <p className="text-stone-400 text-sm mb-6">
-        Allow ongoing work to continue. Payment feels like letting your team finish what they started.
+    <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
+      <h1 className="text-2xl font-semibold mb-2">Continue coverage</h1>
+      <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+        Coverage continues automatically. We maintain your conversations. You take the calls.
       </p>
 
       <div className="space-y-4 mb-8">
@@ -92,7 +74,7 @@ export default function ContinueProtectionPage() {
               {activeCount} conversation{activeCount !== 1 ? "s" : ""} currently being protected
             </p>
           ) : (
-            <p className="text-stone-500 text-sm">No active conversations</p>
+            <p className="text-stone-500 text-sm">Watching over. Maintaining readiness for new conversations.</p>
           )}
           {ctx && ctx.active_conversations.length > 0 && (
             <ul className="mt-2 space-y-1 text-xs text-stone-500">
@@ -116,7 +98,7 @@ export default function ContinueProtectionPage() {
               )}
             </p>
           ) : (
-            <p className="text-stone-500 text-sm">No follow-ups scheduled</p>
+            <p className="text-stone-500 text-sm">Maintaining engagement intervals. Follow-ups will appear as planned.</p>
           )}
         </div>
 
@@ -127,7 +109,7 @@ export default function ContinueProtectionPage() {
               {confirmationsCount} attendance confirmation{confirmationsCount !== 1 ? "s" : ""} pending
             </p>
           ) : (
-            <p className="text-stone-500 text-sm">No pending confirmations</p>
+            <p className="text-stone-500 text-sm">Confirming upcoming attendance. Protect booked calls.</p>
           )}
           {ctx && ctx.pending_confirmations.length > 0 && (
             <ul className="mt-2 space-y-1 text-xs text-stone-500">
@@ -139,30 +121,62 @@ export default function ContinueProtectionPage() {
         </div>
       </div>
 
-      <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-800/50 mb-6">
-        <p className="text-amber-200 text-sm font-medium">Stopping protection may interrupt this work</p>
-        <p className="text-amber-300/80 text-xs mt-1">
-          Follow-ups won&apos;t send. Confirmations won&apos;t go out. Conversations will go cold.
+      <div className="p-4 rounded-xl mb-6" style={{ background: "rgba(243, 156, 18, 0.1)", borderColor: "var(--meaning-amber)", borderWidth: "1px" }}>
+        <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+          {hasWork
+            ? `${activeCount + followUpsCount + confirmationsCount} conversation${activeCount + followUpsCount + confirmationsCount !== 1 ? "s" : ""} will lose continuity within the next hour`
+            : "Stopping protection interrupts ongoing work"}
+        </p>
+        <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
+          Momentum fades if continuity stops. We maintain; you take the calls.
         </p>
       </div>
 
+      {billingStatus?.renewal_at && (
+        <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
+          Renewal: {new Date(billingStatus.renewal_at).toLocaleDateString()}. Pause protection anytime before renewal.
+        </p>
+      )}
+
       <div className="flex flex-col sm:flex-row gap-4">
         <button
-          onClick={() => setStep("payment")}
-          className="px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 font-medium text-stone-950"
+          disabled={checkoutLoading}
+          onClick={async () => {
+            setCheckoutLoading(true);
+            try {
+              const res = await fetch("/api/billing/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  workspace_id: workspaceId,
+                  success_url: `${typeof window !== "undefined" ? window.location.origin : ""}/dashboard?checkout=success`,
+                  cancel_url: `${typeof window !== "undefined" ? window.location.origin : ""}/dashboard/continue-protection`,
+                }),
+              });
+              const data = await res.json();
+              if (data.checkout_url) window.location.href = data.checkout_url;
+            } catch {
+              // fallback: continue protection without checkout (trial continues)
+            } finally {
+              setCheckoutLoading(false);
+            }
+          }}
+          className="px-6 py-3 rounded-lg font-medium"
+          style={{ background: "var(--meaning-green)", color: "#0E1116" }}
         >
-          Continue to payment
+          {checkoutLoading ? "Preparing…" : "Keep coverage active"}
         </button>
         <Link
           href="/dashboard"
-          className="px-6 py-3 rounded-lg border border-stone-600 text-stone-300 hover:bg-stone-800/80 font-medium text-center"
+          className="px-6 py-3 rounded-lg font-medium text-center"
+          style={{ borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-secondary)" }}
         >
           Not now
         </Link>
       </div>
 
-      <p className="mt-4 text-stone-500 text-xs">
-        Payment allows ongoing work to continue. Pause protection anytime — no subscription to cancel.
+      <p className="mt-4 text-xs" style={{ color: "var(--text-muted)" }}>
+        Coverage continues automatically. Pause protection anytime. Resume when ready.
       </p>
     </div>
   );

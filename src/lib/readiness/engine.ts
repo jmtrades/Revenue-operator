@@ -27,6 +27,7 @@ export interface LearningProvenance {
   local_sample_size: number;
   prior_sample_size: number;
   blend_ratio: number;
+  learning_sources?: Array<"lead_specific" | "workspace_history" | "network_pattern">;
 }
 
 export interface ReadinessResult {
@@ -136,10 +137,21 @@ export async function computeReadiness(
     const networkPrior = Math.min(8, networkPriorRaw) * priorWeight;
     baseScore += networkPrior;
     if (networkPrior > 0) signals["network_prior"] = networkPrior;
+    const learningSources: Array<"lead_specific" | "workspace_history" | "network_pattern"> = [];
+    if (localSampleSize > 0) learningSources.push("workspace_history");
+    if (priorSampleSize > 0) learningSources.push("network_pattern");
+    try {
+      const { getLeadMemory } = await import("@/lib/lead-memory");
+      const pastReactions = await getLeadMemory(leadId, "past_reactions");
+      if (pastReactions?.reactions?.length) learningSources.unshift("lead_specific");
+    } catch {
+      // Non-blocking
+    }
     learningProvenance = {
       local_sample_size: localSampleSize,
       prior_sample_size: priorSampleSize,
       blend_ratio: priorWeight,
+      learning_sources: learningSources,
     };
   } catch {
     learningProvenance = undefined;

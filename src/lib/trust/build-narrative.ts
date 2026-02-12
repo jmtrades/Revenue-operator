@@ -21,54 +21,54 @@ export function narrativeForAction(
   const explanation = (reasoning?.explanation as string) ?? "";
 
   const actionNoticed: Record<string, string> = {
-    greeting: "New lead reached out.",
-    question: lastUserMsg ? `Lead asked: "${lastUserMsg.slice(0, 80)}${lastUserMsg.length > 80 ? "…" : ""}"` : "Lead sent a message.",
-    follow_up: "Lead stopped replying.",
-    qualification_question: "Lead showed interest; needed to qualify fit.",
-    discovery_questions: "Lead engaged; gathering situation.",
-    value_proposition: "Lead ready for value context.",
-    booking: "Lead responded to availability.",
-    call_invite: "Lead qualified; routing to call.",
-    reminder: "Call scheduled; sending reminder.",
-    prep_info: "Call coming up; sharing prep.",
+    greeting: "New conversation started.",
+    question: lastUserMsg ? `They asked: "${lastUserMsg.slice(0, 80)}${lastUserMsg.length > 80 ? "…" : ""}"` : "Inbound message received.",
+    follow_up: "Reply window closing.",
+    qualification_question: "Interest shown; fit needs qualifying.",
+    discovery_questions: "Engagement detected; gathering situation.",
+    value_proposition: "Ready for value context.",
+    booking: "Availability indicated.",
+    call_invite: "Qualified; routing to call.",
+    reminder: "Call scheduled; confirming attendance.",
+    prep_info: "Call coming up; preparing.",
     next_step: "Call completed; proposing next step.",
-    recovery: "Lead went quiet; reaching back out.",
-    win_back: "Lead was lost; trying to re-engage.",
-    clarifying_question: "Unclear intent; asking for more.",
+    recovery: "Conversation cooling; recovering momentum.",
+    win_back: "Previously lost; re-engaging.",
+    clarifying_question: "Unclear intent; clarifying.",
   };
 
   const actionDecision: Record<string, string> = {
-    greeting: "Send welcoming reply.",
-    question: "Answer and move toward call.",
-    follow_up: "Send follow-up to re-engage.",
-    qualification_question: "Ask qualifying question.",
-    discovery_questions: "Ask discovery question.",
-    value_proposition: "Share relevant value.",
-    booking: "Send booking link.",
-    call_invite: "Offer call slot.",
-    reminder: "Send reminder.",
-    prep_info: "Send prep information.",
-    next_step: "Suggest next step.",
-    recovery: "Send recovery message.",
-    win_back: "Send win-back offer.",
-    clarifying_question: "Ask clarifying question.",
+    greeting: "Maintaining continuity.",
+    question: "Preparing response toward call.",
+    follow_up: "Maintaining engagement.",
+    qualification_question: "Preparing qualification.",
+    discovery_questions: "Gathering context.",
+    value_proposition: "Preparing relevance.",
+    booking: "Preparing booking path.",
+    call_invite: "Routing to call.",
+    reminder: "Confirming attendance.",
+    prep_info: "Preparing for call.",
+    next_step: "Proposing next step.",
+    recovery: "Recovering momentum.",
+    win_back: "Re-engaging.",
+    clarifying_question: "Clarifying before acting.",
   };
 
   const actionExpected: Record<string, string> = {
-    greeting: "Lead replies; conversation continues.",
-    question: "Lead responds; we qualify.",
-    follow_up: "Lead re-engages.",
-    qualification_question: "We learn fit and readiness.",
-    discovery_questions: "We understand their situation.",
-    value_proposition: "Lead sees relevance.",
-    booking: "Call gets scheduled.",
-    call_invite: "Lead books or declines.",
-    reminder: "Lead shows up.",
-    prep_info: "Better conversation.",
-    next_step: "Lead takes next step.",
-    recovery: "Lead comes back.",
-    win_back: "Lead reconsiders.",
-    clarifying_question: "We get clarity before acting.",
+    greeting: "Conversation continues.",
+    question: "Progress toward call.",
+    follow_up: "Momentum maintained.",
+    qualification_question: "Fit established.",
+    discovery_questions: "Context gathered.",
+    value_proposition: "Relevance established.",
+    booking: "Call scheduled.",
+    call_invite: "Call booked.",
+    reminder: "Attendance secured.",
+    prep_info: "Call prepared.",
+    next_step: "Next step taken.",
+    recovery: "Momentum restored.",
+    win_back: "Re-engagement.",
+    clarifying_question: "Clarity before acting.",
   };
 
   return {
@@ -83,18 +83,20 @@ export function narrativeForRestraint(
   details?: Record<string, unknown>
 ): DecisionNarrative {
   const restraintNoticed: Record<string, string> = {
-    cooldown_active: "Lead was contacted recently.",
+    cooldown_active: "Recent touch; cooldown active.",
     stage_limit: "Daily limit for this stage reached.",
     warmup_limit: "New account; limiting volume.",
     outside_business_hours: "Outside business hours.",
-    workspace_paused: "Department is paused.",
+    workspace_paused: "Protection paused.",
+    coverage_not_enabled: "This protection scope is not enabled.",
   };
   const restraintDecision: Record<string, string> = {
-    cooldown_active: "Wait before next message.",
+    cooldown_active: "Wait before next touch.",
     stage_limit: "Reschedule for tomorrow.",
-    warmup_limit: "Gradually increase sends.",
+    warmup_limit: "Gradually increase capacity.",
     workspace_paused: "Hold until resumed.",
     outside_business_hours: "Wait for business hours.",
+    coverage_not_enabled: "Protection limited. Enable this scope in Settings to act.",
   };
   const restraintExpected: Record<string, string> = {
     cooldown_active: "Next check when cooldown ends.",
@@ -102,6 +104,7 @@ export function narrativeForRestraint(
     warmup_limit: "Full capacity soon.",
     workspace_paused: "Resume when you unpause.",
     outside_business_hours: "Action in the morning.",
+    coverage_not_enabled: "Enable coverage scope to maintain this conversation.",
   };
 
   const attempt = details?.attemptCount as number | undefined;

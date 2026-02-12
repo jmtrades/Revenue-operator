@@ -429,6 +429,34 @@ export async function GET(req: NextRequest) {
   };
 
   const targetSnapshot = await getTargetSnapshot(workspaceId);
+
+  const { getWorkspaceStrategy, planWorkspaceStrategy } = await import("@/lib/strategy/planner");
+  const { data: objRow } = await db.from("workspace_objectives").select("last_evaluated_at").eq("workspace_id", workspaceId).eq("objective_type", "bookings").single();
+  const lastEval = (objRow as { last_evaluated_at?: string })?.last_evaluated_at;
+  const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
+  let revenue_trajectory: "On track" | "At risk" = "On track";
+  if (!lastEval || new Date(lastEval) < thirtyMinAgo) {
+    const { evaluateWorkspaceObjective, evaluateRevenueObjective } = await import("@/lib/objectives/engine");
+    const obj = await evaluateWorkspaceObjective(workspaceId);
+    let revenueStatus: "ahead" | "on_track" | "behind" | null = null;
+    try {
+      const rev = await evaluateRevenueObjective(workspaceId);
+      if (rev) {
+        revenueStatus = rev.status;
+        revenue_trajectory = rev.status === "behind" ? "At risk" : "On track";
+      }
+    } catch {
+      // Non-blocking
+    }
+    if (obj) await planWorkspaceStrategy(workspaceId, obj.status, revenueStatus);
+  } else {
+    const { data: revRow } = await db.from("workspace_objectives").select("status").eq("workspace_id", workspaceId).eq("objective_type", "revenue").single();
+    const revStatus = (revRow as { status?: string })?.status;
+    if (revStatus === "behind") revenue_trajectory = "At risk";
+  }
+  const strategy = await getWorkspaceStrategy(workspaceId);
+  const levelLabel = strategy.aggressiveness_level.charAt(0).toUpperCase() + strategy.aggressiveness_level.slice(1);
+  const system_strategy = `System strategy today: ${levelLabel} (tracking toward weekly goal)`;
   const { count: pendingJobsCount } = await db
     .from("job_queue")
     .select("id", { count: "exact", head: true })
@@ -826,5 +854,7 @@ export async function GET(req: NextRequest) {
     active_protections,
     expected_weekly: expectedWeekly ? { low: expectedWeekly.low, high: expectedWeekly.high, confidence: expectedWeekly.confidence } : null,
     projection_impact,
+    system_strategy,
+    revenue_trajectory,
   });
 }

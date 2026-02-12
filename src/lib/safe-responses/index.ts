@@ -27,9 +27,9 @@ export function getSafeResponse(type: SensitiveType): string {
   return RESPONSES[type] ?? RESPONSES.pricing_request;
 }
 
-/** Escalation holding message: acknowledge + timeline + reassurance. Never leave lead without response. */
+/** Escalation holding message: acknowledge + timeline. Neutral, no pressure. */
 export function getEscalationHoldingMessage(): string {
-  return "Thanks for reaching out. I'm looping in our team to make sure you get the best possible help. Someone will follow up within 24 hours. In the meantime, is there anything else I can clarify?";
+  return "Thanks for reaching out. I'm looping in our team. Someone will follow up within 24 hours.";
 }
 
 export function detectSensitiveIntent(

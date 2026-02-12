@@ -120,6 +120,12 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       recordCommitmentSignal(lead.id, "reschedule_resistance").catch(() => {});
     }
 
+    const { detectDisinterest, setLowPressureMode } = await import("@/lib/human-safety/disinterest-detector");
+    const disinterest = detectDisinterest(message);
+    if (disinterest.detected && disinterest.lowPressureMode) {
+      await setLowPressureMode(workspace_id, lead.id, true);
+    }
+
     const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).single();
     const settings = mergeSettings(settingsRow);
     const optOut = isOptOut(message, settings);

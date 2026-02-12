@@ -114,10 +114,22 @@ export async function runCalendarCallEndedJob(callSessionId: string): Promise<vo
   });
 
   if (result.status === "no_show") {
+    try {
+      const { recordCloserFeedback } = await import("@/lib/outcomes/closer-feedback");
+      await recordCloserFeedback(s.workspace_id, leadId, "no_show");
+    } catch {
+      // Non-blocking
+    }
     await enqueue({ type: "no_show_reminder", leadId });
     return;
   }
   if (result.status === "showed") {
+    try {
+      const { recordCloserFeedback } = await import("@/lib/outcomes/closer-feedback");
+      await recordCloserFeedback(s.workspace_id, leadId, "showed");
+    } catch {
+      // Non-blocking
+    }
     await enqueue({ type: "execute_post_call_plan", callSessionId, workspaceId: s.workspace_id, leadId });
     return;
   }
