@@ -38,7 +38,7 @@ npm run dev
 1. **Connect repo** → Vercel Dashboard
 2. **Environment variables** → Add all from `.env.example`
 3. **Migrations** → Run `supabase/migrations/*.sql` in order (Dashboard SQL or `supabase db push`)
-4. **Cron** → Vercel Cron or external: `process-queue` every 1 min, `no-reply` daily, `calendar-ended` every 5 min, `renewal-reminder` hourly
+4. **Cron** → Recommended minimal: `*/2 * * * *` → `GET /api/cron/core`, `0 * * * *` → `GET /api/cron/assurance-delivery` (both with `Authorization: Bearer <CRON_SECRET>`). See **Core vs full guarantees** below.
 
 ## Security
 
@@ -83,6 +83,17 @@ Content-Type: application/json
 Disputes an invoice line within the 7-day window. Sets status to `disputed`.
 
 ### Cron (use `Authorization: Bearer <CRON_SECRET>`)
+
+**Recommended minimal production setup:**
+
+| Schedule | Route |
+|----------|--------|
+| `*/2 * * * *` | `/api/cron/core` |
+| `0 * * * *` | `/api/cron/assurance-delivery` |
+
+**Core vs full guarantees.** Core runs connector-inbox, process-queue, commitment/opportunity/payment/shared-transaction recovery, exposure-engine, operability-anchor, assumption-engine, normalization-engine, proof-capsules, assurance-delivery, settlement-export. Optional: `GET /api/cron/guarantees` (e.g. `*/10 * * * *`) for progress-watchdog, integrity-audit, closure, handoff-notifications, no-reply; `GET /api/cron/core-drift` (e.g. `0 */6 * * *`) for doctrine-safe drift detection. See `docs/PRODUCTION_DEPLOYMENT.md` for the full optional table.
+
+**Optional (individual crons):**
 
 | Route | Schedule | Purpose |
 |-------|----------|---------|
@@ -225,7 +236,7 @@ Supabase: run migrations via Dashboard SQL or `supabase db push`.
 - [ ] `OPENAI_API_KEY` set
 - [ ] `WEBHOOK_SECRET` set (signature or legacy secret)
 - [ ] `CRON_SECRET` set for cron + admin DLQ
-- [ ] Cron: `process-queue` every 1 min, `no-reply` daily, `billing` monthly, `learning` daily
+- [ ] Cron: `/api/cron/core` every 2 min, `/api/cron/assurance-delivery` hourly (Bearer CRON_SECRET); or full optional crons per docs
 - [ ] Rate limit at edge if needed beyond built-in
 - [ ] Rotate keys if exposed
 
@@ -248,4 +259,4 @@ npm run start
 ```bash
 vercel --prod
 ```
-Set env vars in Vercel dashboard. Configure cron: `process-queue` (1 min), `no-reply` (daily), `billing` (monthly), `learning` (daily).
+Set env vars in Vercel dashboard. Configure cron: `/api/cron/core` every 2 min, `/api/cron/assurance-delivery` hourly (see docs for full optional table).

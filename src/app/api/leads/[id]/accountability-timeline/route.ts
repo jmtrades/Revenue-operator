@@ -70,14 +70,14 @@ export async function GET(
       timeline.push({
         phase: "protection",
         when: act.created_at,
-        what: "Held back",
+        what: "Follow-through continued",
         detail: (pl.noticed as string) ?? (pl.policy_reason as string),
       });
     } else if (act.action === "escalation_suggest") {
       timeline.push({
         phase: "protection",
         when: act.created_at,
-        what: "Escalated",
+        what: "Decision progressed",
         detail: (pl.noticed as string) ?? (pl.escalation_reason as string),
       });
     }
@@ -89,25 +89,25 @@ export async function GET(
       timeline.push({
         phase: "preparation",
         when: ev.created_at,
-        what: "Call booked",
+        what: "They're set",
       });
     } else if (ev.event_type === "no_reply_timeout") {
       timeline.push({
         phase: "protection",
         when: ev.created_at,
-        what: "Recovery triggered",
-        detail: "No reply — outreach scheduled",
+        what: "Follow-through continued",
+        detail: "Outreach scheduled",
       });
     }
   }
 
   for (const s of sessions ?? []) {
     const sess = s as { id: string; call_started_at: string; show_status?: string | null; show_reason?: string | null };
-    const status = sess.show_status === "showed" ? "Attended" : sess.show_status === "no_show" ? "No-show" : "Unknown";
+    const status = sess.show_status === "showed" ? "They're planning to attend" : sess.show_status === "no_show" ? "No-show" : "Unknown";
     timeline.push({
       phase: "attendance",
       when: sess.call_started_at,
-      what: `Call ${status}`,
+      what: status,
       detail: sess.show_reason ?? undefined,
     });
   }

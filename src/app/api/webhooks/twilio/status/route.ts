@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { recordDeliveryReceipt } from "@/lib/delivery/provider";
+import { markAttemptDelivered } from "@/lib/delivery-assurance/action-attempts";
 
 export async function POST(request: NextRequest) {
   const form = await request.formData();
@@ -16,6 +17,7 @@ export async function POST(request: NextRequest) {
 
   if (messageStatus === "delivered") {
     await recordDeliveryReceipt(messageSid);
+    await markAttemptDelivered(messageSid);
   }
 
   return new NextResponse("OK", { status: 200, headers: { "Content-Type": "text/plain" } });

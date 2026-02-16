@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const { data: ws } = await db
     .from("workspaces")
-    .select("billing_status, protection_renewal_at, stripe_customer_id, stripe_subscription_id, created_at")
+    .select("billing_status, protection_renewal_at, stripe_customer_id, stripe_subscription_id, created_at, status, pause_reason")
     .eq("id", workspaceId)
     .single();
 
@@ -26,6 +26,8 @@ export async function GET(req: NextRequest) {
     stripe_customer_id?: string | null;
     stripe_subscription_id?: string | null;
     created_at?: string;
+    status?: string | null;
+    pause_reason?: string | null;
   };
 
   const trialEnd = row.protection_renewal_at
@@ -34,10 +36,25 @@ export async function GET(req: NextRequest) {
       ? new Date(new Date(row.created_at).getTime() + 14 * 24 * 60 * 60 * 1000)
       : null;
 
+  const isPaused = row.billing_status === "trial_ended" || row.pause_reason || (row.billing_status === "trial" && trialEnd && new Date(trialEnd) < new Date());
+  let has_upcoming_booking_24h = false;
+  if (isPaused) {
+    const now = new Date();
+    const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const { count } = await db
+      .from("call_sessions")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId)
+      .gte("call_started_at", now.toISOString())
+      .lt("call_started_at", in24h.toISOString());
+    has_upcoming_booking_24h = (count ?? 0) > 0;
+  }
+
   return NextResponse.json({
     billing_status: row.billing_status ?? "trial",
     renewal_at: row.protection_renewal_at ?? trialEnd?.toISOString() ?? null,
     stripe_customer_id: row.stripe_customer_id,
     has_subscription: Boolean(row.stripe_subscription_id),
+    has_upcoming_booking_24h: has_upcoming_booking_24h,
   });
 }

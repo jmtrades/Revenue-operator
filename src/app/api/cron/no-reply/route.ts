@@ -8,18 +8,14 @@ import { getDb } from "@/lib/db/queries";
 import { processEvent } from "@/lib/event-engine";
 import { scheduleReactivationAttempts } from "@/lib/reactivation/engine";
 import { enqueue } from "@/lib/queue";
+import "@/lib/runtime";
+import { assertCronAuthorized } from "@/lib/runtime";
 
 export const dynamic = "force-dynamic";
 
-const CRON_SECRET = process.env.CRON_SECRET;
-
 export async function GET(request: NextRequest) {
-  if (CRON_SECRET) {
-    const auth = request.headers.get("authorization");
-    if (auth !== `Bearer ${CRON_SECRET}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-  }
+  const authErr = assertCronAuthorized(request);
+  if (authErr) return authErr;
 
   const db = getDb();
 
@@ -35,6 +31,7 @@ export async function GET(request: NextRequest) {
       .lt("last_activity_at", cutoffIso);
 
     let transitioned = 0;
+    const workspacesWithReactivation = new Set<string>();
     for (const lead of stale ?? []) {
       const l = lead as { id: string; workspace_id: string; state: string };
       const decision = processEvent({
@@ -74,9 +71,15 @@ export async function GET(request: NextRequest) {
 
         if (decision.newState === "REACTIVATE") {
           await enqueue({ type: "reactivation", leadId: l.id });
+          workspacesWithReactivation.add(l.workspace_id);
         }
         transitioned++;
       }
+    }
+
+    const { recordReliefEvent } = await import("@/lib/awareness-timing/relief-events");
+    for (const workspaceId of workspacesWithReactivation) {
+      recordReliefEvent(workspaceId, "A delay did not continue.").catch(() => {});
     }
 
     const scheduled = await scheduleReactivationAttempts();

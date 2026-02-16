@@ -9,16 +9,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { evaluateWorkspaceObjective, evaluateRevenueObjective } from "@/lib/objectives/engine";
 import { planWorkspaceStrategy } from "@/lib/strategy/planner";
-
-const CRON_SECRET = process.env.CRON_SECRET;
+import "@/lib/runtime";
+import { assertCronAuthorized } from "@/lib/runtime";
 
 export async function GET(request: NextRequest) {
-  if (CRON_SECRET) {
-    const auth = request.headers.get("authorization");
-    if (auth !== `Bearer ${CRON_SECRET}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-  }
+  const authErr = assertCronAuthorized(request);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: workspaces } = await db

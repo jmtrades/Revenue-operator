@@ -47,7 +47,7 @@ export default function ActivationPage() {
       <header className="mb-8">
         <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Connect your calendar</h1>
         <p className="mt-1" style={{ color: "var(--text-secondary)" }}>
-          One step: connect. We maintain continuity — follow-ups, reminders, recoveries.
+          Connect once. New enquiries then enter handling automatically.
         </p>
       </header>
 
@@ -59,11 +59,11 @@ export default function ActivationPage() {
             {state?.zoom_configured ? (
               <>
                 <p className="text-sm font-medium text-stone-400">Calendar &amp; calls</p>
-                <p className="text-base text-stone-200 mt-1">Connect Zoom so we process closing calls and handle follow-ups</p>
+                <p className="text-base text-stone-200 mt-1">Connect Zoom so closing calls and follow-ups continue</p>
                 {state?.zoom_connected ? (
                   <div className="mt-3 flex items-center gap-2 text-emerald-400">
                     <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
-                    Connected — protection active
+                    Connected
                   </div>
                 ) : (
                   <a
@@ -83,9 +83,9 @@ export default function ActivationPage() {
           </div>
 
           {state?.activated_at && (
-            <div className="flex items-center gap-2 text-emerald-400">
+            <div className="flex items-center gap-2 text-stone-200">
               <span className="inline-block w-3 h-3 rounded-full bg-emerald-500" />
-              Protection is live. <Link href={workspaceId ? `/dashboard/live?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard"} className="text-amber-400 hover:text-amber-300">Go to overview →</Link>
+              New enquiries now enter handling. <Link href={workspaceId ? `/dashboard?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard"} className="text-amber-400 hover:text-amber-300">Open Work</Link>
             </div>
           )}
 

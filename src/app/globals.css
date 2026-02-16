@@ -1,43 +1,68 @@
 @import "tailwindcss";
 
-/* Design system: banking-grade monitoring / operations console */
+/* Design system: operational infrastructure — calm, sparse, outcome-only */
 :root {
   /* Surfaces */
   --background: #0c0f13;
   --surface: #141922;
   --card: #1a202c;
-  --border: #2d3548;
-  --border-subtle: #232a38;
+  --border: #252d3a;
+  --border-subtle: #1e242e;
   /* Text */
   --text-primary: #e8ecf1;
   --text-secondary: #a0aab8;
-  --text-muted: #6b7685;
-  /* Accent + semantic */
+  --text-muted: #8a94a3;
+  /* Accent + semantic (muted, risk prominent) */
   --accent: #4da3ff;
   --accent-hover: #6bb3ff;
   --meaning-green: #2ecc71;
   --meaning-amber: #f39c12;
   --meaning-red: #e74c3c;
   --meaning-blue: #4da3ff;
-  /* Radius */
+  /* Radius — containers 14–20px */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
-  /* Shadow */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
-  /* Spacing scale (for consistency) */
+  --radius-container: 16px;
+  /* Shadow — flat, minimal */
+  --shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
+  /* Spacing scale — +20% vertical gravity */
   --space-1: 4px;
   --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
+  --space-3: 14px;
+  --space-4: 19px;
+  --space-5: 24px;
+  --space-6: 29px;
+  --space-8: 38px;
+  --space-10: 48px;
+  --space-12: 58px;
+  /* Typography (reference) */
+  --font-headline: 1.75rem;
+  --font-title: 1.25rem;
+  --font-body: 0.9375rem;
+  --font-muted: 0.8125rem;
+}
+
+/* Operational environment: ledger + OS + audit log. White, black, muted blue. */
+[data-operational-environment="true"] {
+  --background: #ffffff;
+  --surface: #f8f9fa;
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --border-subtle: #eef0f2;
+  --text-primary: #0f0f0f;
+  --text-secondary: #374151;
+  --text-muted: #6b7280;
+  --meaning-blue: #5b8dc9;
+  --meaning-green: #0d7d4c;
+  --meaning-amber: #b45309;
+  --meaning-red: #b91c1c;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
 }
 
 @theme inline {
@@ -54,10 +79,15 @@ html {
 body {
   background: var(--background);
   color: var(--text-primary);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  line-height: 1.5;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
 }
+
+/* Institutional finish: readable muted, consistent rhythm */
+p, .text-sm { line-height: 1.6; }
+h1, h2, h3 { letter-spacing: -0.02em; }
 
 @layer utilities {
   .text-meaning-green { color: var(--meaning-green); }
@@ -72,4 +102,9 @@ body {
   .border-meaning-amber { border-color: var(--meaning-amber); }
   .border-meaning-red { border-color: var(--meaning-red); }
   .border-meaning-blue { border-color: var(--meaning-blue); }
+  /* Focus ring for keyboard a11y */
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }

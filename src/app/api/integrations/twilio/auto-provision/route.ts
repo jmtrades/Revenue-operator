@@ -11,12 +11,24 @@ import { getSession } from "@/lib/auth/request-session";
 
 export async function POST(req: NextRequest) {
   const session = getSession(req);
-  if (!session?.workspaceId) {
+  let workspaceId = session?.workspaceId;
+  if (!workspaceId) {
+    try {
+      const body = await req.json().catch(() => ({}));
+      workspaceId = (body as { workspace_id?: string }).workspace_id?.trim();
+    } catch {
+      // ignore
+    }
+  }
+  if (!workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const workspaceId = session.workspaceId;
   const db = getDb();
+  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).single();
+  if (!ws) {
+    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+  }
 
   // Check if already provisioned
   const { data: existing } = await db
@@ -37,7 +49,7 @@ export async function POST(req: NextRequest) {
   // Use global Twilio account for auto-provisioning
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin ?? "";
 
   if (!accountSid || !authToken) {
     return NextResponse.json({

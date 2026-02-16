@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prebuild": "tsx scripts/verify-guarantees.ts",
     "setup:stripe": "tsx scripts/setup-stripe.ts",
+    "verify:env": "tsx scripts/verify-env.ts",
     "verify:launch": "tsx scripts/verify-launch.ts",
+    "readiness": "tsx scripts/readiness.ts",
+    "smoke": "tsx scripts/smoke-production.ts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

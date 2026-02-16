@@ -1,24 +1,48 @@
 /**
- * Health check for deployment.
+ * System health probe for hosting and self-monitoring. API only, no UI.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
+import { getDb } from "@/lib/db/queries";
+import { getCronHeartbeats } from "@/lib/runtime/cron-heartbeat";
 
 export async function GET() {
-  const checks: Record<string, string> = {
-    status: "ok",
-    timestamp: new Date().toISOString(),
-  };
-
+  let database: "ok" | "fail" = "fail";
   try {
-    const hasSupabase = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
-    checks.supabase = hasSupabase ? "configured" : "missing";
+    const db = getDb();
+    const { error } = await db.from("system_cron_heartbeats").select("job_name").limit(1);
+    database = error ? "fail" : "ok";
   } catch {
-    checks.supabase = "error";
+    database = "fail";
   }
 
-  const healthy = checks.supabase !== "error";
-  return NextResponse.json(checks, { status: healthy ? 200 : 503 });
+  const stripe: "ok" | "missing" =
+    !!(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET && process.env.STRIPE_DEFAULT_PRICE_ID)
+      ? "ok"
+      : "missing";
+
+  let last_cron_execution: { commitment_recovery: string | null; settlement_export: string | null } = {
+    commitment_recovery: null,
+    settlement_export: null,
+  };
+  try {
+    const heartbeats = await getCronHeartbeats();
+    last_cron_execution = {
+      commitment_recovery: heartbeats["commitment-recovery"] ?? null,
+      settlement_export: heartbeats["settlement-export"] ?? null,
+    };
+  } catch {
+    // leave nulls
+  }
+
+  const system_ready = database === "ok";
+
+  return NextResponse.json({
+    database,
+    stripe,
+    last_cron_execution,
+    system_ready,
+  });
 }

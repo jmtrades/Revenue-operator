@@ -84,7 +84,7 @@ export async function generateResponse(
     messages: [
       {
         role: "system",
-        content: `You generate brief, professional sales messages. Action: ${action}. Be concise. Never promise anything you can't deliver. If asked who is preparing messages, indicate you are part of the team's workflow.`,
+        content: `You write like a calm receptionist: 1–2 short sentences, casual, no "thanks for reaching out" or "happy to assist". Move toward booking. No emojis, no bullet points, no corporate tone. Action: ${action}. Never mention AI, bot, or automation.`,
       },
       {
         role: "user",

@@ -6,14 +6,12 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { refreshAllZoomTokensNearExpiry } from "@/lib/zoom/refresh-token";
-
-const CRON_SECRET = process.env.CRON_SECRET;
+import "@/lib/runtime";
+import { assertCronAuthorized } from "@/lib/runtime";
 
 export async function GET(req: NextRequest) {
-  if (CRON_SECRET) {
-    const auth = req.headers.get("authorization");
-    if (auth !== `Bearer ${CRON_SECRET}`) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authErr = assertCronAuthorized(req);
+  if (authErr) return authErr;
   const refreshed = await refreshAllZoomTokensNearExpiry();
   return NextResponse.json({ ok: true, refreshed });
 }

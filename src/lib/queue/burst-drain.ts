@@ -4,6 +4,8 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { isDoctrineEnforced } from "@/lib/doctrine/enforce";
+import { convertLegacyWebhookToSignalAndEnqueue } from "@/lib/doctrine/legacy-to-signal";
 import { processWebhookJob } from "@/lib/pipeline/process-webhook";
 import { runDecisionJobWithEngines } from "@/lib/pipeline/decision-with-engines";
 import { runReactivationJob } from "@/lib/reactivation/run-job";
@@ -63,9 +65,13 @@ async function acquireLock(
 
 async function processPayload(payload: JobPayload): Promise<void> {
   if (payload.type === "process_webhook" && payload.webhookId) {
-    const result = await processWebhookJob(payload.webhookId);
-    if (result?.decisionLeadId && result?.decisionWorkspaceId) {
-      await runDecisionJobWithEngines(result.decisionLeadId, result.decisionWorkspaceId);
+    if (isDoctrineEnforced()) {
+      await convertLegacyWebhookToSignalAndEnqueue(payload.webhookId);
+    } else {
+      const result = await processWebhookJob(payload.webhookId);
+      if (result?.decisionLeadId && result?.decisionWorkspaceId) {
+        await runDecisionJobWithEngines(result.decisionLeadId, result.decisionWorkspaceId);
+      }
     }
   } else if (payload.type === "zoom_webhook" && payload.webhookId && payload.workspaceId && payload.meetingId && payload.meetingUuid) {
     await processZoomWebhook(payload.webhookId, payload.workspaceId, payload.meetingId, payload.meetingUuid);

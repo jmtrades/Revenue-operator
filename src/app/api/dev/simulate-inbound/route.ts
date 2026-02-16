@@ -9,6 +9,8 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { isDoctrineEnforced } from "@/lib/doctrine/enforce";
+import { ingestInboundAsSignal } from "@/lib/signals/ingest-inbound";
 import { processWebhookJob } from "@/lib/pipeline/process-webhook";
 import { enqueue } from "@/lib/queue";
 import { burstDrain } from "@/lib/queue/burst-drain";
@@ -49,45 +51,61 @@ export async function POST(req: NextRequest) {
     // Create test lead
     const testPhone = `+1555${Math.floor(Math.random() * 10000000)}`;
     const testMessage = "Hi, I'm interested in learning more";
+    const externalMessageId = `test_${Date.now()}`;
 
-    // Insert webhook event
-    const { data: webhookEvent } = await db
-      .from("raw_webhook_events")
-      .insert({
+    let leadId: string;
+
+    if (isDoctrineEnforced()) {
+      const { signalId, inserted } = await ingestInboundAsSignal({
         workspace_id: workspaceId,
-        payload: {
+        channel: "sms",
+        external_lead_id: testPhone,
+        thread_id: testPhone,
+        phone: testPhone,
+        message: testMessage,
+        external_message_id: externalMessageId,
+      });
+      if (!inserted || !signalId) {
+        return NextResponse.json({ error: "Failed to ingest signal (duplicate?)" }, { status: 500 });
+      }
+      await enqueue({ type: "process_signal", signalId });
+      await burstDrain();
+      const { data: leadRow } = await db.from("leads").select("id").eq("workspace_id", workspaceId).eq("external_id", testPhone).single();
+      leadId = (leadRow as { id: string })?.id;
+      if (!leadId) return NextResponse.json({ error: "Lead not found after ingest" }, { status: 500 });
+    } else {
+      const { data: webhookEvent } = await db
+        .from("raw_webhook_events")
+        .insert({
           workspace_id: workspaceId,
-          channel: "sms",
-          external_lead_id: testPhone,
-          thread_id: testPhone,
-          phone: testPhone,
-          message: testMessage,
-          external_message_id: `test_${Date.now()}`,
-        },
-        source: "twilio_inbound",
-        processed: false,
-        dedupe_key: `test_${Date.now()}_${testPhone}`,
-      })
-      .select("id")
-      .single();
+          payload: {
+            workspace_id: workspaceId,
+            channel: "sms",
+            external_lead_id: testPhone,
+            thread_id: testPhone,
+            phone: testPhone,
+            message: testMessage,
+            external_message_id: externalMessageId,
+          },
+          source: "twilio_inbound",
+          processed: false,
+          dedupe_key: `test_${Date.now()}_${testPhone}`,
+        })
+        .select("id")
+        .single();
 
-    if (!webhookEvent) {
-      return NextResponse.json({ error: "Failed to create webhook event" }, { status: 500 });
+      if (!webhookEvent) {
+        return NextResponse.json({ error: "Failed to create webhook event" }, { status: 500 });
+      }
+
+      const webhookId = (webhookEvent as { id: string }).id;
+      const processResult = await processWebhookJob(webhookId);
+      if (!processResult?.decisionLeadId) {
+        return NextResponse.json({ error: "Failed to process webhook" }, { status: 500 });
+      }
+      leadId = processResult.decisionLeadId;
+      await burstDrain();
     }
-
-    const webhookId = (webhookEvent as { id: string }).id;
-
-    // Process webhook (creates lead, conversation, message, resolves state)
-    const processResult = await processWebhookJob(webhookId);
-    
-    if (!processResult || !processResult.decisionLeadId) {
-      return NextResponse.json({ error: "Failed to process webhook" }, { status: 500 });
-    }
-
-    const leadId = processResult.decisionLeadId;
-
-    // Decision job is already enqueued by processWebhookJob, just drain the queue
-    await burstDrain();
 
     // Wait a moment for processing
     await new Promise((resolve) => setTimeout(resolve, 1000));

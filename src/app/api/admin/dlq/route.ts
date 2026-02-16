@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
   if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
   const p = (job.payload ?? {}) as { type?: string; webhookId?: string; leadId?: string; workspaceId?: string; eventId?: string };
   if (p.type === "process_webhook" && p.webhookId) {
+    // When DOCTRINE_ENFORCED=1, cron will convert to signal and enqueue process_signal.
     await enqueue({ type: "process_webhook", webhookId: p.webhookId });
   } else if (p.type === "decision" && p.leadId && p.workspaceId) {
     await enqueue({ type: "decision", leadId: p.leadId, workspaceId: p.workspaceId, eventId: p.eventId ?? p.leadId });

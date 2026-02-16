@@ -6,9 +6,10 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import "@/lib/runtime";
+import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
 
-const CRON_SECRET = process.env.CRON_SECRET;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Continuity <noreply@recall-touch.com>";
 
@@ -39,10 +40,8 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
 }
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authErr = assertCronAuthorized(req);
+  if (authErr) return authErr;
 
   const db = getDb();
   const now = new Date();
@@ -101,11 +100,11 @@ export async function GET(req: NextRequest) {
     try {
       await sendEmail(
         email,
-        `Your trial renews on ${renewalDate}`,
+        `Handling coverage ends on ${renewalDate}`,
         `
-        <p>Your trial renews on ${renewalDate}.</p>
-        <p>You can cancel anytime before renewal. Protection continues automatically after trial.</p>
-        <p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? "https://recall-touch.com"}/dashboard/settings">Manage billing</a></p>
+        <p>Handling coverage ends on ${renewalDate}.</p>
+        <p>To continue coverage, open Preferences. You can pause anytime before then.</p>
+        <p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? "https://recall-touch.com"}/dashboard/settings">Preferences</a></p>
         `
       );
 
@@ -140,11 +139,11 @@ export async function GET(req: NextRequest) {
     try {
       await sendEmail(
         email,
-        `Your trial renews tomorrow`,
+        `Handling coverage ends on ${renewalDate}`,
         `
-        <p>Your trial renews tomorrow (${renewalDate}).</p>
-        <p>You can cancel anytime before renewal. Protection continues automatically after trial.</p>
-        <p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? "https://recall-touch.com"}/dashboard/settings">Manage billing</a></p>
+        <p>Handling coverage ends tomorrow (${renewalDate}).</p>
+        <p>To continue coverage, open Preferences. You can pause anytime before then.</p>
+        <p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? "https://recall-touch.com"}/dashboard/settings">Preferences</a></p>
         `
       );
 

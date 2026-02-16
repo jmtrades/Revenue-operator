@@ -41,6 +41,8 @@ function ConnectPageContent() {
       try {
         const res = await fetch("/api/integrations/twilio/auto-provision", {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ workspace_id: workspaceId }),
         });
         const data = await res.json();
 
@@ -95,9 +97,13 @@ function ConnectPageContent() {
         const res = await fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`);
         const data = await res.json();
         
-        // If we have real conversations, redirect to live page
+        // If we have real conversations, redirect to live page with conversation_id
         if (data.recent_conversations && Array.isArray(data.recent_conversations) && data.recent_conversations.length > 0) {
-          router.push(`/live?workspace_id=${encodeURIComponent(workspaceId)}`);
+          const latest = data.recent_conversations[0];
+          const convId = latest?.id;
+          const params = new URLSearchParams({ workspace_id: workspaceId });
+          if (convId) params.set("conversation_id", convId);
+          router.push(`/live?${params.toString()}`);
         }
       } catch (error) {
         console.error("[connect] Failed to check for messages", error);
@@ -114,7 +120,7 @@ function ConnectPageContent() {
     
     if (isProduction) {
       // In production, guide user to text the number
-      alert(`Text "${phoneNumber}" from your phone with: "Hi, I'm interested"\n\nThen return here to see it handled.`);
+      alert(`Text "${phoneNumber}" from the number used for this workspace with: "Hi, I'm interested"\n\nThen return here to see it handled.`);
       return;
     }
 
@@ -272,7 +278,7 @@ function ConnectPageContent() {
                   Don&apos;t have a lead right now?
                 </p>
                 <p className="text-xs mb-4" style={{ color: "var(--text-secondary)" }}>
-                  Add this number to your website, ad, or bio — it replies automatically.
+                  Add this number to your website, ad, or bio — follow-through continues so they reach your calendar.
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -296,7 +302,7 @@ function ConnectPageContent() {
             {showCopyConfirmation && (
               <div className="mt-3 p-3 rounded-lg text-xs text-center" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 <p style={{ color: "var(--text-secondary)" }}>
-                  Anyone who messages this number will get an instant reply.
+                  Decision completion continues here so they complete actions and show up.
                 </p>
               </div>
             )}

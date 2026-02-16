@@ -3,10 +3,12 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { listBusinessTypes } from "@/lib/presets";
 
 function ActivatePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [businessType, setBusinessType] = useState("general");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
@@ -17,8 +19,11 @@ function ActivatePageContent() {
     fetch("/api/auth/session", { credentials: "include" })
       .then((r) => r.json())
       .then((data) => {
-        if (data?.session?.userId && data?.session?.workspaceId) {
-          router.replace("/dashboard");
+        const session = data?.session;
+        const hasSession = session && (session.user_id || session.userId) && (session.workspace_id ?? session.workspaceId);
+        if (hasSession) {
+          const wid = session.workspace_id ?? session.workspaceId;
+          router.replace(wid ? `/connect?workspace_id=${encodeURIComponent(wid)}` : "/connect");
           return;
         }
         setCheckingSession(false);
@@ -53,7 +58,7 @@ function ActivatePageContent() {
         body: JSON.stringify({
           email: email.trim(),
           hired_roles: ["full_autopilot"],
-          business_type: null,
+          business_type: businessType || "general",
         }),
       });
       
@@ -86,7 +91,7 @@ function ActivatePageContent() {
         if (checkoutError.error === "STRIPE_NOT_CONFIGURED") {
           setError("Payment setup isn't complete yet.");
         } else {
-          setError(checkoutError.error || checkoutError.message || "We couldn't start checkout.");
+          setError(checkoutError.error || checkoutError.message || "Checkout could not be started.");
         }
         setSubmitting(false);
         clearTimeout(loadingTimer);
@@ -127,7 +132,7 @@ function ActivatePageContent() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Restoring your conversations…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Loading…</p>
       </div>
     );
   }
@@ -147,17 +152,34 @@ function ActivatePageContent() {
         <div className="max-w-md w-full">
           <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Start protection</h1>
           <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-            We maintain continuity — reply, follow up, recover — so people show up. You take the calls.
+            Enquiries, follow-ups, and reminders continue here so more people show up. You handle: calls.
           </p>
           <form onSubmit={handleEmailSubmit} className="space-y-4">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@company.com"
-              required
-              className="w-full px-4 py-3 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-            />
+            <div>
+              <label htmlFor="business_type" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Business type</label>
+              <select
+                id="business_type"
+                value={businessType}
+                onChange={(e) => setBusinessType(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+              >
+                {listBusinessTypes().map(({ value, label }) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Email</label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="email@company.com"
+                required
+                className="w-full px-4 py-3 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+              />
+            </div>
             <button
               type="submit"
               disabled={submitting}
@@ -181,7 +203,7 @@ function ActivatePageContent() {
           )}
           
           <p className="text-xs mt-4 text-center" style={{ color: "var(--text-muted)" }}>
-            $0 today — trial ends in 14 days — pause anytime before renewal
+            $0 today. Trial has a fixed end date. Pause anytime before then.
           </p>
         </div>
       </div>

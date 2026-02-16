@@ -1,6 +1,6 @@
 export { PageHeader } from "./PageHeader";
 export { Card, CardHeader, CardBody } from "./Card";
-export { Badge } from "./Badge";
+export { StateLabel } from "./StateLabel";
 export { EmptyState } from "./EmptyState";
 export { LoadingState, LoadingScreen } from "./LoadingState";
-export { Stat } from "./Stat";
+export { ValueLine } from "./ValueLine";

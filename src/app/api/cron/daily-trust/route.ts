@@ -7,16 +7,12 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { sendDailyTrustEmails } from "@/lib/email/daily-trust";
-
-const CRON_SECRET = process.env.CRON_SECRET;
+import "@/lib/runtime";
+import { assertCronAuthorized } from "@/lib/runtime";
 
 export async function GET(request: NextRequest) {
-  if (CRON_SECRET) {
-    const auth = request.headers.get("authorization");
-    if (auth !== `Bearer ${CRON_SECRET}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-  }
+  const authErr = assertCronAuthorized(request);
+  if (authErr) return authErr;
 
   const results = await sendDailyTrustEmails();
   return NextResponse.json({

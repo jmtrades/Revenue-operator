@@ -23,30 +23,17 @@ export default function GlobalError({
         <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "#0c0f13", color: "#e5e7eb" }}>
           <div className="max-w-md w-full text-center">
             <h1 className="text-xl font-semibold mb-3" style={{ color: "#e5e7eb" }}>
-              Something went wrong
+              Normal conditions are not present.
             </h1>
             <p className="text-sm mb-6" style={{ color: "#9ca3af" }}>
-              We encountered an issue. This has been logged and we'll look into it.
             </p>
-            {error.digest && (
-              <p className="text-xs mb-4 font-mono" style={{ color: "#6b7280" }}>
-                Reference: {error.digest}
-              </p>
-            )}
             <div className="flex gap-3 justify-center">
-              <button
-                onClick={reset}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
-                style={{ background: "#10b981", color: "#0c0f13" }}
-              >
-                Try again
-              </button>
               <Link
                 href="/activate"
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
                 style={{ background: "#1f2937", borderColor: "#374151", borderWidth: "1px", color: "#e5e7eb" }}
               >
-                Return to activation
+                Access
               </Link>
             </div>
           </div>

@@ -6,24 +6,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { isLiveCompleted, setLiveCompleted } from "@/lib/live-gate";
 
-const FEED_ITEMS: { text: string; delaySec: number }[] = [
-  { text: "New inquiry noticed", delaySec: 0 },
-  { text: "Prepared a reply you can send", delaySec: 2 },
-  { text: "Follow-up scheduled", delaySec: 5 },
-  { text: "Conversation moved toward a call", delaySec: 7 },
-  { text: "Attendance confirmed", delaySec: 10 },
-  { text: "Conversation stabilised", delaySec: 13 },
-];
-
 function LivePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { workspaceId: contextWid, workspaces, loading } = useWorkspace();
   const urlWid = searchParams.get("workspace_id") ?? "";
   const workspaceId = urlWid || contextWid || "";
-  const [phase, setPhase] = useState<"feed" | "fade" | "ready">("feed");
-  const [feedIndex, setFeedIndex] = useState(0);
-  const [elapsed, setElapsed] = useState(0);
+  const [phase, setPhase] = useState<"feed" | "ready">("feed");
 
   useEffect(() => {
     if (!loading && workspaces.length === 0) {
@@ -36,30 +25,11 @@ function LivePageContent() {
     }
   }, [loading, workspaces.length, contextWid, urlWid, router]);
 
-  // Removed value page redirect - go directly to dashboard
-
+  // Single transition to ready after delay. No setInterval — UI changes only on navigation or one-off transition.
   useEffect(() => {
     if (phase !== "feed") return;
-    const interval = setInterval(() => {
-      setElapsed((e) => {
-        const next = e + 1;
-        // Wait 2 seconds after final item (at 13s) before showing ready
-        if (next >= 15) {
-          setPhase("fade");
-          return next;
-        }
-        setFeedIndex(FEED_ITEMS.filter((f) => f.delaySec <= next).length);
-        return next;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [phase]);
-
-  useEffect(() => {
-    if (phase === "fade") {
-      const t = setTimeout(() => setPhase("ready"), 600);
-      return () => clearTimeout(t);
-    }
+    const t = setTimeout(() => setPhase("ready"), 3000);
+    return () => clearTimeout(t);
   }, [phase]);
 
   const handleContinue = () => {
@@ -79,11 +49,10 @@ function LivePageContent() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center p-8 transition-opacity duration-500"
-      style={{
-        background: "var(--background)",
-        color: "var(--text-primary)",
-        opacity: phase === "fade" ? 0.85 : 1,
-      }}
+        style={{
+          background: "var(--background)",
+          color: "var(--text-primary)",
+        }}
     >
       <div className="max-w-md w-full">
         <div
@@ -106,29 +75,18 @@ function LivePageContent() {
             </span>
           </div>
           <h1 className="text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
-            Conversations are now being maintained
+            Follow-through is now protected
           </h1>
           <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
             Watch what happens
           </p>
 
           <div className="space-y-3 min-h-[200px] text-left">
-            {phase === "feed" &&
-              FEED_ITEMS.slice(0, feedIndex).map((item, i) => (
-                <div
-                  key={i}
-                  className="py-3.5 px-4 rounded-lg text-sm flex items-center gap-3 transition-opacity duration-300"
-                  style={{
-                    background: "var(--surface)",
-                    borderColor: "var(--border)",
-                    borderWidth: "1px",
-                    color: "var(--meaning-green)",
-                  }}
-                >
-                  <span className="shrink-0">✔</span>
-                  {item.text}
-                </div>
-              ))}
+            {phase === "feed" && (
+              <p className="text-base py-4" style={{ color: "var(--text-secondary)" }}>
+                Follow-through is protected. Decisions remain on track.
+              </p>
+            )}
             {phase === "ready" && (
               <p className="text-base font-medium py-4" style={{ color: "var(--text-primary)" }}>
                 We&apos;ll keep doing this automatically
@@ -142,7 +100,7 @@ function LivePageContent() {
               className="mt-10 w-full py-3.5 rounded-lg font-medium transition-opacity hover:opacity-90"
               style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
             >
-              Continue
+              Open
             </button>
           )}
         </div>

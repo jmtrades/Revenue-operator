@@ -1,6 +1,6 @@
 /**
- * Webhook: Inbound message ingestion
- * Security: signature verification, replay protection, rate limiting, workspace isolation
+ * Webhook: Inbound message ingestion.
+ * When DOCTRINE_ENFORCED=1: ingest-only (normalize + insertSignal + enqueue process_signal). No raw_webhook + process_webhook.
  */
 
 export const dynamic = "force-dynamic";
@@ -9,6 +9,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
 import { burstDrain } from "@/lib/queue/burst-drain";
+import { isDoctrineEnforced } from "@/lib/doctrine/enforce";
+import { ingestInboundAsSignal } from "@/lib/signals/ingest-inbound";
 import { withContext } from "@/lib/logger";
 import { verifyWebhookSignature, isTimestampFresh } from "@/lib/security/webhook-signature";
 import { claimReplayNonce } from "@/lib/security/replay";
@@ -98,8 +100,26 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  let inserted: { id: string } | null = null;
   try {
+    if (isDoctrineEnforced()) {
+      const thread_id = (body as { thread_id?: string }).thread_id ?? external_lead_id;
+      const external_message_id = (body as { external_message_id?: string }).external_message_id ?? dedupeKey.slice(0, 36);
+      const { signalId, inserted } = await ingestInboundAsSignal({
+        workspace_id,
+        channel,
+        external_lead_id,
+        thread_id: thread_id ?? null,
+        message,
+        external_message_id,
+      });
+      await incrementInboundRateLimit(workspace_id, ip);
+      if (inserted && signalId) {
+        await enqueue({ type: "process_signal", signalId });
+      }
+      return NextResponse.json({ ok: true, idempotent: !inserted });
+    }
+
+    let inserted: { id: string } | null = null;
     const { data: existing } = await db
       .from("raw_webhook_events")
       .select("id")
@@ -144,14 +164,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     log.error("webhook error", { err: String(err) });
     logWebhookFailure("inbound", err, workspace_id);
-    // Queue retry silently - don't alter UI state
-    try {
-      if (inserted?.id) {
-        await enqueue({ type: "process_webhook", webhookId: inserted.id });
-      }
-    } catch {
-      // Silent retry queue failure
-    }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

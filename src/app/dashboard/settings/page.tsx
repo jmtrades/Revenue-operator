@@ -15,7 +15,6 @@ export default function SettingsPage() {
   const [callAwareEnabled, setCallAwareEnabled] = useState(true);
   const [communicationStyle, setCommunicationStyle] = useState<"direct" | "consultative">("consultative");
   const [webhookUrl, setWebhookUrl] = useState("");
-  const [saved, setSaved] = useState(false);
   const [zoomHealth, setZoomHealth] = useState<{ connected: boolean; token_valid?: boolean } | null>(null);
   const [zoomDisconnecting, setZoomDisconnecting] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -31,6 +30,15 @@ export default function SettingsPage() {
   const [showSources, setShowSources] = useState(false);
   const [twilioPhone, setTwilioPhone] = useState<string | null>(null);
   const [inboundWebhookUrl, setInboundWebhookUrl] = useState("");
+  const [teamHandoffEmails, setTeamHandoffEmails] = useState("");
+  const [absenceStatements, setAbsenceStatements] = useState<{
+    what_would_fail: string[];
+    recent_operation: string[];
+    current_dependency: string[];
+    if_disabled: string[];
+  } | null>(null);
+  const [disconnectStatements, setDisconnectStatements] = useState<string[] | null>(null);
+  const [operationalProfile, setOperationalProfile] = useState<string>("org");
   const [businessContext, setBusinessContext] = useState({
     business_name: "",
     offer_summary: "",
@@ -64,6 +72,8 @@ export default function SettingsPage() {
         setPreviewMode(d.preview_mode ?? false);
         setEscalationEnabled(d.escalation_rules?.enabled ?? false);
         setCallAwareEnabled(d.call_aware_enabled ?? true);
+        const th = d.team_handoff_emails;
+        setTeamHandoffEmails(Array.isArray(th) ? (th as string[]).join(", ") : typeof th === "string" ? th : "");
         const style = d.communication_style;
         setCommunicationStyle(style === "direct" ? "direct" : "consultative");
         const cf = d.coverage_flags;
@@ -75,6 +85,10 @@ export default function SettingsPage() {
             post_call_continuity: cf.post_call_continuity !== false,
             notifications: cf.notifications !== false,
           });
+        }
+        const op = d.operational_profile;
+        if (typeof op === "string" && ["org", "solo", "creator", "vendor", "recruiting", "legal", "saas"].includes(op)) {
+          setOperationalProfile(op);
         }
       })
       .catch(() => {});
@@ -157,6 +171,7 @@ export default function SettingsPage() {
         call_aware_enabled: callAwareEnabled,
         communication_style: communicationStyle,
         coverage_flags: coverageFlags,
+        team_handoff_emails: teamHandoffEmails.split(",").map((e) => e.trim()).filter(Boolean),
       }),
     });
     if (webhookUrl) {
@@ -176,16 +191,43 @@ export default function SettingsPage() {
         booking_link: businessContext.booking_link || null,
       }),
     }).catch(() => {});
-    setSaved(res.ok);
   };
 
   return (
     <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
-      <PageHeader title="Preferences" subtitle="How we work for you" />
+      <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>
+        <Link href={workspaceId ? `/dashboard/presence?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/presence"} style={{ color: "var(--meaning-blue)" }}>Presence</Link>
+      </p>
+      <PageHeader title="Preferences" subtitle="Configuration" />
       {!workspaceId ? (
-        <EmptyState title="Watching for new conversations" subtitle="Maintaining continuity" icon="watch" />
+        <EmptyState title="Follow-through in progress appears here." subtitle="In place." icon="watch" />
       ) : (
         <div className="space-y-6">
+          <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Operating profile</h2>
+            <select
+              value={operationalProfile}
+              onChange={(e) => {
+                const v = e.target.value as "org" | "solo" | "creator" | "vendor" | "recruiting" | "legal" | "saas";
+                setOperationalProfile(v);
+                fetch(`/api/workspaces/${workspaceId}/settings`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ operational_profile: v }),
+                }).catch(() => {});
+              }}
+              className="w-full max-w-xs text-sm py-2 px-3 border rounded focus-ring"
+              style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--text-primary)" }}
+            >
+              <option value="org">Organization</option>
+              <option value="solo">Solo professional</option>
+              <option value="creator">Creator / personal brand</option>
+              <option value="vendor">Ecommerce / vendor</option>
+              <option value="recruiting">Recruiting / hiring</option>
+              <option value="legal">Legal / accounting</option>
+              <option value="saas">SaaS onboarding / CS</option>
+            </select>
+          </section>
           {sessionEmail && (
             <Card>
               <CardHeader>Account</CardHeader>
@@ -210,7 +252,7 @@ export default function SettingsPage() {
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
             <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Business context</h2>
             <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>
-              Help us match your tone and offer. This makes replies more accurate.
+              Match your tone and offer so follow-through stays on brand. No manual follow-through required.
             </p>
             <button
               type="button"
@@ -228,7 +270,7 @@ export default function SettingsPage() {
                     type="text"
                     value={businessContext.business_name}
                     onChange={(e) => setBusinessContext({ ...businessContext, business_name: e.target.value })}
-                    placeholder="Your business name"
+                    placeholder="Business name"
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
@@ -238,7 +280,7 @@ export default function SettingsPage() {
                   <textarea
                     value={businessContext.offer_summary}
                     onChange={(e) => setBusinessContext({ ...businessContext, offer_summary: e.target.value })}
-                    placeholder="Brief description of your service or product"
+                    placeholder="Brief description of the service or product"
                     rows={2}
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
@@ -321,10 +363,10 @@ export default function SettingsPage() {
                   {twilioPhone ? (
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-mono" style={{ color: "var(--text-primary)" }}>{twilioPhone}</p>
-                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>Active</span>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>In place</span>
                     </div>
                   ) : (
-                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>Not connected</p>
+                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>Not in place</p>
                   )}
                 </div>
                 <div>
@@ -345,8 +387,6 @@ export default function SettingsPage() {
                       type="button"
                       onClick={() => {
                         navigator.clipboard.writeText(inboundWebhookUrl);
-                        setSaved(true);
-                        setTimeout(() => setSaved(false), 2000);
                       }}
                       className="px-3 py-2 rounded text-xs"
                       style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
@@ -382,7 +422,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
             <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>How we sound</h2>
-            <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>Tone when we maintain continuity</p>
+            <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>Tone for follow-through</p>
             <select
               value={communicationStyle}
               onChange={(e) => setCommunicationStyle(e.target.value as typeof communicationStyle)}
@@ -429,17 +469,38 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
           </section>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Coverage</h2>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Handling coverage</h2>
             {billingStatus?.billing_status === "active" ? (
-              <p className="text-sm mb-2" style={{ color: "var(--meaning-green)" }}>Billing active</p>
+              <p className="text-sm mb-2" style={{ color: "var(--meaning-green)" }}>In place.</p>
             ) : billingStatus?.renewal_at ? (
               <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
-                Trial ends on {new Date(billingStatus.renewal_at).toLocaleDateString()}. Cancel before renewal.
+                Handling coverage ends on {new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" })}.
               </p>
             ) : (
               <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
-                Coverage continues automatically. Pause protection anytime. Resume when ready.
+                Coverage continues automatically. Pause protection anytime. Resume as needed.
               </p>
+            )}
+            <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>Responsibility for follow-through remains in place during this period.</p>
+            {absenceStatements && (
+              <div className="mb-4 p-4 rounded-lg text-sm space-y-2" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
+                {(() => {
+                  const seen = new Set<string>();
+                  const lines = [...(absenceStatements.what_would_fail || []), ...(absenceStatements.recent_operation || []), ...(absenceStatements.current_dependency || []), ...(absenceStatements.if_disabled || [])]
+                    .filter((line): line is string => Boolean(line) && !seen.has(line) && (seen.add(line), true));
+                  return lines.map((line, i) => (
+                    <p key={i} style={{ color: "var(--text-secondary)" }}>{line}</p>
+                  ));
+                })()}
+                <button
+                  type="button"
+                  onClick={() => { setAbsenceStatements(null); window.location.reload(); }}
+                  className="text-xs mt-2"
+                  style={{ color: "var(--meaning-blue)" }}
+                >
+                  Done
+                </button>
+              </div>
             )}
             <div className="flex gap-2">
               <Link
@@ -453,12 +514,17 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                 type="button"
                 onClick={async () => {
                   if (!workspaceId || !confirm("Pause protection? Coverage runs until period end. Resume anytime.")) return;
-                  await fetch("/api/billing/pause-coverage", {
+                  const res = await fetch("/api/billing/pause-coverage", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ workspace_id: workspaceId }),
                   });
-                  window.location.reload();
+                  const data = await res.json().catch(() => ({}));
+                  if (data?.absence_statements && (data.absence_statements.what_would_fail?.length || data.absence_statements.recent_operation?.length || data.absence_statements.current_dependency?.length || data.absence_statements.if_disabled?.length)) {
+                    setAbsenceStatements(data.absence_statements);
+                  } else {
+                    window.location.reload();
+                  }
                 }}
                 className="px-4 py-2 rounded-lg font-medium text-sm"
                 style={{ borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-secondary)" }}
@@ -471,26 +537,77 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
             <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Connect your calendar</h2>
             <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
-              We handle conversations once connected.
+              Follow-through continues here in place.
             </p>
             {zoomHealth?.connected && (
               <div className="mb-3 p-3 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                <p className="font-medium" style={{ color: "var(--meaning-green)" }}>Connected</p>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (!workspaceId) return;
-                    setZoomDisconnecting(true);
-                    await fetch(`/api/workspaces/${workspaceId}/zoom/disconnect`, { method: "POST" });
-                    setZoomHealth({ connected: false });
-                    setZoomDisconnecting(false);
-                  }}
-                  disabled={zoomDisconnecting}
-                  className="mt-2 text-xs hover:underline disabled:opacity-50"
-                  style={{ color: "var(--meaning-red)" }}
-                >
-                  Disconnect Zoom
-                </button>
+                <p className="font-medium" style={{ color: "var(--meaning-green)" }}>In place</p>
+                {disconnectStatements === null ? (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!workspaceId) return;
+                      const r = await fetch(`/api/system/absence-statements?workspace_id=${encodeURIComponent(workspaceId)}`);
+                      const d = (await (r.ok ? r.json() : Promise.resolve(null))) as {
+                        what_would_fail?: string[];
+                        recent_operation?: string[];
+                        current_dependency?: string[];
+                        if_disabled?: string[];
+                      } | null;
+                      const lines = [
+                        ...(d?.what_would_fail || []),
+                        ...(d?.recent_operation || []),
+                        ...(d?.current_dependency || []),
+                        ...(d?.if_disabled || []),
+                      ].filter(Boolean);
+                      if (lines.length) {
+                        setDisconnectStatements(lines);
+                      } else {
+                        setZoomDisconnecting(true);
+                        await fetch(`/api/workspaces/${workspaceId}/zoom/disconnect`, { method: "POST" });
+                        setZoomHealth({ connected: false });
+                        setZoomDisconnecting(false);
+                      }
+                    }}
+                    disabled={zoomDisconnecting}
+                    className="mt-2 text-xs hover:underline disabled:opacity-50"
+                    style={{ color: "var(--meaning-red)" }}
+                  >
+                    Disconnect Zoom
+                  </button>
+                ) : (
+                  <div className="mt-2 space-y-1">
+                    {disconnectStatements.map((line, i) => (
+                      <p key={i} className="text-xs" style={{ color: "var(--text-secondary)" }}>{line}</p>
+                    ))}
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        type="button"
+                        onClick={() => setDisconnectStatements(null)}
+                        className="text-xs"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (!workspaceId) return;
+                          setZoomDisconnecting(true);
+                          await fetch(`/api/workspaces/${workspaceId}/zoom/disconnect`, { method: "POST" });
+                          setZoomHealth({ connected: false });
+                          setZoomDisconnecting(false);
+                          setDisconnectStatements(null);
+                        }}
+                        disabled={zoomDisconnecting}
+                        className="text-xs"
+                        style={{ color: "var(--meaning-red)" }}
+                      >
+                        Disconnect anyway
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             <Link
@@ -528,7 +645,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                   style={{ accentColor: "var(--meaning-blue)" }}
                 />
                 <label htmlFor="escalation" className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Ask before we act on high-value conversations
+                  Hand off to you before acting on high-value follow-through
                 </label>
               </div>
               <div className="flex items-center gap-3">
@@ -554,7 +671,6 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
           >
             Save
           </button>
-          {saved && <p className="text-sm" style={{ color: "var(--meaning-green)" }}>Saved</p>}
 
           <div className="pt-6" style={{ borderTop: "1px solid var(--border)" }}>
             <button
@@ -576,6 +692,20 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
+                </div>
+                <div>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Team awareness (handoffs + booking only)</label>
+                  <input
+                    type="text"
+                    value={teamHandoffEmails}
+                    onChange={(e) => setTeamHandoffEmails(e.target.value)}
+                    placeholder="email@company.com, other@company.com"
+                    className="w-full px-3 py-2 rounded text-sm"
+                    style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+                  />
+                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+                    These addresses receive only handoffs and booking-ownership notices. No logs or summaries.
+                  </p>
                 </div>
               </div>
             )}

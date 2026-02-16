@@ -17,6 +17,25 @@ export function getNextHorizonDays(stage: number): number | null {
   return REACTIVATION_HORIZONS_DAYS[stage];
 }
 
+/**
+ * When trajectory says return cycle underperforming or demand underheated, use shorter horizon to trigger reactivation earlier.
+ */
+export async function getEffectiveHorizonDays(stage: number, workspaceId: string): Promise<number | null> {
+  const base = getNextHorizonDays(stage);
+  if (base === null) return null;
+  try {
+    const { getTrajectoryState, isDemandUnderheated } = await import("@/lib/guarantee/trajectory");
+    const t = await getTrajectoryState(workspaceId);
+    if (t?.return_cycle_underperforming || isDemandUnderheated(t)) {
+      const shorter = Math.max(1, Math.floor(base / 2));
+      return shorter;
+    }
+  } catch {
+    // trajectory optional
+  }
+  return base;
+}
+
 export function getAngleForStage(stage: number): ReactivationAngle {
   return REACTIVATION_ANGLES[stage % REACTIVATION_ANGLES.length];
 }
@@ -46,7 +65,7 @@ export async function scheduleReactivationAttempts(): Promise<number> {
     };
 
     const stage = l.reactivation_stage ?? 0;
-    const horizonDays = getNextHorizonDays(stage);
+    const horizonDays = await getEffectiveHorizonDays(stage, l.workspace_id);
     if (horizonDays === null) continue;
 
     const lastAttempt = l.reactivation_attempt_at ? new Date(l.reactivation_attempt_at) : null;
@@ -79,6 +98,10 @@ export async function scheduleReactivationAttempts(): Promise<number> {
       .single();
 
     if (deal) continue;
+
+    const { getCapacityPressure } = await import("@/lib/guarantee/capacity-stability");
+    const cap = await getCapacityPressure(l.workspace_id);
+    if ((cap?.pressure_level ?? 0) >= 3) continue;
 
     await enqueue({ type: "reactivation", leadId: l.id });
     await db

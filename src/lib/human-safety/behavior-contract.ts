@@ -1,9 +1,10 @@
 /**
  * Universal behavior contract: human-acceptable messaging.
- * Optimizes for comfort and reliability over persuasion.
+ * Optimizes for believability and comfort. Receptionist filter runs first.
  * Runs AFTER generation but BEFORE execution.
  */
 
+import { applyHumanReceptionistFilter } from "@/lib/receptionist";
 import { filterAwkwardness } from "./awkwardness-filter";
 import { checkOwnershipBoundary } from "./ownership-boundary";
 import { applyBlameShield } from "./blame-shield";
@@ -68,6 +69,13 @@ export function enforceHumanAcceptability(
 
   let current = message.trim();
   const reasons: string[] = [];
+
+  // 0. Human receptionist filter: casual, short, no robotic phrasing
+  const receptionist = applyHumanReceptionistFilter(current);
+  if (!receptionist.valid || receptionist.message !== current) {
+    current = receptionist.message;
+    if (receptionist.reason) reasons.push(receptionist.reason);
+  }
 
   // 1. Awkwardness filter
   const awkward = filterAwkwardness(current, context);

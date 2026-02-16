@@ -38,7 +38,7 @@ export default function ContinueProtectionPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-xl mx-auto">
-        <EmptyState title="Watching for new conversations" subtitle="Maintaining continuity" icon="watch" />
+        <EmptyState title="Follow-through in progress appears here." subtitle="In place." icon="watch" />
       </div>
     );
   }
@@ -46,7 +46,7 @@ export default function ContinueProtectionPage() {
   if (loading) {
     return (
       <div className="p-8 max-w-xl mx-auto">
-        <LoadingState message="Watching over" submessage="We maintain; you take the calls." />
+        <LoadingState message="In progress" submessage="Calls remain manual." />
       </div>
     );
   }
@@ -60,24 +60,26 @@ export default function ContinueProtectionPage() {
 
   return (
     <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
-      <PageHeader title="Keep protection active" subtitle="Coverage continues automatically. We maintain your conversations. You take the calls." />
+      <PageHeader title="Handling continues." subtitle="Coverage remains in place. Follow-through continues here. Calls remain manual." />
       <p className="text-sm mb-2" style={{ color: "var(--text-primary)" }}>
-        Protection will continue automatically after your trial.
+        Coverage remains in place on confirm.
       </p>
       <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
-        $0 today — trial ends in 14 days — pause anytime before renewal
+        {billingStatus?.renewal_at
+          ? `Handling coverage ends on ${new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" })}. Pause anytime before then.`
+          : "Pause anytime before the date shown in Preferences."}
       </p>
 
       <div className="space-y-4 mb-8">
         <Card>
-          <CardHeader>Active conversations</CardHeader>
+          <CardHeader>Follow-through in progress</CardHeader>
           <CardBody>
             {activeCount > 0 ? (
               <p className="text-sm" style={{ color: "var(--text-primary)" }}>
-                {activeCount} conversation{activeCount !== 1 ? "s" : ""} currently being protected
+                {activeCount} follow-through{activeCount !== 1 ? "s" : ""} in progress
               </p>
             ) : (
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Watching over. Maintaining readiness for new conversations.</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Remains prepared for new follow-through.</p>
             )}
             {ctx && ctx.active_conversations.length > 0 && (
               <ul className="mt-2 space-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
@@ -116,7 +118,7 @@ export default function ContinueProtectionPage() {
                 {confirmationsCount} attendance confirmation{confirmationsCount !== 1 ? "s" : ""} pending
               </p>
             ) : (
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Confirming upcoming attendance. Protecting booked calls.</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Attendance confirmation continues.</p>
             )}
             {ctx && ctx.pending_confirmations.length > 0 && (
               <ul className="mt-2 space-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
@@ -132,17 +134,17 @@ export default function ContinueProtectionPage() {
       <div className="p-4 rounded-xl mb-6" style={{ background: "rgba(243, 156, 18, 0.1)", borderColor: "var(--meaning-amber)", borderWidth: "1px" }}>
         <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
           {hasWork
-            ? `${activeCount + followUpsCount + confirmationsCount} conversation${activeCount + followUpsCount + confirmationsCount !== 1 ? "s" : ""} will lose continuity within the next hour`
-            : "Stopping protection interrupts ongoing work"}
+            ? "If handling stops: handling is no longer present for new enquiries. Attendance confirmation will require manual follow-through. Ongoing decisions may stall."
+            : "Handling is no longer present for new enquiries. Attendance confirmation will require manual follow-through. Ongoing decisions may stall."}
         </p>
         <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
-          Momentum fades if continuity stops. We maintain; you take the calls.
+          No manual follow-through required in place. You handle: calls.
         </p>
       </div>
 
       {billingStatus?.renewal_at && (
         <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
-          Renewal: {new Date(billingStatus.renewal_at).toLocaleDateString()}. Pause protection anytime before renewal.
+          Handling coverage ends on {new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" })}. Pause anytime before then.
         </p>
       )}
 
@@ -172,7 +174,7 @@ export default function ContinueProtectionPage() {
           className="px-6 py-3 rounded-lg font-medium"
           style={{ background: "var(--meaning-green)", color: "#0E1116" }}
         >
-          {checkoutLoading ? "Preparing…" : "Keep protection active"}
+          {checkoutLoading ? "Preparing…" : "Coverage remains in place"}
         </button>
         <Link
           href="/dashboard"
@@ -184,7 +186,7 @@ export default function ContinueProtectionPage() {
       </div>
 
       <p className="mt-4 text-xs" style={{ color: "var(--text-muted)" }}>
-        Coverage continues automatically. Pause protection anytime. Resume when ready.
+        Coverage remains in place. Pause anytime. Resume as needed.
       </p>
     </div>
   );

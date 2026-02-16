@@ -14,23 +14,17 @@ export function SavedTodayBar() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    const fetchData = () => {
-      fetchWithFallback<{
-        conversations_maintained: number;
-        follow_ups_recovered: number;
-        attendance_protected: number;
-      }>(`/api/saved-today?workspace_id=${encodeURIComponent(workspaceId)}`, {
-        cacheKey: `saved-today-${workspaceId}`,
-      }).then((result) => {
-        if (result.data) {
-          setData(result.data);
-        }
-        // Keep previous data on error
-      });
-    };
-    fetchData();
-    const interval = setInterval(fetchData, 60_000);
-    return () => clearInterval(interval);
+    fetchWithFallback<{
+      conversations_maintained: number;
+      follow_ups_recovered: number;
+      attendance_protected: number;
+    }>(`/api/saved-today?workspace_id=${encodeURIComponent(workspaceId)}`, {
+      cacheKey: `saved-today-${workspaceId}`,
+    }).then((result) => {
+      if (result.data) {
+        setData(result.data);
+      }
+    });
   }, [workspaceId]);
 
   // Always show something - use cached or default values
@@ -47,9 +41,9 @@ export function SavedTodayBar() {
       className="px-4 py-2.5 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm border-b"
       style={{ background: "var(--surface)", borderColor: "var(--border)" }}
     >
-      <span className="font-medium" style={{ color: "var(--text-muted)" }}>Saved today</span>
-      <span style={{ color: "var(--text-secondary)" }}>Conversations stayed active: {displayData.conversations_maintained}</span>
-      <span style={{ color: "var(--text-secondary)" }}>Follow-ups recovered: {displayData.follow_ups_recovered}</span>
+      <span className="font-medium" style={{ color: "var(--text-muted)" }}>Prevented today</span>
+      <span style={{ color: "var(--text-secondary)" }}>Follow-through protected: {displayData.conversations_maintained}</span>
+      <span style={{ color: "var(--text-secondary)" }}>Customers returned: {displayData.follow_ups_recovered}</span>
       <span style={{ color: "var(--text-secondary)" }}>Attendance protected: {displayData.attendance_protected}</span>
     </div>
   );

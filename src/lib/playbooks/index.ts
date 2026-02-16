@@ -1,11 +1,41 @@
 /**
  * Playbooks Engine
  * Deterministic playbooks per conversation state.
- * Defines allowed intents, forbidden phrases, goals, cadence, and template selection.
+ * Human-Standard Revenue Receptionist: no robotic/assistant phrasing.
  */
 
 import type { ConversationState } from "@/lib/conversation-state/resolver";
 import type { Objective } from "@/lib/conversation-state/objectives";
+
+/** Receptionist-forbidden phrases: never sound like support doc or AI. */
+const RECEPTIONIST_FORBIDDEN = [
+  "thank you for reaching out",
+  "thanks for reaching out",
+  "i would be happy to assist",
+  "happy to assist",
+  "based on your message",
+  "i understand your concern",
+  "as an assistant",
+  "i can help you with that",
+  "how can i help you today",
+  "how can i help",
+  "ai ",
+  "automation",
+  "bot",
+  "system ",
+  "workflow",
+  "model",
+  "analysis",
+  "following up regarding your inquiry",
+  "regarding your inquiry",
+  "as per your",
+  "please be advised",
+  "do not hesitate",
+  "feel free to",
+  "at your earliest convenience",
+  "kind regards",
+  "best regards",
+];
 
 export interface BusinessContext {
   business_name: string;
@@ -76,7 +106,7 @@ export function getPlaybookForState(
       return {
         primary_goal: "acknowledge",
         allowed_interventions: ["acknowledge", "clarify", "qualify"],
-        forbidden_phrases: ["I'm an AI", "automated", "bot"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "I'm an AI", "automated"],
         tone,
         max_questions: 1,
         recommended_next_action_type: "acknowledge",
@@ -90,7 +120,7 @@ export function getPlaybookForState(
       return {
         primary_goal: "clarify",
         allowed_interventions: ["clarify", "qualify"],
-        forbidden_phrases: ["I don't know", "let me check", "I'll get back to you"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "I don't know", "let me check", "I'll get back to you"],
         tone,
         max_questions: 2,
         recommended_next_action_type: "clarify",
@@ -104,7 +134,7 @@ export function getPlaybookForState(
       return {
         primary_goal: "reduce_uncertainty",
         allowed_interventions: ["qualify", "objection_handle", "book"],
-        forbidden_phrases: ["hurry", "limited time", "act now"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "hurry", "limited time", "act now"],
         tone,
         max_questions: 1,
         recommended_next_action_type: "qualify",
@@ -119,7 +149,7 @@ export function getPlaybookForState(
       return {
         primary_goal: "reduce_uncertainty",
         allowed_interventions: ["objection_handle", "reengage", "defer"],
-        forbidden_phrases: ["you're wrong", "that's not true", "you should"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "you're wrong", "that's not true", "you should"],
         tone,
         max_questions: 1,
         recommended_next_action_type: "objection_handle",
@@ -134,7 +164,7 @@ export function getPlaybookForState(
       return {
         primary_goal: "reduce_uncertainty",
         allowed_interventions: ["objection_handle", "defer"],
-        forbidden_phrases: ["you're wrong", "that's not true", "you must"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "you're wrong", "that's not true", "you must"],
         tone: "calm", // Always calm for hard objections
         max_questions: 1,
         recommended_next_action_type: "objection_handle",
@@ -148,7 +178,7 @@ export function getPlaybookForState(
       return {
         primary_goal: "reengage",
         allowed_interventions: ["reengage", "defer"],
-        forbidden_phrases: ["why haven't you", "you disappeared", "where did you go"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "why haven't you", "you disappeared", "where did you go", "following up regarding"],
         tone: "calm",
         max_questions: 1,
         recommended_next_action_type: "reengage",
@@ -163,7 +193,7 @@ export function getPlaybookForState(
       return {
         primary_goal: "secure_commitment",
         allowed_interventions: ["book", "confirm"],
-        forbidden_phrases: ["maybe", "think about it", "later"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "maybe", "think about it", "later"],
         tone,
         max_questions: 1,
         recommended_next_action_type: "book",
@@ -177,22 +207,37 @@ export function getPlaybookForState(
       return {
         primary_goal: "prepare_attendance",
         allowed_interventions: ["confirm", "reengage"],
-        forbidden_phrases: ["don't forget", "remember", "important"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "don't forget", "remember", "important"],
         tone: "calm",
         max_questions: 1,
         recommended_next_action_type: "confirm",
         recommended_delay_rules: {
-          hours: 24, // Confirm 24h before call
+          hours: 24,
         },
         template_set_id: "post_booking",
       };
 
+    case "NO_SHOW":
+    case "COLD":
+      return {
+        primary_goal: "reengage",
+        allowed_interventions: ["reengage", "defer"],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN, "why haven't you", "you disappeared", "guilty", "sorry you missed"],
+        tone: "calm",
+        max_questions: 1,
+        recommended_next_action_type: "reengage",
+        recommended_delay_rules: {
+          hours: 24,
+          low_pressure_multiplier: 2,
+        },
+        template_set_id: "drift",
+      };
+
     default:
-      // Fallback
       return {
         primary_goal: "acknowledge",
         allowed_interventions: ["acknowledge"],
-        forbidden_phrases: [],
+        forbidden_phrases: [...RECEPTIONIST_FORBIDDEN],
         tone,
         max_questions: 1,
         recommended_next_action_type: "acknowledge",

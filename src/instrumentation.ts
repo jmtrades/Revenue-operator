@@ -4,6 +4,7 @@
  */
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
+    await import("@/lib/continuity-connectors/register");
     try {
       const { validateEnv } = await import("@/lib/env/validate");
       validateEnv();

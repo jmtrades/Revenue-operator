@@ -57,10 +57,10 @@ export async function fetchWithFallback<T>(
       if (cacheKey) {
         const cached = getCachedResponse<T>(cacheKey);
         if (cached) {
-          return { data: cached, fromCache: true, error: "Still monitoring — retrying in the background" };
+          return { data: cached, fromCache: true, error: "Data remains from last view." };
         }
       }
-      return { data: null, fromCache: false, error: "Still monitoring — retrying in the background" };
+      return { data: null, fromCache: false, error: "Normal conditions are not present." };
     }
 
     const data = await response.json();
@@ -70,10 +70,10 @@ export async function fetchWithFallback<T>(
       if (cacheKey) {
         const cached = getCachedResponse<T>(cacheKey);
         if (cached) {
-          return { data: cached, fromCache: true, error: "Still monitoring — retrying in the background" };
+          return { data: cached, fromCache: true, error: "Data remains from last view." };
         }
       }
-      return { data: null, fromCache: false, error: "Still monitoring — retrying in the background" };
+      return { data: null, fromCache: false, error: "Normal conditions are not present." };
     }
 
     // Cache successful response
@@ -89,10 +89,10 @@ export async function fetchWithFallback<T>(
     if (cacheKey) {
       const cached = getCachedResponse<T>(cacheKey);
       if (cached) {
-        return { data: cached, fromCache: true, error: "Still monitoring — retrying in the background" };
+        return { data: cached, fromCache: true, error: "Data remains from last view." };
       }
     }
     
-    return { data: null, fromCache: false, error: "Still monitoring — retrying in the background" };
+    return { data: null, fromCache: false, error: "Normal conditions are not present." };
   }
 }

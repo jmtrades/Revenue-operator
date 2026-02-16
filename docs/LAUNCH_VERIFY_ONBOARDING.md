@@ -88,6 +88,40 @@
 
 ---
 
+## Real checklist (post-deploy)
+
+Run in **incognito** after deploy.
+
+1. **Incognito flow**
+   - Open app in incognito.
+   - Go to `/activate`. Enter email, click "Start 14-day protection".
+   - Either redirect to Stripe or see a clear error + "Try again". Never blank or no response.
+
+2. **Stripe success**
+   - Complete checkout (card required). Redirect to `/connect?workspace_id=...`.
+   - Page loads; number appears (or "Restoring workspace…" then number). No crash.
+
+3. **Stripe cancel**
+   - From Stripe checkout click back/cancel. Land on `/activate?canceled=1`.
+   - Can try again; no loop.
+
+4. **Twilio inbound**
+   - On `/connect`, copy number and send: "Hi — interested, can you tell me more?"
+   - Within ~45s, redirect to `/live?conversation_id=...&workspace_id=...`.
+
+5. **/live timeline**
+   - Real timeline: "Message received", "Understanding intent", "Preparing reply", "Reply sent".
+   - Real message bubbles. "Go to dashboard" and auto-redirect after reply.
+
+6. **Session persistence**
+   - After onboarding, refresh `/connect` or `/dashboard`. No email prompt again; session restored.
+
+7. **Error states**
+   - On activate: force API error (e.g. wrong STRIPE_PRICE_ID). See "Payment setup isn't complete yet" (or similar) + retry.
+   - On connect: disconnect network briefly. See "Restoring workspace…" / retry, not blank screen.
+
+---
+
 ## Verification Tests
 
 ### Build Verification ✅

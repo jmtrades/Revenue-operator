@@ -75,18 +75,18 @@ export default function CalendarPage() {
     return "High";
   }
 
-  function preparationState(c: CalendarCall): "Prepared" | "Confirming" | "Monitoring" {
-    if (noShows.some((n) => n.session_id === c.session_id)) return "Monitoring";
+  function preparationState(c: CalendarCall): "Prepared" | "Confirming" | "In progress" {
+    if (noShows.some((n) => n.session_id === c.session_id)) return "In progress";
     if (confirmationNeeded.some((n) => n.session_id === c.session_id)) return "Confirming";
     if (highConfidence.some((h) => h.session_id === c.session_id)) return "Prepared";
-    return "Monitoring";
+    return "In progress";
   }
 
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-3xl">
         <PageHeader title="Calendar" subtitle="Upcoming calls and attendance status." />
-        <EmptyState icon="watch" title="Watching for new conversations" subtitle="Maintaining continuity" />
+        <EmptyState icon="watch" title="Follow-through in progress appears here." subtitle="In place." />
       </div>
     );
   }
@@ -96,9 +96,9 @@ export default function CalendarPage() {
       <PageHeader title="Calendar" subtitle="Attendance confidence and preparation state." />
 
       {loading ? (
-        <LoadingState message="Checking conversations…" submessage="Updating status…" />
+        <LoadingState message="In progress." submessage="Prepared." />
       ) : allCalls.length === 0 ? (
-        <EmptyState icon="pulse" title="We'll show conversations here when they appear." subtitle="Everything is quiet right now." />
+        <EmptyState icon="pulse" title="Calls appear here." subtitle="Stable for now." />
       ) : (
         <div className="space-y-4">
           {allCalls.map((c) => {
@@ -131,7 +131,7 @@ export default function CalendarPage() {
                     className="text-sm font-medium shrink-0"
                     style={{ color: "var(--meaning-blue)" }}
                   >
-                    View details
+                    Access details
                   </Link>
                 </div>
               </div>

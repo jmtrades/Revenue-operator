@@ -33,6 +33,10 @@ export async function getSchedulingRules(workspaceId: string): Promise<Schedulin
   return { ...DEFAULT_RULES, ...raw };
 }
 
+import type { SlotPreference } from "@/lib/guarantee/temporal-urgency";
+
+export type { SlotPreference };
+
 export interface SlotRecommendation {
   deal_id: string;
   lead_id: string;
@@ -40,6 +44,8 @@ export interface SlotRecommendation {
   scheduling_reason: string;
   suggested_slot?: string;
   constraints_applied?: string[];
+  /** Internal time-allocation hint. Not user-visible scoring. */
+  slot_preference?: SlotPreference;
 }
 
 export async function getSlotRecommendation(dealId: string): Promise<SlotRecommendation | null> {
@@ -73,6 +79,36 @@ export async function getSlotRecommendation(dealId: string): Promise<SlotRecomme
     schedulingReason = "Lower probability—fill slot when available";
   }
 
+  let slot_preference: SlotPreference = null;
+  try {
+    const { getTemporalUrgency, getSlotPreference } = await import("@/lib/guarantee/temporal-urgency");
+    const { getEconomicPriority } = await import("@/lib/guarantee/economic-priority");
+    const { getTrajectoryState } = await import("@/lib/guarantee/trajectory");
+    const [temporalRow, priorityRow, trajectoryRow] = await Promise.all([
+      getTemporalUrgency(d.lead_id),
+      getEconomicPriority(d.lead_id),
+      getTrajectoryState(d.workspace_id),
+    ]);
+    const temporalLevel = (temporalRow?.temporal_urgency_level ?? 0) as 0 | 1 | 2 | 3;
+    const priorityLevel = priorityRow?.economic_priority_level ?? 0;
+    slot_preference = await getSlotPreference(d.lead_id, d.workspace_id, temporalLevel, priorityLevel);
+    if (trajectoryRow?.future_overload && (!slot_preference || slot_preference === "nearest") && temporalLevel < 3) {
+      slot_preference = "distant";
+    }
+    if (slot_preference === "nearest") {
+      schedulingReason = `${schedulingReason}; offer nearest slot (time allocation)`;
+      constraintsApplied.push("slot_preference=nearest");
+    } else if (slot_preference === "distant") {
+      schedulingReason = `${schedulingReason}; offer distant availability first (time allocation)`;
+      constraintsApplied.push("slot_preference=distant");
+    } else if (slot_preference === "historical") {
+      schedulingReason = `${schedulingReason}; prefer historical booking window (repeat customer)`;
+      constraintsApplied.push("slot_preference=historical");
+    }
+  } catch {
+    // temporal/economic layers optional
+  }
+
   if (rules.min_notice_minutes != null) {
     constraintsApplied.push(`min_notice_minutes=${rules.min_notice_minutes}`);
   }
@@ -95,6 +131,7 @@ export async function getSlotRecommendation(dealId: string): Promise<SlotRecomme
     slot_quality_score: slotQualityScore,
     scheduling_reason: schedulingReason,
     constraints_applied: constraintsApplied,
+    slot_preference: slot_preference ?? undefined,
   };
 }
 

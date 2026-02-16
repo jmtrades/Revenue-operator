@@ -30,9 +30,7 @@ export interface TemplateContext {
  */
 export function buildMessage(context: TemplateContext): string {
   const { state, playbook, objectionType, objectionSlots, businessContext, leadContext, channel } = context;
-  const businessName = businessContext.business_name || "";
   const leadName = leadContext.leadName;
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
 
   // If objection detected, use objection response
   if (objectionType && objectionSlots) {
@@ -65,8 +63,14 @@ export function buildMessage(context: TemplateContext): string {
     case "POST_BOOKING":
       return buildPostBookingMessage(businessContext, leadName, channel);
 
+    case "NO_SHOW":
+      return buildNoShowMessage(businessContext, leadName, channel);
+
+    case "COLD":
+      return buildColdMessage(businessContext, leadName, channel);
+
     default:
-      return `${greeting}. Thanks for reaching out. How can I help?`;
+      return "Hey — what were you looking to get done?";
   }
 }
 
@@ -75,17 +79,16 @@ function buildNewInterestMessage(
   leadName: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
   const businessName = businessContext.business_name;
   const offer = businessContext.offer_summary;
 
   if (businessName && offer) {
-    return `${greeting}. ${businessName} ${offer}. What are you looking for?`;
+    return `Hey — yeah we can help with that. What were you looking to get done?`;
   }
   if (offer) {
-    return `${greeting}. ${offer}. What are you looking for?`;
+    return `Hey — yeah we can help with that. What were you looking to get done?`;
   }
-  return `${greeting}. Thanks for reaching out. What can I help with?`;
+  return "Hey — yeah we can help. What were you looking to get done?";
 }
 
 function buildClarificationMessage(
@@ -94,28 +97,22 @@ function buildClarificationMessage(
   lastMessage: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
-  
   if (lastMessage && lastMessage.length < 50) {
-    // Short question - provide direct answer
-    return `${greeting}. ${getClarificationAnswer(lastMessage, businessContext)}`;
+    const answer = getClarificationAnswer(lastMessage, businessContext);
+    return answer.length > 80 ? answer : `${answer} What else?`;
   }
-  
-  return `${greeting}. ${businessContext.offer_summary || "I can answer questions."} What would you like to know?`;
+  return "What do you want to know?";
 }
 
 function getClarificationAnswer(question: string, businessContext: BusinessContext): string {
   const qLower = question.toLowerCase();
-  
   if (/(price|cost|how much)/i.test(qLower) && businessContext.pricing_range) {
     return businessContext.pricing_range;
   }
-  
-  if (/(what|how|who)/i.test(qLower)) {
-    return businessContext.offer_summary || "I can answer questions.";
+  if (/(what|how|who)/i.test(qLower) && businessContext.offer_summary) {
+    return businessContext.offer_summary;
   }
-  
-  return businessContext.offer_summary || "Happy to answer questions.";
+  return businessContext.offer_summary || "We cover that — what bit matters to you?";
 }
 
 function buildConsideringMessage(
@@ -123,14 +120,11 @@ function buildConsideringMessage(
   leadName: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
   const bookingLink = businessContext.booking_link;
-  
   if (bookingLink) {
-    return `${greeting}. What questions do you have? ${bookingLink}`;
+    return `Any questions? ${bookingLink}`;
   }
-  
-  return `${greeting}. What would help you decide?`;
+  return "What would help you decide?";
 }
 
 function buildSoftObjectionMessage(
@@ -138,8 +132,7 @@ function buildSoftObjectionMessage(
   leadName: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
-  return `${greeting}. No rush. When you're ready, happy to discuss.`;
+  return "No rush. When you're ready we can have a quick look.";
 }
 
 function buildHardObjectionMessage(
@@ -147,8 +140,7 @@ function buildHardObjectionMessage(
   leadName: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
-  return `${greeting}. Understood. If anything changes, happy to reconnect.`;
+  return "Understood. If things change, we're here.";
 }
 
 function buildDriftMessage(
@@ -156,14 +148,11 @@ function buildDriftMessage(
   leadName: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
   const bookingLink = businessContext.booking_link;
-  
   if (bookingLink) {
-    return `${greeting}. Still interested? ${bookingLink}`;
+    return `Still wanted help with this or sorted now? ${bookingLink}`;
   }
-  
-  return `${greeting}. Still interested?`;
+  return "Still wanted help with this or sorted now?";
 }
 
 function buildCommitmentMessage(
@@ -171,14 +160,11 @@ function buildCommitmentMessage(
   leadName: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
   const bookingLink = businessContext.booking_link;
-  
   if (bookingLink) {
-    return `${greeting}. Great. ${bookingLink}`;
+    return `Here you go. ${bookingLink}`;
   }
-  
-  return `${greeting}. Great. When works for a quick call?`;
+  return "When works for a quick call?";
 }
 
 function buildPostBookingMessage(
@@ -186,8 +172,27 @@ function buildPostBookingMessage(
   leadName: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
-  return `${greeting}. Just confirming you're still on for our call.`;
+  return "Quick one — still on for the call?";
+}
+
+function buildNoShowMessage(
+  businessContext: BusinessContext,
+  leadName: string | undefined,
+  channel: string
+): string {
+  return "We missed you — things get busy. Want to reschedule or sorted elsewhere?";
+}
+
+function buildColdMessage(
+  businessContext: BusinessContext,
+  leadName: string | undefined,
+  channel: string
+): string {
+  const bookingLink = businessContext.booking_link;
+  if (bookingLink) {
+    return `You’d asked about this before — still relevant? ${bookingLink}`;
+  }
+  return "You’d asked about this before — still relevant?";
 }
 
 function buildObjectionMessage(
@@ -196,11 +201,9 @@ function buildObjectionMessage(
   leadName: string | undefined,
   channel: string
 ): string {
-  const greeting = leadName ? `Hi ${leadName}` : "Hi";
   const parts: string[] = [];
-
   if (slots.acknowledgement) {
-    parts.push(`${greeting}. ${slots.acknowledgement}`);
+    parts.push(slots.acknowledgement);
   }
 
   if (slots.reframing) {
@@ -224,7 +227,7 @@ function buildObjectionMessage(
     message = sentences.slice(0, 2).join(". ") + ".";
   }
 
-  return message.trim() || `${greeting}. Thanks for letting me know.`;
+  return message.trim() || "Got it. Easiest way is a quick look — want to grab a time?";
 }
 
 /**

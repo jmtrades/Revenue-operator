@@ -56,7 +56,7 @@ function OnboardingContent() {
         <div className="max-w-lg text-center">
           <h1 className="text-2xl font-semibold text-stone-50">Protection ready</h1>
           <p className="text-stone-400 mt-2">
-            Create an account to begin watching over your conversations.
+            Create an account. We’ll handle customer follow-through for you.
           </p>
           <Link href="/activate" className="mt-6 inline-block text-amber-400 hover:underline">
             Start protection
@@ -71,7 +71,7 @@ function OnboardingContent() {
       <div className="max-w-md w-full text-center">
         <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Connect your calendar</h1>
         <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
-          Connect your calendar so we can watch your conversations.
+          Connect once. New enquiries then enter handling automatically.
         </p>
         {wid ? (
           <div className="space-y-3">

@@ -83,20 +83,20 @@ function ValuePageContent() {
               <span className="inline-block w-2.5 h-2.5 rounded-full animate-pulse" style={{ background: "var(--meaning-green)" }} aria-hidden />
               <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>Analyzing</p>
             </div>
-            <p className="text-lg mb-6" style={{ color: "var(--text-primary)" }}>We analyzed your calendar and conversation patterns.</p>
+            <p className="text-lg mb-6" style={{ color: "var(--text-primary)" }}>We analyzed your calendar and follow-through patterns.</p>
           </>
         )}
         {phase === "results" && data && (
           <>
             <p className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>What we found</p>
-            <p className="text-lg mb-6" style={{ color: "var(--text-primary)" }}>We analysed your recent activity</p>
+            <p className="text-lg mb-6" style={{ color: "var(--text-primary)" }}>Where follow-through continues</p>
             <ul className="space-y-3 text-sm">
               <li className="flex justify-between items-center py-2 border-b" style={{ borderColor: "var(--border)" }}>
-                <span style={{ color: "var(--text-secondary)" }}>Conversations likely to go quiet</span>
+                <span style={{ color: "var(--text-secondary)" }}>Follow-through likely to stall</span>
                 <span className="font-medium" style={{ color: "var(--text-primary)" }}>{data.conversations_likely_quiet}</span>
               </li>
               <li className="flex justify-between items-center py-2 border-b" style={{ borderColor: "var(--border)" }}>
-                <span style={{ color: "var(--text-secondary)" }}>Missed follow-ups detected</span>
+                <span style={{ color: "var(--text-secondary)" }}>Decisions that needed a nudge</span>
                 <span className="font-medium" style={{ color: "var(--text-primary)" }}>{data.likely_missed_follow_ups}</span>
               </li>
               <li className="flex justify-between items-center py-2" style={{ borderColor: "var(--border)" }}>
@@ -119,20 +119,20 @@ function ValuePageContent() {
               ))}
             </ul>
             <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
-              This is what normally slips through when no one is actively watching conversations.
+              This is what normally slips through when follow-through is not in place.
             </p>
           </>
         )}
         {phase === "active" && (
           <>
             <p className="text-lg font-medium mb-2" style={{ color: "var(--text-primary)" }}>Protection is now active</p>
-            <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>We are maintaining conversations and watching attendance. You only take the calls.</p>
+            <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>Follow-through and attendance continue here. You handle: calls.</p>
             <button
               onClick={handleContinue}
               className="w-full py-3.5 rounded-lg font-medium"
               style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
             >
-              Continue to overview
+              Access overview
             </button>
           </>
         )}

@@ -9,15 +9,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { ensureCallSessionFromCalendarEvent } from "@/lib/calls/calendar-fallback";
 import { enqueue } from "@/lib/queue";
+import "@/lib/runtime";
+import { assertCronAuthorized } from "@/lib/runtime";
 
-const CRON_SECRET = process.env.CRON_SECRET;
 const WINDOW_MINUTES = 10;
 
 export async function GET(req: NextRequest) {
-  if (CRON_SECRET) {
-    const auth = req.headers.get("authorization");
-    if (auth !== `Bearer ${CRON_SECRET}`) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authErr = assertCronAuthorized(req);
+  if (authErr) return authErr;
 
   const db = getDb();
   const windowEnd = new Date();

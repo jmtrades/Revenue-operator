@@ -22,17 +22,10 @@ export async function sendActivationConfirmationEmail(workspaceId: string): Prom
   const email = (user as { email?: string } | null)?.email;
   if (!email) return false;
 
-  const subject = "Revenue Operator is now handling your conversations";
-  const body = `Your Revenue Operator is live.
+  const subject = "Conditions are normal.";
+  const body = `Conditions are normal.
 
-We're now:
-• Preparing responses when new conversations come in
-• Scheduling follow-ups so leads don't go cold
-• Reminding people before calls
-
-You only need to take the calls. We handle the rest.
-
-View your dashboard: ${process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
+Open: ${process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
 
   try {
     if (process.env.RESEND_API_KEY) {

@@ -277,7 +277,7 @@ export async function computeReadiness(
       : score >= 60
         ? "Conversation ready for next step."
         : score >= 40
-          ? "Needs attention to prevent decay."
+          ? "Manual follow-through required."
           : "Low readiness — recovery or re-engagement needed.";
 
   // Timing window

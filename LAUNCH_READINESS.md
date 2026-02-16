@@ -1,106 +1,166 @@
-# Launch Readiness Report
+# Launch Readiness
 
-## Baseline (Phase 0)
+This document describes the operational guarantees that ensure the system is ready for companies to rely on it.
 
-### Initial Failures
-- **Lint**: 9 errors, 66 warnings (Date.now impure, prefer-const, activateAndRedirect order, setState in effect)
-- **Test**: Passed (134 tests)
-- **Build**: Failed (duplicate `now`/`setNow` in conversations page)
+## Core Guarantees
 
-### Changes Made
+### 1. Completion Requires External Confirmation
 
-#### Lint Fixes
-1. **conversations/page.tsx**: Moved `Date.now()` to `useState` + `useEffect` interval for purity; prefixed unused `hotMap`/`atRiskMap` with `_`; fixed LeadCard `column` param
-2. **leads/[id]/page.tsx**: Same `Date.now()` → `useState` + interval; `router` → `_router`
-3. **onboarding/page.tsx**: `activateAndRedirect` moved before `useEffect`, wrapped in `useCallback` with correct deps
-4. **wrapup/[token]/page.tsx**: Derive `status` from `!token` instead of `setState` in effect; removed unused `router` import
-5. **Auto-fix**: `prefer-const` for delays, _cache, reasons, behW, participantNames
-6. **diagnosis/route.ts**: `let delays` → `const delays`
+**Guarantee:** No internal action alone may finalize an outcome.
 
-#### Build Fix
-- Removed duplicate `[now, setNow]` declaration in conversations page
+**Implementation:**
+- `acknowledgeSharedTransaction` requires `state === "pending_acknowledgement"`
+- Idempotency check: if already acknowledged, returns success without duplicate processing
+- State transitions: `pending_acknowledgement` → `acknowledged` only via counterparty action
+- No timeout mechanisms that auto-complete records
 
-#### Env
-- Extended `src/lib/env.ts` with optional: BASE_URL, ENCRYPTION_KEY, ZOOM_*, TWILIO_*, STRIPE_PRICE_ID, NEXT_PUBLIC_APP_URL, EMAIL_FROM, RESEND_API_KEY
+**Verification:** Onboarding remains in valid incomplete state forever if counterparty never confirms.
 
----
+### 2. Removal Creates Uncertainty
 
-## No Silent Failures (Phase 1)
+**Guarantee:** Absence endpoints must always produce meaningful consequence statements.
 
-### Exit Paths Audited
-Every decision-with-engines return path now schedules `lead_plan.next_action_at`:
+**Implementation:**
+- `/api/operational/absence-statements` returns `what_will_fail`, `what_becomes_uncertain`, `what_moves_outside`
+- Always returns arrays (never errors) even with minimal data
+- Derived from `disable-impact` and `retention-intercept` signals
+- Empty arrays indicate no operational dependency (truthful emptiness)
 
-| Exit | Schedules |
-|------|-----------|
-| decision_no_intervention | ✓ recheck |
-| coverage_not_enabled | ✓ recheck |
-| cooldown_active | ✓ observe (or recheck if no cooldown_until) |
-| uncertainty_restraint | ✓ observe + defer message |
-| low_confidence | ✓ recheck |
-| no_role_for_action | ✓ recheck |
-| !convId | ✓ recheck |
-| inEscalationHold | ✓ observe |
-| escalation_suggest | ✓ observe at hold_until |
-| forceSimulate | ✓ observe |
-| Successful send | ✓ advanceSequence/completeLeadPlan |
+**Verification:** Removal safety test script simulates full lifecycle and verifies uncertainty detection.
 
-### New Tests
-- `__tests__/decision-exit-scheduling.test.ts`: Asserts `computeRevenueState` returns `transition_toward_risk_at` when appropriate and null for REVENUE_LOST
+### 3. Records Persist Across Time
 
----
+**Guarantee:** Reference memory must attach later work deterministically.
 
-## No Duplicate Sends (Phase 2)
+**Implementation:**
+- `thread_reference_memory` table links threads to contexts
+- `detectAndAttachReference` runs on new commitments, payments, conversations
+- Deterministic matching: same subject, same lead, same conversation
+- No user choice required; system observes and attaches
 
-- `enqueueDecision` dedupes pending decision jobs per lead (DB path)
-- `shouldEnqueueDecision` prevents enqueue when active plan has future `next_action_at`
-- `hashMessage` + cooldowns prevent resend loops
-- Existing tests: `lead-plan.test.ts`, `burst-drain.test.ts`, `idempotency.test.ts`
+**Verification:** `workspaceHasMultiDayReferences` detects cross-day references.
 
----
+### 4. Multi-Party Reliance Detectable
 
-## Human Safety (Phase 3)
+**Guarantee:** Presence must show reliance when third parties act.
 
-- `applySafetyLayer` runs before every `sendOutbound` in `src/lib/delivery/provider.ts`
-- `enforceHumanAcceptability` + `isLowPressureMode` applied
-- Templates only via `buildMessageFromIntervention` (no free-form AI)
-- Existing tests: `human-safety.test.ts`, `opt-out-enforcement.test.ts`
+**Implementation:**
+- `hasThirdPartyReliance` checks for observer events, downstream resolution, cross-participant references
+- Presence lines include: "Work now depends on this record beyond its origin."
+- `reciprocal_events` records actor_role and operational_action
+- Authority transfer detection: downstream resolves originator/counterparty responsibilities
 
----
+**Verification:** Presence surface shows reliance lines when third parties act.
 
-## Final Verification
+### 5. Exportable History Exists
 
+**Guarantee:** `export-record` must always produce a defensible chronological document.
+
+**Implementation:**
+- `/api/operational/export-record` returns: orientation, continuation, responsibilities, amendments, proof
+- Performance caps: MAX_THREADS=1000, MAX_CONTINUATION_PER_THREAD=500, MAX_RESPONSIBILITIES_PER_THREAD=200, MAX_AMENDMENTS_PER_THREAD=200
+- Always returns valid JSON structure (never errors)
+- Empty arrays indicate no data (truthful emptiness)
+
+**Verification:** Export endpoint tested with minimal data, returns valid structure.
+
+### 6. Payment Justification Exists
+
+**Guarantee:** `why-pay` must always produce factual reliance lines.
+
+**Implementation:**
+- `/api/operational/why-pay` returns up to 6 factual lines
+- Checks: acknowledged threads, third-party reliance, multi-day references, parallel reality, historical clarity, cascade uncertainty
+- Always returns `{ lines: string[] }` (never errors)
+- Empty array indicates no operational dependency (truthful emptiness)
+
+**Verification:** Endpoint tested with minimal data, returns valid structure.
+
+## Data Integrity Locks
+
+### Append-Only Tables
+
+- `orientation_records`: Duplicate prevention (1-hour window check)
+- `thread_amendments`: Immutable once recorded
+- `reciprocal_events`: Immutable once recorded
+- `proof_capsules`: Reproducible from deterministic inputs
+- `outcome_dependencies`: Never deleted, only resolved
+
+### Idempotency
+
+- `acknowledgeSharedTransaction`: Returns success if already acknowledged
+- `recordOrientationStatement`: Prevents duplicates within 1-hour window
+- All critical endpoints: Return neutral responses on failure
+
+## Performance Containment
+
+### Safe Caps
+
+- Record log: LIMIT=80 entries
+- Export: MAX_THREADS=1000, MAX_CONTINUATION_PER_THREAD=500
+- Record log thread check: MAX_THREADS_CHECK=100
+- Continuation entries: Bounded per thread
+- Dependency traversal: Bounded queries
+
+### Deterministic Ordering
+
+- All queries use explicit `ORDER BY created_at ASC` or `ORDER BY recorded_at ASC`
+- No dependency on UI timing or race conditions
+- Database-level ordering guarantees consistency
+
+## Endpoint Reliability
+
+### Critical Endpoints (Never Fail)
+
+- `/api/operational/why-pay`: Returns `{ lines: [] }` on error
+- `/api/operational/absence-statements`: Returns empty arrays on error
+- `/api/operational/export-record`: Returns empty structure on error
+- `/api/system/core-status`: Returns default booleans on error
+
+### Neutral Responses
+
+- No partial writes
+- No error messages exposing internal state
+- Truthful emptiness: empty arrays/objects indicate no data, not failure
+
+## Onboarding Stability
+
+### Incomplete State Forever
+
+- If counterparty never confirms: system remains in `pending_acknowledgement` state
+- No timeout mechanisms
+- No auto-completion
+- Valid incomplete state persists indefinitely
+
+### Installation Confirmation
+
+- Triggers when: first acknowledged thread exists, proof capsule exists, absence moment shown
+- Records: "Operational recording is now active."
+- One-time state: `workspace_installation_confirmed_at`
+
+## Doctrine Compliance
+
+### Text Constraints
+
+- All user-visible text: ≤90 characters
+- Factual statements only
+- No metrics, percentages, or persuasion
+- No internal identifiers exposed
+
+### Surface Limits
+
+- Situation: Answers "What currently requires reality to align?"
+- Record: Answers "What actually happened?"
+- Activity: Answers "What is waiting on the world?"
+- Presence: Answers "How much the organization now depends on the record"
+- Continuation: Appears only when reciprocal chain exists
+
+## Verification
+
+Run removal safety test:
+
+```bash
+npx tsx scripts/removal-safety-test.ts
 ```
-npm run lint   → 0 errors, 63 warnings
-npm run test   → 33 files, 136 tests passed
-npm run build  → Success
-```
 
-### Route Check
-- `GET /api/health` → 200, `{"status":"ok"}`
-- `GET /api/command-center?workspace_id=...` → 200, valid JSON
-
----
-
-## Critical Launch Env Vars
-
-| Var | Required | Purpose |
-|-----|----------|---------|
-| NEXT_PUBLIC_SUPABASE_URL | Yes | DB + auth |
-| NEXT_PUBLIC_SUPABASE_ANON_KEY | Yes | Client auth |
-| SUPABASE_SERVICE_ROLE_KEY | Yes | Server/admin |
-| CRON_SECRET | Yes (prod) | Cron auth |
-| WEBHOOK_SECRET | Recommended | Inbound webhook verification |
-| OPENAI_API_KEY | For AI features | Slot fill, deal prediction |
-| STRIPE_SECRET_KEY | For billing | Checkout, subscriptions |
-| TWILIO_* | For SMS | Delivery |
-| ENCRYPTION_KEY | For Zoom OAuth | Token encryption |
-
----
-
-## Vercel Deployment
-
-- **Build command**: `npm run build`
-- **Output**: Next.js standalone (default)
-- **Cron auth**: All `/api/cron/*` require `Authorization: Bearer <CRON_SECRET>`
-- **/ops**: Protected via middleware (staff auth)
-- **Middleware**: Uses `proxy` convention (Next.js 16 deprecation note)
+Expected: All stages pass, uncertainty detected at removal stage.
