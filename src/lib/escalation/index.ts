@@ -12,7 +12,17 @@ export type EscalationTrigger =
   | "anger_detected"
   | "negotiation_attempt"
   | "policy_sensitive"
-  | "autonomy_assist_approval_required";
+  | "autonomy_assist_approval_required"
+  | "guarantee_stagnation"
+  | "emotional_complexity"
+  | "ambiguous_meaning_outcome_critical"
+  | "intent_conflicts_with_booking"
+  | "legal_medical_risk"
+  | "financial_risk"
+  | "delivery_failed"
+  | "system_integrity_violation"
+  | "signal_unprocessable"
+  | "progress_stalled";
 
 export interface EscalationRules {
   enabled?: boolean;
@@ -133,6 +143,13 @@ export async function checkEscalation(
   return { shouldEscalate: false };
 }
 
+const OPERATIONAL_RISK_REASONS: EscalationTrigger[] = [
+  "delivery_failed",
+  "system_integrity_violation",
+  "signal_unprocessable",
+  "progress_stalled",
+];
+
 export async function logEscalation(
   workspaceId: string,
   leadId: string,
@@ -153,7 +170,19 @@ export async function logEscalation(
     hold_until: holdUntil?.toISOString() ?? null,
     holding_message_sent: false,
   }).select("id").single();
-  return (data as { id?: string })?.id ?? null;
+  const id = (data as { id?: string })?.id ?? null;
+
+  if (id && OPERATIONAL_RISK_REASONS.includes(escalationReason)) {
+    const { sendOwnerAssuranceEmail } = await import("@/lib/operational-presence");
+    sendOwnerAssuranceEmail(workspaceId).catch(() => {});
+  }
+
+  const { breakOperationalConfidenceStreak } = await import("@/lib/operational-confidence-streak");
+  breakOperationalConfidenceStreak(workspaceId).catch((err) => {
+    console.warn("[operational-confidence-streak] break failed", workspaceId, err);
+  });
+
+  return id;
 }
 
 export async function getAssignedUserId(workspaceId: string, leadId: string): Promise<string | null> {

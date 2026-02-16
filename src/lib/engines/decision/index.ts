@@ -61,6 +61,11 @@ const INTERVENTION_REASON_CODES: Record<string, string> = {
   warmup_limit: "Warmup limit reached",
   channel_unavailable: "Channel unavailable",
   feature_disabled: "Feature disabled",
+  capacity_critical_indecisive_deferred: "Capacity critical; indecisive lead deferred until availability returns",
+  capacity_critical_priority_low_deferred: "Capacity critical; low economic priority deferred",
+  priority_low_indecisive_reduced_depth: "Low priority and indecisive; reduced intervention depth",
+  trajectory_low_value_overload_soften: "Pipeline low-value overload; soften followups for low-priority lead",
+  trajectory_demand_overheated_reduce: "Demand overheated; reduce followups to protect schedule",
 };
 
 /** Pure intervention decision. No message construction. */
@@ -270,6 +275,69 @@ export async function decideIntervention(
     };
   }
 
+  const { getCapacityPressure } = await import("@/lib/guarantee/capacity-stability");
+  const { getCommitmentPressure } = await import("@/lib/guarantee/commitment-stability");
+  const { getEconomicPriority, isPriorityLow, isPriorityHigh } = await import("@/lib/guarantee/economic-priority");
+  const { getTemporalUrgency, isTemporalFlexible, isTemporalUrgent } = await import("@/lib/guarantee/temporal-urgency");
+  const { getTrajectoryState, isDemandOverheated, isDemandUnderheated } = await import("@/lib/guarantee/trajectory");
+
+  const capacityRow = await getCapacityPressure(workspaceId);
+  const commitmentRow = await getCommitmentPressure(leadId);
+  const priorityRow = await getEconomicPriority(leadId);
+  const temporalRow = await getTemporalUrgency(leadId);
+  const trajectoryRow = await getTrajectoryState(workspaceId);
+
+  const capacityLevel = (capacityRow?.pressure_level ?? 0) as 0 | 1 | 2 | 3;
+  const commitmentLevel = commitmentRow?.pressure_level ?? 0;
+  const priorityLevel = (priorityRow?.economic_priority_level ?? 0) as 0 | 1 | 2 | 3;
+  const temporalLevel = (temporalRow?.temporal_urgency_level ?? 0) as 0 | 1 | 2 | 3;
+
+  if (
+    trajectoryRow?.low_value_overload &&
+    isPriorityLow(priorityLevel) &&
+    !isDemandUnderheated(trajectoryRow)
+  ) {
+    return {
+      intervene: false,
+      intervention_type: null,
+      timing: "scheduled",
+      channel_priority: [],
+      confidence: 0,
+      reason_code: INTERVENTION_REASON_CODES.trajectory_low_value_overload_soften,
+    };
+  }
+
+  if (capacityLevel === 3 && isPriorityLow(priorityLevel)) {
+    return {
+      intervene: false,
+      intervention_type: null,
+      timing: "scheduled",
+      channel_priority: [],
+      confidence: 0,
+      reason_code: INTERVENTION_REASON_CODES.capacity_critical_priority_low_deferred,
+    };
+  }
+  if (capacityLevel === 3 && commitmentLevel >= 2 && !isPriorityHigh(priorityLevel)) {
+    return {
+      intervene: false,
+      intervention_type: null,
+      timing: "scheduled",
+      channel_priority: [],
+      confidence: 0,
+      reason_code: INTERVENTION_REASON_CODES.capacity_critical_indecisive_deferred,
+    };
+  }
+  if (isPriorityLow(priorityLevel) && commitmentLevel >= 2) {
+    return {
+      intervene: false,
+      intervention_type: null,
+      timing: "scheduled",
+      channel_priority: [],
+      confidence: 0,
+      reason_code: INTERVENTION_REASON_CODES.priority_low_indecisive_reduced_depth,
+    };
+  }
+
   let interventionType: InterventionType = effectiveAllowedActions[0] as InterventionType;
   let confidence = 0.8;
   let reasonCode = INTERVENTION_REASON_CODES.ready_follow_up;
@@ -298,12 +366,32 @@ export async function decideIntervention(
     const dealId = (dealRow as { id?: string })?.id;
     if (dealId && effectiveAllowedActions.includes("booking")) {
       const route = await getBookingRoute(dealId);
-      if (route.tier === "clarify_nurture") {
+      const capacityLimitedOrWorse = capacityLevel >= 2;
+      const capacityOpenOrNormal = capacityLevel <= 1;
+      const prioritiseCommitmentFromTrajectory =
+        trajectoryRow?.high_value_underrepresented && isPriorityHigh(priorityLevel);
+      const accelerateFromFutureEmpty = trajectoryRow?.future_empty === true;
+      const delayCommitmentPush =
+        isTemporalFlexible(temporalLevel) &&
+        capacityOpenOrNormal &&
+        !prioritiseCommitmentFromTrajectory &&
+        !accelerateFromFutureEmpty;
+      const prioritiseBooking =
+        (capacityLevel === 3 && isPriorityHigh(priorityLevel)) ||
+        (capacityLevel === 3 && isTemporalUrgent(temporalLevel));
+      if (prioritiseBooking) {
+        interventionType = effectiveAllowedActions.includes("call_invite") ? "call_invite" : "booking";
+      } else if (delayCommitmentPush && route.tier === "clarify_nurture") {
+        interventionType = "qualification_question";
+      } else if (route.tier === "clarify_nurture" && !capacityLimitedOrWorse) {
         interventionType = "qualification_question";
       } else if (route.tier === "triage_call" && effectiveAllowedActions.includes("call_invite")) {
         interventionType = "call_invite";
       } else {
         interventionType = "booking";
+      }
+      if (capacityLimitedOrWorse && interventionType === "qualification_question") {
+        interventionType = effectiveAllowedActions.includes("call_invite") ? "call_invite" : "booking";
       }
       confidence = 0.85;
       reasonCode = INTERVENTION_REASON_CODES.booking_qualified;
@@ -331,6 +419,20 @@ export async function decideIntervention(
       confidence: 0,
       reason_code: INTERVENTION_REASON_CODES.feature_disabled,
     };
+  }
+
+  if (isDemandOverheated(trajectoryRow) && isPriorityLow(priorityLevel)) {
+    const followupTypes = ["follow_up", "win_back", "recovery"];
+    if (followupTypes.includes(interventionType)) {
+      return {
+        intervene: false,
+        intervention_type: null,
+        timing: "scheduled",
+        channel_priority: [],
+        confidence: 0,
+        reason_code: INTERVENTION_REASON_CODES.trajectory_demand_overheated_reduce,
+      };
+    }
   }
 
   const agg = strategyState?.aggressiveness_level ?? "balanced";

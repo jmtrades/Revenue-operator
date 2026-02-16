@@ -34,7 +34,9 @@ export async function GET(req: NextRequest) {
   }
   return NextResponse.json({
     session: {
+      userId: session.userId,
       user_id: session.userId,
+      workspaceId: session.workspaceId ?? null,
       workspace_id: session.workspaceId ?? null,
       email,
     },

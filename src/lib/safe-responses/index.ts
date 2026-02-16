@@ -12,24 +12,24 @@ export type SensitiveType =
 
 const RESPONSES: Record<SensitiveType, string> = {
   pricing_request:
-    "Thanks for your interest. Pricing depends on your specific needs. I'd be happy to set up a quick call so we can give you an accurate quote. Would that work?",
+    "Pricing depends on what you need. Easiest is a quick call and we can give you a straight answer.",
   refund_request:
-    "I understand you'd like to discuss a refund. Let me connect you with someone who can help right away. I'll have our team reach out within one business day.",
+    "I'll get the owner to message you about that shortly.",
   anger:
-    "I'm sorry you're frustrated. Your experience matters. I'd like to help—what would be the most helpful next step for you?",
+    "Got it — what would help most from here?",
   legal_medical:
-    "I'm not able to provide legal or medical advice. I'd recommend consulting a qualified professional for that. Is there something else I can help with today?",
+    "I can't give advice on that — you'd need to speak to a professional. Anything else I can help with?",
   negotiation:
-    "I hear you. Let me see what options we have for your situation. Would a quick call work so we can explore the best fit?",
+    "I hear you. Easiest way is a quick call and we can see what fits.",
 };
 
 export function getSafeResponse(type: SensitiveType): string {
   return RESPONSES[type] ?? RESPONSES.pricing_request;
 }
 
-/** Escalation holding message: acknowledge + timeline. Neutral, no pressure. */
+/** Escalation holding message: human receptionist handoff. */
 export function getEscalationHoldingMessage(): string {
-  return "Thanks for reaching out. I'm looping in our team. Someone will follow up within 24 hours.";
+  return "Let me grab the owner — they'll message you shortly.";
 }
 
 export function detectSensitiveIntent(

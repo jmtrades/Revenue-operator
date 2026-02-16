@@ -8,15 +8,13 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import "@/lib/runtime";
+import { assertCronAuthorized } from "@/lib/runtime";
 import { runPatternAggregator } from "@/lib/network/pattern-aggregator";
 
-const CRON_SECRET = process.env.CRON_SECRET;
-
 export async function GET(req: NextRequest) {
-  const auth = req.headers.get("authorization");
-  if (CRON_SECRET && auth !== `Bearer ${CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authErr = assertCronAuthorized(req);
+  if (authErr) return authErr;
 
   try {
     const result = await runPatternAggregator();

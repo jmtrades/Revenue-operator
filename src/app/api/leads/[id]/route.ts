@@ -12,7 +12,18 @@ export async function GET(
   const { data: lead, error } = await db.from("leads").select("*").eq("id", id).single();
   if (error || !lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const { data: deals } = await db.from("deals").select("id, value_cents, status").eq("lead_id", id);
-  return NextResponse.json({ ...lead, deals: deals ?? [] });
+  let responsibility_state: string | undefined;
+  try {
+    const { resolveResponsibility } = await import("@/lib/closure/resolver");
+    responsibility_state = await resolveResponsibility(id);
+  } catch {
+    // closure may throw if no signals; leave undefined
+  }
+  return NextResponse.json({
+    ...lead,
+    deals: deals ?? [],
+    ...(responsibility_state != null && { responsibility_state }),
+  });
 }
 
 export async function PATCH(
@@ -37,5 +48,10 @@ export async function PATCH(
     .select()
     .single();
   if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
+  const workspaceId = (updated as { workspace_id?: string })?.workspace_id;
+  if (workspaceId) {
+    const { recordProviderInteraction } = await import("@/lib/detachment");
+    recordProviderInteraction(workspaceId, `lead:${id}`).catch(() => {});
+  }
   return NextResponse.json(updated);
 }

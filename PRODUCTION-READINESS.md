@@ -36,14 +36,18 @@ All items below verified. Run tests, build, and lint before deploy.
 
 ## Cron jobs
 
+**Recommended minimal:**
+
 | Endpoint | Schedule |
 |----------|----------|
-| `/api/cron/process-queue` | Every 1 min |
-| `/api/cron/no-reply` | Daily |
-| `/api/cron/billing` | Monthly |
-| `/api/cron/learning` | Daily |
+| `/api/cron/core` | `*/2 * * * *` (every 2 min) |
+| `/api/cron/assurance-delivery` | `0 * * * *` (hourly) |
 
 Header: `Authorization: Bearer <CRON_SECRET>`
+
+**Core vs full guarantees.** Core provides the minimal continuity bundle (connector-inbox, process-queue, recoveries, engines, proof-capsules, assurance-delivery, settlement-export). Optional single cron `GET /api/cron/guarantees` (e.g. `*/10 * * * *`) runs progress-watchdog, integrity-audit, closure, handoff-notifications, no-reply. Optional `GET /api/cron/core-drift` (e.g. `0 */6 * * *`) records doctrine-safe drift incidents. See `docs/PRODUCTION_DEPLOYMENT.md` for the full optional table.
+
+**Installation readiness.** `GET /api/installation/readiness?workspace_id=...` returns booleans only. “Connected” means evidence/data exists in that domain (e.g. bookings, shared_transactions), not OAuth or connector configuration.
 
 ---
 

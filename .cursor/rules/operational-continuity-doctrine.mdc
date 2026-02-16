@@ -1,0 +1,17 @@
+---
+description: Governs all changes to Revenue Operator. Read DOCTRINE.md before adding or modifying features.
+globs: ["**/*"]
+---
+
+# Operational Continuity Doctrine
+
+Revenue Operator is **Operational Continuity Infrastructure**, not a CRM, assistant, or marketing tool.
+
+- **Design:** Environmental effect, not assistance. User should feel "I operate inside this", not "I use this."
+- **Output:** Short factual sentences only; past/present tense; ≤90 chars; no metrics, persuasion, or performance language.
+- **UI:** Ledger + OS + audit log feel. No KPIs, charts, progress bars, or bright alerts. Answer only: what continued, what required attention, what would fail without it.
+- **Never add:** Dashboards with KPIs, productivity analytics, AI advice, marketing copy, gamification, performance scoring.
+- **Always:** Environmental presence (neutral reference link on confirmations/follow-ups); absence moments (disable-impact + retention only when cancel/pause/disconnect/billing failure); multi-audience wording (same logic, tone by audience); billing from continuity_scope_units.
+- **Engineering:** Deterministic execution paths; no LLM deciding actions; all visible statements from stored events only.
+
+Full rules: **README and DOCTRINE.md** in repo root. When in doubt, reject "helping the user work" and implement "work continues without them."

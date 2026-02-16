@@ -38,24 +38,14 @@ export async function sendDailyTrustEmails(): Promise<Array<{ workspaceId: strin
     if (!email) continue;
 
     const bullets: string[] = [];
-    if (replies > 0) bullets.push(`Responses kept open: ${replies}`);
-    if (followUps > 0) bullets.push(`Follow-ups recovered: ${followUps}`);
-    if (attendance > 0) bullets.push(`Attendance protected: ${attendance}`);
-    
-    // Fail-safe: If no actions, interpret as stability
-    if (bullets.length === 0) {
-      bullets.push("Everything stayed stable today — nothing required intervention");
-    }
+    if (replies > 0) bullets.push(`Conversations continued: ${replies}`);
+    if (followUps > 0) bullets.push(`Decisions progressed: ${followUps}`);
+    if (attendance > 0) bullets.push(`Attendance was confirmed: ${attendance}`);
 
-    const total = Math.max(1, replies + followUps + attendance);
-    const subject = `${total} conversation${total !== 1 ? "s" : ""} didn't go quiet today`;
-    const body = `Today we kept things moving:
+    const subject = "Conditions are normal.";
+    const body = `Conditions are normal.
 
-${bullets.map((b) => `• ${b}`).join("\n")}
-
-Protection is running. You only take the calls.
-
-View overview: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
+Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
 
     try {
       if (process.env.RESEND_API_KEY) {

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 /**
- * Daily First-Open Summary: Shows what happened while user was away (≥6 hours gap).
+ * Daily First-Open Summary: Shows after user absence (≥6 hours gap).
+ * Optionally shows 1–3 handled-situation imprints (factual, no totals).
  * Auto-dismisses after 8 seconds. One-time per session gap.
  */
 
@@ -15,6 +16,7 @@ export function DailySummaryBanner() {
   const { workspaceId } = useWorkspace();
   const [show, setShow] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [imprints, setImprints] = useState<string[]>([]);
 
   useEffect(() => {
     if (!workspaceId || dismissed) return;
@@ -44,16 +46,29 @@ export function DailySummaryBanner() {
     }
   }, [workspaceId, dismissed]);
 
+  useEffect(() => {
+    if (!show || !workspaceId) return;
+    fetch(`/api/handled-situations?workspace_id=${encodeURIComponent(workspaceId)}`)
+      .then((r) => r.json())
+      .then((d: { imprints?: string[] }) => {
+        const list = d.imprints ?? [];
+        setImprints(list.slice(0, 3)); // Show at most 3, sparingly
+      })
+      .catch(() => {});
+  }, [show, workspaceId]);
+
   if (!show) return null;
 
   return (
     <div className="px-4 py-3 border-b" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-      <p className="text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>Since you were last here:</p>
-      <ul className="text-sm space-y-1" style={{ color: "var(--text-secondary)" }}>
-        <li>• Conversations stayed active</li>
-        <li>• Follow-ups didn&apos;t lapse</li>
-        <li>• Upcoming calls stayed confirmed</li>
-      </ul>
+      <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Everything remains in progress.</p>
+      {imprints.length > 0 && (
+        <ul className="text-xs mt-2 space-y-0.5" style={{ color: "var(--text-muted)" }}>
+          {imprints.map((s, i) => (
+            <li key={i}>{s}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

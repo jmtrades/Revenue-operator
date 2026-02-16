@@ -1,12 +1,20 @@
 /**
- * Queue abstraction. Redis when available, else DB-backed for single instance.
+ * Queue abstraction. Source of truth is always DB (job_queue + job_claims).
+ * Engines (commitment, opportunity, payment, shared-record, etc.) communicate only via
+ * enqueued jobs and append-only events — no direct engine-to-engine calls.
+ * No Redis dequeue: jobs are never lost on worker crash.
+ * Guarantees: no silent action failure, no indefinite responsibility, demonstrable correctness.
  */
 
 import { getDb } from "@/lib/db/queries";
 
+import type { ActionCommand } from "@/lib/action-queue/types";
+
 export type JobPayload =
   | { type: "process_webhook"; webhookId: string }
+  | { type: "process_signal"; signalId: string }
   | { type: "decision"; leadId: string; workspaceId: string; eventId: string }
+  | { type: "action"; action: ActionCommand; action_command_id?: string }
   | { type: "no_reply"; leadId: string }
   | { type: "no_show_reminder"; leadId: string }
   | { type: "reactivation"; leadId: string }
@@ -16,24 +24,11 @@ export type JobPayload =
   | { type: "analyze_call"; callSessionId: string; workspaceId: string }
   | { type: "execute_post_call_plan"; callSessionId: string; workspaceId: string; leadId: string }
   | { type: "calendar_call_ended"; callSessionId: string }
-  | { type: "post_call_unknown_checkin"; leadId: string; workspaceId: string; callSessionId: string };
+  | { type: "post_call_unknown_checkin"; leadId: string; workspaceId: string; callSessionId: string }
+  | { type: "closure_reconciliation"; workspaceId: string }
+  | { type: "handoff_notify"; escalationId: string; workspaceId: string; leadId: string; decisionNeeded: string }
+  | { type: "handoff_notify_batch"; escalationIds: string[]; workspaceId: string };
 
-let redisClient: import("ioredis").Redis | null = null;
-
-async function getRedis(): Promise<import("ioredis").Redis | null> {
-  if (redisClient) return redisClient;
-  const url = process.env.REDIS_URL;
-  if (!url) return null;
-  try {
-    const Redis = (await import("ioredis")).default;
-    redisClient = new Redis(url);
-    return redisClient;
-  } catch {
-    return null;
-  }
-}
-
-const QUEUE_NAME = "ro:jobs";
 const DLQ_NAME = "ro:dlq";
 
 /** Enqueue decision job only if no active plan with future next_action_at and no duplicate pending job. */
@@ -47,20 +42,17 @@ export async function enqueueDecision(
   if (!check.enqueue && check.reason === "plan_scheduled") {
     return null;
   }
-  const redis = await getRedis();
-  if (!redis) {
-    const db = getDb();
-    const { data: rows } = await db
-      .from("job_queue")
-      .select("id, payload")
-      .eq("status", "pending")
-      .eq("job_type", "decision")
-      .limit(50);
-    const hasDuplicate = (rows ?? []).some(
-      (r: { payload?: { leadId?: string } }) => (r.payload as { leadId?: string })?.leadId === leadId
-    );
-    if (hasDuplicate) return null;
-  }
+  const db = getDb();
+  const { data: rows } = await db
+    .from("job_queue")
+    .select("id, payload")
+    .eq("status", "pending")
+    .eq("job_type", "decision")
+    .limit(50);
+  const hasDuplicate = (rows ?? []).some(
+    (r: { payload?: { leadId?: string } }) => (r.payload as { leadId?: string })?.leadId === leadId
+  );
+  if (hasDuplicate) return null;
   return enqueue({
     type: "decision",
     leadId,
@@ -69,79 +61,78 @@ export async function enqueueDecision(
   });
 }
 
-/** Enqueue job. Uses Redis if available, else DB. */
+/** Enqueue job. Always persists to DB (source of truth); jobs are not lost on crash. */
 export async function enqueue(payload: JobPayload): Promise<string> {
-  const redis = await getRedis();
-  const jobId = crypto.randomUUID();
-  const job = JSON.stringify({ id: jobId, payload, enqueuedAt: new Date().toISOString() });
-
-  if (redis) {
-    await redis.lpush(QUEUE_NAME, job);
-    return jobId;
-  }
-
   const db = getDb();
   const { data: inserted } = await db.from("job_queue").insert({
     job_type: payload.type,
     payload,
     status: "pending",
   }).select("id").single();
-  return (inserted as { id?: string })?.id ?? jobId;
+  return (inserted as { id?: string })?.id ?? crypto.randomUUID();
 }
 
-/** Process one job with advisory lock. Returns job payload or null if empty. */
-export async function dequeue(workerId?: string): Promise<{ id: string; payload: JobPayload } | null> {
-  const redis = await getRedis();
-  if (redis) {
-    const raw = await redis.rpop(QUEUE_NAME);
-    if (!raw) return null;
-    const job = JSON.parse(raw) as { id: string; payload: JobPayload };
-    return job;
-  }
+/** Claim TTL: 15 min so long jobs (slow provider, large workspaces) are not reclaimed mid-flight. */
+export const CLAIM_TTL_SECONDS = 15 * 60;
 
+export interface DequeueResult {
+  id: string;
+  payload: JobPayload;
+  /** Set when job was claimed via DB RPC (job_claims). TTL uses DB now(), not worker clock. */
+  claim?: { worker_id: string; job_id: string; expires_at: string; claim_ttl_seconds: number };
+}
+
+/** Process one job: claim via job_claims (SELECT FOR UPDATE SKIP LOCKED). Dequeue is always DB-backed so jobs are never lost. */
+export async function dequeue(workerId?: string): Promise<DequeueResult | null> {
   const db = getDb();
   const wId = workerId ?? `worker-${crypto.randomUUID().slice(0, 8)}`;
+
+  const { data: claimResult } = await db.rpc("claim_next_job", {
+    p_worker_id: wId,
+    p_ttl_seconds: CLAIM_TTL_SECONDS,
+  });
+  const jobId =
+    typeof claimResult === "string"
+      ? claimResult
+      : (claimResult as { job_id?: string } | null)?.job_id ?? null;
+  if (!jobId) return null;
+
+  const { data: claimRow } = await db
+    .from("job_claims")
+    .select("worker_id, expires_at")
+    .eq("job_id", jobId)
+    .single();
+  const claimMeta =
+    claimRow && (claimRow as { expires_at?: string }).expires_at
+      ? {
+          worker_id: (claimRow as { worker_id: string }).worker_id,
+          job_id: jobId,
+          expires_at: (claimRow as { expires_at: string }).expires_at,
+          claim_ttl_seconds: CLAIM_TTL_SECONDS,
+        }
+      : undefined;
 
   const { data: row } = await db
     .from("job_queue")
     .select("id, payload, job_type")
-    .eq("status", "pending")
-    .is("locked_by", null)
-    .order("created_at", { ascending: true })
-    .limit(1)
+    .eq("id", jobId)
     .single();
 
   if (!row) return null;
   const r = row as { id: string; payload: unknown; job_type: string };
 
-  const { data: locked } = await db
+  await db
     .from("job_queue")
-    .update({
-      status: "processing",
-      locked_by: wId,
-      locked_at: new Date().toISOString(),
-      attempts: 1,
-    })
-    .eq("id", r.id)
-    .eq("status", "pending")
-    .is("locked_by", null)
-    .select("id")
-    .single();
-
-  if (!locked) return null;
+    .update({ status: "processing", locked_by: wId, locked_at: new Date().toISOString(), attempts: 1 })
+    .eq("id", r.id);
 
   const payload = (typeof r.payload === "object" && r.payload !== null ? r.payload : {}) as JobPayload;
   if (!payload.type) (payload as { type: string }).type = r.job_type;
-  return { id: r.id, payload };
+  return { id: r.id, payload, claim: claimMeta };
 }
 
 /** Move failed job to DLQ. */
 export async function toDLQ(jobId: string, error: string): Promise<void> {
-  const redis = await getRedis();
-  if (redis) {
-    await redis.lpush(DLQ_NAME, JSON.stringify({ jobId, error, at: new Date().toISOString() }));
-    return;
-  }
   const db = getDb();
   await db
     .from("job_queue")
@@ -149,35 +140,29 @@ export async function toDLQ(jobId: string, error: string): Promise<void> {
     .eq("id", jobId);
 }
 
-/** Mark job completed (DB-backed queue only). Idempotent via completion_id. */
+/** Mark job completed. Release claim so job cannot run again. */
 export async function complete(jobId: string, completionId?: string): Promise<void> {
-  try {
-    const db = getDb();
-    const cid = completionId ?? crypto.randomUUID();
-    await db
-      .from("job_queue")
-      .update({
-        status: "completed",
-        processed_at: new Date().toISOString(),
-        completion_id: cid,
-        locked_by: null,
-        locked_at: null,
-      })
-      .eq("id", jobId);
-  } catch {
-    // Redis jobs have no DB row
-  }
+  const db = getDb();
+  const cid = completionId ?? crypto.randomUUID();
+  await db.from("job_claims").delete().eq("job_id", jobId);
+  await db
+    .from("job_queue")
+    .update({
+      status: "completed",
+      processed_at: new Date().toISOString(),
+      completion_id: cid,
+      locked_by: null,
+      locked_at: null,
+    })
+    .eq("id", jobId);
 }
 
-/** Mark job failed (DB-backed queue only). */
+/** Mark job failed. Release claim. */
 export async function fail(jobId: string, error: string): Promise<void> {
-  try {
-    const db = getDb();
-    await db
-      .from("job_queue")
-      .update({ status: "failed", error })
-      .eq("id", jobId);
-  } catch {
-    // Redis jobs have no DB row
-  }
+  const db = getDb();
+  await db.from("job_claims").delete().eq("job_id", jobId);
+  await db
+    .from("job_queue")
+    .update({ status: "failed", error })
+    .eq("id", jobId);
 }

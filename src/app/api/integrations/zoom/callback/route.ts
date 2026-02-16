@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 
   const clientId = process.env.ZOOM_CLIENT_ID;
   const clientSecret = process.env.ZOOM_CLIENT_SECRET;
-  const baseUrl = process.env.BASE_URL || req.nextUrl.origin || "http://localhost:3000";
+  const baseUrl = process.env.BASE_URL || process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin || "";
   const redirectUri = `${baseUrl}/api/integrations/zoom/callback`;
 
   if (!clientId || !clientSecret) {

@@ -28,7 +28,7 @@ export async function GET(
     cfg?.status === "active"
       ? "Active"
       : cfg?.status === "pending"
-        ? "Needs attention"
+        ? "Decision owner required"
         : "Limited";
 
   return NextResponse.json({

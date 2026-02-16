@@ -49,19 +49,13 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
 
     // Fail-safe: If no recoveries, interpret as stability
     const recoveryText = recoveries > 0 
-      ? `• ${recoveries} quiet conversation${recoveries !== 1 ? "s" : ""} recovered`
-      : `• No recoveries were needed this week — conversations stayed active`;
+      ? `• ${recoveries} conversation${recoveries !== 1 ? "s" : ""} — customer returned`
+      : `• Conversations stayed on track`;
 
-    const subject = "Here's what didn't fall through the cracks this week";
-    const body = `This week we maintained continuity:
+    const subject = "Conditions are normal.";
+    const body = `Conditions are normal.
 
-• ${conversationsMaintained} conversation${conversationsMaintained !== 1 ? "s" : ""} maintained
-• ${attendanceSecured} attendance confirmation${attendanceSecured !== 1 ? "s" : ""} secured
-${recoveryText}
-
-Protection is running. You only take the calls.
-
-View overview: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
+Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
 
     try {
       if (process.env.RESEND_API_KEY) {

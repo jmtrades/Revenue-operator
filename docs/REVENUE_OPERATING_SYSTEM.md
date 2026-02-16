@@ -2,6 +2,8 @@
 
 The product is a **decision layer** between leads and sales teams — not automation software.
 
+**Product and GTM master:** See [RECALL_TOUCH_PRODUCT_MASTER.md](./RECALL_TOUCH_PRODUCT_MASTER.md) for category, 6 revenue layers, UX rules, demo mode, pricing, and implementation order. Code: `src/lib/lifecycle/` (layer model and receptionist performance metrics).
+
 ## Product Evolution
 
 ```

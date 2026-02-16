@@ -3,11 +3,10 @@
 import { useState, useEffect } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
+import { PAYMENT_FAILURE_PRIMARY } from "@/lib/billing-copy";
 
 /**
- * Billing failure banner: Shows soft message when payment fails.
- * "Protection may pause soon unless billing is updated"
- * System continues appearing active until pause.
+ * Payment failure banner: Primary message only; payment/retry in secondary line.
  */
 
 export function BillingFailureBanner() {
@@ -29,16 +28,19 @@ export function BillingFailureBanner() {
 
   return (
     <div className="px-4 py-3 border-b text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-      <div className="flex items-center justify-between">
-        <span style={{ color: "var(--text-secondary)" }}>
-          Protection may pause soon unless billing is updated
-        </span>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="font-medium" style={{ color: "var(--text-primary)" }}>{PAYMENT_FAILURE_PRIMARY}</p>
+          <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
+            Update your payment method in Preferences to resume coverage.
+          </p>
+        </div>
         <Link
           href="/dashboard/continue-protection"
           className="text-sm font-medium shrink-0"
           style={{ color: "var(--meaning-green)" }}
         >
-          Update billing
+          Preferences
         </Link>
       </div>
     </div>

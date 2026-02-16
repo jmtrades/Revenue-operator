@@ -23,7 +23,9 @@ export type ConversationState =
   | "HARD_OBJECTION"
   | "DRIFT"
   | "COMMITMENT"
-  | "POST_BOOKING";
+  | "POST_BOOKING"
+  | "NO_SHOW"
+  | "COLD";
 
 export interface ConversationStateResult {
   state: ConversationState;
@@ -60,7 +62,25 @@ export async function resolveConversationState(
 
   // Rule-based pre-classification for deterministic cases
   const messageLower = message.toLowerCase().trim();
-  
+
+  // COLD: Very long silence (e.g. 7+ days), re-engagement context
+  if (has_previous_engagement && last_reply_hours_ago !== undefined && last_reply_hours_ago >= 24 * 7) {
+    return {
+      state: "COLD",
+      confidence: 0.85,
+      reasoning_tags: ["long_silence", "reactivation"],
+    };
+  }
+
+  // NO_SHOW: Explicit no-show mention or post-appointment no-show signal
+  if (/(no.?show|didn't show|didnt show|missed (the )?appointment|wasn't there|werent there)/i.test(messageLower)) {
+    return {
+      state: "NO_SHOW",
+      confidence: 0.9,
+      reasoning_tags: ["no_show_signal"],
+    };
+  }
+
   // DRIFT: No reply after previous engagement OR very short disengaged responses
   if (has_previous_engagement && last_reply_hours_ago !== undefined && last_reply_hours_ago > 48) {
     if (messageLower.length < 10 || /^(ok|k|thanks|thx|sure|yep|nope)$/i.test(messageLower)) {
@@ -191,18 +211,20 @@ async function classifyWithLLM(context: ConversationContext): Promise<Conversati
 
   const systemPrompt = `You are a conversation state classifier. Classify the user's message into ONE of these states:
 
-NEW_INTEREST: first contact, generic inquiry, "how does it work"
-CLARIFICATION: asking specific details to understand
-CONSIDERING: comparison language, "thinking about it", evaluating
-SOFT_OBJECTION: delay phrases, "later", "busy", "not sure yet"
+NEW_INTEREST: first contact, generic inquiry
+CLARIFICATION: asking specific details
+CONSIDERING: comparison, "thinking about it"
+SOFT_OBJECTION: delay phrases, "later", "busy"
 HARD_OBJECTION: price resistance, distrust, rejection
-DRIFT: no reply after previous engagement or short disengaged responses
-COMMITMENT: asks how to proceed, booking intent
+DRIFT: no reply after engagement or short disengaged responses
+COMMITMENT: booking intent, how to proceed
 POST_BOOKING: call scheduled but attendance uncertain
+NO_SHOW: missed appointment, didn't show
+COLD: very long silence, reactivation
 
 Return JSON only:
 {
-  "state": "one_of_the_8_states",
+  "state": "one_of_the_10_states",
   "confidence": 0.0-1.0,
   "reasoning_tags": ["tag1", "tag2"]
 }
@@ -239,6 +261,8 @@ Classify the state.`;
       "DRIFT",
       "COMMITMENT",
       "POST_BOOKING",
+      "NO_SHOW",
+      "COLD",
     ];
 
     const state = validStates.includes(parsed.state as ConversationState)

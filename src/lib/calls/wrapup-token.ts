@@ -33,7 +33,7 @@ export async function createWrapupTokenForCall(
     expires_at: expiresAt.toISOString(),
   });
 
-  const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+  const baseUrl = process.env.BASE_URL || process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || "";
   return { token, url: `${baseUrl}/wrapup/${token}` };
 }
 

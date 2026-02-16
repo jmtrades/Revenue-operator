@@ -62,7 +62,7 @@ export function WorkspaceGate({ children, fallback }: WorkspaceGateProps) {
       <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <div className="max-w-md w-full text-center">
           <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
-            We couldn't restore your workspace yet
+            We couldn&apos;t restore your workspace yet
           </h2>
           <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
             This usually resolves quickly. If it persists, restart activation.

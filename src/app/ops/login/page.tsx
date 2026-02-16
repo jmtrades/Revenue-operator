@@ -29,7 +29,7 @@ export default function OpsLoginPage() {
         });
         return;
       }
-      setMessage({ type: "success", text: "Check your email for the magic link." });
+      setMessage({ type: "success", text: "Check the inbox for the magic link." });
     } catch {
       setMessage({ type: "error", text: "Request failed" });
     } finally {

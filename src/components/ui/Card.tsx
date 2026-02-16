@@ -8,12 +8,13 @@ interface CardProps {
 export function Card({ children, className = "" }: CardProps) {
   return (
     <div
-      className={`rounded-xl border p-5 ${className}`}
+      className={`rounded-2xl border p-6 ${className}`}
       style={{
         background: "var(--card)",
         borderColor: "var(--border)",
         borderWidth: "1px",
         boxShadow: "var(--shadow-sm)",
+        borderRadius: "var(--radius-container)",
       }}
     >
       {children}

@@ -61,15 +61,15 @@ export function TrialBanner() {
   const hasExpectation = ew && (ew.low > 0 || ew.high > 0);
 
   if (day >= 11) {
-    const willLoseContinuity = conversationsAtRisk.length + futureCalls.length || (hasProtections ? ap!.conversations_being_warmed + ap!.followups_scheduled_24h + ap!.attendance_protections + ap!.recoveries_running : 0);
+    const renewalDate = billingStatus?.renewal_at ? new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" }) : null;
     return (
       <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <div>
-          <span className="font-medium" style={{ color: "var(--text-primary)" }}>Protection will pause automatically unless continued</span>
+          <span className="font-medium" style={{ color: "var(--text-primary)" }}>
+            {renewalDate ? `Handling coverage ends on ${renewalDate}.` : "Handling coverage is ending soon."}
+          </span>
           <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
-            {willLoseContinuity > 0
-              ? `${willLoseContinuity} conversation${willLoseContinuity !== 1 ? "s" : ""} will lose continuity within the next hour.`
-              : "Prevent interruption to keep coverage active."}
+            If you do not continue: follow-through will no longer be protected. Response continuity, decision completion, and attendance stability will stop for in-progress work.
           </p>
         </div>
         <Link
@@ -77,24 +77,21 @@ export function TrialBanner() {
           className="px-4 py-2 rounded-lg font-medium shrink-0"
           style={{ background: "var(--meaning-green)", color: "#0E1116" }}
         >
-          Keep coverage active
+          Continue coverage
         </Link>
       </div>
     );
   }
 
   if (day >= 6) {
-    const renewalDate = billingStatus?.renewal_at ? new Date(billingStatus.renewal_at).toLocaleDateString() : null;
+    const renewalDate = billingStatus?.renewal_at ? new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" }) : null;
     return (
       <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <div>
-          <span className="font-medium" style={{ color: "var(--text-primary)" }}>Protection active</span>
+          <span className="font-medium" style={{ color: "var(--text-primary)" }}>Coverage active</span>
           <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
-            {renewalDate && `Renewal on ${renewalDate}. `}
-            {hasProtections
-              ? `${ap!.conversations_being_warmed + ap!.followups_scheduled_24h + ap!.attendance_protections + ap!.recoveries_running} protection${(ap!.conversations_being_warmed + ap!.followups_scheduled_24h + ap!.attendance_protections + ap!.recoveries_running) !== 1 ? "s" : ""} running. Pause anytime. `
-              : "Protection continues when active. Pause anytime. "}
-            We&apos;ll remind you before any charge.
+            {renewalDate ? `Handling coverage ends on ${renewalDate}. ` : ""}
+            Nothing requires supervision. We&apos;ll notify you when your input is needed.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -103,7 +100,7 @@ export function TrialBanner() {
             className="px-4 py-2 rounded-lg font-medium shrink-0"
             style={{ background: "var(--meaning-green)", color: "#0E1116" }}
           >
-            Keep coverage active
+            Continue coverage
           </Link>
           <button onClick={() => setDismissed(true)} style={{ color: "var(--text-muted)" }}>×</button>
         </div>
@@ -112,17 +109,14 @@ export function TrialBanner() {
   }
 
   if (day >= 3) {
-    const renewalDate = billingStatus?.renewal_at ? new Date(billingStatus.renewal_at).toLocaleDateString() : null;
+    const renewalDate = billingStatus?.renewal_at ? new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" }) : null;
     return (
       <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <div>
-          <span className="font-medium" style={{ color: "var(--text-primary)" }}>Protection running</span>
+          <span className="font-medium" style={{ color: "var(--text-primary)" }}>Coverage running</span>
           <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
-            {renewalDate ? `Renewal on ${renewalDate}. ` : ""}
-            {hasExpectation
-              ? `We expect ${ew!.low}–${ew!.high} conversations per week. `
-              : "Activity appears in Activity as we work. "}
-            We&apos;ll remind you before any charge.
+            {renewalDate ? `Handling coverage ends on ${renewalDate}. ` : ""}
+            We&apos;ll notify you when your input is needed.
           </p>
         </div>
         <button onClick={() => setDismissed(true)} className="shrink-0" style={{ color: "var(--text-muted)" }}>×</button>
@@ -134,7 +128,7 @@ export function TrialBanner() {
     return (
       <div className="px-4 py-2 flex items-center justify-between text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <span style={{ color: "var(--text-primary)" }}>
-          Activity appears in Overview as we work. We&apos;ll remind you before any charge.
+          Nothing requires supervision. We&apos;ll notify you when your input is needed. We&apos;ll remind you before any charge.
         </span>
         <button onClick={() => setDismissed(true)} style={{ color: "var(--text-muted)" }}>×</button>
       </div>

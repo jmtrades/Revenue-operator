@@ -6,7 +6,7 @@ interface LoadingStateProps {
   className?: string;
 }
 
-export function LoadingState({ message = "Restoring your conversations…", submessage, className = "" }: LoadingStateProps) {
+export function LoadingState({ message = "In progress.", submessage, className = "" }: LoadingStateProps) {
   return (
     <div
       className={`flex flex-col items-center justify-center rounded-xl border py-12 px-6 text-center ${className}`}
@@ -17,8 +17,8 @@ export function LoadingState({ message = "Restoring your conversations…", subm
       }}
     >
       <span
-        className="mb-3 inline-block h-3 w-3 rounded-full animate-pulse"
-        style={{ background: "var(--meaning-amber)" }}
+        className="mb-3 inline-block h-3 w-3 rounded-full"
+        style={{ background: "var(--text-muted)" }}
         aria-hidden
       />
       <p className="font-medium" style={{ color: "var(--text-primary)" }}>
@@ -33,13 +33,13 @@ export function LoadingState({ message = "Restoring your conversations…", subm
   );
 }
 
-export function LoadingScreen({ message = "Restoring your conversations…" }: { message?: string }) {
+export function LoadingScreen({ message = "In progress." }: { message?: string }) {
   return (
     <div className="flex min-h-screen items-center justify-center" style={{ background: "var(--background)" }}>
       <div className="text-center">
         <span
-          className="mb-3 inline-block h-3 w-3 rounded-full animate-pulse"
-          style={{ background: "var(--meaning-green)" }}
+          className="mb-3 inline-block h-3 w-3 rounded-full"
+          style={{ background: "var(--text-muted)" }}
           aria-hidden
         />
         <p className="text-lg font-medium" style={{ color: "var(--text-primary)" }}>

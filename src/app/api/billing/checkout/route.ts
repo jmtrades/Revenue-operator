@@ -1,16 +1,14 @@
 /**
  * Stripe checkout: create session for activation
  * 14-day trial, payment method upfront, USD only
+ * Economic framing: use BILLING_EMAIL_SUBJECT and INVOICE_DESCRIPTION in Stripe Product/email settings.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID;
-const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 
 export async function POST(req: NextRequest) {
   let body: { workspace_id?: string; email?: string; success_url?: string; cancel_url?: string };
@@ -20,11 +18,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  // Validate required env vars
+  // Validate required env vars (read at request time for tests and flexibility)
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  const stripePriceId = process.env.STRIPE_PRICE_ID;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   const missing: string[] = [];
-  if (!STRIPE_SECRET_KEY) missing.push("STRIPE_SECRET_KEY");
-  if (!STRIPE_PRICE_ID || STRIPE_PRICE_ID === "price_placeholder") missing.push("STRIPE_PRICE_ID");
-  if (!NEXT_PUBLIC_APP_URL) missing.push("NEXT_PUBLIC_APP_URL");
+  if (!stripeSecretKey) missing.push("STRIPE_SECRET_KEY");
+  if (!stripePriceId || stripePriceId === "price_placeholder") missing.push("STRIPE_PRICE_ID");
+  if (!appUrl) missing.push("NEXT_PUBLIC_APP_URL");
 
   if (missing.length > 0) {
     console.error("[checkout] Missing env vars:", missing);
@@ -106,7 +107,7 @@ export async function POST(req: NextRequest) {
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 
   const Stripe = (await import("stripe")).default;
-  const stripe = new Stripe(STRIPE_SECRET_KEY!); // Already validated above
+  const stripe = new Stripe(stripeSecretKey!); // Already validated above
 
   // Get email if not provided
   if (!finalEmail) {
@@ -117,21 +118,26 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const baseUrl = NEXT_PUBLIC_APP_URL;
+  const baseUrl = appUrl;
   const successUrl = body.success_url ?? `${baseUrl}/connect?workspace_id=${encodeURIComponent(finalWorkspaceId)}&session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = body.cancel_url ?? `${baseUrl}/activate?canceled=1`;
 
   let customerId = (ws as { stripe_customer_id?: string | null }).stripe_customer_id;
   if (!customerId) {
-    const customer = await stripe.customers.create({ 
+    const customer = await stripe.customers.create({
       email: finalEmail,
-      metadata: { workspace_id: finalWorkspaceId } 
+      metadata: { workspace_id: finalWorkspaceId },
+      invoice_settings: { footer: RECEIPT_FOOTER },
     });
     customerId = customer.id;
-    await db.from("workspaces").update({ 
-      stripe_customer_id: customerId, 
-      updated_at: new Date().toISOString() 
+    await db.from("workspaces").update({
+      stripe_customer_id: customerId,
+      updated_at: new Date().toISOString(),
     }).eq("id", finalWorkspaceId);
+  } else {
+    await stripe.customers.update(customerId, {
+      invoice_settings: { footer: RECEIPT_FOOTER },
+    }).catch(() => {});
   }
 
   try {
@@ -141,7 +147,7 @@ export async function POST(req: NextRequest) {
       metadata: { workspace_id: finalWorkspaceId },
       payment_method_collection: "always",
       payment_method_types: ["card"],
-      line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+      line_items: [{ price: stripePriceId, quantity: 1 }],
       subscription_data: {
         trial_period_days: 14,
         metadata: { workspace_id: finalWorkspaceId },

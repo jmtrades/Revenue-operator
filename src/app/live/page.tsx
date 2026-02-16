@@ -20,9 +20,10 @@ function LivePageContent() {
   const searchParams = useSearchParams();
   const { workspaceId: contextWid, workspaces, loading } = useWorkspace();
   const urlWid = searchParams.get("workspace_id") ?? "";
+  const urlConvId = searchParams.get("conversation_id") ?? null;
   const workspaceId = urlWid || contextWid || "";
   const [timeline, setTimeline] = useState<TimelineStep[]>([]);
-  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(urlConvId);
   const [messages, setMessages] = useState<Array<{ role: string; content: string; created_at: string }>>([]);
   const [isReady, setIsReady] = useState(false);
   const [autoSimulated, setAutoSimulated] = useState(false);
@@ -77,12 +78,16 @@ function LivePageContent() {
     return () => clearTimeout(timer);
   }, [workspaceId, autoSimulated, isProduction]);
 
-  // Poll for conversation events
+  // Sync conversation_id from URL
+  useEffect(() => {
+    if (urlConvId && urlConvId !== conversationId) setConversationId(urlConvId);
+  }, [urlConvId]);
+
+  // Poll for conversation events (1s for 20s then 2s)
   useEffect(() => {
     if (!workspaceId) return;
 
     const fetchConversationEvents = async () => {
-      // Get latest conversation
       const result = await fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`);
       const data = await result.json();
 
@@ -94,7 +99,6 @@ function LivePageContent() {
           setConversationId(convId);
         }
         
-        // Always fetch latest messages for the conversation
         if (convId) {
           try {
             const msgRes = await fetch(`/api/conversations/${convId}/messages`);
@@ -132,14 +136,14 @@ function LivePageContent() {
                 steps.push({
                   id: "step-3",
                   step: "preparing_reply",
-                  label: "Preparing reply",
+                  label: "Keeping decision on track",
                   completed: true,
                   timestamp: firstAssistantMsg.created_at,
                 });
                 steps.push({
                   id: "step-4",
                   step: "reply_sent",
-                  label: "Reply sent",
+                  label: "Follow-through protected",
                   completed: true,
                   timestamp: firstAssistantMsg.created_at,
                   message: firstAssistantMsg.content,
@@ -155,7 +159,7 @@ function LivePageContent() {
                 steps.push({
                   id: "step-3",
                   step: "preparing_reply",
-                  label: "Preparing reply",
+                  label: "Keeping decision on track",
                   completed: false,
                 });
               }
@@ -206,7 +210,7 @@ function LivePageContent() {
           }}
         >
           <h1 className="text-xl font-semibold mb-6 text-center" style={{ color: "var(--text-primary)" }}>
-            Your conversation is being handled
+            Follow-through is being protected
           </h1>
 
           {/* Timeline */}
@@ -242,7 +246,7 @@ function LivePageContent() {
               </div>
             ) : (
               <div className="text-center py-8" style={{ color: "var(--text-muted)" }}>
-                <p className="text-sm">Waiting for message…</p>
+                <p className="text-sm">Waiting for next step…</p>
               </div>
             )}
           </div>
@@ -288,7 +292,7 @@ function LivePageContent() {
                 className="mt-4 w-full py-3.5 rounded-lg font-medium transition-opacity hover:opacity-90"
                 style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
               >
-                Go to dashboard
+                Continue
               </button>
             </>
           )}

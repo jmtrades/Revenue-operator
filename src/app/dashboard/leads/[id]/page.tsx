@@ -4,7 +4,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ProofDrawer } from "@/components/ProofDrawer";
-import { LoadingState } from "@/components/ui";
+import { LoadingState, Card } from "@/components/ui";
+import { Shell } from "@/components/Shell";
+import { PrimaryAction } from "@/components/PrimaryAction";
+import { SecondaryAction } from "@/components/SecondaryAction";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface Lead {
@@ -15,6 +18,7 @@ interface Lead {
   company: string | null;
   state: string;
   created_at?: string;
+  responsibility_state?: string;
 }
 
 interface Message {
@@ -47,13 +51,9 @@ export default function LeadViewPage() {
   const [callContinuity, setCallContinuity] = useState<{ status: "Prepared" | "Waiting" | "Recovering" } | null>(null);
   const [loading, setLoading] = useState(true);
   const [proofOpen, setProofOpen] = useState(false);
-  const [controlOpen, setControlOpen] = useState(false);
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 60000);
-    return () => clearInterval(id);
-  }, []);
+  const [openEscalationId, setOpenEscalationId] = useState<string | null>(null);
+  const [beyondScope, setBeyondScope] = useState<boolean>(false);
+  const [recordedBanner, setRecordedBanner] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -115,161 +115,155 @@ export default function LeadViewPage() {
     });
   }, [id, lead, deals]);
 
+  useEffect(() => {
+    if (!id) return;
+    fetchWithFallback<{ escalation_id?: string; beyond_scope?: boolean }>(`/api/leads/${id}/open-handoff`, { cacheKey: `open-handoff-${id}` }).then(
+      (result) => {
+        if (result.data) {
+          const d = result.data as { escalation_id?: string; beyond_scope?: boolean };
+          if (typeof d.escalation_id === "string") setOpenEscalationId(d.escalation_id);
+          setBeyondScope(d.beyond_scope === true);
+        }
+      }
+    );
+  }, [id]);
+
   if (loading) return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <LoadingState message="Watching over" submessage="Preparing your brief. Continuity monitoring in progress." />
-    </div>
+    <Shell size="md">
+      <LoadingState message="Loading." submessage="" />
+    </Shell>
   );
   if (!lead) return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <div className="p-4 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-secondary)" }}>
-        <span className="inline-block w-2 h-2 rounded-full animate-pulse mr-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-        Still monitoring — retrying in the background
-      </div>
-    </div>
+    <Shell size="md">
+      <Card>
+        <span style={{ color: "var(--text-secondary)" }}>Data remains from last view.</span>
+      </Card>
+    </Shell>
   );
 
   const displayName = lead.name || lead.email || lead.company || "Unknown";
-  const risks = [...(preCallBrief?.risks ?? []), ...(preCallBrief?.hesitations ?? []).map((h) => `Hesitation: ${h}`)];
-  const firstTimestamp = messages[0]?.created_at ?? lead.created_at;
-  const daysBuilt = firstTimestamp
-    ? Math.max(1, Math.floor((now - new Date(firstTimestamp).getTime()) / (24 * 60 * 60 * 1000)))
-    : 1;
+  const isCompleted = lead.responsibility_state === "COMPLETED";
+
+  if (isCompleted) {
+    return (
+      <div className="min-h-screen" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <Shell size="md">
+          <p className="text-sm mb-8" style={{ color: "var(--text-muted)", letterSpacing: "0.01em" }}>
+            <Link href="/dashboard/conversations" className="focus-ring rounded px-0.5" style={{ color: "var(--text-muted)" }}>Follow-through</Link>
+            <span className="mx-1">/</span>
+            <span style={{ color: "var(--text-secondary)" }}>{displayName}</span>
+          </p>
+          <section className="mb-10">
+            <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--text-primary)", lineHeight: 1.4 }}>{displayName}</h1>
+            {lead.company && <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{lead.company}</p>}
+            <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>Record integrity is demonstrable.</p>
+          </section>
+          <p className="text-sm mb-8" style={{ color: "var(--text-muted)" }}>Handled.</p>
+          <section className="mb-10" style={{ borderTop: "1px solid var(--border)", paddingTop: "var(--space-8)" }}>
+            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Record</h2>
+            {messages.length === 0 ? (
+              <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>No record.</p>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((m, i) => (
+                  <div key={i} className="py-4" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+                    <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>{m.content}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </Shell>
+      </div>
+    );
+  }
+
+  const situationSummary: Record<string, string> = {
+    NEW: "Conversation started.",
+    CONTACTED: "Waiting on availability.",
+    ENGAGED: "Conversation in progress.",
+    QUALIFIED: "Still considering scheduling.",
+    BOOKED: "Appointment remains prepared.",
+    SHOWED: "Appointment completed.",
+    LOST: "Conversation paused.",
+    REACTIVATE: "Conversation paused.",
+  };
+  const situationLine = situationSummary[lead.state] ?? "Conversation in progress.";
+
+  const recordDecision = () => {
+    if (!openEscalationId) return;
+    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+      .then((r) => {
+        if (r.ok) {
+          setOpenEscalationId(null);
+          setRecordedBanner(true);
+        }
+      })
+      .catch(() => {});
+  };
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-      <div className="max-w-2xl mx-auto">
-        <Link href="/dashboard/conversations" className="text-sm mb-4 inline-block" style={{ color: "var(--text-muted)" }}>
-          ← Conversations
-        </Link>
+    <div className="min-h-screen" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+      <Shell size="md">
+        {recordedBanner && (
+          <p className="mb-6 text-sm py-2 border-b" style={{ color: "var(--text-muted)", borderColor: "var(--border-subtle)" }}>Entry stored.</p>
+        )}
+        <p className="text-sm mb-8" style={{ color: "var(--text-muted)", letterSpacing: "0.01em" }}>
+          <Link href="/dashboard/conversations" className="focus-ring rounded px-0.5" style={{ color: "var(--text-muted)" }}>Follow-through</Link>
+          <span className="mx-1">/</span>
+          <span style={{ color: "var(--text-secondary)" }}>{displayName}</span>
+        </p>
 
-        <div className="p-4 rounded-xl mb-6" style={{ background: workspacePaused ? "rgba(243, 156, 18, 0.1)" : "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>
-            You only take the call. We maintain this conversation.
-          </p>
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-            Messages stay natural and low-pressure.
-          </p>
-        </div>
+        {/* Identity — no label */}
+        <section className="mb-10">
+          <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--text-primary)", lineHeight: 1.4 }}>{displayName}</h1>
+          {lead.company && <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{lead.company}</p>}
+          <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{situationLine}</p>
+          <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>Record integrity is demonstrable.</p>
+        </section>
 
-        <div className="mb-8">
-          <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Here&apos;s what matters before the call</h1>
-          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>{displayName}</p>
-          {lead.company && <p className="text-sm" style={{ color: "var(--text-muted)" }}>{lead.company}</p>}
-        </div>
-
-        <div className="space-y-6">
-          {callContinuity && (
-            <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Call continuity</h2>
-              <p className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                <span
-                  className="px-2 py-0.5 rounded text-xs font-medium"
-                  style={{
-                    background: callContinuity.status === "Prepared" ? "rgba(46, 204, 113, 0.2)" : callContinuity.status === "Recovering" ? "rgba(243, 156, 18, 0.2)" : "rgba(77, 163, 255, 0.2)",
-                    color: callContinuity.status === "Prepared" ? "var(--meaning-green)" : callContinuity.status === "Recovering" ? "var(--meaning-amber)" : "var(--meaning-blue)",
-                  }}
-                >
-                  {callContinuity.status}
-                </span>
-                {callContinuity.status === "Prepared" && (
-                  <p className="text-xs mt-2" style={{ color: "var(--meaning-green)", opacity: 0.8 }}>
-                    This conversation has been kept warm
-                  </p>
-                )}
-              </p>
-            </section>
-          )}
-
-          {preCallBrief?.context && (
-            <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Context</h2>
-              <p className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                {preCallBrief.context}
-              </p>
-            </section>
-          )}
-          {preCallBrief?.motivation && (
-            <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Motivation</h2>
-              <p className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                {preCallBrief.motivation}
-              </p>
-            </section>
-          )}
-          {risks.length > 0 && (
-            <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Concern signals</h2>
-              <ul className="py-3 px-4 rounded-lg space-y-2" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                {risks.map((r, i) => (
-                  <li key={i} className="list-disc list-inside" style={{ color: "var(--text-primary)" }}>{r}</li>
-                ))}
-              </ul>
-            </section>
-          )}
-          {preCallBrief?.recommended_strategy && (
-            <section>
-              <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Suggested approach</h2>
-              <p className="py-3 px-4 rounded-lg" style={{ background: "var(--card)", borderColor: "var(--meaning-blue)", borderWidth: "1px", color: "var(--text-primary)" }}>
-                {preCallBrief.recommended_strategy}
-              </p>
-            </section>
-          )}
-        </div>
-
-        {!preCallBrief?.context && !preCallBrief?.motivation && !preCallBrief?.recommended_strategy && risks.length === 0 && (
-          <div className="mt-8 py-6 px-6 rounded-xl text-center" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-muted)" }}>
-            Brief is being prepared. You can take the call — we&apos;re watching over this conversation.
+        {workspacePaused && (
+          <div className="mb-6 py-3 px-4 rounded-xl" style={{ background: "rgba(243, 156, 18, 0.08)", border: "1px solid var(--border)", borderRadius: "var(--radius-container)" }}>
+            <p className="text-sm" style={{ color: "var(--text-primary)" }}>Normal conditions are not present. Resume in preferences.</p>
           </div>
         )}
 
-        <div className="mt-10 pt-6" style={{ borderTop: "1px solid var(--border)" }}>
-          <button
-            onClick={() => setControlOpen(!controlOpen)}
-            className="text-sm font-medium"
-            style={{ color: "var(--meaning-amber)" }}
-          >
-            {controlOpen ? "Hide control" : "Open conversation"}
-          </button>
-          {controlOpen && (
-            <div className="mt-4 space-y-4">
-              <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={async () => {
-                    await fetch(`/api/leads/${id}/run-plan`, { method: "POST" });
-                  }}
-                  className="px-4 py-2 rounded-lg font-medium"
-                  style={{ background: "var(--meaning-green)", color: "#0E1116" }}
-                >
-                  Add follow-up touch
-                </button>
-                <button
-                  onClick={() => setProofOpen(true)}
-                  className="px-4 py-2 rounded-lg"
-                  style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
-                >
-                  What we did
-                </button>
-              </div>
-              <section>
-                <h3 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Message thread</h3>
-                {messages.length === 0 ? (
-                  <p className="text-sm" style={{ color: "var(--text-muted)" }}>Watching for new messages</p>
-                ) : (
-                  <div className="space-y-3">
-                    {messages.map((m, i) => (
-                      <div key={i} className="p-3 rounded-lg" style={{ background: m.role === "user" ? "var(--surface)" : "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                        <span className="text-xs" style={{ color: "var(--text-muted)" }}>{m.role}</span>
-                        <p className="mt-1">{m.content}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
+        {/* Record */}
+        <section className="mb-10" style={{ borderTop: "1px solid var(--border)", paddingTop: "var(--space-8)" }}>
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Record</h2>
+          {messages.length === 0 ? (
+            <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>No record.</p>
+          ) : (
+            <div className="space-y-4">
+              {messages.map((m, i) => (
+                <div key={i} className="py-4" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+                  <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>{m.content}</p>
+                </div>
+              ))}
             </div>
           )}
-        </div>
-      </div>
+        </section>
+
+        {/* Outcome */}
+        <section style={{ borderTop: "1px solid var(--border)", paddingTop: "var(--space-8)" }}>
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Outcome</h2>
+          {openEscalationId && (
+            <>
+              <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>Outside authority.</p>
+              {beyondScope && <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>Beyond scope.</p>}
+              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>An entry exists for record.</p>
+              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>Unrecorded outcomes create exposure.</p>
+              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>Entry restores reliance.</p>
+            </>
+          )}
+          <div className="flex flex-wrap gap-3">
+            {openEscalationId && (
+              <PrimaryAction onClick={recordDecision}>Enter outcome</PrimaryAction>
+            )}
+            <SecondaryAction onClick={() => setProofOpen(true)}>How it progressed</SecondaryAction>
+          </div>
+        </section>
+      </Shell>
       <ProofDrawer leadId={id} isOpen={proofOpen} onClose={() => setProofOpen(false)} />
     </div>
   );

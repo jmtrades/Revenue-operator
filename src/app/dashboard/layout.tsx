@@ -1,28 +1,30 @@
 "use client";
 
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
 import { LoadingScreen } from "@/components/ui";
-import { TrialBanner } from "@/components/TrialBanner";
-import { RenewalReminderBanner } from "@/components/RenewalReminderBanner";
-import { CoverageLimitedBanner } from "@/components/CoverageLimitedBanner";
-import { ConfidenceContractBanner } from "@/components/ConfidenceContractBanner";
-import { ProtectionPausedBanner } from "@/components/ProtectionPausedBanner";
-import { BillingFailureBanner } from "@/components/BillingFailureBanner";
-import { ReassuranceAnchor } from "@/components/ReassuranceAnchor";
-import { DailySummaryBanner } from "@/components/DailySummaryBanner";
-import { OfflineBanner } from "@/components/OfflineBanner";
-import { HeartbeatBar } from "@/components/HeartbeatBar";
-import { SavedTodayBar } from "@/components/SavedTodayBar";
 
-const nav = [
-  { href: "/dashboard", label: "Overview" },
-  { href: "/dashboard/conversations", label: "Conversations" },
-  { href: "/dashboard/calls", label: "Calendar" },
-  { href: "/dashboard/reports", label: "Outcomes" },
-  { href: "/dashboard/settings", label: "Preferences" },
+/** Operational environment: four surfaces only; record/lead, preferences, connection are deep-link only. */
+const ALLOWED_DASHBOARD_PATHS = [
+  "/dashboard",
+  "/dashboard/record",
+  "/dashboard/activity",
+  "/dashboard/presence",
+  "/dashboard/preferences",
+  "/dashboard/connection",
+];
+function isAllowedPath(pathname: string): boolean {
+  if (ALLOWED_DASHBOARD_PATHS.includes(pathname)) return true;
+  if (pathname.startsWith("/dashboard/record/lead/")) return true;
+  return false;
+}
+const NAV = [
+  { href: "/dashboard", label: "Situation" },
+  { href: "/dashboard/record", label: "Record" },
+  { href: "/dashboard/activity", label: "Activity" },
+  { href: "/dashboard/presence", label: "Presence" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -50,7 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 }
 
 function DashboardShellFallback() {
-  return <LoadingScreen message="Restoring your conversations…" />;
+  return <LoadingScreen message="Loading…" />;
 }
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -67,47 +69,101 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     }
   }, [urlWid, workspaces, workspaceId, setWorkspaceId]);
 
+  // Record dashboard open for absence-confidence (do not send reassurance if opened in last 72h)
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/dashboard/ping?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).catch(() => {});
+  }, [workspaceId]);
+
   useEffect(() => {
     if (redirecting.current || loading || workspaces.length > 0) return;
     if (!pathname.startsWith("/dashboard")) return;
-    if (pathname === "/dashboard/onboarding") return;
     redirecting.current = true;
     router.replace("/activate");
   }, [loading, workspaces.length, pathname, router]);
 
+  const allowed = isAllowedPath(pathname);
+  const isLiveOrValue = pathname === "/dashboard/live" || pathname === "/dashboard/value";
+  useEffect(() => {
+    if (!pathname.startsWith("/dashboard") || allowed || isLiveOrValue) return;
+    const q = new URLSearchParams(window.location.search);
+    router.replace(`/dashboard${q.toString() ? `?${q.toString()}` : ""}`);
+  }, [pathname, allowed, isLiveOrValue, router]);
+
   if (loading) {
-    return <LoadingScreen message="Restoring your conversations…" />;
+    return <LoadingScreen message="Loading…" />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row" style={{ background: "var(--background)" }}>
-      <aside className="w-full md:w-52 border-b md:border-b-0 md:border-r flex flex-col shrink-0" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
-        <div className="p-4 border-b" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Revenue Continuity</p>
-          <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>We maintain. You take the calls.</p>
+    <div
+      className="min-h-screen flex flex-col md:flex-row"
+      style={{ background: "var(--background)" }}
+      data-operational-environment="true"
+    >
+      <aside
+        className="w-full md:w-48 border-b md:border-b-0 md:border-r flex flex-col shrink-0"
+        style={{ borderColor: "var(--border)", background: "var(--background)" }}
+      >
+        <div className="p-5 border-b" style={{ borderColor: "var(--border)" }}>
+          <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+            Situation · Record · Activity · Presence
+          </p>
         </div>
         <WorkspaceSelect />
-        <nav className="flex-1 p-3 space-y-0.5">
-          {nav.map((n) => (
+        <nav className="flex-1 p-4 space-y-0.5">
+          {NAV.map((n) => (
             <NavLink key={n.href} href={n.href} label={n.label} />
           ))}
         </nav>
       </aside>
       <main className="flex-1 overflow-auto flex flex-col min-w-0">
-        <HeartbeatBar />
-        <SavedTodayBar />
-        <OfflineBanner />
-        <ReassuranceAnchor />
-        <DailySummaryBanner />
-        <BillingFailureBanner />
-        <ProtectionPausedBanner />
-        <CoverageLimitedBanner />
-        <TrialBanner />
-        <RenewalReminderBanner />
-        {/* ConfidenceContractBanner removed - exposes AI logic, breaks trust */}
+        <TopBar />
         <div className="flex-1 overflow-auto">{children}</div>
       </main>
     </div>
+  );
+}
+
+function TopBar() {
+  const { workspaceId } = useWorkspace();
+  const [ambient, setAmbient] = useState<{ line: string; institutional_state: string } | null>(null);
+
+  useEffect(() => {
+    if (!workspaceId) {
+      setAmbient(null);
+      return;
+    }
+    fetch(`/api/operational/ambient-state?workspace_id=${encodeURIComponent(workspaceId)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => (d?.line != null ? setAmbient({ line: d.line, institutional_state: d.institutional_state ?? "none" }) : setAmbient(null)))
+      .catch(() => setAmbient(null));
+  }, [workspaceId]);
+
+  return (
+    <header
+      className="shrink-0 flex items-center justify-between gap-4 px-6 py-4 border-b"
+      style={{ borderColor: "var(--border)", background: "var(--background)" }}
+    >
+      <div className="flex-1 min-w-0" />
+      <p
+        className="flex-shrink-0 text-sm truncate max-w-md text-center"
+        style={{ color: "var(--text-secondary)" }}
+      >
+        {ambient?.line ?? "—"}
+      </p>
+      <div className="flex-1 flex justify-end min-w-0">
+        <span
+          className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
+          style={{
+            background:
+              ambient?.institutional_state && ambient.institutional_state !== "none"
+                ? "var(--meaning-blue)"
+                : "var(--text-muted)",
+          }}
+          aria-hidden
+        />
+      </div>
+    </header>
   );
 }
 
@@ -141,15 +197,7 @@ function WorkspaceSelect() {
       <div className="p-3">
         <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>Context</p>
         <div className="p-3 rounded-lg text-sm" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <p className="mb-2" style={{ color: "var(--text-secondary)" }}>Reconnecting…</p>
-          <button
-            type="button"
-            onClick={retry}
-            className="text-xs font-medium"
-            style={{ color: "var(--meaning-blue)" }}
-          >
-            Retry
-          </button>
+          <p style={{ color: "var(--text-secondary)" }}>Normal conditions are not present.</p>
         </div>
       </div>
     );
@@ -176,7 +224,7 @@ function WorkspaceSelect() {
       <select
         value={effectiveId}
         onChange={(e) => handleChange(e.target.value)}
-        className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-1"
+        className="w-full px-3 py-2 rounded-lg text-sm focus-ring"
         style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text-primary)", borderWidth: "1px" }}
       >
         {workspaces.map((w) => (
@@ -196,10 +244,10 @@ function NavLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={to}
-      className="block px-3 py-2.5 rounded-lg text-sm transition-colors hover:opacity-90"
+      className="block py-2.5 text-sm focus-ring"
       style={{
-        background: active ? "rgba(77, 163, 255, 0.12)" : "transparent",
-        color: active ? "var(--meaning-blue)" : "var(--text-secondary)",
+        color: active ? "var(--text-primary)" : "var(--text-muted)",
+        fontWeight: active ? 500 : 400,
       }}
     >
       {label}

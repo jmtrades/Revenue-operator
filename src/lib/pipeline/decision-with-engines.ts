@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import { computeDealStateVector } from "@/lib/engines/perception";
 import { decideIntervention } from "@/lib/engines/decision";
 import { buildMessageFromIntervention, DEFER_MESSAGE } from "@/lib/engines/execution";
+import { checkConfidenceCeiling, CLARIFICATION_MESSAGE } from "@/lib/confidence-ceiling";
 import { computeRevenueState, buildLossPreventionPayload } from "@/lib/revenue-state";
 import { redact } from "@/lib/redact";
 import { checkPolicy, mergeSettings } from "@/lib/autopilot";
@@ -20,9 +21,9 @@ import { logRestraint } from "@/lib/trust/log-restraint";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 
 const SAFE_FALLBACK_MESSAGES: Record<string, string> = {
-  clarifying_question: "Thanks for reaching out. Could you tell me a bit more about what you're looking for?",
-  book_cta: "I'd be happy to help. Would you like to schedule a quick call to discuss?",
-  greeting: "Hi! Thanks for your message. How can I help you today?",
+  clarifying_question: "What were you looking to get done?",
+  book_cta: "When works for a quick call?",
+  greeting: "Hey — what were you looking to get done?",
 };
 
 /**
@@ -99,6 +100,14 @@ export async function runDecisionJobWithEngines(
     return;
   }
 
+  const { data: actionLock } = await db.from("lead_action_locks").select("locked_until").eq("lead_id", leadId).single();
+  const lockedUntil = (actionLock as { locked_until?: string } | null)?.locked_until;
+  if (lockedUntil && new Date(lockedUntil) > new Date()) {
+    const recheckAt = new Date(lockedUntil);
+    await setLeadPlan(workspaceId, leadId, { next_action_type: "observe", next_action_at: recheckAt.toISOString() });
+    return;
+  }
+
   const { data: convRow } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).single();
   const convId = (convRow as { id?: string })?.id;
   if (!convId) {
@@ -108,6 +117,14 @@ export async function runDecisionJobWithEngines(
     await setLeadPlan(workspaceId, leadId, { next_action_type: "recheck", next_action_at: recheckAt.toISOString() });
     return;
   }
+
+  const { data: recentMessages } = await db
+    .from("messages")
+    .select("content, role")
+    .eq("conversation_id", convId)
+    .order("created_at", { ascending: false })
+    .limit(5);
+  const lastUserMsg = (recentMessages ?? []).find((m: { role: string }) => m.role === "user")?.content ?? "";
 
   const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspaceId).single();
   const settings = mergeSettings(settingsRow as Parameters<typeof mergeSettings>[0]);
@@ -172,7 +189,55 @@ export async function runDecisionJobWithEngines(
 
   const minAct = Number((settingsRow as { min_confidence_to_act?: number })?.min_confidence_to_act ?? 0.55);
   const minSchedule = Number((settingsRow as { min_confidence_to_schedule?: number })?.min_confidence_to_schedule ?? 0.45);
-  if (decision.confidence < minAct) {
+
+  const ceilingResult = await checkConfidenceCeiling({
+    leadId,
+    conversationId: convId,
+    lastUserMessage: lastUserMsg,
+    leadState: (lead as { state: string }).state,
+    decisionConfidence: decision.confidence,
+    minConfidenceToAct: minAct,
+  });
+
+  if (ceilingResult.escalate && ceilingResult.reason) {
+    const lockUntil = new Date();
+    lockUntil.setMinutes(lockUntil.getMinutes() + 10);
+    await db.from("lead_action_locks").upsert(
+      { lead_id: leadId, locked_until: lockUntil.toISOString(), reason: "confidence_ceiling" },
+      { onConflict: "lead_id" }
+    );
+    const assignedUserId = await getAssignedUserId(workspaceId, leadId);
+    const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).single();
+    const timeoutHours = (escRules as { escalation_rules?: { escalation_timeout_hours?: number }; escalation_timeout_hours?: number })?.escalation_rules?.escalation_timeout_hours
+      ?? (escRules as { escalation_timeout_hours?: number })?.escalation_timeout_hours
+      ?? 24;
+    const holdUntil = new Date();
+    holdUntil.setHours(holdUntil.getHours() + timeoutHours);
+    const holdingMessage = getEscalationHoldingMessage();
+    const escalationId = await logEscalation(workspaceId, leadId, ceilingResult.reason as import("@/lib/escalation").EscalationTrigger, decision.intervention_type, holdingMessage, assignedUserId ?? undefined, holdUntil);
+    await db.from("messages").insert({
+      conversation_id: convId,
+      role: "assistant",
+      content: holdingMessage,
+      confidence_score: 1,
+      approved_by_human: false,
+      metadata: { action: "escalation_holding", escalation_reason: ceilingResult.reason, reason_code: decision.reason_code, confidence_ceiling: true },
+    });
+    if (escalationId) {
+      await db.from("escalation_logs").update({ hold_until: holdUntil.toISOString(), holding_message_sent: true }).eq("id", escalationId);
+    }
+    const channel = (convRow as { channel?: string })?.channel ?? "web";
+    const { count: totalOutbound } = await db.from("outbound_messages").select("id", { count: "exact", head: true }).eq("lead_id", leadId);
+    const attemptCount = (totalOutbound ?? 0) + 1;
+    const { enqueueSendMessage } = await import("@/lib/action-queue/send-message");
+    await enqueueSendMessage(workspaceId, leadId, convId, channel, holdingMessage, `send:${workspaceId}:${leadId}:${convId}:escalation:${attemptCount}`);
+    const escRecheck = (() => { const t = new Date(); t.setHours(t.getHours() + 4); return t; })();
+    await setLeadPlan(workspaceId, leadId, { next_action_type: "observe", next_action_at: escRecheck.toISOString() });
+    return;
+  }
+
+  const useClarification = ceilingResult.useClarification ?? decision.confidence < minAct;
+  if (useClarification) {
     if (decision.confidence >= minSchedule) {
       const observeAt = revenueState.transition_toward_risk_at
         ? new Date(revenueState.transition_toward_risk_at)
@@ -184,34 +249,26 @@ export async function runDecisionJobWithEngines(
       const channel = (convRow as { channel?: string })?.channel ?? "web";
       const { count: totalOutbound } = await db.from("outbound_messages").select("id", { count: "exact", head: true }).eq("lead_id", leadId);
       const attemptCount = (totalOutbound ?? 0) + 1;
-      const { sendOutbound } = await import("@/lib/delivery/provider");
+      const { enqueueSendMessage } = await import("@/lib/action-queue/send-message");
       const { recordIntervention, hashMessage } = await import("@/lib/stability/cooldowns");
+      const clarificationText = decision.confidence < minAct ? CLARIFICATION_MESSAGE : DEFER_MESSAGE;
       await db.from("messages").insert({
         conversation_id: convId,
         role: "assistant",
-        content: DEFER_MESSAGE,
+        content: clarificationText,
         confidence_score: decision.confidence,
         approved_by_human: false,
-        metadata: { action: "defer", reason_code: decision.reason_code },
+        metadata: { action: "defer", reason_code: decision.reason_code, confidence_ceiling: true },
       });
-      const { data: om } = await db
-        .from("outbound_messages")
-        .insert({
-          workspace_id: workspaceId,
-          lead_id: leadId,
-          conversation_id: convId,
-          content: DEFER_MESSAGE,
-          channel,
-          status: "queued",
-          attempt_count: attemptCount,
-        })
-        .select("id")
-        .single();
-      if (om) {
-        const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-        await sendOutbound((om as { id: string }).id, workspaceId, leadId, convId, channel, DEFER_MESSAGE, to);
-      }
-      await recordIntervention(workspaceId, leadId, "clarifying_question", hashMessage(DEFER_MESSAGE));
+      await enqueueSendMessage(
+        workspaceId,
+        leadId,
+        convId,
+        channel,
+        clarificationText,
+        `send:${workspaceId}:${leadId}:${convId}:defer:${attemptCount}`
+      );
+      await recordIntervention(workspaceId, leadId, "clarifying_question", hashMessage(clarificationText));
       await setLeadPlan(workspaceId, leadId, {
         next_action_type: "observe",
         next_action_at: observeAt.toISOString(),
@@ -261,18 +318,15 @@ export async function runDecisionJobWithEngines(
     return;
   }
 
+  const { getCapacityPressure } = await import("@/lib/guarantee/capacity-stability");
+  const capacityRow = await getCapacityPressure(workspaceId);
+  const capacityPressure = capacityRow?.pressure_level ?? 0;
   let message = buildMessageFromIntervention(decision, {
     leadName: (lead as { name?: string }).name,
     company: (lead as { company?: string }).company,
+    capacity_pressure: capacityPressure,
   });
 
-  const { data: messages } = await db
-    .from("messages")
-    .select("content, role")
-    .eq("conversation_id", convId)
-    .order("created_at", { ascending: false })
-    .limit(5);
-  const lastUserMsg = (messages ?? []).find((m: { role: string }) => m.role === "user")?.content ?? "";
   const sensitive = detectSensitiveIntent([], lastUserMsg);
   if (sensitive) {
     message = getSafeResponse(sensitive);
@@ -288,6 +342,31 @@ export async function runDecisionJobWithEngines(
   if (!policy.allowed) {
     message = SAFE_FALLBACK_MESSAGES[policy.safeFallback] ?? SAFE_FALLBACK_MESSAGES.clarifying_question;
   }
+
+  // Human presence layer (timing, variation, memory, validation, emotional complexity)
+  type ConvState = import("@/lib/conversation-state/resolver").ConversationState;
+  const interventionToState: Record<string, ConvState> = {
+    booking: "COMMITMENT",
+    call_invite: "COMMITMENT",
+    follow_up: "DRIFT",
+    qualification_question: "CLARIFICATION",
+    clarifying_question: "CLARIFICATION",
+    greeting: "NEW_INTEREST",
+    confirmation: "POST_BOOKING",
+    winback: "COLD",
+  };
+  const stateForPresence = interventionToState[decision.intervention_type] ?? "NEW_INTEREST";
+  const { applyHumanPresence } = await import("@/lib/human-presence");
+  const presenceResult = await applyHumanPresence({
+    leadId,
+    workspaceId,
+    conversationId: convId,
+    state: stateForPresence,
+    message,
+    lastUserMessage: lastUserMsg,
+  });
+  message = presenceResult.content;
+  const shouldEscalateByEmotion = presenceResult.shouldEscalateByEmotion ?? false;
 
   const { isPreviewMode } = await import("@/lib/preview-mode");
   const { shouldSimulateOnly } = await import("@/lib/autonomy");
@@ -335,24 +414,15 @@ export async function runDecisionJobWithEngines(
       approved_by_human: false,
       metadata: { action: "escalation_hold_limited_assist", reason_code: decision.reason_code },
     });
-    const { data: omH } = await db
-      .from("outbound_messages")
-      .insert({
-        workspace_id: workspaceId,
-        lead_id: leadId,
-        conversation_id: convId,
-        content: holdingMessage,
-        channel,
-        status: "queued",
-        attempt_count: attemptCount,
-      })
-      .select("id")
-      .single();
-    if (omH) {
-      const { sendOutbound } = await import("@/lib/delivery/provider");
-      const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-      await sendOutbound((omH as { id: string }).id, workspaceId, leadId, convId, channel, holdingMessage, to);
-    }
+    const { enqueueSendMessage } = await import("@/lib/action-queue/send-message");
+    await enqueueSendMessage(
+      workspaceId,
+      leadId,
+      convId,
+      channel,
+      holdingMessage,
+      `send:${workspaceId}:${leadId}:${convId}:escalation_hold:${attemptCount}`
+    );
     const escHoldRecheck = (() => { const t = new Date(); t.setHours(t.getHours() + 4); return t; })();
     await setLeadPlan(workspaceId, leadId, { next_action_type: "observe", next_action_at: escHoldRecheck.toISOString() });
     return;
@@ -372,8 +442,8 @@ export async function runDecisionJobWithEngines(
     policySensitiveDetected: !!sensitive,
   });
 
-  if (!forceSimulate && ((escalationCheck.shouldEscalate && escalationCheck.reason) || needsApproval)) {
-    const escReason = escalationCheck.reason ?? "autonomy_assist_approval_required";
+  if (!forceSimulate && ((escalationCheck.shouldEscalate && escalationCheck.reason) || needsApproval || shouldEscalateByEmotion)) {
+    const escReason = escalationCheck.reason ?? (shouldEscalateByEmotion ? "emotional_complexity" : "autonomy_assist_approval_required");
     const assignedUserId = await getAssignedUserId(workspaceId, leadId);
     const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).single();
     const timeoutHours = (escRules as { escalation_rules?: { escalation_timeout_hours?: number }; escalation_timeout_hours?: number })?.escalation_rules?.escalation_timeout_hours
@@ -398,28 +468,15 @@ export async function runDecisionJobWithEngines(
     }
 
     const outChannel = channel;
-    const { data: om } = await db
-      .from("outbound_messages")
-      .insert({
-        workspace_id: workspaceId,
-        lead_id: leadId,
-        conversation_id: convId,
-        content: holdingMessage,
-        channel: outChannel,
-        status: "queued",
-        attempt_count: attemptCount,
-      })
-      .select("id")
-      .single();
-
-    if (om) {
-      const { sendOutbound } = await import("@/lib/delivery/provider");
-      const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-      const sendResult = await sendOutbound((om as { id: string }).id, workspaceId, leadId, convId, outChannel, holdingMessage, to);
-      if (sendResult.status === "failed" && sendResult.error) {
-        await db.from("outbound_messages").update({ delivery_error: sendResult.error }).eq("id", (om as { id: string }).id);
-      }
-    }
+    const { enqueueSendMessage } = await import("@/lib/action-queue/send-message");
+    await enqueueSendMessage(
+      workspaceId,
+      leadId,
+      convId,
+      outChannel,
+      holdingMessage,
+      `send:${workspaceId}:${leadId}:${convId}:escalation:${attemptCount}`
+    );
 
     await db.from("pending_approvals").insert({
       lead_id: leadId,
@@ -501,28 +558,16 @@ export async function runDecisionJobWithEngines(
     metadata: { action: decision.intervention_type, policy_reason: policy.reason, reason_code: decision.reason_code },
   });
 
-  const { data: om } = await db
-    .from("outbound_messages")
-    .insert({
-      workspace_id: workspaceId,
-      lead_id: leadId,
-      conversation_id: convId,
-      content: message,
-      channel,
-      status: "queued",
-      attempt_count: attemptCount,
-    })
-    .select("id")
-    .single();
-
-  if (om) {
-    const { sendOutbound } = await import("@/lib/delivery/provider");
-    const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-    const sendResult = await sendOutbound((om as { id: string }).id, workspaceId, leadId, convId, channel, message, to);
-    if (sendResult.status === "failed" && sendResult.error) {
-      await db.from("outbound_messages").update({ delivery_error: sendResult.error }).eq("id", (om as { id: string }).id);
-    }
-  }
+  const { enqueueSendMessage } = await import("@/lib/action-queue/send-message");
+  await enqueueSendMessage(
+    workspaceId,
+    leadId,
+    convId,
+    channel,
+    message,
+    `send:${workspaceId}:${leadId}:${convId}:${attemptCount}`,
+    { send_at: presenceResult.sendAt, delay_seconds: presenceResult.delaySeconds }
+  );
 
   const { incrementMetric, METRIC_KEYS } = await import("@/lib/observability/metrics");
   await incrementMetric(workspaceId, policy.allowed ? METRIC_KEYS.REPLIES_SENT : METRIC_KEYS.FALLBACK_USED);

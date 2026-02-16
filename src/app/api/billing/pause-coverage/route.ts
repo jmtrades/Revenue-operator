@@ -50,8 +50,41 @@ export async function POST(req: NextRequest) {
     })
     .eq("id", workspaceId);
 
+  // Absence moment: return factual statements only (no persuasion)
+  let absence_statements: {
+    what_would_fail: string[];
+    recent_operation: string[];
+    current_dependency: string[];
+    if_disabled: string[];
+  } = {
+    what_would_fail: [],
+    recent_operation: [],
+    current_dependency: [],
+    if_disabled: [],
+  };
+  try {
+    const [getDisableImpactStatements, getRetentionInterceptPayload] = await Promise.all([
+      import("@/lib/operational-perception/disable-impact").then((m) => m.getDisableImpactStatements),
+      import("@/lib/operational-perception/retention-intercept").then((m) => m.getRetentionInterceptPayload),
+    ]);
+    const [disableImpact, retention] = await Promise.all([
+      getDisableImpactStatements(workspaceId),
+      getRetentionInterceptPayload(workspaceId),
+    ]);
+    const trim = (s: string) => (s.length > 90 ? s.slice(0, 90).trim() : s.trim());
+    absence_statements = {
+      what_would_fail: disableImpact.slice(0, 6).map(trim).filter(Boolean),
+      recent_operation: retention.recent_operation.slice(0, 4).map(trim).filter(Boolean),
+      current_dependency: retention.current_dependency.slice(0, 4).map(trim).filter(Boolean),
+      if_disabled: retention.if_disabled.slice(0, 4).map(trim).filter(Boolean),
+    };
+  } catch {
+    // Non-blocking
+  }
+
   return NextResponse.json({
     success: true,
     message: "Protection paused. Coverage runs until period end. Resume anytime.",
+    absence_statements,
   });
 }

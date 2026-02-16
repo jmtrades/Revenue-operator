@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export function ProtectionPausedBanner() {
   const { workspaceId } = useWorkspace();
-  const [billingStatus, setBillingStatus] = useState<{ billing_status?: string; renewal_at?: string | null } | null>(null);
+  const [billingStatus, setBillingStatus] = useState<{ billing_status?: string; renewal_at?: string | null; has_upcoming_booking_24h?: boolean } | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -30,17 +30,24 @@ export function ProtectionPausedBanner() {
   return (
     <div className="w-full px-4 py-6" style={{ background: "var(--card)", borderBottom: "1px solid var(--border)" }}>
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-lg font-medium mb-2" style={{ color: "var(--text-primary)" }}>Protection paused</h2>
+        <h2 className="text-lg font-medium mb-2" style={{ color: "var(--text-primary)" }}>Normal conditions are not present.</h2>
         <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-          Conversations are no longer being maintained.
-          Some may go quiet.
+          Handling is no longer present for new enquiries.
+          Attendance confirmation will require manual follow-through.
+          Ongoing decisions may stall.
+          {billingStatus.has_upcoming_booking_24h && (
+            <>
+              {" "}
+              Upcoming attendance will require manual confirmation.
+            </>
+          )}
         </p>
         <Link
           href="/dashboard/continue-protection"
           className="inline-block px-6 py-2.5 rounded-lg font-medium"
           style={{ background: "var(--meaning-green)", color: "#0E1116" }}
         >
-          Keep protection active
+          Resume handling
         </Link>
       </div>
     </div>

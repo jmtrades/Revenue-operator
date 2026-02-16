@@ -136,9 +136,22 @@ export async function sendOutbound(
   const db = getDb();
 
   // Safety runs LAST before send
-  const safeContent = await applySafetyLayer(content, workspaceId, leadId, conversationId, channel);
+  let safeContent = await applySafetyLayer(content, workspaceId, leadId, conversationId, channel);
   if (safeContent !== content) {
     await db.from("outbound_messages").update({ content: safeContent }).eq("id", messageId);
+  }
+
+  // Environmental presence: append neutral factual reference when available (doctrine)
+  try {
+    const { attachProofReferenceToOutgoingMessages } = await import("@/lib/environmental-presence/proof-reference");
+    const { confirmationSnippet } = await attachProofReferenceToOutgoingMessages(workspaceId);
+    if (confirmationSnippet && !safeContent.includes(confirmationSnippet)) {
+      const withRef = safeContent.trimEnd() + "\n" + confirmationSnippet.trim();
+      const maxLen = channel === "sms" ? 320 : 500;
+      safeContent = withRef.length <= maxLen ? withRef : safeContent;
+    }
+  } catch {
+    // Non-blocking; send without reference if unavailable
   }
 
   const fallbackOrder: string[] =

@@ -79,6 +79,8 @@ export async function POST(req: NextRequest) {
         autonomy_mode: "act", // Full automation - system acts automatically
         responsibility_level: "guarantee", // Allows full autonomy
       });
+      const { applyPresetToWorkspace } = await import("@/lib/presets/apply");
+      await applyPresetToWorkspace(wsId, businessType).catch(() => {});
       return jsonWithSession({ workspace_id: wsId }, uid, wsId);
     }
     return NextResponse.json({ error: "Failed to create trial" }, { status: 500 });
@@ -108,6 +110,10 @@ export async function POST(req: NextRequest) {
     autonomy_mode: "act", // Full automation - system acts automatically
     responsibility_level: "guarantee", // Allows full autonomy
   });
+
+  // Apply preset (instant response, qualification, booking, reminders, no-show recovery, reactivation) — no user config
+  const { applyPresetToWorkspace } = await import("@/lib/presets/apply");
+  await applyPresetToWorkspace(workspaceId, businessType).catch(() => {});
 
   await db.from("activation_states").upsert(
     { workspace_id: workspaceId, step: "scan", updated_at: new Date().toISOString() },

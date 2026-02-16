@@ -8,6 +8,14 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { logWebhookFailure } from "@/lib/reliability/logging";
+import { createPaymentObligation, resolvePaymentObligationsBySubject } from "@/lib/payment-completion";
+import {
+  ensureSharedTransactionForSubject,
+  createAcknowledgementToken,
+  buildPublicAckLink,
+} from "@/lib/shared-transaction-assurance";
+import { activateSettlementFromStripe } from "@/lib/settlement";
+import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import Stripe from "stripe";
 
 // Structured logging for webhook events
@@ -27,14 +35,36 @@ function logWebhookEvent(type: string, workspaceId: string | null, status: "succ
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-export async function POST(req: NextRequest) {
-  // Production safety: reject unsigned events
-  if (!webhookSecret && process.env.NODE_ENV === "production") {
-    logWebhookEvent("webhook_no_secret", null, "error");
-    return NextResponse.json({ error: "Webhook secret required in production" }, { status: 500 });
-  }
+async function appendSettlementWebhookEvent(
+  workspaceId: string,
+  eventType: "settlement_export_failed",
+  payload: Record<string, unknown>
+) {
+  const db = getDb();
+  await db.from("protocol_events").insert({
+    external_ref: `settle:${workspaceId}:webhook`,
+    workspace_id: workspaceId,
+    event_type: eventType,
+    payload,
+  });
+}
 
+async function getSettlementWorkspaceIdBySubscriptionId(subscriptionId: string): Promise<string | null> {
+  const db = getDb();
+  const { data: row } = await db
+    .from("settlement_accounts")
+    .select("workspace_id")
+    .eq("stripe_subscription_id", subscriptionId)
+    .maybeSingle();
+  return (row as { workspace_id: string } | null)?.workspace_id ?? null;
+}
+
+export async function POST(req: NextRequest) {
   if (!webhookSecret) {
+    if (process.env.NODE_ENV === "production") {
+      logWebhookEvent("webhook_no_secret", null, "error");
+      return NextResponse.json({ error: "Webhook secret required in production" }, { status: 500 });
+    }
     return NextResponse.json({ received: true }, { status: 200 });
   }
 
@@ -53,36 +83,56 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
-
-  // Idempotency check: prevent duplicate processing
   const eventId = event.id;
-  const { data: existing } = await db
-    .from("webhook_events")
-    .select("id, processed")
-    .eq("event_id", eventId)
-    .single();
 
-  if (existing && (existing as { processed?: boolean }).processed) {
-    console.log(`[webhook] Event ${eventId} already processed, skipping`);
+  const { error: insertError } = await db.from("webhook_events").insert({
+    event_id: eventId,
+    event_type: event.type,
+    payload: event.data.object,
+    processed: false,
+  });
+  if (insertError && (insertError as { code?: string }).code === "23505") {
     return NextResponse.json({ received: true, skipped: "duplicate" }, { status: 200 });
   }
+  if (insertError) {
+    const { data: existing } = await db.from("webhook_events").select("processed").eq("event_id", eventId).maybeSingle();
+    if (existing && (existing as { processed?: boolean }).processed) {
+      return NextResponse.json({ received: true, skipped: "duplicate" }, { status: 200 });
+    }
+  }
 
-  // Store event for idempotency
-  await db.from("webhook_events").upsert(
-    {
+  try {
+    await handleStripeWebhookEvent(db, event, eventId);
+  } catch (err) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    await db.from("system_webhook_failures").insert({
+      provider: "stripe",
       event_id: eventId,
-      event_type: event.type,
-      payload: event.data.object,
-      processed: false,
-    },
-    { onConflict: "event_id" }
-  );
+      error: errMsg,
+    });
+    return NextResponse.json({ received: true }, { status: 200 });
+  }
 
+  return NextResponse.json({ received: true }, { status: 200 });
+}
+
+async function handleStripeWebhookEvent(
+  db: ReturnType<typeof getDb>,
+  event: Stripe.Event,
+  eventId: string
+): Promise<void> {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      const workspaceId = session.metadata?.workspace_id;
-      if (workspaceId) {
+      const workspaceId = session.client_reference_id ?? session.metadata?.workspace_id;
+      const isSettlement = session.metadata?.settlement === "true";
+      if (workspaceId && isSettlement && session.subscription && session.customer) {
+        await activateSettlementFromStripe(
+          workspaceId,
+          typeof session.customer === "string" ? session.customer : session.customer.id,
+          typeof session.subscription === "string" ? session.subscription : session.subscription.id
+        );
+      } else if (workspaceId && !isSettlement) {
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
         const sub = await stripe.subscriptions.retrieve(session.subscription as string);
         const isTrialing = sub.status === "trialing";
@@ -146,6 +196,29 @@ export async function POST(req: NextRequest) {
             .eq("id", workspaceId);
         }
       }
+      const settlementWorkspaceId = sub.metadata?.workspace_id ?? await getSettlementWorkspaceIdBySubscriptionId(sub.id);
+      if (settlementWorkspaceId) {
+        const badStatuses = ["canceled", "unpaid", "incomplete_expired"];
+        if (badStatuses.includes(sub.status ?? "")) {
+          const now = new Date().toISOString();
+          const { data: ac } = await db
+            .from("settlement_accounts")
+            .select("suspension_entry_created_at")
+            .eq("workspace_id", settlementWorkspaceId)
+            .single();
+          const alreadyCreated = (ac as { suspension_entry_created_at: string | null } | null)?.suspension_entry_created_at != null;
+          await db
+            .from("settlement_accounts")
+            .update({
+              settlement_state: "suspended",
+              suspended_at: now,
+              updated_at: now,
+              ...(!alreadyCreated && { suspension_entry_created_at: now }),
+            })
+            .eq("workspace_id", settlementWorkspaceId);
+          await appendSettlementWebhookEvent(settlementWorkspaceId, "settlement_export_failed", { reason: "subscription_not_active" });
+        }
+      }
       break;
     }
     case "customer.subscription.deleted": {
@@ -166,16 +239,110 @@ export async function POST(req: NextRequest) {
       }
       break;
     }
+    case "invoice.created": {
+      const invCreated = event.data.object as Stripe.Invoice & { due_date?: number | null };
+      const workspaceId = invCreated.metadata?.workspace_id;
+      if (workspaceId && (invCreated.amount_due ?? 0) > 0) {
+        const dueAt = invCreated.due_date
+          ? new Date(invCreated.due_date * 1000)
+          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        createPaymentObligation({
+          workspaceId,
+          subjectType: "invoice",
+          subjectId: invCreated.id,
+          amount: invCreated.amount_due ?? 0,
+          currency: (invCreated.currency ?? "usd").toLowerCase(),
+          dueAt,
+        }).catch(() => {});
+        const customerEmail =
+          typeof (invCreated as Stripe.Invoice).customer_email === "string"
+            ? (invCreated as Stripe.Invoice).customer_email
+            : null;
+        if (customerEmail) {
+          ensureSharedTransactionForSubject({
+            workspaceId,
+            subjectType: "payment",
+            subjectId: invCreated.id,
+            counterpartyIdentifier: customerEmail.trim().toLowerCase(),
+            deadlineAt: dueAt,
+            initiatedBy: "business",
+          }).then(async (txId) => {
+            if (!txId) return;
+            const { data: lead } = await db
+              .from("leads")
+              .select("id")
+              .eq("workspace_id", workspaceId)
+              .eq("email", customerEmail.trim().toLowerCase())
+              .limit(1)
+              .maybeSingle();
+            const leadId = (lead as { id: string } | null)?.id ?? null;
+            if (!leadId) return;
+            const { data: conv } = await db
+              .from("conversations")
+              .select("id, channel")
+              .eq("lead_id", leadId)
+              .limit(1)
+              .maybeSingle();
+            if (!conv) return;
+            const c = conv as { id: string; channel: string };
+            const { rawToken } = await createAcknowledgementToken(txId);
+            const link = buildPublicAckLink(rawToken);
+            await enqueueSendMessage(
+              workspaceId,
+              leadId,
+              c.id,
+              c.channel || "sms",
+              link,
+              `payment-ack:${workspaceId}:${invCreated.id}`
+            );
+          }).catch(() => {});
+        }
+      }
+      break;
+    }
     case "invoice.paid": {
       const invoice = event.data.object as Stripe.Invoice & { subscription?: string | Stripe.Subscription | null };
       const workspaceId = invoice.metadata?.workspace_id;
+      const subscriptionId = typeof invoice.subscription === "string"
+        ? invoice.subscription
+        : invoice.subscription && typeof invoice.subscription === "object"
+          ? invoice.subscription.id
+          : null;
+      const settlementWid = workspaceId ?? (subscriptionId ? await getSettlementWorkspaceIdBySubscriptionId(subscriptionId) : null);
+      if (settlementWid) {
+        const { data: acc } = await db
+          .from("settlement_accounts")
+          .select("settlement_state")
+          .eq("workspace_id", settlementWid)
+          .single();
+        if ((acc as { settlement_state: string } | null)?.settlement_state === "suspended") {
+          const subActive = subscriptionId
+            ? (async () => {
+                try {
+                  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+                  const sub = await stripe.subscriptions.retrieve(subscriptionId);
+                  return sub.status === "active" || sub.status === "trialing";
+                } catch {
+                  return false;
+                }
+              })()
+            : Promise.resolve(false);
+          if (await subActive) {
+            const now = new Date().toISOString();
+            await db
+              .from("settlement_accounts")
+              .update({
+                settlement_state: "active",
+                suspended_at: null,
+                updated_at: now,
+              })
+              .eq("workspace_id", settlementWid);
+          }
+        }
+      }
       if (workspaceId) {
-        // Trial ended, subscription now active
-        const subscriptionId = typeof invoice.subscription === "string" 
-          ? invoice.subscription 
-          : invoice.subscription && typeof invoice.subscription === "object" 
-            ? invoice.subscription.id 
-            : null;
+        await resolvePaymentObligationsBySubject(workspaceId, "subscription", invoice.id, "paid");
+        await resolvePaymentObligationsBySubject(workspaceId, "invoice", invoice.id, "paid");
         if (subscriptionId) {
           const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
           const sub = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription & { current_period_end?: number };
@@ -194,11 +361,14 @@ export async function POST(req: NextRequest) {
       break;
     }
     case "invoice.payment_failed": {
-      const invoice = event.data.object as Stripe.Invoice;
+      const invoice = event.data.object as Stripe.Invoice & { due_date?: number | null; subscription?: string | null };
       const workspaceId = invoice.metadata?.workspace_id;
+      const subId = typeof invoice.subscription === "string" ? invoice.subscription : null;
+      const settlementWid = workspaceId ?? (subId ? await getSettlementWorkspaceIdBySubscriptionId(subId) : null);
+      if (settlementWid) {
+        await appendSettlementWebhookEvent(settlementWid, "settlement_export_failed", { reason: "invoice_payment_failed" });
+      }
       if (workspaceId) {
-        // Don't pause immediately - give grace period
-        // Set flag for UI to show soft message
         await db
           .from("workspaces")
           .update({
@@ -206,6 +376,60 @@ export async function POST(req: NextRequest) {
             updated_at: new Date().toISOString(),
           })
           .eq("id", workspaceId);
+        const dueAt = invoice.due_date
+          ? new Date(invoice.due_date * 1000)
+          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        createPaymentObligation({
+          workspaceId,
+          subjectType: "subscription",
+          subjectId: invoice.id,
+          amount: invoice.amount_due ?? 0,
+          currency: (invoice.currency ?? "usd").toLowerCase(),
+          dueAt,
+        }).catch(() => {});
+        const customerEmail =
+          typeof (invoice as Stripe.Invoice).customer_email === "string"
+            ? (invoice as Stripe.Invoice).customer_email
+            : null;
+        if (customerEmail) {
+          ensureSharedTransactionForSubject({
+            workspaceId,
+            subjectType: "payment",
+            subjectId: invoice.id,
+            counterpartyIdentifier: customerEmail.trim().toLowerCase(),
+            deadlineAt: dueAt,
+            initiatedBy: "business",
+          }).then(async (txId) => {
+            if (!txId) return;
+            const { data: lead } = await db
+              .from("leads")
+              .select("id")
+              .eq("workspace_id", workspaceId)
+              .eq("email", customerEmail.trim().toLowerCase())
+              .limit(1)
+              .maybeSingle();
+            const leadId = (lead as { id: string } | null)?.id ?? null;
+            if (!leadId) return;
+            const { data: conv } = await db
+              .from("conversations")
+              .select("id, channel")
+              .eq("lead_id", leadId)
+              .limit(1)
+              .maybeSingle();
+            if (!conv) return;
+            const c = conv as { id: string; channel: string };
+            const { rawToken } = await createAcknowledgementToken(txId);
+            const link = buildPublicAckLink(rawToken);
+            await enqueueSendMessage(
+              workspaceId,
+              leadId,
+              c.id,
+              c.channel || "sms",
+              link,
+              `payment-ack:${workspaceId}:${invoice.id}`
+            );
+          }).catch(() => {});
+        }
       }
       break;
     }
@@ -213,7 +437,6 @@ export async function POST(req: NextRequest) {
       break;
   }
 
-  // Mark event as processed
   await db
     .from("webhook_events")
     .update({
@@ -222,6 +445,4 @@ export async function POST(req: NextRequest) {
       workspace_id: (event.data.object as { metadata?: { workspace_id?: string } }).metadata?.workspace_id ?? null,
     })
     .eq("event_id", eventId);
-
-  return NextResponse.json({ received: true }, { status: 200 });
 }

@@ -1,7 +1,9 @@
 /**
  * processWebhookJob: normalize -> upsert lead/conv/msg -> emit event -> enqueue decisionJob
+ * When DOCTRINE_ENFORCED=1 this must not be called; use convertLegacyWebhookToSignalAndEnqueue instead.
  */
 
+import { assertNotEnforcedOrConvert } from "@/lib/doctrine/enforce";
 import { getDb } from "@/lib/db/queries";
 import { processEvent } from "@/lib/event-engine";
 import { enqueue, enqueueDecision } from "@/lib/queue";
@@ -27,6 +29,8 @@ export interface RawWebhookPayload {
 }
 
 export async function processWebhookJob(webhookId: string): Promise<{ decisionLeadId: string | null; decisionWorkspaceId: string | null } | void> {
+  assertNotEnforcedOrConvert({ jobType: "process_webhook", id: webhookId, message: "processWebhookJob must not run when DOCTRINE_ENFORCED=1" });
+
   const db = getDb();
   const { data: raw, error: fetchErr } = await db
     .from("raw_webhook_events")
@@ -105,7 +109,6 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
         .eq("role", "user");
       
       if (count === 1) {
-        // First inbound message for this workspace
         try {
           await db.from("activation_events").insert({
             workspace_id,
@@ -116,6 +119,8 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
         } catch {
           // Non-blocking
         }
+        const { syncFirstContact } = await import("@/lib/revenue-lifecycle/sync");
+        await syncFirstContact(lead.id, workspace_id).catch(() => {});
       }
     } catch {
       // Non-blocking
@@ -226,6 +231,9 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       updated_at: new Date().toISOString(),
       last_activity_at: new Date().toISOString(),
     }).eq("id", lead.id);
+
+    const { syncFromLeadState } = await import("@/lib/revenue-lifecycle/sync");
+    await syncFromLeadState(lead.id, workspace_id, decision.newState as import("@/lib/types").LeadState).catch(() => {});
 
     if (decision.transitionOccurred && decision.newState !== currentState) {
       if (decision.newState === "QUALIFIED") {

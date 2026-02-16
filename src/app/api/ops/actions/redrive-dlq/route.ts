@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
 
     const type = (r.job_type ?? p.type) as string;
     if (type === "process_webhook" && p.webhookId) {
+      // When DOCTRINE_ENFORCED=1, cron will run convertLegacyWebhookToSignalAndEnqueue (no legacy path).
       await enqueue({ type: "process_webhook", webhookId: p.webhookId as string });
     } else if (type === "decision" && p.leadId && p.workspaceId) {
       await enqueue({ type: "decision", leadId: p.leadId as string, workspaceId: p.workspaceId as string, eventId: (p.eventId as string) ?? (p.leadId as string) });

@@ -47,8 +47,10 @@ export async function GET(req: NextRequest) {
   const todayStart = new Date(now);
   todayStart.setUTCHours(0, 0, 0, 0);
 
-  const { data: ws } = await db.from("workspaces").select("status, pause_reason").eq("id", workspaceId).single();
-  const wsRow = ws as { status?: string; pause_reason?: string } | undefined;
+  const { data: ws } = await db.from("workspaces").select("status, pause_reason, created_at").eq("id", workspaceId).single();
+  const wsRow = ws as { status?: string; pause_reason?: string; created_at?: string } | undefined;
+  const { data: actState } = await db.from("activation_states").select("activated_at").eq("workspace_id", workspaceId).single();
+  const activatedAt = (actState as { activated_at?: string } | null)?.activated_at ?? null;
   const { data: settingsRow } = await db.from("settings").select("preview_mode, weekly_call_target, business_type").eq("workspace_id", workspaceId).single();
   const previewMode = (settingsRow as { preview_mode?: boolean })?.preview_mode ?? false;
   const weeklyTarget = (settingsRow as { weekly_call_target?: number })?.weekly_call_target ?? 12;
@@ -230,8 +232,8 @@ export async function GET(req: NextRequest) {
     const prior = list.find((x) => new Date(x.created_at).getTime() < eventTime);
     if (!prior) return undefined;
     const actionLabels: Record<string, string> = {
-      recovery: "Recovery message",
-      win_back: "Win-back outreach",
+      recovery: "Follow-through restored",
+      win_back: "Customer returned",
       reminder: "Reminder",
       prep_info: "Prep info",
       booking: "Booking link",
@@ -251,7 +253,7 @@ export async function GET(req: NextRequest) {
     const decision = p.decision as string | undefined;
     const expected =
       (p.expected as string | undefined) ??
-      (what.includes("prevent") ? "Loss avoided." : what.includes("Protect") || what.includes("Secured") ? "Revenue protected." : what.includes("Recover") ? "Opportunity recovered." : undefined);
+      (what.includes("continued") ? "Follow-through continued." : what.includes("confirmed") ? "Attendance was confirmed." : what.includes("set") || what.includes("returned") ? "Decision progressed." : "Follow-through continued.");
     const why = (p.policy_reason as string | undefined) ?? (p.reasoning as string | undefined);
     const role = item.type === "action" && (item as { role?: string }).role ? roleLabels[(item as { role: string }).role] ?? (item as { role: string }).role : undefined;
     const confidenceLabel = p.confidence_label as string | undefined;
@@ -262,7 +264,7 @@ export async function GET(req: NextRequest) {
     const isRevivalBooking =
       item.type === "event" &&
       (item.action === "booking_created" || item.action === "call_completed") &&
-      (attributed_to === "Recovery message" || attributed_to === "Win-back outreach");
+      (attributed_to === "Follow-through restored" || attributed_to === "Customer returned");
     let counterfactual: CounterfactualOutcome | undefined;
     if (item.type === "event") {
       if (item.action === "booking_created") {
@@ -287,7 +289,7 @@ export async function GET(req: NextRequest) {
       who,
       when: item.created_at,
       why: noticed ?? why,
-      expected: isRevivalBooking ? "Effort preserved. Would have been lost without outreach." : expected,
+      expected: isRevivalBooking ? "Customer returned." : expected,
       role,
       noticed,
       decision,
@@ -415,9 +417,9 @@ export async function GET(req: NextRequest) {
     // Show real count only - no fallback to "1" to avoid fake numbers
     const monitorCount = hotLeads.length + atRisk.length;
     const monitoringEntries = [
-      { what: monitorCount > 0 ? `Watching over ${monitorCount} active lead${monitorCount !== 1 ? "s" : ""}` : "Monitoring conversations", who: "System", when: new Date().toISOString(), is_monitoring: true },
-      { what: `Next check in ~${nextMins} min`, who: "System", when: new Date().toISOString(), is_monitoring: true },
-      { what: "Checking conversations", who: "System", when: new Date().toISOString(), is_monitoring: true },
+      { what: monitorCount > 0 ? `Active decisions remain in progress` : "Everything remains on track", who: "—", when: new Date().toISOString(), is_monitoring: true },
+      { what: "Upcoming appointments remain scheduled", who: "—", when: new Date().toISOString(), is_monitoring: true },
+      { what: "Follow-through in progress", who: "—", when: new Date().toISOString(), is_monitoring: true },
     ];
     activity.unshift(...monitoringEntries);
   }
@@ -444,7 +446,7 @@ export async function GET(req: NextRequest) {
     .eq("job_type", "decision")
     .gte("created_at", todayStart.toISOString());
   const shift_summary = {
-    replies_sent: todayReplies,
+    replies_sent: todayReplies, // internal; dashboard shows prevented-failure language
     follow_ups_scheduled: todayFollowUps ?? 0,
     calls_booked: (todayBookings ?? []).length,
     calls_completed: (todayCompletions ?? []).length,
@@ -792,7 +794,7 @@ export async function GET(req: NextRequest) {
     return { lead_id: lid, reply_window_remaining_min: remaining_min };
   }).filter((w) => w.reply_window_remaining_min != null && w.reply_window_remaining_min > 0);
 
-  const intervention_highlights = activity.filter((a) => a.effort_preserved || a.attributed_to === "Recovery message" || a.attributed_to === "Win-back outreach").slice(0, 5);
+  const intervention_highlights = activity.filter((a) => a.effort_preserved || a.attributed_to === "Follow-through restored" || a.attributed_to === "Customer returned").slice(0, 5);
 
   const midnight = new Date(todayStart);
   midnight.setUTCHours(0, 0, 0, 0);
@@ -808,9 +810,9 @@ export async function GET(req: NextRequest) {
     overnight_protections: (overnightActions ?? []).length,
     readiness_summary: isMorning
       ? (overnightActions ?? []).length > 0
-        ? `${(overnightActions ?? []).length} touch${(overnightActions ?? []).length !== 1 ? "es" : ""} sent overnight — conversations protected`
-        : "No overnight activity. All quiet."
-      : "Ready for the day.",
+        ? "Everything remains on track"
+        : "Everything remains on track"
+      : "Upcoming appointments remain scheduled.",
     pending_today: pendingDecisionCount,
     at_risk_count: atRisk.length,
   };
@@ -835,7 +837,7 @@ export async function GET(req: NextRequest) {
   const response = {
     operator_status: operatorStatus,
     heartbeat_visible: true,
-    last_action: lastAction ? actionToImpact((lastAction as { action: string }).action, lastActionPayload) + ` (${new Date((lastAction as { created_at: string }).created_at).toLocaleTimeString()})` : null,
+    last_action: lastAction ? actionToImpact((lastAction as { action: string }).action, lastActionPayload) : null,
     next_action: nextAction,
     today_booked: (todayBookings ?? []).length,
     today_recovered: (todayCompletions ?? []).length,
@@ -885,6 +887,15 @@ export async function GET(req: NextRequest) {
       created_at: c.created_at,
       updated_at: c.updated_at,
     })),
+    runs_continuously: (() => {
+      const cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const created = wsRow?.created_at ? new Date(wsRow.created_at) : null;
+      return !!created && created.getTime() <= cutoff.getTime() && wsRow?.status === "active" && !wsRow?.pause_reason;
+    })(),
+    first_connection_recent: (() => {
+      const cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return !!activatedAt && new Date(activatedAt).getTime() >= cutoff.getTime();
+    })(),
   };
 
   // Performance guard: if response took > 4 seconds, cache it

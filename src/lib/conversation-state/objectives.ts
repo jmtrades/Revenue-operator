@@ -27,6 +27,8 @@ export function stateToObjective(state: ConversationState): Objective {
     DRIFT: "reengage",
     COMMITMENT: "secure_commitment",
     POST_BOOKING: "prepare_attendance",
+    NO_SHOW: "reengage",
+    COLD: "reengage",
   };
 
   return mapping[state] ?? "acknowledge";
@@ -66,6 +68,10 @@ export function getResponseStrategy(
   }
 
   if (state === "DRIFT") {
+    return { action: "recovery", timing: "scheduled", priority: "medium" };
+  }
+
+  if (state === "NO_SHOW" || state === "COLD") {
     return { action: "recovery", timing: "scheduled", priority: "medium" };
   }
 

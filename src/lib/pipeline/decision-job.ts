@@ -18,7 +18,7 @@ import { getWarmupLimit } from "@/lib/warmup";
 import { getBookingRoute } from "@/lib/intelligence/booking-routing";
 import { getSafeResponse, getEscalationHoldingMessage, detectSensitiveIntent } from "@/lib/safe-responses";
 import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
-import { sendOutbound } from "@/lib/delivery/provider";
+import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { isPreviewMode } from "@/lib/preview-mode";
 import { shouldSimulateOnly, shouldRequireApproval, isFeatureEnabled, isRampComplete } from "@/lib/autonomy";
 import { recordInaction } from "@/lib/inaction-reasons";
@@ -33,9 +33,9 @@ import { redact } from "@/lib/redact";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 
 const SAFE_FALLBACK_MESSAGES: Record<string, string> = {
-  clarifying_question: "Thanks for reaching out. Could you tell me a bit more about what you're looking for?",
-  book_cta: "I'd be happy to help. Would you like to schedule a quick call to discuss?",
-  greeting: "Hi! Thanks for your message. How can I help you today?",
+  clarifying_question: "What were you looking to get done?",
+  book_cta: "When works for a quick call?",
+  greeting: "Hey — what were you looking to get done?",
 };
 
 export async function runDecisionJob(
@@ -119,19 +119,18 @@ export async function runDecisionJob(
     const lastUserMessage = (messages ?? []).find((m: { role: string }) => m.role === "user");
     lastUserMsg = lastUserMessage?.content ?? "";
 
-    // Get conversation state from latest message metadata (state-driven, not wording-driven)
-    const conversationState = (lastUserMessage as { metadata?: { conversation_state?: string } })?.metadata?.conversation_state as
-      | "NEW_INTEREST"
-      | "CLARIFICATION"
-      | "CONSIDERING"
-      | "SOFT_OBJECTION"
-      | "HARD_OBJECTION"
-      | "DRIFT"
-      | "COMMITMENT"
-      | "POST_BOOKING"
-      | undefined;
+    // Conversation state engine: single source of truth. State → Objective → Response → Next action timing. AI never improvises freely.
+    type ConvState = "NEW_INTEREST" | "CLARIFICATION" | "CONSIDERING" | "SOFT_OBJECTION" | "HARD_OBJECTION" | "DRIFT" | "COMMITMENT" | "POST_BOOKING" | "NO_SHOW" | "COLD";
+    let conversationState = (lastUserMessage as { metadata?: { conversation_state?: string } })?.metadata?.conversation_state as ConvState | undefined;
+    if (!conversationState && lastUserMsg) {
+      const { getConversationContext } = await import("@/lib/conversation-state/resolver");
+      const { resolveConversationState } = await import("@/lib/conversation-state/resolver");
+      const ctx = await getConversationContext(leadId, convId);
+      const result = await resolveConversationState({ ...ctx, message: lastUserMsg });
+      conversationState = result.state as ConvState;
+    }
 
-    // NEW FLOW: state → playbook → objection → template v2
+    // State-driven flow: state → playbook → objection → template v2 (booking-first)
     if (conversationState) {
       // Get business context
       const { data: businessContextRow } = await db
@@ -186,31 +185,58 @@ export async function runDecisionJob(
       const objectionType = detectObjectionType(lastUserMsg, conversationState);
       const objectionSlots = objectionType ? getObjectionResponseSlots(objectionType, businessContext, conversationState) : null;
 
-      // Build message using template v2
+      // Store conversation memory for recall (topic, hesitation, objections)
+      const { upsertConversationMemory } = await import("@/lib/human-presence/conversation-memory");
+      const memoryUpdates: { previous_objections?: string[]; hesitation_reason?: string } = {};
+      if (objectionType) memoryUpdates.previous_objections = [objectionType];
+      if (/price|cost|how much|budget/i.test(lastUserMsg)) memoryUpdates.hesitation_reason = "price";
+      if (Object.keys(memoryUpdates).length > 0) {
+        upsertConversationMemory(leadId, workspaceId, memoryUpdates).catch(() => {});
+      }
+
+      // Message Compiler: structured plan + deterministic render (no templates, no raw LLM text)
+      const { compileMessage, stateToIntent } = await import("@/lib/message-compiler");
       const { buildMessage, validateMessage } = await import("@/lib/templates/v2");
+      const { conversationHadProofReference, conversationAlreadyHadRecordExpectation } = await import("@/lib/environmental-presence/proof-reference");
+      const addRecordExpectation =
+        (await conversationHadProofReference(workspaceId, convId)) && !(await conversationAlreadyHadRecordExpectation(convId));
       const { data: convChannel } = await db.from("conversations").select("channel").eq("id", convId).single();
       const channel = ((convChannel as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
 
-      message = buildMessage({
-        state: conversationState,
-        playbook,
-        objectionType: objectionType ?? undefined,
-        objectionSlots: objectionSlots ?? undefined,
-        businessContext,
-        leadContext: {
-          leadName: lead.name ?? undefined,
-          company: lead.company ?? undefined,
-          lastMessage: lastUserMsg,
-        },
-        channel,
-      });
+      const intent = stateToIntent(conversationState);
+      if (intent) {
+        message = compileMessage(intent, {
+          channel,
+          tone: objectionType ? "warm" : conversationState === "DRIFT" || conversationState === "COLD" ? "warm" : "neutral",
+          businessContext: {
+            business_name: businessContext.business_name,
+            offer_summary: businessContext.offer_summary ?? undefined,
+            pricing_range: businessContext.pricing_range ?? undefined,
+          },
+          entities: { name: lead.name ?? undefined },
+          addRecordExpectation,
+        });
+      } else {
+        message = buildMessage({
+          state: conversationState,
+          playbook,
+          objectionType: objectionType ?? undefined,
+          objectionSlots: objectionSlots ?? undefined,
+          businessContext,
+          leadContext: {
+            leadName: lead.name ?? undefined,
+            company: lead.company ?? undefined,
+            lastMessage: lastUserMsg,
+          },
+          channel,
+        });
+      }
 
       // Validate message
       const validation = validateMessage(message, playbook);
       if (!validation.valid) {
         console.warn("[decision-job] Message validation failed", { reason: validation.reason, message });
-        // Fallback to safe message
-        message = "Thanks for reaching out. How can I help?";
+        message = "Hey — what were you looking to get done?";
       }
 
       // Update action based on playbook recommendation
@@ -245,18 +271,31 @@ export async function runDecisionJob(
       // Store next action timing for later scheduling
       (reasoning as { _next_action_at?: Date })._next_action_at = nextActionAt;
     } else {
-      // Fallback to old flow if no state available
-      const result = await fillSlots(action, {
-        leadName: lead.name ?? undefined,
-        company: lead.company ?? undefined,
-        lastMessage: lastUserMsg,
-        workspaceId,
-        leadId,
-        communication_style: communicationStyle,
-      });
-      message = result.message;
-      confidence = result.confidence;
-      reasoning = { risk_flags: result.risk_flags, explanation: result.explanation };
+      // Fallback: Message Compiler when action maps to intent; otherwise fillSlots
+      const { compileMessage, actionToIntent } = await import("@/lib/message-compiler");
+      const { conversationHadProofReference, conversationAlreadyHadRecordExpectation } = await import("@/lib/environmental-presence/proof-reference");
+      const addRecordExpectationFallback =
+        (await conversationHadProofReference(workspaceId, convId)) && !(await conversationAlreadyHadRecordExpectation(convId));
+      const fallbackIntent = actionToIntent(action);
+      if (fallbackIntent) {
+        const { data: convChannel } = await db.from("conversations").select("channel").eq("id", convId).single();
+        const ch = ((convChannel as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
+        message = compileMessage(fallbackIntent, { channel: ch, entities: { name: lead.name ?? undefined }, addRecordExpectation: addRecordExpectationFallback });
+        confidence = 0.8;
+        reasoning = { explanation: "Message Compiler fallback." };
+      } else {
+        const result = await fillSlots(action, {
+          leadName: lead.name ?? undefined,
+          company: lead.company ?? undefined,
+          lastMessage: lastUserMsg,
+          workspaceId,
+          leadId,
+          communication_style: communicationStyle,
+        });
+        message = result.message;
+        confidence = result.confidence;
+        reasoning = { risk_flags: result.risk_flags, explanation: result.explanation };
+      }
     }
 
     // Safety checks
@@ -278,29 +317,21 @@ export async function runDecisionJob(
       const dealId = (dealRow as { id?: string })?.id;
       if (dealId) {
         const route = await getBookingRoute(dealId);
+        const { conversationHadProofReference, conversationAlreadyHadRecordExpectation } = await import("@/lib/environmental-presence/proof-reference");
+        const addRec = (await conversationHadProofReference(workspaceId, convId)) && !(await conversationAlreadyHadRecordExpectation(convId));
         if (route.tier === "clarify_nurture") {
           action = "qualification_question";
-          const qualResult = await fillSlots("qualification_question", {
-            leadName: lead.name ?? undefined,
-            company: lead.company ?? undefined,
-            lastMessage: lastUserMsg,
-            workspaceId,
-            leadId,
-            communication_style: communicationStyle,
-          });
-          message = qualResult.message;
+          const { compileMessage } = await import("@/lib/message-compiler");
+          const { data: chRow } = await db.from("conversations").select("channel").eq("id", convId).single();
+          const ch = ((chRow as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
+          message = compileMessage("clarification", { channel: ch, entities: { name: lead.name ?? undefined }, addRecordExpectation: addRec });
           reasoning = { ...reasoning, booking_route: route };
         } else if (route.tier === "triage_call" && action === "booking") {
           action = "call_invite";
-          const invResult = await fillSlots("call_invite", {
-            leadName: lead.name ?? undefined,
-            company: lead.company ?? undefined,
-            lastMessage: lastUserMsg,
-            workspaceId,
-            leadId,
-            communication_style: communicationStyle,
-          });
-          message = invResult.message;
+          const { compileMessage } = await import("@/lib/message-compiler");
+          const { data: chRow } = await db.from("conversations").select("channel").eq("id", convId).single();
+          const ch = ((chRow as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
+          message = compileMessage("follow_up", { channel: ch, entities: { name: lead.name ?? undefined }, addRecordExpectation: addRec });
           reasoning = { ...reasoning, booking_route: route };
         } else {
           reasoning = { ...reasoning, booking_route: route };
@@ -445,23 +476,14 @@ export async function runDecisionJob(
     });
     const { data: convH } = await db.from("conversations").select("channel").eq("id", convId).single();
     const outCh = (convH as { channel?: string })?.channel ?? "web";
-    const { data: omH } = await db
-      .from("outbound_messages")
-      .insert({
-        workspace_id: workspaceId,
-        lead_id: leadId,
-        conversation_id: convId,
-        content: holdingMessage,
-        channel: outCh,
-        status: "queued",
-        attempt_count: (totalOutbound ?? 0) + 1,
-      })
-      .select("id")
-      .single();
-    if (omH) {
-      const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-      await sendOutbound((omH as { id: string }).id, workspaceId, leadId, convId, outCh, holdingMessage, to);
-    }
+    await enqueueSendMessage(
+      workspaceId,
+      leadId,
+      convId,
+      outCh,
+      holdingMessage,
+      `send:${workspaceId}:${leadId}:${convId}:hold:${(totalOutbound ?? 0) + 1}`
+    );
     return;
   }
 
@@ -481,6 +503,22 @@ export async function runDecisionJob(
   const { data: dealRow } = await db.from("deals").select("value_cents").eq("lead_id", leadId).neq("status", "lost").limit(1).single();
   const dealValue = (dealRow as { value_cents?: number })?.value_cents ?? 0;
 
+  // Human presence layer: timing, variation, memory, validation, emotional complexity
+  const { applyHumanPresence } = await import("@/lib/human-presence");
+  type ConvState = import("@/lib/conversation-state/resolver").ConversationState;
+  const conversationStateForPresence = (reasoning as { conversation_state?: string }).conversation_state ?? "NEW_INTEREST";
+  const presenceResult = await applyHumanPresence({
+    leadId,
+    workspaceId,
+    conversationId: convId,
+    state: conversationStateForPresence as ConvState,
+    message,
+    lastUserMessage: lastUserMsg,
+    objectionCount: (reasoning as { objection_type?: string })?.objection_type ? 1 : 0,
+  });
+  message = presenceResult.content;
+  const shouldEscalateByEmotion = presenceResult.shouldEscalateByEmotion ?? false;
+
   const needsApproval = !forceSimulate && (await shouldRequireApproval(workspaceId, action, {
     isSensitive: !!sensitive,
     dealValueCents: dealValue,
@@ -494,8 +532,8 @@ export async function runDecisionJob(
     policySensitiveDetected: !!sensitive,
   });
 
-  if (!forceSimulate && ((escalationCheck.shouldEscalate && escalationCheck.reason) || needsApproval)) {
-    const escReason = escalationCheck.reason ?? "autonomy_assist_approval_required";
+  if (!forceSimulate && ((escalationCheck.shouldEscalate && escalationCheck.reason) || needsApproval || shouldEscalateByEmotion)) {
+    const escReason = escalationCheck.reason ?? (shouldEscalateByEmotion ? "emotional_complexity" : "autonomy_assist_approval_required");
     const assignedUserId = await getAssignedUserId(workspaceId, leadId);
     const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).single();
     const timeoutHours = (escRules as { escalation_rules?: { escalation_timeout_hours?: number }; escalation_timeout_hours?: number })?.escalation_rules?.escalation_timeout_hours
@@ -521,27 +559,14 @@ export async function runDecisionJob(
 
     const { data: conv } = await db.from("conversations").select("channel").eq("id", convId).single();
     const outChannel = (conv as { channel?: string })?.channel ?? "web";
-    const { data: om } = await db
-      .from("outbound_messages")
-      .insert({
-        workspace_id: workspaceId,
-        lead_id: leadId,
-        conversation_id: convId,
-        content: holdingMessage,
-        channel: outChannel,
-        status: "queued",
-        attempt_count: (totalOutbound ?? 0) + 1,
-      })
-      .select("id")
-      .single();
-
-    if (om) {
-      const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-      const sendResult = await sendOutbound((om as { id: string }).id, workspaceId, leadId, convId, outChannel, holdingMessage, to);
-      if (sendResult.status === "failed" && sendResult.error) {
-        await db.from("outbound_messages").update({ delivery_error: sendResult.error }).eq("id", (om as { id: string }).id);
-      }
-    }
+    await enqueueSendMessage(
+      workspaceId,
+      leadId,
+      convId,
+      outChannel,
+      holdingMessage,
+      `send:${workspaceId}:${leadId}:${convId}:escalation:${(totalOutbound ?? 0) + 1}`
+    );
 
     await db.from("pending_approvals").insert({
       lead_id: leadId,
@@ -611,88 +636,35 @@ export async function runDecisionJob(
 
   const { data: conv } = await db.from("conversations").select("channel").eq("id", convId).single();
   const outChannel = (conv as { channel?: string })?.channel ?? "web";
-  const { data: om } = await db
-    .from("outbound_messages")
-    .insert({
-      workspace_id: workspaceId,
-      lead_id: leadId,
-      conversation_id: convId,
-      content: message,
-      channel: outChannel,
-      status: "queued",
-      attempt_count: attemptCount,
-    })
-    .select("id")
-    .single();
+  await enqueueSendMessage(
+    workspaceId,
+    leadId,
+    convId,
+    outChannel,
+    message,
+    `send:${workspaceId}:${leadId}:${convId}:${attemptCount}`,
+    { send_at: presenceResult.sendAt, delay_seconds: presenceResult.delaySeconds }
+  );
 
-  if (om) {
-    const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-    const sendResult = await sendOutbound(
-      (om as { id: string }).id,
-      workspaceId,
-      leadId,
-      convId,
-      outChannel,
-      message,
-      to
-    );
-
-    // Log reply_sent activation event (first reply only)
-    if (sendResult.status === "sent") {
-      try {
-        const { count } = await db
-          .from("outbound_messages")
-          .select("*", { count: "exact", head: true })
-          .eq("workspace_id", workspaceId)
-          .eq("status", "sent");
-        
-        if (count === 1) {
-          // First sent reply for this workspace
-          const { data: workspace } = await db
-            .from("workspaces")
-            .select("owner_id")
-            .eq("id", workspaceId)
-            .single();
-          
-          try {
-            await db.from("activation_events").insert({
-              workspace_id: workspaceId,
-              user_id: (workspace as { owner_id?: string })?.owner_id || null,
-              step: "reply_sent",
-              metadata: {},
-            });
-          } catch {
-            // Non-blocking
-          }
-        }
-      } catch {
-        // Non-blocking
-      }
-    }
-
-    // Schedule next action based on playbook (if state-driven flow was used)
-    const nextActionAt = (reasoning as { _next_action_at?: Date })._next_action_at;
-    const conversationStateFromReasoning = (reasoning as { conversation_state?: string }).conversation_state;
-    if (nextActionAt && conversationStateFromReasoning) {
-      const playbookActionMap: Record<string, string> = {
-        NEW_INTEREST: "observe",
-        CLARIFICATION: "observe",
-        CONSIDERING: "observe",
-        SOFT_OBJECTION: "follow_up",
-        HARD_OBJECTION: "follow_up",
-        DRIFT: "follow_up",
-        COMMITMENT: "confirm",
-        POST_BOOKING: "observe",
-      };
-      const nextActionType = playbookActionMap[conversationStateFromReasoning] ?? "observe";
-      await setLeadPlan(workspaceId, leadId, {
-        next_action_type: nextActionType,
-        next_action_at: nextActionAt.toISOString(),
-      }).catch(() => {});
-    }
-    if (sendResult.status === "failed" && sendResult.error) {
-      await db.from("outbound_messages").update({ delivery_error: sendResult.error }).eq("id", (om as { id: string }).id);
-    }
+  // Schedule next action based on playbook (if state-driven flow was used)
+  const nextActionAt = (reasoning as { _next_action_at?: Date })._next_action_at;
+  const conversationStateFromReasoning = (reasoning as { conversation_state?: string }).conversation_state;
+  if (nextActionAt && conversationStateFromReasoning) {
+    const playbookActionMap: Record<string, string> = {
+      NEW_INTEREST: "observe",
+      CLARIFICATION: "observe",
+      CONSIDERING: "observe",
+      SOFT_OBJECTION: "follow_up",
+      HARD_OBJECTION: "follow_up",
+      DRIFT: "follow_up",
+      COMMITMENT: "confirm",
+      POST_BOOKING: "observe",
+    };
+    const nextActionType = playbookActionMap[conversationStateFromReasoning] ?? "observe";
+    await setLeadPlan(workspaceId, leadId, {
+      next_action_type: nextActionType,
+      next_action_at: nextActionAt.toISOString(),
+    }).catch(() => {});
   }
 
   await incrementMetric(workspaceId, policy.allowed ? METRIC_KEYS.REPLIES_SENT : METRIC_KEYS.FALLBACK_USED);
