@@ -4,8 +4,8 @@ export const ROUTES = {
   PRICING: "/pricing",
   PRODUCT: "/product",
   DOCS: "/docs",
-  CONTACT: "/#contact",
-  BOOK_DEMO: "/activate",
+  CONTACT: "/contact",
+  BOOK_DEMO: "mailto:hello@recall-touch.com?subject=Demo%20request",
 } as const;
 
 export const NAV_LINKS = [
@@ -21,7 +21,16 @@ export const PRICING_TIERS = [
     priceAnnual: "$39",
     period: "/mo",
     description: "1 operator",
-    features: ["Basic compliance", "Encrypted records", "Audit trail"],
+    features: [
+      "1 operator seat",
+      "200 governed calls/month",
+      "Call recording & transcription",
+      "Basic compliance framework",
+      "Encrypted records",
+      "Audit trail",
+      "Email support",
+      "14-day free trial",
+    ],
     cta: "Start free",
     href: "/activate",
     popular: false,
@@ -32,7 +41,18 @@ export const PRICING_TIERS = [
     priceAnnual: "$119",
     period: "/mo",
     description: "Up to 5 operators",
-    features: ["Priority compliance", "Follow-up automation", "API access"],
+    features: [
+      "Up to 5 operator seats",
+      "1,000 governed calls/month",
+      "Call recording & transcription",
+      "Priority compliance framework",
+      "Follow-up automation",
+      "Escalation routing (L1→L2)",
+      "Jurisdiction controls",
+      "API access",
+      "Priority email support",
+      "14-day free trial",
+    ],
     cta: "Start free",
     href: "/activate",
     popular: true,
@@ -43,7 +63,20 @@ export const PRICING_TIERS = [
     priceAnnual: "Custom",
     period: "",
     description: "Unlimited operators",
-    features: ["Custom compliance", "SSO", "Audit log", "Dedicated support"],
+    features: [
+      "Unlimited operator seats",
+      "Unlimited governed calls",
+      "Full compliance framework",
+      "Custom jurisdiction rules",
+      "Advanced escalation (L1→L2→L3)",
+      "Multi-channel governance",
+      "SSO & SAML",
+      "Full audit log & chain of custody",
+      "API + webhooks",
+      "Dedicated account manager",
+      "Custom onboarding",
+      "SLA guarantee",
+    ],
     cta: "Get in touch",
     href: "/activate",
     popular: false,
@@ -59,13 +92,13 @@ export const FOOTER_PRODUCT = [
 ] as const;
 
 export const FOOTER_COMPANY = [
-  { label: "About", href: "/#about" },
-  { label: "Contact", href: "/#contact" },
+  { label: "About", href: "/product" },
+  { label: "Contact", href: "/contact" },
 ] as const;
 
 export const FOOTER_LEGAL = [
-  { label: "Privacy", href: "/#privacy" },
-  { label: "Terms", href: "/#terms" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
 ] as const;
 
 export const PRICING_FAQ = [

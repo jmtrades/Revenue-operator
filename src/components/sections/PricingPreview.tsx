@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -9,6 +10,7 @@ import { motion } from "framer-motion";
 import { PRICING_TIERS, ROUTES } from "@/lib/constants";
 
 export function PricingPreview() {
+  const [annual, setAnnual] = useState(false);
   return (
     <section id="pricing" className="marketing-section" style={{ background: "var(--bg-primary)" }}>
       <Container>
@@ -18,6 +20,16 @@ export function PricingPreview() {
             Governance scales with your operation.
           </h2>
         </AnimateOnScroll>
+        <div className="flex items-center justify-center gap-3 mb-10">
+          <span className="text-sm font-medium" style={{ color: !annual ? "var(--text-primary)" : "var(--text-tertiary)" }}>Monthly</span>
+          <button type="button" role="switch" aria-checked={annual} onClick={() => setAnnual((a) => !a)} className="relative w-12 h-7 rounded-full border transition-colors" style={{ background: "var(--bg-surface)", borderColor: "var(--border-default)" }}>
+            <span className="absolute top-0.5 w-6 h-6 rounded-full transition-all duration-200" style={{ left: annual ? "calc(100% - 26px)" : "2px", background: annual ? "var(--accent-primary)" : "var(--text-tertiary)" }} />
+          </button>
+          <span className="text-sm font-medium flex items-center gap-2" style={{ color: annual ? "var(--text-primary)" : "var(--text-tertiary)" }}>
+            Annual
+            {annual && <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "var(--accent-secondary-subtle)", color: "var(--accent-secondary)" }}>Save 20%</span>}
+          </span>
+        </div>
         <StaggerChildren className="grid md:grid-cols-3 gap-6">
           {PRICING_TIERS.map((tier) => (
             <motion.div
@@ -33,7 +45,7 @@ export function PricingPreview() {
               )}
               <h3 className="font-semibold text-lg mb-1" style={{ color: "var(--text-primary)" }}>{tier.name}</h3>
               <p className="text-2xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>
-                {tier.priceMonthly}
+                {annual ? tier.priceAnnual : tier.priceMonthly}
                 <span className="text-sm font-normal" style={{ color: "var(--text-tertiary)" }}>{tier.period}</span>
               </p>
               <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{tier.description}</p>

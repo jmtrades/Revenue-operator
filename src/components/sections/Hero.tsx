@@ -86,10 +86,7 @@ export function Hero() {
               filter: "blur(40px)",
             }}
           />
-          <div className="hidden lg:block" style={{ transform: "perspective(2000px) rotateX(2deg)" }}>
-            <MockDashboard />
-          </div>
-          <div className="lg:hidden">
+          <div className="lg:[transform:perspective(2000px)_rotateX(2deg)]" aria-hidden="true">
             <MockDashboard />
           </div>
         </motion.div>

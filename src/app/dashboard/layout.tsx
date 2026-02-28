@@ -20,23 +20,39 @@ const ALLOWED_DASHBOARD_PATHS = [
   "/dashboard/connection",
   "/dashboard/import",
   "/dashboard/billing",
+  "/dashboard/calls",
+  "/dashboard/follow-ups",
+  "/dashboard/escalations",
+  "/dashboard/messages",
+  "/dashboard/compliance",
+  "/dashboard/settings",
 ];
 function isAllowedPath(pathname: string): boolean {
   if (ALLOWED_DASHBOARD_PATHS.includes(pathname)) return true;
   if (pathname.startsWith("/dashboard/record/lead/")) return true;
   if (pathname.startsWith("/dashboard/policies/")) return true;
+  if (pathname.startsWith("/dashboard/calls/")) return true;
+  if (pathname.startsWith("/dashboard/messages/")) return true;
+  if (pathname.startsWith("/dashboard/settings/")) return true;
   return false;
 }
 const NAV = [
+  { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/start", label: "Start" },
   { href: "/dashboard/record", label: "Record" },
+  { href: "/dashboard/calls", label: "Calls" },
   { href: "/dashboard/activity", label: "Activity" },
   { href: "/dashboard/presence", label: "Presence" },
   { href: "/dashboard/approvals", label: "Approvals" },
+  { href: "/dashboard/follow-ups", label: "Follow-ups" },
+  { href: "/dashboard/escalations", label: "Escalations" },
+  { href: "/dashboard/messages", label: "Messages" },
   { href: "/dashboard/policies", label: "Policies" },
   { href: "/dashboard/templates", label: "Templates" },
+  { href: "/dashboard/compliance", label: "Compliance" },
   { href: "/dashboard/import", label: "Import" },
   { href: "/dashboard/billing", label: "Billing" },
+  { href: "/dashboard/settings", label: "Settings" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -97,11 +113,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const allowed = isAllowedPath(pathname);
   const isLiveOrValue = pathname === "/dashboard/live" || pathname === "/dashboard/value";
   useEffect(() => {
-    if (pathname === "/dashboard") {
-      const q = new URLSearchParams(window.location.search);
-      router.replace(`/dashboard/start${q.toString() ? `?${q.toString()}` : ""}`);
-      return;
-    }
     if (!pathname.startsWith("/dashboard") || allowed || isLiveOrValue) return;
     const q = new URLSearchParams(window.location.search);
     router.replace(`/dashboard/start${q.toString() ? `?${q.toString()}` : ""}`);

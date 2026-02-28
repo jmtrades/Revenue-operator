@@ -32,7 +32,6 @@ describe("Surface restriction", () => {
     const legacy = [
       "/dashboard/conversations",
       "/dashboard/leads",
-      "/dashboard/settings",
       "/dashboard/activation",
       "/dashboard/continue-protection",
     ];

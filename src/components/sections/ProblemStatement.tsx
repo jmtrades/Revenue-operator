@@ -3,13 +3,12 @@
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
-import { StatCountUp } from "@/components/shared/StatCountUp";
 import { motion } from "framer-motion";
 
 const STATS = [
-  { target: 67, suffix: "%", desc: "of sales calls have no compliance record" },
-  { target: 3.2, suffix: "×", decimals: 1, desc: "higher dispute rate without call governance" },
-  { target: 47, prefix: "$", suffix: "K", desc: "average cost of a single compliance violation" },
+  { value: "67%", desc: "of sales calls have no compliance record" },
+  { value: "3.2×", desc: "higher dispute rate without call governance" },
+  { value: "$47K", desc: "average cost of a single compliance violation" },
 ];
 
 export function ProblemStatement() {
@@ -45,12 +44,7 @@ export function ProblemStatement() {
               className="card-marketing p-8"
             >
               <div className="text-4xl sm:text-5xl font-bold mb-2" style={{ color: "var(--accent-primary)" }}>
-                <StatCountUp
-                  target={stat.target}
-                  prefix={stat.prefix ?? ""}
-                  suffix={stat.suffix ?? ""}
-                  decimals={stat.decimals ?? 0}
-                />
+                {stat.value}
               </div>
               <p className="text-sm mt-2" style={{ color: "var(--text-tertiary)", lineHeight: 1.5 }}>
                 {stat.desc}
