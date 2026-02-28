@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 /**
- * Minimal top nav: Recall Touch, Pricing, Declare, Start.
+ * Minimal top nav: Recall Touch, Product, Pricing, Documentation, Sign in, Start free.
  */
 export function AuthorityNav() {
   return (
@@ -13,9 +13,11 @@ export function AuthorityNav() {
           Recall Touch
         </Link>
         <div className="flex items-center gap-6">
+          <Link href="/product" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Product</Link>
           <Link href="/pricing" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Pricing</Link>
-          <Link href="/declare" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Declare</Link>
-          <Link href="/dashboard/start" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Start</Link>
+          <Link href="/docs" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Documentation</Link>
+          <Link href="/dashboard/start" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Sign in</Link>
+          <Link href="/activate" className="text-[13px] uppercase tracking-wide font-semibold" style={{ color: "var(--text-primary)" }}>Start free</Link>
         </div>
       </div>
     </nav>

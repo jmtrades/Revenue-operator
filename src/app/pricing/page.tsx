@@ -1,9 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { AuthorityHeader, InstitutionalCard, AuthorityNav } from "@/components/institutional";
+import { Check } from "lucide-react";
+import { Navbar } from "@/components/sections/Navbar";
+import { Footer } from "@/components/sections/Footer";
+import { Container } from "@/components/ui/Container";
+import { AccordionItem } from "@/components/ui/Accordion";
+import { PRICING_TIERS, PRICING_FAQ, COMPARISON_FEATURES, ROUTES } from "@/lib/constants";
+import { motion } from "framer-motion";
 
-/** Licensed per operator. No toggles. No feature lists. */
+/** Licensed per operator. Monthly/annual toggle. */
 
 export const ANNUAL_NOTE = "Two months applied without interruption on annual commitment.";
 
@@ -14,70 +21,129 @@ export function pricingCopyForTests(): string {
     "Growth",
     "Team",
     "Conversations handled under governance",
-    "Declare governance",
+    "Start free",
     "Execution is applied under declared jurisdiction",
   ].join(" ");
 }
 
 export default function PricingPage() {
+  const [annual, setAnnual] = useState(false);
   return (
-    <main className="min-h-screen" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-      <AuthorityNav />
-      <div className="max-w-[1100px] mx-auto px-6 sm:px-8 py-[120px]">
-        <AuthorityHeader
-          label="Pricing"
-          title="Call handling without exposure."
-        />
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, ease: "easeOut" }} className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <Navbar />
+      <main className="pt-28 pb-24">
+        <Container>
+          <p className="section-label mb-4">Pricing</p>
+          <h1 className="font-bold text-3xl md:text-4xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+            Governance scales with your operation.
+          </h1>
+          <p className="text-base mb-8 max-w-xl" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+            Licensed per operator environment. Execution is applied under declared jurisdiction and review depth.
+          </p>
+          <div className="flex items-center justify-center gap-3 mb-12">
+            <span className="text-sm font-medium" style={{ color: annual ? "var(--text-tertiary)" : "var(--text-primary)" }}>Monthly</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={annual}
+              onClick={() => setAnnual((a) => !a)}
+              className="w-14 h-10 rounded-full border-2 transition-colors flex-shrink-0 p-0.5"
+              style={{
+                background: annual ? "var(--accent-primary)" : "var(--bg-surface)",
+                borderColor: "var(--border-default)",
+              }}
+            >
+              <span
+                className="block w-5 h-5 rounded-full bg-white transition-transform"
+                style={{ transform: annual ? "translateX(1.25rem)" : "translateX(0)" }}
+              />
+            </button>
+            <span className="text-sm font-medium flex items-center gap-2" style={{ color: annual ? "var(--text-primary)" : "var(--text-tertiary)" }}>
+              Annual
+              <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ background: "var(--accent-secondary)", color: "var(--bg-primary)" }}>Save 20%</span>
+            </span>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {PRICING_TIERS.map((tier) => (
+              <div
+                key={tier.name}
+                className="card-marketing p-8 relative"
+                style={tier.popular ? { borderColor: "var(--accent-primary)", boxShadow: "0 0 0 1px var(--accent-primary)" } : undefined}
+              >
+                {tier.popular && (
+                  <span className="pill-popular absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-current" /> Popular
+                  </span>
+                )}
+                <h3 className="font-semibold text-lg mb-1" style={{ color: "var(--text-primary)" }}>{tier.name}</h3>
+                <p className="text-2xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>
+                  {annual ? tier.priceAnnual : tier.priceMonthly}
+                  <span className="text-sm font-normal" style={{ color: "var(--text-tertiary)" }}>{tier.period}</span>
+                </p>
+                <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{tier.description}</p>
+                <ul className="space-y-2 mb-8">
+                  {tier.features.map((feat) => (
+                    <li key={feat} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
+                      <Check className="w-4 h-4 shrink-0" style={{ color: "var(--accent-secondary)" }} />
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <Link href={tier.cta === "Get in touch" ? ROUTES.CONTACT : ROUTES.START} className={tier.popular ? "btn-marketing-primary w-full block text-center py-3 rounded-lg no-underline" : "btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline"}>
+                  {tier.cta}
+                </Link>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-sm mb-10" style={{ color: "var(--text-tertiary)" }}>
+            All plans include: encrypted records · compliance framework · audit trail · 14-day free trial
+          </p>
 
-        <p className="mt-8 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-          Governance license applied per operator environment.
-        </p>
-        <p className="mt-1 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-          Applied upon declaration.
-        </p>
-        <p className="mt-1 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-          No additional configuration required.
-        </p>
-        <p className="mt-1 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-          No onboarding team required.
-        </p>
+          <h2 className="font-semibold text-xl mb-6 mt-20" style={{ color: "var(--text-primary)" }}>
+            Feature comparison
+          </h2>
+          <div className="overflow-x-auto rounded-lg border mb-20" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border-default)" }}>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Feature</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Solo</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Growth</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Team</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON_FEATURES.map((row, i) => (
+                  <tr key={i} style={{ borderBottom: "1px solid var(--border-default)", background: i % 2 === 1 ? "rgba(255,255,255,0.01)" : "transparent" }}>
+                    <td className="py-3 px-4" style={{ color: "var(--text-primary)" }}>{row.name}</td>
+                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{row.solo}</td>
+                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{row.growth}</td>
+                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{row.team}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        <div className="mt-12 space-y-[40px]">
-          <InstitutionalCard>
-            <h3 className="font-headline mb-2" style={{ fontSize: "22px", fontWeight: 450 }}>Solo — 297 / month</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              Conversations handled under governance.
-            </p>
-          </InstitutionalCard>
+          <h2 id="faq" className="font-semibold text-xl mb-6" style={{ color: "var(--text-primary)" }}>
+            Frequently asked questions
+          </h2>
+          <div className="max-w-2xl mb-16">
+            {PRICING_FAQ.map((faq, i) => (
+              <AccordionItem key={i} title={faq.q}>
+                {faq.a}
+              </AccordionItem>
+            ))}
+          </div>
 
-          <InstitutionalCard>
-            <h3 className="font-headline mb-2" style={{ fontSize: "22px", fontWeight: 450 }}>Growth — 897 / month</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              Conversations handled under governance.
-            </p>
-          </InstitutionalCard>
-
-          <InstitutionalCard>
-            <h3 className="font-headline mb-2" style={{ fontSize: "22px", fontWeight: 450 }}>Team — 2400 / month</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              Conversations handled under governance.
-            </p>
-          </InstitutionalCard>
-        </div>
-
-        <p className="mt-12 text-sm text-center" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-          Execution is applied under declared jurisdiction and review depth.
-        </p>
-
-        <p className="mt-8 text-sm text-center mb-6" style={{ color: "var(--text-muted)" }}>
-          Execution begins under record.
-        </p>
-        <div className="text-center">
-          <Link href="/activate" className="btn-primary">
-            Declare governance
-          </Link>
-        </div>
-      </div>
-    </main>
+          <div className="text-center">
+            <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-block">
+              Start free →
+            </Link>
+          </div>
+        </Container>
+      </main>
+      <Footer />
+    </motion.div>
   );
 }

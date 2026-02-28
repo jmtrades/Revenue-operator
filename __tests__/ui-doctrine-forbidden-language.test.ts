@@ -48,7 +48,7 @@ function extractStrings(content: string): string[] {
 }
 
 /** Marketing pages: factual copy only; excluded. See docs/MARKETING_PAGES_DOCTRINE.md */
-const MARKETING_EXCLUDE = ["src/app/pricing/", "src/app/example/"];
+const MARKETING_EXCLUDE = ["src/app/pricing/", "src/app/product/", "src/app/example/"];
 /** Onboarding: fixed product copy (e.g. first-record message "what we agreed") is factual and mandated. */
 const ONBOARD_EXCLUDE = ["src/app/onboard/"];
 

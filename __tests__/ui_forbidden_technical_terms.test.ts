@@ -68,6 +68,7 @@ function isUserFacing(s: string): boolean {
   if (s.includes("var(--") || s.includes("@/")) return false;
   if (/^[a-z0-9_-]+$/i.test(s) && s.includes("-")) return false;
   if (s.includes("Authorization:") || s.includes("Bearer ") || s.includes("POST ") && s.includes("{")) return false;
+  if (s.includes("schema.org") || s.includes("@context")) return false; // JSON-LD structured data, not user-facing
   return true;
 }
 

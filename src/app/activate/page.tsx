@@ -16,7 +16,9 @@ function ActivatePageContent() {
   const [loadingMessage, setLoadingMessage] = useState("Preparing checkout…");
 
   useEffect(() => {
-    fetch("/api/auth/session", { credentials: "include" })
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10_000);
+    fetch("/api/auth/session", { credentials: "include", signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
         const session = data?.session;
@@ -28,7 +30,8 @@ function ActivatePageContent() {
         }
         setCheckingSession(false);
       })
-      .catch(() => setCheckingSession(false));
+      .catch(() => setCheckingSession(false))
+      .finally(() => clearTimeout(timeoutId));
   }, [router]);
 
   // Check for canceled param

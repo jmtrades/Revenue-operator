@@ -72,7 +72,12 @@ describe("Commercial Execution Final Lock", () => {
     expect(forbidden.toLowerCase()).toMatch(/dialer/);
 
     const landing = read("src/app/page.tsx");
-    expect(landing).toMatch(/Every commercial conversation must be governed|Declare governance|Commercial execution standard/i);
+    const hero = read("src/components/sections/Hero.tsx");
+    expect(landing).toMatch(/Hero/);
+    expect(hero).toMatch(/Every call that drives revenue/i);
+    expect(hero).toMatch(/Commercial execution infrastructure|Start free|governs inbound/i);
+    expect(hero).not.toMatch(/Declare governance/i);
+    expect(landing).not.toMatch(/Declare governance/i);
   });
 
   it("dashboard redirects to /dashboard/start", () => {
