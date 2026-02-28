@@ -1,13 +1,12 @@
 /**
- * Ops: Send customer check-in email (template)
- * Requires staff write access.
+ * Ops: Enqueue check-in email via action intent. Executor sends; route never calls delivery.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { sendOutbound } from "@/lib/delivery/provider";
+import { createActionIntent } from "@/lib/action-intents";
 import { requireStaffWriteAccess, logStaffAction } from "@/lib/ops/auth";
 
 const CHECK_IN_TEMPLATE = `Hi there,
@@ -25,51 +24,40 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
   }
-  const { workspace_id: workspaceId, to_email: toEmail, subject = "Quick check-in" } = body;
-  if (!workspaceId || !toEmail) return NextResponse.json({ error: "workspace_id and to_email required" }, { status: 400 });
+  const { workspace_id: workspaceId, to_email: toEmail } = body;
+  if (!workspaceId || !toEmail) {
+    return NextResponse.json({ ok: false, reason: "workspace_id_and_to_email_required" }, { status: 200 });
+  }
 
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).single();
-  if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+  if (!ws) return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 200 });
 
   const { data: lead } = await db.from("leads").select("id").eq("workspace_id", workspaceId).ilike("email", toEmail).limit(1).maybeSingle();
   const leadId = (lead as { id?: string })?.id;
-  if (!leadId) return NextResponse.json({ error: "Lead not found for email in workspace" }, { status: 404 });
+  if (!leadId) return NextResponse.json({ ok: false, reason: "lead_not_found" }, { status: 200 });
 
   const { data: conv } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).maybeSingle();
   const convId = (conv as { id?: string })?.id;
-  if (!convId) return NextResponse.json({ error: "No conversation for lead" }, { status: 404 });
-  const channel = (conv as { channel?: string })?.channel ?? "web";
+  if (!convId) return NextResponse.json({ ok: false, reason: "no_conversation" }, { status: 200 });
+  const channel = (conv as { channel?: string })?.channel ?? "email";
 
-  const { data: om } = await db
-    .from("outbound_messages")
-    .insert({
+  await createActionIntent(workspaceId, {
+    intentType: "send_message",
+    payload: {
+      channel,
+      text: CHECK_IN_TEMPLATE,
+      email: toEmail,
       workspace_id: workspaceId,
-      lead_id: leadId,
       conversation_id: convId,
-      content: CHECK_IN_TEMPLATE,
-      channel,
-      status: "queued",
-      attempt_count: 1,
-    })
-    .select("id")
-    .single();
-
-  if (om) {
-    await sendOutbound(
-      (om as { id: string }).id,
-      workspaceId,
-      leadId,
-      convId,
-      channel,
-      CHECK_IN_TEMPLATE,
-      { email: toEmail }
-    );
-  }
+      lead_id: leadId,
+    },
+    dedupeKey: `check-in-email:${workspaceId}:${leadId}`,
+  });
 
   await logStaffAction(session.id, "send_check_in_email", { workspace_id: workspaceId, to_email: toEmail }, workspaceId);
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true }, { status: 200 });
 }

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 
 export default function OnboardIdentityPage() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function OnboardIdentityPage() {
       }
       const workspaceId = json.workspace_id;
       sessionStorage.setItem("onboard_workspace_id", workspaceId);
-      router.push("/onboard/source");
+      router.push("/onboard/domain");
     } catch {
       setError("Network error");
       setLoading(false);
@@ -45,57 +46,64 @@ export default function OnboardIdentityPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#fafaf9] p-6">
-      <div className="max-w-md w-full space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="business_name" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
-              Business name
-            </label>
-            <input
-              id="business_name"
-              type="text"
-              value={businessName}
-              onChange={(e) => setBusinessName(e.target.value)}
-              className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
-              disabled={loading}
-            />
+    <main className="min-h-screen bg-[#fafaf9] p-6">
+      <div className="mx-auto max-w-[720px] pt-16">
+        <div className="space-y-8">
+          <OnboardExecutionStateBanner />
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="business_name" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
+                Business name
+              </label>
+              <input
+                id="business_name"
+                type="text"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label htmlFor="operator_name" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
+                Your name
+              </label>
+              <input
+                id="operator_name"
+                type="text"
+                value={operatorName}
+                onChange={(e) => setOperatorName(e.target.value)}
+                className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
+                disabled={loading}
+              />
+            </div>
+            {error && <p className="text-[18px] text-[#78716c]">{error}</p>}
           </div>
-          <div>
-            <label htmlFor="operator_name" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
-              Your name
-            </label>
-            <input
-              id="operator_name"
-              type="text"
-              value={operatorName}
-              onChange={(e) => setOperatorName(e.target.value)}
-              className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
-              disabled={loading}
-            />
+          <div className="border-t border-[#e7e5e4] pt-8">
+            <form onSubmit={handleSubmit}>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] disabled:opacity-50 transition-colors"
+              >
+                {loading ? "Creating..." : "Continue"}
+              </button>
+            </form>
           </div>
-          <div>
-            <label htmlFor="email" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
-              disabled={loading}
-            />
-          </div>
-          {error && <p className="text-[18px] text-[#78716c]">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] disabled:opacity-50 transition-colors"
-          >
-            {loading ? "Creating..." : "Continue"}
-          </button>
-        </form>
+        </div>
       </div>
     </main>
   );

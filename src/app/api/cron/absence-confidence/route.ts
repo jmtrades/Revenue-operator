@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { deterministicIndex } from "@/lib/intelligence/deterministic-variant";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 
@@ -33,7 +34,9 @@ export async function GET(req: NextRequest) {
 
   const { data: workspaces } = await db
     .from("workspaces")
-    .select("id, owner_id, last_dashboard_open_at, absence_confidence_sent_at, created_at, status, pause_reason, billing_status, protection_renewal_at");
+    .select("id, owner_id, last_dashboard_open_at, absence_confidence_sent_at, created_at, status, pause_reason, billing_status, protection_renewal_at")
+    .order("id", { ascending: true })
+    .limit(500);
 
   const eligible: Array<{ id: string; owner_id: string }> = [];
 
@@ -63,12 +66,14 @@ export async function GET(req: NextRequest) {
 
     if (row.absence_confidence_sent_at && new Date(row.absence_confidence_sent_at).getTime() > sevenDaysAgo.getTime()) continue;
 
-    const { count: escalationCount } = await db
+    const { data: escalationRow } = await db
       .from("escalation_logs")
-      .select("id", { count: "exact", head: true })
+      .select("id")
       .eq("workspace_id", row.id)
-      .gte("created_at", seventyTwoHoursAgo.toISOString());
-    if ((escalationCount ?? 0) > 0) continue;
+      .gte("created_at", seventyTwoHoursAgo.toISOString())
+      .limit(1)
+      .maybeSingle();
+    if (escalationRow) continue;
 
     eligible.push({ id: row.id, owner_id: row.owner_id });
   }
@@ -80,7 +85,9 @@ export async function GET(req: NextRequest) {
     const email = (user as { email?: string } | null)?.email;
     if (!email) continue;
 
-    const message = ABSENCE_MESSAGES[Math.floor(Math.random() * ABSENCE_MESSAGES.length)]!;
+    const daySeed = now.toISOString().slice(0, 10);
+    const msgIndex = deterministicIndex(`${workspaceId}:${daySeed}`, ABSENCE_MESSAGES.length);
+    const message = ABSENCE_MESSAGES[msgIndex]!;
 
     try {
       if (RESEND_API_KEY) {

@@ -1,6 +1,6 @@
 /**
  * Human-safety layer: predictable, safe, human-acceptable behavior.
- * Optimizes for comfort and reliability over persuasion.
+ * Favors comfort and reliability over persuasion.
  * Safety runs LAST before send and can override everything.
  */
 

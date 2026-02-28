@@ -22,6 +22,8 @@ All actions pass through:
 - **Template-slot messaging** – no freeform risk
 - **Workspace isolation** – all queries scoped by workspace_id
 
+**Cursor:** see [docs/CURSOR_MASTER_PROMPT.md](docs/CURSOR_MASTER_PROMPT.md).
+
 ## Quick Start
 
 ```bash
@@ -31,6 +33,24 @@ cp .env.example .env.local
 npm install
 npm run build
 npm run dev
+```
+
+### Use it now (local only, no Vercel/Stripe/cron)
+
+1. Copy env and set **only** the minimal vars (Supabase URL + anon key + service role key, `SESSION_SECRET`, `NEXT_PUBLIC_APP_URL=http://localhost:3000`, `CRON_SECRET` — any string).
+2. Apply migrations to your Supabase project (Dashboard SQL or `supabase db push`).
+3. Run:
+
+   ```bash
+   npm install && npm run dev
+   ```
+
+4. Open **http://localhost:3000**. Onboarding (`/onboard`) and public corridor work. Trial at `/activate` shows “Trial could not be started.” until you add `STRIPE_SECRET_KEY` and `STRIPE_PRICE_ID` to `.env.local`.
+
+**Is it working?** Run:
+
+```bash
+BASE_URL=https://recall-touch.com npm run prod:gate
 ```
 
 ## Vercel Deployment
@@ -204,6 +224,13 @@ npm run test
 - Warm-up caps
 - Call consent and escalation triggers
 - Dispute flow
+
+## Self-check (production readiness)
+
+- **Local:** `BASE_URL=http://localhost:3000 npm run self-check`
+- **Production:** `BASE_URL=https://recall-touch.com npm run self-check`
+
+The self-check script exercises trial start, billing webhook, onboarding thread, public work, system health, core-status, and dashboard load. It uses `/api/system/health` for a doctrine-safe overall readiness signal. Use `npm run self-check` (hyphen).
 
 ## Migrations
 

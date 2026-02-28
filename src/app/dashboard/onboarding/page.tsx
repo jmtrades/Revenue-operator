@@ -71,7 +71,7 @@ function OnboardingContent() {
       <div className="max-w-md w-full text-center">
         <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Connect your calendar</h1>
         <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
-          Connect once. New enquiries then enter handling automatically.
+          Connect once. New enquiries then enter handling under governance.
         </p>
         {wid ? (
           <div className="space-y-3">

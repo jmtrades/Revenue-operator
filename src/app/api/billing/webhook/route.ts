@@ -4,6 +4,7 @@
  */
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
@@ -16,6 +17,7 @@ import {
 } from "@/lib/shared-transaction-assurance";
 import { activateSettlementFromStripe } from "@/lib/settlement";
 import { enqueueSendMessage } from "@/lib/action-queue/send-message";
+import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
 import Stripe from "stripe";
 
 // Structured logging for webhook events
@@ -133,6 +135,18 @@ async function handleStripeWebhookEvent(
           typeof session.subscription === "string" ? session.subscription : session.subscription.id
         );
       } else if (workspaceId && !isSettlement) {
+        const subId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
+        if (subId) {
+          const { data: existing } = await db
+            .from("workspaces")
+            .select("stripe_subscription_id, billing_status")
+            .eq("id", workspaceId)
+            .maybeSingle();
+          const existingRow = existing as { stripe_subscription_id?: string | null; billing_status?: string } | null;
+          if (existingRow?.stripe_subscription_id === subId && (existingRow.billing_status === "trial" || existingRow.billing_status === "active")) {
+            break;
+          }
+        }
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
         const sub = await stripe.subscriptions.retrieve(session.subscription as string);
         const isTrialing = sub.status === "trialing";
@@ -144,20 +158,26 @@ async function handleStripeWebhookEvent(
           : periodEnd
             ? new Date(periodEnd * 1000)
             : null;
-        await db
-          .from("workspaces")
-          .update({
-            billing_status: isTrialing ? "trial" : "active",
-            protection_renewal_at: renewsAt?.toISOString() ?? null,
-            trial_end_at: trialEndAt?.toISOString() ?? null,
-            renews_at: renewsAt?.toISOString() ?? null,
-            stripe_subscription_id: sub.id,
-            status: "active",
-            paused_at: null,
-            pause_reason: null,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", workspaceId);
+        const firstPriceId = sub.items?.data?.[0]?.price
+          ? (typeof sub.items.data[0].price === "string" ? sub.items.data[0].price : sub.items.data[0].price?.id)
+          : null;
+        const tierInterval = priceIdToTierAndInterval(firstPriceId);
+        const updatePayload: Record<string, unknown> = {
+          billing_status: isTrialing ? "trial" : "active",
+          protection_renewal_at: renewsAt?.toISOString() ?? null,
+          trial_end_at: trialEndAt?.toISOString() ?? null,
+          renews_at: renewsAt?.toISOString() ?? null,
+          stripe_subscription_id: sub.id,
+          status: "active",
+          paused_at: null,
+          pause_reason: null,
+          updated_at: new Date().toISOString(),
+        };
+        if (tierInterval) {
+          updatePayload.billing_tier = tierInterval.tier;
+          updatePayload.billing_interval = tierInterval.interval;
+        }
+        await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
       }
       break;
     }
@@ -174,16 +194,22 @@ async function handleStripeWebhookEvent(
           : periodEnd
             ? new Date(periodEnd * 1000)
             : null;
-        await db
-          .from("workspaces")
-          .update({
-            billing_status: isTrialing ? "trial" : sub.status === "active" ? "active" : "paused",
-            protection_renewal_at: renewsAt?.toISOString() ?? null,
-            trial_end_at: trialEndAt?.toISOString() ?? null,
-            renews_at: renewsAt?.toISOString() ?? null,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", workspaceId);
+        const firstPriceId = sub.items?.data?.[0]?.price
+          ? (typeof sub.items.data[0].price === "string" ? sub.items.data[0].price : sub.items.data[0].price?.id)
+          : null;
+        const tierInterval = priceIdToTierAndInterval(firstPriceId);
+        const updatePayload: Record<string, unknown> = {
+          billing_status: isTrialing ? "trial" : sub.status === "active" ? "active" : "paused",
+          protection_renewal_at: renewsAt?.toISOString() ?? null,
+          trial_end_at: trialEndAt?.toISOString() ?? null,
+          renews_at: renewsAt?.toISOString() ?? null,
+          updated_at: new Date().toISOString(),
+        };
+        if (tierInterval) {
+          updatePayload.billing_tier = tierInterval.tier;
+          updatePayload.billing_interval = tierInterval.interval;
+        }
+        await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
         if (sub.cancel_at_period_end) {
           await db
             .from("workspaces")

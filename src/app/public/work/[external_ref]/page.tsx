@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const FOLLOW_UP_TYPES = [
   "request_adjustment",
@@ -75,16 +75,16 @@ export default function PublicWorkPage() {
 
   if (!externalRef || notFound) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#fafaf9] p-6">
-        <p className="text-[18px] text-[#78716c]">Not found.</p>
+      <main className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--background)" }}>
+        <p className="text-lg" style={{ color: "var(--text-muted)" }}>Not found.</p>
       </main>
     );
   }
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#fafaf9] p-6">
-        <p className="text-[18px] text-[#78716c]">Loading.</p>
+      <main className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--background)" }}>
+        <p className="text-lg" style={{ color: "var(--text-muted)" }}>Loading.</p>
       </main>
     );
   }
@@ -105,6 +105,12 @@ export default function PublicWorkPage() {
   const participants = data?.participants ?? [];
   const canRespond = data?.can_respond === true;
   const canFollowUp = data?.can_follow_up === true;
+
+  const copyRecordLink = useCallback(() => {
+    if (typeof window === "undefined" || !externalRef) return;
+    const url = `${window.location.origin}/public/work/${encodeURIComponent(externalRef)}`;
+    navigator.clipboard.writeText(url).catch(() => {});
+  }, [externalRef]);
 
   const sendResponse = (type: string, text?: string, extra?: { actor_role?: string; participant_hint?: string; evidence_text?: string; evidence_pointer?: string }) => {
     if (responseDone || responding) return;
@@ -129,18 +135,46 @@ export default function PublicWorkPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] text-[#1c1917] p-6">
-      <div className="mx-auto max-w-[880px] space-y-12">
-        <h1 className="text-[21px] font-normal text-[#1c1917]">Record</h1>
+    <main className="min-h-screen py-16 sm:py-24 px-6" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+      <div className="mx-auto max-w-[680px] space-y-20 text-center" style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.25)" }}>
+        <header className="space-y-4 pb-12 border-b-2" style={{ borderColor: "var(--accent)", paddingBottom: "3rem" }}>
+          <h1 className="font-headline text-[28px] sm:text-[32px] uppercase tracking-tight">
+            Governed commercial record
+          </h1>
+          <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            Verified under declared jurisdiction.
+          </p>
+          <p className="text-sm mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.75, letterSpacing: "0.01em" }}>
+            This record reflects governed execution under declared jurisdiction and review level.
+          </p>
+        </header>
+        <div className="text-sm text-left" style={{ color: "var(--text-muted)", lineHeight: 1.75, letterSpacing: "0.01em", display: "flex", flexDirection: "column", gap: "16px" }}>
+          <p>Chronological.</p>
+          <p>Immutable.</p>
+          <p>Unalterable once issued.</p>
+          <p>Forwardable without modification.</p>
+          <p className="pt-2" style={{ color: "var(--text-secondary)" }}>This record confirms execution occurred under governance.</p>
+          <p className="pt-1" style={{ color: "var(--text-secondary)" }}>Communication was evaluated before issuance.</p>
+          <p className="pt-1" style={{ color: "var(--text-secondary)" }}>Record integrity is enforced at issuance.</p>
+        </div>
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={copyRecordLink}
+            className="btn-primary"
+          >
+            Copy record
+          </button>
+        </div>
 
         {participants.length > 0 && (
-          <section>
-            <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <h2 className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
               Participants
             </h2>
             <ul className="space-y-1">
               {participants.map((p, i) => (
-                <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+                <li key={i} className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                   {p.role}
                   {p.hint ? ` — ${p.hint}` : ""}
                 </li>
@@ -149,16 +183,16 @@ export default function PublicWorkPage() {
           </section>
         )}
 
-        <section>
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+        <section className="text-left pt-16 border-t" style={{ borderColor: "var(--border)" }}>
+          <h2 className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
             What happened
           </h2>
           {what_happened.length === 0 ? (
-            <p className="text-[18px] leading-relaxed text-[#78716c]">No entries.</p>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>No entries.</p>
           ) : (
             <ul className="space-y-2">
               {what_happened.map((s, i) => (
-                <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+                <li key={i} className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                   {s}
                 </li>
               ))}
@@ -166,154 +200,115 @@ export default function PublicWorkPage() {
           )}
         </section>
 
-        <section className="border-t border-[#e7e5e4] pt-8">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+        <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+          <h2 className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
             If removed
           </h2>
           {if_removed.length === 0 ? (
-            <p className="text-[18px] leading-relaxed text-[#78716c]">Nothing listed.</p>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>Nothing listed.</p>
           ) : (
             <ul className="space-y-2">
               {if_removed.map((s, i) => (
-                <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
-                  {s}
-                </li>
+                <li key={i} className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{s}</li>
               ))}
             </ul>
           )}
         </section>
 
-        <section className="border-t border-[#e7e5e4] pt-8">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+        <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+          <h2 className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
             Reliance
           </h2>
           {reliance.length === 0 ? (
-            <p className="text-[18px] leading-relaxed text-[#78716c]">Nothing listed.</p>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>Nothing listed.</p>
           ) : (
             <ul className="space-y-2">
               {reliance.map((s, i) => (
-                <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
-                  {s}
-                </li>
+                <li key={i} className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{s}</li>
               ))}
             </ul>
           )}
         </section>
 
         {pendingResponsibility && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <p className="text-[18px] leading-relaxed text-[#44403c]">{pendingResponsibility}</p>
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{pendingResponsibility}</p>
           </section>
         )}
 
         {pendingAssignment && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <p className="text-[18px] leading-relaxed text-[#44403c]">{pendingAssignment}</p>
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{pendingAssignment}</p>
           </section>
         )}
 
         {recordExternalDependence && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <p className="text-[18px] leading-relaxed text-[#44403c]">{recordExternalDependence}</p>
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{recordExternalDependence}</p>
           </section>
         )}
 
         {evidenceStatement && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <p className="text-[18px] leading-relaxed text-[#44403c]">{evidenceStatement}</p>
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{evidenceStatement}</p>
           </section>
         )}
 
         {referenceContinuation && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <p className="text-[18px] leading-relaxed text-[#44403c]">{referenceContinuation}</p>
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{referenceContinuation}</p>
           </section>
         )}
 
         {amendmentStatement && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <p className="text-[18px] leading-relaxed text-[#44403c]">{amendmentStatement}</p>
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{amendmentStatement}</p>
           </section>
         )}
 
         {stabilityStatement && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <p className="text-[18px] leading-relaxed text-[#44403c]">{stabilityStatement}</p>
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{stabilityStatement}</p>
           </section>
         )}
 
         {continuationSurface && continuation.length > 0 && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <h2 className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
               Continuation
             </h2>
             {chainHeaderLine && (
-              <p className="text-[18px] leading-relaxed text-[#44403c] mb-4">
-                {chainHeaderLine}
-              </p>
+              <p className="text-base leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>{chainHeaderLine}</p>
             )}
             <ul className="space-y-2">
               {continuation.map((s, i) => (
-                <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
-                  {s}
-                </li>
+                <li key={i} className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{s}</li>
               ))}
             </ul>
           </section>
         )}
 
         {canRespond && !responseDone && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <h2 className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
               Enter response
             </h2>
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => sendResponse("confirm")}
-                disabled={!!responding}
-                className="text-[18px] py-2 px-0 border-b border-transparent hover:border-[#44403c] disabled:opacity-50"
-                style={{ color: "#44403c" }}
-              >
-                Confirm
-              </button>
-              <button
-                type="button"
-                onClick={() => sendResponse("dispute")}
-                disabled={!!responding}
-                className="text-[18px] py-2 px-0 border-b border-transparent hover:border-[#44403c] disabled:opacity-50"
-                style={{ color: "#44403c" }}
-              >
-                Dispute
-              </button>
-              <button
-                type="button"
-                onClick={() => sendResponse("info")}
-                disabled={!!responding}
-                className="text-[18px] py-2 px-0 border-b border-transparent hover:border-[#44403c] disabled:opacity-50"
-                style={{ color: "#44403c" }}
-              >
-                Provide information
-              </button>
+              <button type="button" onClick={() => sendResponse("confirm")} disabled={!!responding} className="btn-secondary text-sm py-2">Confirm</button>
+              <button type="button" onClick={() => sendResponse("dispute")} disabled={!!responding} className="btn-secondary text-sm py-2">Dispute</button>
+              <button type="button" onClick={() => sendResponse("info")} disabled={!!responding} className="btn-secondary text-sm py-2">Provide information</button>
             </div>
           </section>
         )}
 
         {canFollowUp && !responseDone && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <h2 className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
               Next action
             </h2>
             <div className="flex flex-wrap gap-3">
               {FOLLOW_UP_TYPES.map((action) => (
-                <button
-                  key={action}
-                  type="button"
-                  onClick={() => sendResponse(action)}
-                  disabled={!!responding}
-                  className="text-[18px] py-2 px-0 border-b border-transparent hover:border-[#44403c] disabled:opacity-50"
-                  style={{ color: "#44403c" }}
-                >
+                <button key={action} type="button" onClick={() => sendResponse(action)} disabled={!!responding} className="btn-secondary text-sm py-2">
                   {FOLLOW_UP_LABELS[action]}
                 </button>
               ))}
@@ -322,10 +317,19 @@ export default function PublicWorkPage() {
         )}
 
         {responseDone && (
-          <section className="border-t border-[#e7e5e4] pt-8">
-            <p className="text-[18px] leading-relaxed text-[#78716c]">Response recorded.</p>
+          <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>Response recorded.</p>
           </section>
         )}
+
+        <footer className="pt-20 mt-20 text-center space-y-4 border-t" style={{ borderColor: "var(--border)" }}>
+          <p className="text-base font-medium" style={{ color: "var(--text-secondary)" }}>
+            If revenue depends on conversation, it must be governed.
+          </p>
+          <p className="text-[13px]" style={{ color: "var(--text-muted)" }}>
+            Used by independent operators and enterprise teams.
+          </p>
+        </footer>
       </div>
     </main>
   );

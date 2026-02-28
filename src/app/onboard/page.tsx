@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 
 export default function OnboardLandingPage() {
   const router = useRouter();
@@ -13,24 +14,29 @@ export default function OnboardLandingPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#fafaf9] p-6">
-      <div className="max-w-md w-full space-y-8 text-center">
-        <div className="space-y-4">
-          <p className="text-[18px] leading-relaxed text-[#1c1917]">
-            Work becomes real when both sides see the same record.
-          </p>
-          <p className="text-[18px] leading-relaxed text-[#44403c]">
-            Messages can be forgotten. Records cannot.
-          </p>
+    <main className="min-h-screen p-6" style={{ background: "var(--background)" }}>
+      <div className="mx-auto max-w-[720px] pt-16">
+        <div className="space-y-8">
+          <OnboardExecutionStateBanner />
+          <div className="space-y-4">
+            <p className="text-lg leading-relaxed" style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>
+              Domain, jurisdiction, review level, and governance are set in order.
+            </p>
+            <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              Records are append-only and auditable.
+            </p>
+          </div>
+          <div className="border-t pt-8" style={{ borderColor: "var(--border)" }}>
+            <button
+              type="button"
+              onClick={handleBegin}
+              disabled={loading}
+              className="btn-primary w-full max-w-[320px] disabled:opacity-50"
+            >
+              {loading ? "Loading…" : "Continue"}
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={handleBegin}
-          disabled={loading}
-          className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] disabled:opacity-50 transition-colors"
-        >
-          {loading ? "Loading..." : "Begin record"}
-        </button>
       </div>
     </main>
   );

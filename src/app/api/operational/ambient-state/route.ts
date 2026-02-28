@@ -81,11 +81,11 @@ export async function GET(request: NextRequest) {
   } else if (hasUnresolved) {
     line = getSituationStatement();
   } else if (operationAnchored) {
-    line = "The operation is being maintained by the process.";
+    line = "Operational execution active.";
   } else if (firstProofLine) {
     line = firstProofLine;
   } else {
-    line = "No unresolved condition was present.";
+    line = "Governed strategy applied.";
   }
 
   const institutional_state =

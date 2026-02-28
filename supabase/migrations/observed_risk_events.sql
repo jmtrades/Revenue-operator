@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS revenue_operator.observed_risk_events (
 ALTER TABLE revenue_operator.observed_risk_events ADD COLUMN IF NOT EXISTS related_external_ref text;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_observed_risk_events_dedupe
-  ON revenue_operator.observed_risk_events (workspace_id, risk_type, subject_type, subject_id, (date_trunc('day', detected_at)));
+  ON revenue_operator.observed_risk_events (workspace_id, risk_type, subject_type, subject_id, (CAST(detected_at AT TIME ZONE 'UTC' AS date)));
 
 CREATE INDEX IF NOT EXISTS idx_observed_risk_events_workspace_detected
   ON revenue_operator.observed_risk_events (workspace_id, detected_at DESC);

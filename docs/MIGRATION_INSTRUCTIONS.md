@@ -1,34 +1,32 @@
-# Migration Instructions — Launch Billing Fields
+# Migration Instructions — Apply All Migrations
 
-## Option 1: Using Supabase CLI (Recommended)
+## Option 1: npm script with Postgres URL (recommended)
 
-### Install Supabase CLI
+Apply all migrations in `supabase/migrations/` in alphabetical order using a direct Postgres connection:
+
+1. Add to `.env` or `.env.local` (replace `[YOUR-PASSWORD]` with your DB password):
+   `DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.ucjbsftixnnbmuodholg.supabase.co:5432/postgres`
+2. Run: `npm run db:migrate`
+   The script loads `.env` / `.env.local` automatically. Or pass inline: `DATABASE_URL='postgresql://...' npm run db:migrate`
+
+Requires the `pg` package (already in devDependencies).
+
+## Option 2: Supabase CLI
+
+**Note:** The CLI only runs migration files named `<timestamp>_name.sql` (e.g. `20240101120000_name.sql`). This repo uses descriptive names (`name.sql`), so `supabase db push` will **skip** most files. Use Option 1 or 3 to apply all migrations.
+
+### Link and push (for timestamped migrations only)
 ```bash
-# macOS
-brew install supabase/tap/supabase
-
-# Or via npm
-npm install -g supabase
-```
-
-### Link Project and Run Migrations
-```bash
-cd "/Users/junior/revenue operator"
-
-# Link to your Supabase project
 supabase link --project-ref ucjbsftixnnbmuodholg
-
-# Push all migrations (including new ones)
 supabase db push
 ```
 
-## Option 2: Using Supabase SQL Editor (Direct)
+## Option 3: Supabase SQL Editor (manual)
 
-1. Go to [Supabase Dashboard](https://supabase.com/dashboard/project/ucjbsftixnnbmuodholg)
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard/project/ucjbsftixnnbmuodholg)  
+   Project URL: `https://ucjbsftixnnbmuodholg.supabase.co` (use as `NEXT_PUBLIC_SUPABASE_URL`)
 2. Navigate to **SQL Editor**
-3. Create a new query
-4. Copy and paste the contents of `supabase/migrations/launch_billing_fields.sql`
-5. Click **Run**
+3. Run each `.sql` file in `supabase/migrations/` in **alphabetical order** (or follow the order in `docs/SUPABASE_PROD_CHECKLIST.md`).
 
 ## Migration Files Created
 

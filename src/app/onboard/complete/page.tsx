@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 
 export default function OnboardCompletePage() {
   const router = useRouter();
@@ -77,26 +78,37 @@ export default function OnboardCompletePage() {
     if (!continuityInput.trim() || submitting) return;
     setSubmitting(true);
     try {
-      const res = await fetch("/api/onboard/create-thread", {
+      const res = await fetch("/api/onboard/append-outcome", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspace_id: workspaceId }),
+        body: JSON.stringify({
+          workspace_id: workspaceId,
+          external_ref: externalRef,
+          outcome_text: continuityInput.trim(),
+        }),
       });
       const json = await res.json();
       if (json.external_ref) {
-        sessionStorage.setItem("onboard_external_ref", json.external_ref);
-        router.push("/onboard/record");
+        setContinuityInput("");
+        const orientRes = await fetch(`/api/onboard/orientation?workspace_id=${workspaceId}`);
+        const orientJson = await orientRes.json();
+        if (Array.isArray(orientJson.lines)) {
+          setOrientationLines(orientJson.lines);
+        }
       }
     } catch {
+      // ignore
+    } finally {
       setSubmitting(false);
     }
   };
 
   return (
     <main className="min-h-screen bg-[#fafaf9] text-[#1c1917] p-6">
-      <div className="mx-auto max-w-[880px] space-y-8">
+      <div className="mx-auto max-w-[720px] pt-16 space-y-8">
+        <OnboardExecutionStateBanner />
         <h1 className="text-[21px] font-normal text-[#1c1917]">Record #1</h1>
-        <section>
+        <section className="space-y-3">
           {orientationLines.length === 0 ? (
             <p className="text-[18px] leading-relaxed text-[#78716c]">No entries.</p>
           ) : (
@@ -110,7 +122,7 @@ export default function OnboardCompletePage() {
           )}
         </section>
         <section className="border-t border-[#e7e5e4] pt-8">
-          <form onSubmit={handleContinuitySubmit}>
+          <form onSubmit={handleContinuitySubmit} className="space-y-4">
             <input
               type="text"
               value={continuityInput}
@@ -119,6 +131,13 @@ export default function OnboardCompletePage() {
               disabled={submitting}
               className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
             />
+            <button
+              type="submit"
+              disabled={submitting || !continuityInput.trim()}
+              className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] disabled:opacity-50 transition-colors"
+            >
+              {submitting ? "Adding..." : "Add outcome"}
+            </button>
           </form>
         </section>
       </div>

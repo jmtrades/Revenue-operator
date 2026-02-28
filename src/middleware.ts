@@ -1,7 +1,7 @@
 /**
  * 1) Ops routes: require staff session.
- * 2) App session: restore auth cookie on every request so reload/tab/return never asks for email again.
- *    Dashboard and protected APIs require session; missing session → redirect to /activate or 401.
+ * 2) App session: restore auth cookie on dashboard; missing session → redirect (GET only).
+ * 3) Public and API bypass: explicit list; never redirect POST, never block webhooks or public API.
  */
 
 import { NextResponse } from "next/server";
@@ -13,6 +13,31 @@ import {
   isSessionEnabled,
 } from "@/lib/auth/session-edge";
 
+function isPublicPage(pathname: string): boolean {
+  if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
+  if (pathname.startsWith("/onboard") || pathname.startsWith("/public/work")) return true;
+  return false;
+}
+
+function isPublicApi(pathname: string): boolean {
+  if (pathname.startsWith("/api/public/")) return true;
+  if (pathname.startsWith("/api/onboard/")) return true;
+  if (pathname.startsWith("/api/trial/")) return true;
+  if (pathname === "/api/billing/webhook" || pathname === "/api/billing/checkout") return true;
+  if (pathname.startsWith("/api/billing/")) return true;
+  if (pathname === "/api/system/core-status") return true;
+  if (pathname === "/api/system/health") return true;
+  if (pathname.startsWith("/api/health")) return true;
+  if (pathname.startsWith("/api/cron/")) return true;
+  if (pathname.startsWith("/api/auth/")) return true;
+  if (pathname.startsWith("/api/webhooks/")) return true;
+  if (pathname.startsWith("/api/command-center")) return true;
+  if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
+  if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;
+  if (pathname.startsWith("/api/conversations/") && pathname.includes("/messages")) return true;
+  return false;
+}
+
 function isOpsRoute(pathname: string): boolean {
   return pathname.startsWith("/ops") || pathname.startsWith("/api/ops");
 }
@@ -21,48 +46,18 @@ function isOpsAuthRoute(pathname: string): boolean {
   return pathname === "/ops/login" || pathname.startsWith("/api/ops/auth");
 }
 
-function isPublicRoute(pathname: string): boolean {
-  if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
-  if (pathname.startsWith("/onboard")) return true;
-  if (pathname.startsWith("/public/work")) return true;
-  if (pathname.startsWith("/api/trial/start")) return true;
-  if (pathname.startsWith("/api/billing/checkout")) return true;
-  if (pathname.startsWith("/api/billing/webhook")) return true;
-  if (pathname.startsWith("/api/billing/")) return true;
-  if (pathname.startsWith("/api/webhooks/")) return true;
-  if (pathname.startsWith("/api/webhooks/inbound-generic")) return true;
-  if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;
-  if (pathname.startsWith("/api/command-center")) return true;
-  if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
-  if (pathname.startsWith("/api/conversations/") && pathname.includes("/messages")) return true;
-  if (pathname === "/api/auth/session" || pathname === "/api/auth/logout") return true;
-  if (pathname === "/api/health" || pathname === "/api/health/cron") return true;
-  if (pathname.startsWith("/api/public/")) return true;
-  if (pathname.startsWith("/api/cron/")) return true;
-  return false;
-}
-
 function isDashboardOrApi(pathname: string): boolean {
   return pathname.startsWith("/dashboard") || pathname.startsWith("/api/");
 }
 
-/** Operational environment: only four surfaces + record/lead/[id], preferences, connection. */
-const ALLOWED_DASHBOARD_PREFIXES = [
-  "/dashboard",           // exact or Situation
-  "/dashboard/record",
-  "/dashboard/activity",
-  "/dashboard/presence",
-  "/dashboard/preferences",
-  "/dashboard/connection",
-];
 function isAllowedDashboardPath(pathname: string): boolean {
   if (pathname === "/dashboard") return true;
-  if (pathname === "/dashboard/record" || pathname === "/dashboard/activity" || pathname === "/dashboard/presence") return true;
+  if (pathname === "/dashboard/record" || pathname === "/dashboard/activity" || pathname === "/dashboard/presence" || pathname === "/dashboard/approvals") return true;
   if (pathname === "/dashboard/preferences" || pathname === "/dashboard/connection") return true;
   if (pathname.startsWith("/dashboard/record/lead/")) return true;
   return false;
 }
-/** Redirect legacy URLs to canonical ones. */
+
 function getDashboardRedirect(pathname: string): string | null {
   if (pathname === "/dashboard/settings") return "/dashboard/preferences";
   if (pathname === "/dashboard/activation") return "/dashboard/connection";
@@ -74,12 +69,14 @@ function getDashboardRedirect(pathname: string): string | null {
   }
   return null;
 }
+
 function shouldRedirectDashboard(pathname: string): boolean {
   const legacy = getDashboardRedirect(pathname);
   if (legacy) return true;
   if (!pathname.startsWith("/dashboard")) return false;
   return !isAllowedDashboardPath(pathname);
 }
+
 function getRedirectTarget(pathname: string): string {
   const legacy = getDashboardRedirect(pathname);
   if (legacy) return legacy;
@@ -88,59 +85,71 @@ function getRedirectTarget(pathname: string): string {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const method = req.method ?? "GET";
 
-  // ——— Operational environment: only four surfaces + drill-in + deep-link ———
-  if (shouldRedirectDashboard(pathname)) {
-    const target = getRedirectTarget(pathname);
-    const url = new URL(target, req.url);
-    req.nextUrl.searchParams.forEach((v, k) => url.searchParams.set(k, v));
-    return NextResponse.redirect(url);
+  // ——— API routes: never return HTML, never redirect POST ———
+  if (pathname.startsWith("/api/")) {
+    if (isPublicApi(pathname)) return NextResponse.next();
+    if (method !== "GET" && method !== "HEAD") {
+      // POST/PUT/DELETE to protected API: do not redirect, return 401 if no session
+      if (!isSessionEnabled()) return NextResponse.next();
+      const cookieHeader = req.cookies.get(getSessionCookieName())?.value ?? null;
+      const session = await getSessionFromCookieAsync(cookieHeader);
+      if (!session) {
+        const workspaceIdParam = req.nextUrl.searchParams.get("workspace_id");
+        if (workspaceIdParam) return NextResponse.next();
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      const refreshedCookie = await createSessionCookieAsync({ userId: session.userId, workspaceId: session.workspaceId });
+      if (refreshedCookie) {
+        const res = NextResponse.next();
+        res.headers.set("Set-Cookie", refreshedCookie);
+        return res;
+      }
+      return NextResponse.next();
+    }
+    // GET to protected API: same as below when we get to dashboard/API branch
   }
+
+  // ——— Public pages: never redirect, never require session ———
+  if (isPublicPage(pathname)) return NextResponse.next();
 
   // ——— Ops: staff session only ———
   if (isOpsRoute(pathname)) {
     if (isOpsAuthRoute(pathname)) return NextResponse.next();
     const sessionCookie = req.cookies.get("ops_session")?.value;
     if (!sessionCookie) {
-      if (pathname.startsWith("/api/")) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
+      if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       return NextResponse.redirect(new URL("/ops/login", req.url));
     }
     return NextResponse.next();
   }
 
-  // ——— App: restore session on dashboard + protected API (Edge-compatible) ———
-  if (!isDashboardOrApi(pathname) || isPublicRoute(pathname)) {
-    return NextResponse.next();
+  // ——— Dashboard redirects (legacy URLs): only for GET, never redirect POST ———
+  if (method === "GET" && shouldRedirectDashboard(pathname)) {
+    const target = getRedirectTarget(pathname);
+    const url = new URL(target, req.url);
+    req.nextUrl.searchParams.forEach((v, k) => url.searchParams.set(k, v));
+    return NextResponse.redirect(url);
   }
-  if (!isSessionEnabled()) {
-    return NextResponse.next();
-  }
+
+  // ——— App: session for dashboard and protected API ———
+  if (!isDashboardOrApi(pathname)) return NextResponse.next();
+  if (isPublicApi(pathname)) return NextResponse.next();
+  if (!isSessionEnabled()) return NextResponse.next();
 
   const cookieHeader = req.cookies.get(getSessionCookieName())?.value ?? null;
   const session = await getSessionFromCookieAsync(cookieHeader);
 
-  // No session: redirect dashboard to activate, API to 401
-  // BUT: if workspace_id is in query params, allow access (for post-checkout redirects)
   if (!session) {
     const workspaceIdParam = req.nextUrl.searchParams.get("workspace_id");
-    if (pathname.startsWith("/dashboard")) {
-      // Allow dashboard access if workspace_id is in URL (post-checkout flow)
-      if (workspaceIdParam) {
-        return NextResponse.next();
-      }
-      return NextResponse.redirect(new URL("/activate", req.url));
-    }
-    if (pathname.startsWith("/api/")) {
-      // Allow API access if workspace_id in query (for connect/live) or public API
-      if (workspaceIdParam) return NextResponse.next();
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (pathname.startsWith("/dashboard") && workspaceIdParam) return NextResponse.next();
+    if (pathname.startsWith("/api/") && workspaceIdParam) return NextResponse.next();
+    if (pathname.startsWith("/dashboard")) return NextResponse.redirect(new URL("/activate", req.url));
+    if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     return NextResponse.next();
   }
 
-  // Session valid: refresh cookie (extend expiry) and continue
   const refreshedCookie = await createSessionCookieAsync({
     userId: session.userId,
     workspaceId: session.workspaceId,
@@ -155,5 +164,16 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/ops/:path*", "/api/ops/:path*", "/dashboard/:path*", "/api/:path*"],
+  matcher: [
+    "/",
+    "/activate",
+    "/connect",
+    "/live",
+    "/onboard/:path*",
+    "/public/work/:path*",
+    "/ops/:path*",
+    "/api/ops/:path*",
+    "/dashboard/:path*",
+    "/api/:path*",
+  ],
 };

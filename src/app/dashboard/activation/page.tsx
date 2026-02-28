@@ -47,7 +47,7 @@ export default function ActivationPage() {
       <header className="mb-8">
         <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Connect your calendar</h1>
         <p className="mt-1" style={{ color: "var(--text-secondary)" }}>
-          Connect once. New enquiries then enter handling automatically.
+          Connect once. New enquiries then enter handling under governance.
         </p>
       </header>
 
@@ -77,7 +77,7 @@ export default function ActivationPage() {
             ) : (
               <>
                 <p className="text-stone-500">Zoom is not configured. We work with calendar events without it.</p>
-                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Connect via webhook or integrations.</p>
+                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Connect via external source or calendar.</p>
               </>
             )}
           </div>

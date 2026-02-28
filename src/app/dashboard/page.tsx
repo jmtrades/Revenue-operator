@@ -7,6 +7,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 import { Shell } from "@/components/Shell";
 import { HandoffList } from "@/components/HandoffList";
+import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 
 interface Capsule {
   today: string[];
@@ -118,6 +119,10 @@ export default function SituationPage() {
 
   return (
     <Shell>
+      <DashboardExecutionStateBanner />
+      <p className="text-xs mb-8" style={{ color: "var(--text-muted)" }}>
+        Handling active. Commitments secured. Compliance enforced. Confirmation recorded.
+      </p>
       <div className="space-y-16 max-w-2xl">
         <section>
           <div className="border-b pb-4 mb-4" style={{ borderColor: "var(--border)" }}>
@@ -128,7 +133,7 @@ export default function SituationPage() {
           <div className="space-y-4">
             {currentState.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                No unresolved condition was present.
+                Governed strategy applied.
               </p>
             ) : (
               currentState.map((line, i) => (

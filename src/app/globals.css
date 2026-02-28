@@ -1,108 +1,176 @@
 @import "tailwindcss";
 
-/* Design system: operational infrastructure — calm, sparse, outcome-only */
+/* Institutional call and conversation governance — design tokens */
 :root {
   /* Surfaces */
-  --background: #0c0f13;
-  --surface: #141922;
-  --card: #1a202c;
-  --border: #252d3a;
-  --border-subtle: #1e242e;
+  --background: #0B0B0C;
+  --surface: #121214;
+  --surface-card: #121214;
+  --border: #27272A;
+  --border-subtle: #3F3F46;
   /* Text */
-  --text-primary: #e8ecf1;
-  --text-secondary: #a0aab8;
-  --text-muted: #8a94a3;
-  /* Accent + semantic (muted, risk prominent) */
-  --accent: #4da3ff;
-  --accent-hover: #6bb3ff;
-  --meaning-green: #2ecc71;
-  --meaning-amber: #f39c12;
-  --meaning-red: #e74c3c;
-  --meaning-blue: #4da3ff;
-  /* Radius — containers 14–20px */
+  --text-primary: #F4F4F5;
+  --text-secondary: #A1A1AA;
+  --text-muted: #71717A;
+  /* Accent & semantic */
+  --accent: #C6A75E;
+  --accent-hover: #D4B872;
+  --danger: #7F1D1D;
+  --approval: #164E3E;
+  /* Buttons: dark background, gold border on hover */
+  --btn-primary-bg: #121214;
+  --btn-primary-text: #F4F4F5;
+  --btn-primary-border: #2A2A2E;
+  --btn-primary-hover-border: #C6A75E;
+  --btn-primary-hover-bg: #151517;
+  --btn-secondary-border: #2A2A2E;
+  --btn-secondary-hover-border: #C6A75E;
+  --btn-secondary-hover-bg: #151517;
+  /* Cards */
+  --card-border: #1E1E22;
+  --card-padding: 32px;
+  --card-radius: 16px;
+  /* Radius */
+  --radius-btn: 12px;
+  --radius-card: 16px;
+  /* Typography */
+  --font-h1: 48px;
+  --font-h2: 32px;
+  --font-h3: 22px;
+  --font-body: 16px;
+  --font-small: 13px;
+  --line-height-body: 1.6;
+  --tracking-tight: -0.02em;
+  --tracking-micro: 0.08em;
+  /* Spacing: section 120px, card 40px, authority block 16px */
+  --section-py: 120px;
+  --card-p: 32px;
+  --card-gap: 40px;
+  --authority-gap: 16px;
+  --grid-gap: 40px;
+  --container-max: 1100px;
+  /* Transitions */
+  --transition-fade: 180ms ease;
+  /* Legacy compatibility */
+  --card: var(--surface-card);
+  --surface-elevated: #18181B;
+  --meaning-green: var(--approval);
+  --meaning-amber: var(--accent);
+  --meaning-red: var(--danger);
+  --meaning-blue: var(--text-primary);
+  --shadow-sm: 0 1px 1px rgba(0,0,0,0.25);
+  --shadow-md: 0 2px 6px rgba(0,0,0,0.3);
   --radius-sm: 6px;
-  --radius-md: 10px;
+  --radius-md: 12px;
   --radius-lg: 14px;
   --radius-xl: 18px;
-  --radius-container: 16px;
-  /* Shadow — flat, minimal */
-  --shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.15);
-  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.18);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
-  /* Spacing scale — +20% vertical gravity */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 14px;
-  --space-4: 19px;
-  --space-5: 24px;
-  --space-6: 29px;
-  --space-8: 38px;
-  --space-10: 48px;
-  --space-12: 58px;
-  /* Typography (reference) */
-  --font-headline: 1.75rem;
-  --font-title: 1.25rem;
-  --font-body: 0.9375rem;
-  --font-muted: 0.8125rem;
 }
 
-/* Operational environment: ledger + OS + audit log. White, black, muted blue. */
 [data-operational-environment="true"] {
-  --background: #ffffff;
-  --surface: #f8f9fa;
-  --card: #ffffff;
-  --border: #e5e7eb;
-  --border-subtle: #eef0f2;
-  --text-primary: #0f0f0f;
-  --text-secondary: #374151;
-  --text-muted: #6b7280;
-  --meaning-blue: #5b8dc9;
-  --meaning-green: #0d7d4c;
-  --meaning-amber: #b45309;
-  --meaning-red: #b91c1c;
-  --shadow-sm: none;
-  --shadow-md: none;
-  --shadow-lg: none;
+  --background: #0B0B0C;
+  --surface: #121214;
+  --surface-card: #121214;
+  --border: #27272A;
+  --text-primary: #F4F4F5;
+  --text-secondary: #A1A1AA;
+  --text-muted: #71717A;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--text-primary);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-body-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 html {
-  font-size: 15px;
+  font-size: 16px;
 }
 
 body {
   background: var(--background);
   color: var(--text-primary);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  line-height: 1.6;
+  font-family: var(--font-body-sans), system-ui, sans-serif;
+  line-height: var(--line-height-body);
   -webkit-font-smoothing: antialiased;
   letter-spacing: 0.01em;
 }
 
-/* Institutional finish: readable muted, consistent rhythm */
-p, .text-sm { line-height: 1.6; }
-h1, h2, h3 { letter-spacing: -0.02em; }
+/* Headings: serif (Playfair / Canela style) */
+.font-headline,
+h1.headline {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(2rem, 4vw, 48px);
+  line-height: 1.15;
+  letter-spacing: var(--tracking-tight);
+  font-weight: 500;
+}
+
+h2.headline {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 32px;
+  letter-spacing: var(--tracking-tight);
+  font-weight: 500;
+}
+
+h3.headline {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 22px;
+  letter-spacing: var(--tracking-tight);
+  font-weight: 500;
+}
+
+.text-micro {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+}
+
+/* Buttons: padding 16px 28px, hover border only, active 100ms */
+.btn-primary {
+  display: inline-block;
+  max-width: 320px;
+  padding: 16px 28px;
+  border-radius: var(--radius-btn);
+  font-size: var(--font-body);
+  font-weight: 500;
+  text-align: center;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: 1px solid var(--btn-primary-border);
+  transition: border-color 180ms ease, transform 100ms ease, box-shadow 100ms ease;
+}
+.btn-primary:hover {
+  border-color: var(--btn-primary-hover-border);
+}
+.btn-primary:active {
+  transform: scale(0.98);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.btn-secondary {
+  display: inline-block;
+  max-width: 320px;
+  padding: 16px 28px;
+  border-radius: var(--radius-btn);
+  font-size: var(--font-body);
+  font-weight: 500;
+  text-align: center;
+  border: 1px solid var(--btn-secondary-border);
+  color: var(--text-primary);
+  background: transparent;
+  transition: border-color 180ms ease, transform 100ms ease, box-shadow 100ms ease;
+}
+.btn-secondary:hover {
+  border-color: var(--btn-secondary-hover-border);
+}
+.btn-secondary:active {
+  transform: scale(0.98);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
 
 @layer utilities {
-  .text-meaning-green { color: var(--meaning-green); }
-  .text-meaning-amber { color: var(--meaning-amber); }
-  .text-meaning-red { color: var(--meaning-red); }
-  .text-meaning-blue { color: var(--meaning-blue); }
-  .bg-meaning-green { background-color: var(--meaning-green); }
-  .bg-meaning-amber { background-color: var(--meaning-amber); }
-  .bg-meaning-red { background-color: var(--meaning-red); }
-  .bg-meaning-blue { background-color: var(--meaning-blue); }
-  .border-meaning-green { border-color: var(--meaning-green); }
-  .border-meaning-amber { border-color: var(--meaning-amber); }
-  .border-meaning-red { border-color: var(--meaning-red); }
-  .border-meaning-blue { border-color: var(--meaning-blue); }
-  /* Focus ring for keyboard a11y */
   .focus-ring:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;

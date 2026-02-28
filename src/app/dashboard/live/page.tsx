@@ -89,7 +89,7 @@ function LivePageContent() {
             )}
             {phase === "ready" && (
               <p className="text-base font-medium py-4" style={{ color: "var(--text-primary)" }}>
-                We&apos;ll keep doing this automatically
+                We&apos;ll keep doing this under governance
               </p>
             )}
           </div>

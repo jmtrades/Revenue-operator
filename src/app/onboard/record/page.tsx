@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 
 export default function OnboardRecordPage() {
   const router = useRouter();
@@ -42,15 +43,18 @@ export default function OnboardRecordPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#fafaf9] p-6">
-        <p className="text-[18px] text-[#78716c]">Loading.</p>
+      <main className="min-h-screen bg-[#fafaf9] p-6">
+        <div className="mx-auto max-w-[720px] pt-16">
+          <p className="text-[18px] text-[#78716c]">Loading.</p>
+        </div>
       </main>
     );
   }
 
   return (
     <main className="min-h-screen bg-[#fafaf9] text-[#1c1917] p-6">
-      <div className="mx-auto max-w-[880px] space-y-8">
+      <div className="mx-auto max-w-[720px] pt-16 space-y-8">
+        <OnboardExecutionStateBanner />
         <h1 className="text-[21px] font-normal text-[#1c1917]">Record #1</h1>
         <section>
           {orientationLines.length === 0 ? (
@@ -74,7 +78,7 @@ export default function OnboardRecordPage() {
           <button
             type="button"
             onClick={() => router.push("/onboard/send")}
-            className="py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] transition-colors"
+            className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] transition-colors"
           >
             Continue
           </button>

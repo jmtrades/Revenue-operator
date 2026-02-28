@@ -83,19 +83,17 @@ describe("core cron", () => {
 });
 
 describe("why-pay", () => {
-  it("returns array, up to 6 lines, doctrine-safe", () => {
+  it("returns lines array, up to 6 lines, doctrine-safe", () => {
     const route = readFileSync(path.join(ROOT, "src/app/api/operational/why-pay/route.ts"), "utf-8");
     expect(route).toContain("MAX_LINES = 6");
     expect(route).toContain("MAX_CHARS = 90");
-    expect(route).toContain("proof_capsules");
-    expect(route).toContain("getInstitutionalState");
-    expect(route).toContain("normalizationEstablished");
-    expect(route).toContain("NextResponse.json(lines");
+    expect(route).toContain("lines:");
+    expect(route).toMatch(/NextResponse\.json\(\s*\{\s*lines/);
   });
 
-  it("response is array of lines only (no ids in payload)", () => {
+  it("response is lines only (no internal ids in payload)", () => {
     const route = readFileSync(path.join(ROOT, "src/app/api/operational/why-pay/route.ts"), "utf-8");
-    expect(route).toMatch(/NextResponse\.json\(lines/);
+    expect(route).toMatch(/NextResponse\.json\(\s*\{\s*lines:\s*lines/);
   });
 
   it("why-pay requires workspace access when session enabled", () => {

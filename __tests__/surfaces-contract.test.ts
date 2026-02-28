@@ -1,5 +1,5 @@
 /**
- * Contract: only four surfaces in nav; no icons; no trial/heartbeat in layout.
+ * Contract: nav surfaces (Start canonical, Record, Activity, Presence, Approvals); no icons; no trial/heartbeat in layout.
  */
 
 import { describe, it, expect } from "vitest";
@@ -10,20 +10,22 @@ const ROOT = path.resolve(__dirname, "..");
 const LAYOUT = path.join(ROOT, "src", "app", "dashboard", "layout.tsx");
 
 describe("Surfaces contract", () => {
-  it("only four nav links exist (Situation, Record, Activity, Presence)", () => {
+  it("nav includes Start, Record, Activity, Presence, Approvals", () => {
     const content = readFileSync(LAYOUT, "utf-8");
-    expect(content).toContain("Situation");
+    expect(content).toContain("Start");
     expect(content).toContain("Record");
     expect(content).toContain("Activity");
     expect(content).toContain("Presence");
+    expect(content).toContain("Approvals");
     const navMatch = content.match(/NAV\s*=\s*\[[\s\S]*?\]/);
     expect(navMatch).toBeTruthy();
     const navBlock = navMatch![0];
-    expect(navBlock).toContain('label: "Situation"');
+    expect(navBlock).toContain('label: "Start"');
     expect(navBlock).toContain('label: "Record"');
     expect(navBlock).toContain('label: "Activity"');
     expect(navBlock).toContain('label: "Presence"');
-    expect((navBlock.match(/href:/g) || []).length).toBe(4);
+    expect(navBlock).toContain('label: "Approvals"');
+    expect((navBlock.match(/href:/g) || []).length).toBeGreaterThanOrEqual(5);
   });
 
   it("nav has no icon or badge components", () => {

@@ -1,6 +1,6 @@
 /**
- * Revenue Operator - Core Types
- * Deterministic revenue workflow engine with AI assistance
+ * Revenue Operator — Core Types
+ * Deterministic commercial execution infrastructure. Structured AI only; no freeform.
  */
 
 export const LEAD_STATES = [

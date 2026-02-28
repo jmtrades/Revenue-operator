@@ -1,0 +1,7 @@
+{
+  "scenario_category": "identity_mismatch",
+  "channel": "inbound",
+  "structured_context_json": { "mismatch": true, "source": "fixture" },
+  "expected_outcome_type": "escalation_required",
+  "expected_next_required_action": "escalate_to_human"
+}

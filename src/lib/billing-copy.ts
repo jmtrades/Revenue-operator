@@ -24,3 +24,6 @@ export const PAYMENT_FAILURE_PRIMARY = "Handling coverage could not continue.";
 export function coverageEndsOn(date: Date): string {
   return `Handling coverage ends on ${date.toLocaleDateString(undefined, { dateStyle: "long" })}.`;
 }
+
+/** When a feature is gated: show this instead of "Upgrade to unlock". No persuasion. */
+export const FEATURE_UNAVAILABLE_MESSAGE = "Not available for current plan.";

@@ -87,7 +87,7 @@ export default function SettingsPage() {
           });
         }
         const op = d.operational_profile;
-        if (typeof op === "string" && ["org", "solo", "creator", "vendor", "recruiting", "legal", "saas"].includes(op)) {
+        if (typeof op === "string" && ["org", "solo", "creator", "vendor", "recruiting", "legal", "customer_success"].includes(op)) {
           setOperationalProfile(op);
         }
       })
@@ -198,7 +198,7 @@ export default function SettingsPage() {
       <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>
         <Link href={workspaceId ? `/dashboard/presence?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/presence"} style={{ color: "var(--meaning-blue)" }}>Presence</Link>
       </p>
-      <PageHeader title="Preferences" subtitle="Configuration" />
+      <PageHeader title="Preferences" subtitle="Operating standard" />
       {!workspaceId ? (
         <EmptyState title="Follow-through in progress appears here." subtitle="In place." icon="watch" />
       ) : (
@@ -208,7 +208,7 @@ export default function SettingsPage() {
             <select
               value={operationalProfile}
               onChange={(e) => {
-                const v = e.target.value as "org" | "solo" | "creator" | "vendor" | "recruiting" | "legal" | "saas";
+                const v = e.target.value as "org" | "solo" | "creator" | "vendor" | "recruiting" | "legal" | "customer_success";
                 setOperationalProfile(v);
                 fetch(`/api/workspaces/${workspaceId}/settings`, {
                   method: "PATCH",
@@ -225,7 +225,7 @@ export default function SettingsPage() {
               <option value="vendor">Ecommerce / vendor</option>
               <option value="recruiting">Recruiting / hiring</option>
               <option value="legal">Legal / accounting</option>
-              <option value="saas">SaaS onboarding / CS</option>
+              <option value="customer_success">Customer onboarding / CS</option>
             </select>
           </section>
           {sessionEmail && (
@@ -374,7 +374,7 @@ export default function SettingsPage() {
                   <p className="text-xs" style={{ color: "var(--text-muted)" }}>Coming soon</p>
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Webhook URL (for CRMs)</label>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Inbound address</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
@@ -394,8 +394,11 @@ export default function SettingsPage() {
                       Copy
                     </button>
                   </div>
+                  <p className="text-[11px] mt-1" style={{ color: "var(--text-muted)" }}>
+                    External sources send new enquiries to this address.
+                  </p>
                   <details className="mt-2">
-                    <summary className="text-xs cursor-pointer" style={{ color: "var(--text-muted)" }}>Payload schema</summary>
+                    <summary className="text-xs cursor-pointer" style={{ color: "var(--text-muted)" }}>Request structure</summary>
                     <pre className="mt-2 p-3 rounded text-xs overflow-x-auto" style={{ background: "var(--surface)", color: "var(--text-secondary)" }}>
 {`POST ${inboundWebhookUrl}
 Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
@@ -443,7 +446,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                 { key: "booking_protection" as const, label: "Booking protection", desc: "Qualification to booking routing" },
                 { key: "attendance_protection" as const, label: "Attendance protection", desc: "Confirmations, reminders, rescue" },
                 { key: "post_call_continuity" as const, label: "Post-call continuity", desc: "Call-aware follow-ups, hesitation monitor" },
-                { key: "notifications" as const, label: "Notifications", desc: "Outbound webhooks" },
+                { key: "notifications" as const, label: "Notifications", desc: "Outbound notifications to external systems" },
               ].map(({ key, label, desc }) => (
                 <div key={key} className="flex items-center justify-between p-3 rounded-lg" style={{ background: "var(--surface)" }}>
                   <div>
@@ -478,7 +481,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
               </p>
             ) : (
               <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
-                Coverage continues automatically. Pause protection anytime. Resume as needed.
+                Coverage continues under governance. Pause protection anytime. Resume as needed.
               </p>
             )}
             <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>Responsibility for follow-through remains in place during this period.</p>
@@ -678,7 +681,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
               className="text-sm"
               style={{ color: "var(--text-muted)" }}
             >
-              {showAdvanced ? "−" : "+"} Webhooks
+              {showAdvanced ? "−" : "+"} External sources
             </button>
             {showAdvanced && (
               <div className="mt-4 space-y-4">

@@ -1,0 +1,7 @@
+{
+  "scenario_category": "dispute",
+  "channel": "message",
+  "structured_context_json": { "type": "dispute", "source": "fixture" },
+  "expected_outcome_type": "dispute",
+  "expected_next_required_action": "escalate_to_human"
+}

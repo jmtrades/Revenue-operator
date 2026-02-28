@@ -3,7 +3,7 @@
 
 BEGIN;
 
-ALTER TABLE IF NOT EXISTS revenue_operator.workspaces
+ALTER TABLE revenue_operator.workspaces
   ADD COLUMN IF NOT EXISTS installation_confirmed_at timestamptz;
 
 CREATE INDEX IF NOT EXISTS idx_workspaces_installation_confirmed
