@@ -108,7 +108,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [pathname, allowed, isLiveOrValue, router]);
 
   if (loading) {
-    return <LoadingScreen message="Loading…" />;
+    return <LoadingScreen message="Loading…" onRetry={retry} />;
   }
 
   return (

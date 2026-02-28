@@ -32,9 +32,12 @@ function ConnectPageContent() {
     }
   }, [workspaceId, workspaces.length, router]);
 
-  // Auto-provision on mount with retry logic
+  // Auto-provision on mount with retry logic and timeout
   useEffect(() => {
     if (!workspaceId || provisioned) return;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15_000);
 
     const provision = async () => {
       setActivating(true);
@@ -43,6 +46,7 @@ function ConnectPageContent() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ workspace_id: workspaceId }),
+          signal: controller.signal,
         });
         const data = await res.json();
 
@@ -50,31 +54,30 @@ function ConnectPageContent() {
           setPhoneNumber(data.phone_number);
           setProvisioned(true);
           setRetryCount(0);
-          // Activate workspace
+          clearTimeout(timeoutId);
           await fetch(`/api/activation?workspace_id=${encodeURIComponent(workspaceId)}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "activate" }),
           });
         } else if (retryCount < 10) {
-          // Retry up to 10 times (30 seconds total)
-          setTimeout(() => {
-            setRetryCount((c) => c + 1);
-          }, 3000);
+          setTimeout(() => setRetryCount((c) => c + 1), 3000);
         }
       } catch (error) {
-        console.error("[connect]", error);
         if (retryCount < 10) {
-          setTimeout(() => {
-            setRetryCount((c) => c + 1);
-          }, 3000);
+          setTimeout(() => setRetryCount((c) => c + 1), 3000);
         }
       } finally {
+        clearTimeout(timeoutId);
         setActivating(false);
       }
     };
 
     provision();
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [workspaceId, provisioned, retryCount]);
 
   // Show fallback after 45 seconds if no message

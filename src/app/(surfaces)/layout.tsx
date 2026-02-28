@@ -13,15 +13,16 @@ function SurfacesShell({ children }: { children: React.ReactNode }) {
   const { workspaceId, workspaces, loading, setWorkspaceId } = useWorkspace();
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-[#1c1917]">
-      <header className="border-b border-[#e7e5e4] px-6 py-4">
+    <div className="min-h-screen" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+      <header className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
         <div className="mx-auto flex max-w-[880px] items-center justify-between gap-4">
           <nav className="flex gap-6">
             {nav.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-[15px] text-[#78716c] hover:text-[#1c1917]"
+                className="text-[15px] transition-colors hover:opacity-90"
+              style={{ color: "var(--text-muted)" }}
               >
                 {label}
               </Link>
@@ -31,7 +32,8 @@ function SurfacesShell({ children }: { children: React.ReactNode }) {
             <select
               value={workspaceId}
               onChange={(e) => setWorkspaceId(e.target.value)}
-              className="rounded border border-[#e7e5e4] bg-white px-3 py-1.5 text-[15px] text-[#1c1917]"
+              className="rounded-lg border px-3 py-2 text-[15px] focus-ring"
+              style={{ borderColor: "var(--border)", background: "var(--surface)", color: "var(--text-primary)" }}
             >
               {workspaces.map((w) => (
                 <option key={w.id} value={w.id}>
@@ -45,7 +47,10 @@ function SurfacesShell({ children }: { children: React.ReactNode }) {
       <main className="px-6 py-10">
         <div className="mx-auto max-w-[880px]">
           {loading ? (
-            <p className="text-[18px] text-[#78716c]">Loading…</p>
+            <div className="flex items-center gap-3 py-8">
+              <span className="inline-block h-4 w-4 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" aria-hidden />
+              <p className="text-base" style={{ color: "var(--text-muted)" }}>Loading…</p>
+            </div>
           ) : (
             children
           )}
