@@ -117,12 +117,36 @@ export default function SituationPage() {
   const searchParams = useSearchParams();
   const recordHref = `/dashboard/record${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
+  const callsHref = `/dashboard/calls${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+
   return (
     <Shell>
       <DashboardExecutionStateBanner />
-      <p className="text-xs mb-8" style={{ color: "var(--text-muted)" }}>
+      <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
         Handling active. Commitments secured. Compliance enforced. Confirmation recorded.
       </p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>—</p>
+          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Active records</p>
+        </div>
+        <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>—</p>
+          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Recent calls</p>
+        </div>
+        <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>—</p>
+          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Pending follow-ups</p>
+        </div>
+      </div>
+      <div className="mb-10">
+        <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>Recent records</h2>
+        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+          <Link href={callsHref} style={{ color: "var(--meaning-blue)" }}>View all calls</Link>
+          {" · "}
+          <Link href={recordHref} style={{ color: "var(--text-muted)" }}>Record</Link>
+        </p>
+      </div>
       <div className="space-y-16 max-w-2xl">
         <section>
           <div className="border-b pb-4 mb-4" style={{ borderColor: "var(--border)" }}>

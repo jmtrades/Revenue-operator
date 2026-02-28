@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard/
+Disallow: /activate
 
 Sitemap: https://recall-touch.com/sitemap.xml

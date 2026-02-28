@@ -3,31 +3,29 @@
 import { Check } from "lucide-react";
 import { Phone, MessageSquare, CreditCard } from "lucide-react";
 
-/** Card 1: Call governance — waveform bars */
+/** Card 1: Call governance — waveform bars (spec: viewBox 240×56, 32 bars, active index 10) */
 export function WaveformVisual() {
-  const bars = Array.from({ length: 35 }, (_, i) => {
-    const height = 12 + Math.sin(i * 0.4) * 20 + Math.sin(i * 1.1) * 12;
-    const clamped = Math.max(4, Math.min(56, height));
-    const isActive = i === 11;
-    return { height: clamped, isActive };
+  const bars = Array.from({ length: 32 }, (_, i) => {
+    const h = 14 + Math.sin(i * 0.45) * 18 + Math.sin(i * 1.2) * 10 + Math.sin(i * 0.7) * 6;
+    return Math.max(4, Math.min(52, h));
   });
+  const activeIndex = 10;
   return (
-    <div className="mt-auto pt-6 opacity-60 group-hover:opacity-80 transition-opacity duration-200" aria-hidden>
-      <svg viewBox="0 0 260 64" width="100%" height={64} className="block" preserveAspectRatio="none">
-        {bars.map((bar, i) => (
+    <div className="mt-auto pt-6" aria-hidden="true">
+      <svg viewBox="0 0 240 56" className="w-full h-14 opacity-50 group-hover:opacity-70 transition-opacity duration-300" preserveAspectRatio="none">
+        {bars.map((h, i) => (
           <rect
             key={i}
-            x={i * 7 + 2}
-            y={64 - bar.height}
+            x={i * 7.2 + 2}
+            y={56 - h}
             width={3}
-            height={bar.height}
+            height={h}
             rx={1.5}
-            fill="var(--accent-primary)"
-            opacity={bar.isActive ? 1 : 0.2}
-            style={bar.isActive ? { filter: "drop-shadow(0 0 4px var(--accent-primary))" } : undefined}
+            className={i === activeIndex ? "fill-[var(--accent-primary)]" : "fill-[var(--accent-primary)] opacity-25"}
+            style={i === activeIndex ? { filter: "drop-shadow(0 0 6px var(--accent-primary))" } : undefined}
           />
         ))}
-        <line x1={0} y1={63} x2={260} y2={63} stroke="var(--border-default)" strokeWidth={1} />
+        <line x1={0} y1={55.5} x2={240} y2={55.5} className="stroke-[var(--border-default)]" strokeWidth="0.5" />
       </svg>
     </div>
   );
