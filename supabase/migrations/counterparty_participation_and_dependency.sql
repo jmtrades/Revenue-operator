@@ -33,10 +33,16 @@ CREATE TABLE IF NOT EXISTS revenue_operator.operational_dependency (
 CREATE INDEX IF NOT EXISTS idx_operational_dependency_workspace
   ON revenue_operator.operational_dependency (workspace_id);
 
-ALTER TABLE revenue_operator.protocol_events
-  DROP CONSTRAINT IF EXISTS protocol_events_event_type_check;
-ALTER TABLE revenue_operator.protocol_events
-  ADD CONSTRAINT protocol_events_event_type_check
-  CHECK (event_type IN ('created', 'token_issued', 'acknowledged', 'rescheduled', 'disputed', 'expired', 'mirrored', 'network_pressure', 'environment_required'));
+-- Extend protocol_events.event_type only if the table exists (e.g. created by shared_entry_protocol).
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'revenue_operator' AND table_name = 'protocol_events'
+  ) THEN
+    EXECUTE 'ALTER TABLE revenue_operator.protocol_events DROP CONSTRAINT IF EXISTS protocol_events_event_type_check';
+    EXECUTE 'ALTER TABLE revenue_operator.protocol_events ADD CONSTRAINT protocol_events_event_type_check CHECK (event_type IN (''created'', ''token_issued'', ''acknowledged'', ''rescheduled'', ''disputed'', ''expired'', ''mirrored'', ''network_pressure'', ''environment_required''))';
+  END IF;
+END $$;
 
 COMMIT;

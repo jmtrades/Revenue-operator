@@ -1,6 +1,6 @@
 # Launch Now — recall-touch.com
 
-What to do, in order. Migrations are already applied.
+What to do, in order. Migrations are already applied. **Cron:** `vercel.json` is configured so Vercel Cron calls `/api/cron/core` every 2 minutes; no extra cron setup needed if you deploy with this repo.
 
 ---
 
