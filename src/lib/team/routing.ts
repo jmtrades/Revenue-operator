@@ -1,8 +1,10 @@
 /**
  * Team mode: lead routing by role
- * Hot leads → closer, others → operator
+ * Hot leads → closer, others → operator.
+ * Deterministic: same leadId + workspaceId → same closer (hash-based).
  */
 
+import { createHash } from "crypto";
 import { getDb } from "@/lib/db/queries";
 import { predictDealOutcome } from "@/lib/intelligence/deal-prediction";
 
@@ -38,7 +40,10 @@ export async function routeLead(
   }
 
   if (isHot) {
-    const closer = closers[Math.floor(Math.random() * closers.length)] as { user_id: string };
+    const seed = `${leadId}:${workspaceId}`;
+    const hash = createHash("sha256").update(seed).digest("hex");
+    const index = parseInt(hash.slice(0, 8), 16) % closers.length;
+    const closer = closers[index] as { user_id: string };
     await db.from("lead_assignments").upsert(
       {
         lead_id: leadId,

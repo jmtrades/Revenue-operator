@@ -1,0 +1,7 @@
+{
+  "scenario_category": "payment_made",
+  "channel": "message",
+  "structured_context_json": { "payment": "completed", "source": "fixture" },
+  "expected_outcome_type": "payment_made",
+  "expected_next_required_action": "none"
+}

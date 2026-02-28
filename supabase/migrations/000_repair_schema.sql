@@ -30,9 +30,17 @@ CREATE TABLE IF NOT EXISTS revenue_operator.lead_action_locks (
 CREATE INDEX IF NOT EXISTS idx_lead_action_locks_locked_until
   ON revenue_operator.lead_action_locks(locked_until);
 
--- Indexes for cron and pipeline queries (idempotent)
-CREATE INDEX IF NOT EXISTS idx_escalation_logs_holding_notified
-  ON revenue_operator.escalation_logs(holding_message_sent, notified_at)
-  WHERE holding_message_sent = true;
+-- Indexes for cron and pipeline queries (idempotent; only if table and column exist)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'revenue_operator' AND table_name = 'escalation_logs' AND column_name = 'holding_message_sent'
+  ) THEN
+    CREATE INDEX IF NOT EXISTS idx_escalation_logs_holding_notified
+      ON revenue_operator.escalation_logs(holding_message_sent, notified_at)
+      WHERE holding_message_sent = true;
+  END IF;
+END $$;
 
 COMMIT;

@@ -154,6 +154,9 @@ export async function sendOutbound(
     // Non-blocking; send without reference if unavailable
   }
 
+  // Content must already be governed (canonical pipeline). Executor only sends.
+  const sendChannel: "sms" | "email" = channel === "sms" || channel === "email" ? channel : "sms";
+
   const fallbackOrder: string[] =
     channel === "sms"
       ? ["sms", "email", "web"]
@@ -182,6 +185,25 @@ export async function sendOutbound(
           external_id: result.sid,
         })
         .eq("id", messageId);
+      try {
+        const { recordMessageTrace } = await import("@/lib/speech-governance/trace");
+        await recordMessageTrace({
+          workspace_id: workspaceId,
+          channel: sendChannel,
+          intent_type: "follow_up",
+          rendered_text: safeContent,
+          result_status: "sent",
+        });
+        await db.from("audit_log").insert({
+          workspace_id: workspaceId,
+          actor_user_id: null,
+          actor_type: "system",
+          action_type: "message_sent",
+          details_json: { channel: sendChannel },
+        });
+      } catch {
+        // Non-blocking
+      }
       return { status: "sent", externalId: result.sid };
     }
 

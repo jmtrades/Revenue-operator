@@ -85,9 +85,16 @@ export default function RecordPage() {
         </div>
         <div className="space-y-0">
           {filtered.length === 0 ? (
-            <p className="text-sm py-8" style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>
-              {entries.length === 0 ? "What actually happened." : "No entries in this view."}
-            </p>
+            <div className="py-12">
+              <p className="text-sm mb-2" style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>
+                {entries.length === 0 ? "No record yet." : "No entries in this view."}
+              </p>
+              {entries.length === 0 && (
+                <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
+                  Connect a source to begin handling calls.
+                </p>
+              )}
+            </div>
           ) : (
             filtered.map((e, i) => (
               <div

@@ -11,19 +11,24 @@ import { getDb } from "@/lib/db/queries";
 import { createAcknowledgementToken } from "@/lib/shared-transaction-assurance";
 
 export async function POST(request: NextRequest) {
-  let body: { workspace_id?: string; external_ref?: string; counterparty_contact?: string };
+  let body: { workspace_id?: string; external_ref?: string; counterparty_contact?: string; approval_mode?: string };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { workspace_id, external_ref, counterparty_contact } = body;
+  const { workspace_id, external_ref, counterparty_contact, approval_mode } = body;
   if (!workspace_id || !external_ref || !counterparty_contact) {
     return NextResponse.json(
       { error: "workspace_id, external_ref, and counterparty_contact required" },
       { status: 400 }
     );
+  }
+
+  if (approval_mode === "review_required" || approval_mode === "autopilot") {
+    const dbForSettings = getDb();
+    await dbForSettings.from("settings").update({ approval_mode, updated_at: new Date().toISOString() }).eq("workspace_id", workspace_id);
   }
 
   const db = getDb();

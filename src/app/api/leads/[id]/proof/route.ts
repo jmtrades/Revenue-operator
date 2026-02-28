@@ -135,7 +135,7 @@ export async function GET(
     const baselineConversion = 0.02;
     counterfactual = {
       baseline_conversion: baselineConversion,
-      impact: `Baseline conversion ~${(baselineConversion * 100).toFixed(1)}%. Engagement increases likelihood.`,
+      impact: `Baseline conversion ~${(baselineConversion * 100).toFixed(1)}%. Engagement is associated with likelihood.`,
     };
 
     const { data: inv } = await db.from("invoice_items").select("amount_cents, status").eq("lead_id", leadId).limit(1).single();

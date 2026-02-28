@@ -16,6 +16,9 @@ interface Handoff {
 interface CommandCenterActivity {
   activity?: Array<{ what: string; who: string; when: string; effort_preserved?: boolean }>;
 }
+interface RequiresAuthority {
+  count: number;
+}
 interface Conversation {
   lead_id: string;
   lead_name: string | null;
@@ -28,6 +31,7 @@ export default function ActivityPage() {
   const [handoffs, setHandoffs] = useState<Handoff[]>([]);
   const [continuing, setContinuing] = useState<Array<{ line: string; maintained: boolean }>>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [requiresAuthority, setRequiresAuthority] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +47,8 @@ export default function ActivityPage() {
       fetchWithFallback<{ handoffs: Handoff[] }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`),
       fetchWithFallback<CommandCenterActivity>(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`),
       fetchWithFallback<{ conversations: Conversation[] }>(`/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`),
-    ]).then(([hRes, ccRes, cRes]) => {
+      fetchWithFallback<RequiresAuthority>(`/api/enterprise/requires-authority?workspace_id=${encodeURIComponent(workspaceId)}`),
+    ]).then(([hRes, ccRes, cRes, raRes]) => {
       if (hRes.data?.handoffs) setHandoffs(hRes.data.handoffs);
       const act = (ccRes.data?.activity ?? []).slice(0, 15);
       setContinuing(
@@ -53,6 +58,7 @@ export default function ActivityPage() {
         }).filter((x) => x.line)
       );
       if (cRes.data?.conversations) setConversations(cRes.data.conversations.slice(0, 30));
+      if (raRes.data?.count != null) setRequiresAuthority(raRes.data.count);
     }).finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -75,6 +81,17 @@ export default function ActivityPage() {
   return (
     <Shell>
       <div className="max-w-2xl space-y-12">
+        {requiresAuthority > 0 && (
+          <section>
+            <h2 className="text-sm font-medium mb-6" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
+              Requires authority
+            </h2>
+            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
+              <Link href="/dashboard/record" style={{ color: "var(--text-primary)" }}>{requiresAuthority} record entries</Link>
+            </p>
+          </section>
+        )}
+
         {handoffs.length > 0 && (
           <section>
             <h2 className="text-sm font-medium mb-6" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
@@ -102,9 +119,14 @@ export default function ActivityPage() {
             Continuing work
           </h2>
           {continuing.length === 0 && handoffs.length === 0 && conversations.length === 0 ? (
-            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              No external action was required.
-            </p>
+            <div>
+              <p className="text-sm mb-2" style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>
+                No activity yet.
+              </p>
+              <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
+                Connect a source or upload leads to begin.
+              </p>
+            </div>
           ) : continuing.length === 0 ? null : (
             <ul className="space-y-3">
               {continuing.map((item, i) => (

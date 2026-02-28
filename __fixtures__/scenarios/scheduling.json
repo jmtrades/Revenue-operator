@@ -1,0 +1,6 @@
+{
+  "scenario_category": "scheduling",
+  "channel": "voice",
+  "structured_context_json": { "intent": "book", "source": "fixture" },
+  "expected_outcome_type": "information_provided"
+}

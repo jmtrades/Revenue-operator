@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 
 export default function OnboardSourcePage() {
   const router = useRouter();
@@ -27,22 +28,25 @@ export default function OnboardSourcePage() {
   if (!workspaceId) return null;
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#fafaf9] p-6">
-      <div className="max-w-md w-full space-y-6">
-        <p className="text-[18px] leading-relaxed text-[#1c1917] text-center">
-          Where do requests currently arrive?
-        </p>
-        <div className="space-y-3">
-          {["Email inbox", "Phone / SMS", "Calendar bookings", "Form or CRM"].map((source) => (
-            <button
-              key={source}
-              type="button"
-              onClick={() => handleSelect(source)}
-              className="w-full py-3 px-6 text-[18px] text-left text-[#1c1917] bg-white border border-[#e7e5e4] hover:bg-[#fafaf9] transition-colors"
-            >
-              {source}
-            </button>
-          ))}
+    <main className="min-h-screen bg-[#fafaf9] p-6">
+      <div className="mx-auto max-w-[720px] pt-16">
+        <div className="space-y-8">
+          <OnboardExecutionStateBanner />
+          <p className="text-[18px] leading-relaxed text-[#1c1917]">
+            Where do requests currently arrive?
+          </p>
+          <div className="space-y-3">
+            {["Email inbox", "Phone / SMS", "Calendar bookings", "Form or external source"].map((source) => (
+              <button
+                key={source}
+                type="button"
+                onClick={() => handleSelect(source)}
+                className="w-full py-3 px-6 text-[18px] text-left text-[#1c1917] bg-white border border-[#e7e5e4] hover:bg-[#fafaf9] transition-colors"
+              >
+                {source}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </main>

@@ -192,6 +192,12 @@ export async function createSharedTransaction(
     await upsertCounterpartyEdge(input.workspaceId, input.counterpartyIdentifier);
     updateCounterpartyReliance(input.workspaceId, input.counterpartyIdentifier, "shared_entry").catch(() => {});
     maybeIssueCounterpartyInvite(input.workspaceId, input.counterpartyIdentifier).catch(() => {});
+    const { emitSendPublicRecordLink } = await import("@/lib/action-intents/emit");
+    await emitSendPublicRecordLink(input.workspaceId, id, {
+      external_ref: externalRef,
+      subject_type: input.subjectType,
+      subject_id: input.subjectId,
+    }).catch(() => {});
   }
   return id;
 }

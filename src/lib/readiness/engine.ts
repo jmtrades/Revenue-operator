@@ -142,8 +142,9 @@ export async function computeReadiness(
     if (priorSampleSize > 0) learningSources.push("network_pattern");
     try {
       const { getLeadMemory } = await import("@/lib/lead-memory");
-      const pastReactions = await getLeadMemory(leadId, "past_reactions");
-      if (pastReactions?.reactions?.length) learningSources.unshift("lead_specific");
+      const mem = await getLeadMemory(workspaceId, leadId);
+      const reactions = mem?.lifecycle_notes_json?.filter((n) => n.note_type === "webhook_reaction") ?? [];
+      if (reactions.length > 0) learningSources.unshift("lead_specific");
     } catch {
       // Non-blocking
     }

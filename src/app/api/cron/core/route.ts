@@ -8,9 +8,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
 
-/** Order: connector-inbox first (inbound → signals/entries), then queue drain, recoveries, engines, proof, assurance, settlement. */
+/** Order: connector-inbox, hosted-executor, watchdog, self-healing, approval-expiry, data-retention, then queue/recoveries/engines. */
 const CORE_STEPS = [
   "/api/cron/connector-inbox",
+  "/api/cron/hosted-executor",
+  "/api/cron/action-intent-watchdog",
+  "/api/cron/self-healing",
+  "/api/cron/approval-expiry",
+  "/api/cron/data-retention",
   "/api/cron/process-queue",
   "/api/cron/commitment-recovery",
   "/api/cron/opportunity-recovery",

@@ -1,5 +1,5 @@
 /**
- * Preset builder layer — composes workflows automatically from business type.
+ * Preset builder layer — composes execution flows from business type. No user configuration.
  * User never configures. Recall-Touch is a pre-trained digital employee.
  */
 

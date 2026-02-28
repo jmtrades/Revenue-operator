@@ -41,7 +41,7 @@ export async function GET(
   const lastActivityAt = lastActivityRaw ? new Date(lastActivityRaw).getTime() : createdAt;
   const daysToWarm = Math.max(0, Math.ceil((lastActivityAt - createdAt) / (24 * 60 * 60 * 1000)));
 
-  const learned = await getLearnedPreferences(leadId);
+  const learned = await getLearnedPreferences(wid, leadId);
 
   return NextResponse.json({
     warmth_score: warmthScore,
@@ -54,26 +54,21 @@ export async function GET(
   });
 }
 
-async function getLearnedPreferences(leadId: string): Promise<string[]> {
-  const types = ["past_reactions", "follow_up_patterns", "objections_raised", "interests_expressed"] as const;
+async function getLearnedPreferences(workspaceId: string, leadId: string): Promise<string[]> {
   const lines: string[] = [];
+  const mem = await getLeadMemory(workspaceId, leadId);
+  if (!mem) return lines;
 
-  for (const t of types) {
-    const mem = await getLeadMemory(leadId, t);
-    if (!mem) continue;
-    if (t === "past_reactions" && Array.isArray(mem.reactions) && mem.reactions.length > 0) {
-      const recent = mem.reactions.slice(-3);
-      recent.forEach((r) => lines.push(`Responded to "${r.trigger}" → ${r.outcome}`));
-    }
-    if (t === "follow_up_patterns" && Array.isArray(mem.patterns) && mem.patterns.length > 0) {
-      mem.patterns.forEach((p) => lines.push(`Follow-up pattern: ${p}`));
-    }
-    if (t === "objections_raised" && Array.isArray(mem.objections) && mem.objections.length > 0) {
-      mem.objections.forEach((o) => lines.push(`Raised objection: ${o}`));
-    }
-    if (t === "interests_expressed" && Array.isArray(mem.interests) && mem.interests.length > 0) {
-      mem.interests.forEach((i) => lines.push(`Expressed interest: ${i}`));
-    }
+  const reactionNotes = mem.lifecycle_notes_json.filter((n) => n.note_type === "webhook_reaction");
+  const recent = reactionNotes.slice(-3);
+  recent.forEach((r) => {
+    const action = r.last_action ?? "action";
+    const outcome = r.outcome ?? "";
+    lines.push(`Responded to "${action}" → ${outcome}`);
+  });
+
+  if (mem.objections_history_json.length > 0) {
+    mem.objections_history_json.slice(-5).forEach((o) => lines.push(`Raised objection: ${o.tag}`));
   }
 
   return lines;

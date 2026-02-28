@@ -6,25 +6,37 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
 import { LoadingScreen } from "@/components/ui";
 
-/** Operational environment: four surfaces only; record/lead, preferences, connection are deep-link only. */
+/** Operational environment: start is canonical; record/lead, preferences, connection are deep-link only. */
 const ALLOWED_DASHBOARD_PATHS = [
   "/dashboard",
+  "/dashboard/start",
   "/dashboard/record",
   "/dashboard/activity",
   "/dashboard/presence",
+  "/dashboard/approvals",
+  "/dashboard/policies",
+  "/dashboard/templates",
   "/dashboard/preferences",
   "/dashboard/connection",
+  "/dashboard/import",
+  "/dashboard/billing",
 ];
 function isAllowedPath(pathname: string): boolean {
   if (ALLOWED_DASHBOARD_PATHS.includes(pathname)) return true;
   if (pathname.startsWith("/dashboard/record/lead/")) return true;
+  if (pathname.startsWith("/dashboard/policies/")) return true;
   return false;
 }
 const NAV = [
-  { href: "/dashboard", label: "Situation" },
+  { href: "/dashboard/start", label: "Start" },
   { href: "/dashboard/record", label: "Record" },
   { href: "/dashboard/activity", label: "Activity" },
   { href: "/dashboard/presence", label: "Presence" },
+  { href: "/dashboard/approvals", label: "Approvals" },
+  { href: "/dashboard/policies", label: "Policies" },
+  { href: "/dashboard/templates", label: "Templates" },
+  { href: "/dashboard/import", label: "Import" },
+  { href: "/dashboard/billing", label: "Billing" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -85,9 +97,14 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const allowed = isAllowedPath(pathname);
   const isLiveOrValue = pathname === "/dashboard/live" || pathname === "/dashboard/value";
   useEffect(() => {
+    if (pathname === "/dashboard") {
+      const q = new URLSearchParams(window.location.search);
+      router.replace(`/dashboard/start${q.toString() ? `?${q.toString()}` : ""}`);
+      return;
+    }
     if (!pathname.startsWith("/dashboard") || allowed || isLiveOrValue) return;
     const q = new URLSearchParams(window.location.search);
-    router.replace(`/dashboard${q.toString() ? `?${q.toString()}` : ""}`);
+    router.replace(`/dashboard/start${q.toString() ? `?${q.toString()}` : ""}`);
   }, [pathname, allowed, isLiveOrValue, router]);
 
   if (loading) {
@@ -106,7 +123,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       >
         <div className="p-5 border-b" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-            Situation · Record · Activity · Presence
+            Start · Record · Activity · Presence · Approvals
           </p>
         </div>
         <WorkspaceSelect />
@@ -118,6 +135,11 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       </aside>
       <main className="flex-1 overflow-auto flex flex-col min-w-0">
         <TopBar />
+        <div className="shrink-0 px-6 py-2 border-b" style={{ borderColor: "var(--border)" }}>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            Handling active. Commitments secured. Compliance enforced. Confirmation recorded.
+          </p>
+        </div>
         <div className="flex-1 overflow-auto">{children}</div>
       </main>
     </div>
@@ -209,10 +231,9 @@ function WorkspaceSelect() {
         <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>Context</p>
         <Link
           href="/activate"
-          className="block w-full px-3 py-2 rounded-lg text-sm font-medium text-center"
-          style={{ background: "var(--meaning-amber)", color: "#0E1116" }}
+          className="block w-full px-3 py-2 rounded-lg text-sm font-medium text-center btn-primary"
         >
-          Start protection
+          Set up call handling
         </Link>
       </div>
     );
@@ -239,7 +260,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const wid = searchParams.get("workspace_id");
-  const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+  const active = pathname === href || (href !== "/dashboard/start" && pathname.startsWith(href));
   const to = wid ? `${href}${href.includes("?") ? "&" : "?"}workspace_id=${encodeURIComponent(wid)}` : href;
   return (
     <Link

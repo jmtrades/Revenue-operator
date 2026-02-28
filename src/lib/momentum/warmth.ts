@@ -67,8 +67,8 @@ export async function getWarmthScores(
   }
 
   for (const lid of leadIds) {
-    const objMem = await getLeadMemory(lid, "objections_raised");
-    const objectionsCount = Array.isArray(objMem?.objections) ? objMem.objections.length : 0;
+    const mem = await getLeadMemory(workspaceId, lid);
+    const objectionsCount = mem?.objections_history_json?.length ?? 0;
 
     const score = computeWarmth(
       actionByLead[lid] ?? 0,

@@ -63,7 +63,7 @@ export interface MessagePlan {
   entities: MessagePlanEntities;
   constraints: MessagePlanConstraints;
   tone: Tone;
-  /** Audience: organization=operational, professional=workflow, personal=reassurance, public=factual. Tone selection only. */
+  /** Audience: organization=operational, professional=governed, personal=reassurance, public=factual. Tone selection only. */
   audience?: Audience;
   proof_anchor?: string;
   reason_tags: string[];

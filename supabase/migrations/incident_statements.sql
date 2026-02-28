@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS revenue_operator.incident_statements (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_incident_statements_dedupe
-  ON revenue_operator.incident_statements (workspace_id, category, COALESCE(related_external_ref, ''), (date_trunc('day', created_at)));
+  ON revenue_operator.incident_statements (workspace_id, category, COALESCE(related_external_ref, ''), (CAST(created_at AT TIME ZONE 'UTC' AS date)));
 
 CREATE INDEX IF NOT EXISTS idx_incident_statements_workspace_created
   ON revenue_operator.incident_statements (workspace_id, created_at DESC);

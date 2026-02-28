@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 import { useRouter } from "next/navigation";
 
 export default function OnboardWaitingPage() {
@@ -59,32 +60,39 @@ export default function OnboardWaitingPage() {
   if (!workspaceId || !externalRef) return null;
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#fafaf9] p-6">
-      <div className="max-w-md w-full space-y-6 text-center">
-        {acknowledged ? (
-          <>
-            <p className="text-[18px] leading-relaxed text-[#44403c]">
-              Another party confirmed the outcome.
-            </p>
-            <p className="text-[18px] leading-relaxed text-[#44403c]">
-              The record is now complete.
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="text-[18px] leading-relaxed text-[#1c1917]">
-              The other side has the record.
-            </p>
-            <p className="text-[18px] leading-relaxed text-[#44403c]">
-              Completion happens when they see the same thing.
-            </p>
-            {stateSignals.map((signal, i) => (
-              <p key={i} className="text-[18px] leading-relaxed text-[#78716c]">
-                {signal}
+    <main className="min-h-screen bg-[#fafaf9] p-6">
+      <div className="mx-auto max-w-[720px] pt-16">
+        <div className="space-y-6">
+          <OnboardExecutionStateBanner />
+          {acknowledged ? (
+            <>
+              <p className="text-[18px] leading-relaxed text-[#44403c]">
+                Another party confirmed the outcome.
               </p>
-            ))}
-          </>
-        )}
+              <p className="text-[18px] leading-relaxed text-[#44403c]">
+                The record is now complete.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-[18px] leading-relaxed text-[#1c1917]">
+                The other side has the record.
+              </p>
+              <p className="text-[18px] leading-relaxed text-[#44403c]">
+                Completion happens when they see the same thing.
+              </p>
+              {stateSignals.length > 0 && (
+                <div className="border-t border-[#e7e5e4] pt-4 space-y-2">
+                  {stateSignals.map((signal, i) => (
+                    <p key={i} className="text-[18px] leading-relaxed text-[#78716c]">
+                      {signal}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </main>
   );

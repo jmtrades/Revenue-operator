@@ -52,7 +52,7 @@ export default function ContractPage() {
           When human judgment is required
         </h2>
         <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          When the system cannot determine the correct next step within its rules. When a customer response or external event falls outside predefined handling. When closure cannot be achieved automatically. When notification has been chosen. In those cases only, contact occurs; otherwise operation is within authority.
+          When the system cannot determine the correct next step within its rules. When a customer response or external event falls outside predefined handling. When closure cannot be achieved within authority. When notification has been chosen. In those cases only, contact occurs; otherwise operation is within authority.
         </p>
       </section>
 

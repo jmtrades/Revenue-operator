@@ -285,7 +285,7 @@ function LivePageContent() {
           {isReady && (
             <>
               <p className="text-base font-medium py-4 text-center" style={{ color: "var(--text-primary)" }}>
-                This continues automatically
+                This continues under governance
               </p>
               <button
                 onClick={handleContinue}

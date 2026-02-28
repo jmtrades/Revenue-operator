@@ -32,6 +32,7 @@ export async function GET(
     safe_fallback_action: "clarifying_question",
     recovery_profile: "standard",
     operational_profile: "org",
+    approval_mode: "autopilot",
   });
 }
 

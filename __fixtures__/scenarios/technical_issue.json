@@ -1,0 +1,6 @@
+{
+  "scenario_category": "inbound_triage",
+  "channel": "message",
+  "structured_context_json": { "outcome": "technical_issue", "source": "fixture" },
+  "expected_outcome_type": "technical_issue"
+}

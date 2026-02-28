@@ -1,0 +1,7 @@
+{
+  "scenario_category": "unknown",
+  "channel": "inbound",
+  "structured_context_json": { "source": "fixture" },
+  "expected_outcome_type": "unknown",
+  "expected_next_required_action": "request_disclosure_confirmation"
+}

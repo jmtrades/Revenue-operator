@@ -50,8 +50,9 @@ function ActivatePageContent() {
       setLoadingMessage("Opening secure checkout…");
     }, 1200);
     
+    const tier = searchParams.get("tier") || "solo";
+    const interval = searchParams.get("interval") || "year";
     try {
-      // Step 1: Create workspace
       const trialRes = await fetch("/api/trial/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -59,65 +60,51 @@ function ActivatePageContent() {
           email: email.trim(),
           hired_roles: ["full_autopilot"],
           business_type: businessType || "general",
+          tier: tier === "growth" || tier === "team" ? tier : "solo",
+          interval: interval === "month" ? "month" : "year",
         }),
       });
-      
-      if (!trialRes.ok) {
-        const trialData = await trialRes.json().catch(() => ({}));
-        throw new Error(trialData.error || "Failed to start trial");
-      }
-      
-      const trialData = await trialRes.json();
-      const workspaceId = trialData.workspace_id;
-      
-      if (!workspaceId) {
-        throw new Error("No workspace ID returned");
-      }
-      
-      // Step 2: Create checkout session
-      const base = typeof window !== "undefined" ? window.location.origin : "";
-      const checkoutRes = await fetch("/api/billing/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email.trim(),
-          workspace_id: workspaceId,
-        }),
-      });
-      
-      if (!checkoutRes.ok) {
-        const checkoutError = await checkoutRes.json().catch(() => ({}));
-        
-        if (checkoutError.error === "STRIPE_NOT_CONFIGURED") {
-          setError("Payment setup isn't complete yet.");
-        } else {
-          setError(checkoutError.error || checkoutError.message || "Checkout could not be started.");
-        }
+
+      const trialData = await trialRes.json().catch(() => ({ ok: false }));
+      if (!trialData.ok) {
+        const reason = trialData.reason || "unknown";
+        const safeReasons = ["invalid_json", "invalid_email", "missing_env", "workspace_creation_failed", "workspace_create_failed", "checkout_creation_failed", "wrong_price_mode", "stripe_unreachable"];
+        const safe = safeReasons.includes(reason) ? reason : "unknown";
+        let message = "Trial could not be started.";
+        if (safe === "invalid_email") message = "Valid email required.";
+        else if (safe === "missing_env") {
+          const missing = Array.isArray(trialData.missing) ? trialData.missing as string[] : [];
+          message = missing.length > 0
+            ? `Trial needs config: add ${missing.join(", ")} to .env.local (or host env).`
+            : "Trial is not configured yet. Add STRIPE_SECRET_KEY, STRIPE_PRICE_ID and NEXT_PUBLIC_APP_URL.";
+        } else if (safe === "workspace_creation_failed" || safe === "workspace_create_failed") message = "Workspace could not be created. Try again in a moment.";
+        setError(message);
         setSubmitting(false);
         clearTimeout(loadingTimer);
         return;
       }
-      
-      const checkoutData = await checkoutRes.json();
-      
-      if (!checkoutData.url && !checkoutData.checkout_url) {
-        setError("Checkout unavailable");
+
+      if (trialData.reason === "already_active" && trialData.workspace_id) {
+        clearTimeout(loadingTimer);
+        window.location.href = `/connect?workspace_id=${encodeURIComponent(trialData.workspace_id)}`;
+        return;
+      }
+
+      const checkoutUrl = trialData.checkout_url ?? trialData.url;
+      if (!checkoutUrl) {
+        setError("Trial could not be started.");
         setSubmitting(false);
         clearTimeout(loadingTimer);
         return;
       }
-      
-      const checkoutUrl = checkoutData.url || checkoutData.checkout_url;
-      
-      // Redirect to Stripe
+
       clearTimeout(loadingTimer);
       window.location.href = checkoutUrl;
-      window.location.assign(checkoutUrl); // Fallback
       
     } catch (error) {
       clearTimeout(loadingTimer);
       console.error("[activate] Error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      const errorMessage = error instanceof Error ? error.message : "Something went wrong. Try again.";
       setError(errorMessage);
       setSubmitting(false);
     }
@@ -147,21 +134,25 @@ function ActivatePageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
       <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
         <div className="max-w-md w-full">
-          <h1 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Start protection</h1>
-          <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-            Enquiries, follow-ups, and reminders continue here so more people show up. You handle: calls.
+          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Set up call handling</h1>
+          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            Set jurisdiction and review level. Calls and follow-ups continue under governance.
+          </p>
+          <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
+            Handling begins under review until governance is confirmed.
           </p>
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <div>
-              <label htmlFor="business_type" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Business type</label>
+              <label htmlFor="business_type" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Industry</label>
               <select
                 id="business_type"
                 value={businessType}
                 onChange={(e) => setBusinessType(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="w-full px-4 py-3 rounded-lg focus-ring"
+              style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
               >
                 {listBusinessTypes().map(({ value, label }) => (
                   <option key={value} value={value}>{label}</option>
@@ -177,15 +168,16 @@ function ActivatePageContent() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="email@company.com"
                 required
-                className="w-full px-4 py-3 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="w-full px-4 py-3 rounded-lg focus-ring"
+                style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
               />
             </div>
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 font-medium text-stone-950"
+              className="btn-primary w-full max-w-[320px] disabled:opacity-50"
             >
-              {submitting ? "Starting…" : "Start 14-day protection"}
+              {submitting ? "Starting…" : "Set up call handling"}
             </button>
           </form>
           
@@ -208,7 +200,7 @@ function ActivatePageContent() {
         </div>
       </div>
       <div className="p-4 text-center">
-        <Link href="/" className="text-stone-500 text-sm hover:text-stone-300">
+        <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>
           ← Back to home
         </Link>
       </div>

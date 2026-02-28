@@ -31,13 +31,15 @@ describe("requireWorkspaceAccess", () => {
   it("returns 404 when session is enabled and workspace not owned by session user", async () => {
     mockIsSessionEnabled.mockReturnValue(true);
     mockGetSession.mockReturnValue({ userId: "user-a", workspaceId: "w1" });
+    const chain = {
+      eq: (_: string, __: string) => ({
+        maybeSingle: () => Promise.resolve({ data: { id: "w1", owner_id: "user-b" } }),
+        eq: () => ({ maybeSingle: () => Promise.resolve({ data: null }) }),
+      }),
+    };
     mockGetDb.mockReturnValue({
       from: () => ({
-        select: () => ({
-          eq: () => ({
-            maybeSingle: () => Promise.resolve({ data: { id: "w1", owner_id: "user-b" } }),
-          }),
-        }),
+        select: () => chain,
       }),
     });
     const { requireWorkspaceAccess } = await import("@/lib/auth/workspace-access");

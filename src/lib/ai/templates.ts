@@ -6,7 +6,7 @@
 import OpenAI from "openai";
 import { buildMessage, containsRestrictedTopic, type TemplateSlots } from "@/lib/templates";
 import { parseAIContract } from "@/lib/ai/contract";
-import { checkDrift, logDriftAlert, getSafeMessageOnDrift } from "@/lib/message-drift";
+import { checkDrift, logDriftAlert } from "@/lib/message-drift";
 import { getMemoryContextForReasoning } from "@/lib/business-memory";
 import { getLeadMemoryContextForReasoning } from "@/lib/lead-memory";
 
@@ -26,7 +26,6 @@ export interface SlotFillResult {
   explanation?: string;
 }
 
-const FALLBACK_MESSAGE = "Thanks for reaching out. Could you tell me a bit more about what you're looking for?";
 
 const STYLE_INSTRUCTIONS: Record<string, string> = {
   direct: "Tone: short, clear, neutral. No hedging. No persuasion. Minimal filler.",
@@ -78,16 +77,16 @@ export async function fillSlots(
       const slots = slot_values as TemplateSlots;
       const useAction = recommended_action && ["greeting", "question", "clarifying_question", "follow_up", "booking", "call_invite"].includes(recommended_action) ? recommended_action : action;
       let message = buildMessage(useAction, slots);
-      if (containsRestrictedTopic(message)) message = FALLBACK_MESSAGE;
+      if (containsRestrictedTopic(message)) message = buildMessage("clarifying_question", { greeting: "Thanks for reaching out.", question_1: "Could you tell me a bit more about what you're looking for?" });
       const { driftScore, useSafeMode } = checkDrift(message, useAction);
       if (useSafeMode) {
         if (context.workspaceId) {
           await logDriftAlert(context.workspaceId, context.leadId ?? null, driftScore, message);
         }
-        message = getSafeMessageOnDrift();
+        message = buildMessage("clarifying_question", { greeting: "Thanks for reaching out.", question_1: "Could you tell me a bit more about what you're looking for?" });
       }
       return { slots, confidence, message, intent, sentiment, risk_flags: risk_flags ?? [], explanation };
     }
   }
-  return { slots: {}, confidence: 0.5, message: FALLBACK_MESSAGE };
+  return { slots: {}, confidence: 0.5, message: buildMessage("clarifying_question", { greeting: "Thanks for reaching out.", question_1: "Could you tell me a bit more about what you're looking for?" }) };
 }

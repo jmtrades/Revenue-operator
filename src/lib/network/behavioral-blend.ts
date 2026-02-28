@@ -42,14 +42,13 @@ function toTimeBucket(hoursSinceLast: number): string {
   return "72+";
 }
 
-/** Lead memory expectation: from past_reactions positive outcomes */
-async function getLeadMemoryExpectation(leadId: string): Promise<{ value: number; hasData: boolean }> {
-  const mem = await getLeadMemory(leadId, "past_reactions");
-  if (!mem?.reactions?.length) return { value: 0, hasData: false };
-  const positive = (mem.reactions as Array<{ outcome?: string }>).filter(
-    (r) => /replied|booked|positive|yes|engaged/i.test(r.outcome ?? "")
-  ).length;
-  const rate = mem.reactions.length > 0 ? positive / mem.reactions.length : 0;
+/** Lead memory expectation: from past reactions (lifecycle_notes) positive outcomes */
+async function getLeadMemoryExpectation(workspaceId: string, leadId: string): Promise<{ value: number; hasData: boolean }> {
+  const mem = await getLeadMemory(workspaceId, leadId);
+  const reactions = mem?.lifecycle_notes_json?.filter((n) => n.note_type === "webhook_reaction") ?? [];
+  if (!reactions.length) return { value: 0, hasData: false };
+  const positive = reactions.filter((r) => /replied|booked|positive|yes|engaged/i.test(r.outcome ?? "")).length;
+  const rate = reactions.length > 0 ? positive / reactions.length : 0;
   return { value: rate, hasData: true };
 }
 
@@ -125,7 +124,7 @@ export async function getBlendedExpectation(
   }
 ): Promise<BlendedExpectationResult> {
   const [leadMem, workspaceHist, behavioral] = await Promise.all([
-    getLeadMemoryExpectation(leadId),
+    getLeadMemoryExpectation(workspaceId, leadId),
     getWorkspaceExpectation(workspaceId, context.stage, context.messageType),
     getBehavioralExpectation(workspaceId, context.stage, context.messageType, context.hoursSinceLastMessage),
   ]);

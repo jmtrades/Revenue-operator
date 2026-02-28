@@ -1,59 +1,69 @@
-# Vercel Environment Variables
+# Vercel Environment Variables — recall-touch.com
 
-Production environment variables required for deployment.
+Production deployment requires these variables. Missing required vars must cause validation failure in production.
 
-## Required Variables
+## Domain
 
-| Variable | Required | Where Used | Failure Mode |
-|----------|----------|------------|--------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Database connection (client + server) | App cannot connect to database |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Database connection (client) | Client-side queries fail |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Database connection (server) | Server-side operations fail |
-| `CRON_SECRET` | Yes | Cron route authentication | Cron routes return 401 |
-| `SESSION_SECRET` or `ENCRYPTION_KEY` | Yes (at least one) | Session cookie signing | Sessions not persisted |
-| `NEXT_PUBLIC_APP_URL` | Yes | Link generation, redirects | Links point to localhost |
+- **BASE_URL** = `https://recall-touch.com` (used by cron self-calls, links, prod gate)
+- **NEXT_PUBLIC_APP_URL** = `https://recall-touch.com`
 
-## Conditional Variables (If Integrations Enabled)
+## Core (required)
 
-| Variable | Required | Where Used | Failure Mode |
-|----------|----------|------------|--------------|
-| `RESEND_API_KEY` | If email enabled | Email delivery (`/lib/assurance-delivery`) | Emails not sent, neutral response |
-| `EMAIL_FROM` | If email enabled | Email sender address | Defaults to "Revenue Operator <noreply@revenue-operator.com>" |
-| `STRIPE_SECRET_KEY` | If billing enabled | Stripe API calls | Billing operations fail |
-| `STRIPE_WEBHOOK_SECRET` | If billing enabled | Webhook signature verification | Webhook returns 401 |
-| `STRIPE_PRICE_ID` | If billing enabled | Checkout session creation | Checkout fails |
-| `TWILIO_ACCOUNT_SID` | If SMS enabled | Twilio API (`/lib/delivery/provider`) | SMS not sent, neutral response |
-| `TWILIO_AUTH_TOKEN` | If SMS enabled | Twilio API | SMS not sent, neutral response |
-| `TWILIO_PHONE_NUMBER` | If SMS enabled | Twilio sender number | SMS not sent, neutral response |
-| `ZOOM_CLIENT_ID` | If Zoom enabled | Zoom OAuth (`/api/integrations/zoom`) | Zoom integration fails |
-| `ZOOM_CLIENT_SECRET` | If Zoom enabled | Zoom OAuth | Zoom integration fails |
-| `ZOOM_WEBHOOK_SECRET` | If Zoom enabled | Zoom webhook verification | Zoom webhook returns 401 |
-| `ZOOM_REDIRECT_URL` | If Zoom enabled | Zoom OAuth callback | OAuth callback fails |
+| Variable | Purpose |
+|----------|---------|
+| `CRON_SECRET` | Cron route auth: `Authorization: Bearer <CRON_SECRET>` |
+| `PUBLIC_VIEW_SALT` | Salt for public record view fingerprint hashing |
+| `FOUNDER_EXPORT_KEY` | Auth for `GET /api/internal/founder/export` (header `X-Founder-Key` or `Authorization: Bearer`) |
+| `SESSION_SECRET` or `ENCRYPTION_KEY` | Session cookie signing (at least one required) |
 
-## Optional Variables
+## Supabase (required)
 
-| Variable | Required | Where Used | Failure Mode |
-|----------|----------|------------|--------------|
-| `WEBHOOK_SECRET` | Optional | Inbound webhook signature (`/api/webhooks/inbound`) | Webhooks accepted without signature |
-| `BASE_URL` | Optional | Fallback for link generation | Falls back to `NEXT_PUBLIC_APP_URL` or request origin |
-| `APP_URL` | Optional | Fallback for link generation | Falls back to `NEXT_PUBLIC_APP_URL` |
-| `NODE_ENV` | Auto-set by Vercel | Environment detection | Defaults to "production" on Vercel |
-| `DATABASE_URL` | Optional | Direct Postgres connection (if not using Supabase) | Not used if Supabase vars present |
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (client + server) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-side DB (founder export, cron, migrations) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` or `SUPABASE_ANON_KEY` | Client-side DB (RLS applies) |
 
-## Security Notes
+## Stripe (required for billing)
 
-- **Never log secret values**: All endpoints return neutral responses on error
-- **Missing keys**: Endpoints return empty arrays/objects, not errors
-- **CRON_SECRET**: Must match value used in cron caller (Vercel Cron or external)
-- **SESSION_SECRET/ENCRYPTION_KEY**: Must be at least 32 bytes (base64 or hex)
+| Variable | Purpose |
+|----------|---------|
+| `STRIPE_SECRET_KEY` | Stripe API |
+| `STRIPE_WEBHOOK_SECRET` | Webhook signature verification; endpoint `https://recall-touch.com/api/billing/webhook` |
+| `STRIPE_SOLO_MONTHLY` | Price ID Solo monthly |
+| `STRIPE_SOLO_YEARLY` | Price ID Solo annual |
+| `STRIPE_GROWTH_MONTHLY` | Price ID Growth monthly |
+| `STRIPE_GROWTH_YEARLY` | Price ID Growth annual |
+| `STRIPE_TEAM_MONTHLY` | Price ID Team monthly |
+| `STRIPE_TEAM_YEARLY` | Price ID Team annual |
+
+Legacy single price: `STRIPE_PRICE_ID` or `STRIPE_DEFAULT_PRICE_ID` may be used if tier-specific IDs not set.
+
+## Optional
+
+| Variable | Purpose |
+|----------|---------|
+| `EMAIL_SENDER_ADDRESS` or `EMAIL_FROM` | Sender for transactional email |
+| `TWILIO_*`, `RESEND_*`, `ZOOM_*` | Per-feature; see conditional vars in verify-prod-config |
+
+## Cron
+
+- **Schedule:** Every 2 minutes.
+- **URL:** `GET https://recall-touch.com/api/cron/core`
+- **Header:** `Authorization: Bearer <CRON_SECRET>`
+
+## Webhook
+
+- **Stripe:** `https://recall-touch.com/api/billing/webhook`
+- **Events:** `checkout.session.completed`, `invoice.paid`, `invoice.payment_failed`, `customer.subscription.deleted`
+
+## Security
+
+- Never log or expose `CRON_SECRET`, `FOUNDER_EXPORT_KEY`, `PUBLIC_VIEW_SALT`, or Stripe keys.
+- All API responses are doctrine-safe: no stack traces, no internal IDs in client payloads.
+- Founder export uses strict allowlist; no Stripe IDs, tokens, or secrets in response.
 
 ## Verification
 
-Run `npm run verify:env` to check all required variables are set (does not print values).
-
-## Example Vercel Setup
-
-1. Go to Vercel Project → Settings → Environment Variables
-2. Add each variable above for Production environment
-3. For Preview/Development, use same values or test values
-4. Redeploy after adding variables
+- **Pre-deploy:** `npm run verify:env` (or `verify-prod-config`) checks required vars.
+- **Post-deploy:** `BASE_URL=https://recall-touch.com npm run prod:gate` validates live app.

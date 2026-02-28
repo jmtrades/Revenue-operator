@@ -17,7 +17,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_financial_exposure_records_dedupe
     workspace_id,
     category,
     COALESCE(related_external_ref, ''),
-    date_trunc('day', created_at)
+    (CAST(created_at AT TIME ZONE 'UTC' AS date))
   );
 
 CREATE INDEX IF NOT EXISTS idx_financial_exposure_records_workspace_resolved

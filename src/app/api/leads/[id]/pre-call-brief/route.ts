@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getDb } from "@/lib/db/queries";
 import { generateCloserPacket } from "@/lib/intelligence/closer-packet";
 import { getLeadMemory } from "@/lib/lead-memory";
 
@@ -17,11 +18,13 @@ export async function GET(
   const dealId = req.nextUrl.searchParams.get("deal_id") ?? undefined;
 
   try {
+    const db = getDb();
+    const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).single();
+    const workspaceId = (lead as { workspace_id?: string } | null)?.workspace_id;
     const packet = await generateCloserPacket(leadId, dealId ?? undefined);
-    const objMem = await getLeadMemory(leadId, "objections_raised");
-    const objections = Array.isArray(objMem?.objections) ? objMem.objections : [];
-    const interestsMem = await getLeadMemory(leadId, "interests_expressed");
-    const interests = Array.isArray(interestsMem?.interests) ? interestsMem.interests : [];
+    const mem = workspaceId ? await getLeadMemory(workspaceId, leadId) : null;
+    const objections = mem?.objections_history_json?.map((o) => o.tag) ?? [];
+    const interests: string[] = [];
 
     const motivation = interests.length > 0
       ? interests.join("; ")

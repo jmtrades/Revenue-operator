@@ -65,6 +65,14 @@ export async function createResponsibilityForEvent(
       satisfied: false,
       created_at: now,
     });
+  const { emitRequestCounterpartyAction } = await import("@/lib/action-intents/emit");
+  const { data: tx } = await db.from("shared_transactions").select("workspace_id").eq("id", threadId).maybeSingle();
+  if (tx) {
+    await emitRequestCounterpartyAction((tx as { workspace_id: string }).workspace_id, threadId, {
+      required_action: requiredAction,
+      assigned_role: assignedRole,
+    }).catch(() => {});
+  }
 }
 
 /**
@@ -131,6 +139,14 @@ export async function onReciprocalEvent(
   actorRole: AssignedRole,
   operationalAction: string
 ): Promise<void> {
+  if (operationalAction === "schedule_follow_up") {
+    const { data: tx } = await getDb().from("shared_transactions").select("workspace_id").eq("id", threadId).maybeSingle();
+    if (tx) {
+      const { emitCreateFollowupCommitment } = await import("@/lib/action-intents/emit");
+      await emitCreateFollowupCommitment((tx as { workspace_id: string }).workspace_id, threadId, { event_id: eventId }).catch(() => {});
+    }
+  }
+
   // Create responsibility from mapping
   const mapping = EVENT_TO_RESPONSIBILITY[operationalAction];
   if (mapping) {

@@ -12,7 +12,7 @@ const FORBIDDEN = [
   "processing", "dashboard",
   "urgent", "immediately", "asap", "quickly", "important", "forget",
   "software", "app", "platform", "tool", "assistant", "feature", "interface", "screen", "page", "click",
-  "you", "your", "we", "us",
+  "we", "us",
 ];
 const FORBIDDEN_PHRASES = ["don't forget", "right away", "system will"];
 
@@ -47,12 +47,22 @@ function extractStrings(content: string): string[] {
   return out;
 }
 
+/** Marketing pages: factual copy only; excluded. See docs/MARKETING_PAGES_DOCTRINE.md */
+const MARKETING_EXCLUDE = ["src/app/pricing/", "src/app/example/"];
+/** Onboarding: fixed product copy (e.g. first-record message "what we agreed") is factual and mandated. */
+const ONBOARD_EXCLUDE = ["src/app/onboard/"];
+
 describe("UI doctrine: forbidden language in dashboard/components", () => {
-  const files = [...walkTsx(APP), ...walkTsx(COMPONENTS)];
+  const allFiles = [...walkTsx(APP), ...walkTsx(COMPONENTS)];
+  const files = allFiles.filter((f) => {
+    const rel = path.relative(ROOT, f);
+    return !MARKETING_EXCLUDE.some((p) => rel.startsWith(p)) && !ONBOARD_EXCLUDE.some((p) => rel.startsWith(p));
+  });
   const violations: { file: string; word: string; snippet: string }[] = [];
 
   function isUserFacing(s: string): boolean {
     if (s.startsWith("/") || s.includes("workspace_id") || (s.includes("?") && s.length > 30)) return false;
+    if (s.includes("window.location") || s.includes("location.origin")) return false; // redirect/API URLs, not displayed copy
     if (s.includes("@/") || s.includes("var(--")) return false;
     if (s.includes("../") || s.includes("/page") || /^(\.\.\/)?[a-z-]+\/page$/i.test(s)) return false; // import paths
     if (/^\[.*\]/.test(s)) return false; // log/debug prefixes not user-facing

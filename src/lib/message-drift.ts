@@ -7,7 +7,6 @@ import { getDb } from "@/lib/db/queries";
 import { ACTION_TEMPLATES } from "@/lib/templates";
 
 const DRIFT_THRESHOLD = 0.4;
-const FALLBACK_MESSAGE = "Thanks for reaching out. Could you tell me a bit more about what you're looking for?";
 
 function computeDriftScore(message: string, action: string): number {
   const def = ACTION_TEMPLATES[action] ?? ACTION_TEMPLATES.clarifying_question;
@@ -44,8 +43,4 @@ export async function logDriftAlert(
     drift_score: driftScore,
     message_preview: messagePreview.slice(0, 200),
   });
-}
-
-export function getSafeMessageOnDrift(): string {
-  return FALLBACK_MESSAGE;
 }
