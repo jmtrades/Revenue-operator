@@ -28,6 +28,14 @@
   --accent-warning-bg: rgba(255, 178, 36, 0.02);
   --accent-danger: #FF4D4D;
   --accent-danger-subtle: rgba(255, 77, 77, 0.1);
+  /* Activity feed card accents (v7) */
+  --card-lead: #3B82F6;
+  --card-appointment: #22C55E;
+  --card-emergency: #EF4444;
+  --card-outbound: #A855F7;
+  --card-action: #F59E0B;
+  --card-info: #6B7280;
+  --card-spam: #374151;
   --text-inverse: #0A0A0B;
   --gradient-hero: linear-gradient(180deg, rgba(79, 140, 255, 0.06) 0%, transparent 60%);
   --gradient-hero-radial: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(79, 140, 255, 0.08), transparent);

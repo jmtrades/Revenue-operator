@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
-import { MockDashboard } from "./MockDashboard";
+import { ActivityFeedMockup } from "./ActivityFeedMockup";
 import { ROUTES } from "@/lib/constants";
 
 const fadeUp = {
@@ -25,12 +25,12 @@ export function Hero() {
       />
       <Container className="text-center relative z-10">
         <motion.div {...fadeUp}>
-          <SectionLabel>Commercial execution infrastructure</SectionLabel>
+          <SectionLabel>AI PHONE SYSTEM FOR EVERY BUSINESS</SectionLabel>
         </motion.div>
         <motion.h1
           className="font-bold text-center max-w-[800px] mx-auto mb-6"
           style={{
-            fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+            fontSize: "clamp(2.5rem, 5vw, 4rem)",
             letterSpacing: "-0.03em",
             lineHeight: 1.1,
             color: "var(--text-primary)",
@@ -39,16 +39,16 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          Every call that drives revenue should be under record.
+          Your AI phone team. Always on. Always perfect.
         </motion.h1>
         <motion.p
-          className="text-center max-w-[600px] mx-auto mb-8 text-lg md:text-xl"
+          className="text-center max-w-[620px] mx-auto mb-8 text-lg md:text-xl"
           style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Recall Touch governs inbound calls, outbound engagement, payment confirmations, and follow-ups — automatically. No improvisation. Full compliance. Auditable record.
+          Recall Touch answers your calls, follows up with leads, books appointments, handles emergencies, and makes outbound calls — so you can focus on running your business.
         </motion.p>
         <motion.div
           className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-4"
@@ -57,10 +57,10 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline w-full sm:w-auto text-center">
-            Start free →
+            Start free — 5 minute setup →
           </Link>
-          <Link href="#how-it-works" className="btn-marketing-ghost btn-lg no-underline w-full sm:w-auto text-center">
-            See how it works
+          <Link href={ROUTES.DEMO} className="btn-marketing-ghost btn-lg no-underline w-full sm:w-auto text-center inline-flex items-center justify-center gap-2">
+            Hear a live demo ▶
           </Link>
         </motion.div>
         <motion.p
@@ -70,7 +70,7 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          Setup in under 60 seconds · No credit card required
+          Works with your existing number · No credit card · 14-day free trial
         </motion.p>
 
         <motion.div
@@ -87,7 +87,7 @@ export function Hero() {
             }}
           />
           <div className="lg:[transform:perspective(2000px)_rotateX(2deg)]" aria-hidden="true">
-            <MockDashboard />
+            <ActivityFeedMockup />
           </div>
         </motion.div>
       </Container>

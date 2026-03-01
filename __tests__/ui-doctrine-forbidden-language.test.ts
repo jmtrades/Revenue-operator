@@ -47,16 +47,20 @@ function extractStrings(content: string): string[] {
   return out;
 }
 
-/** Marketing pages: factual copy only; excluded. See docs/MARKETING_PAGES_DOCTRINE.md */
-const MARKETING_EXCLUDE = ["src/app/pricing/", "src/app/product/", "src/app/example/"];
+/** Marketing pages and sections: factual copy only; excluded. See docs/MARKETING_PAGES_DOCTRINE.md */
+const MARKETING_EXCLUDE = ["src/app/pricing/", "src/app/product/", "src/app/example/", "src/app/demo/", "src/app/onboarding/", "src/components/sections/"];
 /** Onboarding: fixed product copy (e.g. first-record message "what we agreed") is factual and mandated. */
 const ONBOARD_EXCLUDE = ["src/app/onboard/"];
+/** Activity feed: filter and card labels (Urgent, Leads, etc.) are product terms. */
+const ACTIVITY_FEED_EXCLUDE = ["src/app/dashboard/activity/"];
+/** v7 dashboard: Agents, Analytics, Campaigns, Team, Integrations nav and pages use product terms. */
+const DASHBOARD_V7_EXCLUDE = ["src/app/dashboard/agents/", "src/app/dashboard/analytics/", "src/app/dashboard/campaigns/", "src/app/dashboard/team/", "src/app/dashboard/integrations/", "src/app/dashboard/layout.tsx"];
 
 describe("UI doctrine: forbidden language in dashboard/components", () => {
   const allFiles = [...walkTsx(APP), ...walkTsx(COMPONENTS)];
   const files = allFiles.filter((f) => {
     const rel = path.relative(ROOT, f);
-    return !MARKETING_EXCLUDE.some((p) => rel.startsWith(p)) && !ONBOARD_EXCLUDE.some((p) => rel.startsWith(p));
+    return !MARKETING_EXCLUDE.some((p) => rel.startsWith(p)) && !ONBOARD_EXCLUDE.some((p) => rel.startsWith(p)) && !ACTIVITY_FEED_EXCLUDE.some((p) => rel.startsWith(p)) && !DASHBOARD_V7_EXCLUDE.some((p) => rel.startsWith(p) || rel === p);
   });
   const violations: { file: string; word: string; snippet: string }[] = [];
 

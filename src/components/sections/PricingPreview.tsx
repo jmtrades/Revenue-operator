@@ -17,7 +17,7 @@ export function PricingPreview() {
         <AnimateOnScroll className="text-center mb-16">
           <SectionLabel>Pricing</SectionLabel>
           <h2 className="font-semibold max-w-2xl mx-auto" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}>
-            Governance scales with your operation.
+            Less than one missed call a month.
           </h2>
         </AnimateOnScroll>
         <div className="flex items-center justify-center gap-3 mb-10">
@@ -30,7 +30,7 @@ export function PricingPreview() {
             {annual && <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "var(--accent-secondary-subtle)", color: "var(--accent-secondary)" }}>Save 20%</span>}
           </span>
         </div>
-        <StaggerChildren className="grid md:grid-cols-3 gap-6">
+        <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {PRICING_TIERS.map((tier) => (
             <motion.div
               key={tier.name}
@@ -58,8 +58,8 @@ export function PricingPreview() {
                 ))}
               </ul>
               <Link
-                href={tier.cta === "Get in touch" ? ROUTES.CONTACT : ROUTES.START}
-                className={tier.popular ? "btn-marketing-primary w-full block text-center py-3 rounded-lg no-underline" : "btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline"}
+                href={tier.cta === "Talk to sales" ? ROUTES.CONTACT : ROUTES.START}
+                className={tier.cta === "Talk to sales" ? "btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline" : tier.popular ? "btn-marketing-primary w-full block text-center py-3 rounded-lg no-underline" : "btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline"}
               >
                 {tier.cta}
               </Link>

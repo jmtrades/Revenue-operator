@@ -63,7 +63,7 @@ export function ScrollDepthCTA() {
     >
       <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
       <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-        Ready to govern your calls?
+        Your next customer could be calling. Ready?
       </p>
       <div className="flex items-center gap-2">
         <Link

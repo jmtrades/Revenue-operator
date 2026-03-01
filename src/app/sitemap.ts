@@ -11,5 +11,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${BASE}/terms`, lastModified: new Date(), changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${BASE}/demo`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.5 },
   ];
 }

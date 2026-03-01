@@ -21,6 +21,13 @@ interface Message {
   content: string;
   created_at: string;
 }
+interface CallRow {
+  id: string;
+  call_started_at: string | null;
+  call_ended_at: string | null;
+  outcome: string | null;
+  summary: string | null;
+}
 
 export default function RecordLeadPage() {
   const params = useParams();
@@ -28,6 +35,7 @@ export default function RecordLeadPage() {
   const id = params.id as string;
   const [lead, setLead] = useState<Lead | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [calls, setCalls] = useState<CallRow[]>([]);
   const [openEscalationId, setOpenEscalationId] = useState<string | null>(null);
   const [beyondScope, setBeyondScope] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -46,13 +54,15 @@ export default function RecordLeadPage() {
       fetchWithFallback<Lead>(`/api/leads/${id}`),
       fetchWithFallback<{ messages: Message[] }>(`/api/leads/${id}/messages`),
       fetchWithFallback<{ escalation_id?: string; beyond_scope?: boolean }>(`/api/leads/${id}/open-handoff`),
-    ]).then(([lRes, mRes, hRes]) => {
+      fetchWithFallback<{ calls: CallRow[] }>(`/api/leads/${id}/calls`, { credentials: "include" }),
+    ]).then(([lRes, mRes, hRes, cRes]) => {
       if (lRes.data && !(lRes.data as { error?: unknown }).error) setLead(lRes.data as Lead);
       if (mRes.data?.messages) setMessages(mRes.data.messages);
       if (hRes.data?.escalation_id) {
         setOpenEscalationId((hRes.data as { escalation_id: string }).escalation_id);
         setBeyondScope((hRes.data as { beyond_scope?: boolean }).beyond_scope === true);
       }
+      if (cRes.data?.calls) setCalls(cRes.data.calls);
     }).finally(() => setLoading(false));
   }, [id]);
 
@@ -155,6 +165,21 @@ export default function RecordLeadPage() {
 
       {recorded && (
         <p className="text-sm mb-6 pb-4 border-b" style={{ color: "var(--text-muted)", borderColor: "var(--border)" }}>Entry stored.</p>
+      )}
+
+      {calls.length > 0 && (
+        <section className="mb-10">
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>Calls</h2>
+          <ul className="space-y-2">
+            {calls.map((call) => (
+              <li key={call.id} className="text-sm py-2 border-b" style={{ borderColor: "var(--border)" }}>
+                <span style={{ color: "var(--text-muted)" }}>{call.call_started_at ? new Date(call.call_started_at).toLocaleString() : "—"}</span>
+                {call.outcome && <span className="ml-2" style={{ color: "var(--text-secondary)" }}>· {call.outcome}</span>}
+                {call.summary && <p className="mt-1" style={{ color: "var(--text-secondary)" }}>{call.summary}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       <section className="mb-10">

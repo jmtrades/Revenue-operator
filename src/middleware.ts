@@ -15,13 +15,14 @@ import {
 
 function isPublicPage(pathname: string): boolean {
   if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
-  if (pathname.startsWith("/onboard") || pathname.startsWith("/public/work")) return true;
+  if (pathname === "/sign-in" || pathname.startsWith("/auth/")) return true;
+  if (pathname.startsWith("/onboard") || pathname.startsWith("/onboarding") || pathname.startsWith("/public/work")) return true;
   return false;
 }
 
 function isPublicApi(pathname: string): boolean {
   if (pathname.startsWith("/api/public/")) return true;
-  if (pathname.startsWith("/api/onboard/")) return true;
+  if (pathname.startsWith("/api/onboard/") || pathname.startsWith("/api/onboarding/")) return true;
   if (pathname.startsWith("/api/trial/")) return true;
   if (pathname === "/api/billing/webhook" || pathname === "/api/billing/checkout") return true;
   if (pathname.startsWith("/api/billing/")) return true;
@@ -30,7 +31,7 @@ function isPublicApi(pathname: string): boolean {
   if (pathname.startsWith("/api/health")) return true;
   if (pathname.startsWith("/api/cron/")) return true;
   if (pathname.startsWith("/api/auth/")) return true;
-  if (pathname.startsWith("/api/webhooks/")) return true;
+  if (pathname.startsWith("/api/webhooks/") || pathname.startsWith("/api/integrations/twilio")) return true;
   if (pathname.startsWith("/api/command-center")) return true;
   if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
   if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;
@@ -53,7 +54,10 @@ function isDashboardOrApi(pathname: string): boolean {
 function isAllowedDashboardPath(pathname: string): boolean {
   if (pathname === "/dashboard") return true;
   if (pathname === "/dashboard/record" || pathname === "/dashboard/activity" || pathname === "/dashboard/presence" || pathname === "/dashboard/approvals") return true;
-  if (pathname === "/dashboard/preferences" || pathname === "/dashboard/connection") return true;
+  if (pathname === "/dashboard/preferences" || pathname === "/dashboard/connection" || pathname === "/dashboard/billing") return true;
+  if (pathname === "/dashboard/contacts" || pathname === "/dashboard/calendar" || pathname === "/dashboard/analytics" || pathname === "/dashboard/team" || pathname === "/dashboard/integrations") return true;
+  if (pathname === "/dashboard/calls" || pathname === "/dashboard/messages" || pathname.startsWith("/dashboard/messages/")) return true;
+  if (pathname.startsWith("/dashboard/campaigns") || pathname.startsWith("/dashboard/agents")) return true;
   if (pathname.startsWith("/dashboard/record/lead/")) return true;
   return false;
 }
@@ -170,6 +174,8 @@ export const config = {
     "/connect",
     "/live",
     "/onboard/:path*",
+    "/onboarding",
+    "/onboarding/:path*",
     "/public/work/:path*",
     "/ops/:path*",
     "/api/ops/:path*",

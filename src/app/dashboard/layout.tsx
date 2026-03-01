@@ -26,6 +26,13 @@ const ALLOWED_DASHBOARD_PATHS = [
   "/dashboard/messages",
   "/dashboard/compliance",
   "/dashboard/settings",
+  "/dashboard/contacts",
+  "/dashboard/calendar",
+  "/dashboard/campaigns",
+  "/dashboard/agents",
+  "/dashboard/analytics",
+  "/dashboard/team",
+  "/dashboard/integrations",
 ];
 function isAllowedPath(pathname: string): boolean {
   if (ALLOWED_DASHBOARD_PATHS.includes(pathname)) return true;
@@ -34,6 +41,8 @@ function isAllowedPath(pathname: string): boolean {
   if (pathname.startsWith("/dashboard/calls/")) return true;
   if (pathname.startsWith("/dashboard/messages/")) return true;
   if (pathname.startsWith("/dashboard/settings/")) return true;
+  if (pathname.startsWith("/dashboard/campaigns/")) return true;
+  if (pathname.startsWith("/dashboard/agents/")) return true;
   return false;
 }
 const NAV = [
@@ -42,6 +51,10 @@ const NAV = [
   { href: "/dashboard/record", label: "Record" },
   { href: "/dashboard/calls", label: "Calls" },
   { href: "/dashboard/activity", label: "Activity" },
+  { href: "/dashboard/contacts", label: "Contacts" },
+  { href: "/dashboard/calendar", label: "Calendar" },
+  { href: "/dashboard/campaigns", label: "Campaigns" },
+  { href: "/dashboard/agents", label: "Agents" },
   { href: "/dashboard/presence", label: "Presence" },
   { href: "/dashboard/approvals", label: "Approvals" },
   { href: "/dashboard/follow-ups", label: "Follow-ups" },
@@ -49,6 +62,9 @@ const NAV = [
   { href: "/dashboard/messages", label: "Messages" },
   { href: "/dashboard/policies", label: "Policies" },
   { href: "/dashboard/templates", label: "Templates" },
+  { href: "/dashboard/analytics", label: "Analytics" },
+  { href: "/dashboard/team", label: "Team" },
+  { href: "/dashboard/integrations", label: "Integrations" },
   { href: "/dashboard/compliance", label: "Compliance" },
   { href: "/dashboard/import", label: "Import" },
   { href: "/dashboard/billing", label: "Billing" },
@@ -184,7 +200,8 @@ function TopBar() {
       >
         {ambient?.line ?? "—"}
       </p>
-      <div className="flex-1 flex justify-end min-w-0">
+      <div className="flex-1 flex justify-end items-center gap-3 min-w-0">
+        <span className="text-xs" style={{ color: "var(--text-tertiary)" }} aria-label="Notifications">Notifications</span>
         <span
           className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
           style={{

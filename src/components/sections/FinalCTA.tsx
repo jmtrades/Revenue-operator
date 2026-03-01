@@ -11,13 +11,13 @@ export function FinalCTA() {
       <Container>
         <AnimateOnScroll className="text-center max-w-2xl mx-auto">
           <h2 className="font-bold text-3xl md:text-4xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}>
-            If revenue depends on conversation, govern it.
+            Your next customer is calling right now. Is anyone answering?
           </h2>
           <p className="text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Start in under 60 seconds. No credit card required.
+            Start free — takes 5 minutes.
           </p>
           <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline inline-block">
-            Start free →
+            Start free — takes 5 minutes →
           </Link>
           <p className="text-sm mt-6" style={{ color: "var(--text-tertiary)" }}>
             Or: <Link href={ROUTES.BOOK_DEMO} className="underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded" style={{ color: "var(--text-tertiary)" }}>Book a demo</Link>

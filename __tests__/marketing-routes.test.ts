@@ -12,11 +12,12 @@ const ROOT = path.resolve(__dirname, "..");
 
 describe("Marketing routes contract", () => {
   describe("Pricing page", () => {
-    it("has factual tiers Solo, Growth, Team", () => {
-      const content = readFileSync(path.join(ROOT, "src", "app", "pricing", "page.tsx"), "utf-8");
-      expect(content).toContain("Solo");
-      expect(content).toContain("Growth");
-      expect(content).toContain("Team");
+    it("has factual tiers Starter, Professional, Business, Enterprise", () => {
+      const content = readFileSync(path.join(ROOT, "src", "lib", "constants.ts"), "utf-8");
+      expect(content).toContain("Starter");
+      expect(content).toContain("Professional");
+      expect(content).toContain("Business");
+      expect(content).toContain("Enterprise");
     });
 
     it("does not expose internal IDs", () => {

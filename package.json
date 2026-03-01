@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.7.0",
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.34.3",

@@ -157,7 +157,7 @@ export default function SituationPage() {
           <div className="space-y-4">
             {currentState.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Governed strategy applied.
+                No unresolved condition was present.
               </p>
             ) : (
               currentState.map((line, i) => (
