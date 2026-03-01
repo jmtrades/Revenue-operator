@@ -97,6 +97,13 @@ Expected:
 - **Gate command:**
   - `BASE_URL=https://recall-touch.com npm run prod:gate`
 
+- **Auth (Get started / Sign-in / Login):** Signup and login must never 500. Minimal env for auth flow:
+  - `SESSION_SECRET` or `ENCRYPTION_KEY` — session cookie signing (required for post-login session).
+  - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — required for Supabase magic link and `/auth/callback`; if missing, callback redirects to `/sign-in?error=auth`.
+  - `BASE_URL` or `NEXT_PUBLIC_APP_URL` — used for redirect origin in `/auth/callback` (e.g. `https://recall-touch.com`).
+  - `/api/auth/session` always returns 200 with `{ session: null }` or session payload; never 500.
+  - Transition surfaces (activate, sign-in) use "Verifying session." and on timeout/error show "Unable to proceed." with "Back to home" only.
+
 ---
 
 ### 5. Expected self-check output (success)

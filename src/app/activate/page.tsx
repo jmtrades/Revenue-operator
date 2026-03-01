@@ -32,6 +32,7 @@ function ActivatePageContent() {
   const [submitting, setSubmitting] = useState(false);
   const [submittedLocal, setSubmittedLocal] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
+  const [transitionError, setTransitionError] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
@@ -49,10 +50,14 @@ function ActivatePageContent() {
     }
   }, []);
 
-  // Non-blocking: redirect only if session exists; never block form render
+  // Bounded session check: redirect if session exists; after 8s show institutional error if still pending
   useEffect(() => {
     const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), 8_000);
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      setTransitionError(true);
+      setSessionChecked(true);
+    }, 8_000);
     fetch("/api/auth/session", { credentials: "include", signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
@@ -61,11 +66,15 @@ function ActivatePageContent() {
         if (hasSession) {
           const wid = session.workspace_id ?? session.workspaceId;
           router.replace(wid ? `/connect?workspace_id=${encodeURIComponent(wid)}` : "/connect");
+          return;
         }
         setSessionChecked(true);
       })
-      .catch(() => setSessionChecked(true))
-      .finally(() => clearTimeout(t));
+      .catch(() => {
+        setTransitionError(true);
+        setSessionChecked(true);
+      })
+      .finally(() => clearTimeout(timeoutId));
   }, [router]);
 
   useEffect(() => {
@@ -151,6 +160,42 @@ function ActivatePageContent() {
     }
     setSubmittedLocal(true);
   };
+
+  // Institutional error: session check failed or timed out
+  if (transitionError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 md:p-12" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <div className="max-w-md w-full text-center">
+          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
+          <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>Unable to proceed.</p>
+          <p className="text-sm mb-6" style={{ color: "var(--text-tertiary)", lineHeight: 1.6 }}>Authorization could not be confirmed.</p>
+          <Link
+            href="/"
+            className="inline-block py-2.5 px-4 rounded-lg text-sm font-medium"
+            style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
+          >
+            Back to home
+          </Link>
+        </div>
+        <div className="p-4 text-center mt-6">
+          <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>← Back to home</Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Verifying session (bounded wait)
+  if (!sessionChecked) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <div className="max-w-md w-full text-center">
+          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
+          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>Verifying session.</p>
+          <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to home</Link>
+        </div>
+      </div>
+    );
+  }
 
   // Success state (localStorage or after local submit)
   if (submittedLocal) {
@@ -325,7 +370,7 @@ export default function ActivatePage() {
       fallback={
         <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
           <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
-          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>One moment…</p>
+          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>Verifying session.</p>
           <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to home</Link>
         </div>
       }

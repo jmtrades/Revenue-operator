@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
+import { getBaseUrl } from "@/lib/runtime/base-url";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
+  const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {
     return NextResponse.redirect(new URL("/sign-in", origin));

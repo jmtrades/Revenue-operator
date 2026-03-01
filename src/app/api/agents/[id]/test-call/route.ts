@@ -121,5 +121,5 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     await db.from("call_sessions").update({ call_ended_at: new Date().toISOString() }).eq("id", callSessionId);
     return NextResponse.json({ error: e instanceof Error ? e.message : "Test call failed" }, { status: 502 });
   }
-  return NextResponse.json({ ok: true, message: "Test call started. Your phone should ring shortly." });
+  return NextResponse.json({ ok: true, reason: "test_call_started" });
 }
