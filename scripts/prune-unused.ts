@@ -95,7 +95,7 @@ function main(): void {
 
   const reachable = new Set<string>();
   function resolveFile(file: string): string | null {
-    let full = path.join(ROOT, file);
+    const full = path.join(ROOT, file);
     if (existsSync(full)) return file;
     const alt = file.endsWith(".ts") ? file.replace(/\.ts$/, ".tsx") : file.replace(/\.tsx$/, ".ts");
     if (existsSync(path.join(ROOT, alt))) return alt;

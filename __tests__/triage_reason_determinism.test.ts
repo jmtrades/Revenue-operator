@@ -3,6 +3,8 @@
  */
 
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "fs";
+import path from "path";
 import { resolveTriageReason } from "../src/lib/scenarios/triage";
 
 describe("Triage reason determinism", () => {
@@ -24,10 +26,8 @@ describe("Triage reason determinism", () => {
   });
 
   it("no Math.random or crypto in triage", () => {
-    const path = require("path");
-    const fs = require("fs");
     const full = path.resolve(__dirname, "../src/lib/scenarios/triage.ts");
-    const content = fs.readFileSync(full, "utf-8");
+    const content = readFileSync(full, "utf-8");
     expect(content).not.toContain("Math.random");
     expect(content).not.toContain("crypto.randomUUID");
   });

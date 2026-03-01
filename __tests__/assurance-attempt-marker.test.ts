@@ -11,9 +11,9 @@ const ROOT = path.resolve(__dirname, "..");
 
 describe("assurance attempt marker", () => {
   it("assurance-delivery records marker when send fails (missing owner email or Resend)", () => {
-    const module = readFileSync(path.join(ROOT, "src/lib/assurance-delivery/index.ts"), "utf-8");
-    expect(module).toContain("recordAssuranceAttemptMarker");
-    expect(module).toContain("assurance_attempt_marker");
+    const content = readFileSync(path.join(ROOT, "src/lib/assurance-delivery/index.ts"), "utf-8");
+    expect(content).toContain("recordAssuranceAttemptMarker");
+    expect(content).toContain("assurance_attempt_marker");
   });
 
   it("core-status reads assurance_attempt_marker for assurance_attempted_recently", () => {

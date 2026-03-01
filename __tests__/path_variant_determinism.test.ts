@@ -3,6 +3,8 @@
  */
 
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "fs";
+import path from "path";
 import { selectPathVariant } from "../src/lib/intelligence/path-variant";
 
 describe("Path variant determinism", () => {
@@ -22,10 +24,8 @@ describe("Path variant determinism", () => {
   });
 
   it("path-variant.ts does not use Math.random", () => {
-    const path = require("path");
-    const fs = require("fs");
     const full = path.resolve(__dirname, "../src/lib/intelligence/path-variant.ts");
-    const content = fs.readFileSync(full, "utf-8");
+    const content = readFileSync(full, "utf-8");
     expect(content).not.toContain("Math.random");
   });
 });

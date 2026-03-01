@@ -3,6 +3,8 @@
  */
 
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "fs";
+import path from "path";
 import { idempotencyKey } from "../src/lib/signals/types";
 import { reduceLeadState } from "../src/lib/state/reducer";
 import type { LifecycleState } from "../src/lib/state/types";
@@ -63,28 +65,22 @@ describe("State reducer — deterministic", () => {
 
 describe("Decision path — no direct send", () => {
   it("decision-job does not import sendOutbound from delivery/provider", () => {
-    const fs = require("fs");
-    const path = require("path");
     const decisionJobPath = path.join(process.cwd(), "src/lib/pipeline/decision-job.ts");
-    const content = fs.readFileSync(decisionJobPath, "utf8");
+    const content = readFileSync(decisionJobPath, "utf8");
     expect(content).not.toMatch(/from ["']@\/lib\/delivery\/provider["']/);
     expect(content).not.toMatch(/sendOutbound/);
   });
 
   it("decision-with-engines does not import sendOutbound from delivery/provider", () => {
-    const fs = require("fs");
-    const path = require("path");
     const path2 = path.join(process.cwd(), "src/lib/pipeline/decision-with-engines.ts");
-    const content = fs.readFileSync(path2, "utf8");
+    const content = readFileSync(path2, "utf8");
     expect(content).not.toMatch(/from ["']@\/lib\/delivery\/provider["']/);
     expect(content).not.toMatch(/sendOutbound/);
   });
 
   it("action-queue worker is the only pipeline code that imports sendOutbound", () => {
-    const fs = require("fs");
-    const path = require("path");
     const workerPath = path.join(process.cwd(), "src/lib/action-queue/worker.ts");
-    const content = fs.readFileSync(workerPath, "utf8");
+    const content = readFileSync(workerPath, "utf8");
     expect(content).toMatch(/sendOutbound/);
     expect(content).toMatch(/delivery\/provider/);
   });
