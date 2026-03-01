@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getClientOrNull } from "@/lib/supabase/client";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -10,11 +10,14 @@ export default function SignInPage() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createClient();
-
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || loading) return;
+    const supabase = getClientOrNull();
+    if (!supabase) {
+      setError("Sign-in is not configured.");
+      return;
+    }
     setLoading(true);
     setError(null);
     const { error: err } = await supabase.auth.signInWithOtp({
@@ -30,6 +33,11 @@ export default function SignInPage() {
   };
 
   const handleGoogle = async () => {
+    const supabase = getClientOrNull();
+    if (!supabase) {
+      setError("Sign-in is not configured.");
+      return;
+    }
     setLoading(true);
     setError(null);
     const { error: err } = await supabase.auth.signInWithOAuth({
