@@ -63,7 +63,7 @@ export function ReadinessProofDrawer({ leadId, workspaceId, isOpen, onClose }: R
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {loading ? (
-          <p className="text-stone-500">Loading…</p>
+          <p className="text-stone-500">Preparing…</p>
         ) : !data ? (
           <p className="text-stone-500">No readiness data</p>
         ) : (

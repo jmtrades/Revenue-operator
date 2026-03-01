@@ -33,7 +33,7 @@ export default function OnboardLandingPage() {
               disabled={loading}
               className="btn-primary w-full max-w-[320px] disabled:opacity-50"
             >
-              {loading ? "Loading…" : "Continue"}
+              {loading ? "Preparing…" : "Continue"}
             </button>
           </div>
         </div>
