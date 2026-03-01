@@ -63,7 +63,7 @@ export default function DashboardBillingPage() {
   if (loading || !workspaceId) {
     return (
       <div className="p-6">
-        <p className="text-[15px] text-[#78716c]">Loading…</p>
+        <p className="text-[15px] text-[#78716c]">Preparing…</p>
       </div>
     );
   }

@@ -55,7 +55,7 @@ export default function OpsDashboardPage() {
     }
   };
 
-  if (loading) return <div className="p-8 text-stone-500">Loading…</div>;
+  if (loading) return <div className="p-8 text-stone-500">Preparing…</div>;
   if (!data) return <div className="p-8 text-rose-400">Failed to load ops dashboard.</div>;
 
   return (

@@ -51,7 +51,7 @@ export default function SoloPage() {
   }
 
   if (loading) {
-    return <p className="text-[18px] text-[#78716c]">Loading…</p>;
+    return <p className="text-[18px] text-[#78716c]">Preparing…</p>;
   }
 
   if (error) {
