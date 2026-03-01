@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { workspace_id, services, hours, faq_extra } = body;
+  const { workspace_id, services, hours, emergencies_after_hours, appointment_handling, faq_extra } = body;
   if (!workspace_id) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id, name").eq("id", workspace_id).maybeSingle();
@@ -24,6 +24,18 @@ export async function POST(req: NextRequest) {
     { onConflict: "workspace_id" }
   );
   if (upsertErr) return NextResponse.json({ error: upsertErr.message }, { status: 500 });
+
+  const brain = {
+    services: (services || "").trim() || undefined,
+    emergencies_after_hours: emergencies_after_hours || undefined,
+    appointment_handling: appointment_handling || undefined,
+    faq_extra: faqExtraTrim || undefined,
+  };
+  const { data: agent } = await db.from("agents").select("id, knowledge_base").eq("workspace_id", workspace_id).limit(1).maybeSingle();
+  if (agent) {
+    const kb = (agent as { knowledge_base?: Record<string, unknown> }).knowledge_base ?? {};
+    await db.from("agents").update({ knowledge_base: { ...kb, ...brain }, updated_at: new Date().toISOString() }).eq("id", (agent as { id: string }).id);
+  }
   return NextResponse.json({ ok: true });
 }
 

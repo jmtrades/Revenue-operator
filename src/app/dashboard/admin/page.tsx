@@ -38,7 +38,7 @@ export default function AdminDLQPage() {
     <div className="min-h-screen bg-stone-950 text-stone-100 p-8">
       <h1 className="text-2xl font-semibold mb-6">Dead Letter Queue</h1>
       {loading ? (
-        <p className="text-stone-400">Preparing…</p>
+        <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>One moment…</p>
       ) : (
         <div className="space-y-4">
           {jobs.length === 0 && <p className="text-stone-500">No failed jobs</p>}

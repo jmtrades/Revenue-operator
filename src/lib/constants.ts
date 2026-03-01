@@ -116,6 +116,7 @@ export const FOOTER_PRODUCT = [
 
 export const FOOTER_COMPANY = [
   { label: "About", href: "/product" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ] as const;
 
@@ -131,8 +132,10 @@ export const PRICING_FAQ = [
   { q: "Do you offer annual billing?", a: "Annual billing is available for Growth and Team. Two months are applied without interruption on annual commitment." },
   { q: "What compliance frameworks are supported?", a: "Recall Touch supports jurisdiction-based controls (US, UK, EU) and configurable review depth (preview required, approval required, or standard)." },
   { q: "Can I export my records?", a: "Yes. All plans include an audit trail. Team plans include full export and API access for record retrieval." },
-  { q: "What happens if I exceed my call limit?", a: "We will notify you before you reach your limit. You can upgrade your plan or add capacity. No automatic overage charges." },
-  { q: "Do you offer volume discounts?", a: "Team and enterprise plans support custom pricing and volume discounts. Contact us for details." },
+  { q: "What happens if I exceed my call limit?", a: "Recall Touch will notify you before you reach your limit. You can upgrade your plan or add capacity. No automatic overage charges." },
+  { q: "Do you offer volume discounts?", a: "Team and enterprise plans support custom pricing and volume discounts. Email hello@recall-touch.com for details." },
+  { q: "Can I port my existing number?", a: "Yes. Number porting is supported. Start with a new number and port later, or contact support to port during setup." },
+  { q: "How do I set up call forwarding?", a: "After signup, you get step-by-step instructions. Docs include carrier-specific steps for AT&T, Verizon, T-Mobile, and others." },
 ] as const;
 
 export const COMPARISON_FEATURES = [

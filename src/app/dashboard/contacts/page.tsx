@@ -99,15 +99,24 @@ export default function ContactsPage() {
       ) : (
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
           {filtered.map((c) => (
-            <li key={c.id} className="border-b last:border-b-0" style={{ borderColor: "var(--border)" }}>
+            <li key={c.id} className="border-b last:border-b-0 flex items-center justify-between gap-2" style={{ borderColor: "var(--border)" }}>
               <Link
                 href={`/dashboard/record/lead/${c.id}`}
-                className="block px-4 py-3 hover:opacity-90"
+                className="flex-1 min-w-0 px-4 py-3 hover:opacity-90"
                 style={{ color: "var(--text-primary)" }}
               >
                 <p className="text-sm font-medium">{c.name || c.email || c.company || "—"}</p>
                 <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{c.state} · {c.company || "—"}</p>
               </Link>
+              {c.phone && (
+                <Link
+                  href={`/dashboard/messages?lead=${c.id}`}
+                  className="px-3 py-2 text-xs font-medium rounded-lg border shrink-0"
+                  style={{ borderColor: "var(--border)", color: "var(--accent-primary)" }}
+                >
+                  Message
+                </Link>
+              )}
             </li>
           ))}
         </ul>

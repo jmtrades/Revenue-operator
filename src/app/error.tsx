@@ -21,17 +21,26 @@ export default function Error({
     <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
       <div className="max-w-md w-full text-center">
         <h1 className="text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
-          Normal conditions are not present.
+          Something went wrong.
         </h1>
         <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+          We couldn’t load this page. You can try again or go back home.
         </p>
-        <div className="flex gap-3 justify-center">
-          <Link
-            href="/activate"
+        <div className="flex gap-3 justify-center flex-wrap">
+          <button
+            type="button"
+            onClick={() => reset()}
             className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
             style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
           >
-            Access
+            Try again
+          </button>
+          <Link
+            href="/"
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
+            style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
+          >
+            Go home
           </Link>
         </div>
       </div>

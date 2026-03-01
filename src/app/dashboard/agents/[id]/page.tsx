@@ -28,6 +28,7 @@ export default function AgentDetailPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testCalling, setTestCalling] = useState(false);
+  const [testPhone, setTestPhone] = useState("");
   const [greeting, setGreeting] = useState("");
   const [voiceId, setVoiceId] = useState("");
   const [personality, setPersonality] = useState("professional");
@@ -73,9 +74,15 @@ export default function AgentDetailPage() {
     if (!id || testCalling) return;
     setTestCalling(true);
     try {
-      const r = await fetch(`/api/agents/${id}/test-call`, { method: "POST", credentials: "include" });
+      const r = await fetch(`/api/agents/${id}/test-call`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ phone_number: testPhone.trim() || undefined }),
+      });
       const data = await r.json();
       if (r.ok && data?.ok) alert(data.message ?? "Test call requested.");
+      else if (!r.ok) alert(data?.error ?? "Test call failed.");
     } finally {
       setTestCalling(false);
     }
@@ -94,7 +101,7 @@ export default function AgentDetailPage() {
     return (
       <div className="p-8 max-w-4xl">
         <PageHeader title="Agent" subtitle="Edit agent." />
-        <LoadingState message={loading ? "Preparing…" : "Agent not found."} className="min-h-[200px]" />
+        <LoadingState message={loading ? "One moment…" : "Agent not found."} className="min-h-[200px]" />
       </div>
     );
   }
@@ -150,9 +157,20 @@ export default function AgentDetailPage() {
             <p className="text-sm" style={{ color: "var(--text-primary)" }}>{(agent.stats as { totalCalls: number }).totalCalls} calls</p>
           </div>
         )}
+        <div>
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>Test call (optional)</label>
+          <input
+            type="tel"
+            value={testPhone}
+            onChange={(e) => setTestPhone(e.target.value)}
+            placeholder="+1 555 123 4567"
+            className="w-full px-3 py-2 rounded-lg border text-sm mb-2"
+            style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text-primary)" }}
+          />
+        </div>
         <div className="flex flex-wrap gap-3">
           <button type="button" onClick={save} disabled={saving} className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50" style={{ background: "var(--accent)", color: "var(--text-inverse)" }}>{saving ? "Saving…" : "Save"}</button>
-          <button type="button" onClick={testCall} disabled={testCalling} className="px-4 py-2 rounded-lg text-sm font-medium border disabled:opacity-50" style={{ borderColor: "var(--border)", color: "var(--text-primary)" }} aria-label="Request test call">{testCalling ? "Requesting…" : "Test call"}</button>
+          <button type="button" onClick={testCall} disabled={testCalling} className="px-4 py-2 rounded-lg text-sm font-medium border disabled:opacity-50" style={{ borderColor: "var(--border)", color: "var(--text-primary)" }} aria-label="Request test call">{testCalling ? "Calling…" : "Test call"}</button>
           <Link href="/dashboard/agents" className="inline-block px-4 py-2 text-sm" style={{ color: "var(--text-muted)" }}>Cancel</Link>
         </div>
       </div>

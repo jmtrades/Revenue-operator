@@ -51,7 +51,7 @@ export default function OrgPage() {
   }
 
   if (loading) {
-    return <p className="text-[18px] text-[#78716c]">Preparing…</p>;
+    return <p className="text-[18px]" style={{ color: "var(--text-tertiary)" }}>One moment…</p>;
   }
 
   if (error) {

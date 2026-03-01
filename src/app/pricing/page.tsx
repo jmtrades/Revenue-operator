@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Navbar } from "@/components/sections/Navbar";
@@ -24,6 +24,75 @@ export function pricingCopyForTests(): string {
     "Start free",
     "Talk to sales",
   ].join(" ");
+}
+
+const RECALL_TOUCH_STARTER_MONTHLY = 49;
+
+function ROICalculator({ className = "" }: { className?: string }) {
+  const [callsPerDay, setCallsPerDay] = useState<string>("10");
+  const [avgCustomerValue, setAvgCustomerValue] = useState<string>("500");
+  const [missedCallRatePct, setMissedCallRatePct] = useState<string>("30");
+
+  const result = useMemo(() => {
+    const calls = parseFloat(callsPerDay) || 0;
+    const value = parseFloat(avgCustomerValue) || 0;
+    const rate = Math.min(100, Math.max(0, parseFloat(missedCallRatePct) || 0)) / 100;
+    const missedPerMonth = calls * 30 * rate;
+    const revenueLost = Math.round(missedPerMonth * value);
+    return { revenueLost, missedPerMonth };
+  }, [callsPerDay, avgCustomerValue, missedCallRatePct]);
+
+  return (
+    <div className={`rounded-xl border p-6 max-w-lg ${className}`} style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+      <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
+        See how much missed calls could be costing you.
+      </p>
+      <div className="grid gap-4 mb-6">
+        <label className="block">
+          <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Average calls per day</span>
+          <input
+            type="number"
+            min={0}
+            step={1}
+            value={callsPerDay}
+            onChange={(e) => setCallsPerDay(e.target.value)}
+            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)", color: "var(--text-primary)" }}
+          />
+        </label>
+        <label className="block">
+          <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Average value of a new customer ($)</span>
+          <input
+            type="number"
+            min={0}
+            step={50}
+            value={avgCustomerValue}
+            onChange={(e) => setAvgCustomerValue(e.target.value)}
+            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)", color: "var(--text-primary)" }}
+          />
+        </label>
+        <label className="block">
+          <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Current missed call rate (%)</span>
+          <input
+            type="number"
+            min={0}
+            max={100}
+            step={5}
+            value={missedCallRatePct}
+            onChange={(e) => setMissedCallRatePct(e.target.value)}
+            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)", color: "var(--text-primary)" }}
+          />
+        </label>
+      </div>
+      <div className="pt-4 border-t" style={{ borderColor: "var(--border-default)" }}>
+        <p className="text-base font-medium" style={{ color: "var(--text-primary)" }}>
+          You&apos;re leaving about <span style={{ color: "var(--accent-primary)" }}>${result.revenueLost.toLocaleString()}</span>/month on the table. Recall Touch costs <span style={{ color: "var(--accent-primary)" }}>${RECALL_TOUCH_STARTER_MONTHLY}</span>/month.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default function PricingPage() {
@@ -99,7 +168,13 @@ export default function PricingPage() {
             All plans include: encrypted records · compliance framework · audit trail · 14-day free trial
           </p>
 
-          <h2 className="font-semibold text-xl mb-6 mt-20" style={{ color: "var(--text-primary)" }}>
+          {/* ROI Calculator — definitive spec */}
+          <h2 id="roi-calculator" className="font-semibold text-xl mb-4 mt-20 scroll-mt-24" style={{ color: "var(--text-primary)" }}>
+            ROI calculator
+          </h2>
+          <ROICalculator className="mb-16" />
+
+          <h2 className="font-semibold text-xl mb-6 mt-8" style={{ color: "var(--text-primary)" }}>
             Feature comparison
           </h2>
           <div className="overflow-x-auto rounded-lg border mb-20" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>

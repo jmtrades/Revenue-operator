@@ -38,17 +38,28 @@ function FeedCard({ card, index }: { card: (typeof FEED_CARDS)[0]; index: number
   );
 }
 
+const CARD_INTERVAL_MS = 3000;
+
 export function ActivityFeedMockup() {
   const [visibleCount, setVisibleCount] = useState(0);
 
+  // Initial stagger, then a new call card slides in every 3 seconds (spec)
   useEffect(() => {
     const t1 = setTimeout(() => setVisibleCount(1), 400);
     const t2 = setTimeout(() => setVisibleCount(2), 900);
     const t3 = setTimeout(() => setVisibleCount(3), 1400);
-    const t4 = setTimeout(() => setVisibleCount(4), 1900);
-    const t5 = setTimeout(() => setVisibleCount(5), 2400);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); };
+    const t4 = setTimeout(() => setVisibleCount(4), 1400 + CARD_INTERVAL_MS);
+    const t5 = setTimeout(() => setVisibleCount(5), 1400 + CARD_INTERVAL_MS * 2);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+      clearTimeout(t5);
+    };
   }, []);
+
+  const displayCards = FEED_CARDS.slice(0, visibleCount);
 
   return (
     <div className="w-full max-w-[340px] mx-auto" aria-hidden="true">
@@ -57,7 +68,7 @@ export function ActivityFeedMockup() {
         style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)" }}
       >
         <div className="h-8 flex items-center justify-center border-b" style={{ borderColor: "var(--border-default)", background: "var(--bg-elevated)" }}>
-          <span className="w-2 h-2 rounded-full" style={{ background: "var(--text-tertiary)" }} />
+          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--text-tertiary)" }} />
         </div>
         <div className="px-3 pt-4 pb-6" style={{ minHeight: "320px" }}>
           <div className="flex items-center justify-between mb-3 px-1">
@@ -80,8 +91,8 @@ export function ActivityFeedMockup() {
           </div>
           <div className="space-y-3 mt-3">
             <AnimatePresence mode="popLayout">
-              {FEED_CARDS.slice(0, visibleCount).map((card, i) => (
-                <FeedCard key={`${card.label}-${card.time}`} card={card} index={i} />
+              {displayCards.map((card, i) => (
+                <FeedCard key={`${card.label}-${card.time}-${i}`} card={card} index={i} />
               ))}
             </AnimatePresence>
           </div>

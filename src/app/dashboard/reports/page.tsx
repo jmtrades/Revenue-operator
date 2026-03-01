@@ -65,7 +65,7 @@ export default function ReportsPage() {
       <PageHeader title="Protection scope" subtitle="What continues here" />
 
       {loading ? (
-        <LoadingState message="Preparing…" submessage="" />
+        <LoadingState message="One moment…" submessage="" />
       ) : (
         <div className="space-y-8">
           <section>

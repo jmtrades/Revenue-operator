@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import { Shield, Lock, Server, Zap } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
+import { ROUTES } from "@/lib/constants";
 
 const badges = [
   { icon: Shield, label: "SOC 2" },
@@ -13,14 +16,49 @@ const badges = [
 ];
 
 export function SocialProof() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleEarlyAccess = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    try {
+      localStorage.setItem("rt_early_access", JSON.stringify({ email: email.trim(), at: Date.now() }));
+    } catch {
+      // ignore
+    }
+    setSubmitted(true);
+  };
+
   return (
     <section className="marketing-section" style={{ background: "var(--bg-surface)" }}>
       <Container>
         <AnimateOnScroll className="text-center">
-          <SectionLabel>Trusted by</SectionLabel>
-          <p className="text-base mb-10 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Trusted by 200+ businesses across home services, healthcare, insurance, real estate, and legal.
+          <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>
+            EARLY ACCESS
+          </span>
+          <SectionLabel>Founding members</SectionLabel>
+          <p className="text-base mb-6 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+            Launching to the first 100 businesses. Get in early. Lock in founding pricing for life.
           </p>
+          {!submitted ? (
+            <form onSubmit={handleEarlyAccess} className="flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto mb-10">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                required
+                className="flex-1 px-4 py-2.5 rounded-lg text-sm border"
+                style={{ background: "var(--bg-primary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
+              />
+              <button type="submit" className="px-5 py-2.5 rounded-lg text-sm font-medium shrink-0" style={{ background: "var(--accent-primary)", color: "var(--bg-primary)" }}>
+                Join waitlist
+              </button>
+            </form>
+          ) : (
+            <p className="text-sm mb-10" style={{ color: "var(--meaning-green)" }}>You&apos;re on the list. Check your inbox for next steps.</p>
+          )}
           <div className="flex flex-wrap justify-center gap-4">
             {badges.map((b) => (
               <div key={b.label} className="flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
@@ -29,6 +67,9 @@ export function SocialProof() {
               </div>
             ))}
           </div>
+          <p className="text-sm mt-6" style={{ color: "var(--text-tertiary)" }}>
+            Or <Link href={ROUTES.START} className="underline" style={{ color: "var(--accent-primary)" }}>get started free now</Link> and set up in 5 minutes.
+          </p>
         </AnimateOnScroll>
       </Container>
     </section>

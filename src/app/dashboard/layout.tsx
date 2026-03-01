@@ -95,7 +95,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 }
 
 function DashboardShellFallback() {
-  return <LoadingScreen message="Preparing…" />;
+  return <LoadingScreen message="One moment…" />;
 }
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -140,7 +140,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [pathname, allowed, isLiveOrValue, router]);
 
   if (loading) {
-    return <LoadingScreen message="Preparing…" onRetry={retry} />;
+    return <LoadingScreen message="One moment…" onRetry={retry} />;
   }
 
   if (error && workspaces.length === 0) {

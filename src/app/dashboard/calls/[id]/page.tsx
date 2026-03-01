@@ -71,7 +71,7 @@ export default function CallRecordDetailPage() {
   if (loading) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Record" subtitle="Preparing…" />
+        <PageHeader title="Record" subtitle="One moment…" />
         <div className="h-32 rounded-lg animate-pulse" style={{ background: "var(--bg-elevated)" }} />
       </div>
     );

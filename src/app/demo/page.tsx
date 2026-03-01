@@ -159,7 +159,7 @@ function DemoTranscript({ script, isActive, onComplete }: { script: DemoScript; 
               </span>
               <div className="flex-1 min-w-0">
                 <span className="text-xs font-medium block mb-0.5" style={{ color: "var(--text-tertiary)" }}>
-                  {isAi ? "AI" : "Caller"}
+                  {isAi ? "Agent" : "Caller"}
                 </span>
                 <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.5 }}>
                   &ldquo;{text}
@@ -219,7 +219,7 @@ export default function DemoPage() {
             Hear Recall Touch in action
           </h1>
           <p className="text-center text-base mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Simulated call. Messages appear as the AI and caller talk.
+            Watch Recall Touch handle real calls — then try it yourself.
           </p>
 
           <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
@@ -242,16 +242,25 @@ export default function DemoPage() {
 
           <DemoTranscript key={key} script={script} isActive={true} onComplete={handleComplete} />
 
-          <p className="text-center mt-8">
-            <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline inline-block">
-              Start free — takes 5 minutes →
-            </Link>
-          </p>
-          <p className="mt-4 text-center text-sm" style={{ color: "var(--text-tertiary)" }}>
-            <Link href={ROUTES.CONTACT} className="underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded" style={{ color: "var(--text-tertiary)" }}>
-              Book a live walkthrough
-            </Link>
-          </p>
+          <section className="mt-12 pt-8 border-t text-center" style={{ borderColor: "var(--border-default)" }}>
+            <h2 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>Try it yourself</h2>
+            <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
+              Live demo coming soon. Get started free and set up your own agent to test. →
+            </p>
+            <Link href={ROUTES.START} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Get started free →</Link>
+          </section>
+
+          <section className="mt-12 pt-8 border-t text-center" style={{ borderColor: "var(--border-default)" }}>
+            <h2 className="font-semibold text-lg mb-4" style={{ color: "var(--text-primary)" }}>Ready to put this to work for your business?</h2>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline inline-block">
+                Start free — takes 5 minutes →
+              </Link>
+              <Link href={ROUTES.CONTACT} className="btn-marketing-ghost btn-lg no-underline inline-block">
+                Talk to a human →
+              </Link>
+            </div>
+          </section>
         </Container>
       </main>
       <Footer />

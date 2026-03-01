@@ -45,7 +45,7 @@ export default function OnboardRecordPage() {
     return (
       <main className="min-h-screen bg-[#fafaf9] p-6">
         <div className="mx-auto max-w-[720px] pt-16">
-          <p className="text-[18px] text-[#78716c]">Preparing…</p>
+          <p className="text-[18px]" style={{ color: "var(--text-tertiary)" }}>One moment…</p>
         </div>
       </main>
     );

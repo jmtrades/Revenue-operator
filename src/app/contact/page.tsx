@@ -17,7 +17,7 @@ export default function ContactPage() {
               Get in touch
             </h1>
             <p className="text-lg mb-12" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-              Whether you&apos;re evaluating Recall Touch for your team or need technical support, we&apos;re here.
+              Whether you&apos;re evaluating Recall Touch for your team or need technical support, the team is here to help.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6 mb-16">
@@ -26,7 +26,7 @@ export default function ContactPage() {
                   Sales & Enterprise
                 </h2>
                 <p className="text-sm mb-6 flex-1" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Talk to our team about Team plans, custom compliance, and volume pricing.
+                  Talk to the team about Team plans, custom compliance, and volume pricing.
                 </p>
                 <a href="mailto:enterprise@recall-touch.com?subject=Enterprise%20inquiry" className="btn-marketing-primary w-full block text-center py-3 rounded-lg no-underline">
                   Book a call →
@@ -73,11 +73,11 @@ export default function ContactPage() {
                   <textarea id="body" name="body" rows={4} required className="w-full px-4 py-2.5 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)] resize-y" style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }} />
                 </div>
                 <button type="submit" className="btn-marketing-primary px-6 py-2.5 rounded-lg text-sm">
-                  Send message
+                  Send message →
                 </button>
               </form>
               <p className="text-sm mt-4" style={{ color: "var(--text-tertiary)" }}>
-                hello@recall-touch.com
+                hello@recall-touch.com · <a href="mailto:hello@recall-touch.com?subject=Schedule%20a%20call" className="underline" style={{ color: "var(--accent-primary)" }}>Schedule a call →</a>
               </p>
             </div>
 

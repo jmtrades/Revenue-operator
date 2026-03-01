@@ -35,13 +35,13 @@ export async function POST(req: NextRequest) {
   const err = await requireWorkspaceAccess(req, session.workspaceId);
   if (err) return err;
 
-  let body: { name: string; type?: string; agent_id?: string };
+  let body: { name: string; type?: string; agent_id?: string; target_filter?: Record<string, unknown> };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { name, type = "lead_followup", agent_id } = body;
+  const { name, type = "lead_followup", agent_id, target_filter } = body;
   if (!name?.trim()) return NextResponse.json({ error: "name required" }, { status: 400 });
 
   const db = getDb();
@@ -55,16 +55,21 @@ export async function POST(req: NextRequest) {
   }
   if (!agentId) return NextResponse.json({ error: "No agent in workspace; create an agent first" }, { status: 400 });
 
+  const typeVal = ["lead_followup", "appointment_reminder", "reactivation", "custom"].includes(type) ? type : "lead_followup";
+  const insertPayload: Record<string, unknown> = {
+    workspace_id: session.workspaceId,
+    agent_id: agentId,
+    name: name.trim(),
+    type: typeVal,
+    status: "draft",
+  };
+  if (target_filter && typeof target_filter === "object" && Object.keys(target_filter).length > 0) {
+    insertPayload.target_filter = target_filter;
+  }
   try {
     const { data: campaign, error } = await db
       .from("campaigns")
-      .insert({
-        workspace_id: session.workspaceId,
-        agent_id: agentId,
-        name: name.trim(),
-        type: ["lead_followup", "appointment_reminder", "reactivation", "custom"].includes(type) ? type : "lead_followup",
-        status: "draft",
-      })
+      .insert(insertPayload)
       .select("id, name, type, status, created_at")
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

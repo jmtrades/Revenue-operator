@@ -70,8 +70,9 @@ export default function DocsPage() {
               <section id="call-forwarding" className="scroll-mt-28 mb-12 pt-8 border-t" style={{ borderColor: "var(--border-default)" }}>
                 <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Call Forwarding</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your AI agent 24/7.
+                  Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7.
                 </p>
+                <p className="text-sm mb-2" style={{ color: "var(--text-tertiary)" }}>Carrier-specific steps: AT&T, Verizon, T-Mobile, Comcast, Vonage, Google Voice. Detailed docs coming soon. Email hello@recall-touch.com with questions.</p>
               </section>
 
               <section id="ai-agents" className="scroll-mt-28 mb-12 pt-8 border-t" style={{ borderColor: "var(--border-default)" }}>

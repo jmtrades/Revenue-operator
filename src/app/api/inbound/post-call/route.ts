@@ -1,6 +1,7 @@
 /**
  * POST /api/inbound/post-call — Post-call processing: store transcript/summary, ensure lead exists, optional SMS.
  * Call after Twilio recording/transcription or when Vapi sends call ended webhook.
+ * When transcript is present and summary missing, runs GPT-4o analysis (summary + outcome) and writes to call_analysis.
  * When send_confirmation_sms is true, enqueues SendReminder so worker sends SMS (no direct send).
  * Detects emergency keywords in transcript and records urgency in call_analysis for activity feed.
  */
@@ -11,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { enqueueAction } from "@/lib/action-queue";
 import type { ActionCommand } from "@/lib/action-queue/types";
+import { analyzeClosingCall } from "@/lib/zoom/analysis";
 
 const EMERGENCY_KEYWORDS = /\b(emergency|urgent|burst|leak|flood|flooding|flooded|fire|break-in|break in|broken in|no heat|no a\/c|no ac|out of power|power out|flooding|flooded)\b/i;
 
@@ -55,7 +57,8 @@ export async function POST(req: NextRequest) {
     transcript_text: transcript || null,
   };
   if (recording_url) (updates as Record<string, string>).recording_url = recording_url;
-  if (summary != null && String(summary).trim()) (updates as Record<string, string>).summary = String(summary).trim();
+  const summaryTrim = summary != null && String(summary).trim() ? String(summary).trim() : null;
+  if (summaryTrim) (updates as Record<string, string>).summary = summaryTrim;
 
   if (sessionId) {
     await db.from("call_sessions").update(updates).eq("id", sessionId);
@@ -70,6 +73,40 @@ export async function POST(req: NextRequest) {
         analysis_json: { outcome: "urgent" },
         confidence: 1,
         analysis_source: "post_call_keywords",
+      });
+    } catch {
+      // non-blocking
+    }
+  }
+
+  // GPT-4o post-call: when we have transcript and no summary (or short transcript), enrich with analysis
+  if (sessionId && transcript && String(transcript).trim().length >= 50 && process.env.OPENAI_API_KEY) {
+    try {
+      let leadName: string | undefined;
+      let company: string | undefined;
+      if (leadId) {
+        const { data: lead } = await db.from("leads").select("name, company").eq("id", leadId).maybeSingle();
+        if (lead) {
+          leadName = (lead as { name?: string }).name;
+          company = (lead as { company?: string }).company;
+        }
+      }
+      const analysis = await analyzeClosingCall(transcript, { leadName, company });
+      const summaryFromAnalysis = analysis.summary && String(analysis.summary).trim() ? analysis.summary : null;
+      if (summaryFromAnalysis && !summaryTrim) {
+        await db.from("call_sessions").update({ summary: summaryFromAnalysis }).eq("id", sessionId);
+      }
+      await db.from("call_analysis").insert({
+        workspace_id,
+        call_session_id: sessionId,
+        analysis_json: {
+          outcome: analysis.outcome,
+          next_best_action: analysis.next_best_action,
+          followup_plan: analysis.followup_plan,
+          summary: analysis.summary,
+        },
+        confidence: analysis.confidence,
+        analysis_source: "gpt4o_post_call",
       });
     } catch {
       // non-blocking

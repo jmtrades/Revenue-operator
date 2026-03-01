@@ -65,7 +65,7 @@ export default function OnboardCompletePage() {
   if (!workspaceId || !externalRef || loading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-[#fafaf9] p-6">
-        <p className="text-[18px] text-[#78716c]">Preparing…</p>
+        <p className="text-[18px]" style={{ color: "var(--text-tertiary)" }}>One moment…</p>
       </main>
     );
   }
