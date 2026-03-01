@@ -46,7 +46,7 @@ export default function ContinueProtectionPage() {
   if (loading) {
     return (
       <div className="p-8 max-w-xl mx-auto">
-        <LoadingState message="In progress" submessage="Calls remain manual." />
+        <LoadingState message="Preparing…" submessage="" />
       </div>
     );
   }

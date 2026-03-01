@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const ACTIVATE_STORAGE_KEY = "recall_touch_activate";
+/** Launch prompt: primary key for signup data */
+const RECALLTOUCH_SIGNUP_KEY = "recalltouch_signup";
 
 const BUSINESS_TYPE_CHIPS: { value: string; label: string }[] = [
   { value: "home_services", label: "Home Services" },
@@ -25,16 +27,18 @@ function ActivatePageContent() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [businessType, setBusinessType] = useState<string>("");
+  const [website, setWebsite] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedLocal, setSubmittedLocal] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
-  // Restore submitted state from localStorage (so success message persists on refresh)
+  // Restore submitted state from localStorage (check both keys for backwards compat)
   useEffect(() => {
     try {
-      const raw = typeof window !== "undefined" ? localStorage.getItem(ACTIVATE_STORAGE_KEY) : null;
+      if (typeof window === "undefined") return;
+      const raw = localStorage.getItem(RECALLTOUCH_SIGNUP_KEY) ?? localStorage.getItem(ACTIVATE_STORAGE_KEY);
       if (raw) {
         const data = JSON.parse(raw) as { submittedAt?: number };
         if (data?.submittedAt && Date.now() - data.submittedAt < 24 * 60 * 60 * 1000) setSubmittedLocal(true);
@@ -70,7 +74,7 @@ function ActivatePageContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting) return;
-    const payload = { name: name.trim(), businessName: businessName.trim(), email: email.trim(), phone: phone.trim(), businessType: businessType || "general" };
+    const payload = { name: name.trim(), businessName: businessName.trim(), email: email.trim(), phone: phone.trim(), businessType: businessType || "general", website: website.trim() };
     if (!payload.email) {
       setError("Email is required.");
       return;
@@ -78,9 +82,23 @@ function ActivatePageContent() {
 
     setSubmitting(true);
     setError(null);
-    setSubmitMessage("Preparing…");
+    setSubmitMessage("Setting up…");
 
-    const loadingTimer = setTimeout(() => setSubmitMessage("Almost there…"), 1200);
+    const loadingTimer = setTimeout(() => setSubmitMessage("Almost there…"), 1000);
+
+    // Store in signups table when backend is configured (launch prompt)
+    fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: payload.name,
+        businessName: payload.businessName,
+        email: payload.email,
+        phone: payload.phone || undefined,
+        industry: payload.businessType || undefined,
+        website: payload.website || undefined,
+      }),
+    }).catch(() => {});
 
     try {
       const tier = searchParams.get("tier") || "solo";
@@ -143,7 +161,7 @@ function ActivatePageContent() {
           <div className="max-w-md w-full text-center">
             <h1 className="font-headline text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>You&apos;re in!</h1>
             <p className="text-sm mb-6" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              We&apos;ll have your AI phone system ready within 24 hours. Check your email for next steps.
+              We&apos;re setting up your AI phone system now. Check your email in the next 24 hours for your login and phone number. Questions? hello@recall-touch.com
             </p>
             <Link
               href="/"
@@ -220,7 +238,18 @@ function ActivatePageContent() {
                 style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
               />
             </div>
-
+            <div>
+              <label htmlFor="website" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Website URL (optional)</label>
+              <input
+                id="website"
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://yourbusiness.com"
+                className="w-full px-4 py-3 rounded-lg focus-ring"
+                style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
+              />
+            </div>
             <div>
               <span className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>What type of business?</span>
               <div className="flex flex-wrap gap-2">
