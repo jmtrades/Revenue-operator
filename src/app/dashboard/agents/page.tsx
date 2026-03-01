@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { PageHeader, EmptyState, LoadingState } from "@/components/ui";
+import { PageHeader, EmptyState } from "@/components/ui";
+import { ListSkeleton } from "@/components/ui/ListSkeleton";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 type Agent = { id: string; name: string; purpose: string; is_active: boolean; created_at: string };
@@ -51,7 +52,7 @@ export default function AgentsPage() {
     <div className="p-8 max-w-4xl">
       <PageHeader title="Agents" subtitle="Configure AI phone agents." />
       {loading ? (
-        <LoadingState message="Loading agents." className="min-h-[200px]" />
+        <ListSkeleton rows={4} />
       ) : error ? (
         <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error}</p>

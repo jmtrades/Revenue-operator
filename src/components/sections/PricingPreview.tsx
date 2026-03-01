@@ -9,6 +9,13 @@ import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/s
 import { motion } from "framer-motion";
 import { PRICING_TIERS, ROUTES } from "@/lib/constants";
 
+const TIER_ROI: Record<string, string> = {
+  Starter: "Less than one missed service call",
+  Professional: "One recovered lead pays for 6 months",
+  Business: "Replace a $55K/year SDR for $4,200/year",
+  Enterprise: "Custom ROI and dedicated support",
+};
+
 export function PricingPreview() {
   const [annual, setAnnual] = useState(false);
   return (
@@ -48,7 +55,10 @@ export function PricingPreview() {
                 {annual ? tier.priceAnnual : tier.priceMonthly}
                 <span className="text-sm font-normal" style={{ color: "var(--text-tertiary)" }}>{tier.period}</span>
               </p>
-              <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{tier.description}</p>
+              <p className={`text-sm ${TIER_ROI[tier.name] ? "mb-2" : "mb-6"}`} style={{ color: "var(--text-secondary)" }}>{tier.description}</p>
+              {TIER_ROI[tier.name] && (
+                <p className="text-xs mb-6" style={{ color: "var(--text-tertiary)" }}>{TIER_ROI[tier.name]}</p>
+              )}
               <ul className="space-y-2 mb-8">
                 {tier.features.map((feat) => (
                   <li key={feat} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>

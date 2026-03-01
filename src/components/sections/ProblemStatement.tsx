@@ -5,17 +5,37 @@ import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
 import { motion } from "framer-motion";
 
-const LEFT_STATS = [
-  { value: "$126,000", desc: "Average annual revenue lost to missed calls" },
-  { value: "80%", desc: "Of callers who hit voicemail hang up" },
-  { value: "93%", desc: "Who get a busy signal never call back" },
-];
+const PROBLEM_INBOUND = {
+  title: "Calls go unanswered.",
+  stats: [
+    { value: "$126K", desc: "Lost per year to missed calls" },
+    { value: "80%", desc: "Hang up on voicemail" },
+    { value: "93%", desc: "Never call back after busy signal" },
+  ],
+  accent: "var(--accent-primary)",
+};
 
-const RIGHT_STATS = [
-  { value: "$35,000/yr", desc: "Average receptionist salary" },
-  { value: "$4,200/yr", desc: "Traditional answering service" },
-  { value: "—", desc: "They still miss calls. They still forget follow-ups." },
-];
+const PROBLEM_OUTBOUND = {
+  title: "Follow-up never happens.",
+  stats: [
+    { value: "51%", desc: "Of leads are never contacted" },
+    { value: "42 hrs", desc: "Average lead response time" },
+    { value: "44%", desc: "Of reps give up after 1 try · Leads go to whoever calls first" },
+  ],
+  accent: "var(--accent-secondary)",
+};
+
+const PROBLEM_HUMAN = {
+  title: "Hiring doesn't fix it.",
+  stats: [
+    { value: "$35K", desc: "Receptionist · $55K SDR" },
+    { value: "30–45%", desc: "Turnover in phone-heavy roles" },
+    { value: "3–6 mo", desc: "To train · They still miss calls and forget follow-ups" },
+  ],
+  accent: "var(--accent-warning)",
+};
+
+const CARDS = [PROBLEM_INBOUND, PROBLEM_OUTBOUND, PROBLEM_HUMAN];
 
 export function ProblemStatement() {
   return (
@@ -28,29 +48,20 @@ export function ProblemStatement() {
           </h2>
         </AnimateOnScroll>
 
-        <StaggerChildren className="grid md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
-          <motion.div variants={fadeUpVariants} className="card-marketing p-8">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-6" style={{ color: "var(--text-tertiary)" }}>The cost of missed calls</h3>
-            <ul className="space-y-5">
-              {LEFT_STATS.map((s) => (
-                <li key={s.desc}>
-                  <span className="text-2xl md:text-3xl font-bold block mb-1" style={{ color: "var(--accent-primary)" }}>{s.value}</span>
-                  <span className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>{s.desc}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-          <motion.div variants={fadeUpVariants} className="card-marketing p-8">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-6" style={{ color: "var(--text-tertiary)" }}>The cost of humans</h3>
-            <ul className="space-y-5">
-              {RIGHT_STATS.map((s) => (
-                <li key={s.desc}>
-                  <span className="text-2xl md:text-3xl font-bold block mb-1" style={{ color: "var(--accent-warning)" }}>{s.value}</span>
-                  <span className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>{s.desc}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+        <StaggerChildren className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+          {CARDS.map((card) => (
+            <motion.div key={card.title} variants={fadeUpVariants} className="card-marketing p-6 md:p-8">
+              <h3 className="text-sm font-semibold uppercase tracking-wider mb-5" style={{ color: "var(--text-tertiary)" }}>{card.title}</h3>
+              <ul className="space-y-4">
+                {card.stats.map((s) => (
+                  <li key={s.desc}>
+                    <span className="text-xl md:text-2xl font-bold block mb-1" style={{ color: card.accent }}>{s.value}</span>
+                    <span className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>{s.desc}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
         </StaggerChildren>
 
         <AnimateOnScroll className="text-center mt-10">

@@ -2,6 +2,7 @@
  * POST /api/inbound/post-call — Post-call processing: store transcript/summary, ensure lead exists, optional SMS.
  * Call after Twilio recording/transcription or when Vapi sends call ended webhook.
  * When send_confirmation_sms is true, enqueues SendReminder so worker sends SMS (no direct send).
+ * Detects emergency keywords in transcript and records urgency in call_analysis for activity feed.
  */
 
 export const dynamic = "force-dynamic";
@@ -11,6 +12,8 @@ import { getDb } from "@/lib/db/queries";
 import { enqueueAction } from "@/lib/action-queue";
 import type { ActionCommand } from "@/lib/action-queue/types";
 
+const EMERGENCY_KEYWORDS = /\b(emergency|urgent|burst|leak|flood|flooding|flooded|fire|break-in|break in|broken in|no heat|no a\/c|no ac|out of power|power out|flooding|flooded)\b/i;
+
 export async function POST(req: NextRequest) {
   let body: {
     workspace_id?: string;
@@ -18,6 +21,7 @@ export async function POST(req: NextRequest) {
     call_session_id?: string;
     recording_url?: string;
     transcript?: string;
+    summary?: string;
     caller_phone?: string;
     duration_seconds?: number;
     send_confirmation_sms?: boolean;
@@ -27,7 +31,7 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { workspace_id, call_sid, call_session_id, recording_url, transcript, send_confirmation_sms } = body;
+  const { workspace_id, call_sid, call_session_id, recording_url, transcript, summary, send_confirmation_sms } = body;
   if (!workspace_id) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).maybeSingle();
@@ -51,9 +55,25 @@ export async function POST(req: NextRequest) {
     transcript_text: transcript || null,
   };
   if (recording_url) (updates as Record<string, string>).recording_url = recording_url;
+  if (summary != null && String(summary).trim()) (updates as Record<string, string>).summary = String(summary).trim();
 
   if (sessionId) {
     await db.from("call_sessions").update(updates).eq("id", sessionId);
+  }
+
+  const isEmergency = transcript && EMERGENCY_KEYWORDS.test(transcript);
+  if (sessionId && isEmergency) {
+    try {
+      await db.from("call_analysis").insert({
+        workspace_id,
+        call_session_id: sessionId,
+        analysis_json: { outcome: "urgent" },
+        confidence: 1,
+        analysis_source: "post_call_keywords",
+      });
+    } catch {
+      // non-blocking
+    }
   }
 
   if (send_confirmation_sms && leadId) {

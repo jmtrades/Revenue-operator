@@ -43,7 +43,7 @@ export default function TemplatesPage() {
   if (loading) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Loading.</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Preparing…</p>
       </Shell>
     );
   }

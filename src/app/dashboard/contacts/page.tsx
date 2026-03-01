@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { PageHeader, EmptyState, LoadingState } from "@/components/ui";
+import { PageHeader, EmptyState } from "@/components/ui";
+import { ContactsListSkeleton } from "@/components/ui/ContactsListSkeleton";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface Contact {
@@ -84,7 +85,7 @@ export default function ContactsPage() {
         />
       </div>
       {loading ? (
-        <LoadingState message="Loading contacts." className="min-h-[200px]" />
+        <ContactsListSkeleton />
       ) : error ? (
         <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error}</p>

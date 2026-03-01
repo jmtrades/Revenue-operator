@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { PageHeader, EmptyState, LoadingState } from "@/components/ui";
+import { PageHeader, EmptyState } from "@/components/ui";
+import { ListSkeleton } from "@/components/ui/ListSkeleton";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface Appointment {
@@ -71,7 +72,7 @@ export default function CalendarPage() {
     <div className="p-8 max-w-4xl">
       <PageHeader title="Calendar" subtitle="Booked appointments." />
       {loading ? (
-        <LoadingState message="Loading appointments." className="min-h-[200px]" />
+        <ListSkeleton rows={5} header />
       ) : error ? (
         <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error}</p>

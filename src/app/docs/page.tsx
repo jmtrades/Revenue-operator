@@ -55,6 +55,26 @@ export default function DocsPage() {
               </div>
             ))}
           </div>
+          <section id="api" className="mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
+            <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>API Reference</h2>
+            <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+              REST and webhook APIs for integrating Recall Touch with your existing systems are in development. Business and Enterprise plans will include full API access. Contact us for early access.
+            </p>
+            <Link href={ROUTES.CONTACT} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Contact for API access →</Link>
+          </section>
+
+          <section id="changelog" className="mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
+            <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Changelog</h2>
+            <div className="space-y-4">
+              <div>
+                <p className="font-medium text-sm mb-1" style={{ color: "var(--text-primary)" }}>v1.0 — March 2026</p>
+                <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                  Launch. Governed call handling, compliance records, follow-up automation, and multi-channel support.
+                </p>
+              </div>
+            </div>
+          </section>
+
           <div className="mt-12 text-center">
             <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-block">
               Start free →

@@ -130,7 +130,7 @@ export default function LeadViewPage() {
 
   if (loading) return (
     <Shell size="md">
-      <LoadingState message="Loading." submessage="" />
+      <LoadingState message="Preparing…" submessage="" />
     </Shell>
   );
   if (!lead) return (

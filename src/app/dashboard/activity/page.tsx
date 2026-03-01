@@ -6,7 +6,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 import { Phone, MessageSquare, Check, ChevronDown, ChevronUp } from "lucide-react";
-import { LoadingState } from "@/components/ui";
+import { ActivityFeedSkeleton } from "@/components/ui/ActivityFeedSkeleton";
 
 type FilterId = "all" | "needs_action" | "leads" | "appointments" | "urgent" | "outbound" | "spam";
 type CardType = "lead" | "appointment" | "emergency" | "outbound" | "action" | "info" | "spam";
@@ -115,8 +115,15 @@ export default function ActivityPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    const interval = setInterval(() => refetch(true), 30000);
+    const interval = setInterval(() => refetch(true), 15000);
     return () => clearInterval(interval);
+  }, [workspaceId]);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    const onFocus = () => refetch(true);
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
   }, [workspaceId]);
 
   const feedCards = calls.map((call) => {
@@ -181,7 +188,7 @@ export default function ActivityPage() {
       </div>
 
       {loading ? (
-        <LoadingState message="Loading activity." className="min-h-[200px]" />
+        <ActivityFeedSkeleton />
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)" }}>
           <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No external action was required.</p>

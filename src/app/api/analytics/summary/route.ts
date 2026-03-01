@@ -18,8 +18,14 @@ export async function GET(req: NextRequest) {
   let calls = 0;
   let appointments = 0;
   let upcoming = 0;
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   try {
-    const { count: c } = await db.from("call_sessions").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
+    const { count: c } = await db
+      .from("call_sessions")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId)
+      .gte("call_started_at", sevenDaysAgo.toISOString());
     calls = c ?? 0;
   } catch {
     // ignore
