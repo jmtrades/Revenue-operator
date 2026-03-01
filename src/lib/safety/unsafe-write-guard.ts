@@ -84,7 +84,7 @@ function wrapBuilder(builder: unknown, table: string): unknown {
       if (methods.includes(prop)) {
         return (...args: unknown[]) => {
           checkUnsafeWrite(table);
-          return b[prop].apply(b, args);
+          return (b[prop] as (...a: unknown[]) => unknown).call(b, ...args);
         };
       }
       return (target as Record<string, unknown>)[prop];

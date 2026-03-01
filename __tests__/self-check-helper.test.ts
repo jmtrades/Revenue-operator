@@ -26,7 +26,7 @@ describe("self-check helper fetchJson", () => {
     }
     expect((result as { json: unknown }).json).toEqual({ ok: true });
     expect((result as { raw: string }).raw).toBe('{"ok":true}');
-    expect((fake as any).getReadCount()).toBe(1);
+    expect((fake as Response & { getReadCount(): number }).getReadCount()).toBe(1);
   });
 
   it("returns raw fallback when body is not JSON", async () => {
@@ -35,7 +35,7 @@ describe("self-check helper fetchJson", () => {
     expect((result as { status: number }).status).toBe(500);
     expect((result as { ok: boolean }).ok).toBe(false);
     expect((result as { raw: string }).raw).toBe("not-json");
-    expect((fake as any).getReadCount()).toBe(1);
+    expect((fake as Response & { getReadCount(): number }).getReadCount()).toBe(1);
   });
 });
 
