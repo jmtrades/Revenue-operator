@@ -1,6 +1,6 @@
 "use client";
 
-import { Shield, PhoneCall, FileCheck } from "lucide-react";
+import { Link2, Brain, Sparkles } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
@@ -9,21 +9,21 @@ import { motion } from "framer-motion";
 const steps = [
   {
     num: 1,
-    icon: Shield,
-    title: "Declare",
-    desc: "Set your jurisdiction, review depth, and compliance controls. One-time setup, under 60 seconds.",
+    icon: Link2,
+    title: "Connect",
+    desc: "Forward your business number or get a new one.",
   },
   {
     num: 2,
-    icon: PhoneCall,
-    title: "Execute",
-    desc: "Calls are handled under record. Inbound, outbound, confirmations — all governed by your declared rules.",
+    icon: Brain,
+    title: "Teach",
+    desc: "Tell us your services, hours, and how you want calls handled. Or paste your website — we'll figure it out.",
   },
   {
     num: 3,
-    icon: FileCheck,
-    title: "Record",
-    desc: "Every conversation produces an auditable, compliant record. Forward, review, or archive with full chain of custody.",
+    icon: Sparkles,
+    title: "Relax",
+    desc: "Every call answered. Every lead captured. Every appointment booked. Check your phone when you're ready.",
   },
 ];
 
@@ -45,7 +45,7 @@ export function HowItWorks() {
             className="font-semibold max-w-2xl mx-auto"
             style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}
           >
-            From live conversation to governed record.
+            Setup takes 5 minutes. Then it runs itself.
           </h2>
         </AnimateOnScroll>
         <div className="max-w-[900px] mx-auto">

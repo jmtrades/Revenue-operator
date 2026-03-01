@@ -74,8 +74,8 @@ describe("Commercial Execution Final Lock", () => {
     const landing = read("src/app/page.tsx");
     const hero = read("src/components/sections/Hero.tsx");
     expect(landing).toMatch(/Hero/);
-    expect(hero).toMatch(/Every call that drives revenue/i);
-    expect(hero).toMatch(/Commercial execution infrastructure|Start free|governs inbound/i);
+    expect(hero).toMatch(/Your AI phone team|Always on\. Always perfect/i);
+    expect(hero).toMatch(/Start free|answers your calls|follows up with leads/i);
     expect(hero).not.toMatch(/Declare governance/i);
     expect(landing).not.toMatch(/Declare governance/i);
   });

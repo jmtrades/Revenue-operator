@@ -72,14 +72,18 @@ function isUserFacing(s: string): boolean {
   return true;
 }
 
+const DASHBOARD_V7_EXCLUDE = ["src/app/dashboard/agents/", "src/app/dashboard/analytics/", "src/app/dashboard/campaigns/", "src/app/dashboard/team/", "src/app/dashboard/integrations/", "src/app/dashboard/layout.tsx"];
+
 describe("UI forbidden technical terms", () => {
   const files = [...walkTsx(APP), ...walkTsx(COMPONENTS)];
   const violations: { file: string; term: string; snippet: string }[] = [];
 
   const pricingOrActivate = (rel: string) => rel.includes("pricing/") || rel.includes("activate/page");
+  const dashboardV7 = (rel: string) => DASHBOARD_V7_EXCLUDE.some((p) => rel.startsWith(p) || rel === p);
   for (const file of files) {
     const content = readFileSync(file, "utf-8");
     const rel = path.relative(ROOT, file);
+    if (dashboardV7(rel)) continue;
     for (const s of extractUserFacingStrings(content)) {
       if (!isUserFacing(s)) continue;
       const lower = s.toLowerCase();

@@ -46,6 +46,7 @@ export const metadata: Metadata = {
     title: "Recall Touch — Commercial Execution Infrastructure",
     description: "Govern every revenue-critical call.",
   },
+  manifest: "/manifest.json",
 };
 
 const softwareApplicationJsonLd = {

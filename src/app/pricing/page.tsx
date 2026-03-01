@@ -16,13 +16,13 @@ export const ANNUAL_NOTE = "Two months applied without interruption on annual co
 
 export function pricingCopyForTests(): string {
   return [
-    "Licensed per operator environment",
-    "Solo",
-    "Growth",
-    "Team",
-    "Conversations handled under governance",
+    "Less than one missed call",
+    "Starter",
+    "Professional",
+    "Business",
+    "Enterprise",
     "Start free",
-    "Execution is applied under declared jurisdiction",
+    "Talk to sales",
   ].join(" ");
 }
 
@@ -35,10 +35,10 @@ export default function PricingPage() {
         <Container>
           <p className="section-label mb-4">Pricing</p>
           <h1 className="font-bold text-3xl md:text-4xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
-            Governance scales with your operation.
+            Less than one missed call a month.
           </h1>
           <p className="text-base mb-8 max-w-xl" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Licensed per operator environment. Execution is applied under declared jurisdiction and review depth.
+            Plans for solo operators through to established businesses. Start free, no credit card.
           </p>
           <div className="flex items-center justify-center gap-3 mb-12">
             <span className="text-sm font-medium" style={{ color: annual ? "var(--text-tertiary)" : "var(--text-primary)" }}>Monthly</span>
@@ -63,7 +63,7 @@ export default function PricingPage() {
               <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ background: "var(--accent-secondary)", color: "var(--bg-primary)" }}>Save 20%</span>
             </span>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {PRICING_TIERS.map((tier) => (
               <div
                 key={tier.name}
@@ -89,7 +89,7 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href={tier.cta === "Get in touch" ? ROUTES.CONTACT : ROUTES.START} className={tier.popular ? "btn-marketing-primary w-full block text-center py-3 rounded-lg no-underline" : "btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline"}>
+                <Link href={tier.cta === "Talk to sales" ? ROUTES.CONTACT : ROUTES.START} className={tier.cta === "Talk to sales" ? "btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline" : tier.popular ? "btn-marketing-primary w-full block text-center py-3 rounded-lg no-underline" : "btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline"}>
                   {tier.cta}
                 </Link>
               </div>
@@ -107,18 +107,20 @@ export default function PricingPage() {
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border-default)" }}>
                   <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Feature</th>
-                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Solo</th>
-                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Growth</th>
-                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Team</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Starter</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Professional</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Business</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Enterprise</th>
                 </tr>
               </thead>
               <tbody>
                 {COMPARISON_FEATURES.map((row, i) => (
                   <tr key={i} style={{ borderBottom: "1px solid var(--border-default)", background: i % 2 === 1 ? "rgba(255,255,255,0.01)" : "transparent" }}>
                     <td className="py-3 px-4" style={{ color: "var(--text-primary)" }}>{row.name}</td>
-                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{row.solo}</td>
-                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{row.growth}</td>
-                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{row.team}</td>
+                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{"starter" in row ? row.starter : ""}</td>
+                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{"professional" in row ? row.professional : ""}</td>
+                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{"business" in row ? row.business : ""}</td>
+                    <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{"enterprise" in row ? row.enterprise : ""}</td>
                   </tr>
                 ))}
               </tbody>

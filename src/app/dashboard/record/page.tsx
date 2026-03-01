@@ -87,7 +87,7 @@ export default function RecordPage() {
           {filtered.length === 0 ? (
             <div className="py-12">
               <p className="text-sm mb-2" style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>
-                {entries.length === 0 ? "No record yet." : "No entries in this view."}
+                {entries.length === 0 ? "What actually happened." : "No entries in this view."}
               </p>
               {entries.length === 0 && (
                 <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>

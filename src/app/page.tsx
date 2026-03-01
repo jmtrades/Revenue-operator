@@ -5,7 +5,7 @@ import { Hero } from "@/components/sections/Hero";
 import { ProblemStatement } from "@/components/sections/ProblemStatement";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Features } from "@/components/sections/Features";
-import { UseCases } from "@/components/sections/UseCases";
+import { Industries } from "@/components/sections/Industries";
 import { PricingPreview } from "@/components/sections/PricingPreview";
 import { SocialProof } from "@/components/sections/SocialProof";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -21,7 +21,7 @@ export default function LandingPage() {
         <ProblemStatement />
         <HowItWorks />
         <Features />
-        <UseCases />
+        <Industries />
         <PricingPreview />
         <SocialProof />
         <FinalCTA />
