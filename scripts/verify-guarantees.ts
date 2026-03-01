@@ -14,9 +14,10 @@ const root = path.resolve(__dirname, "..");
 async function runVitest(): Promise<boolean> {
   return new Promise((resolve) => {
     const child = spawn(
-      "npx",
+      process.platform === "win32" ? "npx.cmd" : "npx",
       [
-        "vitest", "run",
+        "vitest",
+        "run",
         "__tests__/guarantee-contract.test.ts",
         "__tests__/guarantee-preservation.test.ts",
         "__tests__/forbidden_language_enforcement.test.ts",
@@ -152,7 +153,7 @@ async function runVitest(): Promise<boolean> {
         "__tests__/prune_script_safety_contract.test.ts",
         "--reporter=verbose",
       ],
-      { cwd: root, stdio: "inherit", shell: true }
+      { cwd: root, stdio: "inherit" }
     );
     child.on("close", (code) => resolve(code === 0));
   });

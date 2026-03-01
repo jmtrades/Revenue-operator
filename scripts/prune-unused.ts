@@ -85,7 +85,7 @@ function main(): void {
     };
     walk(appDir, "");
   }
-  if (existsSync(path.join(ROOT, "src", "middleware.ts"))) entries.push("src/middleware.ts");
+  if (existsSync(path.join(ROOT, "src", "proxy.ts"))) entries.push("src/proxy.ts");
   if (existsSync(path.join(ROOT, "src", "instrumentation.ts"))) entries.push("src/instrumentation.ts");
   const testsDir = path.join(ROOT, "__tests__");
   if (existsSync(testsDir)) {

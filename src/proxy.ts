@@ -2,6 +2,8 @@
  * 1) Ops routes: require staff session.
  * 2) App session: restore auth cookie on dashboard; missing session → redirect (GET only).
  * 3) Public and API bypass: explicit list; never redirect POST, never block webhooks or public API.
+ *
+ * Next.js 16: proxy (formerly middleware) — request boundary in front of the app.
  */
 
 import { NextResponse } from "next/server";
@@ -87,7 +89,7 @@ function getRedirectTarget(pathname: string): string {
   return "/dashboard";
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const method = req.method ?? "GET";
 
