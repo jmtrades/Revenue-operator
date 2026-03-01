@@ -19,7 +19,7 @@ export default function SignInPage() {
       <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
         <div className="w-full max-w-md text-center space-y-6">
           <h1 className="text-xl font-semibold">Welcome back</h1>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>One moment…</p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Verifying session.</p>
           <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
             <Link href="/" className="underline">Back to home</Link>
           </p>
