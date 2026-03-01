@@ -60,7 +60,7 @@ export default function ActivationPage() {
       {loading && !state ? (
         <div className="flex items-center gap-3 py-6">
           <span className="inline-block h-4 w-4 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" aria-hidden />
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>Loading…</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>Preparing…</p>
         </div>
       ) : (
         <div className="space-y-6">

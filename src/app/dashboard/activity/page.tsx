@@ -81,12 +81,19 @@ interface Handoff {
   decision_needed: string;
 }
 
+interface SummaryMetrics {
+  calls_last_7_days?: number;
+  appointments_total?: number;
+  appointments_upcoming?: number;
+}
+
 export default function ActivityPage() {
   const { workspaceId } = useWorkspace();
-  const [filter, setFilter] = useState<FilterId>("all");
+  const [filter, setFilter] = useState<FilterId>("needs_action");
   const [calls, setCalls] = useState<CallRow[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [handoffs, setHandoffs] = useState<Handoff[]>([]);
+  const [summary, setSummary] = useState<SummaryMetrics | null>(null);
   const [loading, setLoading] = useState(true);
 
   const refetch = (silent?: boolean) => {
@@ -95,10 +102,12 @@ export default function ActivityPage() {
     Promise.all([
       fetchWithFallback<{ calls: CallRow[] }>(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`),
       fetchWithFallback<{ handoffs: Handoff[] }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`),
+      fetchWithFallback<SummaryMetrics>(`/api/analytics/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
     ])
-      .then(([cRes, hRes]) => {
+      .then(([cRes, hRes, sRes]) => {
         if (cRes.data?.calls) setCalls(cRes.data.calls);
         if (hRes.data?.handoffs) setHandoffs(hRes.data.handoffs);
+        if (sRes.data) setSummary(sRes.data);
       })
       .finally(() => { if (!silent) setLoading(false); });
   };
@@ -158,6 +167,8 @@ export default function ActivityPage() {
     );
   }
 
+  const leadsCount = calls.filter((c) => deriveCardType(c) === "lead").length;
+
   return (
     <Shell size="md" className="max-w-[600px]">
       <div className="flex items-center justify-between gap-4 mb-4">
@@ -168,6 +179,25 @@ export default function ActivityPage() {
         <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
           {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
         </span>
+      </div>
+
+      <div className="grid grid-cols-4 gap-2 mb-6 overflow-x-auto scrollbar-hide">
+        <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.calls_last_7_days ?? "—"}</p>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>calls (7d)</p>
+        </div>
+        <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>100%</p>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>answered</p>
+        </div>
+        <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{leadsCount}</p>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>new leads</p>
+        </div>
+        <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.appointments_upcoming ?? "—"}</p>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>appts</p>
+        </div>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mb-6">

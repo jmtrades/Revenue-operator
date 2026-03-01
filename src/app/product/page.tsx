@@ -84,6 +84,17 @@ const FEATURES = [
   },
 ];
 
+const PRODUCT_SECTIONS = [
+  { id: "inbound", title: "Inbound Call Handling", desc: "Your AI answers every call 24/7. No more missed leads or after-hours voicemail. Callers get a natural conversation, instant qualification, and optional booking — all without you picking up.", bullets: ["24/7 answer", "Natural voice AI", "Instant qualification", "Optional calendar booking"] },
+  { id: "outbound", title: "Outbound AI Calling", desc: "Follow up with leads in seconds, remind customers before appointments, and run campaigns that feel human. The AI places calls, leaves voicemails, and updates your records automatically.", bullets: ["Speed-to-lead (60s)", "Appointment reminders", "No-show recovery", "Review requests"] },
+  { id: "agents", title: "AI Agent Builder", desc: "Create and customize AI agents with templates for your industry. Set voice, greeting, knowledge base, and rules. No code. Test with a real call before going live.", bullets: ["20+ templates", "Custom voice & greeting", "Knowledge base", "Test call button"] },
+  { id: "leads", title: "Lead Capture & Qualification", desc: "Every call is summarized, scored, and classified. High-intent leads get instant alerts. Key details (budget, timeline, service) are extracted and attached to the contact.", bullets: ["AI summary & score", "Instant alerts", "Key detail extraction", "Activity feed"] },
+  { id: "appointments", title: "Appointment Management", desc: "Book appointments during calls. Sync with Google Calendar or Outlook. Send confirmations and reminders automatically. Recover no-shows with a single click.", bullets: ["Book during call", "Calendar sync", "Confirmations & reminders", "No-show recovery"] },
+  { id: "messaging", title: "Messaging", desc: "Auto-text callers after every call. Two-way SMS from your business number. Sequences for follow-up, reminders, and review requests. All from one inbox.", bullets: ["Post-call auto-text", "Two-way SMS", "Follow-up sequences", "Unified inbox"] },
+  { id: "insights", title: "Insights & ROI", desc: "See calls answered, leads captured, appointments booked, and revenue attributed. Compare before vs after. Know exactly how much time and revenue the AI drives.", bullets: ["Call volume & answer rate", "Lead funnel", "Revenue attribution", "Time saved"] },
+  { id: "compliance", title: "Compliance & Records", desc: "Every call is recorded, transcribed, and stored. Export compliance records for legal or audit. Jurisdiction-aware. Chain of custody. No manual logging.", bullets: ["Recording & transcription", "Export records", "Audit trail", "Jurisdiction tagging"] },
+];
+
 const USE_CASES = [
   { icon: ArrowDownToLine, title: "Inbound operations", desc: "Teams handling inbound enquiries where every response must be consistent, documented, and legally defensible.", href: "#governance" },
   { icon: ArrowUpFromLine, title: "Outbound sales", desc: "Revenue teams making outbound calls where pricing commitments, verbal agreements, and follow-ups need a compliance trail.", href: "#followups" },
@@ -105,6 +116,26 @@ export default function ProductPage() {
               Every feature designed for compliance-grade commercial operations.
             </p>
           </section>
+
+          <div className="space-y-20 mb-24">
+            {PRODUCT_SECTIONS.map((s, i) => (
+              <section key={s.id} id={s.id} className={"grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start " + (i % 2 === 1 ? "md:grid-flow-dense" : "")}>
+                <div className={i % 2 === 1 ? "md:col-start-2" : ""}>
+                  <h2 className="font-semibold text-xl md:text-2xl mb-4" style={{ color: "var(--text-primary)" }}>{s.title}</h2>
+                  <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>{s.desc}</p>
+                  <ul className="space-y-1.5">
+                    {s.bullets.map((b) => (
+                      <li key={b} className="text-sm flex items-center gap-2" style={{ color: "var(--text-secondary)" }}>
+                        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--accent-primary)" }} />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className={i % 2 === 1 ? "md:col-start-1 md:row-start-1" : ""} />
+              </section>
+            ))}
+          </div>
 
           <div className="space-y-24 md:space-y-32">
             {FEATURES.map((f) => {
@@ -154,7 +185,7 @@ export default function ProductPage() {
             <h2 className="font-semibold text-2xl mb-4" style={{ color: "var(--text-primary)" }}>If revenue depends on conversation, govern it.</h2>
             <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>Start in under 60 seconds. No credit card required.</p>
             <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline inline-block">
-              Start free →
+              Start free → takes 5 minutes
             </Link>
             <p className="text-sm mt-6" style={{ color: "var(--text-tertiary)" }}>
               Or: <Link href={ROUTES.CONTACT} className="underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded" style={{ color: "var(--text-tertiary)" }}>Book a demo</Link>

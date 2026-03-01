@@ -25,7 +25,7 @@ export default function OpsWorkspacesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-8 text-stone-500">Loading…</div>;
+  if (loading) return <div className="p-8 text-stone-500">Preparing…</div>;
 
   return (
     <div className="p-8 max-w-4xl">

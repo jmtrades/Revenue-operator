@@ -96,7 +96,7 @@ export default function CalendarPage() {
       <PageHeader title="Calendar" subtitle="Attendance confidence and preparation state." />
 
       {loading ? (
-        <LoadingState message="In progress." submessage="Prepared." />
+        <LoadingState message="Preparing…" submessage="" />
       ) : allCalls.length === 0 ? (
         <EmptyState icon="pulse" title="Calls appear here." subtitle="Stable for now." />
       ) : (

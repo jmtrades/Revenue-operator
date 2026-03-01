@@ -84,7 +84,7 @@ export default function PublicWorkPage() {
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--background)" }}>
-        <p className="text-lg" style={{ color: "var(--text-muted)" }}>Loading.</p>
+        <p className="text-lg" style={{ color: "var(--text-muted)" }}>Preparing…</p>
       </main>
     );
   }

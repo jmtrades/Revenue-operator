@@ -299,6 +299,15 @@ function ConnectPageContent() {
                     I&apos;ll test later
                   </button>
                 </div>
+                <p className="text-center mt-3">
+                  <Link
+                    href={workspaceId ? `/dashboard/onboarding?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/onboarding"}
+                    className="text-sm"
+                    style={{ color: "var(--accent-primary)" }}
+                  >
+                    Complete AI setup (5 steps) →
+                  </Link>
+                </p>
               </div>
             )}
             

@@ -65,13 +65,20 @@ export default function ContactPage() {
                   <input id="email" name="email" type="email" required className="w-full px-4 py-2.5 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]" style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }} />
                 </div>
                 <div>
+                  <label htmlFor="company" className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Company</label>
+                  <input id="company" name="company" type="text" className="w-full px-4 py-2.5 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]" style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }} />
+                </div>
+                <div>
                   <label htmlFor="body" className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Message</label>
                   <textarea id="body" name="body" rows={4} required className="w-full px-4 py-2.5 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)] resize-y" style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }} />
                 </div>
                 <button type="submit" className="btn-marketing-primary px-6 py-2.5 rounded-lg text-sm">
-                  Send
+                  Send message
                 </button>
               </form>
+              <p className="text-sm mt-4" style={{ color: "var(--text-tertiary)" }}>
+                hello@recall-touch.com
+              </p>
             </div>
 
             <p className="text-sm mt-8" style={{ color: "var(--text-tertiary)" }}>

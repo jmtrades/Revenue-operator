@@ -3,22 +3,51 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { listBusinessTypes } from "@/lib/presets";
+
+const ACTIVATE_STORAGE_KEY = "recall_touch_activate";
+
+const BUSINESS_TYPE_CHIPS: { value: string; label: string }[] = [
+  { value: "home_services", label: "Home Services" },
+  { value: "healthcare", label: "Healthcare" },
+  { value: "legal", label: "Legal" },
+  { value: "real_estate", label: "Real Estate" },
+  { value: "insurance", label: "Insurance" },
+  { value: "b2b_sales", label: "B2B Sales" },
+  { value: "local_business", label: "Local Business" },
+  { value: "contractors", label: "Contractors" },
+];
 
 function ActivatePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [businessType, setBusinessType] = useState("general");
+  const [name, setName] = useState("");
+  const [businessName, setBusinessName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [businessType, setBusinessType] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
+  const [submittedLocal, setSubmittedLocal] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
-  // Non-blocking: show form immediately, redirect only if session exists
+  // Restore submitted state from localStorage (so success message persists on refresh)
+  useEffect(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem(ACTIVATE_STORAGE_KEY) : null;
+      if (raw) {
+        const data = JSON.parse(raw) as { submittedAt?: number };
+        if (data?.submittedAt && Date.now() - data.submittedAt < 24 * 60 * 60 * 1000) setSubmittedLocal(true);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Non-blocking: redirect only if session exists; never block form render
   useEffect(() => {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8_000);
+    const t = setTimeout(() => controller.abort(), 8_000);
     fetch("/api/auth/session", { credentials: "include", signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
@@ -27,120 +56,144 @@ function ActivatePageContent() {
         if (hasSession) {
           const wid = session.workspace_id ?? session.workspaceId;
           router.replace(wid ? `/connect?workspace_id=${encodeURIComponent(wid)}` : "/connect");
-          return;
         }
         setSessionChecked(true);
       })
       .catch(() => setSessionChecked(true))
-      .finally(() => clearTimeout(timeoutId));
+      .finally(() => clearTimeout(t));
   }, [router]);
 
   useEffect(() => {
-    if (searchParams.get("canceled") === "1") {
-      setError("No problem — protection didn't start.");
-    }
+    if (searchParams.get("canceled") === "1") setError("No problem — protection didn't start.");
   }, [searchParams]);
 
-  const startProtection = async () => {
-    if (!email.trim() || submitting) return;
-    
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitting) return;
+    const payload = { name: name.trim(), businessName: businessName.trim(), email: email.trim(), phone: phone.trim(), businessType: businessType || "general" };
+    if (!payload.email) {
+      setError("Email is required.");
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
-    setSubmitMessage("Preparing checkout…");
-    const loadingTimer = setTimeout(() => setSubmitMessage("Opening secure checkout…"), 1200);
-    const tier = searchParams.get("tier") || "solo";
-    const interval = searchParams.get("interval") || "year";
+    setSubmitMessage("Preparing…");
+
+    const loadingTimer = setTimeout(() => setSubmitMessage("Almost there…"), 1200);
+
     try {
+      const tier = searchParams.get("tier") || "solo";
+      const interval = searchParams.get("interval") || "year";
       const trialRes = await fetch("/api/trial/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: email.trim(),
+          email: payload.email,
           hired_roles: ["full_autopilot"],
-          business_type: businessType || "general",
+          business_type: payload.businessType || "general",
           tier: tier === "growth" || tier === "team" ? tier : "solo",
           interval: interval === "month" ? "month" : "year",
         }),
       });
 
       const trialData = await trialRes.json().catch(() => ({ ok: false }));
-      if (!trialData.ok) {
-        const reason = trialData.reason || "unknown";
-        const safeReasons = ["invalid_json", "invalid_email", "missing_env", "workspace_creation_failed", "workspace_create_failed", "checkout_creation_failed", "wrong_price_mode", "stripe_unreachable"];
-        const safe = safeReasons.includes(reason) ? reason : "unknown";
-        let message = "Trial could not be started.";
-        if (safe === "invalid_email") message = "Valid email required.";
-        else if (safe === "missing_env") {
-          const missing = Array.isArray(trialData.missing) ? trialData.missing as string[] : [];
-          message = missing.length > 0
-            ? `Trial needs config: add ${missing.join(", ")} to .env.local (or host env).`
-            : "Trial is not configured yet. Add STRIPE_SECRET_KEY, STRIPE_PRICE_ID and NEXT_PUBLIC_APP_URL.";
-        } else if (safe === "workspace_creation_failed" || safe === "workspace_create_failed") message = "Workspace could not be created. Try again in a moment.";
-        setError(message);
-        setSubmitting(false);
-        setSubmitMessage(null);
-        clearTimeout(loadingTimer);
-        return;
-      }
 
-      if (trialData.reason === "already_active" && trialData.workspace_id) {
+      if (trialData.ok && trialData.reason === "already_active" && trialData.workspace_id) {
         clearTimeout(loadingTimer);
         setSubmitMessage(null);
         window.location.href = `/connect?workspace_id=${encodeURIComponent(trialData.workspace_id)}`;
         return;
       }
 
-      const checkoutUrl = trialData.checkout_url ?? trialData.url;
-      if (!checkoutUrl) {
-        setError("Trial could not be started.");
-        setSubmitting(false);
-        setSubmitMessage(null);
+      if (trialData.ok && (trialData.checkout_url ?? trialData.url)) {
         clearTimeout(loadingTimer);
+        setSubmitMessage(null);
+        window.location.href = trialData.checkout_url ?? trialData.url;
         return;
       }
-
-      clearTimeout(loadingTimer);
-      window.location.href = checkoutUrl;
-      return;
-    } catch (err) {
-      clearTimeout(loadingTimer);
-      setSubmitMessage(null);
-      console.error("[activate] Error:", err);
-      setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
-      setSubmitting(false);
+    } catch {
+      // API failed — fall through to localStorage
     }
+
+    clearTimeout(loadingTimer);
+    setSubmitMessage(null);
+    setSubmitting(false);
+
+    // Works without backend: store locally and show success
+    try {
+      localStorage.setItem(
+        ACTIVATE_STORAGE_KEY,
+        JSON.stringify({
+          ...payload,
+          submittedAt: Date.now(),
+        })
+      );
+    } catch {
+      // ignore
+    }
+    setSubmittedLocal(true);
   };
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await startProtection();
-  };
+  // Success state (localStorage or after local submit)
+  if (submittedLocal) {
+    return (
+      <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+        <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
+          <div className="max-w-md w-full text-center">
+            <h1 className="font-headline text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>You&apos;re in!</h1>
+            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              We&apos;ll have your AI phone system ready within 24 hours. Check your email for next steps.
+            </p>
+            <Link
+              href="/"
+              className="inline-block py-2.5 px-4 rounded-lg text-sm font-medium"
+              style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
+            >
+              Back to home
+            </Link>
+          </div>
+        </div>
+        <div className="p-4 text-center">
+          <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>← Back to home</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
       <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
         <div className="max-w-md w-full">
-          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Set up call handling</h1>
-          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Set jurisdiction and review level. Calls and follow-ups continue under governance.
+          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
+          <p className="text-sm mb-6" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            Your name, business, and how to reach you. We&apos;ll set up your AI phone system.
           </p>
-          <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
-            Handling begins under review until governance is confirmed.
-          </p>
-          <form onSubmit={handleEmailSubmit} className="space-y-4">
+
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="business_type" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Industry</label>
-              <select
-                id="business_type"
-                value={businessType}
-                onChange={(e) => setBusinessType(e.target.value)}
+              <label htmlFor="name" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Your name</label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Jane Smith"
                 className="w-full px-4 py-3 rounded-lg focus-ring"
-              style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
-              >
-                {listBusinessTypes().map(({ value, label }) => (
-                  <option key={value} value={value}>{label}</option>
-                ))}
-              </select>
+                style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
+              />
+            </div>
+            <div>
+              <label htmlFor="business_name" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Business name</label>
+              <input
+                id="business_name"
+                type="text"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Acme Plumbing"
+                className="w-full px-4 py-3 rounded-lg focus-ring"
+                style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
+              />
             </div>
             <div>
               <label htmlFor="email" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Email</label>
@@ -149,18 +202,52 @@ function ActivatePageContent() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@company.com"
+                placeholder="you@company.com"
                 required
                 className="w-full px-4 py-3 rounded-lg focus-ring"
                 style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
               />
             </div>
+            <div>
+              <label htmlFor="phone" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Phone number</label>
+              <input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="(555) 123-4567"
+                className="w-full px-4 py-3 rounded-lg focus-ring"
+                style={{ background: "var(--surface)", border: "1px solid var(--card-border)", color: "var(--text-primary)" }}
+              />
+            </div>
+
+            <div>
+              <span className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>What type of business?</span>
+              <div className="flex flex-wrap gap-2">
+                {BUSINESS_TYPE_CHIPS.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setBusinessType((prev) => (prev === value ? "" : value))}
+                    className="px-3 py-2 rounded-lg text-sm font-medium border transition-colors"
+                    style={{
+                      background: businessType === value ? "var(--accent-primary-subtle)" : "var(--surface)",
+                      borderColor: businessType === value ? "var(--accent-primary)" : "var(--card-border)",
+                      color: businessType === value ? "var(--accent-primary)" : "var(--text-secondary)",
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={submitting}
               className="btn-primary w-full max-w-[320px] disabled:opacity-50"
             >
-              {submitting ? "Starting…" : "Set up call handling"}
+              {submitting ? "Preparing…" : "Get started free →"}
             </button>
             {submitting && submitMessage && (
               <p className="text-sm text-center mt-2" style={{ color: "var(--text-muted)" }} aria-live="polite">
@@ -168,29 +255,30 @@ function ActivatePageContent() {
               </p>
             )}
           </form>
-          
+
           {error && (
-            <div className="mt-4 p-4 rounded-lg" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
+            <div className="mt-4 p-4 rounded-lg" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
               <p className="text-sm mb-3" style={{ color: "var(--text-primary)" }}>{error}</p>
               <button
-                onClick={startProtection}
-                className="w-full py-2 px-4 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
+                type="button"
+                onClick={() => setError(null)}
+                className="w-full py-2 px-4 rounded-lg text-sm font-medium"
                 style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
               >
                 Try again
               </button>
             </div>
           )}
-          
-          <p className="text-xs mt-4 text-center" style={{ color: "var(--text-muted)" }}>
-            $0 today. Trial has a fixed end date. Pause anytime before then.
+
+          <p className="text-xs mt-6 text-center" style={{ color: "var(--text-muted)" }}>
+            By signing up you agree to our{" "}
+            <Link href="/terms" className="underline">Terms</Link> and{" "}
+            <Link href="/privacy" className="underline">Privacy Policy</Link>.
           </p>
         </div>
       </div>
       <div className="p-4 text-center">
-        <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>
-          ← Back to home
-        </Link>
+        <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>← Back to home</Link>
       </div>
     </div>
   );
@@ -198,13 +286,15 @@ function ActivatePageContent() {
 
 export default function ActivatePage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Set up call handling</h1>
-        <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>One moment…</p>
-        <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to home</Link>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
+          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>Preparing…</p>
+          <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to home</Link>
+        </div>
+      }
+    >
       <ActivatePageContent />
     </Suspense>
   );

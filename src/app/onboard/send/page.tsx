@@ -119,7 +119,7 @@ export default function OnboardSendPage() {
             </div>
           </div>
           {previewLoading ? (
-            <p className="text-[18px] text-[#78716c]">Loading preview.</p>
+            <p className="text-[18px] text-[#78716c]">Preparing preview…</p>
           ) : preview && (
             <section className="border border-[#e7e5e4] p-4 space-y-3">
               <p className="text-[13px] font-medium uppercase tracking-wide text-[#78716c]">Message preview</p>

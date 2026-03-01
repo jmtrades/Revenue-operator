@@ -46,11 +46,10 @@ function isAllowedPath(pathname: string): boolean {
   return false;
 }
 const NAV = [
-  { href: "/dashboard", label: "Overview" },
+  { href: "/dashboard/activity", label: "Activity" },
   { href: "/dashboard/start", label: "Start" },
   { href: "/dashboard/record", label: "Record" },
   { href: "/dashboard/calls", label: "Calls" },
-  { href: "/dashboard/activity", label: "Activity" },
   { href: "/dashboard/contacts", label: "Contacts" },
   { href: "/dashboard/calendar", label: "Calendar" },
   { href: "/dashboard/campaigns", label: "Campaigns" },
@@ -128,7 +127,13 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
   const allowed = isAllowedPath(pathname);
   const isLiveOrValue = pathname === "/dashboard/live" || pathname === "/dashboard/value";
+  // Default app home is Activity (v9)
   useEffect(() => {
+    if (pathname === "/dashboard") {
+      const q = new URLSearchParams(window.location.search);
+      router.replace(`/dashboard/activity${q.toString() ? `?${q.toString()}` : ""}`);
+      return;
+    }
     if (!pathname.startsWith("/dashboard") || allowed || isLiveOrValue) return;
     const q = new URLSearchParams(window.location.search);
     router.replace(`/dashboard/start${q.toString() ? `?${q.toString()}` : ""}`);
@@ -152,12 +157,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className="min-h-screen flex flex-col md:flex-row"
+      className="min-h-screen flex flex-col md:flex-row pb-20 md:pb-0"
       style={{ background: "var(--background)" }}
       data-operational-environment="true"
     >
       <aside
-        className="w-full md:w-48 border-b md:border-b-0 md:border-r flex flex-col shrink-0"
+        className="hidden md:flex md:w-48 border-r flex-col shrink-0"
         style={{ borderColor: "var(--border)", background: "var(--background)" }}
       >
         <div className="p-5 border-b" style={{ borderColor: "var(--border)" }}>
@@ -166,7 +171,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           </p>
         </div>
         <WorkspaceSelect />
-        <nav className="flex-1 p-4 space-y-0.5">
+        <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
           {NAV.map((n) => (
             <NavLink key={n.href} href={n.href} label={n.label} />
           ))}
@@ -174,14 +179,98 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       </aside>
       <main className="flex-1 overflow-auto flex flex-col min-w-0">
         <TopBar />
-        <div className="shrink-0 px-6 py-2 border-b" style={{ borderColor: "var(--border)" }}>
+        <div className="shrink-0 px-4 md:px-6 py-2 border-b hidden md:block" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
             Handling active. Commitments secured. Compliance enforced. Confirmation recorded.
           </p>
         </div>
         <div className="flex-1 overflow-auto">{children}</div>
       </main>
+      <MobileBottomNav />
     </div>
+  );
+}
+
+const MOBILE_TABS = [
+  { href: "/dashboard/activity", label: "Activity" },
+  { href: "/dashboard/contacts", label: "Contacts" },
+  { href: "/dashboard/campaigns", label: "Campaigns" },
+  { href: "/dashboard/agents", label: "Agents" },
+] as const;
+const MORE_LINKS = [
+  { href: "/dashboard/messages", label: "Messages" },
+  { href: "/dashboard/calendar", label: "Calendar" },
+  { href: "/dashboard/analytics", label: "Analytics" },
+  { href: "/dashboard/settings", label: "Settings" },
+];
+
+function MobileBottomNav() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const wid = searchParams.get("workspace_id");
+  const q = wid ? `?workspace_id=${encodeURIComponent(wid)}` : "";
+
+  const isActive = (href: string) =>
+    pathname === href || (href !== "/dashboard/activity" && pathname.startsWith(href));
+
+  return (
+    <>
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around py-2 safe-area-pb"
+        style={{ borderColor: "var(--border)", borderTopWidth: "1px", background: "var(--background)" }}
+        aria-label="Mobile navigation"
+      >
+        {MOBILE_TABS.map(({ href, label }) => (
+          <Link
+            key={href}
+            href={href + q}
+            className="flex flex-col items-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-center"
+            style={{ color: isActive(href) ? "var(--text-primary)" : "var(--text-muted)", fontWeight: isActive(href) ? 500 : 400 }}
+          >
+            <span className="text-[10px] uppercase tracking-wider">{label}</span>
+          </Link>
+        ))}
+        <div className="flex flex-col items-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-center relative">
+          <button
+            type="button"
+            onClick={() => setMoreOpen((o) => !o)}
+            className="w-full"
+            style={{ color: moreOpen ? "var(--text-primary)" : "var(--text-muted)", fontWeight: moreOpen ? 500 : 400 }}
+            aria-expanded={moreOpen}
+            aria-haspopup="true"
+          >
+            <span className="text-[10px] uppercase tracking-wider">More</span>
+          </button>
+          {moreOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                style={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                aria-hidden
+                onClick={() => setMoreOpen(false)}
+              />
+              <div
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 z-50 min-w-[160px] rounded-lg border py-2 shadow-lg"
+                style={{ background: "var(--background)", borderColor: "var(--border)" }}
+              >
+                {MORE_LINKS.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href + q}
+                    onClick={() => setMoreOpen(false)}
+                    className="block px-4 py-2 text-sm text-left"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </nav>
+    </>
   );
 }
 
