@@ -94,7 +94,7 @@ export default function AgentDetailPage() {
     return (
       <div className="p-8 max-w-4xl">
         <PageHeader title="Agent" subtitle="Edit agent." />
-        <LoadingState message={loading ? "Loading." : "Agent not found."} className="min-h-[200px]" />
+        <LoadingState message={loading ? "Preparing…" : "Agent not found."} className="min-h-[200px]" />
       </div>
     );
   }

@@ -36,7 +36,7 @@ export function LoadingState({ message = "In progress.", submessage, className =
   );
 }
 
-const LOADING_FALLBACK_MS = 8000;
+const LOADING_FALLBACK_MS = 6000;
 
 export function LoadingScreen({ message = "Loading.", onRetry }: { message?: string; onRetry?: () => void }) {
   const [showFallback, setShowFallback] = useState(false);

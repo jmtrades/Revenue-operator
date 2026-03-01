@@ -7,7 +7,7 @@ export const ROUTES = {
   CONTACT: "/contact",
   DEMO: "/demo",
   ONBOARDING: "/onboarding",
-  BOOK_DEMO: "mailto:hello@recall-touch.com?subject=Demo%20request",
+  BOOK_DEMO: "/contact",
 } as const;
 
 export const NAV_LINKS = [

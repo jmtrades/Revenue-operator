@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { PageHeader, EmptyState, LoadingState } from "@/components/ui";
+import { PageHeader, EmptyState } from "@/components/ui";
+import { ListSkeleton } from "@/components/ui/ListSkeleton";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface Member {
@@ -43,7 +44,7 @@ export default function TeamPage() {
     <div className="p-8 max-w-4xl">
       <PageHeader title="Team" subtitle="Manage team members and roles." />
       {loading ? (
-        <LoadingState message="Loading team." className="min-h-[200px]" />
+        <ListSkeleton rows={4} />
       ) : team.length === 0 ? (
         <div className="rounded-lg border p-8 text-center" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>No team members yet. Add members in settings.</p>

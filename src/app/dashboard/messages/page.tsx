@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { PageHeader, EmptyState, LoadingState } from "@/components/ui";
+import { PageHeader, EmptyState } from "@/components/ui";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface Conversation {
@@ -150,7 +150,14 @@ export default function MessagesPage() {
       <div className="flex gap-4 rounded-lg border overflow-hidden min-h-[400px]" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
         <div className="w-64 border-r flex-shrink-0 overflow-y-auto" style={{ borderColor: "var(--border)" }}>
           {loading ? (
-            <div className="p-4"><LoadingState message="Loading." submessage="Conversations" className="min-h-[120px]" /></div>
+            <div className="p-4 space-y-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="rounded animate-pulse py-3" style={{ background: "var(--border)" }}>
+                  <div className="h-3 rounded mb-1.5" style={{ background: "var(--border)", width: "70%" }} />
+                  <div className="h-2.5 rounded" style={{ background: "var(--border)", width: "50%" }} />
+                </div>
+              ))}
+            </div>
           ) : listError ? (
             <div className="p-4 text-center">
               <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{listError}</p>

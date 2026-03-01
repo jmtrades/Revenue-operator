@@ -61,9 +61,16 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     setError(null);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    const guardId = setTimeout(() => {
+      setLoading((prev) => {
+        if (prev) setError("Request timed out. Check your connection.");
+        return false;
+      });
+    }, FETCH_TIMEOUT_MS + 2000);
     try {
       const res = await fetch("/api/workspaces", { signal: controller.signal, credentials: "include" });
       clearTimeout(timeoutId);
+      clearTimeout(guardId);
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) {
         setWorkspaces([]);
@@ -95,6 +102,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (e) {
       clearTimeout(timeoutId);
+      clearTimeout(guardId);
       if (e instanceof Error && e.name === "AbortError") {
         setError("Request timed out. Check your connection.");
       } else {
@@ -104,6 +112,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       setWorkspaceIdState("");
       setWorkspaceName("");
     } finally {
+      clearTimeout(guardId);
       setLoading(false);
     }
   }, []);

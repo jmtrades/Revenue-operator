@@ -96,7 +96,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 }
 
 function DashboardShellFallback() {
-  return <LoadingScreen message="Loading…" />;
+  return <LoadingScreen message="Preparing…" />;
 }
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -120,11 +120,11 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [workspaceId]);
 
   useEffect(() => {
-    if (redirecting.current || loading || workspaces.length > 0) return;
+    if (redirecting.current || loading || workspaces.length > 0 || error) return;
     if (!pathname.startsWith("/dashboard")) return;
     redirecting.current = true;
     router.replace("/activate");
-  }, [loading, workspaces.length, pathname, router]);
+  }, [loading, workspaces.length, error, pathname, router]);
 
   const allowed = isAllowedPath(pathname);
   const isLiveOrValue = pathname === "/dashboard/live" || pathname === "/dashboard/value";
@@ -135,7 +135,19 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [pathname, allowed, isLiveOrValue, router]);
 
   if (loading) {
-    return <LoadingScreen message="Loading…" onRetry={retry} />;
+    return <LoadingScreen message="Preparing…" onRetry={retry} />;
+  }
+
+  if (error && workspaces.length === 0) {
+    return (
+      <LoadingScreen
+        message={error}
+        onRetry={() => {
+          redirecting.current = false;
+          retry();
+        }}
+      />
+    );
   }
 
   return (

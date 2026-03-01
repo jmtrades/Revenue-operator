@@ -19,7 +19,7 @@ export function SocialProof() {
         <AnimateOnScroll className="text-center">
           <SectionLabel>Trusted by</SectionLabel>
           <p className="text-base mb-10 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Used by operations teams in financial services, healthcare, and insurance.
+            Trusted by 200+ businesses across home services, healthcare, insurance, real estate, and legal.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             {badges.map((b) => (

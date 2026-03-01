@@ -11,13 +11,14 @@ function ActivatePageContent() {
   const [businessType, setBusinessType] = useState("general");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loadingMessage, setLoadingMessage] = useState("Preparing checkout…");
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
+  // Non-blocking: show form immediately, redirect only if session exists
   useEffect(() => {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10_000);
+    const timeoutId = setTimeout(() => controller.abort(), 8_000);
     fetch("/api/auth/session", { credentials: "include", signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
@@ -28,13 +29,12 @@ function ActivatePageContent() {
           router.replace(wid ? `/connect?workspace_id=${encodeURIComponent(wid)}` : "/connect");
           return;
         }
-        setCheckingSession(false);
+        setSessionChecked(true);
       })
-      .catch(() => setCheckingSession(false))
+      .catch(() => setSessionChecked(true))
       .finally(() => clearTimeout(timeoutId));
   }, [router]);
 
-  // Check for canceled param
   useEffect(() => {
     if (searchParams.get("canceled") === "1") {
       setError("No problem — protection didn't start.");
@@ -46,13 +46,8 @@ function ActivatePageContent() {
     
     setSubmitting(true);
     setError(null);
-    setLoadingMessage("Preparing checkout…");
-    
-    // Show "Opening secure checkout" after 1200ms
-    const loadingTimer = setTimeout(() => {
-      setLoadingMessage("Opening secure checkout…");
-    }, 1200);
-    
+    setSubmitMessage("Preparing checkout…");
+    const loadingTimer = setTimeout(() => setSubmitMessage("Opening secure checkout…"), 1200);
     const tier = searchParams.get("tier") || "solo";
     const interval = searchParams.get("interval") || "year";
     try {
@@ -83,12 +78,14 @@ function ActivatePageContent() {
         } else if (safe === "workspace_creation_failed" || safe === "workspace_create_failed") message = "Workspace could not be created. Try again in a moment.";
         setError(message);
         setSubmitting(false);
+        setSubmitMessage(null);
         clearTimeout(loadingTimer);
         return;
       }
 
       if (trialData.reason === "already_active" && trialData.workspace_id) {
         clearTimeout(loadingTimer);
+        setSubmitMessage(null);
         window.location.href = `/connect?workspace_id=${encodeURIComponent(trialData.workspace_id)}`;
         return;
       }
@@ -97,18 +94,19 @@ function ActivatePageContent() {
       if (!checkoutUrl) {
         setError("Trial could not be started.");
         setSubmitting(false);
+        setSubmitMessage(null);
         clearTimeout(loadingTimer);
         return;
       }
 
       clearTimeout(loadingTimer);
       window.location.href = checkoutUrl;
-      
-    } catch (error) {
+      return;
+    } catch (err) {
       clearTimeout(loadingTimer);
-      console.error("[activate] Error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Something went wrong. Try again.";
-      setError(errorMessage);
+      setSubmitMessage(null);
+      console.error("[activate] Error:", err);
+      setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
       setSubmitting(false);
     }
   };
@@ -117,24 +115,6 @@ function ActivatePageContent() {
     e.preventDefault();
     await startProtection();
   };
-
-  if (checkingSession) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Loading…</p>
-      </div>
-    );
-  }
-
-  if (submitting) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
-        <p className="text-sm" style={{ color: "var(--text-primary)" }}>{loadingMessage}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
@@ -182,6 +162,11 @@ function ActivatePageContent() {
             >
               {submitting ? "Starting…" : "Set up call handling"}
             </button>
+            {submitting && submitMessage && (
+              <p className="text-sm text-center mt-2" style={{ color: "var(--text-muted)" }} aria-live="polite">
+                {submitMessage}
+              </p>
+            )}
           </form>
           
           {error && (
@@ -215,8 +200,9 @@ export default function ActivatePage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-3" style={{ background: "var(--meaning-green)" }} aria-hidden />
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Loading…</p>
+        <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Set up call handling</h1>
+        <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>One moment…</p>
+        <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to home</Link>
       </div>
     }>
       <ActivatePageContent />

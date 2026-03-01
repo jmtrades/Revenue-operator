@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { PageHeader, EmptyState, LoadingState } from "@/components/ui";
+import { PageHeader, EmptyState } from "@/components/ui";
+import { MetricsSkeleton } from "@/components/ui/MetricsSkeleton";
 import Link from "next/link";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
@@ -42,7 +43,9 @@ export default function AnalyticsPage() {
     return (
       <div className="p-8 max-w-4xl">
         <PageHeader title="Analytics" subtitle="Calls, outcomes, and revenue attribution." />
-        <LoadingState message="Loading metrics." className="min-h-[200px]" />
+        <div className="rounded-lg border p-6" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
+          <MetricsSkeleton cards={3} />
+        </div>
       </div>
     );
   }

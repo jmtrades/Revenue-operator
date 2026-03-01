@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getClientOrNull } from "@/lib/supabase/client";
 
@@ -9,15 +9,17 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [authAvailable, setAuthAvailable] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setAuthAvailable(getClientOrNull() !== null);
+  }, []);
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || loading) return;
     const supabase = getClientOrNull();
-    if (!supabase) {
-      setError("Sign-in is not configured.");
-      return;
-    }
+    if (!supabase) return;
     setLoading(true);
     setError(null);
     const { error: err } = await supabase.auth.signInWithOtp({
@@ -34,10 +36,7 @@ export default function SignInPage() {
 
   const handleGoogle = async () => {
     const supabase = getClientOrNull();
-    if (!supabase) {
-      setError("Sign-in is not configured.");
-      return;
-    }
+    if (!supabase) return;
     setLoading(true);
     setError(null);
     const { error: err } = await supabase.auth.signInWithOAuth({
@@ -50,6 +49,30 @@ export default function SignInPage() {
       return;
     }
   };
+
+  // Auth not configured: show clean "Coming soon" with CTA to /activate (no blank/loading)
+  if (authAvailable === false) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+        <div className="w-full max-w-md text-center space-y-6">
+          <h1 className="text-xl font-semibold">Sign in</h1>
+          <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            Account sign-in is coming soon. Get started by setting up call handling — it takes about 5 minutes.
+          </p>
+          <Link
+            href="/activate"
+            className="inline-block w-full max-w-[280px] py-3 px-4 rounded-lg font-medium text-sm text-center no-underline"
+            style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}
+          >
+            Start free — set up call handling →
+          </Link>
+          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+            <Link href="/" className="underline">Back to home</Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
@@ -106,6 +129,8 @@ export default function SignInPage() {
         )}
         <p className="text-center text-sm" style={{ color: "var(--text-tertiary)" }}>
           <Link href="/" className="underline">Back to home</Link>
+          {" · "}
+          <Link href="/activate" className="underline">Start free</Link>
         </p>
       </div>
     </div>

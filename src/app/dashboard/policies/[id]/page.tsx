@@ -99,7 +99,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
   if (loading || !policy) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Loading.</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Preparing…</p>
       </Shell>
     );
   }
