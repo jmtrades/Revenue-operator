@@ -8,14 +8,22 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
 
-  if (code) {
+  if (!code) {
+    return NextResponse.redirect(new URL("/sign-in", origin));
+  }
+
+  try {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
       return NextResponse.redirect(`${origin}/sign-in?error=auth`);
     }
     const userId = data.user?.id;
-    if (userId) {
+    if (!userId) {
+      return NextResponse.redirect(new URL(next, origin));
+    }
+    let workspaceId: string | undefined;
+    try {
       const db = getDb();
       let { data: ws } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
       if (!ws) {
@@ -25,15 +33,18 @@ export async function GET(request: Request) {
           await db.from("settings").insert({ workspace_id: (created as { id: string }).id, risk_level: "balanced" });
         }
       }
-      const workspaceId = (ws as { id?: string } | null)?.id ?? undefined;
-      const cookie = createSessionCookie({ userId, workspaceId });
-      if (cookie) {
-        const res = NextResponse.redirect(new URL(next, origin));
-        res.headers.append("Set-Cookie", cookie);
-        return res;
-      }
+      workspaceId = (ws as { id?: string } | null)?.id ?? undefined;
+    } catch {
+      // DB unavailable — still set session with userId only
+    }
+    const cookie = createSessionCookie({ userId, workspaceId });
+    if (cookie) {
+      const res = NextResponse.redirect(new URL(next, origin));
+      res.headers.append("Set-Cookie", cookie);
+      return res;
     }
     return NextResponse.redirect(new URL(next, origin));
+  } catch {
+    return NextResponse.redirect(`${origin}/sign-in?error=auth`);
   }
-  return NextResponse.redirect(new URL("/sign-in", origin));
 }
