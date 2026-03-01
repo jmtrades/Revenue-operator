@@ -99,7 +99,7 @@ export default function SituationPage() {
   if (loading) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Preparing…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
       </Shell>
     );
   }

@@ -38,7 +38,7 @@ export function LoadingState({ message = "In progress.", submessage, className =
 
 const LOADING_FALLBACK_MS = 6000;
 
-export function LoadingScreen({ message = "Preparing…", onRetry }: { message?: string; onRetry?: () => void }) {
+export function LoadingScreen({ message = "One moment…", onRetry }: { message?: string; onRetry?: () => void }) {
   const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {

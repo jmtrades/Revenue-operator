@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const ACTIVATE_STORAGE_KEY = "recall_touch_activate";
-/** Launch prompt: primary key for signup data */
+/** Definitive spec: primary key for signup data */
+const RT_SIGNUP_KEY = "rt_signup";
 const RECALLTOUCH_SIGNUP_KEY = "recalltouch_signup";
 
 const BUSINESS_TYPE_CHIPS: { value: string; label: string }[] = [
@@ -38,7 +39,7 @@ function ActivatePageContent() {
   useEffect(() => {
     try {
       if (typeof window === "undefined") return;
-      const raw = localStorage.getItem(RECALLTOUCH_SIGNUP_KEY) ?? localStorage.getItem(ACTIVATE_STORAGE_KEY);
+      const raw = localStorage.getItem(RT_SIGNUP_KEY) ?? localStorage.getItem(RECALLTOUCH_SIGNUP_KEY) ?? localStorage.getItem(ACTIVATE_STORAGE_KEY);
       if (raw) {
         const data = JSON.parse(raw) as { submittedAt?: number };
         if (data?.submittedAt && Date.now() - data.submittedAt < 24 * 60 * 60 * 1000) setSubmittedLocal(true);
@@ -82,9 +83,9 @@ function ActivatePageContent() {
 
     setSubmitting(true);
     setError(null);
-    setSubmitMessage("Setting up…");
+    setSubmitMessage("Creating your account…");
 
-    const loadingTimer = setTimeout(() => setSubmitMessage("Almost there…"), 1000);
+    const loadingTimer = setTimeout(() => setSubmitMessage("Almost there…"), 1500);
 
     // Store in signups table when backend is configured (launch prompt)
     fetch("/api/signup", {
@@ -138,15 +139,13 @@ function ActivatePageContent() {
     setSubmitMessage(null);
     setSubmitting(false);
 
-    // Works without backend: store locally and show success
+    // Works without backend: store locally (definitive spec: rt_signup)
+    const formData = { ...payload, submittedAt: Date.now() };
     try {
-      localStorage.setItem(
-        ACTIVATE_STORAGE_KEY,
-        JSON.stringify({
-          ...payload,
-          submittedAt: Date.now(),
-        })
-      );
+      const json = JSON.stringify(formData);
+      localStorage.setItem(RT_SIGNUP_KEY, json);
+      localStorage.setItem(RECALLTOUCH_SIGNUP_KEY, json);
+      localStorage.setItem(ACTIVATE_STORAGE_KEY, json);
     } catch {
       // ignore
     }
@@ -159,9 +158,9 @@ function ActivatePageContent() {
       <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
           <div className="max-w-md w-full text-center">
-            <h1 className="font-headline text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>You&apos;re in!</h1>
+            <h1 className="font-headline text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>🎉 Welcome to Recall Touch!</h1>
             <p className="text-sm mb-6" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              We&apos;re setting up your AI phone system now. Check your email in the next 24 hours for your login and phone number. Questions? hello@recall-touch.com
+              We&apos;re setting up your AI phone system now. Check your email for your login link within the next few minutes. Questions? hello@recall-touch.com
             </p>
             <Link
               href="/"
@@ -240,6 +239,7 @@ function ActivatePageContent() {
             </div>
             <div>
               <label htmlFor="website" className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Website URL (optional)</label>
+              <p className="text-[11px] mb-1" style={{ color: "var(--text-tertiary)" }}>Helps tailor your experience.</p>
               <input
                 id="website"
                 type="url"
@@ -276,8 +276,14 @@ function ActivatePageContent() {
               disabled={submitting}
               className="btn-primary w-full max-w-[320px] disabled:opacity-50"
             >
-              {submitting ? "Preparing…" : "Get started free →"}
+              {submitting ? "Creating your account…" : "Get started free →"}
             </button>
+            <p className="text-xs text-center mt-2" style={{ color: "var(--text-muted)" }}>
+              No credit card required · 14-day free trial · Cancel anytime
+            </p>
+            <p className="text-sm text-center" style={{ color: "var(--text-secondary)" }}>
+              Already have an account? <Link href="/sign-in" className="underline">Sign in →</Link>
+            </p>
             {submitting && submitMessage && (
               <p className="text-sm text-center mt-2" style={{ color: "var(--text-muted)" }} aria-live="polite">
                 {submitMessage}
@@ -319,7 +325,7 @@ export default function ActivatePage() {
       fallback={
         <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
           <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
-          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>Preparing…</p>
+          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>One moment…</p>
           <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to home</Link>
         </div>
       }

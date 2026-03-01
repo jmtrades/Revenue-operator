@@ -142,7 +142,7 @@ export default function DashboardStartPage() {
   if (!workspaceId) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Preparing…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
       </Shell>
     );
   }

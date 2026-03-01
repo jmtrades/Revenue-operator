@@ -186,7 +186,7 @@ function LivePageContent() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <span className="inline-block w-3 h-3 rounded-full animate-pulse mb-2" style={{ background: "var(--meaning-amber)" }} aria-hidden />
-        <p style={{ color: "var(--text-muted)" }}>Preparing…</p>
+        <p style={{ color: "var(--text-muted)" }}>One moment…</p>
       </div>
     );
   }
@@ -306,7 +306,7 @@ export default function LivePage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <p style={{ color: "var(--text-muted)" }}>Preparing…</p>
+        <p style={{ color: "var(--text-muted)" }}>One moment…</p>
       </div>
     }>
       <WorkspaceGate>

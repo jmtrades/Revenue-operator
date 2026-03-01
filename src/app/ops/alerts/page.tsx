@@ -25,7 +25,7 @@ export default function OpsAlertsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-8 text-stone-500">Preparing…</div>;
+  if (loading) return <div className="p-8 text-sm" style={{ color: "var(--text-tertiary)" }}>One moment…</div>;
 
   return (
     <div className="p-8 max-w-4xl">

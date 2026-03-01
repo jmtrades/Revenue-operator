@@ -21,29 +21,28 @@ export async function GET(
 
   // Get conversation (id can be conversation id or lead id)
   let conversationId: string | null = null;
-  
-  // Try as conversation id first
-  const { data: convById } = await db
-    .from("conversations")
-    .select("id, lead_id, workspace_id")
-    .eq("id", id)
-    .eq("workspace_id", session.workspaceId)
-    .single();
-  
+
+  const { data: convById } = await db.from("conversations").select("id, lead_id").eq("id", id).maybeSingle();
   if (convById) {
-    conversationId = (convById as { id: string }).id;
-  } else {
-    // Try as lead id
-    const { data: convByLead } = await db
-      .from("conversations")
-      .select("id, lead_id, workspace_id")
-      .eq("lead_id", id)
-      .eq("workspace_id", session.workspaceId)
-      .limit(1)
-      .single();
-    
-    if (convByLead) {
-      conversationId = (convByLead as { id: string }).id;
+    const { data: lead } = await db.from("leads").select("id").eq("id", (convById as { lead_id: string }).lead_id).eq("workspace_id", session.workspaceId).maybeSingle();
+    if (lead) conversationId = (convById as { id: string }).id;
+  }
+  if (!conversationId) {
+    // Try as lead id (prefer SMS for two-way inbox); ensure lead is in workspace
+    const { data: leadRow } = await db.from("leads").select("id").eq("id", id).eq("workspace_id", session.workspaceId).maybeSingle();
+    if (leadRow) {
+      const { data: convByLead } = await db
+        .from("conversations")
+        .select("id")
+        .eq("lead_id", id)
+        .eq("channel", "sms")
+        .limit(1)
+        .maybeSingle();
+      if (convByLead) conversationId = (convByLead as { id: string }).id;
+      else {
+        const { data: anyConv } = await db.from("conversations").select("id").eq("lead_id", id).limit(1).maybeSingle();
+        if (anyConv) conversationId = (anyConv as { id: string }).id;
+      }
     }
   }
 

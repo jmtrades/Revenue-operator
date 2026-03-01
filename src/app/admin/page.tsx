@@ -107,6 +107,7 @@ export default function AdminDashboardPage() {
         <h2 className="text-lg font-medium mb-3">Quick actions</h2>
         <div className="flex flex-wrap gap-2">
           <Link href="/admin/signups" className="px-3 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}>View all signups</Link>
+          <a href="/api/admin/export/signups" className="px-3 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }} download="signups.csv">Export signups CSV</a>
           <Link href="/admin/calls" className="px-3 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}>View all calls</Link>
           <Link href="/admin/revenue" className="px-3 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}>View revenue</Link>
           <Link href="/admin/system" className="px-3 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}>System logs</Link>

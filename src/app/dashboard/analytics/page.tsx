@@ -13,27 +13,42 @@ interface Summary {
   appointments_upcoming: number;
 }
 
+interface Usage {
+  calls: number;
+  messages: number;
+  calls_limit: number;
+  messages_limit: number;
+  calls_pct: number;
+  messages_pct: number;
+}
+
 export default function AnalyticsPage() {
   const { workspaceId } = useWorkspace();
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [usage, setUsage] = useState<Usage | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!workspaceId) {
       setSummary(null);
+      setUsage(null);
       setLoading(false);
       return;
     }
     setLoading(true);
-    fetchWithFallback<Summary>(`/api/analytics/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
-      .then((r) => { if (r.data) setSummary(r.data); })
-      .finally(() => setLoading(false));
+    Promise.all([
+      fetchWithFallback<Summary>(`/api/analytics/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<Usage>(`/api/usage?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+    ]).then(([r1, r2]) => {
+      if (r1.data) setSummary(r1.data);
+      if (r2.data) setUsage(r2.data);
+    }).finally(() => setLoading(false));
   }, [workspaceId]);
 
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Analytics" subtitle="Metrics and performance." />
+        <PageHeader title="Analytics" subtitle="Calls, outcomes, and usage." />
         <EmptyState icon="watch" title="Select a context." subtitle="Analytics appear here." />
       </div>
     );
@@ -50,10 +65,42 @@ export default function AnalyticsPage() {
     );
   }
 
+  const usageAlert = usage && (usage.calls_pct >= 100 || usage.messages_pct >= 100);
+  const usageWarn = usage && !usageAlert && (usage.calls_pct >= 80 || usage.messages_pct >= 80);
+
   return (
     <div className="p-8 max-w-4xl">
       <PageHeader title="Analytics" subtitle="Calls, outcomes, and revenue attribution." />
       <div className="rounded-lg border p-6 space-y-6" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
+        {usageAlert && (
+          <div className="rounded-lg p-3 text-sm font-medium" style={{ background: "var(--accent-danger-subtle, rgba(239,68,68,0.1))", color: "var(--accent-danger, #ef4444)" }}>
+            Usage at or over plan limit. Upgrade or wait for the next period.
+          </div>
+        )}
+        {usageWarn && !usageAlert && (
+          <div className="rounded-lg p-3 text-sm" style={{ background: "var(--accent-warning-subtle, rgba(245,158,11,0.1))", color: "var(--text-secondary)" }}>
+            Usage above 80% of plan limit. Consider upgrading soon.
+          </div>
+        )}
+        {usage && (
+          <div>
+            <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>Usage this period</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Calls: {usage.calls} / {usage.calls_limit}</p>
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+                  <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, usage.calls_pct)}%`, background: "var(--accent-primary)" }} />
+                </div>
+              </div>
+              <div>
+                <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Messages: {usage.messages} / {usage.messages_limit}</p>
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+                  <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, usage.messages_pct)}%`, background: "var(--accent-primary)" }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {summary && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)" }}>

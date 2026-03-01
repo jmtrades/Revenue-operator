@@ -179,7 +179,7 @@ function ConnectPageContent() {
   if (!workspaceId) {
     return (
       <div className="min-h-screen flex items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <p style={{ color: "var(--text-muted)" }}>Preparing…</p>
+        <p style={{ color: "var(--text-muted)" }}>One moment…</p>
       </div>
     );
   }
@@ -340,7 +340,7 @@ export default function ConnectPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <p style={{ color: "var(--text-muted)" }}>Preparing…</p>
+        <p style={{ color: "var(--text-muted)" }}>One moment…</p>
       </div>
     }>
       <WorkspaceGate>

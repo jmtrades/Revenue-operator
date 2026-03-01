@@ -154,9 +154,25 @@ function OnboardingWizard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workspace_id: wid }),
       });
-      const data = await res.json();
-      if (data.phone_number) setPhoneNumber(data.phone_number);
-      else if (data.error) setError(data.error);
+      const data = (await res.json().catch(() => ({}))) as { phone_number?: string; error?: string };
+      if (data.phone_number) {
+        setPhoneNumber(data.phone_number);
+        return;
+      }
+      if (!res.ok) {
+        const fallback = await fetch("/api/onboarding/number", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ workspace_id: wid }),
+        });
+        const fallbackData = (await fallback.json().catch(() => ({}))) as { phone_number?: string; stub?: boolean };
+        if (fallbackData.phone_number) {
+          setPhoneNumber(fallbackData.phone_number);
+          setError(null);
+          return;
+        }
+      }
+      if (data.error) setError(data.error);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -453,7 +469,7 @@ export default function OnboardingPage() {
     <Suspense
       fallback={
         <div className="min-h-[80vh] flex items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>Preparing…</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
         </div>
       }
     >

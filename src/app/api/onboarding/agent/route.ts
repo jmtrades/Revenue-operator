@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   const { data: ws } = await db.from("workspaces").select("id, name").eq("id", workspace_id).maybeSingle();
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
   const w = ws as { name?: string };
-  const greetingText = greeting?.trim() || `Thanks for calling ${w.name ?? "us"}! This is ${agent_name.trim()}. How can I help?`;
+  const greetingText = greeting?.trim() || `Thanks for calling ${w.name ?? "the business"}! This is ${agent_name.trim()}. How can I help?`;
   const caps = Array.isArray(capabilities) ? capabilities : [];
   const { data: agent, error } = await db
     .from("agents")

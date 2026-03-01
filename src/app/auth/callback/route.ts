@@ -23,6 +23,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL(next, origin));
     }
     let workspaceId: string | undefined;
+    let isNewUser = false;
     try {
       const db = getDb();
       let { data: ws } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
         const { data: created, error: createErr } = await db.from("workspaces").insert({ name: "My workspace", owner_id: userId, autonomy_level: "assisted", kill_switch: false }).select("id").single();
         if (!createErr && created) {
           ws = created as { id: string };
+          isNewUser = true;
           await db.from("settings").insert({ workspace_id: (created as { id: string }).id, risk_level: "balanced" });
         }
       }
@@ -37,13 +39,14 @@ export async function GET(request: Request) {
     } catch {
       // DB unavailable — still set session with userId only
     }
+    const redirectPath = isNewUser && next === "/dashboard" ? "/dashboard/onboarding" : next;
     const cookie = createSessionCookie({ userId, workspaceId });
     if (cookie) {
-      const res = NextResponse.redirect(new URL(next, origin));
+      const res = NextResponse.redirect(new URL(redirectPath, origin));
       res.headers.append("Set-Cookie", cookie);
       return res;
     }
-    return NextResponse.redirect(new URL(next, origin));
+    return NextResponse.redirect(new URL(redirectPath, origin));
   } catch {
     return NextResponse.redirect(`${origin}/sign-in?error=auth`);
   }

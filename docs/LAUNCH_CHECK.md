@@ -22,6 +22,7 @@ Quick verification steps before production deployment.
 - [ ] **Optional vars set** (if features enabled):
   - Email: `RESEND_API_KEY`, `EMAIL_FROM`
   - SMS: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`
+  - Voice (inbound + outbound): `VAPI_API_KEY`, `VAPI_PHONE_NUMBER_ID` (Vapi dashboard; set webhook to `https://your-domain.com/api/webhooks/vapi` for end-of-call)
   - Zoom: `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET`, `ZOOM_WEBHOOK_SECRET`, `ZOOM_REDIRECT_URL`
 
 - [ ] **Preview/Development vars** (optional, can use same values or test values)
@@ -102,6 +103,11 @@ BASE_URL=https://recall-touch.com npm run prod:gate
    - [ ] `/dashboard/record` shows Record with correct empty state
    - [ ] `/dashboard/activity` shows Activity with correct empty state
    - [ ] `/dashboard/presence` shows Presence with correct empty state
+
+6. Voice (if Vapi enabled):
+   - [ ] Twilio phone number voice webhook points to `https://your-domain.com/api/webhooks/twilio/voice`
+   - [ ] Vapi dashboard: end-of-call webhook URL set to `https://your-domain.com/api/webhooks/vapi`
+   - [ ] Place a test inbound call → call connects to Vapi; after hang up, activity feed shows the call with summary when webhook fires
 
 ## If Issues
 

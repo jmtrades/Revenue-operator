@@ -95,6 +95,8 @@ export default function ActivityPage() {
   const [handoffs, setHandoffs] = useState<Handoff[]>([]);
   const [summary, setSummary] = useState<SummaryMetrics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [callInProgress, setCallInProgress] = useState<string | null>(null);
+  const [callError, setCallError] = useState<string | null>(null);
 
   const refetch = (silent?: boolean) => {
     if (!workspaceId) return;
@@ -168,6 +170,26 @@ export default function ActivityPage() {
   }
 
   const leadsCount = calls.filter((c) => deriveCardType(c) === "lead").length;
+
+  const startOutboundCall = async (leadId: string) => {
+    setCallError(null);
+    setCallInProgress(leadId);
+    try {
+      const r = await fetch("/api/outbound/call", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ lead_id: leadId }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error ?? "Call failed");
+      refetch(true);
+    } catch (e) {
+      setCallError(e instanceof Error ? e.message : "Call failed");
+    } finally {
+      setCallInProgress(null);
+    }
+  };
 
   return (
     <Shell size="md" className="max-w-[600px]">
@@ -260,22 +282,44 @@ export default function ActivityPage() {
                     {card.transcript_text && (
                       <p className="text-xs line-clamp-3" style={{ color: "var(--text-tertiary)" }}>{card.transcript_text}</p>
                     )}
+                    {callError && (
+                      <p className="text-xs mb-2" style={{ color: "var(--accent-danger, #ef4444)" }}>{callError}</p>
+                    )}
                     <div className="flex flex-wrap gap-2">
                       {card.lead_id && (
-                        <Link
-                          href={`/dashboard/record/lead/${card.lead_id}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
-                          style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
-                        >
-                          <Phone className="w-3.5 h-3.5" /> Call back
-                        </Link>
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => startOutboundCall(card.lead_id!)}
+                            disabled={!!callInProgress}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-60"
+                            style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
+                          >
+                            <Phone className="w-3.5 h-3.5" />
+                            {callInProgress === card.lead_id ? "Calling…" : "Call back"}
+                          </button>
+                          <Link
+                            href={`/dashboard/messages?lead=${card.lead_id}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
+                            style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" /> Message
+                          </Link>
+                          <Link
+                            href={`/dashboard/record/lead/${card.lead_id}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
+                            style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
+                          >
+                            View
+                          </Link>
+                        </>
                       )}
                       <Link
                         href={`/dashboard/calls/${card.id}`}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
                         style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
                       >
-                        <MessageSquare className="w-3.5 h-3.5" /> View details
+                        View details
                       </Link>
                       <button
                         type="button"

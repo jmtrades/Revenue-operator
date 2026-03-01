@@ -14,7 +14,7 @@ const MAX_WORDS = 14;
 const START_PAGE_COPY = [
   "Execution is now under institutional governance.",
   "Handling not observed recently.",
-  "Preparing…",
+  "One moment…",
   "First activity recorded under governance.",
   "You are operating at institutional standard.",
   "All handling follows declared governance parameters.",

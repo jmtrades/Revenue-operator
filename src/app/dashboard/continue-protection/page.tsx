@@ -46,7 +46,7 @@ export default function ContinueProtectionPage() {
   if (loading) {
     return (
       <div className="p-8 max-w-xl mx-auto">
-        <LoadingState message="Preparing…" submessage="" />
+        <LoadingState message="One moment…" submessage="" />
       </div>
     );
   }
@@ -174,7 +174,7 @@ export default function ContinueProtectionPage() {
           className="px-6 py-3 rounded-lg font-medium"
           style={{ background: "var(--meaning-green)", color: "#0E1116" }}
         >
-          {checkoutLoading ? "Preparing…" : "Coverage remains in place"}
+          {checkoutLoading ? "One moment…" : "Coverage remains in place"}
         </button>
         <Link
           href="/dashboard"

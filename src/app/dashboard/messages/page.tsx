@@ -70,18 +70,29 @@ export default function MessagesPage() {
     loadConversations();
   }, [workspaceId]);
 
-  useEffect(() => {
-    if (!workspaceId || !selectedLeadId) {
-      setMessages([]);
-      return;
-    }
+  const loadMessages = () => {
+    if (!workspaceId || !selectedLeadId) return;
     fetchWithFallback<{ conversation_id: string; messages: Msg[] }>(
       `/api/conversations/${selectedLeadId}/messages`,
       { credentials: "include" }
     ).then((res) => {
       if (res.data?.messages) setMessages(res.data.messages);
     });
+  };
+
+  useEffect(() => {
+    if (!workspaceId || !selectedLeadId) {
+      setMessages([]);
+      return;
+    }
+    loadMessages();
   }, [workspaceId, selectedLeadId]);
+
+  useEffect(() => {
+    if (!workspaceId || !selectedLeadId || tab !== "inbox") return;
+    const interval = setInterval(loadMessages, 15000);
+    return () => clearInterval(interval);
+  }, [workspaceId, selectedLeadId, tab]);
 
   const selectedConv = conversations.find((c) => c.lead_id === selectedLeadId);
   const sendMessage = async () => {

@@ -39,7 +39,7 @@ export default function WrapupPage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-stone-950 text-stone-200 flex items-center justify-center p-4">
-        <p>Preparing…</p>
+        <p style={{ color: "var(--text-secondary)" }}>One moment…</p>
       </div>
     );
   }
