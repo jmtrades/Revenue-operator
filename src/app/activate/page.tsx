@@ -31,8 +31,6 @@ function ActivatePageContent() {
   const [website, setWebsite] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedLocal, setSubmittedLocal] = useState(false);
-  const [sessionChecked, setSessionChecked] = useState(false);
-  const [transitionError, setTransitionError] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
@@ -50,14 +48,12 @@ function ActivatePageContent() {
     }
   }, []);
 
-  // Bounded session check: redirect if session exists; after 8s show institutional error if still pending
+  // Bounded session check: redirect if session exists; never block showing the form
   useEffect(() => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       controller.abort();
-      setTransitionError(true);
-      setSessionChecked(true);
-    }, 8_000);
+    }, 2_000);
     fetch("/api/auth/session", { credentials: "include", signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
@@ -66,13 +62,10 @@ function ActivatePageContent() {
         if (hasSession) {
           const wid = session.workspace_id ?? session.workspaceId;
           router.replace(wid ? `/connect?workspace_id=${encodeURIComponent(wid)}` : "/connect");
-          return;
         }
-        setSessionChecked(true);
       })
       .catch(() => {
-        setTransitionError(true);
-        setSessionChecked(true);
+        // Ignore errors — form still renders and works without a session check
       })
       .finally(() => clearTimeout(timeoutId));
   }, [router]);
@@ -161,59 +154,45 @@ function ActivatePageContent() {
     setSubmittedLocal(true);
   };
 
-  // Institutional error: session check failed or timed out
-  if (transitionError) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 md:p-12" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <div className="max-w-md w-full text-center">
-          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
-          <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>Unable to proceed.</p>
-          <p className="text-sm mb-6" style={{ color: "var(--text-tertiary)", lineHeight: 1.6 }}>Authorization could not be confirmed.</p>
-          <Link
-            href="/"
-            className="inline-block py-2.5 px-4 rounded-lg text-sm font-medium"
-            style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
-          >
-            Back to home
-          </Link>
-        </div>
-        <div className="p-4 text-center mt-6">
-          <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>← Back to home</Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Verifying session (bounded wait)
-  if (!sessionChecked) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-        <div className="max-w-md w-full text-center">
-          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
-          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>Verifying session.</p>
-          <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to home</Link>
-        </div>
-      </div>
-    );
-  }
-
   // Success state (localStorage or after local submit)
   if (submittedLocal) {
+    const savedEmail = (() => {
+      try {
+        const raw = localStorage.getItem(RT_SIGNUP_KEY) ?? localStorage.getItem(RECALLTOUCH_SIGNUP_KEY);
+        if (raw) {
+          const d = JSON.parse(raw) as { email?: string };
+          return d?.email ?? null;
+        }
+      } catch {
+        return null;
+      }
+      return null;
+    })();
     return (
       <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
           <div className="max-w-md w-full text-center">
             <h1 className="font-headline text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>🎉 Welcome to Recall Touch!</h1>
             <p className="text-sm mb-6" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              We&apos;re setting up your AI phone system now. Check your email for your login link within the next few minutes. Questions? hello@recall-touch.com
+              We&apos;re setting up your AI phone system now.
+              {savedEmail ? ` Check ${savedEmail} for your login link.` : " Check your email for your login link."}
             </p>
-            <Link
-              href="/"
-              className="inline-block py-2.5 px-4 rounded-lg text-sm font-medium"
-              style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
-            >
-              Back to home
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/dashboard"
+                className="inline-block py-2.5 px-4 rounded-lg text-sm font-medium"
+                style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
+              >
+                Go to dashboard →
+              </Link>
+              <Link
+                href="/"
+                className="inline-block py-2.5 px-4 rounded-lg text-sm font-medium border"
+                style={{ borderColor: "var(--card-border)", color: "var(--text-secondary)" }}
+              >
+                Back to home
+              </Link>
+            </div>
           </div>
         </div>
         <div className="p-4 text-center">
@@ -366,16 +345,6 @@ function ActivatePageContent() {
 
 export default function ActivatePage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-          <h1 className="font-headline text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started with Recall Touch</h1>
-          <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>Verifying session.</p>
-          <Link href="/" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to home</Link>
-        </div>
-      }
-    >
-      <ActivatePageContent />
-    </Suspense>
+    <ActivatePageContent />
   );
 }

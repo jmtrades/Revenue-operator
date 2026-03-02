@@ -67,11 +67,22 @@ export default function AnalyticsPage() {
 
   const usageAlert = usage && (usage.calls_pct >= 100 || usage.messages_pct >= 100);
   const usageWarn = usage && !usageAlert && (usage.calls_pct >= 80 || usage.messages_pct >= 80);
+  const hasNoData = !summary && !usage;
 
   return (
     <div className="p-8 max-w-4xl">
       <PageHeader title="Analytics" subtitle="Calls, outcomes, and revenue attribution." />
-      <div className="rounded-lg border p-6 space-y-6" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
+      <div className="rounded-xl border p-6 space-y-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+        {hasNoData ? (
+          <div className="py-12 px-6 text-center rounded-lg" style={{ background: "var(--bg-elevated)" }}>
+            <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No data yet</p>
+            <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Set up call forwarding and take a few calls. Metrics and usage will appear here.</p>
+            <Link href="/docs#call-forwarding" className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Set up call forwarding →</Link>
+            <span className="mx-2" style={{ color: "var(--text-tertiary)" }}>·</span>
+            <Link href="/dashboard/activity" className="text-sm" style={{ color: "var(--text-secondary)" }}>Activity</Link>
+          </div>
+        ) : (
+          <>
         {usageAlert && (
           <div className="rounded-lg p-3 text-sm font-medium" style={{ background: "var(--accent-danger-subtle, rgba(239,68,68,0.1))", color: "var(--accent-danger, #ef4444)" }}>
             Usage at or over plan limit. Upgrade or wait for the next period.
@@ -117,8 +128,10 @@ export default function AnalyticsPage() {
             </div>
           </div>
         )}
-        <p className="text-xs" style={{ color: "var(--text-muted)" }}>Compliance records and revenue attribution in a later phase.</p>
-        <Link href="/dashboard" className="inline-block text-sm" style={{ color: "var(--accent)" }}>Dashboard</Link>
+            <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Know exactly how much your AI is making you. Revenue attribution and compliance records available in plan.</p>
+            <Link href="/dashboard/billing" className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Plan & usage →</Link>
+          </>
+        )}
       </div>
     </div>
   );

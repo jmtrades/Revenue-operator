@@ -12,6 +12,7 @@
     "smoke": "tsx scripts/smoke-production.ts",
     "self-check": "tsx scripts/self-check.ts",
     "prod:gate": "tsx scripts/prod-gate.ts",
+    "urls:list": "tsx scripts/print-domain-urls.ts",
     "db:migrate": "tsx scripts/apply-migrations.ts",
     "dev": "next dev",
     "build": "next build",

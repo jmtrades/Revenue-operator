@@ -77,9 +77,13 @@ export default function DashboardBillingPage() {
 
   if (loading || !workspaceId) {
     return (
-      <div className="p-6 max-w-lg">
+      <div className="p-6 max-w-lg space-y-4">
         <PageHeader title="Billing" subtitle="Plan and usage." />
-        <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>One moment…</p>
+        <div className="rounded-xl border p-4 space-y-3 animate-pulse" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <div className="h-4 w-32 rounded" style={{ background: "var(--border-default)" }} />
+          <div className="h-3 w-full rounded" style={{ background: "var(--border-default)" }} />
+          <div className="h-3 w-3/4 rounded" style={{ background: "var(--border-default)" }} />
+        </div>
       </div>
     );
   }
@@ -158,6 +162,16 @@ export default function DashboardBillingPage() {
           {managing ? "Opening…" : "Manage billing"}
         </button>
       )}
+
+      <div className="rounded-lg border p-4 text-sm" style={{ borderColor: "var(--border-default)", background: "var(--bg-elevated)" }}>
+        <p className="font-medium mb-2" style={{ color: "var(--text-primary)" }}>Thinking of canceling?</p>
+        <p className="mb-3" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
+          In the last 30 days your AI answered calls, captured leads, and booked appointments. Consider pausing for a month or downgrading instead of canceling — your data stays safe.
+        </p>
+        <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+          Use &quot;Manage billing&quot; to change plan or cancel. Questions? <a href="mailto:hello@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>hello@recall-touch.com</a>
+        </p>
+      </div>
     </div>
   );
 }

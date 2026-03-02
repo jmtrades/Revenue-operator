@@ -65,8 +65,8 @@ export default function CampaignsPage() {
     <div className="p-8 max-w-4xl">
       <PageHeader title="Campaigns" subtitle="Outbound call campaigns." />
       <p className="mb-4">
-        <Link href={`/dashboard/campaigns/new?workspace_id=${encodeURIComponent(workspaceId)}`} className="text-sm" style={{ color: "var(--accent)" }}>
-          New campaign
+        <Link href={`/dashboard/campaigns/new?workspace_id=${encodeURIComponent(workspaceId)}`} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>
+          + New campaign
         </Link>
       </p>
       {loading ? (
@@ -77,9 +77,10 @@ export default function CampaignsPage() {
           <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>Retry</button>
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No campaigns yet.</p>
-          <Link href={`/dashboard/campaigns/new?workspace_id=${encodeURIComponent(workspaceId)}`} className="inline-block mt-4 text-sm" style={{ color: "var(--accent)" }}>Create one</Link>
+        <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No campaigns yet</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Run follow-ups, reminders, and reactivation calls. Your AI reaches out so you don&apos;t have to.</p>
+          <Link href={`/dashboard/campaigns/new?workspace_id=${encodeURIComponent(workspaceId)}`} className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Launch your first campaign →</Link>
         </div>
       ) : (
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>

@@ -2,15 +2,25 @@ import type { MetadataRoute } from "next";
 
 const BASE = "https://recall-touch.com";
 
+const INDUSTRY_SLUGS = ["home-services", "healthcare", "legal", "real-estate", "insurance", "b2b-sales", "local-business", "contractors"];
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: BASE, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 1 },
-    { url: `${BASE}/pricing`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.8 },
-    { url: `${BASE}/product`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.8 },
-    { url: `${BASE}/docs`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 },
-    { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: "yearly" as const, priority: 0.3 },
-    { url: `${BASE}/terms`, lastModified: new Date(), changeFrequency: "yearly" as const, priority: 0.3 },
-    { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.5 },
-    { url: `${BASE}/demo`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.5 },
+  const now = new Date();
+  const entries: MetadataRoute.Sitemap = [
+    { url: BASE, lastModified: now, changeFrequency: "weekly" as const, priority: 1 },
+    { url: `${BASE}/activate`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.9 },
+    { url: `${BASE}/sign-in`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${BASE}/pricing`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${BASE}/product`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${BASE}/demo`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${BASE}/docs`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 },
+    { url: `${BASE}/contact`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 },
+    { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
+    { url: `${BASE}/terms`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
   ];
+  for (const slug of INDUSTRY_SLUGS) {
+    entries.push({ url: `${BASE}/industries/${slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 });
+  }
+  return entries;
 }

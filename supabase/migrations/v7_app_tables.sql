@@ -77,7 +77,7 @@ CREATE INDEX IF NOT EXISTS idx_appointments_workspace ON revenue_operator.appoin
 CREATE INDEX IF NOT EXISTS idx_appointments_lead ON revenue_operator.appointments(lead_id);
 CREATE INDEX IF NOT EXISTS idx_appointments_start ON revenue_operator.appointments(workspace_id, start_time);
 
--- Messages: SMS/email sent or received
+-- Messages: SMS/email sent or received (v7 shape). If table already exists (e.g. from setup) with conversation_id shape, add v7 columns.
 CREATE TABLE IF NOT EXISTS revenue_operator.messages (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id uuid NOT NULL REFERENCES revenue_operator.workspaces(id) ON DELETE CASCADE,
@@ -93,9 +93,17 @@ CREATE TABLE IF NOT EXISTS revenue_operator.messages (
   sent_at timestamptz NOT NULL DEFAULT now(),
   created_at timestamptz NOT NULL DEFAULT now()
 );
-CREATE INDEX IF NOT EXISTS idx_messages_workspace ON revenue_operator.messages(workspace_id);
-CREATE INDEX IF NOT EXISTS idx_messages_lead ON revenue_operator.messages(lead_id);
-CREATE INDEX IF NOT EXISTS idx_messages_sent_at ON revenue_operator.messages(workspace_id, sent_at DESC);
+ALTER TABLE revenue_operator.messages ADD COLUMN IF NOT EXISTS workspace_id uuid REFERENCES revenue_operator.workspaces(id) ON DELETE CASCADE;
+ALTER TABLE revenue_operator.messages ADD COLUMN IF NOT EXISTS lead_id uuid REFERENCES revenue_operator.leads(id) ON DELETE CASCADE;
+ALTER TABLE revenue_operator.messages ADD COLUMN IF NOT EXISTS direction text;
+ALTER TABLE revenue_operator.messages ADD COLUMN IF NOT EXISTS channel text;
+ALTER TABLE revenue_operator.messages ADD COLUMN IF NOT EXISTS status text DEFAULT 'sent';
+ALTER TABLE revenue_operator.messages ADD COLUMN IF NOT EXISTS trigger text DEFAULT 'manual';
+ALTER TABLE revenue_operator.messages ADD COLUMN IF NOT EXISTS call_id uuid;
+ALTER TABLE revenue_operator.messages ADD COLUMN IF NOT EXISTS sent_at timestamptz DEFAULT now();
+CREATE INDEX IF NOT EXISTS idx_messages_workspace ON revenue_operator.messages(workspace_id) WHERE workspace_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_messages_lead ON revenue_operator.messages(lead_id) WHERE lead_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_messages_sent_at ON revenue_operator.messages(workspace_id, sent_at DESC) WHERE workspace_id IS NOT NULL;
 
 -- Team members: optional link to auth user
 CREATE TABLE IF NOT EXISTS revenue_operator.team_members (

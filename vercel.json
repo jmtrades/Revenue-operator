@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/core",
       "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/speed-to-lead",
+      "schedule": "* * * * *"
     }
   ]
 }

@@ -73,7 +73,7 @@ const DEMO_SCRIPTS: DemoScript[] = [
 const TYPING_DELAY_MS = 1500;
 const CHAR_DELAY_MS = 25;
 
-function DemoTranscript({ script, isActive, onComplete }: { script: DemoScript; isActive: boolean; onComplete: () => void }) {
+function DemoTranscript({ script, isActive, onComplete, skipCount, onSkip }: { script: DemoScript; isActive: boolean; onComplete: () => void; skipCount: number; onSkip: () => void }) {
   const [visibleLines, setVisibleLines] = useState<{ index: number; text: string }[]>([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
@@ -138,13 +138,33 @@ function DemoTranscript({ script, isActive, onComplete }: { script: DemoScript; 
     if (showResult && isActive) onComplete();
   }, [showResult, isActive, onComplete]);
 
+  // Skip → advance: complete current line and move to next (or result)
+  useEffect(() => {
+    if (!isActive || showResult || skipCount === 0) return;
+    const line = script.lines[currentLineIndex];
+    const fullText = line?.text ?? "";
+    setVisibleLines((prev) => {
+      const idx = prev.findIndex((p) => p.index === currentLineIndex);
+      if (idx >= 0) return [...prev.slice(0, idx), { index: currentLineIndex, text: fullText }, ...prev.slice(idx + 1)];
+      return [...prev, { index: currentLineIndex, text: fullText }];
+    });
+    setCurrentCharIndex(fullText.length);
+  }, [skipCount, isActive, showResult, script.lines, currentLineIndex]);
+
   if (!isActive) return null;
 
   return (
     <div className="rounded-xl border p-4 md:p-6 space-y-4" style={{ background: "var(--bg-surface)", borderColor: "var(--border-default)" }}>
-      <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-tertiary)" }}>
-        <Phone className="w-4 h-4" />
-        <span>Incoming call — (555) 234-5678</span>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-tertiary)" }}>
+          <Phone className="w-4 h-4" />
+          <span>Incoming call — (555) 234-5678</span>
+        </div>
+        {!showResult && (
+          <button type="button" onClick={onSkip} className="text-sm font-medium shrink-0" style={{ color: "var(--accent-primary)" }}>
+            Skip →
+          </button>
+        )}
       </div>
 
       <div className="space-y-3 min-h-[200px]">
@@ -195,6 +215,7 @@ export default function DemoPage() {
   const [tab, setTab] = useState<"inbound" | "appointment" | "outbound">("inbound");
   const [key, setKey] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [skipCount, setSkipCount] = useState(0);
 
   const script =
     tab === "inbound"
@@ -208,6 +229,7 @@ export default function DemoPage() {
     setTab(t);
     setKey((k) => k + 1);
     setCompleted(false);
+    setSkipCount(0);
   };
 
   return (
@@ -216,10 +238,10 @@ export default function DemoPage() {
       <main className="pt-28 pb-24">
         <Container className="max-w-2xl">
           <h1 className="font-bold text-3xl md:text-4xl mb-2 text-center" style={{ letterSpacing: "-0.02em" }}>
-            Hear Recall Touch in action
+            See Recall Touch in action
           </h1>
           <p className="text-center text-base mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Watch Recall Touch handle real calls — then try it yourself.
+            Watch AI answer a real business call — live.
           </p>
 
           <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
@@ -240,7 +262,7 @@ export default function DemoPage() {
             ))}
           </div>
 
-          <DemoTranscript key={key} script={script} isActive={true} onComplete={handleComplete} />
+          <DemoTranscript key={key} script={script} isActive={true} onComplete={handleComplete} skipCount={skipCount} onSkip={() => setSkipCount((c) => c + 1)} />
 
           <section className="mt-12 pt-8 border-t text-center" style={{ borderColor: "var(--border-default)" }}>
             <h2 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>Try it yourself</h2>
