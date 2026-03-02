@@ -64,7 +64,7 @@ export function SocialProof() {
               </button>
             </form>
           ) : (
-            <p className="text-sm mb-10" style={{ color: "var(--meaning-green)" }}>You&apos;re in! 🎉</p>
+            <p className="text-sm mb-10" style={{ color: "var(--meaning-green)" }}>You&apos;re on the list! 🎉</p>
           )}
           <div className="flex flex-wrap justify-center gap-4">
             {badges.map((b) => (

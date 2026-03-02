@@ -7,8 +7,8 @@ import { enqueue } from "@/lib/queue";
 import { evaluateState } from "@/lib/state-machine";
 import { getCommitmentScore, getAdjustedReminderHours } from "@/lib/commitment";
 
-const SAFE_RECAP = "Thanks for the call. Here's a quick recap of what we discussed. Let me know if you have any questions.";
-const SAFE_FOLLOW_UP = "Following up on our conversation. Would a quick call this week work to continue the discussion?";
+const _SAFE_RECAP = "Thanks for the call. Here's a quick recap of what we discussed. Let me know if you have any questions.";
+const _SAFE_FOLLOW_UP = "Following up on our conversation. Would a quick call this week work to continue the discussion?";
 
 export async function executePostCallPlan(
   callSessionId: string,

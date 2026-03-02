@@ -98,8 +98,8 @@ export default function DashboardStartPage() {
     if (typeof window !== "undefined") sessionStorage.setItem("first_win_shown", "1");
   };
 
-  const [showDeclaredBanner, setShowDeclaredBanner] = useState(false);
-  const [declaredBannerFading, setDeclaredBannerFading] = useState(false);
+  const [_showDeclaredBanner, setShowDeclaredBanner] = useState(false);
+  const [_declaredBannerFading, setDeclaredBannerFading] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined" || !workspaceId) return;
     if (sessionStorage.getItem("declared_posture") === "1") {

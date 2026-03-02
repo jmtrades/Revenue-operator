@@ -10,7 +10,7 @@ import { describe, it, expect, vi } from "vitest";
 
 const chain = (end: unknown) => ({
   in: () => ({ limit: () => ({ maybeSingle: () => Promise.resolve(end) }) }),
-  limit: (n?: number) => ({ maybeSingle: () => Promise.resolve(end), single: () => Promise.resolve(end) }),
+  limit: (_n?: number) => ({ maybeSingle: () => Promise.resolve(end), single: () => Promise.resolve(end) }),
   order: () => ({ limit: () => Promise.resolve(end) }),
   single: () => Promise.resolve(end),
   maybeSingle: () => Promise.resolve(end),
@@ -22,7 +22,7 @@ vi.mock("@/lib/db/queries", () => ({
   getDb: () => ({
     from: () => ({
       select: () => ({
-        eq: (col: string, _val: unknown) => chain({ data: null }),
+        eq: (_col: string, _val: unknown) => chain({ data: null }),
         is: () => ({ order: () => ({ limit: () => Promise.resolve({ data: [] }) }) }),
       }),
       insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: { id: "att-1" } }) }) }),

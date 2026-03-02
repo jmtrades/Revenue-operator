@@ -79,10 +79,10 @@ function logStructured(level: string, event: string, data: Record<string, unknow
     ...data,
   });
   if (level === "warning") {
-    // eslint-disable-next-line no-console
+     
     console.warn(line);
   } else {
-    // eslint-disable-next-line no-console
+     
     console.log(line);
   }
 }

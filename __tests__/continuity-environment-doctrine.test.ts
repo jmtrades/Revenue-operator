@@ -15,11 +15,11 @@ const FORBIDDEN_IN_MESSAGES = [
   "click", "tool", "platform", "assistant", "software", "analytics", "KPI",
 ];
 
-function* walkTs(dir: string): Generator<string> {
+function* _walkTs(dir: string): Generator<string> {
   try {
     for (const e of readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, e.name);
-      if (e.isDirectory()) yield* walkTs(full);
+      if (e.isDirectory()) yield* _walkTs(full);
       else if (e.isFile() && e.name.endsWith(".ts")) yield full;
     }
   } catch {
@@ -60,7 +60,7 @@ describe("Continuity Environment doctrine", () => {
     ];
     for (const file of libs) {
       const content = readFileSync(file, "utf-8");
-      const lower = content.toLowerCase();
+      const _lower = content.toLowerCase();
       for (const word of FORBIDDEN_IN_MESSAGES) {
         const re = new RegExp(`["'\`][^"'\`]*\\b${word}\\b[^"'\`]*["'\`]`, "i");
         expect(re.test(content), `Forbidden word "${word}" in ${path.relative(ROOT, file)}`).toBe(false);

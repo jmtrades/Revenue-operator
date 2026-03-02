@@ -11,7 +11,7 @@ import { recordOrientationStatement } from "@/lib/orientation/records";
 export async function detectAndRecordReturnToRecord(
   externalRef: string,
   workspaceId: string,
-  ip: string
+  _ip: string
 ): Promise<void> {
   const db = getDb();
   
@@ -24,7 +24,7 @@ export async function detectAndRecordReturnToRecord(
   if (!tx) return;
   
   const threadId = (tx as { id: string }).id;
-  const counterparty = (tx as { counterparty_identifier: string }).counterparty_identifier;
+  const _counterparty = (tx as { counterparty_identifier: string }).counterparty_identifier;
   
   const { data: recentView } = await db
     .from("record_reference_events")

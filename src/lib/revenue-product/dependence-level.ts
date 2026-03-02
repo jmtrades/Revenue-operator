@@ -4,7 +4,6 @@
  */
 
 import { getDb } from "@/lib/db/queries";
-import { workspaceHasTemporalStability } from "@/lib/temporal-stability";
 import { hasThirdPartyReliance } from "@/lib/third-party-reliance/presence-state";
 import { crossPartyRelianceEstablished } from "@/lib/operational-responsibilities";
 import { getInstitutionalState } from "@/lib/institutional-state";

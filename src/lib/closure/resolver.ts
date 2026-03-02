@@ -44,13 +44,13 @@ export async function resolveResponsibility(leadId: string): Promise<Responsibil
 
   const signals = await getSignalsForLead(workspaceId, leadId);
   let state: ResponsibilityState = DEFAULT_RESPONSIBILITY_STATE;
-  let lastMappedAt: string | null = null;
+  let _lastMappedAt: string | null = null;
 
   for (const s of signals) {
     const next = responsibilityFromSignal(s.signal_type as CanonicalSignalType);
     if (next != null) {
       state = next;
-      lastMappedAt = s.occurred_at;
+      _lastMappedAt = s.occurred_at;
     }
   }
 

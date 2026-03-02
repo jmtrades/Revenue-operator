@@ -9,8 +9,6 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { computeReadiness, persistReadiness } from "@/lib/readiness/engine";
-import { predictDealOutcome } from "@/lib/intelligence/deal-prediction";
-
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });

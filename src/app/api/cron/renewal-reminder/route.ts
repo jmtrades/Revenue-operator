@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
 
   const db = getDb();
   const now = new Date();
-  const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-  const in25h = new Date(now.getTime() + 25 * 60 * 60 * 1000);
+  const _in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const _in25h = new Date(now.getTime() + 25 * 60 * 60 * 1000);
 
   const { data: workspaces } = await db
     .from("workspaces")

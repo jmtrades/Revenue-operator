@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 function PublicAckContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
-  const [action, setAction] = useState<"confirm" | "reschedule" | "dispute" | null>(null);
+  const [_action, setAction] = useState<"confirm" | "reschedule" | "dispute" | null>(null);
   const [newDeadline, setNewDeadline] = useState("");
   const [disputeReason, setDisputeReason] = useState("");
   const [result, setResult] = useState<boolean | null>(null);

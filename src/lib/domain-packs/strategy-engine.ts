@@ -23,7 +23,7 @@ export interface StrategyEngineOutput {
   compliance_required: boolean;
 }
 
-const DEFAULT_STATE: StrategyState = "discovery";
+const _DEFAULT_STATE: StrategyState = "discovery";
 
 /**
  * Select next state from domain pack rules only. No probabilistic choice.

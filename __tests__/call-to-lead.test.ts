@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 
-let calendarLeadId: string | null = null;
+let _calendarLeadId: string | null = null;
 let emailMatch: string | null = null;
 
 vi.mock("@/lib/db/queries", () => ({
@@ -9,7 +9,7 @@ vi.mock("@/lib/db/queries", () => ({
       select: () => ({
         eq: (col: string, val: string) => {
           if (col === "id") {
-            calendarLeadId = val;
+            _calendarLeadId = val;
             return {
               eq: () => ({
                 single: () =>
@@ -44,7 +44,7 @@ import { matchCallToLead } from "@/lib/zoom/call-to-lead";
 
 describe("call-to-lead matching", () => {
   beforeEach(() => {
-    calendarLeadId = null;
+    _calendarLeadId = null;
     emailMatch = null;
   });
 

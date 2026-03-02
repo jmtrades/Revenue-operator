@@ -16,7 +16,7 @@ import type { ResolveUniversalOutcomeInput } from "../src/lib/intelligence/outco
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const FIXTURES_DIR = path.join(ROOT, "__fixtures__", "scenarios");
-const INCIDENT_LIMIT = 50;
+const _INCIDENT_LIMIT = 50;
 
 type Fixture = {
   scenario_category: string;
@@ -184,7 +184,7 @@ function loadFixtures(): Fixture[] {
   return fixtures;
 }
 
-function replayHash(incidentId: string, expected: string, result: string): string {
+function _replayHash(incidentId: string, expected: string, result: string): string {
   return createHash("sha256").update(incidentId + expected + result).digest("hex").slice(0, 32);
 }
 

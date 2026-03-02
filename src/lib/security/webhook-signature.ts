@@ -6,7 +6,7 @@
 import { createHmac, timingSafeEqual } from "crypto";
 
 const TOLERANCE_SEC = 300;
-const REPLAY_WINDOW_SEC = 3600;
+const _REPLAY_WINDOW_SEC = 3600;
 
 export function verifyWebhookSignature(
   payload: string,

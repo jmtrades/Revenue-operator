@@ -7,7 +7,7 @@ import Link from "next/link";
 export function ProtectionPausedBanner() {
   const { workspaceId } = useWorkspace();
   const [billingStatus, setBillingStatus] = useState<{ billing_status?: string; renewal_at?: string | null; has_upcoming_booking_24h?: boolean } | null>(null);
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, _setDismissed] = useState(false);
 
   useEffect(() => {
     if (!workspaceId) return;

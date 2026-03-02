@@ -24,7 +24,7 @@ export async function emitExecutionPlanIntent(
   recipient: EmitRecipient,
   options?: { rendered_text?: string; approval_id?: string | null; dedupe_suffix?: string }
 ): Promise<string | null> {
-  const { identifiers, decision, action_intent_to_emit, channel_chosen, disclaimer_lines, approval_id } = plan;
+  const { identifiers, decision, action_intent_to_emit, channel_chosen, disclaimer_lines: _disclaimer_lines, approval_id } = plan;
   const workspaceId = identifiers.workspace_id;
   const conversationId = identifiers.conversation_id;
   const threadId = identifiers.thread_id ?? null;

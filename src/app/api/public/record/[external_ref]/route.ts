@@ -16,8 +16,8 @@ import {
   recordPublicRecord404,
 } from "@/lib/security/rate-limit";
 
-const ALLOWED_STATES = ["normal", "outside_authority", "beyond_scope", "exposure"] as const;
-type PublicState = (typeof ALLOWED_STATES)[number];
+const _ALLOWED_STATES = ["normal", "outside_authority", "beyond_scope", "exposure"] as const;
+type PublicState = (typeof _ALLOWED_STATES)[number];
 
 function toPublicState(raw: string): PublicState {
   if (raw === "acknowledged" || raw === "resolved" || raw === "completed") return "normal";

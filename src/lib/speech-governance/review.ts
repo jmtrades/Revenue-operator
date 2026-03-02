@@ -19,7 +19,7 @@ const REVIEW_REQUIRED_DOMAINS = new Set(["real_estate", "finance", "healthcare"]
 export function requiresReview(
   intentType: string,
   domainType: string,
-  jurisdiction: string
+  _jurisdiction: string
 ): boolean {
   if (REVIEW_REQUIRED_INTENTS.has(intentType)) return true;
   if (REVIEW_REQUIRED_DOMAINS.has(domainType)) {

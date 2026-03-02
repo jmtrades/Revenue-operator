@@ -40,7 +40,7 @@ export interface HumanPresenceResult {
  * Run the full behaviour layer: delay, memory, variation, validation, presence.
  */
 export async function applyHumanPresence(input: HumanPresenceInput): Promise<HumanPresenceResult> {
-  const { leadId, workspaceId, conversationId, state, message, lastUserMessage = "", objectionCount = 0 } = input;
+  const { leadId, workspaceId: _workspaceId, conversationId, state, message, lastUserMessage = "", objectionCount = 0 } = input;
 
   const momentum = await computeMomentum({
     leadId,

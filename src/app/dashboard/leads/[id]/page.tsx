@@ -46,9 +46,9 @@ export default function LeadViewPage() {
   const [lead, setLead] = useState<Lead | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
-  const [preCallBrief, setPreCallBrief] = useState<PreCallBrief | null>(null);
+  const [_preCallBrief, setPreCallBrief] = useState<PreCallBrief | null>(null);
   const [workspacePaused, setWorkspacePaused] = useState(false);
-  const [callContinuity, setCallContinuity] = useState<{ status: "Prepared" | "Waiting" | "Recovering" } | null>(null);
+  const [_callContinuity, setCallContinuity] = useState<{ status: "Prepared" | "Waiting" | "Recovering" } | null>(null);
   const [loading, setLoading] = useState(true);
   const [proofOpen, setProofOpen] = useState(false);
   const [openEscalationId, setOpenEscalationId] = useState<string | null>(null);

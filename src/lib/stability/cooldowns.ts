@@ -4,7 +4,6 @@
  */
 
 import { getDb } from "@/lib/db/queries";
-import { mergeSettings } from "@/lib/autopilot";
 import type { LeadState } from "@/lib/types";
 
 const DEFAULT_COOLDOWN_HOURS: Record<string, number> = {

@@ -6,7 +6,7 @@
 import { getDb } from "@/lib/db/queries";
 
 const MIN_EVENTS = 3;
-const MIN_DAYS_SPAN = 1;
+const _MIN_DAYS_SPAN = 1;
 
 export async function recordStaffRelianceEvent(workspaceId: string): Promise<void> {
   const db = getDb();

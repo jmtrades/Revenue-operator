@@ -10,7 +10,7 @@ import { getSchedulingRules } from "@/lib/calendar-optimization";
 export type CapacityPressureLevel = 0 | 1 | 2 | 3;
 /** 0 open, 1 normal, 2 limited, 3 critical */
 
-const MS_DAY = 24 * 60 * 60 * 1000;
+const _MS_DAY = 24 * 60 * 60 * 1000;
 const HOURS_72 = 72 * 60 * 60 * 1000;
 
 export interface CapacityStateRow {

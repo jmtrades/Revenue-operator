@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { readdirSync, readFileSync } from "fs";
+import { readFileSync } from "fs";
 import path from "path";
 
 const ROOT = path.resolve(__dirname, "..");

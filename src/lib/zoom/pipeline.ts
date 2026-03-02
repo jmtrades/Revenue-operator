@@ -4,7 +4,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
-import { zoomFetch, getMeeting, getPastMeetingParticipants, getRecording } from "./client";
+import { getPastMeetingParticipants, getRecording } from "./client";
 import { matchCallToLead } from "./call-to-lead";
 import { analyzeClosingCall } from "./analysis";
 
@@ -18,7 +18,7 @@ export async function processZoomWebhook(
   const { data: raw } = await db.from("raw_webhook_events").select("payload").eq("id", webhookId).single();
   if (!raw) return;
 
-  const payload = (raw as { payload?: { payload?: { object?: Record<string, unknown> } } }).payload?.payload?.object ?? {};
+  const _payload = (raw as { payload?: { payload?: { object?: Record<string, unknown> } } }).payload?.payload?.object ?? {};
   const participantEmails: string[] = [];
   const participantNames: string[] = [];
 

@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { readFileSync, existsSync } from "fs";
+import { readFileSync } from "fs";
 import path from "path";
 import { resolveQueueType, type QueueType } from "../src/lib/scenarios/queue-type";
 

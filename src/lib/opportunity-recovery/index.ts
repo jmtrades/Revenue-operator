@@ -160,14 +160,14 @@ const REVIVAL_POOL_GENERAL = [
   "Quick follow-up in case you had any other questions.",
 ];
 
-function inferContextFromMessages(messages: { role: string; content: string }[]): "booking" | "pricing" | "general" {
+function _inferContextFromMessages(messages: { role: string; content: string }[]): "booking" | "pricing" | "general" {
   const text = messages.map((m) => m.content).join(" ").toLowerCase();
   if (/\b(book|schedule|appointment|calendar|time slot|when can we meet)\b/.test(text)) return "booking";
   if (/\b(price|cost|fee|how much|pricing|quote)\b/.test(text)) return "pricing";
   return "general";
 }
 
-function pickRevivalMessage(context: "booking" | "pricing" | "general", attemptIndex: number): string {
+function _pickRevivalMessage(context: "booking" | "pricing" | "general", attemptIndex: number): string {
   const pool =
     context === "booking" ? REVIVAL_POOL_BOOKING : context === "pricing" ? REVIVAL_POOL_PRICING : REVIVAL_POOL_GENERAL;
   return pool[attemptIndex % pool.length] ?? REVIVAL_POOL_GENERAL[0]!;
@@ -221,7 +221,7 @@ export async function runRevivalForOpportunity(opp: OpportunityStateRow): Promis
       .eq("conversation_id", opp.conversation_id)
       .order("created_at", { ascending: false })
       .limit(20);
-    const messages = (msgs ?? []) as { role: string; content: string }[];
+    const _messages = (msgs ?? []) as { role: string; content: string }[];
     const { compileMessage } = await import("@/lib/message-compiler");
     const content = compileMessage("follow_up", {
       channel: (c.channel || "sms") as "sms" | "email" | "web",

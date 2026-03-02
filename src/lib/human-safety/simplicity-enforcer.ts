@@ -9,7 +9,7 @@ export interface SimplicityResult {
   reason?: string;
 }
 
-function countSentences(text: string): number {
+function _countSentences(text: string): number {
   return (text.match(/[.!?]+/g) || []).length;
 }
 

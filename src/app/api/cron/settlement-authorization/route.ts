@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
     if (!rawToken) continue;
     issued++;
     const link = buildPublicSettlementLink(rawToken);
-    const fullLink = link.startsWith("http") ? link : `${APP_URL.replace(/\/$/, "")}/public/settlement?token=${encodeURIComponent(rawToken)}`;
+    const _fullLink = link.startsWith("http") ? link : `${APP_URL.replace(/\/$/, "")}/public/settlement?token=${encodeURIComponent(rawToken)}`;
     const messageText = "Administrative activation available.";
 
     const { data: leads } = await db

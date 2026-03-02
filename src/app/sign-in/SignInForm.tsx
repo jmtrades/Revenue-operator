@@ -2,9 +2,23 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getClientOrNull } from "@/lib/supabase/client";
 
+function getSignupEmail(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup") ?? localStorage.getItem("recall_touch_activate");
+    if (!raw) return null;
+    const d = JSON.parse(raw) as { email?: string };
+    return d?.email?.trim() ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default function SignInForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -16,23 +30,42 @@ export default function SignInForm() {
     return () => clearTimeout(id);
   }, []);
 
-  const handleMagicLink = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || loading) return;
-    const supabase = getClientOrNull();
-    if (!supabase) return;
+    const trimmed = email.trim().toLowerCase();
     setLoading(true);
     setError(null);
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback` },
-    });
-    setLoading(false);
-    if (err) {
-      setError(err.message);
+
+    const signupEmail = getSignupEmail();
+    if (signupEmail && signupEmail.toLowerCase() === trimmed) {
+      try {
+        localStorage.setItem("rt_session", "true");
+      } catch {
+        // ignore
+      }
+      setLoading(false);
+      router.push("/app");
       return;
     }
-    setSent(true);
+
+    const supabase = getClientOrNull();
+    if (supabase) {
+      const { error: err } = await supabase.auth.signInWithOtp({
+        email: trimmed,
+        options: { emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback` },
+      });
+      setLoading(false);
+      if (err) {
+        setError(err.message);
+        return;
+      }
+      setSent(true);
+      return;
+    }
+
+    setLoading(false);
+    setError("No account found for this email. Sign up first to continue.");
   };
 
   const handleGoogle = async () => {
@@ -85,7 +118,7 @@ export default function SignInForm() {
           </p>
         ) : (
           <>
-            <form onSubmit={handleMagicLink} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="signin-email" className="sr-only">Email</label>
                 <input
@@ -141,6 +174,11 @@ export default function SignInForm() {
         {error && (
           <p className="text-sm text-center" style={{ color: "var(--meaning-red)" }}>
             {error}
+          </p>
+        )}
+        {error && (
+          <p className="text-center text-sm">
+            <Link href="/activate" className="underline" style={{ color: "var(--accent-primary)" }}>Sign up first →</Link>
           </p>
         )}
         <p className="text-center text-sm space-y-1" style={{ color: "var(--text-tertiary)" }}>

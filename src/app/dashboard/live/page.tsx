@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { isLiveCompleted, setLiveCompleted } from "@/lib/live-gate";
+import { setLiveCompleted } from "@/lib/live-gate";
 
 function LivePageContent() {
   const router = useRouter();

@@ -29,7 +29,7 @@ export interface TemplateContext {
  * Deterministic template selection - no free-form generation.
  */
 export function buildMessage(context: TemplateContext): string {
-  const { state, playbook, objectionType, objectionSlots, businessContext, leadContext, channel } = context;
+  const { state, playbook: _playbook, objectionType, objectionSlots, businessContext, leadContext, channel } = context;
   const leadName = leadContext.leadName;
 
   // If objection detected, use objection response
@@ -76,8 +76,8 @@ export function buildMessage(context: TemplateContext): string {
 
 function buildNewInterestMessage(
   businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   const businessName = businessContext.business_name;
   const offer = businessContext.offer_summary;
@@ -93,9 +93,9 @@ function buildNewInterestMessage(
 
 function buildClarificationMessage(
   businessContext: BusinessContext,
-  leadName: string | undefined,
+  _leadName: string | undefined,
   lastMessage: string | undefined,
-  channel: string
+  _channel: string
 ): string {
   if (lastMessage && lastMessage.length < 50) {
     const answer = getClarificationAnswer(lastMessage, businessContext);
@@ -117,8 +117,8 @@ function getClarificationAnswer(question: string, businessContext: BusinessConte
 
 function buildConsideringMessage(
   businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   const bookingLink = businessContext.booking_link;
   if (bookingLink) {
@@ -128,25 +128,25 @@ function buildConsideringMessage(
 }
 
 function buildSoftObjectionMessage(
-  businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _businessContext: BusinessContext,
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   return "No rush. When you're ready we can have a quick look.";
 }
 
 function buildHardObjectionMessage(
-  businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _businessContext: BusinessContext,
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   return "Understood. If things change, we're here.";
 }
 
 function buildDriftMessage(
   businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   const bookingLink = businessContext.booking_link;
   if (bookingLink) {
@@ -157,8 +157,8 @@ function buildDriftMessage(
 
 function buildCommitmentMessage(
   businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   const bookingLink = businessContext.booking_link;
   if (bookingLink) {
@@ -168,25 +168,25 @@ function buildCommitmentMessage(
 }
 
 function buildPostBookingMessage(
-  businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _businessContext: BusinessContext,
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   return "Quick one — still on for the call?";
 }
 
 function buildNoShowMessage(
-  businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _businessContext: BusinessContext,
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   return "We missed you — things get busy. Want to reschedule or sorted elsewhere?";
 }
 
 function buildColdMessage(
   businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   const bookingLink = businessContext.booking_link;
   if (bookingLink) {
@@ -197,9 +197,9 @@ function buildColdMessage(
 
 function buildObjectionMessage(
   slots: ObjectionResponseSlots,
-  businessContext: BusinessContext,
-  leadName: string | undefined,
-  channel: string
+  _businessContext: BusinessContext,
+  _leadName: string | undefined,
+  _channel: string
 ): string {
   const parts: string[] = [];
   if (slots.acknowledgement) {

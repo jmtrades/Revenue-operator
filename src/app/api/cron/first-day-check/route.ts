@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
 
   for (const ws of workspaces || []) {
     const workspaceId = (ws as { id: string }).id;
-    const ownerId = (ws as { owner_id: string }).owner_id;
+    const _ownerId = (ws as { owner_id: string }).owner_id;
     const user = (ws as { users?: { email?: string } | null })?.users;
     const email = user && typeof user === "object" && "email" in user ? user.email : null;
 

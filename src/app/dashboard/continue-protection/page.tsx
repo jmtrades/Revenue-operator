@@ -18,7 +18,7 @@ export default function ContinueProtectionPage() {
   const [billingStatus, setBillingStatus] = useState<{ renewal_at?: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [step, setStep] = useState<"interstitial" | "payment">("interstitial");
+  const [_step, _setStep] = useState<"interstitial" | "payment">("interstitial");
 
   useEffect(() => {
     if (!workspaceId) return;

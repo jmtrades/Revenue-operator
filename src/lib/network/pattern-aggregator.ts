@@ -10,7 +10,7 @@ import { getDb } from "@/lib/db/queries";
 
 const MIN_SAMPLES = 20;
 const LOOKBACK_DAYS = 90;
-const TIME_BUCKETS = ["0-4h", "4-24h", "24-72h", "72+"];
+const _TIME_BUCKETS = ["0-4h", "4-24h", "24-72h", "72+"];
 const HALFLIFE_DAYS = 30;
 
 function toIndustryBucket(businessType: string | null | undefined): string {

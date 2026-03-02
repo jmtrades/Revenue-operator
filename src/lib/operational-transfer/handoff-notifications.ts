@@ -5,7 +5,6 @@
  */
 
 import { getDb } from "@/lib/db/queries";
-import { notifyHandoff } from "./notify";
 import { enqueue } from "@/lib/queue";
 import {
   leadHasHumanReplyAfter,

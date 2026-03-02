@@ -65,7 +65,7 @@ describe("installation and adoption", () => {
 
   describe("executed_action_types", () => {
     it("markExecutedActionType is idempotent (insert ignore on conflict)", () => {
-      const pk = { workspace_id: "w1", action_type: "commitment_recovery" };
+      const _pk = { workspace_id: "w1", action_type: "commitment_recovery" };
       const errorCode = "23505";
       const isConflict = errorCode === "23505";
       expect(isConflict).toBe(true);

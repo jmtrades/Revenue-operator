@@ -155,7 +155,7 @@ export async function createDefaultBrain(getDb: () => ReturnType<typeof import("
 
   async function recordCommitmentIntent(
     config: BrainConfig,
-    params: { intent: string }
+    _params: { intent: string }
   ): Promise<RecordCommitmentIntentResult> {
     try {
       if (!config.leadId) return { ok: true };

@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 /**
  * Shows calm continuity message when API requests are slow (>1200ms).
  * Used for network latency masking.

@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
           violation_count: audit.violationCount,
         });
         if (audit.violationCount > 0) failures++;
-      } catch (err) {
+      } catch (_err) {
         failures++;
         details.push({
           workspace_id: workspaceId,

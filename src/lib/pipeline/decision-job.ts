@@ -169,7 +169,7 @@ export async function runDecisionJob(
       const { getPlaybookForState, calculateNextActionAt } = await import("@/lib/playbooks");
       const { data: leadRow } = await db.from("leads").select("created_at, last_activity_at").eq("id", leadId).single();
       const leadCreated = leadRow ? new Date((leadRow as { created_at?: string }).created_at ?? Date.now()) : new Date();
-      const lastActivity = leadRow ? new Date((leadRow as { last_activity_at?: string }).last_activity_at ?? Date.now()) : new Date();
+      const _lastActivity = leadRow ? new Date((leadRow as { last_activity_at?: string }).last_activity_at ?? Date.now()) : new Date();
       const conversationAgeHours = (Date.now() - leadCreated.getTime()) / (1000 * 60 * 60);
 
       const playbook = getPlaybookForState(conversationState, businessContext, {

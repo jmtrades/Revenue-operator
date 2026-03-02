@@ -26,7 +26,7 @@ function isSensitiveKey(key: string): boolean {
   return false;
 }
 
-function redactValue(value: unknown): unknown {
+function _redactValue(value: unknown): unknown {
   if (value === null || value === undefined) return value;
   if (typeof value === "string") {
     if (value.length > 8 && /^[a-zA-Z0-9_-]+$/.test(value)) return "[REDACTED]";

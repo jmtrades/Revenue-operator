@@ -79,14 +79,14 @@ export async function GET(req: NextRequest) {
   const showed = (deals ?? []).filter((d) => (d as { status: string }).status === "showed").length;
   const bookingAccuracy = booked > 0 ? (showed / booked) * 100 : 100;
 
-  const { count: fallbackCount } = await db
+  const { count: _fallbackCount } = await db
     .from("action_logs")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
     .eq("action", "send_message")
     .gte("created_at", weekStart.toISOString());
 
-  const { count: optOutCount } = await db
+  const { count: _optOutCount } = await db
     .from("events")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)

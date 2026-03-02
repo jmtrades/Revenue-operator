@@ -50,7 +50,7 @@ export default function OpsDashboardPage() {
       });
       const d = await r.json();
       setActionResult(d.error ? `${label} failed: ${d.error}` : `${label}: ${JSON.stringify(d)}`);
-    } catch (e) {
+    } catch (_e) {
       setActionResult(`${label} failed`);
     }
   };

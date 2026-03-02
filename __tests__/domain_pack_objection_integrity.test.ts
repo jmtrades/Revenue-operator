@@ -7,10 +7,10 @@ import { describe, it, expect } from "vitest";
 import { INDUSTRY_PACKS } from "@/lib/domain-packs/presets/industry-packs";
 import type { ObjectionNode } from "@/lib/domain-packs/schema";
 
-function countObjectionNodes(nodes: ObjectionNode[]): number {
+function _countObjectionNodes(nodes: ObjectionNode[]): number {
   let n = nodes.length;
   for (const node of nodes) {
-    if (node.children?.length) n += countObjectionNodes(node.children);
+    if (node.children?.length) n += _countObjectionNodes(node.children);
   }
   return n;
 }

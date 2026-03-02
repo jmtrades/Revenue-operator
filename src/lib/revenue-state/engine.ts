@@ -5,7 +5,7 @@
  */
 
 import type { DealStateVector } from "@/lib/engines/perception";
-import type { RevenueState, RevenueStateResult } from "./types";
+import type { RevenueStateResult } from "./types";
 
 /** Compute when a lead will move toward REVENUE_AT_RISK (hours from now). */
 function predictTransitionToRisk(v: DealStateVector): number | null {

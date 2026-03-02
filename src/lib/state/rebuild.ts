@@ -5,7 +5,7 @@
 
 import { getSignalsForLead } from "@/lib/signals/store";
 import { reduceLeadState } from "./reducer";
-import { leadStateToLifecycle, lifecycleToLeadState, type LifecycleState } from "./types";
+import { lifecycleToLeadState, type LifecycleState } from "./types";
 import type { CanonicalSignalType } from "@/lib/signals/types";
 
 export interface RebuildCheckpoint {

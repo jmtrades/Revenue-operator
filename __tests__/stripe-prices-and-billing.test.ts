@@ -12,8 +12,6 @@ import {
 } from "@/lib/stripe-prices";
 import { FEATURE_UNAVAILABLE_MESSAGE } from "@/lib/billing-copy";
 import { getTierFeatures } from "@/lib/feature-gate";
-import type { BillingTier } from "@/lib/feature-gate/types";
-
 describe("Stripe price resolution", () => {
   const originalEnv = process.env;
 

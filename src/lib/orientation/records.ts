@@ -233,7 +233,7 @@ export async function getOperationalOrientationStateBooleans(workspaceId: string
   const db = getDb();
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
-  const since24h = new Date(now.getTime() - RECENTLY_VIEWED_MS).toISOString();
+  const _since24h = new Date(now.getTime() - RECENTLY_VIEWED_MS).toISOString();
   const since24hHandoff = new Date(now.getTime() - RECENT_HANDOFF_MS).toISOString();
 
   const [viewedRow, stateRow, count6h, escRows] = await Promise.all([

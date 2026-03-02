@@ -2,7 +2,7 @@
  * Billing tests: Stripe webhook signature verification, trial creation, reminder idempotency
  */
 
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 
 describe("Billing", () => {
   describe("Trial reminders", () => {

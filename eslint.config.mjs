@@ -13,6 +13,16 @@ const uiDoctrine = { rules: uiDoctrinePlugin.rules };
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Global: ignore unused vars/args that start with _
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
+    },
+  },
   {
     files: ["src/app/dashboard/**/*.tsx", "src/components/**/*.tsx", "src/lib/intelligence/**/*.ts"],
     plugins: { "ui-doctrine": uiDoctrine },
@@ -20,7 +30,7 @@ const eslintConfig = defineConfig([
       "react-hooks/set-state-in-effect": "off",
       "react-hooks/preserve-manual-memoization": "off",
       "react-hooks/exhaustive-deps": "warn",
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" }],
       "ui-doctrine/no-dashboard-patterns": "error",
       "ui-doctrine/no-live-ui": "error",
     },

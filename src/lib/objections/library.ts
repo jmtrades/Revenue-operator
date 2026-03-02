@@ -105,7 +105,7 @@ export function detectObjectionType(
 export function getObjectionResponseSlots(
   objectionType: ObjectionType,
   context: BusinessContext,
-  conversationState: ConversationState
+  _conversationState: ConversationState
 ): ObjectionResponseSlots | null {
   if (!objectionType) return null;
 

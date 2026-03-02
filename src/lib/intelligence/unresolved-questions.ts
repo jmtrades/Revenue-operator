@@ -95,7 +95,7 @@ export async function recordUnresolvedQuestions(
 ): Promise<{ ok: boolean }> {
   if (questions.length === 0) return { ok: true };
   const db = getDb();
-  const now = new Date().toISOString();
+  const _now = new Date().toISOString();
   try {
     for (const q of questions) {
       await db.from("unresolved_questions").insert({

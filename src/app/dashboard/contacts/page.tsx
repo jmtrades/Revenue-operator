@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
@@ -25,7 +25,7 @@ export default function ContactsPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
-  const load = () => {
+  const load = useCallback(() => {
     if (!workspaceId) return;
     setLoading(true);
     setError(null);
@@ -40,7 +40,7 @@ export default function ContactsPage() {
       })
       .catch(() => setError("Could not load contacts."))
       .finally(() => setLoading(false));
-  };
+  }, [workspaceId]);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -50,7 +50,7 @@ export default function ContactsPage() {
       return;
     }
     load();
-  }, [workspaceId]);
+  }, [workspaceId, load]);
 
   const filtered = search.trim()
     ? contacts.filter(

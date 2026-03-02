@@ -20,7 +20,7 @@ export const PRICING_TIERS = [
   {
     name: "Starter",
     priceMonthly: "$97",
-    priceAnnual: "$79",
+    priceAnnual: "$81",
     period: "/mo",
     description: "For solo operators",
     features: [
@@ -116,16 +116,18 @@ export const FOOTER_LEGAL = [
 ] as const;
 
 export const PRICING_FAQ = [
-  { q: "Can I switch plans later?", a: "Yes. You can upgrade or downgrade at any time. Changes take effect at the start of the next billing period." },
-  { q: "What counts as a governed call?", a: "Any voice call that is recorded, transcribed, and stored under your declared jurisdiction and compliance framework." },
-  { q: "Is there a free trial?", a: "All plans include a 14-day free trial. No credit card required to start." },
-  { q: "Do you offer annual billing?", a: "Annual billing is available for all plans. Two months free (17% off) when you commit annually." },
-  { q: "What compliance frameworks are supported?", a: "Recall Touch supports jurisdiction-based controls (US, UK, EU) and configurable review depth (preview required, approval required, or standard)." },
-  { q: "Can I export my records?", a: "Yes. All plans include an audit trail. Team plans include full export and API access for record retrieval." },
-  { q: "What happens if I exceed my call limit?", a: "Recall Touch will notify you before you reach your limit. You can upgrade your plan or add capacity. No automatic overage charges." },
-  { q: "Do you offer volume discounts?", a: "Team and enterprise plans support custom pricing and volume discounts. Email hello@recall-touch.com for details." },
-  { q: "Can I port my existing number?", a: "Yes. Number porting is supported. Start with a new number and port later, or contact support to port during setup." },
-  { q: "How do I set up call forwarding?", a: "After signup, you get step-by-step instructions. Docs include carrier-specific steps for AT&T, Verizon, T-Mobile, and others." },
+  { q: "How does the free trial work?", a: "14 days, full features, no credit card needed." },
+  { q: "What if I exceed my minutes?", a: "Calls continue at overage rate, never cut off." },
+  { q: "Can I keep my existing number?", a: "Yes, forward it to your Recall Touch number." },
+  { q: "What voices are available?", a: "6 included, premium via add-on $29/mo." },
+  { q: "Is there a contract?", a: "No, month-to-month, cancel anytime." },
+  { q: "Do you support HIPAA?", a: "Yes, add-on $99/mo with BAA." },
+  { q: "What integrations?", a: "Google Calendar, Outlook, HubSpot, Zapier. API on Scale+." },
+  { q: "How is this different from an answering service?", a: "24/7, handles outbound, costs 90% less." },
+  { q: "What happens after hours?", a: "Answers following your after-hours rules." },
+  { q: "Can I try before buying?", a: "14-day trial or use the interactive demo right now." },
+  { q: "How do I cancel?", a: "Settings → Billing → Cancel. Effective at period end." },
+  { q: "How does billing work?", a: "Monthly or annual. Included minutes plus overage per minute." },
 ] as const;
 
 export const COMPARISON_FEATURES = [

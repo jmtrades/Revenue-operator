@@ -361,7 +361,7 @@ function TopBar() {
 function WorkspaceSelect() {
   const router = useRouter();
   const pathname = usePathname();
-  const { workspaceId, workspaces, loading, error, setWorkspaceId, retry } = useWorkspace();
+  const { workspaceId, workspaces, loading, error, setWorkspaceId, retry: _retry } = useWorkspace();
   const effectiveId = workspaceId || (workspaces.length > 0 ? workspaces[0]?.id : "") || "";
 
   const handleChange = (id: string) => {

@@ -3,8 +3,6 @@
  * All outbound messages from controlled templates with slots.
  */
 
-import type { LeadState } from "@/lib/types";
-
 export type TemplateSlots = {
   greeting?: string;
   context_line?: string;

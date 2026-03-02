@@ -9,7 +9,6 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
-import { workspaceHasTemporalStability } from "@/lib/temporal-stability";
 import { hasThirdPartyReliance } from "@/lib/third-party-reliance/presence-state";
 import { hasCascadeUncertainty } from "@/lib/operational-ambiguity/cascade-uncertainty";
 import { hasHistoricalClarity } from "@/lib/operational-ambiguity/historical-clarity";

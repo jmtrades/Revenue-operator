@@ -9,14 +9,14 @@ export default function NotFound() {
           Page not found
         </h1>
         <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-          This page doesn’t exist or was moved. Go back home or try the main menu.
+          This page doesn’t exist.
         </p>
         <div className="flex gap-3 justify-center flex-wrap">
           <Link
             href="/"
             className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-black font-semibold hover:bg-zinc-200 transition"
           >
-            Go home
+            Go home →
           </Link>
           <Link
             href="/contact"

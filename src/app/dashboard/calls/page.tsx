@@ -26,7 +26,7 @@ interface CalendarRiskData {
 export default function CalendarPage() {
   const { workspaceId } = useWorkspace();
   const [data, setData] = useState<CalendarRiskData | null>(null);
-  const [riskSurface, setRiskSurface] = useState<{ calendar_at_risk: Array<{ call_id: string; rescue_needed: boolean }> } | null>(null);
+  const [_riskSurface, setRiskSurface] = useState<{ calendar_at_risk: Array<{ call_id: string; rescue_needed: boolean }> } | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function CalendarPage() {
         <div className="space-y-4">
           {allCalls.map((c) => {
             const confidence = attendanceConfidence(c);
-            const prep = preparationState(c);
+            const _prep = preparationState(c);
             const name = c.lead?.name ?? c.lead?.company ?? "—";
             return (
               <div

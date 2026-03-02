@@ -18,7 +18,7 @@ const PURPOSE_OPTIONS: { value: string; label: string }[] = [
 
 export default function ImportPage() {
   const { workspaceId } = useWorkspace();
-  const [file, setFile] = useState<File | null>(null);
+  const [_file, setFile] = useState<File | null>(null);
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<string[][]>([]);
   const [importing, setImporting] = useState(false);

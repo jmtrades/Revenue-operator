@@ -138,40 +138,20 @@ export function ActivateForm() {
   };
 
   if (submittedLocal) {
-    const savedEmail = (() => {
-      try {
-        const raw = localStorage.getItem(RT_SIGNUP_KEY) ?? localStorage.getItem(RECALLTOUCH_SIGNUP_KEY);
-        if (raw) {
-          const d = JSON.parse(raw) as { email?: string };
-          return d?.email ?? null;
-        }
-      } catch {
-        return null;
-      }
-      return null;
-    })();
     return (
       <div className="text-center">
         <div className="text-5xl mb-4">🎉</div>
         <h2 className="text-xl font-bold text-white mb-3">Welcome to Recall Touch!</h2>
         <p className="text-sm mb-6 text-zinc-400">
-          We&apos;re setting up your AI phone system now.
-          {savedEmail ? ` Check ${savedEmail} for your login link.` : " Check your email for your login link."}
+          Your AI phone system is ready. Let&apos;s set up your first agent.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/dashboard"
-            className="inline-block py-2.5 px-4 rounded-lg text-sm font-medium bg-white text-black hover:bg-zinc-200 transition"
-          >
-            Go to dashboard →
-          </Link>
-          <Link
-            href="/"
-            className="inline-block py-2.5 px-4 rounded-lg text-sm font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition"
-          >
-            Back to home
-          </Link>
-        </div>
+        <button
+          type="button"
+          onClick={() => router.push("/app")}
+          className="w-full max-w-[320px] py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200 transition"
+        >
+          Set up your AI agent →
+        </button>
       </div>
     );
   }

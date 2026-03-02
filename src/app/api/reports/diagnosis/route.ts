@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
   const booked = stateCounts.BOOKED ?? 0;
   const showed = stateCounts.SHOWED ?? 0;
-  const qualified = stateCounts.QUALIFIED ?? 0;
+  const _qualified = stateCounts.QUALIFIED ?? 0;
   if (booked > 0 && showed < booked * 0.7) {
     diagnosis.push({
       problem: "Show rate decline",

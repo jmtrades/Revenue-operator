@@ -226,7 +226,7 @@ export async function runPreCallPreparationWindow(): Promise<
   const { data: settingsRows } = await db.from("settings").select("workspace_id, business_hours");
   if (!settingsRows?.length) return results;
 
-  const dayStart = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  const _dayStart = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
   const dayEnd = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
 
   for (const row of settingsRows as { workspace_id: string; business_hours?: { timezone?: string } }[]) {
@@ -303,7 +303,7 @@ export async function runWorkdayCompletionSignal(): Promise<
 > {
   const db = getDb();
   const results: Array<{ workspaceId: string; sent: boolean; error?: string }> = [];
-  const now = new Date().toISOString();
+  const _now = new Date().toISOString();
 
   const { data: settingsRows } = await db.from("settings").select("workspace_id, business_hours");
   if (!settingsRows?.length) return results;

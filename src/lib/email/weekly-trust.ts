@@ -43,12 +43,12 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
     const email = (user as { email?: string } | null)?.email;
     if (!email) continue;
 
-    const conversationsMaintained = Math.max(1, Math.floor((activeConversations ?? 0) * 0.7) + replies);
-    const attendanceSecured = attendance;
+    const _conversationsMaintained = Math.max(1, Math.floor((activeConversations ?? 0) * 0.7) + replies);
+    const _attendanceSecured = attendance;
     const recoveries = followUps;
 
     // Fail-safe: If no recoveries, interpret as stability
-    const recoveryText = recoveries > 0 
+    const _recoveryText = recoveries > 0 
       ? `• ${recoveries} conversation${recoveries !== 1 ? "s" : ""} — customer returned`
       : `• Conversations stayed on track`;
 

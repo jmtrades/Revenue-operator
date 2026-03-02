@@ -3,7 +3,6 @@ import {
   passesStageLimit,
   passesCooldownLadder,
   getCooldownSeconds,
-  STAGE_LIMITS,
   COOLDOWN_LADDER,
 } from "../src/lib/autopilot";
 

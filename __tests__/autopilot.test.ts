@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   isOptOut,
-  isWithinBusinessHours,
   containsForbiddenPhrase,
   mergeSettings,
 } from "../src/lib/autopilot";

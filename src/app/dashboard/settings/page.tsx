@@ -162,7 +162,7 @@ export default function SettingsPage() {
 
   const save = async () => {
     if (!workspaceId) return;
-    const res = await fetch(`/api/workspaces/${workspaceId}/settings`, {
+    const _res = await fetch(`/api/workspaces/${workspaceId}/settings`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -8,8 +8,8 @@ import path from "path";
 
 const ROOT = path.resolve(__dirname, "..");
 const PERIOD_PATH = path.join(ROOT, "src/lib/proof-capsule-period/index.ts");
-const MAX_LINE = 90;
-const MAX_LINES = 8;
+const _MAX_LINE = 90;
+const _MAX_LINES = 8;
 const FORBIDDEN = ["you", "your", "we", "us", "click", "optimize", "ROI", "KPI", "dashboard", "assistant"];
 
 describe("Proof capsules", () => {

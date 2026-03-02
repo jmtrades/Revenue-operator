@@ -28,12 +28,20 @@ export default function GlobalError({
             <p className="text-sm mb-6" style={{ color: "#9ca3af" }}>
             </p>
             <div className="flex gap-3 justify-center">
-              <Link
-                href="/activate"
+              <button
+                type="button"
+                onClick={() => reset()}
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
                 style={{ background: "#1f2937", borderColor: "#374151", borderWidth: "1px", color: "#e5e7eb" }}
               >
-                Access
+                Try again
+              </button>
+              <Link
+                href="/"
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
+                style={{ background: "#1f2937", borderColor: "#374151", borderWidth: "1px", color: "#e5e7eb" }}
+              >
+                Go home
               </Link>
             </div>
           </div>

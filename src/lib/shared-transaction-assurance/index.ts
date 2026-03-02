@@ -47,12 +47,12 @@ export interface SharedTransactionRow {
   updated_at: string;
 }
 
-const PROTOCOL_EVENT_TYPES = ["created", "token_issued", "acknowledged", "rescheduled", "disputed", "expired", "mirrored", "network_pressure"] as const;
+const _PROTOCOL_EVENT_TYPES = ["created", "token_issued", "acknowledged", "rescheduled", "disputed", "expired", "mirrored", "network_pressure"] as const;
 
 async function appendProtocolEvent(
   externalRef: string,
   workspaceId: string | null,
-  eventType: (typeof PROTOCOL_EVENT_TYPES)[number],
+  eventType: (typeof _PROTOCOL_EVENT_TYPES)[number],
   payload: Record<string, unknown> = {}
 ): Promise<void> {
   const db = getDb();

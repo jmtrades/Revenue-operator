@@ -25,7 +25,7 @@ export async function detectAndRecordConflictedMemory(
   
   if (!disputeEvent) return;
   
-  const disputeTime = new Date((disputeEvent as { recorded_at: string }).recorded_at).getTime();
+  const _disputeTime = new Date((disputeEvent as { recorded_at: string }).recorded_at).getTime();
   
   const { data: downstreamActions } = await db
     .from("reciprocal_events")

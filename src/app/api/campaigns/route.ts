@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json(campaign);
-  } catch (e) {
+  } catch (_e) {
     return NextResponse.json({ error: "Failed to create campaign" }, { status: 500 });
   }
 }

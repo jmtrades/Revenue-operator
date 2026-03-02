@@ -13,11 +13,11 @@ function fillSlotsDeterministic(
   context: { leadName?: string; company?: string; capacity_pressure?: number }
 ): TemplateSlots {
   const name = context.leadName?.trim() || "there";
-  const company = context.company?.trim() || "";
+  const _company = context.company?.trim() || "";
   const capacity = context.capacity_pressure ?? 0;
   const limited = capacity >= 2;
   const critical = capacity >= 3;
-  const def = ACTION_TEMPLATES[interventionType];
+  const _def = ACTION_TEMPLATES[interventionType];
   const slots: TemplateSlots = {};
 
   switch (interventionType) {

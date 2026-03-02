@@ -32,7 +32,7 @@ function isPaymentsConfigured(): boolean {
  */
 export function createStripePaymentsProvider(): PaymentsReadProvider {
   return {
-    async listRecentCharges({ workspaceId, since, limit }) {
+    async listRecentCharges({ workspaceId: _workspaceId, since, limit }) {
       if (!isPaymentsConfigured()) return [];
       try {
         const Stripe = (await import("stripe")).default;

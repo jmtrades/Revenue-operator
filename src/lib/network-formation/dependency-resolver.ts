@@ -70,8 +70,8 @@ export async function resolveMissingDependencies(workspaceId: string): Promise<n
     if (resolved >= MAX_RESOLVE_PER_RUN) break;
     
     const threadId = thread.id;
-    const subjectType = thread.subject_type;
-    const subjectId = thread.subject_id;
+    const _subjectType = thread.subject_type;
+    const _subjectId = thread.subject_id;
     const leadId = thread.lead_id;
     const conversationId = thread.conversation_id;
     

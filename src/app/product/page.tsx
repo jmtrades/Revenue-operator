@@ -82,14 +82,14 @@ const FEATURES = [
 ];
 
 const PRODUCT_SECTIONS = [
-  { id: "inbound", title: "Inbound Call Handling", desc: "Your AI answers every call 24/7. No more missed leads or after-hours voicemail. Callers get a natural conversation, instant qualification, and optional booking — all without you picking up.", bullets: ["24/7 answer", "Natural voice AI", "Instant qualification", "Optional calendar booking"] },
-  { id: "outbound", title: "Outbound AI Calling", desc: "Follow up with leads in seconds, remind customers before appointments, and run campaigns that feel human. The AI places calls, leaves voicemails, and updates your records automatically.", bullets: ["Speed-to-lead (60s)", "Appointment reminders", "No-show recovery", "Review requests"] },
-  { id: "agents", title: "AI Agent Builder", desc: "Create and customize AI agents with templates for your industry. Set voice, greeting, knowledge base, and rules. No code. Test with a real call before going live.", bullets: ["20+ templates", "Custom voice & greeting", "Knowledge base", "Test call button"] },
-  { id: "leads", title: "Lead Capture & Qualification", desc: "Every call is summarized, scored, and classified. High-intent leads get instant alerts. Key details (budget, timeline, service) are extracted and attached to the contact.", bullets: ["AI summary & score", "Instant alerts", "Key detail extraction", "Activity feed"] },
-  { id: "appointments", title: "Appointment Management", desc: "Book appointments during calls. Sync with Google Calendar or Outlook. Send confirmations and reminders automatically. Recover no-shows with a single click.", bullets: ["Book during call", "Calendar sync", "Confirmations & reminders", "No-show recovery"] },
-  { id: "messaging", title: "Messaging", desc: "Auto-text callers after every call. Two-way SMS from your business number. Sequences for follow-up, reminders, and review requests. All from one inbox.", bullets: ["Post-call auto-text", "Two-way SMS", "Follow-up sequences", "Unified inbox"] },
-  { id: "insights", title: "Insights & ROI", desc: "See calls answered, leads captured, appointments booked, and revenue attributed. Compare before vs after. Know exactly how much time and revenue the AI drives.", bullets: ["Call volume & answer rate", "Lead funnel", "Revenue attribution", "Time saved"] },
-  { id: "compliance", title: "Compliance & Records", desc: "Every call is recorded, transcribed, and stored. Export compliance records for legal or audit. Jurisdiction-aware. Chain of custody. No manual logging.", bullets: ["Recording & transcription", "Export records", "Audit trail", "Jurisdiction tagging"] },
+  { id: "answers-every-call", title: "Answers every call", desc: "Your AI picks up on the first ring, 24/7/365. No voicemail. No hold music. Natural conversational voice handles everything from simple questions to complex scheduling. Whether it's 2 AM or your busiest hour, every caller gets the same professional experience.", bullets: ["First ring answer", "24/7/365", "Natural voice", "No voicemail"] },
+  { id: "outbound", title: "Makes outbound calls", desc: "New web lead? Your AI calls back within 60 seconds. Appointment tomorrow? Confirmation call the evening before. No-show? Automatic reschedule. Customer hasn't returned in 6 months? Reactivation follow-up. Your AI follows up so your team handles work that requires a human.", bullets: ["60-second callback", "Appointment reminders", "No-show recovery", "Reactivation"] },
+  { id: "agents", title: "Agent studio", desc: "Build your AI agent without code. Start from 20+ industry templates or from scratch. Choose voice, personality, greeting, knowledge base, business rules. Test with a real call before going live. Edit anytime — changes are instant.", bullets: ["No code", "20+ templates", "Voice & personality", "Test before live"] },
+  { id: "leads", title: "Lead capture & scoring", desc: "Every call auto-extracts name, phone, address, service needed, urgency. Each lead scored 0-100 on intent signals. Instant text + email notification. No more sticky notes or forgotten follow-ups.", bullets: ["Auto-extract details", "Score 0-100", "Instant alerts", "Activity feed"] },
+  { id: "appointments", title: "Appointment booking", desc: "Checks Google Calendar or Outlook in real-time, offers available slots, books, confirms via text. Sends reminders before. Reschedules no-shows automatically. Calendar stays full without you lifting a finger.", bullets: ["Calendar sync", "Real-time availability", "Confirmations & reminders", "No-show reschedule"] },
+  { id: "messaging", title: "Smart messaging", desc: "Two-way SMS from your business number. Auto-confirmations after bookings. Follow-up sequences for leads who didn't convert. Review requests after appointments. One inbox for all conversations.", bullets: ["Two-way SMS", "Auto-confirmations", "Follow-up sequences", "One inbox"] },
+  { id: "insights", title: "Analytics & ROI", desc: "Call volume, answer rate, lead conversion, appointment completion, revenue recovered. Usage meter shows minutes vs plan. Monthly ROI statement: your AI captured X leads, booked Y appointments worth $Z. Cost: $97. ROI: clear.", bullets: ["Call volume & answer rate", "Lead conversion", "Revenue recovered", "Usage meter"] },
+  { id: "compliance", title: "Compliance", desc: "Every call recorded and transcribed. HIPAA mode available. Retention 30-365 days. Full audit trail. Data export. Industry-ready documentation.", bullets: ["Recording & transcription", "HIPAA option", "Retention 30-365 days", "Audit trail"] },
 ];
 
 const USE_CASES = [
@@ -121,21 +121,30 @@ export default function ProductPage() {
 
           <div className="space-y-20 mb-24">
             {PRODUCT_SECTIONS.map((s, i) => (
-              <section key={s.id} id={s.id} className={"grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start " + (i % 2 === 1 ? "md:grid-flow-dense" : "")}>
-                <div className={i % 2 === 1 ? "md:col-start-2" : ""}>
-                  <h2 className="font-semibold text-xl md:text-2xl mb-4" style={{ color: "var(--text-primary)" }}>{s.title}</h2>
-                  <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>{s.desc}</p>
-                  <ul className="space-y-1.5">
-                    {s.bullets.map((b) => (
-                      <li key={b} className="text-sm flex items-center gap-2" style={{ color: "var(--text-secondary)" }}>
-                        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--accent-primary)" }} />
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className={i % 2 === 1 ? "md:col-start-1 md:row-start-1" : ""} />
-              </section>
+              <div key={s.id}>
+                {i === 4 && (
+                  <div className="mb-20 p-6 rounded-2xl border text-center" style={{ borderColor: "var(--accent-primary)", background: "var(--accent-primary-subtle)" }}>
+                    <p className="text-base font-medium" style={{ color: "var(--text-primary)" }}>
+                      Enterprise voice AI: $150,000/year + 6 weeks. Recall Touch: $97/month + 5 minutes.
+                    </p>
+                  </div>
+                )}
+                <section id={s.id} className={"grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start " + (i % 2 === 1 ? "md:grid-flow-dense" : "")}>
+                  <div className={i % 2 === 1 ? "md:col-start-2" : ""}>
+                    <h2 className="font-semibold text-xl md:text-2xl mb-4" style={{ color: "var(--text-primary)" }}>{s.title}</h2>
+                    <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>{s.desc}</p>
+                    <ul className="space-y-1.5">
+                      {s.bullets.map((b) => (
+                        <li key={b} className="text-sm flex items-center gap-2" style={{ color: "var(--text-secondary)" }}>
+                          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--accent-primary)" }} />
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className={i % 2 === 1 ? "md:col-start-1 md:row-start-1" : ""} />
+                </section>
+              </div>
             ))}
           </div>
 
@@ -184,7 +193,7 @@ export default function ProductPage() {
           </section>
 
           <section className="mt-24 py-16 text-center" style={{ background: "var(--gradient-cta-section)", borderTop: "1px solid var(--border-default)", borderBottom: "1px solid var(--border-default)" }}>
-            <p className="text-sm font-medium mb-4" style={{ color: "var(--accent-primary)" }}>Enterprise voice systems used to cost $150K/year. Now $97/month.</p>
+            <p className="text-sm font-medium mb-4" style={{ color: "var(--accent-primary)" }}>Enterprise voice AI: $150,000/year + 6 weeks. Recall Touch: $97/month + 5 minutes.</p>
             <h2 className="font-semibold text-2xl mb-4" style={{ color: "var(--text-primary)" }}>If revenue depends on conversation, govern it.</h2>
             <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>Start in under 60 seconds. No credit card required.</p>
             <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline inline-block">
