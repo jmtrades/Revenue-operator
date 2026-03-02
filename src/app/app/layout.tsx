@@ -93,7 +93,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         role="status"
         aria-label="Demo mode"
       >
-        Demo mode
+        Demo Mode — Connect your phone to go live
       </div>
       <div className="flex flex-1 min-h-0">
         <aside className="hidden md:flex md:w-60 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800">
@@ -121,7 +121,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </nav>
           <div className="p-3 border-t border-zinc-800">
             <span className="inline-block px-3 py-1 rounded-lg text-xs font-medium bg-zinc-800 text-zinc-400">
-              Starter
+              Starter — 14 days left
             </span>
           </div>
         </aside>

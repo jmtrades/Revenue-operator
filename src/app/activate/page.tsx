@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ActivateForm } from "@/components/ActivateForm";
 
 // Auth transition contract (bounded, no indefinite spinner)
-// Verifying session.
 // Unable to proceed.
 // Authorization could not be confirmed.
 // setTransitionError after 8000ms (8_000) to avoid indefinite wait.

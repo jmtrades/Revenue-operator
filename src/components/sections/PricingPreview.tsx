@@ -34,7 +34,7 @@ export function PricingPreview() {
           </button>
           <span className="text-sm font-medium flex items-center gap-2" style={{ color: annual ? "var(--text-primary)" : "var(--text-tertiary)" }}>
             Annual
-            {annual && <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "var(--accent-secondary-subtle)", color: "var(--accent-secondary)" }}>2 months free</span>}
+            {annual && <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "#22C55E20", color: "#22C55E" }}>Save 17%</span>}
           </span>
         </div>
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

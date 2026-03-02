@@ -64,13 +64,14 @@ const TYPE_LABELS: Record<string, string> = {
   urgent: "Urgent",
 };
 
-type FilterId = "all" | "needs_action" | "leads" | "appointments";
+type FilterId = "all" | "needs_action" | "leads" | "appointments" | "urgent";
 
 const FILTERS: { id: FilterId; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "needs_action", label: "Needs action" },
+  { id: "needs_action", label: "Needs Action" },
   { id: "leads", label: "Leads" },
   { id: "appointments", label: "Appointments" },
+  { id: "urgent", label: "Urgent" },
 ];
 
 export default function AppActivityPage() {
@@ -97,9 +98,11 @@ export default function AppActivityPage() {
         ? DEMO_CARDS.filter((c) => c.type === "lead")
         : filter === "appointments"
           ? DEMO_CARDS.filter((c) => c.type === "appointment")
-          : filter === "needs_action"
-            ? DEMO_CARDS.filter((c) => c.type === "lead" || c.type === "urgent")
-            : DEMO_CARDS;
+          : filter === "urgent"
+            ? DEMO_CARDS.filter((c) => c.type === "urgent")
+            : filter === "needs_action"
+              ? DEMO_CARDS.filter((c) => c.type === "lead" || c.type === "urgent")
+              : DEMO_CARDS;
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">

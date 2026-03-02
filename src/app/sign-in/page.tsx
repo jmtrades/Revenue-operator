@@ -1,10 +1,6 @@
 import Link from "next/link";
 import SignInForm from "./SignInForm";
 
-// Auth transition contract (bounded, no indefinite spinner)
-// Verifying session.
-// setTransitionError after 8000ms (8_000) to avoid indefinite wait.
-
 export const metadata = {
   title: "Sign in",
   description: "Sign in to your Recall Touch dashboard.",
