@@ -1,5 +1,3 @@
-"use client";
-
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { ProblemStatement } from "@/components/sections/ProblemStatement";
@@ -15,7 +13,7 @@ import { ScrollDepthCTA } from "@/components/sections/ScrollDepthCTA";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+    <div className="min-h-screen bg-black text-white">
       <Navbar />
       <main id="main">
         <Hero />
