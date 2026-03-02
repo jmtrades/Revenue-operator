@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Recall Touch — Commercial Execution Infrastructure";
+export const alt = "Recall Touch — AI Phone System for Every Business";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -24,7 +24,7 @@ export default async function Image() {
           Recall Touch
         </div>
         <div style={{ fontSize: 24, color: "#8B8B8D", marginTop: 16 }}>
-          Commercial Execution Infrastructure
+          AI Phone System for Every Business
         </div>
       </div>
     ),

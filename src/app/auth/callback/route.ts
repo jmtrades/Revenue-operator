@@ -21,6 +21,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${origin}/sign-in?error=auth`);
     }
     const userId = data.user?.id;
+    const userEmail = data.user?.email;
     if (!userId) {
       return NextResponse.redirect(new URL(next, origin));
     }
@@ -28,6 +29,13 @@ export async function GET(request: Request) {
     let isNewUser = false;
     try {
       const db = getDb();
+      if (userEmail) {
+        try {
+          await db.from("users").upsert({ id: userId, email: userEmail }, { onConflict: "id" });
+        } catch {
+          // users table may not exist yet (migration not run)
+        }
+      }
       let { data: ws } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
       if (!ws) {
         const { data: created, error: createErr } = await db.from("workspaces").insert({ name: "My workspace", owner_id: userId, autonomy_level: "assisted", kill_switch: false }).select("id").single();

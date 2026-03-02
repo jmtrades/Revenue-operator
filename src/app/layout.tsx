@@ -29,22 +29,24 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — Commercial Execution Infrastructure",
+    default: "Recall Touch — AI Phone System for Every Business",
   },
   description:
-    "Govern every revenue-critical call. Recall Touch provides compliance-grade call governance, automated follow-ups, and auditable records for commercial operations.",
+    "Your AI phone team. Answer every call 24/7, follow up with leads in 60 seconds, book appointments, and never miss a customer. Set up in 5 minutes.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://recall-touch.com",
     siteName: "Recall Touch",
-    title: "Recall Touch — Commercial Execution Infrastructure",
-    description: "Govern every revenue-critical call. Compliance-grade call governance, automated follow-ups, and auditable records.",
+    title: "Recall Touch — AI Phone System for Every Business",
+    description: "Your AI phone team. Answer every call 24/7, follow up with leads in 60 seconds, book appointments. Set up in 5 minutes.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Phone System for Every Business" }],
   },
+  icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — Commercial Execution Infrastructure",
-    description: "Govern every revenue-critical call.",
+    title: "Recall Touch — AI Phone System for Every Business",
+    description: "Your AI phone team. Answer every call 24/7. Set up in 5 minutes.",
   },
   manifest: "/manifest.json",
 };
@@ -55,14 +57,14 @@ const softwareApplicationJsonLd = {
   name: "Recall Touch",
   applicationCategory: "BusinessApplication",
   description:
-    "Commercial execution infrastructure. Govern every revenue-critical call with compliance-grade recording, automated follow-ups, and auditable records.",
+    "AI phone system for every business. Answer every call 24/7, follow up with leads in 60 seconds, book appointments. Set up in 5 minutes.",
   url: "https://recall-touch.com",
   offers: {
     "@type": "AggregateOffer",
-    lowPrice: "49",
-    highPrice: "149",
+    lowPrice: "97",
+    highPrice: "497",
     priceCurrency: "USD",
-    offerCount: "3",
+    offerCount: "4",
   },
   operatingSystem: "Web",
 };

@@ -92,9 +92,11 @@ export default function ContactsPage() {
           <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>Retry</button>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No contacts yet. They appear when you have conversations or import leads.</p>
-          <Link href="/dashboard/record" className="inline-block mt-4 text-sm" style={{ color: "var(--accent)" }}>Record</Link>
+        <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No contacts yet</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Contacts appear when callers reach your number or when you import leads.</p>
+          <Link href="/dashboard/activity" className="inline-block text-sm font-medium mr-2" style={{ color: "var(--accent-primary)" }}>Activity →</Link>
+          <Link href="/dashboard/import" className="inline-block text-sm" style={{ color: "var(--text-secondary)" }}>Import</Link>
         </div>
       ) : (
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>

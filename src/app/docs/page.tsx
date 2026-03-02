@@ -72,7 +72,16 @@ export default function DocsPage() {
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                   Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7.
                 </p>
-                <p className="text-sm mb-2" style={{ color: "var(--text-tertiary)" }}>Carrier-specific steps: AT&T, Verizon, T-Mobile, Comcast, Vonage, Google Voice. Detailed docs coming soon. Email hello@recall-touch.com with questions.</p>
+                <p className="text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>Carrier-specific steps</p>
+                <ul className="text-sm space-y-2 mb-4 list-disc pl-5" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                  <li><strong>AT&T:</strong> Dial <code className="px-1 rounded bg-black/10">*21*[your RT number]#</code> then call. To cancel: <code className="px-1 rounded bg-black/10">#21#</code></li>
+                  <li><strong>Verizon:</strong> Dial <code className="px-1 rounded bg-black/10">*72</code> then your Recall Touch number. Wait for confirmation. To cancel: <code className="px-1 rounded bg-black/10">*73</code></li>
+                  <li><strong>T-Mobile:</strong> Dial <code className="px-1 rounded bg-black/10">**21*[RT number]#</code>. To cancel: <code className="px-1 rounded bg-black/10">##21#</code></li>
+                  <li><strong>Comcast Business:</strong> Log in to the Comcast Business portal → Voice → Call Forwarding → enter your Recall Touch number.</li>
+                  <li><strong>Google Voice:</strong> Settings → Calls → turn on “Forward calls to linked numbers” or add your RT number.</li>
+                  <li><strong>Vonage:</strong> Admin portal → Phone numbers → Forwarding → set your RT number.</li>
+                </ul>
+                <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>Generic: Call your carrier and say “I want to forward my calls to [your Recall Touch number].” Questions: hello@recall-touch.com</p>
               </section>
 
               <section id="ai-agents" className="scroll-mt-28 mb-12 pt-8 border-t" style={{ borderColor: "var(--border-default)" }}>

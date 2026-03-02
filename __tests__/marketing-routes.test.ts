@@ -12,11 +12,11 @@ const ROOT = path.resolve(__dirname, "..");
 
 describe("Marketing routes contract", () => {
   describe("Pricing page", () => {
-    it("has factual tiers Starter, Professional, Business, Enterprise", () => {
+    it("has factual tiers Starter, Growth, Scale, Enterprise", () => {
       const content = readFileSync(path.join(ROOT, "src", "lib", "constants.ts"), "utf-8");
       expect(content).toContain("Starter");
-      expect(content).toContain("Professional");
-      expect(content).toContain("Business");
+      expect(content).toContain("Growth");
+      expect(content).toContain("Scale");
       expect(content).toContain("Enterprise");
     });
 

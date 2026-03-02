@@ -33,6 +33,7 @@ loadEnv();
 
 /** Run these first (in order); then all others alphabetically. */
 const RUN_FIRST = [
+  "000_base_schema.sql", // creates schema, users, workspaces, leads, settings, conversations
   "000_repair_schema.sql",
   "shared_transaction_assurance.sql",
   "orientation_layer.sql", // creates workspace_orientation_state

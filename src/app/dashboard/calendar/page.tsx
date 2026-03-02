@@ -79,12 +79,11 @@ export default function CalendarPage() {
           <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>Retry</button>
         </div>
       ) : appointments.length === 0 ? (
-        <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No appointments yet.</p>
-          <div className="flex flex-wrap justify-center gap-4 mt-4">
-            <Link href="/dashboard/activity" className="text-sm" style={{ color: "var(--accent)" }}>Activity</Link>
-            <Link href="/dashboard/integrations" className="text-sm" style={{ color: "var(--text-secondary)" }}>Connect calendar</Link>
-          </div>
+        <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No appointments yet</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Your AI will book them automatically when callers schedule. Connect a calendar to sync.</p>
+          <Link href="/dashboard/integrations" className="inline-block text-sm font-medium mr-2" style={{ color: "var(--accent-primary)" }}>Connect calendar →</Link>
+          <Link href="/dashboard/activity" className="inline-block text-sm" style={{ color: "var(--text-secondary)" }}>Activity</Link>
         </div>
       ) : (
         <div className="space-y-6">

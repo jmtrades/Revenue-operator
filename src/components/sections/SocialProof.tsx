@@ -22,10 +22,17 @@ export function SocialProof() {
   const handleEarlyAccess = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
+    const payload = { email: email.trim(), at: Date.now() };
     try {
-      localStorage.setItem("rt_early_access", JSON.stringify({ email: email.trim(), at: Date.now() }));
+      localStorage.setItem("rt_waitlist", JSON.stringify(payload));
+      localStorage.setItem("rt_early_access", JSON.stringify(payload));
     } catch {
       // ignore
+    }
+    try {
+      fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim() }) }).catch(() => {});
+    } catch {
+      // silent fail
     }
     setSubmitted(true);
   };
@@ -57,7 +64,7 @@ export function SocialProof() {
               </button>
             </form>
           ) : (
-            <p className="text-sm mb-10" style={{ color: "var(--meaning-green)" }}>You&apos;re on the list. Check your inbox for next steps.</p>
+            <p className="text-sm mb-10" style={{ color: "var(--meaning-green)" }}>You&apos;re on the list! 🎉</p>
           )}
           <div className="flex flex-wrap justify-center gap-4">
             {badges.map((b) => (

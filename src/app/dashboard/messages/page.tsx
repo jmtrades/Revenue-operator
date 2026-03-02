@@ -175,7 +175,11 @@ export default function MessagesPage() {
               <button type="button" onClick={loadConversations} className="text-xs font-medium px-3 py-1.5 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>Retry</button>
             </div>
           ) : conversations.length === 0 ? (
-            <p className="p-4 text-sm" style={{ color: "var(--text-muted)" }}>No conversations yet.</p>
+            <div className="p-4 text-center">
+              <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No messages yet</p>
+              <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Your AI will text callers automatically. Threads appear here after calls or when you send a message.</p>
+              <Link href="/dashboard/activity" className="inline-block mt-3 text-xs font-medium" style={{ color: "var(--accent-primary)" }}>Activity →</Link>
+            </div>
           ) : (
             <ul>
               {conversations.map((c) => (

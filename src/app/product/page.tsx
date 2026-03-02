@@ -182,7 +182,7 @@ export default function ProductPage() {
           </section>
 
           <section className="mt-24 py-16 text-center" style={{ background: "var(--gradient-cta-section)", borderTop: "1px solid var(--border-default)", borderBottom: "1px solid var(--border-default)" }}>
-            <p className="text-sm font-medium mb-4" style={{ color: "var(--accent-primary)" }}>Enterprise voice systems used to cost $150K/year. Now $49/month.</p>
+            <p className="text-sm font-medium mb-4" style={{ color: "var(--accent-primary)" }}>Enterprise voice systems used to cost $150K/year. Now $97/month.</p>
             <h2 className="font-semibold text-2xl mb-4" style={{ color: "var(--text-primary)" }}>If revenue depends on conversation, govern it.</h2>
             <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>Start in under 60 seconds. No credit card required.</p>
             <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline inline-block">

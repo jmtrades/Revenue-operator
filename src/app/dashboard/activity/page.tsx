@@ -242,10 +242,12 @@ export default function ActivityPage() {
       {loading ? (
         <ActivityFeedSkeleton />
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)" }}>
-          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No external action was required.</p>
-          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Calls and leads will appear here.</p>
-          <Link href="/dashboard/record" className="inline-block mt-4 text-sm" style={{ color: "var(--accent-primary)" }}>Record a call</Link>
+        <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No calls yet</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Set up call forwarding so your number reaches Recall Touch. New calls will appear here.</p>
+          <Link href="/docs#call-forwarding" className="inline-block mt-2 text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Set up call forwarding →</Link>
+          <span className="mx-2" style={{ color: "var(--text-tertiary)" }}>·</span>
+          <Link href="/dashboard/record" className="inline-block mt-2 text-sm" style={{ color: "var(--text-secondary)" }}>Record a call</Link>
         </div>
       ) : (
         <ul className="space-y-3">

@@ -11,8 +11,8 @@ import { PRICING_TIERS, ROUTES } from "@/lib/constants";
 
 const TIER_ROI: Record<string, string> = {
   Starter: "Less than one missed service call",
-  Professional: "One recovered lead pays for 6 months",
-  Business: "Replace a $55K/year SDR for $4,200/year",
+  Growth: "One recovered lead pays for the month",
+  Scale: "Replace a receptionist for a fraction of the cost",
   Enterprise: "Custom ROI and dedicated support",
 };
 
@@ -34,7 +34,7 @@ export function PricingPreview() {
           </button>
           <span className="text-sm font-medium flex items-center gap-2" style={{ color: annual ? "var(--text-primary)" : "var(--text-tertiary)" }}>
             Annual
-            {annual && <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "var(--accent-secondary-subtle)", color: "var(--accent-secondary)" }}>Save 20%</span>}
+            {annual && <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "var(--accent-secondary-subtle)", color: "var(--accent-secondary)" }}>2 months free</span>}
           </span>
         </div>
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

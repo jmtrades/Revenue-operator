@@ -16,14 +16,14 @@ export default function NotFound() {
             className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
             style={{ background: "var(--accent-primary)", color: "var(--text-inverse)", border: "none" }}
           >
-            Home
+            Go home
           </Link>
           <Link
-            href="/dashboard"
+            href="/contact"
             className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
             style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
           >
-            Dashboard
+            Contact support
           </Link>
         </div>
       </div>

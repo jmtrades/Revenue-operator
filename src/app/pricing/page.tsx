@@ -18,15 +18,15 @@ export function pricingCopyForTests(): string {
   return [
     "Less than one missed call",
     "Starter",
-    "Professional",
-    "Business",
+    "Growth",
+    "Scale",
     "Enterprise",
     "Start free",
     "Talk to sales",
   ].join(" ");
 }
 
-const RECALL_TOUCH_STARTER_MONTHLY = 49;
+const RECALL_TOUCH_STARTER_MONTHLY = 97;
 
 function ROICalculator({ className = "" }: { className?: string }) {
   const [callsPerDay, setCallsPerDay] = useState<string>("10");
@@ -95,6 +95,63 @@ function ROICalculator({ className = "" }: { className?: string }) {
   );
 }
 
+function UsageEstimator({ className = "" }: { className?: string }) {
+  const [callsPerDay, setCallsPerDay] = useState(10);
+  const [avgMin, setAvgMin] = useState(3);
+
+  const monthlyMin = Math.round(callsPerDay * 30 * avgMin);
+  const recommended = monthlyMin <= 200 ? "Starter" : monthlyMin <= 750 ? "Growth" : monthlyMin <= 2500 ? "Scale" : "Enterprise";
+  const estimate = recommended === "Starter" ? 97 : recommended === "Growth" ? 247 : recommended === "Scale" ? 497 : "Custom";
+
+  return (
+    <div className={`rounded-xl border p-6 max-w-lg ${className}`} style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+      <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
+        How many calls do you get per day?
+      </p>
+      <div className="flex items-center gap-4 mb-4">
+        <input
+          type="range"
+          min={5}
+          max={100}
+          value={callsPerDay}
+          onChange={(e) => setCallsPerDay(Number(e.target.value))}
+          className="flex-1 h-2 rounded-lg"
+          style={{ accentColor: "var(--accent-primary)" }}
+        />
+        <span className="text-sm font-medium w-12" style={{ color: "var(--text-primary)" }}>{callsPerDay}</span>
+      </div>
+      <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
+        Average call length (minutes)
+      </p>
+      <div className="flex items-center gap-4 mb-6">
+        <input
+          type="range"
+          min={2}
+          max={5}
+          step={0.5}
+          value={avgMin}
+          onChange={(e) => setAvgMin(Number(e.target.value))}
+          className="flex-1 h-2 rounded-lg"
+          style={{ accentColor: "var(--accent-primary)" }}
+        />
+        <span className="text-sm font-medium w-12" style={{ color: "var(--text-primary)" }}>{avgMin}</span>
+      </div>
+      <div className="pt-4 border-t" style={{ borderColor: "var(--border-default)" }}>
+        <p className="text-sm mb-1" style={{ color: "var(--text-tertiary)" }}>~{monthlyMin.toLocaleString()} min/month</p>
+        <p className="text-base font-medium mb-1" style={{ color: "var(--text-primary)" }}>
+          Recommended: <span style={{ color: "var(--accent-primary)" }}>{recommended}</span>
+          {typeof estimate === "number" ? ` · Est. $${estimate}/mo` : ` · ${estimate}`}
+        </p>
+        {typeof estimate === "number" && (
+          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+            Same volume with a receptionist: ~$3,500/mo · You save ${3500 - Number(estimate)}/mo
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
   return (
@@ -129,7 +186,7 @@ export default function PricingPage() {
             </button>
             <span className="text-sm font-medium flex items-center gap-2" style={{ color: annual ? "var(--text-primary)" : "var(--text-tertiary)" }}>
               Annual
-              <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ background: "var(--accent-secondary)", color: "var(--bg-primary)" }}>Save 20%</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ background: "var(--accent-secondary)", color: "var(--bg-primary)" }}>2 months free</span>
             </span>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -169,7 +226,11 @@ export default function PricingPage() {
           </p>
 
           {/* ROI Calculator — definitive spec */}
-          <h2 id="roi-calculator" className="font-semibold text-xl mb-4 mt-20 scroll-mt-24" style={{ color: "var(--text-primary)" }}>
+          <h2 id="estimate" className="font-semibold text-xl mb-4 mt-20 scroll-mt-24" style={{ color: "var(--text-primary)" }}>
+            Estimate your cost
+          </h2>
+          <UsageEstimator className="mb-10" />
+          <h2 id="roi-calculator" className="font-semibold text-xl mb-4 mt-12 scroll-mt-24" style={{ color: "var(--text-primary)" }}>
             ROI calculator
           </h2>
           <ROICalculator className="mb-16" />
@@ -183,8 +244,8 @@ export default function PricingPage() {
                 <tr style={{ borderBottom: "1px solid var(--border-default)" }}>
                   <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Feature</th>
                   <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Starter</th>
-                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Professional</th>
-                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Business</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Growth</th>
+                  <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Scale</th>
                   <th className="py-4 px-4 font-semibold" style={{ color: "var(--text-tertiary)" }}>Enterprise</th>
                 </tr>
               </thead>

@@ -59,9 +59,10 @@ export default function AgentsPage() {
           <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>Retry</button>
         </div>
       ) : agents.length === 0 ? (
-        <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No agents yet.</p>
-          <Link href="/onboarding" className="inline-block mt-4 text-sm" style={{ color: "var(--accent)" }}>Onboarding</Link>
+        <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No agents yet</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Your AI receptionist is set up in onboarding. Add voice, greeting, and knowledge there.</p>
+          <Link href="/dashboard/onboarding" className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Create your first agent →</Link>
         </div>
       ) : (
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>

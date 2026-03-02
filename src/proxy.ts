@@ -19,6 +19,9 @@ function isPublicPage(pathname: string): boolean {
   if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
   if (pathname === "/sign-in" || pathname.startsWith("/auth/")) return true;
   if (pathname.startsWith("/onboard") || pathname.startsWith("/onboarding") || pathname.startsWith("/public/work")) return true;
+  if (pathname === "/demo" || pathname === "/product" || pathname === "/pricing" || pathname === "/docs") return true;
+  if (pathname === "/contact" || pathname === "/blog" || pathname === "/privacy" || pathname === "/terms") return true;
+  if (pathname.startsWith("/industries/")) return true;
   return false;
 }
 
@@ -38,6 +41,7 @@ function isPublicApi(pathname: string): boolean {
   if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
   if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;
   if (pathname.startsWith("/api/conversations/") && pathname.includes("/messages")) return true;
+  if (pathname === "/api/signup" || pathname === "/api/contact" || pathname === "/api/waitlist") return true;
   return false;
 }
 
@@ -50,7 +54,7 @@ function isOpsAuthRoute(pathname: string): boolean {
 }
 
 function isDashboardOrApi(pathname: string): boolean {
-  return pathname.startsWith("/dashboard") || pathname.startsWith("/api/");
+  return pathname.startsWith("/dashboard") || pathname.startsWith("/admin") || pathname.startsWith("/api/");
 }
 
 function isAllowedDashboardPath(pathname: string): boolean {
@@ -152,6 +156,7 @@ export async function proxy(req: NextRequest) {
     if (pathname.startsWith("/dashboard") && workspaceIdParam) return NextResponse.next();
     if (pathname.startsWith("/api/") && workspaceIdParam) return NextResponse.next();
     if (pathname.startsWith("/dashboard")) return NextResponse.redirect(new URL("/activate", req.url));
+    if (pathname.startsWith("/admin")) return NextResponse.redirect(new URL("/activate", req.url));
     if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     return NextResponse.next();
   }
@@ -175,12 +180,24 @@ export const config = {
     "/activate",
     "/connect",
     "/live",
+    "/sign-in",
+    "/demo",
+    "/product",
+    "/pricing",
+    "/docs",
+    "/contact",
+    "/blog",
+    "/privacy",
+    "/terms",
+    "/industries/:path*",
     "/onboard/:path*",
     "/onboarding",
     "/onboarding/:path*",
     "/public/work/:path*",
     "/ops/:path*",
     "/api/ops/:path*",
+    "/admin",
+    "/admin/:path*",
     "/dashboard/:path*",
     "/api/:path*",
   ],
