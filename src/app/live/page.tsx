@@ -80,8 +80,10 @@ function LivePageContent() {
 
   // Sync conversation_id from URL
   useEffect(() => {
-    if (urlConvId && urlConvId !== conversationId) setConversationId(urlConvId);
-  }, [urlConvId]);
+    if (!urlConvId || urlConvId === conversationId) return;
+    const id = setTimeout(() => setConversationId(urlConvId), 0);
+    return () => clearTimeout(id);
+  }, [urlConvId, conversationId]);
 
   // Poll for conversation events (1s for 20s then 2s)
   useEffect(() => {

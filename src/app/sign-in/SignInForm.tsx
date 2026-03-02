@@ -12,7 +12,8 @@ export default function SignInForm() {
   const [authAvailable, setAuthAvailable] = useState<boolean | null>(null);
 
   useEffect(() => {
-    setAuthAvailable(getClientOrNull() !== null);
+    const id = setTimeout(() => setAuthAvailable(getClientOrNull() !== null), 0);
+    return () => clearTimeout(id);
   }, []);
 
   const handleMagicLink = async (e: React.FormEvent) => {

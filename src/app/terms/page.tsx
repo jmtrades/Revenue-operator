@@ -22,50 +22,91 @@ export default function TermsPage() {
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Acceptance</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                By accessing or using Recall Touch, you agree to these Terms of Service. If you are using the service on behalf of an organization, you represent that you have authority to bind that organization.
+                By accessing or using Recall Touch, you agree to these Terms of Service. If you are using the service on behalf of an organization, you represent that you have authority to bind that organization to these terms. If you do not agree, you may not use the service.
               </p>
             </section>
 
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Description of Service</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                Recall Touch provides commercial execution infrastructure: call governance, compliance-grade recording and records, automated follow-ups, and multi-channel messaging under a single compliance framework. We reserve the right to modify or discontinue features with reasonable notice.
+                Recall Touch is an AI phone system for businesses. We provide call answering, outbound calling, appointment booking, lead capture, messaging, recording, transcription, and related features. The service is offered on a subscription basis with different plans and limits as described on our pricing page. We reserve the right to modify, suspend, or discontinue features with reasonable notice when practicable. We do not guarantee uninterrupted or error-free operation.
               </p>
             </section>
 
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>User Responsibilities</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                You are responsible for your account, for ensuring that your use complies with applicable laws, and for the content and data you process through our service. You must not use the service for illegal purposes or to violate the rights of others.
+                You are responsible for your account credentials and for all activity under your account. You must use the service in compliance with all applicable laws and regulations, including those governing telephony, data protection, and your industry. You are responsible for the content and data you input or process through Recall Touch and for obtaining any consents (for example, from callers) where required. You must not use the service for illegal purposes, to harass or harm others, to send spam, or to violate the rights of any third party. We may suspend or terminate your access if we reasonably believe you have violated these terms.
+              </p>
+            </section>
+
+            <section className="mb-10">
+              <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Acceptable Use</h2>
+              <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                You may not reverse-engineer, decompile, or attempt to extract the source code of our service; resell or sublicense the service without our written consent; use automated means to scrape or overload our systems; or use the service to build a competing product. You may not use the service in a way that could damage, disable, or impair our infrastructure or that of our providers.
               </p>
             </section>
 
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Payment Terms</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                Paid plans are billed in advance. Fees are non-refundable except as required by law or as stated in your plan. We may change pricing with notice; continued use after changes constitutes acceptance.
+                Paid plans are billed in advance (monthly or annually as selected). Fees are non-refundable except as required by law or as explicitly stated in your plan (for example, a money-back guarantee). We may change pricing with notice; continued use after the effective date of a change constitutes acceptance. Failure to pay may result in suspension or termination of service. Overage fees may apply if you exceed included usage; such fees will be disclosed in your plan or at the time of use.
+              </p>
+            </section>
+
+            <section className="mb-10">
+              <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Intellectual Property</h2>
+              <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                Recall Touch and its content, features, and technology (including software, design, and branding) are owned by us or our licensors. We grant you a limited, non-exclusive, non-transferable license to use the service for your internal business purposes in accordance with these terms. You do not acquire any ownership rights in our service or content. Feedback you provide may be used by us without obligation to you.
+              </p>
+            </section>
+
+            <section className="mb-10">
+              <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Termination</h2>
+              <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                You may cancel your account at any time through your account settings or by contacting us. We may suspend or terminate your account or access to the service for breach of these terms, non-payment, or for any other reason with notice where practicable. Upon termination, your right to use the service ceases. We may retain and use your data as described in our Privacy Policy. Sections that by their nature should survive (including liability limitations, indemnification, and governing law) will survive termination.
+              </p>
+            </section>
+
+            <section className="mb-10">
+              <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Disclaimers</h2>
+              <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                The service is provided “as is” and “as available.” We disclaim all warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the service will be uninterrupted, secure, or error-free. You use the service at your own risk. Our AI and automation are tools to assist your business; you remain responsible for the accuracy and appropriateness of how you use them and for any decisions made based on their output.
               </p>
             </section>
 
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Limitation of Liability</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                To the maximum extent permitted by law, Recall Touch and its affiliates shall not be liable for indirect, incidental, special, or consequential damages, or for loss of data or profits. Our total liability shall not exceed the fees you paid in the twelve months preceding the claim.
+                To the maximum extent permitted by law, Recall Touch and its affiliates, officers, directors, employees, and agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or for loss of profits, data, revenue, or business opportunities, whether in contract, tort, or otherwise. Our total aggregate liability for any claims arising out of or related to these terms or the service shall not exceed the greater of (a) the fees you paid to us in the twelve months preceding the claim, or (b) one hundred U.S. dollars. Some jurisdictions do not allow the exclusion or limitation of certain damages; in such cases, our liability will be limited to the maximum extent permitted by law.
               </p>
             </section>
 
             <section className="mb-10">
-              <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Governing Law</h2>
+              <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Indemnification</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                These terms are governed by the laws of the State of Delaware, without regard to conflict of law principles. Disputes shall be resolved in the courts of that jurisdiction.
+                You agree to indemnify, defend, and hold harmless Recall Touch and its affiliates and their respective officers, directors, employees, and agents from and against any claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys’ fees) arising out of or related to your use of the service, your violation of these terms, your violation of any law or the rights of a third party, or any content or data you submit or process through the service.
+              </p>
+            </section>
+
+            <section className="mb-10">
+              <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Governing Law and Disputes</h2>
+              <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                These terms are governed by the laws of the State of Delaware, United States, without regard to conflict of law principles. Any dispute arising out of or relating to these terms or the service shall be resolved exclusively in the state or federal courts located in Delaware, and you consent to the personal jurisdiction of such courts. The United Nations Convention on Contracts for the International Sale of Goods does not apply.
+              </p>
+            </section>
+
+            <section className="mb-10">
+              <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>General</h2>
+              <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                These terms constitute the entire agreement between you and Recall Touch regarding the service and supersede any prior agreements. If any provision is found unenforceable, the remaining provisions will remain in effect. Our failure to enforce any right or provision is not a waiver of that right or provision. You may not assign these terms without our consent; we may assign them in connection with a merger, acquisition, or sale of assets. We may provide notice to you by email, in-product notification, or post to our website.
               </p>
             </section>
 
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Contact</h2>
               <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                For questions about these terms:{" "}
-                <a href="mailto:legal@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>legal@recall-touch.com</a>.
+                For questions about these terms: <a href="mailto:legal@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>legal@recall-touch.com</a>. We will respond within a reasonable time.
               </p>
             </section>
 

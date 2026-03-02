@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
-import { PricingContent } from "@/components/PricingContent";
+import { PricingContent, ANNUAL_NOTE, pricingCopyForTests } from "@/components/PricingContent";
+
+export { ANNUAL_NOTE, pricingCopyForTests };
 
 export const metadata = {
   title: "Pricing",

@@ -15,7 +15,8 @@ export default function OnboardSourcePage() {
       router.push("/onboard/identity");
       return;
     }
-    setWorkspaceId(wsId);
+    const id = setTimeout(() => setWorkspaceId(wsId), 0);
+    return () => clearTimeout(id);
   }, [router]);
 
   const handleSelect = (source: string) => {

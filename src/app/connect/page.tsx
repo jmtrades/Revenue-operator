@@ -113,9 +113,7 @@ function ConnectPageContent() {
       }
     };
 
-    // Poll every 2 seconds for real messages
-    const interval = setInterval(checkForMessages, 2000);
-    return () => clearInterval(interval);
+    checkForMessages();
   }, [workspaceId, provisioned, router]);
 
   const handleTestMessage = async () => {

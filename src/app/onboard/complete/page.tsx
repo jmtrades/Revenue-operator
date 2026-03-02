@@ -10,6 +10,8 @@ export default function OnboardCompletePage() {
   const [externalRef, setExternalRef] = useState<string | null>(null);
   const [orientationLines, setOrientationLines] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [continuityInput, setContinuityInput] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const wsId = sessionStorage.getItem("onboard_workspace_id");
@@ -69,9 +71,6 @@ export default function OnboardCompletePage() {
       </main>
     );
   }
-
-  const [continuityInput, setContinuityInput] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   const handleContinuitySubmit = async (e: React.FormEvent) => {
     e.preventDefault();

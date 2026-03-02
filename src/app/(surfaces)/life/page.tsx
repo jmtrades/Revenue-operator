@@ -43,13 +43,18 @@ export default function LifePage() {
 
   useEffect(() => {
     if (!workspaceId) {
-      setSections(null);
-      setIdentity(null);
-      setLoading(false);
-      return;
+      const id = setTimeout(() => {
+        setSections(null);
+        setIdentity(null);
+        setLoading(false);
+      }, 0);
+      return () => clearTimeout(id);
     }
-    setError(null);
-    load();
+    const tid = setTimeout(() => {
+      setError(null);
+      load();
+    }, 0);
+    return () => clearTimeout(tid);
   }, [workspaceId, load]);
 
   const addReference = useCallback(() => {

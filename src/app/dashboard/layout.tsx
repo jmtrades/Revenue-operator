@@ -3,6 +3,29 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  LayoutList,
+  Users,
+  Bot,
+  Megaphone,
+  MessageSquare,
+  Calendar,
+  BarChart3,
+  Settings,
+  Play,
+  FileText,
+  PhoneCall,
+  UserCheck,
+  ListTodo,
+  ArrowUpRight,
+  FileCheck,
+  FileStack,
+  Shield,
+  Plug,
+  Download,
+  CreditCard,
+  type LucideIcon,
+} from "lucide-react";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
 import { LoadingScreen } from "@/components/ui";
 
@@ -33,6 +56,7 @@ const ALLOWED_DASHBOARD_PATHS = [
   "/dashboard/analytics",
   "/dashboard/team",
   "/dashboard/integrations",
+  "/dashboard/onboarding",
 ];
 function isAllowedPath(pathname: string): boolean {
   if (ALLOWED_DASHBOARD_PATHS.includes(pathname)) return true;
@@ -45,29 +69,29 @@ function isAllowedPath(pathname: string): boolean {
   if (pathname.startsWith("/dashboard/agents/")) return true;
   return false;
 }
-const NAV = [
-  { href: "/dashboard/activity", label: "Activity" },
-  { href: "/dashboard/start", label: "Start" },
-  { href: "/dashboard/record", label: "Record" },
-  { href: "/dashboard/calls", label: "Calls" },
-  { href: "/dashboard/contacts", label: "Contacts" },
-  { href: "/dashboard/calendar", label: "Calendar" },
-  { href: "/dashboard/campaigns", label: "Campaigns" },
-  { href: "/dashboard/agents", label: "Agents" },
-  { href: "/dashboard/presence", label: "Presence" },
-  { href: "/dashboard/approvals", label: "Approvals" },
-  { href: "/dashboard/follow-ups", label: "Follow-ups" },
-  { href: "/dashboard/escalations", label: "Escalations" },
-  { href: "/dashboard/messages", label: "Messages" },
-  { href: "/dashboard/policies", label: "Policies" },
-  { href: "/dashboard/templates", label: "Templates" },
-  { href: "/dashboard/analytics", label: "Analytics" },
-  { href: "/dashboard/team", label: "Team" },
-  { href: "/dashboard/integrations", label: "Integrations" },
-  { href: "/dashboard/compliance", label: "Compliance" },
-  { href: "/dashboard/import", label: "Import" },
-  { href: "/dashboard/billing", label: "Billing" },
-  { href: "/dashboard/settings", label: "Settings" },
+const NAV: { href: string; label: string; icon?: LucideIcon }[] = [
+  { href: "/dashboard/activity", label: "Activity", icon: LayoutList },
+  { href: "/dashboard/contacts", label: "Contacts", icon: Users },
+  { href: "/dashboard/agents", label: "Agents", icon: Bot },
+  { href: "/dashboard/campaigns", label: "Campaigns", icon: Megaphone },
+  { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
+  { href: "/dashboard/calendar", label: "Calendar", icon: Calendar },
+  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard/start", label: "Start", icon: Play },
+  { href: "/dashboard/record", label: "Record", icon: FileText },
+  { href: "/dashboard/calls", label: "Calls", icon: PhoneCall },
+  { href: "/dashboard/presence", label: "Presence", icon: UserCheck },
+  { href: "/dashboard/approvals", label: "Approvals", icon: FileCheck },
+  { href: "/dashboard/follow-ups", label: "Follow-ups", icon: ListTodo },
+  { href: "/dashboard/escalations", label: "Escalations", icon: ArrowUpRight },
+  { href: "/dashboard/policies", label: "Policies", icon: FileStack },
+  { href: "/dashboard/templates", label: "Templates", icon: FileText },
+  { href: "/dashboard/team", label: "Team", icon: Users },
+  { href: "/dashboard/integrations", label: "Integrations", icon: Plug },
+  { href: "/dashboard/compliance", label: "Compliance", icon: Shield },
+  { href: "/dashboard/import", label: "Import", icon: Download },
+  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -139,6 +163,21 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     router.replace(`/dashboard/start${q.toString() ? `?${q.toString()}` : ""}`);
   }, [pathname, allowed, isLiveOrValue, router]);
 
+  // Redirect to onboarding if not yet completed (client-only)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    if (!mounted || pathname === "/dashboard/onboarding" || loading || workspaces.length === 0) return;
+    try {
+      if (!localStorage.getItem("rt_onboarded")) {
+        const q = new URLSearchParams(window.location.search);
+        router.replace(`/dashboard/onboarding${q.toString() ? `?${q.toString()}` : ""}`);
+      }
+    } catch {
+      // ignore
+    }
+  }, [mounted, pathname, loading, workspaces.length, router]);
+
   if (loading) {
     return <LoadingScreen message="One moment…" onRetry={retry} />;
   }
@@ -162,18 +201,18 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       data-operational-environment="true"
     >
       <aside
-        className="hidden md:flex md:w-48 border-r flex-col shrink-0"
+        className="hidden md:flex md:w-60 border-r flex-col shrink-0"
         style={{ borderColor: "var(--border)", background: "var(--background)" }}
       >
         <div className="p-5 border-b" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-            Start · Record · Activity · Presence · Approvals
+            Recall Touch
           </p>
         </div>
         <WorkspaceSelect />
-        <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
+        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
           {NAV.map((n) => (
-            <NavLink key={n.href} href={n.href} label={n.label} />
+            <NavLink key={n.href} href={n.href} label={n.label} icon={n.icon} />
           ))}
         </nav>
       </aside>
@@ -385,7 +424,7 @@ function WorkspaceSelect() {
   );
 }
 
-function NavLink({ href, label }: { href: string; label: string }) {
+function NavLink({ href, label, icon: Icon }: { href: string; label: string; icon?: LucideIcon }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const wid = searchParams.get("workspace_id");
@@ -394,12 +433,15 @@ function NavLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={to}
-      className="block py-2.5 text-sm focus-ring"
+      className={`flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-sm focus-ring transition-colors ${
+        active ? "bg-zinc-800/50" : ""
+      }`}
       style={{
         color: active ? "var(--text-primary)" : "var(--text-muted)",
         fontWeight: active ? 500 : 400,
       }}
     >
+      {Icon && <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />}
       {label}
     </Link>
   );

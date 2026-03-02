@@ -19,13 +19,17 @@ export default function SoloPage() {
 
   useEffect(() => {
     if (!workspaceId) {
-      setSections(null);
-      setIdentity(null);
-      setLoading(false);
-      return;
+      const id = setTimeout(() => {
+        setSections(null);
+        setIdentity(null);
+        setLoading(false);
+      }, 0);
+      return () => clearTimeout(id);
     }
-    setLoading(true);
-    setError(null);
+    const tid = setTimeout(() => {
+      setLoading(true);
+      setError(null);
+    }, 0);
     Promise.all([
       fetch(`/api/system/identity?workspace_id=${encodeURIComponent(workspaceId)}`, {
         credentials: "include",
@@ -42,6 +46,7 @@ export default function SoloPage() {
       })
       .catch((e) => setError(e?.message ?? "Failed to load"))
       .finally(() => setLoading(false));
+    return () => clearTimeout(tid);
   }, [workspaceId]);
 
   if (!workspaceId) {

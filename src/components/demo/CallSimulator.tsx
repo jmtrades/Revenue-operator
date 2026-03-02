@@ -11,87 +11,86 @@ type DemoScript = { title: string; lines: DemoLine[]; result: string; resultDeta
 
 const DEMO_SCRIPTS: DemoScript[] = [
   {
-    title: "Inbound Lead",
+    title: "Inbound Lead (Plumber)",
     lines: [
-      { role: "ai", text: "Good morning, Acme Plumbing! This is Sarah. How can I help you today?" },
-      { role: "caller", text: "Hi, I've got a leaky faucet under my kitchen sink." },
-      { role: "ai", text: "Oh no, I can definitely help with that. Can I get your name?" },
+      { role: "ai", text: "Thanks for calling Riverside Plumbing! This is Sarah. How can I help?" },
+      { role: "caller", text: "Yeah hi, I've got a leak under my kitchen sink." },
+      { role: "ai", text: "Oh no, let me get some info so we can get someone out quickly. What's your name?" },
       { role: "caller", text: "Mike Johnson." },
-      { role: "ai", text: "Thanks Mike. What's the best address for the service call?" },
-      { role: "caller", text: "742 Elm Street, Portland." },
-      { role: "ai", text: "Got it. And a good number to reach you?" },
+      { role: "ai", text: "Thanks Mike. Best phone number to reach you?" },
       { role: "caller", text: "503-555-0199." },
-      { role: "ai", text: "Perfect. Is this actively flooding, or more of a slow drip?" },
-      { role: "caller", text: "Just a slow drip. Not an emergency." },
-      { role: "ai", text: "Great. I have tomorrow morning at 10 AM or Thursday at 2 PM. What works best?" },
-      { role: "caller", text: "Tomorrow at 10 is perfect." },
-      { role: "ai", text: "You're all set. I'm sending you a confirmation text right now. Anything else I can help with?" },
-      { role: "caller", text: "Nope, that's all. Thanks!" },
-      { role: "ai", text: "Thank you Mike, we'll see you tomorrow." },
+      { role: "ai", text: "Got it. And the property address?" },
+      { role: "caller", text: "742 Elm Street, Portland." },
+      { role: "ai", text: "Is this an active leak or more of a slow drip?" },
+      { role: "caller", text: "Slow drip, but getting worse." },
+      { role: "ai", text: "Understood. We have tomorrow at 10 AM or Thursday at 2 PM. Which works better?" },
+      { role: "caller", text: "Tomorrow at 10." },
+      { role: "ai", text: "Booked! Mike Johnson, tomorrow 10 AM, 742 Elm St, kitchen sink leak. Sending a text confirmation to 503-555-0199 now. Anything else?" },
+      { role: "caller", text: "No, that's great." },
+      { role: "ai", text: "We'll see you tomorrow morning Mike!" },
     ],
     result: "Lead captured and appointment booked.",
     resultDetails: [
-      "Lead: Mike Johnson · (503) 555-0199",
-      "Address: 742 Elm Street, Portland",
-      "Service: Leak repair (non‑emergency)",
+      "Lead captured: Mike Johnson",
+      "Phone: (503) 555-0199",
+      "Address: 742 Elm St Portland",
+      "Service: Kitchen sink leak repair",
       "Appointment: Tomorrow 10:00 AM",
       "Confirmation text sent",
-      "Owner notified via SMS + push",
+      "Owner notified instantly",
       "Lead score: 92/100",
-      "Added to your system automatically",
     ],
   },
   {
-    title: "Appointment",
+    title: "Appointment Booking (Dental)",
     lines: [
-      { role: "ai", text: "Thank you for calling Bright Smile Dental, this is Alex. How can I help today?" },
-      { role: "caller", text: "I need to schedule a cleaning." },
-      { role: "ai", text: "Happy to help. Are you an existing patient?" },
+      { role: "ai", text: "Good morning, Maple Street Dental! This is Alex. How can I help?" },
+      { role: "caller", text: "Hi, I'd like to schedule a cleaning." },
+      { role: "ai", text: "Of course! Are you an existing patient?" },
       { role: "caller", text: "Yes, Sarah Chen." },
-      { role: "ai", text: "Welcome back Sarah. Do you prefer mornings or afternoons?" },
-      { role: "caller", text: "Mornings are best." },
-      { role: "ai", text: "I have next Tuesday at 9 AM or Wednesday at 10:30 AM. Which works better?" },
-      { role: "caller", text: "Tuesday at 9 works." },
-      { role: "ai", text: "Perfect. You're booked with Dr. Martinez on Tuesday at 9 AM." },
-      { role: "caller", text: "Great, thank you." },
-      { role: "ai", text: "We’ll send a reminder the day before and a text when we’re ready for you. Anything else I can help with?" },
-      { role: "caller", text: "No, that's everything." },
+      { role: "ai", text: "Welcome back Sarah! Morning or afternoon preference?" },
+      { role: "caller", text: "Mornings are better." },
+      { role: "ai", text: "We have Tuesday at 9 AM or Wednesday at 10:30 with Dr. Martinez. Either work?" },
+      { role: "caller", text: "Tuesday at 9." },
+      { role: "ai", text: "You're booked — Tuesday 9 AM, Dr. Martinez, cleaning. I'll send a reminder the day before." },
+      { role: "caller", text: "Thank you!" },
+      { role: "ai", text: "See you Tuesday Sarah!" },
     ],
-    result: "Existing patient appointment scheduled.",
+    result: "Appointment scheduled.",
     resultDetails: [
-      "Patient matched: Sarah Chen",
-      "Appointment: Tuesday 9:00 AM with Dr. Martinez",
-      "Synced to Google/Outlook calendar",
-      "Reminder scheduled the day before",
-      "AI handled the entire intake without staff",
+      "Patient identified: Sarah Chen (existing)",
+      "Appointment: Tuesday 9:00 AM",
+      "Provider: Dr. Martinez",
+      "Service: Cleaning",
+      "Calendar synced",
+      "Reminder scheduled (Monday)",
     ],
   },
   {
-    title: "Outbound Follow‑up",
+    title: "Outbound Follow-up (Roofing)",
     lines: [
-      { role: "ai", text: "Hi, this is Emma from Peak Roofing. Am I speaking with James?" },
-      { role: "caller", text: "Yeah, this is James." },
-      { role: "ai", text: "Great. I'm following up on the roof inspection request you just submitted on our website. Is now a good time?" },
-      { role: "caller", text: "Wow, that was fast. Yeah, sure." },
-      { role: "ai", text: "We try to call within a couple of minutes. Can you tell me a bit about what's going on with your roof?" },
-      { role: "caller", text: "I've got some missing shingles after the storm last week." },
-      { role: "ai", text: "Got it. Storm damage can be urgent. Would you like us to send an estimator out?" },
-      { role: "caller", text: "Yes, please." },
-      { role: "ai", text: "I have tomorrow at 11 AM or 3 PM. Which works better?" },
-      { role: "caller", text: "3 PM." },
-      { role: "ai", text: "Done. Our estimator Mike will be there tomorrow at 3 PM." },
-      { role: "caller", text: "Perfect." },
-      { role: "ai", text: "He can also help you start the insurance claim if you’d like. Anything else before I let you go?" },
-      { role: "caller", text: "No, that’s all. Thanks." },
-      { role: "ai", text: "Thank you James, we’ll take great care of you." },
+      { role: "ai", text: "Hi, is this James? This is Emma from Summit Roofing." },
+      { role: "caller", text: "Uh yeah, who?" },
+      { role: "ai", text: "Summit Roofing — you filled out a request on our website about 2 minutes ago about roof damage. I wanted to follow up right away." },
+      { role: "caller", text: "Oh right yeah, we had storm damage last week." },
+      { role: "ai", text: "I'm sorry to hear that. What are you seeing?" },
+      { role: "caller", text: "Some shingles missing on the south side. Might be water getting in." },
+      { role: "ai", text: "That needs attention soon. We can send an estimator out — would tomorrow at 3 PM work?" },
+      { role: "caller", text: "Yeah, 3 works." },
+      { role: "ai", text: "Great. Before they come, have you started an insurance claim?" },
+      { role: "caller", text: "Not yet, was going to call them next." },
+      { role: "ai", text: "Our estimator can help document everything for the claim. You're set for tomorrow at 3 PM James. I'll text a confirmation." },
+      { role: "caller", text: "Perfect, thanks." },
     ],
-    result: "Speed‑to‑lead outbound follow‑up completed.",
+    result: "Speed-to-lead follow-up completed.",
     resultDetails: [
-      "New web lead called back in under 2 minutes",
-      "Estimate scheduled for tomorrow at 3 PM",
-      "Insurance assistance noted on the lead",
+      "Speed-to-lead: 2 minutes",
+      "Contact: James (web form lead)",
+      "Issue: Storm damage — missing shingles, south side",
+      "Estimate scheduled: Tomorrow 3:00 PM",
+      "Insurance: Not yet filed — estimator will assist",
+      "Confirmation text sent",
       "Lead score: 95/100",
-      "Owner notified and calendar updated",
     ],
   },
 ];
@@ -204,7 +203,7 @@ function DemoTranscript({
             className="text-sm font-medium shrink-0"
             style={{ color: "var(--accent-primary)" }}
           >
-            Skip →
+            Skip to result →
           </button>
         )}
       </div>
@@ -316,13 +315,13 @@ export function CallSimulator() {
         className="font-bold text-3xl md:text-4xl mb-2 text-center"
         style={{ letterSpacing: "-0.02em" }}
       >
-        See Recall Touch in action
+        See Recall Touch handle a real call
       </h1>
       <p
         className="text-center text-base mb-8"
         style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}
       >
-        Watch AI answer a real business call — live.
+        Watch our AI answer calls, book appointments, and follow up on leads — in real-time.
       </p>
 
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
@@ -338,7 +337,7 @@ export function CallSimulator() {
               color: tab === t ? "var(--accent-primary)" : "var(--text-secondary)",
             }}
           >
-            {t === "inbound" ? "Inbound Lead" : t === "appointment" ? "Appointment" : "Outbound Follow‑up"}
+            {t === "inbound" ? "Inbound Lead (Plumber)" : t === "appointment" ? "Appointment (Dental)" : "Outbound Follow-up (Roofing)"}
           </button>
         ))}
       </div>

@@ -17,7 +17,7 @@ export default function OnboardRecordPage() {
       router.push("/onboard/identity");
       return;
     }
-    setWorkspaceId(wsId);
+    const id = setTimeout(() => setWorkspaceId(wsId), 0);
     fetch("/api/onboard/create-thread", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,6 +39,7 @@ export default function OnboardRecordPage() {
       .catch(() => {
         setLoading(false);
       });
+    return () => clearTimeout(id);
   }, [router]);
 
   if (loading) {

@@ -59,17 +59,20 @@ function isDashboardOrApi(pathname: string): boolean {
 
 function isAllowedDashboardPath(pathname: string): boolean {
   if (pathname === "/dashboard") return true;
+  if (pathname === "/dashboard/onboarding" || pathname === "/dashboard/settings" || pathname.startsWith("/dashboard/settings/")) return true;
   if (pathname === "/dashboard/record" || pathname === "/dashboard/activity" || pathname === "/dashboard/presence" || pathname === "/dashboard/approvals") return true;
   if (pathname === "/dashboard/preferences" || pathname === "/dashboard/connection" || pathname === "/dashboard/billing") return true;
   if (pathname === "/dashboard/contacts" || pathname === "/dashboard/calendar" || pathname === "/dashboard/analytics" || pathname === "/dashboard/team" || pathname === "/dashboard/integrations") return true;
   if (pathname === "/dashboard/calls" || pathname === "/dashboard/messages" || pathname.startsWith("/dashboard/messages/")) return true;
   if (pathname.startsWith("/dashboard/campaigns") || pathname.startsWith("/dashboard/agents")) return true;
   if (pathname.startsWith("/dashboard/record/lead/")) return true;
+  if (pathname === "/dashboard/start" || pathname === "/dashboard/compliance" || pathname === "/dashboard/policies") return true;
+  if (pathname.startsWith("/dashboard/policies/") || pathname === "/dashboard/templates" || pathname === "/dashboard/follow-ups" || pathname === "/dashboard/escalations") return true;
+  if (pathname === "/dashboard/import" || pathname === "/dashboard/activation" || pathname === "/dashboard/continue-protection") return true;
   return false;
 }
 
 function getDashboardRedirect(pathname: string): string | null {
-  if (pathname === "/dashboard/settings") return "/dashboard/preferences";
   if (pathname === "/dashboard/activation") return "/dashboard/connection";
   if (pathname === "/dashboard/continue-protection") return "/dashboard";
   if (pathname === "/dashboard/leads" || pathname === "/dashboard/conversations") return "/dashboard/activity";

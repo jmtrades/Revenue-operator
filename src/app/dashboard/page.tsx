@@ -29,6 +29,7 @@ interface Handoff {
 }
 
 export default function SituationPage() {
+  const searchParams = useSearchParams();
   const { workspaceId, workspaces } = useWorkspace();
   const [capsule, setCapsule] = useState<Capsule | null>(null);
   const [retention, setRetention] = useState<RetentionPayload | null>(null);
@@ -114,7 +115,6 @@ export default function SituationPage() {
   const hasMoreCurrent = currentStateFull.length > CAP;
   const hasMoreRecent = recentChangeFull.length > CAP;
   const hasMoreRemoved = ifRemovedFull.length > CAP;
-  const searchParams = useSearchParams();
   const recordHref = `/dashboard/record${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
   const callsHref = `/dashboard/calls${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;

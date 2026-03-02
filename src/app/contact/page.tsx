@@ -16,7 +16,7 @@ export default function ContactPage() {
               Get in touch
             </h1>
             <p className="text-lg mb-12" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-              Whether you&apos;re evaluating Recall Touch for your team or need technical support, the team is here to help.
+              Whether you&apos;re evaluating Recall Touch for your team or need technical support, the team is here to help. Email hello@recall-touch.com — response within 4 hours.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6 mb-16">

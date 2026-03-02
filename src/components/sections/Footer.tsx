@@ -15,7 +15,7 @@ export function Footer() {
           <div>
             <p className="font-semibold mb-3" style={{ color: "var(--text-primary)", fontSize: "17px" }}>Recall Touch</p>
             <p className="text-sm transition-colors duration-150" style={{ color: "var(--text-tertiary)", lineHeight: 1.5 }}>
-              Commercial execution infrastructure.
+              AI phone system for every business.
             </p>
           </div>
           <div>
@@ -51,7 +51,7 @@ export function Footer() {
         </div>
         <div className="pt-8 border-t flex flex-col sm:flex-row justify-between items-center gap-4" style={{ borderColor: "var(--border-default)" }}>
           <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>© 2026 Recall Touch. All rights reserved.</p>
-          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>SOC 2 Type II · GDPR Compliant · 256-bit Encryption</p>
+          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>AI phone system for every business.</p>
         </div>
       </Container>
     </footer>
