@@ -126,12 +126,6 @@ export default function ActivityPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    const interval = setInterval(() => refetch(true), 15000);
-    return () => clearInterval(interval);
-  }, [workspaceId]);
-
-  useEffect(() => {
-    if (!workspaceId) return;
     const onFocus = () => refetch(true);
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);

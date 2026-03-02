@@ -183,6 +183,7 @@ function OnboardingWizard() {
   const finishOnboarding = useCallback(async () => {
     if (!wid) return;
     try {
+      if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "1");
       await fetch(`/api/activation?workspace_id=${encodeURIComponent(wid)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -212,10 +213,19 @@ function OnboardingWizard() {
     <div className="min-h-screen flex flex-col p-6 md:p-12" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
       <div className="max-w-lg mx-auto w-full">
         <div className="mb-8">
-          <div className="h-1.5 rounded-full overflow-hidden mb-2" style={{ background: "var(--bg-elevated)" }}>
-            <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progress}%`, background: "var(--accent-primary)" }} />
+          <div className="flex items-center justify-center gap-2 mb-2">
+            {Array.from({ length: STEPS }, (_, i) => i + 1).map((s) => (
+              <span
+                key={s}
+                className="inline-block w-2.5 h-2.5 rounded-full transition-colors"
+                style={{
+                  background: s <= step ? "var(--accent-primary)" : "var(--bg-elevated)",
+                }}
+                aria-hidden
+              />
+            ))}
           </div>
-          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Step {step} of {STEPS}</p>
+          <p className="text-xs text-center" style={{ color: "var(--text-tertiary)" }}>Step {step} of {STEPS}</p>
         </div>
 
         {error && (
@@ -363,7 +373,7 @@ function OnboardingWizard() {
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="radio" name="appt" checked={appointmentHandling === "capture"} onChange={() => setAppointmentHandling("capture")} className="rounded-full" />
-                  <span className="text-sm" style={{ color: "var(--text-primary)" }}>Capture details and I'll confirm later</span>
+                  <span className="text-sm" style={{ color: "var(--text-primary)" }}>Capture details and I&apos;ll confirm later</span>
                 </label>
               </div>
             </div>

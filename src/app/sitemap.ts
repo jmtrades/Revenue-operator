@@ -16,6 +16,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/docs`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 },
     { url: `${BASE}/contact`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 },
+    { url: `${BASE}/blog/why-missed-calls-cost-more`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${BASE}/blog/speed-to-lead-60-second-rule`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${BASE}/blog/voice-agent-vs-receptionist-cost`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
     { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${BASE}/terms`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
   ];

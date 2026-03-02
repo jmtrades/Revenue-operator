@@ -32,13 +32,16 @@ export default function OnboardSendPage() {
       router.push("/onboard/identity");
       return;
     }
-    setWorkspaceId(wsId);
-    setExternalRef(extRef);
+    const id = setTimeout(() => {
+      setWorkspaceId(wsId);
+      setExternalRef(extRef);
+    }, 0);
+    return () => clearTimeout(id);
   }, [router]);
 
   useEffect(() => {
     if (!workspaceId) return;
-    setPreviewLoading(true);
+    const id = setTimeout(() => setPreviewLoading(true), 0);
     fetch(`/api/enterprise/message-preview?workspace_id=${encodeURIComponent(workspaceId)}&intent_type=first_record_send`)
       .then((r) => r.json())
       .then((json: { ok?: boolean; proposed_text?: string; disclosures?: string[]; requires_approval?: boolean; policy_basis?: PreviewData["policy_basis"] }) => {
@@ -60,6 +63,7 @@ export default function OnboardSendPage() {
       })
       .catch(() => setPreview(null))
       .finally(() => setPreviewLoading(false));
+    return () => clearTimeout(id);
   }, [workspaceId]);
 
   useEffect(() => {

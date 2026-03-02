@@ -193,12 +193,32 @@ export default function SettingsPage() {
     }).catch(() => {});
   };
 
+  const settingsLinks = [
+    { href: "/dashboard/settings/business", label: "Business" },
+    { href: "/dashboard/settings/phone", label: "Phone" },
+    { href: "/dashboard/settings/call-rules", label: "Call rules" },
+    { href: "/dashboard/settings/team", label: "Team" },
+    { href: "/dashboard/settings/notifications", label: "Notifications" },
+    { href: "/dashboard/settings/integrations", label: "Integrations" },
+    { href: "/dashboard/settings/compliance", label: "Compliance" },
+    { href: "/dashboard/settings/billing", label: "Billing" },
+  ];
+  const q = workspaceId ? `?workspace_id=${encodeURIComponent(workspaceId)}` : "";
+
   return (
     <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
       <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>
         <Link href={workspaceId ? `/dashboard/presence?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/presence"} style={{ color: "var(--meaning-blue)" }}>Presence</Link>
       </p>
-      <PageHeader title="Preferences" subtitle="Operating standard" />
+      <PageHeader title="Settings" subtitle="Preferences and configuration" />
+      <nav className="mb-8 flex flex-wrap gap-2" aria-label="Settings sections">
+        {settingsLinks.map(({ href, label }) => (
+          <Link key={href} href={href + q} className="px-3 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border)", color: "var(--text-secondary)", background: "var(--surface)" }}>
+            {label}
+          </Link>
+        ))}
+      </nav>
+      <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--text-primary)" }}>General preferences</h2>
       {!workspaceId ? (
         <EmptyState title="Follow-through in progress appears here." subtitle="In place." icon="watch" />
       ) : (

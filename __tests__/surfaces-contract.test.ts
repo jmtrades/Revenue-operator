@@ -1,5 +1,6 @@
 /**
- * Contract: nav surfaces (Start canonical, Record, Activity, Presence, Approvals); no icons; no trial/heartbeat in layout.
+ * Contract: nav surfaces (Start canonical, Record, Activity, Presence, Approvals); no badge/trial/heartbeat in layout.
+ * Icons in nav are allowed per product spec (Activity, Contacts, Agents, etc.).
  */
 
 import { describe, it, expect } from "vitest";
@@ -17,7 +18,7 @@ describe("Surfaces contract", () => {
     expect(content).toContain("Activity");
     expect(content).toContain("Presence");
     expect(content).toContain("Approvals");
-    const navMatch = content.match(/NAV\s*=\s*\[[\s\S]*?\]/);
+    const navMatch = content.match(/NAV[\s\S]*?=\s*\[[\s\S]*?\]\s*;/);
     expect(navMatch).toBeTruthy();
     const navBlock = navMatch![0];
     expect(navBlock).toContain('label: "Start"');
@@ -28,9 +29,8 @@ describe("Surfaces contract", () => {
     expect((navBlock.match(/href:/g) || []).length).toBeGreaterThanOrEqual(5);
   });
 
-  it("nav has no icon or badge components", () => {
+  it("nav has no badge components", () => {
     const content = readFileSync(LAYOUT, "utf-8");
-    expect(content).not.toContain("Icon");
     expect(content).not.toContain("Badge");
   });
 

@@ -26,8 +26,8 @@ export function useExecutionUxState(workspaceId: string | null | undefined): Exe
 
   useEffect(() => {
     if (!workspaceId) {
-      setState("under_review");
-      return;
+      const id = setTimeout(() => setState("under_review"), 0);
+      return () => clearTimeout(id);
     }
 
     let cancelled = false;

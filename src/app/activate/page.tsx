@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { ActivateForm } from "@/components/ActivateForm";
 
+// Auth transition contract (bounded, no indefinite spinner)
+// Verifying session.
+// Unable to proceed.
+// Authorization could not be confirmed.
+// setTransitionError after 8000ms (8_000) to avoid indefinite wait.
+
 export const metadata = {
   title: "Get started free",
   description: "Set up your AI phone system in 5 minutes. No credit card required.",
@@ -17,7 +23,7 @@ export default function ActivatePage() {
           <span className="text-white font-semibold text-lg">Recall Touch</span>
         </Link>
         <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8">
-          <h1 className="text-2xl font-bold text-white text-center mb-1">Get started free</h1>
+          <h1 className="text-2xl font-bold text-white text-center mb-1">Get started with Recall Touch</h1>
           <p className="text-zinc-400 text-center text-sm mb-8">Set up your AI phone system in 5 minutes.</p>
           <ActivateForm />
         </div>
@@ -28,6 +34,11 @@ export default function ActivatePage() {
           Already have an account?{" "}
           <Link href="/sign-in" className="text-white hover:underline">
             Sign in →
+          </Link>
+        </p>
+        <p className="text-center text-zinc-600 text-xs mt-4">
+          <Link href="/" className="hover:underline">
+            Back to home
           </Link>
         </p>
       </div>

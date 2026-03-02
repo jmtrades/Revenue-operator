@@ -54,12 +54,16 @@ export default function PublicWorkPage() {
 
   useEffect(() => {
     if (!externalRef) {
-      setLoading(false);
-      setNotFound(true);
-      return;
+      const id = setTimeout(() => {
+        setLoading(false);
+        setNotFound(true);
+      }, 0);
+      return () => clearTimeout(id);
     }
-    setLoading(true);
-    setNotFound(false);
+    const id = setTimeout(() => {
+      setLoading(true);
+      setNotFound(false);
+    }, 0);
     fetch(`/api/public/work/${encodeURIComponent(externalRef)}`, { cache: "no-store" })
       .then((res) => {
         if (res.status === 404) {
@@ -71,6 +75,13 @@ export default function PublicWorkPage() {
       })
       .then((json) => setData(json as PublicWorkData | null))
       .finally(() => setLoading(false));
+    return () => clearTimeout(id);
+  }, [externalRef]);
+
+  const copyRecordLink = useCallback(() => {
+    if (typeof window === "undefined" || !externalRef) return;
+    const url = `${window.location.origin}/public/work/${encodeURIComponent(externalRef)}`;
+    navigator.clipboard.writeText(url).catch(() => {});
   }, [externalRef]);
 
   if (!externalRef || notFound) {
@@ -105,12 +116,6 @@ export default function PublicWorkPage() {
   const participants = data?.participants ?? [];
   const canRespond = data?.can_respond === true;
   const canFollowUp = data?.can_follow_up === true;
-
-  const copyRecordLink = useCallback(() => {
-    if (typeof window === "undefined" || !externalRef) return;
-    const url = `${window.location.origin}/public/work/${encodeURIComponent(externalRef)}`;
-    navigator.clipboard.writeText(url).catch(() => {});
-  }, [externalRef]);
 
   const sendResponse = (type: string, text?: string, extra?: { actor_role?: string; participant_hint?: string; evidence_text?: string; evidence_pointer?: string }) => {
     if (responseDone || responding) return;

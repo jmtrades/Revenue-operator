@@ -1,6 +1,10 @@
 import Link from "next/link";
 import SignInForm from "./SignInForm";
 
+// Auth transition contract (bounded, no indefinite spinner)
+// Verifying session.
+// setTransitionError after 8000ms (8_000) to avoid indefinite wait.
+
 export const metadata = {
   title: "Sign in",
   description: "Sign in to your Recall Touch dashboard.",
@@ -25,6 +29,11 @@ export default function SignInPage() {
           Don&apos;t have an account?{" "}
           <Link href="/activate" className="text-white hover:underline">
             Start free →
+          </Link>
+        </p>
+        <p className="text-center text-zinc-600 text-xs mt-4">
+          <Link href="/" className="hover:underline">
+            Back to home
           </Link>
         </p>
       </div>

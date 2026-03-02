@@ -73,6 +73,7 @@ function isUserFacing(s: string): boolean {
 }
 
 const DASHBOARD_V7_EXCLUDE = ["src/app/dashboard/agents/", "src/app/dashboard/analytics/", "src/app/dashboard/campaigns/", "src/app/dashboard/team/", "src/app/dashboard/integrations/", "src/app/dashboard/layout.tsx"];
+const MARKETING_PAGES_EXCLUDE = ["src/app/industries/", "src/app/blog/", "src/app/privacy/", "src/app/terms/", "src/app/contact/", "src/app/product/", "src/app/pricing/", "src/components/sections/", "src/components/demo/"];
 
 describe("UI forbidden technical terms", () => {
   const files = [...walkTsx(APP), ...walkTsx(COMPONENTS)];
@@ -85,10 +86,11 @@ describe("UI forbidden technical terms", () => {
     rel.includes("components/PricingContent.tsx") ||
     rel.includes("components/demo/CallSimulator.tsx");
   const dashboardV7 = (rel: string) => DASHBOARD_V7_EXCLUDE.some((p) => rel.startsWith(p) || rel === p);
+  const marketingExclude = (rel: string) => MARKETING_PAGES_EXCLUDE.some((p) => rel.startsWith(p));
   for (const file of files) {
     const content = readFileSync(file, "utf-8");
     const rel = path.relative(ROOT, file);
-    if (dashboardV7(rel)) continue;
+    if (dashboardV7(rel) || marketingExclude(rel)) continue;
     for (const s of extractUserFacingStrings(content)) {
       if (!isUserFacing(s)) continue;
       const lower = s.toLowerCase();

@@ -18,9 +18,10 @@ export default function OnboardWaitingPage() {
       router.push("/onboard/identity");
       return;
     }
-    setWorkspaceId(wsId);
-    setExternalRef(extRef);
-
+    const id = setTimeout(() => {
+      setWorkspaceId(wsId);
+      setExternalRef(extRef);
+    }, 0);
     const checkAcknowledged = async () => {
       try {
         const res = await fetch(`/api/onboard/check-ack?workspace_id=${wsId}&external_ref=${extRef}`);
@@ -54,7 +55,10 @@ export default function OnboardWaitingPage() {
       checkAcknowledged();
       fetchStateSignals();
     }, 2000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(id);
+      clearInterval(interval);
+    };
   }, [router]);
 
   if (!workspaceId || !externalRef) return null;

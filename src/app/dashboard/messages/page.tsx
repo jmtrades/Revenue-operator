@@ -88,12 +88,6 @@ export default function MessagesPage() {
     loadMessages();
   }, [workspaceId, selectedLeadId]);
 
-  useEffect(() => {
-    if (!workspaceId || !selectedLeadId || tab !== "inbox") return;
-    const interval = setInterval(loadMessages, 15000);
-    return () => clearInterval(interval);
-  }, [workspaceId, selectedLeadId, tab]);
-
   const selectedConv = conversations.find((c) => c.lead_id === selectedLeadId);
   const sendMessage = async () => {
     if (!workspaceId || !selectedLeadId || !reply.trim() || sending) return;

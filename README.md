@@ -287,3 +287,7 @@ npm run start
 vercel --prod
 ```
 Set env vars in Vercel dashboard. Configure cron: `/api/cron/core` every 2 min, `/api/cron/assurance-delivery` hourly (see docs for full optional table).
+
+## GitHub
+
+Repository: connect with `git remote add origin https://github.com/<org>/<repo>.git` then `git push -u origin main`. Ensure `.env.local` is never committed (see `.gitignore`).
