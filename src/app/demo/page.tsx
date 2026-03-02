@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
-import { CallSimulator } from "@/components/demo/CallSimulator";
+import { DemoSimulatorSection } from "@/components/demo/DemoSimulatorSection";
 
 export const metadata = {
   title: "Live demo",
@@ -20,10 +20,10 @@ export default function DemoPage() {
             See Recall Touch in action
           </h1>
           <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Watch real AI phone calls — booking appointments, capturing leads, and following up.
+            Watch real AI phone calls in real-time.
           </p>
         </div>
-        <CallSimulator />
+        <DemoSimulatorSection />
       </main>
       <Footer />
     </div>

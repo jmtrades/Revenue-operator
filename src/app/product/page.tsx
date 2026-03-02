@@ -112,10 +112,10 @@ export default function ProductPage() {
           <section className="max-w-3xl mb-24">
             <p className="section-label mb-4">Product</p>
             <h1 className="font-bold text-3xl md:text-4xl mb-6" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
-              See what governed execution looks like.
+              Your AI phone system. Every call answered. Every lead captured.
             </h1>
             <p className="text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-              Every feature designed for compliance-grade commercial operations.
+              Answer calls 24/7, book appointments, follow up with leads, and keep every conversation documented.
             </p>
           </section>
 

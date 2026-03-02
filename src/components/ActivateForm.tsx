@@ -131,6 +131,7 @@ export function ActivateForm() {
       localStorage.setItem(RT_SIGNUP_KEY, json);
       localStorage.setItem(RECALLTOUCH_SIGNUP_KEY, json);
       localStorage.setItem(ACTIVATE_STORAGE_KEY, json);
+      localStorage.setItem("rt_authenticated", "true");
     } catch {
       // ignore
     }
@@ -143,7 +144,7 @@ export function ActivateForm() {
         <div className="text-5xl mb-4">🎉</div>
         <h2 className="text-xl font-bold text-white mb-3">Welcome to Recall Touch!</h2>
         <p className="text-sm mb-6 text-zinc-400">
-          Your AI phone system is ready. Let&apos;s set up your first agent.
+          Your AI phone system is ready.
         </p>
         <button
           type="button"
@@ -152,6 +153,9 @@ export function ActivateForm() {
         >
           Set up your AI agent →
         </button>
+        <p className="text-xs mt-4 text-zinc-500">
+          No credit card · 14-day free trial · Cancel anytime
+        </p>
       </div>
     );
   }

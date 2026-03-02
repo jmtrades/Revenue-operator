@@ -39,7 +39,7 @@ export default function Error({
             href="/"
             className="px-4 py-2 rounded-lg text-sm font-medium bg-zinc-900 border border-zinc-700 text-white hover:border-zinc-500 transition"
           >
-            Go home
+            Go home →
           </Link>
         </div>
       </div>

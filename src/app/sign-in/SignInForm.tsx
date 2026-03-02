@@ -41,6 +41,7 @@ export default function SignInForm() {
     if (signupEmail && signupEmail.toLowerCase() === trimmed) {
       try {
         localStorage.setItem("rt_session", "true");
+        localStorage.setItem("rt_authenticated", "true");
       } catch {
         // ignore
       }

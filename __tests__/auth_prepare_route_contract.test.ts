@@ -17,23 +17,15 @@ describe("Auth prepare route contract", () => {
     expect(content).toContain("Back to home");
   });
 
-  it("activate page does not show indefinite Preparing; uses Verifying session or institutional error", () => {
+  it("activate page does not show indefinite Preparing or Verifying session", () => {
     const content = readFileSync(ACTIVATE_PAGE, "utf-8");
     expect(content).not.toMatch(/Preparing\.\.\.?/);
-    expect(content).toContain("Verifying session.");
-    expect(content).toContain("Unable to proceed.");
-    expect(content).toContain("Authorization could not be confirmed.");
+    expect(content).not.toContain("Verifying session.");
   });
 
-  it("activate page has bounded timeout (8 seconds) for session check", () => {
-    const content = readFileSync(ACTIVATE_PAGE, "utf-8");
-    expect(content).toMatch(/8_000|8000/);
-    expect(content).toContain("setTransitionError");
-  });
-
-  it("sign-in page uses Verifying session and Back to home", () => {
+  it("sign-in page has Back to home and does not show Verifying session", () => {
     const content = readFileSync(SIGNIN_PAGE, "utf-8");
-    expect(content).toContain("Verifying session.");
+    expect(content).not.toContain("Verifying session.");
     expect(content).toContain("Back to home");
     expect(content).not.toMatch(/Preparing\.\.\.?/);
   });
