@@ -1,33 +1,37 @@
-import { Navbar } from "@/components/sections/Navbar";
+import Link from "next/link";
 import { Hero } from "@/components/sections/Hero";
-import { ProblemStatement } from "@/components/sections/ProblemStatement";
-import { HowItWorks } from "@/components/sections/HowItWorks";
-import { Features } from "@/components/sections/Features";
-import { Industries } from "@/components/sections/Industries";
-import { PricingPreview } from "@/components/sections/PricingPreview";
-import { MetricsSection } from "@/components/sections/MetricsSection";
-import { SocialProof } from "@/components/sections/SocialProof";
-import { FinalCTA } from "@/components/sections/FinalCTA";
-import { Footer } from "@/components/sections/Footer";
-import { ScrollDepthCTA } from "@/components/sections/ScrollDepthCTA";
 
-export default function LandingPage() {
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navbar />
+      <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
+        <Link
+          href="/"
+          className="flex items-center gap-2"
+        >
+          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+            <span className="text-black font-bold text-sm">RT</span>
+          </div>
+          <span className="font-semibold text-lg">Recall Touch</span>
+        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/sign-in"
+            className="text-sm text-zinc-400 hover:text-white transition"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/activate"
+            className="text-sm bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-zinc-200 transition"
+          >
+            Start free →
+          </Link>
+        </div>
+      </nav>
       <main id="main">
         <Hero />
-        <ProblemStatement />
-        <HowItWorks />
-        <Features />
-        <Industries />
-        <MetricsSection />
-        <PricingPreview />
-        <SocialProof />
-        <FinalCTA />
-        <Footer />
       </main>
-      <ScrollDepthCTA />
     </div>
   );
 }

@@ -1,12 +1,9 @@
-"use client";
-
 import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { Phone, Clock, FileCheck, ArrowUpRight, Layers } from "lucide-react";
 import { ROUTES } from "@/lib/constants";
-import { motion } from "framer-motion";
 import {
   WaveformVisual,
   TimelineVisual,
@@ -101,9 +98,14 @@ const USE_CASES = [
   { icon: Building2, title: "Regulated industries", desc: "Organizations in financial services, insurance, healthcare, or legal where call documentation isn't optional — it's a regulatory requirement.", href: "#compliance" },
 ];
 
+export const metadata = {
+  title: "Product",
+  description: "See how Recall Touch answers every call, books appointments, follows up with leads, and keeps every conversation documented.",
+};
+
 export default function ProductPage() {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, ease: "easeOut" }} className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+    <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       <Navbar />
       <main className="pt-28 pb-24">
         <Container>
@@ -197,6 +199,6 @@ export default function ProductPage() {
         </Container>
       </main>
       <Footer />
-    </motion.div>
+    </div>
   );
 }

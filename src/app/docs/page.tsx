@@ -1,12 +1,9 @@
-"use client";
-
 import Link from "next/link";
 import { BookOpen, Code, Shield, Plug, HelpCircle, MessageCircle } from "lucide-react";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
-import { motion } from "framer-motion";
 
 const DOC_SIDEBAR = [
   { id: "getting-started", label: "Getting Started" },
@@ -27,9 +24,14 @@ const DOC_CARDS = [
   { icon: MessageCircle, title: "Contact Support", desc: "Talk to our team for technical or compliance questions.", href: ROUTES.CONTACT },
 ];
 
+export const metadata = {
+  title: "Docs",
+  description: "Step-by-step guides for forwarding your number, setting up your voice agent, launching campaigns, and integrating Recall Touch.",
+};
+
 export default function DocsPage() {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, ease: "easeOut" }} className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+    <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       <Navbar />
       <main className="pt-28 pb-24">
         <Container>
@@ -55,7 +57,7 @@ export default function DocsPage() {
                   Documentation
                 </h1>
                 <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Everything you need to set up and manage governed operations.
+                  Step-by-step guides for forwarding your number, setting up your voice agent, and connecting Recall Touch to the tools your business already uses.
                 </p>
               </div>
 
@@ -159,6 +161,6 @@ export default function DocsPage() {
         </Container>
       </main>
       <Footer />
-    </motion.div>
+    </div>
   );
 }
