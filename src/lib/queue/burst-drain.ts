@@ -34,7 +34,7 @@ type JobPayload =
 
 async function acquireLock(
   db: ReturnType<typeof getDb>,
-  workerId: string
+  _workerId: string
 ): Promise<{ id: string; payload: unknown; job_type: string } | null> {
   const { data: row } = await db
     .from("job_queue")

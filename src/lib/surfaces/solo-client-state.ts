@@ -22,7 +22,7 @@ export interface SoloClientStatePayload {
 
 export async function getSoloClientState(
   workspaceId: string,
-  reference?: string | null
+  _reference?: string | null
 ): Promise<SoloClientStatePayload> {
   const [retention, disableImpact] = await Promise.all([
     getRetentionInterceptPayload(workspaceId),

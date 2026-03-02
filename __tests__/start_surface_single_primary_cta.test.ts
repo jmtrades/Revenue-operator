@@ -11,7 +11,7 @@ const ROOT = path.resolve(__dirname, "..");
 const START_PAGE = path.join(ROOT, "src", "app", "dashboard", "start", "page.tsx");
 const NEXT_ACTION_ROUTE = path.join(ROOT, "src", "app", "api", "operational", "next-action", "route.ts");
 
-const ALLOWED_LABELS = [
+const _ALLOWED_LABELS = [
   "Open record",
   "Record activation",
   "Confirm governance",

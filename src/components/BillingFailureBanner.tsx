@@ -12,7 +12,7 @@ import { PAYMENT_FAILURE_PRIMARY } from "@/lib/billing-copy";
 export function BillingFailureBanner() {
   const { workspaceId } = useWorkspace();
   const [billingStatus, setBillingStatus] = useState<{ billing_status?: string } | null>(null);
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, _setDismissed] = useState(false);
 
   useEffect(() => {
     if (!workspaceId) return;

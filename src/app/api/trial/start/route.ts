@@ -240,7 +240,7 @@ export async function POST(req: NextRequest) {
       // Non-critical if preset application fails
     }
 
-    const activationResult = await db.from("activation_states").upsert(
+    const _activationResult = await db.from("activation_states").upsert(
       { workspace_id: workspaceId, step: "scan", updated_at: new Date().toISOString() },
       { onConflict: "workspace_id" }
     );

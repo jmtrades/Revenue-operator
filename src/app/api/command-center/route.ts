@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
     .neq("status", "lost");
 
   const hotLeads: Array<{ id: string; lead_id: string; name?: string; email?: string; company?: string; probability: number; value_cents: number; contribution?: string }> = [];
-  const dealIds = (deals ?? []).map((d: { id: string; lead_id: string }) => d.id);
+  const _dealIds = (deals ?? []).map((d: { id: string; lead_id: string }) => d.id);
   const leadIds = [...new Set((deals ?? []).map((d: { lead_id: string }) => d.lead_id))];
 
   if (leadIds.length > 0) {
@@ -131,8 +131,8 @@ export async function GET(req: NextRequest) {
     .order("updated_at", { ascending: false })
     .limit(5);
 
-  const recentConvIds = (recentConversations ?? []).map((c: { id: string }) => c.id);
-  const recentConvLeadIds = [...new Set((recentConversations ?? []).map((c: { lead_id: string }) => c.lead_id))];
+  const _recentConvIds = (recentConversations ?? []).map((c: { id: string }) => c.id);
+  const _recentConvLeadIds = [...new Set((recentConversations ?? []).map((c: { lead_id: string }) => c.lead_id))];
 
   const { data: recentActions } = await db
     .from("action_logs")
@@ -411,7 +411,7 @@ export async function GET(req: NextRequest) {
   const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
   const isQuietPeriod = !lastAction || lastActionAt < twoHoursAgo;
   if (isQuietPeriod) {
-    const nextMins = nextScheduled
+    const _nextMins = nextScheduled
       ? Math.max(0, Math.ceil((new Date((nextScheduled as { created_at: string }).created_at).getTime() - Date.now()) / 60000))
       : 30;
     // Show real count only - no fallback to "1" to avoid fake numbers
@@ -731,7 +731,7 @@ export async function GET(req: NextRequest) {
     recoveries_running: atRisk.filter((l) => leadsWithPendingJobs.has(l.id)).length,
   };
 
-  const avgWarmth = cardLeadIds.length > 0
+  const _avgWarmth = cardLeadIds.length > 0
     ? Object.values(warmthScores).reduce((s, v) => s + v, 0) / cardLeadIds.length
     : 0;
   const warmerCount = Object.values(warmthScores).filter((v) => v >= 50).length;

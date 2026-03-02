@@ -7,8 +7,8 @@ import Link from "next/link";
 export function TrialBanner() {
   const { workspaceId } = useWorkspace();
   const [day, setDay] = useState(0);
-  const [conversationsAtRisk, setConversationsAtRisk] = useState<Array<{ id: string; name?: string; company?: string }>>([]);
-  const [futureCalls, setFutureCalls] = useState<Array<{ deal_id: string; lead_id: string; name?: string; company?: string; value_cents?: number }>>([]);
+  const [_conversationsAtRisk, setConversationsAtRisk] = useState<Array<{ id: string; name?: string; company?: string }>>([]);
+  const [_futureCalls, setFutureCalls] = useState<Array<{ deal_id: string; lead_id: string; name?: string; company?: string; value_cents?: number }>>([]);
   const [billingStatus, setBillingStatus] = useState<{ renewal_at?: string | null } | null>(null);
   const [commandCenter, setCommandCenter] = useState<{
     active_protections?: { conversations_being_warmed: number; followups_scheduled_24h: number; attendance_protections: number; recoveries_running: number };
@@ -57,8 +57,8 @@ export function TrialBanner() {
 
   const ap = commandCenter?.active_protections;
   const ew = commandCenter?.expected_weekly;
-  const hasProtections = ap && (ap.conversations_being_warmed > 0 || ap.followups_scheduled_24h > 0 || ap.attendance_protections > 0 || ap.recoveries_running > 0);
-  const hasExpectation = ew && (ew.low > 0 || ew.high > 0);
+  const _hasProtections = ap && (ap.conversations_being_warmed > 0 || ap.followups_scheduled_24h > 0 || ap.attendance_protections > 0 || ap.recoveries_running > 0);
+  const _hasExpectation = ew && (ew.low > 0 || ew.high > 0);
 
   if (day >= 11) {
     const renewalDate = billingStatus?.renewal_at ? new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" }) : null;

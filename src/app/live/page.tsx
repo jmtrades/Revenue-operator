@@ -4,8 +4,6 @@ import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { WorkspaceGate } from "@/components/WorkspaceGate";
-import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
-
 interface TimelineStep {
   id: string;
   step: "message_received" | "understanding_intent" | "preparing_reply" | "reply_sent";
@@ -178,7 +176,7 @@ function LivePageContent() {
     fetchConversationEvents();
     const interval = setInterval(fetchConversationEvents, 1000); // Poll every 1 second
     return () => clearInterval(interval);
-  }, [workspaceId, conversationId]);
+  }, [workspaceId, conversationId, router]);
 
   const handleContinue = () => {
     router.push(workspaceId ? `/dashboard?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard");

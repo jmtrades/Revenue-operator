@@ -5,8 +5,6 @@
 
 import { getDb } from "@/lib/db/queries";
 import { enqueueDecision } from "@/lib/queue";
-import { setLeadPlan } from "@/lib/plans/lead-plan";
-
 export const CONVERSION_OPERATOR = "ConversionOperator";
 
 /** Find leads in active_prospect/potential with recent activity and no booking; enqueue decision to drive booking */

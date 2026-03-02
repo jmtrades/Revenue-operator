@@ -75,7 +75,7 @@ describe("economic-activation", () => {
     });
 
     it("setUsageMeter overwrites same period so re-run does not double-count", () => {
-      const periodKey = "workspace_id:period_start:usage_type";
+      const _periodKey = "workspace_id:period_start:usage_type";
       const behavior = "upsert_replace";
       expect(behavior).toBe("upsert_replace");
     });

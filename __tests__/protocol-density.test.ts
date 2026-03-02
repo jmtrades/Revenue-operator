@@ -169,7 +169,7 @@ describe("Protocol density", () => {
         {},
         originWs
       );
-      const { data: ev } = await db
+      const { data: _ev } = await db
         .from("protocol_events")
         .select("event_type")
         .eq("external_ref", externalRef)

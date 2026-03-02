@@ -7,7 +7,7 @@ import { describe, it, expect, vi } from "vitest";
 vi.mock("@/lib/db/queries", () => ({
   getDb: () => ({
     from: (table: string) => ({
-      select: (...args: string[]) => ({
+      select: (..._args: string[]) => ({
         eq: (col: string, val: string) => ({
           single: () => {
             if (table === "settings" && col === "workspace_id") {

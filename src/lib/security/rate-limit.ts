@@ -18,7 +18,7 @@ function hashKey(key: string): string {
 export async function checkInboundRateLimit(workspaceId: string, ip: string): Promise<boolean> {
   const db = getDb();
   const key = hashKey(`inbound:${workspaceId}:${ip}`);
-  const windowStart = new Date(Date.now() - INBOUND_WINDOW_SEC * 1000).toISOString();
+  const _windowStart = new Date(Date.now() - INBOUND_WINDOW_SEC * 1000).toISOString();
 
   const { data: row } = await db
     .from("rate_limits")
@@ -83,7 +83,7 @@ export function hashIpForPublicRecord(ip: string): string {
 export async function checkPublicRecordRateLimit(ipHash: string, externalRef: string): Promise<boolean> {
   const db = getDb();
   const key = hashKey(`${PUBLIC_RECORD_SCOPE}:${ipHash}:${externalRef}`);
-  const windowStart = new Date(Date.now() - PUBLIC_RECORD_WINDOW_SEC * 1000).toISOString();
+  const _windowStart = new Date(Date.now() - PUBLIC_RECORD_WINDOW_SEC * 1000).toISOString();
   const { data: row } = await db
     .from("rate_limits")
     .select("count, window_start")

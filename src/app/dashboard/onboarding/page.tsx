@@ -41,7 +41,7 @@ function OnboardingWizard() {
   const [agentName, setAgentName] = useState("Sarah");
   const [voiceId, setVoiceId] = useState("warm");
   const [greeting, setGreeting] = useState("");
-  const [capabilities, setCapabilities] = useState<string[]>(["answer_questions", "capture_leads", "book_appointments", "handle_emergencies", "send_texts", "block_spam"]);
+  const [capabilities, _setCapabilities] = useState<string[]>(["answer_questions", "capture_leads", "book_appointments", "handle_emergencies", "send_texts", "block_spam"]);
 
   // Step 3
   const [services, setServices] = useState("");
@@ -207,7 +207,7 @@ function OnboardingWizard() {
     );
   }
 
-  const progress = (step / STEPS) * 100;
+  const _progress = (step / STEPS) * 100;
 
   return (
     <div className="min-h-screen flex flex-col p-6 md:p-12" style={{ background: "var(--background)", color: "var(--text-primary)" }}>

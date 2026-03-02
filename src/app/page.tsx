@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
-import { MockDashboard } from "@/components/sections/MockDashboard";
 import { ProblemStatement } from "@/components/sections/ProblemStatement";
+import { HomepageActivitySection } from "@/components/sections/HomepageActivitySection";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Features } from "@/components/sections/Features";
 import { Industries } from "@/components/sections/Industries";
@@ -20,7 +20,7 @@ export default function HomePage() {
       <Navbar />
       <main id="main">
         <Hero />
-        <MockDashboard />
+        <HomepageActivitySection />
         <ProblemStatement />
         <HowItWorks />
         <Features />

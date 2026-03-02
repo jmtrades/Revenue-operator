@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { detectDealDeath, recordDealDeathSignal } from "@/lib/intelligence/deal-death";
+import { detectDealDeath } from "@/lib/intelligence/deal-death";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");

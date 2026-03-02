@@ -46,7 +46,7 @@ export function getTierFeatures(tier: BillingTier): TierFeatures {
 export async function allowFeature(
   workspaceId: string,
   feature: FeatureKey,
-  context?: { currentDomainPackCount?: number; currentChannelCount?: number }
+  _context?: { currentDomainPackCount?: number; currentChannelCount?: number }
 ): Promise<boolean> {
   const tier = await resolveBillingTier(workspaceId);
   const features = TIER_FEATURES[tier];

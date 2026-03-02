@@ -3,7 +3,7 @@
  * Idempotency, replay safety, no direct state mutation, drift semantics, runSafeCron.
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 vi.mock("@/lib/db/queries", () => ({
   getDb: () => ({

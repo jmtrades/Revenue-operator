@@ -13,8 +13,6 @@ import {
 import { getLastResponsibilityState, recordResponsibilityChange } from "./history";
 import { enqueueDecision, enqueue } from "@/lib/queue";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
-import type { ResponsibilityState } from "./responsibility";
-
 /** Before marking lead dormant: no pending actions, no future bookings, no unresolved escalations. */
 async function closureFinalityGuard(leadId: string, workspaceId: string): Promise<boolean> {
   const db = getDb();

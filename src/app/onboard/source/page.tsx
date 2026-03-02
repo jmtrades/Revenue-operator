@@ -7,7 +7,7 @@ import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 export default function OnboardSourcePage() {
   const router = useRouter();
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [_selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
     const wsId = sessionStorage.getItem("onboard_workspace_id");

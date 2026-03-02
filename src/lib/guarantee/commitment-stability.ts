@@ -159,7 +159,7 @@ export async function updateCommitmentPressure(leadId: string, workspaceId: stri
 
   const messages = await getRecentMessages(convId, 12);
   const userMessages = messages.filter((m) => m.role === "user");
-  const outboundMessages = messages.filter((m) => m.role === "assistant");
+  const _outboundMessages = messages.filter((m) => m.role === "assistant");
   const lastUser = userMessages[0];
 
   const current = await getCommitmentPressure(leadId);

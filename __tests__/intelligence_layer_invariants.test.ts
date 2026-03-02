@@ -15,7 +15,6 @@ import {
   computeNextCommitmentState,
   DEFAULT_COMMITMENT_STATE,
   type VoiceOutcomeInput,
-  type MessageOutcomeInput,
 } from "../src/lib/intelligence/commitment-score";
 import { evaluateRisk, type RiskEngineInput } from "../src/lib/intelligence/risk-engine";
 import { selectBatchWave, type LeadSegmentItem } from "../src/lib/intelligence/batch-controller";

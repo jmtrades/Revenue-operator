@@ -7,7 +7,6 @@ import { getDb } from "@/lib/db/queries";
 import {
   upsertFinancialExposure,
   resolveFinancialExposure,
-  type FinancialExposureCategory,
 } from "./index";
 
 const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;

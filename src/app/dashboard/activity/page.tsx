@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
@@ -98,7 +98,7 @@ export default function ActivityPage() {
   const [callInProgress, setCallInProgress] = useState<string | null>(null);
   const [callError, setCallError] = useState<string | null>(null);
 
-  const refetch = (silent?: boolean) => {
+  const refetch = useCallback((silent?: boolean) => {
     if (!workspaceId) return;
     if (!silent) setLoading(true);
     Promise.all([
@@ -112,7 +112,7 @@ export default function ActivityPage() {
         if (sRes.data) setSummary(sRes.data);
       })
       .finally(() => { if (!silent) setLoading(false); });
-  };
+  }, [workspaceId]);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -122,14 +122,14 @@ export default function ActivityPage() {
       return;
     }
     refetch();
-  }, [workspaceId]);
+  }, [workspaceId, refetch]);
 
   useEffect(() => {
     if (!workspaceId) return;
     const onFocus = () => refetch(true);
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
-  }, [workspaceId]);
+  }, [workspaceId, refetch]);
 
   const feedCards = calls.map((call) => {
     const type = deriveCardType(call);

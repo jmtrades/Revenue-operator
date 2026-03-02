@@ -6,7 +6,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 export function HeartbeatBar() {
   const { workspaceId } = useWorkspace();
   const [statusLevel, setStatusLevel] = useState<"healthy" | "warning" | "risk">("healthy");
-  const [maintained, setMaintained] = useState(0);
+  const [_maintained, setMaintained] = useState(0);
 
   useEffect(() => {
     if (!workspaceId) {

@@ -21,8 +21,8 @@ export async function detectBookingDrift(workspaceId: string): Promise<BookingDr
   const provider = getCalendarProvider();
   const out: BookingDriftCandidate[] = [];
 
-  const from = new Date().toISOString();
-  const to = new Date(Date.now() + HORIZON_HOURS * 60 * 60 * 1000).toISOString();
+  const _from = new Date().toISOString();
+  const _to = new Date(Date.now() + HORIZON_HOURS * 60 * 60 * 1000).toISOString();
   const { data: callSessions } = await db
     .from("call_sessions")
     .select("id, lead_id, workspace_id, external_event_id, started_at, call_started_at")

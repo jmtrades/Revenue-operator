@@ -7,7 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import { appendNarrative } from "@/lib/confidence-engine";
 
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
-const SEVEN_DAYS_MS = 7 * TWENTY_FOUR_HOURS_MS;
+const _SEVEN_DAYS_MS = 7 * TWENTY_FOUR_HOURS_MS;
 
 /** Ensure ritual_cycle_state row exists. */
 async function ensureRitualState(workspaceId: string): Promise<void> {

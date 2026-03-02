@@ -22,7 +22,7 @@ const EMPTY_RULES: ComplianceRules = {
 export async function resolveCompliancePack(
   workspaceId: string,
   industryType?: string | null,
-  regionState?: string | null
+  _regionState?: string | null
 ): Promise<ComplianceRules> {
   const db = getDb();
 

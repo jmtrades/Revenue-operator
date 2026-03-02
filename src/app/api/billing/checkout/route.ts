@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
         
         finalWorkspaceId = wsId;
         finalEmail = email;
-      } catch (err) {
+      } catch (_err) {
         const { data: existing } = await db.from("users").select("id").eq("email", email).limit(1).maybeSingle();
         const uid = (existing as { id: string } | null)?.id;
         if (uid) {
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
           stripe_customer_id: customerId,
           updated_at: new Date().toISOString(),
         }).eq("id", finalWorkspaceId);
-      } catch (err) {
+      } catch (_err) {
         log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed" });
         return NextResponse.json({ ok: false, reason: "customer_create_failed" }, { status: 200 });
       }

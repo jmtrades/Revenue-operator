@@ -8,9 +8,9 @@ import path from "path";
 
 const ROOT = path.resolve(__dirname, "..");
 
-const CAP_TODAY = 6;
-const CAP_PROOF = 8;
-const CAP_REVERSION = 6;
+const _CAP_TODAY = 6;
+const _CAP_PROOF = 8;
+const _CAP_REVERSION = 6;
 
 const POSITION_KEYS = [
   "institutional_state",

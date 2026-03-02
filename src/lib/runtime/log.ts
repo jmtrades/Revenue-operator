@@ -9,6 +9,6 @@ export function log(event: string, data?: Record<string, unknown> & { workspace_
     event,
     ...(data ?? {}),
   };
-  // eslint-disable-next-line no-console
+   
   console.log(JSON.stringify(payload));
 }

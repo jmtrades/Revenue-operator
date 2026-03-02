@@ -18,7 +18,7 @@ export function reduceLeadState(
   signal: SignalForReducer
 ): LifecycleState {
   const s = signal.signal_type;
-  const p = signal.payload;
+  const _p = signal.payload;
 
   switch (s) {
     case "InboundMessageReceived":

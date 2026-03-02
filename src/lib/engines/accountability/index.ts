@@ -9,7 +9,6 @@ import {
   getCounterfactualForAttendance,
   getCounterfactualForRevival,
   type CounterfactualOutcome,
-  type OutcomeType,
 } from "@/lib/attribution/counterfactual";
 
 export interface OutcomeAttribution {

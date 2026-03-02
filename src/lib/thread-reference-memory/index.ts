@@ -130,7 +130,7 @@ export async function detectAndAttachReference(context: ReferenceContext): Promi
     leadId,
     createdAt,
     threadId: contextThreadId,
-    acknowledgedAt,
+    acknowledgedAt: _acknowledgedAt,
     state,
   } = context;
 

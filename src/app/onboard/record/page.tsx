@@ -6,8 +6,8 @@ import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 
 export default function OnboardRecordPage() {
   const router = useRouter();
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
-  const [externalRef, setExternalRef] = useState<string | null>(null);
+  const [_workspaceId, setWorkspaceId] = useState<string | null>(null);
+  const [_externalRef, setExternalRef] = useState<string | null>(null);
   const [orientationLines, setOrientationLines] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -21,7 +21,7 @@ export default function DeclarePage() {
   const [step, setStep] = useState(1);
   const [jurisdiction, setJurisdiction] = useState<string | null>(null);
   const [reviewLevel, setReviewLevel] = useState<string | null>(null);
-  const [sourceDone, setSourceDone] = useState(false);
+  const [_sourceDone, setSourceDone] = useState(false);
   const [purpose, setPurpose] = useState<string | null>(null);
   const [activated, setActivated] = useState(false);
   const [fading, setFading] = useState(false);

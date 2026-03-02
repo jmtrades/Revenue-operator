@@ -17,7 +17,7 @@ export function narrativeForAction(
     reasoning?: Record<string, unknown>;
   }
 ): DecisionNarrative {
-  const { lastUserMsg, state, policyReason, reasoning } = context;
+  const { lastUserMsg, state: _state, policyReason: _policyReason, reasoning } = context;
   const explanation = (reasoning?.explanation as string) ?? "";
 
   const actionNoticed: Record<string, string> = {

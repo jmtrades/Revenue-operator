@@ -40,7 +40,7 @@ export async function GET(
     : "";
 
   const { data: lead } = await db.from("leads").select("state, company").eq("id", s.lead_id).single();
-  const state = (lead as { state?: string })?.state ?? "unknown";
+  const _state = (lead as { state?: string })?.state ?? "unknown";
 
   const whatWorked = s.outcome === "booked" || s.outcome === "qualified"
     ? "Clear qualification and next-step agreement."

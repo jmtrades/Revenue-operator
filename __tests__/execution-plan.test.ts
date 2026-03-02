@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { ExecutionPlan, ExecutionDecision } from "@/lib/execution-plan/types";
+import type { ExecutionDecision } from "@/lib/execution-plan/types";
 
 vi.mock("@/lib/db/queries", () => ({
   getDb: () => ({

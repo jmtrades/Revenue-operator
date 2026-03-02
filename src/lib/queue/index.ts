@@ -29,7 +29,7 @@ export type JobPayload =
   | { type: "handoff_notify"; escalationId: string; workspaceId: string; leadId: string; decisionNeeded: string }
   | { type: "handoff_notify_batch"; escalationIds: string[]; workspaceId: string };
 
-const DLQ_NAME = "ro:dlq";
+const _DLQ_NAME = "ro:dlq";
 
 /** Enqueue decision job only if no active plan with future next_action_at and no duplicate pending job. */
 export async function enqueueDecision(

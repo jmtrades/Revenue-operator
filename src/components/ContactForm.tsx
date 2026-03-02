@@ -5,17 +5,23 @@ import { useState } from "react";
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError(null);
     const form = e.currentTarget;
     const data = {
       name: (form.elements.namedItem("name") as HTMLInputElement)?.value?.trim() ?? "",
       email: (form.elements.namedItem("email") as HTMLInputElement)?.value?.trim() ?? "",
       company: (form.elements.namedItem("company") as HTMLInputElement)?.value?.trim() ?? "",
+      subject: (form.elements.namedItem("subject") as HTMLSelectElement)?.value ?? "General",
       message: (form.elements.namedItem("body") as HTMLTextAreaElement)?.value?.trim() ?? "",
     };
-    if (!data.name || !data.email || !data.message) return;
+    if (!data.name || !data.email || !data.message) {
+      setError("Please fill in name, email, and message.");
+      return;
+    }
     setLoading(true);
     try {
       try {
@@ -102,6 +108,27 @@ export function ContactForm() {
       </div>
       <div>
         <label
+          htmlFor="subject"
+          className="block text-sm font-medium mb-1.5"
+          style={{ color: "var(--text-secondary)" }}
+        >
+          Subject
+        </label>
+        <select
+          id="subject"
+          name="subject"
+          className="w-full px-4 py-2.5 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]"
+          style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
+        >
+          <option value="General">General</option>
+          <option value="Sales">Sales</option>
+          <option value="Support">Support</option>
+          <option value="Billing">Billing</option>
+          <option value="Partnership">Partnership</option>
+        </select>
+      </div>
+      <div>
+        <label
           htmlFor="body"
           className="block text-sm font-medium mb-1.5"
           style={{ color: "var(--text-secondary)" }}
@@ -117,6 +144,9 @@ export function ContactForm() {
           style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
         />
       </div>
+      {error && (
+        <p className="text-sm" style={{ color: "var(--accent-danger)" }}>{error}</p>
+      )}
       <button
         type="submit"
         disabled={loading}

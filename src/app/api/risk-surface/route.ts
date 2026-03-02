@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 
-const RISK_TYPES = [
+const _RISK_TYPES = [
   "reply_window_expiring",
   "cooling_conversation",
   "post_call_hesitation",
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
   const conversations_at_risk: Array<{
     lead_id: string;
     name: string;
-    risk_type: (typeof RISK_TYPES)[number];
+    risk_type: (typeof _RISK_TYPES)[number];
     risk_reason: string;
     time_remaining_min: number | null;
     recommended_protection: string;

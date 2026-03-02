@@ -7,7 +7,6 @@ import {
   upsertImmediateRisk,
   resolveImmediateRisk,
   recordRiskCategoryDuringObserving,
-  type ImmediateRiskCategory,
 } from "./index";
 import { getInstallationState } from "@/lib/installation";
 
@@ -16,7 +15,7 @@ const TWO_HOURS_MS = 2 * ONE_HOUR_MS;
 const TWENTY_FOUR_HOURS_MS = 24 * ONE_HOUR_MS;
 const THIRTY_MIN_MS = 30 * 60 * 1000;
 
-function isWithinBusinessHours(workspaceId: string, _db: ReturnType<typeof getDb>): Promise<boolean> {
+function isWithinBusinessHours(_workspaceId: string, _db: ReturnType<typeof getDb>): Promise<boolean> {
   return Promise.resolve(true);
 }
 
@@ -42,7 +41,7 @@ async function detectUnconfirmedCommitments(): Promise<void> {
 /** Resolve unconfirmed_commitment when commitment is resolved or past window. */
 async function resolveUnconfirmedCommitments(): Promise<void> {
   const db = getDb();
-  const now = new Date().toISOString();
+  const _now = new Date().toISOString();
   const { data: risks } = await db
     .from("immediate_risk_events")
     .select("id, workspace_id, related_external_ref")

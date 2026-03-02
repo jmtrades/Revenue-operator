@@ -5,7 +5,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
 import path from "path";
-import { evaluateVariantEffectiveness, getWorkspaceStrategyMatrix, SUPPRESS_THRESHOLD } from "../src/lib/intelligence/strategy-effectiveness";
+import { SUPPRESS_THRESHOLD } from "../src/lib/intelligence/strategy-effectiveness";
 
 const ROOT = path.resolve(__dirname, "..");
 

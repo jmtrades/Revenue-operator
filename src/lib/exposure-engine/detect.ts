@@ -4,7 +4,6 @@
 
 import { getDb } from "@/lib/db/queries";
 import { upsertExposure } from "./record";
-import type { ExposureType, SubjectType } from "./types";
 
 const DETECT_LIMIT = 200;
 const REPLY_DELAY_HOURS = 2;

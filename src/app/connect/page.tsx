@@ -63,7 +63,7 @@ function ConnectPageContent() {
         } else if (retryCount < 10) {
           setTimeout(() => setRetryCount((c) => c + 1), 3000);
         }
-      } catch (error) {
+      } catch {
         if (retryCount < 10) {
           setTimeout(() => setRetryCount((c) => c + 1), 3000);
         }

@@ -8,7 +8,7 @@ vi.mock("@/lib/db/queries", () => {
   const emptyData = { data: [] };
   const leadData = { state: "ENGAGED", last_activity_at: new Date().toISOString(), created_at: new Date().toISOString(), opt_out: false };
   const convData = { id: "conv1" };
-  const orderLimit = () => ({ data: [] });
+  const _orderLimit = () => ({ data: [] });
   const limitOne = (table: string) => ({
     single: () => (table === "leads" ? { data: leadData, error: null } : table === "conversations" ? { data: convData, error: null } : { data: null, error: null }),
     maybeSingle: () => (table === "conversations" ? { data: convData, error: null } : { data: null, error: null }),
@@ -17,8 +17,8 @@ vi.mock("@/lib/db/queries", () => {
     getDb: () => ({
       from: (table: string) => ({
         select: () => ({
-          eq: (col: string) => ({
-            eq: (c2: string) => ({
+          eq: (_col: string) => ({
+            eq: (_c2: string) => ({
               single: () => (table === "leads" ? { data: leadData, error: null } : { data: null, error: null }),
               order: () => ({ limit: () => emptyData }),
               limit: (n: number) => (n === 1 ? limitOne(table) : emptyData),

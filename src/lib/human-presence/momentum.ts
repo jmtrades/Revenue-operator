@@ -28,7 +28,7 @@ export async function computeMomentum(input: MomentumInput): Promise<{
   const { leadId, conversationId, lastUserMessageLength = 0, bookingIntentSignals = false } = input;
 
   // Recent outbound count and last few messages
-  const { data: recent } = await db
+  const { data: _recent } = await db
     .from("outbound_messages")
     .select("created_at")
     .eq("lead_id", leadId)

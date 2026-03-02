@@ -23,7 +23,7 @@ const MAX_HORIZON_LENGTH = 3;
 export function buildStrategicHorizon(input: BuildStrategicHorizonInput): HorizonStep[] {
   const {
     stage,
-    primaryObjective,
+    primaryObjective: _primaryObjective,
     openQuestionsCount,
     brokenCommitmentsCount,
     goodwillScore,

@@ -18,7 +18,7 @@ export async function detectAndRecordForwardedAccess(
   workspaceId: string
 ): Promise<boolean> {
   const db = getDb();
-  const ipHash = hashIpForPublicRecord(ip);
+  const _ipHash = hashIpForPublicRecord(ip);
   
   const { data: tx } = await db
     .from("shared_transactions")
@@ -28,7 +28,7 @@ export async function detectAndRecordForwardedAccess(
   
   if (!tx) return false;
   const threadId = (tx as { id: string }).id;
-  const counterpartyIdentifier = (tx as { counterparty_identifier: string }).counterparty_identifier;
+  const _counterpartyIdentifier = (tx as { counterparty_identifier: string }).counterparty_identifier;
   
   const { data: firstView } = await db
     .from("record_reference_events")

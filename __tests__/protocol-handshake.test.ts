@@ -104,7 +104,7 @@ describe("Protocol handshake", () => {
       const { data: workspaces } = await db.from("workspaces").select("id").limit(2);
       const ids = (workspaces ?? []).map((w: { id: string }) => w.id);
       if (ids.length < 2) return;
-      const [workspaceA, workspaceB] = ids;
+      const [_workspaceA, workspaceB] = ids;
       const identifier = `mirror-${Date.now()}@example.com`;
       await db.from("counterparty_identities").insert({
         workspace_id: workspaceB,

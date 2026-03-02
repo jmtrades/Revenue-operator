@@ -88,7 +88,7 @@ export async function fetchWithFallback<T>(
     }
 
     return { data, fromCache: false };
-  } catch (err) {
+  } catch (_err) {
     clearTimeout(timeoutId);
     clearTimeout(latencyTimer);
 

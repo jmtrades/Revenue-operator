@@ -23,7 +23,7 @@ export async function POST(
   if (!session) return NextResponse.json({ error: "Call session not found" }, { status: 404 });
   const workspaceId = (session as { workspace_id: string }).workspace_id;
 
-  const { token, url } = await createWrapupTokenForCall(workspaceId, callSessionId);
+  const { url } = await createWrapupTokenForCall(workspaceId, callSessionId);
 
   const { data: webhook } = await db
     .from("webhook_configs")

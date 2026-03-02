@@ -40,7 +40,7 @@ describe("Performance regression smoke", () => {
 
   it("founder export has no unbounded select (no select without limit)", () => {
     const content = readFileSync(path.join(ROOT, "src/app/api/internal/founder/export/route.ts"), "utf-8");
-    const selectCalls = content.match(/\.from\s*\([^)]+\)\s*\.select\s*\([^)]+\)/g) || [];
+    const _selectCalls = content.match(/\.from\s*\([^)]+\)\s*\.select\s*\([^)]+\)/g) || [];
     const hasLimit = content.includes(".limit(");
     expect(hasLimit, "founder export should use .limit() on workspace query").toBe(true);
   });

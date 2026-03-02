@@ -2,13 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/db/queries", () => ({
   getDb: () => ({
-    from: (table: string) => ({
-      select: (...cols: string[]) => ({
-        eq: (field: string, val: string) => ({
+    from: (_table: string) => ({
+      select: (..._cols: string[]) => ({
+        eq: (_field: string, _val: string) => ({
           single: () => Promise.resolve({ data: null }),
-          in: (f: string, vals: string[]) => Promise.resolve({ data: [], count: 0 }),
+          in: (_f: string, _vals: string[]) => Promise.resolve({ data: [], count: 0 }),
         }),
-        in: (field: string, vals: string[]) => ({
+        in: (_field: string, _vals: string[]) => ({
           eq: () => Promise.resolve({ count: 0 }),
         }),
       }),

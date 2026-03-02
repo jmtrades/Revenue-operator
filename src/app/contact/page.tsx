@@ -15,9 +15,13 @@ export default function ContactPage() {
             <h1 className="font-bold text-3xl md:text-4xl mb-4" style={{ letterSpacing: "-0.02em" }}>
               Get in touch
             </h1>
-            <p className="text-lg mb-12" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-              Whether you&apos;re evaluating Recall Touch for your team or need technical support, the team is here to help. Email hello@recall-touch.com — response within 4 hours.
+            <p className="text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+              Whether you&apos;re evaluating Recall Touch for your team or need technical support, the team is here to help.
             </p>
+            <div className="mb-8 p-4 rounded-xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+              <p className="font-medium" style={{ color: "var(--text-primary)" }}>hello@recall-touch.com</p>
+              <p className="text-sm mt-1" style={{ color: "var(--text-tertiary)" }}>Response within 4 hours</p>
+            </div>
 
             <div className="grid md:grid-cols-2 gap-6 mb-16">
               <div className="card-marketing p-8 flex flex-col">

@@ -18,7 +18,7 @@ import {
 function isPublicPage(pathname: string): boolean {
   if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
   if (pathname === "/sign-in" || pathname.startsWith("/auth/")) return true;
-  if (pathname.startsWith("/onboard") || pathname.startsWith("/onboarding") || pathname.startsWith("/public/work")) return true;
+  if (pathname.startsWith("/app") || pathname.startsWith("/onboard") || pathname.startsWith("/onboarding") || pathname.startsWith("/public/work")) return true;
   if (pathname === "/demo" || pathname === "/product" || pathname === "/pricing" || pathname === "/docs") return true;
   if (pathname === "/contact" || pathname === "/blog" || pathname === "/privacy" || pathname === "/terms") return true;
   if (pathname.startsWith("/industries/")) return true;
@@ -201,6 +201,8 @@ export const config = {
     "/api/ops/:path*",
     "/admin",
     "/admin/:path*",
+    "/app",
+    "/app/:path*",
     "/dashboard/:path*",
     "/api/:path*",
   ],

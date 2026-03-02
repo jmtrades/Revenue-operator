@@ -32,7 +32,7 @@ export async function getNextEscalationChannel(
   domainType: string,
   stageState: string,
   currentChannel: string,
-  trigger: EscalationTrigger
+  _trigger: EscalationTrigger
 ): Promise<ChannelType | null> {
   const db = getDb();
   const { data } = await db

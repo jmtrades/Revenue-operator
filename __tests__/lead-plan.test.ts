@@ -11,7 +11,7 @@ import {
   shouldEnqueueDecision,
 } from "@/lib/plans/lead-plan";
 
-const mockPlan = {
+const _mockPlan = {
   id: "p1",
   workspace_id: "ws-1",
   lead_id: "lead-1",

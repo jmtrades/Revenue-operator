@@ -48,7 +48,7 @@ describe("Public work GET contract", () => {
   });
 
   it("route does not return internal ids in payload", () => {
-    const content = readFileSync(PUBLIC_WORK_ROUTE, "utf-8");
+    const _content = readFileSync(PUBLIC_WORK_ROUTE, "utf-8");
     const returnedKeys = ["what_happened", "if_removed", "reliance", "continuation", "continuation_surface", "pending_responsibility_statement", "pending_assignment_statement", "record_external_dependence_statement", "evidence_present", "evidence_statement", "participants", "can_respond", "can_follow_up"];
     for (const key of FORBIDDEN_KEYS) {
       expect(returnedKeys).not.toContain(key);

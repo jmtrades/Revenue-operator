@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
@@ -24,7 +24,7 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const load = () => {
+  const load = useCallback(() => {
     if (!workspaceId) return;
     setLoading(true);
     setError(null);
@@ -39,7 +39,7 @@ export default function CalendarPage() {
       })
       .catch(() => setError("Could not load appointments."))
       .finally(() => setLoading(false));
-  };
+  }, [workspaceId]);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -49,7 +49,7 @@ export default function CalendarPage() {
       return;
     }
     load();
-  }, [workspaceId]);
+  }, [workspaceId, load]);
 
   if (!workspaceId) {
     return (

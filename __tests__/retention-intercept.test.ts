@@ -12,7 +12,7 @@ const REQUIRED_KEYS = ["recent_operation", "current_dependency", "if_disabled"] 
 const CAP_RECENT = 4;
 const CAP_DEPENDENCY = 4;
 const CAP_IF_DISABLED = 4;
-const MAX_CHARS = 90;
+const _MAX_CHARS = 90;
 
 describe("GET /api/operational/retention-intercept", () => {
   it("response has exact keys: recent_operation, current_dependency, if_disabled", () => {

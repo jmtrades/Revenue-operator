@@ -291,7 +291,7 @@ function DemoTranscript({
 export function CallSimulator() {
   const [tab, setTab] = useState<"inbound" | "appointment" | "outbound">("inbound");
   const [key, setKey] = useState(0);
-  const [completed, setCompleted] = useState(false);
+  const [_completed, setCompleted] = useState(false);
   const [skipCount, setSkipCount] = useState(0);
 
   const script =
@@ -311,19 +311,6 @@ export function CallSimulator() {
 
   return (
     <Container className="max-w-2xl">
-      <h1
-        className="font-bold text-3xl md:text-4xl mb-2 text-center"
-        style={{ letterSpacing: "-0.02em" }}
-      >
-        See Recall Touch handle a real call
-      </h1>
-      <p
-        className="text-center text-base mb-8"
-        style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}
-      >
-        Watch our AI answer calls, book appointments, and follow up on leads — in real-time.
-      </p>
-
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
         {(["inbound", "appointment", "outbound"] as const).map((t) => (
           <button
@@ -337,7 +324,7 @@ export function CallSimulator() {
               color: tab === t ? "var(--accent-primary)" : "var(--text-secondary)",
             }}
           >
-            {t === "inbound" ? "Inbound Lead (Plumber)" : t === "appointment" ? "Appointment (Dental)" : "Outbound Follow-up (Roofing)"}
+            {t === "inbound" ? "Inbound Lead" : t === "appointment" ? "Appointment" : "Follow-up"}
           </button>
         ))}
       </div>
@@ -355,51 +342,18 @@ export function CallSimulator() {
         className="mt-12 pt-8 border-t text-center"
         style={{ borderColor: "var(--border-default)" }}
       >
-        <h2
-          className="font-semibold text-lg mb-2"
-          style={{ color: "var(--text-primary)" }}
-        >
-          Try it yourself
+        <h2 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>
+          Ready?
         </h2>
-        <p
-          className="text-sm mb-4"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          Live phone demo coming soon. Get started free and set up your own AI in a few minutes.
+        <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
+          Start free — 5 minute setup. No credit card · 14-day trial
         </p>
         <Link
           href={ROUTES.START}
-          className="text-sm font-medium"
-          style={{ color: "var(--accent-primary)" }}
+          className="btn-marketing-primary no-underline inline-block"
         >
-          Start free →
+          Start free — 5 minute setup →
         </Link>
-      </section>
-
-      <section
-        className="mt-12 pt-8 border-t text-center"
-        style={{ borderColor: "var(--border-default)" }}
-      >
-        <h2
-          className="font-semibold text-lg mb-4"
-          style={{ color: "var(--text-primary)" }}
-        >
-          Ready to stop missing calls?
-        </h2>
-        <div className="flex flex-wrap gap-3 justify-center">
-          <Link
-            href={ROUTES.START}
-            className="btn-marketing-primary btn-lg no-underline inline-block"
-          >
-            Start free — 5 minutes →
-          </Link>
-          <Link
-            href={ROUTES.CONTACT}
-            className="btn-marketing-ghost btn-lg no-underline inline-block"
-          >
-            Talk to a human →
-          </Link>
-        </div>
       </section>
     </Container>
   );

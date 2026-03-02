@@ -32,7 +32,7 @@ describe("requireWorkspaceAccess", () => {
     mockIsSessionEnabled.mockReturnValue(true);
     mockGetSession.mockReturnValue({ userId: "user-a", workspaceId: "w1" });
     const chain = {
-      eq: (_: string, __: string) => ({
+      eq: (_key: string, _val: string) => ({
         maybeSingle: () => Promise.resolve({ data: { id: "w1", owner_id: "user-b" } }),
         eq: () => ({ maybeSingle: () => Promise.resolve({ data: null }) }),
       }),

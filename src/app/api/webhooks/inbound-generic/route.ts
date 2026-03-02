@@ -6,7 +6,6 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
 import { ingestInboundAsSignal } from "@/lib/signals/ingest-inbound";
 

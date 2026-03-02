@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -44,7 +44,7 @@ export default function MessagesPage() {
     if (openLeadId) setSelectedLeadId(openLeadId);
   }, [openLeadId]);
 
-  const loadConversations = () => {
+  const loadConversations = useCallback(() => {
     if (!workspaceId) return;
     setLoading(true);
     setListError(null);
@@ -58,7 +58,7 @@ export default function MessagesPage() {
       })
       .catch(() => setListError("Could not load conversations."))
       .finally(() => setLoading(false));
-  };
+  }, [workspaceId]);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -68,9 +68,9 @@ export default function MessagesPage() {
       return;
     }
     loadConversations();
-  }, [workspaceId]);
+  }, [workspaceId, loadConversations]);
 
-  const loadMessages = () => {
+  const loadMessages = useCallback(() => {
     if (!workspaceId || !selectedLeadId) return;
     fetchWithFallback<{ conversation_id: string; messages: Msg[] }>(
       `/api/conversations/${selectedLeadId}/messages`,
@@ -78,7 +78,7 @@ export default function MessagesPage() {
     ).then((res) => {
       if (res.data?.messages) setMessages(res.data.messages);
     });
-  };
+  }, [workspaceId, selectedLeadId]);
 
   useEffect(() => {
     if (!workspaceId || !selectedLeadId) {
@@ -86,7 +86,7 @@ export default function MessagesPage() {
       return;
     }
     loadMessages();
-  }, [workspaceId, selectedLeadId]);
+  }, [workspaceId, selectedLeadId, loadMessages]);
 
   const selectedConv = conversations.find((c) => c.lead_id === selectedLeadId);
   const sendMessage = async () => {

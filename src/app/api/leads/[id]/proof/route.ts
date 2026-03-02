@@ -128,7 +128,7 @@ export async function GET(
       .eq("workspace_id", workspaceId)
       .in("metric_key", ["replies_sent", "replies_sent"])
       .limit(10);
-    const sums = (metrics ?? []).reduce((acc: Record<string, number>, r: { metric_key: string; metric_value: number }) => {
+    const _sums = (metrics ?? []).reduce((acc: Record<string, number>, r: { metric_key: string; metric_value: number }) => {
       acc[r.metric_key] = (acc[r.metric_key] ?? 0) + Number(r.metric_value);
       return acc;
     }, {});

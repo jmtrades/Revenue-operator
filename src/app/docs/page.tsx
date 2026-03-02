@@ -6,13 +6,14 @@ import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
 const DOC_SIDEBAR = [
-  { id: "getting-started", label: "Getting Started" },
+  { id: "quick-start", label: "Quick Start" },
   { id: "call-forwarding", label: "Call Forwarding" },
-  { id: "ai-agents", label: "Agents" },
+  { id: "ai-agents", label: "Agent Config" },
   { id: "campaigns", label: "Campaigns" },
   { id: "integrations", label: "Integrations" },
-  { id: "api", label: "API Reference" },
-  { id: "changelog", label: "Changelog" },
+  { id: "billing", label: "Billing" },
+  { id: "api", label: "API (coming soon)" },
+  { id: "faq", label: "FAQ" },
 ] as const;
 
 const DOC_CARDS = [
@@ -61,8 +62,8 @@ export default function DocsPage() {
                 </p>
               </div>
 
-              <section id="getting-started" className="scroll-mt-28 mb-12">
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Getting Started</h2>
+              <section id="quick-start" className="scroll-mt-28 mb-12">
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Quick Start</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                   Set up your first governed environment in minutes. Sign up, add your business details, configure your AI agent, and connect your phone number. Your AI will answer calls and capture leads from day one.
                 </p>
@@ -131,12 +132,28 @@ export default function DocsPage() {
                 ))}
               </div>
 
-              <section id="api" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>API Reference</h2>
+              <section id="billing" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Billing</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  REST and webhook APIs for integrating Recall Touch with your existing systems are in development. Business and Enterprise plans will include full API access. Contact us for early access.
+                  Plans are billed monthly or annually. Annual billing includes two months free. Included minutes and overage rates are listed on the pricing page. You can change or cancel your plan from Settings → Billing. Invoices are available in the dashboard.
+                </p>
+                <Link href={ROUTES.PRICING} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>View pricing →</Link>
+              </section>
+
+              <section id="api" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>API (coming soon)</h2>
+                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                  REST and webhook APIs for integrating Recall Touch with your existing systems are in development. Scale and Enterprise plans will include full API access. Contact us for early access.
                 </p>
                 <Link href={ROUTES.CONTACT} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Contact for API access →</Link>
+              </section>
+
+              <section id="faq" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>FAQ</h2>
+                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                  Common questions about setup, call forwarding, agents, and billing are answered on the pricing page.
+                </p>
+                <Link href={`${ROUTES.PRICING}#faq`} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>View FAQ →</Link>
               </section>
 
               <section id="changelog" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>

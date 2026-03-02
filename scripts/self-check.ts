@@ -87,7 +87,7 @@ async function main() {
     if (!health || typeof health !== "object" || health.ok !== true) {
       fail("system/health: reported not-ok");
     }
-  } catch (e) {
+  } catch (_e) {
     fail("system/health: request failed");
   }
 

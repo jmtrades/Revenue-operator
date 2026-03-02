@@ -17,7 +17,7 @@ const PRIMARY_OBJECTIVES = [
   "escalate",
 ] as const;
 
-function isPrimaryObjective(s: string): s is (typeof PRIMARY_OBJECTIVES)[number] {
+function _isPrimaryObjective(s: string): s is (typeof PRIMARY_OBJECTIVES)[number] {
   return (PRIMARY_OBJECTIVES as readonly string[]).includes(s);
 }
 

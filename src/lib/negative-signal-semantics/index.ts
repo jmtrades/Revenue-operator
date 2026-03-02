@@ -61,7 +61,7 @@ function isTimeWindowLocal(timezone: string, hour: number, minuteStart: number, 
 }
 
 function isOneHourBeforeClose(timezone: string, endStr: string): boolean {
-  const [endHour, endMin] = (endStr || "17:00").split(":").map((n) => parseInt(n, 10));
+  const [endHour, _endMin] = (endStr || "17:00").split(":").map((n) => parseInt(n, 10));
   const oneHourBefore = endHour - 1;
   const formatter = new Intl.DateTimeFormat("en", {
     timeZone: timezone,
@@ -74,8 +74,8 @@ function isOneHourBeforeClose(timezone: string, endStr: string): boolean {
 }
 
 function isClosePlus30(timezone: string, endStr: string): boolean {
-  const [endHour, endMin] = (endStr || "17:00").split(":").map((n) => parseInt(n, 10));
-  let close30Min = endMin + 30;
+  const [endHour, _endMin] = (endStr || "17:00").split(":").map((n) => parseInt(n, 10));
+  let close30Min = _endMin + 30;
   let close30Hour = endHour;
   if (close30Min >= 60) {
     close30Min -= 60;

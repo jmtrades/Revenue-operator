@@ -25,7 +25,7 @@ export async function detectAndRecordCompletionDecay(
   
   const state = (tx as { state: string }).state;
   const acknowledgedAt = (tx as { acknowledged_at: string | null }).acknowledged_at;
-  const createdAt = (tx as { created_at: string }).created_at;
+  const _createdAt = (tx as { created_at: string }).created_at;
   
   if (state === "acknowledged" || acknowledgedAt) return false;
   

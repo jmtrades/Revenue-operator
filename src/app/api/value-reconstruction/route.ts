@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
     .limit(100);
 
   const leads = leadCount ?? 0;
-  const deals = dealCount ?? 0;
+  const _deals = dealCount ?? 0;
   const upcomingCalls = (sessions ?? []).length;
   const activeIn7d = (recentLeads ?? []).length;
 

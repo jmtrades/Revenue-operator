@@ -40,7 +40,7 @@ export function stateToObjective(state: ConversationState): Objective {
  */
 export function getResponseStrategy(
   state: ConversationState,
-  objective: Objective
+  _objective: Objective
 ): {
   action: string;
   timing: "immediate" | "scheduled";

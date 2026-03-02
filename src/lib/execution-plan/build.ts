@@ -18,7 +18,6 @@ import { parseAIContract } from "@/lib/ai/contract";
 import { resolveObjectives } from "@/lib/intelligence/objective-engine";
 import { evaluateRisk } from "@/lib/intelligence/risk-engine";
 import { getLatestCommitmentState } from "@/lib/intelligence/commitment-score";
-import { createMessageApproval } from "@/lib/governance/approval-queue";
 import { resolveScenarioProfile } from "@/lib/scenarios/resolver";
 import type { ListPurposeKey } from "@/lib/scenarios/types";
 import { resolveQueueType } from "@/lib/scenarios/queue-type";
@@ -462,7 +461,7 @@ export async function buildExecutionPlan(
   // Strategic pattern guard: prevent repeated failed macro-strategy
   if (threadId) {
     const strategicPattern = await getStrategicPattern(workspaceId, threadId).catch(() => null);
-    const openQuestions = await getOpenQuestions(workspaceId, threadId).catch(() => []);
+    const _openQuestions = await getOpenQuestions(workspaceId, threadId).catch(() => []);
     const goodwill = (await getPreviousSnapshot(workspaceId, threadId).catch(() => null))?.goodwill_score ?? 50;
     const guardResult = evaluateStrategicGuard(
       strategicPattern,
