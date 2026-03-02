@@ -2,6 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async headers() {
+    // Next.js App Router requires inline styles/scripts for hydration and streaming.
+    // Keep this policy strict on origins, but allow inline for style/script so pages do not render blank.
+    const csp = [
+      "default-src 'self'",
+      "base-uri 'self'",
+      "object-src 'none'",
+      "frame-ancestors 'none'",
+      "form-action 'self'",
+      "img-src 'self' data: https:",
+      "font-src 'self' data:",
+      "style-src 'self' 'unsafe-inline'",
+      "script-src 'self' 'unsafe-inline'",
+    ].join("; ");
+
     return [
       {
         source: "/:path*",
@@ -15,7 +29,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; frame-ancestors 'none';",
+            value: csp,
           },
         ],
       },
