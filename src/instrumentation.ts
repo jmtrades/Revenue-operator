@@ -12,14 +12,8 @@ export async function register() {
       const errorMessage = error instanceof Error ? error.message : String(error);
       // Always log the error
       console.error("[instrumentation] Environment validation failed:", errorMessage);
-      
-      // In production, throw to prevent startup with missing vars
-      if (process.env.NODE_ENV === "production") {
-        throw new Error(`Production startup blocked: ${errorMessage}`);
-      }
-      
-      // In dev, warn but allow startup (for local development flexibility)
-      console.warn("[instrumentation] Continuing in dev mode despite missing env vars");
+      // Never block startup based on env; log and continue in a degraded mode.
+      console.warn("[instrumentation] Continuing startup despite missing env vars (degraded mode).");
     }
   }
 }

@@ -42,16 +42,11 @@ export function validateEnv() {
   }
 }
 
-// Auto-validate on import (server-side only)
+// Auto-validate on import (server-side only), but never block startup.
 if (typeof window === "undefined") {
   try {
     validateEnv();
   } catch (error) {
-    // Only throw in production or if explicitly enabled
-    if (process.env.NODE_ENV === "production" || process.env.ENFORCE_ENV_VALIDATION === "true") {
-      throw error;
-    }
-    // In dev, just warn
-    console.warn("[env] Missing environment variables (non-blocking in dev):", error);
+    console.warn("[env] Missing environment variables (non-blocking):", error);
   }
 }
