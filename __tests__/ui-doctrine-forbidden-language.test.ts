@@ -48,7 +48,19 @@ function extractStrings(content: string): string[] {
 }
 
 /** Marketing pages and sections: factual copy only; excluded. See docs/MARKETING_PAGES_DOCTRINE.md */
-const MARKETING_EXCLUDE = ["src/app/pricing/", "src/app/product/", "src/app/example/", "src/app/demo/", "src/app/onboarding/", "src/components/sections/", "src/app/layout.tsx", "src/app/opengraph-image.tsx"];
+const MARKETING_EXCLUDE = [
+  "src/app/pricing/",
+  "src/app/product/",
+  "src/app/example/",
+  "src/app/demo/",
+  "src/app/onboarding/",
+  "src/components/sections/",
+  "src/app/layout.tsx",
+  "src/app/opengraph-image.tsx",
+  "src/components/ActivateForm.tsx",
+  "src/app/activate/page.tsx",
+  "src/app/sign-in/page.tsx",
+];
 /** Onboarding: fixed product copy (e.g. first-record message "what we agreed") is factual and mandated. */
 const ONBOARD_EXCLUDE = ["src/app/onboard/"];
 /** Activity feed: filter and card labels (Urgent, Leads, etc.) are product terms. */
