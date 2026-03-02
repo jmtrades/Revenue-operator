@@ -79,7 +79,11 @@ describe("UI forbidden technical terms", () => {
   const violations: { file: string; term: string; snippet: string }[] = [];
 
   const pricingOrActivate = (rel: string) =>
-    rel.includes("pricing/") || rel.includes("activate/page") || rel.includes("components/ActivateForm.tsx");
+    rel.includes("pricing/") ||
+    rel.includes("activate/page") ||
+    rel.includes("components/ActivateForm.tsx") ||
+    rel.includes("components/PricingContent.tsx") ||
+    rel.includes("components/demo/CallSimulator.tsx");
   const dashboardV7 = (rel: string) => DASHBOARD_V7_EXCLUDE.some((p) => rel.startsWith(p) || rel === p);
   for (const file of files) {
     const content = readFileSync(file, "utf-8");

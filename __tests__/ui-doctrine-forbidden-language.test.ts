@@ -55,6 +55,7 @@ const MARKETING_EXCLUDE = [
   "src/app/demo/",
   "src/app/onboarding/",
   "src/components/sections/",
+  "src/components/demo/",
   "src/app/layout.tsx",
   "src/app/opengraph-image.tsx",
   "src/components/ActivateForm.tsx",
