@@ -85,7 +85,7 @@ export default function SignInForm() {
         if (result.error) setError(result.error.message);
       });
     } else {
-      setToast("Coming soon");
+      setToast("Google sign-in requires setup — use email for now");
     }
   };
 

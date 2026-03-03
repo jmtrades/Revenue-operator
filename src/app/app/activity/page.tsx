@@ -115,19 +115,19 @@ export default function AppActivityPage() {
       </div>
 
       <div className="grid grid-cols-4 gap-2 mb-6">
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
           <p className="text-lg font-semibold text-white">7</p>
           <p className="text-[10px] text-zinc-500">Calls today</p>
         </div>
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
           <p className="text-lg font-semibold text-white">100%</p>
           <p className="text-[10px] text-zinc-500">Answer rate</p>
         </div>
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
           <p className="text-lg font-semibold text-white">3</p>
           <p className="text-[10px] text-zinc-500">New leads</p>
         </div>
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
           <p className="text-lg font-semibold text-white">$2,400</p>
           <p className="text-[10px] text-zinc-500">Est. revenue</p>
         </div>
@@ -145,21 +145,33 @@ export default function AppActivityPage() {
         </div>
       )}
 
-      {/* Milestone cards */}
-      <ul className="space-y-2 mb-6">
-        <li className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 flex items-center gap-2">
-          <span className="text-lg">🎉</span>
-          <span className="text-sm text-green-200">First call answered!</span>
-        </li>
-        <li className="rounded-xl border border-zinc-600 bg-zinc-800/50 p-3 flex items-center gap-2">
-          <span className="text-lg">💰</span>
-          <span className="text-sm text-green-500">First lead captured!</span>
-        </li>
-        <li className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 flex items-center gap-2">
-          <span className="text-lg">📅</span>
-          <span className="text-sm text-emerald-200">First appointment booked!</span>
-        </li>
-      </ul>
+      <div className="mb-6 p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl shrink-0">🎉</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-white">Welcome! Complete your setup for the best experience.</p>
+            <p className="text-xs text-zinc-500 mt-1">Your AI is answering calls with demo data. Connect your phone to go live.</p>
+            <Link href="/app/onboarding" className="inline-block mt-3 px-4 py-2 bg-white text-black text-xs font-semibold rounded-xl hover:bg-zinc-100 transition-colors">
+              Finish setup →
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 mb-6">
+        <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-2.5 text-center">
+          <span className="text-sm">✓</span>
+          <p className="text-[10px] text-green-400 mt-0.5">First call</p>
+        </div>
+        <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-2.5 text-center">
+          <span className="text-sm">💰</span>
+          <p className="text-[10px] text-green-400 mt-0.5">Lead captured</p>
+        </div>
+        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-2.5 text-center">
+          <span className="text-sm">📅</span>
+          <p className="text-[10px] text-emerald-400 mt-0.5">Appt booked</p>
+        </div>
+      </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
         {FILTERS.map((f) => (
