@@ -87,6 +87,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const isActive = (href: string) =>
     pathname === href || (href !== "/app/activity" && pathname.startsWith(href));
 
+  const isOnboarding = pathname === "/app/onboarding";
+
   return (
     <div className="min-h-screen bg-black flex flex-col pb-20 md:pb-0">
       <div
@@ -100,55 +102,68 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </Link>
       </div>
       <div className="flex flex-1 min-h-0">
-        <aside className="hidden md:flex md:w-60 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800">
-          <div className="p-5 border-b border-zinc-800">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+        {isOnboarding ? (
+          <aside className="hidden md:flex md:w-16 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800 items-center py-5">
+            <Link href="/" className="flex flex-col items-center gap-1">
+              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                 <span className="text-black font-bold text-sm">RT</span>
               </div>
-              <span className="text-white font-semibold truncate">{businessName}</span>
+              <span className="text-[10px] text-zinc-500">Recall Touch</span>
+            </Link>
+          </aside>
+        ) : (
+          <aside className="hidden md:flex md:w-60 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800">
+            <div className="p-5 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                  <span className="text-black font-bold text-sm">RT</span>
+                </div>
+                <span className="text-white font-semibold truncate">{businessName}</span>
+              </div>
             </div>
-          </div>
-          <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-            {NAV.map(({ href, label, icon: Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-sm transition-colors ${
-                  isActive(href) ? "bg-zinc-800/50 text-white font-medium" : "text-zinc-400 hover:text-zinc-300"
-                }`}
-              >
-                <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                {label}
-              </Link>
-            ))}
-          </nav>
-          <div className="p-3 border-t border-zinc-800 space-y-2">
-            <div className="px-3 py-2 rounded-lg bg-zinc-800/50 border border-zinc-700">
-              <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
-              <span className="block text-[10px] text-zinc-500">12 days left</span>
+            <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+              {NAV.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-sm transition-colors ${
+                    isActive(href) ? "bg-zinc-800/50 text-white font-medium" : "text-zinc-400 hover:text-zinc-300"
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                  {label}
+                </Link>
+              ))}
+            </nav>
+            <div className="p-3 border-t border-zinc-800 space-y-2">
+              <div className="px-3 py-2 rounded-lg bg-zinc-800/50 border border-zinc-700">
+                <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
+                <span className="block text-[10px] text-zinc-500">12 days left</span>
+              </div>
+              <OnboardingChecklist />
             </div>
-            <OnboardingChecklist />
-          </div>
-        </aside>
+          </aside>
+        )}
         <main className="flex-1 overflow-auto min-w-0 bg-black">{children}</main>
       </div>
-      <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around py-2 bg-zinc-950 border-t border-zinc-800 safe-area-pb"
-        aria-label="Mobile navigation"
-      >
-        {MOBILE_TABS.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`flex flex-col items-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-center text-[10px] uppercase tracking-wider ${
-              isActive(href) ? "text-white font-medium" : "text-zinc-500"
-            }`}
-          >
-            {label}
-          </Link>
-        ))}
-      </nav>
+      {!isOnboarding && (
+        <nav
+          className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around py-2 bg-zinc-950 border-t border-zinc-800 safe-area-pb"
+          aria-label="Mobile navigation"
+        >
+          {MOBILE_TABS.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`flex flex-col items-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-center text-[10px] uppercase tracking-wider ${
+                isActive(href) ? "text-white font-medium" : "text-zinc-500"
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+      )}
     </div>
   );
 }

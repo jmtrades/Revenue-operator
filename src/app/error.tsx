@@ -31,13 +31,13 @@ export default function Error({
           <button
             type="button"
             onClick={() => reset()}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-zinc-900 border border-zinc-700 text-white hover:border-zinc-500 transition"
+            className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 transition"
           >
             Try again
           </button>
           <Link
             href="/"
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-zinc-900 border border-zinc-700 text-white hover:border-zinc-500 transition"
+            className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition"
           >
             Go home →
           </Link>

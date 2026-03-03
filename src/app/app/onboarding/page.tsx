@@ -126,8 +126,7 @@ export default function AppOnboardingPage() {
             {Array.from({ length: STEPS }, (_, i) => (
               <span
                 key={i}
-                className="inline-block w-2.5 h-2.5 rounded-full bg-zinc-700"
-                style={i + 1 <= step ? { background: "#3B82F6" } : undefined}
+                className={`inline-block w-2.5 h-2.5 rounded-full ${i + 1 <= step ? "bg-white" : "bg-zinc-700"}`}
                 aria-hidden
               />
             ))}
@@ -138,6 +137,9 @@ export default function AppOnboardingPage() {
         {/* Step 1 — YOUR BUSINESS */}
         {step === 1 && (
           <div className="space-y-6">
+            <p className="text-sm text-zinc-400">
+              Welcome! Let&apos;s set up your AI phone system. This takes about 2 minutes.
+            </p>
             <h1 className="text-xl font-semibold">Your business</h1>
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Business name</label>
@@ -146,7 +148,7 @@ export default function AppOnboardingPage() {
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="Acme Plumbing"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:border-zinc-500 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
             </div>
             <div>
@@ -173,8 +175,9 @@ export default function AppOnboardingPage() {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://yourbusiness.com"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:border-zinc-500 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
+              <p className="mt-1 text-xs text-zinc-500">We&apos;ll auto-learn your services and FAQ from your site.</p>
             </div>
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Address (optional)</label>
@@ -183,8 +186,9 @@ export default function AppOnboardingPage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="123 Main St"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:border-zinc-500 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
+              <p className="mt-1 text-xs text-zinc-500">Used for location-based call routing.</p>
             </div>
             <div>
               <span className="block text-xs font-medium mb-1.5 text-zinc-400">Timezone</span>
@@ -225,7 +229,7 @@ export default function AppOnboardingPage() {
                     type="button"
                     onClick={() => setVoiceId(v.id)}
                     className={`flex items-center gap-2 p-3 rounded-xl border text-left text-sm ${
-                      voiceId === v.id ? "border-blue-500 bg-blue-500/10" : "border-zinc-700 bg-zinc-800/50"
+                      voiceId === v.id ? "border-zinc-400 bg-zinc-800/80 text-white" : "border-zinc-700 bg-zinc-800/50 text-zinc-400"
                     }`}
                   >
                     <span className="text-lg" aria-hidden>▶</span>
@@ -252,7 +256,7 @@ export default function AppOnboardingPage() {
                 max={100}
                 value={personality}
                 onChange={(e) => setPersonality(Number(e.target.value))}
-                className="w-full h-2 rounded-lg accent-blue-500"
+                className="w-full h-2 rounded-lg accent-zinc-400"
               />
             </div>
             <div className="flex gap-2">

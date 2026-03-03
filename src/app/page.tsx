@@ -6,6 +6,7 @@ import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Features } from "@/components/sections/Features";
 import { Industries } from "@/components/sections/Industries";
 import { MetricsSection } from "@/components/sections/MetricsSection";
+import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { PricingPreview } from "@/components/sections/PricingPreview";
 import { SocialProof } from "@/components/sections/SocialProof";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -26,6 +27,7 @@ export default function HomePage() {
         <Features />
         <Industries />
         <MetricsSection />
+        <TestimonialsSection />
         <PricingPreview />
         <SocialProof />
         <FinalCTA />

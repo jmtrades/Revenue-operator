@@ -38,7 +38,7 @@ export function SocialProof() {
   };
 
   return (
-    <section className="marketing-section" style={{ background: "var(--bg-surface)" }}>
+    <section className="marketing-section pt-8 pb-16 md:pt-10 md:pb-20" style={{ background: "var(--bg-surface)" }}>
       <Container>
         <AnimateOnScroll className="text-center">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>
@@ -59,7 +59,7 @@ export function SocialProof() {
                 className="flex-1 px-4 py-2.5 rounded-lg text-sm border"
                 style={{ background: "var(--bg-primary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               />
-              <button type="submit" className="px-5 py-2.5 rounded-lg text-sm font-medium shrink-0" style={{ background: "var(--accent-primary)", color: "var(--bg-primary)" }}>
+              <button type="submit" className="btn-marketing-primary px-5 py-2.5 rounded-xl text-sm font-semibold shrink-0">
                 Join waitlist →
               </button>
             </form>
