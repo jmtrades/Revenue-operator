@@ -151,9 +151,9 @@ export default function AppActivityPage() {
           <span className="text-lg">🎉</span>
           <span className="text-sm text-green-200">First call answered!</span>
         </li>
-        <li className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-3 flex items-center gap-2">
+        <li className="rounded-xl border border-zinc-600 bg-zinc-800/50 p-3 flex items-center gap-2">
           <span className="text-lg">💰</span>
-          <span className="text-sm text-blue-200">First lead captured!</span>
+          <span className="text-sm text-green-500">First lead captured!</span>
         </li>
         <li className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 flex items-center gap-2">
           <span className="text-lg">📅</span>
@@ -168,7 +168,7 @@ export default function AppActivityPage() {
             type="button"
             onClick={() => setFilter(f.id)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${
-              filter === f.id ? "bg-blue-500/20 text-blue-400" : "bg-zinc-800/50 text-zinc-400"
+              filter === f.id ? "bg-zinc-700 text-white" : "bg-zinc-800/50 text-zinc-400"
             }`}
           >
             {f.label}

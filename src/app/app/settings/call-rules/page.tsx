@@ -17,7 +17,7 @@ export default function AppSettingsCallRulesPage() {
           </select>
         </div>
       </div>
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-blue-400 hover:underline">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
     </div>
   );
 }

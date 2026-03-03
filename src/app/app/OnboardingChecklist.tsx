@@ -18,10 +18,10 @@ function getProgress(): { completed: number; done: Set<string> } {
   if (typeof window === "undefined") return { completed: 0, done: new Set() };
   try {
     const raw = localStorage.getItem("rt_onboarding_checklist");
-    const done = raw ? new Set(JSON.parse(raw) as string[]) : new Set(["business", "agent", "services", "test_call"]);
+    const done = raw ? new Set(JSON.parse(raw) as string[]) : new Set<string>();
     return { completed: done.size, done };
   } catch {
-    return { completed: 4, done: new Set(["business", "agent", "services", "test_call"]) };
+    return { completed: 0, done: new Set() };
   }
 }
 

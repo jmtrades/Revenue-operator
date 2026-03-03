@@ -11,7 +11,7 @@ export default function AppSettingsPhonePage() {
         <p className="text-xs text-zinc-500 mt-1">Provisioned · Forwarding active</p>
       </div>
       <button type="button" className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-600 text-zinc-300">+ Add Number $5/mo</button>
-      <p className="mt-4"><Link href="/app/settings" className="text-sm text-blue-400 hover:underline">← Settings</Link></p>
+      <p className="mt-4"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
     </div>
   );
 }

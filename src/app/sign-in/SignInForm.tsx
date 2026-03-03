@@ -25,6 +25,7 @@ export default function SignInForm() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -68,7 +69,7 @@ export default function SignInForm() {
     }
 
     setLoading(false);
-    setError("No account found. Get started free →");
+    setError("No account found. Start free →");
   };
 
   const handleGoogle = () => {
@@ -102,7 +103,7 @@ export default function SignInForm() {
         <>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="signin-email" className="block text-xs font-medium text-zinc-500 mb-1">Email</label>
+              <label htmlFor="signin-email" className="block text-xs font-medium text-zinc-500 mb-1">Email address</label>
               <input
                 id="signin-email"
                 type="email"
@@ -115,15 +116,25 @@ export default function SignInForm() {
             </div>
             <div>
               <label htmlFor="signin-password" className="block text-xs font-medium text-zinc-500 mb-1">Password</label>
-              <input
-                id="signin-password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
-                autoComplete="current-password"
-              />
+              <div className="relative">
+                <input
+                  id="signin-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 pr-12 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500 hover:text-zinc-400"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
             <button
               type="submit"

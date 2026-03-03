@@ -31,7 +31,7 @@ export default function AppSettingsPage() {
         ))}
       </div>
       <p className="mt-6">
-        <Link href="/app/activity" className="text-sm text-blue-400 hover:underline">← Activity</Link>
+        <Link href="/app/activity" className="text-sm text-zinc-400 hover:text-white transition-colors">← Activity</Link>
       </p>
     </div>
   );
