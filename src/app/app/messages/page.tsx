@@ -3,38 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const MOCK_THREADS = [
-  {
-    id: "1",
-    name: "Mike Johnson",
-    preview: "You're all set for tomorrow at 10 AM.",
-    time: "9:14 AM",
-    unread: true,
-    messages: [
-      { id: "m1", from: "ai" as const, text: "Hi Mike, this is your AI assistant. Just confirming your plumbing visit tomorrow at 10 AM.", time: "9:12 AM" },
-      { id: "m2", from: "user" as const, text: "YES thanks", time: "9:13 AM" },
-      { id: "m3", from: "ai" as const, text: "You're all set for tomorrow at 10 AM. If anything changes, just text here.", time: "9:14 AM" },
-    ],
-  },
-  {
-    id: "2",
-    name: "Sarah Chen",
-    preview: "See you Tuesday at 9 AM.",
-    time: "9:31 AM",
-    unread: false,
-    messages: [
-      { id: "s1", from: "ai" as const, text: "Hi Sarah, this is your dental office AI. Your cleaning is Tuesday at 9 AM with Dr. Martinez. Reply YES to confirm.", time: "9:29 AM" },
-      { id: "s2", from: "user" as const, text: "Confirmed", time: "9:30 AM" },
-      { id: "s3", from: "ai" as const, text: "Great — you're confirmed. See you Tuesday at 9 AM.", time: "9:31 AM" },
-    ],
-  },
-];
+type Thread = {
+  id: string;
+  name: string;
+  preview: string;
+  time: string;
+  unread: boolean;
+  messages: Array<{ id: string; from: "ai" | "user"; text: string; time: string }>;
+};
 
 export default function AppMessagesPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [autoReply, setAutoReply] = useState(true);
-  const [threads, setThreads] = useState(MOCK_THREADS);
+  const [threads, setThreads] = useState<Thread[]>([]);
 
   const active = threads.find((t) => t.id === selected) ?? threads[0] ?? null;
 
@@ -55,7 +37,12 @@ export default function AppMessagesPage() {
       </div>
       <div className="flex flex-col md:flex-row gap-4 min-h-[420px]">
         <div className="md:w-72 shrink-0 border border-zinc-800 rounded-2xl bg-zinc-900/60 overflow-hidden">
-          {threads.map((t) => (
+          {threads.length === 0 ? (
+            <div className="p-4 text-center text-xs text-zinc-500">
+              No conversations yet. Messages from your call activity will appear here.
+            </div>
+          ) : (
+          threads.map((t) => (
             <button
               key={t.id}
               type="button"
@@ -83,7 +70,8 @@ export default function AppMessagesPage() {
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-zinc-300 mt-2 shrink-0" />
               )}
             </button>
-          ))}
+          ))
+          )}
         </div>
         <div className="flex-1 border border-zinc-800 rounded-2xl bg-zinc-900/40 flex flex-col">
           {active ? (

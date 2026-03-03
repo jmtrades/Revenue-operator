@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Phone, User, Bot, Check } from "lucide-react";
+import { Phone, User, Bot } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
 type DemoLine = { role: "ai" | "caller"; text: string };
-type DemoScript = { title: string; lines: DemoLine[]; result: string; resultDetails: string[] };
+type DemoScript = { title: string; lines: DemoLine[]; result: string; resultDetails: string[]; score?: number };
 
 const DEMO_SCRIPTS: DemoScript[] = [
   {
@@ -31,15 +31,15 @@ const DEMO_SCRIPTS: DemoScript[] = [
     ],
     result: "Lead captured and appointment booked.",
     resultDetails: [
-      "Lead captured: Mike Johnson",
+      "Contact: Mike Johnson",
       "Phone: (503) 555-0199",
-      "Address: 742 Elm St Portland",
-      "Service: Kitchen sink leak repair",
+      "Address: 742 Elm St, Portland",
+      "Issue: Kitchen sink leak — slow drip",
       "Appointment: Tomorrow 10:00 AM",
-      "Confirmation text sent",
-      "Owner notified instantly",
-      "Lead score: 92/100",
+      "Text sent: Confirmation ✓",
+      "Owner notified: Instantly ✓",
     ],
+    score: 92,
   },
   {
     title: "Appointment Booking (Dental)",
@@ -58,13 +58,14 @@ const DEMO_SCRIPTS: DemoScript[] = [
     ],
     result: "Appointment scheduled.",
     resultDetails: [
-      "Patient identified: Sarah Chen (existing)",
-      "Appointment: Tuesday 9:00 AM",
-      "Provider: Dr. Martinez",
+      "Patient: Sarah Chen (existing)",
       "Service: Cleaning",
-      "Calendar synced",
-      "Reminder scheduled (Monday)",
+      "Provider: Dr. Martinez",
+      "Appointment: Tuesday 9:00 AM",
+      "Calendar synced: ✓",
+      "Reminder: Monday ✓",
     ],
+    score: 88,
   },
   {
     title: "Outbound Follow-up (Roofing)",
@@ -85,14 +86,14 @@ const DEMO_SCRIPTS: DemoScript[] = [
     ],
     result: "Speed-to-lead follow-up completed.",
     resultDetails: [
-      "Speed-to-lead: 2 minutes",
-      "Contact: James (web form lead)",
+      "Response time: 2 minutes",
+      "Contact: James Wilson",
       "Issue: Storm damage — missing shingles, south side",
-      "Estimate scheduled: Tomorrow 3:00 PM",
-      "Insurance: Not yet filed — estimator will assist",
-      "Confirmation text sent",
-      "Lead score: 95/100",
+      "Appointment: Tomorrow 3:00 PM",
+      "Insurance: Documentation flagged ✓",
+      "Text sent: Confirmation ✓",
     ],
+    score: 95,
   },
 ];
 
@@ -306,25 +307,38 @@ function DemoTranscript({
       </div>
 
       {showResult && (
-        <div
-          className="pt-4 border-t space-y-2"
-          style={{ borderColor: "var(--border-default)" }}
-        >
-          <p
-            className="flex items-center gap-2 text-sm font-medium"
-            style={{ color: "var(--meaning-green)" }}
-          >
-            <Check className="w-4 h-4" />
-            CALL SUMMARY: {script.result}
-          </p>
-          <ul
-            className="text-xs space-y-1 pl-6"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {script.resultDetails.map((d, i) => (
-              <li key={i}>→ {d}</li>
-            ))}
-          </ul>
+        <div className="mt-4 p-6 rounded-2xl bg-zinc-800/80 border border-zinc-700 animate-slide-up">
+          <h3 className="text-lg font-semibold text-white mb-3">Call Complete — Results</h3>
+          <div className="h-px bg-zinc-700 mb-4" />
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm mb-4">
+            {script.resultDetails.map((d, i) => {
+              const idx = d.indexOf(": ");
+              const label = idx >= 0 ? d.slice(0, idx) : "";
+              const value = idx >= 0 ? d.slice(idx + 2) : d;
+              return (
+                <div key={i}>
+                  <span className="text-xs text-zinc-500 block">{label || "Detail"}</span>
+                  <span className="text-sm text-white font-medium">{value}</span>
+                </div>
+              );
+            })}
+          </div>
+          {script.score != null && (
+            <>
+              <div className="h-px bg-zinc-700 mb-3" />
+              <p className="text-xs text-zinc-500 mb-1">Lead Score</p>
+              <p className="text-green-400 font-bold text-lg">{script.score}</p>
+              <div className="h-2 rounded-full bg-zinc-800 overflow-hidden mt-1">
+                <div
+                  className="h-full rounded-full bg-green-500 transition-all"
+                  style={{ width: `${script.score}%` }}
+                />
+              </div>
+              <p className="text-xs text-zinc-500 mt-1">
+                {script.score >= 80 ? "High-quality lead" : script.score >= 60 ? "Qualified lead" : "Follow up"}
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>

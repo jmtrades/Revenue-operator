@@ -23,37 +23,15 @@ type Campaign = {
 
 const STORAGE_KEY = "rt_campaigns";
 
-const DEMO_CAMPAIGNS: Campaign[] = [
-  {
-    id: "cmp-1",
-    name: "New Lead Follow-up",
-    type: "follow_up",
-    agentName: "Follow-Up",
-    status: "Active",
-    sent: 34,
-    total: 50,
-    dateRange: "Mar 1–7",
-    audienceSummary: "Leads from last 7 days",
-    scheduleSummary: "Weekdays · 9AM–5PM · max 25/day",
-  },
-];
-
-function seedCampaigns(): Campaign[] {
-  if (typeof window === "undefined") return DEMO_CAMPAIGNS;
+function loadCampaigns(): Campaign[] {
+  if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(DEMO_CAMPAIGNS));
-      return DEMO_CAMPAIGNS;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw) as Campaign[];
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(DEMO_CAMPAIGNS));
-      return DEMO_CAMPAIGNS;
-    }
-    return parsed;
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return DEMO_CAMPAIGNS;
+    return [];
   }
 }
 
@@ -74,7 +52,7 @@ function statusClasses(status: CampaignStatus) {
 
 export default function AppCampaignsPage() {
   const initialCampaigns =
-    typeof window === "undefined" ? DEMO_CAMPAIGNS : seedCampaigns();
+    typeof window === "undefined" ? [] : loadCampaigns();
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const [selectedId, setSelectedId] = useState<string | null>(
     initialCampaigns[0]?.id ?? null,

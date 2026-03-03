@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { OnboardingChecklist } from "./OnboardingChecklist";
+import { OnboardingStepProvider, useOnboardingStep, ONBOARDING_STEP_LABELS } from "./OnboardingStepContext";
 
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/activity", label: "Activity", icon: LayoutList },
@@ -90,28 +91,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const isOnboarding = pathname === "/app/onboarding";
 
   return (
-    <div className="min-h-screen bg-black flex flex-col pb-20 md:pb-0">
-      <div
-        className="shrink-0 py-2 px-4 flex items-center justify-center gap-2 flex-wrap text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
-        role="status"
-        aria-label="Demo mode"
-      >
-        <span>🎯 Demo Mode — Your AI is using sample data. Forward your phone number to go live.</span>
-        <Link href="/app/settings/phone" className="text-white font-semibold underline underline-offset-2 hover:no-underline">
-          Set up →
-        </Link>
-      </div>
-      <div className="flex flex-1 min-h-0">
-        {isOnboarding ? (
-          <aside className="hidden md:flex md:w-16 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800 items-center py-5">
-            <Link href="/" className="flex flex-col items-center gap-1">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-black font-bold text-sm">RT</span>
-              </div>
-              <span className="text-[10px] text-zinc-500">Recall Touch</span>
-            </Link>
-          </aside>
-        ) : (
+    <OnboardingStepProvider>
+      <div className="min-h-screen bg-black flex flex-col pb-20 md:pb-0">
+        <div
+          className="shrink-0 py-2 px-4 flex items-center justify-center gap-2 flex-wrap text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
+          role="status"
+          aria-label="Demo mode"
+        >
+          <span>🎯 Demo Mode — Your AI is using sample data. Forward your phone number to go live.</span>
+          <Link href="/app/settings/phone" className="text-white font-semibold underline underline-offset-2 hover:no-underline">
+            Set up →
+          </Link>
+        </div>
+        <div className="flex flex-1 min-h-0">
+          {isOnboarding ? (
+            <OnboardingSidebar />
+          ) : (
           <aside className="hidden md:flex md:w-60 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800">
             <div className="p-5 border-b border-zinc-800">
               <div className="flex items-center gap-2">
@@ -165,6 +160,76 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
       )}
-    </div>
+      </div>
+    </OnboardingStepProvider>
+  );
+}
+
+function OnboardingSidebar() {
+  const ctx = useOnboardingStep();
+  const step = ctx?.step ?? 1;
+  const businessName = typeof window !== "undefined" ? (() => {
+    try {
+      const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
+      if (raw) {
+        const d = JSON.parse(raw) as { businessName?: string };
+        return d?.businessName?.trim() || "Recall Touch";
+      }
+    } catch { /* ignore */ }
+    return "Recall Touch";
+  })() : "Recall Touch";
+
+  return (
+    <aside className="hidden md:flex md:w-52 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800 py-5 px-4">
+      <Link href="/" className="flex flex-col items-center gap-1 mb-6">
+        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+          <span className="text-black font-bold text-sm">RT</span>
+        </div>
+        <span className="text-[10px] text-zinc-500 text-center">{businessName}</span>
+      </Link>
+      <nav className="flex-1" aria-label="Onboarding steps">
+        <div className="flex flex-col gap-0">
+          {ONBOARDING_STEP_LABELS.map((label, i) => {
+            const stepNum = i + 1;
+            const isComplete = step > stepNum;
+            const isCurrent = step === stepNum;
+            return (
+              <div key={stepNum} className="flex items-center gap-3">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium shrink-0 ${
+                      isComplete
+                        ? "bg-green-500 text-white"
+                        : isCurrent
+                          ? "bg-white text-black"
+                          : "bg-zinc-800 text-zinc-600"
+                    } ${isCurrent ? "ring-2 ring-white/50" : ""}`}
+                  >
+                    {isComplete ? "✓" : stepNum}
+                  </div>
+                  {i < ONBOARDING_STEP_LABELS.length - 1 && (
+                    <div className={`w-0.5 min-h-[14px] ${step > stepNum ? "bg-green-500/50" : "bg-zinc-800"}`} />
+                  )}
+                </div>
+                <span
+                  className={`text-sm py-1 ${
+                    isComplete ? "text-white" : isCurrent ? "text-white font-medium" : "text-zinc-600"
+                  }`}
+                >
+                  {label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </nav>
+      <div className="mt-4 pt-4 border-t border-zinc-800 space-y-2">
+        <div className="px-3 py-2 rounded-lg bg-zinc-800/50 border border-zinc-700">
+          <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
+          <span className="block text-[10px] text-zinc-500">14 days left</span>
+        </div>
+        <OnboardingChecklist />
+      </div>
+    </aside>
   );
 }

@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { ActivityFeedMockup } from "./ActivityFeedMockup";
 import { ROUTES } from "@/lib/constants";
+import { speakText } from "@/lib/voice-preview";
+import { Waveform } from "@/components/Waveform";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -13,7 +16,22 @@ const fadeUp = {
   transition: { duration: 0.5, ease: "easeOut" as const },
 };
 
+const SARAH_GREETING = "Thanks for calling Riverside Plumbing! This is Sarah. How can I help you today?";
+
 export function Hero() {
+  const [audioPlaying, setAudioPlaying] = useState(false);
+
+  const handlePlayGreeting = () => {
+    if (audioPlaying) return;
+    setAudioPlaying(true);
+    speakText(SARAH_GREETING, {
+      gender: "female",
+      rate: 0.95,
+      pitch: 1.1,
+      onEnd: () => setAudioPlaying(false),
+    });
+  };
+
   return (
     <section className="pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden" style={{ background: "var(--bg-primary)", backgroundImage: "var(--gradient-hero-radial)", backgroundRepeat: "no-repeat", backgroundPosition: "top center" }}>
       <div
@@ -63,8 +81,29 @@ export function Hero() {
             Hear a live demo ▶
           </Link>
         </motion.div>
+        <motion.div
+          className="flex justify-center items-center gap-2 mt-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+        >
+          <button
+            type="button"
+            onClick={handlePlayGreeting}
+            disabled={audioPlaying}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm border bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-600 transition-colors disabled:opacity-70"
+            aria-label="Hear Sarah greet a caller"
+          >
+            {audioPlaying ? (
+              <Waveform isPlaying />
+            ) : (
+              <span className="text-base" aria-hidden>🔊</span>
+            )}
+            <span>{audioPlaying ? "Playing…" : "Hear Sarah greet a caller"}</span>
+          </button>
+        </motion.div>
         <motion.p
-          className="text-sm"
+          className="text-sm mt-2"
           style={{ color: "var(--text-tertiary)" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

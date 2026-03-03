@@ -5,15 +5,36 @@ import Link from "next/link";
 
 type CancelStep = 0 | 1 | 2 | 3 | 4;
 
+function getUsageFromStorage(): { minutesUsed: number; minutesLimit: number; calls: number; leads: number; estRevenue: number } {
+  if (typeof window === "undefined") return { minutesUsed: 0, minutesLimit: 200, calls: 0, leads: 0, estRevenue: 0 };
+  try {
+    const raw = localStorage.getItem("rt_activity_stats");
+    if (raw) {
+      const d = JSON.parse(raw) as { minutesUsed?: number; minutesLimit?: number; calls?: number; leads?: number; estRevenue?: number };
+      return {
+        minutesUsed: typeof d.minutesUsed === "number" ? d.minutesUsed : 0,
+        minutesLimit: typeof d.minutesLimit === "number" ? d.minutesLimit : 200,
+        calls: typeof d.calls === "number" ? d.calls : 0,
+        leads: typeof d.leads === "number" ? d.leads : 0,
+        estRevenue: typeof d.estRevenue === "number" ? d.estRevenue : 0,
+      };
+    }
+  } catch {
+    // ignore
+  }
+  return { minutesUsed: 0, minutesLimit: 200, calls: 0, leads: 0, estRevenue: 0 };
+}
+
 export default function AppSettingsBillingPage() {
   const [cancelStep, setCancelStep] = useState<CancelStep>(0);
+  const usage = getUsageFromStorage();
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <h1 className="text-lg font-semibold text-white mb-4">Billing</h1>
       <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50 mb-4">
         <p className="text-sm font-medium text-white">Starter — $97/mo</p>
-        <p className="text-xs text-zinc-500 mt-1">87 / 200 min used</p>
+        <p className="text-xs text-zinc-500 mt-1">{usage.minutesUsed} / {usage.minutesLimit} min used</p>
       </div>
       <button type="button" className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-600 text-zinc-300 mb-4 block">Change plan</button>
       <p className="text-xs text-zinc-500 mb-4">Payment method: •••• 4242</p>
@@ -39,7 +60,7 @@ export default function AppSettingsBillingPage() {
               <>
                 <h2 className="text-lg font-semibold text-white mb-2">Before you go</h2>
                 <p className="text-sm text-zinc-400 mb-4">
-                  This month, Recall Touch answered 47 calls and captured 12 leads worth ~$2,400. Are you sure?
+                  This month, Recall Touch answered {usage.calls} call{usage.calls !== 1 ? "s" : ""} and captured {usage.leads} lead{usage.leads !== 1 ? "s" : ""}{usage.estRevenue > 0 ? ` worth ~$${usage.estRevenue.toLocaleString()}` : ""}. Are you sure?
                 </p>
                 <div className="flex gap-2 justify-end">
                   <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">Stay</button>
