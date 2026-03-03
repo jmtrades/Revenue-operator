@@ -59,10 +59,16 @@ export default function AppAnalyticsPage() {
           <p className="text-xs text-amber-400 mt-2">Upgrade to Growth for more minutes.</p>
         )}
       </div>
-      <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50 mb-6">
+      <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50 mb-4">
         <p className="text-sm font-medium text-white mb-2">ROI this month</p>
         <p className="text-sm text-zinc-400">
           Calls answered: 47. Leads: 12. Appointments: 8. Est. value: $2,400. Your cost: $97. Return: ~25x.
+        </p>
+      </div>
+      <div className="p-4 rounded-xl border border-green-500/30 bg-green-500/5 mb-6">
+        <p className="text-xs font-medium text-green-400 mb-2">Since you joined</p>
+        <p className="text-sm text-zinc-300">
+          47 calls answered · 12 leads captured · 8 appointments booked · ~6 hrs saved · Est. value: $2,400 · Your cost: $97 · Net ROI: 25x
         </p>
       </div>
       <p>
