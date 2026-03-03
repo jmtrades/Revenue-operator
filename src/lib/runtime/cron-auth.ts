@@ -12,6 +12,15 @@ export function assertCronAuthorized(req: { headers: { get: (name: string) => st
   if (!secret) {
     return NextResponse.json({ error: "Cron not configured" }, { status: 501 });
   }
+
+  // Allow trusted Vercel Cron invocations without explicit Authorization header.
+  // Vercel automatically adds x-vercel-cron for scheduled jobs, which cannot
+  // currently be configured to send custom Authorization headers.
+  const isVercelCron = !!req.headers.get("x-vercel-cron");
+  if (isVercelCron) {
+    return null;
+  }
+
   const auth = req.headers.get("authorization");
   if (auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

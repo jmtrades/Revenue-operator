@@ -109,3 +109,4 @@ Everything else is noise.
 - Settlement + usage classification (continuity_scope_units), core + guarantees crons
 
 Cursor and all contributors must treat this document as a governing constraint.
+https://vercel.com/juniors-projects-685fb506/revenue-operator/settings/environment-variables
