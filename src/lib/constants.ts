@@ -13,7 +13,8 @@ export const ROUTES = {
 export const NAV_LINKS = [
   { href: ROUTES.PRODUCT, label: "Product" },
   { href: ROUTES.PRICING, label: "Pricing" },
-  { href: ROUTES.DOCS, label: "Documentation" },
+  { href: ROUTES.DEMO, label: "Demo" },
+  { href: ROUTES.DOCS, label: "Docs" },
 ] as const;
 
 export const PRICING_TIERS = [

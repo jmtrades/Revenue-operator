@@ -1,38 +1,25 @@
-# RECALL TOUCH — CURSOR MASTER PROMPT
-# ═══════════════════════════════════════════════════════════════
-# Paste as .cursorrules — read ALL before writing code
-# ═══════════════════════════════════════════════════════════════
+# RECALL TOUCH — DEFINITIVE CURSOR MASTER PROMPT
+# Paste as .cursorrules. Read ALL before writing ANY code. Implement code — ship each wave.
 
-# LIVE SITE AUDIT — VERIFIED BUGS (March 2 2026):
-# BUG 1: Dead end after signup — "Go to dashboard" does nothing; Back to home loops.
-# BUG 2: Fake email promise — "Check email for login link" but no email sent.
-# BUG 3: Sign-in broken — no account from signup.
-# BUG 4: Demo broken — /demo 404 or static, nothing plays.
-# BUG 5: Homepage preview empty — filter tabs but no call cards.
-# BUG 6: Pricing toggle doesn't switch prices.
-# BUG 7: Waitlist doesn't save or confirm.
-# BUG 8: Missing /product, /pricing, /docs, /contact, /privacy, /terms, /blog, /industries/*.
-# BUG 9: No /app/* — no onboarding, dashboard, settings.
-# BUG 10: No SEO — no sitemap, robots.txt.
+CONTEXT: Recall Touch (recall-touch.com). Next.js + Tailwind + Supabase. Do NOT depend on Supabase for public pages.
+GOAL: Premium product feel — not template, not AI-slop.
 
-# RULES: Public page = Server Component. Interactive = "use client" island + mount guard. Dynamic import (ssr:false) for window/document. Auth in middleware only /app/*. Forms: localStorage first → API (catch silent) → success. npm run build after every file. No "Verifying session" / blank / infinite spinner.
+RULES: TypeScript. Public page.tsx = Server Component (no "use client", no useEffect, no supabase). Interactive = "use client" islands + mount guard + skeleton. Browser-only = dynamic(..., { ssr: false }). Auth in middleware only /app/*. Forms: localStorage first → API (catch silent) → success. npm run build after every file. No "Verifying session" / blank / spinner.
 
-# DESIGN: bg-black, bg-zinc-950 sidebar, bg-zinc-900/50 cards. text-white headings, text-zinc-400 body. Primary btn: bg-white text-black rounded-xl. Accents: Blue lead, Green appt, Red urgent, Purple outbound, Orange follow-up.
+STEP A — REPO RECON: Run build, lint, fix all errors before proceeding.
 
-# WAVE 1 — UNBREAK CONVERSION FUNNEL:
-# 1. Activate success: ONE button "Set up my AI agent →" router.push('/app'). Copy: "Your AI phone system is ready. Let's set up your first AI agent — takes 2 minutes." No Check email, no Back to home. Store rt_signup + rt_authenticated.
-# 2. /app layout: 240px sidebar, bottom tab mobile. Banner: "🎯 Demo Mode — Your AI is using sample data. Forward your phone number to go live. [Set up →]". Plan badge: "Starter · Trial" "12 days left". Redirect !rt_onboarded → /app/onboarding.
-# 3. /app/onboarding — 5-step wizard (Business, Agent, Teach AI, Phone, Test). Step 5: rt_onboarded → /app/activity.
-# 4. /app/activity — 4 stats, filter chips, 5 demo cards, empty state.
-# 5. Homepage preview — dark card, 3 call cards slide-up, ssr:false.
-# 6. Pricing toggle — Monthly/Annual, Save 17%.
-# 7. Waitlist — localStorage + API → "You're on the list! 🎉"
-# 8. middleware + error.tsx + not-found.tsx styled.
+STEP B — VERIFIED BUGS (fix all): 1) Signup dead end — one button "Set up my AI agent →" only. 2) No false email promise. 3) Sign-in via localStorage match. 4) /demo plays. 5) Homepage preview has call cards. 6) Pricing toggle works. 7) Waitlist saves. 8) All pages exist. 9) /app shell + onboarding + activity. 10) sitemap + robots. 11) Styled error/404. 12) Activate has NavBar. 13) Tab title Recall Touch. 14) Success screen = one CTA, no competing links.
 
-# WAVE 2 — ALL PUBLIC PAGES: /demo (CallSimulator), /product (8 sections), /pricing, /sign-in, /docs, /contact, /privacy, /terms, /blog + 3 slugs, /industries/[slug], API routes, sitemap + robots + metadata.
+STEP C — BRAND: "AI answers your business calls 24/7 so you never miss a lead." SMB owner. Confident, Clean, Capable. Dark theme.
 
-# WAVE 3 — APP + ANTI-CHURN: contacts, agents, campaigns, messages, calendar, analytics, settings (8 sub-pages). Anti-churn: Weekly ROI card, Usage milestones in activity, Inactivity banner (3+ days no calls), Onboarding checklist in sidebar, Cancel flow (value → pause → downgrade), Value dashboard in analytics, Toast notifications for leads/appointments.
+STEP D — DESIGN: bg-black, bg-zinc-950 sidebar, bg-zinc-900/50 cards, text-white headings, text-zinc-400 body. Primary btn: bg-white text-black rounded-xl. NavBar: Logo | Product, Pricing, Demo, Docs | Sign in, Start free →. Footer: 4 cols + "AI phone system for every business".
 
-# WAVE 4 — POLISH: Mobile 375px, no overflow, zero console errors, forms validate, skeletons, confetti on onboarding complete, slide-up on cards, green pulse on Active, toasts top-right.
+WAVE 1 — UNBREAK MONEY PATH: Root layout Server Component, html class dark, body bg-black. /activate: NavBar, success = "Welcome aboard!" + one button + "Takes 2 minutes · Your first 14 days are free". /app shell (client, mount guard), banner "Demo Mode — Forward your number [Set up →]", redirect !rt_onboarded → onboarding. /app/onboarding 5 steps. /app/activity 4 stats, filters, 5 demo cards, milestone. Homepage preview animated cards (ssr:false). Pricing toggle. Waitlist. middleware + error.tsx + not-found.tsx.
 
-# FINAL: No "Verifying session", no dead buttons, no blank screens. All links work. Footer "AI phone system". Pricing toggle works.
+WAVE 2 — PUBLIC PAGES: /demo CallSimulator 3 tabs. /product 8 sections. /pricing toggle+calculator+FAQ. /sign-in. /docs. /contact, /privacy, /terms. /blog + 3. /industries/[slug]. API routes. SEO.
+
+WAVE 3 — APP + ANTI-CHURN: contacts, agents, campaigns, messages, calendar, analytics, settings (8 sub). Cancel flow. Milestones, inactivity banner, onboarding checklist, ROI card, toasts.
+
+WAVE 4 — POLISH: Mobile 375px, motion, a11y, performance, final QA.
+
+VERIFICATION: Core flow works. All pages render. No Verifying session, no dead buttons, no 404 on linked routes. build + lint pass.
