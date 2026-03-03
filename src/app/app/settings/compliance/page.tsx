@@ -26,7 +26,7 @@ export default function AppSettingsCompliancePage() {
         </div>
       </div>
       <button type="button" className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">Export all data</button>
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-blue-400 hover:underline">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
     </div>
   );
 }

@@ -9,7 +9,7 @@ export default function AppSettingsTeamPage() {
       <p className="text-sm text-zinc-400 mb-4">Member list, invite, roles (Admin / Manager / Viewer), escalation order.</p>
       <input type="email" placeholder="Email to invite" className="w-full px-4 py-2.5 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-500 text-sm mb-4" />
       <button type="button" className="px-4 py-2 rounded-xl text-sm font-medium bg-white text-black">Invite</button>
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-blue-400 hover:underline">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
     </div>
   );
 }

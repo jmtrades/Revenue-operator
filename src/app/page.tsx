@@ -8,6 +8,7 @@ import { Industries } from "@/components/sections/Industries";
 import { MetricsSection } from "@/components/sections/MetricsSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { PricingPreview } from "@/components/sections/PricingPreview";
+import { EnterpriseComparisonCard } from "@/components/sections/EnterpriseComparisonCard";
 import { SocialProof } from "@/components/sections/SocialProof";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Footer } from "@/components/sections/Footer";
@@ -29,6 +30,7 @@ export default function HomePage() {
         <MetricsSection />
         <TestimonialsSection />
         <PricingPreview />
+        <EnterpriseComparisonCard />
         <SocialProof />
         <FinalCTA />
       </main>

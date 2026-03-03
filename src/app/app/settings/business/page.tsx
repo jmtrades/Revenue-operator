@@ -35,7 +35,7 @@ export default function AppSettingsBusinessPage() {
         </div>
       </div>
       <button type="button" className="px-4 py-2 rounded-xl text-sm font-medium bg-white text-black">Save</button>
-      <p className="mt-4"><Link href="/app/settings" className="text-sm text-blue-400 hover:underline">← Settings</Link></p>
+      <p className="mt-4"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
     </div>
   );
 }

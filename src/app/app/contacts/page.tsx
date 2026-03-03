@@ -53,7 +53,7 @@ export default function AppContactsPage() {
             type="button"
             onClick={() => setTab(t)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize ${
-              tab === t ? "bg-blue-500/20 text-blue-400" : "bg-zinc-800/50 text-zinc-400"
+              tab === t ? "bg-zinc-700 text-white" : "bg-zinc-800/50 text-zinc-400"
             }`}
           >
             {t}
@@ -95,7 +95,7 @@ export default function AppContactsPage() {
         </ul>
       )}
       <p className="mt-6">
-        <Link href="/app/activity" className="text-sm text-blue-400 hover:underline">← Activity</Link>
+        <Link href="/app/activity" className="text-sm text-zinc-400 hover:text-white transition-colors">← Activity</Link>
       </p>
     </div>
   );

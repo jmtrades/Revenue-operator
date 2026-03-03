@@ -7,7 +7,7 @@ export const ROUTES = {
   CONTACT: "/contact",
   DEMO: "/demo",
   ONBOARDING: "/onboarding",
-  BOOK_DEMO: "/contact",
+  BOOK_DEMO: "/demo",
 } as const;
 
 export const NAV_LINKS = [
@@ -106,7 +106,7 @@ export const FOOTER_PRODUCT = [
 ] as const;
 
 export const FOOTER_COMPANY = [
-  { label: "About", href: "/product" },
+  { label: "About", href: "/contact" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ] as const;
