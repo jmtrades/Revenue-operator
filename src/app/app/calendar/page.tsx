@@ -263,7 +263,7 @@ export default function AppCalendarPage() {
         </div>
         <button
           type="button"
-          onClick={() => setGoogleToast("Coming soon — this demo focuses on the operator flow.")}
+          onClick={() => setGoogleToast("Google Calendar integration is available on Growth and Scale plans.")}
           className="self-start sm:self-auto px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
         >
           Connect

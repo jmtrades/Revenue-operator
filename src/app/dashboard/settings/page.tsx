@@ -391,7 +391,7 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Email</label>
-                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>Coming soon</p>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>Not configured</p>
                 </div>
                 <div>
                   <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Inbound address</label>

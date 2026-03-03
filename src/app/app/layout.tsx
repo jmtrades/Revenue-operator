@@ -28,10 +28,10 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
 ];
 
 const MOBILE_TABS = [
-  { href: "/app/activity", label: "Activity" },
-  { href: "/app/contacts", label: "Contacts" },
-  { href: "/app/agents", label: "Agents" },
-  { href: "/app/settings", label: "More" },
+  { href: "/app/activity", label: "Activity", icon: LayoutList },
+  { href: "/app/contacts", label: "Contacts", icon: Users },
+  { href: "/app/agents", label: "Agents", icon: Bot },
+  { href: "/app/settings", label: "More", icon: Settings },
 ] as const;
 
 function getBusinessName(): string {
@@ -151,15 +151,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around py-2 bg-zinc-950 border-t border-zinc-800 safe-area-pb"
           aria-label="Mobile navigation"
         >
-          {MOBILE_TABS.map(({ href, label }) => (
+          {MOBILE_TABS.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
-              className={`flex flex-col items-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-center text-[10px] uppercase tracking-wider ${
-                isActive(href) ? "text-white font-medium" : "text-zinc-500"
+              className={`flex flex-col items-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-center ${
+                isActive(href) ? "text-white" : "text-zinc-500"
               }`}
             >
-              {label}
+              <Icon className="w-5 h-5" strokeWidth={1.5} />
+              <span className="text-[10px] font-medium">{label}</span>
             </Link>
           ))}
         </nav>

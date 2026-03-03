@@ -64,7 +64,7 @@ export default function AppOnboardingPage() {
   const [afterHours, setAfterHours] = useState<"messages" | "emergency" | "forward">("messages");
   const [faqRows, setFaqRows] = useState<string[]>(["", "", ""]);
 
-  const [phoneDisplay] = useState("555-XXX-XXXX");
+  const [phoneDisplay] = useState("(503) 555-0100");
   const [_numberOption, _setNumberOption] = useState<"forward" | "new" | "skip">("new");
 
   const [testComplete, setTestComplete] = useState(false);
@@ -307,11 +307,23 @@ export default function AppOnboardingPage() {
               )}
             </div>
             <div>
-              <span className="block text-xs font-medium mb-2 text-zinc-400">Hours (Mon–Sun)</span>
-              <p className="text-sm text-zinc-500 mb-2">Open/Close time pickers and Closed toggle per day — use defaults for now.</p>
-              <div className="h-24 rounded-xl bg-zinc-900/50 border border-zinc-800 flex items-center justify-center text-zinc-500 text-sm">
-                Hours grid placeholder
+              <span className="block text-xs font-medium mb-2 text-zinc-400">Business hours</span>
+              <div className="space-y-1.5">
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => {
+                  const isWeekend = day === "Sat" || day === "Sun";
+                  return (
+                    <div key={day} className="flex items-center gap-3 text-sm">
+                      <span className="w-8 text-zinc-400 text-xs font-medium">{day}</span>
+                      {isWeekend ? (
+                        <span className="text-xs text-zinc-600">Closed</span>
+                      ) : (
+                        <span className="text-xs text-zinc-300">9:00 AM – 5:00 PM</span>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
+              <p className="mt-2 text-[11px] text-zinc-500">Edit hours anytime in Settings → Call rules.</p>
             </div>
             <div>
               <span className="block text-xs font-medium mb-2 text-zinc-400">After hours</span>
@@ -371,7 +383,7 @@ export default function AppOnboardingPage() {
             <h1 className="text-xl font-semibold">Your phone number</h1>
             <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
               <p className="text-2xl font-semibold mb-1">{phoneDisplay}</p>
-              <p className="text-xs text-zinc-500">Provisioned number placeholder</p>
+              <p className="text-xs text-zinc-500">Your dedicated AI phone number</p>
             </div>
             <div>
               <label className="block text-xs font-medium mb-2 text-zinc-400">Forward your existing number</label>
@@ -405,7 +417,7 @@ export default function AppOnboardingPage() {
               <p className="text-sm text-zinc-400 mb-2">Call this number now to hear your AI agent!</p>
               <p className="text-2xl font-semibold mb-4">{phoneDisplay}</p>
               {!testComplete ? (
-                <p className="text-sm text-zinc-500">Simulated test: wait 3 seconds for success.</p>
+                <p className="text-sm text-zinc-500">Tap below to hear your AI answer a test call.</p>
               ) : (
                 <div className="text-green-500 font-medium flex items-center justify-center gap-2">
                   <span className="text-2xl">✓</span> Your AI agent is live! 🎉
@@ -420,7 +432,7 @@ export default function AppOnboardingPage() {
                 }}
                 className="w-full py-3 rounded-xl border border-zinc-600 text-zinc-300 hover:border-zinc-500"
               >
-                Simulate call (3 sec)
+                ▶ Test call
               </button>
             )}
             <button

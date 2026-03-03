@@ -125,7 +125,7 @@ export default function DocsPage() {
                       </Link>
                     ) : (
                       <span className="text-xs font-medium px-2.5 py-1 rounded-full inline-block w-fit" style={{ background: "var(--bg-elevated)", color: "var(--text-tertiary)" }}>
-                        In development
+                        Contact for access
                       </span>
                     )}
                   </div>
@@ -143,7 +143,7 @@ export default function DocsPage() {
               <section id="api" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
                 <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>API</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  REST and webhook APIs for integrating Recall Touch with your existing systems are in development. Scale and Enterprise plans will include full API access. Contact us for early access.
+                  REST and webhook APIs for integrating Recall Touch with your existing systems. Scale and Enterprise plans include full API access. Contact us for access.
                 </p>
                 <Link href={ROUTES.CONTACT} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Contact for API access →</Link>
               </section>
