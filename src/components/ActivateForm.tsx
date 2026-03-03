@@ -142,12 +142,9 @@ export function ActivateForm() {
     return (
       <div className="text-center">
         <div className="text-5xl mb-4">🎉</div>
-        <h2 className="text-xl font-bold text-white mb-3">Welcome to Recall Touch!</h2>
-        <p className="text-sm mb-2 text-zinc-400">
-          Your AI phone system is ready.
-        </p>
+        <h2 className="text-xl font-bold text-white mb-3">Welcome aboard!</h2>
         <p className="text-sm mb-6 text-zinc-400">
-          Let&apos;s set up your first AI agent — takes 2 minutes.
+          Your AI phone system is ready.
         </p>
         <button
           type="button"
@@ -157,7 +154,7 @@ export function ActivateForm() {
           Set up my AI agent →
         </button>
         <p className="text-xs mt-4 text-zinc-500">
-          No credit card · 14-day free trial
+          Takes 2 minutes · Your first 14 days are free
         </p>
       </div>
     );
