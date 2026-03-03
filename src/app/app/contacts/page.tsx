@@ -31,91 +31,15 @@ type SortId = "newest" | "score" | "name";
 
 const STORAGE_KEY = "rt_contacts";
 
-const DEMO_CONTACTS: Contact[] = [
-  {
-    id: "c1",
-    firstName: "Mike",
-    lastName: "Johnson",
-    phone: "(503) 555-0199",
-    email: "mike.johnson@email.com",
-    type: "lead",
-    score: 92,
-    notes: "Kitchen sink leak, slow drip",
-    tags: ["plumbing", "urgent"],
-    lastContact: "2025-03-03T09:14:00",
-    history: [
-      {
-        date: "2025-03-03T09:14:00",
-        type: "inbound",
-        duration: "4:32",
-        summary: "Lead — sink leak, booked tomorrow 10AM",
-      },
-      {
-        date: "2025-03-02T14:30:00",
-        type: "outbound",
-        duration: "1:15",
-        summary: "Confirmation call",
-      },
-    ],
-  },
-  {
-    id: "c2",
-    firstName: "Sarah",
-    lastName: "Chen",
-    phone: "(503) 555-0234",
-    email: "sarah.chen@email.com",
-    type: "customer",
-    score: 88,
-    notes: "Regular dental patient",
-    tags: ["dental", "recurring"],
-    lastContact: "2025-03-03T09:31:00",
-    history: [
-      {
-        date: "2025-03-03T09:31:00",
-        type: "inbound",
-        duration: "2:15",
-        summary: "Cleaning booked Tue 9AM Dr. Martinez",
-      },
-    ],
-  },
-  {
-    id: "c3",
-    firstName: "James",
-    lastName: "Wilson",
-    phone: "(503) 555-0345",
-    email: "james.wilson@email.com",
-    type: "lead",
-    score: 95,
-    notes: "Storm damage, missing shingles",
-    tags: ["roofing", "insurance"],
-    lastContact: "2025-03-03T10:02:00",
-    history: [
-      {
-        date: "2025-03-03T10:02:00",
-        type: "outbound",
-        duration: "3:05",
-        summary: "Follow-up — estimate tomorrow 3PM",
-      },
-    ],
-  },
-];
-
-function ensureContactsSeeded(): Contact[] {
-  if (typeof window === "undefined") return DEMO_CONTACTS;
+function loadContacts(): Contact[] {
+  if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(DEMO_CONTACTS));
-      return DEMO_CONTACTS;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw) as Contact[];
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(DEMO_CONTACTS));
-      return DEMO_CONTACTS;
-    }
-    return parsed;
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return DEMO_CONTACTS;
+    return [];
   }
 }
 
@@ -173,7 +97,7 @@ function typeLabel(type: ContactType) {
 
 export default function AppContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>(() =>
-    typeof window === "undefined" ? DEMO_CONTACTS : ensureContactsSeeded(),
+    typeof window === "undefined" ? [] : loadContacts(),
   );
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState<TabId>("all");

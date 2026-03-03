@@ -3,25 +3,21 @@
 import { useState, useEffect } from "react";
 
 const CARDS = [
-  { id: "1", type: "lead" as const, name: "Mike Johnson", time: "9:14 AM", duration: "4:32", summary: "Kitchen sink leak — 742 Elm St — Booked tomorrow 10 AM", score: 92 },
-  { id: "2", type: "appointment" as const, name: "Sarah Chen", time: "9:31 AM", duration: "2:15", summary: "Dental cleaning — Tuesday 9 AM Dr. Martinez", score: null },
-  { id: "3", type: "follow-up" as const, name: "James Wilson", time: "10:02 AM", duration: "3:05", summary: "Roof estimate — Storm damage — Tomorrow 3 PM", score: null },
-  { id: "4", type: "urgent" as const, name: "Emergency", time: "10:17 AM", duration: "1:52", summary: "Pipe burst — 88 Oak Ave — Owner notified immediately", score: null },
-  { id: "5", type: "lead" as const, name: "Lisa Park", time: "10:44 AM", duration: "2:38", summary: "AC repair quote — Scheduled callback 2 PM", score: null },
+  { id: "1", type: "lead" as const, name: "Mike Johnson", time: "9:14 AM", summary: "Kitchen sink leak", outcome: "✅ Booked 10 AM" },
+  { id: "2", type: "appointment" as const, name: "Sarah Chen", time: "9:31 AM", summary: "Dental cleaning — Dr. Martinez", outcome: "✅ Tue 9 AM" },
+  { id: "3", type: "follow-up" as const, name: "James Wilson", time: "10:02 AM", summary: "Roof estimate — storm damage", outcome: "✅ Tomorrow 3 PM" },
 ];
 
-const TYPE_COLORS: Record<string, string> = {
-  lead: "#3B82F6",
-  appointment: "#22C55E",
-  "follow-up": "#A855F7",
-  urgent: "#EF4444",
+const CARD_STYLES: Record<string, { border: string; badge: string }> = {
+  lead: { border: "border-l-blue-500", badge: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
+  appointment: { border: "border-l-green-500", badge: "bg-green-500/10 text-green-400 border-green-500/20" },
+  "follow-up": { border: "border-l-purple-500", badge: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
 };
 
 const TYPE_LABELS: Record<string, string> = {
   lead: "Lead",
   appointment: "Appointment",
   "follow-up": "Follow-up",
-  urgent: "Urgent",
 };
 
 export function HomepageActivityPreview() {
@@ -65,35 +61,34 @@ export function HomepageActivityPreview() {
           Recent calls
         </h3>
         <ul className="space-y-3">
-          {CARDS.map((card, i) => (
-            <li
-              key={card.id}
-              className="rounded-xl border-l-4 overflow-hidden transition-all duration-300"
-              style={{
-                borderLeftColor: TYPE_COLORS[card.type] ?? "#71717a",
-                background: "var(--bg-surface)",
-                opacity: visible.includes(i) ? 1 : 0,
-                transform: visible.includes(i) ? "translateX(0)" : "translateX(-12px)",
-              }}
-            >
-              <div className="p-3 sm:p-4">
-                <div className="flex justify-between items-start gap-2">
-                  <span
-                    className="text-[10px] font-semibold uppercase tracking-wider"
-                    style={{ color: TYPE_COLORS[card.type] ?? "#71717a" }}
-                  >
-                    {TYPE_LABELS[card.type]}
-                  </span>
-                  <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{card.time}</span>
+          {CARDS.map((card, i) => {
+            const style = CARD_STYLES[card.type] ?? { border: "border-l-zinc-500", badge: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20" };
+            return (
+              <li
+                key={card.id}
+                className={`rounded-xl border-l-[3px] overflow-hidden transition-all duration-300 bg-zinc-900/80 border border-zinc-800/50 ${style.border} ${
+                  visible.includes(i) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+                }`}
+                style={{
+                  transitionDelay: visible.includes(i) ? `${i * 150}ms` : "0ms",
+                }}
+              >
+                <div className="p-3 sm:p-4 flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[10px] text-zinc-500">{card.time}</span>
+                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${style.badge}`}>
+                        {TYPE_LABELS[card.type]}
+                      </span>
+                    </div>
+                    <p className="text-sm font-semibold text-white mt-1 truncate">{card.name}</p>
+                    <p className="text-xs text-zinc-500 truncate mt-0.5">{card.summary}</p>
+                  </div>
+                  <span className="text-xs text-green-400 shrink-0 font-medium">{card.outcome}</span>
                 </div>
-                <p className="text-sm font-medium mt-1 truncate" style={{ color: "var(--text-primary)" }}>{card.name}</p>
-                <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-secondary)" }}>{card.summary}</p>
-                {card.score != null && (
-                  <p className="text-[10px] mt-1.5" style={{ color: "var(--text-tertiary)" }}>Score: {card.score}</p>
-                )}
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

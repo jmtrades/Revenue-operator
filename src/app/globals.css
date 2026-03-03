@@ -222,6 +222,51 @@ h3.headline {
   animation: spin 0.8s linear infinite;
 }
 
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes waveform-bar {
+  0%, 100% { height: 6px; }
+  50% { height: 14px; }
+}
+.animate-waveform-bar {
+  animation: waveform-bar 0.4s ease-in-out infinite;
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--confetti-dx, 0), 280px) rotate(720deg) scale(0.3);
+  }
+}
+.animate-confetti-fall {
+  animation: confetti-fall 1.8s ease-out forwards;
+  pointer-events: none;
+}
+
 /* Marketing: section label, container, card hover */
 .section-label {
   font-size: 0.75rem;

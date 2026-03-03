@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useOnboardingStep } from "../OnboardingStepContext";
+import { speakText } from "@/lib/voice-preview";
+import { Waveform } from "@/components/Waveform";
 
 const STEPS = 5;
 const INDUSTRIES = [
@@ -15,14 +18,28 @@ const INDUSTRIES = [
   { value: "contractors", label: "Contractors" },
 ];
 const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Mike", "Lisa"];
-const VOICES = [
-  { id: "warm_female", label: "Warm Female" },
-  { id: "professional_male", label: "Professional Male" },
-  { id: "friendly_female", label: "Friendly Female" },
-  { id: "calm_male", label: "Calm Male" },
-  { id: "energetic_female", label: "Energetic Female" },
-  { id: "confident_male", label: "Confident Male" },
+const VOICES: { id: string; label: string; gender: "female" | "male"; preview: string }[] = [
+  { id: "warm_female", label: "Warm Female", gender: "female", preview: "Hi, thanks for calling. How can I help you today?" },
+  { id: "professional_male", label: "Professional Male", gender: "male", preview: "Good morning. You've reached our team. How may I assist you?" },
+  { id: "friendly_female", label: "Friendly Female", gender: "female", preview: "Hey there! Thanks for calling. What can I do for you?" },
+  { id: "calm_male", label: "Calm Male", gender: "male", preview: "Hello. Take your time. How can I help?" },
+  { id: "energetic_female", label: "Energetic Female", gender: "female", preview: "Hi! Great to hear from you. What do you need?" },
+  { id: "confident_male", label: "Confident Male", gender: "male", preview: "Thanks for calling. I'm here to help. What's the best way to assist?" },
 ];
+
+const PERSONALITY_STOPS = [
+  { value: 0, label: "Very Professional" },
+  { value: 25, label: "Professional" },
+  { value: 50, label: "Balanced" },
+  { value: 75, label: "Friendly" },
+  { value: 100, label: "Very Friendly" },
+];
+
+const CALL_STYLES = [
+  { id: "thorough", label: "Thorough", desc: "Asks clarifying questions, confirms details" },
+  { id: "conversational", label: "Conversational", desc: "Natural back-and-forth, brief confirmations" },
+  { id: "quick", label: "Quick", desc: "Gets to the point, minimal small talk" },
+] as const;
 
 function getSignupPrefill(): { businessName?: string; industry?: string; website?: string } {
   if (typeof window === "undefined") return {};
@@ -57,6 +74,9 @@ export default function AppOnboardingPage() {
   const [voiceId, setVoiceId] = useState("warm_female");
   const [greeting, setGreeting] = useState("");
   const [personality, setPersonality] = useState(50);
+  const [callStyle, setCallStyle] = useState<"thorough" | "conversational" | "quick">("conversational");
+  const [greetingPlaying, setGreetingPlaying] = useState(false);
+  const [step5Playing, setStep5Playing] = useState(false);
 
   const [services, setServices] = useState<string[]>([]);
   const [serviceInput, setServiceInput] = useState("");
@@ -66,13 +86,14 @@ export default function AppOnboardingPage() {
 
   const [phoneDisplay] = useState("(503) 555-0100");
   const [_numberOption, _setNumberOption] = useState<"forward" | "new" | "skip">("new");
-
-  const [testComplete, setTestComplete] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     const id = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(id);
   }, []);
+
+  const onboardingCtx = useOnboardingStep();
 
   useEffect(() => {
     if (!mounted) return;
@@ -91,6 +112,10 @@ export default function AppOnboardingPage() {
     return () => clearTimeout(id);
   }, [mounted]);
 
+  useEffect(() => {
+    onboardingCtx?.setStep(step);
+  }, [step, onboardingCtx]);
+
   const defaultGreeting = `Thanks for calling ${businessName || "[Business]"}! This is ${agentName}. How can I help you today?`;
 
   const addService = () => {
@@ -104,11 +129,33 @@ export default function AppOnboardingPage() {
   const finishOnboarding = () => {
     try {
       localStorage.setItem("rt_onboarded", "true");
+      localStorage.setItem(
+        "rt_onboarding_checklist",
+        JSON.stringify(["business", "agent", "services", "phone", "test_call"])
+      );
     } catch {
       // ignore
     }
     router.push("/app/activity");
   };
+
+  const handleGoToDashboard = () => {
+    setShowConfetti(true);
+    setTimeout(() => {
+      setShowConfetti(false);
+      finishOnboarding();
+    }, 1600);
+  };
+
+  const greetingToPlay = greeting.trim() || defaultGreeting;
+  const selectedVoice = VOICES.find((v) => v.id === voiceId);
+
+  const scriptPreviewText =
+    callStyle === "thorough"
+      ? `${agentName} will greet the caller, ask what they need, then ask 1–2 clarifying questions before offering next steps or booking.`
+      : callStyle === "conversational"
+        ? `${agentName} will keep it natural: brief greeting, confirm the reason for the call, then suggest an appointment or follow-up.`
+        : `${agentName} will get straight to the point: quick greeting, confirm need, then offer the next step.`;
 
   if (!mounted) {
     return (
@@ -137,10 +184,9 @@ export default function AppOnboardingPage() {
         {/* Step 1 — YOUR BUSINESS */}
         {step === 1 && (
           <div className="space-y-6">
-            <p className="text-sm text-zinc-400">
-              Welcome! Let&apos;s set up your AI phone system. This takes about 2 minutes.
-            </p>
-            <h1 className="text-xl font-semibold">Your business</h1>
+            <h1 className="text-xl font-bold text-white">Welcome to Recall Touch!</h1>
+            <p className="text-sm text-zinc-400">Let&apos;s get your AI phone system running in 2 minutes.</p>
+            <h2 className="text-lg font-semibold text-white">Your business</h2>
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Business name</label>
               <input
@@ -177,7 +223,7 @@ export default function AppOnboardingPage() {
                 placeholder="https://yourbusiness.com"
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
-              <p className="mt-1 text-xs text-zinc-500">We&apos;ll auto-learn your services and FAQ from your site.</p>
+              <p className="mt-1 text-xs text-zinc-500">We&apos;ll learn your services automatically.</p>
             </div>
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Address (optional)</label>
@@ -188,7 +234,7 @@ export default function AppOnboardingPage() {
                 placeholder="123 Main St"
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
-              <p className="mt-1 text-xs text-zinc-500">Used for location-based call routing.</p>
+              <p className="mt-1 text-xs text-zinc-500">Used for local service area.</p>
             </div>
             <div>
               <span className="block text-xs font-medium mb-1.5 text-zinc-400">Timezone</span>
@@ -207,34 +253,58 @@ export default function AppOnboardingPage() {
         {/* Step 2 — MEET YOUR AI */}
         {step === 2 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold">Meet your AI</h1>
+            <h1 className="text-xl font-semibold text-white">Meet your AI</h1>
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Agent name</label>
-              <select
+              <input
+                type="text"
                 value={agentName}
                 onChange={(e) => setAgentName(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white focus:border-zinc-500 focus:outline-none"
-              >
+                placeholder="e.g. Sarah"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:outline-none mb-2"
+              />
+              <div className="flex flex-wrap gap-2">
                 {AGENT_NAMES.map((n) => (
-                  <option key={n} value={n}>{n}</option>
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setAgentName(n)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
+                      agentName === n ? "bg-white/10 border-white text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-600"
+                    }`}
+                  >
+                    {n}
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
             <div>
               <label className="block text-xs font-medium mb-2 text-zinc-400">Voice</label>
               <div className="grid grid-cols-2 gap-2">
                 {VOICES.map((v) => (
-                  <button
+                  <div
                     key={v.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setVoiceId(v.id)}
-                    className={`flex items-center gap-2 p-3 rounded-xl border text-left text-sm ${
-                      voiceId === v.id ? "border-zinc-400 bg-zinc-800/80 text-white" : "border-zinc-700 bg-zinc-800/50 text-zinc-400"
+                    onKeyDown={(e) => e.key === "Enter" && setVoiceId(v.id)}
+                    className={`flex items-center gap-2 p-3 rounded-xl border text-left text-sm cursor-pointer ${
+                      voiceId === v.id ? "border-zinc-400 bg-zinc-800/80 text-white border-l-4 border-l-green-500" : "border-zinc-700 bg-zinc-800/50 text-zinc-400 border-l-4 border-l-transparent"
                     }`}
                   >
-                    <span className="text-lg" aria-hidden>▶</span>
-                    {v.label}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        speakText(v.preview, { gender: v.gender });
+                      }}
+                      className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-zinc-700 hover:bg-zinc-600 text-white text-xs"
+                      aria-label={`Preview ${v.label}`}
+                    >
+                      ▶
+                    </button>
+                    <span>{v.label}</span>
+                  </div>
                 ))}
               </div>
             </div>
@@ -245,19 +315,68 @@ export default function AppOnboardingPage() {
                 onChange={(e) => setGreeting(e.target.value)}
                 placeholder={defaultGreeting}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:border-zinc-500 focus:outline-none resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:outline-none resize-none"
               />
+              <button
+                type="button"
+                onClick={() => {
+                  setGreetingPlaying(true);
+                  const stop = speakText(greetingToPlay, {
+                    gender: selectedVoice?.gender ?? "female",
+                    onEnd: () => setGreetingPlaying(false),
+                  });
+                  (window as unknown as { __stopGreeting?: () => void }).__stopGreeting = stop;
+                }}
+                className="mt-2 flex items-center gap-2 py-2 px-3 rounded-xl border border-zinc-700 text-zinc-300 hover:border-zinc-600 text-sm"
+              >
+                {greetingPlaying ? <Waveform isPlaying /> : <span>▶</span>}
+                Preview Greeting
+              </button>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-2 text-zinc-400">Personality: Professional ←→ Friendly</label>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={personality}
-                onChange={(e) => setPersonality(Number(e.target.value))}
-                className="w-full h-2 rounded-lg accent-zinc-400"
-              />
+              <label className="block text-xs font-medium mb-2 text-zinc-400">Personality</label>
+              <div className="flex justify-between text-[11px] text-zinc-500 mb-1">
+                <span>Very Professional</span>
+                <span>Very Friendly</span>
+              </div>
+              <div className="flex gap-1">
+                {PERSONALITY_STOPS.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setPersonality(value)}
+                    className={`flex-1 py-2 rounded-lg text-[10px] font-medium border ${
+                      personality === value ? "bg-white/10 border-white text-white" : "border-zinc-700 text-zinc-500"
+                    }`}
+                    title={label}
+                  >
+                    {value === 0 ? "Pro" : value === 25 ? "Pro+" : value === 50 ? "Mid" : value === 75 ? "Friendly" : "Very"}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1 text-xs text-zinc-500">{PERSONALITY_STOPS.find((s) => s.value === personality)?.label ?? "Balanced"}</p>
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-2 text-zinc-400">Call style</label>
+              <div className="space-y-2">
+                {CALL_STYLES.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setCallStyle(s.id)}
+                    className={`w-full p-3 rounded-xl border text-left text-sm ${
+                      callStyle === s.id ? "border-zinc-400 bg-zinc-800/80 text-white" : "border-zinc-700 bg-zinc-800/50 text-zinc-400"
+                    }`}
+                  >
+                    <span className="font-medium">{s.label}</span>
+                    <p className="text-xs text-zinc-500 mt-0.5">{s.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
+              <p className="text-xs font-medium text-zinc-400 mb-1">How {agentName} will handle a call</p>
+              <p className="text-sm text-zinc-300">{scriptPreviewText}</p>
             </div>
             <div className="flex gap-2">
               <button
@@ -412,38 +531,72 @@ export default function AppOnboardingPage() {
         {/* Step 5 — TEST IT */}
         {step === 5 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold">Test it</h1>
+            <h1 className="text-xl font-semibold text-white">Test it</h1>
             <div className="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
-              <p className="text-sm text-zinc-400 mb-2">Call this number now to hear your AI agent!</p>
+              <p className="text-sm text-zinc-400 mb-2">Call this number to hear your AI agent</p>
               <p className="text-2xl font-semibold mb-4">{phoneDisplay}</p>
-              {!testComplete ? (
-                <p className="text-sm text-zinc-500">Tap below to hear your AI answer a test call.</p>
-              ) : (
-                <div className="text-green-500 font-medium flex items-center justify-center gap-2">
-                  <span className="text-2xl">✓</span> Your AI agent is live! 🎉
-                </div>
-              )}
+              <p className="text-sm text-zinc-500">Hear how {agentName} will answer.</p>
             </div>
-            {!testComplete && (
-              <button
-                type="button"
-                onClick={() => {
-                  setTimeout(() => setTestComplete(true), 3000);
-                }}
-                className="w-full py-3 rounded-xl border border-zinc-600 text-zinc-300 hover:border-zinc-500"
-              >
-                ▶ Test call
-              </button>
-            )}
             <button
               type="button"
-              onClick={finishOnboarding}
+              onClick={() => {
+                setStep5Playing(true);
+                speakText(greetingToPlay, {
+                  gender: selectedVoice?.gender ?? "female",
+                  onEnd: () => setStep5Playing(false),
+                });
+              }}
+              className="w-full py-3 rounded-xl border border-zinc-600 text-zinc-300 hover:border-zinc-500 flex items-center justify-center gap-2"
+            >
+              {step5Playing ? <Waveform isPlaying /> : <span>▶</span>}
+              Hear {agentName} answer a call
+            </button>
+            <button
+              type="button"
+              onClick={handleGoToDashboard}
               className="w-full py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200"
             >
-              Go to your dashboard →
+              Go to my dashboard →
             </button>
           </div>
         )}
+      </div>
+
+      {showConfetti && (
+        <ConfettiOverlay />
+      )}
+    </div>
+  );
+}
+
+const CONFETTI_PARTICLES = (() => {
+  const dx = [-120, -90, -60, -30, 0, 30, 60, 90, 120, -100, -70, -40, 40, 70, 100, -80, -50, 50, 80, -110, -20, 20, 110, -95, -25, 25, 95, -85, -55, 55, 85, -45, 45];
+  const colors = ["#fff", "#22c55e", "#a3e635", "#71717a", "#d4d4d8"];
+  return dx.map((d, i) => ({ dx: d, delay: i * 35, color: colors[i % colors.length]! }));
+})();
+
+function ConfettiOverlay() {
+  return (
+    <div
+      className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center"
+      aria-hidden
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        {CONFETTI_PARTICLES.map((p, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 rounded-sm animate-confetti-fall"
+            style={{
+              left: "50%",
+              top: "40%",
+              marginLeft: -4,
+              marginTop: -4,
+              backgroundColor: p.color,
+              ["--confetti-dx" as string]: `${p.dx}px`,
+              animationDelay: `${p.delay}ms`,
+            }}
+          />
+        ))}
       </div>
     </div>
   );

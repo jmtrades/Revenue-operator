@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { speakText } from "@/lib/voice-preview";
+import { Waveform } from "@/components/Waveform";
 
 type VoiceId =
   | "warm_female"
@@ -85,7 +87,7 @@ function defaultAgent(): Agent {
     personality: 60,
     callStyle: "thorough",
     active: true,
-    callsHandled: 47,
+    callsHandled: 0,
     services: [],
     faq: [],
     specialInstructions: "",
@@ -99,24 +101,15 @@ function defaultAgent(): Agent {
   };
 }
 
-function seedAgents(): Agent[] {
-  if (typeof window === "undefined") return [defaultAgent()];
+function loadAgents(): Agent[] {
+  if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      const seeded = [defaultAgent()];
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
-      return seeded;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw) as Agent[];
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      const seeded = [defaultAgent()];
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
-      return seeded;
-    }
-    return parsed;
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return [defaultAgent()];
+    return [];
   }
 }
 
@@ -130,7 +123,7 @@ function saveAgents(next: Agent[]) {
 }
 
 const initialAgents: Agent[] =
-  typeof window === "undefined" ? [defaultAgent()] : seedAgents();
+  typeof window === "undefined" ? [] : loadAgents();
 
 export default function AppAgentsPage() {
   const [agents, setAgents] = useState<Agent[]>(initialAgents);
@@ -151,6 +144,14 @@ export default function AppAgentsPage() {
     () => (selectedId ? agents.find((a) => a.id === selectedId) ?? null : null),
     [agents, selectedId],
   );
+  const [hearPlaying, setHearPlaying] = useState(false);
+  const [playingAgentId, setPlayingAgentId] = useState<string | null>(null);
+  const isHearPlaying = hearPlaying && playingAgentId === selectedId;
+  const voiceGender = useMemo(() => {
+    if (!selected) return "female" as const;
+    const maleVoices: VoiceId[] = ["professional_male", "calm_male", "authoritative_male"];
+    return maleVoices.includes(selected.voice) ? "male" : "female";
+  }, [selected]);
 
   const updateSelected = (partial: Partial<Agent>) => {
     if (!selected) return;
@@ -166,7 +167,7 @@ export default function AppAgentsPage() {
   const handleDelete = () => {
     if (!selected) return;
     const remaining = agents.filter((a) => a.id !== selected.id);
-    const next = remaining.length > 0 ? remaining : [defaultAgent()];
+    const next = remaining;
     setAgents(next);
     setSelectedId(next[0]?.id ?? null);
     saveAgents(next);
@@ -309,6 +310,24 @@ export default function AppAgentsPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPlayingAgentId(selected.id);
+                      setHearPlaying(true);
+                      speakText(selected.greeting, {
+                        gender: voiceGender,
+                        onEnd: () => {
+                          setHearPlaying(false);
+                          setPlayingAgentId(null);
+                        },
+                      });
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
+                  >
+                    {isHearPlaying ? <Waveform isPlaying /> : <span>▶</span>}
+                    Hear This Agent
+                  </button>
                   <button
                     type="button"
                     onClick={handleDelete}

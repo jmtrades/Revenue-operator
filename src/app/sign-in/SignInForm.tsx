@@ -69,7 +69,7 @@ export default function SignInForm() {
     }
 
     setLoading(false);
-    setError("No account found. Start free →");
+    setError("No account found with this email.");
   };
 
   const handleGoogle = () => {
@@ -85,16 +85,16 @@ export default function SignInForm() {
         if (result.error) setError(result.error.message);
       });
     } else {
-      setToast("Google sign-in requires setup — use email for now");
+      setToast("Coming soon");
     }
   };
 
   const handleForgotPassword = () => {
-    setToast("Check your email");
+    setToast("Reset link sent");
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {sent ? (
         <p className="text-sm text-center text-zinc-400">
           Check your email for the sign-in link.
@@ -103,7 +103,7 @@ export default function SignInForm() {
         <>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="signin-email" className="block text-xs font-medium text-zinc-500 mb-1">Email address</label>
+              <label htmlFor="signin-email" className="block text-sm font-medium text-zinc-400 mb-1.5">Email address</label>
               <input
                 id="signin-email"
                 type="email"
@@ -115,7 +115,7 @@ export default function SignInForm() {
               />
             </div>
             <div>
-              <label htmlFor="signin-password" className="block text-xs font-medium text-zinc-500 mb-1">Password</label>
+              <label htmlFor="signin-password" className="block text-sm font-medium text-zinc-400 mb-1.5">Password</label>
               <div className="relative">
                 <input
                   id="signin-password"
