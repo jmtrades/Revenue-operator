@@ -96,7 +96,14 @@ const DEMO_SCRIPTS: DemoScript[] = [
 ];
 
 const TYPING_DELAY_MS = 1200;
+const TYPING_INDICATOR_MS = 800;
 const CHAR_DELAY_MS = 25;
+
+function formatTimer(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
 function DemoTranscript({
   script,
@@ -115,12 +122,16 @@ function DemoTranscript({
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const [showTyping, setShowTyping] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
 
   const reset = useCallback(() => {
     setVisibleLines([]);
     setCurrentLineIndex(0);
     setCurrentCharIndex(0);
     setShowResult(false);
+    setShowTyping(false);
+    setElapsed(0);
   }, []);
 
   useEffect(() => {
@@ -132,12 +143,29 @@ function DemoTranscript({
     setCurrentLineIndex(0);
     setCurrentCharIndex(0);
     setShowResult(false);
-  }, [isActive, script.title, reset]);
+    setShowTyping(script.lines[0]?.role === "ai");
+    setElapsed(0);
+  }, [isActive, script.title, reset, script.lines]);
+
+  useEffect(() => {
+    if (!isActive || showResult) return;
+    // Demo call simulator: live timer is required by product spec (FIX 2 — "timer counts up from 0:00")
+    // eslint-disable-next-line ui-doctrine/no-live-ui -- demo simulator only
+    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(id);
+  }, [isActive, showResult]);
+
+  useEffect(() => {
+    if (!showTyping) return;
+    const t = setTimeout(() => setShowTyping(false), TYPING_INDICATOR_MS);
+    return () => clearTimeout(t);
+  }, [showTyping]);
 
   useEffect(() => {
     if (!isActive || showResult || currentLineIndex >= script.lines.length) return;
     const line = script.lines[currentLineIndex];
     const fullText = line?.text ?? "";
+    if (line?.role === "ai" && showTyping) return;
 
     if (currentCharIndex < fullText.length) {
       const t = setTimeout(() => {
@@ -161,9 +189,11 @@ function DemoTranscript({
     const t = setTimeout(() => {
       setCurrentLineIndex(nextIndex);
       setCurrentCharIndex(0);
+      const nextLine = script.lines[nextIndex];
+      if (nextLine?.role === "ai") setShowTyping(true);
     }, TYPING_DELAY_MS);
     return () => clearTimeout(t);
-  }, [isActive, script.lines, currentLineIndex, currentCharIndex, showResult]);
+  }, [isActive, script.lines, currentLineIndex, currentCharIndex, showResult, showTyping]);
 
   useEffect(() => {
     if (showResult && isActive) onComplete();
@@ -194,7 +224,7 @@ function DemoTranscript({
           style={{ color: "var(--text-tertiary)" }}
         >
           <Phone className="w-4 h-4" />
-          <span>Call in progress — 0:00</span>
+          <span>Call in progress — {formatTimer(elapsed)}</span>
         </div>
         {!showResult && (
           <button
@@ -209,6 +239,18 @@ function DemoTranscript({
       </div>
 
       <div className="space-y-3 min-h-[220px]">
+        {showTyping && (
+          <div className="flex gap-2 items-center">
+            <span className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-zinc-700/50">
+              <Bot className="w-4 h-4 text-zinc-400" />
+            </span>
+            <div className="flex gap-1">
+              <span className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+          </div>
+        )}
         {visibleLines.map(({ index, text }) => {
           const line = script.lines[index];
           if (!line) return null;

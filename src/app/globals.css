@@ -251,28 +251,28 @@ h3.headline {
   .marketing-section { padding: var(--section-py-desktop) 0; }
 }
 .btn-marketing-primary {
-  background: var(--accent-primary);
-  color: #ffffff;
+  background: #ffffff;
+  color: #0a0a0a;
   font-weight: 600;
   font-size: 0.9375rem;
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
   transition: all 150ms ease;
 }
 .btn-marketing-primary:hover {
-  background: var(--accent-primary-hover);
-  box-shadow: var(--shadow-glow-primary);
+  background: #e4e4e7;
+  box-shadow: none;
 }
 .btn-marketing-primary:focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid #71717a;
   outline-offset: 2px;
 }
 .btn-marketing-primary.btn-lg {
   padding: 14px 32px;
   font-size: 1rem;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 .btn-marketing-ghost:focus-visible {
   outline: 2px solid var(--accent-primary);

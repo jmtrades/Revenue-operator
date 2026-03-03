@@ -20,15 +20,17 @@ function getSignupEmail(): string | null {
 export default function SignInForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [authAvailable, setAuthAvailable] = useState<boolean | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    const id = setTimeout(() => setAuthAvailable(getClientOrNull() !== null), 0);
+    if (!toast) return;
+    const id = setTimeout(() => setToast(null), 4000);
     return () => clearTimeout(id);
-  }, []);
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,128 +68,107 @@ export default function SignInForm() {
     }
 
     setLoading(false);
-    setError("No account found for this email. Sign up first to continue.");
+    setError("No account found. Get started free →");
   };
 
-  const handleGoogle = async () => {
+  const handleGoogle = () => {
     const supabase = getClientOrNull();
-    if (!supabase) return;
-    setLoading(true);
-    setError(null);
-    const { error: err } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback` },
-    });
-    if (err) {
-      setError(err.message);
-      setLoading(false);
-      return;
+    if (supabase) {
+      setLoading(true);
+      setError(null);
+      void supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback` },
+      }).then((result: { error?: { message: string } | null }) => {
+        setLoading(false);
+        if (result.error) setError(result.error.message);
+      });
+    } else {
+      setToast("Coming soon");
     }
   };
 
-  // Auth not configured: show "Sign in is coming soon" with CTA (no blank/loading)
-  if (authAvailable === false) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-        <div className="w-full max-w-md text-center space-y-6">
-          <h1 className="text-xl font-semibold">Welcome back</h1>
-          <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Sign in is coming soon. In the meantime, get started with call handling — it takes about 5 minutes.
-          </p>
-          <Link
-            href="/activate"
-            className="inline-block w-full max-w-[280px] py-3 px-4 rounded-lg font-medium text-sm text-center no-underline"
-            style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}
-          >
-            Get started →
-          </Link>
-          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-            <Link href="/" className="underline">Back to home</Link>
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const handleForgotPassword = () => {
+    setToast("Check your email");
+  };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <div className="w-full max-w-sm space-y-6">
-        <h1 className="text-xl font-semibold text-center">Welcome back</h1>
-        {sent ? (
-          <p className="text-sm text-center" style={{ color: "var(--text-secondary)" }}>
-            Check your email for the sign-in link.
-          </p>
-        ) : (
-          <>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="signin-email" className="sr-only">Email</label>
-                <input
-                  id="signin-email"
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border text-sm"
-                  style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="signin-password" className="sr-only">Password</label>
-                <input
-                  id="signin-password"
-                  type="password"
-                  placeholder="Password"
-                  className="w-full px-4 py-2 rounded-lg border text-sm"
-                  style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
-                  autoComplete="current-password"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-2 rounded-lg font-medium text-sm"
-                style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}
-              >
-                {loading ? "Sending…" : "Sign in →"}
-              </button>
-            </form>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t" style={{ borderColor: "var(--border-default)" }} />
-              </div>
-              <div className="relative flex justify-center text-xs" style={{ color: "var(--text-tertiary)" }}>
-                or
-              </div>
+    <div className="space-y-4">
+      {sent ? (
+        <p className="text-sm text-center text-zinc-400">
+          Check your email for the sign-in link.
+        </p>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="signin-email" className="block text-xs font-medium text-zinc-500 mb-1">Email</label>
+              <input
+                id="signin-email"
+                type="email"
+                placeholder="you@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="signin-password" className="block text-xs font-medium text-zinc-500 mb-1">Password</label>
+              <input
+                id="signin-password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                autoComplete="current-password"
+              />
             </div>
             <button
-              type="button"
-              onClick={handleGoogle}
+              type="submit"
               disabled={loading}
-              className="w-full py-2 rounded-lg border font-medium text-sm"
-              style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}
+              className="w-full py-3 rounded-xl font-semibold text-sm bg-white text-black hover:bg-zinc-100 transition disabled:opacity-60"
             >
-              Continue with Google
+              {loading ? "Signing in…" : "Sign in →"}
             </button>
-          </>
-        )}
-        {error && (
-          <p className="text-sm text-center" style={{ color: "var(--meaning-red)" }}>
-            {error}
+          </form>
+          <div className="relative py-2">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-zinc-700" />
+            </div>
+            <div className="relative flex justify-center text-xs text-zinc-500">or</div>
+          </div>
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={loading}
+            className="w-full py-3 rounded-xl font-medium text-sm border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition"
+          >
+            Continue with Google
+          </button>
+          <p className="text-center">
+            <button type="button" onClick={handleForgotPassword} className="text-xs text-zinc-500 hover:text-zinc-400">
+              Forgot password?
+            </button>
           </p>
-        )}
-        {error && (
-          <p className="text-center text-sm">
-            <Link href="/activate" className="underline" style={{ color: "var(--accent-primary)" }}>Sign up first →</Link>
-          </p>
-        )}
-        <p className="text-center text-sm space-y-1" style={{ color: "var(--text-tertiary)" }}>
-          <span className="block">Don&apos;t have an account? <Link href="/activate" className="underline">Start free →</Link></span>
-          <span className="block">Forgot password? <Link href="/activate" className="underline">Reset it →</Link></span>
-          <span className="block mt-2"><Link href="/" className="underline">Back to home</Link></span>
-        </p>
-      </div>
+        </>
+      )}
+      {error && (
+        <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-center">
+          <p className="text-sm text-red-200">{error}</p>
+          {error.includes("No account") && (
+            <Link href="/activate" className="inline-block mt-2 text-sm font-medium text-white underline">
+              Get started free →
+            </Link>
+          )}
+        </div>
+      )}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200 animate-in fade-in slide-in-from-top-2">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
