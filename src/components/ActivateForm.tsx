@@ -143,18 +143,21 @@ export function ActivateForm() {
       <div className="text-center">
         <div className="text-5xl mb-4">🎉</div>
         <h2 className="text-xl font-bold text-white mb-3">Welcome to Recall Touch!</h2>
-        <p className="text-sm mb-6 text-zinc-400">
+        <p className="text-sm mb-2 text-zinc-400">
           Your AI phone system is ready.
+        </p>
+        <p className="text-sm mb-6 text-zinc-400">
+          Let&apos;s set up your first AI agent — takes 2 minutes.
         </p>
         <button
           type="button"
           onClick={() => router.push("/app")}
           className="w-full max-w-[320px] py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200 transition"
         >
-          Set up your AI agent →
+          Set up my AI agent →
         </button>
         <p className="text-xs mt-4 text-zinc-500">
-          No credit card · 14-day free trial · Cancel anytime
+          No credit card · 14-day free trial
         </p>
       </div>
     );

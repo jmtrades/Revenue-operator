@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const DEMO_CARDS = [
   {
@@ -131,6 +132,34 @@ export default function AppActivityPage() {
           <p className="text-[10px] text-zinc-500">Est. revenue</p>
         </div>
       </div>
+
+      {/* Inactivity banner: show when no calls for 3+ days (set rt_show_inactivity_banner=true to test) */}
+      {typeof window !== "undefined" && typeof localStorage !== "undefined" && localStorage.getItem("rt_show_inactivity_banner") === "true" && (
+        <div className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10">
+          <p className="text-sm text-amber-200">
+            Your AI hasn&apos;t received any calls yet. Is your number forwarded?
+          </p>
+          <Link href="/app/settings/phone" className="inline-block mt-2 text-xs font-medium text-amber-400 hover:text-amber-300 underline">
+            Check setup →
+          </Link>
+        </div>
+      )}
+
+      {/* Milestone cards */}
+      <ul className="space-y-2 mb-6">
+        <li className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 flex items-center gap-2">
+          <span className="text-lg">🎉</span>
+          <span className="text-sm text-green-200">First call answered!</span>
+        </li>
+        <li className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-3 flex items-center gap-2">
+          <span className="text-lg">💰</span>
+          <span className="text-sm text-blue-200">First lead captured!</span>
+        </li>
+        <li className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 flex items-center gap-2">
+          <span className="text-lg">📅</span>
+          <span className="text-sm text-emerald-200">First appointment booked!</span>
+        </li>
+      </ul>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
         {FILTERS.map((f) => (

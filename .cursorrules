@@ -1,137 +1,38 @@
 # RECALL TOUCH — CURSOR MASTER PROMPT
 # ═══════════════════════════════════════════════════════════════
-# Paste ENTIRE file as .cursorrules
-# Read EVERY section before writing ANY code
-# Execute WAVE 1 first. Deploy. Test. Then WAVE 2. Etc.
+# Paste as .cursorrules — read ALL before writing code
 # ═══════════════════════════════════════════════════════════════
 
+# LIVE SITE AUDIT — VERIFIED BUGS (March 2 2026):
+# BUG 1: Dead end after signup — "Go to dashboard" does nothing; Back to home loops.
+# BUG 2: Fake email promise — "Check email for login link" but no email sent.
+# BUG 3: Sign-in broken — no account from signup.
+# BUG 4: Demo broken — /demo 404 or static, nothing plays.
+# BUG 5: Homepage preview empty — filter tabs but no call cards.
+# BUG 6: Pricing toggle doesn't switch prices.
+# BUG 7: Waitlist doesn't save or confirm.
+# BUG 8: Missing /product, /pricing, /docs, /contact, /privacy, /terms, /blog, /industries/*.
+# BUG 9: No /app/* — no onboarding, dashboard, settings.
+# BUG 10: No SEO — no sitemap, robots.txt.
 
-# ═══════════════════════════════
-# STATE OF THE SITE — MARCH 2026
-# ═══════════════════════════════
+# RULES: Public page = Server Component. Interactive = "use client" island + mount guard. Dynamic import (ssr:false) for window/document. Auth in middleware only /app/*. Forms: localStorage first → API (catch silent) → success. npm run build after every file. No "Verifying session" / blank / infinite spinner.
 
-WHAT WORKS:
-- Homepage HTML renders from server (hero, pricing, industries, features, footer)
-- Footer says "AI phone system for every business" (correct)
-- Title: "Recall Touch — AI Phone System for Every Business" (correct)
-- /activate form submits and shows success screen with 🎉
-- Nav has Product, Pricing, Documentation, Sign in, Start free links
+# DESIGN: bg-black, bg-zinc-950 sidebar, bg-zinc-900/50 cards. text-white headings, text-zinc-400 body. Primary btn: bg-white text-black rounded-xl. Accents: Blue lead, Green appt, Red urgent, Purple outbound, Orange follow-up.
 
-WHAT IS BROKEN (tested by a real human):
+# WAVE 1 — UNBREAK CONVERSION FUNNEL:
+# 1. Activate success: ONE button "Set up my AI agent →" router.push('/app'). Copy: "Your AI phone system is ready. Let's set up your first AI agent — takes 2 minutes." No Check email, no Back to home. Store rt_signup + rt_authenticated.
+# 2. /app layout: 240px sidebar, bottom tab mobile. Banner: "🎯 Demo Mode — Your AI is using sample data. Forward your phone number to go live. [Set up →]". Plan badge: "Starter · Trial" "12 days left". Redirect !rt_onboarded → /app/onboarding.
+# 3. /app/onboarding — 5-step wizard (Business, Agent, Teach AI, Phone, Test). Step 5: rt_onboarded → /app/activity.
+# 4. /app/activity — 4 stats, filter chips, 5 demo cards, empty state.
+# 5. Homepage preview — dark card, 3 call cards slide-up, ssr:false.
+# 6. Pricing toggle — Monthly/Annual, Save 17%.
+# 7. Waitlist — localStorage + API → "You're on the list! 🎉"
+# 8. middleware + error.tsx + not-found.tsx styled.
 
-1. SIGNUP DEAD END — After /activate success, "Go to dashboard →" goes nowhere.
-   "Back to home" goes back to activate, not homepage. User is STUCK.
+# WAVE 2 — ALL PUBLIC PAGES: /demo (CallSimulator), /product (8 sections), /pricing, /sign-in, /docs, /contact, /privacy, /terms, /blog + 3 slugs, /industries/[slug], API routes, sitemap + robots + metadata.
 
-2. FALSE EMAIL — Success says "Check jmtrades1990@gmail.com for your login link."
-   No email is sent. No email service configured. User waits forever for nothing.
+# WAVE 3 — APP + ANTI-CHURN: contacts, agents, campaigns, messages, calendar, analytics, settings (8 sub-pages). Anti-churn: Weekly ROI card, Usage milestones in activity, Inactivity banner (3+ days no calls), Onboarding checklist in sidebar, Cancel flow (value → pause → downgrade), Value dashboard in analytics, Toast notifications for leads/appointments.
 
-3. SIGN-IN BROKEN — No account created during signup. No password set. Can't log in.
+# WAVE 4 — POLISH: Mobile 375px, no overflow, zero console errors, forms validate, skeletons, confetti on onboarding complete, slide-up on cards, green pulse on Active, toasts top-right.
 
-4. DEMO DOESN'T PLAY — /demo either 404 or shows static page. No interactive simulator.
-
-5. PRICING TOGGLE — Monthly/Annual buttons don't switch prices.
-
-6. WAITLIST — "Join waitlist" form doesn't save or confirm.
-
-7. MISSING PAGES — /product, /pricing (full page), /docs, /contact, /privacy, /terms,
-   /blog, /blog/*, /industries/* — all either 404 or broken.
-
-8. APP SYSTEM — /app/* doesn't exist at all. No onboarding, no dashboard, no settings.
-
-9. NO SEO — Zero Google results. No sitemap. No robots.txt.
-
-10. NO ERROR PAGES — Bad routes show raw Next.js errors, not styled 404.
-
-
-# ═══════════════════════════════
-# ARCHITECTURE RULES
-# ═══════════════════════════════
-
-1. Public page.tsx = Server Component. No "use client". No useEffect. No supabase.
-2. Interactive widgets = separate "use client" island files with mount guard:
-   ```tsx
-   'use client'
-   import { useState, useEffect } from 'react'
-   export default function Widget() {
-     const [mounted, setMounted] = useState(false)
-     useEffect(() => { setMounted(true) }, [])
-     if (!mounted) return <div className="h-16 bg-zinc-900 rounded-xl animate-pulse" />
-     return <div>...</div>
-   }
-   ```
-3. Dynamic import for anything using window/document/localStorage at render:
-   `import dynamic from 'next/dynamic'`
-   `const X = dynamic(() => import('@/components/X'), { ssr: false })`
-4. Auth in middleware.ts only. Only protect /app/* routes.
-5. Forms: save localStorage first → try API (silent catch) → show success.
-6. npm run build after EVERY file. Zero errors.
-7. No page may ever show "Verifying session." or blank screen.
-
-
-# ═══════════════════════════════
-# DESIGN SYSTEM
-# ═══════════════════════════════
-
-Background: bg-black (pages), bg-zinc-950 (sidebar), bg-zinc-900/50 border-zinc-800 (cards)
-Text: text-white (headings), text-zinc-400 (body), text-zinc-500 (muted)
-Primary btn: bg-white text-black rounded-xl font-semibold hover:bg-zinc-200 transition
-Secondary: border border-zinc-700 text-zinc-300 rounded-xl hover:border-zinc-500
-Input: bg-zinc-800/50 border-zinc-700 rounded-xl focus:border-zinc-500
-Cards: bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6
-Accents: Blue #3B82F6 lead, Green #22C55E appt, Red #EF4444 urgent, Purple #A855F7 outbound, Orange #F59E0B follow-up
-
-
-# ═══════════════════════════════════════════════════════════════
-# WAVE 1 — FIX THE CONVERSION FUNNEL (the path from visitor to user)
-# ═══════════════════════════════════════════════════════════════
-
-Execute WAVE 1 first. Deploy. Test. Then WAVE 2.
-
-## 1A. Fix /activate success screen
-Success: ONE button "Set up your AI agent →" router.push('/app'). No "Check email". No "Back to home".
-Store: localStorage('rt_signup'), localStorage('rt_authenticated', 'true').
-
-## 1B. /app layout — 240px sidebar (desktop), 56px bottom bar (mobile), Demo Mode banner. Redirect to /app/onboarding if !rt_onboarded.
-
-## 1C. /app/onboarding — 5-step wizard (Business, Agent, Teach AI, Phone, Test). Step 5: [Go to your dashboard →] sets rt_onboarded, push /app/activity.
-
-## 1D. /app/activity — 4 stat cards, filter chips, 5 demo call cards (colored borders). Empty state if no data.
-
-## 1E. Homepage dashboard preview — "use client" + dynamic ssr:false. Dark card, 3 call cards slide-up.
-
-## 1F. Pricing toggle — Monthly/Annual switches prices ($97↔$81 etc). Annual "Save 17%".
-
-## 1G. Waitlist — validate → localStorage('rt_waitlist') → POST /api/waitlist → "You're on the list! 🎉"
-
-## 1H. middleware: only /app/*; error.tsx and not-found.tsx styled dark with [Try again] [Go home].
-
-WAVE 1 DEPLOY + TEST: build → deploy → test full funnel before WAVE 2.
-
-
-# ═══════════════════════════════════════════════════════════════
-# WAVE 2 — ALL PUBLIC PAGES
-# ═══════════════════════════════════════════════════════════════
-
-/demo (CallSimulator), /product (8 sections), /pricing (toggle+calculator+FAQ), /sign-in (localStorage match → /app), /docs, /contact, /privacy, /terms, /blog + /blog/[slug], /industries/[slug], API routes, sitemap.ts, robots.ts, metadata on every page.
-
-
-# ═══════════════════════════════════════════════════════════════
-# WAVE 3 — COMPLETE APP INTERIOR
-# ═══════════════════════════════════════════════════════════════
-
-/app/contacts, /app/agents, /app/campaigns, /app/messages, /app/calendar, /app/analytics, /app/settings + 8 sub-pages. All with demo data or empty states.
-
-
-# ═══════════════════════════════════════════════════════════════
-# WAVE 4 — POLISH
-# ═══════════════════════════════════════════════════════════════
-
-Mobile 375px, Safari+Chrome, no console errors, forms validated, performance, fonts, next/image, consistent spacing. Every CTA works.
-
-
-# ═══════════════════════════════════════════════════════════════
-# FINAL VERIFICATION
-# ═══════════════════════════════════════════════════════════════
-
-Core flow: Homepage → Start free → /activate → success → Set up AI agent → /app/onboarding → 5 steps → /app/activity. Demo plays. Pricing toggle. Waitlist. Sign in after signup.
-All pages render. No "Verifying session", no dead buttons, no blank screens, no "Governed"/"Jurisdiction".
+# FINAL: No "Verifying session", no dead buttons, no blank screens. All links work. Footer "AI phone system". Pricing toggle works.

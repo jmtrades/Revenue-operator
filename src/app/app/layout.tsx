@@ -14,6 +14,7 @@ import {
   Settings,
   type LucideIcon,
 } from "lucide-react";
+import { OnboardingChecklist } from "./OnboardingChecklist";
 
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/activity", label: "Activity", icon: LayoutList },
@@ -89,11 +90,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-black flex flex-col pb-20 md:pb-0">
       <div
-        className="shrink-0 py-2 px-4 text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
+        className="shrink-0 py-2 px-4 flex items-center justify-center gap-2 flex-wrap text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
         role="status"
         aria-label="Demo mode"
       >
-        Demo Mode — Connect your phone to go live
+        <span>🎯 Demo Mode — Your AI is using sample data. Forward your phone number to go live.</span>
+        <Link href="/app/settings/phone" className="text-white font-semibold underline underline-offset-2 hover:no-underline">
+          Set up →
+        </Link>
       </div>
       <div className="flex flex-1 min-h-0">
         <aside className="hidden md:flex md:w-60 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800">
@@ -119,10 +123,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             ))}
           </nav>
-          <div className="p-3 border-t border-zinc-800">
-            <span className="inline-block px-3 py-1 rounded-lg text-xs font-medium bg-zinc-800 text-zinc-400">
-              Starter — 14 days left
-            </span>
+          <div className="p-3 border-t border-zinc-800 space-y-2">
+            <div className="px-3 py-2 rounded-lg bg-zinc-800/50 border border-zinc-700">
+              <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
+              <span className="block text-[10px] text-zinc-500">12 days left</span>
+            </div>
+            <OnboardingChecklist />
           </div>
         </aside>
         <main className="flex-1 overflow-auto min-w-0 bg-black">{children}</main>
