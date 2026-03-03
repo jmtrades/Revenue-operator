@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 
 const METRICS = [
-  { label: "Total calls", value: "47" },
-  { label: "Answer rate", value: "100%" },
-  { label: "Leads captured", value: "12" },
-  { label: "Appointments booked", value: "8" },
-  { label: "Revenue recovered", value: "$2,400" },
-  { label: "Time saved", value: "~6 hrs" },
+  { label: "Total calls", value: "47", trend: "+12" },
+  { label: "Answer rate", value: "100%", trend: "+5%" },
+  { label: "Leads captured", value: "12", trend: "+3" },
+  { label: "Appointments booked", value: "8", trend: "+2" },
+  { label: "Revenue recovered", value: "$2,400", trend: "+$600" },
+  { label: "Time saved", value: "~6 hrs", trend: "+1.2 hrs" },
 ];
 
 export default function AppAnalyticsPage() {
@@ -40,6 +40,7 @@ export default function AppAnalyticsPage() {
           <div key={m.label} className="p-3 rounded-xl border border-zinc-800 bg-zinc-900/50 text-center">
             <p className="text-lg font-semibold text-white">{m.value}</p>
             <p className="text-[10px] text-zinc-500">{m.label}</p>
+            <p className="text-[10px] text-emerald-400 mt-1">{m.trend}</p>
           </div>
         ))}
       </div>
