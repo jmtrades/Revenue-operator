@@ -49,7 +49,8 @@ export async function createMagicLink(email: string): Promise<{ token: string } 
     expires_at: expiresAt.toISOString(),
   });
 
-  // In production: send email with token. For now return token for dev/testing.
+  // In production, an email provider should deliver this URL to the staff user.
+  // For now we surface it directly for dev and operational debugging flows.
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3000";
@@ -57,7 +58,6 @@ export async function createMagicLink(email: string): Promise<{ token: string } 
   if (process.env.NODE_ENV === "development" || process.env.OPS_DEV_MAGIC_LINK === "true") {
     return { token: verifyUrl };
   }
-  // TODO: integrate email provider for magic link delivery
   return { token: verifyUrl };
 }
 
