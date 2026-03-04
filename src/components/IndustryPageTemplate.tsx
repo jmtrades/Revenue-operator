@@ -98,6 +98,12 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
           <div className="grid gap-10 lg:grid-cols-[1fr_auto] items-center">
             <div>
               <p
+                className="text-sm font-medium mb-2"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                This is one example of how Recall Touch works. It adapts to any business.
+              </p>
+              <p
                 className="section-label mb-2"
                 style={{ color: "var(--accent-primary)" }}
               >

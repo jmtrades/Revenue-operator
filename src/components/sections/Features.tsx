@@ -11,11 +11,11 @@ const CAPABILITIES = [
   { icon: PhoneOutgoing, title: "Makes outbound calls", desc: "Follows up, reminds, re-engages." },
   { icon: Calendar, title: "Books appointments", desc: "Checks your calendar, books, confirms." },
   { icon: Target, title: "Captures every lead", desc: "Qualifies, scores, texts you instantly." },
-  { icon: AlertCircle, title: "Handles emergencies", desc: "Detects urgency, alerts you immediately." },
+  { icon: AlertCircle, title: "Smart routing", desc: "Detects urgency, screens callers, routes to the right person or takes a message." },
   { icon: MessageSquare, title: "Texts automatically", desc: "Confirmations, reminders, follow-ups." },
-  { icon: Brain, title: "Learns your business", desc: "Answers questions about your services." },
-  { icon: BarChart3, title: "Shows your ROI", desc: "See how many leads were captured, appointments booked, and revenue recovered. Know your return on every dollar." },
-  { icon: RefreshCw, title: "Never gives up", desc: "Follows up 5+ times across calls and texts until the lead responds, books, or opts out. Because 80% of sales need 5+ touches." },
+  { icon: Brain, title: "Learns your world", desc: "Answers questions about your services, hours, policies, pricing — whatever you teach it." },
+  { icon: BarChart3, title: "Shows your ROI", desc: "See how many leads were captured, appointments booked, and revenue recovered." },
+  { icon: RefreshCw, title: "Never gives up", desc: "Follows up until the lead responds, books, or opts out." },
 ];
 
 export function Features() {

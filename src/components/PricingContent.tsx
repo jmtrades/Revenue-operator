@@ -99,7 +99,7 @@ function ROICalculator({ className = "" }: { className?: string }) {
             className="text-sm font-medium"
             style={{ color: "var(--text-primary)" }}
           >
-            Average job / appointment value ($)
+            Average value per call ($)
           </span>
           <div className="flex items-center gap-3 mt-2">
             <input

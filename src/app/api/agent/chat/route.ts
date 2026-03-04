@@ -2,21 +2,24 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 
+const DEMO_SYSTEM =
+  `You are a Recall Touch demo AI agent. You demonstrate how Recall Touch handles calls for any type of business or person. Adapt naturally to whatever the caller describes. If they mention plumbing, be a plumbing receptionist. If they mention a law firm, do legal intake. If they want to schedule a meeting, handle scheduling. If they just want to chat, be helpful. Show versatility. Be warm, professional, efficient. Keep responses short and natural like a real phone call. Always try to capture the caller's name, need, and next step.`;
+
 const AGENTS: Record<string, { name: string; style: string; greeting: string }> = {
   sarah: {
-    name: "Sarah",
-    style: "warm and friendly — like a helpful neighbor. Uses \"hi there\", \"no worries\", \"absolutely\"",
-    greeting: "Hi there! Thanks for calling Riverside Plumbing. This is Sarah — what can I help you with?",
+    name: "Recall Touch",
+    style: "versatile demo agent",
+    greeting: "Hi! This is the Recall Touch demo. I can be your receptionist for any kind of business — just tell me what you need. What can I help you with?",
   },
   alex: {
-    name: "Alex",
-    style: "calm and professional — efficient but not cold. Uses \"certainly\", \"of course\", \"happy to help\"",
-    greeting: "Good afternoon, Riverside Plumbing. This is Alex speaking. How can I help you today?",
+    name: "Recall Touch",
+    style: "versatile demo agent",
+    greeting: "Hi! This is the Recall Touch demo. I can be your receptionist for any kind of business — just tell me what you need. What can I help you with?",
   },
   emma: {
-    name: "Emma",
-    style: "upbeat and energetic — enthusiastic without being annoying. Uses \"hey!\", \"awesome\", \"sounds great\"",
-    greeting: "Hey! Thanks for calling Riverside Plumbing! I'm Emma — what's going on?",
+    name: "Recall Touch",
+    style: "versatile demo agent",
+    greeting: "Hi! This is the Recall Touch demo. I can be your receptionist for any kind of business — just tell me what you need. What can I help you with?",
   },
 };
 
@@ -46,19 +49,14 @@ export async function POST(req: NextRequest) {
 
     const agentId = body?.agentId ?? body?.agent ?? "sarah";
     const a = AGENTS[agentId] ?? AGENTS.sarah;
-    const biz = body?.business ?? {
-      name: "Riverside Plumbing",
-      services: "plumbing repair, drain cleaning, water heater, emergency, remodels",
-      hours: "Mon-Fri 8-6, Sat 9-2, emergency 24/7",
-      area: "Portland metro, 30mi radius",
-      pricing: "Free estimates",
-    };
+    const biz = body?.business ?? {};
 
-    const name = (biz.name ?? "Riverside Plumbing").trim() || "Riverside Plumbing";
-    const services = (biz.services ?? "plumbing repair, drain cleaning, water heater, emergency, remodels").trim();
-    const hours = (biz.hours ?? "Mon-Fri 8-6, Sat 9-2, emergency 24/7").trim();
-    const area = (biz.area ?? "Portland metro, 30mi radius").trim();
-    const pricing = (biz.pricing ?? "Free estimates").trim();
+    const name = (biz.name ?? "").trim() || "the business";
+    const services = (biz.services ?? "").trim();
+    const hours = (biz.hours ?? "").trim();
+    const area = (biz.area ?? "").trim();
+    const pricing = (biz.pricing ?? "").trim();
+    const useDemoPrompt = !body?.business?.name?.trim();
 
     const messages = rawMessages
       .filter((m): m is Message => (m?.role === "user" || m?.role === "assistant") && typeof m?.content === "string")
@@ -83,17 +81,9 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
         max_tokens: 100,
-        system: `You are ${a.name}, AI phone receptionist for ${name}. Style: ${a.style}.
-
-THIS IS A PHONE CALL. Rules:
-- 1-2 sentences max. Talk like a human on the phone. Use contractions.
-- Ask ONE question at a time. Never list multiple questions.
-- No bullet points, no lists, no markdown, no emojis.
-- Collect: name, what they need, when they're available. Then confirm booking.
-- For emergencies (flooding, burst pipe, gas): "That sounds urgent — what's your address? I'll get someone out right away."
-- If asked about pricing: "We do free estimates. Want me to get one scheduled?"
-- Only if directly asked if you're AI: "I'm an AI assistant for ${name}, but I handle everything a receptionist would."
-- Business: ${name}. Services: ${services}. Hours: ${hours}. Area: ${area}. Pricing: ${pricing}.`,
+        system: useDemoPrompt
+          ? DEMO_SYSTEM
+          : `You are ${a.name}, AI phone agent for ${name}. Style: ${a.style}. THIS IS A PHONE CALL. 1-2 sentences max. Talk like a human on the phone. Ask ONE question at a time. No bullet points, no lists, no markdown. Business: ${name}. Services: ${services}. Hours: ${hours}. Area: ${area}. Pricing: ${pricing}.`,
         messages,
       }),
     });

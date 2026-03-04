@@ -1,14 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 
-const INDUSTRIES = ["Plumbing", "Dental", "Law firm", "Real estate", "Insurance", "Restaurant"] as const;
+const USE_CASES = [
+  { id: "missed-call", label: "Missed call recovery", caller: "Hi, I called earlier and nobody answered. I need to schedule a visit.", agent: "Thanks for calling back. I’ll get you on the calendar — what day works best?", result: "Callback captured · Appointment offered" },
+  { id: "booking", label: "Appointment booking", caller: "I’d like to book an appointment for next week.", agent: "Sure. We have Tuesday afternoon or Wednesday morning. Which do you prefer?", result: "Slot confirmed · Reminder scheduled" },
+  { id: "lead-follow-up", label: "Lead follow-up", caller: "I filled out the form on your site. Wanted to know more about pricing.", agent: "I’ve got your details. Our team will reach out within an hour. What’s the best number?", result: "Lead qualified · Follow-up queued" },
+  { id: "after-hours", label: "After-hours handling", caller: "It’s 8pm — are you open? I have an urgent question.", agent: "We’re closed now, but I can take your name and number and have someone call you first thing tomorrow.", result: "Message taken · Next-day callback" },
+  { id: "screening", label: "Call screening", caller: "I need to speak with the person in charge of billing.", agent: "I can help with billing. Can you tell me your account name or number so I get you to the right person?", result: "Intent captured · Routed to right team" },
+] as const;
 
 export function HomepageLiveDemo() {
-  const [activeIndustry, setActiveIndustry] = useState<(typeof INDUSTRIES)[number]>("Plumbing");
-  const [playing, setPlaying] = useState(false);
+  const [activeId, setActiveId] = useState<(typeof USE_CASES)[number]["id"]>("missed-call");
+  const active = USE_CASES.find((u) => u.id === activeId) ?? USE_CASES[0];
 
   return (
     <section
@@ -23,133 +28,49 @@ export function HomepageLiveDemo() {
               Hear the difference in 30 seconds
             </h2>
             <p className="mt-2 text-sm md:text-base text-zinc-400">
-              Pick an industry, press play, and experience how a calm receptionist handles real revenue calls without missing a beat.
+              See how your AI handles real situations — missed calls, booking, follow-up, after-hours, and screening.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {INDUSTRIES.map((label) => {
-              const isActive = label === activeIndustry;
+            {USE_CASES.map((u) => {
+              const isActive = u.id === activeId;
               return (
                 <button
-                  key={label}
+                  key={u.id}
                   type="button"
-                  onClick={() => setActiveIndustry(label)}
+                  onClick={() => setActiveId(u.id)}
                   className={`px-3.5 py-1.5 rounded-full text-xs md:text-sm border transition-colors ${
                     isActive
                       ? "bg-white text-black border-white"
                       : "border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500"
                   }`}
                 >
-                  {label}
+                  {u.label}
                 </button>
               );
             })}
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2 items-stretch mt-2">
-            <motion.div
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 md:p-6 flex flex-col justify-between"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
-                    Listen
-                  </p>
-                  <p className="text-sm text-zinc-300 mt-1">
-                    {activeIndustry} reception call, ~30 seconds
-                  </p>
-                </div>
-                <span className="text-[11px] text-zinc-500">Demo recording</span>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 md:p-6">
+            <p className="text-xs font-semibold uppercase text-zinc-500 mb-3">{active.label}</p>
+            <div className="space-y-3 text-sm">
+              <div className="rounded-xl px-3 py-2 bg-zinc-800/80 border border-zinc-700/60 text-zinc-200">
+                <p className="text-[11px] uppercase tracking-wide text-zinc-500 mb-1">Caller</p>
+                <p>{active.caller}</p>
               </div>
-              <div className="flex-1 flex flex-col justify-between gap-4">
-                <button
-                  type="button"
-                  onClick={() => setPlaying((p) => !p)}
-                  className="flex items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-900/70 px-3 py-2.5 text-sm text-zinc-100 hover:border-zinc-500 transition-colors w-full"
-                >
-                  <span
-                    className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                      playing ? "bg-zinc-200 text-black" : "bg-white text-black"
-                    }`}
-                  >
-                    {playing ? "❚❚" : "▶"}
-                  </span>
-                  <span className="flex-1 text-left">
-                    {playing ? "Playing sample…" : "Play sample call"}
-                  </span>
-                  <span className="text-[11px] text-zinc-500">00:32</span>
-                </button>
-                <div className="relative h-20 mt-1 rounded-xl bg-zinc-950/70 border border-zinc-800 overflow-hidden">
-                  <div className="absolute inset-x-0 bottom-0 flex items-end gap-[3px] px-3 pb-3">
-                    {Array.from({ length: 64 }).map((_, i) => {
-                      const base = 8 + ((i * 19) % 40);
-                      const height = base;
-                      const delay = (i % 12) * 0.12;
-                      return (
-                        // biome-ignore lint/suspicious/noArrayIndexKey: decorative only
-                        <span
-                          key={i}
-                          className={`w-[3px] rounded-full ${
-                            playing ? "animate-[pulseWave_1.4s_ease-in-out_infinite]" : ""
-                          }`}
-                          style={{
-                            height,
-                            backgroundImage:
-                              "linear-gradient(to top, rgba(59,130,246,0.15), rgba(59,130,246,0.9))",
-                            opacity: playing ? 1 : 0.4,
-                            animationDelay: `${delay}s`,
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-                <p className="text-xs text-zinc-500 mt-2">
-                  Sample call — hear how your AI receptionist handles a real inquiry.
-                </p>
+              <div className="rounded-xl px-3 py-2 bg-zinc-800/80 border border-emerald-900/50 text-emerald-100 ml-4">
+                <p className="text-[11px] uppercase tracking-wide text-emerald-400/80 mb-1">Your AI</p>
+                <p>{active.agent}</p>
               </div>
-            </motion.div>
-
-            <motion.div
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 md:p-6 flex flex-col justify-between"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.4, delay: 0.05 }}
-            >
-              <div className="mb-4">
-                <p className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
-                  Talk
-                </p>
-                <p className="text-sm text-zinc-300 mt-1">
-                  Talk to the live receptionist demo in the corner, just like a real customer would on the phone.
-                </p>
+              <div className="rounded-xl px-3 py-2 bg-zinc-800/50 border border-dashed border-zinc-600 text-zinc-400">
+                <p className="text-[11px] uppercase tracking-wide mb-1">Result</p>
+                <p>{active.result}</p>
               </div>
-              <div className="space-y-3 text-sm text-zinc-400">
-                <p>
-                  Click the round widget labeled “Sarah” in the bottom corner. Say what a real caller would say — ask about availability, pricing, or urgent help.
-                </p>
-                <p>
-                  Every answer is generated live, using the same call logic that will protect your revenue when you switch it on for your own number.
-                </p>
-              </div>
-              <div className="mt-5 flex flex-wrap items-center gap-3">
-                <a
-                  href="#"
-                  className="bg-white text-black font-semibold rounded-xl px-4 py-2.5 text-sm hover:bg-zinc-100 transition-colors"
-                >
-                  Open Sarah in the corner
-                </a>
-                <p className="text-[11px] text-zinc-500">
-                  No install, no account required to try the demo.
-                </p>
-              </div>
-            </motion.div>
+            </div>
+            <p className="text-xs text-zinc-500 mt-4">
+              Sample conversation — your AI handles this 24/7 for any type of business.
+            </p>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-800 pt-4">
@@ -168,4 +89,3 @@ export function HomepageLiveDemo() {
     </section>
   );
 }
-

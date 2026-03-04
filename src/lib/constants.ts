@@ -23,7 +23,7 @@ export const SOLUTIONS_LINKS = [
   { label: "Legal", href: "/industries/legal" },
   { label: "Real Estate", href: "/industries/real-estate" },
   { label: "Healthcare", href: "/industries/healthcare" },
-  { label: "All Industries →", href: "/activate" },
+  { label: "All use cases →", href: "/activate" },
 ] as const;
 
 export const FOOTER_SOLUTIONS = [
@@ -40,7 +40,7 @@ export const PRICING_TIERS = [
     priceMonthly: "$79",
     priceAnnual: "$66",
     period: "/mo",
-    description: "Less than a missed service call",
+    description: "Less than one missed call",
     features: [
       "400 inbound min included",
       "50 outbound calls",
@@ -155,7 +155,7 @@ export const COMPARISON_FEATURES = [
   { category: "Core", name: "AI agents", starter: "1", professional: "3", business: "Unlimited", enterprise: "Custom" },
   { category: "Core", name: "Outbound calls/mo", starter: "50", professional: "500", business: "2,000", enterprise: "Custom" },
   { category: "Features", name: "Appointment booking", starter: "—", professional: "✓", business: "✓", enterprise: "✓" },
-  { category: "Features", name: "Campaign builder", starter: "—", professional: "✓", business: "✓", enterprise: "✓" },
+  { category: "Features", name: "Outbound campaigns", starter: "—", professional: "✓", business: "✓", enterprise: "✓" },
   { category: "Features", name: "Compliance export", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
   { category: "Support", name: "Priority support", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
 ] as const;
