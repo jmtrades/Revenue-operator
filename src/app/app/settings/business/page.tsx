@@ -28,6 +28,7 @@ export default function AppSettingsBusinessPage() {
     try {
       const existing = getBusinessData();
       localStorage.setItem("rt_signup", JSON.stringify({ ...existing, businessName: name, website, address, industry }));
+      if (name.trim()) localStorage.setItem("rt_business_name", name.trim());
     } catch { /* ignore */ }
     setToast("Settings saved");
     setTimeout(() => setToast(null), 3000);

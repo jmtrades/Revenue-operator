@@ -79,7 +79,7 @@ export const PRICING_TIERS = [
     priceMonthly: "$399",
     priceAnnual: "$333",
     period: "/mo",
-    description: "Full AI phone team for a fraction of one hire",
+    description: "Full AI communication team for a fraction of one hire",
     features: [
       "5,000 inbound min included",
       "2,000 outbound calls",
