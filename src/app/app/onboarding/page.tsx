@@ -396,7 +396,6 @@ export default function AppOnboardingPage() {
                 greeting={greeting.trim() || undefined}
                 personality={personality}
                 callStyle={callStyle}
-                showVoiceToggle={false}
                 showMic={true}
               />
             </div>

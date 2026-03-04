@@ -975,10 +975,9 @@ function TestTab({ agent }: { agent: Agent }) {
           initialAgent={agentNameToId(agent.name)}
           businessName={agent.websiteUrl || undefined}
           greeting={agent.greeting}
-          personality={agent.personality}
-          callStyle={agent.callStyle}
-          showVoiceToggle={false}
-          showMic={true}
+            personality={agent.personality}
+            callStyle={agent.callStyle}
+            showMic={true}
         />
       </div>
       <p className="text-[11px] text-zinc-500">

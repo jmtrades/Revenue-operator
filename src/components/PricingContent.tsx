@@ -21,7 +21,7 @@ export function pricingCopyForTests(): string {
   ].join(" ");
 }
 
-const RECALL_TOUCH_STARTER_MONTHLY = 97;
+const RECALL_TOUCH_STARTER_MONTHLY = 79;
 
 function ROICalculator({ className = "" }: { className?: string }) {
   const [callsPerDay, setCallsPerDay] = useState<string>("10");

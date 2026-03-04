@@ -27,7 +27,7 @@ export default function DemoPage() {
           </p>
         </div>
         <div className="max-w-4xl mx-auto px-4">
-          <LiveAgentChat variant="demo" initialAgent="sarah" voiceDefaultOn={false} showVoiceToggle showMic />
+          <LiveAgentChat variant="demo" initialAgent="sarah" showMic />
         </div>
 
         <div className="max-w-3xl mx-auto px-4 mt-16">

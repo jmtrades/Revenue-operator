@@ -94,7 +94,7 @@ export default function AppActivityPage() {
           leads: leadCount,
           estRevenue,
           minutesUsed: 0,
-          minutesLimit: 200,
+          minutesLimit: 400,
           lastActivityAt: lastActivityAt ?? undefined,
         })
       );
