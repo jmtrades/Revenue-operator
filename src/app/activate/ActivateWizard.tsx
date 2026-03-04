@@ -169,8 +169,17 @@ export function ActivateWizard() {
 
   const goNext = useCallback(() => {
     if (!canGoNext) return;
-    setStep((prev) => (prev < 5 ? ((prev + 1) as StepId) : prev));
-  }, [canGoNext]);
+    setStep((prev) => {
+      const next = prev < 5 ? ((prev + 1) as StepId) : prev;
+      if (prev === 1) {
+        try {
+          const bn = state.businessName.trim();
+          if (bn) localStorage.setItem("rt_business_name", bn);
+        } catch { /* ignore */ }
+      }
+      return next;
+    });
+  }, [canGoNext, state.businessName]);
 
   const goBack = useCallback(() => {
     setStep((prev) => (prev > 1 ? ((prev - 1) as StepId) : prev));
@@ -208,7 +217,18 @@ export function ActivateWizard() {
   };
 
   const handleFinalize = () => {
-    // For now we only log; backend wiring comes later.
+    try {
+      if (state.businessName.trim()) {
+        localStorage.setItem("rt_business_name", state.businessName.trim());
+      }
+      const existing = (() => {
+        try {
+          const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
+          return raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+        } catch { return {}; }
+      })();
+      localStorage.setItem("rt_signup", JSON.stringify({ ...existing, businessName: state.businessName.trim() }));
+    } catch { /* ignore */ }
     if (process.env.NODE_ENV === "development") {
       console.log("Activation completed", state);
     }

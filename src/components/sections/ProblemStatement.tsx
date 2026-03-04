@@ -29,7 +29,7 @@ const PROBLEM_HUMAN = {
   stats: [
     { value: "$35K", desc: "Receptionist + $55K SDR salaries" },
     { value: "30–45%", desc: "Turnover in phone-heavy roles" },
-    { value: "—", desc: "Calls, texts, scheduling all in different systems" },
+    { value: "4+", desc: "Average tools businesses juggle for calls, texts, scheduling, and follow-up" },
   ],
   accent: "var(--accent-warning)",
 };

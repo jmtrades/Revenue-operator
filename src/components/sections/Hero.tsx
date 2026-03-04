@@ -18,7 +18,7 @@ export function Hero() {
         }}
       />
       <Container className="relative z-10">
-        <div className="grid gap-10 lg:grid-cols-[1fr_auto] items-center">
+        <div className="max-w-3xl">
           <div>
             <SectionLabel>AI phone intelligence</SectionLabel>
             <h1
@@ -45,12 +45,12 @@ export function Hero() {
               >
                 Try it free →
               </Link>
-              <a
-                href="#live-audio-demo"
+              <Link
+                href="/demo"
                 className="border border-white/30 text-white font-semibold rounded-xl px-5 py-2.5 hover:bg-white/10 transition-colors no-underline w-full sm:w-auto text-center inline-flex items-center justify-center gap-2"
               >
-                Watch it work ▶
-              </a>
+                Try the demo ▶
+              </Link>
             </div>
             <p
               className="text-sm mb-6"
@@ -61,13 +61,6 @@ export function Hero() {
             <p className="text-xs font-medium" style={{ color: "#64748B" }}>
               Trusted by 200+ businesses, solo operators, and teams
             </p>
-          </div>
-          <div
-            className="relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl px-5 py-5 md:px-6 md:py-6 shadow-[0_24px_80px_rgba(15,23,42,0.8)] hidden lg:block"
-            aria-hidden="true"
-          >
-            <p className="text-xs font-semibold uppercase mb-1" style={{ color: "#64748B" }}>Every call answered</p>
-            <p className="text-sm" style={{ color: "#E5E7EB" }}>Answer · Follow up · Book · Never miss a beat.</p>
           </div>
         </div>
       </Container>
