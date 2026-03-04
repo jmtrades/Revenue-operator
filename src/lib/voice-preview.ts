@@ -47,3 +47,21 @@ export function speakText(
   synth.speak(utterance);
   return () => synth.cancel();
 }
+
+/** V25: Button-only voice preview. Use ONLY on onboarding voice ▶ and [▶ Preview Greeting]. Never auto-play. */
+export function previewVoice(text: string, gender: "female" | "male") {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const match = voices.find((v) => {
+    const n = v.name.toLowerCase();
+    return gender === "female"
+      ? n.includes("samantha") || n.includes("karen") || n.includes("fiona") || n.includes("victoria")
+      : n.includes("daniel") || n.includes("alex") || n.includes("tom") || n.includes("fred");
+  });
+  if (match) u.voice = match;
+  u.rate = 0.95;
+  u.pitch = gender === "female" ? 1.05 : 0.9;
+  window.speechSynthesis.speak(u);
+}

@@ -1,14 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { HomepageActivityPreview } from "./HomepageActivityPreview";
 import { ROUTES } from "@/lib/constants";
-import { speakText } from "@/lib/voice-preview";
-import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
 
 const fadeUp = {
@@ -17,22 +14,7 @@ const fadeUp = {
   transition: { duration: 0.5, ease: "easeOut" as const },
 };
 
-const SARAH_GREETING = "Thanks for calling Riverside Plumbing! This is Sarah. How can I help you today?";
-
 export function Hero() {
-  const [audioPlaying, setAudioPlaying] = useState(false);
-
-  const handlePlayGreeting = () => {
-    if (audioPlaying) return;
-    setAudioPlaying(true);
-    speakText(SARAH_GREETING, {
-      gender: "female",
-      rate: 0.95,
-      pitch: 1.1,
-      onEnd: () => setAudioPlaying(false),
-    });
-  };
-
   return (
     <section className="pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden" style={{ background: "var(--bg-primary)", backgroundImage: "var(--gradient-hero-radial)", backgroundRepeat: "no-repeat", backgroundPosition: "top center" }}>
       <div
@@ -75,55 +57,41 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline w-full sm:w-auto text-center">
+          <Link href={ROUTES.START} className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-zinc-200 transition-colors no-underline w-full sm:w-auto text-center">
             Start free — 5 minute setup →
           </Link>
-          <Link href={ROUTES.DEMO} className="btn-marketing-ghost btn-lg no-underline w-full sm:w-auto text-center inline-flex items-center justify-center gap-2">
-            Hear a demo ▶
-          </Link>
-        </motion.div>
-        <motion.div
-          className="flex justify-center items-center gap-2 mt-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-        >
-          <button
-            type="button"
-            onClick={handlePlayGreeting}
-            disabled={audioPlaying}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm border bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-600 transition-colors disabled:opacity-70"
-            aria-label="Hear Sarah greet a caller"
+          <a
+            href="#agent-chat"
+            className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-zinc-200 transition-colors w-full sm:w-auto text-center inline-flex items-center justify-center gap-2 no-underline"
           >
-            {audioPlaying ? (
-              <Waveform isPlaying />
-            ) : (
-              <span className="text-base" aria-hidden>🔊</span>
-            )}
-            <span>{audioPlaying ? "Playing…" : "Hear Sarah greet a caller"}</span>
-          </button>
+            Talk to our AI ▶
+          </a>
         </motion.div>
         <motion.p
           className="text-sm mt-2"
           style={{ color: "var(--text-tertiary)" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
         >
           Works with your existing number · No credit card · 14-day free trial
         </motion.p>
 
         <motion.div
-          className="mt-10 max-w-2xl mx-auto text-left"
+          id="agent-chat"
+          className="mt-14 max-w-2xl mx-auto text-left scroll-mt-24"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.45 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <p className="text-lg font-semibold text-white text-center">Talk to Sarah right now</p>
-          <p className="text-sm text-zinc-400 text-center mt-1 mb-4">
-            She&apos;s our receptionist. Try asking about plumbing services.
+          <h2 className="text-2xl font-bold text-white text-center">Talk to our AI receptionist</h2>
+          <p className="text-sm text-zinc-400 text-center mt-2 mb-4">
+            This is Sarah. She answers calls for businesses like yours. Type a message — or try one of the suggestions below.
           </p>
           <LiveAgentChat variant="homepage" initialAgent="sarah" />
+          <p className="text-xs text-zinc-500 text-center mt-4">
+            Not convinced? <Link href={ROUTES.DEMO} className="text-zinc-400 hover:text-white underline">Watch her handle a full call →</Link>
+          </p>
         </motion.div>
 
         <motion.div

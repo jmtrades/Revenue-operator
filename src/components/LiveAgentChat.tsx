@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Waveform } from "@/components/Waveform";
-import { speakText } from "@/lib/voice-preview";
 
 type AgentId = "sarah" | "alex" | "emma";
 
@@ -17,8 +15,6 @@ const AGENTS: Record<
     pill: string;
     avatarBg: string;
     greeting: string;
-    tts: { gender: "female" | "male"; rate: number; pitch: number };
-    elevenVoiceId?: string;
   }
 > = {
   sarah: {
@@ -26,60 +22,30 @@ const AGENTS: Record<
     name: "Sarah",
     initials: "S",
     pill: "Sarah",
-    avatarBg: "bg-pink-500/20 text-pink-300 border-pink-500/30",
-    greeting: "Hi there! Thanks for calling Riverside Plumbing. This is Sarah — how can I help you today?",
-    tts: { gender: "female", rate: 0.95, pitch: 1.05 },
-    elevenVoiceId: process.env.NEXT_PUBLIC_ELEVENLABS_SARAH_VOICE_ID,
+    avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+    greeting: "Hi there! Thanks for calling Riverside Plumbing. This is Sarah — what can I help you with?",
   },
   alex: {
     id: "alex",
     name: "Alex",
     initials: "A",
     pill: "Alex",
-    avatarBg: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    greeting: "Good afternoon, Riverside Plumbing. This is Alex. How may I assist you?",
-    tts: { gender: "male", rate: 0.9, pitch: 0.85 },
-    elevenVoiceId: process.env.NEXT_PUBLIC_ELEVENLABS_ALEX_VOICE_ID,
+    avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+    greeting: "Good afternoon, Riverside Plumbing. This is Alex speaking. How can I help you today?",
   },
   emma: {
     id: "emma",
     name: "Emma",
     initials: "E",
     pill: "Emma",
-    avatarBg: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-    greeting: "Hey! Thanks for calling Riverside Plumbing! This is Emma. What can I do for you?",
-    tts: { gender: "female", rate: 1.05, pitch: 1.1 },
-    elevenVoiceId: process.env.NEXT_PUBLIC_ELEVENLABS_EMMA_VOICE_ID,
+    avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+    greeting: "Hey! Thanks for calling Riverside Plumbing! I'm Emma — what's going on?",
   },
 };
 
 function canUseSpeechRecognition(): boolean {
   if (typeof window === "undefined") return false;
   return Boolean((window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition);
-}
-
-async function speakViaElevenLabs(text: string, voiceId: string): Promise<void> {
-  const r = await fetch("/api/agent/speak", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, voice_id: voiceId }),
-  });
-  if (!r.ok) throw new Error("speak failed");
-  const buf = await r.arrayBuffer();
-  const blob = new Blob([buf], { type: "audio/mpeg" });
-  const url = URL.createObjectURL(blob);
-  await new Promise<void>((resolve, reject) => {
-    const audio = new Audio(url);
-    audio.onended = () => {
-      URL.revokeObjectURL(url);
-      resolve();
-    };
-    audio.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error("audio play failed"));
-    };
-    audio.play().catch(reject);
-  });
 }
 
 export function LiveAgentChat(props: {
@@ -89,8 +55,6 @@ export function LiveAgentChat(props: {
   greeting?: string;
   personality?: number;
   callStyle?: "thorough" | "conversational" | "quick";
-  voiceDefaultOn?: boolean;
-  showVoiceToggle?: boolean;
   showMic?: boolean;
 }) {
   const {
@@ -100,21 +64,21 @@ export function LiveAgentChat(props: {
     greeting,
     personality,
     callStyle,
-    voiceDefaultOn = false,
-    showVoiceToggle = variant !== "mini",
-    showMic = variant !== "mini",
+  showMic = variant !== "mini",
   } = props;
 
   const [agent, setAgent] = useState<AgentId>(initialAgent);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [speaking, setSpeaking] = useState(false);
-  const [voiceOn, setVoiceOn] = useState<boolean>(voiceDefaultOn);
   const listRef = useRef<HTMLDivElement | null>(null);
 
   const cfg = AGENTS[agent];
-  const heightClass = variant === "demo" ? "h-[500px]" : variant === "mini" ? "h-[250px]" : "h-[360px]";
+  const heightClass = variant === "demo" ? "h-[500px]" : variant === "mini" ? "h-[220px]" : "h-[380px]";
+  const userMessageCount = messages.filter((m) => m.role === "user").length;
+  const showChips = userMessageCount === 0;
+  const MAX_EXCHANGES = 20;
+  const atLimit = messages.length >= MAX_EXCHANGES;
 
   const statusDot = "bg-green-500";
 
@@ -134,7 +98,6 @@ export function LiveAgentChat(props: {
     setMessages([{ role: "assistant", content: cfg.greeting }]);
     setInput("");
     setLoading(false);
-    setSpeaking(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agent]);
 
@@ -147,54 +110,27 @@ export function LiveAgentChat(props: {
 
   const send = async (text: string) => {
     const trimmed = text.trim();
-    if (!trimmed || loading) return;
+    if (!trimmed || loading || atLimit) return;
     const next = [...messages, { role: "user", content: trimmed } as Msg];
     setMessages(next);
     setInput("");
     setLoading(true);
     try {
+      const businessPayload = businessName
+        ? { name: businessName, services: "", hours: "", area: "", pricing: "Free estimates" }
+        : undefined;
       const r = await fetch("/api/agent/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...requestPayload,
           messages: next,
+          agentId: agent,
+          business: businessPayload,
         }),
       });
       const data = (await r.json().catch(() => null)) as { text?: string };
       const reply = typeof data?.text === "string" && data.text.trim() ? data.text.trim() : "Sorry — could you say that again?";
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-
-      if (voiceOn) {
-        setSpeaking(true);
-        const voiceId = cfg.elevenVoiceId;
-        try {
-          if (voiceId) {
-            await speakViaElevenLabs(reply, voiceId);
-          } else {
-            await new Promise<void>((resolve) => {
-              speakText(reply, {
-                gender: cfg.tts.gender,
-                rate: cfg.tts.rate,
-                pitch: cfg.tts.pitch,
-                onEnd: resolve,
-              });
-            });
-          }
-        } catch {
-          // Fallback to browser voice if ElevenLabs fails.
-          await new Promise<void>((resolve) => {
-            speakText(reply, {
-              gender: cfg.tts.gender,
-              rate: cfg.tts.rate,
-              pitch: cfg.tts.pitch,
-              onEnd: resolve,
-            });
-          });
-        } finally {
-          setSpeaking(false);
-        }
-      }
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -230,24 +166,17 @@ export function LiveAgentChat(props: {
     rec.start();
   };
 
+  const SUGGESTIONS = ["I have a leaky faucet", "I need emergency help", "What are your hours?"];
+
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
       <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-zinc-800 bg-zinc-950/40">
         <div className="flex items-center gap-2 min-w-0">
-          <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-sm font-semibold ${cfg.avatarBg}`}>
-            {cfg.initials}
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold text-white truncate">{cfg.name}</p>
-              <span className={`inline-block w-2 h-2 rounded-full ${statusDot}`} aria-label="Online" />
-              <span className="text-[11px] text-zinc-500">Online</span>
-            </div>
-          </div>
+          <span className="text-xs font-medium text-zinc-500 shrink-0">Talk to our AI</span>
+          <span className="text-zinc-600">·</span>
         </div>
-
         <div className="flex items-center gap-2">
-          <div className="hidden sm:flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5">
             {(["sarah", "alex", "emma"] as AgentId[]).map((id) => {
               const a = AGENTS[id];
               const active = agent === id;
@@ -266,17 +195,6 @@ export function LiveAgentChat(props: {
               );
             })}
           </div>
-
-          {showVoiceToggle && (
-            <button
-              type="button"
-              onClick={() => setVoiceOn((v) => !v)}
-              className="px-3 py-1.5 rounded-xl border border-zinc-700 text-[11px] text-zinc-300 hover:border-zinc-500"
-              aria-label={voiceOn ? "Voice on" : "Voice off"}
-            >
-              {voiceOn ? "🔊 Voice on" : "🔇 Voice off"}
-            </button>
-          )}
         </div>
       </div>
 
@@ -311,6 +229,20 @@ export function LiveAgentChat(props: {
       </div>
 
       <div className="px-4 py-3 border-t border-zinc-800 bg-zinc-950/30">
+        {showChips && (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => send(s)}
+                className="bg-zinc-800 border border-zinc-700 rounded-full px-3 py-1 text-xs text-zinc-300 hover:border-zinc-600 transition-colors"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="flex items-center gap-2">
           {showMic && canUseSpeechRecognition() && (
             <button
@@ -332,17 +264,17 @@ export function LiveAgentChat(props: {
               }
             }}
             className="flex-1 w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 outline-none"
-            placeholder="Type your message…"
+            placeholder="Type your message..."
             aria-label="Message input"
           />
           <button
             type="button"
             onClick={() => send(input)}
-            disabled={!input.trim() || loading}
-            className="bg-white text-black font-semibold rounded-xl px-4 py-3 hover:bg-zinc-200 disabled:opacity-60"
+            disabled={!input.trim() || loading || atLimit}
+            className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-zinc-200 disabled:opacity-60 transition-colors"
             aria-label="Send message"
           >
-            Send
+            →
           </button>
         </div>
 
@@ -350,12 +282,7 @@ export function LiveAgentChat(props: {
           <p className="text-[11px] text-zinc-500">
             {variant === "mini" ? "Test how your agent responds before you connect your number." : "Try asking about services, pricing, or availability."}
           </p>
-          {speaking && (
-            <div className="flex items-center gap-2 text-[11px] text-green-400">
-              <Waveform isPlaying />
-              Speaking…
-            </div>
-          )}
+          {atLimit && <p className="text-[11px] text-amber-400">Session limit reached. Refresh to start a new conversation.</p>}
         </div>
       </div>
     </div>

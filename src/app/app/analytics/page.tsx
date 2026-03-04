@@ -58,9 +58,9 @@ export default function AppAnalyticsPage() {
       ]
     : [];
   const minutesUsed = totalCalls * 3;
-  const minutesLimit = 200;
+  const minutesLimit = 400;
   const pct = minutesLimit > 0 ? Math.round((minutesUsed / minutesLimit) * 100) : 0;
-  const returnMultiple = 97 > 0 ? (estRevenue / 97) : 0;
+  const returnMultiple = 79 > 0 ? (estRevenue / 79) : 0;
 
   const metrics = [
     { label: "Total calls", value: String(totalCalls), trend: "", icon: "📞" as const },
@@ -221,7 +221,7 @@ export default function AppAnalyticsPage() {
           </div>
           <div className="text-center">
             <p className="text-xs text-zinc-400">Your cost</p>
-            <p className="text-lg font-bold text-white">$97</p>
+            <p className="text-lg font-bold text-white">$79</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-zinc-400">Return</p>
@@ -233,7 +233,7 @@ export default function AppAnalyticsPage() {
       <div className="p-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 mb-6">
         <p className="text-xs font-medium text-emerald-400 mb-1">Since you joined</p>
         <p className="text-sm text-zinc-300">
-          {totalCalls} calls · {leadsCaptured} leads · {appointments} appointments · {timeSaved} saved · ${estRevenue} value · $97 cost
+          {totalCalls} calls · {leadsCaptured} leads · {appointments} appointments · {timeSaved} saved · ${estRevenue} value · $79 cost
         </p>
       </div>
 
