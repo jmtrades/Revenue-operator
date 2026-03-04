@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 type AgentId = "sarah" | "alex" | "emma";
 
@@ -48,7 +48,9 @@ function canUseSpeechRecognition(): boolean {
   return Boolean((window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition);
 }
 
-export function LiveAgentChat(props: {
+export type LiveAgentChatRef = { send: (text: string) => void };
+
+export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
   variant?: "homepage" | "demo" | "mini";
   initialAgent?: AgentId;
   businessName?: string;
@@ -56,7 +58,8 @@ export function LiveAgentChat(props: {
   personality?: number;
   callStyle?: "thorough" | "conversational" | "quick";
   showMic?: boolean;
-}) {
+  onUserMessage?: () => void;
+}>(function LiveAgentChat(props, ref) {
   const {
     variant = "homepage",
     initialAgent = "sarah",
@@ -64,7 +67,8 @@ export function LiveAgentChat(props: {
     greeting,
     personality,
     callStyle,
-  showMic = variant !== "mini",
+    showMic = variant !== "mini",
+    onUserMessage,
   } = props;
 
   const [agent, setAgent] = useState<AgentId>(initialAgent);
@@ -108,9 +112,10 @@ export function LiveAgentChat(props: {
     el.scrollTop = el.scrollHeight;
   }, [messages, loading]);
 
-  const send = async (text: string) => {
+  const send = useCallback(async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || loading || atLimit) return;
+    onUserMessage?.();
     const next = [...messages, { role: "user", content: trimmed } as Msg];
     setMessages(next);
     setInput("");
@@ -139,7 +144,9 @@ export function LiveAgentChat(props: {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading, atLimit, messages, onUserMessage, agent, businessName]);
+
+  useImperativeHandle(ref, () => ({ send }), [send]);
 
   const startMic = () => {
     if (!canUseSpeechRecognition()) return;
@@ -166,7 +173,7 @@ export function LiveAgentChat(props: {
     rec.start();
   };
 
-  const SUGGESTIONS = ["I'd like to schedule an appointment", "Can someone call me back about pricing?", "What are your hours and availability?"];
+  const SUGGESTIONS = ["I'd like to schedule an appointment", "Can someone call me back about pricing?", "What services do you offer?"];
 
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
@@ -287,5 +294,5 @@ export function LiveAgentChat(props: {
       </div>
     </div>
   );
-}
+});
 

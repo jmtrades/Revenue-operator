@@ -425,7 +425,7 @@ export default function InboxPage() {
     <div className="min-h-screen bg-black text-white">
       <div className="p-4 md:p-6 lg:p-8 h-full">
         <h1 className="text-xl md:text-2xl font-semibold text-white mb-4">Inbox</h1>
-        <p className="text-sm text-zinc-400 mb-4">All conversations — calls, texts, and emails — in one place.</p>
+        <p className="text-sm text-zinc-400 mb-4">All conversations in one place.</p>
         {/* Mobile layout */}
         <div className="md:hidden h-[calc(100vh-7rem)] border border-zinc-800 rounded-2xl overflow-hidden">
           {mobileMode === "list" ? (

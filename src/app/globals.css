@@ -289,6 +289,11 @@ h3.headline {
   pointer-events: none;
 }
 
+@keyframes breathing {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 /* Marketing: section label, container, card hover */
 .section-label {
   font-size: 0.75rem;

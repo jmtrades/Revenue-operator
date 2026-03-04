@@ -28,7 +28,7 @@ const NAV_MAIN: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/activity", label: "Dashboard", icon: LayoutList },
   { href: "/app/calls", label: "Calls", icon: PhoneCall },
   { href: "/app/leads", label: "Leads", icon: Users },
-  { href: "/app/calendar", label: "Appointments", icon: Calendar },
+  { href: "/app/appointments", label: "Appointments", icon: Calendar },
   { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
   { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
@@ -51,7 +51,7 @@ const MOBILE_TABS = [
 ] as const;
 
 const MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/calendar", label: "Appointments", icon: Calendar },
+  { href: "/app/appointments", label: "Appointments", icon: Calendar },
   { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
@@ -133,7 +133,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <WorkspaceProvider>
     <OnboardingStepProvider>
-      <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#0a0f1e" }}>
+      <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#080d19" }}>
         <div
           className="shrink-0 py-2 px-4 flex items-center justify-center gap-2 flex-wrap text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
           role="status"
@@ -197,7 +197,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </aside>
         )}
-        <main id="main" className="flex-1 overflow-auto min-w-0" style={{ background: "#0a0f1e" }} tabIndex={-1}>{children}</main>
+        <main id="main" className="flex-1 overflow-auto min-w-0" style={{ background: "#080d19" }} tabIndex={-1}>{children}</main>
       </div>
       {!isOnboarding && (
         <>

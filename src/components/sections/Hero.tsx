@@ -36,7 +36,7 @@ export function Hero() {
               className="text-base md:text-lg max-w-lg mb-6"
               style={{ color: "#94A3B8", lineHeight: 1.7 }}
             >
-              AI that handles your calls, texts, follow-ups, and scheduling — so you can focus on everything else. For businesses, teams, and anyone who communicates by phone.
+              The AI layer for every call, text, and follow-up. For businesses, teams, and anyone who communicates by phone.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-3">
               <Link

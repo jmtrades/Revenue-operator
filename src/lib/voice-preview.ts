@@ -1,17 +1,62 @@
 /**
  * Voice preview engine — SpeechSynthesis for demos and onboarding.
- * Real agents use premium AI voices; this is for browser preview only.
+ * speakTextViaApi tries ElevenLabs /api/agent/speak first, then falls back to browser TTS.
  */
+
+export type SpeakOptions = {
+  gender?: "female" | "male";
+  rate?: number;
+  pitch?: number;
+  onStart?: () => void;
+  onEnd?: () => void;
+  voiceId?: string;
+};
+
+/**
+ * Try ElevenLabs TTS via /api/agent/speak; on 503/502 or error, fall back to browser TTS.
+ * Returns { usedFallback: true } when browser TTS was used (caller can show "Using basic voice").
+ */
+export async function speakTextViaApi(
+  text: string,
+  options?: SpeakOptions
+): Promise<{ usedFallback: boolean }> {
+  if (typeof window === "undefined") {
+    options?.onEnd?.();
+    return { usedFallback: true };
+  }
+  try {
+    const res = await fetch("/api/agent/speak", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text.slice(0, 5000), voiceId: options?.voiceId }),
+    });
+    if (res.ok && res.body) {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.onplay = () => options?.onStart?.();
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        options?.onEnd?.();
+      };
+      audio.onerror = () => {
+        URL.revokeObjectURL(url);
+        speakText(text, options);
+        options?.onEnd?.();
+      };
+      await audio.play();
+      return { usedFallback: false };
+    }
+  } catch {
+    // fall through to browser TTS
+  }
+  speakText(text, options);
+  return { usedFallback: true };
+}
 
 export function speakText(
   text: string,
-  options?: {
-    gender?: "female" | "male";
-    rate?: number;
-    pitch?: number;
-    onStart?: () => void;
-    onEnd?: () => void;
-  }
+  options?: SpeakOptions
 ): (() => void) {
   if (typeof window === "undefined" || !window.speechSynthesis) {
     options?.onEnd?.();

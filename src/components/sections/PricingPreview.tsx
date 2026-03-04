@@ -12,7 +12,7 @@ import { PRICING_TIERS, ROUTES } from "@/lib/constants";
 const TIER_ROI: Record<string, string> = {
   Starter: "Less than one missed call",
   Growth: "One recovered lead pays for the month",
-  Scale: "Full AI phone team for a fraction of one hire",
+  Scale: "Full AI communication team for a fraction of one hire",
   Enterprise: "Custom ROI and dedicated support",
 };
 
