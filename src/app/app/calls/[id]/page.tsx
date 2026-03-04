@@ -79,6 +79,11 @@ export default function AppCallDetailPage() {
       .finally(() => setLoading(false));
   }, [id, workspaceId]);
 
+  useEffect(() => {
+    if (call) document.title = "Call — Recall Touch";
+    return () => { document.title = ""; };
+  }, [call]);
+
   const name =
     call?.matched_lead?.name ||
     call?.matched_lead?.email ||
@@ -185,6 +190,14 @@ export default function AppCallDetailPage() {
               <p className="text-xs text-zinc-400">
                 {call.matched_lead.company}
               </p>
+            )}
+            {(call.lead_id ?? call.matched_lead?.id) && (
+              <Link
+                href="/app/leads"
+                className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-zinc-300 hover:text-white"
+              >
+                View lead →
+              </Link>
             )}
           </section>
         )}

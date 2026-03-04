@@ -81,8 +81,15 @@ function formatDuration(start?: string | null, end?: string | null): string {
   return `${m}:${rem.toString().padStart(2, "0")}`;
 }
 
+const PAGE_TITLE = "Dashboard — Recall Touch";
+
 export default function AppActivityPage() {
   const { workspaceId } = useWorkspace();
+
+  useEffect(() => {
+    document.title = PAGE_TITLE;
+    return () => { document.title = ""; };
+  }, []);
   const [mounted, setMounted] = useState(false);
   const [filter, setFilter] = useState<FilterId>("all");
   const [playingId, setPlayingId] = useState<string | null>(null);

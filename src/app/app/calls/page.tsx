@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Search, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
+const PAGE_TITLE = "Calls — Recall Touch";
+
 type CallType = "inbound" | "outbound" | null;
 type CallOutcome = "appointment" | "lead" | "info" | "transfer" | "voicemail" | null;
 type CallSentiment = "positive" | "neutral" | "negative" | null;
@@ -140,6 +142,11 @@ export default function CallsPage() {
   const start = (pageSafe - 1) * PAGE_SIZE;
   const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
+  useEffect(() => {
+    document.title = PAGE_TITLE;
+    return () => { document.title = ""; };
+  }, []);
+
   const handleRowClick = (id: string) => {
     router.push(`/app/calls/${id}`);
   };
@@ -220,9 +227,19 @@ export default function CallsPage() {
       </div>
 
       {loading ? (
-        <div className="mt-6 text-sm text-zinc-500">Loading calls…</div>
+        <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
+          <div className="h-8 w-48 rounded-lg bg-zinc-800 animate-pulse mb-4" />
+          <div className="h-4 w-full max-w-xl rounded bg-zinc-800/80 animate-pulse mb-2" />
+          <div className="h-4 w-3/4 max-w-md rounded bg-zinc-800/60 animate-pulse" />
+        </div>
       ) : error ? (
         <div className="mt-6 text-sm text-red-400">{error}</div>
+      ) : filtered.length === 0 ? (
+        <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-12 text-center">
+          <PhoneCall className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
+          <p className="text-sm font-medium text-white mb-1">No calls found</p>
+          <p className="text-xs text-zinc-500 mb-4">Try adjusting your filters or search.</p>
+        </div>
       ) : (
       <div className="hidden md:block rounded-2xl border border-zinc-800 bg-zinc-950/60 overflow-hidden">
         <table className="w-full text-sm">

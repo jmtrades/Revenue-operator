@@ -38,7 +38,7 @@ export function SocialProof() {
   };
 
   return (
-    <section className="marketing-section pt-8 pb-16 md:pt-10 md:pb-20" style={{ background: "var(--bg-surface)" }}>
+    <section id="waitlist" className="marketing-section pt-8 pb-16 md:pt-10 md:pb-20" style={{ background: "var(--bg-surface)" }}>
       <Container>
         <AnimateOnScroll className="text-center">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>

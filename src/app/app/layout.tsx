@@ -7,36 +7,59 @@ import {
   LayoutList,
   PhoneCall,
   Users,
-  Bot,
   Megaphone,
   MessageSquare,
   Calendar,
   BarChart3,
+  BookOpen,
+  Code,
+  Shield,
   Settings,
+  CreditCard,
+  Menu,
   type LucideIcon,
 } from "lucide-react";
+import { MOCK_INBOX_THREADS } from "@/lib/mock/inbox";
 import { OnboardingChecklist } from "./OnboardingChecklist";
 import { OnboardingStepProvider, useOnboardingStep, ONBOARDING_STEP_LABELS } from "./OnboardingStepContext";
 
-const NAV: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/activity", label: "Activity", icon: LayoutList },
+const NAV_MAIN: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/app/activity", label: "Dashboard", icon: LayoutList },
   { href: "/app/calls", label: "Calls", icon: PhoneCall },
   { href: "/app/leads", label: "Leads", icon: Users },
-  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/app/contacts", label: "Contacts", icon: Users },
-  { href: "/app/agents", label: "Agents", icon: Bot },
+  { href: "/app/calendar", label: "Appointments", icon: Calendar },
   { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/app/messages", label: "Messages", icon: MessageSquare },
-  { href: "/app/calendar", label: "Calendar", icon: Calendar },
+  { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
+  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
+  { href: "/app/compliance", label: "Compliance", icon: Shield },
+];
+
+const NAV_UTILITY: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/app/team", label: "Team", icon: Users },
   { href: "/app/settings", label: "Settings", icon: Settings },
+  { href: "/app/settings/billing", label: "Billing", icon: CreditCard },
+  { href: "/app/developer", label: "Developer", icon: Code },
 ];
 
 const MOBILE_TABS = [
-  { href: "/app/activity", label: "Activity", icon: LayoutList },
+  { href: "/app/activity", label: "Dashboard", icon: LayoutList },
   { href: "/app/calls", label: "Calls", icon: PhoneCall },
   { href: "/app/leads", label: "Leads", icon: Users },
-  { href: "/app/settings", label: "More", icon: Settings },
+  { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
 ] as const;
+
+const MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/app/calendar", label: "Appointments", icon: Calendar },
+  { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
+  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
+  { href: "/app/compliance", label: "Compliance", icon: Shield },
+  { href: "/app/team", label: "Team", icon: Users },
+  { href: "/app/settings", label: "Settings", icon: Settings },
+  { href: "/app/settings/billing", label: "Billing", icon: CreditCard },
+  { href: "/app/developer", label: "Developer", icon: Code },
+];
 
 function getBusinessName(): string {
   if (typeof window === "undefined") return "My Business";
@@ -57,6 +80,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [businessName, setBusinessName] = useState("My Business");
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
+  const inboxUnread = MOCK_INBOX_THREADS.filter((t) => t.unread).length;
 
   useEffect(() => {
     const id = setTimeout(() => setMounted(true), 0);
@@ -80,6 +105,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }, [mounted, pathname, router]);
 
+  useEffect(() => {
+    if (!mobileMoreOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileMoreOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileMoreOpen]);
+
   if (!mounted) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -90,6 +124,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/app/activity" && pathname.startsWith(href));
+
+  const isMoreActive = MOBILE_MORE_LINKS.some(({ href }) => isActive(href));
 
   const isOnboarding = pathname === "/app/onboarding";
 
@@ -120,7 +156,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-              {NAV.map(({ href, label, icon: Icon }) => (
+              {NAV_MAIN.map(({ href, label, icon: Icon }) => {
+                const effectiveLabel =
+                  href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-sm transition-colors ${
+                      isActive(href) ? "bg-zinc-800/50 text-white font-medium" : "text-zinc-400 hover:text-zinc-300"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                    {effectiveLabel}
+                  </Link>
+                );
+              })}
+              <div className="my-2 border-t border-zinc-800" aria-hidden />
+              {NAV_UTILITY.map(({ href, label, icon: Icon }) => (
                 <Link
                   key={href}
                   href={href}
@@ -145,24 +198,75 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <main id="main" className="flex-1 overflow-auto min-w-0 bg-black" tabIndex={-1}>{children}</main>
       </div>
       {!isOnboarding && (
-        <nav
-          className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-zinc-950 border-t border-zinc-800 safe-area-pb"
-          aria-label="Mobile navigation"
-        >
-          {MOBILE_TABS.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
+        <>
+          <nav
+            className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-zinc-950 border-t border-zinc-800 safe-area-pb"
+            aria-label="Mobile navigation"
+          >
+            {MOBILE_TABS.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation ${
+                  isActive(href) ? "text-white" : "text-zinc-500"
+                }`}
+                aria-current={isActive(href) ? "page" : undefined}
+              >
+                <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
+                <span className="text-[10px] font-medium">{label}</span>
+              </Link>
+            ))}
+            <button
+              type="button"
+              onClick={() => setMobileMoreOpen(true)}
               className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation ${
-                isActive(href) ? "text-white" : "text-zinc-500"
+                isMoreActive ? "text-white" : "text-zinc-500"
               }`}
-              aria-current={isActive(href) ? "page" : undefined}
+              aria-label="More menu"
+              aria-expanded={mobileMoreOpen}
             >
-              <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
-              <span className="text-[10px] font-medium">{label}</span>
-            </Link>
-          ))}
-        </nav>
+              <Menu className="w-5 h-5 shrink-0 mx-auto" strokeWidth={1.5} aria-hidden />
+              <span className="text-[10px] font-medium">More</span>
+            </button>
+          </nav>
+          {mobileMoreOpen && (
+            <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="More menu">
+              <div
+                className="absolute inset-0 bg-black/60"
+                onClick={() => setMobileMoreOpen(false)}
+                onKeyDown={(e) => e.key === "Escape" && setMobileMoreOpen(false)}
+              />
+              <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-zinc-800 bg-zinc-950 shadow-2xl">
+                <div className="sticky top-0 flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-950">
+                  <span className="text-sm font-medium text-white">More</span>
+                  <button
+                    type="button"
+                    onClick={() => setMobileMoreOpen(false)}
+                    className="p-2 rounded-lg text-zinc-400 hover:text-white"
+                    aria-label="Close"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <nav className="p-2" aria-label="More pages">
+                  {MOBILE_MORE_LINKS.map(({ href, label, icon: Icon }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={() => setMobileMoreOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm ${
+                        isActive(href) ? "bg-zinc-800/50 text-white" : "text-zinc-300"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} />
+                      {href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label}
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+            </div>
+          )}
+        </>
       )}
       </div>
     </OnboardingStepProvider>
