@@ -60,7 +60,7 @@ export default async function IndustryPage({
                   lineHeight: 1.2,
                 }}
               >
-                Coming soon
+                Dedicated guide in the works
               </h1>
               <p
                 className="text-base mb-8"

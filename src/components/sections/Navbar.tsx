@@ -146,7 +146,7 @@ export function Navbar() {
           <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost px-4 py-2 text-sm rounded-lg no-underline">
             Sign in
           </Link>
-          <Link href={ROUTES.START} className="btn-marketing-primary px-4 py-2 text-sm rounded-lg no-underline">
+          <Link href={ROUTES.START} className="btn-marketing-primary px-4 py-2 text-sm rounded-xl no-underline">
             Start free →
           </Link>
         </div>
@@ -208,7 +208,7 @@ export function Navbar() {
             <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost w-full text-center py-3 rounded-lg no-underline text-base" onClick={() => setMobileOpen(false)}>
               Sign in
             </Link>
-            <Link href={ROUTES.START} className="btn-marketing-primary w-full text-center py-3 rounded-lg no-underline text-base" onClick={() => setMobileOpen(false)}>
+            <Link href={ROUTES.START} className="btn-marketing-primary w-full text-center py-3 rounded-xl no-underline text-base" onClick={() => setMobileOpen(false)}>
               Start free →
             </Link>
           </div>
