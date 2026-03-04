@@ -95,11 +95,11 @@ export function LiveAgentChat(props: {
 
   useEffect(() => {
     // On first load and on agent switch: reset and greet.
-    setMessages([{ role: "assistant", content: cfg.greeting }]);
+    setMessages([{ role: "assistant", content: greeting ?? cfg.greeting }]);
     setInput("");
     setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agent]);
+  }, [agent, greeting]);
 
   useEffect(() => {
     // Auto-scroll to bottom.

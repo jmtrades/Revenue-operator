@@ -23,7 +23,7 @@ export const SOLUTIONS_LINKS = [
   { label: "Legal", href: "/industries/legal" },
   { label: "Real Estate", href: "/industries/real-estate" },
   { label: "Healthcare", href: "/industries/healthcare" },
-  { label: "More coming soon", href: "/product#industries" },
+  { label: "All Industries →", href: "/activate" },
 ] as const;
 
 export const FOOTER_SOLUTIONS = [

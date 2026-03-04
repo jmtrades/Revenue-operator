@@ -1,12 +1,13 @@
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { DemoSimulatorSection } from "@/components/demo/DemoSimulatorSection";
-import { LiveAgentChat } from "@/components/LiveAgentChat";
+import { DemoPageContent } from "./DemoPageContent";
+import { VoiceOrbClient } from "@/components/VoiceOrbClient";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 
 export const metadata = {
-  title: "Demo — Recall Touch",
+  title: "Demo",
   description: "Talk to the agent and watch a sample call.",
 };
 
@@ -18,17 +19,7 @@ export default function DemoPage() {
     >
       <Navbar />
       <main className="pt-28 pb-24">
-        <div className="max-w-2xl mx-auto px-4 text-center mb-10">
-          <h1 className="font-bold text-3xl md:text-4xl mb-2" style={{ letterSpacing: "-0.02em" }}>
-            Try the agent
-          </h1>
-          <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Type a message and see how the receptionist responds.
-          </p>
-        </div>
-        <div className="max-w-4xl mx-auto px-4">
-          <LiveAgentChat variant="demo" initialAgent="sarah" showMic />
-        </div>
+        <DemoPageContent />
 
         <div className="max-w-3xl mx-auto px-4 mt-16">
           <div className="flex items-center justify-between gap-3 mb-6">
@@ -46,6 +37,7 @@ export default function DemoPage() {
           </p>
         </div>
       </main>
+      <VoiceOrbClient />
       <Footer />
     </div>
   );

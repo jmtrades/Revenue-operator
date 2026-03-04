@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { WorkspaceProvider } from "@/components/WorkspaceContext";
 import {
   LayoutList,
   PhoneCall,
@@ -130,6 +131,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const isOnboarding = pathname === "/app/onboarding";
 
   return (
+    <WorkspaceProvider>
     <OnboardingStepProvider>
       <div className="min-h-screen bg-black flex flex-col pb-20 md:pb-0">
         <div
@@ -270,6 +272,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       )}
       </div>
     </OnboardingStepProvider>
+    </WorkspaceProvider>
   );
 }
 

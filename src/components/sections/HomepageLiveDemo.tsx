@@ -110,7 +110,7 @@ export function HomepageLiveDemo() {
                   </div>
                 </div>
                 <p className="text-xs text-zinc-500 mt-2">
-                  Real recordings plug in here later. For now, this shows how short, decisive calls feel when every caller is actually handled.
+                  Sample call — hear how your AI receptionist handles a real inquiry.
                 </p>
               </div>
             </motion.div>

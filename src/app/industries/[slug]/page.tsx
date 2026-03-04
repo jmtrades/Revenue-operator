@@ -12,12 +12,13 @@ export function generateStaticParams() {
   return INDUSTRY_SLUGS.map((slug) => ({ slug }));
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const industry = getIndustryBySlug(params.slug);
+  const { slug } = await params;
+  const industry = getIndustryBySlug(slug);
   if (!industry) return { title: "Industry | Recall Touch" };
   return {
     title: `${industry.name} AI Phone Agent | Recall Touch`,
@@ -25,12 +26,12 @@ export function generateMetadata({
   };
 }
 
-export default function IndustryPage({
+export default async function IndustryPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const slug = params.slug;
+  const { slug } = await params;
   const industry = getIndustryBySlug(slug);
 
   if (!industry) {
