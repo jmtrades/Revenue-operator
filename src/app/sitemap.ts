@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 const BASE = "https://recall-touch.com";
 
-const INDUSTRY_SLUGS = ["home-services", "healthcare", "legal", "real-estate", "insurance", "b2b-sales", "local-business", "contractors"];
+const INDUSTRY_SLUGS = ["plumbing-hvac", "dental", "legal", "real-estate", "healthcare"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

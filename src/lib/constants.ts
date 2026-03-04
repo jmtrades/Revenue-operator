@@ -17,6 +17,23 @@ export const NAV_LINKS = [
   { href: ROUTES.DOCS, label: "Docs" },
 ] as const;
 
+export const SOLUTIONS_LINKS = [
+  { label: "Plumbing & HVAC", href: "/industries/plumbing-hvac" },
+  { label: "Dental", href: "/industries/dental" },
+  { label: "Legal", href: "/industries/legal" },
+  { label: "Real Estate", href: "/industries/real-estate" },
+  { label: "Healthcare", href: "/industries/healthcare" },
+  { label: "More coming soon", href: "/product#industries" },
+] as const;
+
+export const FOOTER_SOLUTIONS = [
+  { label: "Plumbing & HVAC", href: "/industries/plumbing-hvac" },
+  { label: "Dental", href: "/industries/dental" },
+  { label: "Legal", href: "/industries/legal" },
+  { label: "Real Estate", href: "/industries/real-estate" },
+  { label: "Healthcare", href: "/industries/healthcare" },
+] as const;
+
 export const PRICING_TIERS = [
   {
     name: "Starter",

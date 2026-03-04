@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
-import { NAV_LINKS, ROUTES } from "@/lib/constants";
+import { Menu, X, ChevronDown } from "lucide-react";
+import { NAV_LINKS, SOLUTIONS_LINKS, ROUTES } from "@/lib/constants";
 import { Container } from "@/components/ui/Container";
 
 export function Navbar() {
@@ -77,7 +77,55 @@ export function Navbar() {
           Recall Touch
         </Link>
         <nav className="hidden lg:flex items-center gap-8">
-          {NAV_LINKS.map((l) => {
+          <Link
+            href={ROUTES.PRODUCT}
+            className="text-sm font-medium transition-colors duration-150 pb-0.5 border-b-2 border-transparent"
+            style={{
+              color: pathname === ROUTES.PRODUCT ? "var(--text-primary)" : "var(--text-secondary)",
+              borderBottomColor: pathname === ROUTES.PRODUCT ? "var(--accent-primary)" : "transparent",
+            }}
+          >
+            Product
+          </Link>
+          <div className="relative group">
+            <button
+              type="button"
+              className="flex items-center gap-1 text-sm font-medium transition-colors duration-150 pb-0.5 border-b-2 border-transparent"
+              style={{
+                color: pathname.startsWith("/industries/") ? "var(--text-primary)" : "var(--text-secondary)",
+                borderBottomColor: pathname.startsWith("/industries/") ? "var(--accent-primary)" : "transparent",
+              }}
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Solutions
+              <ChevronDown className="w-4 h-4 opacity-70" />
+            </button>
+            <div
+              className="absolute top-full left-0 pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150"
+              style={{ minWidth: "200px" }}
+            >
+              <div
+                className="rounded-xl border py-2 shadow-lg"
+                style={{
+                  background: "var(--bg-surface)",
+                  borderColor: "var(--border-default)",
+                }}
+              >
+                {SOLUTIONS_LINKS.map((s) => (
+                  <Link
+                    key={s.href + s.label}
+                    href={s.href}
+                    className="block px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {s.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+          {NAV_LINKS.filter((l) => l.href !== ROUTES.PRODUCT).map((l) => {
             const isActive = pathname === l.href || (l.href.length > 1 && pathname.startsWith(l.href + "/"));
             return (
               <Link
@@ -117,13 +165,35 @@ export function Navbar() {
       {mobileOpen && (
         <div
           ref={menuRef}
-          className="lg:hidden fixed inset-0 top-16 z-40 flex flex-col items-center justify-center gap-8 p-8 pt-12"
+          className="lg:hidden fixed inset-0 top-16 z-40 flex flex-col items-center justify-center gap-6 p-8 pt-12 overflow-y-auto"
           style={{
             background: "var(--bg-primary)",
             borderTop: "1px solid var(--border-default)",
           }}
         >
-          {NAV_LINKS.map((l) => (
+          <Link
+            href={ROUTES.PRODUCT}
+            className="text-2xl font-semibold transition-colors"
+            style={{ color: "var(--text-primary)" }}
+            onClick={() => setMobileOpen(false)}
+          >
+            Product
+          </Link>
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>Solutions</p>
+            {SOLUTIONS_LINKS.map((s) => (
+              <Link
+                key={s.href + s.label}
+                href={s.href}
+                className="text-lg font-medium transition-colors"
+                style={{ color: "var(--text-primary)" }}
+                onClick={() => setMobileOpen(false)}
+              >
+                {s.label}
+              </Link>
+            ))}
+          </div>
+          {NAV_LINKS.filter((l) => l.href !== ROUTES.PRODUCT).map((l) => (
             <Link
               key={l.href}
               href={l.href}

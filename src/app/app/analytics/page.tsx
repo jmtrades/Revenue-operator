@@ -39,6 +39,8 @@ interface LeadRecord {
   state: string;
 }
 
+const PAGE_TITLE = "Analytics — Recall Touch";
+
 export default function AppAnalyticsPage() {
   const [range, setRange] = useState<RangeKey>("30d");
   const { workspaceId } = useWorkspace();
@@ -46,6 +48,11 @@ export default function AppAnalyticsPage() {
   const [leads, setLeads] = useState<LeadRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = PAGE_TITLE;
+    return () => { document.title = ""; };
+  }, []);
 
   useEffect(() => {
     if (!workspaceId) return;

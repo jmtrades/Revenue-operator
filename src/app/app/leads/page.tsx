@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
+const PAGE_TITLE = "Leads — Recall Touch";
+
 interface ApiLead {
   id: string;
   name?: string | null;
@@ -102,6 +104,11 @@ export default function LeadsPage() {
   };
 
   const [leads, setLeads] = useState<LeadView[]>([]);
+
+  useEffect(() => {
+    document.title = PAGE_TITLE;
+    return () => { document.title = ""; };
+  }, []);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -437,6 +444,12 @@ export default function LeadsPage() {
             <div className="mt-6 text-sm text-zinc-500">Loading leads…</div>
           ) : error ? (
             <div className="mt-6 text-sm text-red-400">{error}</div>
+          ) : filteredLeads.length === 0 ? (
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-12 text-center">
+              <Users className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
+              <p className="text-sm font-medium text-white mb-1">No leads found</p>
+              <p className="text-xs text-zinc-500">Try adjusting your filters or search.</p>
+            </div>
           ) : (
           <div className="hidden md:block rounded-2xl border border-zinc-800 bg-zinc-950/60 overflow-hidden">
             <table className="w-full text-sm">
@@ -527,6 +540,8 @@ export default function LeadsPage() {
           </div>
           )}
 
+          {filteredLeads.length > 0 && (
+          <>
           {/* Mobile cards */}
           <div className="md:hidden space-y-3">
             {filteredLeads.map((lead) => {
@@ -566,7 +581,6 @@ export default function LeadsPage() {
               </p>
             )}
           </div>
-        </div>
 
         {/* Board view (desktop only) */}
         {view === "board" && (
@@ -628,6 +642,9 @@ export default function LeadsPage() {
             })}
           </div>
         )}
+          </>
+          )}
+        </div>
       </div>
 
       {/* Detail drawer */}
