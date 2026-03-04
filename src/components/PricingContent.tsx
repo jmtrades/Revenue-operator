@@ -23,19 +23,40 @@ export function pricingCopyForTests(): string {
 
 const RECALL_TOUCH_STARTER_MONTHLY = 79;
 
-function ROICalculator({ className = "" }: { className?: string }) {
-  const [callsPerDay, setCallsPerDay] = useState<string>("10");
-  const [avgCustomerValue, setAvgCustomerValue] = useState<string>("500");
-  const [missedCallRatePct, setMissedCallRatePct] = useState<string>("30");
+type RoiResult = {
+  monthlyRecovered: number;
+  annualRecovered: number;
+  receptionistAnnual: number;
+  savingsAnnual: number;
+  roiMultiple: number;
+  recommendedPlan: "Starter" | "Growth" | "Scale" | "Enterprise";
+};
 
-  const result = useMemo(() => {
-    const calls = parseFloat(callsPerDay) || 0;
-    const value = parseFloat(avgCustomerValue) || 0;
-    const rate = Math.min(100, Math.max(0, parseFloat(missedCallRatePct) || 0)) / 100;
-    const missedPerMonth = calls * 30 * rate;
-    const revenueLost = Math.round(missedPerMonth * value);
-    return { revenueLost, missedPerMonth };
-  }, [callsPerDay, avgCustomerValue, missedCallRatePct]);
+function ROICalculator({ className = "" }: { className?: string }) {
+  const [missedPerWeek, setMissedPerWeek] = useState(10);
+  const [avgJobValue, setAvgJobValue] = useState(500);
+
+  const result: RoiResult = useMemo(() => {
+    const weekly = Math.max(5, Math.min(100, missedPerWeek));
+    const value = Math.max(50, Math.min(2000, avgJobValue));
+    const monthlyRecovered = weekly * 4 * value;
+    const annualRecovered = monthlyRecovered * 12;
+    const receptionistAnnual = 3800 * 12;
+    const savingsAnnual = Math.max(0, annualRecovered - receptionistAnnual);
+    const roiMultiple = receptionistAnnual === 0 ? 0 : annualRecovered / receptionistAnnual;
+    let recommended: RoiResult["recommendedPlan"] = "Starter";
+    if (monthlyRecovered > 8000) recommended = "Growth";
+    if (monthlyRecovered > 20000) recommended = "Scale";
+    if (monthlyRecovered > 40000) recommended = "Enterprise";
+    return {
+      monthlyRecovered,
+      annualRecovered,
+      receptionistAnnual,
+      savingsAnnual,
+      roiMultiple,
+      recommendedPlan: recommended,
+    };
+  }, [avgJobValue, missedPerWeek]);
 
   return (
     <div
@@ -46,75 +67,100 @@ function ROICalculator({ className = "" }: { className?: string }) {
         className="text-sm mb-4"
         style={{ color: "var(--text-secondary)" }}
       >
-        See how much missed calls could be costing you.
+        Model what happens when you stop letting calls slip through to voicemail.
       </p>
-      <div className="grid gap-4 mb-6">
+      <div className="grid gap-5 mb-6">
         <label className="block">
           <span
             className="text-sm font-medium"
             style={{ color: "var(--text-primary)" }}
           >
-            Average calls per day
+            Missed calls per week
           </span>
-          <input
-            type="number"
-            min={0}
-            step={1}
-            value={callsPerDay}
-            onChange={(e) => setCallsPerDay(e.target.value)}
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-            style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)", color: "var(--text-primary)" }}
-          />
+          <div className="flex items-center gap-3 mt-2">
+            <input
+              type="range"
+              min={5}
+              max={100}
+              step={1}
+              value={missedPerWeek}
+              onChange={(e) => setMissedPerWeek(Number(e.target.value))}
+              className="flex-1 h-2 rounded-lg"
+              style={{ accentColor: "var(--accent-primary)" }}
+            />
+            <span
+              className="text-sm font-medium w-10 text-right"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {missedPerWeek}
+            </span>
+          </div>
         </label>
         <label className="block">
           <span
             className="text-sm font-medium"
             style={{ color: "var(--text-primary)" }}
           >
-            Average value of a new customer ($)
+            Average job / appointment value ($)
           </span>
-          <input
-            type="number"
-            min={0}
-            step={50}
-            value={avgCustomerValue}
-            onChange={(e) => setAvgCustomerValue(e.target.value)}
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-            style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)", color: "var(--text-primary)" }}
-          />
-        </label>
-        <label className="block">
-          <span
-            className="text-sm font-medium"
-            style={{ color: "var(--text-primary)" }}
-          >
-            Current missed call rate (%)
-          </span>
-          <input
-            type="number"
-            min={0}
-            max={100}
-            step={5}
-            value={missedCallRatePct}
-            onChange={(e) => setMissedCallRatePct(e.target.value)}
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-            style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)", color: "var(--text-primary)" }}
-          />
+          <div className="flex items-center gap-3 mt-2">
+            <input
+              type="range"
+              min={50}
+              max={2000}
+              step={50}
+              value={avgJobValue}
+              onChange={(e) => setAvgJobValue(Number(e.target.value))}
+              className="flex-1 h-2 rounded-lg"
+              style={{ accentColor: "var(--accent-primary)" }}
+            />
+            <span
+              className="text-sm font-medium w-16 text-right"
+              style={{ color: "var(--text-primary)" }}
+            >
+              ${avgJobValue}
+            </span>
+          </div>
         </label>
       </div>
       <div
         className="pt-4 border-t"
         style={{ borderColor: "var(--border-default)" }}
       >
-        <p
-          className="text-base font-medium"
-          style={{ color: "var(--text-primary)" }}
-        >
-          You&apos;re leaving about{" "}
-          <span style={{ color: "var(--accent-primary)" }}>${result.revenueLost.toLocaleString()}</span>/month on the
-          table. Recall Touch costs{" "}
-          <span style={{ color: "var(--accent-primary)" }}>${RECALL_TOUCH_STARTER_MONTHLY}</span>/month.
-        </p>
+        <div className="grid gap-3 text-sm">
+          <p style={{ color: "var(--text-primary)" }}>
+            Monthly revenue recovered{" "}
+            <span style={{ color: "var(--accent-primary)" }}>
+              ${result.monthlyRecovered.toLocaleString()}
+            </span>
+            .
+          </p>
+          <p style={{ color: "var(--text-primary)" }}>
+            Annual receptionist baseline{" "}
+            <span style={{ color: "var(--accent-primary)" }}>
+              ${result.receptionistAnnual.toLocaleString()}
+            </span>
+            .
+          </p>
+          <p style={{ color: "var(--text-primary)" }}>
+            Annual revenue Recall Touch protects{" "}
+            <span style={{ color: "var(--accent-primary)" }}>
+              ${result.annualRecovered.toLocaleString()}
+            </span>{" "}
+            · ~
+            <span style={{ color: "var(--accent-primary)" }}>
+              {result.roiMultiple.toFixed(1)}x
+            </span>{" "}
+            receptionist cost.
+          </p>
+          <p style={{ color: "var(--text-primary)" }}>
+            Recommended plan:{" "}
+            <span style={{ color: "var(--accent-primary)" }}>
+              {result.recommendedPlan}
+            </span>
+            .
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -229,7 +275,7 @@ export function PricingContent() {
         >
           Plans for solo operators through to established businesses. Start free, no credit card.
         </p>
-        <div className="flex items-center justify-center gap-3 mb-12">
+        <div className="flex items-center justify-center gap-3 mb-10">
           <span
             className="text-sm font-medium"
             style={{ color: annual ? "var(--text-tertiary)" : "var(--text-primary)" }}
@@ -261,11 +307,11 @@ export function PricingContent() {
               className="text-xs font-semibold px-2 py-0.5 rounded"
               style={{ background: "var(--accent-secondary)", color: "var(--bg-primary)" }}
             >
-              2 months free
+              Save 20%
             </span>
           </span>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {PRICING_TIERS.map((tier) => (
             <div
               key={tier.name}
@@ -274,7 +320,7 @@ export function PricingContent() {
             >
               {tier.popular && (
                 <span className="pill-popular absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-current" /> Popular
+                  <span className="w-1.5 h-1.5 rounded-full bg-current" /> Most popular
                 </span>
               )}
               <h3
@@ -339,16 +385,8 @@ export function PricingContent() {
         </p>
 
         <h2
-          id="estimate"
-          className="font-semibold text-xl mb-4 mt-20 scroll-mt-24"
-          style={{ color: "var(--text-primary)" }}
-        >
-          Estimate your cost
-        </h2>
-        <UsageEstimator className="mb-10" />
-        <h2
           id="roi-calculator"
-          className="font-semibold text-xl mb-4 mt-12 scroll-mt-24"
+          className="font-semibold text-xl mb-4 mt-14 scroll-mt-24"
           style={{ color: "var(--text-primary)" }}
         >
           ROI calculator
@@ -463,13 +501,16 @@ export function PricingContent() {
           ))}
         </div>
 
-        <div className="text-center">
+        <div className="text-center space-y-3">
           <Link
             href={ROUTES.START}
             className="btn-marketing-primary no-underline inline-block"
           >
             Start free →
           </Link>
+          <p className="text-xs text-zinc-500">
+            Trusted by hundreds of operators who can&apos;t afford to miss decisive calls.
+          </p>
         </div>
       </Container>
     </main>
