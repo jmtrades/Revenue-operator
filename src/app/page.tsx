@@ -13,7 +13,7 @@ import { EnterpriseComparisonCard } from "@/components/sections/EnterpriseCompar
 import { SocialProof } from "@/components/sections/SocialProof";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Footer } from "@/components/sections/Footer";
-import { VoiceOrb } from "@/components/VoiceOrb";
+import { VoiceOrbClient } from "@/components/VoiceOrbClient";
 
 export default function HomePage() {
   return (
@@ -37,7 +37,7 @@ export default function HomePage() {
         <SocialProof />
         <FinalCTA />
       </main>
-      <VoiceOrb />
+      <VoiceOrbClient />
       <Footer />
     </div>
   );

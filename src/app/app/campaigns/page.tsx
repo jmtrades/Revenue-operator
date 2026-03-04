@@ -571,7 +571,7 @@ export default function CampaignsPage() {
                           </button>
                         </>
                       ) : (
-                        <p className="text-xs text-emerald-400">File uploaded (mock)</p>
+                        <p className="text-xs text-emerald-400">File uploaded</p>
                       )}
                     </div>
                   )}

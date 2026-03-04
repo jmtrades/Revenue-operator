@@ -65,7 +65,7 @@ const INDUSTRIES: { id: IndustryId; label: string; emoji: string }[] = [
   { id: "restaurant", label: "Restaurant", emoji: "🍽️" },
   { id: "property_mgmt", label: "Property Mgmt", emoji: "🏢" },
   { id: "roofing", label: "Roofing", emoji: "🏠" },
-  { id: "other", label: "Other", emoji: "✨" },
+  { id: "other", label: "Other / General", emoji: "✨" },
 ];
 
 const INDUSTRY_SERVICES: Record<IndustryId, string[]> = {

@@ -104,7 +104,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
         icon: "MapPin",
       },
       {
-        title: "Quote estimation",
+        title: "Quote requests",
         description: "Gather job details and ballpark ranges so you show up prepared and close more work.",
         icon: "Calculator",
       },
@@ -161,12 +161,12 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
         icon: "Calendar",
       },
       {
-        title: "Insurance pre-verification",
+        title: "Insurance verification",
         description: "Capture insurance info and set expectations so front desk can verify before the visit.",
         icon: "Shield",
       },
       {
-        title: "Recall and reminder calls",
+        title: "Recall reminders",
         description: "Automated recall and appointment reminders so patients show up and rebook.",
         icon: "Phone",
       },
@@ -238,7 +238,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
         icon: "Calendar",
       },
       {
-        title: "After-hours emergency line",
+        title: "After-hours line",
         description: "Urgent calls get a professional response and escalation path so you never miss a critical lead.",
         icon: "Phone",
       },

@@ -171,6 +171,7 @@ export function VoiceOrb() {
         onClick={() => setOpen((prev) => !prev)}
         className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-white text-black shadow-lg flex items-center justify-center border border-zinc-300 hover:bg-zinc-100 transition-colors"
         aria-label={open ? "Close Talk to Sarah" : "Talk to Sarah"}
+        title="Try the voice demo"
       >
         <span className="text-lg font-semibold">Sarah</span>
       </button>
