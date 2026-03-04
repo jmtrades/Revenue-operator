@@ -64,7 +64,7 @@ export function VoiceOrb() {
         {
           role: "assistant",
           content:
-            "Hi! I'm Sarah. I answer calls for businesses like yours. Go ahead — ask me anything, just like a real phone call.",
+            "Hi! I'm the Recall Touch demo. I can help with anything a phone agent would — scheduling, questions, follow-up. What can I do for you?",
         },
       ]);
     }
@@ -169,11 +169,11 @@ export function VoiceOrb() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-white text-black shadow-lg flex items-center justify-center border border-zinc-300 hover:bg-zinc-100 transition-colors"
-        aria-label={open ? "Close Talk to Sarah" : "Talk to Sarah"}
-        title="Try the voice demo"
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-white text-black shadow-lg flex items-center justify-center border border-zinc-300 hover:bg-zinc-100 transition-colors animate-pulse"
+        aria-label={open ? "Close voice demo" : "Talk to Recall Touch"}
+        title="Talk to Recall Touch"
       >
-        <span className="text-lg font-semibold">Sarah</span>
+        <span className="text-lg font-semibold" aria-hidden="true">🎙</span>
       </button>
       {open && (
         <div className="fixed bottom-24 right-6 z-40 w-[320px] max-w-[90vw] rounded-2xl border border-zinc-800 bg-black/95 backdrop-blur-md shadow-2xl flex flex-col overflow-hidden animate-[slideUp_0.25s_ease-out]">
@@ -184,10 +184,10 @@ export function VoiceOrb() {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-semibold text-white">
-                  Sarah
+                  Recall Touch
                 </span>
                 <span className="text-[11px] text-zinc-500">
-                  AI receptionist · Voice demo
+                  Voice demo
                 </span>
               </div>
             </div>
@@ -236,7 +236,7 @@ export function VoiceOrb() {
             {showFallbackNotice && (
               <p className="text-[11px] text-zinc-500 mt-1">
                 Full voice demo uses your microphone. If it&apos;s blocked, try
-                enabling it in your browser, or talk to Sarah using the text
+                enabling it in your browser, or use the text chat
                 chat above.
               </p>
             )}
@@ -252,7 +252,7 @@ export function VoiceOrb() {
               }`}
             >
               <span aria-hidden>{listening ? "■" : "🎙️"}</span>
-              <span>{listening ? "Stop demo" : "Talk to Sarah"}</span>
+              <span>{listening ? "Stop demo" : "Talk"}</span>
             </button>
             <button
               type="button"

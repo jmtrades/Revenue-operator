@@ -63,24 +63,24 @@ const MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
 ];
 
 function getBusinessName(): string {
-  if (typeof window === "undefined") return "My Business";
+  if (typeof window === "undefined") return "My Workspace";
   try {
     const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
     if (raw) {
       const d = JSON.parse(raw) as { businessName?: string };
-      return d?.businessName?.trim() || "My Business";
+      return d?.businessName?.trim() || "My Workspace";
     }
   } catch {
     // ignore
   }
-  return "My Business";
+  return "My Workspace";
 }
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [businessName, setBusinessName] = useState("My Business");
+  const [businessName, setBusinessName] = useState("My Workspace");
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const inboxUnread = MOCK_INBOX_THREADS.filter((t) => t.unread).length;
 

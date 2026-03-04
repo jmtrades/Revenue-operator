@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { PRICING_TIERS, ROUTES } from "@/lib/constants";
 
 const TIER_ROI: Record<string, string> = {
-  Starter: "Less than one missed service call",
+  Starter: "Less than one missed call",
   Growth: "One recovered lead pays for the month",
   Scale: "Replace a receptionist for a fraction of the cost",
   Enterprise: "Custom ROI and dedicated support",

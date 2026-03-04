@@ -5,9 +5,12 @@ import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
 const BLOG_POSTS = [
+  { slug: "how-ai-phone-agents-work", title: "How AI phone agents work (and why they don't sound like robots)", excerpt: "Modern voice AI sounds natural and handles real conversations. Here's how it works and why callers often can't tell the difference.", date: "February 2026" },
+  { slug: "5-signs-losing-revenue-missed-calls", title: "5 signs you're losing revenue to missed calls", excerpt: "If you're missing calls, you're missing revenue. Learn the warning signs and what to do about them.", date: "February 2026" },
+  { slug: "recall-touch-vs-hiring", title: "Recall Touch vs hiring: the real cost comparison", excerpt: "How the cost of a 24/7 AI phone agent stacks up against hiring and retaining a human receptionist or SDR.", date: "March 2026" },
+  { slug: "setup-guide-5-minutes", title: "Setup guide: Go live in 5 minutes", excerpt: "Get your AI phone agent answering calls in under 5 minutes. Step-by-step with no technical setup required.", date: "March 2026" },
   { slug: "why-missed-calls-cost-more", title: "Why missed calls cost more than you think", excerpt: "Every unanswered call is a potential customer walking to a competitor. This piece breaks down the real cost of missed calls and how to fix it.", date: "March 2026" },
   { slug: "speed-to-lead-60-second-rule", title: "Speed-to-lead: the 60-second rule", excerpt: "Responding within 60 seconds can dramatically increase your chance of closing. Here's why speed matters and how to get there.", date: "March 2026" },
-  { slug: "voice-agent-vs-receptionist-cost", title: "Voice agent vs receptionist: the real cost comparison", excerpt: "How the cost of a 24/7 voice agent stacks up against hiring and retaining a human receptionist.", date: "March 2026" },
 ];
 
 export default function BlogPage() {

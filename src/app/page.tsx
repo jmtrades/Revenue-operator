@@ -5,7 +5,7 @@ import { HomepageActivitySection } from "@/components/sections/HomepageActivityS
 import { HomepageLiveDemo } from "@/components/sections/HomepageLiveDemo";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Features } from "@/components/sections/Features";
-import { Industries } from "@/components/sections/Industries";
+import { WhoUsesSection } from "@/components/sections/WhoUsesSection";
 import { MetricsSection } from "@/components/sections/MetricsSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { PricingPreview } from "@/components/sections/PricingPreview";
@@ -29,7 +29,7 @@ export default function HomePage() {
         <ProblemStatement />
         <HowItWorks />
         <Features />
-        <Industries />
+        <WhoUsesSection />
         <MetricsSection />
         <TestimonialsSection />
         <PricingPreview />

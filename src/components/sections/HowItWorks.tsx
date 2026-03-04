@@ -11,19 +11,19 @@ const steps = [
     num: 1,
     icon: Link2,
     title: "Connect",
-    desc: "Forward your business number or get a new one.",
+    desc: "Forward your number or get a new one. Any carrier. Any phone.",
   },
   {
     num: 2,
     icon: Brain,
-    title: "Teach",
-    desc: "Tell us your services, hours, and how you want calls handled. Or paste your website — we'll figure it out.",
+    title: "Configure",
+    desc: "Tell your AI what to do: answer calls, book appointments, follow up, qualify leads, or all of it. Use a template or start from scratch.",
   },
   {
     num: 3,
     icon: Sparkles,
-    title: "Relax",
-    desc: "Every call answered. Every lead captured. Every appointment booked. Check your phone when you're ready.",
+    title: "Done",
+    desc: "Every call answered. Every lead captured. Every follow-up sent.",
   },
 ];
 
@@ -45,7 +45,7 @@ export function HowItWorks() {
             className="font-semibold max-w-2xl mx-auto"
             style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}
           >
-            Setup takes 5 minutes. Then it runs itself.
+            Three steps. Then it runs.
           </h2>
         </AnimateOnScroll>
         <div className="max-w-[900px] mx-auto">

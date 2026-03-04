@@ -36,24 +36,24 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — AI Phone System for Every Business",
+    default: "Recall Touch — AI Phone System",
   },
   description:
-    "Your AI phone team. Answer every call 24/7, follow up with leads in 60 seconds, book appointments, and never miss a customer. Set up in 5 minutes.",
+    "Your phone calls. Handled. AI that answers, follows up, books, and never drops the ball. For businesses, teams, and anyone who can't afford to miss a call.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://recall-touch.com",
     siteName: "Recall Touch",
-    title: "Recall Touch — AI Phone System for Every Business",
-    description: "Your AI phone team. Answer every call 24/7, follow up with leads in 60 seconds, book appointments. Set up in 5 minutes.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Phone System for Every Business" }],
+    title: "Recall Touch — AI Phone System",
+    description: "Your phone calls. Handled. AI that answers, follows up, books. Set up in 5 minutes.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Phone System" }],
   },
   icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — AI Phone System for Every Business",
-    description: "Your AI phone team. Answer every call 24/7. Set up in 5 minutes.",
+    title: "Recall Touch — AI Phone System",
+    description: "Your phone calls. Handled. Set up in 5 minutes.",
   },
   manifest: "/manifest.json",
 };

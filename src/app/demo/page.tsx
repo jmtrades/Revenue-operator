@@ -7,8 +7,8 @@ import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 
 export const metadata = {
-  title: "Demo",
-  description: "Talk to the agent and watch a sample call.",
+  title: "Try the AI",
+  description: "Talk to your AI. Right now. Same AI that handles real calls.",
 };
 
 export default function DemoPage() {
