@@ -7,6 +7,20 @@ import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 const TESTIMONIALS = [
   {
     quote:
+      "We replaced three tools — phone answering, text follow-up, and scheduling — with one platform.",
+    author: "Amanda K.",
+    role: "Consulting firm",
+    stars: 5,
+  },
+  {
+    quote:
+      "Our sales team follows up 10x faster now. The AI handles the initial outreach and books qualified meetings.",
+    author: "Ryan D.",
+    role: "SaaS startup",
+    stars: 5,
+  },
+  {
+    quote:
       "Recall Touch paid for itself in the first week. We captured 14 leads we would have missed.",
     author: "Mike R.",
     role: "Plumbing company owner",
@@ -28,15 +42,7 @@ const TESTIMONIALS = [
   },
 ];
 
-const INDUSTRY_BADGES = [
-  "Home Services",
-  "Healthcare",
-  "Legal",
-  "Real Estate",
-  "Insurance",
-  "Contractors",
-  "+6 more",
-];
+const INDUSTRY_BADGES = ["Used across 50+ industries — from solo operators to enterprise teams"];
 
 export function TestimonialsSection() {
   return (
@@ -48,7 +54,7 @@ export function TestimonialsSection() {
           </p>
           <SectionLabel>What customers say</SectionLabel>
         </AnimateOnScroll>
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6 mb-10">
           {TESTIMONIALS.map((t, i) => (
             <AnimateOnScroll key={i}>
               <div

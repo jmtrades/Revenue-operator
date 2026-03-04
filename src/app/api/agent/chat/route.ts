@@ -8,18 +8,18 @@ const DEMO_SYSTEM =
 const AGENTS: Record<string, { name: string; style: string; greeting: string }> = {
   sarah: {
     name: "Recall Touch",
-    style: "versatile demo agent",
-    greeting: "Hi! This is the Recall Touch demo. I can be your receptionist for any kind of business — just tell me what you need. What can I help you with?",
+    style: "professional, formal tone",
+    greeting: "Hello. Thanks for calling. How can I help you today?",
   },
   alex: {
     name: "Recall Touch",
-    style: "versatile demo agent",
-    greeting: "Hi! This is the Recall Touch demo. I can be your receptionist for any kind of business — just tell me what you need. What can I help you with?",
+    style: "friendly, casual tone",
+    greeting: "Hi there! Thanks for reaching out. What can I do for you?",
   },
   emma: {
     name: "Recall Touch",
-    style: "versatile demo agent",
-    greeting: "Hi! This is the Recall Touch demo. I can be your receptionist for any kind of business — just tell me what you need. What can I help you with?",
+    style: "concise, brief and efficient",
+    greeting: "Hi. How can I help?",
   },
 };
 

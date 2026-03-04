@@ -13,7 +13,7 @@ const DEMO_SCRIPTS: DemoScript[] = [
   {
     title: "Inbound Lead (Plumber)",
     lines: [
-      { role: "ai", text: "Thanks for calling Riverside Plumbing! This is Sarah. How can I help?" },
+      { role: "ai", text: "Thanks for calling! How can I help you today?" },
       { role: "caller", text: "Yeah hi, I've got a leak under my kitchen sink." },
       { role: "ai", text: "I can help with that. Can I get your name?" },
       { role: "caller", text: "Mike Johnson." },

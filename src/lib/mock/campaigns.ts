@@ -28,7 +28,7 @@ export interface Campaign {
 export const MOCK_CAMPAIGNS: Campaign[] = [
   {
     id: "cmp-1",
-    name: "Spring HVAC Tune-Up",
+    name: "Spring Re-engagement Campaign",
     status: "Active",
     type: "Outbound calls",
     audience: 250,
@@ -61,7 +61,7 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
   },
   {
     id: "cmp-2",
-    name: "Dental Recall - Overdue Patients",
+    name: "Overdue Client Follow-Up",
     status: "Active",
     type: "SMS + Call",
     audience: 120,

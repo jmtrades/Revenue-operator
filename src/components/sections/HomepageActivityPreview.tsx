@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 
 const CARDS = [
-  { id: "1", type: "lead" as const, name: "Mike Johnson", time: "9:14 AM", summary: "Kitchen sink leak", outcome: "✅ Booked 10 AM" },
-  { id: "2", type: "appointment" as const, name: "Sarah Chen", time: "9:31 AM", summary: "Dental cleaning — Dr. Martinez", outcome: "✅ Tue 9 AM" },
-  { id: "3", type: "follow-up" as const, name: "James Wilson", time: "10:02 AM", summary: "Roof estimate — storm damage", outcome: "✅ Tomorrow 3 PM" },
+  { id: "1", type: "lead" as const, name: "Alex Rivera", time: "9:14 AM", summary: "Scheduling consultation", outcome: "✅ Booked 2 PM" },
+  { id: "2", type: "appointment" as const, name: "Sarah Chen", time: "9:31 AM", summary: "Pricing question", outcome: "✅ Info sent via text" },
+  { id: "3", type: "follow-up" as const, name: "James Wilson", time: "10:02 AM", summary: "Callback request", outcome: "✅ Follow-up in 30 min" },
 ];
 
 const CARD_STYLES: Record<string, { border: string; badge: string }> = {

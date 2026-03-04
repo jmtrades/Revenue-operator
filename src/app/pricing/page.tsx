@@ -6,7 +6,7 @@ export { ANNUAL_NOTE, pricingCopyForTests };
 
 export const metadata = {
   title: "Pricing",
-  description: "Plans that pay for themselves in a single saved call. Starter, Growth, Scale, and Enterprise.",
+  description: "Simple pricing for AI phone communication. From $79/month. Answer calls, send texts, book appointments, and follow up automatically.",
 };
 
 export default function PricingPage() {

@@ -24,6 +24,9 @@ export function FinalCTA() {
               Book a demo →
             </Link>
           </div>
+          <p className="text-sm mt-4" style={{ color: "var(--text-tertiary)" }}>
+            Works for calls, texts, scheduling, follow-ups, and campaigns. One platform.
+          </p>
           <p className="text-sm mt-6" style={{ color: "var(--text-tertiary)" }}>
             <Link href={ROUTES.DOCS} className="underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded" style={{ color: "var(--text-tertiary)" }}>View documentation</Link>
           </p>

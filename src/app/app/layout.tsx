@@ -133,7 +133,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <WorkspaceProvider>
     <OnboardingStepProvider>
-      <div className="min-h-screen bg-black flex flex-col pb-20 md:pb-0">
+      <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#0a0f1e" }}>
         <div
           className="shrink-0 py-2 px-4 flex items-center justify-center gap-2 flex-wrap text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
           role="status"
@@ -197,7 +197,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </aside>
         )}
-        <main id="main" className="flex-1 overflow-auto min-w-0 bg-black" tabIndex={-1}>{children}</main>
+        <main id="main" className="flex-1 overflow-auto min-w-0" style={{ background: "#0a0f1e" }} tabIndex={-1}>{children}</main>
       </div>
       {!isOnboarding && (
         <>
@@ -284,7 +284,7 @@ function OnboardingSidebar() {
       const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
       if (raw) {
         const d = JSON.parse(raw) as { businessName?: string };
-        return d?.businessName?.trim() || "Recall Touch";
+        return d?.businessName?.trim() || "My Workspace";
       }
     } catch { /* ignore */ }
     return "Recall Touch";

@@ -79,7 +79,7 @@ export const PRICING_TIERS = [
     priceMonthly: "$399",
     priceAnnual: "$333",
     period: "/mo",
-    description: "Replace a receptionist for a fraction of the cost",
+    description: "Full AI phone team for a fraction of one hire",
     features: [
       "5,000 inbound min included",
       "2,000 outbound calls",
@@ -130,6 +130,14 @@ export const FOOTER_COMPANY = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
+export const FOOTER_USE_CASES = [
+  { label: "Inbound Calls", href: "/product#answers-every-call" },
+  { label: "Outbound Campaigns", href: "/product#outbound" },
+  { label: "Appointment Scheduling", href: "/product#appointments" },
+  { label: "Lead Follow-Up", href: "/product#leads" },
+  { label: "After-Hours Coverage", href: "/product" },
+] as const;
+
 export const FOOTER_LEGAL = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
@@ -154,8 +162,12 @@ export const COMPARISON_FEATURES = [
   { category: "Core", name: "Inbound min/mo", starter: "400", professional: "1,500", business: "5,000", enterprise: "Custom" },
   { category: "Core", name: "AI agents", starter: "1", professional: "3", business: "Unlimited", enterprise: "Custom" },
   { category: "Core", name: "Outbound calls/mo", starter: "50", professional: "500", business: "2,000", enterprise: "Custom" },
+  { category: "Core", name: "SMS included", starter: "100", professional: "500", business: "Unlimited", enterprise: "Custom" },
+  { category: "Features", name: "Inbox (unified messaging)", starter: "✓", professional: "✓", business: "✓", enterprise: "✓" },
+  { category: "Features", name: "Knowledge base", starter: "✓", professional: "✓", business: "✓", enterprise: "✓" },
   { category: "Features", name: "Appointment booking", starter: "—", professional: "✓", business: "✓", enterprise: "✓" },
   { category: "Features", name: "Outbound campaigns", starter: "—", professional: "✓", business: "✓", enterprise: "✓" },
+  { category: "Features", name: "API access", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
   { category: "Features", name: "Compliance export", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
   { category: "Support", name: "Priority support", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
 ] as const;

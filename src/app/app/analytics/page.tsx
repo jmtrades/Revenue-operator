@@ -114,16 +114,17 @@ export default function AppAnalyticsPage() {
 
   const estRevenueImpact = appointments * 250;
 
+  const hasData = totalCalls > 0 || leads.length > 0;
   const summaryCards = [
     {
       label: "Total calls",
       value: totalCalls.toString(),
-      trend: "+12% vs prior period",
+      trend: hasData ? "+12% vs prior period" : "No data yet",
     },
     {
       label: "Avg handle time",
       value: formatDuration(avgHandleTime),
-      trend: "Stable",
+      trend: hasData ? "Stable" : "No data yet",
     },
     {
       label: "Lead conversion",
@@ -131,17 +132,17 @@ export default function AppAnalyticsPage() {
         totalCalls === 0
           ? "0%"
           : `${Math.round((callsWithLead / totalCalls) * 100)}%`,
-      trend: "+8% vs prior period",
+      trend: hasData ? "+8% vs prior period" : "No data yet",
     },
     {
       label: "Appointments booked",
       value: appointments.toString(),
-      trend: "+5 this month",
+      trend: hasData ? "+5 this month" : "No data yet",
     },
     {
       label: "Est. revenue impact",
       value: `$${estRevenueImpact.toLocaleString()}`,
-      trend: "+19% vs prior period",
+      trend: hasData ? "+19% vs prior period" : "No data yet",
     },
   ];
 

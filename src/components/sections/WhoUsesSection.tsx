@@ -23,7 +23,7 @@ export function WhoUsesSection() {
         <AnimateOnScroll className="text-center mb-16">
           <SectionLabel>Who uses Recall Touch</SectionLabel>
           <h2 className="font-semibold max-w-2xl mx-auto" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}>
-            For everyone who uses a phone
+            Built for how you communicate
           </h2>
         </AnimateOnScroll>
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
