@@ -17,15 +17,21 @@ type Appointment = {
 
 const STORAGE_KEY = "rt_calendar";
 
+const DEMO_APPOINTMENTS: Appointment[] = [
+  { id: "apt-demo-1", contact: "Mike Johnson", service: "Plumbing — sink", date: new Date().toISOString().slice(0, 10), time: "10:00", durationMinutes: 60, status: "confirmed" },
+  { id: "apt-demo-2", contact: "Sarah Chen", service: "Dental cleaning", date: new Date(Date.now() + 86400000).toISOString().slice(0, 10), time: "09:00", durationMinutes: 45, status: "confirmed" },
+  { id: "apt-demo-3", contact: "James Wilson", service: "Roof estimate", date: new Date(Date.now() + 172800000).toISOString().slice(0, 10), time: "15:00", durationMinutes: 90, status: "pending" },
+];
+
 function loadAppointments(): Appointment[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) return DEMO_APPOINTMENTS;
     const parsed = JSON.parse(raw) as Appointment[];
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEMO_APPOINTMENTS;
   } catch {
-    return [];
+    return DEMO_APPOINTMENTS;
   }
 }
 
@@ -41,7 +47,7 @@ function saveAppointments(next: Appointment[]) {
 export default function AppCalendarPage() {
   const [view, setView] = useState<"week" | "month">("week");
   const [appointments, setAppointments] = useState<Appointment[]>(() =>
-    typeof window === "undefined" ? [] : loadAppointments(),
+    typeof window === "undefined" ? DEMO_APPOINTMENTS : loadAppointments(),
   );
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [showNew, setShowNew] = useState(false);

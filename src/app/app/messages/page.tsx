@@ -12,11 +12,16 @@ type Thread = {
   messages: Array<{ id: string; from: "ai" | "user"; text: string; time: string }>;
 };
 
+const DEMO_THREADS: Thread[] = [
+  { id: "msg-demo-1", name: "Mike Johnson", preview: "Thanks, I'll be there at 10 AM.", time: "9:14 AM", unread: false, messages: [{ id: "m1", from: "ai", text: "Your 10 AM appointment is confirmed.", time: "9:12 AM" }, { id: "m2", from: "user", text: "Thanks, I'll be there at 10 AM.", time: "9:14 AM" }] },
+  { id: "msg-demo-2", name: "Sarah Chen", preview: "See you Tuesday.", time: "Yesterday", unread: true, messages: [{ id: "m3", from: "ai", text: "Reminder: Dental cleaning Tue 9 AM.", time: "Yesterday" }, { id: "m4", from: "user", text: "See you Tuesday.", time: "Yesterday" }] },
+];
+
 export default function AppMessagesPage() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(DEMO_THREADS[0]?.id ?? null);
   const [input, setInput] = useState("");
   const [autoReply, setAutoReply] = useState(true);
-  const [threads, setThreads] = useState<Thread[]>([]);
+  const [threads, setThreads] = useState<Thread[]>(DEMO_THREADS);
 
   const active = threads.find((t) => t.id === selected) ?? threads[0] ?? null;
 

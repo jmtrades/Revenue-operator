@@ -23,15 +23,19 @@ type Campaign = {
 
 const STORAGE_KEY = "rt_campaigns";
 
+const DEMO_CAMPAIGNS: Campaign[] = [
+  { id: "cmp-demo-1", name: "Post-visit follow-up", type: "follow_up", agentName: "Receptionist", status: "Active", sent: 12, total: 24, dateRange: "This week", audienceSummary: "All contacts", scheduleSummary: "Mon–Fri · 9am–5pm · max 25/day" },
+];
+
 function loadCampaigns(): Campaign[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) return DEMO_CAMPAIGNS;
     const parsed = JSON.parse(raw) as Campaign[];
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEMO_CAMPAIGNS;
   } catch {
-    return [];
+    return DEMO_CAMPAIGNS;
   }
 }
 

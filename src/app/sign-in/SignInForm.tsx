@@ -37,6 +37,10 @@ export default function SignInForm() {
     e.preventDefault();
     if (!email.trim() || loading) return;
     const trimmed = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -85,12 +89,12 @@ export default function SignInForm() {
         if (result.error) setError(result.error.message);
       });
     } else {
-      setToast("Coming soon");
+      setToast("Google sign-in is unavailable.");
     }
   };
 
   const handleForgotPassword = () => {
-    setToast("Reset link sent");
+    setToast("Check your email.");
   };
 
   return (
@@ -109,9 +113,12 @@ export default function SignInForm() {
                 type="email"
                 placeholder="you@company.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setError(null); }}
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
                 required
+                aria-invalid={!!error}
+                aria-describedby={error ? "signin-error" : undefined}
+                autoComplete="email"
               />
             </div>
             <div>
@@ -159,14 +166,14 @@ export default function SignInForm() {
             Continue with Google
           </button>
           <p className="text-center">
-            <button type="button" onClick={handleForgotPassword} className="text-xs text-zinc-500 hover:text-zinc-400">
+            <button type="button" onClick={handleForgotPassword} className="text-xs text-zinc-500 hover:text-zinc-400" aria-label="Forgot password? We will send reset instructions to your email.">
               Forgot password?
             </button>
           </p>
         </>
       )}
       {error && (
-        <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-center">
+        <div id="signin-error" role="alert" className="rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-center">
           <p className="text-sm text-red-200">{error}</p>
           {error.includes("No account") && (
             <Link href="/activate" className="inline-block mt-2 text-sm font-medium text-white underline">

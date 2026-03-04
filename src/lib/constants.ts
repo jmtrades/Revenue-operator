@@ -98,6 +98,7 @@ export const PRICING_TIERS = [
 ] as const;
 
 export const FOOTER_PRODUCT = [
+  { label: "Book a demo", href: "/demo" },
   { label: "Features", href: "/product" },
   { label: "Pricing", href: "/pricing" },
   { label: "Documentation", href: "/docs" },

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { speakText } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
+import { LiveAgentChat } from "@/components/LiveAgentChat";
 
 type VoiceId =
   | "warm_female"
@@ -926,6 +927,13 @@ function RulesTab({ agent, onChange }: { agent: Agent; onChange: (partial: Parti
   );
 }
 
+function agentNameToId(name: string): "sarah" | "alex" | "emma" {
+  const n = (name || "").trim().toLowerCase();
+  if (n === "alex") return "alex";
+  if (n === "emma") return "emma";
+  return "sarah";
+}
+
 function TestTab({ agent }: { agent: Agent }) {
   const [playing, setPlaying] = useState(false);
   const [step, setStep] = useState(0);
@@ -958,6 +966,21 @@ function TestTab({ agent }: { agent: Agent }) {
 
   return (
     <div className="space-y-4 text-xs md:text-sm">
+      <p className="text-[11px] text-zinc-500">
+        Talk to this agent to test how it responds with your greeting and style.
+      </p>
+      <div className="rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-900/50">
+        <LiveAgentChat
+          variant="mini"
+          initialAgent={agentNameToId(agent.name)}
+          businessName={agent.websiteUrl || undefined}
+          greeting={agent.greeting}
+          personality={agent.personality}
+          callStyle={agent.callStyle}
+          showVoiceToggle={false}
+          showMic={true}
+        />
+      </div>
       <p className="text-[11px] text-zinc-500">
         Quick simulated call so you can hear how this agent greets and handles a simple enquiry.
       </p>
