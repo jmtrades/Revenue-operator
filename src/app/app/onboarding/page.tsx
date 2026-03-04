@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useOnboardingStep } from "../OnboardingStepContext";
 import { speakText } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
+import { LiveAgentChat } from "@/components/LiveAgentChat";
 
 const STEPS = 5;
 const INDUSTRIES = [
@@ -40,6 +41,14 @@ const CALL_STYLES = [
   { id: "conversational", label: "Conversational", desc: "Natural back-and-forth, brief confirmations" },
   { id: "quick", label: "Quick", desc: "Gets to the point, minimal small talk" },
 ] as const;
+
+type AgentId = "sarah" | "alex" | "emma";
+function agentNameToId(name: string): AgentId {
+  const n = (name || "Sarah").trim().toLowerCase();
+  if (n === "alex") return "alex";
+  if (n === "emma") return "emma";
+  return "sarah";
+}
 
 function getSignupPrefill(): { businessName?: string; industry?: string; website?: string } {
   if (typeof window === "undefined") return {};
@@ -377,6 +386,19 @@ export default function AppOnboardingPage() {
             <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
               <p className="text-xs font-medium text-zinc-400 mb-1">How {agentName} will handle a call</p>
               <p className="text-sm text-zinc-300">{scriptPreviewText}</p>
+            </div>
+            <div className="rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-900/50">
+              <p className="text-xs font-medium text-zinc-400 px-4 pt-3 pb-1">Try talking to {agentName}</p>
+              <LiveAgentChat
+                variant="mini"
+                initialAgent={agentNameToId(agentName)}
+                businessName={businessName || undefined}
+                greeting={greeting.trim() || undefined}
+                personality={personality}
+                callStyle={callStyle}
+                showVoiceToggle={false}
+                showMic={true}
+              />
             </div>
             <div className="flex gap-2">
               <button

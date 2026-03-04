@@ -139,22 +139,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </aside>
         )}
-        <main className="flex-1 overflow-auto min-w-0 bg-black">{children}</main>
+        <main id="main" className="flex-1 overflow-auto min-w-0 bg-black" tabIndex={-1}>{children}</main>
       </div>
       {!isOnboarding && (
         <nav
-          className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around py-2 bg-zinc-950 border-t border-zinc-800 safe-area-pb"
+          className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-zinc-950 border-t border-zinc-800 safe-area-pb"
           aria-label="Mobile navigation"
         >
           {MOBILE_TABS.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
-              className={`flex flex-col items-center gap-0.5 py-1 px-2 min-w-0 flex-1 text-center ${
+              className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation ${
                 isActive(href) ? "text-white" : "text-zinc-500"
               }`}
+              aria-current={isActive(href) ? "page" : undefined}
             >
-              <Icon className="w-5 h-5" strokeWidth={1.5} />
+              <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
               <span className="text-[10px] font-medium">{label}</span>
             </Link>
           ))}

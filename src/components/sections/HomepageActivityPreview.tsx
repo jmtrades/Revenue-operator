@@ -26,7 +26,7 @@ export function HomepageActivityPreview() {
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     CARDS.forEach((_, i) => {
-      timers.push(setTimeout(() => setVisible((v) => [...v, i]), 200 + i * 150));
+      timers.push(setTimeout(() => setVisible((v) => [...v, i]), 400 + i * 600));
     });
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -70,7 +70,7 @@ export function HomepageActivityPreview() {
                   visible.includes(i) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
                 }`}
                 style={{
-                  transitionDelay: visible.includes(i) ? `${i * 150}ms` : "0ms",
+                  transitionDelay: visible.includes(i) ? `${i * 100}ms` : "0ms",
                 }}
               >
                 <div className="p-3 sm:p-4 flex items-start justify-between gap-2">

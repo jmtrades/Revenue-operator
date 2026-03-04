@@ -5,10 +5,11 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
-import { ActivityFeedMockup } from "./ActivityFeedMockup";
+import { HomepageActivityPreview } from "./HomepageActivityPreview";
 import { ROUTES } from "@/lib/constants";
 import { speakText } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
+import { LiveAgentChat } from "@/components/LiveAgentChat";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -78,7 +79,7 @@ export function Hero() {
             Start free — 5 minute setup →
           </Link>
           <Link href={ROUTES.DEMO} className="btn-marketing-ghost btn-lg no-underline w-full sm:w-auto text-center inline-flex items-center justify-center gap-2">
-            Hear a live demo ▶
+            Hear a demo ▶
           </Link>
         </motion.div>
         <motion.div
@@ -113,6 +114,19 @@ export function Hero() {
         </motion.p>
 
         <motion.div
+          className="mt-10 max-w-2xl mx-auto text-left"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.45 }}
+        >
+          <p className="text-lg font-semibold text-white text-center">Talk to Sarah right now</p>
+          <p className="text-sm text-zinc-400 text-center mt-1 mb-4">
+            She&apos;s our receptionist. Try asking about plumbing services.
+          </p>
+          <LiveAgentChat variant="homepage" initialAgent="sarah" />
+        </motion.div>
+
+        <motion.div
           className="mt-12 md:mt-16 relative"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -126,7 +140,7 @@ export function Hero() {
             }}
           />
           <div className="lg:[transform:perspective(2000px)_rotateX(2deg)]" aria-hidden="true">
-            <ActivityFeedMockup />
+            <HomepageActivityPreview />
           </div>
         </motion.div>
       </Container>
