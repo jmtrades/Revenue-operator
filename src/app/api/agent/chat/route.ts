@@ -93,7 +93,7 @@ THIS IS A PHONE CALL. Rules:
 - For emergencies (flooding, burst pipe, gas): "That sounds urgent — what's your address? I'll get someone out right away."
 - If asked about pricing: "We do free estimates. Want me to get one scheduled?"
 - Only if directly asked if you're AI: "I'm an AI assistant for ${name}, but I handle everything a receptionist would."
-- Business: ${name}. Services: ${services}. Hours: ${hours}. Area: ${area}.`,
+- Business: ${name}. Services: ${services}. Hours: ${hours}. Area: ${area}. Pricing: ${pricing}.`,
         messages,
       }),
     });

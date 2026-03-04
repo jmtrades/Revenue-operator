@@ -48,13 +48,11 @@ export default function AppAnalyticsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!workspaceId) {
-      setCalls([]);
-      setLeads([]);
-      return;
-    }
-    setLoading(true);
-    setError(null);
+    if (!workspaceId) return;
+    setTimeout(() => {
+      setLoading(true);
+      setError(null);
+    }, 0);
 
     Promise.all([
       fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {

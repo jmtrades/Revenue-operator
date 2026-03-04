@@ -80,9 +80,9 @@ export function LiveAgentChat(props: {
   const MAX_EXCHANGES = 20;
   const atLimit = messages.length >= MAX_EXCHANGES;
 
-  const statusDot = "bg-green-500";
+  const _statusDot = "bg-green-500";
 
-  const requestPayload = useMemo(
+  const _requestPayload = useMemo(
     () => ({
       agent,
       businessName,

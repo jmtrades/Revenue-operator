@@ -53,7 +53,7 @@ export function Hero() {
               animate={fadeUp.animate}
               transition={{ ...fadeUp.transition, delay: 0.05 }}
             >
-              Every call answered. Every lead captured. Every dollar tracked.
+              Your AI phone team. Always on. Always perfect.
             </motion.h1>
             <motion.p
               className="text-base md:text-lg max-w-lg mb-6"
