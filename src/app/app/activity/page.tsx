@@ -96,10 +96,7 @@ export default function AppActivityPage() {
   }, []);
 
   useEffect(() => {
-    if (!workspaceId) {
-      setCards([]);
-      return;
-    }
+    if (!workspaceId) return;
     setLoading(true);
     fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
@@ -207,6 +204,19 @@ export default function AppActivityPage() {
     }
   }
 
+  const filtered = useMemo(() => {
+    if (filter === "all") return cards;
+    if (filter === "leads") return cards.filter((c) => c.type === "lead");
+    if (filter === "appointments")
+      return cards.filter((c) => c.type === "appointment");
+    if (filter === "urgent") return cards.filter((c) => c.type === "urgent");
+    if (filter === "needs_action")
+      return cards.filter(
+        (c) => c.type === "lead" || c.type === "urgent",
+      );
+    return cards;
+  }, [cards, filter]);
+
   if (!mounted) {
     return (
       <div className="max-w-[600px] mx-auto p-4 md:p-6">
@@ -221,19 +231,6 @@ export default function AppActivityPage() {
       </div>
     );
   }
-
-  const filtered = useMemo(() => {
-    if (filter === "all") return cards;
-    if (filter === "leads") return cards.filter((c) => c.type === "lead");
-    if (filter === "appointments")
-      return cards.filter((c) => c.type === "appointment");
-    if (filter === "urgent") return cards.filter((c) => c.type === "urgent");
-    if (filter === "needs_action")
-      return cards.filter(
-        (c) => c.type === "lead" || c.type === "urgent",
-      );
-    return cards;
-  }, [cards, filter]);
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">

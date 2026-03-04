@@ -56,16 +56,15 @@ export default function AppCallDetailPage() {
   const { workspaceId } = useWorkspace();
   const id = typeof params.id === "string" ? params.id : "";
   const [call, setCall] = useState<CallDetail | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id || !workspaceId) {
-      if (!workspaceId) setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
+    if (!id || !workspaceId) return;
+    setTimeout(() => {
+      setLoading(true);
+      setError(null);
+    }, 0);
     fetch(`/api/calls/${id}?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })

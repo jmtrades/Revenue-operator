@@ -1,15 +1,15 @@
-\"use client\";
+"use client";
 
-import { useEffect, useMemo, useState } from \"react\";
-import { useRouter } from \"next/navigation\";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Users,
   Search,
   Filter,
   X,
   ChevronRight,
-} from \"lucide-react\";
-import { useWorkspace } from \"@/components/WorkspaceContext\";
+} from "lucide-react";
+import { useWorkspace } from "@/components/WorkspaceContext";
 
 interface ApiLead {
   id: string;
@@ -25,6 +25,9 @@ interface ApiLead {
 
 type ViewMode = "table" | "board";
 type ScoreBucket = "all" | "high" | "medium" | "low";
+
+type LeadStatus = "New" | "Contacted" | "Qualified" | "Appointment Set" | "Won" | "Lost";
+type LeadSource = "Inbound Call" | "Outbound Outreach" | "Website" | "Referral";
 
 const STATUS_ORDER: LeadStatus[] = [
   "New",
@@ -101,12 +104,11 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState<LeadView[]>([]);
 
   useEffect(() => {
-    if (!workspaceId) {
-      setLeads([]);
-      return;
-    }
-    setLoading(true);
-    setError(null);
+    if (!workspaceId) return;
+    setTimeout(() => {
+      setLoading(true);
+      setError(null);
+    }, 0);
     fetch(`/api/leads?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -203,7 +205,7 @@ export default function LeadsPage() {
   }, [leads, search, sort, sourceFilter, scoreFilter, statusFilter]);
 
   const groupedByStatus = useMemo(() => {
-    const map = new Map<LeadStatus, MockLead[]>();
+    const map = new Map<LeadStatus, LeadView[]>();
     STATUS_ORDER.forEach((s) => map.set(s, []));
     filteredLeads.forEach((lead) => {
       const arr = map.get(lead.status);
@@ -268,7 +270,7 @@ export default function LeadsPage() {
     return SCORE_COLORS[bucket];
   };
 
-  const sources: LeadSource[] = ["Inbound Call", "Outbound Campaign", "Website", "Referral"];
+  const sources: LeadSource[] = ["Inbound Call", "Outbound Outreach", "Website", "Referral"];
 
   return (
     <>

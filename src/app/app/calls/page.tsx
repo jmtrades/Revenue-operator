@@ -1,13 +1,13 @@
-\"use client\";
+"use client";
 
-import { useEffect, useMemo, useState } from \"react\";
-import { useRouter } from \"next/navigation\";
-import { Search, ChevronLeft, ChevronRight, PhoneCall } from \"lucide-react\";
-import { useWorkspace } from \"@/components/WorkspaceContext\";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
+import { useWorkspace } from "@/components/WorkspaceContext";
 
-type CallType = \"inbound\" | \"outbound\" | null;
-type CallOutcome = \"appointment\" | \"lead\" | \"info\" | \"transfer\" | \"voicemail\" | null;
-type CallSentiment = \"positive\" | \"neutral\" | \"negative\" | null;
+type CallType = "inbound" | "outbound" | null;
+type CallOutcome = "appointment" | "lead" | "info" | "transfer" | "voicemail" | null;
+type CallSentiment = "positive" | "neutral" | "negative" | null;
 
 interface CallRecord {
   id: string;
@@ -18,11 +18,12 @@ interface CallRecord {
   outcome?: string | null;
   matched_lead?: { name?: string | null; email?: string | null; company?: string | null } | null;
   analysis_outcome?: unknown;
+  started_at?: string | null;
 }
 
 const PAGE_SIZE = 10;
 
-const OUTCOME_LABELS: Record<CallOutcome, string> = {
+const OUTCOME_LABELS: Record<Exclude<CallOutcome, null>, string> = {
   appointment: "Appointment",
   lead: "Lead",
   info: "Info",
@@ -30,18 +31,27 @@ const OUTCOME_LABELS: Record<CallOutcome, string> = {
   voicemail: "Voicemail",
 };
 
-const TYPE_LABELS: Record<CallType, string> = {
+const TYPE_LABELS: Record<Exclude<CallType, null>, string> = {
   inbound: "Inbound",
   outbound: "Outbound",
 };
 
-const SENTIMENT_LABELS: Record<CallSentiment, string> = {
+const SENTIMENT_LABELS: Record<Exclude<CallSentiment, null>, string> = {
   positive: "Positive",
   neutral: "Neutral",
   negative: "Negative",
 };
 
 type SortKey = "newest" | "duration" | "sentiment";
+
+function durationSeconds(c: CallRecord): number {
+  const start = c.call_started_at ?? c.started_at ?? null;
+  const end = c.call_ended_at ?? null;
+  if (!start || !end) return 0;
+  const s = new Date(start).getTime();
+  const e = new Date(end).getTime();
+  return Math.max(0, Math.floor((e - s) / 1000));
+}
 
 export default function CallsPage() {
   const router = useRouter();
@@ -50,18 +60,18 @@ export default function CallsPage() {
   const [error, setError] = useState<string | null>(null);
   const [records, setRecords] = useState<CallRecord[]>([]);
   const [query, setQuery] = useState("");
-  const [outcomeFilter, setOutcomeFilter] = useState<CallOutcome | "all">("all");
-  const [sentimentFilter, setSentimentFilter] = useState<CallSentiment | "all">("all");
+  const [outcomeFilter, setOutcomeFilter] = useState<NonNullable<CallOutcome> | "all">("all");
+  const [sentimentFilter, setSentimentFilter] =
+    useState<NonNullable<CallSentiment> | "all">("all");
   const [sort, setSort] = useState<SortKey>("newest");
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    if (!workspaceId) {
-      setRecords([]);
-      return;
-    }
-    setLoading(true);
-    setError(null);
+    if (!workspaceId) return;
+    setTimeout(() => {
+      setLoading(true);
+      setError(null);
+    }, 0);
     fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -172,7 +182,7 @@ export default function CallsPage() {
           <select
             value={outcomeFilter}
             onChange={(e) => {
-              setOutcomeFilter(e.target.value as CallOutcome | "all");
+              setOutcomeFilter(e.target.value as NonNullable<CallOutcome> | "all");
               setPage(1);
             }}
             className="text-xs md:text-sm rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-zinc-600"
@@ -187,7 +197,7 @@ export default function CallsPage() {
           <select
             value={sentimentFilter}
             onChange={(e) => {
-              setSentimentFilter(e.target.value as CallSentiment | "all");
+              setSentimentFilter(e.target.value as NonNullable<CallSentiment> | "all");
               setPage(1);
             }}
             className="text-xs md:text-sm rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-zinc-600"
@@ -242,6 +252,7 @@ export default function CallsPage() {
               const sentiment =
                 (c.analysis_outcome as { sentiment?: CallSentiment } | undefined)?.sentiment ??
                 null;
+              const kind: Exclude<CallType, null> = "inbound";
               return (
                 <tr
                   key={c.id}
@@ -271,12 +282,12 @@ export default function CallsPage() {
                   </td>
                   <td className="py-3 px-4 text-xs">
                     <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-200">
-                      {TYPE_LABELS[c.type ?? "inbound"]}
+                      {TYPE_LABELS[kind]}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-xs">
                     <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-200">
-                      {OUTCOME_LABELS[c.outcome ?? "lead"]}
+                      {OUTCOME_LABELS[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-xs">
@@ -324,6 +335,7 @@ export default function CallsPage() {
           const sentiment =
             (c.analysis_outcome as { sentiment?: CallSentiment } | undefined)?.sentiment ??
             null;
+          const kind: Exclude<CallType, null> = "inbound";
           return (
             <button
               key={c.id}
@@ -360,10 +372,10 @@ export default function CallsPage() {
               <div className="mt-2 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-[11px] text-zinc-300">
                   <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5">
-                    {TYPE_LABELS[c.type ?? "inbound"]}
+                    {TYPE_LABELS[kind]}
                   </span>
                   <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5">
-                    {OUTCOME_LABELS[c.outcome ?? "lead"]}
+                    {OUTCOME_LABELS[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
                   </span>
                 </div>
                 <span className="text-xs text-zinc-300">

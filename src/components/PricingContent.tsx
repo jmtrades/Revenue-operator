@@ -21,8 +21,6 @@ export function pricingCopyForTests(): string {
   ].join(" ");
 }
 
-const RECALL_TOUCH_STARTER_MONTHLY = 79;
-
 type RoiResult = {
   monthlyRecovered: number;
   annualRecovered: number;
@@ -166,9 +164,9 @@ function ROICalculator({ className = "" }: { className?: string }) {
   );
 }
 
-function UsageEstimator({ className = "" }: { className?: string }) {
-  const [callsPerDay, setCallsPerDay] = useState(10);
-  const [avgMin, setAvgMin] = useState(3);
+function _UsageEstimator({ className = "" }: { className?: string }) {
+  const callsPerDay = 10;
+  const avgMin = 3;
 
   const monthlyMin = Math.round(callsPerDay * 30 * avgMin);
   const recommended = monthlyMin <= 200 ? "Starter" : monthlyMin <= 750 ? "Growth" : monthlyMin <= 2500 ? "Scale" : "Enterprise";
@@ -191,7 +189,7 @@ function UsageEstimator({ className = "" }: { className?: string }) {
           min={5}
           max={100}
           value={callsPerDay}
-          onChange={(e) => setCallsPerDay(Number(e.target.value))}
+          onChange={() => undefined}
           className="flex-1 h-2 rounded-lg"
           style={{ accentColor: "var(--accent-primary)" }}
         />
@@ -215,7 +213,7 @@ function UsageEstimator({ className = "" }: { className?: string }) {
           max={5}
           step={0.5}
           value={avgMin}
-          onChange={(e) => setAvgMin(Number(e.target.value))}
+          onChange={() => undefined}
           className="flex-1 h-2 rounded-lg"
           style={{ accentColor: "var(--accent-primary)" }}
         />
