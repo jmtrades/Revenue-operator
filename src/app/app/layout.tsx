@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutList,
+  PhoneCall,
   Users,
   Bot,
   Megaphone,
@@ -19,19 +20,21 @@ import { OnboardingStepProvider, useOnboardingStep, ONBOARDING_STEP_LABELS } fro
 
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/activity", label: "Activity", icon: LayoutList },
+  { href: "/app/calls", label: "Calls", icon: PhoneCall },
+  { href: "/app/leads", label: "Leads", icon: Users },
+  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/app/contacts", label: "Contacts", icon: Users },
   { href: "/app/agents", label: "Agents", icon: Bot },
   { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/app/messages", label: "Messages", icon: MessageSquare },
   { href: "/app/calendar", label: "Calendar", icon: Calendar },
-  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/app/settings", label: "Settings", icon: Settings },
 ];
 
 const MOBILE_TABS = [
   { href: "/app/activity", label: "Activity", icon: LayoutList },
-  { href: "/app/contacts", label: "Contacts", icon: Users },
-  { href: "/app/agents", label: "Agents", icon: Bot },
+  { href: "/app/calls", label: "Calls", icon: PhoneCall },
+  { href: "/app/leads", label: "Leads", icon: Users },
   { href: "/app/settings", label: "More", icon: Settings },
 ] as const;
 

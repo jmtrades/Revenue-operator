@@ -2,6 +2,7 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { ProblemStatement } from "@/components/sections/ProblemStatement";
 import { HomepageActivitySection } from "@/components/sections/HomepageActivitySection";
+import { HomepageLiveDemo } from "@/components/sections/HomepageLiveDemo";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Features } from "@/components/sections/Features";
 import { Industries } from "@/components/sections/Industries";
@@ -12,6 +13,7 @@ import { EnterpriseComparisonCard } from "@/components/sections/EnterpriseCompar
 import { SocialProof } from "@/components/sections/SocialProof";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Footer } from "@/components/sections/Footer";
+import { VoiceOrb } from "@/components/VoiceOrb";
 
 export default function HomePage() {
   return (
@@ -22,6 +24,7 @@ export default function HomePage() {
       <Navbar />
       <main id="main">
         <Hero />
+        <HomepageLiveDemo />
         <HomepageActivitySection />
         <ProblemStatement />
         <HowItWorks />
@@ -34,6 +37,7 @@ export default function HomePage() {
         <SocialProof />
         <FinalCTA />
       </main>
+      <VoiceOrb />
       <Footer />
     </div>
   );
