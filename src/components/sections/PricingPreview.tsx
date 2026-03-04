@@ -12,7 +12,7 @@ import { PRICING_TIERS, ROUTES } from "@/lib/constants";
 const TIER_ROI: Record<string, string> = {
   Starter: "Less than one missed call",
   Growth: "One recovered lead pays for the month",
-  Scale: "Replace a receptionist for a fraction of the cost",
+  Scale: "Full AI phone team for a fraction of one hire",
   Enterprise: "Custom ROI and dedicated support",
 };
 
@@ -24,7 +24,7 @@ export function PricingPreview() {
         <AnimateOnScroll className="text-center mb-16">
           <SectionLabel>Pricing</SectionLabel>
           <h2 className="font-semibold max-w-2xl mx-auto" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}>
-            Less than one missed call a month.
+            Plans that pay for themselves.
           </h2>
         </AnimateOnScroll>
         <div className="flex items-center justify-center gap-3 mb-10">

@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     default: "Recall Touch — AI Phone System",
   },
   description:
-    "Your phone calls. Handled. AI that answers, follows up, books, and never drops the ball. For businesses, teams, and anyone who can't afford to miss a call.",
+    "Recall Touch is the AI phone system that handles your calls, texts, follow-ups, and scheduling automatically. Works with any number. Set up in 5 minutes.",
   openGraph: {
     type: "website",
     locale: "en_US",

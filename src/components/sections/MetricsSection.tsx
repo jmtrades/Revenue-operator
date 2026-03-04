@@ -7,7 +7,8 @@ import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 const WHAT_IF_ITEMS = [
   { value: "$126K", label: "Average revenue lost per year to missed calls", id: "revenue-lost" },
   { value: "100%", label: "Answer rate with Recall Touch (up from ~60% national average)", id: "answer-rate" },
-  { value: "60 sec", label: "Recall Touch follows up on new leads (vs 42-hour industry average)", id: "speed-to-lead" },
+  { value: "60 sec", label: "Average time for Recall Touch to follow up on a new lead via call or text", id: "speed-to-lead" },
+  { value: "1 inbox", label: "All calls, texts, and follow-ups in one place (vs 4+ tools for most teams)", id: "inbox" },
   { value: "5 min", label: "Setup time (vs 6 weeks for enterprise solutions)", id: "setup-time" },
 ];
 
@@ -21,7 +22,7 @@ export function MetricsSection() {
             The numbers that matter
           </h2>
         </AnimateOnScroll>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8">
           {WHAT_IF_ITEMS.map((m) => (
             <AnimateOnScroll key={m.id}>
               <div className="text-center p-6 rounded-xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>

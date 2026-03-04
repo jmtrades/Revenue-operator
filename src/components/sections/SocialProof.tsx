@@ -46,7 +46,7 @@ export function SocialProof() {
           </span>
           <SectionLabel>Founding members</SectionLabel>
           <p className="text-base mb-6 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Launching to the first 100 businesses. Get in early. Lock in founding pricing for life.
+            Launching to the first 100 users. Get in early. Lock in founding pricing for life.
           </p>
           {!submitted ? (
             <form onSubmit={handleEarlyAccess} className="flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto mb-10">

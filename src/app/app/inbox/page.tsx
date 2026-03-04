@@ -425,8 +425,9 @@ export default function InboxPage() {
     <div className="min-h-screen bg-black text-white">
       <div className="p-4 md:p-6 lg:p-8 h-full">
         <h1 className="text-xl md:text-2xl font-semibold text-white mb-4">Inbox</h1>
-
-        {/* Mobile layout */}\n        <div className="md:hidden h-[calc(100vh-7rem)] border border-zinc-800 rounded-2xl overflow-hidden">
+        <p className="text-sm text-zinc-400 mb-4">All conversations — calls, texts, and emails — in one place.</p>
+        {/* Mobile layout */}
+        <div className="md:hidden h-[calc(100vh-7rem)] border border-zinc-800 rounded-2xl overflow-hidden">
           {mobileMode === "list" ? (
             <ConversationList
               threads={threads}
@@ -452,7 +453,8 @@ export default function InboxPage() {
           )}
         </div>
 
-        {/* Desktop layout */}\n        <div className="hidden md:flex h-[calc(100vh-8rem)] rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-950/60">
+        {/* Desktop layout */}
+        <div className="hidden md:flex h-[calc(100vh-8rem)] rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-950/60">
           <div className="w-80 border-r border-zinc-800 bg-zinc-950/80">
             <ConversationList
               threads={threads}

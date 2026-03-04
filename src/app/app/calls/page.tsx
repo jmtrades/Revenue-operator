@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -237,8 +238,9 @@ export default function CallsPage() {
       ) : filtered.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-12 text-center">
           <PhoneCall className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-          <p className="text-sm font-medium text-white mb-1">No calls found</p>
-          <p className="text-xs text-zinc-500 mb-4">Try adjusting your filters or search.</p>
+          <p className="text-sm font-medium text-white mb-1">No calls yet</p>
+          <p className="text-xs text-zinc-500 mb-4">Once your AI starts taking calls, they&apos;ll appear here with full transcripts and summaries.</p>
+          <Link href="/app/settings/phone" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Connect your number →</Link>
         </div>
       ) : (
       <div className="hidden md:block rounded-2xl border border-zinc-800 bg-zinc-950/60 overflow-hidden">

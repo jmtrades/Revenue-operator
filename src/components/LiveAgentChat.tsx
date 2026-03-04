@@ -19,27 +19,27 @@ const AGENTS: Record<
 > = {
   sarah: {
     id: "sarah",
-    name: "Sarah",
-    initials: "S",
-    pill: "Sarah",
+    name: "Professional",
+    initials: "P",
+    pill: "Professional",
     avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
-    greeting: "Hi there! Thanks for calling Riverside Plumbing. This is Sarah — what can I help you with?",
+    greeting: "Hello. Thanks for calling. How can I help you today?",
   },
   alex: {
     id: "alex",
-    name: "Alex",
-    initials: "A",
-    pill: "Alex",
+    name: "Friendly",
+    initials: "F",
+    pill: "Friendly",
     avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
-    greeting: "Good afternoon, Riverside Plumbing. This is Alex speaking. How can I help you today?",
+    greeting: "Hi there! Thanks for reaching out. What can I do for you?",
   },
   emma: {
     id: "emma",
-    name: "Emma",
-    initials: "E",
-    pill: "Emma",
+    name: "Concise",
+    initials: "C",
+    pill: "Concise",
     avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
-    greeting: "Hey! Thanks for calling Riverside Plumbing! I'm Emma — what's going on?",
+    greeting: "Hi. How can I help?",
   },
 };
 
@@ -166,13 +166,13 @@ export function LiveAgentChat(props: {
     rec.start();
   };
 
-  const SUGGESTIONS = ["I have a leaky faucet", "I need emergency help", "What are your hours?"];
+  const SUGGESTIONS = ["I'd like to schedule an appointment", "Can someone call me back about pricing?", "What are your hours and availability?"];
 
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
       <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-zinc-800 bg-zinc-950/40">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xs font-medium text-zinc-500 shrink-0">Talk to our AI</span>
+          <span className="text-xs font-medium text-zinc-500 shrink-0">Recall Touch</span>
           <span className="text-zinc-600">·</span>
         </div>
         <div className="flex items-center gap-2">

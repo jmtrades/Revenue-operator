@@ -47,7 +47,7 @@ export const MOCK_KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
     id: "kb-2",
     title: "Service Pricing Guide",
     type: "Document",
-    content: "Standard service call: $89. Hourly rate: $120. Emergency after hours: $185. Premium packages available.",
+    content: "Standard call: $89. Hourly rate: $120. Emergency after hours: $185. Premium packages available.",
     wordCount: 18,
     lastUpdated: "2025-02-27T10:30:00Z",
     status: "Active",

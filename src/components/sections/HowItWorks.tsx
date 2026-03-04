@@ -17,7 +17,7 @@ const steps = [
     num: 2,
     icon: Brain,
     title: "Configure",
-    desc: "Tell your AI what to do: answer calls, book appointments, follow up, qualify leads, or all of it. Use a template or start from scratch.",
+    desc: "Tell your AI what to do: answer calls, handle texts, book appointments, follow up, qualify leads, or all of it. Use a template or start from scratch.",
   },
   {
     num: 3,

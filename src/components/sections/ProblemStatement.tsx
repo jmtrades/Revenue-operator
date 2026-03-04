@@ -5,7 +5,7 @@ import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/s
 import { motion } from "framer-motion";
 
 const PROBLEM_INBOUND = {
-  title: "Calls go unanswered.",
+  title: "Calls fall through the cracks",
   stats: [
     { value: "$126K", desc: "Lost per year to missed calls" },
     { value: "80%", desc: "Hang up on voicemail" },
@@ -15,21 +15,21 @@ const PROBLEM_INBOUND = {
 };
 
 const PROBLEM_OUTBOUND = {
-  title: "Follow-up never happens.",
+  title: "Follow-up is broken",
   stats: [
-    { value: "51%", desc: "Of leads are never contacted" },
-    { value: "42 hrs", desc: "Average lead response time" },
-    { value: "44%", desc: "Of reps give up after 1 try · Leads go to whoever calls first" },
+    { value: "51%", desc: "Of leads never contacted" },
+    { value: "42 hrs", desc: "Average response time" },
+    { value: "44%", desc: "Of reps give up after 1 try" },
   ],
   accent: "var(--accent-secondary)",
 };
 
 const PROBLEM_HUMAN = {
-  title: "Hiring doesn't fix it.",
+  title: "Communication doesn't scale",
   stats: [
-    { value: "$35K", desc: "Receptionist · $55K SDR" },
+    { value: "$35K", desc: "Receptionist + $55K SDR salaries" },
     { value: "30–45%", desc: "Turnover in phone-heavy roles" },
-    { value: "3–6 mo", desc: "To train · They still miss calls and forget follow-ups" },
+    { value: "—", desc: "Calls, texts, scheduling all in different systems" },
   ],
   accent: "var(--accent-warning)",
 };
@@ -43,7 +43,7 @@ export function ProblemStatement() {
         <AnimateOnScroll className="text-center mb-12 md:mb-16">
           <p className="section-label mb-4" style={{ color: "var(--accent-warning)" }}>The problem</p>
           <h2 className="font-semibold max-w-3xl mx-auto" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}>
-            Every missed call costs you money. Every human you hire costs you more.
+            Phone communication is broken. For everyone.
           </h2>
         </AnimateOnScroll>
 
@@ -65,7 +65,7 @@ export function ProblemStatement() {
 
         <AnimateOnScroll className="text-center mt-10">
           <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            What if you could answer every call, follow up on every lead, and never pay another salary to do it?
+            What if every call, text, and follow-up was handled automatically — and you could see exactly what happened?
           </p>
         </AnimateOnScroll>
       </Container>
