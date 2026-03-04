@@ -3,6 +3,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { previewVoice } from "@/lib/voice-preview";
+import {
+  AGENT_TEMPLATES,
+  AGENT_TEMPLATE_CATEGORIES,
+  type AgentTemplateCategory,
+} from "@/lib/data/agent-templates";
+import { Confetti } from "@/components/Confetti";
 
 type StepId = 1 | 2 | 3 | 4 | 5;
 
@@ -20,7 +26,7 @@ type IndustryId =
   | "roofing"
   | "other";
 
-type AgentTemplateId = "sarah" | "alex" | "jordan" | "scratch";
+type AgentTemplateId = string;
 
 type DayId = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
 
@@ -132,7 +138,7 @@ export function ActivateWizard() {
     agentName: "",
     hours: DEFAULT_HOURS,
     greeting:
-      "Hi, thanks for calling. This is your virtual receptionist. How can I help you today?",
+      "Hi, thanks for calling. How can I help you today?",
     services: [],
     lastTestFeedback: null,
   }));
@@ -412,141 +418,14 @@ export function ActivateWizard() {
           )}
 
           {step === 2 && (
-            <div className="space-y-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-lg md:text-xl font-semibold text-slate-50">
-                    Pick a starting template
-                  </h2>
-                  <p className="mt-1 text-sm text-slate-400">
-                    We&apos;ll tune the script for{" "}
-                    {getIndustryLabel(state.industry).toLowerCase()}.
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {["sarah", "alex", "jordan"].map((id) => {
-                  const typed = id as AgentTemplateId;
-                  const isSelected = state.agentTemplate === typed;
-                  const name =
-                    typed === "sarah"
-                      ? "Sarah"
-                      : typed === "alex"
-                        ? "Alex"
-                        : "Jordan";
-                  const initials = name[0];
-                  const description =
-                    typed === "sarah"
-                      ? `Friendly receptionist who books appointments and answers ${getIndustryLabel(
-                          state.industry,
-                        ).toLowerCase()} questions.`
-                      : typed === "alex"
-                        ? "Calm, concise operator who keeps calls short but complete."
-                        : "Warm, conversational style for relationship-focused calls.";
-                  const bullets =
-                    typed === "sarah"
-                      ? [
-                          "Greets new callers and captures details",
-                          "Confirms availability before booking",
-                          "Escalates edge cases to you",
-                        ]
-                      : typed === "alex"
-                        ? [
-                            "Keeps calls moving toward a decision",
-                            "Summarizes key details for you",
-                            "Avoids long small talk",
-                          ]
-                        : [
-                            "Keeps returning customers feeling known",
-                            "Surfaces follow-up reminders",
-                            "Protects existing relationships",
-                          ];
-                  return (
-                    <button
-                      key={typed}
-                      type="button"
-                      onClick={() =>
-                        setState((prev) => ({
-                          ...prev,
-                          agentTemplate: typed,
-                          agentName: prev.agentName || name,
-                        }))
-                      }
-                      className={`flex flex-col items-start gap-3 rounded-2xl border px-4 py-4 text-left text-sm transition-colors ${
-                        isSelected
-                          ? "border-sky-400 bg-sky-500/10"
-                          : "border-slate-700 bg-slate-900/40 hover:border-slate-500"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-800 text-sm font-semibold text-slate-50 border border-slate-600">
-                          {initials}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-slate-50">
-                            {name}
-                          </p>
-                          <p className="text-xs text-slate-400">
-                            {description}
-                          </p>
-                        </div>
-                      </div>
-                      <ul className="mt-1 space-y-1.5 text-xs text-slate-400">
-                        {bullets.map((b) => (
-                          <li key={b} className="flex items-start gap-1.5">
-                            <span className="mt-[3px] h-1 w-1 rounded-full bg-sky-400" />
-                            <span>{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </button>
-                  );
-                })}
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setState((prev) => ({
-                      ...prev,
-                      agentTemplate: "scratch",
-                      agentName: prev.agentName || "Agent",
-                    }))
-                  }
-                  className={`flex flex-col justify-center gap-2 rounded-2xl border px-4 py-4 text-left text-sm transition-colors ${
-                    state.agentTemplate === "scratch"
-                      ? "border-sky-400 bg-sky-500/10"
-                      : "border-slate-700 bg-slate-900/40 hover:border-slate-500"
-                  }`}
-                >
-                  <p className="text-sm font-semibold text-slate-50">
-                    Start from scratch
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    Minimal script, no assumptions. We&apos;ll still protect
-                    callers and capture decisions.
-                  </p>
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={goBack}
-                  className="text-xs md:text-sm text-slate-400 hover:text-slate-100"
-                >
-                  ← Back
-                </button>
-                <button
-                  type="button"
-                  onClick={goNext}
-                  disabled={!canGoNext}
-                  className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs md:text-sm font-semibold text-black hover:bg-slate-100 disabled:opacity-60"
-                >
-                  Next →
-                </button>
-              </div>
-            </div>
+            <Step2Templates
+              state={state}
+              setState={setState}
+              goBack={goBack}
+              goNext={goNext}
+              canGoNext={canGoNext}
+              getIndustryLabel={getIndustryLabel}
+            />
           )}
 
           {step === 3 && (
@@ -714,9 +593,7 @@ export function ActivateWizard() {
                       }))
                     }
                     className="w-full resize-none rounded-xl bg-transparent px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none"
-                    placeholder={`Hi, thanks for calling ${
-                      state.businessName || "our office"
-                    }. This is ${state.agentName || "your agent"} — how can I help?`}
+                    placeholder={`Hi, thanks for calling ${state.businessName || "your business"}. How can I help you today?`}
                   />
                   <div className="flex items-center justify-between px-3 pb-2 text-[11px] text-slate-500">
                     <span>{state.greeting.length} characters</span>
@@ -815,14 +692,23 @@ export function ActivateWizard() {
 
           {step === 5 && (
             <div className="space-y-6">
+              <Confetti key="step5-confetti" />
               <div>
                 <h2 className="text-lg md:text-xl font-semibold text-slate-50">
-                  Your agent is active. 🎉
+                  Your AI agent is live! 🎉
                 </h2>
                 <p className="mt-1 text-sm text-slate-400">
-                  Your AI agent is ready to take calls.
+                  Your agent is ready to take calls. Complete the steps below to start.
                 </p>
               </div>
+
+              <ul className="space-y-2 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm text-slate-300">
+                <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Business name set</li>
+                <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Phone number added</li>
+                <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Agent template chosen</li>
+                <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Greeting configured</li>
+                <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Ready to forward calls</li>
+              </ul>
 
               <div className="flex items-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
@@ -869,9 +755,9 @@ export function ActivateWizard() {
                 <a
                   href="/app"
                   onClick={handleFinalize}
-                  className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs md:text-sm font-semibold text-black hover:bg-slate-100"
+                  className="inline-flex items-center justify-center rounded-xl bg-emerald-500 px-5 py-2.5 text-xs md:text-sm font-semibold text-white hover:bg-emerald-400"
                 >
-                  Go to dashboard →
+                  Activate Agent →
                 </a>
               </div>
             </div>
@@ -879,6 +765,147 @@ export function ActivateWizard() {
         </section>
       </div>
     </Container>
+  );
+}
+
+function Step2Templates({
+  state,
+  setState,
+  goBack,
+  goNext,
+  canGoNext,
+  getIndustryLabel,
+}: {
+  state: ActivationState;
+  setState: React.Dispatch<React.SetStateAction<ActivationState>>;
+  goBack: () => void;
+  goNext: () => void;
+  canGoNext: boolean;
+  getIndustryLabel: (id: IndustryId | null) => string;
+}) {
+  const [category, setCategory] = useState<AgentTemplateCategory | "all">("all");
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    let list = category === "all" ? AGENT_TEMPLATES : AGENT_TEMPLATES.filter((t) => t.category === category);
+    const q = search.trim().toLowerCase();
+    if (q) list = list.filter((t) => t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.styleLabel.toLowerCase().includes(q));
+    return list;
+  }, [category, search]);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-lg md:text-xl font-semibold text-slate-50">Pick a starting template</h2>
+        <p className="mt-1 text-sm text-slate-400">We&apos;ll tune the script for {getIndustryLabel(state.industry).toLowerCase()}.</p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setCategory("all")}
+          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${category === "all" ? "border-sky-400 bg-sky-500/10 text-slate-50" : "border-slate-700 bg-slate-900/40 text-slate-400 hover:border-slate-500"}`}
+        >
+          All
+        </button>
+        {AGENT_TEMPLATE_CATEGORIES.map((c) => (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => setCategory(c.id)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${category === c.id ? "border-sky-400 bg-sky-500/10 text-slate-50" : "border-slate-700 bg-slate-900/40 text-slate-400 hover:border-slate-500"}`}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+
+      <input
+        type="search"
+        placeholder="Search templates..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+        aria-label="Search templates"
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-h-[50vh] overflow-y-auto pr-2">
+        {filtered.map((t) => {
+          const isSelected = state.agentTemplate === t.id;
+          const initials = t.name.replace(/^The\s+/, "").slice(0, 2).toUpperCase();
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() =>
+                setState((prev) => ({
+                  ...prev,
+                  agentTemplate: t.id,
+                  agentName: prev.agentName || t.name.replace(/^The\s+/, ""),
+                  greeting: t.defaultGreeting,
+                }))
+              }
+              className={`flex flex-col items-start gap-2 rounded-2xl border px-4 py-4 text-left text-sm transition-colors ${
+                isSelected ? "border-sky-400 bg-sky-500/10" : "border-slate-700 bg-slate-900/40 hover:border-slate-500"
+              }`}
+            >
+              <div className="flex items-center gap-3 w-full min-w-0">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-800 text-[10px] font-semibold text-slate-50 border border-slate-600">
+                  {initials}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-slate-50 truncate">{t.name}</p>
+                  <p className="text-[11px] text-slate-400 truncate">{t.styleLabel}</p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 line-clamp-2">{t.description}</p>
+              <ul className="mt-1 space-y-0.5 text-[11px] text-slate-500">
+                {t.behaviors.map((b) => (
+                  <li key={b} className="flex items-start gap-1.5">
+                    <span className="mt-[3px] h-1 w-1 rounded-full bg-sky-400 shrink-0" />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[10px] text-slate-500 mt-1">Best for: {t.bestFor}</p>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  previewVoice(t.defaultGreeting, "female");
+                }}
+                className="text-[11px] text-sky-400 hover:text-sky-300 mt-1"
+              >
+                Preview voice ▶
+              </button>
+            </button>
+          );
+        })}
+
+        <button
+          type="button"
+          onClick={() =>
+            setState((prev) => ({
+              ...prev,
+              agentTemplate: "scratch",
+              agentName: prev.agentName || "Agent",
+              greeting: `Hi, thanks for calling ${prev.businessName || "your business"}. How can I help you today?`,
+            }))
+          }
+          className={`flex flex-col justify-center gap-2 rounded-2xl border px-4 py-4 text-left text-sm transition-colors ${
+            state.agentTemplate === "scratch" ? "border-sky-400 bg-sky-500/10" : "border-slate-700 bg-slate-900/40 hover:border-slate-500"
+          }`}
+        >
+          <p className="text-sm font-semibold text-slate-50">Start from scratch</p>
+          <p className="text-xs text-slate-400">Minimal script, no assumptions. Callers are still protected and decisions captured.</p>
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 pt-2">
+        <button type="button" onClick={goBack} className="text-xs md:text-sm text-slate-400 hover:text-slate-100">← Back</button>
+        <button type="button" onClick={goNext} disabled={!canGoNext} className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs md:text-sm font-semibold text-black hover:bg-slate-100 disabled:opacity-60">Next →</button>
+      </div>
+    </div>
   );
 }
 

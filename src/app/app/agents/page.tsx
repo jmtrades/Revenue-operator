@@ -5,6 +5,7 @@ import Link from "next/link";
 import { speakText } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
+import { AGENT_TEMPLATES, AGENT_TEMPLATE_CATEGORIES, type AgentTemplateCategory } from "@/lib/data/agent-templates";
 
 type VoiceId =
   | "warm_female"
@@ -50,6 +51,10 @@ type Agent = {
 type TabId = "profile" | "knowledge" | "rules" | "test";
 
 const STORAGE_KEY = "rt_agents";
+
+function generateAgentId(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+}
 
 const VOICE_OPTIONS: { id: VoiceId; label: string; description: string }[] = [
   { id: "warm_female", label: "Warm F", description: "Calm, friendly, receptionist-style" },
@@ -133,6 +138,7 @@ export default function AppAgentsPage() {
   );
   const [tab, setTab] = useState<TabId>("profile");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [templateCategory, setTemplateCategory] = useState<AgentTemplateCategory | "all">("all");
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -176,7 +182,7 @@ export default function AppAgentsPage() {
   };
 
   const createAgentFromTemplate = (template: AgentTemplateId) => {
-    const id = `a-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const id = generateAgentId("a");
     const base = defaultAgent();
     const nameByTemplate: Record<AgentTemplateId, string> = {
       receptionist: "Receptionist",
@@ -212,6 +218,34 @@ export default function AppAgentsPage() {
       afterHoursMode: template === "after_hours" ? "forward" : base.afterHoursMode,
     };
 
+    const next = [...agents, agent];
+    setAgents(next);
+    setSelectedId(agent.id);
+    setTab("profile");
+    setShowTemplateModal(false);
+    saveAgents(next);
+    setToast("Agent created");
+  };
+
+  const createAgentFromSharedTemplate = (templateId: string) => {
+    const t = AGENT_TEMPLATES.find((x) => x.id === templateId);
+    if (!t) return;
+    const id = generateAgentId("a");
+    const base = defaultAgent();
+    const name = t.name.replace(/^The\s+/, "") ?? t.name;
+    const agent: Agent = {
+      ...base,
+      id,
+      template: "receptionist",
+      name,
+      greeting: t.defaultGreeting,
+      callsHandled: 0,
+      services: [],
+      faq: [],
+      transferRules: [],
+      specialInstructions: "",
+      websiteUrl: "",
+    };
     const next = [...agents, agent];
     setAgents(next);
     setSelectedId(agent.id);
@@ -459,6 +493,23 @@ export default function AppAgentsPage() {
             >
               Create from scratch
             </button>
+            <div className="mt-6 pt-4 border-t border-zinc-800">
+              <p className="text-xs font-medium text-zinc-400 mb-2">Or pick by communication style (20+ templates)</p>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                <button type="button" onClick={() => setTemplateCategory("all")} className={`rounded-full border px-2.5 py-1 text-[11px] ${templateCategory === "all" ? "border-zinc-500 bg-zinc-800 text-white" : "border-zinc-700 text-zinc-400 hover:text-white"}`}>All</button>
+                {AGENT_TEMPLATE_CATEGORIES.map((c) => (
+                  <button key={c.id} type="button" onClick={() => setTemplateCategory(c.id)} className={`rounded-full border px-2.5 py-1 text-[11px] ${templateCategory === c.id ? "border-zinc-500 bg-zinc-800 text-white" : "border-zinc-700 text-zinc-400 hover:text-white"}`}>{c.label}</button>
+                ))}
+              </div>
+              <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+                {(templateCategory === "all" ? AGENT_TEMPLATES : AGENT_TEMPLATES.filter((t) => t.category === templateCategory)).map((t) => (
+                  <button key={t.id} type="button" onClick={() => createAgentFromSharedTemplate(t.id)} className="w-full text-left px-3 py-2 rounded-xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 hover:border-zinc-600 text-xs transition-colors">
+                    <span className="font-medium text-white">{t.name}</span>
+                    <span className="text-zinc-500 ml-1">· {t.styleLabel}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}

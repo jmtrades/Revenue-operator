@@ -69,7 +69,10 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="pt-8 border-t flex flex-col sm:flex-row justify-between items-center gap-4" style={{ borderColor: "var(--border-default)" }}>
+        <p className="text-sm text-center py-4" style={{ color: "var(--text-tertiary)" }}>
+          Recall Touch handles calls, texts, scheduling, follow-ups, and campaigns — one platform for all phone communication.
+        </p>
+        <div className="pt-4 border-t flex flex-col sm:flex-row justify-between items-center gap-4" style={{ borderColor: "var(--border-default)" }}>
           <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>© 2026 Recall Touch. All rights reserved.</p>
           <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>AI phone system for every business.</p>
         </div>

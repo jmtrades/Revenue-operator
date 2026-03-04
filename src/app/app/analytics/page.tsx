@@ -119,12 +119,12 @@ export default function AppAnalyticsPage() {
     {
       label: "Total calls",
       value: totalCalls.toString(),
-      trend: hasData ? "+12% vs prior period" : "No data yet",
+      trend: hasData ? "+12% vs prior period" : "—",
     },
     {
       label: "Avg handle time",
       value: formatDuration(avgHandleTime),
-      trend: hasData ? "Stable" : "No data yet",
+      trend: hasData ? "Stable" : "—",
     },
     {
       label: "Lead conversion",
@@ -132,17 +132,17 @@ export default function AppAnalyticsPage() {
         totalCalls === 0
           ? "0%"
           : `${Math.round((callsWithLead / totalCalls) * 100)}%`,
-      trend: hasData ? "+8% vs prior period" : "No data yet",
+      trend: hasData ? "+8% vs prior period" : "—",
     },
     {
       label: "Appointments booked",
       value: appointments.toString(),
-      trend: hasData ? "+5 this month" : "No data yet",
+      trend: hasData ? "+5 this month" : "—",
     },
     {
       label: "Est. revenue impact",
       value: `$${estRevenueImpact.toLocaleString()}`,
-      trend: hasData ? "+19% vs prior period" : "No data yet",
+      trend: hasData ? "+19% vs prior period" : "—",
     },
   ];
 

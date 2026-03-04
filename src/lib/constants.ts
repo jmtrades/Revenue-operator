@@ -136,6 +136,7 @@ export const FOOTER_USE_CASES = [
   { label: "Appointment Scheduling", href: "/product#appointments" },
   { label: "Lead Follow-Up", href: "/product#leads" },
   { label: "After-Hours Coverage", href: "/product" },
+  { label: "Call Screening", href: "/product" },
 ] as const;
 
 export const FOOTER_LEGAL = [

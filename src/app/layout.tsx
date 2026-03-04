@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — AI Phone System",
+    default: "Recall Touch — AI Phone & Text Communication",
   },
   description:
     "Recall Touch is the AI phone system that handles your calls, texts, follow-ups, and scheduling automatically. Works with any number. Set up in 5 minutes.",

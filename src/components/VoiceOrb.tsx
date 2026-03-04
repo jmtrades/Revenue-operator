@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { speakText } from "@/lib/voice-preview";
+import { speakTextViaApi } from "@/lib/voice-preview";
 
 interface ConversationMessage {
   role: "user" | "assistant";
@@ -106,7 +106,7 @@ export function VoiceOrb() {
           ? data.text.trim()
           : "That's exactly how I would handle calls for your business. Want to set me up? It takes about 5 minutes.";
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-      speakText(reply, {
+      await speakTextViaApi(reply, {
         gender: "female",
         rate: 0.98,
         pitch: 1.05,
@@ -169,7 +169,8 @@ export function VoiceOrb() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-white text-black shadow-lg flex items-center justify-center border border-zinc-300 hover:bg-zinc-100 transition-colors animate-pulse"
+        className="fixed bottom-6 right-6 z-40 rounded-full bg-white text-black flex items-center justify-center border border-zinc-300 hover:bg-zinc-100 transition-transform duration-200 shadow-lg hover:shadow-[0_0_24px_rgba(59,130,246,0.35)] animate-[breathing_3s_ease-in-out_infinite]"
+        style={{ width: 56, height: 56 }}
         aria-label={open ? "Close voice demo" : "Talk to Recall Touch"}
         title="Talk to Recall Touch"
       >
@@ -236,8 +237,7 @@ export function VoiceOrb() {
             {showFallbackNotice && (
               <p className="text-[11px] text-zinc-500 mt-1">
                 Full voice demo uses your microphone. If it&apos;s blocked, try
-                enabling it in your browser, or use the text chat
-                chat above.
+                enabling it in your browser, or use the text chat above.
               </p>
             )}
           </div>
