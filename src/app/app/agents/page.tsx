@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { speakText } from "@/lib/voice-preview";
+import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
 import { AGENT_TEMPLATES, AGENT_TEMPLATE_CATEGORIES, type AgentTemplateCategory } from "@/lib/data/agent-templates";
@@ -159,6 +159,15 @@ export default function AppAgentsPage() {
     const maleVoices: VoiceId[] = ["professional_male", "calm_male", "authoritative_male"];
     return maleVoices.includes(selected.voice) ? "male" : "female";
   }, [selected]);
+
+  const [elevenLabsVoices, setElevenLabsVoices] = useState<Array<{ id: string; name: string }>>([]);
+  const [previewVoiceId, setPreviewVoiceId] = useState("");
+  useEffect(() => {
+    fetch("/api/agent/voices")
+      .then((r) => r.json())
+      .then((data: { voices?: Array<{ id: string; name: string }> }) => setElevenLabsVoices(data.voices ?? []))
+      .catch(() => setElevenLabsVoices([]));
+  }, []);
 
   const updateSelected = (partial: Partial<Agent>) => {
     if (!selected) return;
@@ -344,14 +353,29 @@ export default function AppAgentsPage() {
                     Configure how this agent answers, books, and follows through.
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {elevenLabsVoices.length > 0 && (
+                    <select
+                      value={previewVoiceId}
+                      onChange={(e) => setPreviewVoiceId(e.target.value)}
+                      className="px-2 py-1.5 rounded-lg border border-zinc-700 bg-zinc-900 text-xs text-zinc-200 focus:border-zinc-500 focus:outline-none"
+                      aria-label="Preview voice"
+                    >
+                      <option value="">Default voice</option>
+                      {elevenLabsVoices.map((v) => (
+                        <option key={v.id} value={v.id}>{v.name}</option>
+                      ))}
+                    </select>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
                       setPlayingAgentId(selected.id);
                       setHearPlaying(true);
-                      speakText(selected.greeting, {
+                      void speakTextViaApi(selected.greeting, {
+                        voiceId: previewVoiceId || undefined,
                         gender: voiceGender,
+                        onStart: () => setHearPlaying(true),
                         onEnd: () => {
                           setHearPlaying(false);
                           setPlayingAgentId(null);

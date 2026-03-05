@@ -7,8 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 
 const ELEVENLABS_VOICE_RACHEL = "21m00Tcm4TlvDq8ikWAM"; // Rachel — natural female
-const _ELEVENLABS_VOICE_JOSH = "TxGEqnHWrfWFTfGW9XjX"; // Josh — natural male (optional alternative)
-const ELEVENLABS_MODEL = "eleven_turbo_v2_5"; // Low latency
+const ELEVENLABS_MODEL = "eleven_multilingual_v2"; // 29 languages; no language param — text language = output language
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
@@ -19,9 +18,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: { text?: string; voiceId?: string };
+  let body: { text?: string; voiceId?: string; language?: string };
   try {
-    body = (await req.json()) as { text?: string; voiceId?: string };
+    body = (await req.json()) as { text?: string; voiceId?: string; language?: string };
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -49,6 +48,7 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           text: text.slice(0, 5000),
           model_id: ELEVENLABS_MODEL,
+          // No language param: multilingual model uses text language for output (32 langs supported)
         }),
       }
     );

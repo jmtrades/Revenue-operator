@@ -1,15 +1,16 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
-import { previewVoice } from "@/lib/voice-preview";
+import { previewVoiceViaApi } from "@/lib/voice-preview";
 import {
   AGENT_TEMPLATES,
   AGENT_TEMPLATE_CATEGORIES,
   type AgentTemplateCategory,
 } from "@/lib/data/agent-templates";
 import { Confetti } from "@/components/Confetti";
+import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
 
 type StepId = 1 | 2 | 3 | 4 | 5;
 
@@ -43,6 +44,13 @@ interface HoursSlot {
 type OrgTypeId = "business" | "solo" | "team" | "agency" | "personal" | "other";
 type UseCaseId = "answer" | "book" | "followup" | "afterhours" | "outbound" | "route";
 
+interface ElevenLabsVoice {
+  id: string;
+  name: string;
+  labels: Record<string, string>;
+  category: string;
+}
+
 interface ActivationState {
   businessName: string;
   industry: IndustryId | null;
@@ -55,6 +63,8 @@ interface ActivationState {
   greeting: string;
   services: string[];
   lastTestFeedback: TestFeedback;
+  preferredLanguage: string;
+  elevenlabsVoiceId: string;
 }
 
 const ORG_TYPES: { id: OrgTypeId; label: string }[] = [
@@ -142,6 +152,8 @@ export function ActivateWizard() {
       "Hi, thanks for calling. How can I help you today?",
     services: [],
     lastTestFeedback: null,
+    preferredLanguage: "en",
+    elevenlabsVoiceId: "",
   }));
 
   const currentIndex = useMemo(
@@ -200,12 +212,24 @@ export function ActivateWizard() {
   const effectiveServices =
     state.services.length > 0 ? state.services : industryServices;
 
+  const [voices, setVoices] = useState<ElevenLabsVoice[]>([]);
+  useEffect(() => {
+    if (step !== 3) return;
+    fetch("/api/agent/voices")
+      .then((r) => r.json())
+      .then((data: { voices?: ElevenLabsVoice[] }) => setVoices(data.voices ?? []))
+      .catch(() => setVoices([]));
+  }, [step]);
+
   const handlePlayTestGreeting = () => {
     const voiceText =
       state.greeting.trim().length > 0
         ? state.greeting.trim()
         : `Hi, thanks for calling ${state.businessName || "your business"}.`;
-    previewVoice(voiceText, "female");
+    previewVoiceViaApi(voiceText, {
+      voiceId: state.elevenlabsVoiceId || undefined,
+      gender: "female",
+    });
   };
 
   const handleThumb = (fb: TestFeedback) => {
@@ -249,6 +273,8 @@ export function ActivateWizard() {
           greeting: state.greeting || undefined,
           businessHours: hoursObj,
           knowledgeItems: state.services?.length ? state.services.map((s) => ({ type: "service", value: s })) : undefined,
+          preferredLanguage: state.preferredLanguage || "en",
+          elevenlabsVoiceId: state.elevenlabsVoiceId || undefined,
         }),
       });
       if (res.ok) {
@@ -509,6 +535,50 @@ export function ActivateWizard() {
                     placeholder="Sarah"
                     className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="preferred_language" className="block text-xs font-medium text-slate-300">
+                    Preferred language
+                  </label>
+                  <select
+                    id="preferred_language"
+                    value={state.preferredLanguage}
+                    onChange={(e) =>
+                      setState((prev) => ({ ...prev, preferredLanguage: e.target.value }))
+                    }
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  >
+                    {SUPPORTED_LANGUAGES.map((lang) => (
+                      <option key={lang.code} value={lang.code}>
+                        {lang.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-slate-500">Agent responds in this language and switches if the caller uses another.</p>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor="agent_voice" className="block text-xs font-medium text-slate-300">
+                    Voice (ElevenLabs)
+                  </label>
+                  <select
+                    id="agent_voice"
+                    value={state.elevenlabsVoiceId}
+                    onChange={(e) =>
+                      setState((prev) => ({ ...prev, elevenlabsVoiceId: e.target.value }))
+                    }
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  >
+                    <option value="">Default (Rachel)</option>
+                    {voices.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-slate-500">Use Preview voice below to hear this voice. Supports all languages.</p>
                 </div>
                 <div className="space-y-2">
                   <p className="block text-xs font-medium text-slate-300">
@@ -919,7 +989,7 @@ function Step2Templates({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  previewVoice(t.defaultGreeting, "female");
+                  previewVoiceViaApi(t.defaultGreeting, "female");
                 }}
                 className="text-[11px] text-sky-400 hover:text-sky-300 mt-1"
               >

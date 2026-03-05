@@ -19,6 +19,8 @@ interface OnboardingPayload {
   greeting?: string;
   businessHours?: Record<string, unknown>;
   knowledgeItems?: unknown[];
+  preferredLanguage?: string;
+  elevenlabsVoiceId?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -41,6 +43,8 @@ export async function POST(req: NextRequest) {
   const greeting = typeof body.greeting === "string" ? body.greeting : null;
   const businessHours = body.businessHours && typeof body.businessHours === "object" ? body.businessHours : null;
   const knowledgeItems = Array.isArray(body.knowledgeItems) ? body.knowledgeItems : null;
+  const preferredLanguage = typeof body.preferredLanguage === "string" ? body.preferredLanguage.trim() || null : null;
+  const elevenlabsVoiceId = typeof body.elevenlabsVoiceId === "string" ? body.elevenlabsVoiceId.trim() || null : null;
 
   try {
     const db = getDb();
@@ -66,6 +70,8 @@ export async function POST(req: NextRequest) {
     if (greeting !== null) update.greeting = greeting;
     if (businessHours !== null) update.working_hours = businessHours;
     if (knowledgeItems !== null) update.knowledge_items = knowledgeItems;
+    if (preferredLanguage !== null) update.preferred_language = preferredLanguage;
+    if (elevenlabsVoiceId !== null) update.elevenlabs_voice_id = elevenlabsVoiceId;
 
     const { error: updateErr } = await db.from("workspaces").update(update).eq("id", workspaceId);
     if (updateErr) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { speakText } from "@/lib/voice-preview";
+import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -405,7 +405,8 @@ export default function AppActivityPage() {
                       e.stopPropagation();
                       if (playingId === card.id) return;
                       setPlayingId(card.id);
-                      speakText(getPlaySummary(card), {
+                      void speakTextViaApi(getPlaySummary(card), {
+                        onStart: () => setPlayingId(card.id),
                         onEnd: () => setPlayingId(null),
                       });
                     }}

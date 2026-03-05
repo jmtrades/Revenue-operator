@@ -93,7 +93,20 @@ export function speakText(
   return () => synth.cancel();
 }
 
-/** V25: Button-only voice preview. Use ONLY on onboarding voice ▶ and [▶ Preview Greeting]. Never auto-play. */
+/** Uses ElevenLabs via API when configured; otherwise browser TTS. Use for onboarding/activate previews. Pass voiceId for real ElevenLabs voice. */
+export function previewVoiceViaApi(
+  text: string,
+  genderOrOptions?: "female" | "male" | SpeakOptions
+): void {
+  if (typeof window === "undefined") return;
+  const options: SpeakOptions =
+    typeof genderOrOptions === "object" && genderOrOptions !== null
+      ? genderOrOptions
+      : { gender: genderOrOptions ?? "female" };
+  void speakTextViaApi(text, options);
+}
+
+/** V25: Button-only voice preview (browser TTS fallback). Use ONLY when API is not desired. Never auto-play. */
 export function previewVoice(text: string, gender: "female" | "male") {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();

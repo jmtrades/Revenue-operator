@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useOnboardingStep } from "../OnboardingStepContext";
-import { speakText } from "@/lib/voice-preview";
+import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
 
@@ -305,7 +305,7 @@ export default function AppOnboardingPage() {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        speakText(v.preview, { gender: v.gender });
+                        void speakTextViaApi(v.preview, { gender: v.gender });
                       }}
                       className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-zinc-700 hover:bg-zinc-600 text-white text-xs"
                       aria-label={`Preview ${v.label}`}
@@ -330,11 +330,11 @@ export default function AppOnboardingPage() {
                 type="button"
                 onClick={() => {
                   setGreetingPlaying(true);
-                  const stop = speakText(greetingToPlay, {
+                  (window as unknown as { __stopGreeting?: () => void }).__stopGreeting = () => {};
+                  void speakTextViaApi(greetingToPlay, {
                     gender: selectedVoice?.gender ?? "female",
                     onEnd: () => setGreetingPlaying(false),
                   });
-                  (window as unknown as { __stopGreeting?: () => void }).__stopGreeting = stop;
                 }}
                 className="mt-2 flex items-center gap-2 py-2 px-3 rounded-xl border border-zinc-700 text-zinc-300 hover:border-zinc-600 text-sm"
               >
@@ -562,7 +562,7 @@ export default function AppOnboardingPage() {
               type="button"
               onClick={() => {
                 setStep5Playing(true);
-                speakText(greetingToPlay, {
+                void speakTextViaApi(greetingToPlay, {
                   gender: selectedVoice?.gender ?? "female",
                   onEnd: () => setStep5Playing(false),
                 });
