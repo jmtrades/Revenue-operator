@@ -11,7 +11,6 @@ import type { NextRequest } from "next/server";
 import {
   getSessionFromCookieAsync,
   createSessionCookieAsync,
-  getSessionCookieName,
   isSessionEnabled,
 } from "@/lib/auth/session-edge";
 

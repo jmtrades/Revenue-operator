@@ -17,13 +17,14 @@ export default function AppSettingsIntegrationsPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState<boolean | null>(null);
   const searchParams = useSearchParams();
+  const calendarParam = searchParams.get("calendar");
 
   useEffect(() => {
     fetch("/api/integrations/google-calendar/status", { credentials: "include" })
       .then((r) => r.json())
       .then((data: { connected?: boolean }) => setGoogleCalendarConnected(Boolean(data?.connected)))
       .catch(() => setGoogleCalendarConnected(false));
-  }, [searchParams.get("calendar")]);
+  }, [calendarParam]);
 
   useEffect(() => {
     const calendar = searchParams.get("calendar");
@@ -32,8 +33,9 @@ export default function AppSettingsIntegrationsPage() {
     if (msg) {
       const t = setTimeout(() => setToast(msg), 0);
       const t2 = setTimeout(() => setToast(null), 4000);
-      setGoogleCalendarConnected(calendar === "connected");
-      return () => { clearTimeout(t); clearTimeout(t2); };
+      const connected = calendar === "connected";
+      const t3 = setTimeout(() => setGoogleCalendarConnected(connected), 0);
+      return () => { clearTimeout(t); clearTimeout(t2); clearTimeout(t3); };
     }
     const t = setTimeout(() => setToast(null), 4000);
     return () => clearTimeout(t);

@@ -60,9 +60,10 @@ export async function POST(req: NextRequest) {
   }
 
   const cookie = createSessionCookie({ userId, workspaceId });
-  const res = NextResponse.json({ ok: true, userId, workspaceId });
-  if (cookie) {
-    res.headers.set("Set-Cookie", cookie);
+  if (!cookie) {
+    return NextResponse.json({ error: "Session not configured (set SESSION_SECRET)" }, { status: 503 });
   }
+  const res = NextResponse.json({ ok: true, userId, workspaceId });
+  res.headers.set("Set-Cookie", cookie);
   return res;
 }
