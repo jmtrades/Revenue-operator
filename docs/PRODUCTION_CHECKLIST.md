@@ -89,7 +89,17 @@ Ensure these are set in **Vercel** → project → **Settings** → **Environmen
 
 ---
 
-## 6. Verify
+## 6. Database (app access)
+
+The app talks to the DB via **Supabase API** (not raw Postgres). So in addition to migrations:
+
+- [ ] **Supabase Dashboard** → **Project Settings** → **API** → **Exposed schemas**: add **revenue_operator** (so the API can read/write that schema).
+- [ ] In **Vercel** (and in **.env.local** for local dev): set **NEXT_PUBLIC_SUPABASE_URL** (e.g. `https://YOUR_REF.supabase.co`) and **SUPABASE_SERVICE_ROLE_KEY** (from same API page, or copy from Vercel).
+- [ ] Run **`npm run verify:db`** locally: it checks Postgres (DATABASE_URL) and Supabase API (URL + key). Fix any reported missing env or schema.
+
+---
+
+## 7. Verify
 
 - [ ] Deploy (or redeploy) on Vercel
 - [ ] Test sign-in and onboarding

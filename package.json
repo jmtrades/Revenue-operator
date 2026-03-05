@@ -14,6 +14,7 @@
     "prod:gate": "tsx scripts/prod-gate.ts",
     "urls:list": "tsx scripts/print-domain-urls.ts",
     "db:migrate": "tsx scripts/apply-migrations.ts",
+    "verify:db": "tsx scripts/verify-db.ts",
     "urls:webhooks": "tsx scripts/print-webhook-urls.ts",
     "dev": "next dev",
     "build": "next build",

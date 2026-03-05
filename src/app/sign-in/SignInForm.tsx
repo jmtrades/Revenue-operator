@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getClientOrNull } from "@/lib/supabase/client";
 
 function getSignupEmail(): string | null {
@@ -19,8 +19,11 @@ function getSignupEmail(): string | null {
 
 export default function SignInForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isCreateMode = searchParams.get("create") === "1";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [businessName, setBusinessName] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +46,37 @@ export default function SignInForm() {
     }
     setLoading(true);
     setError(null);
+
+    // Create account: call signup API
+    if (isCreateMode) {
+      if (!password || password.length < 6) {
+        setError("Please enter a password (at least 6 characters).");
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: trimmed,
+            password,
+            businessName: businessName.trim() || "My Workspace",
+          }),
+          credentials: "include",
+        });
+        const data = (await res.json()) as { ok?: boolean; error?: string };
+        if (res.ok && data.ok) {
+          router.push("/app");
+          return;
+        }
+        setError(data.error ?? "Sign up failed.");
+      } catch {
+        setError("Something went wrong. Try again.");
+      }
+      setLoading(false);
+      return;
+    }
 
     // Password sign-in: call API and set session cookie
     if (password) {
@@ -121,7 +155,7 @@ export default function SignInForm() {
 
   return (
     <div className="space-y-6">
-      {sent ? (
+      {sent && !isCreateMode ? (
         <p className="text-sm text-center text-zinc-400">
           Check your email for the sign-in link.
         </p>
@@ -144,16 +178,19 @@ export default function SignInForm() {
               />
             </div>
             <div>
-              <label htmlFor="signin-password" className="block text-sm font-medium text-zinc-400 mb-1.5">Password</label>
+              <label htmlFor="signin-password" className="block text-sm font-medium text-zinc-400 mb-1.5">
+                {isCreateMode ? "Password (min 6 characters)" : "Password"}
+              </label>
               <div className="relative">
                 <input
                   id="signin-password"
                   type={showPassword ? "text" : "password"}
-                  placeholder=""
+                  placeholder={isCreateMode ? "Choose a password" : ""}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 pr-12 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
-                  autoComplete="current-password"
+                  autoComplete={isCreateMode ? "new-password" : "current-password"}
+                  required={isCreateMode}
                 />
                 <button
                   type="button"
@@ -165,33 +202,57 @@ export default function SignInForm() {
                 </button>
               </div>
             </div>
+            {isCreateMode && (
+              <div>
+                <label htmlFor="signin-business" className="block text-sm font-medium text-zinc-400 mb-1.5">Business name (optional)</label>
+                <input
+                  id="signin-business"
+                  type="text"
+                  placeholder="My Workspace"
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                  autoComplete="organization"
+                />
+              </div>
+            )}
             <button
               type="submit"
               disabled={loading}
               className="w-full py-3 rounded-xl font-semibold text-sm bg-white text-black hover:bg-zinc-100 transition disabled:opacity-60"
             >
-              {loading ? "Signing in…" : "Sign in →"}
+              {loading ? (isCreateMode ? "Creating account…" : "Signing in…") : isCreateMode ? "Create account →" : "Sign in →"}
             </button>
           </form>
-          <div className="relative py-2">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-zinc-700" />
-            </div>
-            <div className="relative flex justify-center text-xs text-zinc-500">or</div>
-          </div>
-          <button
-            type="button"
-            onClick={handleGoogle}
-            disabled={loading}
-            className="w-full py-3 rounded-xl font-medium text-sm border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition"
-          >
-            Continue with Google
-          </button>
-          <p className="text-center">
-            <button type="button" onClick={handleForgotPassword} className="text-xs text-zinc-500 hover:text-zinc-400" aria-label="Forgot password? We will send reset instructions to your email.">
-              Forgot password?
-            </button>
-          </p>
+          {!isCreateMode && (
+            <>
+              <div className="relative py-2">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-zinc-700" />
+                </div>
+                <div className="relative flex justify-center text-xs text-zinc-500">or</div>
+              </div>
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={loading}
+                className="w-full py-3 rounded-xl font-medium text-sm border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition"
+              >
+                Continue with Google
+              </button>
+              <p className="text-center">
+                <button type="button" onClick={handleForgotPassword} className="text-xs text-zinc-500 hover:text-zinc-400" aria-label="Forgot password? We will send reset instructions to your email.">
+                  Forgot password?
+                </button>
+              </p>
+            </>
+          )}
+          {isCreateMode && (
+            <p className="text-center text-sm text-zinc-500">
+              Already have an account?{" "}
+              <Link href="/sign-in" className="text-white hover:underline font-medium">Sign in</Link>
+            </p>
+          )}
         </>
       )}
       {error && (

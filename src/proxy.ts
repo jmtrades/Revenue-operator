@@ -107,7 +107,7 @@ export async function proxy(req: NextRequest) {
     if (method !== "GET" && method !== "HEAD") {
       // POST/PUT/DELETE to protected API: do not redirect, return 401 if no session
       if (!isSessionEnabled()) return NextResponse.next();
-      const cookieHeader = req.cookies.get(getSessionCookieName())?.value ?? null;
+      const cookieHeader = req.headers.get("cookie") ?? null;
       const session = await getSessionFromCookieAsync(cookieHeader);
       if (!session) {
         const workspaceIdParam = req.nextUrl.searchParams.get("workspace_id");
@@ -153,7 +153,7 @@ export async function proxy(req: NextRequest) {
   if (isPublicApi(pathname)) return NextResponse.next();
   if (!isSessionEnabled()) return NextResponse.next();
 
-  const cookieHeader = req.cookies.get(getSessionCookieName())?.value ?? null;
+  const cookieHeader = req.headers.get("cookie") ?? null;
   const session = await getSessionFromCookieAsync(cookieHeader);
 
   if (!session) {

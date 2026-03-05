@@ -1,10 +1,11 @@
 import Link from "next/link";
 import SignInForm from "./SignInForm";
+import { SignInTitle } from "./SignInTitle";
 import { Navbar } from "@/components/sections/Navbar";
 
 export const metadata = {
   title: "Sign in — Recall Touch",
-  description: "Sign in to your Recall Touch dashboard.",
+  description: "Sign in or create your Recall Touch account.",
 };
 
 export default function SignInPage() {
@@ -19,15 +20,18 @@ export default function SignInPage() {
                 <span className="text-black font-bold text-sm">RT</span>
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-white text-center mt-4">Sign in</h1>
-            <p className="text-zinc-400 text-center text-sm">Welcome back to Recall Touch</p>
+            <SignInTitle />
             <div className="h-6" />
             <SignInForm />
           </div>
           <p className="text-center text-zinc-500 text-sm mt-8">
             Don&apos;t have an account?{" "}
             <Link href="/activate" className="text-white hover:underline font-medium">
-              Start free →
+              Start free
+            </Link>
+            {" or "}
+            <Link href="/sign-in?create=1" className="text-white hover:underline font-medium">
+              Create account →
             </Link>
           </p>
           <p className="text-center text-zinc-600 text-xs mt-4">
