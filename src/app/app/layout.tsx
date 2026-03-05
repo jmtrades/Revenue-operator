@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { WorkspaceProvider } from "@/components/WorkspaceContext";
+import { WorkspaceName } from "@/components/WorkspaceName";
 import {
   LayoutList,
   PhoneCall,
@@ -62,27 +63,10 @@ const MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/developer", label: "Developer", icon: Code },
 ];
 
-function getBusinessName(): string {
-  if (typeof window === "undefined") return "My Workspace";
-  try {
-    const fromBiz = localStorage.getItem("rt_business_name")?.trim();
-    if (fromBiz) return fromBiz;
-    const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
-    if (raw) {
-      const d = JSON.parse(raw) as { businessName?: string };
-      return d?.businessName?.trim() || "My Workspace";
-    }
-  } catch {
-    // ignore
-  }
-  return "My Workspace";
-}
-
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [businessName, setBusinessName] = useState("My Workspace");
   const [demoMode, setDemoMode] = useState(true);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const inboxUnread = MOCK_INBOX_THREADS.filter((t) => t.unread).length;
@@ -97,20 +81,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     fetch("/api/workspace/me", { credentials: "include" })
       .then((res) => (res.ok ? res.json() : null))
-      .then((data: { name?: string; demoMode?: boolean } | null) => {
+      .then((data: { demoMode?: boolean } | null) => {
         if (cancelled) return;
-        if (data?.name?.trim()) setBusinessName(data.name.trim());
-        else setBusinessName(getBusinessName());
         setDemoMode(data?.demoMode !== false);
       })
-      .catch(() => {
-        if (!cancelled) setBusinessName(getBusinessName());
-      });
-    const fallback = setTimeout(() => setBusinessName(getBusinessName()), 500);
-    return () => {
-      cancelled = true;
-      clearTimeout(fallback);
-    };
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, [mounted]);
 
   useEffect(() => {
@@ -174,7 +150,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                   <span className="text-black font-bold text-sm">RT</span>
                 </div>
-                <span className="text-white font-semibold truncate">{businessName}</span>
+                <WorkspaceName className="text-white font-semibold truncate block" />
               </div>
             </div>
             <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
@@ -299,24 +275,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 function OnboardingSidebar() {
   const ctx = useOnboardingStep();
   const step = ctx?.step ?? 1;
-  const [workspaceLabel, setWorkspaceLabel] = useState("My Workspace");
-  useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      try {
-        const fromBiz = localStorage.getItem("rt_business_name")?.trim();
-        if (fromBiz) {
-          setWorkspaceLabel(fromBiz);
-          return;
-        }
-        const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
-        if (raw) {
-          const d = JSON.parse(raw) as { businessName?: string };
-          setWorkspaceLabel(d?.businessName?.trim() || "My Workspace");
-        }
-      } catch { /* ignore */ }
-    });
-    return () => cancelAnimationFrame(id);
-  }, []);
 
   return (
     <aside className="hidden md:flex md:w-52 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800 py-5 px-4">
@@ -324,7 +282,7 @@ function OnboardingSidebar() {
         <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
           <span className="text-black font-bold text-sm">RT</span>
         </div>
-        <span className="text-[10px] text-zinc-500 text-center">{workspaceLabel}</span>
+        <WorkspaceName className="text-[10px] text-zinc-500 text-center block" />
       </Link>
       <nav className="flex-1" aria-label="Onboarding steps">
         <div className="flex flex-col gap-0">

@@ -4,7 +4,7 @@ import { SignInTitle } from "./SignInTitle";
 import { Navbar } from "@/components/sections/Navbar";
 
 export const metadata = {
-  title: "Sign in — Recall Touch",
+  title: { absolute: "Sign in — Recall Touch" },
   description: "Sign in or create your Recall Touch account.",
 };
 

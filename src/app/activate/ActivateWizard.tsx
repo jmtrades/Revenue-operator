@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import {
@@ -241,7 +240,6 @@ export function ActivateWizard() {
     }
   };
 
-  const router = useRouter();
   const handleFinalize = useCallback(async (e?: React.MouseEvent) => {
     e?.preventDefault();
     try {
@@ -284,8 +282,8 @@ export function ActivateWizard() {
         console.log("Workspace create:", res.status, await res.text());
       }
     } catch { /* ignore */ }
-    router.push("/app");
-  }, [state, router]);
+    window.location.href = "/app/activity";
+  }, [state]);
 
   return (
     <Container>

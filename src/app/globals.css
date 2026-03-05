@@ -163,6 +163,17 @@ body {
   min-width: 0;
 }
 
+/* Keyboard focus: visible ring for accessibility (no ring on mouse click) */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 2px solid var(--accent-primary, #4F8CFF);
+  outline-offset: 2px;
+}
+
 /* Headings: serif (Playfair / Canela style) */
 .font-headline,
 h1.headline {
