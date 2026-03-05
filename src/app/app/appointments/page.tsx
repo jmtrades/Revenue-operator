@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Calendar, ChevronRight } from "lucide-react";
+import { useWorkspace } from "@/components/WorkspaceContext";
 
 const PAGE_TITLE = "Appointments — Recall Touch";
 
@@ -77,8 +78,16 @@ function statusColor(status: AppointmentStatus): string {
   }
 }
 
+function mapApiStatus(s: string): AppointmentStatus {
+  if (s === "confirmed") return "Confirmed";
+  if (s === "cancelled") return "Cancelled";
+  if (s === "completed" || s === "no_show") return "Completed";
+  return "Pending";
+}
+
 export default function AppointmentsPage() {
-  const [appointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
+  const { workspaceId } = useWorkspace();
+  const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [view, setView] = useState<"list" | "calendar">("list");
 
@@ -88,6 +97,32 @@ export default function AppointmentsPage() {
       document.title = "";
     };
   }, []);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    let cancelled = false;
+    fetch(`/api/appointments?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { appointments: [] }))
+      .then((data: { appointments?: { id: string; date: string; time: string; contactName: string; type: string; status: string; source: string }[] }) => {
+        if (cancelled) return;
+        const list = data.appointments ?? [];
+        if (list.length > 0) {
+          setAppointments(
+            list.map((a) => ({
+              id: a.id,
+              date: a.date,
+              time: a.time,
+              contactName: a.contactName,
+              type: a.type,
+              status: mapApiStatus(a.status),
+              source: (a.source || "Inbound call") as AppointmentSource,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [workspaceId]);
 
   const isEmpty = appointments.length === 0;
 

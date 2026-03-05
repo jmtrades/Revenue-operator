@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
+import { DemoVoiceButton } from "@/components/demo/DemoVoiceButton";
 import { ROUTES } from "@/lib/constants";
 
 const DEMO_GREETING =
@@ -37,6 +38,7 @@ export function DemoPageContent() {
             <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-xl" aria-hidden>🎙</div>
             <p className="text-[10px] text-zinc-500 text-center">Tap mic below to talk</p>
           </div>
+          <DemoVoiceButton />
           <p className="text-xs text-zinc-500 text-center">Or try a scenario:</p>
           <div className="flex flex-wrap justify-center gap-2 w-full">
             {SCENARIOS.map((label) => (

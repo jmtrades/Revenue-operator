@@ -83,6 +83,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [businessName, setBusinessName] = useState("My Workspace");
+  const [demoMode, setDemoMode] = useState(true);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const inboxUnread = MOCK_INBOX_THREADS.filter((t) => t.unread).length;
 
@@ -93,8 +94,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!mounted) return;
-    const id = setTimeout(() => setBusinessName(getBusinessName()), 0);
-    return () => clearTimeout(id);
+    let cancelled = false;
+    fetch("/api/workspace/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { name?: string; demoMode?: boolean } | null) => {
+        if (cancelled) return;
+        if (data?.name?.trim()) setBusinessName(data.name.trim());
+        else setBusinessName(getBusinessName());
+        setDemoMode(data?.demoMode !== false);
+      })
+      .catch(() => {
+        if (!cancelled) setBusinessName(getBusinessName());
+      });
+    const fallback = setTimeout(() => setBusinessName(getBusinessName()), 500);
+    return () => {
+      cancelled = true;
+      clearTimeout(fallback);
+    };
   }, [mounted]);
 
   useEffect(() => {
@@ -136,6 +152,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <WorkspaceProvider>
     <OnboardingStepProvider>
       <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#080d19" }}>
+        {demoMode && (
         <div
           className="shrink-0 py-2 px-4 flex items-center justify-center gap-2 flex-wrap text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
           role="status"
@@ -146,6 +163,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             Set up →
           </Link>
         </div>
+        )}
         <div className="flex flex-1 min-h-0">
           {isOnboarding ? (
             <OnboardingSidebar />

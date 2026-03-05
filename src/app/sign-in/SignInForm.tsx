@@ -44,6 +44,28 @@ export default function SignInForm() {
     setLoading(true);
     setError(null);
 
+    // Password sign-in: call API and set session cookie
+    if (password) {
+      try {
+        const res = await fetch("/api/auth/signin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: trimmed, password }),
+          credentials: "include",
+        });
+        const data = (await res.json()) as { ok?: boolean; error?: string };
+        if (res.ok && data.ok) {
+          router.push("/app");
+          return;
+        }
+        setError(data.error ?? "Sign-in failed.");
+      } catch {
+        setError("Something went wrong. Try again.");
+      }
+      setLoading(false);
+      return;
+    }
+
     const signupEmail = getSignupEmail();
     if (signupEmail && signupEmail.toLowerCase() === trimmed) {
       try {
