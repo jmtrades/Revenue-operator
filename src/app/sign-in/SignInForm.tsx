@@ -53,7 +53,7 @@ export default function SignInForm() {
         });
         const data = (await res.json()) as { ok?: boolean; error?: string };
         if (res.ok && data.ok) {
-          window.location.href = "/app";
+          window.location.href = "/app/activity";
           return;
         }
         setError(data.error ?? "Sign up failed.");
@@ -79,7 +79,7 @@ export default function SignInForm() {
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (res.ok && data.ok) {
-        window.location.href = "/app";
+        window.location.href = "/app/activity";
         return;
       }
       const msg = data.error ?? "Sign-in failed.";
@@ -210,7 +210,7 @@ export default function SignInForm() {
             </p>
           )}
       {error && (
-        <div id="signin-error" role="alert" className="rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-center">
+        <div id="signin-error" role="alert" aria-live="polite" className="rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-center">
           <p className="text-sm text-red-200">{error}</p>
           {(error.includes("Invalid") || error.includes("No account") || error.includes("password")) && (
             <Link href="/sign-in?create=1" className="inline-block mt-2 text-sm font-medium text-white underline">

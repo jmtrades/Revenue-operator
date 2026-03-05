@@ -322,16 +322,18 @@ export default function AppActivityPage() {
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-6" role="tablist" aria-label="Filter activity">
         {FILTERS.map((f) => (
           <button
             key={f.id}
             type="button"
+            role="tab"
+            aria-selected={filter === f.id}
             onClick={() => setFilter(f.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
               filter === f.id
                 ? "bg-zinc-700 text-white"
-                : "bg-zinc-800/50 text-zinc-400"
+                : "bg-zinc-800/50 text-zinc-400 hover:text-zinc-300"
             }`}
           >
             {f.label}
@@ -348,15 +350,23 @@ export default function AppActivityPage() {
       {filtered.length === 0 && !loading ? (
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 text-center">
           <p className="text-sm font-medium text-white">No calls yet</p>
-          <p className="text-xs text-zinc-500 mt-1">
-            Connect your phone number in Settings to see call activity here.
+          <p className="text-xs text-zinc-500 mt-2 max-w-sm mx-auto">
+            Forward your number in Settings to start receiving calls. Your AI will answer, capture leads, and book appointments.
           </p>
-          <Link
-            href="/app/settings/phone"
-            className="inline-block mt-4 px-4 py-2 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:border-zinc-500"
-          >
-            Settings → Phone
-          </Link>
+          <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/app/settings/phone"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 transition-colors"
+            >
+              Connect phone →
+            </Link>
+            <Link
+              href="/app/onboarding"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:border-zinc-500 transition-colors"
+            >
+              Finish setup
+            </Link>
+          </div>
         </div>
       ) : (
         <ul className="space-y-3">
