@@ -7,7 +7,7 @@ import { getSession } from "@/lib/auth/request-session";
 
 export const dynamic = "force-dynamic";
 
-const SCOPE = "https://www.googleapis.com/auth/calendar.events";
+const SCOPE = "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly";
 const BASE = "https://accounts.google.com/o/oauth2/v2/auth";
 
 export async function GET(req: NextRequest) {
