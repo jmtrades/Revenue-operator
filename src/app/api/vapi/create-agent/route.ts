@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const db = getDb();
     const { data: ws, error: wsErr } = await db
       .from("workspaces")
-      .select("id, name, greeting, agent_name, vapi_assistant_id")
+      .select("id, name, greeting, agent_name, vapi_assistant_id, preferred_language")
       .eq("id", session.workspaceId)
       .single();
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
     }
 
-    const row = ws as { id: string; name?: string; greeting?: string; agent_name?: string; vapi_assistant_id?: string | null };
+    const row = ws as { id: string; name?: string; greeting?: string; agent_name?: string; vapi_assistant_id?: string | null; preferred_language?: string | null };
     let assistantId = row.vapi_assistant_id?.trim() || null;
 
     if (!assistantId) {
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
         business_name: businessName,
         agent_name: agentName,
         greeting,
+        preferred_language: row.preferred_language ?? undefined,
       });
       const { id } = await createAssistant({
         name: `${agentName} – ${row.id.slice(0, 8)}`,

@@ -14,6 +14,8 @@ export interface BusinessBrainInput {
   emergencies_after_hours?: string;
   appointment_handling?: string;
   faq_extra?: string;
+  /** Preferred response language code (e.g. en, es, fr). Agent should switch when caller uses another language. */
+  preferred_language?: string;
 }
 
 export function compileSystemPrompt(input: BusinessBrainInput): string {
@@ -28,11 +30,14 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     emergencies_after_hours,
     appointment_handling,
     faq_extra,
+    preferred_language,
   } = input;
 
+  const langName = preferred_language ? getLanguageName(preferred_language) : "English";
   const lines: string[] = [
     `You are ${agent_name}, the phone receptionist for ${business_name}.`,
     "Answer briefly and professionally. Do not make up information.",
+    `Respond in ${langName} by default. If the caller speaks another language, switch to that language immediately and continue the conversation in their language so they can be served in their preferred language.`,
   ];
 
   if (offer_summary) {
@@ -75,4 +80,17 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   lines.push("If you don't know something, say you'll have someone get back to them. Never guess.");
 
   return lines.join("\n");
+}
+
+function getLanguageName(code: string): string {
+  const names: Record<string, string> = {
+    en: "English", es: "Spanish", fr: "French", de: "German", it: "Italian",
+    pt: "Portuguese", nl: "Dutch", pl: "Polish", ru: "Russian", ja: "Japanese",
+    zh: "Chinese", ko: "Korean", ar: "Arabic", hi: "Hindi", tr: "Turkish",
+    vi: "Vietnamese", th: "Thai", id: "Indonesian", ms: "Malay", fil: "Filipino",
+    sv: "Swedish", da: "Danish", no: "Norwegian", fi: "Finnish", cs: "Czech",
+    uk: "Ukrainian", hu: "Hungarian", ro: "Romanian", bg: "Bulgarian", el: "Greek",
+    he: "Hebrew",
+  };
+  return names[code.toLowerCase().slice(0, 2)] ?? "English";
 }

@@ -2,6 +2,8 @@
 
 Use this as a single list. Replace `https://www.recall-touch.com` with your real domain if different.
 
+**Migrate to Supabase + GitHub:** See [MIGRATE_SUPABASE_GITHUB.md](./MIGRATE_SUPABASE_GITHUB.md) for one path: run migrations, set env, push to GitHub, and verify caller-ready.
+
 ---
 
 ## 1. Run database migrations (once)
@@ -68,6 +70,7 @@ Ensure these are set in **Vercel** → project → **Settings** → **Environmen
 - [ ] **CRON_SECRET** (long random string)
 - [ ] **RESEND_API_KEY**, **EMAIL_FROM** (for emails)
 - [ ] **VAPI_API_KEY**, **VAPI_PHONE_NUMBER_ID**, **VAPI_DEMO_ASSISTANT_ID** (for voice)
+- [ ] **ELEVENLABS_API_KEY** (for real TTS voices and language support)
 - [ ] **TWILIO_ACCOUNT_SID**, **TWILIO_AUTH_TOKEN**, **TWILIO_PHONE_NUMBER** (for SMS)
 
 ---
@@ -99,12 +102,14 @@ The app talks to the DB via **Supabase API** (not raw Postgres). So in addition 
 
 ---
 
-## 7. Verify
+## 7. Verify (caller-ready)
 
-- [ ] Deploy (or redeploy) on Vercel
-- [ ] Test sign-in and onboarding
-- [ ] Trigger a test webhook from Stripe/Vapi/Twilio if possible to confirm URLs respond
+- [ ] Deploy (or redeploy) on Vercel; run `npm run verify:db` locally to confirm DB + Supabase API.
+- [ ] Test **sign-in** and **create account**; confirm redirect to `/app` and workspace name in sidebar.
+- [ ] Complete **onboarding** (e.g. `/activate`): business, agent, voice, language, greeting → data saved to Supabase.
+- [ ] Confirm **voice**: preview uses ElevenLabs when key is set; Vapi + Twilio voice webhooks point to your domain.
+- [ ] Trigger a test webhook from Stripe/Vapi/Twilio if possible to confirm URLs respond.
 
 ---
 
-**Reference:** Full details in `docs/DEPLOYMENT.md`.
+**Reference:** Full details in `docs/DEPLOYMENT.md`. Supabase + GitHub flow: `docs/MIGRATE_SUPABASE_GITHUB.md`.

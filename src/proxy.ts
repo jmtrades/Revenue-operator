@@ -37,6 +37,7 @@ function isPublicApi(pathname: string): boolean {
   if (pathname.startsWith("/api/cron/")) return true;
   if (pathname.startsWith("/api/auth/")) return true;
   if (pathname === "/api/vapi/demo-config") return true;
+  if (pathname === "/api/agent/speak" || pathname === "/api/agent/voices") return true;
   if (pathname.startsWith("/api/webhooks/") || pathname.startsWith("/api/integrations/twilio")) return true;
   if (pathname.startsWith("/api/command-center")) return true;
   if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
