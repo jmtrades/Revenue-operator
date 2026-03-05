@@ -33,7 +33,7 @@ export default function SignInForm() {
     setLoading(true);
     setError(null);
 
-    // Create account: call signup API
+    // Create account: call signup API (client-side fetch only; no form action)
     if (isCreateMode) {
       if (!password || password.length < 6) {
         setError("Please enter a password (at least 6 characters).");
@@ -51,20 +51,31 @@ export default function SignInForm() {
           }),
           credentials: "include",
         });
-        const data = (await res.json()) as { ok?: boolean; error?: string };
+        const data = (await res.json()) as { ok?: boolean; error?: string; confirmEmail?: boolean };
         if (res.ok && data.ok) {
+          if (data.confirmEmail) {
+            setError(null);
+            setToast("Account created! Check your email to confirm, then sign in.");
+            setLoading(false);
+            return;
+          }
           window.location.href = "/app/activity";
           return;
         }
-        setError(data.error ?? "Sign up failed.");
+        if (res.status === 503) {
+          setError("Sign-in is temporarily unavailable. Please try again later.");
+        } else {
+          setError(data.error ?? "Sign up failed.");
+        }
       } catch {
         setError("Something went wrong. Try again.");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
       return;
     }
 
-    // Sign-in: require password and call API
+    // Sign-in: require password and call API (client-side fetch only)
     if (!password || !password.trim()) {
       setError("Please enter your password.");
       setLoading(false);
@@ -82,16 +93,21 @@ export default function SignInForm() {
         window.location.href = "/app/activity";
         return;
       }
-      const msg = data.error ?? "Sign-in failed.";
-      setError(
-        msg.includes("Invalid") || msg.includes("credentials")
-          ? "Invalid email or password."
-          : msg
-      );
+      if (res.status === 503) {
+        setError("Sign-in is temporarily unavailable. Please try again later.");
+      } else {
+        const msg = data.error ?? "Sign-in failed.";
+        setError(
+          msg.includes("Invalid") || msg.includes("credentials")
+            ? "Invalid email or password."
+            : msg
+        );
+      }
     } catch {
       setError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGoogle = () => {
@@ -99,9 +115,10 @@ export default function SignInForm() {
     if (supabase) {
       setLoading(true);
       setError(null);
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
       void supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback` },
+        options: { redirectTo: `${origin}/auth/callback?next=/app/activity` },
       }).then((result: { error?: { message: string } | null }) => {
         setLoading(false);
         if (result.error) setError(result.error.message);

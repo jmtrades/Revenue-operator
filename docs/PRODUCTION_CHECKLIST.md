@@ -6,6 +6,26 @@ Use this as a single list. Replace `https://www.recall-touch.com` with your real
 
 ---
 
+## 0. Launch-blocking (do first)
+
+### SESSION_SECRET (required)
+
+- [ ] In **Vercel** → **Settings** → **Environment Variables**, set **SESSION_SECRET** to a long random string (32+ characters). If this is missing, sign-in returns 503 and `/app` does not redirect unauthenticated users to `/sign-in`.
+
+### Supabase email confirmation
+
+- [ ] **Option A (recommended for launch):** Supabase Dashboard → **Authentication** → **Providers** → **Email** → turn **OFF** “Enable email confirmations”. Users can sign up and use the app immediately.
+- [ ] **Option B:** Configure custom SMTP in Supabase (e.g. Resend: host `smtp.resend.com`, port 465, user `resend`, password = `RESEND_API_KEY`, sender `noreply@recall-touch.com`). If SMTP is not set and confirmations are ON, signup will show a friendly “Account created! Check your email to confirm” (no raw error).
+
+### Google “Continue with Google”
+
+- [ ] **Google Cloud Console** → **APIs & Services** → **Credentials** → **Create credentials** → **OAuth 2.0 Client ID** (Web application).
+- [ ] **Authorized redirect URI:** `https://<your-supabase-project-ref>.supabase.co/auth/v1/callback`
+- [ ] **Supabase Dashboard** → **Authentication** → **Providers** → **Google**: Enable, paste **Client ID** and **Client Secret**.
+- [ ] The app already uses redirect `https://www.recall-touch.com/auth/callback?next=/app/activity` (or your domain). No code change needed.
+
+---
+
 ## 1. Run database migrations (once)
 
 - [ ] Get **Database URL** from Supabase: **Project Settings → Database → Connection string (URI)**. Use the **Transaction** pooler. Replace `[YOUR-PASSWORD]` with your DB password.
@@ -105,7 +125,7 @@ The app talks to the DB via **Supabase API** (not raw Postgres). So in addition 
 ## 7. Verify (caller-ready)
 
 - [ ] Deploy (or redeploy) on Vercel; run `npm run verify:db` locally to confirm DB + Supabase API.
-- [ ] Test **sign-in** and **create account**; confirm redirect to `/app` and workspace name in sidebar.
+- [ ] Test **sign-in** and **create account**; confirm redirect to `/app/activity` and workspace name in sidebar (not stale “Portland Plumbing”).
 - [ ] Complete **onboarding** (e.g. `/activate`): business, agent, voice, language, greeting → data saved to Supabase.
 - [ ] Confirm **voice**: preview uses ElevenLabs when key is set; Vapi + Twilio voice webhooks point to your domain.
 - [ ] Trigger a test webhook from Stripe/Vapi/Twilio if possible to confirm URLs respond.
