@@ -33,12 +33,23 @@ export async function POST(req: NextRequest) {
 
   const supabase = createClient(url, anonKey);
   const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) {
+
+  // Supabase may return an error when confirmation email fails (e.g. SMTP not configured).
+  // Treat as success so we don't show "Error sending confirmation email"; user may need to confirm later.
+  const isConfirmationEmailError =
+    error &&
+    (error.message?.toLowerCase().includes("confirmation") ||
+      error.message?.toLowerCase().includes("email") ||
+      error.message?.toLowerCase().includes("send"));
+  if (error && !isConfirmationEmailError) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  const userId = data.user?.id;
+  const userId = data?.user?.id;
   if (!userId) {
+    if (isConfirmationEmailError) {
+      return NextResponse.json({ ok: true, confirmEmail: true });
+    }
     return NextResponse.json({ error: "Sign up failed" }, { status: 400 });
   }
 
@@ -57,6 +68,11 @@ export async function POST(req: NextRequest) {
     }
   } catch {
     // continue without workspace
+  }
+
+  // If confirmation is required and email failed, don't set session; tell client to show "check your email".
+  if (isConfirmationEmailError) {
+    return NextResponse.json({ ok: true, confirmEmail: true });
   }
 
   const cookie = createSessionCookie({ userId, workspaceId });

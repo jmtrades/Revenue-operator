@@ -14,9 +14,22 @@ export function WorkspaceName({ className }: { className?: string }) {
   useEffect(() => {
     let cancelled = false;
     fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+      .then((res) => {
+        if (cancelled) return null;
+        // Unauthenticated (401) or any error: never show stale localStorage (e.g. "Portland Plumbing")
+        if (!res.ok) {
+          try {
+            localStorage.removeItem("rt_business_name");
+          } catch {
+            // ignore
+          }
+          setName(FALLBACK);
+          return null;
+        }
+        return res.json() as Promise<{ name?: string }>;
+      })
       .then((data: { name?: string } | null) => {
-        if (cancelled) return;
+        if (cancelled || data == null) return;
         const fromApi = data?.name?.trim();
         if (fromApi) {
           setName(fromApi);
@@ -27,34 +40,11 @@ export function WorkspaceName({ className }: { className?: string }) {
           }
           return;
         }
-        try {
-          const fromStorage = localStorage.getItem("rt_business_name")?.trim();
-          if (fromStorage) {
-            setName(fromStorage);
-            return;
-          }
-          const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
-          if (raw) {
-            const d = JSON.parse(raw) as { businessName?: string };
-            const bn = d?.businessName?.trim();
-            if (bn) {
-              setName(bn);
-              return;
-            }
-          }
-        } catch {
-          // ignore
-        }
         setName(FALLBACK);
       })
       .catch(() => {
         if (cancelled) return;
-        try {
-          const fromStorage = localStorage.getItem("rt_business_name")?.trim();
-          setName(fromStorage || FALLBACK);
-        } catch {
-          setName(FALLBACK);
-        }
+        setName(FALLBACK);
       });
     return () => {
       cancelled = true;

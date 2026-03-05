@@ -7,7 +7,7 @@ import { getBaseUrl } from "@/lib/runtime/base-url";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/app";
+  const next = searchParams.get("next") ?? "/app/activity";
   const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
     } catch {
       // DB unavailable — still set session with userId only
     }
-    const redirectPath = isNewUser && (next === "/dashboard" || next === "/app") ? "/app/onboarding" : next;
+    const redirectPath = isNewUser && (next === "/dashboard" || next === "/app" || next === "/app/activity") ? "/app/onboarding" : next;
     const cookie = createSessionCookie({ userId, workspaceId });
     if (cookie) {
       const res = NextResponse.redirect(new URL(redirectPath, origin));
