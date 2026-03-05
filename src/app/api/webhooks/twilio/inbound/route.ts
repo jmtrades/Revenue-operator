@@ -89,10 +89,11 @@ export async function POST(request: NextRequest) {
     }
 
     try {
+      const normalizedPhone = from.replace(/[^0-9+]/g, "");
       const { signalId, inserted } = await ingestInboundAsSignal({
         workspace_id: workspaceId,
         channel: "sms",
-        external_lead_id: from.replace(/[^0-9+]/g, ""),
+        external_lead_id: normalizedPhone,
         thread_id: from,
         message: body,
         external_message_id: messageSid,
@@ -100,6 +101,31 @@ export async function POST(request: NextRequest) {
       if (inserted && signalId) {
         await enqueue({ type: "process_signal", signalId });
         await burstDrain();
+      }
+      const { data: leadRow } = await db
+        .from("leads")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("external_id", normalizedPhone)
+        .limit(1)
+        .maybeSingle();
+      const leadId = (leadRow as { id: string } | null)?.id;
+      if (leadId) {
+        const now = new Date().toISOString();
+        try {
+          await db.from("messages").insert({
+            workspace_id: workspaceId,
+            lead_id: leadId,
+            direction: "inbound",
+            channel: "sms",
+            content: body,
+            status: "delivered",
+            trigger: "manual",
+            sent_at: now,
+          });
+        } catch {
+          // ignore insert failure (e.g. table shape differs)
+        }
       }
     } catch (err) {
       logWebhookFailure("twilio_inbound", err, workspaceId);

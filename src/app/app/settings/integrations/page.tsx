@@ -1,23 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 const INTEGRATIONS = [
-  { name: "Google Calendar", icon: "📅", desc: "Sync appointments booked by your AI", plan: "Growth+" },
-  { name: "Outlook", icon: "📧", desc: "Calendar and email integration", plan: "Growth+" },
-  { name: "HubSpot", icon: "🔧", desc: "Push leads and contacts automatically", plan: "Scale+" },
-  { name: "Salesforce", icon: "☁️", desc: "Two-way contact and deal sync", plan: "Scale+" },
-  { name: "Zapier", icon: "⚡", desc: "Connect to 5,000+ apps via triggers", plan: "Growth+" },
-  { name: "Slack", icon: "💬", desc: "Get AI call summaries in Slack channels", plan: "Growth+" },
+  { name: "Google Calendar", icon: "📅", desc: "Sync appointments booked by your AI", plan: "Growth+", authUrl: "/api/integrations/google-calendar/auth" },
+  { name: "Outlook", icon: "📧", desc: "Calendar and email integration", plan: "Growth+", authUrl: null },
+  { name: "HubSpot", icon: "🔧", desc: "Push leads and contacts automatically", plan: "Scale+", authUrl: null },
+  { name: "Salesforce", icon: "☁️", desc: "Two-way contact and deal sync", plan: "Scale+", authUrl: null },
+  { name: "Zapier", icon: "⚡", desc: "Connect to 5,000+ apps via triggers", plan: "Growth+", authUrl: null },
+  { name: "Slack", icon: "💬", desc: "Get AI call summaries in Slack channels", plan: "Growth+", authUrl: null },
 ];
 
 export default function AppSettingsIntegrationsPage() {
   const [toast, setToast] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
-  const handleConnect = (name: string) => {
-    setToast(`${name} — available on Growth and Scale plans`);
-    setTimeout(() => setToast(null), 4000);
+  useEffect(() => {
+    const calendar = searchParams.get("calendar");
+    if (!calendar) return;
+    const msg = calendar === "connected" ? "Google Calendar connected." : calendar === "error" ? "Could not connect Google Calendar." : calendar === "config" ? "Google Calendar is not configured." : null;
+    if (msg) {
+      const t = setTimeout(() => setToast(msg), 0);
+      const t2 = setTimeout(() => setToast(null), 4000);
+      return () => { clearTimeout(t); clearTimeout(t2); };
+    }
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [searchParams]);
+
+  const handleConnect = (name: string, authUrl: string | null) => {
+    if (!authUrl) {
+      setToast(`${name} — available on Growth and Scale plans`);
+      setTimeout(() => setToast(null), 4000);
+    }
   };
 
   return (
@@ -36,9 +53,15 @@ export default function AppSettingsIntegrationsPage() {
               </div>
               <p className="text-[11px] text-zinc-500 mt-0.5">{i.desc}</p>
             </div>
-            <button type="button" onClick={() => handleConnect(i.name)} className="px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
-              Connect
-            </button>
+            {(i as { authUrl?: string | null }).authUrl ? (
+              <Link href={(i as { authUrl: string }).authUrl} className="px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
+                Connect
+              </Link>
+            ) : (
+              <button type="button" onClick={() => handleConnect(i.name, null)} className="px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
+                Connect
+              </button>
+            )}
           </div>
         ))}
       </div>

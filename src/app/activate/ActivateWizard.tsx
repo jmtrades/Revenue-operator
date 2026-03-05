@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { previewVoice } from "@/lib/voice-preview";
 import {
@@ -216,7 +217,9 @@ export function ActivateWizard() {
     }
   };
 
-  const handleFinalize = () => {
+  const router = useRouter();
+  const handleFinalize = useCallback(async (e?: React.MouseEvent) => {
+    e?.preventDefault();
     try {
       if (state.businessName.trim()) {
         localStorage.setItem("rt_business_name", state.businessName.trim());
@@ -228,11 +231,35 @@ export function ActivateWizard() {
         } catch { return {}; }
       })();
       localStorage.setItem("rt_signup", JSON.stringify({ ...existing, businessName: state.businessName.trim() }));
+
+      const hoursObj = state.hours?.length
+        ? { days: state.hours.map((h) => h.day), start: state.hours[0]?.start ?? "09:00", end: state.hours[0]?.end ?? "17:00", timezone: "UTC" }
+        : undefined;
+      const res = await fetch("/api/workspace/create", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessName: state.businessName.trim() || "My Workspace",
+          businessPhone: state.businessPhone.trim() || undefined,
+          industry: state.industry ?? undefined,
+          orgType: state.orgType ?? undefined,
+          agentTemplate: state.agentTemplate ?? undefined,
+          agentName: state.agentName || undefined,
+          greeting: state.greeting || undefined,
+          businessHours: hoursObj,
+          knowledgeItems: state.services?.length ? state.services.map((s) => ({ type: "service", value: s })) : undefined,
+        }),
+      });
+      if (res.ok) {
+        fetch("/api/vapi/create-agent", { method: "POST", credentials: "include" }).catch(() => {});
+      }
+      if (process.env.NODE_ENV === "development" && !res.ok) {
+        console.log("Workspace create:", res.status, await res.text());
+      }
     } catch { /* ignore */ }
-    if (process.env.NODE_ENV === "development") {
-      console.log("Activation completed", state);
-    }
-  };
+    router.push("/app");
+  }, [state, router]);
 
   return (
     <Container>
@@ -772,13 +799,13 @@ export function ActivateWizard() {
                 >
                   ← Back
                 </button>
-                <a
-                  href="/app"
-                  onClick={handleFinalize}
+                <button
+                  type="button"
+                  onClick={(e) => void handleFinalize(e)}
                   className="inline-flex items-center justify-center rounded-xl bg-emerald-500 px-5 py-2.5 text-xs md:text-sm font-semibold text-white hover:bg-emerald-400"
                 >
                   Activate Agent →
-                </a>
+                </button>
               </div>
             </div>
           )}

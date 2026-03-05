@@ -2,14 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft } from "lucide-react";
-
-const PAGE_TITLE = "Inbox — Recall Touch";
+import { useWorkspace } from "@/components/WorkspaceContext";
 import {
   MOCK_INBOX_THREADS,
   type InboxThread,
   type InboxMessage,
   type InboxChannel,
 } from "@/lib/mock/inbox";
+
+const PAGE_TITLE = "Inbox — Recall Touch";
 
 type Filter = "all" | "unread" | "phone" | "sms" | "email";
 type ReplyChannel = "sms" | "email";
@@ -350,6 +351,7 @@ function ConversationDetail({
 }
 
 export default function InboxPage() {
+  const { workspaceId } = useWorkspace();
   useEffect(() => {
     document.title = PAGE_TITLE;
     return () => { document.title = ""; };
@@ -363,6 +365,20 @@ export default function InboxPage() {
   const [replyChannel, setReplyChannel] = useState<ReplyChannel>("sms");
   const [input, setInput] = useState("");
   const [mobileMode, setMobileMode] = useState<"list" | "detail">("list");
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/inbox?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { threads: [] }))
+      .then((data: { threads?: InboxThread[] }) => {
+        const list = data.threads ?? [];
+        if (list.length > 0) {
+          setThreads(list);
+          setSelectedId(list[0]?.id ?? null);
+        }
+      })
+      .catch(() => {});
+  }, [workspaceId]);
 
   const activeThread = useMemo(
     () => threads.find((t) => t.id === selectedId) ?? threads[0] ?? null,

@@ -18,7 +18,7 @@ import {
 function isPublicPage(pathname: string): boolean {
   if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
   if (pathname === "/sign-in" || pathname.startsWith("/auth/")) return true;
-  if (pathname.startsWith("/app") || pathname.startsWith("/onboard") || pathname.startsWith("/onboarding") || pathname.startsWith("/public/work")) return true;
+  if (pathname.startsWith("/onboard") || pathname.startsWith("/onboarding") || pathname.startsWith("/public/work")) return true;
   if (pathname === "/demo" || pathname === "/product" || pathname === "/pricing" || pathname === "/docs") return true;
   if (pathname === "/contact" || pathname === "/blog" || pathname === "/privacy" || pathname === "/terms") return true;
   if (pathname.startsWith("/industries/")) return true;
@@ -36,6 +36,7 @@ function isPublicApi(pathname: string): boolean {
   if (pathname.startsWith("/api/health")) return true;
   if (pathname.startsWith("/api/cron/")) return true;
   if (pathname.startsWith("/api/auth/")) return true;
+  if (pathname === "/api/vapi/demo-config") return true;
   if (pathname.startsWith("/api/webhooks/") || pathname.startsWith("/api/integrations/twilio")) return true;
   if (pathname.startsWith("/api/command-center")) return true;
   if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
@@ -146,8 +147,9 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // ——— App: session for dashboard and protected API ———
-  if (!isDashboardOrApi(pathname)) return NextResponse.next();
+  // ——— App and dashboard: require session ———
+  const isApp = pathname.startsWith("/app");
+  if (!isDashboardOrApi(pathname) && !isApp) return NextResponse.next();
   if (isPublicApi(pathname)) return NextResponse.next();
   if (!isSessionEnabled()) return NextResponse.next();
 
@@ -158,6 +160,7 @@ export async function proxy(req: NextRequest) {
     const workspaceIdParam = req.nextUrl.searchParams.get("workspace_id");
     if (pathname.startsWith("/dashboard") && workspaceIdParam) return NextResponse.next();
     if (pathname.startsWith("/api/") && workspaceIdParam) return NextResponse.next();
+    if (isApp) return NextResponse.redirect(new URL("/sign-in", req.url));
     if (pathname.startsWith("/dashboard")) return NextResponse.redirect(new URL("/activate", req.url));
     if (pathname.startsWith("/admin")) return NextResponse.redirect(new URL("/activate", req.url));
     if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -37,8 +37,8 @@ export const FOOTER_SOLUTIONS = [
 export const PRICING_TIERS = [
   {
     name: "Starter",
-    priceMonthly: "$79",
-    priceAnnual: "$66",
+    priceMonthly: "$297",
+    priceAnnual: "$247",
     period: "/mo",
     description: "Less than one missed call",
     features: [
@@ -55,8 +55,8 @@ export const PRICING_TIERS = [
   },
   {
     name: "Growth",
-    priceMonthly: "$199",
-    priceAnnual: "$166",
+    priceMonthly: "$497",
+    priceAnnual: "$416",
     period: "/mo",
     description: "One recovered lead pays for the whole month",
     features: [
@@ -76,8 +76,8 @@ export const PRICING_TIERS = [
   },
   {
     name: "Scale",
-    priceMonthly: "$399",
-    priceAnnual: "$333",
+    priceMonthly: "$2,400",
+    priceAnnual: "$1,583",
     period: "/mo",
     description: "Full AI communication team for a fraction of one hire",
     features: [
