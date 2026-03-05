@@ -2,30 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { getClientOrNull } from "@/lib/supabase/client";
 
-function getSignupEmail(): string | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup") ?? localStorage.getItem("recall_touch_activate");
-    if (!raw) return null;
-    const d = JSON.parse(raw) as { email?: string };
-    return d?.email?.trim() ?? null;
-  } catch {
-    return null;
-  }
-}
-
 export default function SignInForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const isCreateMode = searchParams.get("create") === "1";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -67,7 +53,7 @@ export default function SignInForm() {
         });
         const data = (await res.json()) as { ok?: boolean; error?: string };
         if (res.ok && data.ok) {
-          router.push("/app");
+          window.location.href = "/app";
           return;
         }
         setError(data.error ?? "Sign up failed.");
@@ -78,58 +64,34 @@ export default function SignInForm() {
       return;
     }
 
-    // Password sign-in: call API and set session cookie
-    if (password) {
-      try {
-        const res = await fetch("/api/auth/signin", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: trimmed, password }),
-          credentials: "include",
-        });
-        const data = (await res.json()) as { ok?: boolean; error?: string };
-        if (res.ok && data.ok) {
-          router.push("/app");
-          return;
-        }
-        setError(data.error ?? "Sign-in failed.");
-      } catch {
-        setError("Something went wrong. Try again.");
-      }
+    // Sign-in: require password and call API
+    if (!password || !password.trim()) {
+      setError("Please enter your password.");
       setLoading(false);
       return;
     }
-
-    const signupEmail = getSignupEmail();
-    if (signupEmail && signupEmail.toLowerCase() === trimmed) {
-      try {
-        localStorage.setItem("rt_session", "true");
-        localStorage.setItem("rt_authenticated", "true");
-      } catch {
-        // ignore
-      }
-      setLoading(false);
-      router.push("/app");
-      return;
-    }
-
-    const supabase = getClientOrNull();
-    if (supabase) {
-      const { error: err } = await supabase.auth.signInWithOtp({
-        email: trimmed,
-        options: { emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback` },
+    try {
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed, password: password.trim() }),
+        credentials: "include",
       });
-      setLoading(false);
-      if (err) {
-        setError(err.message);
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (res.ok && data.ok) {
+        window.location.href = "/app";
         return;
       }
-      setSent(true);
-      return;
+      const msg = data.error ?? "Sign-in failed.";
+      setError(
+        msg.includes("Invalid") || msg.includes("credentials")
+          ? "Invalid email or password."
+          : msg
+      );
+    } catch {
+      setError("Something went wrong. Try again.");
     }
-
     setLoading(false);
-    setError("No account found with this email.");
   };
 
   const handleGoogle = () => {
@@ -155,13 +117,7 @@ export default function SignInForm() {
 
   return (
     <div className="space-y-6">
-      {sent && !isCreateMode ? (
-        <p className="text-sm text-center text-zinc-400">
-          Check your email for the sign-in link.
-        </p>
-      ) : (
-        <>
-          <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="signin-email" className="block text-sm font-medium text-zinc-400 mb-1.5">Email address</label>
               <input
@@ -190,7 +146,7 @@ export default function SignInForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 pr-12 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
                   autoComplete={isCreateMode ? "new-password" : "current-password"}
-                  required={isCreateMode}
+                  required
                 />
                 <button
                   type="button"
@@ -253,14 +209,12 @@ export default function SignInForm() {
               <Link href="/sign-in" className="text-white hover:underline font-medium">Sign in</Link>
             </p>
           )}
-        </>
-      )}
       {error && (
         <div id="signin-error" role="alert" className="rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-center">
           <p className="text-sm text-red-200">{error}</p>
-          {error.includes("No account") && (
-            <Link href="/activate" className="inline-block mt-2 text-sm font-medium text-white underline">
-              Get started free →
+          {(error.includes("Invalid") || error.includes("No account") || error.includes("password")) && (
+            <Link href="/sign-in?create=1" className="inline-block mt-2 text-sm font-medium text-white underline">
+              Create account →
             </Link>
           )}
         </div>

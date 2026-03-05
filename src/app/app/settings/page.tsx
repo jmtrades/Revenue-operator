@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 const SETTINGS_LINKS = [
@@ -14,6 +15,19 @@ const SETTINGS_LINKS = [
 ];
 
 export default function AppSettingsPage() {
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await fetch("/api/auth/signout", { method: "POST", credentials: "include" });
+      window.location.href = "/sign-in";
+    } catch {
+      setSigningOut(false);
+    }
+  };
+
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <h1 className="text-lg font-semibold text-white mb-2">Settings</h1>
@@ -33,6 +47,16 @@ export default function AppSettingsPage() {
             <span className="text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0">→</span>
           </Link>
         ))}
+      </div>
+      <div className="mt-8 pt-6 border-t border-zinc-800">
+        <button
+          type="button"
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200 transition disabled:opacity-60"
+        >
+          {signingOut ? "Signing out…" : "Sign out"}
+        </button>
       </div>
       <p className="mt-6">
         <Link href="/app/activity" className="text-sm text-zinc-400 hover:text-white transition-colors">← Activity</Link>
