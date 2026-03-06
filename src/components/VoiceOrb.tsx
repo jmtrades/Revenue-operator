@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Mic, Square } from "lucide-react";
 import { speakTextViaApi } from "@/lib/voice-preview";
 
 interface ConversationMessage {
@@ -174,7 +175,7 @@ export function VoiceOrb() {
         aria-label={open ? "Close voice demo" : "Talk to Recall Touch"}
         title="Talk to Recall Touch"
       >
-        <span className="text-lg font-semibold" aria-hidden="true">🎙</span>
+        <Mic className="h-5 w-5" aria-hidden="true" />
       </button>
       {open && (
         <div className="fixed bottom-24 right-6 z-40 w-[320px] max-w-[90vw] rounded-2xl border border-zinc-800 bg-black/95 backdrop-blur-md shadow-2xl flex flex-col overflow-hidden animate-[slideUp_0.25s_ease-out]">
@@ -251,7 +252,7 @@ export function VoiceOrb() {
                   : "bg-white text-black hover:bg-zinc-100"
               }`}
             >
-              <span aria-hidden>{listening ? "■" : "🎙️"}</span>
+              <span aria-hidden>{listening ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-4 w-4" />}</span>
               <span>{listening ? "Stop demo" : "Talk"}</span>
             </button>
             <button

@@ -257,7 +257,13 @@ export default function AppSettingsAgentPage() {
       </button>
 
       <div className="mt-6">
-        <WorkspaceVoiceButton />
+        <WorkspaceVoiceButton
+          title="Test your agent"
+          description="Run a live browser call with your current assistant, then review the transcript before saving more changes."
+          startLabel="Start live test"
+          endLabel="End live test"
+          showUnavailable={true}
+        />
       </div>
 
       {toast && (

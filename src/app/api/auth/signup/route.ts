@@ -5,7 +5,6 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseJsClient } from "@supabase/supabase-js";
-import { createClient as createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import {
@@ -91,7 +90,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseJsClient(url, anonKey);
   let data: { user?: { id: string } | null } | undefined;
   let error: { message?: string } | null = null;
   try {

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Bot } from "lucide-react";
 
 type Thread = {
   id: string;
@@ -102,8 +103,8 @@ export default function AppMessagesPage() {
                       }`}
                     >
                       <div className="flex items-center gap-1 mb-1">
-                        <span className="text-[10px] text-zinc-400">
-                          {m.from === "user" ? active.name : "🤖 AI"}
+                        <span className="flex items-center gap-1 text-[10px] text-zinc-400">
+                          {m.from === "user" ? active.name : <><Bot className="h-3 w-3" /> Agent</>}
                         </span>
                         <span className="text-[10px] text-zinc-500">{m.time}</span>
                       </div>

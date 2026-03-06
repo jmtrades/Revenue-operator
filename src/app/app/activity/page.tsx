@@ -2,6 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import {
+  CalendarCheck,
+  CheckCircle2,
+  Phone,
+  Sparkles,
+  UserPlus,
+  Video,
+} from "lucide-react";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -82,6 +90,24 @@ function formatDuration(start?: string | null, end?: string | null): string {
 }
 
 const PAGE_TITLE = "Dashboard — Recall Touch";
+
+const NEXT_ACTIONS = [
+  {
+    title: "Connect your phone",
+    body: "Route your existing number or claim a new one so your AI can start answering real calls.",
+    href: "/app/settings/phone",
+  },
+  {
+    title: "Make a test call",
+    body: "Hear the current greeting and confirm your call flow before going live.",
+    href: "/app/onboarding",
+  },
+  {
+    title: "Share with your team",
+    body: "Invite the people who should see leads, appointments, and inbox updates.",
+    href: "/app/team",
+  },
+] as const;
 
 export default function AppActivityPage() {
   const { workspaceId } = useWorkspace();
@@ -284,7 +310,9 @@ export default function AppActivityPage() {
 
       <div className="mb-6 p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50">
         <div className="flex items-start gap-3">
-          <span className="text-2xl shrink-0">🎉</span>
+          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10">
+            <Sparkles className="h-5 w-5 text-amber-400" />
+          </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-white">
               Welcome! Complete your setup for the best experience.
@@ -303,17 +331,23 @@ export default function AppActivityPage() {
       </div>
 
       <div className="grid grid-cols-3 gap-2 mb-6">
-        <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-2.5 text-center">
-          <span className="text-sm">✓</span>
-          <p className="text-[10px] text-green-400 mt-0.5">First call</p>
+        <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] p-3 text-center">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
+            <Phone className="h-5 w-5 text-emerald-400" />
+          </div>
+          <p className="mt-2 text-[11px] font-medium text-emerald-400">First call</p>
         </div>
-        <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-2.5 text-center">
-          <span className="text-sm">💰</span>
-          <p className="text-[10px] text-green-400 mt-0.5">Lead captured</p>
+        <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] p-3 text-center">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
+            <UserPlus className="h-5 w-5 text-emerald-400" />
+          </div>
+          <p className="mt-2 text-[11px] font-medium text-emerald-400">Lead captured</p>
         </div>
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-2.5 text-center">
-          <span className="text-sm">📅</span>
-          <p className="text-[10px] text-emerald-400 mt-0.5">Appt booked</p>
+        <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] p-3 text-center">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
+            <CalendarCheck className="h-5 w-5 text-emerald-400" />
+          </div>
+          <p className="mt-2 text-[11px] font-medium text-emerald-400">Appt booked</p>
         </div>
       </div>
 
@@ -344,9 +378,12 @@ export default function AppActivityPage() {
 
       {filtered.length === 0 && !loading ? (
         <div className="space-y-4">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 text-center">
-            <p className="text-sm font-medium text-white">No calls yet</p>
-            <p className="text-xs text-zinc-500 mt-2 max-w-sm mx-auto">
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center text-white/10">
+              <Phone className="h-12 w-12" />
+            </div>
+            <p className="mt-4 text-[16px] font-medium text-white/80">No calls yet</p>
+            <p className="mt-2 max-w-sm mx-auto text-[13px] text-white/40">
               Forward your number in Settings to start receiving calls. Your AI will answer, capture leads, and book appointments.
             </p>
             <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -365,17 +402,52 @@ export default function AppActivityPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
-            <p className="text-sm font-semibold text-white">Quick tip</p>
-            <p className="text-xs text-zinc-500 mt-1">
-              Forward your existing number to start receiving AI-answered calls in under 2 minutes.
-            </p>
-            <Link href="/app/settings/phone" className="inline-block mt-3 text-xs font-medium text-white underline underline-offset-2">
-              Set up phone →
-            </Link>
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <p className="text-sm font-semibold text-white">What to do next</p>
+            <div className="mt-3 space-y-3">
+              {NEXT_ACTIONS.map((item, index) => (
+                <div key={item.href} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-[#0f1623] p-3">
+                  <div className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white/[0.04] text-zinc-400">
+                    {index === 0 ? <Phone className="h-3.5 w-3.5" /> : index === 1 ? <CheckCircle2 className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-white/80">{item.title}</p>
+                    <p className="mt-1 text-[13px] text-white/40">{item.body}</p>
+                    <Link href={item.href} className="mt-2 inline-block text-xs font-medium text-zinc-300 underline underline-offset-2">
+                      Open →
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <div className="flex items-center gap-2">
+              <Video className="h-4 w-4 text-white/30" />
+              <p className="text-sm font-semibold text-white">See it handled live</p>
+            </div>
+            <div className="mt-3 rounded-2xl border border-white/[0.06] bg-[#0f1623] p-4">
+              <p className="text-[13px] text-white/40">
+                Watch the sample call walkthrough to hear how a real lead is answered, qualified, and booked before you connect your line.
+              </p>
+              <Link
+                href="/demo"
+                className="mt-3 inline-flex items-center justify-center rounded-xl border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:border-zinc-500"
+              >
+                Watch the call demo →
+              </Link>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <p className="text-sm font-semibold text-white">Estimated ROI</p>
+            <p className="mt-1 text-[13px] text-white/40">
+              Businesses at your stage typically recover <span className="font-medium text-white/80">$2,400+</span> a month once every missed call turns into a captured lead.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
             <p className="text-sm font-semibold text-white">Recent system events</p>
             {systemEvents.length === 0 ? (
               <p className="text-xs text-zinc-500 mt-2">Your setup events will appear here.</p>
@@ -394,7 +466,7 @@ export default function AppActivityPage() {
             )}
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 flex items-center justify-between gap-4">
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-white">Want to see your AI in action?</p>
               <p className="text-xs text-zinc-500 mt-1">Place a quick test call before you go fully live.</p>

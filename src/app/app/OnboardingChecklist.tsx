@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Check, Circle } from "lucide-react";
 
 const ITEMS: { key: string; label: string; href: string }[] = [
   { key: "business", label: "Business info added", href: "/app/onboarding" },
@@ -52,11 +53,11 @@ export function OnboardingChecklist() {
   const pct = total ? Math.round((progress.completed / total) * 100) : 0;
 
   return (
-    <div className="rounded-lg border border-zinc-700 bg-zinc-800/30 p-2">
+    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
       <p className="text-[10px] font-medium text-zinc-400 mb-1.5">
         {progress.completed}/{total} complete
       </p>
-      <div className="h-1 rounded-full bg-zinc-700 overflow-hidden mb-2">
+      <div className="h-1 rounded-full bg-zinc-800 overflow-hidden mb-2">
         <div
           className="h-full rounded-full bg-green-500/80 transition-all duration-300"
           style={{ width: `${pct}%` }}
@@ -64,10 +65,16 @@ export function OnboardingChecklist() {
       </div>
       <ul className="space-y-1">
         {ITEMS.slice(0, 4).map((item) => (
-          <li key={item.key} className="flex items-center gap-1.5 text-[10px]">
-            <span className={progress.done.has(item.key) ? "text-green-500" : "text-zinc-500"}>
-              {progress.done.has(item.key) ? "✅" : "○"}
-            </span>
+          <li key={item.key} className="flex items-center gap-2 text-[10px]">
+            {progress.done.has(item.key) ? (
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10">
+                <Check className="h-4 w-4 text-emerald-400" />
+              </div>
+            ) : (
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/[0.04]">
+                <Circle className="h-3.5 w-3.5 text-zinc-500" />
+              </div>
+            )}
             <Link href={item.href} className="text-zinc-400 hover:text-white truncate">
               {item.label}
             </Link>

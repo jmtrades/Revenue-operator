@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Sparkles, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import {
@@ -736,16 +737,18 @@ export function ActivateWizard() {
                   <button
                     type="button"
                     onClick={() => handleThumb("down")}
-                    className="inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900/40 px-4 py-2 text-xs text-slate-200 hover:border-slate-500"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/40 px-4 py-2 text-xs text-slate-200 hover:border-slate-500"
                   >
-                    👎 Adjust settings
+                    <ThumbsDown className="h-4 w-4" />
+                    Adjust settings
                   </button>
                   <button
                     type="button"
                     onClick={() => handleThumb("up")}
-                    className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-xs font-semibold text-black hover:bg-slate-100"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2 text-xs font-semibold text-black hover:bg-slate-100"
                   >
-                    👍 Looks great! Start answering calls →
+                    <ThumbsUp className="h-4 w-4" />
+                    Looks great! Start answering calls →
                   </button>
                 </div>
               </div>
@@ -767,7 +770,10 @@ export function ActivateWizard() {
               <Confetti key="step5-confetti" />
               <div>
                 <h2 className="text-lg md:text-xl font-semibold text-slate-50">
-                  Your AI agent is live! 🎉
+                  <span className="inline-flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-amber-400" />
+                    Your AI agent is live!
+                  </span>
                 </h2>
                 <p className="mt-1 text-sm text-slate-400">
                   Your agent is ready to take calls. Complete the steps below to start.

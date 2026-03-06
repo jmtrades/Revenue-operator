@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 
 const DEMO_SYSTEM =
-  `You are a Recall Touch demo AI agent. You demonstrate how Recall Touch handles calls for any type of business or person. Adapt naturally to whatever the caller describes. If they mention plumbing, be a plumbing receptionist. If they mention a law firm, do legal intake. If they want to schedule a meeting, handle scheduling. If they just want to chat, be helpful. Show versatility. Be warm, professional, efficient. Keep responses short and natural like a real phone call. Always try to capture the caller's name, need, and next step.`;
+  `You answer phone calls for Recall Touch. Adapt to the caller's business context, stay calm and natural, and guide the conversation toward the next clear step. Keep replies short, human, and focused on the caller's name, need, and next step.`;
 
 const AGENTS: Record<string, { name: string; style: string; greeting: string }> = {
   sarah: {
@@ -18,7 +18,7 @@ const AGENTS: Record<string, { name: string; style: string; greeting: string }> 
   },
   emma: {
     name: "Recall Touch",
-    style: "concise, brief and efficient",
+    style: "direct, calm tone",
     greeting: "Hi. How can I help?",
   },
 };
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         max_tokens: 100,
         system: useDemoPrompt
           ? DEMO_SYSTEM
-          : `You are ${a.name}, AI phone agent for ${name}. Style: ${a.style}. THIS IS A PHONE CALL. 1-2 sentences max. Talk like a human on the phone. Ask ONE question at a time. No bullet points, no lists, no markdown. Business: ${name}. Services: ${services}. Hours: ${hours}. Area: ${area}. Pricing: ${pricing}.`,
+          : `You are ${a.name} for ${name}. Style: ${a.style}. This is a phone call. Keep replies to 1-2 sentences. Talk like a human on the phone. Ask one question at a time. No bullet points, no lists, no markdown. Business: ${name}. Services: ${services}. Hours: ${hours}. Area: ${area}. Pricing: ${pricing}.`,
         messages,
       }),
     });
