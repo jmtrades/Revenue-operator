@@ -42,10 +42,10 @@ export async function sendDailyTrustEmails(): Promise<Array<{ workspaceId: strin
     if (followUps > 0) bullets.push(`Decisions progressed: ${followUps}`);
     if (attendance > 0) bullets.push(`Attendance was confirmed: ${attendance}`);
 
-    const subject = "Conditions are normal.";
-    const body = `Conditions are normal.
+    const subject = "Today's activity snapshot";
+    const body = `${replies} conversations moved forward today.
 
-Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
+Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www.recall-touch.com"}/app/activity`;
 
     try {
       if (process.env.RESEND_API_KEY) {
@@ -56,7 +56,7 @@ Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM || "Revenue Operator <noreply@revenue-operator.com>",
+            from: process.env.EMAIL_FROM || "Recall Touch <noreply@recall-touch.com>",
             to: email,
             subject,
             text: body,

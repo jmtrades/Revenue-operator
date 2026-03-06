@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
+import { fetchWorkspaceMeCached, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 function getInitialTimezone(): string {
   try {
@@ -22,8 +23,7 @@ export default function AppSettingsBusinessPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    fetchWorkspaceMeCached()
       .then((data: { name?: string; address?: string; website?: string; industry?: string } | null) => {
         setName(data?.name ?? "");
         setAddress(data?.address ?? "");
@@ -42,6 +42,7 @@ export default function AppSettingsBusinessPage() {
         body: JSON.stringify({ name, address, website, industry }),
       });
       if (!res.ok) throw new Error("save_failed");
+      invalidateWorkspaceMeCache();
       setToast("Settings saved");
     } catch {
       setToast("Could not save settings");

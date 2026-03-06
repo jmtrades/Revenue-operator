@@ -13,8 +13,68 @@ import { getDb } from "@/lib/db/queries";
 import { enqueueAction } from "@/lib/action-queue";
 import type { ActionCommand } from "@/lib/action-queue/types";
 import { analyzeClosingCall } from "@/lib/zoom/analysis";
+import { sendCallOutcomeEmail } from "@/lib/email/call-alert";
 
 const EMERGENCY_KEYWORDS = /\b(emergency|urgent|burst|leak|flood|flooding|flooded|fire|break-in|break in|broken in|no heat|no a\/c|no ac|out of power|power out|flooding|flooded)\b/i;
+
+function inferBusinessOutcome(text: string): "appointment_booked" | "lead_captured" | "transfer_requested" | "message_taken" | "info_provided" | "urgent" {
+  const lower = text.toLowerCase();
+  if (EMERGENCY_KEYWORDS.test(text)) return "urgent";
+  if (/(booked|scheduled|appointment confirmed|see you on|calendar invite)/i.test(lower)) return "appointment_booked";
+  if (/(transfer|forward|patch you through|connect you)/i.test(lower)) return "transfer_requested";
+  if (/(leave a message|took a message|pass this along|callback message)/i.test(lower)) return "message_taken";
+  if (/(name is|my number is|reach me at|call me back|email me at)/i.test(lower)) return "lead_captured";
+  return "info_provided";
+}
+
+function inferSentiment(text: string): "positive" | "neutral" | "negative" {
+  const lower = text.toLowerCase();
+  if (/(angry|frustrated|upset|disappointed|terrible|awful|not happy)/i.test(lower)) return "negative";
+  if (/(great|perfect|thank you|thanks so much|sounds good|appreciate it)/i.test(lower)) return "positive";
+  return "neutral";
+}
+
+async function ensureLeadForCaller(input: {
+  db: ReturnType<typeof getDb>;
+  workspaceId: string;
+  sessionId: string | null;
+  callerPhone: string | null | undefined;
+}): Promise<string | null> {
+  const phone = input.callerPhone?.trim();
+  if (!phone) return null;
+  const normalized = phone.replace(/\D/g, "");
+  const { data: existing } = await input.db
+    .from("leads")
+    .select("id")
+    .eq("workspace_id", input.workspaceId)
+    .or(`phone.eq.${phone},phone.eq.${normalized}`)
+    .limit(1)
+    .maybeSingle();
+  let leadId = (existing as { id: string } | null)?.id ?? null;
+
+  if (!leadId) {
+    const { data: created } = await input.db
+      .from("leads")
+      .insert({
+        workspace_id: input.workspaceId,
+        phone,
+        name: "Inbound caller",
+        state: "NEW",
+      })
+      .select("id")
+      .single();
+    leadId = (created as { id: string } | null)?.id ?? null;
+  }
+
+  if (leadId && input.sessionId) {
+    await input.db
+      .from("call_sessions")
+      .update({ lead_id: leadId, updated_at: new Date().toISOString() })
+      .eq("id", input.sessionId);
+  }
+
+  return leadId;
+}
 
 export async function POST(req: NextRequest) {
   let body: {
@@ -65,12 +125,27 @@ export async function POST(req: NextRequest) {
   }
 
   const isEmergency = transcript && EMERGENCY_KEYWORDS.test(transcript);
+  const transcriptText = transcript?.trim() ?? "";
+  const summaryText = summaryTrim ?? "";
+  const combinedText = `${summaryText}\n${transcriptText}`.trim();
+  const businessOutcome = inferBusinessOutcome(combinedText);
+  const sentiment = inferSentiment(combinedText);
+
+  if (!leadId) {
+    leadId = await ensureLeadForCaller({
+      db,
+      workspaceId: workspace_id,
+      sessionId,
+      callerPhone: body.caller_phone ?? null,
+    });
+  }
+
   if (sessionId && isEmergency) {
     try {
       await db.from("call_analysis").insert({
         workspace_id,
         call_session_id: sessionId,
-        analysis_json: { outcome: "urgent" },
+        analysis_json: { outcome: "urgent", business_outcome: "urgent", sentiment: "negative" },
         confidence: 1,
         analysis_source: "post_call_keywords",
       });
@@ -101,12 +176,31 @@ export async function POST(req: NextRequest) {
         call_session_id: sessionId,
         analysis_json: {
           outcome: analysis.outcome,
+          business_outcome: businessOutcome,
+          sentiment,
           next_best_action: analysis.next_best_action,
           followup_plan: analysis.followup_plan,
           summary: analysis.summary,
         },
         confidence: analysis.confidence,
         analysis_source: "gpt4o_post_call",
+      });
+    } catch {
+      // non-blocking
+    }
+  } else if (sessionId && combinedText) {
+    try {
+      await db.from("call_analysis").insert({
+        workspace_id,
+        call_session_id: sessionId,
+        analysis_json: {
+          outcome: businessOutcome,
+          business_outcome: businessOutcome,
+          sentiment,
+          summary: summaryText || null,
+        },
+        confidence: 0.6,
+        analysis_source: "post_call_rules",
       });
     } catch {
       // non-blocking
@@ -126,6 +220,16 @@ export async function POST(req: NextRequest) {
       };
       await enqueueAction(cmd).catch(() => {});
     }
+  }
+
+  if (sessionId && ["appointment_booked", "lead_captured", "urgent"].includes(businessOutcome)) {
+    void sendCallOutcomeEmail({
+      workspaceId: workspace_id,
+      callSessionId: sessionId,
+      outcome: businessOutcome,
+      summary: summaryText || transcriptText.slice(0, 220),
+      callerPhone: body.caller_phone ?? null,
+    }).catch(() => {});
   }
 
   return NextResponse.json({ ok: true, call_session_id: sessionId });

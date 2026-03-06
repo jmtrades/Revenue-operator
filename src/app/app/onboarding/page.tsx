@@ -18,6 +18,7 @@ import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
 import { buildStarterKnowledge, mergeKnowledgeItems } from "@/lib/workspace/starter-knowledge";
+import { invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 const STEPS = 5;
 const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Mike", "Lisa"];
@@ -240,6 +241,7 @@ export default function AppOnboardingPage() {
           onboardingCompletedAt: new Date().toISOString(),
         }),
       });
+      invalidateWorkspaceMeCache();
       await fetch("/api/vapi/create-agent", {
         method: "POST",
         credentials: "include",

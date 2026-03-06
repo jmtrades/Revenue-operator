@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 
 type CancelStep = 0 | 1 | 2 | 3 | 4;
 
@@ -15,8 +16,7 @@ export default function AppSettingsBillingPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    fetchWorkspaceMeCached()
       .then((data: { id?: string | null; stats?: typeof usage } | null) => {
         setWorkspaceId(data?.id ?? null);
         if (data?.stats) setUsage(data.stats);

@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 
 export default function AppRootPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    fetchWorkspaceMeCached()
       .then((data: { onboardingCompletedAt?: string | null } | null) => {
         router.replace(data?.onboardingCompletedAt ? "/app/activity" : "/app/onboarding");
       })

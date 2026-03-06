@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { fetchWorkspaceMeCached, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 function formatPhoneNumber(num: string | null): string {
   if (!num) return "—";
@@ -57,8 +58,7 @@ export default function AppSettingsPhonePage() {
   }, [fetchPhone]);
 
   useEffect(() => {
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    fetchWorkspaceMeCached()
       .then((data: { id?: string | null } | null) => {
         const wid = data?.id ?? null;
         if (!wid) return null;
@@ -93,6 +93,7 @@ export default function AppSettingsPhonePage() {
         setPhoneNumber(data.phone_number);
         setStatus("active");
         await fetchPhone();
+        invalidateWorkspaceMeCache();
         setToast(data.message ?? "Number connected. You can now receive calls and texts.");
       } else {
         const message = data.error ?? data.message ?? "Could not connect a number. Check Twilio config or try again.";
@@ -123,6 +124,7 @@ export default function AppSettingsPhonePage() {
         }),
       });
       if (res.ok) {
+        invalidateWorkspaceMeCache();
         setToast("Settings saved.");
       } else {
         const err = (await res.json().catch(() => ({}))) as { error?: string };

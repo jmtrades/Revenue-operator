@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { ProblemStatement } from "@/components/sections/ProblemStatement";
@@ -15,13 +16,18 @@ import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Footer } from "@/components/sections/Footer";
 import { VoiceOrbClient } from "@/components/VoiceOrbClient";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const cookieStore = await cookies();
+  const initialAuthenticated =
+    cookieStore.has("revenue_session") ||
+    cookieStore.getAll().some((cookie) => cookie.name.startsWith("sb-"));
+
   return (
     <div
       className="min-h-screen"
       style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
     >
-      <Navbar />
+      <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
         <HomepageLiveDemo />

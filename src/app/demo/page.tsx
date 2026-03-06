@@ -25,7 +25,9 @@ export default function DemoPage() {
           <div className="flex items-center justify-between gap-3 mb-6">
             <div>
               <h2 className="text-xl font-semibold text-white">Watch a sample call</h2>
-              <p className="text-sm text-zinc-400 mt-1">For visitors who don&apos;t want to type.</p>
+              <p className="text-sm text-zinc-400 mt-1">
+                Starts automatically when this section loads, then shows the captured result.
+              </p>
             </div>
             <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-flex items-center justify-center">
               Start free → 5 minute setup

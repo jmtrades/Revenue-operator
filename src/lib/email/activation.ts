@@ -22,10 +22,10 @@ export async function sendActivationConfirmationEmail(workspaceId: string): Prom
   const email = (user as { email?: string } | null)?.email;
   if (!email) return false;
 
-  const subject = "Conditions are normal.";
-  const body = `Conditions are normal.
+  const subject = "Your phone flow is ready";
+  const body = `Your Recall Touch phone flow is ready.
 
-Open: ${process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
+Open: ${(process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www.recall-touch.com")}/app/activity`;
 
   try {
     if (process.env.RESEND_API_KEY) {
@@ -36,7 +36,7 @@ Open: ${process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
           Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: process.env.EMAIL_FROM || "Revenue Operator <noreply@revenue-operator.com>",
+          from: process.env.EMAIL_FROM || "Recall Touch <noreply@recall-touch.com>",
           to: email,
           subject,
           text: body,

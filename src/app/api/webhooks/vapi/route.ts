@@ -238,6 +238,7 @@ export async function POST(req: NextRequest) {
       transcript: updates.transcript_text ?? undefined,
       summary: updates.summary ?? undefined,
       recording_url: updates.recording_url ?? undefined,
+      caller_phone: call?.customer?.number ?? undefined,
     }),
   }).catch(() => {});
 

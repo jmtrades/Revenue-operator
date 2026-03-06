@@ -1,5 +1,5 @@
 /**
- * PATCH /api/campaigns/[id] — Update campaign (e.g. status: active | paused | draft).
+ * PATCH /api/campaigns/[id] — Update campaign details and status.
  */
 
 export const dynamic = "force-dynamic";
@@ -24,6 +24,15 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (body.status !== undefined && ["draft", "active", "paused", "completed"].includes(String(body.status))) {
     updates.status = body.status;
+  }
+  if (typeof body.name === "string" && body.name.trim()) {
+    updates.name = body.name.trim();
+  }
+  if (typeof body.type === "string" && ["lead_followup", "appointment_reminder", "reactivation", "custom"].includes(body.type)) {
+    updates.type = body.type;
+  }
+  if (body.target_filter && typeof body.target_filter === "object") {
+    updates.target_filter = body.target_filter;
   }
   const { data: campaign, error } = await db.from("campaigns").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
