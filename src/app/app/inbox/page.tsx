@@ -3,12 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import {
-  MOCK_INBOX_THREADS,
-  type InboxThread,
-  type InboxMessage,
-  type InboxChannel,
-} from "@/lib/mock/inbox";
+import type { InboxThread, InboxMessage, InboxChannel } from "@/lib/mock/inbox";
 
 const PAGE_TITLE = "Inbox — Recall Touch";
 
@@ -356,10 +351,8 @@ export default function InboxPage() {
     document.title = PAGE_TITLE;
     return () => { document.title = ""; };
   }, []);
-  const [threads, setThreads] = useState<InboxThread[]>(() => MOCK_INBOX_THREADS);
-  const [selectedId, setSelectedId] = useState<string | null>(
-    () => (MOCK_INBOX_THREADS[0]?.id ?? null),
-  );
+  const [threads, setThreads] = useState<InboxThread[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
   const [replyChannel, setReplyChannel] = useState<ReplyChannel>("sms");

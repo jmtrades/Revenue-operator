@@ -3,8 +3,6 @@
 import { useState, useCallback } from "react";
 import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight } from "lucide-react";
 import {
-  MOCK_TEAM_MEMBERS,
-  MOCK_PENDING_INVITES,
   ROLE_LABELS,
   PERMISSIONS_MATRIX,
   INVITABLE_ROLES,
@@ -55,8 +53,8 @@ function avatarStyle(id: string): { backgroundColor: string; color: string } {
 }
 
 export default function TeamPage() {
-  const [members, setMembers] = useState<TeamMember[]>(() => MOCK_TEAM_MEMBERS);
-  const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>(() => MOCK_PENDING_INVITES);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([]);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<TeamRole>("agent");

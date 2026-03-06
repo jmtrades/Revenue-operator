@@ -21,7 +21,6 @@ import {
   Menu,
   type LucideIcon,
 } from "lucide-react";
-import { MOCK_INBOX_THREADS } from "@/lib/mock/inbox";
 import { OnboardingChecklist } from "./OnboardingChecklist";
 import { OnboardingStepProvider, useOnboardingStep, ONBOARDING_STEP_LABELS } from "./OnboardingStepContext";
 
@@ -69,7 +68,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [demoMode, setDemoMode] = useState(true);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
-  const inboxUnread = MOCK_INBOX_THREADS.filter((t) => t.unread).length;
+  const inboxUnread = 0;
 
   useEffect(() => {
     const id = setTimeout(() => setMounted(true), 0);

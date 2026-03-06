@@ -3,13 +3,11 @@
 import { useMemo, useState, useCallback } from "react";
 import { Shield, ShieldCheck, Download } from "lucide-react";
 import {
-  MOCK_COMPLIANCE_STANDARDS,
-  MOCK_RECORDING_POLICIES,
-  MOCK_AUDIT_LOG,
   RETENTION_OPTIONS,
   type ComplianceStandard,
   type RecordingPolicies,
   type ConsentMode,
+  type AuditLogEntry,
 } from "@/lib/mock/compliance";
 
 function formatDate(iso: string): string {
@@ -37,8 +35,14 @@ const CONSENT_OPTIONS: { value: ConsentMode; label: string }[] = [
 const PAGE_SIZE = 10;
 
 export default function CompliancePage() {
-  const [standards] = useState<ComplianceStandard[]>(() => MOCK_COMPLIANCE_STANDARDS);
-  const [policies, setPolicies] = useState<RecordingPolicies>(() => MOCK_RECORDING_POLICIES);
+  const [standards] = useState<ComplianceStandard[]>([]);
+  const [policies, setPolicies] = useState<RecordingPolicies>({
+    consentMode: "two-party",
+    retentionDays: 90,
+    piiRedaction: true,
+    autoTranscribe: true,
+    consentAnnouncement: "This call may be recorded for quality assurance and training purposes.",
+  });
   const [toast, setToast] = useState("");
   const [auditSearch, setAuditSearch] = useState("");
   const [auditUserFilter, setAuditUserFilter] = useState<string>("all");
@@ -60,7 +64,7 @@ export default function CompliancePage() {
     showToast("Report generated");
   }, [showToast]);
 
-  const auditEntries = useMemo(() => MOCK_AUDIT_LOG.slice(), []);
+  const auditEntries = useMemo(() => [] as AuditLogEntry[], []);
   const uniqueUsers = useMemo(() => Array.from(new Set(auditEntries.map((e) => e.user))).sort(), [auditEntries]);
   const uniqueActions = useMemo(() => Array.from(new Set(auditEntries.map((e) => e.action))).sort(), [auditEntries]);
 

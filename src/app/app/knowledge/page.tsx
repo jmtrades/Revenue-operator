@@ -14,12 +14,11 @@ import {
   Upload,
   ExternalLink,
 } from "lucide-react";
-import {
-  MOCK_KNOWLEDGE_ENTRIES,
-  MOCK_KNOWLEDGE_GAPS,
-  type KnowledgeEntry,
-  type KnowledgeType,
-  type KnowledgeStatus,
+import type {
+  KnowledgeEntry,
+  KnowledgeGap,
+  KnowledgeType,
+  KnowledgeStatus,
 } from "@/lib/mock/knowledge";
 
 const TYPE_OPTIONS: { value: KnowledgeType; label: string }[] = [
@@ -308,7 +307,8 @@ export default function KnowledgePage() {
     return () => { document.title = ""; };
   }, []);
 
-  const [entries, setEntries] = useState<KnowledgeEntry[]>(() => MOCK_KNOWLEDGE_ENTRIES);
+  const [entries, setEntries] = useState<KnowledgeEntry[]>([]);
+  const [knowledgeGaps] = useState<KnowledgeGap[]>([]);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<KnowledgeType | "all">("all");
   const [statusFilter, setStatusFilter] = useState<KnowledgeStatus | "all">("all");
@@ -534,7 +534,7 @@ export default function KnowledgePage() {
                 Callers asked about these topics but your content is limited or missing.
               </p>
               <ul className="space-y-2">
-                {MOCK_KNOWLEDGE_GAPS.map((gap) => (
+                {knowledgeGaps.map((gap) => (
                   <li key={gap.id} className="flex items-center justify-between gap-2">
                     <span className="text-sm text-zinc-300">
                       {gap.topic} <span className="text-zinc-500">(asked {gap.askCount} times)</span>

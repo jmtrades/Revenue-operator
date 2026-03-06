@@ -20,37 +20,6 @@ interface Appointment {
   source: AppointmentSource;
 }
 
-const MOCK_APPOINTMENTS: Appointment[] = (() => {
-  const base = new Date();
-  base.setHours(0, 0, 0, 0);
-  const out: Appointment[] = [];
-  const types = ["Consultation", "Follow-up", "Discovery call", "Demo", "Review", "Check-in"];
-  const contacts = ["Alex Rivera", "Sarah Chen", "James Wilson", "Maria Garcia", "David Lee", "Emily Park", "Tom Harris", "Lisa Brown"];
-  const sources: AppointmentSource[] = ["Inbound call", "Outbound", "Inbox", "Inbound call", "Outbound", "Inbound call", "Inbox", "Outbound"];
-  const statuses: AppointmentStatus[] = ["Confirmed", "Confirmed", "Pending", "Confirmed", "Completed", "Pending", "Confirmed", "Cancelled"];
-  for (let i = 0; i < 10; i++) {
-    const d = new Date(base);
-    d.setDate(d.getDate() + Math.floor(i / 2));
-    const dateStr = d.toISOString().slice(0, 10);
-    const hour = 9 + (i % 6);
-    const time = `${hour.toString().padStart(2, "0")}:00`;
-    out.push({
-      id: `apt-${i + 1}`,
-      date: dateStr,
-      time,
-      contactName: contacts[i % contacts.length],
-      type: types[i % types.length],
-      status: statuses[i % statuses.length],
-      source: sources[i % sources.length],
-    });
-  }
-  return out.sort((a, b) => {
-    const da = new Date(`${a.date}T${a.time}`).getTime();
-    const db = new Date(`${b.date}T${b.time}`).getTime();
-    return da - db;
-  });
-})();
-
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr + "T12:00:00");
   const today = new Date();
@@ -87,7 +56,7 @@ function mapApiStatus(s: string): AppointmentStatus {
 
 export default function AppointmentsPage() {
   const { workspaceId } = useWorkspace();
-  const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [view, setView] = useState<"list" | "calendar">("list");
 
