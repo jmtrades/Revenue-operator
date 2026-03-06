@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = (await import("@/lib/auth/request-session")).getSession(req);
+  const session = await (await import("@/lib/auth/request-session")).getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const err = await requireWorkspaceAccess(req, session.workspaceId);
   if (err) return err;

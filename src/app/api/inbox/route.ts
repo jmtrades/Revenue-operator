@@ -46,10 +46,11 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  const channelMap: Record<string, "phone" | "sms" | "email"> = {
+  const channelMap: Record<string, "phone" | "sms" | "email" | "whatsapp"> = {
     sms: "sms",
     email: "email",
     phone: "phone",
+    whatsapp: "whatsapp",
   };
   const threads = Array.from(byLead.entries()).map(([leadId, { messages: msgs }]) => {
     const lead = leadMap[leadId];

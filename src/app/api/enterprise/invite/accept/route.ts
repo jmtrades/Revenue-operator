@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
   await recordMilestone(workspaceId, "operator_invited", { invite_id: inviteId });
   await recordMilestone(workspaceId, "operator_joined", { invite_id: inviteId });
 
-  const session = getSession(request);
+  const session = await getSession(request);
   const userId = session?.userId ?? null;
   if (userId) {
     try {

@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "compliance"]);
   if (authErr) return authErr;
 
-  const session = getSession(req);
+  const session = await getSession(req);
   const decidedBy = session?.userId ?? null;
   const updated = await decideApproval(approvalId, workspaceId, "rejected", decidedBy);
   if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 200 });

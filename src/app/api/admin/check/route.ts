@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   if (!ADMIN_EMAIL) {
     return NextResponse.json({ allowed: false, reason: "Admin not configured" });
   }
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.userId) {
     return NextResponse.json({ allowed: false, reason: "Not signed in" });
   }

@@ -12,7 +12,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function POST(req: NextRequest) {
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -20,16 +20,17 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
-  let body: { lead_id: string; content: string };
+  let body: { lead_id: string; content: string; channel?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { lead_id, content } = body;
+  const { lead_id, content, channel: channelParam } = body;
   if (!lead_id || typeof content !== "string" || !content.trim()) {
     return NextResponse.json({ error: "lead_id and content required" }, { status: 400 });
   }
+  const channel = (channelParam === "whatsapp" || channelParam === "email" ? channelParam : "sms") as "sms" | "email" | "whatsapp";
 
   const db = getDb();
   const { data: lead } = await db
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
     .from("conversations")
     .select("id")
     .eq("lead_id", lead_id)
-    .eq("channel", "sms")
+    .eq("channel", channel)
     .limit(1)
     .maybeSingle();
   if (existingConv) {
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest) {
       .from("conversations")
       .insert({
         lead_id,
-        channel: "sms",
+        channel,
         external_thread_id: null,
         updated_at: new Date().toISOString(),
       })
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
       lead_id,
       conversation_id: conversationId,
       content: content.trim(),
-      channel: "sms",
+      channel,
       status: "queued",
       metadata: { trigger: "manual" },
     })
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest) {
     workspaceId,
     lead_id,
     conversationId,
-    "sms",
+    channel,
     content.trim(),
     { phone }
   );

@@ -8,8 +8,8 @@ import type { InboxThread, InboxMessage, InboxChannel } from "@/lib/mock/inbox";
 
 const PAGE_TITLE = "Inbox — Recall Touch";
 
-type Filter = "all" | "unread" | "phone" | "sms" | "email";
-type ReplyChannel = "sms" | "email";
+type Filter = "all" | "unread" | "phone" | "sms" | "email" | "whatsapp";
+type ReplyChannel = "sms" | "email" | "whatsapp";
 
 function formatRelative(timestamp: string): string {
   const d = new Date(timestamp).getTime();
@@ -27,12 +27,14 @@ function formatRelative(timestamp: string): string {
 function channelIcon(channel: InboxChannel) {
   if (channel === "phone") return PhoneCall;
   if (channel === "sms") return MessageSquare;
+  if (channel === "whatsapp") return MessageSquare; // reuse or add WhatsApp icon
   return Mail;
 }
 
 function channelLabel(channel: InboxChannel) {
   if (channel === "phone") return "Phone";
   if (channel === "sms") return "SMS";
+  if (channel === "whatsapp") return "WhatsApp";
   return "Email";
 }
 
@@ -59,6 +61,7 @@ function ConversationList({
     if (filter === "phone") list = list.filter((t) => t.channel === "phone");
     if (filter === "sms") list = list.filter((t) => t.channel === "sms");
     if (filter === "email") list = list.filter((t) => t.channel === "email");
+    if (filter === "whatsapp") list = list.filter((t) => t.channel === "whatsapp");
     const q = search.trim().toLowerCase();
     if (q) {
       list = list.filter(
@@ -87,7 +90,7 @@ function ConversationList({
           />
         </div>
         <div className="flex flex-wrap gap-2 mt-3 text-xs">
-          {(["all", "unread", "phone", "sms", "email"] as Filter[]).map((f) => (
+          {(["all", "unread", "phone", "sms", "email", "whatsapp"] as Filter[]).map((f) => (
             <button
               key={f}
               type="button"
@@ -106,7 +109,9 @@ function ConversationList({
                     ? "Phone"
                     : f === "sms"
                       ? "SMS"
-                      : "Email"}
+                      : f === "whatsapp"
+                        ? "WhatsApp"
+                        : "Email"}
             </button>
           ))}
         </div>
@@ -246,6 +251,7 @@ function ConversationDetail({
           <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] bg-zinc-800 text-zinc-300">
             {channel === "phone" && <PhoneCall className="w-3 h-3" />}
             {channel === "sms" && <MessageSquare className="w-3 h-3" />}
+            {channel === "whatsapp" && <MessageSquare className="w-3 h-3" />}
             {channel === "email" && <Mail className="w-3 h-3" />}
             {channelLabel(thread.channel)}
           </span>
@@ -310,7 +316,7 @@ function ConversationDetail({
       <div className="border-t border-zinc-800 px-3 py-3 bg-zinc-950/80">
         <div className="flex items-center gap-2 mb-2 text-[11px] text-zinc-400">
           <span>Reply as</span>
-          {(["sms", "email"] as ReplyChannel[]).map((ch) => (
+          {(["sms", "email", "whatsapp"] as ReplyChannel[]).map((ch) => (
             <button
               key={ch}
               type="button"
@@ -321,7 +327,7 @@ function ConversationDetail({
                   : "bg-zinc-900 text-zinc-300 border-zinc-700 hover:border-zinc-500"
               }`}
             >
-              {ch === "sms" ? "SMS" : "Email"}
+              {ch === "sms" ? "SMS" : ch === "whatsapp" ? "WhatsApp" : "Email"}
             </button>
           ))}
         </div>
@@ -390,7 +396,7 @@ export default function InboxPage() {
     if (!activeThread || !input.trim()) return;
     const content = input.trim();
     const nowIso = new Date().toISOString();
-    const channel: InboxChannel = replyChannel === "sms" ? "sms" : "email";
+    const channel: InboxChannel = replyChannel === "sms" ? "sms" : replyChannel === "whatsapp" ? "whatsapp" : "email";
     setThreads((prev) =>
       prev.map((t) =>
         t.id === activeThread.id

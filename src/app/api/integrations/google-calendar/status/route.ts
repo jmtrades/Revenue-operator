@@ -9,7 +9,7 @@ import { getDb } from "@/lib/db/queries";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.workspaceId) {
     return NextResponse.json({ connected: false });
   }

@@ -17,52 +17,64 @@ async function sendViaTwilio(
   body: string,
   workspaceId?: string
 ): Promise<{ sid: string } | { error: string }> {
-  if (channel !== "sms") {
-    return { error: "Channel not SMS" };
+  if (channel !== "sms" && channel !== "whatsapp") {
+    return { error: "Channel must be sms or whatsapp" };
   }
 
   const db = getDb();
   let accountSid: string | null = null;
   let authToken: string | null = null;
-  let fromSms: string | null = null;
+  let fromNumber: string | null = null;
 
   // Try workspace-specific config first
   if (workspaceId) {
     const { data: phoneConfig } = await db
       .from("phone_configs")
-      .select("twilio_account_sid, proxy_number, twilio_phone_sid")
+      .select("twilio_account_sid, proxy_number, twilio_phone_sid, outbound_from_number, whatsapp_enabled")
       .eq("workspace_id", workspaceId)
       .eq("status", "active")
       .single();
 
     if (phoneConfig) {
-      const config = phoneConfig as { twilio_account_sid?: string | null; proxy_number?: string | null; twilio_phone_sid?: string | null };
+      const config = phoneConfig as {
+        twilio_account_sid?: string | null;
+        proxy_number?: string | null;
+        twilio_phone_sid?: string | null;
+        outbound_from_number?: string | null;
+        whatsapp_enabled?: boolean | null;
+      };
       accountSid = config.twilio_account_sid ?? null;
-      fromSms = config.proxy_number ?? config.twilio_phone_sid ?? null;
-      
-      // For workspace-specific accounts, we'd need to store auth token securely
-      // For now, fall back to global if account SID matches
+      // Outbound from personal/existing number when set; otherwise use connected number
+      fromNumber = config.outbound_from_number?.trim() || config.proxy_number || config.twilio_phone_sid || null;
       if (accountSid === process.env.TWILIO_ACCOUNT_SID) {
         authToken = process.env.TWILIO_AUTH_TOKEN ?? null;
+      }
+      // WhatsApp only if enabled for this workspace
+      if (channel === "whatsapp" && !config.whatsapp_enabled) {
+        return { error: "WhatsApp not enabled for this workspace" };
       }
     }
   }
 
-  // Fall back to global env vars if workspace config not found
-  if (!accountSid || !authToken || !fromSms) {
-    accountSid = process.env.TWILIO_ACCOUNT_SID ?? null;
-    authToken = process.env.TWILIO_AUTH_TOKEN ?? null;
-    fromSms = process.env.TWILIO_PHONE_NUMBER ?? null;
+  if (!accountSid || !authToken || !fromNumber) {
+    accountSid = accountSid ?? process.env.TWILIO_ACCOUNT_SID ?? null;
+    authToken = authToken ?? process.env.TWILIO_AUTH_TOKEN ?? null;
+    fromNumber = fromNumber ?? process.env.TWILIO_PHONE_NUMBER ?? null;
   }
 
-  if (!accountSid || !authToken || !fromSms) {
+  if (!accountSid || !authToken || !fromNumber) {
     return { error: "Twilio not configured" };
   }
 
+  // Twilio WhatsApp: From/To use whatsapp:+E164 format
+  const prefix = channel === "whatsapp" ? "whatsapp:" : "";
+  const toAddr = prefix + (to.startsWith("+") ? to : to.replace(/\D/g, "").length === 10 ? `+1${to.replace(/\D/g, "")}` : to);
+  const fromAddr = prefix + (fromNumber.startsWith("+") ? fromNumber : fromNumber.replace(/\D/g, "").length === 10 ? `+1${fromNumber.replace(/\D/g, "")}` : fromNumber);
+
   const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
   const params = new URLSearchParams({
-    To: to,
-    From: fromSms,
+    To: toAddr,
+    From: fromAddr,
     Body: body,
   });
 
@@ -147,7 +159,7 @@ export async function sendOutbound(
     const { confirmationSnippet } = await attachProofReferenceToOutgoingMessages(workspaceId);
     if (confirmationSnippet && !safeContent.includes(confirmationSnippet)) {
       const withRef = safeContent.trimEnd() + "\n" + confirmationSnippet.trim();
-      const maxLen = channel === "sms" ? 320 : 500;
+      const maxLen = channel === "sms" ? 320 : channel === "whatsapp" ? 1600 : 500;
       safeContent = withRef.length <= maxLen ? withRef : safeContent;
     }
   } catch {
@@ -155,24 +167,26 @@ export async function sendOutbound(
   }
 
   // Content must already be governed (canonical pipeline). Executor only sends.
-  const sendChannel: "sms" | "email" = channel === "sms" || channel === "email" ? channel : "sms";
+  const sendChannel: "sms" | "email" | "whatsapp" = channel === "whatsapp" ? "whatsapp" : channel === "email" ? "email" : "sms";
 
   const fallbackOrder: string[] =
-    channel === "sms"
-      ? ["sms", "email", "web"]
-      : channel === "email"
-        ? ["email", "sms", "web"]
-        : ["web"];
+    channel === "whatsapp"
+      ? ["whatsapp", "sms", "email", "web"]
+      : channel === "sms"
+        ? ["sms", "whatsapp", "email", "web"]
+        : channel === "email"
+          ? ["email", "sms", "web"]
+          : ["web"];
 
   for (const ch of fallbackOrder) {
-    const destination = ch === "sms" ? to.phone : ch === "email" ? to.email : null;
+    const destination = ch === "sms" || ch === "whatsapp" ? to.phone : ch === "email" ? to.email : null;
     if (!destination && ch !== "web") continue;
 
     let result: { sid: string } | { error: string };
     if (ch === "web") {
       result = { sid: `web-${messageId}` };
-    } else if (ch === "sms" && to.phone) {
-      result = await sendViaTwilio("sms", to.phone, safeContent, workspaceId);
+    } else if ((ch === "sms" || ch === "whatsapp") && to.phone) {
+      result = await sendViaTwilio(ch, to.phone, safeContent, workspaceId);
     } else {
       result = { error: "Email provider not implemented" };
     }

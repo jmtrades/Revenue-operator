@@ -12,7 +12,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 
 export async function POST(req: NextRequest) {
-  const session = getSession(req);
+  const session = await getSession(req);
   const workspaceId = session?.workspaceId;
   if (!workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const err = await requireWorkspaceAccess(req, workspaceId);

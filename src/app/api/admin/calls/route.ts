@@ -12,7 +12,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim().toLowerCase();
 
 async function isAdmin(req: NextRequest): Promise<boolean> {
   if (!ADMIN_EMAIL) return false;
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.userId) return false;
   try {
     const db = getDb();

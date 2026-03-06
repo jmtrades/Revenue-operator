@@ -11,7 +11,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id: leadId } = await ctx.params;
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const db = getDb();
