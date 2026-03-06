@@ -78,10 +78,15 @@ export async function POST(req: NextRequest) {
 
   const cookie = createSessionCookie({ userId, workspaceId });
   if (!cookie) {
-    return NextResponse.json(
-      { error: "Session not configured (set SESSION_SECRET)", code: "session_secret" },
-      { status: 503 }
+    // SESSION_SECRET/ENCRYPTION_KEY not configured. Degrade gracefully:
+    // - Do NOT block sign-in (return ok so the app remains usable in demo/preview envs)
+    // - Session guard in proxy.ts is already disabled when secret is missing (isSessionEnabled() === false)
+    // This means /app routes behave like public demo until SESSION_SECRET is set correctly.
+    console.warn(
+      "[auth] Sign-in succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. " +
+        "App sessions are running without revenue_session cookie."
     );
+    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing" });
   }
   const res = NextResponse.json({ ok: true, userId, workspaceId });
   res.headers.set("Set-Cookie", cookie);
