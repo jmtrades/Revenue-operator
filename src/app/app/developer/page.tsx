@@ -12,18 +12,14 @@ import {
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
-import {
-  MOCK_API_KEYS,
-  MOCK_WEBHOOKS,
-  MOCK_EVENT_LOG,
-  MOCK_WEBHOOK_EVENTS,
-  type ApiKeyRow,
-  type ApiKeyPermission,
-  type WebhookRow,
-  type WebhookEvent,
-  type EventLogRow,
-  type EventLogKind,
-  type EventLogStatus,
+import type {
+  ApiKeyRow,
+  ApiKeyPermission,
+  WebhookRow,
+  WebhookEvent,
+  EventLogRow,
+  EventLogKind,
+  EventLogStatus,
 } from "@/lib/mock/developer";
 
 type TabId = "keys" | "webhooks" | "events";
@@ -306,7 +302,26 @@ function ApiKeysTab({
 }
 
 // ----- Webhooks tab -----
-function WebhooksTab({ webhooks, onAdd }: { webhooks: WebhookRow[]; onAdd: (url: string, events: WebhookEvent[]) => void }) {
+const AVAILABLE_WEBHOOK_EVENT_TYPES: WebhookEvent[] = [
+  "call.started",
+  "call.completed",
+  "call.failed",
+  "lead.created",
+  "appointment.booked",
+  "sentiment.flagged",
+  "campaign.completed",
+  "agent.error",
+];
+
+function WebhooksTab({
+  webhooks,
+  onAdd,
+  availableEvents,
+}: {
+  webhooks: WebhookRow[];
+  onAdd: (url: string, events: WebhookEvent[]) => void;
+  availableEvents: WebhookEvent[];
+}) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [addModal, setAddModal] = useState(false);
   const [payloadModal, setPayloadModal] = useState<string | null>(null);
@@ -420,7 +435,7 @@ function WebhooksTab({ webhooks, onAdd }: { webhooks: WebhookRow[]; onAdd: (url:
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-2">Events</label>
                 <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
-                  {MOCK_WEBHOOK_EVENTS.map((ev) => (
+                  {availableEvents.map((ev) => (
                     <label key={ev} className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={newEvents.includes(ev)} onChange={() => toggleEvent(ev)} className="rounded border-zinc-600 text-white" />
                       <span className="text-xs text-zinc-400 font-mono">{ev}</span>
@@ -550,8 +565,9 @@ const TABS: { id: TabId; label: string; icon: typeof Key }[] = [
 
 export default function DeveloperPage() {
   const [tab, setTab] = useState<TabId>("keys");
-  const [keys, setKeys] = useState<ApiKeyRow[]>(() => MOCK_API_KEYS);
-  const [webhooks, setWebhooks] = useState<WebhookRow[]>(() => MOCK_WEBHOOKS);
+  const [keys, setKeys] = useState<ApiKeyRow[]>([]);
+  const [webhooks, setWebhooks] = useState<WebhookRow[]>([]);
+  const eventLog: EventLogRow[] = [];
   const [toast, setToast] = useState("");
   const [eventKindFilter, setEventKindFilter] = useState<EventLogKind | "all">("all");
   const [eventStatusFilter, setEventStatusFilter] = useState<EventLogStatus | "all">("all");
@@ -633,10 +649,16 @@ export default function DeveloperPage() {
             onCopyKey={handleCopyKey}
           />
         )}
-        {tab === "webhooks" && <WebhooksTab webhooks={webhooks} onAdd={handleAddWebhook} />}
+        {tab === "webhooks" && (
+          <WebhooksTab
+            webhooks={webhooks}
+            onAdd={handleAddWebhook}
+            availableEvents={AVAILABLE_WEBHOOK_EVENT_TYPES}
+          />
+        )}
         {tab === "events" && (
           <EventLogTab
-            events={MOCK_EVENT_LOG}
+            events={eventLog}
             kindFilter={eventKindFilter}
             statusFilter={eventStatusFilter}
             onKindFilter={setEventKindFilter}

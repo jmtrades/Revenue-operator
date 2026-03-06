@@ -86,9 +86,9 @@ export async function POST(req: NextRequest) {
       "[auth] Sign-in succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. " +
         "App sessions are running without revenue_session cookie."
     );
-    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing" });
+    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/app/activity" });
   }
-  const res = NextResponse.json({ ok: true, userId, workspaceId });
+  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/activity" });
   res.headers.set("Set-Cookie", cookie);
   return res;
 }

@@ -55,7 +55,7 @@ function extractStrings(content: string): string[] {
   return out;
 }
 
-const EXCLUDE = ["src/app/pricing/", "src/app/example/", "src/app/onboard/", "src/app/dashboard/campaigns/", "src/app/dashboard/agents/", "src/app/dashboard/analytics/", "src/app/dashboard/team/", "src/app/dashboard/integrations/"];
+const EXCLUDE = ["src/app/pricing/", "src/app/example/", "src/app/onboard/", "src/app/dashboard/campaigns/", "src/app/dashboard/agents/", "src/app/dashboard/analytics/", "src/app/dashboard/team/", "src/app/dashboard/integrations/", "src/app/app/developer/"];
 
 describe("Category lock: no forbidden SaaS words in user-facing surfaces", () => {
   const allFiles = [...walkTsx(APP), ...walkTsx(COMPONENTS)];

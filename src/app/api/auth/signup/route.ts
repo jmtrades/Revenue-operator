@@ -39,6 +39,56 @@ export async function POST(req: NextRequest) {
   const password = passwordResult.value;
 
   const businessName = normalizeBusinessName(body?.businessName);
+  const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? "").trim();
+
+  // Prefer admin.createUser when service role is set — bypasses "Error sending confirmation email"
+  if (serviceRoleKey) {
+    try {
+      const admin = createClient(url, serviceRoleKey);
+      const { data: adminData, error: createErr } = await admin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { business_name: businessName },
+      });
+      if (createErr) {
+        if (createErr.message?.toLowerCase().includes("already") || createErr.message?.toLowerCase().includes("duplicate")) {
+          return NextResponse.json({ error: "Account already exists — try signing in" }, { status: 409 });
+        }
+        return NextResponse.json({ error: toFriendlySignupError(createErr.message ?? "") }, { status: 400 });
+      }
+      const userId = adminData?.user?.id;
+      if (!userId) {
+        return NextResponse.json({ error: "Sign up failed" }, { status: 400 });
+      }
+      let workspaceId: string | undefined;
+      try {
+        const db = getDb();
+        await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
+        const { data: created, error: insertErr } = await db
+          .from("workspaces")
+          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+          .select("id")
+          .single();
+        if (!insertErr && created) {
+          workspaceId = (created as { id: string }).id;
+          await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+        }
+      } catch {
+        // continue
+      }
+      const cookie = createSessionCookie({ userId, workspaceId });
+      if (cookie) {
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
+        res.headers.set("Set-Cookie", cookie);
+        return res;
+      }
+      return NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate", session: "missing" });
+    } catch (err) {
+      console.error("[signup] admin.createUser path failed:", err);
+      // fall through to signUp path
+    }
+  }
 
   const supabase = createClient(url, anonKey);
   let data: { user?: { id: string } | null } | undefined;
@@ -89,17 +139,17 @@ export async function POST(req: NextRequest) {
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
-        const res = NextResponse.json({ ok: true, userId, workspaceId });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
     }
-    return NextResponse.json({ ok: true, confirmEmail: true });
+    return NextResponse.json({ ok: true, confirmEmail: true, redirectTo: "/sign-in" });
   }
 
   if (!userId) {
     if (isConfirmationEmailError) {
-      return NextResponse.json({ ok: true, confirmEmail: true });
+      return NextResponse.json({ ok: true, confirmEmail: true, redirectTo: "/sign-in" });
     }
     return NextResponse.json({ error: "Sign up failed" }, { status: 400 });
   }
@@ -126,27 +176,24 @@ export async function POST(req: NextRequest) {
     if (signInData?.session) {
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
-        const res = NextResponse.json({ ok: true, userId, workspaceId });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
     }
-    return NextResponse.json({ ok: true, confirmEmail: true });
+    return NextResponse.json({ ok: true, confirmEmail: true, redirectTo: "/sign-in" });
   }
 
   const cookie = createSessionCookie({ userId, workspaceId });
   if (!cookie) {
     // SESSION_SECRET/ENCRYPTION_KEY not configured. Degrade gracefully:
-    // - Do NOT block signup (return ok so the app remains usable in demo/preview envs)
-    // - Session guard in proxy.ts is already disabled when secret is missing (isSessionEnabled() === false)
-    // This means /app routes behave like public demo until SESSION_SECRET is set correctly.
     console.warn(
       "[auth] Signup succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. " +
         "App sessions are running without revenue_session cookie."
     );
-    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing" });
+    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/activate" });
   }
-  const res = NextResponse.json({ ok: true, userId, workspaceId });
+  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
   res.headers.set("Set-Cookie", cookie);
   return res;
 }

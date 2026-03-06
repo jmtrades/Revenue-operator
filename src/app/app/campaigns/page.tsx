@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import { Megaphone, MoreVertical, Download, Upload } from "lucide-react";
 import {
-  MOCK_CAMPAIGNS,
   CAMPAIGN_TYPES,
   CAMPAIGN_STATUSES,
   type Campaign,
@@ -44,7 +43,7 @@ export default function CampaignsPage() {
     return () => { document.title = ""; };
   }, []);
 
-  const [campaigns, setCampaigns] = useState<Campaign[]>(() => MOCK_CAMPAIGNS);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("All");
   const [expandedId, setExpandedId] = useState<string | null>(null);
