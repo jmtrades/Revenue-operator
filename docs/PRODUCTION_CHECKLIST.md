@@ -19,10 +19,10 @@ Use this as a single list. Replace `https://www.recall-touch.com` with your real
 
 ### Google “Continue with Google”
 
-- [ ] **Google Cloud Console** → **APIs & Services** → **Credentials** → **Create credentials** → **OAuth 2.0 Client ID** (Web application).
-- [ ] **Authorized redirect URI:** `https://<your-supabase-project-ref>.supabase.co/auth/v1/callback`
-- [ ] **Supabase Dashboard** → **Authentication** → **Providers** → **Google**: Enable, paste **Client ID** and **Client Secret**.
-- [ ] The app already uses redirect `https://www.recall-touch.com/auth/callback?next=/app/activity` (or your domain). No code change needed.
+- [ ] **Google Cloud Console** → **APIs & Services** → **Credentials** → **Create credentials** → **OAuth 2.0 Client ID** → **Web application** (not Desktop/Mobile).
+- [ ] **Authorized redirect URI:** add exactly `https://<your-supabase-project-ref>.supabase.co/auth/v1/callback` (get the ref from Supabase Project Settings → API → Project URL, e.g. `https://xxxxx.supabase.co` → ref is `xxxxx`). No trailing slash.
+- [ ] **Supabase Dashboard** → **Authentication** → **Providers** → **Google**: Enable, paste **Client ID** and **Client Secret** (from the same Web application OAuth client), then Save.
+- [ ] If you see “Access blocked: Authorization Error” or “The OAuth client was not found” (Error 401 invalid_client), follow [GOOGLE_OAUTH_FIX.md](./GOOGLE_OAUTH_FIX.md).
 
 ---
 
