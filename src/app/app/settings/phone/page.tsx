@@ -20,10 +20,14 @@ export default function AppSettingsPhonePage() {
   const [_status, setStatus] = useState<string | null>(null);
   const [outboundFrom, setOutboundFrom] = useState<string>("");
   const [whatsappEnabled, setWhatsappEnabled] = useState(false);
+  const [primaryAgentId, setPrimaryAgentId] = useState<string | null>(null);
+  const [testCallNumber, setTestCallNumber] = useState("");
+  const [testingCall, setTestingCall] = useState(false);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [connectError, setConnectError] = useState<string | null>(null);
 
   const fetchPhone = useCallback(async () => {
     try {
@@ -52,9 +56,27 @@ export default function AppSettingsPhonePage() {
     fetchPhone();
   }, [fetchPhone]);
 
+  useEffect(() => {
+    fetch("/api/workspace/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { id?: string | null } | null) => {
+        const wid = data?.id ?? null;
+        if (!wid) return null;
+        return fetch(`/api/agents?workspace_id=${encodeURIComponent(wid)}`, {
+          credentials: "include",
+        });
+      })
+      .then((res) => (res && "ok" in res && res.ok ? res.json() : null))
+      .then((data: { agents?: Array<{ id?: string }> } | null) => {
+        setPrimaryAgentId(data?.agents?.[0]?.id ?? null);
+      })
+      .catch(() => setPrimaryAgentId(null));
+  }, []);
+
   const handleConnectNumber = async () => {
     setConnecting(true);
     setToast(null);
+    setConnectError(null);
     try {
       const res = await fetch("/api/integrations/twilio/auto-provision", {
         method: "POST",
@@ -62,16 +84,25 @@ export default function AppSettingsPhonePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
       });
-      const data = (await res.json().catch(() => ({}))) as { phone_number?: string; error?: string };
+      const data = (await res.json().catch(() => ({}))) as {
+        phone_number?: string;
+        error?: string;
+        message?: string;
+      };
       if (data.phone_number) {
         setPhoneNumber(data.phone_number);
         setStatus("active");
-        setToast("Number connected. You can now receive calls and texts.");
+        await fetchPhone();
+        setToast(data.message ?? "Number connected. You can now receive calls and texts.");
       } else {
-        setToast(data.error ?? "Could not connect a number. Check Twilio config or try again.");
+        const message = data.error ?? data.message ?? "Could not connect a number. Check Twilio config or try again.";
+        setConnectError(message);
+        setToast(message);
       }
     } catch {
-      setToast("Something went wrong. Try again.");
+      const message = "Something went wrong. Try again.";
+      setConnectError(message);
+      setToast(message);
     } finally {
       setConnecting(false);
       setTimeout(() => setToast(null), 4000);
@@ -102,6 +133,35 @@ export default function AppSettingsPhonePage() {
     } finally {
       setSaving(false);
       setTimeout(() => setToast(null), 3000);
+    }
+  };
+
+  const handleTestCall = async () => {
+    if (!primaryAgentId) {
+      setToast("Your primary agent is still loading. Try again in a moment.");
+      setTimeout(() => setToast(null), 3000);
+      return;
+    }
+    setTestingCall(true);
+    setToast(null);
+    try {
+      const res = await fetch(`/api/agents/${primaryAgentId}/test-call`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone_number: testCallNumber.trim() }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string; error?: string };
+      if (!res.ok) {
+        setToast(data.error ?? "Could not start a test call.");
+      } else {
+        setToast(data.message ?? "Test call started. Answer your phone to hear your agent.");
+      }
+    } catch {
+      setToast("Something went wrong.");
+    } finally {
+      setTestingCall(false);
+      setTimeout(() => setToast(null), 4000);
     }
   };
 
@@ -163,6 +223,27 @@ export default function AppSettingsPhonePage() {
               {saving ? "Saving…" : "Save"}
             </button>
           </div>
+          <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-4">
+            <p className="text-sm font-medium text-white mb-2">Test your live phone flow</p>
+            <p className="text-xs text-zinc-500 mb-3">
+              Enter the phone number you want to call. We&apos;ll place a live test call using your current primary agent.
+            </p>
+            <input
+              type="tel"
+              value={testCallNumber}
+              onChange={(e) => setTestCallNumber(e.target.value)}
+              placeholder="+1 555 123 4567"
+              className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none mb-3"
+            />
+            <button
+              type="button"
+              onClick={handleTestCall}
+              disabled={testingCall || !testCallNumber.trim()}
+              className="px-4 py-2.5 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
+            >
+              {testingCall ? "Starting test call…" : "Start test call"}
+            </button>
+          </div>
           <button
             type="button"
             onClick={() => { setToast("Additional numbers are available on Growth and Scale plans."); setTimeout(() => setToast(null), 4000); }}
@@ -184,6 +265,11 @@ export default function AppSettingsPhonePage() {
             >
               {connecting ? "Connecting…" : "Get a number"}
             </button>
+            {connectError ? (
+              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                {connectError}
+              </div>
+            ) : null}
           </div>
           <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
             <p className="text-sm font-medium text-white mb-1">Use your personal or existing number</p>

@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { getGoogleCalendarClientId } from "@/lib/integrations/google-calendar-env";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const clientId = process.env.GOOGLE_CALENDAR_CLIENT_ID?.trim();
+  const clientId = getGoogleCalendarClientId();
   const redirectUri = process.env.GOOGLE_CALENDAR_REDIRECT_URI?.trim() ?? `${process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin}/api/integrations/google-calendar/callback`;
   if (!clientId) {
     return NextResponse.json({ error: "Google Calendar not configured" }, { status: 503 });

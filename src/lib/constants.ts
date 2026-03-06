@@ -1,5 +1,5 @@
 export const ROUTES = {
-  START: "/activate",
+  START: "/sign-in?create=1",
   SIGN_IN: "/sign-in",
   PRICING: "/pricing",
   PRODUCT: "/product",
@@ -23,7 +23,7 @@ export const SOLUTIONS_LINKS = [
   { label: "Legal", href: "/industries/legal" },
   { label: "Real Estate", href: "/industries/real-estate" },
   { label: "Healthcare", href: "/industries/healthcare" },
-  { label: "All use cases →", href: "/activate" },
+  { label: "All use cases →", href: "/sign-in?create=1" },
 ] as const;
 
 export const FOOTER_SOLUTIONS = [
@@ -50,7 +50,7 @@ export const PRICING_TIERS = [
       "Overage: $0.25/min",
     ],
     cta: "Start free",
-    href: "/activate",
+    href: "/sign-in?create=1",
     popular: false,
   },
   {
@@ -71,7 +71,7 @@ export const PRICING_TIERS = [
       "Overage: $0.18/min",
     ],
     cta: "Start free",
-    href: "/activate",
+    href: "/sign-in?create=1",
     popular: true,
   },
   {
@@ -93,7 +93,7 @@ export const PRICING_TIERS = [
       "Overage: $0.12/min",
     ],
     cta: "Start free",
-    href: "/activate",
+    href: "/sign-in?create=1",
     popular: false,
   },
   {

@@ -6,14 +6,11 @@ import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
 import { AGENT_TEMPLATES, AGENT_TEMPLATE_CATEGORIES, type AgentTemplateCategory } from "@/lib/data/agent-templates";
+import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { getTemplateVoiceId } from "@/lib/data/agent-templates";
+import { useWorkspace } from "@/components/WorkspaceContext";
 
-type VoiceId =
-  | "warm_female"
-  | "professional_male"
-  | "upbeat_female"
-  | "calm_male"
-  | "conversational_female"
-  | "authoritative_male";
+type VoiceId = string;
 
 type CallStyle = "thorough" | "conversational" | "quick";
 
@@ -50,20 +47,15 @@ type Agent = {
 
 type TabId = "profile" | "knowledge" | "rules" | "test";
 
-const STORAGE_KEY = "rt_agents";
-
 function generateAgentId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
-const VOICE_OPTIONS: { id: VoiceId; label: string; description: string }[] = [
-  { id: "warm_female", label: "Warm F", description: "Calm, friendly, receptionist-style" },
-  { id: "professional_male", label: "Professional M", description: "Clear, steady, office tone" },
-  { id: "upbeat_female", label: "Upbeat F", description: "Lively, energetic, ideal for follow-up" },
-  { id: "calm_male", label: "Calm M", description: "Measured, reassuring, great for emergencies" },
-  { id: "conversational_female", label: "Conversational F", description: "Natural, human, everyday calls" },
-  { id: "authoritative_male", label: "Authoritative M", description: "Firm, concise, policy-heavy calls" },
-];
+const VOICE_OPTIONS: { id: VoiceId; label: string; description: string }[] = CURATED_VOICES.map((voice) => ({
+  id: voice.id,
+  label: voice.name,
+  description: `${voice.desc} · ${voice.accent}`,
+}));
 
 function templateGreeting(id: AgentTemplateId): string {
   switch (id) {
@@ -88,7 +80,7 @@ function defaultAgent(): Agent {
     id: "a-default",
     name: "Receptionist",
     template: "receptionist",
-    voice: "warm_female",
+    voice: DEFAULT_VOICE_ID,
     greeting: templateGreeting("receptionist"),
     personality: 60,
     callStyle: "thorough",
@@ -107,45 +99,187 @@ function defaultAgent(): Agent {
   };
 }
 
-function loadAgents(): Agent[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as Agent[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+function mapPersonalityToSlider(value: unknown): number {
+  if (value === "friendly") return 80;
+  if (value === "empathetic") return 70;
+  if (value === "casual") return 50;
+  return 60;
 }
 
-function saveAgents(next: Agent[]) {
-  try {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    // ignore
-  }
+function mapSliderToPersonality(value: number): "friendly" | "professional" | "casual" | "empathetic" {
+  if (value >= 75) return "friendly";
+  if (value >= 65) return "empathetic";
+  if (value <= 45) return "casual";
+  return "professional";
 }
 
-const initialAgents: Agent[] =
-  typeof window === "undefined" ? [] : loadAgents();
+function mapAgentRow(row: Record<string, unknown>): Agent {
+  const knowledgeBase = (row.knowledge_base ?? {}) as {
+    services?: string[];
+    faq?: Array<{ q?: string; a?: string }>;
+    specialInstructions?: string;
+    websiteUrl?: string;
+    afterHoursMode?: "messages" | "emergency" | "forward";
+    bookingEnabled?: boolean;
+    pricingEnabled?: boolean;
+    priceList?: string;
+    maxCallDuration?: number;
+    callStyle?: CallStyle;
+  };
+  const rules = (row.rules ?? {}) as {
+    transferRules?: Array<{ phrase?: string; phone?: string }>;
+  };
+
+  return {
+    ...defaultAgent(),
+    id: String(row.id ?? generateAgentId("a")),
+    name: String(row.name ?? "Receptionist"),
+    greeting: String(row.greeting ?? ""),
+    voice: String(row.voice_id ?? DEFAULT_VOICE_ID),
+    personality: mapPersonalityToSlider(row.personality),
+    services: Array.isArray(knowledgeBase.services) ? knowledgeBase.services : [],
+    faq: Array.isArray(knowledgeBase.faq)
+      ? knowledgeBase.faq.map((item, index) => ({
+          id: `${row.id ?? "faq"}-${index}`,
+          question: item.q ?? "",
+          answer: item.a ?? "",
+        }))
+      : [],
+    specialInstructions: typeof knowledgeBase.specialInstructions === "string" ? knowledgeBase.specialInstructions : "",
+    websiteUrl: typeof knowledgeBase.websiteUrl === "string" ? knowledgeBase.websiteUrl : "",
+    transferRules: Array.isArray(rules.transferRules)
+      ? rules.transferRules.map((item, index) => ({
+          id: `${row.id ?? "rule"}-${index}`,
+          phrase: item.phrase ?? "",
+          phone: item.phone ?? "",
+        }))
+      : [],
+    afterHoursMode: knowledgeBase.afterHoursMode ?? "messages",
+    bookingEnabled: knowledgeBase.bookingEnabled ?? true,
+    pricingEnabled: knowledgeBase.pricingEnabled ?? false,
+    priceList: typeof knowledgeBase.priceList === "string" ? knowledgeBase.priceList : "",
+    maxCallDuration:
+      typeof knowledgeBase.maxCallDuration === "number" ? knowledgeBase.maxCallDuration : 12,
+    callStyle:
+      knowledgeBase.callStyle === "quick" || knowledgeBase.callStyle === "conversational"
+        ? knowledgeBase.callStyle
+        : "thorough",
+    active: Boolean(row.is_active ?? true),
+  };
+}
+
+function toAgentPatchPayload(agent: Agent) {
+  return {
+    name: agent.name,
+    voice_id: agent.voice,
+    personality: mapSliderToPersonality(agent.personality),
+    purpose:
+      agent.template === "follow_up" || agent.template === "review_request"
+        ? "outbound"
+        : "both",
+    greeting: agent.greeting,
+    knowledge_base: {
+      services: agent.services,
+      faq: agent.faq.map((item) => ({ q: item.question, a: item.answer })),
+      specialInstructions: agent.specialInstructions,
+      websiteUrl: agent.websiteUrl,
+      afterHoursMode: agent.afterHoursMode,
+      bookingEnabled: agent.bookingEnabled,
+      pricingEnabled: agent.pricingEnabled,
+      priceList: agent.priceList,
+      maxCallDuration: agent.maxCallDuration,
+      callStyle: agent.callStyle,
+    },
+    rules: {
+      neverSay: [],
+      alwaysTransfer: [],
+      escalationChain: [],
+      transferRules: agent.transferRules.map((rule) => ({
+        phrase: rule.phrase,
+        phone: rule.phone,
+      })),
+    },
+    is_active: agent.active,
+  };
+}
 
 export default function AppAgentsPage() {
-  const [agents, setAgents] = useState<Agent[]>(initialAgents);
-  const [selectedId, setSelectedId] = useState<string | null>(
-    initialAgents[0]?.id ?? null,
-  );
+  const { workspaceId } = useWorkspace();
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tab, setTab] = useState<TabId>("profile");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [templateCategory, setTemplateCategory] = useState<AgentTemplateCategory | "all">("all");
   const [toast, setToast] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!toast) return;
     const id = window.setTimeout(() => setToast(null), 2500);
     return () => window.clearTimeout(id);
   }, [toast]);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    setLoading(true);
+    fetch(`/api/agents?workspace_id=${encodeURIComponent(workspaceId)}`, {
+      credentials: "include",
+      cache: "no-store",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then(async (data: { agents?: Array<Record<string, unknown>> } | null) => {
+        const mapped = Array.isArray(data?.agents)
+          ? data!.agents!.map((row) => mapAgentRow(row))
+          : [];
+        if (mapped.length > 0) {
+          setAgents(mapped);
+          setSelectedId((current) =>
+            current && mapped.some((item) => item.id === current) ? current : (mapped[0]?.id ?? null)
+          );
+          return;
+        }
+
+        const fallbackRes = await fetch("/api/workspace/agent", {
+          credentials: "include",
+          cache: "no-store",
+        });
+        if (!fallbackRes.ok) {
+          setAgents([]);
+          setSelectedId(null);
+          return;
+        }
+        const fallback = (await fallbackRes.json()) as {
+          businessName?: string;
+          greeting?: string;
+          agentName?: string;
+          elevenlabsVoiceId?: string;
+          knowledgeItems?: Array<{ q?: string; a?: string }>;
+        };
+        const agent: Agent = {
+          ...defaultAgent(),
+          id: "primary-agent",
+          name: fallback.agentName?.trim() || "Receptionist",
+          greeting:
+            fallback.greeting?.trim() ||
+            `Thanks for calling ${fallback.businessName?.trim() || "your business"}. How can I help you today?`,
+          voice: fallback.elevenlabsVoiceId?.trim() || DEFAULT_VOICE_ID,
+          faq: Array.isArray(fallback.knowledgeItems)
+            ? fallback.knowledgeItems.map((item, index) => ({
+                id: `fallback-faq-${index}`,
+                question: item.q ?? "",
+                answer: item.a ?? "",
+              }))
+            : [],
+        };
+        setAgents([agent]);
+        setSelectedId(agent.id);
+      })
+      .catch(() => {
+        setAgents([]);
+        setSelectedId(null);
+      })
+      .finally(() => setLoading(false));
+  }, [workspaceId]);
 
   const selected = useMemo(
     () => (selectedId ? agents.find((a) => a.id === selectedId) ?? null : null),
@@ -156,8 +290,7 @@ export default function AppAgentsPage() {
   const isHearPlaying = hearPlaying && playingAgentId === selectedId;
   const voiceGender = useMemo(() => {
     if (!selected) return "female" as const;
-    const maleVoices: VoiceId[] = ["professional_male", "calm_male", "authoritative_male"];
-    return maleVoices.includes(selected.voice) ? "male" : "female";
+    return CURATED_VOICES.find((voice) => voice.id === selected.voice)?.gender ?? "female";
   }, [selected]);
 
   const [elevenLabsVoices, setElevenLabsVoices] = useState<Array<{ id: string; name: string }>>([]);
@@ -175,23 +308,41 @@ export default function AppAgentsPage() {
     setAgents(next);
   };
 
-  const handleSave = () => {
-    saveAgents(agents);
-    setToast("Agent saved");
-  };
-
-  const handleDelete = () => {
+  const handleSave = async () => {
     if (!selected) return;
-    const remaining = agents.filter((a) => a.id !== selected.id);
-    const next = remaining;
-    setAgents(next);
-    setSelectedId(next[0]?.id ?? null);
-    saveAgents(next);
-    setToast("Agent deleted");
+    try {
+      const res = await fetch(`/api/agents/${selected.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toAgentPatchPayload(selected)),
+      });
+      if (!res.ok) throw new Error("save_failed");
+      setToast("Agent saved");
+    } catch {
+      setToast("Could not save agent");
+    }
   };
 
-  const createAgentFromTemplate = (template: AgentTemplateId) => {
-    const id = generateAgentId("a");
+  const handleDelete = async () => {
+    if (!selected) return;
+    try {
+      const res = await fetch(`/api/agents/${selected.id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("delete_failed");
+      const next = agents.filter((a) => a.id !== selected.id);
+      setAgents(next);
+      setSelectedId(next[0]?.id ?? null);
+      setToast("Agent deleted");
+    } catch {
+      setToast("Could not delete agent");
+    }
+  };
+
+  const createAgentFromTemplate = async (template: AgentTemplateId) => {
+    if (!workspaceId) return;
     const base = defaultAgent();
     const nameByTemplate: Record<AgentTemplateId, string> = {
       receptionist: "Receptionist",
@@ -202,20 +353,12 @@ export default function AppAgentsPage() {
       review_request: "Review Request",
       scratch: "Custom Agent",
     };
-    const voiceByTemplate: Partial<Record<AgentTemplateId, VoiceId>> = {
-      emergency: "calm_male",
-      after_hours: "professional_male",
-      lead_qualifier: "conversational_female",
-      follow_up: "upbeat_female",
-      review_request: "warm_female",
-    };
-
     const agent: Agent = {
       ...base,
-      id,
+      id: generateAgentId("temp"),
       template,
       name: nameByTemplate[template],
-      voice: voiceByTemplate[template] ?? base.voice,
+      voice: getTemplateVoiceId(template) || base.voice,
       greeting: templateGreeting(template),
       callsHandled: 0,
       services: [],
@@ -227,27 +370,45 @@ export default function AppAgentsPage() {
       afterHoursMode: template === "after_hours" ? "forward" : base.afterHoursMode,
     };
 
-    const next = [...agents, agent];
-    setAgents(next);
-    setSelectedId(agent.id);
-    setTab("profile");
-    setShowTemplateModal(false);
-    saveAgents(next);
-    setToast("Agent created");
+    try {
+      const createdRes = await fetch("/api/agents", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId, name: agent.name }),
+      });
+      if (!createdRes.ok) throw new Error("create_failed");
+      const created = (await createdRes.json()) as { id: string };
+      const persisted = { ...agent, id: created.id };
+      await fetch(`/api/agents/${created.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toAgentPatchPayload(persisted)),
+      });
+      const next = [...agents, persisted];
+      setAgents(next);
+      setSelectedId(persisted.id);
+      setTab("profile");
+      setShowTemplateModal(false);
+      setToast("Agent created");
+    } catch {
+      setToast("Could not create agent");
+    }
   };
 
-  const createAgentFromSharedTemplate = (templateId: string) => {
+  const createAgentFromSharedTemplate = async (templateId: string) => {
     const t = AGENT_TEMPLATES.find((x) => x.id === templateId);
-    if (!t) return;
-    const id = generateAgentId("a");
+    if (!t || !workspaceId) return;
     const base = defaultAgent();
     const name = t.name.replace(/^The\s+/, "") ?? t.name;
     const agent: Agent = {
       ...base,
-      id,
+      id: generateAgentId("temp"),
       template: "receptionist",
       name,
       greeting: t.defaultGreeting,
+      voice: getTemplateVoiceId(t.id) || base.voice,
       callsHandled: 0,
       services: [],
       faq: [],
@@ -255,13 +416,31 @@ export default function AppAgentsPage() {
       specialInstructions: "",
       websiteUrl: "",
     };
-    const next = [...agents, agent];
-    setAgents(next);
-    setSelectedId(agent.id);
-    setTab("profile");
-    setShowTemplateModal(false);
-    saveAgents(next);
-    setToast("Agent created");
+    try {
+      const createdRes = await fetch("/api/agents", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId, name: agent.name }),
+      });
+      if (!createdRes.ok) throw new Error("create_failed");
+      const created = (await createdRes.json()) as { id: string };
+      const persisted = { ...agent, id: created.id };
+      await fetch(`/api/agents/${created.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toAgentPatchPayload(persisted)),
+      });
+      const next = [...agents, persisted];
+      setAgents(next);
+      setSelectedId(persisted.id);
+      setTab("profile");
+      setShowTemplateModal(false);
+      setToast("Agent created");
+    } catch {
+      setToast("Could not create agent");
+    }
   };
 
   return (
@@ -289,6 +468,12 @@ export default function AppAgentsPage() {
       >
         + Create Agent
       </button>
+
+      {loading && (
+        <div className="mb-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-500">
+          Loading your agents…
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1.7fr)] gap-4 lg:gap-6 items-start">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

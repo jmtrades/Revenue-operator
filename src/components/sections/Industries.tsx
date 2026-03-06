@@ -43,7 +43,7 @@ export function Industries() {
               </motion.div>
             </Link>
           ))}
-          <Link href="/activate">
+          <Link href="/sign-in?create=1">
             <motion.div
               variants={fadeUpVariants}
               className="card-marketing p-6 flex flex-col min-w-[260px] hover:border-[var(--accent-primary)] transition-colors border-dashed h-full"

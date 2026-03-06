@@ -6,12 +6,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { sendAgentLiveEmail } from "@/lib/email/agent-live";
+import { buildStarterKnowledge, mergeKnowledgeItems } from "@/lib/workspace/starter-knowledge";
+import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 
 export const dynamic = "force-dynamic";
 
 interface OnboardingPayload {
   businessName?: string;
   businessPhone?: string;
+  website?: string;
+  address?: string;
   industry?: string;
   orgType?: string;
   agentTemplate?: string;
@@ -38,11 +42,14 @@ export async function POST(req: NextRequest) {
 
   const name = typeof body.businessName === "string" ? body.businessName.trim() || "My Workspace" : "My Workspace";
   const phone = typeof body.businessPhone === "string" ? body.businessPhone.trim() || null : null;
+  const website = typeof body.website === "string" ? body.website.trim() || null : null;
+  const address = typeof body.address === "string" ? body.address.trim() || null : null;
+  const industry = typeof body.industry === "string" ? body.industry.trim() || null : null;
   const agentTemplate = typeof body.agentTemplate === "string" ? body.agentTemplate : null;
   const agentName = typeof body.agentName === "string" ? body.agentName : null;
   const greeting = typeof body.greeting === "string" ? body.greeting : null;
   const businessHours = body.businessHours && typeof body.businessHours === "object" ? body.businessHours : null;
-  const knowledgeItems = Array.isArray(body.knowledgeItems) ? body.knowledgeItems : null;
+  const rawKnowledgeItems = Array.isArray(body.knowledgeItems) ? body.knowledgeItems : null;
   const preferredLanguage = typeof body.preferredLanguage === "string" ? body.preferredLanguage.trim() || null : null;
   const elevenlabsVoiceId = typeof body.elevenlabsVoiceId === "string" ? body.elevenlabsVoiceId.trim() || null : null;
 
@@ -63,8 +70,21 @@ export async function POST(req: NextRequest) {
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
     }
 
+    const starterKnowledge = buildStarterKnowledge({
+      industry,
+      address,
+      businessHours,
+    });
+    const knowledgeItems = mergeKnowledgeItems(
+      rawKnowledgeItems as Array<{ q?: string; a?: string }> | null,
+      starterKnowledge,
+    );
+
     const update: Record<string, unknown> = { name, updated_at: new Date().toISOString() };
     if (phone !== null) update.phone = phone;
+    if (website !== null) update.website = website;
+    if (address !== null) update.address = address;
+    if (industry !== null) update.industry = industry;
     if (agentTemplate !== null) update.agent_template = agentTemplate;
     if (agentName !== null) update.agent_name = agentName;
     if (greeting !== null) update.greeting = greeting;
@@ -77,6 +97,15 @@ export async function POST(req: NextRequest) {
     if (updateErr) {
       return NextResponse.json({ error: "Failed to update workspace" }, { status: 500 });
     }
+
+    await syncPrimaryAgent(db, {
+      workspaceId,
+      businessName: name,
+      agentName,
+      greeting,
+      voiceId: elevenlabsVoiceId,
+      knowledgeItems,
+    });
 
     sendAgentLiveEmail(workspaceId).catch(() => {});
 

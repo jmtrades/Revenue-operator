@@ -29,8 +29,23 @@ export function OnboardingChecklist() {
   const [progress, setProgress] = useState({ completed: 0, done: new Set<string>() });
 
   useEffect(() => {
-    const id = setTimeout(() => setProgress(getProgress()), 0);
-    return () => clearTimeout(id);
+    let cancelled = false;
+    fetch("/api/workspace/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { progress?: { items?: Array<{ key: string; completed: boolean }> } } | null) => {
+        if (cancelled) return;
+        const items = data?.progress?.items ?? [];
+        if (items.length > 0) {
+          const done = new Set(items.filter((item) => item.completed).map((item) => item.key));
+          setProgress({ completed: done.size, done });
+          return;
+        }
+        setProgress(getProgress());
+      })
+      .catch(() => setProgress(getProgress()));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const total = ITEMS.length;

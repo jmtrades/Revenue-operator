@@ -96,6 +96,15 @@ export default function AppActivityPage() {
   const [selectedCard, setSelectedCard] = useState<ActivityCard | null>(null);
   const [cards, setCards] = useState<ActivityCard[]>([]);
   const [loading, setLoading] = useState(false);
+  const [systemEvents, setSystemEvents] = useState<Array<{ id: string; title: string; body: string; href: string }>>([]);
+  const [nextStepHref, setNextStepHref] = useState("/app/settings/phone");
+  const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(null);
+  const [workspaceStats, setWorkspaceStats] = useState<{
+    calls: number;
+    leads: number;
+    estRevenue: number;
+    lastCallAt?: string | null;
+  }>({ calls: 0, leads: 0, estRevenue: 0, lastCallAt: null });
 
   useEffect(() => {
     const id = setTimeout(() => setMounted(true), 0);
@@ -104,7 +113,7 @@ export default function AppActivityPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    setLoading(true);
+    const loadingTimeout = window.setTimeout(() => setLoading(true), 0);
     fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -156,58 +165,44 @@ export default function AppActivityPage() {
       .catch(() => {
         setCards([]);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        clearTimeout(loadingTimeout);
+        setLoading(false);
+      });
+    return () => clearTimeout(loadingTimeout);
   }, [workspaceId]);
+
+  useEffect(() => {
+    fetch("/api/workspace/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: {
+        systemEvents?: Array<{ id: string; title: string; body: string; href: string }>;
+        progress?: { nextStep?: { href?: string } | null };
+        stats?: { calls?: number; leads?: number; estRevenue?: number; lastCallAt?: string | null };
+      } | null) => {
+        setSystemEvents(data?.systemEvents ?? []);
+        setNextStepHref(data?.progress?.nextStep?.href || "/app/settings/phone");
+        setWorkspaceStats({
+          calls: data?.stats?.calls ?? 0,
+          leads: data?.stats?.leads ?? 0,
+          estRevenue: data?.stats?.estRevenue ?? 0,
+          lastCallAt: data?.stats?.lastCallAt ?? null,
+        });
+        setLastCheckedAt(Date.now());
+      })
+      .catch(() => {});
+  }, []);
 
   const callCount = cards.length;
   const leadCount = cards.filter((c) => c.type === "lead").length;
   const estRevenue = leadCount * 800;
   const answerRate = callCount > 0 ? 100 : 0;
 
-  useEffect(() => {
-    if (!mounted || typeof window === "undefined") return;
-    try {
-      const prev = localStorage.getItem("rt_activity_stats");
-      let lastActivityAt: number | undefined;
-      if (prev) {
-        const d = JSON.parse(prev) as { lastActivityAt?: number };
-        lastActivityAt =
-          typeof d.lastActivityAt === "number" ? d.lastActivityAt : undefined;
-      }
-      if (callCount > 0) lastActivityAt = Date.now();
-      localStorage.setItem(
-        "rt_activity_stats",
-        JSON.stringify({
-          calls: callCount,
-          leads: leadCount,
-          estRevenue,
-          minutesUsed: 0,
-          minutesLimit: 400,
-          lastActivityAt: lastActivityAt ?? undefined,
-        }),
-      );
-    } catch {
-      // ignore
-    }
-  }, [mounted, callCount, leadCount, estRevenue]);
-
   let showInactivityBanner = false;
-  if (mounted && typeof window !== "undefined") {
-    try {
-      if (localStorage.getItem("rt_show_inactivity_banner") === "true")
-        showInactivityBanner = true;
-      else {
-        const raw = localStorage.getItem("rt_activity_stats");
-        if (raw) {
-          const d = JSON.parse(raw) as { lastActivityAt?: number };
-          const last =
-            typeof d.lastActivityAt === "number" ? d.lastActivityAt : null;
-          if (last != null && Date.now() - last > 3 * 24 * 60 * 60 * 1000)
-            showInactivityBanner = true;
-        }
-      }
-    } catch {
-      // ignore
+  if (workspaceStats.lastCallAt && lastCheckedAt != null) {
+    const last = new Date(workspaceStats.lastCallAt).getTime();
+    if (!Number.isNaN(last) && lastCheckedAt - last > 3 * 24 * 60 * 60 * 1000) {
+      showInactivityBanner = true;
     }
   }
 
@@ -348,23 +343,67 @@ export default function AppActivityPage() {
       )}
 
       {filtered.length === 0 && !loading ? (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 text-center">
-          <p className="text-sm font-medium text-white">No calls yet</p>
-          <p className="text-xs text-zinc-500 mt-2 max-w-sm mx-auto">
-            Forward your number in Settings to start receiving calls. Your AI will answer, capture leads, and book appointments.
-          </p>
-          <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              href="/app/settings/phone"
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 transition-colors"
-            >
-              Connect phone →
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 text-center">
+            <p className="text-sm font-medium text-white">No calls yet</p>
+            <p className="text-xs text-zinc-500 mt-2 max-w-sm mx-auto">
+              Forward your number in Settings to start receiving calls. Your AI will answer, capture leads, and book appointments.
+            </p>
+            <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/app/settings/phone"
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 transition-colors"
+              >
+                Connect phone →
+              </Link>
+              <Link
+                href={nextStepHref}
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:border-zinc-500 transition-colors"
+              >
+                Finish setup
+              </Link>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+            <p className="text-sm font-semibold text-white">Quick tip</p>
+            <p className="text-xs text-zinc-500 mt-1">
+              Forward your existing number to start receiving AI-answered calls in under 2 minutes.
+            </p>
+            <Link href="/app/settings/phone" className="inline-block mt-3 text-xs font-medium text-white underline underline-offset-2">
+              Set up phone →
             </Link>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+            <p className="text-sm font-semibold text-white">Recent system events</p>
+            {systemEvents.length === 0 ? (
+              <p className="text-xs text-zinc-500 mt-2">Your setup events will appear here.</p>
+            ) : (
+              <ul className="mt-3 space-y-3">
+                {systemEvents.map((event) => (
+                  <li key={event.id} className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3">
+                    <p className="text-xs font-medium text-white">{event.title}</p>
+                    <p className="text-xs text-zinc-500 mt-1">{event.body}</p>
+                    <Link href={event.href} className="inline-block mt-2 text-[11px] text-zinc-300 underline underline-offset-2">
+                      View →
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-white">Want to see your AI in action?</p>
+              <p className="text-xs text-zinc-500 mt-1">Place a quick test call before you go fully live.</p>
+            </div>
             <Link
               href="/app/onboarding"
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:border-zinc-500 transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 transition-colors"
             >
-              Finish setup
+              Try a test call →
             </Link>
           </div>
         </div>

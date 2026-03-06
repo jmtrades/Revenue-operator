@@ -22,6 +22,14 @@ interface CallDetail {
   summary?: string | null;
   recording_url?: string | null;
   analysis_outcome?: string | null;
+  analysis?: {
+    outcome?: string;
+    sentiment?: string;
+    summary?: string;
+    next_best_action?: string;
+    followup_plan?: string;
+  } | null;
+  analysis_source?: string | null;
   confidence?: number | null;
   matched_lead?: {
     id: string;
@@ -89,6 +97,9 @@ export default function AppCallDetailPage() {
     call?.matched_lead?.email ||
     call?.matched_lead?.company ||
     "Caller";
+  const summaryText = call?.summary || call?.analysis?.summary || null;
+  const followupPlan = call?.analysis?.followup_plan || call?.analysis?.next_best_action || null;
+  const sentiment = call?.analysis?.sentiment || null;
 
   if (loading) {
     return (
@@ -160,18 +171,51 @@ export default function AppCallDetailPage() {
               AI: {call.analysis_outcome}
             </span>
           )}
+          {sentiment && (
+            <span className="inline-flex items-center rounded-full border border-zinc-700 px-3 py-1">
+              Sentiment: {sentiment}
+            </span>
+          )}
         </div>
       </header>
 
       <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-5 space-y-5">
-        {call.summary && (
+        {call.recording_url && (
+          <section>
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+              Recording
+            </h2>
+            <audio controls className="w-full">
+              <source src={call.recording_url} />
+            </audio>
+          </section>
+        )}
+
+        {summaryText && (
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
               Call summary
             </h2>
             <p className="text-sm text-zinc-200 leading-relaxed">
-              {call.summary}
+              {summaryText}
             </p>
+          </section>
+        )}
+
+        {followupPlan && (
+          <section>
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+              Recommended follow-up
+            </h2>
+            <p className="text-sm text-zinc-300 leading-relaxed">{followupPlan}</p>
+            {(call.lead_id ?? call.matched_lead?.id) && (
+              <Link
+                href="/app/inbox"
+                className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-zinc-300 hover:text-white"
+              >
+                Follow up in inbox →
+              </Link>
+            )}
           </section>
         )}
 

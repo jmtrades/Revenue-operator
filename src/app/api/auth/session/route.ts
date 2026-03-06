@@ -7,18 +7,20 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
-import { isSessionEnabled } from "@/lib/auth/session";
 import { logSessionRestore } from "@/lib/reliability/logging";
 import { getDb } from "@/lib/db/queries";
 
 export async function GET(req: NextRequest) {
+  const json = (body: { session: null | Record<string, unknown> }) => {
+    const res = NextResponse.json(body);
+    res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+    return res;
+  };
+
   try {
-    if (!isSessionEnabled()) {
-      return NextResponse.json({ session: null });
-    }
     const session = await getSession(req);
     if (!session) {
-      return NextResponse.json({ session: null });
+      return json({ session: null });
     }
 
     if (session.userId && session.workspaceId) {
@@ -33,7 +35,7 @@ export async function GET(req: NextRequest) {
     } catch {
       // ignore
     }
-    return NextResponse.json({
+    return json({
       session: {
         userId: session.userId,
         user_id: session.userId,
@@ -43,6 +45,6 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch {
-    return NextResponse.json({ session: null });
+    return json({ session: null });
   }
 }

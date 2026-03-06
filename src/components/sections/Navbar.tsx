@@ -11,6 +11,7 @@ export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,12 +57,46 @@ export function Navbar() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [mobileOpen]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const refreshAuthState = () => {
+      fetch("/api/auth/session", {
+        credentials: "include",
+        cache: "no-store",
+        headers: { "Cache-Control": "no-store" },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data: { session?: { userId?: string | null } | null } | null) => {
+          if (cancelled) return;
+          setAuthenticated(Boolean(data?.session?.userId));
+        })
+        .catch(() => {
+          if (!cancelled) setAuthenticated(false);
+        });
+    };
+
+    refreshAuthState();
+    window.addEventListener("focus", refreshAuthState);
+    document.addEventListener("visibilitychange", refreshAuthState);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("focus", refreshAuthState);
+      document.removeEventListener("visibilitychange", refreshAuthState);
+    };
+  }, [pathname]);
+
   const headerStyle = {
     background: scrolled ? "rgba(10, 10, 11, 0.85)" : "transparent",
     backdropFilter: scrolled ? "blur(16px)" : "none",
     WebkitBackdropFilter: scrolled ? "blur(16px)" : "none",
     borderBottom: scrolled ? "1px solid var(--border-default)" : "none",
   };
+  const desktopPrimaryHref = authenticated ? "/app/activity" : ROUTES.START;
+  const desktopPrimaryLabel = authenticated ? "Dashboard →" : "Start free →";
+  const desktopSecondaryHref = authenticated ? "/app/activity" : ROUTES.SIGN_IN;
+  const desktopSecondaryLabel = authenticated ? "Dashboard" : "Sign in";
 
   return (
     <header
@@ -143,11 +178,11 @@ export function Navbar() {
           })}
         </nav>
         <div className="hidden lg:flex items-center gap-3">
-          <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost px-4 py-2 text-sm rounded-lg no-underline">
-            Sign in
+          <Link href={desktopSecondaryHref} className="btn-marketing-ghost px-4 py-2 text-sm rounded-lg no-underline">
+            {desktopSecondaryLabel}
           </Link>
-          <Link href={ROUTES.START} className="btn-marketing-primary px-4 py-2 text-sm rounded-xl no-underline">
-            Start free →
+          <Link href={desktopPrimaryHref} className="btn-marketing-primary px-4 py-2 text-sm rounded-xl no-underline">
+            {desktopPrimaryLabel}
           </Link>
         </div>
         <button
@@ -205,11 +240,11 @@ export function Navbar() {
             </Link>
           ))}
           <div className="flex flex-col w-full max-w-xs gap-3 mt-4">
-            <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost w-full text-center py-3 rounded-lg no-underline text-base" onClick={() => setMobileOpen(false)}>
-              Sign in
+            <Link href={desktopSecondaryHref} className="btn-marketing-ghost w-full text-center py-3 rounded-lg no-underline text-base" onClick={() => setMobileOpen(false)}>
+              {desktopSecondaryLabel}
             </Link>
-            <Link href={ROUTES.START} className="btn-marketing-primary w-full text-center py-3 rounded-xl no-underline text-base" onClick={() => setMobileOpen(false)}>
-              Start free →
+            <Link href={desktopPrimaryHref} className="btn-marketing-primary w-full text-center py-3 rounded-xl no-underline text-base" onClick={() => setMobileOpen(false)}>
+              {desktopPrimaryLabel}
             </Link>
           </div>
         </div>

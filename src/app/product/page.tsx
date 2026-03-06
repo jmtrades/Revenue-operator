@@ -11,7 +11,7 @@ const PRODUCT_SECTIONS = [
   { id: "leads", title: "Lead capture & scoring", desc: "Every call auto-extracts name, phone, address, what they need, urgency. Each lead scored 0-100 on intent signals. Instant text + email notification. No more sticky notes or forgotten follow-ups.", bullets: ["Auto-extract details", "Score 0-100", "Instant alerts", "Activity feed"] },
   { id: "appointments", title: "Appointment booking", desc: "Checks Google Calendar or Outlook in real-time, offers available slots, books, confirms via text. Sends reminders before. Reschedules no-shows automatically. Calendar stays full without you lifting a finger.", bullets: ["Calendar sync", "Real-time availability", "Confirmations & reminders", "No-show reschedule"] },
   { id: "messaging", title: "Smart messaging", desc: "Two-way SMS from your business number. Auto-confirmations after bookings. Follow-up sequences for leads who didn't convert. Review requests after appointments. One inbox for all conversations.", bullets: ["Two-way SMS", "Auto-confirmations", "Follow-up sequences", "One inbox"] },
-  { id: "insights", title: "Analytics & ROI", desc: "Call volume, answer rate, lead conversion, appointment completion, revenue recovered. Usage meter shows minutes vs plan. Monthly ROI statement: your AI captured X leads, booked Y appointments worth $Z. Cost: $97. ROI: clear.", bullets: ["Call volume & answer rate", "Lead conversion", "Revenue recovered", "Usage meter"] },
+  { id: "insights", title: "Analytics & ROI", desc: "Call volume, answer rate, lead conversion, appointment completion, revenue recovered. Usage meter shows minutes vs plan. Monthly ROI statement: your AI captured X leads, booked Y appointments worth $Z. Starter plan: $297. ROI: clear.", bullets: ["Call volume & answer rate", "Lead conversion", "Revenue recovered", "Usage meter"] },
   { id: "compliance", title: "Compliance", desc: "Every call recorded and transcribed. HIPAA mode available. Retention 30-365 days. Full audit trail. Data export. Industry-ready documentation.", bullets: ["Recording & transcription", "HIPAA option", "Retention 30-365 days", "Audit trail"] },
 ];
 
@@ -80,7 +80,7 @@ export default function ProductPage() {
           </section>
 
           <section className="mt-24 py-16 text-center" style={{ background: "var(--gradient-cta-section)", borderTop: "1px solid var(--border-default)", borderBottom: "1px solid var(--border-default)" }}>
-            <p className="text-sm font-medium mb-4" style={{ color: "var(--accent-primary)" }}>Recall Touch: $97/month + 5 minutes to set up.</p>
+            <p className="text-sm font-medium mb-4" style={{ color: "var(--accent-primary)" }}>Recall Touch starts at $297/month and takes 5 minutes to set up.</p>
             <h2 className="font-semibold text-2xl mb-4" style={{ color: "var(--text-primary)" }}>Ready to handle every call, text, and follow-up automatically?</h2>
             <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>Start in under 60 seconds. No credit card required.</p>
             <Link href={ROUTES.START} className="btn-marketing-primary btn-lg no-underline inline-block">
