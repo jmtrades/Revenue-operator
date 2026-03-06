@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Mic } from "lucide-react";
 
 type AgentId = "sarah" | "alex" | "emma";
 
@@ -258,7 +259,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
               className="w-10 h-10 rounded-xl border border-zinc-700 text-zinc-300 hover:border-zinc-500 flex items-center justify-center"
               aria-label="Voice input"
             >
-              🎙
+              <Mic className="h-4 w-4" />
             </button>
           )}
           <input

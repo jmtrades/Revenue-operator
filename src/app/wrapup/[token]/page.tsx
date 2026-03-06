@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { BadgeCheck, CircleSlash, Clock3 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function WrapupPage() {
@@ -85,9 +86,9 @@ export default function WrapupPage() {
                   : "border-stone-700 bg-stone-900/80 text-stone-300 hover:border-stone-600"
               }`}
             >
-              {o === "interested" && "✅ Interested / next step"}
-              {o === "thinking" && "🟡 Thinking / follow up"}
-              {o === "not_fit" && "❌ Not a fit"}
+              {o === "interested" && <span className="inline-flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-emerald-400" /> Interested / next step</span>}
+              {o === "thinking" && <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4 text-amber-400" /> Thinking / follow up</span>}
+              {o === "not_fit" && <span className="inline-flex items-center gap-2"><CircleSlash className="h-4 w-4 text-rose-400" /> Not a fit</span>}
             </button>
           ))}
         </div>

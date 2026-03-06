@@ -2,6 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import {
+  BellRing,
+  ClipboardList,
+  MoonStar,
+  PhoneCall,
+  ShieldAlert,
+  Star,
+  type LucideIcon,
+} from "lucide-react";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
@@ -665,32 +674,38 @@ export default function AppAgentsPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm">
               <TemplateCard
-                title="📞 Receptionist"
+                title="Receptionist"
+                icon={PhoneCall}
                 description="Answers every call, captures details, and books when ready."
                 onClick={() => createAgentFromTemplate("receptionist")}
               />
               <TemplateCard
-                title="🌙 After-Hours"
+                title="After-Hours"
+                icon={MoonStar}
                 description="Handles calls when the office is closed, forwards true emergencies."
                 onClick={() => createAgentFromTemplate("after_hours")}
               />
               <TemplateCard
-                title="🚨 Emergency"
+                title="Emergency"
+                icon={ShieldAlert}
                 description="Keeps callers calm, routes urgent issues, and records every detail."
                 onClick={() => createAgentFromTemplate("emergency")}
               />
               <TemplateCard
-                title="📋 Lead Qualifier"
+                title="Lead Qualifier"
+                icon={ClipboardList}
                 description="Asks a short set of questions so only qualified leads reach you."
                 onClick={() => createAgentFromTemplate("lead_qualifier")}
               />
               <TemplateCard
-                title="📢 Follow-Up"
+                title="Follow-Up"
+                icon={BellRing}
                 description="Calls back enquiries and missed callers so nothing is dropped."
                 onClick={() => createAgentFromTemplate("follow_up")}
               />
               <TemplateCard
-                title="⭐ Review Request"
+                title="Review Request"
+                icon={Star}
                 description="Follows up after visits to collect reviews without pressure."
                 onClick={() => createAgentFromTemplate("review_request")}
               />
@@ -726,14 +741,17 @@ export default function AppAgentsPage() {
   );
 }
 
-function TemplateCard(props: { title: string; description: string; onClick: () => void }) {
-  const { title, description, onClick } = props;
+function TemplateCard(props: { title: string; description: string; onClick: () => void; icon: LucideIcon }) {
+  const { title, description, onClick, icon: Icon } = props;
   return (
     <button
       type="button"
       onClick={onClick}
       className="text-left p-3 rounded-2xl border border-zinc-800 bg-zinc-900/60 hover:bg-zinc-900 hover:border-zinc-600 transition-colors"
     >
+      <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.04] text-zinc-300">
+        <Icon className="h-4 w-4" />
+      </div>
       <p className="text-sm font-medium text-white mb-1">{title}</p>
       <p className="text-xs text-zinc-500">{description}</p>
     </button>

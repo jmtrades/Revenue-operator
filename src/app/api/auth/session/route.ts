@@ -11,7 +11,13 @@ import { logSessionRestore } from "@/lib/reliability/logging";
 import { getDb } from "@/lib/db/queries";
 
 export async function GET(req: NextRequest) {
-  const json = (body: { session: null | Record<string, unknown> }) => {
+  const nullResponse = () => {
+    const res = NextResponse.json({ session: null });
+    res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+    return res;
+  };
+
+  const json = (body: { session: Record<string, unknown> }) => {
     const res = NextResponse.json(body);
     res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
     return res;
@@ -20,7 +26,7 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getSession(req);
     if (!session) {
-      return json({ session: null });
+      return nullResponse();
     }
 
     if (session.userId && session.workspaceId) {
@@ -45,6 +51,6 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch {
-    return json({ session: null });
+    return nullResponse();
   }
 }

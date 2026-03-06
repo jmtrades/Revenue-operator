@@ -19,4 +19,4 @@ export function useOnboardingStep(): OnboardingStepContextValue | null {
   return useContext(OnboardingStepContext);
 }
 
-export const ONBOARDING_STEP_LABELS = ["Business", "AI Agent", "Knowledge", "Phone", "Go Live"] as const;
+export const ONBOARDING_STEP_LABELS = ["Business", "Agent", "Customize", "Test", "Activate"] as const;

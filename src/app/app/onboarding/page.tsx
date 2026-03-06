@@ -2,10 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import {
+  CalendarRange,
+  ClipboardList,
+  Headphones,
+  MoonStar,
+  PhoneCall,
+  Sparkles,
+} from "lucide-react";
 import { useOnboardingStep } from "../OnboardingStepContext";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
+import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
 import { buildStarterKnowledge, mergeKnowledgeItems } from "@/lib/workspace/starter-knowledge";
@@ -31,6 +40,57 @@ const CALL_STYLES = [
   { id: "thorough", label: "Thorough", desc: "Asks clarifying questions, confirms details" },
   { id: "conversational", label: "Conversational", desc: "Natural back-and-forth, brief confirmations" },
   { id: "quick", label: "Quick", desc: "Gets to the point, minimal small talk" },
+] as const;
+
+const ONBOARDING_TEMPLATES = [
+  {
+    id: "receptionist",
+    name: "Receptionist",
+    description: "Answers calls, takes messages, and routes callers cleanly.",
+    icon: Headphones,
+    agentName: "Sarah",
+    greeting: "Thanks for calling. I can help with questions, messages, and getting you to the right next step.",
+  },
+  {
+    id: "appointment_scheduler",
+    name: "Appointment Scheduler",
+    description: "Books, confirms, and reminds without back-and-forth.",
+    icon: CalendarRange,
+    agentName: "Emma",
+    greeting: "Thanks for calling. I can help you find a time, confirm the details, and book it now.",
+  },
+  {
+    id: "lead_qualifier",
+    name: "Lead Qualifier",
+    description: "Captures key details and routes the hottest opportunities first.",
+    icon: ClipboardList,
+    agentName: "Alex",
+    greeting: "Thanks for reaching out. I’ll ask a few quick questions so we can get you to the right next step.",
+  },
+  {
+    id: "after_hours",
+    name: "After-Hours Agent",
+    description: "Handles closed-office calls gracefully and flags urgency.",
+    icon: MoonStar,
+    agentName: "Sarah",
+    greeting: "You’ve reached us after hours. I can take your details now and make sure the right follow-up happens next.",
+  },
+  {
+    id: "follow_up",
+    name: "Follow-Up Agent",
+    description: "Re-engages callers and leads so nothing gets dropped.",
+    icon: PhoneCall,
+    agentName: "Alex",
+    greeting: "Hi, I’m following up so nothing slips through. I can confirm your status and help with the next step.",
+  },
+  {
+    id: "custom",
+    name: "Custom",
+    description: "Start from scratch and shape the tone yourself.",
+    icon: Sparkles,
+    agentName: "Sarah",
+    greeting: "Thanks for calling. How can I help you today?",
+  },
 ] as const;
 
 type AgentId = "sarah" | "alex" | "emma";
@@ -70,9 +130,10 @@ export default function AppOnboardingPage() {
   const [address, setAddress] = useState("");
   const [timezone, setTimezone] = useState("");
 
-  const [agentName, setAgentName] = useState("Sarah");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("receptionist");
+  const [agentName, setAgentName] = useState<string>(ONBOARDING_TEMPLATES[0].agentName);
   const [voiceId, setVoiceId] = useState<string>(DEFAULT_VOICE_ID);
-  const [greeting, setGreeting] = useState("");
+  const [greeting, setGreeting] = useState<string>(ONBOARDING_TEMPLATES[0].greeting);
   const [personality, setPersonality] = useState(50);
   const [callStyle, setCallStyle] = useState<"thorough" | "conversational" | "quick">("conversational");
   const [greetingPlaying, setGreetingPlaying] = useState(false);
@@ -311,6 +372,42 @@ export default function AppOnboardingPage() {
           <div className="space-y-6">
             <h1 className="text-xl font-semibold text-white">Meet your AI</h1>
             <div>
+              <label className="block text-xs font-medium mb-2 text-zinc-400">Choose a starting template</label>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {ONBOARDING_TEMPLATES.map((template) => {
+                  const Icon = template.icon;
+                  const active = selectedTemplate === template.id;
+                  return (
+                    <button
+                      key={template.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTemplate(template.id);
+                        setAgentName(template.agentName);
+                        setGreeting(template.greeting);
+                      }}
+                      className={`rounded-2xl border p-4 text-left transition-all ${
+                        active
+                          ? "border-blue-500 ring-2 ring-blue-500/40 bg-zinc-900/90"
+                          : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
+                          <Icon className="h-5 w-5 text-blue-400" />
+                        </div>
+                        <span className={`rounded-xl px-2.5 py-1 text-[11px] font-medium ${active ? "bg-blue-500 text-white" : "bg-white/[0.04] text-zinc-400"}`}>
+                          Select
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm font-medium text-white">{template.name}</p>
+                      <p className="mt-1 text-xs text-zinc-500">{template.description}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Agent name</label>
               <input
                 type="text"
@@ -466,10 +563,10 @@ export default function AppOnboardingPage() {
           </div>
         )}
 
-        {/* Step 3 — TEACH YOUR AI */}
+        {/* Step 3 — CUSTOMIZE */}
         {step === 3 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold">Teach your AI</h1>
+            <h1 className="text-xl font-semibold">Customize your agent</h1>
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Services (type and Enter to add)</label>
               <input
@@ -565,13 +662,41 @@ export default function AppOnboardingPage() {
           </div>
         )}
 
-        {/* Step 4 — YOUR PHONE NUMBER */}
+        {/* Step 4 — TEST */}
         {step === 4 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold">Your phone number</h1>
-            <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
-              <p className="text-2xl font-semibold mb-1">{phoneDisplay}</p>
-              <p className="text-xs text-zinc-500">Your dedicated AI phone number</p>
+            <h1 className="text-xl font-semibold">Test your agent</h1>
+            <p className="text-sm text-zinc-400">
+              This is the magic moment. Start a live browser voice test to hear the exact assistant your workspace will use on calls.
+            </p>
+            <WorkspaceVoiceButton
+              title={`Talk to ${agentName}`}
+              description="Start a live browser voice session, watch the transcript below, and confirm the voice and tone feel right."
+              startLabel="Start live test"
+              endLabel="End live test"
+              showUnavailable={true}
+            />
+            <div>
+              <p className="text-xs font-medium mb-2 text-zinc-400">Want a phone-based test too?</p>
+              <p className="text-sm text-zinc-500">
+                You&apos;ll connect and forward your line on the next step. Once that&apos;s done, you can call <span className="font-medium text-white">{phoneDisplay}</span> or use Settings → Phone for a real phone test.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-400">← Back</button>
+              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200">Continue →</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5 — ACTIVATE */}
+        {step === 5 && (
+          <div className="space-y-6">
+            <h1 className="text-xl font-semibold text-white">Activate</h1>
+            <div className="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
+              <p className="text-sm text-zinc-400 mb-2">Your dedicated AI phone number</p>
+              <p className="text-2xl font-semibold mb-4">{phoneDisplay}</p>
+              <p className="text-sm text-zinc-500">Forward your existing line here or use it as your new business number.</p>
             </div>
             <div>
               <label className="block text-xs font-medium mb-2 text-zinc-400">Using a personal or existing number?</label>
@@ -581,30 +706,6 @@ export default function AppOnboardingPage() {
                 <option>T-Mobile: dial **21*number#</option>
                 <option>Other: contact carrier</option>
               </select>
-            </div>
-            <p className="text-sm text-zinc-400">Forward your current line to the number above, or use it as your new business number.</p>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-400">← Back</button>
-              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200">Continue →</button>
-            </div>
-            <button
-              type="button"
-              onClick={() => setStep(5)}
-              className="block w-full text-center text-sm text-zinc-500 hover:text-zinc-400"
-            >
-              Skip for now
-            </button>
-          </div>
-        )}
-
-        {/* Step 5 — TEST IT */}
-        {step === 5 && (
-          <div className="space-y-6">
-            <h1 className="text-xl font-semibold text-white">Test it</h1>
-            <div className="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
-              <p className="text-sm text-zinc-400 mb-2">Call this number to hear your AI agent</p>
-              <p className="text-2xl font-semibold mb-4">{phoneDisplay}</p>
-              <p className="text-sm text-zinc-500">Hear how {agentName} will answer.</p>
             </div>
             <button
               type="button"
@@ -619,7 +720,7 @@ export default function AppOnboardingPage() {
               className="w-full py-3 rounded-xl border border-zinc-600 text-zinc-300 hover:border-zinc-500 flex items-center justify-center gap-2"
             >
               {step5Playing ? <Waveform isPlaying /> : <span>▶</span>}
-              Hear {agentName} answer a call
+              Preview the live greeting
             </button>
             <button
               type="button"

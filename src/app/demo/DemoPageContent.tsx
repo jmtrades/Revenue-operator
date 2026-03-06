@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { Mic } from "lucide-react";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
 import { DemoVoiceButton } from "@/components/demo/DemoVoiceButton";
 import { ROUTES } from "@/lib/constants";
@@ -35,7 +36,9 @@ export function DemoPageContent() {
       <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-[1fr_1.2fr] gap-6 md:gap-8 items-start">
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 flex flex-col items-center gap-4">
           <div className="w-32 h-56 rounded-3xl border-2 border-zinc-700 bg-zinc-900 flex flex-col items-center justify-center gap-3 p-4 shadow-xl">
-            <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-xl" aria-hidden>🎙</div>
+            <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-xl" aria-hidden>
+              <Mic className="h-5 w-5 text-zinc-300" />
+            </div>
             <p className="text-[10px] text-zinc-500 text-center">Tap mic below to talk</p>
           </div>
           <DemoVoiceButton />

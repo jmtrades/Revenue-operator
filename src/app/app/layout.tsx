@@ -19,6 +19,7 @@ import {
   Settings,
   CreditCard,
   Menu,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { OnboardingChecklist } from "./OnboardingChecklist";
@@ -69,6 +70,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [workspaceMeta, setWorkspaceMeta] = useState<{
     banner?: { show?: boolean; text?: string | null; href?: string; cta?: string };
     onboardingCompletedAt?: string | null;
+    stats?: { calls?: number };
   } | null>(null);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const inboxUnread = 0;
@@ -86,6 +88,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       .then((data: {
         banner?: { show?: boolean; text?: string | null; href?: string; cta?: string };
         onboardingCompletedAt?: string | null;
+        stats?: { calls?: number };
       } | null) => {
         if (cancelled) return;
         setWorkspaceMeta(data);
@@ -137,14 +140,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#080d19" }}>
         {workspaceMeta?.banner?.show && workspaceMeta.banner.text && (
         <div
-          className="shrink-0 py-2 px-4 flex items-center justify-center gap-2 flex-wrap text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
+          className="shrink-0 border-b border-blue-500/10 bg-blue-500/5 px-4 py-2 text-center text-[13px] text-white/70"
           role="status"
           aria-label="Workspace status"
         >
           <span>{workspaceMeta.banner.text}</span>
           <Link
             href={workspaceMeta.banner.href || "/app/settings/phone"}
-            className="text-white font-semibold underline underline-offset-2 hover:no-underline"
+            className="font-medium text-white underline underline-offset-2 hover:no-underline"
           >
             {workspaceMeta.banner.cta || "Set up →"}
           </Link>
@@ -154,13 +157,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {isOnboarding ? (
             <OnboardingSidebar />
           ) : (
-          <aside className="hidden md:flex md:w-60 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800">
+          <aside className="hidden md:flex md:w-[220px] flex-col shrink-0 bg-[#0a0f1c] border-r border-white/[0.04]">
             <div className="p-5 border-b border-zinc-800">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                   <span className="text-black font-bold text-sm">RT</span>
                 </div>
-                <WorkspaceName className="text-white font-semibold truncate block" />
+                <WorkspaceName className="truncate block text-[15px] font-semibold text-white/90" />
               </div>
             </div>
             <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
@@ -171,8 +174,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <Link
                     key={href}
                     href={href}
-                    className={`flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-sm transition-colors ${
-                      isActive(href) ? "bg-zinc-800/50 text-white font-medium" : "text-zinc-400 hover:text-zinc-300"
+                    className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors ${
+                      isActive(href)
+                        ? "border-l-blue-500 bg-white/[0.06] text-white"
+                        : "border-l-transparent text-white/50 hover:text-white/80"
                     }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
@@ -185,8 +190,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <Link
                   key={href}
                   href={href}
-                  className={`flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-sm transition-colors ${
-                    isActive(href) ? "bg-zinc-800/50 text-white font-medium" : "text-zinc-400 hover:text-zinc-300"
+                  className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors ${
+                    isActive(href)
+                      ? "border-l-blue-500 bg-white/[0.06] text-white"
+                      : "border-l-transparent text-white/50 hover:text-white/80"
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
@@ -195,9 +202,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               ))}
             </nav>
             <div className="p-3 border-t border-zinc-800 space-y-2">
-              <div className="px-3 py-2 rounded-lg bg-zinc-800/50 border border-zinc-700">
+              <div className="rounded-lg bg-white/[0.03] px-3 py-3">
                 <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
-                <span className="block text-[10px] text-zinc-500">12 days left</span>
+                <span className="block text-[12px] text-white/30">
+                  12 days left{(workspaceMeta?.stats?.calls ?? 0) > 0 ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered` : ""}
+                </span>
               </div>
               <OnboardingChecklist />
             </div>
@@ -253,7 +262,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     className="p-2 rounded-lg text-zinc-400 hover:text-white"
                     aria-label="Close"
                   >
-                    ✕
+                    <X className="h-4 w-4" />
                   </button>
                 </div>
                 <nav className="p-2" aria-label="More pages">

@@ -1,9 +1,38 @@
 /**
- * Weekly trust email: "Here's what didn't fall through the cracks this week"
- * Retention anchor showing total conversations maintained, attendance secured, recoveries.
+ * Weekly digest email sent every Monday.
+ * Uses real workspace records so owners see calls answered, leads captured,
+ * appointments booked, time saved, and the top unanswered topic to improve.
  */
 
 import { getDb } from "@/lib/db/queries";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com";
+
+function formatHoursSaved(callCount: number): string {
+  const hours = Math.max(0.5, Math.round((callCount * 4) / 60 * 10) / 10);
+  return Number.isInteger(hours) ? `${hours.toFixed(0)}` : `${hours.toFixed(1)}`;
+}
+
+function toPlainTextDigest(input: {
+  workspaceName: string;
+  callsAnswered: number;
+  leadsCaptured: number;
+  appointmentsBooked: number;
+  hoursSaved: string;
+  topCallerQuestion: string;
+}) {
+  return [
+    `${input.workspaceName} weekly digest`,
+    "",
+    `Calls answered: ${input.callsAnswered}`,
+    `Leads captured: ${input.leadsCaptured}`,
+    `Appointments booked: ${input.appointmentsBooked}`,
+    `Time saved: ${input.hoursSaved} hour${input.hoursSaved === "1" ? "" : "s"}`,
+    `Top caller question: ${input.topCallerQuestion}`,
+    "",
+    `Open dashboard: ${APP_URL}/app/activity`,
+  ].join("\n");
+}
 
 export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: string; email: string; sent: boolean }>> {
   const db = getDb();
@@ -14,48 +43,63 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
 
   const { data: workspaces } = await db
     .from("workspaces")
-    .select("id, owner_id, status")
+    .select("id, owner_id, status, name")
     .neq("status", "paused");
 
   const results: Array<{ workspaceId: string; email: string; sent: boolean }> = [];
 
   for (const ws of workspaces ?? []) {
-    const row = ws as { id: string; owner_id: string; status?: string };
+    const row = ws as { id: string; owner_id: string; status?: string; name?: string | null };
     const workspaceId = row.id;
+    const workspaceName = row.name?.trim() || "Recall Touch";
 
-    const { data: weekActions } = await db
-      .from("action_logs")
-      .select("action")
-      .eq("workspace_id", workspaceId)
-      .gte("created_at", weekStart.toISOString());
+    const [{ count: callsAnswered }, { count: leadsCaptured }, { count: appointmentsBooked }, { data: weekActions }, { data: user }] =
+      await Promise.all([
+        db
+          .from("call_sessions")
+          .select("id", { count: "exact", head: true })
+          .eq("workspace_id", workspaceId)
+          .gte("started_at", weekStart.toISOString()),
+        db
+          .from("leads")
+          .select("id", { count: "exact", head: true })
+          .eq("workspace_id", workspaceId)
+          .gte("created_at", weekStart.toISOString()),
+        db
+          .from("appointments")
+          .select("id", { count: "exact", head: true })
+          .eq("workspace_id", workspaceId)
+          .in("status", ["confirmed"])
+          .gte("start_time", weekStart.toISOString()),
+        db
+          .from("action_logs")
+          .select("action")
+          .eq("workspace_id", workspaceId)
+          .gte("created_at", weekStart.toISOString())
+          .limit(200),
+        db.from("users").select("email").eq("id", row.owner_id).single(),
+      ]);
 
-    const actions = (weekActions ?? []) as { action: string }[];
-    const followUps = actions.filter((a) => /follow|outreach|recovery|re-engag/i.test(a.action)).length;
-    const replies = actions.filter((a) => /reply|response|message/i.test(a.action)).length;
-    const attendance = actions.filter((a) => /attend|confirm|remind/i.test(a.action)).length;
-
-    const { count: activeConversations } = await db
-      .from("leads")
-      .select("id", { count: "exact", head: true })
-      .eq("workspace_id", workspaceId);
-
-    const { data: user } = await db.from("users").select("email").eq("id", row.owner_id).single();
     const email = (user as { email?: string } | null)?.email;
     if (!email) continue;
 
-    const _conversationsMaintained = Math.max(1, Math.floor((activeConversations ?? 0) * 0.7) + replies);
-    const _attendanceSecured = attendance;
-    const recoveries = followUps;
-
-    // Fail-safe: If no recoveries, interpret as stability
-    const _recoveryText = recoveries > 0 
-      ? `• ${recoveries} conversation${recoveries !== 1 ? "s" : ""} — customer returned`
-      : `• Conversations stayed on track`;
-
-    const subject = "Conditions are normal.";
-    const body = `Conditions are normal.
-
-Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com"}/dashboard`;
+    const actions = (weekActions ?? []) as { action: string }[];
+    const topCallerQuestion =
+      actions.find((entry) => /knowledge|gap|faq|question/i.test(entry.action))?.action.replace(/[_-]/g, " ") ??
+      "No major knowledge gaps showed up this week.";
+    const safeCallsAnswered = callsAnswered ?? 0;
+    const safeLeadsCaptured = leadsCaptured ?? 0;
+    const safeAppointmentsBooked = appointmentsBooked ?? 0;
+    const hoursSaved = formatHoursSaved(safeCallsAnswered);
+    const subject = `${workspaceName}: ${safeCallsAnswered} calls answered this week`;
+    const body = toPlainTextDigest({
+      workspaceName,
+      callsAnswered: safeCallsAnswered,
+      leadsCaptured: safeLeadsCaptured,
+      appointmentsBooked: safeAppointmentsBooked,
+      hoursSaved,
+      topCallerQuestion,
+    });
 
     try {
       if (process.env.RESEND_API_KEY) {
@@ -66,7 +110,7 @@ Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM || "Revenue Operator <noreply@revenue-operator.com>",
+            from: process.env.EMAIL_FROM || "Recall Touch <noreply@revenue-operator.com>",
             to: email,
             subject,
             text: body,

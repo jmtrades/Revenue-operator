@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { Shield, Lock, Server, Zap } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
@@ -64,7 +65,10 @@ export function SocialProof() {
               </button>
             </form>
           ) : (
-            <p className="text-sm mb-10" style={{ color: "var(--meaning-green)" }}>You&apos;re on the list! 🎉</p>
+            <p className="mb-10 inline-flex items-center gap-2 text-sm" style={{ color: "var(--meaning-green)" }}>
+              <Sparkles className="h-4 w-4" />
+              <span>You&apos;re on the list!</span>
+            </p>
           )}
           <div className="flex flex-wrap justify-center gap-4">
             {badges.map((b) => (

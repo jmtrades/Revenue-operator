@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 
 const ACTIVATE_STORAGE_KEY = "recall_touch_activate";
 const RT_SIGNUP_KEY = "rt_signup";
@@ -141,7 +142,11 @@ export function ActivateForm() {
   if (submittedLocal) {
     return (
       <div className="text-center">
-        <div className="text-5xl mb-4">🎉</div>
+        <div className="mb-4 flex justify-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/10">
+            <Sparkles className="h-7 w-7 text-amber-400" />
+          </div>
+        </div>
         <h2 className="text-xl font-bold text-white mb-3">Welcome aboard!</h2>
         <p className="text-sm mb-6 text-zinc-400">
           Your AI phone system is ready.

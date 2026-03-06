@@ -95,8 +95,6 @@ export function Navbar() {
   };
   const desktopPrimaryHref = authenticated ? "/app/activity" : ROUTES.START;
   const desktopPrimaryLabel = authenticated ? "Dashboard →" : "Start free →";
-  const desktopSecondaryHref = authenticated ? "/app/activity" : ROUTES.SIGN_IN;
-  const desktopSecondaryLabel = authenticated ? "Dashboard" : "Sign in";
 
   return (
     <header
@@ -178,9 +176,11 @@ export function Navbar() {
           })}
         </nav>
         <div className="hidden lg:flex items-center gap-3">
-          <Link href={desktopSecondaryHref} className="btn-marketing-ghost px-4 py-2 text-sm rounded-lg no-underline">
-            {desktopSecondaryLabel}
-          </Link>
+          {!authenticated ? (
+            <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost px-4 py-2 text-sm rounded-lg no-underline">
+              Sign in
+            </Link>
+          ) : null}
           <Link href={desktopPrimaryHref} className="btn-marketing-primary px-4 py-2 text-sm rounded-xl no-underline">
             {desktopPrimaryLabel}
           </Link>
@@ -240,9 +240,11 @@ export function Navbar() {
             </Link>
           ))}
           <div className="flex flex-col w-full max-w-xs gap-3 mt-4">
-            <Link href={desktopSecondaryHref} className="btn-marketing-ghost w-full text-center py-3 rounded-lg no-underline text-base" onClick={() => setMobileOpen(false)}>
-              {desktopSecondaryLabel}
-            </Link>
+            {!authenticated ? (
+              <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost w-full text-center py-3 rounded-lg no-underline text-base" onClick={() => setMobileOpen(false)}>
+                Sign in
+              </Link>
+            ) : null}
             <Link href={desktopPrimaryHref} className="btn-marketing-primary w-full text-center py-3 rounded-xl no-underline text-base" onClick={() => setMobileOpen(false)}>
               {desktopPrimaryLabel}
             </Link>

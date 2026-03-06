@@ -11,6 +11,13 @@ export function SwCleanup() {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       registrations.forEach((r) => r.unregister());
     });
+    if ("caches" in window) {
+      window.caches.keys().then((keys) => {
+        keys.forEach((key) => {
+          void window.caches.delete(key);
+        });
+      });
+    }
   }, []);
   return null;
 }

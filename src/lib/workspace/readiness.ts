@@ -62,19 +62,11 @@ export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
   const nextStep = items.find((item) => !item.completed) ?? null;
 
   let bannerText: string | null = null;
-  let bannerHref = nextStep?.href ?? "/app/activity";
-  let bannerCta = nextStep ? "Set up →" : "Dashboard →";
+  const bannerHref = "/app/settings/phone";
+  const bannerCta = "Connect phone →";
 
   if (!hasPhone) {
-    bannerText = "Almost there! Connect your phone number to start receiving real calls.";
-    bannerHref = "/app/settings/phone";
-    bannerCta = "Connect number →";
-  } else if (!hasTestCall) {
-    bannerText = "Your AI is ready. Place a quick test call to hear it live.";
-    bannerHref = "/app/onboarding";
-    bannerCta = "Test your agent →";
-  } else if (nextStep) {
-    bannerText = "Your setup is nearly complete. Finish the next step to go fully live.";
+    bannerText = "Almost there — Connect your phone number to start receiving AI-answered calls.";
   }
 
   const systemEvents = [
@@ -109,7 +101,7 @@ export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
     completed,
     total: items.length,
     nextStep,
-    showBanner: Boolean(bannerText),
+    showBanner: !hasPhone && Boolean(bannerText),
     bannerText,
     bannerHref,
     bannerCta,
