@@ -7,6 +7,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
+import {
+  validateEmail,
+  validatePasswordForSignup,
+  normalizeBusinessName,
+  toFriendlySignupError,
+} from "@/lib/auth/validate";
 
 export const dynamic = "force-dynamic";
 
@@ -21,31 +27,73 @@ export async function POST(req: NextRequest) {
   try {
     body = (await req.json()) as { email?: string; password?: string; businessName?: string };
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
-  const password = typeof body?.password === "string" ? body.password : "";
-  const businessName = typeof body?.businessName === "string" ? body.businessName.trim() || "My Workspace" : "My Workspace";
-  if (!email || !password) {
-    return NextResponse.json({ error: "Email and password required" }, { status: 400 });
-  }
+  const emailResult = validateEmail(body?.email ?? "");
+  if (!emailResult.ok) return NextResponse.json({ error: emailResult.error }, { status: 400 });
+  const email = emailResult.value;
+
+  const passwordResult = validatePasswordForSignup(body?.password ?? "");
+  if (!passwordResult.ok) return NextResponse.json({ error: passwordResult.error }, { status: 400 });
+  const password = passwordResult.value;
+
+  const businessName = normalizeBusinessName(body?.businessName);
 
   const supabase = createClient(url, anonKey);
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  let data: { user?: { id: string } | null } | undefined;
+  let error: { message?: string } | null = null;
+  try {
+    const result = await supabase.auth.signUp({ email, password });
+    data = result.data as { user?: { id: string } | null };
+    error = result.error;
+  } catch {
+    return NextResponse.json({ error: "Auth service unavailable. Please try again." }, { status: 503 });
+  }
 
   // Supabase may return an error when confirmation email fails (e.g. SMTP not configured).
-  // Treat as success so we don't show "Error sending confirmation email"; user may need to confirm later.
   const isConfirmationEmailError =
     error &&
     (error.message?.toLowerCase().includes("confirmation") ||
       error.message?.toLowerCase().includes("email") ||
       error.message?.toLowerCase().includes("send"));
   if (error && !isConfirmationEmailError) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ error: toFriendlySignupError(error.message ?? "") }, { status: 400 });
   }
 
-  const userId = data?.user?.id;
+  let userId: string | undefined = data?.user?.id;
+
+  // If signUp failed with confirmation-email error but user was still created, try to sign in and set session.
+  if (isConfirmationEmailError && !userId) {
+    const { data: signInData } = await supabase.auth.signInWithPassword({ email, password });
+    userId = signInData?.user?.id;
+    if (userId && signInData?.session) {
+      let workspaceId: string | undefined;
+      try {
+        const db = getDb();
+        await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
+        const { data: created, error: createErr } = await db
+          .from("workspaces")
+          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+          .select("id")
+          .single();
+        if (!createErr && created) {
+          workspaceId = (created as { id: string }).id;
+          await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+        }
+      } catch {
+        // continue
+      }
+      const cookie = createSessionCookie({ userId, workspaceId });
+      if (cookie) {
+        const res = NextResponse.json({ ok: true, userId, workspaceId });
+        res.headers.set("Set-Cookie", cookie);
+        return res;
+      }
+    }
+    return NextResponse.json({ ok: true, confirmEmail: true });
+  }
+
   if (!userId) {
     if (isConfirmationEmailError) {
       return NextResponse.json({ ok: true, confirmEmail: true });
@@ -70,8 +118,16 @@ export async function POST(req: NextRequest) {
     // continue without workspace
   }
 
-  // If confirmation is required and email failed, don't set session; tell client to show "check your email".
   if (isConfirmationEmailError) {
+    const { data: signInData } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInData?.session) {
+      const cookie = createSessionCookie({ userId, workspaceId });
+      if (cookie) {
+        const res = NextResponse.json({ ok: true, userId, workspaceId });
+        res.headers.set("Set-Cookie", cookie);
+        return res;
+      }
+    }
     return NextResponse.json({ ok: true, confirmEmail: true });
   }
 

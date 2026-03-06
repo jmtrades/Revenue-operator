@@ -11,14 +11,19 @@ export async function GET(request: Request) {
   const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {
-    return NextResponse.redirect(new URL("/sign-in", origin));
+    const signInUrl = new URL("/sign-in", origin);
+    if (next && next !== "/app/activity") signInUrl.searchParams.set("next", next);
+    return NextResponse.redirect(signInUrl);
   }
 
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      return NextResponse.redirect(`${origin}/sign-in?error=auth`);
+      const signInUrl = new URL("/sign-in", origin);
+      signInUrl.searchParams.set("error", "auth");
+      if (next && next !== "/app/activity") signInUrl.searchParams.set("next", next);
+      return NextResponse.redirect(signInUrl.toString());
     }
     const userId = data.user?.id;
     const userEmail = data.user?.email;
@@ -56,8 +61,12 @@ export async function GET(request: Request) {
       res.headers.append("Set-Cookie", cookie);
       return res;
     }
-    return NextResponse.redirect(new URL(redirectPath, origin));
+    // Session not configured (e.g. SESSION_SECRET missing); send to sign-in so they aren’t stuck
+    const signInUrl = new URL("/sign-in", origin);
+    signInUrl.searchParams.set("error", "auth");
+    return NextResponse.redirect(signInUrl);
   } catch {
     return NextResponse.redirect(`${origin}/sign-in?error=auth`);
   }
 }
+
