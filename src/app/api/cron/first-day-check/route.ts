@@ -10,7 +10,8 @@ import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenue-operator.com>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 
 async function sendEmail(to: string, subject: string, text: string): Promise<boolean> {
   if (!RESEND_API_KEY) {
@@ -93,9 +94,12 @@ export async function GET(req: NextRequest) {
     }
 
     // Send email
-    const subject = "Your line is ready";
-    const body = `If someone messages today they'll get an instant reply.
-You don't need to open the app — just leave it active.`;
+    const subject = "Your phone flow is ready";
+    const body = `Your Recall Touch workspace is ready for calls.
+
+Connect your number, run a test call, and you can start taking live conversations right away.
+
+Open: ${APP_URL}/app/activity`;
 
     const sent = await sendEmail(email, subject, body);
 

@@ -55,12 +55,12 @@ export async function GET(request: NextRequest) {
   const results: Array<{ workspaceId: string; email: string; sent: boolean }> = [];
 
   for (const { workspaceId, ownerEmail, renewalAt } of toNotify) {
-    const subject = "Protection is continuing — nothing will be interrupted";
-    const body = `Protection is continuing automatically tomorrow. Nothing will be interrupted.
+    const subject = "Your billing renews tomorrow";
+    const body = `Recall Touch renews automatically tomorrow.
 
-All conversations will keep being maintained. You only take the calls.
+Your number, call handling, and follow-up coverage will stay active with no interruption.
 
-To pause protection instead, open Preferences in the overview.`;
+If you need to pause instead, open billing in the app today.`;
 
     try {
       if (process.env.RESEND_API_KEY) {
@@ -71,7 +71,7 @@ To pause protection instead, open Preferences in the overview.`;
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM || "Revenue Operator <noreply@revenue-operator.com>",
+            from: process.env.EMAIL_FROM || "Recall Touch <noreply@recall-touch.com>",
             to: ownerEmail,
             subject,
             text: body,

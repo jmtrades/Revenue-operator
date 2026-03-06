@@ -7,11 +7,11 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { NAV_LINKS, SOLUTIONS_LINKS, ROUTES } from "@/lib/constants";
 import { Container } from "@/components/ui/Container";
 
-export function Navbar() {
+export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?: boolean }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(initialAuthenticated);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

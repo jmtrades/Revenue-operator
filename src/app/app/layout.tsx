@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { WorkspaceProvider } from "@/components/WorkspaceContext";
 import { WorkspaceName } from "@/components/WorkspaceName";
+import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import {
   LayoutList,
   PhoneCall,
@@ -83,8 +84,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!mounted) return;
     let cancelled = false;
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    fetchWorkspaceMeCached()
       .then((data: {
         banner?: { show?: boolean; text?: string | null; href?: string; cta?: string };
         onboardingCompletedAt?: string | null;

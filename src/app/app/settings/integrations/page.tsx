@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 
 type WebhookConfig = {
   endpoint_url: string;
   enabled: boolean;
+  has_secret?: boolean;
   max_attempts: number;
   event_lead_qualified: boolean;
   event_call_booked: boolean;
@@ -31,14 +33,15 @@ export default function AppSettingsIntegrationsPage() {
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState<boolean | null>(null);
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
   const [savingWebhook, setSavingWebhook] = useState(false);
+  const [testingWebhook, setTestingWebhook] = useState(false);
   const [availabilityPreview, setAvailabilityPreview] = useState<string[]>([]);
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>(DEFAULT_WEBHOOK_CONFIG);
+  const [webhookSecret, setWebhookSecret] = useState("");
   const searchParams = useSearchParams();
   const calendarParam = searchParams.get("calendar");
 
   useEffect(() => {
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    fetchWorkspaceMeCached()
       .then((data: { id?: string | null } | null) => {
         const wid = data?.id ?? null;
         setWorkspaceId(wid);
@@ -96,14 +99,37 @@ export default function AppSettingsIntegrationsPage() {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(webhookConfig),
+        body: JSON.stringify({ ...webhookConfig, secret: webhookSecret.trim() || undefined }),
       });
       if (!res.ok) throw new Error("save_failed");
       setToast("Webhook destination saved.");
+      setWebhookSecret("");
     } catch {
       setToast("Could not save webhook settings.");
     } finally {
       setSavingWebhook(false);
+      setTimeout(() => setToast(null), 4000);
+    }
+  };
+
+  const handleTestWebhook = async () => {
+    if (!workspaceId) return;
+    setTestingWebhook(true);
+    try {
+      const res = await fetch(`/api/workspaces/${workspaceId}/webhook-config/test`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = (await res.json().catch(() => null)) as { ok?: boolean; status?: number; response?: string; error?: string } | null;
+      if (!res.ok) {
+        setToast(data?.error ?? "Could not send webhook test.");
+        return;
+      }
+      setToast(data?.ok ? `Webhook test delivered (${data?.status ?? 200}).` : `Webhook responded with ${data?.status ?? "an error"}.`);
+    } catch {
+      setToast("Could not send webhook test.");
+    } finally {
+      setTestingWebhook(false);
       setTimeout(() => setToast(null), 4000);
     }
   };
@@ -156,6 +182,19 @@ export default function AppSettingsIntegrationsPage() {
             placeholder="https://hooks.slack.com/... or https://hooks.zapier.com/..."
             className="mt-4 w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
           />
+          <div className="mt-3">
+            <label className="block text-[11px] font-medium text-zinc-400 mb-1">Signing secret (optional)</label>
+            <input
+              type="text"
+              value={webhookSecret}
+              onChange={(e) => setWebhookSecret(e.target.value)}
+              placeholder={webhookConfig.has_secret ? "Secret saved. Enter a new value to rotate it." : "Add a secret to sign deliveries"}
+              className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+            />
+            {webhookConfig.has_secret ? (
+              <p className="mt-1 text-[11px] text-zinc-500">A signing secret is already stored for this destination.</p>
+            ) : null}
+          </div>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-300">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -190,6 +229,12 @@ export default function AppSettingsIntegrationsPage() {
               Reactivated lead
             </label>
           </div>
+          <div className="mt-4 rounded-xl border border-zinc-800 bg-black/20 p-3">
+            <p className="text-[11px] font-medium text-zinc-400">Events you can send</p>
+            <p className="mt-1 text-[11px] text-zinc-500">
+              Lead captured, appointment booked, deal at risk, deal won, and reactivated lead.
+            </p>
+          </div>
           <div className="mt-4 flex items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-medium text-zinc-400">Retry attempts</p>
@@ -207,14 +252,24 @@ export default function AppSettingsIntegrationsPage() {
                 className="mt-1 w-24 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
               />
             </div>
-            <button
-              type="button"
-              onClick={handleSaveWebhook}
-              disabled={savingWebhook || !workspaceId}
-              className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
-            >
-              {savingWebhook ? "Saving…" : "Save webhook"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleTestWebhook}
+                disabled={testingWebhook || !workspaceId || !webhookConfig.endpoint_url.trim()}
+                className="px-4 py-2.5 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 disabled:opacity-60"
+              >
+                {testingWebhook ? "Testing…" : "Send test"}
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveWebhook}
+                disabled={savingWebhook || !workspaceId}
+                className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
+              >
+                {savingWebhook ? "Saving…" : "Save webhook"}
+              </button>
+            </div>
           </div>
         </div>
 

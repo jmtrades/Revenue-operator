@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 
 const FALLBACK = "My Workspace";
 
@@ -12,14 +13,10 @@ export function WorkspaceName({ className }: { className?: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => {
+    fetchWorkspaceMeCached()
+      .then((data) => {
         if (cancelled) return null;
-        if (!res.ok) {
-          setName(FALLBACK);
-          return null;
-        }
-        return res.json() as Promise<{ name?: string }>;
+        return data as { name?: string } | null;
       })
       .then((data: { name?: string } | null) => {
         if (cancelled || data == null) return;

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Check, Circle } from "lucide-react";
+import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 
 const ITEMS: { key: string; label: string; href: string }[] = [
   { key: "business", label: "Business info added", href: "/app/onboarding" },
@@ -31,8 +32,7 @@ export function OnboardingChecklist() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    fetchWorkspaceMeCached()
       .then((data: { progress?: { items?: Array<{ key: string; completed: boolean }> } } | null) => {
         if (cancelled) return;
         const items = data?.progress?.items ?? [];

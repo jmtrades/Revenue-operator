@@ -18,8 +18,25 @@ export async function GET() {
     database = "fail";
   }
 
+  const hasStripePrice =
+    !!(
+      process.env.STRIPE_DEFAULT_PRICE_ID ||
+      process.env.STRIPE_PRICE_ID ||
+      process.env.STRIPE_PRICE_SOLO_MONTH ||
+      process.env.STRIPE_PRICE_SOLO_YEAR ||
+      process.env.STRIPE_PRICE_GROWTH_MONTH ||
+      process.env.STRIPE_PRICE_GROWTH_YEAR ||
+      process.env.STRIPE_PRICE_TEAM_MONTH ||
+      process.env.STRIPE_PRICE_TEAM_YEAR ||
+      process.env.STRIPE_GROWTH_MONTHLY ||
+      process.env.STRIPE_GROWTH_YEARLY ||
+      process.env.STRIPE_TEAM_MONTHLY ||
+      process.env.STRIPE_TEAM_YEARLY ||
+      process.env.STRIPE_SOLO_MONTHLY ||
+      process.env.STRIPE_SOLO_YEARLY
+    );
   const stripe: "ok" | "missing" =
-    !!(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET && process.env.STRIPE_DEFAULT_PRICE_ID)
+    !!(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET && hasStripePrice)
       ? "ok"
       : "missing";
 
@@ -38,8 +55,11 @@ export async function GET() {
   }
 
   const system_ready = database === "ok";
+  const status = system_ready ? "ok" : "degraded";
 
   return NextResponse.json({
+    ok: system_ready,
+    status,
     database,
     stripe,
     last_cron_execution,

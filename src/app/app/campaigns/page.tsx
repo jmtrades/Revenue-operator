@@ -13,6 +13,11 @@ type CampaignRow = {
   answered: number;
   appointments_booked: number;
   created_at: string;
+  target_filter?: {
+    audience?: string;
+    message_template?: string;
+    schedule?: string | null;
+  } | null;
 };
 
 const PAGE_TITLE = "Campaigns — Recall Touch";
@@ -29,6 +34,7 @@ export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CampaignRow["status"]>("all");
   const [form, setForm] = useState({
@@ -72,29 +78,37 @@ export default function CampaignsPage() {
     if (!form.name.trim()) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/campaigns", {
-        method: "POST",
+      const payload = {
+        name: form.name.trim(),
+        type: form.type,
+        target_filter: {
+          audience: form.audience,
+          message_template: form.template,
+          schedule: form.schedule || null,
+        },
+      };
+      const res = await fetch(editingId ? `/api/campaigns/${editingId}` : "/api/campaigns", {
+        method: editingId ? "PATCH" : "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name.trim(),
-          type: form.type,
-          target_filter: {
-            audience: form.audience,
-            message_template: form.template,
-            schedule: form.schedule || null,
-          },
-        }),
+        body: JSON.stringify(payload),
       });
       const created = (await res.json().catch(() => null)) as CampaignRow | { error?: string } | null;
       if (!res.ok || !created || !("id" in created)) {
         const errorMessage =
           created && "error" in created && typeof created.error === "string"
             ? created.error
-            : "Could not create run";
+            : editingId
+              ? "Could not update run"
+              : "Could not create run";
         throw new Error(errorMessage);
       }
-      setCampaigns((prev) => [created, ...prev]);
+      setCampaigns((prev) =>
+        editingId
+          ? prev.map((item) => (item.id === created.id ? { ...item, ...created } : item))
+          : [created, ...prev],
+      );
+      setEditingId(null);
       setForm({
         name: "",
         type: "lead_followup",
@@ -102,9 +116,9 @@ export default function CampaignsPage() {
         template: "Just checking in after your last conversation. Reply here if you want to continue.",
         schedule: "",
       });
-      setToast("Run created.");
+      setToast(editingId ? "Run updated." : "Run created.");
     } catch (error) {
-      setToast(error instanceof Error ? error.message : "Could not create run.");
+      setToast(error instanceof Error ? error.message : editingId ? "Could not update run." : "Could not create run.");
     } finally {
       setSaving(false);
     }
@@ -126,6 +140,17 @@ export default function CampaignsPage() {
       prev.map((item) => (item.id === campaign.id ? { ...item, status: nextStatus } : item)),
     );
     setToast(nextStatus === "active" ? "Run resumed." : "Run paused.");
+  };
+
+  const loadCampaignIntoForm = (campaign: CampaignRow) => {
+    setEditingId(campaign.id);
+    setForm({
+      name: campaign.name,
+      type: campaign.type,
+      audience: campaign.target_filter?.audience ?? "",
+      template: campaign.target_filter?.message_template ?? "",
+      schedule: campaign.target_filter?.schedule ?? "",
+    });
   };
 
   return (
@@ -151,6 +176,13 @@ export default function CampaignsPage() {
           </select>
         </div>
 
+        <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Metric label="Total runs" value={campaigns.length} />
+          <Metric label="Active" value={campaigns.filter((campaign) => campaign.status === "active").length} />
+          <Metric label="Answered" value={campaigns.reduce((sum, campaign) => sum + campaign.answered, 0)} />
+          <Metric label="Appointments" value={campaigns.reduce((sum, campaign) => sum + campaign.appointments_booked, 0)} />
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-4">
             {loading ? (
@@ -170,6 +202,9 @@ export default function CampaignsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-white">{campaign.name}</p>
+                      <p className="mt-2 text-xs text-zinc-500">
+                        {campaign.target_filter?.audience ?? "Outcome-based audience"}
+                      </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         <span className="rounded-full border border-zinc-700 px-2.5 py-1 text-[11px] text-zinc-300">
                           {campaign.type.replace(/_/g, " ")}
@@ -179,13 +214,22 @@ export default function CampaignsPage() {
                         </span>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => { void toggleCampaign(campaign); }}
-                      className="px-3 py-2 rounded-xl border border-zinc-700 text-xs font-medium text-zinc-300 hover:border-zinc-500"
-                    >
-                      {campaign.status === "active" ? "Pause" : "Resume"}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => loadCampaignIntoForm(campaign)}
+                        className="px-3 py-2 rounded-xl border border-zinc-700 text-xs font-medium text-zinc-300 hover:border-zinc-500"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { void toggleCampaign(campaign); }}
+                        className="px-3 py-2 rounded-xl border border-zinc-700 text-xs font-medium text-zinc-300 hover:border-zinc-500"
+                      >
+                        {campaign.status === "active" ? "Pause" : "Resume"}
+                      </button>
+                    </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <Metric label="Contacts" value={campaign.total_contacts} />
@@ -196,16 +240,43 @@ export default function CampaignsPage() {
                   <p className="mt-3 text-[11px] text-zinc-500">
                     Created {new Date(campaign.created_at).toLocaleDateString()}
                   </p>
+                  {campaign.target_filter?.schedule ? (
+                    <p className="mt-1 text-[11px] text-zinc-500">
+                      Scheduled {new Date(campaign.target_filter.schedule).toLocaleString()}
+                    </p>
+                  ) : null}
                 </div>
               ))
             )}
           </div>
 
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 h-fit">
-            <p className="text-sm font-semibold text-white">Create run</p>
-            <p className="text-xs text-zinc-500 mt-1">
-              Keep it tied to real outcomes: follow-up, reminders, recovery, or reactivation.
-            </p>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-white">{editingId ? "Edit run" : "Create run"}</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Keep it tied to real outcomes: follow-up, reminders, recovery, or reactivation.
+                </p>
+              </div>
+              {editingId ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingId(null);
+                    setForm({
+                      name: "",
+                      type: "lead_followup",
+                      audience: "Leads waiting on follow-up",
+                      template: "Just checking in after your last conversation. Reply here if you want to continue.",
+                      schedule: "",
+                    });
+                  }}
+                  className="text-xs text-zinc-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+              ) : null}
+            </div>
             <div className="mt-4 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">Run name</label>
@@ -265,7 +336,7 @@ export default function CampaignsPage() {
                 disabled={saving || !form.name.trim()}
                 className="w-full px-4 py-3 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-60"
               >
-                {saving ? "Creating…" : "Create run"}
+                {saving ? (editingId ? "Saving…" : "Creating…") : editingId ? "Save changes" : "Create run"}
               </button>
             </div>
           </div>

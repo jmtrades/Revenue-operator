@@ -6,7 +6,7 @@
 
 import { getDb } from "@/lib/db/queries";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www.recall-touch.com";
 
 function formatHoursSaved(callCount: number): string {
   const hours = Math.max(0.5, Math.round((callCount * 4) / 60 * 10) / 10);

@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data, error } = await db
       .from("campaigns")
-      .select("id, workspace_id, agent_id, name, type, status, total_contacts, called, answered, appointments_booked, created_at")
+      .select("id, workspace_id, agent_id, name, type, status, total_contacts, called, answered, appointments_booked, created_at, target_filter")
       .eq("workspace_id", workspaceId)
       .order("created_at", { ascending: false })
       .limit(50);

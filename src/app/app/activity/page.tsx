@@ -10,6 +10,7 @@ import {
   UserPlus,
   Video,
 } from "lucide-react";
+import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -199,8 +200,7 @@ export default function AppActivityPage() {
   }, [workspaceId]);
 
   useEffect(() => {
-    fetch("/api/workspace/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    fetchWorkspaceMeCached()
       .then((data: {
         systemEvents?: Array<{ id: string; title: string; body: string; href: string }>;
         progress?: { nextStep?: { href?: string } | null };

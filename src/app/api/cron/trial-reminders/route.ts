@@ -1,6 +1,6 @@
 /**
- * Trial reminder emails: 3 days before and 24 hours before renewal
- * Idempotent: uses trial_reminder_3d_sent_at and trial_reminder_24h_sent_at fields
+ * Trial reminder emails: 2 days before and 24 hours before renewal.
+ * Idempotent: reuses the existing 3d/24h sent-at fields for compatibility.
  */
 
 export const dynamic = "force-dynamic";
@@ -11,7 +11,8 @@ import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Continuity <noreply@recall-touch.com>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 
 async function sendEmail(to: string, subject: string, html: string): Promise<void> {
   if (!RESEND_API_KEY) {
@@ -46,25 +47,25 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const now = new Date();
 
-  // 3 days before renewal
-  const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-  const threeDaysStart = new Date(threeDaysFromNow.getTime() - 2 * 60 * 60 * 1000); // 2 hour window
-  const threeDaysEnd = new Date(threeDaysFromNow.getTime() + 2 * 60 * 60 * 1000);
+  // 2 days before renewal
+  const twoDaysFromNow = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
+  const twoDaysStart = new Date(twoDaysFromNow.getTime() - 2 * 60 * 60 * 1000);
+  const twoDaysEnd = new Date(twoDaysFromNow.getTime() + 2 * 60 * 60 * 1000);
 
   // 24 hours before renewal
   const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
   const oneDayStart = new Date(oneDayFromNow.getTime() - 2 * 60 * 60 * 1000);
   const oneDayEnd = new Date(oneDayFromNow.getTime() + 2 * 60 * 60 * 1000);
 
-  // Get workspaces needing 3-day reminder
-  const { data: workspaces3d } = await db
+  // Get workspaces needing 2-day reminder
+  const { data: workspaces2d } = await db
     .from("workspaces")
     .select("id, owner_id, renews_at, trial_reminder_3d_sent_at")
     .eq("billing_status", "trial")
     .not("renews_at", "is", null)
-    .gte("renews_at", threeDaysStart.toISOString())
-    .lte("renews_at", threeDaysEnd.toISOString())
-    .or("trial_reminder_3d_sent_at.is.null,trial_reminder_3d_sent_at.lt." + threeDaysStart.toISOString());
+    .gte("renews_at", twoDaysStart.toISOString())
+    .lte("renews_at", twoDaysEnd.toISOString())
+    .or("trial_reminder_3d_sent_at.is.null,trial_reminder_3d_sent_at.lt." + twoDaysStart.toISOString());
 
   // Get workspaces needing 24h reminder
   const { data: workspaces24h } = await db
@@ -76,11 +77,11 @@ export async function GET(req: NextRequest) {
     .lte("renews_at", oneDayEnd.toISOString())
     .or("trial_reminder_24h_sent_at.is.null,trial_reminder_24h_sent_at.lt." + oneDayStart.toISOString());
 
-  let sent3d = 0;
+  let sent2d = 0;
   let sent24h = 0;
 
-  // Send 3-day reminders
-  for (const ws of workspaces3d ?? []) {
+  // Send 2-day reminders
+  for (const ws of workspaces2d ?? []) {
     const workspaceId = (ws as { id: string }).id;
     const ownerId = (ws as { owner_id?: string }).owner_id;
     const renewsAt = (ws as { renews_at?: string }).renews_at;
@@ -100,11 +101,11 @@ export async function GET(req: NextRequest) {
     try {
       await sendEmail(
         email,
-        `Handling coverage ends on ${renewalDate}`,
+        `Your trial ends in 2 days`,
         `
-        <p>Handling coverage ends on ${renewalDate}.</p>
-        <p>To continue coverage, open Preferences. You can pause anytime before then.</p>
-        <p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? "https://recall-touch.com"}/dashboard/settings">Preferences</a></p>
+        <p>Your Recall Touch trial ends on <strong>${renewalDate}</strong>.</p>
+        <p>Keep your phone flow live so every call, lead, and appointment keeps moving without interruption.</p>
+        <p><a href="${APP_URL}/app/settings/billing">Open billing →</a></p>
         `
       );
 
@@ -112,9 +113,9 @@ export async function GET(req: NextRequest) {
         .from("workspaces")
         .update({ trial_reminder_3d_sent_at: now.toISOString(), updated_at: now.toISOString() })
         .eq("id", workspaceId);
-      sent3d++;
+      sent2d++;
     } catch (error) {
-      console.error(`[trial-reminders] Failed to send 3d reminder to ${email}`, error);
+      console.error(`[trial-reminders] Failed to send 2d reminder to ${email}`, error);
     }
   }
 
@@ -139,11 +140,11 @@ export async function GET(req: NextRequest) {
     try {
       await sendEmail(
         email,
-        `Handling coverage ends on ${renewalDate}`,
+        `Your trial ends tomorrow`,
         `
-        <p>Handling coverage ends tomorrow (${renewalDate}).</p>
-        <p>To continue coverage, open Preferences. You can pause anytime before then.</p>
-        <p><a href="${process.env.NEXT_PUBLIC_APP_URL ?? "https://recall-touch.com"}/dashboard/settings">Preferences</a></p>
+        <p>Your Recall Touch trial ends tomorrow, <strong>${renewalDate}</strong>.</p>
+        <p>Add billing now to keep your number, follow-up coverage, and booking flow active.</p>
+        <p><a href="${APP_URL}/app/settings/billing">Keep coverage active →</a></p>
         `
       );
 
@@ -158,7 +159,8 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json({
-    sent_3d: sent3d,
+    sent_2d: sent2d,
+    sent_3d: sent2d,
     sent_24h: sent24h,
     checked_at: now.toISOString(),
   });

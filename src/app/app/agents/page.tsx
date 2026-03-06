@@ -14,6 +14,7 @@ import {
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
+import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 import { AGENT_TEMPLATES, AGENT_TEMPLATE_CATEGORIES, type AgentTemplateCategory } from "@/lib/data/agent-templates";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { getTemplateVoiceId } from "@/lib/data/agent-templates";
@@ -576,10 +577,11 @@ export default function AppAgentsPage() {
                         },
                       });
                     }}
+                    disabled={!selected.greeting.trim()}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
                   >
                     {isHearPlaying ? <Waveform isPlaying /> : <span>▶</span>}
-                    Hear This Agent
+                    {isHearPlaying ? "Playing preview…" : "Hear This Agent"}
                   </button>
                   <button
                     type="button"
@@ -608,6 +610,8 @@ export default function AppAgentsPage() {
                     key={id}
                     type="button"
                     onClick={() => setTab(id)}
+                    role="tab"
+                    aria-selected={tab === id}
                     className={`px-3 py-2 border-b-2 -mb-px ${
                       tab === id ? "border-white text-white" : "border-transparent text-zinc-500"
                     }`}
@@ -1247,6 +1251,13 @@ function TestTab({ agent }: { agent: Agent }) {
       <p className="text-[11px] text-zinc-500">
         Talk to this agent to test how it responds with your greeting and style.
       </p>
+      <WorkspaceVoiceButton
+        title={`Test ${agent.name}`}
+        description="Start a real browser call with your current workspace phone flow, then use the quick simulation below for a predictable example."
+        startLabel="Start browser test"
+        endLabel="End browser test"
+        showUnavailable={true}
+      />
       <div className="rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-900/50">
         <LiveAgentChat
           variant="mini"

@@ -215,7 +215,7 @@ export function PricingContent() {
               className="text-xs font-semibold px-2 py-0.5 rounded"
               style={{ background: "var(--accent-secondary)", color: "var(--bg-primary)" }}
             >
-              Save 20%
+              Save 17%
             </span>
           </span>
         </div>
