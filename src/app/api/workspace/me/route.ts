@@ -9,7 +9,7 @@ import { getDb } from "@/lib/db/queries";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

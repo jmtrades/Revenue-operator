@@ -1,10 +1,10 @@
 /**
  * POST /api/auth/signin — Sign in with email + password.
- * Uses Supabase Auth; on success sets revenue_session cookie (userId + workspaceId) for /app and /dashboard.
+ * Uses Supabase Auth (SSR client so auth session is stored in Supabase cookies); on success also sets revenue_session cookie (userId + workspaceId) for /app and /dashboard.
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import { validateEmail, validatePasswordForSignin, toFriendlySigninError } from "@/lib/auth/validate";
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   if (!passwordResult.ok) return NextResponse.json({ error: passwordResult.error }, { status: 400 });
   const password = passwordResult.value;
 
-  const supabase = createClient(url, anonKey);
+  const supabase = await createClient();
   let data: { user?: { id: string } | null } | undefined;
   let error: { message?: string } | null = null;
   try {

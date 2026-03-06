@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator"]);
   if (authErr) return authErr;
 
-  const session = getSession(req);
+  const session = await getSession(req);
   const decidedBy = session?.userId ?? null;
 
   const updated = await decideApproval(approvalId, workspaceId, decision, decidedBy);

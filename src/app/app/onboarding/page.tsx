@@ -526,7 +526,7 @@ export default function AppOnboardingPage() {
               <p className="text-xs text-zinc-500">Your dedicated AI phone number</p>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-2 text-zinc-400">Forward your existing number</label>
+              <label className="block text-xs font-medium mb-2 text-zinc-400">Using a personal or existing number?</label>
               <select className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white focus:border-zinc-500 focus:outline-none">
                 <option>AT&T: dial *21*number#</option>
                 <option>Verizon: dial *72+number</option>
@@ -534,7 +534,7 @@ export default function AppOnboardingPage() {
                 <option>Other: contact carrier</option>
               </select>
             </div>
-            <p className="text-sm text-zinc-400">Or use this as your new business number.</p>
+            <p className="text-sm text-zinc-400">Forward your current line to the number above, or use it as your new business number.</p>
             <div className="flex gap-2">
               <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-400">← Back</button>
               <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200">Continue →</button>

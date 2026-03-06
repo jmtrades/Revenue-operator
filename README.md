@@ -26,9 +26,11 @@ All actions pass through:
 
 ## Quick Start
 
+**Backend:** Database and auth both run on **Supabase**. See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) for full setup.
+
 ```bash
 cp .env.example .env.local
-# Fill Supabase + OpenAI keys (Zoom, Stripe, Twilio optional)
+# Fill Supabase URL + anon key + service role key (see SUPABASE_SETUP.md)
 
 npm install
 npm run build
@@ -38,7 +40,7 @@ npm run dev
 ### Use it now (local only, no Vercel/Stripe/cron)
 
 1. Copy env and set **only** the minimal vars (Supabase URL + anon key + service role key, `SESSION_SECRET`, `NEXT_PUBLIC_APP_URL=http://localhost:3000`, `CRON_SECRET` — any string).
-2. Apply migrations to your Supabase project (Dashboard SQL or `supabase db push`).
+2. Apply migrations to your Supabase project (`npm run db:migrate` with `DATABASE_URL`, or Supabase Dashboard SQL, or `supabase db push`).
 3. Run:
 
    ```bash

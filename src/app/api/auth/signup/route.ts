@@ -1,10 +1,11 @@
 /**
  * POST /api/auth/signup — Sign up with email + password.
- * Creates Supabase user, then workspace + session cookie.
+ * Creates Supabase user (Auth + DB), then sets Supabase auth cookies and revenue_session cookie.
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseJsClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import {
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
   // Prefer admin.createUser when service role is set — bypasses "Error sending confirmation email"
   if (serviceRoleKey) {
     try {
-      const admin = createClient(url, serviceRoleKey);
+      const admin = createSupabaseJsClient(url, serviceRoleKey);
       const { data: adminData, error: createErr } = await admin.auth.admin.createUser({
         email,
         password,
@@ -90,11 +91,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const supabase = createClient(url, anonKey);
+  const supabase = await createSupabaseServerClient();
   let data: { user?: { id: string } | null } | undefined;
   let error: { message?: string } | null = null;
   try {
-    const result = await supabase.auth.signUp({ email, password });
+    const result = await supabase.auth.signUp({ email, password, options: { data: { business_name: businessName } } });
     data = result.data as { user?: { id: string } | null };
     error = result.error;
   } catch {

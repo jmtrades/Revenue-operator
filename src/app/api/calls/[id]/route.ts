@@ -11,11 +11,12 @@ export async function GET(
   const { id } = await params;
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
-  const workspaceId = req.nextUrl.searchParams.get("workspace_id") || getSession(req)?.workspaceId;
+  const authSession = await getSession(req);
+  const workspaceId = req.nextUrl.searchParams.get("workspace_id") || authSession?.workspaceId;
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
 
   const db = getDb();
-  const { data: session, error: sessionErr } = await db
+  const { data: callRow, error: sessionErr } = await db
     .from("call_sessions")
     .select(`
       id, lead_id, matched_lead_id, outcome, started_at, ended_at,
@@ -27,10 +28,10 @@ export async function GET(
     .maybeSingle();
 
   if (sessionErr) return NextResponse.json({ error: sessionErr.message }, { status: 500 });
-  if (!session) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!callRow) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const leadId = (session as { lead_id?: string | null; matched_lead_id?: string | null }).lead_id
-    ?? (session as { matched_lead_id?: string | null }).matched_lead_id;
+  const leadId = (callRow as { lead_id?: string | null; matched_lead_id?: string | null }).lead_id
+    ?? (callRow as { matched_lead_id?: string | null }).matched_lead_id;
   let matched_lead = null;
   if (leadId) {
     const { data: lead } = await db.from("leads").select("id, name, email, company").eq("id", leadId).maybeSingle();
@@ -44,7 +45,7 @@ export async function GET(
     .maybeSingle();
 
   const call = {
-    ...session,
+    ...callRow,
     matched_lead,
     analysis_outcome: (analysis?.analysis_json as Record<string, unknown>)?.outcome ?? null,
     confidence: analysis?.confidence ?? null,

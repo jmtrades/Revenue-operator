@@ -19,7 +19,7 @@ function isOpsAuthorized(req: NextRequest): boolean {
 
 export async function GET(req: NextRequest) {
   // Check ops auth OR session
-  const session = getSession(req);
+  const session = await getSession(req);
   const isOps = isOpsAuthorized(req);
   
   if (!isOps && !session?.workspaceId) {

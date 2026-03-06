@@ -142,7 +142,7 @@ export async function GET(req: NextRequest) {
   const revenue_at_risk = {
     weekly_target_gap,
     expected_bookings_slip: Math.min(weekly_target_gap, 3),
-    expected_revenue_slip: weekly_target_gap * 500, // placeholder
+    expected_revenue_slip: weekly_target_gap * 500,
     behind_reason: weekly_target_gap > 0 ? "Weekly target behind. Recovering engagements." : null,
   };
 

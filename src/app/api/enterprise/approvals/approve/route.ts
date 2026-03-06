@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, idempotent: true }, { status: 200 });
   }
 
-  const session = getSession(req);
+  const session = await getSession(req);
   const decidedBy = session?.userId ?? null;
 
   // Determine workspace role for decision chain.

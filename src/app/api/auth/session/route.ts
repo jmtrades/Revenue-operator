@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     if (!isSessionEnabled()) {
       return NextResponse.json({ session: null });
     }
-    const session = getSession(req);
+    const session = await getSession(req);
     if (!session) {
       return NextResponse.json({ session: null });
     }

@@ -1,6 +1,6 @@
 /**
- * Twilio Inbound SMS — Doctrine: only normalize to canonical signal, then enqueue process_signal.
- * No state mutation, no enqueueDecision. Signal consumer drives state + operators.
+ * Twilio Inbound SMS and WhatsApp — Doctrine: only normalize to canonical signal, then enqueue process_signal.
+ * From/To may be "whatsapp:+E164" for WhatsApp; we normalize for lookup and ingest with channel sms or whatsapp.
  */
 
 export const dynamic = "force-dynamic";
@@ -21,6 +21,12 @@ function verifyTwilioSignature(
   return true;
 }
 
+/** Strip whatsapp: prefix for DB lookup; return normalized number. */
+function normalizeToForLookup(to: string): string {
+  const s = (to ?? "").trim();
+  return s.startsWith("whatsapp:") ? s.slice(9).trim() : s;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -35,13 +41,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    const toNormalized = normalizeToForLookup(to);
+    const isWhatsApp = (to ?? "").startsWith("whatsapp:") || (from ?? "").startsWith("whatsapp:");
+    const channel: "sms" | "whatsapp" = isWhatsApp ? "whatsapp" : "sms";
+
     const db = getDb();
     const { data: phoneConfig } = await db
       .from("phone_configs")
-      .select("workspace_id, twilio_account_sid, proxy_number")
-      .or(`proxy_number.eq.${to},twilio_phone_sid.eq.${to}`)
+      .select("workspace_id, twilio_account_sid, proxy_number, whatsapp_enabled")
+      .or(`proxy_number.eq.${toNormalized},twilio_phone_sid.eq.${toNormalized}`)
       .eq("status", "active")
-      .single();
+      .maybeSingle();
 
     if (!phoneConfig) {
       if (accountSid) {
@@ -53,11 +63,12 @@ export async function POST(request: NextRequest) {
           .single();
         if (configByAccount) {
           const workspaceId = (configByAccount as { workspace_id: string }).workspace_id;
+          const fromNorm = (from ?? "").startsWith("whatsapp:") ? from.slice(9).replace(/[^0-9+]/g, "") : from.replace(/[^0-9+]/g, "");
           try {
             const { signalId, inserted } = await ingestInboundAsSignal({
               workspace_id: workspaceId,
-              channel: "sms",
-              external_lead_id: from.replace(/[^0-9+]/g, ""),
+              channel,
+              external_lead_id: fromNorm,
               thread_id: from,
               message: body,
               external_message_id: messageSid,
@@ -89,10 +100,10 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const normalizedPhone = from.replace(/[^0-9+]/g, "");
+      const normalizedPhone = (from ?? "").startsWith("whatsapp:") ? from.slice(9).replace(/[^0-9+]/g, "") : from.replace(/[^0-9+]/g, "");
       const { signalId, inserted } = await ingestInboundAsSignal({
         workspace_id: workspaceId,
-        channel: "sms",
+        channel,
         external_lead_id: normalizedPhone,
         thread_id: from,
         message: body,
@@ -117,7 +128,7 @@ export async function POST(request: NextRequest) {
             workspace_id: workspaceId,
             lead_id: leadId,
             direction: "inbound",
-            channel: "sms",
+            channel,
             content: body,
             status: "delivered",
             trigger: "manual",

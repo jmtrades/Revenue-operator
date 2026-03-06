@@ -10,7 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 
 export async function POST(req: NextRequest) {
-  const session = getSession(req);
+  const session = await getSession(req);
   let workspaceId = session?.workspaceId;
   if (!workspaceId) {
     try {

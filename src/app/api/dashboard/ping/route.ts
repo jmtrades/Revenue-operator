@@ -9,7 +9,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 
 export async function GET(req: NextRequest) {
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");

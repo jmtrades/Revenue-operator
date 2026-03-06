@@ -20,7 +20,7 @@ export async function requireWorkspaceAccess(
   workspaceId: string
 ): Promise<NextResponse | null> {
   if (!isSessionEnabled()) return null;
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const db = getDb();
   const { data: ws } = await db
@@ -53,7 +53,7 @@ export async function requireWorkspaceRole(
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
   if (!isSessionEnabled()) return null;
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();

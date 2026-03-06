@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const version = (t as { version: number }).version;
 
   await db.from("speech_templates").update({ status: "approved" }).eq("id", objectId);
-  const session = (await import("@/lib/auth/request-session")).getSession(req);
+  const session = await (await import("@/lib/auth/request-session")).getSession(req);
   const userId = session?.userId ?? null;
   await db.from("speech_approvals").insert({
     workspace_id: workspaceId,

@@ -11,7 +11,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

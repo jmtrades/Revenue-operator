@@ -3,7 +3,7 @@
  * Frontend-only; no backend.
  */
 
-export type InboxChannel = "phone" | "sms" | "email";
+export type InboxChannel = "phone" | "sms" | "email" | "whatsapp";
 export type InboxStatus = "Open" | "Resolved" | "Pending";
 
 export interface InboxMessage {
