@@ -1,12 +1,12 @@
 /**
  * Server startup environment validation.
  * Required vars: missing → throw and stop. Optional: missing → log structured warning once.
+ * Use NEXT_PUBLIC_APP_URL for app/base URL (Vercel); APP_URL is optional legacy.
  */
 
 const REQUIRED = [
   "DATABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
-  "APP_URL",
   "CRON_SECRET",
 ] as const;
 

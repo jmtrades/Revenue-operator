@@ -79,7 +79,14 @@ export default function SignInForm() {
 
       if (!res.ok) {
         if (res.status === 503) {
-          setError("Sign-in is temporarily unavailable. Please try again later.");
+          const code = (data as { code?: string }).code;
+          if (code === "session_secret" || code === "auth_config") {
+            setError(
+              "Sign-in isn't available. If you've already set SESSION_SECRET and Supabase vars in Vercel: redeploy after saving, set them for the right environment (Production vs Preview), and check the deployment's Function logs for errors."
+            );
+          } else {
+            setError("Sign-in is temporarily unavailable. Please try again later.");
+          }
         } else if (res.status === 401 && !isCreateMode) {
           setError("Invalid email or password.");
         } else {

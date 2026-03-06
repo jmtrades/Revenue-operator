@@ -12,10 +12,10 @@ import { validateEmail, validatePasswordForSignin, toFriendlySigninError } from 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   if (!url || !anonKey) {
-    return NextResponse.json({ error: "Auth not configured" }, { status: 503 });
+    return NextResponse.json({ error: "Auth not configured", code: "auth_config" }, { status: 503 });
   }
 
   let body: { email?: string; password?: string };
@@ -41,7 +41,10 @@ export async function POST(req: NextRequest) {
     data = res.data as { user?: { id: string } | null };
     error = res.error;
   } catch {
-    return NextResponse.json({ error: "Auth service unavailable. Please try again." }, { status: 503 });
+    return NextResponse.json(
+      { error: "Auth service unavailable. Please try again.", code: "auth_unavailable" },
+      { status: 503 }
+    );
   }
   if (error) {
     return NextResponse.json({ error: toFriendlySigninError(error.message ?? "") }, { status: 401 });
@@ -75,7 +78,10 @@ export async function POST(req: NextRequest) {
 
   const cookie = createSessionCookie({ userId, workspaceId });
   if (!cookie) {
-    return NextResponse.json({ error: "Session not configured (set SESSION_SECRET)" }, { status: 503 });
+    return NextResponse.json(
+      { error: "Session not configured (set SESSION_SECRET)", code: "session_secret" },
+      { status: 503 }
+    );
   }
   const res = NextResponse.json({ ok: true, userId, workspaceId });
   res.headers.set("Set-Cookie", cookie);

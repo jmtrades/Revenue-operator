@@ -8,7 +8,9 @@ const MAX_AGE_SEC = 60 * 60 * 24 * 365; // 1 year
 const SPLIT = ".";
 
 function getSecret(): string | null {
-  return process.env.SESSION_SECRET ?? process.env.ENCRYPTION_KEY ?? null;
+  const raw = process.env.SESSION_SECRET ?? process.env.ENCRYPTION_KEY ?? "";
+  const secret = typeof raw === "string" ? raw.trim() : "";
+  return secret.length > 0 ? secret : null;
 }
 
 async function hmacSha256Base64Url(secret: string, payload: string): Promise<string> {
