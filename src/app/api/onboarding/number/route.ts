@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
 
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl?.origin ?? "";
 
   if (accountSid && authToken) {
     try {
@@ -34,15 +35,24 @@ export async function POST(req: NextRequest) {
       if (searchRes.ok) {
         const data = (await searchRes.json()) as { available_phone_numbers?: Array<{ phone_number: string }> };
         const num = data.available_phone_numbers?.[0]?.phone_number;
-        if (num) {
+        if (num && baseUrl) {
           const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
+          const purchaseParams = new URLSearchParams({
+            PhoneNumber: num,
+            VoiceUrl: `${baseUrl}/api/webhooks/twilio/voice`,
+            VoiceMethod: "POST",
+            SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
+            SmsMethod: "POST",
+            StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
+            StatusCallbackMethod: "POST",
+          });
           const purchaseRes = await fetch(purchaseUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
               Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
             },
-            body: new URLSearchParams({ PhoneNumber: num }),
+            body: purchaseParams.toString(),
           });
           if (purchaseRes.ok) {
             const purchaseJson = (await purchaseRes.json()) as { sid?: string };

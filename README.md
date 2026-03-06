@@ -47,6 +47,10 @@ npm run dev
 
 4. Open **http://localhost:3000**. Onboarding (`/onboard`) and public corridor work. Trial at `/activate` shows “Trial could not be started.” until you add `STRIPE_SECRET_KEY` and `STRIPE_PRICE_ID` to `.env.local`.
 
+### Phone & voice (connect your number)
+
+To let users connect a phone number and have the AI answer calls: set **Twilio** (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`) and **Vapi** (`VAPI_API_KEY`, `VAPI_PHONE_NUMBER_ID`), and `NEXT_PUBLIC_APP_URL` so webhooks point to your app. Users go to **App → Settings → Phone** and click “Connect number”. See `.env.example` for details.
+
 **Is it working?** Run:
 
 ```bash
