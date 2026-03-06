@@ -116,7 +116,7 @@ function DemoTranscript({
 }: {
   script: DemoScript;
   isActive: boolean;
-  onComplete: () => void;
+  onComplete: (elapsedSeconds: number) => void;
   skipCount: number;
   onSkip: () => void;
 }) {
@@ -198,8 +198,8 @@ function DemoTranscript({
   }, [isActive, script.lines, currentLineIndex, currentCharIndex, showResult, showTyping]);
 
   useEffect(() => {
-    if (showResult && isActive) onComplete();
-  }, [showResult, isActive, onComplete]);
+    if (showResult && isActive) onComplete(elapsed);
+  }, [showResult, isActive, onComplete, elapsed]);
 
   useEffect(() => {
     if (!isActive || showResult || skipCount === 0) return;
@@ -350,6 +350,7 @@ export function CallSimulator() {
   const [key, setKey] = useState(0);
   const [_completed, setCompleted] = useState(false);
   const [skipCount, setSkipCount] = useState(0);
+  const [completedSeconds, setCompletedSeconds] = useState<number | null>(null);
 
   const script =
     tab === "inbound"
@@ -358,12 +359,16 @@ export function CallSimulator() {
         ? DEMO_SCRIPTS[1]
         : DEMO_SCRIPTS[2];
 
-  const handleComplete = useCallback(() => setCompleted(true), []);
+  const handleComplete = useCallback((elapsedSeconds: number) => {
+    setCompleted(true);
+    setCompletedSeconds(elapsedSeconds);
+  }, []);
   const handleTabChange = (t: "inbound" | "appointment" | "outbound") => {
     setTab(t);
     setKey((k) => k + 1);
     setCompleted(false);
     setSkipCount(0);
+    setCompletedSeconds(null);
   };
 
   return (
@@ -394,6 +399,14 @@ export function CallSimulator() {
         skipCount={skipCount}
         onSkip={() => setSkipCount((c) => c + 1)}
       />
+
+      {completedSeconds != null ? (
+        <div className="mt-5 rounded-2xl border border-zinc-800 bg-zinc-900/50 px-5 py-4 text-center">
+          <p className="text-sm text-zinc-400">
+            That call took <span className="font-medium text-white">{completedSeconds} seconds</span>. Your AI handles this 24/7.
+          </p>
+        </div>
+      ) : null}
 
       <section
         className="mt-12 pt-8 border-t text-center"

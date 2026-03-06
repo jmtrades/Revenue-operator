@@ -10,6 +10,7 @@ import { createAssistant, updateAssistant } from "@/lib/vapi";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { buildAgentFunctions } from "@/lib/agent-functions";
 import { getTemplateCapabilities, getTemplateVoiceId } from "@/lib/data/agent-templates";
+import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 
 export const dynamic = "force-dynamic";
 
@@ -104,6 +105,16 @@ export async function POST(req: NextRequest) {
         .update({ vapi_assistant_id: assistantId, updated_at: new Date().toISOString() })
         .eq("id", session.workspaceId);
     }
+
+    await syncPrimaryAgent(db, {
+      workspaceId: row.id,
+      businessName,
+      agentName,
+      greeting,
+      voiceId,
+      vapiAssistantId: assistantId,
+      knowledgeItems: faq,
+    });
 
     return NextResponse.json({ ok: true, assistantId });
   } catch (err) {

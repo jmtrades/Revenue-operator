@@ -66,7 +66,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [demoMode, setDemoMode] = useState(true);
+  const [workspaceMeta, setWorkspaceMeta] = useState<{
+    banner?: { show?: boolean; text?: string | null; href?: string; cta?: string };
+    onboardingCompletedAt?: string | null;
+  } | null>(null);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const inboxUnread = 0;
 
@@ -80,9 +83,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     fetch("/api/workspace/me", { credentials: "include" })
       .then((res) => (res.ok ? res.json() : null))
-      .then((data: { demoMode?: boolean } | null) => {
+      .then((data: {
+        banner?: { show?: boolean; text?: string | null; href?: string; cta?: string };
+        onboardingCompletedAt?: string | null;
+      } | null) => {
         if (cancelled) return;
-        setDemoMode(data?.demoMode !== false);
+        setWorkspaceMeta(data);
       })
       .catch(() => {});
     return () => { cancelled = true; };
@@ -91,13 +97,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!mounted || pathname === "/app/onboarding") return;
     try {
-      if (!localStorage.getItem("rt_onboarded")) {
+      const serverOnboarded = Boolean(workspaceMeta?.onboardingCompletedAt);
+      const localOnboarded = localStorage.getItem("rt_onboarded") === "true";
+      if (!serverOnboarded && !localOnboarded) {
         router.replace("/app/onboarding");
       }
     } catch {
       // ignore
     }
-  }, [mounted, pathname, router]);
+  }, [mounted, pathname, router, workspaceMeta?.onboardingCompletedAt]);
 
   useEffect(() => {
     if (!mobileMoreOpen) return;
@@ -127,15 +135,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <WorkspaceProvider>
     <OnboardingStepProvider>
       <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#080d19" }}>
-        {demoMode && (
+        {workspaceMeta?.banner?.show && workspaceMeta.banner.text && (
         <div
           className="shrink-0 py-2 px-4 flex items-center justify-center gap-2 flex-wrap text-center text-xs font-medium bg-zinc-800/80 text-zinc-300 border-b border-zinc-800"
           role="status"
-          aria-label="Demo mode"
+          aria-label="Workspace status"
         >
-          <span>🎯 Demo Mode — Your AI is using sample data. Forward your phone number to go live.</span>
-          <Link href="/app/settings/phone" className="text-white font-semibold underline underline-offset-2 hover:no-underline">
-            Set up →
+          <span>{workspaceMeta.banner.text}</span>
+          <Link
+            href={workspaceMeta.banner.href || "/app/settings/phone"}
+            className="text-white font-semibold underline underline-offset-2 hover:no-underline"
+          >
+            {workspaceMeta.banner.cta || "Set up →"}
           </Link>
         </div>
         )}

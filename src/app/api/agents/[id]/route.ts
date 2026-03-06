@@ -37,3 +37,15 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(agent);
 }
+
+export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const { id } = await ctx.params;
+  const db = getDb();
+  const { data: existing } = await db.from("agents").select("workspace_id").eq("id", id).maybeSingle();
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const err = await requireWorkspaceAccess(req, (existing as { workspace_id: string }).workspace_id);
+  if (err) return err;
+  const { error } = await db.from("agents").delete().eq("id", id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ ok: true });
+}

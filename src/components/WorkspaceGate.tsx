@@ -79,7 +79,7 @@ export function WorkspaceGate({ children, fallback }: WorkspaceGateProps) {
               Retry
             </button>
             <button
-              onClick={() => router.push("/activate")}
+              onClick={() => router.push("/sign-in?create=1")}
               className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
               style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
             >

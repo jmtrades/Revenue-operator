@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "node:crypto";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
 import { burstDrain } from "@/lib/queue/burst-drain";
@@ -13,12 +14,33 @@ import { logWebhookFailure } from "@/lib/reliability/logging";
 import { ingestInboundAsSignal } from "@/lib/signals/ingest-inbound";
 
 function verifyTwilioSignature(
-  _url: string,
-  _params: URLSearchParams,
-  _signature: string,
-  _authToken: string
+  url: string,
+  params: URLSearchParams,
+  signature: string,
+  authToken: string
 ): boolean {
-  return true;
+  const data = Array.from(params.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .reduce((acc, [key, value]) => `${acc}${key}${value}`, url);
+  const expected = crypto
+    .createHmac("sha1", authToken)
+    .update(Buffer.from(data, "utf8"))
+    .digest("base64");
+
+  const expectedBuf = Buffer.from(expected);
+  const providedBuf = Buffer.from(signature);
+  return (
+    expectedBuf.length === providedBuf.length &&
+    crypto.timingSafeEqual(expectedBuf, providedBuf)
+  );
+}
+
+function getValidationUrl(request: NextRequest): string {
+  const configuredBase = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (!configuredBase) return request.url;
+  const incoming = new URL(request.url);
+  const base = configuredBase.replace(/\/$/, "");
+  return `${base}${incoming.pathname}${incoming.search}`;
 }
 
 /** Strip whatsapp: prefix for DB lookup; return normalized number. */
@@ -94,8 +116,10 @@ export async function POST(request: NextRequest) {
       formData.forEach((value, key) => {
         if (typeof value === "string") params.append(key, value);
       });
-      if (!verifyTwilioSignature(request.url, params, signature, authToken)) {
+      const validationUrl = getValidationUrl(request);
+      if (!verifyTwilioSignature(validationUrl, params, signature, authToken)) {
         console.warn("[twilio-inbound] Signature verification failed", { workspaceId });
+        return new NextResponse("Forbidden", { status: 403 });
       }
     }
 

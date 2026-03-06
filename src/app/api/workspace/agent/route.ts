@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +92,20 @@ export async function PATCH(req: NextRequest) {
     const db = getDb();
     const { error } = await db.from("workspaces").update(update).eq("id", session.workspaceId);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    const voiceId = typeof update.elevenlabs_voice_id === "string" ? update.elevenlabs_voice_id : null;
+    const agentName = typeof update.agent_name === "string" ? update.agent_name : null;
+    const greeting = typeof update.greeting === "string" ? update.greeting : null;
+    const businessName = typeof update.name === "string" ? update.name : "My Workspace";
+    await syncPrimaryAgent(db, {
+      workspaceId: session.workspaceId,
+      businessName,
+      agentName,
+      greeting,
+      voiceId,
+      knowledgeItems: Array.isArray(update.knowledge_items)
+        ? (update.knowledge_items as Array<{ q?: string; a?: string }>)
+        : null,
+    });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });

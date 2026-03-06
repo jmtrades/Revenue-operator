@@ -11,7 +11,7 @@ export function EnterpriseComparisonCard() {
           style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
         >
           <p className="text-sm md:text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch costs $97/month and takes 5 minutes.
+            Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch starts at $297/month and takes 5 minutes.
           </p>
         </div>
       </Container>

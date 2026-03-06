@@ -1,37 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
 
-function getBusinessData() {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
-    if (raw) return JSON.parse(raw) as Record<string, string>;
-  } catch { /* ignore */ }
-  return {};
-}
-
 function getInitialTimezone(): string {
-  try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return "America/Los_Angeles"; }
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return "America/Los_Angeles";
+  }
 }
 
 export default function AppSettingsBusinessPage() {
-  const [name, setName] = useState(() => { const d = getBusinessData(); return d.businessName ?? ""; });
+  const [loading, setLoading] = useState(true);
+  const [name, setName] = useState("");
   const [address, setAddress] = useState("");
-  const [website, setWebsite] = useState(() => { const d = getBusinessData(); return d.website ?? ""; });
+  const [website, setWebsite] = useState("");
   const [timezone, setTimezone] = useState(getInitialTimezone);
-  const [industry, setIndustry] = useState(() => { const d = getBusinessData(); return (d.industry && INDUSTRY_OPTIONS.some((i) => i.id === d.industry)) ? d.industry : "other"; });
+  const [industry, setIndustry] = useState("other");
   const [toast, setToast] = useState<string | null>(null);
 
-  const handleSave = () => {
+  useEffect(() => {
+    fetch("/api/workspace/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { name?: string; address?: string; website?: string; industry?: string } | null) => {
+        setName(data?.name ?? "");
+        setAddress(data?.address ?? "");
+        setWebsite(data?.website ?? "");
+        setIndustry(data?.industry && INDUSTRY_OPTIONS.some((item) => item.id === data.industry) ? data.industry : "other");
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleSave = async () => {
     try {
-      const existing = getBusinessData();
-      localStorage.setItem("rt_signup", JSON.stringify({ ...existing, businessName: name, website, address, industry }));
-      if (name.trim()) localStorage.setItem("rt_business_name", name.trim());
-    } catch { /* ignore */ }
-    setToast("Settings saved");
+      const res = await fetch("/api/workspace/me", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, address, website, industry }),
+      });
+      if (!res.ok) throw new Error("save_failed");
+      setToast("Settings saved");
+    } catch {
+      setToast("Could not save settings");
+    }
     setTimeout(() => setToast(null), 3000);
   };
 
@@ -65,7 +79,7 @@ export default function AppSettingsBusinessPage() {
           </select>
         </div>
       </div>
-      <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors">Save changes</button>
+      <button type="button" disabled={loading} onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60">Save changes</button>
 
       {toast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">

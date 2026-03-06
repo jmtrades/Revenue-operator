@@ -206,6 +206,7 @@ function ConversationDetail({
   input,
   setInput,
   onSend,
+  sending,
   onToggleStatus,
   isMobile,
   onBack,
@@ -216,6 +217,7 @@ function ConversationDetail({
   input: string;
   setInput: (v: string) => void;
   onSend: () => void;
+  sending: boolean;
   onToggleStatus: () => void;
   isMobile?: boolean;
   onBack?: () => void;
@@ -342,10 +344,10 @@ function ConversationDetail({
           <button
             type="button"
             onClick={onSend}
-            disabled={!input.trim()}
+            disabled={!input.trim() || sending}
             className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-200 disabled:opacity-50"
           >
-            Send
+            {sending ? "Sending…" : "Send"}
           </button>
         </div>
       </div>
@@ -366,6 +368,7 @@ export default function InboxPage() {
   const [replyChannel, setReplyChannel] = useState<ReplyChannel>("sms");
   const [input, setInput] = useState("");
   const [mobileMode, setMobileMode] = useState<"list" | "detail">("list");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -392,35 +395,51 @@ export default function InboxPage() {
     setThreads((prev) => prev.map((t) => (t.id === id ? { ...t, unread: false } : t)));
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!activeThread || !input.trim()) return;
     const content = input.trim();
     const nowIso = new Date().toISOString();
     const channel: InboxChannel = replyChannel === "sms" ? "sms" : replyChannel === "whatsapp" ? "whatsapp" : "email";
-    setThreads((prev) =>
-      prev.map((t) =>
-        t.id === activeThread.id
-          ? {
-              ...t,
-              messages: [
-                ...t.messages,
-                {
-                  id: `local-${Date.now()}`,
-                  sender: "agent",
-                  content,
-                  timestamp: nowIso,
-                  channel,
-                },
-              ],
-              lastMessage: content,
-              lastMessageAt: nowIso,
-              status: t.status === "Resolved" ? "Open" : t.status,
-              unread: false,
-            }
-          : t,
-      ),
-    );
-    setInput("");
+    setSending(true);
+    try {
+      const res = await fetch("/api/messages/send", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lead_id: activeThread.id,
+          content,
+          channel,
+        }),
+      });
+      if (!res.ok) throw new Error("send_failed");
+      setThreads((prev) =>
+        prev.map((t) =>
+          t.id === activeThread.id
+            ? {
+                ...t,
+                messages: [
+                  ...t.messages,
+                  {
+                    id: `local-${Date.now()}`,
+                    sender: "agent",
+                    content,
+                    timestamp: nowIso,
+                    channel,
+                  },
+                ],
+                lastMessage: content,
+                lastMessageAt: nowIso,
+                status: t.status === "Resolved" ? "Open" : t.status,
+                unread: false,
+              }
+            : t,
+        ),
+      );
+      setInput("");
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleToggleStatus = () => {
@@ -462,7 +481,8 @@ export default function InboxPage() {
               setReplyChannel={setReplyChannel}
               input={input}
               setInput={setInput}
-              onSend={handleSend}
+              onSend={() => { void handleSend(); }}
+              sending={sending}
               onToggleStatus={handleToggleStatus}
               isMobile
               onBack={() => setMobileMode("list")}
@@ -490,7 +510,8 @@ export default function InboxPage() {
               setReplyChannel={setReplyChannel}
               input={input}
               setInput={setInput}
-              onSend={handleSend}
+              onSend={() => { void handleSend(); }}
+              sending={sending}
               onToggleStatus={handleToggleStatus}
             />
           </div>

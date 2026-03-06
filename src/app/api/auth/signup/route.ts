@@ -80,11 +80,11 @@ export async function POST(req: NextRequest) {
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
-        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
-      return NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate", session: "missing" });
+      return NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding", session: "missing" });
     } catch (err) {
       console.error("[signup] admin.createUser path failed:", err);
       // fall through to signUp path
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
-        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
@@ -177,7 +177,7 @@ export async function POST(req: NextRequest) {
     if (signInData?.session) {
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
-        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
@@ -192,9 +192,9 @@ export async function POST(req: NextRequest) {
       "[auth] Signup succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. " +
         "App sessions are running without revenue_session cookie."
     );
-    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/activate" });
+    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/app/onboarding" });
   }
-  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
+  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding" });
   res.headers.set("Set-Cookie", cookie);
   return res;
 }

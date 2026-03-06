@@ -4,6 +4,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import {
+  getGoogleCalendarClientId,
+  getGoogleCalendarClientSecret,
+} from "@/lib/integrations/google-calendar-env";
 
 export const dynamic = "force-dynamic";
 
@@ -21,8 +25,8 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
   const expiresAt = row.expires_at ? new Date(row.expires_at).getTime() : 0;
   if (Date.now() < expiresAt - 60_000) return row.access_token;
 
-  const clientId = process.env.GOOGLE_CALENDAR_CLIENT_ID?.trim();
-  const clientSecret = process.env.GOOGLE_CALENDAR_CLIENT_SECRET?.trim();
+  const clientId = getGoogleCalendarClientId();
+  const clientSecret = getGoogleCalendarClientSecret();
   if (!clientId || !clientSecret || !row.refresh_token) return row.access_token;
 
   const body = new URLSearchParams({

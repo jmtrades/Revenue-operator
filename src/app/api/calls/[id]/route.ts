@@ -47,8 +47,10 @@ export async function GET(
   const call = {
     ...callRow,
     matched_lead,
+    analysis: (analysis?.analysis_json as Record<string, unknown> | null) ?? null,
     analysis_outcome: (analysis?.analysis_json as Record<string, unknown>)?.outcome ?? null,
     confidence: analysis?.confidence ?? null,
+    analysis_source: analysis?.analysis_source ?? null,
   };
 
   return NextResponse.json({ call });

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
+import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 
 type AgentConfig = {
   businessName: string;
@@ -18,6 +19,7 @@ type AgentConfig = {
 export default function AppSettingsAgentPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [config, setConfig] = useState<AgentConfig>({
     businessName: "",
@@ -118,7 +120,12 @@ export default function AppSettingsAgentPage() {
 
   const playGreeting = () => {
     const text = config.greeting.trim() || `Thanks for calling ${config.businessName || "your business"}. How can I help?`;
-    previewVoiceViaApi(text, { voiceId: config.elevenlabsVoiceId || undefined, gender: "female" });
+    setPreviewing(true);
+    previewVoiceViaApi(text, {
+      voiceId: config.elevenlabsVoiceId || undefined,
+      gender: CURATED_VOICES.find((voice) => voice.id === config.elevenlabsVoiceId)?.gender ?? "female",
+      onEnd: () => setPreviewing(false),
+    });
   };
 
   if (loading) {
@@ -177,7 +184,16 @@ export default function AppSettingsAgentPage() {
           <select
             id="agent-voice"
             value={config.elevenlabsVoiceId}
-            onChange={(e) => setConfig((c) => ({ ...c, elevenlabsVoiceId: e.target.value }))}
+            onChange={(e) => {
+              const nextVoiceId = e.target.value;
+              setConfig((c) => ({ ...c, elevenlabsVoiceId: nextVoiceId }));
+              setPreviewing(true);
+              previewVoiceViaApi("Thanks for calling. How can I help you today?", {
+                voiceId: nextVoiceId,
+                gender: CURATED_VOICES.find((voice) => voice.id === nextVoiceId)?.gender ?? "female",
+                onEnd: () => setPreviewing(false),
+              });
+            }}
             className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
           >
             {CURATED_VOICES.map((v) => (
@@ -227,6 +243,10 @@ export default function AppSettingsAgentPage() {
         </div>
       </div>
 
+      {previewing && (
+        <p className="mb-4 text-xs text-zinc-500">Playing voice preview…</p>
+      )}
+
       <button
         type="button"
         onClick={handleSave}
@@ -235,6 +255,10 @@ export default function AppSettingsAgentPage() {
       >
         {saving ? "Saving…" : "Save and update agent"}
       </button>
+
+      <div className="mt-6">
+        <WorkspaceVoiceButton />
+      </div>
 
       {toast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">

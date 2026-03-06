@@ -7,12 +7,27 @@ import Link from "next/link";
 export default function SignInForm() {
   const sp = useSearchParams();
   const isCreate = sp?.get("create") === "1";
+  const oauthError = sp?.get("error") ?? "";
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [biz, setBiz] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const [showPw, setShowPw] = useState(false);
+
+  const oauthErrorMessage =
+    oauthError === "google_config"
+      ? "Google sign-in is not configured yet."
+      : oauthError === "google_state"
+        ? "Google sign-in expired. Please try again."
+        : oauthError === "google_exchange" || oauthError === "google_profile"
+          ? "Google sign-in could not be completed. Please try again."
+          : oauthError === "google_account" || oauthError === "google_workspace" || oauthError === "google_session"
+            ? "Account setup could not be completed after Google sign-in."
+            : oauthError === "auth"
+              ? "Sign-in could not be completed. Please try again."
+              : "";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,15 +58,10 @@ export default function SignInForm() {
   }
 
   async function google() {
-    const { createClient } = await import("@supabase/supabase-js");
-    const sb = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    await sb.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${typeof location !== "undefined" ? location.origin : ""}/auth/callback` },
-    });
+    setGoogleBusy(true);
+    const params = new URLSearchParams();
+    params.set("next", isCreate ? "/app/onboarding" : "/app/activity");
+    window.location.href = `/api/auth/google?${params.toString()}`;
   }
 
   return (
@@ -121,9 +131,9 @@ export default function SignInForm() {
                 />
               </div>
             )}
-            {err && (
+            {(err || oauthErrorMessage) && (
               <div className="px-3.5 py-2.5 bg-red-500/[0.08] border border-red-500/20 rounded-xl text-red-400 text-[13px]">
-                {err}
+                {err || oauthErrorMessage}
               </div>
             )}
             <button
@@ -150,7 +160,8 @@ export default function SignInForm() {
           <button
             type="button"
             onClick={google}
-            className="w-full py-2.5 bg-white/[0.03] border border-white/[0.08] text-white/80 font-medium text-[14px] rounded-xl hover:bg-white/[0.06] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5"
+            disabled={googleBusy}
+            className="w-full py-2.5 bg-white/[0.03] border border-white/[0.08] text-white/80 font-medium text-[14px] rounded-xl hover:bg-white/[0.06] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5 disabled:opacity-50"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -170,7 +181,7 @@ export default function SignInForm() {
                 fill="#EA4335"
               />
             </svg>
-            Continue with Google
+            {googleBusy ? "Continuing..." : "Continue with Google"}
           </button>
 
           {!isCreate && (

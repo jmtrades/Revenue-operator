@@ -32,9 +32,6 @@ export default function DemoPage() {
             </Link>
           </div>
           <DemoSimulatorSection />
-          <p className="text-sm text-zinc-400 mt-6">
-            That took <span className="text-white font-medium">seconds</span>. Your AI handles this 24/7 for <span className="text-white font-medium">$97/month</span>.
-          </p>
         </div>
       </main>
       <VoiceOrbClient />

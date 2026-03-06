@@ -4,6 +4,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import {
+  getGoogleCalendarClientId,
+  getGoogleCalendarClientSecret,
+} from "@/lib/integrations/google-calendar-env";
 
 export const dynamic = "force-dynamic";
 
@@ -22,8 +26,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(returnUrl);
   }
 
-  const clientId = process.env.GOOGLE_CALENDAR_CLIENT_ID?.trim();
-  const clientSecret = process.env.GOOGLE_CALENDAR_CLIENT_SECRET?.trim();
+  const clientId = getGoogleCalendarClientId();
+  const clientSecret = getGoogleCalendarClientSecret();
   const redirectUri = process.env.GOOGLE_CALENDAR_REDIRECT_URI?.trim() ?? `${origin}/api/integrations/google-calendar/callback`;
 
   if (!clientId || !clientSecret) {

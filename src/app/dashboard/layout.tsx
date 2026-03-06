@@ -398,7 +398,7 @@ function WorkspaceSelect() {
       <div className="p-3">
         <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>Context</p>
         <Link
-          href="/activate"
+          href="/sign-in?create=1"
           className="block w-full px-3 py-2 rounded-lg text-sm font-medium text-center btn-primary"
         >
           Set up call handling

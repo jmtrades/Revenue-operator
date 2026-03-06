@@ -1,33 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type CancelStep = 0 | 1 | 2 | 3 | 4;
 
-function getUsageFromStorage(): { minutesUsed: number; minutesLimit: number; calls: number; leads: number; estRevenue: number } {
-  if (typeof window === "undefined") return { minutesUsed: 0, minutesLimit: 400, calls: 0, leads: 0, estRevenue: 0 };
-  try {
-    const raw = localStorage.getItem("rt_activity_stats");
-    if (raw) {
-      const d = JSON.parse(raw) as { minutesUsed?: number; minutesLimit?: number; calls?: number; leads?: number; estRevenue?: number };
-      return {
-        minutesUsed: typeof d.minutesUsed === "number" ? d.minutesUsed : 0,
-        minutesLimit: typeof d.minutesLimit === "number" ? d.minutesLimit : 400,
-        calls: typeof d.calls === "number" ? d.calls : 0,
-        leads: typeof d.leads === "number" ? d.leads : 0,
-        estRevenue: typeof d.estRevenue === "number" ? d.estRevenue : 0,
-      };
-    }
-  } catch {
-    // ignore
-  }
-  return { minutesUsed: 0, minutesLimit: 400, calls: 0, leads: 0, estRevenue: 0 };
-}
-
 export default function AppSettingsBillingPage() {
   const [cancelStep, setCancelStep] = useState<CancelStep>(0);
-  const usage = getUsageFromStorage();
+  const [usage, setUsage] = useState({ minutesUsed: 0, minutesLimit: 400, calls: 0, leads: 0, estRevenue: 0 });
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+  const [billingStatus, setBillingStatus] = useState("trial");
+  const [renewalAt, setRenewalAt] = useState<string | null>(null);
+  const [pausing, setPausing] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/workspace/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { id?: string | null; stats?: typeof usage } | null) => {
+        setWorkspaceId(data?.id ?? null);
+        if (data?.stats) setUsage(data.stats);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, {
+      credentials: "include",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { billing_status?: string; renewal_at?: string | null } | null) => {
+        setBillingStatus(data?.billing_status ?? "trial");
+        setRenewalAt(data?.renewal_at ?? null);
+      })
+      .catch(() => {});
+  }, [workspaceId]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timeout = window.setTimeout(() => setToast(null), 3000);
+    return () => window.clearTimeout(timeout);
+  }, [toast]);
+
+  const handlePauseCoverage = async () => {
+    if (!workspaceId) return;
+    setPausing(true);
+    try {
+      const res = await fetch("/api/billing/pause-coverage", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId }),
+      });
+      const data = (await res.json().catch(() => null)) as { message?: string; error?: string } | null;
+      if (!res.ok) {
+        setToast(data?.error ?? "Could not pause coverage.");
+        return;
+      }
+      setBillingStatus("paused");
+      setToast(data?.message ?? "Coverage paused.");
+      setCancelStep(0);
+    } catch {
+      setToast("Could not pause coverage.");
+    } finally {
+      setPausing(false);
+    }
+  };
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
@@ -35,6 +74,9 @@ export default function AppSettingsBillingPage() {
       <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50 mb-4">
         <p className="text-sm font-medium text-white">Starter — $297/mo</p>
         <p className="text-xs text-zinc-500 mt-1">{usage.minutesUsed} / {usage.minutesLimit} min used</p>
+        <p className="text-xs text-zinc-500 mt-1">
+          Status: {billingStatus}{renewalAt ? ` · renews ${new Date(renewalAt).toLocaleDateString()}` : ""}
+        </p>
       </div>
       <button type="button" className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-600 text-zinc-300 mb-4 block">Change plan</button>
         <p className="text-xs text-zinc-500 mb-4">Payment method: •••• 4242</p>
@@ -43,7 +85,7 @@ export default function AppSettingsBillingPage() {
         <p className="text-xs text-zinc-500">March 2026 — $297.00</p>
       </div>
       <div className="flex gap-2">
-        <button type="button" className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-400">Pause account</button>
+        <button type="button" onClick={handlePauseCoverage} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-400 disabled:opacity-60">{pausing ? "Pausing…" : "Pause account"}</button>
         <button
           type="button"
           onClick={() => setCancelStep(1)}
@@ -76,7 +118,7 @@ export default function AppSettingsBillingPage() {
                 </p>
                 <div className="flex gap-2 justify-end">
                   <button type="button" onClick={() => setCancelStep(3)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">No, continue</button>
-                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium">Pause for 30 days</button>
+                  <button type="button" onClick={() => { void handlePauseCoverage(); }} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60">{pausing ? "Pausing…" : "Pause for 30 days"}</button>
                 </div>
               </>
             )}
@@ -105,6 +147,12 @@ export default function AppSettingsBillingPage() {
               </>
             )}
           </div>
+        </div>
+      )}
+
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">
+          {toast}
         </div>
       )}
 

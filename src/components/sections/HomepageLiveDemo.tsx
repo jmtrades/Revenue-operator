@@ -78,7 +78,7 @@ export function HomepageLiveDemo() {
               Ready to make this your phone line?
             </p>
             <a
-              href="/activate"
+              href="/sign-in?create=1"
               className="bg-white text-black font-semibold rounded-xl px-5 py-2.5 text-sm hover:bg-zinc-100 transition-colors"
             >
               Start free →

@@ -6,27 +6,18 @@ import { useOnboardingStep } from "../OnboardingStepContext";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
+import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
+import { buildStarterKnowledge, mergeKnowledgeItems } from "@/lib/workspace/starter-knowledge";
 
 const STEPS = 5;
-const INDUSTRIES = [
-  { value: "home_services", label: "Home Services" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "legal", label: "Legal" },
-  { value: "real_estate", label: "Real Estate" },
-  { value: "insurance", label: "Insurance" },
-  { value: "b2b_sales", label: "B2B Sales" },
-  { value: "local_business", label: "Local Business" },
-  { value: "contractors", label: "Contractors" },
-];
 const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Mike", "Lisa"];
-const VOICES: { id: string; label: string; gender: "female" | "male"; preview: string }[] = [
-  { id: "warm_female", label: "Warm Female", gender: "female", preview: "Hi, thanks for calling. How can I help you today?" },
-  { id: "professional_male", label: "Professional Male", gender: "male", preview: "Good morning. You've reached our team. How may I assist you?" },
-  { id: "friendly_female", label: "Friendly Female", gender: "female", preview: "Hey there! Thanks for calling. What can I do for you?" },
-  { id: "calm_male", label: "Calm Male", gender: "male", preview: "Hello. Take your time. How can I help?" },
-  { id: "energetic_female", label: "Energetic Female", gender: "female", preview: "Hi! Great to hear from you. What do you need?" },
-  { id: "confident_male", label: "Confident Male", gender: "male", preview: "Thanks for calling. I'm here to help. What's the best way to assist?" },
-];
+const VOICES = CURATED_VOICES.map((voice) => ({
+  id: voice.id,
+  label: `${voice.name} — ${voice.desc}`,
+  gender: voice.gender,
+  preview: "Thanks for calling. How can I help you today?",
+}));
 
 const PERSONALITY_STOPS = [
   { value: 0, label: "Very Professional" },
@@ -80,7 +71,7 @@ export default function AppOnboardingPage() {
   const [timezone, setTimezone] = useState("");
 
   const [agentName, setAgentName] = useState("Sarah");
-  const [voiceId, setVoiceId] = useState("warm_female");
+  const [voiceId, setVoiceId] = useState<string>(DEFAULT_VOICE_ID);
   const [greeting, setGreeting] = useState("");
   const [personality, setPersonality] = useState(50);
   const [callStyle, setCallStyle] = useState<"thorough" | "conversational" | "quick">("conversational");
@@ -135,13 +126,69 @@ export default function AppOnboardingPage() {
     }
   };
 
-  const finishOnboarding = () => {
+  const finishOnboarding = async () => {
+    const knowledgeItems = mergeKnowledgeItems(
+      faqRows
+        .map((row) => row.trim())
+        .filter(Boolean)
+        .map((row) => ({ q: row, a: "I can help with that during your call." })),
+      buildStarterKnowledge({
+        industry,
+        address,
+        businessHours: {
+          monday: { start: "09:00", end: "17:00" },
+          tuesday: { start: "09:00", end: "17:00" },
+          wednesday: { start: "09:00", end: "17:00" },
+          thursday: { start: "09:00", end: "17:00" },
+          friday: { start: "09:00", end: "17:00" },
+        },
+        services,
+      }),
+    );
+
+    try {
+      await fetch("/api/workspace/create", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessName,
+          businessPhone: null,
+          website,
+          address,
+          industry,
+          agentName,
+          greeting: greetingToPlay,
+          knowledgeItems,
+          preferredLanguage: "en",
+          elevenlabsVoiceId: voiceId,
+          businessHours: {
+            monday: { start: "09:00", end: "17:00" },
+            tuesday: { start: "09:00", end: "17:00" },
+            wednesday: { start: "09:00", end: "17:00" },
+            thursday: { start: "09:00", end: "17:00" },
+            friday: { start: "09:00", end: "17:00" },
+          },
+        }),
+      });
+      await fetch("/api/workspace/me", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          onboardingCompletedAt: new Date().toISOString(),
+        }),
+      });
+      await fetch("/api/vapi/create-agent", {
+        method: "POST",
+        credentials: "include",
+      }).catch(() => {});
+    } catch {
+      // ignore and continue to local fallbacks
+    }
     try {
       localStorage.setItem("rt_onboarded", "true");
-      localStorage.setItem(
-        "rt_onboarding_checklist",
-        JSON.stringify(["business", "agent", "services", "phone", "test_call"])
-      );
+      localStorage.setItem("rt_onboarding_checklist", JSON.stringify(["business", "agent", "services", "phone", "test_call"]));
     } catch {
       // ignore
     }
@@ -152,7 +199,7 @@ export default function AppOnboardingPage() {
     setShowConfetti(true);
     setTimeout(() => {
       setShowConfetti(false);
-      finishOnboarding();
+      void finishOnboarding();
     }, 1600);
   };
 
@@ -209,13 +256,13 @@ export default function AppOnboardingPage() {
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Industry</label>
               <div className="flex flex-wrap gap-2">
-                {INDUSTRIES.map(({ value, label }) => (
+                {INDUSTRY_OPTIONS.map(({ id, label }) => (
                   <button
-                    key={value}
+                    key={id}
                     type="button"
-                    onClick={() => setIndustry(value)}
+                    onClick={() => setIndustry(id)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium border ${
-                      industry === value ? "bg-white/10 border-white text-white" : "bg-zinc-800/50 border-zinc-700 text-zinc-400"
+                      industry === id ? "bg-white/10 border-white text-white" : "bg-zinc-800/50 border-zinc-700 text-zinc-400"
                     }`}
                   >
                     {label}
@@ -305,7 +352,7 @@ export default function AppOnboardingPage() {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        void speakTextViaApi(v.preview, { gender: v.gender });
+                        void speakTextViaApi(v.preview, { gender: v.gender, voiceId: v.id });
                       }}
                       className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-zinc-700 hover:bg-zinc-600 text-white text-xs"
                       aria-label={`Preview ${v.label}`}
@@ -333,6 +380,7 @@ export default function AppOnboardingPage() {
                   (window as unknown as { __stopGreeting?: () => void }).__stopGreeting = () => {};
                   void speakTextViaApi(greetingToPlay, {
                     gender: selectedVoice?.gender ?? "female",
+                    voiceId: voiceId || undefined,
                     onEnd: () => setGreetingPlaying(false),
                   });
                 }}
@@ -564,6 +612,7 @@ export default function AppOnboardingPage() {
                 setStep5Playing(true);
                 void speakTextViaApi(greetingToPlay, {
                   gender: selectedVoice?.gender ?? "female",
+                  voiceId: voiceId || undefined,
                   onEnd: () => setStep5Playing(false),
                 });
               }}
