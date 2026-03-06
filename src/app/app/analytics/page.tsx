@@ -12,6 +12,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import Link from "next/link";
 import { BarChart3 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
@@ -279,6 +280,14 @@ export default function AppAnalyticsPage() {
         <p className="text-sm text-zinc-500 mb-4">Loading analytics…</p>
       )}
       {error && <p className="text-sm text-red-400 mb-4">{error}</p>}
+      {!hasData && !loading && !error && (
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 mb-6 text-center">
+          <BarChart3 className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
+          <p className="text-sm font-medium text-white mb-1">Analytics populate as calls come in</p>
+          <p className="text-xs text-zinc-500 mb-4">Your first chart will appear after your first call.</p>
+          <Link href="/demo" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Make a test call →</Link>
+        </div>
+      )}
 
       {/* Row 1: summary cards */}
       <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-5 mb-6">

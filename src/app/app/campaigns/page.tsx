@@ -470,14 +470,14 @@ export default function CampaignsPage() {
         {filtered.length === 0 && (
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 py-12 text-center">
             <Megaphone className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-            <p className="text-sm font-medium text-white mb-1">No runs found</p>
-            <p className="text-xs text-zinc-500 mb-4">Try adjusting your filters.</p>
+            <p className="text-sm font-medium text-white mb-1">Reach leads with automated call and text sequences</p>
+            <p className="text-xs text-zinc-500 mb-4">Create your first run to get started.</p>
             <button
               type="button"
               onClick={() => setNewModalOpen(true)}
-              className="text-sm font-medium text-white hover:underline"
+              className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline"
             >
-              Create your first run
+              Create campaign →
             </button>
           </div>
         )}

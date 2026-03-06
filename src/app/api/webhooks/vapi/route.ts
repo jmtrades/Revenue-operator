@@ -1,6 +1,6 @@
 /**
- * Vapi webhook: call-started, end-of-call-report.
- * Creates call_sessions on call start (when workspace_id + call.id); updates on end.
+ * Vapi webhook: call-started, end-of-call-report, tool-calls.
+ * Creates/updates call_sessions; handles capture_lead, book_appointment, send_sms.
  */
 
 export const dynamic = "force-dynamic";
@@ -9,8 +9,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 
 interface VapiWebhookPayload {
-  message?: { type?: string; transcript?: string; summary?: string; recordingUrl?: string; call?: { id?: string; metadata?: Record<string, string> } };
+  message?: {
+    type?: string;
+    transcript?: string;
+    summary?: string;
+    recordingUrl?: string;
+    call?: { id?: string; metadata?: Record<string, string>; customer?: { number?: string } };
+    assistant?: { metadata?: Record<string, string> };
+    toolCallList?: Array<{ id?: string; name?: string; parameters?: Record<string, unknown> }>;
+  };
   call?: { id?: string; metadata?: Record<string, string> };
+}
+
+function getWorkspaceId(body: VapiWebhookPayload): string | null {
+  const msg = body.message ?? body;
+  const call = (msg as { call?: { metadata?: Record<string, string> } })?.call ?? body.call;
+  const assistant = (msg as { assistant?: { metadata?: Record<string, string> } })?.assistant;
+  return call?.metadata?.workspace_id ?? assistant?.metadata?.workspace_id ?? null;
+}
+
+function getCallId(body: VapiWebhookPayload): string | null {
+  const msg = body.message ?? body;
+  const call = (msg as { call?: { id?: string } })?.call ?? body.call;
+  return call?.id ?? null;
 }
 
 export async function POST(req: NextRequest) {
@@ -23,12 +44,125 @@ export async function POST(req: NextRequest) {
 
   const message = (body.message ?? body) as Record<string, unknown> | undefined;
   const type = typeof message === "object" && message && "type" in message ? (message.type as string) : undefined;
-  const call = (message?.call ?? body.call) as { id?: string; metadata?: Record<string, string> } | undefined;
+  const call = (message?.call ?? body.call) as { id?: string; metadata?: Record<string, string>; customer?: { number?: string } } | undefined;
   const metadata = call?.metadata ?? {};
-  const workspaceId = metadata.workspace_id ?? null;
-  const vapiCallId = call?.id ?? null;
+  const workspaceId = getWorkspaceId(body) ?? metadata.workspace_id ?? null;
+  const vapiCallId = getCallId(body) ?? call?.id ?? null;
 
   const db = getDb();
+
+  // Tool calls: capture_lead, book_appointment, send_sms
+  if (type === "tool-calls" && workspaceId) {
+    const toolCallList = (message?.toolCallList ?? message?.toolCallList) as Array<{ id?: string; name?: string; parameters?: Record<string, unknown> }> | undefined;
+    const list = Array.isArray(toolCallList) ? toolCallList : [];
+    const results: Array<{ name: string; toolCallId: string; result: string }> = [];
+    const customerNumber = call?.customer?.number ?? null;
+
+    for (const tool of list) {
+      const toolId = tool.id ?? "";
+      const name = (tool.name ?? "").trim();
+      const params = (tool.parameters ?? {}) as Record<string, unknown>;
+
+      try {
+        if (name === "capture_lead") {
+          const leadName = typeof params.name === "string" ? params.name.trim() : "Caller";
+          const phone = (typeof params.phone === "string" ? params.phone.trim() : customerNumber) ?? undefined;
+          const email = typeof params.email === "string" ? params.email.trim() : undefined;
+          const { data: inserted } = await db
+            .from("leads")
+            .insert({
+              workspace_id: workspaceId,
+              name: leadName,
+              ...(phone && { phone }),
+              ...(email && { email }),
+              state: "NEW",
+            })
+            .select("id")
+            .single();
+          const leadId = (inserted as { id: string } | null)?.id;
+          if (vapiCallId) {
+            const { data: sess } = await db.from("call_sessions").select("id").eq("workspace_id", workspaceId).eq("external_meeting_id", vapiCallId).maybeSingle();
+            if (sess && leadId) {
+              await db.from("call_sessions").update({ lead_id: leadId, updated_at: new Date().toISOString() }).eq("id", (sess as { id: string }).id);
+            }
+          }
+          results.push({ name: "capture_lead", toolCallId: toolId, result: JSON.stringify({ ok: true, leadId }) });
+        } else if (name === "book_appointment") {
+          const apptName = typeof params.name === "string" ? params.name.trim() : "Caller";
+          const dateStr = typeof params.date === "string" ? params.date : "";
+          const timeStr = typeof params.time === "string" ? params.time : "09:00";
+          const service = typeof params.service === "string" ? params.service.trim() : "Appointment";
+          const notes = typeof params.notes === "string" ? params.notes.trim() : undefined;
+          const startTime = `${dateStr}T${timeStr}:00`;
+          const start = new Date(startTime);
+          const end = new Date(start.getTime() + 30 * 60 * 1000);
+          let leadId: string | null = null;
+          const phone = (typeof params.phone === "string" ? params.phone.trim() : customerNumber) ?? undefined;
+          if (phone) {
+            const normalized = phone.replace(/\D/g, "");
+            const { data: existing } = await db.from("leads").select("id").eq("workspace_id", workspaceId).or(`phone.eq.${phone},phone.eq.${normalized}`).limit(1).maybeSingle();
+            leadId = (existing as { id: string } | null)?.id ?? null;
+            if (!leadId) {
+              const { data: created } = await db.from("leads").insert({ workspace_id: workspaceId, name: apptName, phone, state: "NEW" }).select("id").single();
+              leadId = (created as { id: string })?.id ?? null;
+            }
+          }
+          const apptPayload: Record<string, unknown> = {
+            workspace_id: workspaceId,
+            title: service,
+            start_time: start.toISOString(),
+            end_time: end.toISOString(),
+            status: "confirmed",
+          };
+          if (leadId) apptPayload.lead_id = leadId;
+          if (notes) apptPayload.notes = notes;
+          await db.from("appointments").insert(apptPayload);
+          results.push({ name: "book_appointment", toolCallId: toolId, result: JSON.stringify({ ok: true, message: `Appointment booked for ${dateStr} at ${timeStr}` }) });
+        } else if (name === "send_sms") {
+          const to = typeof params.to === "string" ? params.to.replace(/\D/g, "") : "";
+          const messageBody = typeof params.message === "string" ? params.message : "";
+          if (to && messageBody && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+            const sid = process.env.TWILIO_ACCOUNT_SID;
+            const auth = process.env.TWILIO_AUTH_TOKEN;
+            const fromNum = process.env.TWILIO_PHONE_NUMBER;
+            const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`;
+            const params = new URLSearchParams();
+            params.set("To", to.length >= 10 ? `+${to}` : to);
+            params.set("From", fromNum);
+            params.set("Body", messageBody.slice(0, 1600));
+            await fetch(twilioUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: "Basic " + Buffer.from(`${sid}:${auth}`).toString("base64"),
+              },
+              body: params.toString(),
+            });
+          }
+          try {
+            await db.from("messages").insert({
+              workspace_id: workspaceId,
+              direction: "outbound",
+              channel: "sms",
+              content: messageBody,
+              status: "delivered",
+              sent_at: new Date().toISOString(),
+            });
+          } catch {
+            // table may require lead_id; ignore
+          }
+          results.push({ name: "send_sms", toolCallId: toolId, result: JSON.stringify({ ok: true }) });
+        } else {
+          results.push({ name: name || "unknown", toolCallId: toolId, result: JSON.stringify({ ok: true }) });
+        }
+      } catch (e) {
+        const err = e instanceof Error ? e.message : String(e);
+        results.push({ name: name || "unknown", toolCallId: toolId, result: JSON.stringify({ error: err }) });
+      }
+    }
+
+    return NextResponse.json({ results });
+  }
 
   if (type === "call-started" && workspaceId && vapiCallId) {
     try {

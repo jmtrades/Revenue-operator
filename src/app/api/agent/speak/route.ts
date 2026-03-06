@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 
 const ELEVENLABS_VOICE_RACHEL = "21m00Tcm4TlvDq8ikWAM"; // Rachel — natural female
-const ELEVENLABS_MODEL = "eleven_multilingual_v2"; // 29 languages; no language param — text language = output language
+const ELEVENLABS_MODEL = "eleven_turbo_v2_5"; // Same as live calls: fast, very human-like, 32 languages
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
@@ -48,7 +48,12 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           text: text.slice(0, 5000),
           model_id: ELEVENLABS_MODEL,
-          // No language param: multilingual model uses text language for output (32 langs supported)
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.78,
+            style: 0.35,
+            use_speaker_boost: true,
+          },
         }),
       }
     );
