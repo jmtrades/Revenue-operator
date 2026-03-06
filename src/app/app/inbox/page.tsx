@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import type { InboxThread, InboxMessage, InboxChannel } from "@/lib/mock/inbox";
@@ -114,8 +115,9 @@ function ConversationList({
         {filtered.length === 0 ? (
           <div className="p-8 text-center">
             <MessageSquare className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-            <p className="text-sm font-medium text-white mb-1">No conversations found</p>
-            <p className="text-xs text-zinc-500">Try adjusting your filters or search.</p>
+            <p className="text-sm font-medium text-white mb-1">Your conversations will appear here</p>
+            <p className="text-xs text-zinc-500 mb-4">Your AI can send follow-up texts after calls. Enable SMS in settings to get started.</p>
+            <Link href="/app/settings/integrations" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Enable SMS →</Link>
           </div>
         ) : filtered.map((thread) => {
           const Icon = channelIcon(thread.channel);

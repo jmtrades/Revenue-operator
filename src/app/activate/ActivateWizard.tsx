@@ -7,25 +7,14 @@ import {
   AGENT_TEMPLATES,
   AGENT_TEMPLATE_CATEGORIES,
   type AgentTemplateCategory,
+  type AgentTemplate,
 } from "@/lib/data/agent-templates";
 import { Confetti } from "@/components/Confetti";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
+import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { INDUSTRY_OPTIONS, getServicesForIndustry, getIndustryLabel } from "@/lib/constants/industries";
 
 type StepId = 1 | 2 | 3 | 4 | 5;
-
-type IndustryId =
-  | "plumbing"
-  | "dental"
-  | "legal"
-  | "real_estate"
-  | "insurance"
-  | "healthcare"
-  | "salon"
-  | "auto"
-  | "restaurant"
-  | "property_mgmt"
-  | "roofing"
-  | "other";
 
 type AgentTemplateId = string;
 
@@ -52,7 +41,7 @@ interface ElevenLabsVoice {
 
 interface ActivationState {
   businessName: string;
-  industry: IndustryId | null;
+  industry: string | null;
   businessPhone: string;
   orgType: OrgTypeId | null;
   useCases: UseCaseId[];
@@ -92,36 +81,6 @@ const STEPS: { id: StepId; label: string }[] = [
   { id: 5, label: "Activate" },
 ];
 
-const INDUSTRIES: { id: IndustryId; label: string; emoji: string }[] = [
-  { id: "plumbing", label: "Plumbing", emoji: "🛠️" },
-  { id: "dental", label: "Dental", emoji: "🦷" },
-  { id: "legal", label: "Legal", emoji: "⚖️" },
-  { id: "real_estate", label: "Real Estate", emoji: "🏡" },
-  { id: "insurance", label: "Insurance", emoji: "📑" },
-  { id: "healthcare", label: "Healthcare", emoji: "🏥" },
-  { id: "salon", label: "Salon", emoji: "💇" },
-  { id: "auto", label: "Auto Repair", emoji: "🚗" },
-  { id: "restaurant", label: "Restaurant", emoji: "🍽️" },
-  { id: "property_mgmt", label: "Property Mgmt", emoji: "🏢" },
-  { id: "roofing", label: "Roofing", emoji: "🏠" },
-  { id: "other", label: "Other / General", emoji: "✨" },
-];
-
-const INDUSTRY_SERVICES: Record<IndustryId, string[]> = {
-  plumbing: ["Drain cleaning", "Water heater", "Leak repair", "Emergency service", "Remodeling"],
-  dental: ["New patients", "Cleanings", "Cosmetic", "Emergency", "Follow-up visits"],
-  legal: ["Consultations", "Case updates", "Scheduling", "New inquiries"],
-  real_estate: ["Buyer leads", "Seller leads", "Showings", "Open houses"],
-  insurance: ["New policies", "Claims", "Billing questions", "Renewals"],
-  healthcare: ["New patients", "Appointments", "Refills", "Follow-ups"],
-  salon: ["Hair appointments", "Color", "Walk-ins", "Cancellations"],
-  auto: ["Repairs", "Oil change", "Diagnostics", "Towing"],
-  restaurant: ["Reservations", "Large parties", "Takeout", "Hours"],
-  property_mgmt: ["Maintenance", "Leasing", "Tours", "Tenant support"],
-  roofing: ["Inspections", "Repairs", "New roof", "Emergency tarping"],
-  other: ["New inquiries", "Appointments", "Support", "Follow-ups"],
-};
-
 const DAYS: DayId[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const DEFAULT_HOURS: HoursSlot[] = DAYS.map((day: DayId) => ({
@@ -130,11 +89,6 @@ const DEFAULT_HOURS: HoursSlot[] = DAYS.map((day: DayId) => ({
   start: "09:00",
   end: "17:00",
 }));
-
-function getIndustryLabel(id: IndustryId | null): string {
-  if (!id) return "your business";
-  return INDUSTRIES.find((i) => i.id === id)?.label ?? "your business";
-}
 
 export function ActivateWizard() {
   const [step, setStep] = useState<StepId>(1);
@@ -152,7 +106,7 @@ export function ActivateWizard() {
     services: [],
     lastTestFeedback: null,
     preferredLanguage: "en",
-    elevenlabsVoiceId: "",
+    elevenlabsVoiceId: DEFAULT_VOICE_ID,
   }));
 
   const currentIndex = useMemo(
@@ -206,19 +160,26 @@ export function ActivateWizard() {
   };
 
   const industryServices =
-    state.industry != null ? INDUSTRY_SERVICES[state.industry] : [];
+    getServicesForIndustry(state.industry);
 
   const effectiveServices =
     state.services.length > 0 ? state.services : industryServices;
 
-  const [voices, setVoices] = useState<ElevenLabsVoice[]>([]);
+  const curatedVoiceList = useMemo(
+    () => CURATED_VOICES.map((v) => ({ id: v.id, name: v.name, labels: {} as Record<string, string>, category: v.accent })),
+    []
+  );
+  const [voices, setVoices] = useState<ElevenLabsVoice[]>(() => curatedVoiceList);
   useEffect(() => {
     if (step !== 3) return;
     fetch("/api/agent/voices")
       .then((r) => r.json())
-      .then((data: { voices?: ElevenLabsVoice[] }) => setVoices(data.voices ?? []))
-      .catch(() => setVoices([]));
-  }, [step]);
+      .then((data: { voices?: ElevenLabsVoice[] }) => {
+        const fromApi = data.voices ?? [];
+        setVoices(fromApi.length > 0 ? fromApi : curatedVoiceList);
+      })
+      .catch(() => setVoices(curatedVoiceList));
+  }, [step, curatedVoiceList]);
 
   const handlePlayTestGreeting = () => {
     const voiceText =
@@ -453,17 +414,17 @@ export function ActivateWizard() {
                   id="industry_opt"
                   value={state.industry ?? ""}
                   onChange={(e) => {
-                    const val = e.target.value as IndustryId | "";
+                    const val = e.target.value || null;
                     setState((prev) => ({
                       ...prev,
                       industry: val || null,
-                      services: val ? INDUSTRY_SERVICES[val] : prev.services,
+                      services: getServicesForIndustry(val),
                     }));
                   }}
                   className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                 >
                   <option value="">None / Other</option>
-                  {INDUSTRIES.map((ind) => (
+                  {INDUSTRY_OPTIONS.map((ind) => (
                     <option key={ind.id} value={ind.id}>{ind.label}</option>
                   ))}
                 </select>
@@ -566,7 +527,6 @@ export function ActivateWizard() {
                     }
                     className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   >
-                    <option value="">Default (Rachel)</option>
                     {voices.map((v) => (
                       <option key={v.id} value={v.id}>
                         {v.name}
@@ -893,7 +853,7 @@ function Step2Templates({
   goBack: () => void;
   goNext: () => void;
   canGoNext: boolean;
-  getIndustryLabel: (id: IndustryId | null) => string;
+  getIndustryLabel: (id: string | null) => string;
 }) {
   const [category, setCategory] = useState<AgentTemplateCategory | "all">("all");
   const [search, setSearch] = useState("");
@@ -955,6 +915,7 @@ function Step2Templates({
                   agentTemplate: t.id,
                   agentName: prev.agentName || t.name.replace(/^The\s+/, ""),
                   greeting: t.defaultGreeting,
+                  ...((t as AgentTemplate).voiceId && { elevenlabsVoiceId: (t as AgentTemplate).voiceId! }),
                 }))
               }
               className={`flex flex-col items-start gap-2 rounded-2xl border px-4 py-4 text-left text-sm transition-colors ${
@@ -984,7 +945,7 @@ function Step2Templates({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  previewVoiceViaApi(t.defaultGreeting, "female");
+                  previewVoiceViaApi(t.defaultGreeting, { voiceId: (t as AgentTemplate).voiceId, gender: "female" });
                 }}
                 className="text-[11px] text-sky-400 hover:text-sky-300 mt-1"
               >

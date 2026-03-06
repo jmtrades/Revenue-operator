@@ -1,14 +1,26 @@
 /**
  * Vapi API client: create assistant, create phone call (Twilio inbound).
- * Used when Twilio receives an inbound call and we hand off to Vapi for voice AI.
+ * Uses ElevenLabs for TTS and Deepgram for STT when configured for human-like voice.
  */
 
 const VAPI_BASE = "https://api.vapi.ai";
+
+const DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // Sarah — warm, professional
 
 export interface CreateAssistantInput {
   name: string;
   systemPrompt: string;
   firstMessage: string;
+  /** Optional: end call phrase */
+  endCallMessage?: string;
+  /** Optional: ElevenLabs voice id. When set, uses eleven_turbo_v2_5 for low latency. */
+  voiceId?: string | null;
+  /** Optional: language for Deepgram (e.g. en, es). */
+  language?: string | null;
+  /** Optional: workspace id for webhook metadata. */
+  workspaceId?: string | null;
+  /** Optional: tool/function definitions for capture_lead, book_appointment, send_sms, etc. */
+  toolCalls?: Array<{ name: string; description: string; parameters: Record<string, unknown> }>;
 }
 
 export interface CreateCallInput {
@@ -19,12 +31,67 @@ export interface CreateCallInput {
 }
 
 /**
- * Create a Vapi assistant with the given system prompt and first message.
- * Returns the assistant id to use in createCall.
+ * Create a Vapi assistant. When voiceId is provided, uses ElevenLabs turbo + Deepgram Nova-2
+ * for human-like voice and low latency. Otherwise falls back to OpenAI model + default config.
  */
 export async function createAssistant(input: CreateAssistantInput): Promise<{ id: string }> {
   const key = process.env.VAPI_API_KEY;
   if (!key) throw new Error("VAPI_API_KEY not set");
+
+  const firstMessage = input.firstMessage || "Hello, how can I help you today?";
+  const voiceId = (input.voiceId ?? "").trim() || DEFAULT_VOICE_ID;
+  const lang = (input.language ?? "en").trim() || "en";
+
+  const body: Record<string, unknown> = {
+    name: input.name,
+    firstMessage,
+    endCallMessage: input.endCallMessage ?? `Thank you for calling. Have a great day!`,
+    model: {
+      provider: "anthropic",
+      model: "claude-sonnet-4-20250514",
+      temperature: 0.45,
+      maxTokens: 350,
+      messages: [{ role: "system", content: input.systemPrompt }],
+    },
+    voice: {
+      provider: "elevenlabs",
+      voiceId,
+      model: "eleven_turbo_v2_5",
+      stability: 0.5,
+      similarityBoost: 0.78,
+      style: 0.35,
+      useSpeakerBoost: true,
+      optimizeStreamingLatency: 4,
+    },
+    transcriber: {
+      provider: "deepgram",
+      model: "nova-2",
+      language: lang,
+      smartFormat: true,
+    },
+    silenceTimeoutSeconds: 30,
+    maxDurationSeconds: 600,
+    backgroundSound: "off",
+    backchannelingEnabled: true,
+    backgroundDenoisingEnabled: true,
+    responseDelaySeconds: 0.4,
+    numWordsToInterruptAssistant: 2,
+  };
+
+  if (input.workspaceId) {
+    body.metadata = { workspace_id: input.workspaceId };
+  }
+
+  if (Array.isArray(input.toolCalls) && input.toolCalls.length > 0) {
+    body.toolCalls = input.toolCalls.map((t) => ({
+      type: "function" as const,
+      function: {
+        name: t.name,
+        description: t.description,
+        parameters: t.parameters,
+      },
+    }));
+  }
 
   const res = await fetch(`${VAPI_BASE}/assistant`, {
     method: "POST",
@@ -32,15 +99,7 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      name: input.name,
-      firstMessage: input.firstMessage || "Hello, how can I help you today?",
-      model: {
-        provider: "openai",
-        model: "gpt-4o",
-        messages: [{ role: "system", content: input.systemPrompt }],
-      },
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -51,6 +110,73 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
   const data = (await res.json()) as { id?: string };
   if (!data?.id) throw new Error("Vapi createAssistant: no id in response");
   return { id: data.id };
+}
+
+/**
+ * Update an existing Vapi assistant (same shape as create). Use when user changes greeting, voice, or knowledge.
+ */
+export async function updateAssistant(
+  assistantId: string,
+  input: CreateAssistantInput
+): Promise<{ id: string }> {
+  const key = process.env.VAPI_API_KEY;
+  if (!key) throw new Error("VAPI_API_KEY not set");
+
+  const firstMessage = input.firstMessage || "Hello, how can I help you today?";
+  const voiceId = (input.voiceId ?? "").trim() || DEFAULT_VOICE_ID;
+  const lang = (input.language ?? "en").trim() || "en";
+
+  const body: Record<string, unknown> = {
+    name: input.name,
+    firstMessage,
+    endCallMessage: input.endCallMessage ?? `Thank you for calling. Have a great day!`,
+    model: {
+      provider: "anthropic",
+      model: "claude-sonnet-4-20250514",
+      temperature: 0.45,
+      maxTokens: 350,
+      messages: [{ role: "system", content: input.systemPrompt }],
+    },
+    voice: {
+      provider: "elevenlabs",
+      voiceId,
+      model: "eleven_turbo_v2_5",
+      stability: 0.5,
+      similarityBoost: 0.78,
+      style: 0.35,
+      useSpeakerBoost: true,
+      optimizeStreamingLatency: 4,
+    },
+    transcriber: {
+      provider: "deepgram",
+      model: "nova-2",
+      language: lang,
+      smartFormat: true,
+    },
+  };
+
+  if (input.workspaceId) body.metadata = { workspace_id: input.workspaceId };
+  if (Array.isArray(input.toolCalls) && input.toolCalls.length > 0) {
+    body.toolCalls = input.toolCalls.map((t) => ({
+      type: "function" as const,
+      function: { name: t.name, description: t.description, parameters: t.parameters },
+    }));
+  }
+
+  const res = await fetch(`${VAPI_BASE}/assistant/${assistantId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Vapi updateAssistant: ${res.status} ${err}`);
+  }
+  return { id: assistantId };
 }
 
 /**

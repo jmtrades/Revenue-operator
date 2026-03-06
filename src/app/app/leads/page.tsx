@@ -448,9 +448,9 @@ export default function LeadsPage() {
           ) : filteredLeads.length === 0 ? (
             <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-12 text-center">
               <Users className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-              <p className="text-sm font-medium text-white mb-1">No leads yet</p>
-              <p className="text-xs text-zinc-500 mb-4">Every qualified caller becomes a lead automatically.</p>
-              <Link href="/app/onboarding" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Set up your AI →</Link>
+              <p className="text-sm font-medium text-white mb-1">Leads appear when your AI captures them</p>
+              <p className="text-xs text-zinc-500 mb-4">Leads are created automatically from calls. Try a test call to see it in action.</p>
+              <Link href="/demo" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Try demo →</Link>
             </div>
           ) : (
           <div className="hidden md:block rounded-2xl border border-zinc-800 bg-zinc-950/60 overflow-hidden">

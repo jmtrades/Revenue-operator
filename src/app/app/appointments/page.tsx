@@ -133,15 +133,15 @@ export default function AppointmentsPage() {
             style={{ background: "#111827" }}
           >
             <Calendar className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-            <p className="text-sm font-medium text-white mb-1">No appointments yet</p>
+            <p className="text-sm font-medium text-white mb-1">Appointments show up when callers book through your AI</p>
             <p className="text-xs text-zinc-500 mb-4">
-              Connect your calendar and your AI will start booking.
+              Enable appointment booking in your agent settings to let callers schedule directly.
             </p>
             <Link
-              href="/app/settings"
+              href="/app/agents"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-white underline underline-offset-2 hover:no-underline"
             >
-              Connect calendar →
+              Agent settings →
             </Link>
           </div>
         ) : view === "list" ? (

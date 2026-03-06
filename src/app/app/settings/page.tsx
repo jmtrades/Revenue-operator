@@ -5,6 +5,7 @@ import Link from "next/link";
 
 const SETTINGS_LINKS = [
   { href: "/app/settings/business", label: "Business", desc: "Name, address, website, timezone, industry", icon: "🏢" },
+  { href: "/app/settings/agent", label: "Agent", desc: "Voice, greeting, knowledge, language", icon: "🎙️" },
   { href: "/app/settings/phone", label: "Phone", desc: "Numbers, forwarding status, add number", icon: "📞" },
   { href: "/app/settings/call-rules", label: "Call rules", desc: "Hours, after-hours, emergency, transfer", icon: "📋" },
   { href: "/app/settings/team", label: "Team", desc: "Members, invite, roles, escalation", icon: "👥" },

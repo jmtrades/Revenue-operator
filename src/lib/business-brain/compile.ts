@@ -1,6 +1,6 @@
 /**
  * Business Brain: compile workspace business context + agent into a system prompt
- * for voice agents (e.g. Vapi). Used after onboarding to drive agent behavior.
+ * for voice agents (e.g. Vapi). Four layers: identity, business context, conversation skills, language.
  */
 
 export interface BusinessBrainInput {
@@ -14,6 +14,9 @@ export interface BusinessBrainInput {
   emergencies_after_hours?: string;
   appointment_handling?: string;
   faq_extra?: string;
+  industry?: string;
+  address?: string;
+  phone?: string;
   /** Preferred response language code (e.g. en, es, fr). Agent should switch when caller uses another language. */
   preferred_language?: string;
 }
@@ -30,22 +33,32 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     emergencies_after_hours,
     appointment_handling,
     faq_extra,
+    industry,
+    address,
+    phone,
     preferred_language,
   } = input;
 
   const langName = preferred_language ? getLanguageName(preferred_language) : "English";
-  const lines: string[] = [
-    `You are ${agent_name}, the phone receptionist for ${business_name}.`,
-    "Answer briefly and professionally. Do not make up information.",
-    `Respond in ${langName} by default. If the caller speaks another language, switch to that language immediately and continue the conversation in their language so they can be served in their preferred language.`,
-  ];
 
-  if (offer_summary) {
-    lines.push(`What the business offers: ${offer_summary}`);
-  }
-  if (services) {
-    lines.push(`Services: ${services}`);
-  }
+  // Layer 1: Identity & boundaries
+  const layer1 = [
+    `You are ${agent_name}, the phone assistant for ${business_name}. You answer calls on their behalf.`,
+    "You handle the ENTIRE call naturally. There is no fixed script — listen to what the caller says and respond. Move the conversation toward a clear outcome: answer questions, book appointments, capture leads, take a message, or transfer. Adapt to whatever they need.",
+    "You are NOT a chatbot. You are speaking on a phone call. Keep responses SHORT — 1-2 sentences max.",
+    'Never say "as an AI" or "I\'m an AI assistant." You are simply the person answering the phone.',
+    `If asked "are you a robot?" say "I'm ${business_name}'s phone assistant. How can I help?"`,
+    "Never make up information you don't know. If unsure, say \"Let me have someone get back to you on that.\"",
+    "Never discuss competitors. Never give medical/legal/financial advice.",
+  ].join("\n");
+
+  // Layer 2: Business context
+  const businessLines: string[] = [
+    `Business: ${business_name}`,
+    ...(industry ? [`Industry: ${industry}`] : []),
+    ...(phone ? [`Phone: ${phone}`] : []),
+    ...(address ? [`Location: ${address}`] : []),
+  ];
   if (business_hours && Object.keys(business_hours).length > 0) {
     const hoursStr = Object.entries(business_hours)
       .filter(([, v]) => v && typeof v === "object" && "start" in v && "end" in v)
@@ -54,32 +67,58 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
         return `${day}: ${h.start}-${h.end}`;
       })
       .join("; ");
-    if (hoursStr) lines.push(`Business hours: ${hoursStr}`);
+    if (hoursStr) businessLines.push(`Hours: ${hoursStr}`);
   }
+  if (offer_summary) businessLines.push(`What we offer: ${offer_summary}`);
+  if (services) businessLines.push(`Services: ${services}`);
   if (emergencies_after_hours === "call_me") {
-    lines.push("After hours emergencies: take details and tell the caller someone will call back soon.");
+    businessLines.push("After hours emergencies: take details and tell the caller someone will call back soon.");
   } else if (emergencies_after_hours === "message") {
-    lines.push("After hours: take a message and say someone will call back.");
+    businessLines.push("After hours: take a message and say someone will call back.");
   } else if (emergencies_after_hours === "next_day") {
-    lines.push("After hours: take a message for the next business day.");
+    businessLines.push("After hours: take a message for the next business day.");
   }
   if (appointment_handling === "calendar") {
-    lines.push("Appointments: book directly into the calendar when possible.");
+    businessLines.push("Appointments: book directly into the calendar when possible.");
   } else if (appointment_handling === "capture") {
-    lines.push("Appointments: capture details and say the business will confirm.");
+    businessLines.push("Appointments: capture details and say the business will confirm.");
   }
-  if (faq_extra) {
-    lines.push(`FAQ: ${faq_extra}`);
-  }
+  businessLines.push("");
+  businessLines.push("Knowledge Base:");
   faq.forEach((item) => {
-    if (item.q && item.a) lines.push(`Q: ${item.q} A: ${item.a}`);
+    if (item.q && item.a) businessLines.push(`Q: ${item.q}\nA: ${item.a}`);
   });
-  if (greeting) {
-    lines.push(`Opening greeting (use this tone): ${greeting}`);
-  }
-  lines.push("If you don't know something, say you'll have someone get back to them. Never guess.");
+  if (faq_extra) businessLines.push(faq_extra);
+  const layer2 = businessLines.join("\n");
 
-  return lines.join("\n");
+  // Layer 3: Conversation skills
+  const layer3 = [
+    "CONVERSATION RULES:",
+    "- Start with the greeting, then LISTEN. Don't talk over the caller.",
+    "- Match the caller's energy. If they're rushed, be concise. If chatty, be warm.",
+    "- Use the caller's name once you know it. e.g. \"Of course, Sarah.\"",
+    "- When booking: confirm date, time, and service. Read it back.",
+    "- When qualifying leads: ask name, phone/email, what they need, timeline. Don't interrogate — converse.",
+    "- If the caller is upset: acknowledge first (\"I completely understand that's frustrating\"), then solve.",
+    "- If you don't understand: \"I'm sorry, could you repeat that?\" — never guess.",
+    "- If the caller wants a human: \"Absolutely, let me connect you. One moment.\" → transfer or take a message.",
+    "",
+    "NATURAL SPEECH:",
+    "- Use contractions: \"I'll\", \"we're\", \"that's\"",
+    "- Use filler acknowledgments: \"Sure thing\", \"Absolutely\", \"Of course\", \"Got it\"",
+    "- Keep it conversational: \"Let me check on that for you\" not \"I will now look up that information\"",
+    ...(greeting ? [`Opening greeting (use this tone): ${greeting}`] : []),
+  ].join("\n");
+
+  // Layer 4: Language & multilingual
+  const layer4 = [
+    `Primary language: ${langName}`,
+    "If the caller speaks a different language, switch to match them.",
+    "Always respond in the language the caller is using.",
+    `If unsure of the language, default to ${langName}.`,
+  ].join("\n");
+
+  return [layer1, layer2, layer3, layer4].join("\n\n");
 }
 
 function getLanguageName(code: string): string {

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
 
 function getBusinessData() {
   if (typeof window === "undefined") return {};
@@ -21,7 +22,7 @@ export default function AppSettingsBusinessPage() {
   const [address, setAddress] = useState("");
   const [website, setWebsite] = useState(() => { const d = getBusinessData(); return d.website ?? ""; });
   const [timezone, setTimezone] = useState(getInitialTimezone);
-  const [industry, setIndustry] = useState("home_services");
+  const [industry, setIndustry] = useState(() => { const d = getBusinessData(); return (d.industry && INDUSTRY_OPTIONS.some((i) => i.id === d.industry)) ? d.industry : "other"; });
   const [toast, setToast] = useState<string | null>(null);
 
   const handleSave = () => {
@@ -58,14 +59,9 @@ export default function AppSettingsBusinessPage() {
         <div>
           <label htmlFor="biz-industry" className="block text-xs font-medium text-zinc-400 mb-1">Industry</label>
           <select id="biz-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:outline-none">
-            <option value="home_services">Home Services</option>
-            <option value="healthcare">Healthcare</option>
-            <option value="legal">Legal</option>
-            <option value="real_estate">Real Estate</option>
-            <option value="insurance">Insurance</option>
-            <option value="b2b_sales">B2B Sales</option>
-            <option value="contractors">Contractors</option>
-            <option value="other">Other</option>
+            {INDUSTRY_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id}>{opt.label}</option>
+            ))}
           </select>
         </div>
       </div>

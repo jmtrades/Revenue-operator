@@ -9,6 +9,18 @@ export type AgentTemplateCategory =
   | "multi-channel"
   | "specialized";
 
+/** Capabilities passed to Vapi (e.g. book_appointments for tool calls). */
+export type TemplateCapability =
+  | "answer_calls"
+  | "take_messages"
+  | "route_calls"
+  | "book_appointments"
+  | "follow_up"
+  | "qualify_leads"
+  | "capture_leads"
+  | "transfer_calls"
+  | "outbound_calls";
+
 export interface AgentTemplate {
   id: string;
   name: string;
@@ -18,6 +30,10 @@ export interface AgentTemplate {
   behaviors: [string, string, string];
   bestFor: string;
   defaultGreeting: string;
+  /** Suggested ElevenLabs voice id for this template (curated voices). */
+  voiceId?: string;
+  /** Capabilities for Vapi tools: capture_lead, book_appointment, send_sms, etc. */
+  capabilities?: TemplateCapability[];
 }
 
 export const AGENT_TEMPLATE_CATEGORIES: { id: AgentTemplateCategory; label: string }[] = [
@@ -38,6 +54,8 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     behaviors: ["Greets with clear identification", "Keeps language precise and professional", "Escalates with context"],
     bestFor: "Offices that need a polished first impression",
     defaultGreeting: "Hello, thanks for calling. How may I help you today?",
+    voiceId: "EXAVITQu4vr4xnSDxMaL",
+    capabilities: ["answer_calls", "take_messages", "route_calls"],
   },
   {
     id: "friendly_helper",
@@ -89,6 +107,8 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     behaviors: ["Confirms interest and timing", "Leaves clear next steps", "Respects opt-out and callback preferences"],
     bestFor: "Sales and lead-nurture teams",
     defaultGreeting: "Hi, this is a quick follow-up from our team. Do you have a moment?",
+    voiceId: "yoZ06aMxZJJ28mfd3POQ",
+    capabilities: ["outbound_calls", "qualify_leads", "book_appointments"],
   },
   {
     id: "appointment_setter",
@@ -170,6 +190,8 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     behaviors: ["Answers common questions from knowledge", "Walks through simple fixes", "Escalates complex issues with context"],
     bestFor: "Customer support and help desks",
     defaultGreeting: "Hi, how can I help you today? I can answer questions or get you to the right person.",
+    voiceId: "TX3LPaxmHKxFdv7VOQHJ",
+    capabilities: ["answer_calls", "take_messages", "transfer_calls"],
   },
   {
     id: "bilingual_agent",
@@ -243,4 +265,24 @@ export function getAgentTemplatesByCategory(
 ): AgentTemplate[] {
   if (category === "all") return AGENT_TEMPLATES;
   return AGENT_TEMPLATES.filter((t) => t.category === category);
+}
+
+/** Returns capabilities for Vapi tool calls (e.g. book_appointments) from template id. */
+export function getTemplateCapabilities(templateId: string | null | undefined): string[] {
+  if (!templateId) return [];
+  const t = getAgentTemplateById(templateId);
+  if (t?.capabilities?.length) return [...t.capabilities];
+  const id = templateId.toLowerCase();
+  if (id.includes("appointment") || id.includes("scheduling")) return ["answer_calls", "book_appointments", "follow_up"];
+  if (id.includes("lead") || id.includes("qualif")) return ["answer_calls", "qualify_leads", "capture_leads", "transfer_calls"];
+  if (id.includes("night") || id.includes("after")) return ["answer_calls", "take_messages", "capture_leads", "book_appointments"];
+  if (id.includes("support")) return ["answer_calls", "take_messages", "transfer_calls"];
+  if (id.includes("follow_up") || id.includes("followup")) return ["outbound_calls", "qualify_leads", "book_appointments"];
+  return [];
+}
+
+/** Returns suggested ElevenLabs voice id for template, if set. */
+export function getTemplateVoiceId(templateId: string | null | undefined): string | undefined {
+  if (!templateId) return undefined;
+  return getAgentTemplateById(templateId)?.voiceId;
 }
