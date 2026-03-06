@@ -17,10 +17,10 @@ import {
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   if (!url || !anonKey) {
-    return NextResponse.json({ error: "Auth not configured" }, { status: 503 });
+    return NextResponse.json({ error: "Auth not configured", code: "auth_config" }, { status: 503 });
   }
 
   let body: { email?: string; password?: string; businessName?: string };
@@ -48,7 +48,10 @@ export async function POST(req: NextRequest) {
     data = result.data as { user?: { id: string } | null };
     error = result.error;
   } catch {
-    return NextResponse.json({ error: "Auth service unavailable. Please try again." }, { status: 503 });
+    return NextResponse.json(
+      { error: "Auth service unavailable. Please try again.", code: "auth_unavailable" },
+      { status: 503 }
+    );
   }
 
   // Supabase may return an error when confirmation email fails (e.g. SMTP not configured).
@@ -133,7 +136,10 @@ export async function POST(req: NextRequest) {
 
   const cookie = createSessionCookie({ userId, workspaceId });
   if (!cookie) {
-    return NextResponse.json({ error: "Session not configured (set SESSION_SECRET)" }, { status: 503 });
+    return NextResponse.json(
+      { error: "Session not configured (set SESSION_SECRET)", code: "session_secret" },
+      { status: 503 }
+    );
   }
   const res = NextResponse.json({ ok: true, userId, workspaceId });
   res.headers.set("Set-Cookie", cookie);
