@@ -79,6 +79,8 @@ export async function POST(req: NextRequest) {
           const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
           const purchaseParams = new URLSearchParams({
             PhoneNumber: available.phone_number,
+            VoiceUrl: `${baseUrl}/api/webhooks/twilio/voice`,
+            VoiceMethod: "POST",
             SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
             SmsMethod: "POST",
             StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
@@ -110,24 +112,34 @@ export async function POST(req: NextRequest) {
       const proxyNumber = process.env.TWILIO_PROXY_NUMBER;
       if (proxyNumber) {
         phoneNumber = proxyNumber;
-        // Still configure webhooks even with proxy
+        // Configure webhooks on existing proxy number (look up SID then update)
         try {
-          const updateUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
-          const updateParams = new URLSearchParams({
-            PhoneNumber: proxyNumber,
-            SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
-            SmsMethod: "POST",
-            StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
-            StatusCallbackMethod: "POST",
+          const listUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json?PhoneNumber=${encodeURIComponent(proxyNumber.replace(/\s/g, ""))}`;
+          const listRes = await fetch(listUrl, {
+            headers: { Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64") },
           });
-          await fetch(updateUrl, {
-            method: "POST",
-            headers: {
-              Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: updateParams.toString(),
-          });
+          if (listRes.ok) {
+            const listData = (await listRes.json()) as { incoming_phone_numbers?: Array<{ sid: string }> };
+            const sid = listData.incoming_phone_numbers?.[0]?.sid;
+            if (sid) {
+              const updateUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers/${sid}.json`;
+              await fetch(updateUrl, {
+                method: "POST",
+                headers: {
+                  Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
+                  "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                  VoiceUrl: `${baseUrl}/api/webhooks/twilio/voice`,
+                  VoiceMethod: "POST",
+                  SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
+                  SmsMethod: "POST",
+                  StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
+                  StatusCallbackMethod: "POST",
+                }).toString(),
+              });
+            }
+          }
         } catch {
           // Proxy number may not be configurable, continue anyway
         }
