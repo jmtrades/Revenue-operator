@@ -8,13 +8,20 @@ import { getClientOrNull } from "@/lib/supabase/client";
 export default function SignInForm() {
   const searchParams = useSearchParams();
   const isCreateMode = searchParams.get("create") === "1";
+  const errorParam = searchParams.get("error");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() =>
+    errorParam === "auth" ? "Authentication failed or session expired. Please sign in again." : null
+  );
   const [toast, setToast] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (errorParam === "auth" && !error) setError("Authentication failed or session expired. Please sign in again.");
+  }, [errorParam, error]);
 
   useEffect(() => {
     if (!toast) return;
@@ -24,87 +31,74 @@ export default function SignInForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || loading) return;
+    setError(null);
+
     const trimmed = email.trim().toLowerCase();
+    if (!trimmed) {
+      setError("Please enter your email address.");
+      return;
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       setError("Please enter a valid email address.");
       return;
     }
-    setLoading(true);
-    setError(null);
-
-    // Create account: call signup API (client-side fetch only; no form action)
     if (isCreateMode) {
       if (!password || password.length < 6) {
         setError("Please enter a password (at least 6 characters).");
-        setLoading(false);
         return;
       }
-      try {
-        const res = await fetch("/api/auth/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: trimmed,
-            password,
-            businessName: businessName.trim() || "My Workspace",
-          }),
-          credentials: "include",
-        });
-        const data = (await res.json()) as { ok?: boolean; error?: string; confirmEmail?: boolean };
-        if (res.ok && data.ok) {
-          if (data.confirmEmail) {
-            setError(null);
-            setToast("Account created! Check your email to confirm, then sign in.");
-            setLoading(false);
-            return;
-          }
-          window.location.href = "/app/activity";
-          return;
-        }
-        if (res.status === 503) {
-          setError("Sign-in is temporarily unavailable. Please try again later.");
-        } else {
-          setError(data.error ?? "Sign up failed.");
-        }
-      } catch {
-        setError("Something went wrong. Try again.");
-      } finally {
-        setLoading(false);
+    } else {
+      if (!password || !password.trim()) {
+        setError("Please enter your password.");
+        return;
       }
-      return;
     }
 
-    // Sign-in: require password and call API (client-side fetch only)
-    if (!password || !password.trim()) {
-      setError("Please enter your password.");
-      setLoading(false);
-      return;
-    }
+    if (loading) return;
+    setLoading(true);
+
+    const endpoint = isCreateMode ? "/api/auth/signup" : "/api/auth/signin";
+    const body = isCreateMode
+      ? { email: trimmed, password, businessName: businessName.trim() || "My Workspace" }
+      : { email: trimmed, password: password.trim() };
+
     try {
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: trimmed, password: password.trim() }),
+        body: JSON.stringify(body),
         credentials: "include",
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
-      if (res.ok && data.ok) {
-        window.location.href = "/app/activity";
+      let data: { ok?: boolean; error?: string; confirmEmail?: boolean } = {};
+      try {
+        const text = await res.text();
+        if (text) data = JSON.parse(text) as typeof data;
+      } catch {
+        // non-JSON response (e.g. HTML error page)
+      }
+
+      if (!res.ok) {
+        if (res.status === 503) {
+          setError("Sign-in is temporarily unavailable. Please try again later.");
+        } else if (res.status === 401 && !isCreateMode) {
+          setError("Invalid email or password.");
+        } else {
+          const msg = data.error ?? (isCreateMode ? "Sign up failed. Please try again." : "Sign-in failed.");
+          setError(msg);
+        }
         return;
       }
-      if (res.status === 503) {
-        setError("Sign-in is temporarily unavailable. Please try again later.");
-      } else {
-        const msg = data.error ?? "Sign-in failed.";
-        setError(
-          msg.includes("Invalid") || msg.includes("credentials")
-            ? "Invalid email or password."
-            : msg
-        );
+
+      if (data.ok) {
+        if (isCreateMode && data.confirmEmail) {
+          setToast("Account created! Check your email to confirm, then sign in.");
+          return;
+        }
+        // Replace so user is taken into the app; back button won’t return to sign-in form
+        window.location.replace("/app/activity");
       }
     } catch {
-      setError("Something went wrong. Try again.");
+      setError("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -145,6 +139,7 @@ export default function SignInForm() {
                 onChange={(e) => { setEmail(e.target.value); setError(null); }}
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
                 required
+                maxLength={255}
                 aria-invalid={!!error}
                 aria-describedby={error ? "signin-error" : undefined}
                 autoComplete="email"
@@ -158,12 +153,15 @@ export default function SignInForm() {
                 <input
                   id="signin-password"
                   type={showPassword ? "text" : "password"}
-                  placeholder={isCreateMode ? "Choose a password" : ""}
+                  placeholder={isCreateMode ? "Choose a password (min 6 characters)" : ""}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 pr-12 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
                   autoComplete={isCreateMode ? "new-password" : "current-password"}
                   required
+                  minLength={isCreateMode ? 6 : undefined}
+                  maxLength={256}
+                  aria-describedby={error ? "signin-error" : undefined}
                 />
                 <button
                   type="button"
@@ -186,6 +184,8 @@ export default function SignInForm() {
                   onChange={(e) => setBusinessName(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
                   autoComplete="organization"
+                  maxLength={200}
+                  aria-label="Business name (optional)"
                 />
               </div>
             )}
@@ -193,6 +193,8 @@ export default function SignInForm() {
               type="submit"
               disabled={loading}
               className="w-full py-3 rounded-xl font-semibold text-sm bg-white text-black hover:bg-zinc-100 transition disabled:opacity-60"
+              aria-busy={loading}
+              aria-live="polite"
             >
               {loading ? (isCreateMode ? "Creating account…" : "Signing in…") : isCreateMode ? "Create account →" : "Sign in →"}
             </button>
@@ -237,7 +239,7 @@ export default function SignInForm() {
         </div>
       )}
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200 animate-in fade-in slide-in-from-top-2">
+        <div role="status" aria-live="polite" className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200 animate-in fade-in slide-in-from-top-2">
           {toast}
         </div>
       )}

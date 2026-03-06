@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
+import { validateEmail, validatePasswordForSignin, toFriendlySigninError } from "@/lib/auth/validate";
 
 export const dynamic = "force-dynamic";
 
@@ -21,22 +22,32 @@ export async function POST(req: NextRequest) {
   try {
     body = (await req.json()) as { email?: string; password?: string };
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
-  const password = typeof body?.password === "string" ? body.password : "";
-  if (!email || !password) {
-    return NextResponse.json({ error: "Email and password required" }, { status: 400 });
-  }
+  const emailResult = validateEmail(body?.email ?? "");
+  if (!emailResult.ok) return NextResponse.json({ error: emailResult.error }, { status: 400 });
+  const email = emailResult.value;
+
+  const passwordResult = validatePasswordForSignin(body?.password ?? "");
+  if (!passwordResult.ok) return NextResponse.json({ error: passwordResult.error }, { status: 400 });
+  const password = passwordResult.value;
 
   const supabase = createClient(url, anonKey);
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  let data: { user?: { id: string } | null } | undefined;
+  let error: { message?: string } | null = null;
+  try {
+    const res = await supabase.auth.signInWithPassword({ email, password });
+    data = res.data as { user?: { id: string } | null };
+    error = res.error;
+  } catch {
+    return NextResponse.json({ error: "Auth service unavailable. Please try again." }, { status: 503 });
+  }
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 401 });
+    return NextResponse.json({ error: toFriendlySigninError(error.message ?? "") }, { status: 401 });
   }
 
-  const userId = data.user?.id;
+  const userId = data?.user?.id ?? undefined;
   if (!userId) {
     return NextResponse.json({ error: "No user" }, { status: 401 });
   }

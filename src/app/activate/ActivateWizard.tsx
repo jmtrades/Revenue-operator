@@ -278,9 +278,6 @@ export function ActivateWizard() {
       if (res.ok) {
         fetch("/api/vapi/create-agent", { method: "POST", credentials: "include" }).catch(() => {});
       }
-      if (process.env.NODE_ENV === "development" && !res.ok) {
-        console.log("Workspace create:", res.status, await res.text());
-      }
     } catch { /* ignore */ }
     window.location.href = "/app/activity";
   }, [state]);

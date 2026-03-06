@@ -26,6 +26,7 @@ export default function GlobalError({
               Normal conditions are not present.
             </h1>
             <p className="text-sm mb-6" style={{ color: "#9ca3af" }}>
+              Something went wrong. You can try again or go home.
             </p>
             <div className="flex gap-3 justify-center">
               <button

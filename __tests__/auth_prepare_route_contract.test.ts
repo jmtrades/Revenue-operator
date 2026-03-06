@@ -11,10 +11,10 @@ const ACTIVATE_PAGE = path.join(ROOT, "src", "app", "activate", "page.tsx");
 const SIGNIN_PAGE = path.join(ROOT, "src", "app", "sign-in", "page.tsx");
 
 describe("Auth prepare route contract", () => {
-  it("activate page contains Get started with Recall Touch and Navbar", () => {
+  it("activate page contains Navbar and ActivateWizard (get-started flow)", () => {
     const content = readFileSync(ACTIVATE_PAGE, "utf-8");
-    expect(content).toContain("Get started with Recall Touch");
     expect(content).toContain("Navbar");
+    expect(content).toContain("ActivateWizard");
   });
 
   it("activate page does not show indefinite Preparing or Verifying session", () => {

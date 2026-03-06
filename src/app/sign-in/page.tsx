@@ -1,13 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import SignInForm from "./SignInForm";
 import { SignInTitle } from "./SignInTitle";
 import { Navbar } from "@/components/sections/Navbar";
 
-export const metadata = {
-  title: { absolute: "Sign in — Recall Touch" },
-  description: "Sign in or create your Recall Touch account.",
-};
-
+/**
+ * Sign-in page is fully client-rendered to avoid 503 when RSC prefetch runs
+ * (e.g. when SESSION_SECRET or other server deps are missing in some envs).
+ */
 export default function SignInPage() {
   return (
     <div className="min-h-screen bg-black">
