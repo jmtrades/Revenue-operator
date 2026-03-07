@@ -14,6 +14,7 @@ import { enqueueAction } from "@/lib/action-queue";
 import type { ActionCommand } from "@/lib/action-queue/types";
 import { analyzeClosingCall } from "@/lib/zoom/analysis";
 import { sendCallOutcomeEmail } from "@/lib/email/call-alert";
+import { sendGoLiveEmail } from "@/lib/email/welcome";
 
 const EMERGENCY_KEYWORDS = /\b(emergency|urgent|burst|leak|flood|flooding|flooded|fire|break-in|break in|broken in|no heat|no a\/c|no ac|out of power|power out|flooding|flooded)\b/i;
 
@@ -230,6 +231,23 @@ export async function POST(req: NextRequest) {
       summary: summaryText || transcriptText.slice(0, 220),
       callerPhone: body.caller_phone ?? null,
     }).catch(() => {});
+  }
+
+  const { count: completedCount } = await db
+    .from("call_sessions")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", workspace_id)
+    .not("call_ended_at", "is", null);
+  if (Number(completedCount) === 1) {
+    const { data: ws } = await db.from("workspaces").select("name, owner_id").eq("id", workspace_id).single();
+    const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
+    if (ownerId) {
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
+      const email = (user as { email?: string } | null)?.email;
+      if (email) {
+        void sendGoLiveEmail(email, (ws as { name?: string | null } | null)?.name ?? null).catch(() => {});
+      }
+    }
   }
 
   return NextResponse.json({ ok: true, call_session_id: sessionId });

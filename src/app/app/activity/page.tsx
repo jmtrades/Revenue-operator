@@ -94,6 +94,20 @@ function formatDuration(start?: string | null, end?: string | null): string {
 
 const PAGE_TITLE = "Dashboard — Recall Touch";
 
+function ActivityDateLabel() {
+  const [dateLabel, setDateLabel] = useState("");
+  useEffect(() => {
+    setDateLabel(
+      new Date().toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      }),
+    );
+  }, []);
+  return <span className="text-xs text-zinc-500">{dateLabel}</span>;
+}
+
 const NEXT_ACTIONS = [
   {
     title: "Connect your phone",
@@ -279,13 +293,7 @@ export default function AppActivityPage() {
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <div className="flex items-center justify-between gap-4 mb-4">
         <h1 className="text-lg font-semibold text-white">Activity</h1>
-        <span className="text-xs text-zinc-500">
-          {new Date().toLocaleDateString("en-US", {
-            weekday: "short",
-            month: "short",
-            day: "numeric",
-          })}
-        </span>
+        <ActivityDateLabel />
       </div>
 
       <div className="grid grid-cols-4 gap-2 mb-6">

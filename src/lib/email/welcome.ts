@@ -41,3 +41,29 @@ export async function sendWelcomeEmail(email: string, businessName?: string | nu
     return false;
   }
 }
+
+export async function sendGoLiveEmail(email: string, workspaceName?: string | null): Promise<boolean> {
+  if (!email || !process.env.RESEND_API_KEY) return false;
+  const safeName = workspaceName?.trim() || "Your workspace";
+  const subject = "Your first call is in — you're live";
+  const html = `
+    <p>Hi,</p>
+    <p><strong>${escapeHtml(safeName)}</strong> just completed its first call with Recall Touch.</p>
+    <p>Check your dashboard for the transcript and outcome. Your AI is now handling calls.</p>
+    <p><a href="${APP_URL}/app/activity">Open dashboard →</a></p>
+    <p>— Recall Touch</p>
+  `;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({ from: FROM, to: email, subject, html }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}

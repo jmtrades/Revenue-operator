@@ -227,6 +227,12 @@ export default function CampaignsPage() {
                 <p className="text-xs text-zinc-500 mt-2">
                   Start with a lead follow-up, appointment reminder, or reactivation run.
                 </p>
+                <a
+                  href="#create-run"
+                  className="mt-4 inline-block min-h-[44px] rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-zinc-100 touch-manipulation"
+                >
+                  Create your first run
+                </a>
               </div>
             ) : (
               filtered.map((campaign) => (
@@ -282,7 +288,7 @@ export default function CampaignsPage() {
             )}
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 h-fit">
+          <div id="create-run" className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 h-fit scroll-mt-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-white">{editingId ? "Edit run" : "Create run"}</p>

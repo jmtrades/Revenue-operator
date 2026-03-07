@@ -70,10 +70,22 @@ export async function POST(req: NextRequest) {
     const { data: campaign, error } = await db
       .from("campaigns")
       .insert(insertPayload)
-      .select("id, name, type, status, created_at")
+      .select("id, name, type, status, total_contacts, called, answered, appointments_booked, created_at, target_filter")
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json(campaign);
+    const row = campaign as Record<string, unknown> | null;
+    return NextResponse.json({
+      id: row?.id,
+      name: row?.name,
+      type: row?.type ?? typeVal,
+      status: row?.status ?? "draft",
+      total_contacts: row?.total_contacts ?? 0,
+      called: row?.called ?? 0,
+      answered: row?.answered ?? 0,
+      appointments_booked: row?.appointments_booked ?? 0,
+      created_at: row?.created_at,
+      target_filter: row?.target_filter ?? insertPayload.target_filter ?? null,
+    });
   } catch (_e) {
     return NextResponse.json({ error: "Failed to create campaign" }, { status: 500 });
   }
