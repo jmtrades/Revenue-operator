@@ -4,23 +4,24 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   BellRing,
+  BookOpen,
+  CheckCircle2,
   ClipboardList,
+  Mic,
   MoonStar,
+  Play,
   PhoneCall,
+  PhoneForwarded,
   ShieldAlert,
+  Square,
   Star,
   type LucideIcon,
 } from "lucide-react";
-import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
-import { LiveAgentChat } from "@/components/LiveAgentChat";
-import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 import { AGENT_TEMPLATES, AGENT_TEMPLATE_CATEGORIES, type AgentTemplateCategory } from "@/lib/data/agent-templates";
-import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { CURATED_VOICES, DEFAULT_VOICE_ID, type CuratedVoice } from "@/lib/constants/curated-voices";
 import { getTemplateVoiceId } from "@/lib/data/agent-templates";
 import { useWorkspace } from "@/components/WorkspaceContext";
-
-type VoiceId = string;
 
 type CallStyle = "thorough" | "conversational" | "quick";
 
@@ -37,22 +38,41 @@ type Agent = {
   id: string;
   name: string;
   template: AgentTemplateId;
-  voice: VoiceId;
+  voice: string;
   greeting: string;
   personality: number;
   callStyle: CallStyle;
   active: boolean;
-  callsHandled: number;
   services: string[];
   faq: Array<{ id: string; question: string; answer: string }>;
   specialInstructions: string;
   websiteUrl?: string;
+  vapiAgentId: string | null;
+  stats: {
+    avgRating: number;
+    totalCalls: number;
+    appointmentsBooked: number;
+  };
+  neverSay: string[];
+  alwaysTransfer: string[];
+  escalationChain: string[];
+  transferPhone: string;
   transferRules: Array<{ id: string; phrase: string; phone: string }>;
   afterHoursMode: "messages" | "emergency" | "forward";
   bookingEnabled: boolean;
   pricingEnabled: boolean;
   priceList?: string;
   maxCallDuration: number;
+  voiceSettings: {
+    stability: number;
+    speed: number;
+    responseDelay: number;
+    backchannel: boolean;
+    denoising: boolean;
+    similarityBoost: number;
+    style: number;
+    useSpeakerBoost: boolean;
+  };
 };
 
 type TabId = "profile" | "knowledge" | "rules" | "test";
@@ -61,11 +81,27 @@ function generateAgentId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
-const VOICE_OPTIONS: { id: VoiceId; label: string; description: string }[] = CURATED_VOICES.map((voice) => ({
-  id: voice.id,
-  label: voice.name,
-  description: `${voice.desc} · ${voice.accent}`,
-}));
+const DEFAULT_FAQ_SEED = [
+  {
+    question: "What are your hours?",
+    answer: "We can help you during our normal business hours, and I can still take details any time.",
+  },
+  {
+    question: "Where are you located?",
+    answer: "I can share our location details and make sure the right person follows up if you need anything specific.",
+  },
+  {
+    question: "How do I book an appointment?",
+    answer: "I can help you book that right now and confirm the next available time.",
+  },
+];
+
+const ALWAYS_TRANSFER_OPTIONS = [
+  "Caller explicitly asks for a human",
+  "Caller is angry or frustrated",
+  "Question is about billing or payments",
+  "Agent cannot answer after 2 attempts",
+];
 
 function templateGreeting(id: AgentTemplateId): string {
   switch (id) {
@@ -95,17 +131,36 @@ function defaultAgent(): Agent {
     personality: 60,
     callStyle: "thorough",
     active: true,
-    callsHandled: 0,
     services: [],
     faq: [],
     specialInstructions: "",
     websiteUrl: "",
+    vapiAgentId: null,
+    stats: {
+      avgRating: 0,
+      totalCalls: 0,
+      appointmentsBooked: 0,
+    },
+    neverSay: [],
+    alwaysTransfer: [],
+    escalationChain: [],
+    transferPhone: "",
     transferRules: [],
     afterHoursMode: "messages",
     bookingEnabled: true,
     pricingEnabled: false,
     priceList: "",
     maxCallDuration: 12,
+    voiceSettings: {
+      stability: 0.55,
+      speed: 1,
+      responseDelay: 0.4,
+      backchannel: true,
+      denoising: true,
+      similarityBoost: 0.8,
+      style: 0.35,
+      useSpeakerBoost: true,
+    },
   };
 }
 
@@ -135,9 +190,19 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     priceList?: string;
     maxCallDuration?: number;
     callStyle?: CallStyle;
+    voiceSettings?: Partial<Agent["voiceSettings"]>;
   };
   const rules = (row.rules ?? {}) as {
+    neverSay?: string[];
+    alwaysTransfer?: string[];
+    escalationChain?: string[];
+    transferPhone?: string;
     transferRules?: Array<{ phrase?: string; phone?: string }>;
+  };
+  const stats = (row.stats ?? {}) as {
+    avgRating?: number;
+    totalCalls?: number;
+    appointmentsBooked?: number;
   };
 
   return {
@@ -157,6 +222,18 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
       : [],
     specialInstructions: typeof knowledgeBase.specialInstructions === "string" ? knowledgeBase.specialInstructions : "",
     websiteUrl: typeof knowledgeBase.websiteUrl === "string" ? knowledgeBase.websiteUrl : "",
+    vapiAgentId: typeof row.vapi_agent_id === "string" ? row.vapi_agent_id : null,
+    stats: {
+      avgRating: typeof stats.avgRating === "number" ? stats.avgRating : 0,
+      totalCalls: typeof stats.totalCalls === "number" ? stats.totalCalls : 0,
+      appointmentsBooked:
+        typeof stats.appointmentsBooked === "number" ? stats.appointmentsBooked : 0,
+    },
+    neverSay: Array.isArray(rules.neverSay) ? rules.neverSay.filter(Boolean) : [],
+    alwaysTransfer: Array.isArray(rules.alwaysTransfer) ? rules.alwaysTransfer.filter(Boolean) : [],
+    escalationChain:
+      Array.isArray(rules.escalationChain) ? rules.escalationChain.filter(Boolean) : [],
+    transferPhone: typeof rules.transferPhone === "string" ? rules.transferPhone : "",
     transferRules: Array.isArray(rules.transferRules)
       ? rules.transferRules.map((item, index) => ({
           id: `${row.id ?? "rule"}-${index}`,
@@ -175,6 +252,10 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
         ? knowledgeBase.callStyle
         : "thorough",
     active: Boolean(row.is_active ?? true),
+    voiceSettings: {
+      ...defaultAgent().voiceSettings,
+      ...(knowledgeBase.voiceSettings ?? {}),
+    },
   };
 }
 
@@ -199,11 +280,13 @@ function toAgentPatchPayload(agent: Agent) {
       priceList: agent.priceList,
       maxCallDuration: agent.maxCallDuration,
       callStyle: agent.callStyle,
+      voiceSettings: agent.voiceSettings,
     },
     rules: {
-      neverSay: [],
-      alwaysTransfer: [],
-      escalationChain: [],
+      neverSay: agent.neverSay,
+      alwaysTransfer: agent.alwaysTransfer,
+      escalationChain: agent.escalationChain,
+      transferPhone: agent.transferPhone,
       transferRules: agent.transferRules.map((rule) => ({
         phrase: rule.phrase,
         phone: rule.phone,
@@ -295,21 +378,30 @@ export default function AppAgentsPage() {
     () => (selectedId ? agents.find((a) => a.id === selectedId) ?? null : null),
     [agents, selectedId],
   );
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [hearPlaying, setHearPlaying] = useState(false);
   const [playingAgentId, setPlayingAgentId] = useState<string | null>(null);
+  const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const isHearPlaying = hearPlaying && playingAgentId === selectedId;
-  const voiceGender = useMemo(() => {
-    if (!selected) return "female" as const;
-    return CURATED_VOICES.find((voice) => voice.id === selected.voice)?.gender ?? "female";
-  }, [selected]);
 
-  const [elevenLabsVoices, setElevenLabsVoices] = useState<Array<{ id: string; name: string }>>([]);
-  const [previewVoiceId, setPreviewVoiceId] = useState("");
+  const [elevenLabsVoices, setElevenLabsVoices] = useState<CuratedVoice[]>(CURATED_VOICES);
   useEffect(() => {
     fetch("/api/agent/voices")
       .then((r) => r.json())
-      .then((data: { voices?: Array<{ id: string; name: string }> }) => setElevenLabsVoices(data.voices ?? []))
-      .catch(() => setElevenLabsVoices([]));
+      .then((data: { voices?: CuratedVoice[] }) =>
+        setElevenLabsVoices(Array.isArray(data.voices) && data.voices.length > 0 ? data.voices : CURATED_VOICES),
+      )
+      .catch(() => setElevenLabsVoices(CURATED_VOICES));
+  }, []);
+
+  useEffect(() => {
+    setTab("profile");
+  }, [selectedId]);
+
+  useEffect(() => () => {
+    audioRef.current?.pause();
+    audioRef.current = null;
   }, []);
 
   const updateSelected = (partial: Partial<Agent>) => {
@@ -318,20 +410,121 @@ export default function AppAgentsPage() {
     setAgents(next);
   };
 
-  const handleSave = async () => {
-    if (!selected) return;
+  const playAudioPreview = async (input: {
+    key: string;
+    voiceId: string;
+    text: string;
+    settings: Agent["voiceSettings"];
+    agentId?: string | null;
+  }) => {
+    if (playingVoiceId === input.key && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+      setHearPlaying(false);
+      setPlayingVoiceId(null);
+      setPlayingAgentId(null);
+      return;
+    }
+
+    audioRef.current?.pause();
+    audioRef.current = null;
+    setPlayingVoiceId(input.key);
+    setPlayingAgentId(input.agentId ?? null);
+    setHearPlaying(Boolean(input.agentId));
+
     try {
-      const res = await fetch(`/api/agents/${selected.id}`, {
+      const res = await fetch("/api/agent/preview-voice", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          voice_id: input.voiceId,
+          text: input.text,
+          settings: {
+            stability: input.settings.stability,
+            similarityBoost: input.settings.similarityBoost,
+            style: input.settings.style,
+            useSpeakerBoost: input.settings.useSpeakerBoost,
+          },
+        }),
+      });
+      if (!res.ok) throw new Error("preview_failed");
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.playbackRate = input.settings.speed;
+      audioRef.current = audio;
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        setHearPlaying(false);
+        setPlayingVoiceId(null);
+        setPlayingAgentId(null);
+        audioRef.current = null;
+      };
+      audio.onerror = () => {
+        URL.revokeObjectURL(url);
+        setHearPlaying(false);
+        setPlayingVoiceId(null);
+        setPlayingAgentId(null);
+        audioRef.current = null;
+        setToast("Could not play preview");
+      };
+      await audio.play();
+    } catch {
+      setHearPlaying(false);
+      setPlayingVoiceId(null);
+      setPlayingAgentId(null);
+      setToast("Could not play preview");
+    }
+  };
+
+  const persistAgent = async (agentToSave: Agent, options?: { showToast?: boolean }) => {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/agents/${agentToSave.id}`, {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(toAgentPatchPayload(selected)),
+        body: JSON.stringify(toAgentPatchPayload(agentToSave)),
       });
       if (!res.ok) throw new Error("save_failed");
-      setToast("Agent saved");
+      const syncRes = await fetch("/api/agent/create-vapi", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agent_id: agentToSave.id }),
+      });
+      const syncData = (await syncRes.json().catch(() => null)) as
+        | { vapi_agent_id?: string; error?: string }
+        | null;
+      if (!syncRes.ok || !syncData?.vapi_agent_id) {
+        throw new Error(syncData?.error || "sync_failed");
+      }
+      setAgents((current) =>
+        current.map((agent) =>
+          agent.id === agentToSave.id
+            ? { ...agent, vapiAgentId: syncData.vapi_agent_id ?? agent.vapiAgentId }
+            : agent,
+        ),
+      );
+      if (options?.showToast !== false) {
+        setToast("Agent saved and synced live");
+      }
+      return syncData.vapi_agent_id;
     } catch {
-      setToast("Could not save agent");
+      if (options?.showToast !== false) {
+        setToast("Could not save agent");
+      }
+      return null;
+    } finally {
+      setSaving(false);
     }
+  };
+
+  const handleSave = async () => {
+    if (!selected) return;
+    await persistAgent(selected, { showToast: true });
   };
 
   const handleDelete = async () => {
@@ -370,7 +563,6 @@ export default function AppAgentsPage() {
       name: nameByTemplate[template],
       voice: getTemplateVoiceId(template) || base.voice,
       greeting: templateGreeting(template),
-      callsHandled: 0,
       services: [],
       faq: [],
       transferRules: [],
@@ -390,18 +582,13 @@ export default function AppAgentsPage() {
       if (!createdRes.ok) throw new Error("create_failed");
       const created = (await createdRes.json()) as { id: string };
       const persisted = { ...agent, id: created.id };
-      await fetch(`/api/agents/${created.id}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(toAgentPatchPayload(persisted)),
-      });
-      const next = [...agents, persisted];
+      const assistantId = await persistAgent(persisted, { showToast: false });
+      const next = [...agents, { ...persisted, vapiAgentId: assistantId }];
       setAgents(next);
       setSelectedId(persisted.id);
       setTab("profile");
       setShowTemplateModal(false);
-      setToast("Agent created");
+      setToast("Agent created and synced");
     } catch {
       setToast("Could not create agent");
     }
@@ -419,7 +606,6 @@ export default function AppAgentsPage() {
       name,
       greeting: t.defaultGreeting,
       voice: getTemplateVoiceId(t.id) || base.voice,
-      callsHandled: 0,
       services: [],
       faq: [],
       transferRules: [],
@@ -436,18 +622,13 @@ export default function AppAgentsPage() {
       if (!createdRes.ok) throw new Error("create_failed");
       const created = (await createdRes.json()) as { id: string };
       const persisted = { ...agent, id: created.id };
-      await fetch(`/api/agents/${created.id}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(toAgentPatchPayload(persisted)),
-      });
-      const next = [...agents, persisted];
+      const assistantId = await persistAgent(persisted, { showToast: false });
+      const next = [...agents, { ...persisted, vapiAgentId: assistantId }];
       setAgents(next);
       setSelectedId(persisted.id);
       setTab("profile");
       setShowTemplateModal(false);
-      setToast("Agent created");
+      setToast("Agent created and synced");
     } catch {
       setToast("Could not create agent");
     }
@@ -526,13 +707,13 @@ export default function AppAgentsPage() {
                             : "Custom"}
               </p>
               <p className="text-[11px] text-zinc-500">
-                Voice: {VOICE_OPTIONS.find((v) => v.id === agent.voice)?.label ?? "Voice"}
+                Voice: {elevenLabsVoices.find((v) => v.id === agent.voice)?.name ?? "Voice"}
               </p>
               <p className="mt-2 text-[11px] text-zinc-500 line-clamp-2">
                 {agent.greeting}
               </p>
               <p className="mt-3 text-[11px] text-zinc-600">
-                {agent.callsHandled} calls handled
+                {agent.stats.totalCalls} calls handled
               </p>
             </button>
           ))}
@@ -549,39 +730,24 @@ export default function AppAgentsPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  {elevenLabsVoices.length > 0 && (
-                    <select
-                      value={previewVoiceId}
-                      onChange={(e) => setPreviewVoiceId(e.target.value)}
-                      className="px-2 py-1.5 rounded-lg border border-zinc-700 bg-zinc-900 text-xs text-zinc-200 focus:border-zinc-500 focus:outline-none"
-                      aria-label="Preview voice"
-                    >
-                      <option value="">Default voice</option>
-                      {elevenLabsVoices.map((v) => (
-                        <option key={v.id} value={v.id}>{v.name}</option>
-                      ))}
-                    </select>
-                  )}
                   <button
                     type="button"
-                    onClick={() => {
-                      setPlayingAgentId(selected.id);
-                      setHearPlaying(true);
-                      void speakTextViaApi(selected.greeting, {
-                        voiceId: previewVoiceId || undefined,
-                        gender: voiceGender,
-                        onStart: () => setHearPlaying(true),
-                        onEnd: () => {
-                          setHearPlaying(false);
-                          setPlayingAgentId(null);
-                        },
-                      });
-                    }}
+                    onClick={() =>
+                      void playAudioPreview({
+                        key: `agent-${selected.id}`,
+                        voiceId: selected.voice,
+                        text:
+                          selected.greeting.trim() ||
+                          "Thanks for calling. How can I help you today?",
+                        settings: selected.voiceSettings,
+                        agentId: selected.id,
+                      })
+                    }
                     disabled={!selected.greeting.trim()}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
                   >
-                    {isHearPlaying ? <Waveform isPlaying /> : <span>▶</span>}
-                    {isHearPlaying ? "Playing preview…" : "Hear This Agent"}
+                    {isHearPlaying ? <Waveform isPlaying /> : <Play className="h-3 w-3 fill-current" />}
+                    {isHearPlaying ? "Stop preview" : "Hear This Agent"}
                   </button>
                   <button
                     type="button"
@@ -593,9 +759,10 @@ export default function AppAgentsPage() {
                   <button
                     type="button"
                     onClick={handleSave}
+                    disabled={saving}
                     className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
                   >
-                    Save
+                    {saving ? "Saving…" : "Save"}
                   </button>
                 </div>
               </div>
@@ -622,13 +789,43 @@ export default function AppAgentsPage() {
               </div>
 
               {tab === "profile" && (
-                <ProfileTab agent={selected} onChange={updateSelected} />
+                <ProfileTab
+                  agent={selected}
+                  voices={elevenLabsVoices}
+                  onChange={updateSelected}
+                  onVoicePreview={(voiceId) =>
+                    void playAudioPreview({
+                      key: voiceId,
+                      voiceId,
+                      text:
+                        selected.greeting.trim() ||
+                        "Thanks for calling. How can I help you today?",
+                      settings: selected.voiceSettings,
+                    })
+                  }
+                  previewingVoiceId={playingVoiceId}
+                />
               )}
               {tab === "knowledge" && (
                 <KnowledgeTab agent={selected} onChange={updateSelected} />
               )}
               {tab === "rules" && <RulesTab agent={selected} onChange={updateSelected} />}
-              {tab === "test" && <TestTab agent={selected} />}
+              {tab === "test" && (
+                <TestTab
+                  agent={selected}
+                  onPrepareAgent={async () => {
+                    const assistantId = await persistAgent(selected, { showToast: false });
+                    if (assistantId) {
+                      setAgents((current) =>
+                        current.map((agent) =>
+                          agent.id === selected.id ? { ...agent, vapiAgentId: assistantId } : agent,
+                        ),
+                      );
+                    }
+                    return assistantId;
+                  }}
+                />
+              )}
             </>
           ) : (
             <p className="text-sm text-zinc-500">
@@ -762,7 +959,89 @@ function TemplateCard(props: { title: string; description: string; onClick: () =
   );
 }
 
-function ProfileTab({ agent, onChange }: { agent: Agent; onChange: (partial: Partial<Agent>) => void }) {
+function VoiceCard(props: {
+  voice: CuratedVoice;
+  selected: boolean;
+  previewing: boolean;
+  onSelect: () => void;
+  onPreview: () => void;
+}) {
+  const { voice, selected, previewing, onSelect, onPreview } = props;
+  return (
+    <div
+      onClick={onSelect}
+      className={`relative cursor-pointer rounded-xl p-3 transition-all ${
+        selected
+          ? "border-2 border-white bg-white/[0.06] ring-1 ring-white/20"
+          : "border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12]"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onPreview();
+        }}
+        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.06] transition-colors hover:bg-white/[0.12]"
+        title="Preview voice"
+      >
+        {previewing ? <Square className="h-3 w-3 fill-current text-white/70" /> : <Play className="h-3 w-3 fill-current text-white/50" />}
+      </button>
+      <p className="text-sm font-medium text-white/90">{voice.name}</p>
+      <p className="mt-0.5 text-xs text-white/40">{voice.description}</p>
+      <p className="mt-0.5 text-xs text-white/25">{voice.accent}</p>
+      <p className="mt-2 pr-8 text-[10px] leading-tight text-white/20">{voice.bestFor}</p>
+    </div>
+  );
+}
+
+function RangeSetting(props: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  suffix: string;
+  note?: string;
+  onChange: (value: number) => void;
+}) {
+  const { label, value, min, max, step, suffix, note, onChange } = props;
+  return (
+    <div>
+      <label className="flex justify-between text-xs text-zinc-400">
+        <span>{label}</span>
+        <span className="text-zinc-500">
+          {value}
+          {suffix}
+        </span>
+      </label>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="mt-2 w-full accent-white"
+      />
+      {note ? <p className="mt-1 text-[10px] text-zinc-500">{note}</p> : null}
+    </div>
+  );
+}
+
+function ProfileTab({
+  agent,
+  voices,
+  onChange,
+  onVoicePreview,
+  previewingVoiceId,
+}: {
+  agent: Agent;
+  voices: CuratedVoice[];
+  onChange: (partial: Partial<Agent>) => void;
+  onVoicePreview: (voiceId: string) => void;
+  previewingVoiceId: string | null;
+}) {
   return (
     <div className="space-y-4 text-xs md:text-sm">
       <div className="space-y-1">
@@ -779,22 +1058,97 @@ function ProfileTab({ agent, onChange }: { agent: Agent; onChange: (partial: Par
       <div>
         <p className="text-[11px] text-zinc-500 mb-2">Voice</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {VOICE_OPTIONS.map((voice) => (
-            <button
+          {voices.map((voice) => (
+            <VoiceCard
               key={voice.id}
-              type="button"
-              onClick={() => onChange({ voice: voice.id })}
-              className={`text-left p-2 rounded-xl border text-xs ${
-                agent.voice === voice.id
-                  ? "border-white bg-zinc-900 text-white"
-                  : "border-zinc-800 bg-zinc-900/50 text-zinc-300"
-              }`}
-            >
-              <p className="font-medium mb-0.5">{voice.label}</p>
-              <p className="text-[11px] text-zinc-500">{voice.description}</p>
-            </button>
+              voice={voice}
+              selected={agent.voice === voice.id}
+              previewing={previewingVoiceId === voice.id}
+              onSelect={() => onChange({ voice: voice.id })}
+              onPreview={() => onVoicePreview(voice.id)}
+            />
           ))}
         </div>
+        <details className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
+          <summary className="cursor-pointer text-xs text-zinc-400 hover:text-white">
+            Advanced voice settings
+          </summary>
+          <div className="mt-4 space-y-4">
+            <RangeSetting
+              label="Stability"
+              value={agent.voiceSettings.stability}
+              min={0}
+              max={1}
+              step={0.05}
+              suffix=""
+              note="Lower feels more expressive. Higher feels more consistent."
+              onChange={(value) =>
+                onChange({
+                  voiceSettings: { ...agent.voiceSettings, stability: value },
+                })
+              }
+            />
+            <RangeSetting
+              label="Speed"
+              value={agent.voiceSettings.speed}
+              min={0.8}
+              max={1.3}
+              step={0.05}
+              suffix="x"
+              onChange={(value) =>
+                onChange({
+                  voiceSettings: { ...agent.voiceSettings, speed: value },
+                })
+              }
+            />
+            <RangeSetting
+              label="Response delay"
+              value={agent.voiceSettings.responseDelay}
+              min={0}
+              max={1.5}
+              step={0.1}
+              suffix="s"
+              note="A slight pause can sound more thoughtful. 0.3-0.5 seconds is usually best."
+              onChange={(value) =>
+                onChange({
+                  voiceSettings: { ...agent.voiceSettings, responseDelay: value },
+                })
+              }
+            />
+            <label className="flex items-center gap-2 text-xs text-zinc-400">
+              <input
+                type="checkbox"
+                checked={agent.voiceSettings.backchannel}
+                onChange={(e) =>
+                  onChange({
+                    voiceSettings: {
+                      ...agent.voiceSettings,
+                      backchannel: e.target.checked,
+                    },
+                  })
+                }
+                className="accent-white"
+              />
+              Backchannel sounds while listening
+            </label>
+            <label className="flex items-center gap-2 text-xs text-zinc-400">
+              <input
+                type="checkbox"
+                checked={agent.voiceSettings.denoising}
+                onChange={(e) =>
+                  onChange({
+                    voiceSettings: {
+                      ...agent.voiceSettings,
+                      denoising: e.target.checked,
+                    },
+                  })
+                }
+                className="accent-white"
+              />
+              Background noise reduction
+            </label>
+          </div>
+        </details>
       </div>
 
       <div className="space-y-1">
@@ -867,142 +1221,115 @@ function ProfileTab({ agent, onChange }: { agent: Agent; onChange: (partial: Par
             {agent.active ? "Active on your number" : "Inactive"}
           </span>
         </div>
-        <p className="text-[11px] text-zinc-500">{agent.callsHandled} calls so far</p>
+        <p className="text-[11px] text-zinc-500">{agent.stats.totalCalls} calls so far</p>
       </div>
     </div>
   );
 }
 
 function KnowledgeTab({ agent, onChange }: { agent: Agent; onChange: (partial: Partial<Agent>) => void }) {
-  const [serviceInput, setServiceInput] = useState("");
-
-  const addService = () => {
-    const v = serviceInput.trim();
-    if (!v) return;
-    if (!agent.services.includes(v)) {
-      onChange({ services: [...agent.services, v] });
-    }
-    setServiceInput("");
-  };
-
   const addFaqRow = () => {
     const id = `f-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     onChange({ faq: [...agent.faq, { id, question: "", answer: "" }] });
   };
 
+  const seedDefaults = () => {
+    if (agent.faq.length > 0) return;
+    onChange({
+      faq: DEFAULT_FAQ_SEED.map((item, index) => ({
+        id: `seed-${index}`,
+        question: item.question,
+        answer: item.answer,
+      })),
+    });
+  };
+
   return (
     <div className="space-y-4 text-xs md:text-sm">
-      <div>
-        <label className="block text-[11px] text-zinc-500 mb-1">Services</label>
-        <div className="flex gap-2 mb-2">
-          <input
-            type="text"
-            value={serviceInput}
-            onChange={(e) => setServiceInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addService();
-              }
-            }}
-            className="flex-1 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
-            placeholder="e.g., Emergency plumbing, Routine cleaning"
-          />
-          <button
-            type="button"
-            onClick={addService}
-            className="px-3 py-2 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
-          >
-            Add
-          </button>
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-medium text-white/80">Knowledge base</h3>
+          <p className="text-xs text-white/40">
+            Q&A pairs your agent uses to answer callers clearly and consistently.
+          </p>
         </div>
-        {agent.services.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {agent.services.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() =>
-                  onChange({
-                    services: agent.services.filter((x) => x !== s),
-                  })
-                }
-                className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-200"
-              >
-                {s} <span className="text-zinc-500">×</span>
-              </button>
-            ))}
-          </div>
-        )}
+        <button
+          type="button"
+          onClick={addFaqRow}
+          className="text-sm text-white hover:text-zinc-300"
+        >
+          + Add entry
+        </button>
       </div>
 
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-[11px] text-zinc-500">FAQ</label>
+      {agent.faq.length === 0 ? (
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 px-4 py-8 text-center">
+          <BookOpen className="mx-auto h-8 w-8 text-zinc-600" />
+          <p className="mt-3 text-sm text-zinc-300">No knowledge entries yet</p>
+          <p className="mt-1 text-xs text-zinc-500">
+            Add common questions and short answers so callers get clear next steps.
+          </p>
           <button
             type="button"
-            onClick={addFaqRow}
-            className="text-[11px] text-zinc-300 underline underline-offset-2"
+            onClick={seedDefaults}
+            className="mt-4 rounded-xl border border-zinc-700 px-3 py-2 text-xs text-zinc-200 hover:border-zinc-500"
           >
-            + Add
+            Add starter entries
           </button>
         </div>
-        {agent.faq.length === 0 ? (
-          <p className="text-[11px] text-zinc-600">
-            Add 2–5 short Q&A pairs. Your AI will use these to answer confidently.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {agent.faq.map((item, index) => (
-              <div
-                key={item.id}
-                className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-[11px] text-zinc-500">Question {index + 1}</p>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onChange({
-                        faq: agent.faq.filter((f) => f.id !== item.id),
-                      })
-                    }
-                    className="text-[11px] text-zinc-500 hover:text-zinc-200"
-                  >
-                    Remove
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  value={item.question}
-                  onChange={(e) =>
+      ) : (
+        <div className="space-y-3">
+          {agent.faq.map((item, index) => (
+            <div
+              key={item.id}
+              className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4"
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-[11px] text-zinc-500">Entry {index + 1}</p>
+                <button
+                  type="button"
+                  onClick={() =>
                     onChange({
-                      faq: agent.faq.map((f) =>
-                        f.id === item.id ? { ...f, question: e.target.value } : f,
-                      ),
+                      faq: agent.faq.filter((f) => f.id !== item.id),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
-                  placeholder="What do callers usually ask?"
-                />
-                <textarea
-                  rows={2}
-                  value={item.answer}
-                  onChange={(e) =>
-                    onChange({
-                      faq: agent.faq.map((f) =>
-                        f.id === item.id ? { ...f, answer: e.target.value } : f,
-                      ),
-                    })
-                  }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
-                  placeholder="How should we answer?"
-                />
+                  className="text-[11px] text-zinc-500 hover:text-white"
+                >
+                  Remove
+                </button>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+              <label className="text-xs text-zinc-500">When caller asks about...</label>
+              <input
+                type="text"
+                value={item.question}
+                onChange={(e) =>
+                  onChange({
+                    faq: agent.faq.map((f) =>
+                      f.id === item.id ? { ...f, question: e.target.value } : f,
+                    ),
+                  })
+                }
+                className="mt-1 w-full border-b border-white/[0.08] bg-transparent py-1 text-sm text-white/80 focus:outline-none"
+                placeholder="What do callers usually ask?"
+              />
+              <label className="mt-3 block text-xs text-zinc-500">Agent responds with...</label>
+              <textarea
+                rows={2}
+                value={item.answer}
+                onChange={(e) =>
+                  onChange({
+                    faq: agent.faq.map((f) =>
+                      f.id === item.id ? { ...f, answer: e.target.value } : f,
+                    ),
+                  })
+                }
+                className="mt-1 w-full border-b border-white/[0.08] bg-transparent py-1 text-sm text-white/80 focus:outline-none resize-none"
+                placeholder="How should the agent respond?"
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="space-y-1">
         <label className="block text-[11px] text-zinc-500">Special instructions</label>
@@ -1011,18 +1338,7 @@ function KnowledgeTab({ agent, onChange }: { agent: Agent; onChange: (partial: P
           value={agent.specialInstructions}
           onChange={(e) => onChange({ specialInstructions: e.target.value })}
           className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
-          placeholder="Anything the AI should always remember when talking to callers."
-        />
-      </div>
-
-      <div className="space-y-1">
-        <label className="block text-[11px] text-zinc-500">Website URL</label>
-        <input
-          type="url"
-          value={agent.websiteUrl ?? ""}
-          onChange={(e) => onChange({ websiteUrl: e.target.value })}
-          className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
-          placeholder="https://yourbusiness.com"
+          placeholder="Anything the agent should always remember on calls."
         />
       </div>
     </div>
@@ -1039,9 +1355,60 @@ function RulesTab({ agent, onChange }: { agent: Agent; onChange: (partial: Parti
 
   return (
     <div className="space-y-4 text-xs md:text-sm">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
+        <h3 className="mb-2 text-sm font-medium text-white/80">Transfer to a human when...</h3>
+        <div className="space-y-2">
+          {ALWAYS_TRANSFER_OPTIONS.map((option) => (
+            <label key={option} className="flex items-center gap-2 text-sm text-zinc-300">
+              <input
+                type="checkbox"
+                className="accent-white"
+                checked={agent.alwaysTransfer.includes(option)}
+                onChange={(e) =>
+                  onChange({
+                    alwaysTransfer: e.target.checked
+                      ? [...agent.alwaysTransfer, option]
+                      : agent.alwaysTransfer.filter((item) => item !== option),
+                  })
+                }
+              />
+              {option}
+            </label>
+          ))}
+        </div>
+        <div className="mt-3">
+          <label className="text-xs text-zinc-500">Transfer to phone number</label>
+          <input
+            type="tel"
+            value={agent.transferPhone}
+            onChange={(e) => onChange({ transferPhone: e.target.value })}
+            placeholder="+1 (555) 000-0000"
+            className="mt-1 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-1">
+        <label className="block text-[11px] text-zinc-500">Never say</label>
+        <textarea
+          rows={3}
+          value={agent.neverSay.join("\n")}
+          onChange={(e) =>
+            onChange({
+              neverSay: e.target.value
+                .split("\n")
+                .map((item) => item.trim())
+                .filter(Boolean),
+            })
+          }
+          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none resize-none"
+          placeholder="Competitor names, legal advice, pricing specifics..."
+        />
+      </div>
+
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="block text-[11px] text-zinc-500">Transfer rules</label>
+          <label className="block text-[11px] text-zinc-500">Phrase-based transfer rules</label>
           <button
             type="button"
             onClick={addTransferRule}
@@ -1111,235 +1478,205 @@ function RulesTab({ agent, onChange }: { agent: Agent; onChange: (partial: Parti
       </div>
 
       <div>
-        <p className="text-[11px] text-zinc-500 mb-2">After-hours behavior</p>
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { id: "messages" as const, label: "Messages", desc: "Take messages only, no transfers" },
-            { id: "emergency" as const, label: "Emergency", desc: "Route only clear emergencies" },
-            { id: "forward" as const, label: "Forward", desc: "Forward all calls to on-call" },
-          ].map(({ id, label, desc }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => onChange({ afterHoursMode: id })}
-              className={`text-left p-2 rounded-xl border text-[11px] ${
-                agent.afterHoursMode === id
-                  ? "border-white bg-zinc-900 text-white"
-                  : "border-zinc-800 bg-zinc-900/50 text-zinc-300"
-              }`}
-            >
-              <p className="font-medium mb-0.5">{label}</p>
-              <p className="text-[10px] text-zinc-500">{desc}</p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            role="switch"
-            aria-checked={agent.bookingEnabled}
-            onClick={() => onChange({ bookingEnabled: !agent.bookingEnabled })}
-            className={`w-10 h-5 rounded-full relative transition-colors ${
-              agent.bookingEnabled ? "bg-green-500" : "bg-zinc-700"
-            }`}
-          >
-            <span
-              className="absolute top-0.5 w-4 h-4 rounded-full bg-black transition-all"
-              style={{ left: agent.bookingEnabled ? "22px" : "2px" }}
-            />
-          </button>
-          <p className="text-[11px] text-zinc-300">
-            Allow this agent to book appointments
-          </p>
-        </div>
-        <div className="flex items-start gap-2">
-          <button
-            type="button"
-            role="switch"
-            aria-checked={agent.pricingEnabled}
-            onClick={() => onChange({ pricingEnabled: !agent.pricingEnabled })}
-            className={`mt-0.5 w-10 h-5 rounded-full relative transition-colors ${
-              agent.pricingEnabled ? "bg-green-500" : "bg-zinc-700"
-            }`}
-          >
-            <span
-              className="absolute top-0.5 w-4 h-4 rounded-full bg-black transition-all"
-              style={{ left: agent.pricingEnabled ? "22px" : "2px" }}
-            />
-          </button>
-          <div className="flex-1">
-            <p className="text-[11px] text-zinc-300">Share pricing ranges on calls</p>
-            <p className="text-[11px] text-zinc-500 mb-1">
-              The AI will use these as a guide, not negotiate.
-            </p>
-            {agent.pricingEnabled && (
-              <textarea
-                rows={3}
-                value={agent.priceList ?? ""}
-                onChange={(e) => onChange({ priceList: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
-                placeholder={"Examples:\n• New patient exam: $120–$180\n• Standard cleaning: $95–$140"}
-              />
-            )}
-          </div>
-        </div>
+        <label className="mb-2 block text-[11px] text-zinc-500">After-hours behavior</label>
+        <select
+          value={agent.afterHoursMode}
+          onChange={(e) => onChange({ afterHoursMode: e.target.value as Agent["afterHoursMode"] })}
+          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none"
+        >
+          <option value="messages">Take a message and notify the owner</option>
+          <option value="forward">Offer to schedule a callback</option>
+          <option value="emergency">Transfer to the emergency line</option>
+        </select>
       </div>
 
       <div className="space-y-1">
-        <label className="block text-[11px] text-zinc-500">
-          Max call duration (minutes)
-        </label>
-        <input
-          type="number"
-          min={3}
-          max={30}
-          value={agent.maxCallDuration}
-          onChange={(e) =>
-            onChange({
-              maxCallDuration: Number(e.target.value || 0) || agent.maxCallDuration,
-            })
-          }
-          className="w-24 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
-        />
+        <label className="block text-[11px] text-zinc-500">Maximum call duration</label>
+        <select
+          value={String(agent.maxCallDuration)}
+          onChange={(e) => onChange({ maxCallDuration: Number(e.target.value) })}
+          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none"
+        >
+          <option value="5">5 minutes</option>
+          <option value="10">10 minutes</option>
+          <option value="15">15 minutes</option>
+          <option value="30">30 minutes</option>
+        </select>
       </div>
     </div>
   );
 }
 
-function agentNameToId(name: string): "sarah" | "alex" | "emma" {
-  const n = (name || "").trim().toLowerCase();
-  if (n === "alex") return "alex";
-  if (n === "emma") return "emma";
-  return "sarah";
-}
+function TestTab({
+  agent,
+  onPrepareAgent,
+}: {
+  agent: Agent;
+  onPrepareAgent: () => Promise<string | null>;
+}) {
+  const [status, setStatus] = useState<"idle" | "connecting" | "active" | "ended">("idle");
+  const [transcript, setTranscript] = useState<Array<{ role: string; text: string }>>([]);
+  const [error, setError] = useState<string | null>(null);
+  const clientRef = useRef<{
+    start: (options: { assistantId: string }) => Promise<unknown>;
+    stop: () => void;
+    on: (event: string, handler: (payload?: unknown) => void) => void;
+  } | null>(null);
 
-function TestTab({ agent }: { agent: Agent }) {
-  const [playing, setPlaying] = useState(false);
-  const [step, setStep] = useState(0);
-  const timersRef = useRef<number[]>([]);
+  useEffect(() => {
+    return () => {
+      clientRef.current?.stop();
+      clientRef.current = null;
+    };
+  }, []);
 
-  const clearTimers = () => {
-    timersRef.current.forEach((id) => window.clearTimeout(id));
-    timersRef.current = [];
+  const endCall = () => {
+    clientRef.current?.stop();
+    clientRef.current = null;
+    setStatus("ended");
   };
 
-  const start = () => {
-    clearTimers();
-    setPlaying(true);
-    setStep(1);
-    timersRef.current.push(
-      window.setTimeout(() => setStep(2), 1200),
-      window.setTimeout(() => setStep(3), 2400),
-      window.setTimeout(() => {
-        setStep(4);
-        setPlaying(false);
-      }, 3600),
-    );
-  };
+  const startTestCall = async () => {
+    setStatus("connecting");
+    setTranscript([]);
+    setError(null);
 
-  const stop = () => {
-    clearTimers();
-    setPlaying(false);
-    setStep(0);
+    try {
+      const assistantId = (await onPrepareAgent()) || agent.vapiAgentId;
+      const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
+      if (!publicKey) {
+        throw new Error("NEXT_PUBLIC_VAPI_PUBLIC_KEY is not configured");
+      }
+      if (!assistantId) {
+        throw new Error("This agent has not been synced to Vapi yet");
+      }
+
+      const { default: Vapi } = await import("@vapi-ai/web");
+      const client = new Vapi(publicKey) as {
+        start: (options: { assistantId: string }) => Promise<unknown>;
+        stop: () => void;
+        on: (event: string, handler: (payload?: unknown) => void) => void;
+      };
+      clientRef.current = client;
+
+      client.on("call-start", () => setStatus("active"));
+      client.on("call-end", () => {
+        setStatus("ended");
+        clientRef.current = null;
+      });
+      client.on("message", (payload?: unknown) => {
+        const data = payload as
+          | {
+              role?: string;
+              transcript?: string;
+              text?: string;
+              transcriptType?: string;
+              type?: string;
+            }
+          | undefined;
+        const text = data?.transcript ?? data?.text ?? "";
+        if (!text || data?.transcriptType === "partial") return;
+        const role = data?.role === "assistant" ? "assistant" : "user";
+        setTranscript((current) => [...current, { role, text }]);
+      });
+
+      await client.start({ assistantId });
+    } catch (err) {
+      setStatus("idle");
+      setError(err instanceof Error ? err.message : "Could not start test call");
+    }
   };
 
   return (
-    <div className="space-y-4 text-xs md:text-sm">
-      <p className="text-[11px] text-zinc-500">
-        Talk to this agent to test how it responds with your greeting and style.
-      </p>
-      <WorkspaceVoiceButton
-        title={`Test ${agent.name}`}
-        description="Start a real browser call with your current workspace phone flow, then use the quick simulation below for a predictable example."
-        startLabel="Start browser test"
-        endLabel="End browser test"
-        showUnavailable={true}
-      />
-      <div className="rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-900/50">
-        <LiveAgentChat
-          variant="mini"
-          initialAgent={agentNameToId(agent.name)}
-          businessName={agent.websiteUrl || undefined}
-          greeting={agent.greeting}
-            personality={agent.personality}
-            callStyle={agent.callStyle}
-            showMic={true}
-        />
-      </div>
-      <p className="text-[11px] text-zinc-500">
-        Quick simulated call so you can hear how this agent greets and handles a simple enquiry.
-      </p>
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-zinc-400">
-            Caller · &quot;New enquiry&quot;
+    <div className="py-4 text-center">
+      {status === "idle" && (
+        <div>
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/[0.06]">
+            <Mic className="h-8 w-8 text-white/70" />
+          </div>
+          <h3 className="mb-1 text-lg font-medium text-white/90">Test your agent</h3>
+          <p className="mx-auto mb-6 max-w-xs text-sm text-white/40">
+            Have a real browser conversation with this agent using its current voice, greeting, and knowledge.
           </p>
           <button
             type="button"
-            onClick={() => (playing ? stop() : start())}
-            className="px-3 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
+            onClick={() => void startTestCall()}
+            className="rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100"
           >
-            {playing ? "Stop" : "▶ Test Agent"}
+            Start test call
           </button>
         </div>
-        <div className="space-y-2">
-          {step >= 1 && (
-            <Bubble side="right" label="AI">
-              {agent.greeting}
-            </Bubble>
-          )}
-          {step >= 2 && (
-            <Bubble side="left" label="Caller">
-              Hi, I&apos;m a new customer. I wanted to see if you have availability this week.
-            </Bubble>
-          )}
-          {step >= 3 && (
-            <Bubble side="right" label="AI">
-              Absolutely. I can help with that. What day and time works best, and what are you looking to book?
-            </Bubble>
-          )}
-          {step >= 4 && (
-            <Bubble side="left" label="Caller">
-              Sometime Tuesday morning for a first visit.
-            </Bubble>
+      )}
+
+      {status === "connecting" && (
+        <div>
+          <div className="mx-auto mb-4 flex h-20 w-20 animate-pulse items-center justify-center rounded-full bg-white/[0.08]">
+            <PhoneForwarded className="h-8 w-8 text-white/70" />
+          </div>
+          <p className="text-sm text-zinc-400">Connecting...</p>
+        </div>
+      )}
+
+      {(status === "active" || status === "ended") && (
+        <div>
+          <div
+            className={`mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full ${
+              status === "active"
+                ? "animate-pulse bg-emerald-500/20 text-emerald-300"
+                : "bg-zinc-800 text-zinc-300"
+            }`}
+          >
+            {status === "active" ? <Mic className="h-8 w-8" /> : <CheckCircle2 className="h-8 w-8" />}
+          </div>
+          <p className={`mb-4 text-sm font-medium ${status === "active" ? "text-emerald-400" : "text-zinc-300"}`}>
+            {status === "active" ? "Call active — speak now" : "Test call complete"}
+          </p>
+          <div className="mx-auto max-h-56 max-w-md space-y-2 overflow-y-auto text-left">
+            {transcript.map((item, index) => (
+              <div
+                key={`${item.role}-${index}`}
+                className={`rounded-lg px-3 py-2 text-sm ${
+                  item.role === "assistant"
+                    ? "bg-blue-500/10 text-blue-300"
+                    : "bg-white/[0.04] text-white/70"
+                }`}
+              >
+                <span className="mr-2 text-xs text-white/30">
+                  {item.role === "assistant" ? "Agent" : "You"}
+                </span>
+                {item.text}
+              </div>
+            ))}
+          </div>
+          {status === "active" ? (
+            <button
+              type="button"
+              onClick={endCall}
+              className="mt-4 inline-flex items-center gap-2 text-sm text-red-400 hover:text-red-300"
+            >
+              <Square className="h-3 w-3 fill-current" />
+              End call
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setStatus("idle");
+                setTranscript([]);
+              }}
+              className="mt-4 text-sm text-white hover:text-zinc-300"
+            >
+              Try again
+            </button>
           )}
         </div>
-        {playing && step < 4 && (
-          <div className="flex gap-1 pt-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" />
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce [animation-delay:120ms]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce [animation-delay:240ms]" />
-          </div>
-        )}
-      </div>
-      <p className="text-[11px] text-zinc-500">
-        This is a demo simulation only. In production, calls route through your connected phone number.
-      </p>
-    </div>
-  );
-}
+      )}
 
-function Bubble({
-  side,
-  label,
-  children,
-}: {
-  side: "left" | "right";
-  label: string;
-  children: React.ReactNode;
-}) {
-  const align = side === "left" ? "items-start" : "items-end";
-  const bubbleClass =
-    side === "left"
-      ? "bg-zinc-800 text-zinc-100 rounded-2xl rounded-tl-sm"
-      : "bg-zinc-200 text-zinc-900 rounded-2xl rounded-tr-sm";
-  return (
-    <div className={`flex flex-col ${align}`}>
-      <span className="mb-0.5 text-[10px] text-zinc-500">{label}</span>
-      <div className={`max-w-[85%] px-3 py-2 text-xs ${bubbleClass}`}>{children}</div>
+      {error ? (
+        <p className="mt-4 text-xs text-red-400" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

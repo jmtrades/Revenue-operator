@@ -21,6 +21,17 @@ export interface CreateAssistantInput {
   workspaceId?: string | null;
   /** Optional: tool/function definitions for capture_lead, book_appointment, send_sms, etc. */
   toolCalls?: Array<{ name: string; description: string; parameters: Record<string, unknown> }>;
+  /** Optional: human voice tuning exposed in agent settings. */
+  voiceSettings?: {
+    stability?: number;
+    speed?: number;
+    responseDelay?: number;
+    backchannel?: boolean;
+    denoising?: boolean;
+    similarityBoost?: number;
+    style?: number;
+    useSpeakerBoost?: boolean;
+  };
 }
 
 export interface CreateCallInput {
@@ -41,6 +52,7 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
   const firstMessage = input.firstMessage || "Hello, how can I help you today?";
   const voiceId = (input.voiceId ?? "").trim() || DEFAULT_VOICE_ID;
   const lang = (input.language ?? "en").trim() || "en";
+  const voiceSettings = input.voiceSettings ?? {};
 
   const body: Record<string, unknown> = {
     name: input.name,
@@ -57,10 +69,11 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
       provider: "elevenlabs",
       voiceId,
       model: "eleven_turbo_v2_5",
-      stability: 0.5,
-      similarityBoost: 0.78,
-      style: 0.35,
-      useSpeakerBoost: true,
+      stability: voiceSettings.stability ?? 0.55,
+      speed: voiceSettings.speed ?? 1,
+      similarityBoost: voiceSettings.similarityBoost ?? 0.8,
+      style: voiceSettings.style ?? 0.35,
+      useSpeakerBoost: voiceSettings.useSpeakerBoost ?? true,
       optimizeStreamingLatency: 4,
     },
     transcriber: {
@@ -72,10 +85,11 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
     silenceTimeoutSeconds: 30,
     maxDurationSeconds: 600,
     backgroundSound: "off",
-    backchannelingEnabled: true,
-    backgroundDenoisingEnabled: true,
-    responseDelaySeconds: 0.4,
+    backchannelingEnabled: voiceSettings.backchannel ?? true,
+    backgroundDenoisingEnabled: voiceSettings.denoising ?? true,
+    responseDelaySeconds: voiceSettings.responseDelay ?? 0.4,
     numWordsToInterruptAssistant: 2,
+    modelOutputInMessagesEnabled: true,
   };
 
   if (input.workspaceId) {
@@ -125,6 +139,7 @@ export async function updateAssistant(
   const firstMessage = input.firstMessage || "Hello, how can I help you today?";
   const voiceId = (input.voiceId ?? "").trim() || DEFAULT_VOICE_ID;
   const lang = (input.language ?? "en").trim() || "en";
+  const voiceSettings = input.voiceSettings ?? {};
 
   const body: Record<string, unknown> = {
     name: input.name,
@@ -141,10 +156,11 @@ export async function updateAssistant(
       provider: "elevenlabs",
       voiceId,
       model: "eleven_turbo_v2_5",
-      stability: 0.5,
-      similarityBoost: 0.78,
-      style: 0.35,
-      useSpeakerBoost: true,
+      stability: voiceSettings.stability ?? 0.55,
+      speed: voiceSettings.speed ?? 1,
+      similarityBoost: voiceSettings.similarityBoost ?? 0.8,
+      style: voiceSettings.style ?? 0.35,
+      useSpeakerBoost: voiceSettings.useSpeakerBoost ?? true,
       optimizeStreamingLatency: 4,
     },
     transcriber: {
@@ -153,6 +169,14 @@ export async function updateAssistant(
       language: lang,
       smartFormat: true,
     },
+    silenceTimeoutSeconds: 30,
+    maxDurationSeconds: 600,
+    backgroundSound: "off",
+    backchannelingEnabled: voiceSettings.backchannel ?? true,
+    backgroundDenoisingEnabled: voiceSettings.denoising ?? true,
+    responseDelaySeconds: voiceSettings.responseDelay ?? 0.4,
+    numWordsToInterruptAssistant: 2,
+    modelOutputInMessagesEnabled: true,
   };
 
   if (input.workspaceId) body.metadata = { workspace_id: input.workspaceId };

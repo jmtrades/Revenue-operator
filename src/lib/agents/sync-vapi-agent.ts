@@ -1,0 +1,189 @@
+import { getDb } from "@/lib/db/queries";
+import { createAssistant, updateAssistant } from "@/lib/vapi";
+import { buildAgentFunctions } from "@/lib/agent-functions";
+import { buildVapiSystemPrompt } from "@/lib/agents/build-vapi-system-prompt";
+import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+
+type DbLike = ReturnType<typeof getDb>;
+
+type VoiceSettings = {
+  stability?: number;
+  speed?: number;
+  responseDelay?: number;
+  backchannel?: boolean;
+  denoising?: boolean;
+  similarityBoost?: number;
+  style?: number;
+  useSpeakerBoost?: boolean;
+};
+
+type AgentKnowledgeBase = {
+  services?: string[];
+  faq?: Array<{ q?: string; a?: string }>;
+  specialInstructions?: string;
+  bookingEnabled?: boolean;
+  voiceSettings?: VoiceSettings;
+};
+
+type AgentRules = {
+  neverSay?: string[];
+  alwaysTransfer?: string[];
+  transferPhone?: string | null;
+};
+
+type AgentRow = {
+  id: string;
+  workspace_id: string;
+  name?: string | null;
+  greeting?: string | null;
+  voice_id?: string | null;
+  knowledge_base?: AgentKnowledgeBase | null;
+  rules?: AgentRules | null;
+  vapi_agent_id?: string | null;
+  purpose?: string | null;
+  is_active?: boolean | null;
+};
+
+type WorkspaceRow = {
+  id: string;
+  name?: string | null;
+  industry?: string | null;
+  preferred_language?: string | null;
+  vapi_assistant_id?: string | null;
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assistantId: string }> {
+  if (!process.env.VAPI_API_KEY) {
+    throw new Error("Vapi is not configured");
+  }
+
+  const { data: agentData, error: agentError } = await db
+    .from("agents")
+    .select("id, workspace_id, name, greeting, voice_id, knowledge_base, rules, vapi_agent_id, purpose, is_active")
+    .eq("id", agentId)
+    .single();
+  if (agentError || !agentData) {
+    throw new Error("Agent not found");
+  }
+
+  const agent = agentData as AgentRow;
+  const { data: workspaceData, error: workspaceError } = await db
+    .from("workspaces")
+    .select("id, name, industry, preferred_language, vapi_assistant_id")
+    .eq("id", agent.workspace_id)
+    .single();
+  if (workspaceError || !workspaceData) {
+    throw new Error("Workspace not found");
+  }
+
+  const workspace = workspaceData as WorkspaceRow;
+  const knowledgeBase = agent.knowledge_base ?? {};
+  const rules = agent.rules ?? {};
+  const voiceSettings = knowledgeBase.voiceSettings ?? {};
+  const businessName = workspace.name?.trim() || "My Workspace";
+  const greeting =
+    agent.greeting?.trim() ||
+    `Thanks for calling ${businessName}. How can I help you today?`;
+  const voiceId = agent.voice_id?.trim() || DEFAULT_VOICE_ID;
+  const caps = ["capture_leads", "transfer_calls", "follow_up"];
+  if (knowledgeBase.bookingEnabled !== false) {
+    caps.push("book_appointments");
+  }
+  if (agent.purpose === "outbound") {
+    caps.push("outbound_calls");
+  }
+
+  const assistantPayload = {
+    name: `${businessName} - ${agent.name?.trim() || "Receptionist"}`,
+    systemPrompt: buildVapiSystemPrompt({
+      businessName,
+      industry: workspace.industry ?? null,
+      agentName: agent.name?.trim() || "Receptionist",
+      greeting,
+      services: Array.isArray(knowledgeBase.services) ? knowledgeBase.services : [],
+      faq: Array.isArray(knowledgeBase.faq) ? knowledgeBase.faq : [],
+      specialInstructions: knowledgeBase.specialInstructions ?? "",
+      rules: {
+        neverSay: Array.isArray(rules.neverSay) ? rules.neverSay : [],
+        alwaysTransfer: Array.isArray(rules.alwaysTransfer) ? rules.alwaysTransfer : [],
+        transferPhone: rules.transferPhone ?? null,
+      },
+    }),
+    firstMessage: greeting,
+    endCallMessage: "Thanks for calling. Have a great day!",
+    voiceId,
+    language: workspace.preferred_language ?? "en",
+    workspaceId: workspace.id,
+    toolCalls: buildAgentFunctions({ id: workspace.id, capabilities: caps }).map((tool) => ({
+      name: tool.name,
+      description: tool.description,
+      parameters: tool.parameters,
+    })),
+    voiceSettings: {
+      stability:
+        typeof voiceSettings.stability === "number"
+          ? clamp(voiceSettings.stability, 0, 1)
+          : 0.55,
+      speed:
+        typeof voiceSettings.speed === "number"
+          ? clamp(voiceSettings.speed, 0.8, 1.3)
+          : 1,
+      responseDelay:
+        typeof voiceSettings.responseDelay === "number"
+          ? clamp(voiceSettings.responseDelay, 0, 1.5)
+          : 0.4,
+      backchannel:
+        typeof voiceSettings.backchannel === "boolean"
+          ? voiceSettings.backchannel
+          : true,
+      denoising:
+        typeof voiceSettings.denoising === "boolean"
+          ? voiceSettings.denoising
+          : true,
+      similarityBoost:
+        typeof voiceSettings.similarityBoost === "number"
+          ? clamp(voiceSettings.similarityBoost, 0, 1)
+          : 0.8,
+      style:
+        typeof voiceSettings.style === "number"
+          ? clamp(voiceSettings.style, 0, 1)
+          : 0.35,
+      useSpeakerBoost:
+        typeof voiceSettings.useSpeakerBoost === "boolean"
+          ? voiceSettings.useSpeakerBoost
+          : true,
+    },
+  };
+
+  let assistantId = agent.vapi_agent_id?.trim() || null;
+  if (assistantId) {
+    await updateAssistant(assistantId, assistantPayload);
+  } else {
+    const created = await createAssistant(assistantPayload);
+    assistantId = created.id;
+  }
+
+  await db
+    .from("agents")
+    .update({
+      vapi_agent_id: assistantId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", agent.id);
+
+  if (agent.is_active !== false) {
+    await db
+      .from("workspaces")
+      .update({
+        vapi_assistant_id: assistantId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", workspace.id);
+  }
+
+  return { assistantId };
+}
