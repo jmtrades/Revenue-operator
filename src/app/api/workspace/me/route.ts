@@ -155,6 +155,14 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const STARTER_KNOWLEDGE: Array<{ q: string; a: string }> = [
+    { q: "What are your hours?", a: "We are open Monday through Friday, 9 AM to 5 PM." },
+    { q: "Where are you located?", a: "I can have someone share our address with you. What is the best way to reach you?" },
+    { q: "How do I book an appointment?", a: "I can help you with that right now. What day works best for you?" },
+    { q: "What services do you offer?", a: "We offer a full range of services. What specifically are you looking for help with?" },
+    { q: "What is your pricing?", a: "Pricing depends on your specific needs. I can have our team send you a detailed quote. Can I get your name and email?" },
+  ];
+
   let body: {
     name?: string;
     website?: string;
@@ -179,6 +187,18 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const db = getDb();
+    if (update.onboarding_completed_at) {
+      const { data: existing } = await db
+        .from("workspaces")
+        .select("knowledge_items")
+        .eq("id", session.workspaceId)
+        .single();
+      const current = (existing as { knowledge_items?: Array<{ q?: string; a?: string }> } | null)?.knowledge_items;
+      const hasContent = Array.isArray(current) && current.some((x) => (x?.q ?? "").trim() && (x?.a ?? "").trim());
+      if (!hasContent) {
+        update.knowledge_items = STARTER_KNOWLEDGE;
+      }
+    }
     const { error } = await db
       .from("workspaces")
       .update(update)

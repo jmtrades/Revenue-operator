@@ -127,12 +127,23 @@ async function getInitialShellData(): Promise<{
   };
 }
 
+const FALLBACK_SHELL = {
+  workspaceId: "",
+  workspaceName: "",
+  workspaceMeta: null as AppShellWorkspaceMeta,
+};
+
 export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const initial = await getInitialShellData();
+  let initial = FALLBACK_SHELL;
+  try {
+    initial = await getInitialShellData();
+  } catch {
+    // Auth/DB failure: render shell with empty workspace so client can redirect or retry
+  }
 
   return (
     <AppShellClient

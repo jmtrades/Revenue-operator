@@ -13,8 +13,8 @@ import { CURATED_VOICES } from "@/lib/constants/curated-voices";
 const PLAN_LIMITS: Record<string, number> = {
   starter: 8,
   growth: 12,
-  scale: 12,
-  enterprise: 12,
+  scale: 16,
+  enterprise: 16,
 };
 
 export async function GET(req: NextRequest) {

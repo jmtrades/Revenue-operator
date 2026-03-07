@@ -472,8 +472,12 @@ export default function AppAgentsPageClient({
       .catch(() => setElevenLabsVoices(CURATED_VOICES));
   }, []);
 
+  const prevSelectedIdRef = useRef<string | null>(null);
   useEffect(() => {
-    setTab("profile");
+    if (prevSelectedIdRef.current !== selectedId) {
+      prevSelectedIdRef.current = selectedId;
+      setTab("profile");
+    }
   }, [selectedId]);
 
   useEffect(
@@ -571,6 +575,7 @@ export default function AppAgentsPageClient({
         body: JSON.stringify(toAgentPatchPayload(agentToSave)),
       });
       if (!res.ok) throw new Error("save_failed");
+
       const syncRes = await fetch("/api/agent/create-vapi", {
         method: "POST",
         credentials: "include",
@@ -580,24 +585,29 @@ export default function AppAgentsPageClient({
       const syncData = (await syncRes.json().catch(() => null)) as
         | { vapi_agent_id?: string; error?: string }
         | null;
-      if (!syncRes.ok || !syncData?.vapi_agent_id) {
-        throw new Error(syncData?.error || "sync_failed");
+
+      if (syncRes.ok && syncData?.vapi_agent_id) {
+        setAgents((current) =>
+          current.map((agent) =>
+            agent.id === agentToSave.id
+              ? { ...agent, vapiAgentId: syncData!.vapi_agent_id ?? agent.vapiAgentId }
+              : agent,
+          ),
+        );
+        if (options?.showToast !== false) setToast("Agent saved and synced live");
+        return syncData.vapi_agent_id;
       }
-      setAgents((current) =>
-        current.map((agent) =>
-          agent.id === agentToSave.id
-            ? { ...agent, vapiAgentId: syncData.vapi_agent_id ?? agent.vapiAgentId }
-            : agent,
-        ),
-      );
+
       if (options?.showToast !== false) {
-        setToast("Agent saved and synced live");
+        setToast(
+          syncRes.status === 503
+            ? "Agent saved; voice sync unavailable (check Vapi config)"
+            : "Agent saved; voice sync failed",
+        );
       }
-      return syncData.vapi_agent_id;
+      return null;
     } catch {
-      if (options?.showToast !== false) {
-        setToast("Could not save agent");
-      }
+      if (options?.showToast !== false) setToast("Could not save agent");
       return null;
     } finally {
       setSaving(false);
@@ -825,7 +835,6 @@ export default function AppAgentsPageClient({
                         agentId: selected.id,
                       })
                     }
-                    disabled={!selected.greeting.trim()}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
                   >
                     {isHearPlaying ? (
@@ -1695,12 +1704,15 @@ function TestTab({
 
     try {
       const assistantId = (await onPrepareAgent()) || agent.vapiAgentId;
-      const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
-      if (!publicKey) {
-        throw new Error("NEXT_PUBLIC_VAPI_PUBLIC_KEY is not configured");
-      }
       if (!assistantId) {
-        throw new Error("This agent has not been synced to Vapi yet");
+        throw new Error("This agent has not been synced to Vapi yet. Save the agent first.");
+      }
+
+      const configRes = await fetch("/api/vapi/workspace-config", { credentials: "include" });
+      const config = (await configRes.json().catch(() => null)) as { publicKey?: string | null } | null;
+      const publicKey = config?.publicKey?.trim() ?? null;
+      if (!publicKey) {
+        throw new Error("Voice is not configured for this workspace");
       }
 
       const { default: Vapi } = await import("@vapi-ai/web");
@@ -1714,6 +1726,11 @@ function TestTab({
       client.on("call-start", () => setStatus("active"));
       client.on("call-end", () => {
         setStatus("ended");
+        clientRef.current = null;
+      });
+      client.on("error", () => {
+        setStatus("idle");
+        setError("Call failed. Check your microphone and try again.");
         clientRef.current = null;
       });
       client.on("message", (payload?: unknown) => {
@@ -1754,7 +1771,7 @@ function TestTab({
           <button
             type="button"
             onClick={() => void startTestCall()}
-            className="rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100"
+            className="min-h-[44px] rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100 touch-manipulation"
           >
             Start test call
           </button>

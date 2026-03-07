@@ -31,13 +31,11 @@ export async function POST(req: NextRequest) {
   }
 
   const voiceId = typeof body.voice_id === "string" ? body.voice_id.trim() : "";
-  const text = typeof body.text === "string" ? body.text.trim() : "";
+  const rawText = typeof body.text === "string" ? body.text.trim() : "";
+  const text = rawText || "Thanks for calling. How can I help you today?";
 
   if (!voiceId) {
     return NextResponse.json({ error: "voice_id is required" }, { status: 400 });
-  }
-  if (!text) {
-    return NextResponse.json({ error: "text is required" }, { status: 400 });
   }
 
   const settings = body.settings ?? {};

@@ -150,10 +150,12 @@ export function WorkspaceProvider({
         .then((data) => {
           const snapshot = data as { id?: string | null; name?: string | null } | null;
           const nextId = snapshot?.id?.trim();
-          if (!nextId) return;
-          setWorkspaceIdState((current) => current || nextId);
-          setWorkspaceName((current) => current || snapshot?.name?.trim() || "");
-          persistWorkspaceId(nextId);
+          const nextName = snapshot?.name?.trim();
+          if (nextId) {
+            setWorkspaceIdState((current) => current || nextId);
+            persistWorkspaceId(nextId);
+          }
+          if (nextName) setWorkspaceName(nextName);
         })
         .catch(() => {
           // ignore priming errors and rely on the workspace list request
