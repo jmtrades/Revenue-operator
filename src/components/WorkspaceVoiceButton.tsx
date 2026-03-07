@@ -160,7 +160,7 @@ export function WorkspaceVoiceButton({
           className={`flex h-12 w-12 items-center justify-center rounded-full border transition-all ${
             active
               ? agentSpeaking
-                ? "border-blue-400 bg-blue-500/15 text-blue-300 animate-pulse"
+                ? "border-white/50 bg-white/10 text-white animate-pulse"
                 : "border-emerald-400 bg-emerald-500/10 text-emerald-300"
               : "border-zinc-700 bg-zinc-900 text-zinc-500"
           }`}

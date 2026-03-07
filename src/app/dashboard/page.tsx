@@ -68,7 +68,7 @@ export default function SituationPage() {
             Operation is not yet in place.
           </p>
           <Link
-            href="/sign-in?create=1"
+            href="/activate"
             className="mt-8 inline-block px-6 py-3 text-sm font-medium"
             style={{ color: "var(--meaning-blue)" }}
           >
