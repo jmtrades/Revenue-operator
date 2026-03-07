@@ -7,6 +7,7 @@ import {
   getIndustryBySlug,
   INDUSTRY_SLUGS,
 } from "@/lib/data/industries";
+import { ROUTES } from "@/lib/constants";
 
 export function generateStaticParams() {
   return INDUSTRY_SLUGS.map((slug) => ({ slug }));
@@ -76,15 +77,14 @@ export default async function IndustryPage({
                   lineHeight: 1.6,
                 }}
               >
-                We&apos;re building a dedicated page for this industry. In the
-                meantime, join the waitlist for early access and founding
-                pricing.
+                We&apos;re building a dedicated page for this industry. Get
+                started now and set up your AI phone agent in 5 minutes.
               </p>
               <Link
-                href="/#waitlist"
+                href={ROUTES.START}
                 className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline"
               >
-                Join waitlist →
+                Start free →
               </Link>
               <p className="mt-6 text-sm" style={{ color: "var(--text-tertiary)" }}>
                 <Link href="/industries/plumbing-hvac" className="underline">
