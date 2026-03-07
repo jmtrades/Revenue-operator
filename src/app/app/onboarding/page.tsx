@@ -13,11 +13,14 @@ import {
 import { useOnboardingStep } from "../OnboardingStepContext";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
-import { LiveAgentChat } from "@/components/LiveAgentChat";
 import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
-import { buildStarterKnowledge, mergeKnowledgeItems } from "@/lib/workspace/starter-knowledge";
+
+const ONBOARDING_INDUSTRY_PRIMARY = INDUSTRY_OPTIONS.slice(0, 8);
+const ONBOARDING_INDUSTRY_REST = INDUSTRY_OPTIONS.slice(8);
+import { buildStarterKnowledge, mergeKnowledgeItems, type KnowledgeItem } from "@/lib/workspace/starter-knowledge";
+import { getIndustryLabel } from "@/lib/constants/industries";
 import { invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 const STEPS = 5;
@@ -26,6 +29,13 @@ const VOICES = CURATED_VOICES.map((voice) => ({
   id: voice.id,
   label: `${voice.name} — ${voice.desc}`,
   gender: voice.gender,
+  preview: "Thanks for calling. How can I help you today?",
+}));
+const ONBOARDING_VOICES = CURATED_VOICES.slice(0, 6).map((v) => ({
+  id: v.id,
+  name: v.name,
+  desc: v.desc,
+  gender: v.gender,
   preview: "Thanks for calling. How can I help you today?",
 }));
 
@@ -102,40 +112,35 @@ function agentNameToId(name: string): AgentId {
   return "sarah";
 }
 
-function getSignupPrefill(): { businessName?: string; industry?: string; website?: string } {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
-    if (raw) {
-      const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
-      return {
-        businessName: d?.businessName?.trim(),
-        industry: d?.industry ?? d?.businessType ?? "",
-        website: d?.website?.trim(),
-      };
-    }
-  } catch {
-    // ignore
-  }
-  return {};
-}
-
 export default function AppOnboardingPage() {
   const router = useRouter();
-  const signupPrefill = getSignupPrefill();
-  const [step, setStep] = useState(1);
+  const onboardingCtx = useOnboardingStep();
+  const step = onboardingCtx?.step ?? 1;
+  const setStep = onboardingCtx?.setStep ?? (() => {});
 
-  const [businessName, setBusinessName] = useState(signupPrefill.businessName ?? "");
-  const [website, setWebsite] = useState(signupPrefill.website ?? "");
-  const [industry, setIndustry] = useState(signupPrefill.industry ?? "");
+  const [businessName, setBusinessName] = useState("");
+  const [website, setWebsite] = useState("");
+  const [industry, setIndustry] = useState("");
   const [address, setAddress] = useState("");
-  const [timezone] = useState(() => {
+  const [timezone, setTimezone] = useState("America/Los_Angeles");
+  const [businessPhone, setBusinessPhone] = useState("");
+  const [showAllIndustries, setShowAllIndustries] = useState(false);
+
+  useEffect(() => {
     try {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
+      const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
+      if (raw) {
+        const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
+        if (d?.businessName?.trim()) setBusinessName(d.businessName.trim());
+        if (d?.industry?.trim() || d?.businessType?.trim()) setIndustry(d?.industry ?? d?.businessType ?? "");
+        if (d?.website?.trim()) setWebsite(d.website.trim());
+      }
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
+      setTimezone(tz);
     } catch {
-      return "America/Los_Angeles";
+      // ignore
     }
-  });
+  }, []);
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>("receptionist");
   const [agentName, setAgentName] = useState<string>(ONBOARDING_TEMPLATES[0].agentName);
@@ -144,23 +149,18 @@ export default function AppOnboardingPage() {
   const [personality, setPersonality] = useState(50);
   const [callStyle, setCallStyle] = useState<"thorough" | "conversational" | "quick">("conversational");
   const [greetingPlaying, setGreetingPlaying] = useState(false);
-  const [step5Playing, setStep5Playing] = useState(false);
 
   const [services, setServices] = useState<string[]>([]);
   const [serviceInput, setServiceInput] = useState("");
   const [_hours, _setHours] = useState<Record<string, { open: string; close: string; closed: boolean }>>({});
   const [afterHours, setAfterHours] = useState<"messages" | "emergency" | "forward">("messages");
   const [faqRows, setFaqRows] = useState<string[]>(["", "", ""]);
+  const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([]);
+  const [starterAdded, setStarterAdded] = useState(false);
 
   const [phoneDisplay] = useState("(503) 555-0100");
   const [_numberOption, _setNumberOption] = useState<"forward" | "new" | "skip">("new");
   const [showConfetti, setShowConfetti] = useState(false);
-
-  const onboardingCtx = useOnboardingStep();
-
-  useEffect(() => {
-    onboardingCtx?.setStep(step);
-  }, [step, onboardingCtx]);
 
   const defaultGreeting = `Thanks for calling ${businessName || "[Business]"}! This is ${agentName}. How can I help you today?`;
 
@@ -173,24 +173,15 @@ export default function AppOnboardingPage() {
   };
 
   const finishOnboarding = async () => {
-    const knowledgeItems = mergeKnowledgeItems(
-      faqRows
-        .map((row) => row.trim())
-        .filter(Boolean)
-        .map((row) => ({ q: row, a: "I can help with that during your call." })),
-      buildStarterKnowledge({
-        industry,
-        address,
-        businessHours: {
-          monday: { start: "09:00", end: "17:00" },
-          tuesday: { start: "09:00", end: "17:00" },
-          wednesday: { start: "09:00", end: "17:00" },
-          thursday: { start: "09:00", end: "17:00" },
-          friday: { start: "09:00", end: "17:00" },
-        },
-        services,
-      }),
-    );
+    const defaultHours = {
+      monday: { start: "09:00", end: "17:00" },
+      tuesday: { start: "09:00", end: "17:00" },
+      wednesday: { start: "09:00", end: "17:00" },
+      thursday: { start: "09:00", end: "17:00" },
+      friday: { start: "09:00", end: "17:00" },
+    };
+    const starter = buildStarterKnowledge({ industry, address, businessHours: defaultHours, services });
+    const merged = mergeKnowledgeItems(knowledgeItems, starter);
 
     try {
       await fetch("/api/workspace/create", {
@@ -199,22 +190,16 @@ export default function AppOnboardingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           businessName,
-          businessPhone: null,
+          businessPhone: businessPhone || null,
           website,
           address,
           industry,
           agentName,
           greeting: greetingToPlay,
-          knowledgeItems,
+          knowledgeItems: merged,
           preferredLanguage: "en",
           elevenlabsVoiceId: voiceId,
-          businessHours: {
-            monday: { start: "09:00", end: "17:00" },
-            tuesday: { start: "09:00", end: "17:00" },
-            wednesday: { start: "09:00", end: "17:00" },
-            thursday: { start: "09:00", end: "17:00" },
-            friday: { start: "09:00", end: "17:00" },
-          },
+          businessHours: defaultHours,
         }),
       });
       await fetch("/api/workspace/me", {
@@ -251,20 +236,12 @@ export default function AppOnboardingPage() {
   };
 
   const greetingToPlay = greeting.trim() || defaultGreeting;
-  const selectedVoice = VOICES.find((v) => v.id === voiceId);
-
-  const scriptPreviewText =
-    callStyle === "thorough"
-      ? `${agentName} will greet the caller, ask what they need, then ask 1–2 clarifying questions before offering next steps or booking.`
-      : callStyle === "conversational"
-        ? `${agentName} will keep it natural: brief greeting, confirm the reason for the call, then suggest an appointment or follow-up.`
-        : `${agentName} will get straight to the point: quick greeting, confirm need, then offer the next step.`;
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col p-6 md:p-12">
-      <div className="max-w-lg mx-auto w-full">
-        <div className="mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
+    <div className="min-h-screen bg-gradient-to-b from-[#080d19] to-[#0a0f1e] text-white flex flex-col p-6 md:p-12">
+      <div className="max-w-2xl mx-auto w-full">
+        <div className="mb-6">
+          <div className="flex items-center justify-center gap-2 mb-2" aria-label={`Step ${step} of ${STEPS}`}>
             {Array.from({ length: STEPS }, (_, i) => (
               <span
                 key={i}
@@ -276,264 +253,141 @@ export default function AppOnboardingPage() {
           <p className="text-xs text-center text-zinc-500">Step {step} of {STEPS}</p>
         </div>
 
+        <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 md:p-8">
         {/* Step 1 — YOUR BUSINESS */}
         {step === 1 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-white">Welcome to Recall Touch!</h1>
-            <p className="text-sm text-zinc-400">Let&apos;s get your AI phone system running in 2 minutes.</p>
-            <h2 className="text-lg font-semibold text-white">Your business</h2>
+            <h1 className="text-xl font-bold text-white">Tell us about your business</h1>
+            <p className="text-sm text-zinc-400">We&apos;ll configure your AI based on this.</p>
             <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">Business name</label>
+              <label htmlFor="onboarding-business-name" className="block text-xs font-medium mb-1.5 text-zinc-400">Business name</label>
               <input
+                id="onboarding-business-name"
                 type="text"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="Acme Plumbing"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                placeholder="Portland Plumbing Co"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 focus:outline-none text-base"
               />
             </div>
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">Industry</label>
               <div className="flex flex-wrap gap-2">
-                {INDUSTRY_OPTIONS.map(({ id, label }) => (
+                {(showAllIndustries ? INDUSTRY_OPTIONS : ONBOARDING_INDUSTRY_PRIMARY).map(({ id, label }) => (
                   <button
                     key={id}
                     type="button"
                     onClick={() => setIndustry(id)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium border ${
-                      industry === id ? "bg-white/10 border-white text-white" : "bg-zinc-800/50 border-zinc-700 text-zinc-400"
+                    className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                      industry === id ? "bg-white/[0.1] border-white/30 text-white" : "bg-transparent border-white/[0.08] text-white/70 hover:text-white"
                     }`}
                   >
                     {label}
                   </button>
                 ))}
               </div>
+              {ONBOARDING_INDUSTRY_REST.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllIndustries((v) => !v)}
+                  className="mt-2 text-xs text-zinc-400 hover:text-white underline underline-offset-2"
+                >
+                  {showAllIndustries ? "Show less" : "See all industries"}
+                </button>
+              )}
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">Website (optional)</label>
+              <label htmlFor="onboarding-phone" className="block text-xs font-medium mb-1.5 text-zinc-400">Phone number (we&apos;ll call it to verify)</label>
               <input
-                type="url"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-                placeholder="https://yourbusiness.com"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                id="onboarding-phone"
+                type="tel"
+                value={businessPhone}
+                onChange={(e) => setBusinessPhone(e.target.value)}
+                placeholder="+1 (555) 000-0000"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 focus:outline-none text-base"
               />
-              <p className="mt-1 text-xs text-zinc-500">We&apos;ll learn your services automatically.</p>
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">Address (optional)</label>
-              <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="123 Main St"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
-              />
-              <p className="mt-1 text-xs text-zinc-500">Used for local service area.</p>
-            </div>
-            <div>
-              <span className="block text-xs font-medium mb-1.5 text-zinc-400">Timezone</span>
-              <p className="text-sm text-zinc-500">{timezone || "Detecting…"}</p>
             </div>
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="w-full py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200"
+              className="w-full py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
             >
               Continue →
             </button>
           </div>
         )}
 
-        {/* Step 2 — MEET YOUR AI */}
+        {/* Step 2 — YOUR AI AGENT */}
         {step === 2 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold text-white">Meet your AI</h1>
-            <div>
-              <label className="block text-xs font-medium mb-2 text-zinc-400">Choose a starting template</label>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {ONBOARDING_TEMPLATES.map((template) => {
-                  const Icon = template.icon;
-                  const active = selectedTemplate === template.id;
-                  return (
-                    <button
-                      key={template.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedTemplate(template.id);
-                        setAgentName(template.agentName);
-                        setGreeting(template.greeting);
-                      }}
-                      className={`rounded-2xl border p-4 text-left transition-all ${
-                        active
-                          ? "border-white ring-2 ring-white/20 bg-zinc-900/90"
-                          : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className={`flex h-10 w-10 items-center justify-center rounded-full ${active ? "bg-white/10" : "bg-zinc-800/50"}`}>
-                          <Icon className={`h-5 w-5 ${active ? "text-white" : "text-zinc-400"}`} />
-                        </div>
-                        <span className={`rounded-xl px-2.5 py-1 text-[11px] font-medium ${active ? "bg-white text-black" : "bg-white/[0.04] text-zinc-400"}`}>
-                          Select
-                        </span>
-                      </div>
-                      <p className="mt-3 text-sm font-medium text-white">{template.name}</p>
-                      <p className="mt-1 text-xs text-zinc-500">{template.description}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">Agent name</label>
-              <input
-                type="text"
-                value={agentName}
-                onChange={(e) => setAgentName(e.target.value)}
-                placeholder="e.g. Sarah"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:outline-none mb-2"
-              />
-              <div className="flex flex-wrap gap-2">
-                {AGENT_NAMES.map((n) => (
+            <h1 className="text-xl font-bold text-white">Choose how your AI sounds</h1>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {ONBOARDING_VOICES.map((v) => {
+                const selected = voiceId === v.id;
+                return (
                   <button
-                    key={n}
-                    type="button"
-                    onClick={() => setAgentName(n)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
-                      agentName === n ? "bg-white/10 border-white text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-600"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-2 text-zinc-400">Voice</label>
-              <div className="grid grid-cols-2 gap-2">
-                {VOICES.map((v) => (
-                  <div
                     key={v.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => setVoiceId(v.id)}
-                    onKeyDown={(e) => e.key === "Enter" && setVoiceId(v.id)}
-                    className={`flex items-center gap-2 p-3 rounded-xl border text-left text-sm cursor-pointer ${
-                      voiceId === v.id ? "border-zinc-400 bg-zinc-800/80 text-white border-l-4 border-l-green-500" : "border-zinc-700 bg-zinc-800/50 text-zinc-400 border-l-4 border-l-transparent"
+                    type="button"
+                    onClick={() => { setVoiceId(v.id); setAgentName(v.name); }}
+                    className={`rounded-xl border p-4 text-left transition-all ${
+                      selected ? "border-white/30 bg-white/[0.1] ring-2 ring-white/20" : "border-white/[0.08] bg-transparent hover:border-white/20"
                     }`}
                   >
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        void speakTextViaApi(v.preview, { gender: v.gender, voiceId: v.id });
-                      }}
-                      className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-zinc-700 hover:bg-zinc-600 text-white text-xs"
-                      aria-label={`Preview ${v.label}`}
-                    >
-                      ▶
-                    </button>
-                    <span>{v.label}</span>
-                  </div>
-                ))}
-              </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm font-medium text-white">{v.name}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); void speakTextViaApi(v.preview, { gender: v.gender, voiceId: v.id }); }}
+                        className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white text-xs"
+                        aria-label={`Preview ${v.name}`}
+                      >
+                        ▶
+                      </button>
+                    </div>
+                    <p className="text-xs text-zinc-400 mt-0.5">{v.desc}</p>
+                    {selected && <p className="text-[10px] text-white/80 mt-1">✓ Selected</p>}
+                  </button>
+                );
+              })}
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">Greeting</label>
+              <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-zinc-400">Your AI will say</label>
               <textarea
+                id="onboarding-greeting"
                 value={greeting}
                 onChange={(e) => setGreeting(e.target.value)}
                 placeholder={defaultGreeting}
-                rows={3}
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:outline-none resize-none"
+                rows={2}
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 focus:outline-none resize-none text-base"
               />
               <button
                 type="button"
                 onClick={() => {
                   setGreetingPlaying(true);
-                  (window as unknown as { __stopGreeting?: () => void }).__stopGreeting = () => {};
                   void speakTextViaApi(greetingToPlay, {
-                    gender: selectedVoice?.gender ?? "female",
+                    gender: ONBOARDING_VOICES.find((x) => x.id === voiceId)?.gender ?? "female",
                     voiceId: voiceId || undefined,
                     onEnd: () => setGreetingPlaying(false),
                   });
                 }}
-                className="mt-2 flex items-center gap-2 py-2 px-3 rounded-xl border border-zinc-700 text-zinc-300 hover:border-zinc-600 text-sm"
+                className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl border border-white/[0.08] text-zinc-300 hover:text-white hover:border-white/20 text-sm"
               >
                 {greetingPlaying ? <Waveform isPlaying /> : <span>▶</span>}
-                Preview Greeting
+                Hear it
               </button>
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-2 text-zinc-400">Personality</label>
-              <div className="flex justify-between text-[11px] text-zinc-500 mb-1">
-                <span>Very Professional</span>
-                <span>Very Friendly</span>
-              </div>
-              <div className="flex gap-1">
-                {PERSONALITY_STOPS.map(({ value, label }) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setPersonality(value)}
-                    className={`flex-1 py-2 rounded-lg text-[10px] font-medium border ${
-                      personality === value ? "bg-white/10 border-white text-white" : "border-zinc-700 text-zinc-500"
-                    }`}
-                    title={label}
-                  >
-                    {value === 0 ? "Pro" : value === 25 ? "Pro+" : value === 50 ? "Mid" : value === 75 ? "Friendly" : "Very"}
-                  </button>
-                ))}
-              </div>
-              <p className="mt-1 text-xs text-zinc-500">{PERSONALITY_STOPS.find((s) => s.value === personality)?.label ?? "Balanced"}</p>
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-2 text-zinc-400">Call style</label>
-              <div className="space-y-2">
-                {CALL_STYLES.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => setCallStyle(s.id)}
-                    className={`w-full p-3 rounded-xl border text-left text-sm ${
-                      callStyle === s.id ? "border-zinc-400 bg-zinc-800/80 text-white" : "border-zinc-700 bg-zinc-800/50 text-zinc-400"
-                    }`}
-                  >
-                    <span className="font-medium">{s.label}</span>
-                    <p className="text-xs text-zinc-500 mt-0.5">{s.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
-              <p className="text-xs font-medium text-zinc-400 mb-1">How {agentName} will handle a call</p>
-              <p className="text-sm text-zinc-300">{scriptPreviewText}</p>
-            </div>
-            <div className="rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-900/50">
-              <p className="text-xs font-medium text-zinc-400 px-4 pt-3 pb-1">Try talking to {agentName}</p>
-              <LiveAgentChat
-                variant="mini"
-                initialAgent={agentNameToId(agentName)}
-                businessName={businessName || undefined}
-                greeting={greeting.trim() || undefined}
-                personality={personality}
-                callStyle={callStyle}
-                showMic={true}
-              />
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-400"
+                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-white/[0.08] text-zinc-400 hover:text-white"
               >
                 ← Back
               </button>
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="flex-1 py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200"
+                className="flex-1 py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
               >
                 Continue →
               </button>
@@ -541,174 +395,143 @@ export default function AppOnboardingPage() {
           </div>
         )}
 
-        {/* Step 3 — CUSTOMIZE */}
+        {/* Step 3 — TEACH YOUR AI */}
         {step === 3 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold">Customize your agent</h1>
-            <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">Services (type and Enter to add)</label>
-              <input
-                type="text"
-                value={serviceInput}
-                onChange={(e) => setServiceInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addService())}
-                placeholder="e.g. Plumbing, HVAC"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:border-zinc-500 focus:outline-none"
-              />
-              {services.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {services.map((s) => (
-                    <span
-                      key={s}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-zinc-800 text-sm"
-                    >
-                      {s}
-                      <button type="button" onClick={() => setServices((x) => x.filter((i) => i !== s))} className="text-zinc-500 hover:text-white">×</button>
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div>
-              <span className="block text-xs font-medium mb-2 text-zinc-400">Business hours</span>
-              <div className="space-y-1.5">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => {
-                  const isWeekend = day === "Sat" || day === "Sun";
-                  return (
-                    <div key={day} className="flex items-center gap-3 text-sm">
-                      <span className="w-8 text-zinc-400 text-xs font-medium">{day}</span>
-                      {isWeekend ? (
-                        <span className="text-xs text-zinc-600">Closed</span>
-                      ) : (
-                        <span className="text-xs text-zinc-300">9:00 AM – 5:00 PM</span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <p className="mt-2 text-[11px] text-zinc-500">Edit hours anytime in Settings → Call rules.</p>
-            </div>
-            <div>
-              <span className="block text-xs font-medium mb-2 text-zinc-400">After hours</span>
-              <div className="space-y-2">
-                {(["messages", "emergency", "forward"] as const).map((opt) => (
-                  <label key={opt} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="afterHours"
-                      checked={afterHours === opt}
-                      onChange={() => setAfterHours(opt)}
-                      className="rounded-full"
-                    />
-                    <span className="text-sm">
-                      {opt === "messages" && "Take messages"}
-                      {opt === "emergency" && "Emergency only"}
-                      {opt === "forward" && "Forward to cell"}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">FAQ (3 pre-filled rows)</label>
-              {faqRows.map((row, i) => (
-                <input
-                  key={i}
-                  type="text"
-                  value={row}
-                  onChange={(e) => {
-                    const next = [...faqRows];
-                    next[i] = e.target.value;
-                    setFaqRows(next);
+            <h1 className="text-xl font-bold text-white">What should your AI know?</h1>
+            <p className="text-sm text-zinc-400">Add a few Q&As so your AI can answer real questions.</p>
+            {!starterAdded && (
+              <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p className="text-sm text-zinc-300">
+                  <span className="text-white font-medium">We&apos;ve prepared 5 starter entries</span> for {getIndustryLabel(industry || null)} businesses. You can edit them or add your own.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const starter = buildStarterKnowledge({
+                      industry: industry || null,
+                      address: address || null,
+                      businessHours: { monday: { start: "09:00", end: "17:00" }, tuesday: { start: "09:00", end: "17:00" }, wednesday: { start: "09:00", end: "17:00" }, thursday: { start: "09:00", end: "17:00" }, friday: { start: "09:00", end: "17:00" } },
+                      services: services.length > 0 ? services : null,
+                    });
+                    setKnowledgeItems(starter);
+                    setStarterAdded(true);
                   }}
-                  placeholder={`FAQ ${i + 1}`}
-                  className="w-full px-4 py-2 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:border-zinc-500 focus:outline-none mt-2"
-                />
+                  className="shrink-0 py-2.5 px-4 rounded-xl bg-white text-[#080d19] font-semibold text-sm hover:bg-white/90"
+                >
+                  Add them now
+                </button>
+              </div>
+            )}
+            <div className="space-y-3">
+              {knowledgeItems.map((item, i) => (
+                <div key={i} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+                  <p className="text-xs font-medium text-zinc-400 mb-0.5">Q: {item.q}</p>
+                  <p className="text-sm text-zinc-300 mb-2">A: {item.a}</p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const q = (window.prompt("Question", item.q) ?? item.q ?? "").trim();
+                        const a = (window.prompt("Answer", item.a) ?? item.a ?? "").trim();
+                        const next = [...knowledgeItems];
+                        next[i] = { q, a };
+                        setKnowledgeItems(next);
+                      }}
+                      className="text-xs text-zinc-400 hover:text-white"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setKnowledgeItems((prev) => prev.filter((_, j) => j !== i))}
+                      className="text-xs text-zinc-400 hover:text-red-400"
+                      aria-label="Remove"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
               ))}
               <button
                 type="button"
-                onClick={() => setFaqRows((r) => [...r, ""])}
-                className="mt-2 text-sm text-zinc-400 hover:text-white"
+                onClick={() => setKnowledgeItems((prev) => [...prev, { q: "", a: "" }])}
+                className="w-full py-2.5 rounded-xl border border-dashed border-white/[0.12] text-zinc-400 hover:text-white hover:border-white/20 text-sm"
               >
-                Add another
+                + Add another Q&A
               </button>
             </div>
+            <p className="text-xs text-zinc-500">You can always add more later in your agent settings.</p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-400">← Back</button>
-              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200">Continue →</button>
+              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-white/[0.08] text-zinc-400 hover:text-white">← Back</button>
+              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">Continue →</button>
             </div>
           </div>
         )}
 
-        {/* Step 4 — TEST */}
+        {/* Step 4 — TEST YOUR AI */}
         {step === 4 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold">Test your agent</h1>
-            <p className="text-sm text-zinc-400">
-              This is the magic moment. Start a live browser voice test to hear the exact assistant your workspace will use on calls.
-            </p>
-            <WorkspaceVoiceButton
-              title={`Talk to ${agentName}`}
-              description="Start a live browser voice session, watch the transcript below, and confirm the voice and tone feel right."
-              startLabel="Start live test"
-              endLabel="End live test"
-              showUnavailable={true}
-            />
+            <h1 className="text-xl font-bold text-white">Talk to your AI</h1>
+            <p className="text-sm text-zinc-400">It&apos;s using your voice, greeting, and knowledge base.</p>
+            <div className="flex justify-center py-6">
+              <WorkspaceVoiceButton
+                title=""
+                description=""
+                startLabel="Tap to start a test call"
+                endLabel="End test"
+                showUnavailable={true}
+              />
+            </div>
             <div>
-              <p className="text-xs font-medium mb-2 text-zinc-400">Want a phone-based test too?</p>
-              <p className="text-sm text-zinc-500">
-                You&apos;ll connect and forward your line on the next step. Once that&apos;s done, you can call <span className="font-medium text-white">{phoneDisplay}</span> or use Settings → Phone for a real phone test.
-              </p>
+              <p className="text-xs font-medium text-zinc-400 mb-2">Try asking</p>
+              <ul className="text-sm text-zinc-500 space-y-1">
+                {knowledgeItems.slice(0, 3).map((item, i) => item.q && <li key={i}>&ldquo;{item.q}&rdquo;</li>)}
+                {knowledgeItems.length === 0 && (
+                  <>
+                    <li>&ldquo;What are your hours?&rdquo;</li>
+                    <li>&ldquo;I need to schedule a plumber&rdquo;</li>
+                    <li>&ldquo;How much do you charge?&rdquo;</li>
+                  </>
+                )}
+              </ul>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-400">← Back</button>
-              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200">Continue →</button>
+              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-white/[0.08] text-zinc-400 hover:text-white">← Back</button>
+              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">Continue →</button>
             </div>
           </div>
         )}
 
-        {/* Step 5 — ACTIVATE */}
+        {/* Step 5 — GO LIVE */}
         {step === 5 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold text-white">Activate</h1>
-            <div className="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
-              <p className="text-sm text-zinc-400 mb-2">Your dedicated AI phone number</p>
-              <p className="text-2xl font-semibold mb-4">{phoneDisplay}</p>
-              <p className="text-sm text-zinc-500">Forward your existing line here or use it as your new business number.</p>
+            <h1 className="text-xl font-bold text-white">You&apos;re ready.</h1>
+            <p className="text-sm text-zinc-400">Your AI will answer calls at:</p>
+            <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+              <p className="text-sm font-medium text-white mb-1">Forward your existing number</p>
+              <p className="text-xs text-zinc-400 mb-2">Call your carrier and set up forwarding to your Recall Touch number.</p>
+              <p className="text-sm font-mono text-white/90 mb-2">{phoneDisplay}</p>
+              <a href="/app/settings/phone" className="text-xs text-white/80 hover:text-white underline">Show me how</a>
             </div>
-            <div>
-              <label className="block text-xs font-medium mb-2 text-zinc-400">Using a personal or existing number?</label>
-              <select className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white focus:border-zinc-500 focus:outline-none">
-                <option>AT&T: dial *21*number#</option>
-                <option>Verizon: dial *72+number</option>
-                <option>T-Mobile: dial **21*number#</option>
-                <option>Other: contact carrier</option>
-              </select>
+            <p className="text-xs text-zinc-500 text-center">— or —</p>
+            <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+              <p className="text-sm font-medium text-white mb-1">Get a new phone number</p>
+              <p className="text-xs text-zinc-400 mb-2">We&apos;ll assign you a local number instantly.</p>
+              <a href="/app/settings/phone" className="inline-block py-2 px-4 rounded-xl bg-white/10 text-white text-sm font-medium hover:bg-white/20">Get my number →</a>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                setStep5Playing(true);
-                void speakTextViaApi(greetingToPlay, {
-                  gender: selectedVoice?.gender ?? "female",
-                  voiceId: voiceId || undefined,
-                  onEnd: () => setStep5Playing(false),
-                });
-              }}
-              className="w-full py-3 rounded-xl border border-zinc-600 text-zinc-300 hover:border-zinc-500 flex items-center justify-center gap-2"
-            >
-              {step5Playing ? <Waveform isPlaying /> : <span>▶</span>}
-              Preview the live greeting
-            </button>
+            <p className="text-xs text-zinc-500 text-center">— or —</p>
+            <p className="text-sm text-zinc-500 text-center">Skip for now — I&apos;ll connect a number later.</p>
             <button
               type="button"
               onClick={handleGoToDashboard}
-              className="w-full py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200"
+              className="w-full py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
             >
-              Go to my dashboard →
+              Launch my AI →
             </button>
           </div>
         )}
+        </div>
       </div>
 
       {showConfetti && (

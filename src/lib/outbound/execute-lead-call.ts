@@ -32,12 +32,22 @@ export async function executeLeadOutboundCall(
     return { ok: false, error: "Outbound calling not configured" };
   }
 
-  const [ctxRes, agentRes] = await Promise.all([
+  const [ctxRes, agentRowsRes] = await Promise.all([
     db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
-    db.from("agents").select("id, name, greeting, knowledge_base, vapi_agent_id").eq("workspace_id", workspaceId).limit(1).maybeSingle(),
+    db
+      .from("agents")
+      .select("id, name, greeting, knowledge_base, vapi_agent_id, purpose")
+      .eq("workspace_id", workspaceId)
+      .order("created_at", { ascending: false })
+      .limit(20),
   ]);
   const ctx = ctxRes.data as { business_name?: string; offer_summary?: string; business_hours?: Record<string, unknown>; faq?: Array<{ q?: string; a?: string }> } | null;
-  const agent = agentRes.data as { id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; vapi_agent_id?: string | null } | null;
+  const rows = (agentRowsRes.data ?? []) as Array<{ id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; vapi_agent_id?: string | null; purpose?: string }>;
+  const agent =
+    rows.find((r) => r.purpose === "outbound") ??
+    rows.find((r) => r.purpose === "both") ??
+    rows[0] ??
+    null;
   if (!agent) return { ok: false, error: "No agent configured for workspace" };
 
   const business_name = ctx?.business_name ?? "The business";
