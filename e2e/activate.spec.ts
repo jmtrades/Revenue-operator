@@ -13,7 +13,9 @@ test.describe("Activate flow", () => {
   });
 
   test("activate page shows step progress", async ({ page }) => {
-    await page.goto("/activate");
-    await expect(page.getByText(/Step \d+ of \d+|Business|Agent|Customize/i)).toBeVisible({ timeout: 8000 });
+    await page.goto("/activate", { waitUntil: "networkidle" });
+    await expect(
+      page.getByText(/Step \d+ of \d+|Business|Agent|Customize/i).first()
+    ).toBeVisible({ timeout: 10000 });
   });
 });

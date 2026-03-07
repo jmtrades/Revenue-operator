@@ -6,6 +6,8 @@ import { buildWorkspaceReadiness } from "@/lib/workspace/readiness";
 import { type AppShellWorkspaceMeta } from "./AppShellClient";
 import HydrationGate from "./HydrationGate";
 
+export const dynamic = "force-dynamic";
+
 async function getInitialShellData(): Promise<{
   workspaceId: string;
   workspaceName: string;
