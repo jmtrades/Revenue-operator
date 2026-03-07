@@ -201,7 +201,8 @@ export default function AppSettingsAgentPage() {
           />
         </div>
         <div>
-          <label htmlFor="agent-greeting" className="block text-xs font-medium text-zinc-400 mb-1">Greeting (first thing callers hear)</label>
+          <label htmlFor="agent-greeting" className="block text-xs font-medium text-zinc-400 mb-1">Opening greeting</label>
+          <p className="text-[11px] text-zinc-500 mb-1">This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge.</p>
           <textarea
             id="agent-greeting"
             rows={2}
