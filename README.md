@@ -30,6 +30,8 @@ All actions pass through:
 
 ### Supabase + GitHub (clone → run → deploy)
 
+**Source of truth:** This repo on GitHub. Push to `main` runs CI (build + lint). See [docs/DEPLOY_CHECKLIST.md](docs/DEPLOY_CHECKLIST.md) before go-live.
+
 1. **Clone** the repo (from GitHub):
    ```bash
    git clone https://github.com/jmtrades/Revenue-operator.git
