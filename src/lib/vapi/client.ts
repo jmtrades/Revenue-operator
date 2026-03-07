@@ -34,6 +34,8 @@ export interface CreateAssistantInput {
     style?: number;
     useSpeakerBoost?: boolean;
   };
+  /** Optional: max call duration in seconds. Default 600 (10 min). */
+  maxDurationSeconds?: number | null;
 }
 
 export interface CreateCallInput {
@@ -85,7 +87,7 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
       smartFormat: true,
     },
     silenceTimeoutSeconds: 30,
-    maxDurationSeconds: 600,
+    maxDurationSeconds: input.maxDurationSeconds && input.maxDurationSeconds > 0 ? input.maxDurationSeconds : 600,
     backgroundSound: "off",
     backchannelingEnabled: voiceSettings.backchannel ?? true,
     backgroundDenoisingEnabled: voiceSettings.denoising ?? true,
@@ -172,7 +174,7 @@ export async function updateAssistant(
       smartFormat: true,
     },
     silenceTimeoutSeconds: 30,
-    maxDurationSeconds: 600,
+    maxDurationSeconds: input.maxDurationSeconds && input.maxDurationSeconds > 0 ? input.maxDurationSeconds : 600,
     backgroundSound: "off",
     backchannelingEnabled: voiceSettings.backchannel ?? true,
     backgroundDenoisingEnabled: voiceSettings.denoising ?? true,

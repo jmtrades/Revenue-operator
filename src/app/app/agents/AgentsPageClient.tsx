@@ -7,6 +7,7 @@ import {
   BellRing,
   BookOpen,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   ClipboardList,
   Mic,
@@ -71,11 +72,26 @@ type Agent = {
   escalationChain: string[];
   transferPhone: string;
   transferRules: Array<{ id: string; phrase: string; phone: string }>;
-  afterHoursMode: "messages" | "emergency" | "forward";
+  afterHoursMode: "messages" | "emergency" | "forward" | "closed";
   bookingEnabled: boolean;
+  bookingDefaultDurationMinutes: number;
   pricingEnabled: boolean;
   priceList?: string;
   maxCallDuration: number;
+  followUpSMS: boolean;
+  notifyOwnerOnLead: boolean;
+  sendSummaryEmail: boolean;
+  persistence: "low" | "medium" | "high";
+  qualification: { criteria: Array<{ id: string; label: string; enabled: boolean }>; customCriterion: string };
+  objections: Array<{ id: string; trigger: string; response: string }>;
+  outboundOpening: string;
+  outboundGoal: "book" | "qualify" | "deliver" | "custom";
+  outboundGoalCustom: string;
+  outboundNotInterested: "thank_end" | "callback" | "ask_help";
+  voicemailBehavior: "leave" | "hangup" | "sms";
+  voicemailMessage: string;
+  confusedCallerHandling: string;
+  offTopicHandling: string;
   voiceSettings: {
     stability: number;
     speed: number;
@@ -137,59 +153,47 @@ function getFirstIncompleteStep(agent: Agent): StepId {
   return "golive";
 }
 
-type AgentReadiness = { score: number; total: number; percent: number; recommendations: string[] };
+type ReadinessTaskCategory = "required" | "recommended" | "advanced";
+
+type ReadinessTask = {
+  label: string;
+  complete: boolean;
+  weight: number;
+  category: ReadinessTaskCategory;
+};
+
+type AgentReadiness = {
+  score: number;
+  total: number;
+  percent: number;
+  status: "not_ready" | "basic" | "good" | "excellent";
+  tasks: ReadinessTask[];
+  recommendations: string[];
+};
 
 function getAgentReadiness(agent: Agent): AgentReadiness {
-  const recommendations: string[] = [];
-  let score = 0;
+  const tasks: ReadinessTask[] = [
+    { label: "Greeting configured", complete: !!agent.greeting?.trim(), weight: 10, category: "required" },
+    { label: "Voice selected", complete: !!agent.voice?.trim(), weight: 10, category: "required" },
+    { label: "At least 3 knowledge entries", complete: (agent.faq?.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()).length ?? 0) >= 3, weight: 15, category: "required" },
+    { label: "Transfer number configured", complete: !!(agent.transferPhone?.trim() || agent.transferRules?.some((r) => (r.phone ?? "").trim())), weight: 10, category: "required" },
+    { label: "Voice assistant created", complete: !!(agent.vapiAgentId?.trim()), weight: 15, category: "required" },
+    { label: "Transfer rules configured", complete: (agent.alwaysTransfer?.length ?? 0) > 0 || (agent.transferRules?.length ?? 0) > 0, weight: 10, category: "recommended" },
+    { label: "Safety guardrails set", complete: (agent.neverSay?.length ?? 0) > 0, weight: 5, category: "recommended" },
+    { label: "After-hours behavior set", complete: !!agent.afterHoursMode, weight: 5, category: "recommended" },
+    { label: "Agent tested", complete: (agent.stats?.totalCalls ?? 0) > 0, weight: 10, category: "recommended" },
+    { label: "Follow-up behavior configured", complete: !!(agent.followUpSMS || agent.notifyOwnerOnLead || agent.sendSummaryEmail), weight: 5, category: "advanced" },
+    { label: "Appointment booking configured", complete: agent.bookingEnabled, weight: 5, category: "advanced" },
+  ];
+
+  const score = tasks.filter((t) => t.complete).reduce((sum, t) => sum + t.weight, 0);
   const total = 100;
+  const percent = Math.min(100, Math.round(score));
+  const status =
+    percent >= 90 ? "excellent" : percent >= 70 ? "good" : percent >= 40 ? "basic" : "not_ready";
+  const recommendations = tasks.filter((t) => !t.complete).map((t) => t.label);
 
-  if (agent.greeting.trim().length > 0) {
-    score += 15;
-  } else {
-    recommendations.push("Add a greeting so callers hear a clear intro");
-  }
-
-  if (agent.voice.trim().length > 0) {
-    score += 15;
-  } else {
-    recommendations.push("Select a voice for this agent");
-  }
-
-  const validFaq = agent.faq.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim());
-  if (validFaq.length >= 3) {
-    score += 25;
-  } else {
-    recommendations.push("Add at least 3 knowledge Q&A entries so the agent can answer common questions");
-  }
-
-  const hasTransfer =
-    agent.alwaysTransfer.length > 0 ||
-    (agent.transferPhone ?? "").trim() !== "" ||
-    agent.transferRules.some((r) => (r.phrase ?? "").trim());
-  if (hasTransfer) {
-    score += 15;
-  } else {
-    recommendations.push("Configure when to transfer to a human and a transfer number");
-  }
-
-  if (agent.vapiAgentId && String(agent.vapiAgentId).trim()) {
-    score += 20;
-  } else {
-    recommendations.push("Save the agent to create your voice assistant (required for live calls)");
-  }
-
-  score += 5; // after-hours behavior is configured (messages / forward / emergency)
-
-  const hasRules = (agent.neverSay ?? []).length > 0 || (agent.transferRules ?? []).length > 0;
-  if (hasRules) {
-    score += 5;
-  } else {
-    recommendations.push("Add never-say words or phrase-based transfer rules for better control");
-  }
-
-  const percent = Math.min(100, Math.round((score / total) * 100));
-  return { score, total, percent, recommendations };
+  return { score, total, percent, status, tasks, recommendations };
 }
 
 type InitialFallbackAgent = {
@@ -266,9 +270,31 @@ function defaultAgent(): Agent {
     transferRules: [],
     afterHoursMode: "messages",
     bookingEnabled: true,
+    bookingDefaultDurationMinutes: 30,
     pricingEnabled: false,
     priceList: "",
     maxCallDuration: 12,
+    followUpSMS: false,
+    notifyOwnerOnLead: true,
+    sendSummaryEmail: false,
+    persistence: "medium",
+    qualification: {
+      criteria: [
+        { id: "budget", label: "Has budget", enabled: false },
+        { id: "timeline", label: "Has timeline", enabled: false },
+        { id: "decision_maker", label: "Is decision maker", enabled: false },
+      ],
+      customCriterion: "",
+    },
+    objections: [],
+    outboundOpening: "",
+    outboundGoal: "book",
+    outboundGoalCustom: "",
+    outboundNotInterested: "thank_end",
+    voicemailBehavior: "leave",
+    voicemailMessage: "",
+    confusedCallerHandling: "I'm sorry, let me try to help. Could you tell me what you need?",
+    offTopicHandling: "I'm the phone assistant here. I can help with appointments, pricing, and general questions. What can I help with?",
     voiceSettings: {
       stability: 0.55,
       speed: 1,
@@ -304,13 +330,28 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     faq?: Array<{ q?: string; a?: string }>;
     specialInstructions?: string;
     websiteUrl?: string;
-    afterHoursMode?: "messages" | "emergency" | "forward";
+    afterHoursMode?: "messages" | "emergency" | "forward" | "closed";
     bookingEnabled?: boolean;
+    bookingDefaultDurationMinutes?: number;
     pricingEnabled?: boolean;
     priceList?: string;
     maxCallDuration?: number;
     callStyle?: CallStyle;
     voiceSettings?: Partial<Agent["voiceSettings"]>;
+    followUpSMS?: boolean;
+    notifyOwnerOnLead?: boolean;
+    sendSummaryEmail?: boolean;
+    persistence?: "low" | "medium" | "high";
+    qualification?: { criteria?: Array<{ id?: string; label?: string; enabled?: boolean }>; customCriterion?: string };
+    objections?: Array<{ id?: string; trigger?: string; response?: string }>;
+    outboundOpening?: string;
+    outboundGoal?: "book" | "qualify" | "deliver" | "custom";
+    outboundGoalCustom?: string;
+    outboundNotInterested?: "thank_end" | "callback" | "ask_help";
+    voicemailBehavior?: "leave" | "hangup" | "sms";
+    voicemailMessage?: string;
+    confusedCallerHandling?: string;
+    offTopicHandling?: string;
   };
   const rules = (row.rules ?? {}) as {
     neverSay?: string[];
@@ -374,8 +415,9 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
           phone: item.phone ?? "",
         }))
       : [],
-    afterHoursMode: knowledgeBase.afterHoursMode ?? "messages",
+    afterHoursMode: (knowledgeBase.afterHoursMode === "closed" || knowledgeBase.afterHoursMode === "messages" || knowledgeBase.afterHoursMode === "emergency" || knowledgeBase.afterHoursMode === "forward") ? knowledgeBase.afterHoursMode : "messages",
     bookingEnabled: knowledgeBase.bookingEnabled ?? true,
+    bookingDefaultDurationMinutes: typeof knowledgeBase.bookingDefaultDurationMinutes === "number" ? knowledgeBase.bookingDefaultDurationMinutes : 30,
     pricingEnabled: knowledgeBase.pricingEnabled ?? false,
     priceList:
       typeof knowledgeBase.priceList === "string" ? knowledgeBase.priceList : "",
@@ -388,6 +430,29 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
       knowledgeBase.callStyle === "conversational"
         ? knowledgeBase.callStyle
         : "thorough",
+    followUpSMS: Boolean(knowledgeBase.followUpSMS ?? false),
+    notifyOwnerOnLead: Boolean(knowledgeBase.notifyOwnerOnLead ?? true),
+    sendSummaryEmail: Boolean(knowledgeBase.sendSummaryEmail ?? false),
+    persistence: (knowledgeBase.persistence === "low" || knowledgeBase.persistence === "high") ? knowledgeBase.persistence : "medium",
+    qualification: (() => {
+      const q = knowledgeBase.qualification;
+      const defaultCriteria = defaultAgent().qualification.criteria;
+      const criteria = Array.isArray(q?.criteria) && q.criteria.length > 0
+        ? q.criteria.map((c, i) => ({ id: c.id ?? `q-${i}`, label: c.label ?? "", enabled: Boolean(c.enabled) }))
+        : defaultCriteria;
+      return { criteria, customCriterion: typeof q?.customCriterion === "string" ? q.customCriterion : "" };
+    })(),
+    objections: Array.isArray(knowledgeBase.objections)
+      ? knowledgeBase.objections.map((o, i) => ({ id: (o as { id?: string }).id ?? `obj-${i}`, trigger: (o as { trigger?: string }).trigger ?? "", response: (o as { response?: string }).response ?? "" }))
+      : [],
+    outboundOpening: typeof knowledgeBase.outboundOpening === "string" ? knowledgeBase.outboundOpening : "",
+    outboundGoal: (knowledgeBase.outboundGoal === "qualify" || knowledgeBase.outboundGoal === "deliver" || knowledgeBase.outboundGoal === "custom") ? knowledgeBase.outboundGoal : "book",
+    outboundGoalCustom: typeof knowledgeBase.outboundGoalCustom === "string" ? knowledgeBase.outboundGoalCustom : "",
+    outboundNotInterested: (knowledgeBase.outboundNotInterested === "callback" || knowledgeBase.outboundNotInterested === "ask_help") ? knowledgeBase.outboundNotInterested : "thank_end",
+    voicemailBehavior: (knowledgeBase.voicemailBehavior === "hangup" || knowledgeBase.voicemailBehavior === "sms") ? knowledgeBase.voicemailBehavior : "leave",
+    voicemailMessage: typeof knowledgeBase.voicemailMessage === "string" ? knowledgeBase.voicemailMessage : "",
+    confusedCallerHandling: typeof knowledgeBase.confusedCallerHandling === "string" ? knowledgeBase.confusedCallerHandling : defaultAgent().confusedCallerHandling,
+    offTopicHandling: typeof knowledgeBase.offTopicHandling === "string" ? knowledgeBase.offTopicHandling : defaultAgent().offTopicHandling,
     active: Boolean(row.is_active ?? true),
     voiceSettings: {
       ...defaultAgent().voiceSettings,
@@ -430,11 +495,26 @@ function toAgentPatchPayload(agent: Agent) {
       websiteUrl: agent.websiteUrl,
       afterHoursMode: agent.afterHoursMode,
       bookingEnabled: agent.bookingEnabled,
+      bookingDefaultDurationMinutes: agent.bookingDefaultDurationMinutes,
       pricingEnabled: agent.pricingEnabled,
       priceList: agent.priceList,
       maxCallDuration: agent.maxCallDuration,
       callStyle: agent.callStyle,
       voiceSettings: agent.voiceSettings,
+      followUpSMS: agent.followUpSMS,
+      notifyOwnerOnLead: agent.notifyOwnerOnLead,
+      sendSummaryEmail: agent.sendSummaryEmail,
+      persistence: agent.persistence,
+      qualification: agent.qualification,
+      objections: agent.objections,
+      outboundOpening: agent.outboundOpening,
+      outboundGoal: agent.outboundGoal,
+      outboundGoalCustom: agent.outboundGoalCustom,
+      outboundNotInterested: agent.outboundNotInterested,
+      voicemailBehavior: agent.voicemailBehavior,
+      voicemailMessage: agent.voicemailMessage,
+      confusedCallerHandling: agent.confusedCallerHandling,
+      offTopicHandling: agent.offTopicHandling,
     },
     rules: {
       neverSay: agent.neverSay,
@@ -1717,6 +1797,12 @@ function KnowledgeTab({
   );
 }
 
+const DEFAULT_OBJECTIONS = [
+  { trigger: "Too expensive", response: "We offer flexible pricing. Can I learn more about your budget?" },
+  { trigger: "I need to think about it", response: "Of course. Can I follow up tomorrow to answer any questions?" },
+  { trigger: "I'm already working with someone", response: "That's great. We'd love to be your backup. Can I send our info?" },
+];
+
 function RulesTab({
   agent,
   onChange,
@@ -1724,6 +1810,13 @@ function RulesTab({
   agent: Agent;
   onChange: (partial: Partial<Agent>) => void;
 }) {
+  const [openAdvanced, setOpenAdvanced] = useState({
+    qualification: false,
+    objection: false,
+    outbound: false,
+    inbound: false,
+  });
+
   const addTransferRule = () => {
     const id = `t-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     onChange({
@@ -1863,11 +1956,12 @@ function RulesTab({
           value={agent.afterHoursMode}
           onChange={(e) => onChange({ afterHoursMode: e.target.value as Agent["afterHoursMode"] })}
           aria-label="After-hours behavior"
-          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
         >
-          <option value="messages">Take a message and notify the owner</option>
-          <option value="forward">Offer to schedule a callback</option>
-          <option value="emergency">Transfer to the emergency line</option>
+          <option value="messages">Take message and notify</option>
+          <option value="forward">Schedule callback</option>
+          <option value="emergency">Transfer to emergency line</option>
+          <option value="closed">Closed greeting only</option>
         </select>
       </div>
 
@@ -1877,7 +1971,7 @@ function RulesTab({
           value={[0, 5, 10, 12, 15, 30].includes(agent.maxCallDuration) ? String(agent.maxCallDuration) : "15"}
           onChange={(e) => onChange({ maxCallDuration: Number(e.target.value) })}
           aria-label="Maximum call duration in minutes"
-          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
         >
           <option value="0">No limit</option>
           <option value="5">5 minutes</option>
@@ -1887,6 +1981,365 @@ function RulesTab({
           <option value="30">30 minutes</option>
         </select>
       </div>
+
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-4">
+        <h3 className="text-sm font-medium text-white/80">Appointment booking</h3>
+        <label className="flex items-center gap-2 text-sm text-zinc-300">
+          <input
+            type="checkbox"
+            className="accent-white"
+            checked={agent.bookingEnabled}
+            onChange={(e) => onChange({ bookingEnabled: e.target.checked })}
+          />
+          Agent can book appointments
+        </label>
+        {agent.bookingEnabled && (
+          <div>
+            <label className="block text-[11px] text-zinc-500 mb-1">Default duration</label>
+            <select
+              value={[15, 30, 45, 60].includes(agent.bookingDefaultDurationMinutes) ? String(agent.bookingDefaultDurationMinutes) : "30"}
+              onChange={(e) => onChange({ bookingDefaultDurationMinutes: Number(e.target.value) })}
+              aria-label="Default appointment duration"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+            >
+              <option value="15">15 min</option>
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60">60 min</option>
+            </select>
+            <p className="mt-1 text-[11px] text-zinc-500">Available slots: linked to calendar or manual entry.</p>
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-3">
+        <h3 className="text-sm font-medium text-white/80">Follow-up behavior</h3>
+        <label className="flex items-center gap-2 text-sm text-zinc-300">
+          <input
+            type="checkbox"
+            className="accent-white"
+            checked={agent.followUpSMS}
+            onChange={(e) => onChange({ followUpSMS: e.target.checked })}
+          />
+          Send follow-up SMS after every call
+        </label>
+        <label className="flex items-center gap-2 text-sm text-zinc-300">
+          <input
+            type="checkbox"
+            className="accent-white"
+            checked={agent.notifyOwnerOnLead}
+            onChange={(e) => onChange({ notifyOwnerOnLead: e.target.checked })}
+          />
+          Notify owner when lead captured
+        </label>
+        <label className="flex items-center gap-2 text-sm text-zinc-300">
+          <input
+            type="checkbox"
+            className="accent-white"
+            checked={agent.sendSummaryEmail}
+            onChange={(e) => onChange({ sendSummaryEmail: e.target.checked })}
+          />
+          Send call summary via email
+        </label>
+      </div>
+
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-4">
+        <h3 className="text-sm font-medium text-white/80">Conversation style</h3>
+        <div>
+          <label className="block text-[11px] text-zinc-500 mb-1">Pace</label>
+          <select
+            value={agent.callStyle}
+            onChange={(e) => onChange({ callStyle: e.target.value as CallStyle })}
+            aria-label="Conversation pace"
+            className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+          >
+            <option value="thorough">Thorough</option>
+            <option value="conversational">Conversational</option>
+            <option value="quick">Quick</option>
+          </select>
+        </div>
+        {(agent.purpose === "outbound" || agent.purpose === "both") && (
+          <div>
+            <label className="block text-[11px] text-zinc-500 mb-1">Persistence (outbound)</label>
+            <select
+              value={agent.persistence}
+              onChange={(e) => onChange({ persistence: e.target.value as Agent["persistence"] })}
+              aria-label="Outbound persistence"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Qualification framework — collapsed by default */}
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setOpenAdvanced((s) => ({ ...s, qualification: !s.qualification }))}
+          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-white/80 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-inset"
+          aria-expanded={openAdvanced.qualification}
+        >
+          Qualification framework
+          <ChevronDown className={`h-4 w-4 shrink-0 text-white/50 transition-transform ${openAdvanced.qualification ? "rotate-180" : ""}`} />
+        </button>
+        {openAdvanced.qualification && (
+          <div className="border-t border-zinc-800 p-4 space-y-3">
+            <p className="text-[11px] text-zinc-500">What makes someone a qualified lead?</p>
+            {(agent.qualification?.criteria ?? []).map((c) => (
+              <label key={c.id} className="flex items-center gap-2 text-sm text-zinc-300">
+                <input
+                  type="checkbox"
+                  className="accent-white"
+                  checked={c.enabled}
+                  onChange={(e) =>
+                    onChange({
+                      qualification: {
+                        ...agent.qualification,
+                        criteria: agent.qualification.criteria.map((x) =>
+                          x.id === c.id ? { ...x, enabled: e.target.checked } : x,
+                        ),
+                      },
+                    })
+                  }
+                />
+                {c.label}
+              </label>
+            ))}
+            <div>
+              <label className="block text-[11px] text-zinc-500 mb-1">Custom criterion</label>
+              <input
+                type="text"
+                value={agent.qualification?.customCriterion ?? ""}
+                onChange={(e) =>
+                  onChange({
+                    qualification: { ...agent.qualification, customCriterion: e.target.value },
+                  })
+                }
+                placeholder="e.g., Has authority to sign"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Objection handling — collapsed by default */}
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setOpenAdvanced((s) => ({ ...s, objection: !s.objection }))}
+          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-white/80 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-inset"
+          aria-expanded={openAdvanced.objection}
+        >
+          Objection handling
+          <ChevronDown className={`h-4 w-4 shrink-0 text-white/50 transition-transform ${openAdvanced.objection ? "rotate-180" : ""}`} />
+        </button>
+        {openAdvanced.objection && (
+          <div className="border-t border-zinc-800 p-4 space-y-4">
+            <p className="text-[11px] text-zinc-500">Common objections and how to respond.</p>
+            {(agent.objections ?? []).map((o) => (
+              <div key={o.id} className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-zinc-500">If they say…</span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onChange({
+                        objections: agent.objections.filter((x) => x.id !== o.id),
+                      })
+                    }
+                    className="text-[11px] text-zinc-500 hover:text-zinc-200"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={o.trigger}
+                  onChange={(e) =>
+                    onChange({
+                      objections: agent.objections.map((x) =>
+                        x.id === o.id ? { ...x, trigger: e.target.value } : x,
+                      ),
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  placeholder='e.g., "Too expensive"'
+                />
+                <span className="text-[11px] text-zinc-500">Response</span>
+                <input
+                  type="text"
+                  value={o.response}
+                  onChange={(e) =>
+                    onChange({
+                      objections: agent.objections.map((x) =>
+                        x.id === o.id ? { ...x, response: e.target.value } : x,
+                      ),
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  placeholder="We offer flexible pricing..."
+                />
+              </div>
+            ))}
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const id = `obj-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+                  onChange({ objections: [...(agent.objections ?? []), { id, trigger: "", response: "" }] });
+                }}
+                className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded"
+              >
+                Add objection
+              </button>
+              {(agent.objections?.length ?? 0) === 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = DEFAULT_OBJECTIONS.map((o, i) => ({
+                      id: `obj-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 6)}`,
+                      trigger: o.trigger,
+                      response: o.response,
+                    }));
+                    onChange({ objections: next });
+                  }}
+                  className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded"
+                >
+                  Add from suggestions
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Outbound call settings — when purpose = outbound or both */}
+      {(agent.purpose === "outbound" || agent.purpose === "both") && (
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setOpenAdvanced((s) => ({ ...s, outbound: !s.outbound }))}
+            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-white/80 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-inset"
+            aria-expanded={openAdvanced.outbound}
+          >
+            Outbound call settings
+            <ChevronDown className={`h-4 w-4 shrink-0 text-white/50 transition-transform ${openAdvanced.outbound ? "rotate-180" : ""}`} />
+          </button>
+          {openAdvanced.outbound && (
+            <div className="border-t border-zinc-800 p-4 space-y-4">
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Opening strategy</label>
+                <input
+                  type="text"
+                  value={agent.outboundOpening}
+                  onChange={(e) => onChange({ outboundOpening: e.target.value })}
+                  placeholder="Hi {name}, this is calling from {business}. I'm following up on..."
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Goal of outbound calls</label>
+                <select
+                  value={agent.outboundGoal}
+                  onChange={(e) => onChange({ outboundGoal: e.target.value as Agent["outboundGoal"] })}
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                >
+                  <option value="book">Book an appointment</option>
+                  <option value="qualify">Qualify the lead</option>
+                  <option value="deliver">Deliver information</option>
+                  <option value="custom">Custom</option>
+                </select>
+                {agent.outboundGoal === "custom" && (
+                  <input
+                    type="text"
+                    value={agent.outboundGoalCustom}
+                    onChange={(e) => onChange({ outboundGoalCustom: e.target.value })}
+                    placeholder="Describe the goal"
+                    className="mt-2 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                  />
+                )}
+              </div>
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">If not interested</label>
+                <select
+                  value={agent.outboundNotInterested}
+                  onChange={(e) => onChange({ outboundNotInterested: e.target.value as Agent["outboundNotInterested"] })}
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                >
+                  <option value="thank_end">Thank and end politely</option>
+                  <option value="callback">Offer to call back later</option>
+                  <option value="ask_help">Ask what would be helpful</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Voicemail behavior</label>
+                <select
+                  value={agent.voicemailBehavior}
+                  onChange={(e) => onChange({ voicemailBehavior: e.target.value as Agent["voicemailBehavior"] })}
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                >
+                  <option value="leave">Leave a message</option>
+                  <option value="hangup">Hang up and try again later</option>
+                  <option value="sms">Send SMS instead</option>
+                </select>
+                {agent.voicemailBehavior === "leave" && (
+                  <textarea
+                    rows={2}
+                    value={agent.voicemailMessage}
+                    onChange={(e) => onChange({ voicemailMessage: e.target.value })}
+                    placeholder="Hi {name}, this is {business}..."
+                    className="mt-2 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25 resize-none"
+                  />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Inbound call settings — when purpose = inbound or both */}
+      {(agent.purpose === "inbound" || agent.purpose === "both") && (
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setOpenAdvanced((s) => ({ ...s, inbound: !s.inbound }))}
+            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-white/80 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-inset"
+            aria-expanded={openAdvanced.inbound}
+          >
+            Inbound call settings
+            <ChevronDown className={`h-4 w-4 shrink-0 text-white/50 transition-transform ${openAdvanced.inbound ? "rotate-180" : ""}`} />
+          </button>
+          {openAdvanced.inbound && (
+            <div className="border-t border-zinc-800 p-4 space-y-4">
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Confused caller handling</label>
+                <input
+                  type="text"
+                  value={agent.confusedCallerHandling}
+                  onChange={(e) => onChange({ confusedCallerHandling: e.target.value })}
+                  placeholder="I'm sorry, let me try to help. Could you tell me what you need?"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Off-topic handling</label>
+                <textarea
+                  rows={2}
+                  value={agent.offTopicHandling}
+                  onChange={(e) => onChange({ offTopicHandling: e.target.value })}
+                  placeholder="I'm the phone assistant for {business}. I can help with..."
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25 resize-none"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -2328,12 +2781,27 @@ function TestStepContent({
       <p className="text-xs text-white/50">Talk to your AI right now. It will use your voice, greeting, knowledge base, and rules.</p>
       <TestTab ref={testTabRef} agent={agent} onPrepareAgent={onPrepareAgent} suggestedOpener={suggestedOpener} onCallEnded={() => setShowGoLiveCta(true)} onTryAgain={() => setShowGoLiveCta(false)} />
       {showGoLiveCta && (
-        <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center justify-between gap-3">
-          <p className="text-sm text-white/90">Ready to go live?</p>
-          <button type="button" onClick={() => { onNext(); setShowGoLiveCta(false); }} className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded">
-            Continue →
-          </button>
-        </div>
+        <>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-2">
+            <p className="text-sm font-medium text-white/90">Your agent handled the call well.</p>
+            {(() => {
+              const r = getAgentReadiness(agent);
+              const tips = r.recommendations.slice(0, 2);
+              if (tips.length === 0) return null;
+              return (
+                <p className="text-xs text-white/50">
+                  To improve readiness: {tips.join(". ")}
+                </p>
+              );
+            })()}
+          </div>
+          <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center justify-between gap-3">
+            <p className="text-sm text-white/90">Ready to go live?</p>
+            <button type="button" onClick={() => { onNext(); setShowGoLiveCta(false); }} className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded">
+              Continue
+            </button>
+          </div>
+        </>
       )}
       <section aria-labelledby="test-scenarios-label">
         <p id="test-scenarios-label" className="mb-3 text-xs font-medium text-white/70">Or try a simulated scenario</p>
@@ -2379,16 +2847,17 @@ function GoLiveStepContent({
   activating: boolean;
 }) {
   const r = getReadiness(agent);
-  const voiceName = agent.voice?.trim() ? (voices.find((v) => v.id === agent.voice)?.name ?? agent.voice) : null;
+  const _voiceName = agent.voice?.trim() ? (voices.find((v) => v.id === agent.voice)?.name ?? agent.voice) : null;
   const canActivate =
     !!(agent.name?.trim() && agent.greeting?.trim()) &&
     !!agent.voice?.trim() &&
     (agent.faq?.length ?? 0) >= 3;
+  const allowActivate = canActivate && r.percent >= 40;
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-white">Your agent is ready</h3>
+      <h3 className="text-sm font-semibold text-white">Go live</h3>
       <div>
-        <p className="text-xs text-white/50 mb-1.5">Agent readiness: {r.percent}%</p>
+        <p className="text-xs text-white/50 mb-1.5">Readiness: {r.percent}%</p>
         <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
           <div
             className="h-full rounded-full bg-white/20 transition-[width] duration-300"
@@ -2396,26 +2865,32 @@ function GoLiveStepContent({
           />
         </div>
       </div>
-      <ul className="space-y-1 text-xs text-white/60">
-        <li>{agent.name?.trim() && agent.greeting?.trim() ? "✓ Identity configured" : "○ Identity configured"}</li>
-        <li>{agent.voice?.trim() ? `✓ Voice selected (${voiceName ?? agent.voice})` : "○ Voice selected"}</li>
-        <li>{(agent.faq?.length ?? 0) >= 3 ? `✓ ${agent.faq.length} knowledge entries` : "○ Knowledge entries"}</li>
-        <li>{agent.alwaysTransfer?.length || agent.transferPhone ? "✓ Transfer rules set" : "○ Transfer rules set"}</li>
-        <li className="flex items-center gap-2">
-          {agent.vapiAgentId ? "✓ Voice assistant created" : "○ Voice assistant not yet created"}
-          {canActivate && !agent.vapiAgentId && (
-            <button
-              type="button"
-              onClick={() => void onActivate()}
-              disabled={activating}
-              className="text-[11px] font-medium text-white/80 hover:text-white underline underline-offset-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded disabled:opacity-50"
-            >
-              {activating ? "Syncing…" : "Retry sync"}
-            </button>
-          )}
-        </li>
-      </ul>
-      <p className="text-xs text-white/40">To go live, connect your phone number or activate for test calls and outbound only.</p>
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
+        <p className="text-xs font-medium text-white/70 mb-3">Readiness checklist</p>
+        <ul className="space-y-2 text-xs text-white/60" role="list">
+          {r.tasks.map((t) => (
+            <li key={t.label} className="flex items-center gap-2">
+              {t.complete ? (
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden />
+              ) : (
+                <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />
+              )}
+              <span className={t.complete ? "text-white/80" : "text-white/50"}>{t.label}</span>
+              {t.label === "Voice assistant created" && !agent.vapiAgentId && allowActivate && (
+                <button
+                  type="button"
+                  onClick={() => void onActivate()}
+                  disabled={activating}
+                  className="text-[11px] font-medium text-white/80 hover:text-white underline underline-offset-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded disabled:opacity-50 ml-auto"
+                >
+                  {activating ? "Syncing…" : "Retry sync"}
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p className="text-xs text-white/40">Connect your phone number or activate for test calls and outbound only.</p>
       <div className="grid gap-3 sm:grid-cols-2" role="list">
         <Link
           href="/app/settings/phone"
@@ -2424,7 +2899,7 @@ function GoLiveStepContent({
         >
           <span className="text-sm font-medium text-white/90">Forward your existing number</span>
           <span className="mt-1 text-xs text-white/50">Keep your current number. Forward calls to your AI.</span>
-          <span className="mt-3 text-xs font-medium text-white/70">Set up forwarding →</span>
+          <span className="mt-3 text-xs font-medium text-white/70">Set up forwarding</span>
         </Link>
         <Link
           href="/app/settings/phone"
@@ -2433,20 +2908,23 @@ function GoLiveStepContent({
         >
           <span className="text-sm font-medium text-white/90">Get a new number</span>
           <span className="mt-1 text-xs text-white/50">We&apos;ll assign you a local number instantly.</span>
-          <span className="mt-3 text-xs font-medium text-white/70">Get number →</span>
+          <span className="mt-3 text-xs font-medium text-white/70">Get number</span>
         </Link>
       </div>
       <div className="rounded-2xl border border-white/[0.06] bg-white/[0.01] p-4">
         <p className="text-xs font-medium text-white/70">Or activate without a phone number</p>
         <p className="mt-1 text-[11px] text-white/40">Your AI will be available for test calls and outbound campaigns only.</p>
       </div>
-      {!canActivate && (
-        <p className="text-[11px] text-amber-500/90">Complete Identity, Voice, and at least 3 knowledge entries to activate.</p>
+      {!allowActivate && r.percent < 40 && (
+        <p className="text-[11px] text-amber-500/90">Complete the required items above to activate (at least 40% readiness).</p>
+      )}
+      {!allowActivate && r.percent >= 40 && !canActivate && (
+        <p className="text-[11px] text-amber-500/90">Complete greeting, voice, and at least 3 knowledge entries to activate.</p>
       )}
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label="Back to Test" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={() => void onActivate()} disabled={activating || !canActivate} aria-busy={activating} aria-label={activating ? "Activating agent" : canActivate ? "Activate agent and create voice assistant" : "Complete Identity, Voice, and Knowledge to activate"} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-          {activating ? "Activating…" : "Activate agent"}
+        <button type="button" onClick={() => void onActivate()} disabled={activating || !allowActivate} aria-busy={activating} aria-label={activating ? "Activating agent" : allowActivate ? "Launch my AI" : "Complete required items to activate"} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          {activating ? "Activating…" : "Launch my AI"}
         </button>
       </div>
     </div>

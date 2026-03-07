@@ -74,7 +74,7 @@ export default function SignInForm() {
             </div>
           </div>
           <h1 className="text-[22px] font-semibold text-white text-center tracking-tight">
-            {isCreate ? "Create your account" : "Welcome back"}
+            {isCreate ? "Create your account" : "Sign in"}
           </h1>
           <p className="text-white/40 text-[13px] text-center mt-1 mb-7">
             {isCreate ? "Start your 14-day free trial" : "Sign in to continue"}

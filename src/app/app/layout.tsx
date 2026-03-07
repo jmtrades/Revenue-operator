@@ -3,7 +3,8 @@ import { getDb } from "@/lib/db/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionFromCookie } from "@/lib/auth/session";
 import { buildWorkspaceReadiness } from "@/lib/workspace/readiness";
-import AppShellClient, { type AppShellWorkspaceMeta } from "./AppShellClient";
+import { type AppShellWorkspaceMeta } from "./AppShellClient";
+import HydrationGate from "./HydrationGate";
 
 async function getInitialShellData(): Promise<{
   workspaceId: string;
@@ -146,12 +147,14 @@ export default async function AppLayout({
   }
 
   return (
-    <AppShellClient
-      initialWorkspaceId={initial.workspaceId}
-      initialWorkspaceName={initial.workspaceName}
-      initialWorkspaceMeta={initial.workspaceMeta}
+    <HydrationGate
+      initialShellData={{
+        workspaceId: initial.workspaceId,
+        workspaceName: initial.workspaceName,
+        workspaceMeta: initial.workspaceMeta,
+      }}
     >
       {children}
-    </AppShellClient>
+    </HydrationGate>
   );
 }

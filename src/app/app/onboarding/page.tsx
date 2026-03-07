@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   CalendarRange,
+  CheckCircle2,
   ClipboardList,
   Headphones,
   MoonStar,
@@ -24,13 +25,6 @@ import { getIndustryLabel } from "@/lib/constants/industries";
 import { invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 const STEPS = 5;
-const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Mike", "Lisa"];
-const VOICES = CURATED_VOICES.map((voice) => ({
-  id: voice.id,
-  label: `${voice.name} — ${voice.desc}`,
-  gender: voice.gender,
-  preview: "Thanks for calling. How can I help you today?",
-}));
 const ONBOARDING_VOICES = CURATED_VOICES.slice(0, 6).map((v) => ({
   id: v.id,
   name: v.name,
@@ -39,18 +33,12 @@ const ONBOARDING_VOICES = CURATED_VOICES.slice(0, 6).map((v) => ({
   preview: "Thanks for calling. How can I help you today?",
 }));
 
-const PERSONALITY_STOPS = [
-  { value: 0, label: "Very Professional" },
-  { value: 25, label: "Professional" },
-  { value: 50, label: "Balanced" },
-  { value: 75, label: "Friendly" },
-  { value: 100, label: "Very Friendly" },
-];
-
-const CALL_STYLES = [
-  { id: "thorough", label: "Thorough", desc: "Asks clarifying questions, confirms details" },
-  { id: "conversational", label: "Conversational", desc: "Natural back-and-forth, brief confirmations" },
-  { id: "quick", label: "Quick", desc: "Gets to the point, minimal small talk" },
+const ONBOARDING_TEST_SCENARIOS = [
+  { id: "normal", title: "Normal call", description: "Standard inquiry", phrase: "Hi, I need some information about your services." },
+  { id: "angry", title: "Angry caller", description: "Tests empathy and transfer", phrase: "I've been waiting for a callback for days. I'm really frustrated." },
+  { id: "booking", title: "Booking request", description: "Tests appointment flow", phrase: "I'd like to schedule an appointment for this week." },
+  { id: "afterhours", title: "After hours", description: "Tests closed behavior", phrase: "Are you open right now? What are your hours?" },
+  { id: "unknown", title: "Unknown question", description: "Tests fallback", phrase: "Do you offer XYZ service? I didn't see it on your website." },
 ] as const;
 
 const ONBOARDING_TEMPLATES = [
@@ -104,14 +92,6 @@ const ONBOARDING_TEMPLATES = [
   },
 ] as const;
 
-type AgentId = "sarah" | "alex" | "emma";
-function agentNameToId(name: string): AgentId {
-  const n = (name || "Sarah").trim().toLowerCase();
-  if (n === "alex") return "alex";
-  if (n === "emma") return "emma";
-  return "sarah";
-}
-
 export default function AppOnboardingPage() {
   const router = useRouter();
   const onboardingCtx = useOnboardingStep();
@@ -122,41 +102,46 @@ export default function AppOnboardingPage() {
   const [website, setWebsite] = useState("");
   const [industry, setIndustry] = useState("");
   const [address, setAddress] = useState("");
-  const [timezone, setTimezone] = useState("America/Los_Angeles");
+  const [_timezone, setTimezone] = useState("America/Los_Angeles");
   const [businessPhone, setBusinessPhone] = useState("");
   const [showAllIndustries, setShowAllIndustries] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
-      if (raw) {
-        const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
-        if (d?.businessName?.trim()) setBusinessName(d.businessName.trim());
-        if (d?.industry?.trim() || d?.businessType?.trim()) setIndustry(d?.industry ?? d?.businessType ?? "");
-        if (d?.website?.trim()) setWebsite(d.website.trim());
+    const apply = () => {
+      try {
+        const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
+        if (raw) {
+          const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
+          if (d?.businessName?.trim()) setBusinessName(d.businessName.trim());
+          if (d?.industry?.trim() || d?.businessType?.trim()) setIndustry(d?.industry ?? d?.businessType ?? "");
+          if (d?.website?.trim()) setWebsite(d.website.trim());
+        }
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
+        setTimezone(tz);
+      } catch {
+        // ignore
       }
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
-      setTimezone(tz);
-    } catch {
-      // ignore
-    }
+    };
+    const id = requestAnimationFrame(apply);
+    return () => cancelAnimationFrame(id);
   }, []);
 
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("receptionist");
+  const [_selectedTemplate, _setSelectedTemplate] = useState<string>("receptionist");
   const [agentName, setAgentName] = useState<string>(ONBOARDING_TEMPLATES[0].agentName);
   const [voiceId, setVoiceId] = useState<string>(DEFAULT_VOICE_ID);
   const [greeting, setGreeting] = useState<string>(ONBOARDING_TEMPLATES[0].greeting);
-  const [personality, setPersonality] = useState(50);
-  const [callStyle, setCallStyle] = useState<"thorough" | "conversational" | "quick">("conversational");
+  const [_personality, _setPersonality] = useState(50);
+  const [_callStyle, _setCallStyle] = useState<"thorough" | "conversational" | "quick">("conversational");
   const [greetingPlaying, setGreetingPlaying] = useState(false);
 
   const [services, setServices] = useState<string[]>([]);
   const [serviceInput, setServiceInput] = useState("");
   const [_hours, _setHours] = useState<Record<string, { open: string; close: string; closed: boolean }>>({});
-  const [afterHours, setAfterHours] = useState<"messages" | "emergency" | "forward">("messages");
-  const [faqRows, setFaqRows] = useState<string[]>(["", "", ""]);
+  const [_afterHours, _setAfterHours] = useState<"messages" | "emergency" | "forward">("messages");
+  const [_faqRows, _setFaqRows] = useState<string[]>(["", "", ""]);
   const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([]);
   const [starterAdded, setStarterAdded] = useState(false);
+  const [businessHoursDisplay, setBusinessHoursDisplay] = useState("");
 
   const [phoneDisplay] = useState("(503) 555-0100");
   const [_numberOption, _setNumberOption] = useState<"forward" | "new" | "skip">("new");
@@ -267,7 +252,7 @@ export default function AppOnboardingPage() {
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="Portland Plumbing Co"
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none text-base"
               />
             </div>
             <div>
@@ -304,7 +289,7 @@ export default function AppOnboardingPage() {
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
                 placeholder="+1 (555) 000-0000"
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none text-base"
               />
             </div>
             <button
@@ -358,7 +343,7 @@ export default function AppOnboardingPage() {
                 onChange={(e) => setGreeting(e.target.value)}
                 placeholder={defaultGreeting}
                 rows={2}
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 focus:outline-none resize-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none resize-none text-base"
               />
               <button
                 type="button"
@@ -399,7 +384,70 @@ export default function AppOnboardingPage() {
         {step === 3 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-white">What should your AI know?</h1>
-            <p className="text-sm text-zinc-400">Add a few Q&As so your AI can answer real questions.</p>
+            <p className="text-sm text-zinc-400">Add business details and Q&As so your AI can answer real questions.</p>
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-4">
+              <p className="text-xs font-medium text-white/70">Business info</p>
+              <div>
+                <label htmlFor="onboarding-address" className="block text-[11px] text-zinc-500 mb-1">Address</label>
+                <input
+                  id="onboarding-address"
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="123 Main St, City, State"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label htmlFor="onboarding-hours" className="block text-[11px] text-zinc-500 mb-1">Hours</label>
+                <input
+                  id="onboarding-hours"
+                  type="text"
+                  value={businessHoursDisplay}
+                  onChange={(e) => setBusinessHoursDisplay(e.target.value)}
+                  placeholder="e.g. Monday–Friday 9 AM–5 PM"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Services</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {services.map((s) => (
+                    <span
+                      key={s}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.08] text-white/90 text-xs"
+                    >
+                      {s}
+                      <button
+                        type="button"
+                        onClick={() => setServices((prev) => prev.filter((x) => x !== s))}
+                        className="text-white/50 hover:text-white"
+                        aria-label={`Remove ${s}`}
+                      >
+                        &#215;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={serviceInput}
+                    onChange={(e) => setServiceInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addService(); } }}
+                    placeholder="Add a service"
+                    className="flex-1 px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={addService}
+                    className="shrink-0 px-4 py-2.5 rounded-xl border border-white/[0.08] text-white/80 hover:text-white hover:bg-white/[0.04] text-sm"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
             {!starterAdded && (
               <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <p className="text-sm text-zinc-300">
@@ -414,7 +462,14 @@ export default function AppOnboardingPage() {
                       businessHours: { monday: { start: "09:00", end: "17:00" }, tuesday: { start: "09:00", end: "17:00" }, wednesday: { start: "09:00", end: "17:00" }, thursday: { start: "09:00", end: "17:00" }, friday: { start: "09:00", end: "17:00" } },
                       services: services.length > 0 ? services : null,
                     });
-                    setKnowledgeItems(starter);
+                    const withHours = businessHoursDisplay.trim()
+                      ? starter.map((item) =>
+                          (item.q ?? "").toLowerCase().includes("hour")
+                            ? { ...item, a: businessHoursDisplay.trim() }
+                            : item
+                        )
+                      : starter;
+                    setKnowledgeItems(withHours);
                     setStarterAdded(true);
                   }}
                   className="shrink-0 py-2.5 px-4 rounded-xl bg-white text-[#080d19] font-semibold text-sm hover:bg-white/90"
@@ -484,17 +539,21 @@ export default function AppOnboardingPage() {
               />
             </div>
             <div>
-              <p className="text-xs font-medium text-zinc-400 mb-2">Try asking</p>
-              <ul className="text-sm text-zinc-500 space-y-1">
-                {knowledgeItems.slice(0, 3).map((item, i) => item.q && <li key={i}>&ldquo;{item.q}&rdquo;</li>)}
-                {knowledgeItems.length === 0 && (
-                  <>
-                    <li>&ldquo;What are your hours?&rdquo;</li>
-                    <li>&ldquo;I need to schedule a plumber&rdquo;</li>
-                    <li>&ldquo;How much do you charge?&rdquo;</li>
-                  </>
-                )}
-              </ul>
+              <p className="text-xs font-medium text-white/70 mb-2">Scenario simulator</p>
+              <p className="text-[11px] text-zinc-500 mb-3">When you&apos;re on the test call, try saying one of these to see how your AI responds.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="list">
+                {ONBOARDING_TEST_SCENARIOS.map((s) => (
+                  <div
+                    key={s.id}
+                    role="listitem"
+                    className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 text-left"
+                  >
+                    <p className="font-medium text-sm text-white/90">{s.title}</p>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">{s.description}</p>
+                    <p className="text-xs text-white/60 mt-2">&ldquo;{s.phrase}&rdquo;</p>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="flex gap-2">
               <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-white/[0.08] text-zinc-400 hover:text-white">← Back</button>
@@ -507,6 +566,27 @@ export default function AppOnboardingPage() {
         {step === 5 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-white">You&apos;re ready.</h1>
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
+              <p className="text-xs font-medium text-white/70 mb-3">Readiness checklist</p>
+              <ul className="space-y-2 text-xs text-white/60">
+                <li className="flex items-center gap-2">
+                  {greeting.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />}
+                  <span className={greeting.trim() ? "text-white/80" : "text-white/50"}>Greeting configured</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  {voiceId?.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />}
+                  <span className={voiceId?.trim() ? "text-white/80" : "text-white/50"}>Voice selected</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  {knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />}
+                  <span className={knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? "text-white/80" : "text-white/50"}>At least 3 knowledge entries</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />
+                  <span className="text-white/50">Phone connection (optional now)</span>
+                </li>
+              </ul>
+            </div>
             <p className="text-sm text-zinc-400">Your AI will answer calls at:</p>
             <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
               <p className="text-sm font-medium text-white mb-1">Forward your existing number</p>
