@@ -65,7 +65,7 @@ export function Hero() {
               ✓ Works with your existing number &nbsp; ✓ 5-minute setup &nbsp; ✓ No credit card required
             </p>
             <p className="text-xs font-medium" style={{ color: "#64748B" }}>
-              Trusted by 200+ businesses, solo operators, and teams
+              Built for businesses across 50+ industries
             </p>
           </div>
         </div>

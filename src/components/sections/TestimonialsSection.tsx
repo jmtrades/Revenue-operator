@@ -50,7 +50,7 @@ export function TestimonialsSection() {
       <Container>
         <AnimateOnScroll className="text-center mb-10">
           <p className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
-            Trusted by 200+ businesses across 12 industries
+            Built for businesses across 12 industries
           </p>
           <SectionLabel>What customers say</SectionLabel>
         </AnimateOnScroll>

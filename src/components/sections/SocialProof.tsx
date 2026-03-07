@@ -42,35 +42,11 @@ export function SocialProof() {
     <section id="waitlist" className="marketing-section pt-8 pb-16 md:pt-10 md:pb-20" style={{ background: "var(--bg-surface)" }}>
       <Container>
         <AnimateOnScroll className="text-center">
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>
-            EARLY ACCESS
-          </span>
-          <SectionLabel>Founding members</SectionLabel>
-          <p className="text-base mb-6 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Launching to the first 100 users. Get in early. Lock in founding pricing for life.
+          <SectionLabel>Trust & compliance</SectionLabel>
+          <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+            Enterprise-grade security and reliability. Start free — no credit card required.
           </p>
-          {!submitted ? (
-            <form onSubmit={handleEarlyAccess} className="flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto mb-10">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                required
-                className="flex-1 px-4 py-2.5 rounded-lg text-sm border"
-                style={{ background: "var(--bg-primary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
-              />
-              <button type="submit" className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-zinc-200 transition-colors shrink-0">
-                Join waitlist →
-              </button>
-            </form>
-          ) : (
-            <p className="mb-10 inline-flex items-center gap-2 text-sm" style={{ color: "var(--meaning-green)" }}>
-              <Sparkles className="h-4 w-4" />
-              <span>You&apos;re on the list!</span>
-            </p>
-          )}
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
             {badges.map((b) => (
               <div key={b.label} className="flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
                 <b.icon className="w-4 h-4" style={{ color: "var(--accent-secondary)" }} />
@@ -78,9 +54,39 @@ export function SocialProof() {
               </div>
             ))}
           </div>
+          <Link
+            href={ROUTES.START}
+            className="inline-flex items-center justify-center bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-200 transition-colors"
+          >
+            Start free →
+          </Link>
           <p className="text-sm mt-6" style={{ color: "var(--text-tertiary)" }}>
-            Or <Link href={ROUTES.START} className="underline" style={{ color: "var(--accent-primary)" }}>get started free now</Link> and set up in 5 minutes.
+            Optional: get product updates.{" "}
+            {!submitted ? (
+              <button type="button" onClick={() => document.getElementById("newsletter-email")?.focus()} className="underline" style={{ color: "var(--accent-primary)" }}>
+                Notify me
+              </button>
+            ) : (
+              <span className="inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" /> You&apos;re on the list.</span>
+            )}
           </p>
+          {!submitted && (
+            <form onSubmit={handleEarlyAccess} className="flex flex-col sm:flex-row gap-2 justify-center max-w-sm mx-auto mt-3">
+              <input
+                id="newsletter-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                aria-label="Email for product updates"
+                className="flex-1 px-3 py-2 rounded-lg text-sm border"
+                style={{ background: "var(--bg-primary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
+              />
+              <button type="submit" className="text-sm text-zinc-300 hover:text-white border border-zinc-600 rounded-lg px-4 py-2 shrink-0 transition-colors">
+                Subscribe
+              </button>
+            </form>
+          )}
         </AnimateOnScroll>
       </Container>
     </section>
