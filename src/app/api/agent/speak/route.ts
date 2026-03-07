@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const res = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream`,
       {
         method: "POST",
         headers: {
@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
           text: text.slice(0, 5000),
           model_id: ELEVENLABS_MODEL,
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.78,
+            stability: 0.55,
+            similarity_boost: 0.8,
             style: 0.35,
             use_speaker_boost: true,
           },

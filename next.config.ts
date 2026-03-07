@@ -10,8 +10,11 @@ const nextConfig: NextConfig = {
       "object-src 'none'",
       "frame-ancestors 'none'",
       "form-action 'self'",
+      "connect-src 'self' https: wss:",
       "img-src 'self' data: https:",
+      "media-src 'self' data: blob: https:",
       "font-src 'self' data:",
+      "worker-src 'self' blob:",
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self' 'unsafe-inline'",
     ].join("; ");
