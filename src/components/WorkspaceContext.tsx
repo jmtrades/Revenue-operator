@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
+import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
 const LOCAL_STORAGE_KEY = "revenue_last_workspace_id";
 
@@ -46,9 +47,23 @@ function persistWorkspaceId(id: string): void {
   }
 }
 
-export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const [workspaceId, setWorkspaceIdState] = useState("");
-  const [workspaceName, setWorkspaceName] = useState("");
+export function WorkspaceProvider({
+  children,
+  initialWorkspaceId = "",
+  initialWorkspaceName = "",
+}: {
+  children: React.ReactNode;
+  initialWorkspaceId?: string;
+  initialWorkspaceName?: string;
+}) {
+  const [workspaceId, setWorkspaceIdState] = useState(() => {
+    const snapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+    return snapshot?.id?.trim() || initialWorkspaceId || getSavedWorkspaceId() || "";
+  });
+  const [workspaceName, setWorkspaceName] = useState(() => {
+    const snapshot = getWorkspaceMeSnapshotSync() as { name?: string | null } | null;
+    return snapshot?.name?.trim() || initialWorkspaceName || "";
+  });
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -83,7 +98,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 
       const urlWid = getUrlWorkspaceId();
       const savedWid = getSavedWorkspaceId();
-      const candidate = urlWid || savedWid;
+      const candidate = urlWid || workspaceId || savedWid;
 
       if (list.length === 0) {
         setWorkspaceIdState("");
@@ -115,7 +130,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(guardId);
       setLoading(false);
     }
-  }, []);
+  }, [workspaceId]);
 
   const setWorkspaceId = useCallback((id: string) => {
     setWorkspaceIdState(id);
@@ -131,6 +146,18 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (initialRun.current) {
       initialRun.current = false;
+      fetchWorkspaceMeCached()
+        .then((data) => {
+          const snapshot = data as { id?: string | null; name?: string | null } | null;
+          const nextId = snapshot?.id?.trim();
+          if (!nextId) return;
+          setWorkspaceIdState((current) => current || nextId);
+          setWorkspaceName((current) => current || snapshot?.name?.trim() || "");
+          persistWorkspaceId(nextId);
+        })
+        .catch(() => {
+          // ignore priming errors and rely on the workspace list request
+        });
       loadWorkspaces();
     }
   }, [loadWorkspaces]);

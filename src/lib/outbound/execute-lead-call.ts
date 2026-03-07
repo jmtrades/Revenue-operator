@@ -6,6 +6,7 @@
 import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { createAssistant, createOutboundCall } from "@/lib/vapi";
+import { hasVapiServerKey } from "@/lib/vapi/env";
 
 export async function executeLeadOutboundCall(
   workspaceId: string,
@@ -26,7 +27,7 @@ export async function executeLeadOutboundCall(
     return { ok: false, error: "Lead has no valid phone number" };
   }
 
-  if (!process.env.VAPI_API_KEY || !process.env.VAPI_PHONE_NUMBER_ID) {
+  if (!hasVapiServerKey() || !process.env.VAPI_PHONE_NUMBER_ID) {
     return { ok: false, error: "Outbound calling not configured" };
   }
 

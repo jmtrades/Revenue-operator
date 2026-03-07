@@ -1,29 +1,49 @@
-"use client";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { getDb } from "@/lib/db/queries";
+import { createClient } from "@/lib/supabase/server";
+import { getSessionFromCookie } from "@/lib/auth/session";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
-
-export default function AppRootPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchWorkspaceMeCached()
-      .then((data: { onboardingCompletedAt?: string | null } | null) => {
-        router.replace(data?.onboardingCompletedAt ? "/app/activity" : "/app/onboarding");
-      })
-      .catch(() => router.replace("/app/onboarding"))
-      .finally(() => setLoading(false));
-  }, [router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="h-16 w-64 bg-zinc-900 rounded-xl animate-pulse" />
-      </div>
-    );
+async function getUserId(): Promise<string | null> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.id) {
+      return user.id;
+    }
+  } catch {
+    // fall through to revenue_session cookie
   }
 
-  return null;
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map(({ name, value }) => `${name}=${value}`)
+    .join("; ");
+  const session = getSessionFromCookie(cookieHeader);
+  return session?.userId ?? null;
+}
+
+export default async function AppRootPage() {
+  const userId = await getUserId();
+  if (!userId) {
+    redirect("/app/onboarding");
+  }
+
+  const db = getDb();
+  const { data: workspace } = await db
+    .from("workspaces")
+    .select("onboarding_completed_at")
+    .eq("owner_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const onboarded = Boolean(
+    (workspace as { onboarding_completed_at?: string | null } | null)?.onboarding_completed_at,
+  );
+
+  redirect(onboarded ? "/app/activity" : "/app/onboarding");
 }

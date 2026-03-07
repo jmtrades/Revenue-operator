@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { fetchWorkspaceMeCached, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
+import {
+  fetchWorkspaceMeCached,
+  getWorkspaceMeSnapshotSync,
+  invalidateWorkspaceMeCache,
+} from "@/lib/client/workspace-me";
 
 function formatPhoneNumber(num: string | null): string {
   if (!num) return "—";
@@ -16,15 +20,60 @@ function formatPhoneNumber(num: string | null): string {
   return num;
 }
 
+type PhoneSettingsSnapshot = {
+  phoneNumber: string | null;
+  status: string | null;
+  outboundFrom: string;
+  whatsappEnabled: boolean;
+};
+
+const PHONE_SETTINGS_SNAPSHOT_PREFIX = "rt_phone_settings_snapshot:";
+
+function readPhoneSettingsSnapshot(workspaceId: string): PhoneSettingsSnapshot | null {
+  if (typeof window === "undefined" || !workspaceId) return null;
+  try {
+    const raw = window.localStorage.getItem(
+      `${PHONE_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`,
+    );
+    return raw ? (JSON.parse(raw) as PhoneSettingsSnapshot) : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistPhoneSettingsSnapshot(
+  workspaceId: string,
+  snapshot: PhoneSettingsSnapshot,
+) {
+  if (typeof window === "undefined" || !workspaceId) return;
+  try {
+    window.localStorage.setItem(
+      `${PHONE_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`,
+      JSON.stringify(snapshot),
+    );
+  } catch {
+    // ignore persistence errors
+  }
+}
+
 export default function AppSettingsPhonePage() {
-  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+  const snapshotWorkspaceId = workspaceSnapshot?.id?.trim() || "default";
+  const initialSnapshot = readPhoneSettingsSnapshot(snapshotWorkspaceId);
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(
+    initialSnapshot?.phoneNumber ?? null,
+  );
   const [_status, setStatus] = useState<string | null>(null);
-  const [outboundFrom, setOutboundFrom] = useState<string>("");
-  const [whatsappEnabled, setWhatsappEnabled] = useState(false);
+  const [outboundFrom, setOutboundFrom] = useState<string>(
+    initialSnapshot?.outboundFrom ?? "",
+  );
+  const [whatsappEnabled, setWhatsappEnabled] = useState(
+    initialSnapshot?.whatsappEnabled ?? false,
+  );
   const [primaryAgentId, setPrimaryAgentId] = useState<string | null>(null);
   const [testCallNumber, setTestCallNumber] = useState("");
   const [testingCall, setTestingCall] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(initialSnapshot == null);
   const [connecting, setConnecting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -44,6 +93,12 @@ export default function AppSettingsPhonePage() {
         setStatus(data.status ?? null);
         setOutboundFrom(data.outbound_from_number ?? "");
         setWhatsappEnabled(data.whatsapp_enabled ?? false);
+        persistPhoneSettingsSnapshot(snapshotWorkspaceId, {
+          phoneNumber: data.phone_number ?? null,
+          status: data.status ?? null,
+          outboundFrom: data.outbound_from_number ?? "",
+          whatsappEnabled: data.whatsapp_enabled ?? false,
+        });
       }
     } catch {
       setPhoneNumber(null);
@@ -51,7 +106,7 @@ export default function AppSettingsPhonePage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [snapshotWorkspaceId]);
 
   useEffect(() => {
     fetchPhone();

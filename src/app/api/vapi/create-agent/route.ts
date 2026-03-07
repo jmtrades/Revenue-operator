@@ -11,6 +11,7 @@ import { compileSystemPrompt } from "@/lib/business-brain";
 import { buildAgentFunctions } from "@/lib/agent-functions";
 import { getTemplateCapabilities, getTemplateVoiceId } from "@/lib/data/agent-templates";
 import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
+import { hasVapiServerKey } from "@/lib/vapi/env";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!process.env.VAPI_API_KEY) {
+  if (!hasVapiServerKey()) {
     return NextResponse.json({ error: "Voice not configured" }, { status: 503 });
   }
 

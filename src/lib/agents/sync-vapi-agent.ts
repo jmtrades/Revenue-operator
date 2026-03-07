@@ -3,6 +3,7 @@ import { createAssistant, updateAssistant } from "@/lib/vapi";
 import { buildAgentFunctions } from "@/lib/agent-functions";
 import { buildVapiSystemPrompt } from "@/lib/agents/build-vapi-system-prompt";
 import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { hasVapiServerKey } from "@/lib/vapi/env";
 
 type DbLike = ReturnType<typeof getDb>;
 
@@ -47,7 +48,6 @@ type AgentRow = {
 type WorkspaceRow = {
   id: string;
   name?: string | null;
-  industry?: string | null;
   preferred_language?: string | null;
   vapi_assistant_id?: string | null;
 };
@@ -57,7 +57,7 @@ function clamp(value: number, min: number, max: number) {
 }
 
 export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assistantId: string }> {
-  if (!process.env.VAPI_API_KEY) {
+  if (!hasVapiServerKey()) {
     throw new Error("Vapi is not configured");
   }
 
@@ -73,7 +73,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
   const agent = agentData as AgentRow;
   const { data: workspaceData, error: workspaceError } = await db
     .from("workspaces")
-    .select("id, name, industry, preferred_language, vapi_assistant_id")
+    .select("id, name, preferred_language, vapi_assistant_id")
     .eq("id", agent.workspace_id)
     .single();
   if (workspaceError || !workspaceData) {
@@ -101,7 +101,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
     name: `${businessName} - ${agent.name?.trim() || "Receptionist"}`,
     systemPrompt: buildVapiSystemPrompt({
       businessName,
-      industry: workspace.industry ?? null,
+      industry: null,
       agentName: agent.name?.trim() || "Receptionist",
       greeting,
       services: Array.isArray(knowledgeBase.services) ? knowledgeBase.services : [],

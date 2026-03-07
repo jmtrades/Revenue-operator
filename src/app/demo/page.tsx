@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { DemoSimulatorSection } from "@/components/demo/DemoSimulatorSection";
@@ -11,13 +12,18 @@ export const metadata = {
   description: "Talk to your AI. Right now. Same AI that handles real calls.",
 };
 
-export default function DemoPage() {
+export default async function DemoPage() {
+  const cookieStore = await cookies();
+  const initialAuthenticated =
+    cookieStore.has("revenue_session") ||
+    cookieStore.getAll().some((c) => c.name.startsWith("sb-"));
+
   return (
     <div
       className="min-h-screen"
       style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
     >
-      <Navbar />
+      <Navbar initialAuthenticated={initialAuthenticated} />
       <main className="pt-28 pb-24">
         <DemoPageContent />
 

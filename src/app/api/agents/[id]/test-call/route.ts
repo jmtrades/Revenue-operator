@@ -10,6 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { createAssistant, createOutboundCall } from "@/lib/vapi";
+import { hasVapiServerKey } from "@/lib/vapi/env";
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ ok: true, message: "Add a phone number to receive a test call, or call from the Activity feed." });
   }
 
-  if (!process.env.VAPI_API_KEY || !process.env.VAPI_PHONE_NUMBER_ID) {
+  if (!hasVapiServerKey() || !process.env.VAPI_PHONE_NUMBER_ID) {
     return NextResponse.json({ ok: true, message: "Voice is not configured yet. Set VAPI_API_KEY and VAPI_PHONE_NUMBER_ID to enable test calls." });
   }
 

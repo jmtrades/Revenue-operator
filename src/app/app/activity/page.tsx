@@ -10,10 +10,12 @@ import {
   UserPlus,
   Video,
 } from "lucide-react";
-import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
+import {
+  fetchWorkspaceMeCached,
+  getWorkspaceMeSnapshotSync,
+} from "@/lib/client/workspace-me";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
-import { Skeleton } from "@/components/ui/Skeleton";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 type ActivityType = "lead" | "appointment" | "follow-up" | "urgent";
@@ -110,37 +112,70 @@ const NEXT_ACTIONS = [
   },
 ] as const;
 
+const ACTIVITY_SNAPSHOT_KEY = "rt_activity_snapshot";
+
+function readActivitySnapshot(): ActivityCard[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(ACTIVITY_SNAPSHOT_KEY);
+    const parsed = raw ? (JSON.parse(raw) as ActivityCard[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistActivitySnapshot(cards: ActivityCard[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(ACTIVITY_SNAPSHOT_KEY, JSON.stringify(cards));
+  } catch {
+    // ignore persistence errors
+  }
+}
+
 export default function AppActivityPage() {
   const { workspaceId } = useWorkspace();
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as
+    | {
+        systemEvents?: Array<{ id: string; title: string; body: string; href: string }>;
+        progress?: { nextStep?: { href?: string } | null };
+        stats?: { calls?: number; leads?: number; estRevenue?: number; lastCallAt?: string | null };
+      }
+    | null;
 
   useEffect(() => {
     document.title = PAGE_TITLE;
     return () => { document.title = ""; };
   }, []);
-  const [mounted, setMounted] = useState(false);
   const [filter, setFilter] = useState<FilterId>("all");
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<ActivityCard | null>(null);
-  const [cards, setCards] = useState<ActivityCard[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [systemEvents, setSystemEvents] = useState<Array<{ id: string; title: string; body: string; href: string }>>([]);
-  const [nextStepHref, setNextStepHref] = useState("/app/settings/phone");
-  const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(null);
+  const [cards, setCards] = useState<ActivityCard[]>(() => readActivitySnapshot());
+  const [loading, setLoading] = useState(() => readActivitySnapshot().length === 0);
+  const [systemEvents, setSystemEvents] = useState<Array<{ id: string; title: string; body: string; href: string }>>(
+    () => workspaceSnapshot?.systemEvents ?? [],
+  );
+  const [nextStepHref, setNextStepHref] = useState(
+    () => workspaceSnapshot?.progress?.nextStep?.href || "/app/settings/phone",
+  );
+  const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(() =>
+    workspaceSnapshot?.stats?.lastCallAt ? Date.now() : null,
+  );
   const [workspaceStats, setWorkspaceStats] = useState<{
     calls: number;
     leads: number;
     estRevenue: number;
     lastCallAt?: string | null;
-  }>({ calls: 0, leads: 0, estRevenue: 0, lastCallAt: null });
-
-  useEffect(() => {
-    const id = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(id);
-  }, []);
+  }>(() => ({
+    calls: workspaceSnapshot?.stats?.calls ?? 0,
+    leads: workspaceSnapshot?.stats?.leads ?? 0,
+    estRevenue: workspaceSnapshot?.stats?.estRevenue ?? 0,
+    lastCallAt: workspaceSnapshot?.stats?.lastCallAt ?? null,
+  }));
 
   useEffect(() => {
     if (!workspaceId) return;
-    const loadingTimeout = window.setTimeout(() => setLoading(true), 0);
     fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -188,15 +223,10 @@ export default function AppActivityPage() {
           };
         });
         setCards(mapped);
+        persistActivitySnapshot(mapped);
       })
-      .catch(() => {
-        setCards([]);
-      })
-      .finally(() => {
-        clearTimeout(loadingTimeout);
-        setLoading(false);
-      });
-    return () => clearTimeout(loadingTimeout);
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [workspaceId]);
 
   useEffect(() => {
@@ -244,21 +274,6 @@ export default function AppActivityPage() {
       );
     return cards;
   }, [cards, filter]);
-
-  if (!mounted) {
-    return (
-      <div className="max-w-[600px] mx-auto p-4 md:p-6">
-        <Skeleton className="h-6 w-32 mb-6" />
-        <div className="grid grid-cols-4 gap-2 mb-6">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-16 rounded-xl" />
-          ))}
-        </div>
-        <Skeleton className="h-10 w-full mb-4" />
-        <Skeleton lines={5} className="h-20" />
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
@@ -370,7 +385,7 @@ export default function AppActivityPage() {
         ))}
       </div>
 
-      {loading && (
+      {loading && cards.length === 0 && (
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-500 mb-4">
           Loading recent activity…
         </div>

@@ -11,6 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
 const PAGE_TITLE = "Leads — Recall Touch";
 
@@ -25,6 +26,23 @@ interface ApiLead {
   deal_id?: string | null;
   value_cents?: number | null;
 }
+
+type LeadView = {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  source: LeadSource;
+  status: LeadStatus;
+  score: number;
+  service: string;
+  createdAt: string;
+  lastContactAt: string;
+  assignedAgent: string;
+  notes: string;
+  linkedCallId?: string;
+  timeline: { at: string; label: string }[];
+};
 
 type ViewMode = "table" | "board";
 type ScoreBucket = "all" | "high" | "medium" | "low";
@@ -73,10 +91,39 @@ function timeSince(iso: string): string {
 
 type SortKey = "newest" | "score" | "recent-contact";
 
+const LEADS_SNAPSHOT_PREFIX = "rt_leads_snapshot:";
+
+function readLeadsSnapshot(workspaceId: string): LeadView[] {
+  if (typeof window === "undefined" || !workspaceId) return [];
+  try {
+    const raw = window.localStorage.getItem(`${LEADS_SNAPSHOT_PREFIX}${workspaceId}`);
+    const parsed = raw ? (JSON.parse(raw) as LeadView[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistLeadsSnapshot(workspaceId: string, leads: LeadView[]) {
+  if (typeof window === "undefined" || !workspaceId) return;
+  try {
+    window.localStorage.setItem(
+      `${LEADS_SNAPSHOT_PREFIX}${workspaceId}`,
+      JSON.stringify(leads),
+    );
+  } catch {
+    // ignore persistence errors
+  }
+}
+
 export default function LeadsPage() {
   const router = useRouter();
   const { workspaceId } = useWorkspace();
-  const [loading, setLoading] = useState(false);
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+  const snapshotWorkspaceId =
+    workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const initialLeads = readLeadsSnapshot(snapshotWorkspaceId);
+  const [loading, setLoading] = useState(initialLeads.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [view, setView] = useState<ViewMode>("table");
@@ -86,25 +133,7 @@ export default function LeadsPage() {
   const [sort, setSort] = useState<SortKey>("newest");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [drawerLead, setDrawerLead] = useState<LeadView | null>(null);
-
-  type LeadView = {
-    id: string;
-    name: string;
-    phone: string;
-    email: string;
-    source: LeadSource;
-    status: LeadStatus;
-    score: number;
-    service: string;
-    createdAt: string;
-    lastContactAt: string;
-    assignedAgent: string;
-    notes: string;
-    linkedCallId?: string;
-    timeline: { at: string; label: string }[];
-  };
-
-  const [leads, setLeads] = useState<LeadView[]>([]);
+  const [leads, setLeads] = useState<LeadView[]>(initialLeads);
 
   useEffect(() => {
     document.title = PAGE_TITLE;
@@ -113,10 +142,6 @@ export default function LeadsPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    setTimeout(() => {
-      setLoading(true);
-      setError(null);
-    }, 0);
     fetch(`/api/leads?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -169,7 +194,9 @@ export default function LeadsPage() {
             timeline,
           };
         });
+        setError(null);
         setLeads(mapped);
+        persistLeadsSnapshot(workspaceId, mapped);
       })
       .catch(() => setError("Could not load leads for this workspace."))
       .finally(() => setLoading(false));

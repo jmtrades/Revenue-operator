@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { syncVapiAgent } from "@/lib/agents/sync-vapi-agent";
+import { hasVapiServerKey } from "@/lib/vapi/env";
 
 async function attachExistingWorkspaceAssistant(
   workspaceId: string,
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  if (!process.env.VAPI_API_KEY) {
+  if (!hasVapiServerKey()) {
     return NextResponse.json({ error: "Vapi is not configured" }, { status: 503 });
   }
 

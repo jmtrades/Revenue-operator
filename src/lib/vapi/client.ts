@@ -3,6 +3,8 @@
  * Uses ElevenLabs for TTS and Deepgram for STT when configured for human-like voice.
  */
 
+import { getVapiServerKey } from "./env";
+
 const VAPI_BASE = "https://api.vapi.ai";
 
 const DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // Sarah — warm, professional
@@ -46,7 +48,7 @@ export interface CreateCallInput {
  * for human-like voice and low latency. Otherwise falls back to OpenAI model + default config.
  */
 export async function createAssistant(input: CreateAssistantInput): Promise<{ id: string }> {
-  const key = process.env.VAPI_API_KEY;
+  const key = getVapiServerKey();
   if (!key) throw new Error("VAPI_API_KEY not set");
 
   const firstMessage = input.firstMessage || "Hello, how can I help you today?";
@@ -66,7 +68,7 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
       messages: [{ role: "system", content: input.systemPrompt }],
     },
     voice: {
-      provider: "elevenlabs",
+      provider: "11labs",
       voiceId,
       model: "eleven_turbo_v2_5",
       stability: voiceSettings.stability ?? 0.55,
@@ -97,7 +99,7 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
   }
 
   if (Array.isArray(input.toolCalls) && input.toolCalls.length > 0) {
-    body.toolCalls = input.toolCalls.map((t) => ({
+    (body.model as { tools?: unknown[] }).tools = input.toolCalls.map((t) => ({
       type: "function" as const,
       function: {
         name: t.name,
@@ -133,7 +135,7 @@ export async function updateAssistant(
   assistantId: string,
   input: CreateAssistantInput
 ): Promise<{ id: string }> {
-  const key = process.env.VAPI_API_KEY;
+  const key = getVapiServerKey();
   if (!key) throw new Error("VAPI_API_KEY not set");
 
   const firstMessage = input.firstMessage || "Hello, how can I help you today?";
@@ -153,7 +155,7 @@ export async function updateAssistant(
       messages: [{ role: "system", content: input.systemPrompt }],
     },
     voice: {
-      provider: "elevenlabs",
+      provider: "11labs",
       voiceId,
       model: "eleven_turbo_v2_5",
       stability: voiceSettings.stability ?? 0.55,
@@ -181,7 +183,7 @@ export async function updateAssistant(
 
   if (input.workspaceId) body.metadata = { workspace_id: input.workspaceId };
   if (Array.isArray(input.toolCalls) && input.toolCalls.length > 0) {
-    body.toolCalls = input.toolCalls.map((t) => ({
+    (body.model as { tools?: unknown[] }).tools = input.toolCalls.map((t) => ({
       type: "function" as const,
       function: { name: t.name, description: t.description, parameters: t.parameters },
     }));
@@ -208,7 +210,7 @@ export async function updateAssistant(
  * Requires VAPI_PHONE_NUMBER_ID (your Vapi phone number id) for TwiML response.
  */
 export async function createCallForTwilio(input: CreateCallInput): Promise<{ twiml: string }> {
-  const key = process.env.VAPI_API_KEY;
+  const key = getVapiServerKey();
   const phoneNumberId = process.env.VAPI_PHONE_NUMBER_ID;
   if (!key) throw new Error("VAPI_API_KEY not set");
   if (!phoneNumberId) throw new Error("VAPI_PHONE_NUMBER_ID not set for Twilio handoff");
@@ -250,7 +252,7 @@ export async function createCallForTwilio(input: CreateCallInput): Promise<{ twi
  * no TwiML needed. Returns call id if present.
  */
 export async function createOutboundCall(input: CreateCallInput): Promise<{ callId?: string }> {
-  const key = process.env.VAPI_API_KEY;
+  const key = getVapiServerKey();
   const phoneNumberId = process.env.VAPI_PHONE_NUMBER_ID;
   if (!key) throw new Error("VAPI_API_KEY not set");
   if (!phoneNumberId) throw new Error("VAPI_PHONE_NUMBER_ID not set for outbound");

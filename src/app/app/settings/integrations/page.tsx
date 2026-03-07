@@ -81,11 +81,11 @@ export default function AppSettingsIntegrationsPage() {
     if (!calendar) return;
     const msg = calendar === "connected" ? "Google Calendar connected." : calendar === "error" ? "Could not connect Google Calendar." : calendar === "config" ? "Google Calendar is not configured." : null;
     if (msg) {
-      const t = setTimeout(() => setToast(msg), 0);
-      const t2 = setTimeout(() => setToast(null), 4000);
       const connected = calendar === "connected";
-      const t3 = setTimeout(() => setGoogleCalendarConnected(connected), 0);
-      return () => { clearTimeout(t); clearTimeout(t2); clearTimeout(t3); };
+      setToast(msg);
+      setGoogleCalendarConnected(connected);
+      const t = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(t);
     }
     const t = setTimeout(() => setToast(null), 4000);
     return () => clearTimeout(t);

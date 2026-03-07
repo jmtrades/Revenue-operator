@@ -1,15 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
+import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
 const FALLBACK = "My Workspace";
 
 /**
  * Resolves workspace name from the workspace API.
  */
-export function WorkspaceName({ className }: { className?: string }) {
-  const [name, setName] = useState<string | null>(null);
+export function WorkspaceName({
+  className,
+  initialName,
+}: {
+  className?: string;
+  initialName?: string;
+}) {
+  const [name, setName] = useState<string | null>(() => {
+    const snapshot = getWorkspaceMeSnapshotSync() as { name?: string | null } | null;
+    return snapshot?.name?.trim() || initialName?.trim() || null;
+  });
 
   useEffect(() => {
     let cancelled = false;
