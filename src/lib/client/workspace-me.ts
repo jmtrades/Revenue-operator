@@ -2,7 +2,7 @@
 
 type WorkspaceMeResponse = Record<string, unknown> | null;
 
-const CACHE_TTL_MS = 60_000;
+const CACHE_TTL_MS = 120_000; // 2 min — reduces /api/workspace/me calls; in-flight dedup still applies
 const STORAGE_KEY = "rt_workspace_me_snapshot";
 
 let cachedValue: WorkspaceMeResponse = null;

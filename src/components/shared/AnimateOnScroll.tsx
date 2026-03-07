@@ -3,10 +3,11 @@
 import { type ReactNode } from "react";
 import { motion } from "framer-motion";
 
+// Visible by default (opacity: 1) so sections render without JS; only animate translate when in view
 const fadeUp = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 1, y: 16 },
   whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, ease: "easeOut" as const },
+  transition: { duration: 0.4, ease: "easeOut" as const },
   viewport: { once: true, margin: "-50px" },
 };
 
@@ -36,6 +37,6 @@ export function StaggerChildren({ children, className = "" }: { children: ReactN
 }
 
 export const fadeUpVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+  hidden: { opacity: 1, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
 };

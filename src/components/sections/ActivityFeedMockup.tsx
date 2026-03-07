@@ -15,7 +15,7 @@ function FeedCard({ card, index }: { card: (typeof FEED_CARDS)[0]; index: number
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 1, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.15 }}
       className="rounded-xl border-l-4 p-4 text-left"

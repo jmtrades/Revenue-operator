@@ -69,8 +69,8 @@ const softwareApplicationJsonLd = {
   url: "https://recall-touch.com",
   offers: {
     "@type": "AggregateOffer",
-    lowPrice: "97",
-    highPrice: "497",
+    lowPrice: "297",
+    highPrice: "2400",
     priceCurrency: "USD",
     offerCount: "4",
   },

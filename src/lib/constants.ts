@@ -40,7 +40,7 @@ export const PRICING_TIERS = [
     priceMonthly: "$297",
     priceAnnual: "$247",
     period: "/mo",
-    description: "Less than one missed call",
+    description: "Answer every call. One number, one agent.",
     features: [
       "400 inbound min included",
       "50 outbound calls",
@@ -101,7 +101,7 @@ export const PRICING_TIERS = [
     priceMonthly: "Custom",
     priceAnnual: "Custom",
     period: "",
-    description: "From $799/mo — white label, custom compliance, SSO, dedicated manager, SLA",
+    description: "Custom pricing — white label, custom compliance, SSO, dedicated manager, SLA",
     features: [
       "White label",
       "Custom compliance",

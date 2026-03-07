@@ -85,6 +85,61 @@ type Agent = {
 
 type TabId = "profile" | "knowledge" | "rules" | "test";
 
+type AgentReadiness = { score: number; total: number; percent: number; recommendations: string[] };
+
+function getAgentReadiness(agent: Agent): AgentReadiness {
+  const recommendations: string[] = [];
+  let score = 0;
+  const total = 100;
+
+  if (agent.greeting.trim().length > 0) {
+    score += 15;
+  } else {
+    recommendations.push("Add a greeting so callers hear a clear intro");
+  }
+
+  if (agent.voice.trim().length > 0) {
+    score += 15;
+  } else {
+    recommendations.push("Select a voice for this agent");
+  }
+
+  const validFaq = agent.faq.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim());
+  if (validFaq.length >= 3) {
+    score += 25;
+  } else {
+    recommendations.push("Add at least 3 knowledge Q&A entries so the agent can answer common questions");
+  }
+
+  const hasTransfer =
+    agent.alwaysTransfer.length > 0 ||
+    (agent.transferPhone ?? "").trim() !== "" ||
+    agent.transferRules.some((r) => (r.phrase ?? "").trim());
+  if (hasTransfer) {
+    score += 15;
+  } else {
+    recommendations.push("Configure when to transfer to a human and a transfer number");
+  }
+
+  if (agent.vapiAgentId && String(agent.vapiAgentId).trim()) {
+    score += 20;
+  } else {
+    recommendations.push("Save the agent to create your voice assistant (required for live calls)");
+  }
+
+  score += 5; // after-hours behavior is configured (messages / forward / emergency)
+
+  const hasRules = (agent.neverSay ?? []).length > 0 || (agent.transferRules ?? []).length > 0;
+  if (hasRules) {
+    score += 5;
+  } else {
+    recommendations.push("Add never-say words or phrase-based transfer rules for better control");
+  }
+
+  const percent = Math.min(100, Math.round((score / total) * 100));
+  return { score, total, percent, recommendations };
+}
+
 type InitialFallbackAgent = {
   businessName?: string;
   greeting?: string;
@@ -346,10 +401,12 @@ export default function AppAgentsPageClient({
   initialWorkspaceId = "",
   initialAgentsRows = [],
   initialFallbackAgent = null,
+  initialTab,
 }: {
   initialWorkspaceId?: string;
   initialAgentsRows?: Array<Record<string, unknown>>;
   initialFallbackAgent?: InitialFallbackAgent;
+  initialTab?: TabId;
 }) {
   const { workspaceId: contextWorkspaceId } = useWorkspace();
   const workspaceId = contextWorkspaceId || initialWorkspaceId;
@@ -366,7 +423,7 @@ export default function AppAgentsPageClient({
   const [selectedId, setSelectedId] = useState<string | null>(
     () => initialAgents[0]?.id ?? null,
   );
-  const [tab, setTab] = useState<TabId>("profile");
+  const [tab, setTab] = useState<TabId>(initialTab ?? "profile");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [templateCategory, setTemplateCategory] = useState<
     AgentTemplateCategory | "all"
@@ -796,9 +853,17 @@ export default function AppAgentsPageClient({
               <p className="mt-2 text-[11px] text-zinc-500 line-clamp-2">
                 {agent.greeting}
               </p>
-              <p className="mt-3 text-[11px] text-zinc-600">
-                {agent.stats.totalCalls} calls handled
-              </p>
+              {(() => {
+                const readiness = getAgentReadiness(agent);
+                return (
+                  <p className="mt-3 text-[11px] text-zinc-500">
+                    <span className={readiness.percent >= 80 ? "text-green-500/80" : readiness.percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
+                      {readiness.percent}% configured
+                    </span>
+                    {" · "}{agent.stats.totalCalls} calls
+                  </p>
+                );
+              })()}
             </button>
           ))}
         </div>
@@ -812,6 +877,25 @@ export default function AppAgentsPageClient({
                   <p className="text-[11px] text-zinc-500 mt-0.5">
                     Configure how this agent answers, books, and follows through.
                   </p>
+                  {(() => {
+                    const r = getAgentReadiness(selected);
+                    return (
+                      <div className="mt-2">
+                        <p className="text-[11px] text-zinc-500">
+                          <span className={r.percent >= 80 ? "text-green-500/90" : r.percent >= 40 ? "text-amber-500/90" : "text-zinc-500"}>
+                            {r.percent}% ready
+                          </span>
+                        </p>
+                        {r.recommendations.length > 0 && (
+                          <ul className="mt-1 list-disc list-inside text-[11px] text-zinc-500 space-y-0.5">
+                            {r.recommendations.map((rec, i) => (
+                              <li key={i}>{rec}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <button

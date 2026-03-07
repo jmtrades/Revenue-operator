@@ -97,13 +97,16 @@ const PAGE_TITLE = "Dashboard — Recall Touch";
 function ActivityDateLabel() {
   const [dateLabel, setDateLabel] = useState("");
   useEffect(() => {
-    setDateLabel(
-      new Date().toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      }),
-    );
+    const id = window.setTimeout(() => {
+      setDateLabel(
+        new Date().toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        }),
+      );
+    }, 0);
+    return () => window.clearTimeout(id);
   }, []);
   return <span className="text-xs text-zinc-500">{dateLabel}</span>;
 }
@@ -492,10 +495,10 @@ export default function AppActivityPage() {
           <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-white">Want to see your AI in action?</p>
-              <p className="text-xs text-zinc-500 mt-1">Place a quick test call before you go fully live.</p>
+              <p className="text-xs text-zinc-500 mt-1">Use the Test tab on Agents to place a real voice call with your configured agent.</p>
             </div>
             <Link
-              href="/app/onboarding"
+              href="/app/agents?tab=test"
               className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 transition-colors"
             >
               Try a test call →
