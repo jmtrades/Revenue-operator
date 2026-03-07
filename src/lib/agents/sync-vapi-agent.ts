@@ -22,14 +22,23 @@ type AgentKnowledgeBase = {
   services?: string[];
   faq?: Array<{ q?: string; a?: string }>;
   specialInstructions?: string;
+  websiteUrl?: string;
   bookingEnabled?: boolean;
+  afterHoursMode?: "messages" | "emergency" | "forward" | "closed" | null;
+  maxCallDuration?: number;
+  callStyle?: "thorough" | "conversational" | "quick" | null;
   voiceSettings?: VoiceSettings;
+  qualification?: { criteria?: Array<{ label?: string; enabled?: boolean }>; customCriterion?: string };
+  objections?: Array<{ trigger?: string; response?: string }>;
+  confusedCallerHandling?: string | null;
+  offTopicHandling?: string | null;
 };
 
 type AgentRules = {
   neverSay?: string[];
   alwaysTransfer?: string[];
   transferPhone?: string | null;
+  transferRules?: Array<{ phrase?: string; phone?: string }>;
 };
 
 type AgentRow = {
@@ -38,6 +47,7 @@ type AgentRow = {
   name?: string | null;
   greeting?: string | null;
   voice_id?: string | null;
+  personality?: string | null;
   knowledge_base?: AgentKnowledgeBase | null;
   rules?: AgentRules | null;
   vapi_agent_id?: string | null;
@@ -50,6 +60,8 @@ type WorkspaceRow = {
   name?: string | null;
   preferred_language?: string | null;
   vapi_assistant_id?: string | null;
+  address?: string | null;
+  working_hours?: Record<string, { open?: string; close?: string }> | string | null;
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -63,7 +75,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
 
   const { data: agentData, error: agentError } = await db
     .from("agents")
-    .select("id, workspace_id, name, greeting, voice_id, knowledge_base, rules, vapi_agent_id, purpose, is_active")
+    .select("id, workspace_id, name, greeting, voice_id, personality, knowledge_base, rules, vapi_agent_id, purpose, is_active")
     .eq("id", agentId)
     .single();
   if (agentError || !agentData) {
@@ -73,7 +85,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
   const agent = agentData as AgentRow;
   const { data: workspaceData, error: workspaceError } = await db
     .from("workspaces")
-    .select("id, name, preferred_language, vapi_assistant_id")
+    .select("id, name, preferred_language, vapi_assistant_id, address, working_hours")
     .eq("id", agent.workspace_id)
     .single();
   if (workspaceError || !workspaceData) {
@@ -97,6 +109,28 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
     caps.push("outbound_calls");
   }
 
+  let businessHours: string | null = null;
+  if (workspace.working_hours && typeof workspace.working_hours === "object" && !Array.isArray(workspace.working_hours)) {
+    businessHours = Object.entries(workspace.working_hours)
+      .map(([day, hours]) => {
+        const open = (hours as { open?: string })?.open ?? "";
+        const close = (hours as { close?: string })?.close ?? "";
+        return `${day}: ${open}-${close}`.trim();
+      })
+      .filter(Boolean)
+      .join("; ") || null;
+  } else if (typeof workspace.working_hours === "string" && workspace.working_hours.trim()) {
+    businessHours = workspace.working_hours.trim();
+  }
+
+  const qualificationCriteria =
+    Array.isArray(knowledgeBase.qualification?.criteria) &&
+    knowledgeBase.qualification.criteria.length > 0
+      ? knowledgeBase.qualification.criteria
+          .filter((c) => c.enabled && (c.label ?? "").trim())
+          .map((c) => (c.label ?? "").trim())
+      : [];
+
   const assistantPayload = {
     name: `${businessName} - ${agent.name?.trim() || "Receptionist"}`,
     systemPrompt: buildVapiSystemPrompt({
@@ -111,7 +145,17 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
         neverSay: Array.isArray(rules.neverSay) ? rules.neverSay : [],
         alwaysTransfer: Array.isArray(rules.alwaysTransfer) ? rules.alwaysTransfer : [],
         transferPhone: rules.transferPhone ?? null,
+        transferRules: Array.isArray(rules.transferRules) ? rules.transferRules : [],
       },
+      afterHoursMode: knowledgeBase.afterHoursMode ?? null,
+      callStyle: knowledgeBase.callStyle ?? null,
+      personality: agent.personality ?? null,
+      qualificationCriteria,
+      objections: Array.isArray(knowledgeBase.objections) ? knowledgeBase.objections : [],
+      confusedCallerHandling: knowledgeBase.confusedCallerHandling ?? null,
+      offTopicHandling: knowledgeBase.offTopicHandling ?? null,
+      businessHours,
+      address: workspace.address?.trim() || null,
     }),
     firstMessage: greeting,
     endCallMessage: "Thanks for calling. Have a great day!",
@@ -157,6 +201,10 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
           ? voiceSettings.useSpeakerBoost
           : true,
     },
+    maxDurationSeconds:
+      typeof knowledgeBase.maxCallDuration === "number" && knowledgeBase.maxCallDuration > 0
+        ? knowledgeBase.maxCallDuration * 60
+        : 600,
   };
 
   let assistantId = agent.vapi_agent_id?.trim() || null;
