@@ -1,0 +1,35 @@
+# CI: build and lint on push/PR to main. Keeps Supabase + GitHub flow green.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          SESSION_SECRET: placeholder-32-char-secret-for-ci-build
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          CRON_SECRET: placeholder
+
+      - name: Lint
+        run: npm run lint

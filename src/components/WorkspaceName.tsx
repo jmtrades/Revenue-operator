@@ -16,8 +16,10 @@ export function WorkspaceName({
   initialName?: string;
 }) {
   const [name, setName] = useState<string | null>(() => {
+    const fromServer = initialName?.trim();
+    if (fromServer) return fromServer;
     const snapshot = getWorkspaceMeSnapshotSync() as { name?: string | null } | null;
-    return snapshot?.name?.trim() || initialName?.trim() || null;
+    return snapshot?.name?.trim() || null;
   });
 
   useEffect(() => {

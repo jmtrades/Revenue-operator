@@ -4,6 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
+type TargetFilter = {
+  audience?: string;
+  message_template?: string;
+  schedule?: string | null;
+  audience_statuses?: string[];
+  audience_source?: string;
+  audience_min_score?: number | null;
+  audience_not_contacted_days?: number | null;
+};
+
 type CampaignRow = {
   id: string;
   name: string;
@@ -14,11 +24,7 @@ type CampaignRow = {
   answered: number;
   appointments_booked: number;
   created_at: string;
-  target_filter?: {
-    audience?: string;
-    message_template?: string;
-    schedule?: string | null;
-  } | null;
+  target_filter?: TargetFilter | null;
 };
 
 const PAGE_TITLE = "Campaigns — Recall Touch";
@@ -28,6 +34,23 @@ const TYPE_OPTIONS = [
   { id: "appointment_reminder", label: "Appointment reminder" },
   { id: "reactivation", label: "Reactivation" },
   { id: "custom", label: "Custom recovery" },
+];
+
+const LEAD_STATUS_OPTIONS = [
+  "New",
+  "Contacted",
+  "Qualified",
+  "Appointment Set",
+  "Won",
+  "Lost",
+];
+
+const SOURCE_OPTIONS = [
+  { id: "", label: "Any source" },
+  { id: "inbound_call", label: "Inbound Call" },
+  { id: "outbound", label: "Outbound Outreach" },
+  { id: "website", label: "Website" },
+  { id: "referral", label: "Referral" },
 ];
 
 const CAMPAIGNS_SNAPSHOT_PREFIX = "rt_campaigns_snapshot:";
@@ -72,6 +95,10 @@ export default function CampaignsPage() {
     audience: "Leads waiting on follow-up",
     template: "Just checking in after your last conversation. Reply here if you want to continue.",
     schedule: "",
+    audienceStatuses: [] as string[],
+    audienceSource: "",
+    audienceMinScore: "" as number | "",
+    audienceNotContactedDays: "" as number | "",
   });
 
   useEffect(() => {
@@ -110,14 +137,19 @@ export default function CampaignsPage() {
     if (!form.name.trim()) return;
     setSaving(true);
     try {
+      const target_filter: TargetFilter = {
+        audience: form.audience,
+        message_template: form.template,
+        schedule: form.schedule || null,
+        ...(form.audienceStatuses.length > 0 && { audience_statuses: form.audienceStatuses }),
+        ...(form.audienceSource && { audience_source: form.audienceSource }),
+        ...(typeof form.audienceMinScore === "number" && form.audienceMinScore >= 0 && { audience_min_score: form.audienceMinScore }),
+        ...(typeof form.audienceNotContactedDays === "number" && form.audienceNotContactedDays > 0 && { audience_not_contacted_days: form.audienceNotContactedDays }),
+      };
       const payload = {
         name: form.name.trim(),
         type: form.type,
-        target_filter: {
-          audience: form.audience,
-          message_template: form.template,
-          schedule: form.schedule || null,
-        },
+        target_filter,
       };
       const res = await fetch(editingId ? `/api/campaigns/${editingId}` : "/api/campaigns", {
         method: editingId ? "PATCH" : "POST",
@@ -147,6 +179,10 @@ export default function CampaignsPage() {
         audience: "Leads waiting on follow-up",
         template: "Just checking in after your last conversation. Reply here if you want to continue.",
         schedule: "",
+        audienceStatuses: [],
+        audienceSource: "",
+        audienceMinScore: "",
+        audienceNotContactedDays: "",
       });
       setToast(editingId ? "Run updated." : "Run created.");
     } catch (error) {
@@ -176,12 +212,17 @@ export default function CampaignsPage() {
 
   const loadCampaignIntoForm = (campaign: CampaignRow) => {
     setEditingId(campaign.id);
+    const tf = campaign.target_filter;
     setForm({
       name: campaign.name,
       type: campaign.type,
-      audience: campaign.target_filter?.audience ?? "",
-      template: campaign.target_filter?.message_template ?? "",
-      schedule: campaign.target_filter?.schedule ?? "",
+      audience: tf?.audience ?? "",
+      template: tf?.message_template ?? "",
+      schedule: tf?.schedule ?? "",
+      audienceStatuses: Array.isArray(tf?.audience_statuses) ? tf.audience_statuses : [],
+      audienceSource: tf?.audience_source ?? "",
+      audienceMinScore: typeof tf?.audience_min_score === "number" ? tf.audience_min_score : "",
+      audienceNotContactedDays: typeof tf?.audience_not_contacted_days === "number" ? tf.audience_not_contacted_days : "",
     });
   };
 
@@ -242,6 +283,24 @@ export default function CampaignsPage() {
                       <p className="text-sm font-semibold text-white">{campaign.name}</p>
                       <p className="mt-2 text-xs text-zinc-500">
                         {campaign.target_filter?.audience ?? "Outcome-based audience"}
+                        {(() => {
+                          const tf = campaign.target_filter;
+                          const parts: string[] = [];
+                          if (Array.isArray(tf?.audience_statuses) && tf.audience_statuses.length > 0) {
+                            parts.push(tf.audience_statuses.join(", "));
+                          }
+                          if (tf?.audience_source) {
+                            const src = SOURCE_OPTIONS.find((o) => o.id === tf.audience_source);
+                            if (src) parts.push(src.label);
+                          }
+                          if (typeof tf?.audience_min_score === "number") {
+                            parts.push(`Score ≥ ${tf.audience_min_score}`);
+                          }
+                          if (typeof tf?.audience_not_contacted_days === "number") {
+                            parts.push(`Not contacted in ${tf.audience_not_contacted_days} days`);
+                          }
+                          return parts.length > 0 ? ` · ${parts.join(" · ")}` : "";
+                        })()}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         <span className="rounded-full border border-zinc-700 px-2.5 py-1 text-[11px] text-zinc-300">
@@ -307,6 +366,10 @@ export default function CampaignsPage() {
                       audience: "Leads waiting on follow-up",
                       template: "Just checking in after your last conversation. Reply here if you want to continue.",
                       schedule: "",
+                      audienceStatuses: [],
+                      audienceSource: "",
+                      audienceMinScore: "",
+                      audienceNotContactedDays: "",
                     });
                   }}
                   className="text-xs text-zinc-400 hover:text-white"
@@ -341,14 +404,86 @@ export default function CampaignsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Audience</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Audience label</label>
                 <input
                   type="text"
                   value={form.audience}
                   onChange={(e) => setForm((prev) => ({ ...prev, audience: e.target.value }))}
-                  placeholder="Leads who asked for pricing"
+                  placeholder="e.g. Leads waiting on follow-up"
                   className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Lead status (optional)</label>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {LEAD_STATUS_OPTIONS.map((status) => {
+                    const checked = form.audienceStatuses.includes(status);
+                    return (
+                      <label key={status} className="flex items-center gap-1.5 text-xs text-zinc-300">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              audienceStatuses: checked
+                                ? prev.audienceStatuses.filter((s) => s !== status)
+                                : [...prev.audienceStatuses, status],
+                            }));
+                          }}
+                          className="rounded border-zinc-600 bg-zinc-900 text-white"
+                        />
+                        {status}
+                      </label>
+                    );
+                  })}
+                </div>
+                <p className="text-[11px] text-zinc-500 mt-1">Leave empty for all statuses</p>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Source</label>
+                <select
+                  value={form.audienceSource}
+                  onChange={(e) => setForm((prev) => ({ ...prev, audienceSource: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                >
+                  {SOURCE_OPTIONS.map((opt) => (
+                    <option key={opt.id || "any"} value={opt.id}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">Min score</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={form.audienceMinScore === "" ? "" : form.audienceMinScore}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setForm((prev) => ({ ...prev, audienceMinScore: v === "" ? "" : Number(v) }));
+                    }}
+                    placeholder="Any"
+                    className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">Not contacted in (days)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={form.audienceNotContactedDays === "" ? "" : form.audienceNotContactedDays}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setForm((prev) => ({ ...prev, audienceNotContactedDays: v === "" ? "" : Number(v) }));
+                    }}
+                    placeholder="Any"
+                    className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">Message template</label>

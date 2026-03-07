@@ -16,13 +16,14 @@ export async function executeLeadOutboundCall(
 
   const { data: lead } = await db
     .from("leads")
-    .select("id, phone, name")
+    .select("id, phone, name, company, metadata")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (!lead) return { ok: false, error: "Lead not found" };
 
-  const phone = (lead as { phone?: string | null }).phone;
+  const leadRow = lead as { phone?: string | null; name?: string | null; company?: string | null; metadata?: { service_requested?: string; notes?: string } | null };
+  const phone = leadRow.phone;
   if (!phone || String(phone).replace(/\D/g, "").length < 10) {
     return { ok: false, error: "Lead has no valid phone number" };
   }
@@ -50,7 +51,7 @@ export async function executeLeadOutboundCall(
   const appointment_handling = typeof kb.appointment_handling === "string" ? kb.appointment_handling : undefined;
   const faq_extra = typeof kb.faq_extra === "string" ? kb.faq_extra : undefined;
 
-  const systemPrompt = compileSystemPrompt({
+  const baseSystemPrompt = compileSystemPrompt({
     business_name,
     offer_summary,
     business_hours,
@@ -62,21 +63,38 @@ export async function executeLeadOutboundCall(
     appointment_handling,
     faq_extra,
   });
-  const firstMessage = (agent.greeting && String(agent.greeting).trim()) || `Hello, this is ${agent_name}. How can I help you today?`;
 
-  let assistantId = agent.vapi_agent_id ?? null;
-  if (!assistantId) {
-    try {
-      const { id } = await createAssistant({
-        name: `${agent_name} – ${workspaceId.slice(0, 8)}`,
-        systemPrompt,
-        firstMessage,
-      });
-      assistantId = id;
-      await db.from("agents").update({ vapi_agent_id: assistantId, updated_at: new Date().toISOString() }).eq("id", agent.id);
-    } catch {
-      return { ok: false, error: "Failed to create voice assistant" };
-    }
+  const leadName = leadRow.name?.trim() || "there";
+  const serviceRequested = leadRow.metadata?.service_requested?.trim() || leadRow.company?.trim() || "your services";
+  const notes = leadRow.metadata?.notes?.trim() || "";
+  const outboundAddition = `
+
+OUTBOUND CALL CONTEXT:
+You are making an outbound call to ${leadName}.
+They previously expressed interest in: ${serviceRequested}.
+${notes ? `Notes: ${notes}` : ""}
+
+YOUR OPENER:
+Start with a brief, natural opener such as: "Hi ${leadName}, this is calling from ${business_name}. You reached out about ${serviceRequested} and I wanted to follow up. Do you have a quick moment?"
+
+YOUR GOAL:
+- Re-engage them, answer questions, try to book an appointment or next step.
+- If not interested, thank them and end politely. Never be pushy.
+`;
+  const systemPrompt = baseSystemPrompt + outboundAddition;
+  const outboundFirstMessage = `Hi ${leadName}, this is calling from ${business_name}. You reached out about ${serviceRequested} and I wanted to follow up. Do you have a quick moment?`;
+
+  let assistantId: string;
+  try {
+    const { id } = await createAssistant({
+      name: `${agent_name} – outbound ${leadId.slice(0, 8)}`,
+      systemPrompt,
+      firstMessage: outboundFirstMessage,
+      workspaceId,
+    });
+    assistantId = id;
+  } catch {
+    return { ok: false, error: "Failed to create voice assistant for outbound call" };
   }
 
   const { data: sessionRow, error: insertErr } = await db

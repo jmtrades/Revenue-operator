@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   BellRing,
   BookOpen,
@@ -521,13 +522,23 @@ export default function AppAgentsPageClient({
       .catch(() => setElevenLabsVoices(CURATED_VOICES));
   }, []);
 
+  const pathname = usePathname();
+  const router = useRouter();
   const prevSelectedIdRef = useRef<string | null>(null);
   useEffect(() => {
-    if (prevSelectedIdRef.current !== selectedId) {
-      prevSelectedIdRef.current = selectedId;
+    const prev = prevSelectedIdRef.current;
+    prevSelectedIdRef.current = selectedId;
+    // Only reset tab when user switched to a different agent (had a selection and it changed)
+    if (prev != null && prev !== selectedId) {
       setTab("profile");
     }
   }, [selectedId]);
+
+  const handleTabClick = (id: TabId) => {
+    setTab(id);
+    const url = `${pathname}?tab=${id}`;
+    router.replace(url, { scroll: false });
+  };
 
   useEffect(
     () => () => {
@@ -947,7 +958,7 @@ export default function AppAgentsPageClient({
                   <button
                     key={id}
                     type="button"
-                    onClick={() => setTab(id)}
+                    onClick={() => handleTabClick(id)}
                     role="tab"
                     aria-selected={tab === id}
                     className={`px-3 py-2 border-b-2 -mb-px ${

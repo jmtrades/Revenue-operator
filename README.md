@@ -28,6 +28,18 @@ All actions pass through:
 
 **Backend:** Database and auth both run on **Supabase**. See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) for full setup.
 
+### Supabase + GitHub (clone → run → deploy)
+
+1. **Clone** the repo (from GitHub):
+   ```bash
+   git clone https://github.com/jmtrades/Revenue-operator.git
+   cd Revenue-operator
+   ```
+2. **Env:** Copy `.env.example` to `.env.local` and set Supabase URL, anon key, service role key, `SESSION_SECRET`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET`. See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
+3. **Migrations:** Create a Supabase project, expose the `revenue_operator` schema, then run `npm run db:migrate` (with `DATABASE_URL` or `SUPABASE_DB_URL`) or `supabase link && supabase db push`.
+4. **Run:** `npm install && npm run build && npm run dev` → open `http://localhost:3000`.
+5. **Deploy:** Connect the repo to Vercel (or your host), add the same env vars, run migrations against your Supabase project, then deploy. CI runs `build` + `lint` on push/PR to `main` (see [.github/workflows/ci.yml](.github/workflows/ci.yml)).
+
 ```bash
 cp .env.example .env.local
 # Fill Supabase URL + anon key + service role key (see SUPABASE_SETUP.md)
@@ -296,4 +308,7 @@ Set env vars in Vercel dashboard. Configure cron: `/api/cron/core` every 2 min, 
 
 ## GitHub
 
-Repository: connect with `git remote add origin https://github.com/<org>/<repo>.git` then `git push -u origin main`. Ensure `.env.local` is never committed (see `.gitignore`).
+- **Repo:** [github.com/jmtrades/Revenue-operator](https://github.com/jmtrades/Revenue-operator). Push with `git push -u origin main`.
+- **CI:** [.github/workflows/ci.yml](.github/workflows/ci.yml) runs `npm run build` and `npm run lint` on push/PR to `main`. No secrets required for CI (build uses placeholder env).
+- **Cron (optional):** [.github/workflows/cron.yml](.github/workflows/cron.yml) pings production cron endpoints when `CRON_SECRET` is set in repo secrets.
+- Never commit `.env.local` or real keys (see `.gitignore`).
