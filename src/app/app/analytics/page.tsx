@@ -479,7 +479,7 @@ export default function AppAnalyticsPage() {
           <p className="text-sm font-medium text-white">AI insights</p>
           <ul className="space-y-2 text-sm text-zinc-300">
             <li className="flex items-start gap-2">
-              <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" />
+              <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
               <span>Busiest hour this week stays stable around mid-morning.</span>
             </li>
             <li className="flex items-start gap-2">
@@ -491,7 +491,7 @@ export default function AppAnalyticsPage() {
               <span>Calls that reach a live answer are much more likely to become appointments.</span>
             </li>
             <li className="flex items-start gap-2">
-              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" />
+              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
               <span>Make sure pricing and availability are easy to confirm in the first 30 seconds.</span>
             </li>
           </ul>

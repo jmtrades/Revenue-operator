@@ -123,25 +123,13 @@ async function getInitialAgentsPayload(): Promise<{
   };
 }
 
-export default async function AppAgentsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tab?: string }>;
-}) {
+export default async function AppAgentsPage() {
   const initial = await getInitialAgentsPayload();
-  const params = await searchParams;
-  const tabParam = params?.tab?.toLowerCase();
-  const initialTab =
-    tabParam === "test" || tabParam === "knowledge" || tabParam === "rules" || tabParam === "profile"
-      ? tabParam
-      : undefined;
-
   return (
     <AgentsPageClient
       initialWorkspaceId={initial.workspaceId}
       initialAgentsRows={initial.initialAgentsRows}
       initialFallbackAgent={initial.initialFallbackAgent}
-      initialTab={initialTab}
     />
   );
 }

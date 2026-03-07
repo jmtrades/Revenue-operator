@@ -30,7 +30,7 @@ export function WhoUsesSection() {
           {PERSONAS.map((persona) => {
             const Icon = persona.icon;
             return (
-              <Link key={persona.name} href="/sign-in?create=1">
+              <Link key={persona.name} href="/activate">
                 <motion.div
                   variants={fadeUpVariants}
                   className="card-marketing p-6 flex flex-col h-full hover:border-zinc-700 transition-colors min-w-0"
@@ -49,7 +49,7 @@ export function WhoUsesSection() {
           <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
             Don&apos;t see your use case? Recall Touch works for any phone-based workflow.
           </p>
-          <Link href="/sign-in?create=1" className="inline-block font-semibold text-sm" style={{ color: "var(--accent-primary)" }}>
+          <Link href="/activate" className="inline-block font-semibold text-sm" style={{ color: "var(--accent-primary)" }}>
             Get started →
           </Link>
         </AnimateOnScroll>

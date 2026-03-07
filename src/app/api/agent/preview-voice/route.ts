@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
 
 type PreviewVoiceBody = {
   voice_id?: string;
@@ -18,6 +19,11 @@ function clamp(value: number, min: number, max: number) {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getSession(req);
+  if (!session?.workspaceId || !session?.userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
   if (!apiKey) {
     return NextResponse.json({ error: "ElevenLabs not configured" }, { status: 503 });

@@ -154,7 +154,7 @@ export default function AppShellClient({
         <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#080d19" }}>
           {workspaceMeta?.banner?.show && workspaceMeta.banner.text && (
             <div
-              className="shrink-0 border-b border-blue-500/10 bg-blue-500/5 px-4 py-2 text-center text-[13px] text-white/70"
+              className="shrink-0 border-b border-zinc-700 bg-zinc-900/80 px-4 py-2 text-center text-[13px] text-zinc-300"
               role="status"
               aria-label="Workspace status"
             >

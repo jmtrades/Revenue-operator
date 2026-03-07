@@ -394,7 +394,15 @@ export default function LeadsPage() {
 
   const handleAddLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!workspaceId || !addLeadForm.name.trim() || !addLeadForm.phone.trim() || addLeadSaving) return;
+    if (!addLeadForm.name.trim() || !addLeadForm.phone.trim() || addLeadSaving) {
+      if (!addLeadForm.name.trim()) setAddLeadError("Name is required.");
+      else if (!addLeadForm.phone.trim()) setAddLeadError("Phone is required.");
+      return;
+    }
+    if (!workspaceId) {
+      setAddLeadError("Workspace not loaded. Refresh the page and try again.");
+      return;
+    }
     setAddLeadError(null);
     setAddLeadSaving(true);
     try {
@@ -480,8 +488,7 @@ export default function LeadsPage() {
             <button
               type="button"
               onClick={() => { setAddLeadOpen(true); setAddLeadError(null); }}
-              disabled={!workspaceId}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-4 py-2 hover:bg-zinc-100 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-4 py-2 hover:bg-zinc-100"
             >
               <Plus className="w-4 h-4" />
               Add lead
@@ -646,8 +653,7 @@ export default function LeadsPage() {
                 <button
                   type="button"
                   onClick={() => { setAddLeadOpen(true); setAddLeadError(null); }}
-                  disabled={!workspaceId}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-sm font-semibold px-4 py-2.5 hover:bg-zinc-100 disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-sm font-semibold px-4 py-2.5 hover:bg-zinc-100"
                 >
                   <Plus className="w-4 h-4" />
                   Add lead
@@ -1318,14 +1324,13 @@ export default function LeadsPage() {
                     Call back (no phone)
                   </span>
                 )}
-                <button
-                  type="button"
-                  onClick={() => setActionToast("SMS coming soon.")}
+                <Link
+                  href={drawerLead.id ? `/app/messages?lead_id=${encodeURIComponent(drawerLead.id)}` : drawerLead.phone ? `/app/messages?to=${encodeURIComponent(drawerLead.phone)}` : "/app/messages"}
                   className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
-                  Send SMS
-                </button>
+                  Send message
+                </Link>
                 <Link
                   href="/app/campaigns"
                   className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"

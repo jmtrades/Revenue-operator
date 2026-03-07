@@ -192,9 +192,9 @@ export default function TeamPage() {
                       member.role === "owner"
                         ? "bg-amber-500/20 text-amber-300"
                         : member.role === "admin"
-                          ? "bg-blue-500/20 text-blue-300"
+                          ? "bg-zinc-600 text-zinc-200"
                           : member.role === "manager"
-                            ? "bg-violet-500/20 text-violet-300"
+                            ? "bg-zinc-700 text-zinc-300"
                             : "bg-zinc-700 text-zinc-400"
                     }`}
                   >

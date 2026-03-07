@@ -1,6 +1,6 @@
 /**
- * POST /api/onboarding/scrape — Stub: extract services/hours from website URL.
- * Returns placeholder until real scraper is implemented.
+ * POST /api/onboarding/scrape — Extract services/hours from website URL.
+ * Returns empty services/hours for now; scraper can be added later.
  */
 
 export const dynamic = "force-dynamic";
@@ -21,5 +21,5 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
   }
-  return NextResponse.json({ services: "", hours: "", stub: true });
+  return NextResponse.json({ services: "", hours: "" });
 }

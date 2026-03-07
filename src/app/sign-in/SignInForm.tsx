@@ -204,7 +204,7 @@ export default function SignInForm() {
           ) : (
             <>
               New to Recall Touch?{" "}
-              <Link href="/sign-in?create=1" className="text-white/60 hover:text-white transition">
+              <Link href="/activate" className="text-white/60 hover:text-white transition">
                 Create free account →
               </Link>
             </>

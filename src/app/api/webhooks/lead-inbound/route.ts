@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
   const score = scoreFromInput({ name, phone, email: email ?? undefined, service_requested: service_requested ?? undefined, source });
 
   const db = getDb();
-  const { data: lead, error } = await db
+  const { data: _lead, error } = await db
     .from("leads")
     .insert({
       workspace_id: workspaceId,
@@ -73,5 +73,5 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ lead_id: (lead as { id: string })?.id, status: "created" });
+  return NextResponse.json({ status: "created" });
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   BellRing,
   BookOpen,
   CheckCircle2,
+  ChevronRight,
   ClipboardList,
   Mic,
   MoonStar,
@@ -18,7 +19,7 @@ import {
   Star,
   type LucideIcon,
 } from "lucide-react";
-import { Waveform } from "@/components/Waveform";
+import { Confetti } from "@/components/Confetti";
 import {
   AGENT_TEMPLATES,
   AGENT_TEMPLATE_CATEGORIES,
@@ -43,10 +44,13 @@ type AgentTemplateId =
   | "review_request"
   | "scratch";
 
+type AgentPurpose = "inbound" | "outbound" | "both";
+
 type Agent = {
   id: string;
   name: string;
   template: AgentTemplateId;
+  purpose?: AgentPurpose;
   voice: string;
   greeting: string;
   personality: number;
@@ -84,7 +88,54 @@ type Agent = {
   };
 };
 
-type TabId = "profile" | "knowledge" | "rules" | "test";
+export type StepId = "identity" | "voice" | "knowledge" | "behavior" | "test" | "golive";
+
+const SETUP_STEPS: { id: StepId; label: string; description: string }[] = [
+  { id: "identity", label: "Identity", description: "Who is this agent?" },
+  { id: "voice", label: "Voice", description: "How does it sound?" },
+  { id: "knowledge", label: "Knowledge", description: "What does it know?" },
+  { id: "behavior", label: "Behavior", description: "How does it act?" },
+  { id: "test", label: "Test", description: "Does it work?" },
+  { id: "golive", label: "Go live", description: "Connect to your phone" },
+];
+
+const TEST_SCENARIOS: { id: string; title: string; description: string; phrase: string }[] = [
+  { id: "normal", title: "Normal call", description: "I need info about services", phrase: "Hi, I need some information about your services." },
+  { id: "angry", title: "Angry caller", description: "I've been waiting for a callback!", phrase: "I've been waiting for a callback for days. I'm really frustrated." },
+  { id: "booking", title: "Booking request", description: "I want to schedule an appointment", phrase: "I'd like to schedule an appointment for this week." },
+  { id: "afterhours", title: "After hours", description: "Are you open right now?", phrase: "Are you open right now? What are your hours?" },
+  { id: "unknown", title: "Unknown question", description: "Do you offer XYZ service?", phrase: "Do you offer XYZ service? I didn't see it on your website." },
+];
+
+function isStepComplete(stepId: StepId, agent: Agent): boolean {
+  switch (stepId) {
+    case "identity":
+      return !!(agent.name?.trim() && agent.greeting?.trim());
+    case "voice":
+      return !!agent.voice?.trim();
+    case "knowledge":
+      return agent.faq.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()).length >= 3;
+    case "behavior":
+      return (
+        agent.alwaysTransfer.length > 0 ||
+        (agent.transferPhone ?? "").trim() !== "" ||
+        agent.transferRules.some((r) => (r.phrase ?? "").trim())
+      );
+    case "test":
+      return (agent.stats?.totalCalls ?? 0) > 0 || !!(agent.vapiAgentId?.trim());
+    case "golive":
+      return !!(agent.vapiAgentId?.trim());
+    default:
+      return false;
+  }
+}
+
+function getFirstIncompleteStep(agent: Agent): StepId {
+  for (const step of SETUP_STEPS) {
+    if (!isStepComplete(step.id, agent)) return step.id;
+  }
+  return "golive";
+}
 
 type AgentReadiness = { score: number; total: number; percent: number; recommendations: string[] };
 
@@ -192,6 +243,7 @@ function defaultAgent(): Agent {
     id: "a-default",
     name: "Receptionist",
     template: "receptionist",
+    purpose: "both",
     voice: DEFAULT_VOICE_ID,
     greeting: templateGreeting("receptionist"),
     personality: 60,
@@ -273,10 +325,13 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     appointmentsBooked?: number;
   };
 
+  const rawPurpose = row.purpose ?? (row.template === "follow_up" || row.template === "review_request" ? "outbound" : "both");
+  const purpose: AgentPurpose = rawPurpose === "inbound" || rawPurpose === "outbound" || rawPurpose === "both" ? rawPurpose : "both";
   return {
     ...defaultAgent(),
     id: String(row.id ?? generateAgentId("a")),
     name: String(row.name ?? "Receptionist"),
+    purpose,
     greeting: String(row.greeting ?? ""),
     voice: String(row.voice_id ?? DEFAULT_VOICE_ID),
     personality: mapPersonalityToSlider(row.personality),
@@ -366,10 +421,7 @@ function toAgentPatchPayload(agent: Agent) {
     name: agent.name,
     voice_id: agent.voice,
     personality: mapSliderToPersonality(agent.personality),
-    purpose:
-      agent.template === "follow_up" || agent.template === "review_request"
-        ? "outbound"
-        : "both",
+    purpose: agent.purpose ?? (agent.template === "follow_up" || agent.template === "review_request" ? "outbound" : "both"),
     greeting: agent.greeting,
     knowledge_base: {
       services: agent.services,
@@ -402,12 +454,10 @@ export default function AppAgentsPageClient({
   initialWorkspaceId = "",
   initialAgentsRows = [],
   initialFallbackAgent = null,
-  initialTab,
 }: {
   initialWorkspaceId?: string;
   initialAgentsRows?: Array<Record<string, unknown>>;
   initialFallbackAgent?: InitialFallbackAgent;
-  initialTab?: TabId;
 }) {
   const { workspaceId: contextWorkspaceId } = useWorkspace();
   const workspaceId = contextWorkspaceId || initialWorkspaceId;
@@ -424,11 +474,56 @@ export default function AppAgentsPageClient({
   const [selectedId, setSelectedId] = useState<string | null>(
     () => initialAgents[0]?.id ?? null,
   );
-  const [tab, setTab] = useState<TabId>(initialTab ?? "profile");
+  const [activeStep, setActiveStep] = useState<StepId>("identity");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [templateCategory, setTemplateCategory] = useState<
     AgentTemplateCategory | "all"
   >("all");
+  const templateModalCloseRef = useRef<HTMLButtonElement | null>(null);
+  const templateModalContentRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!showTemplateModal) return;
+    templateModalCloseRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowTemplateModal(false);
+        return;
+      }
+      if (e.key !== "Tab" || !templateModalContentRef.current) return;
+      const root = templateModalContentRef.current;
+      const focusable = root.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      const list = Array.from(focusable).filter((el) => el.offsetParent !== null);
+      if (list.length === 0) return;
+      const first = list[0];
+      const last = list[list.length - 1];
+      const target = document.activeElement;
+      if (e.shiftKey) {
+        if (target === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (target === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [showTemplateModal]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setShowTemplateModal(true);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
   const [toast, setToast] = useState<string | null>(null);
   const [loading, setLoading] = useState(!hasInitialPayload);
 
@@ -505,7 +600,8 @@ export default function AppAgentsPageClient({
   const [playingAgentId, setPlayingAgentId] = useState<string | null>(null);
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const isHearPlaying = hearPlaying && playingAgentId === selectedId;
+  const [showConfetti, setShowConfetti] = useState(false);
+  const _isHearPlaying = hearPlaying && playingAgentId === selectedId;
 
   const [elevenLabsVoices, setElevenLabsVoices] =
     useState<CuratedVoice[]>(CURATED_VOICES);
@@ -522,23 +618,29 @@ export default function AppAgentsPageClient({
       .catch(() => setElevenLabsVoices(CURATED_VOICES));
   }, []);
 
-  const pathname = usePathname();
-  const router = useRouter();
+  const _pathname = usePathname();
   const prevSelectedIdRef = useRef<string | null>(null);
+  const STORAGE_KEY = "rt_agents_step";
+
   useEffect(() => {
     const prev = prevSelectedIdRef.current;
     prevSelectedIdRef.current = selectedId;
-    // Only reset tab when user switched to a different agent (had a selection and it changed)
-    if (prev != null && prev !== selectedId) {
-      setTab("profile");
+    if (prev !== selectedId && selected) {
+      const stored = typeof window !== "undefined" && selectedId ? window.sessionStorage.getItem(`${STORAGE_KEY}_${selectedId}`) : null;
+      const step = stored && SETUP_STEPS.some((s) => s.id === stored) ? (stored as StepId) : getFirstIncompleteStep(selected);
+      setActiveStep(step);
     }
-  }, [selectedId]);
+  }, [selectedId, selected]);
 
-  const handleTabClick = (id: TabId) => {
-    setTab(id);
-    const url = `${pathname}?tab=${id}`;
-    router.replace(url, { scroll: false });
-  };
+  useEffect(() => {
+    if (selectedId && activeStep) {
+      try {
+        window.sessionStorage.setItem(`${STORAGE_KEY}_${selectedId}`, activeStep);
+      } catch {
+        // ignore
+      }
+    }
+  }, [activeStep, selectedId]);
 
   useEffect(
     () => () => {
@@ -572,6 +674,12 @@ export default function AppAgentsPageClient({
       return;
     }
 
+    const voiceId = (input.voiceId ?? "").trim();
+    if (!voiceId) {
+      setToast("Select a voice first to hear a preview.");
+      return;
+    }
+
     audioRef.current?.pause();
     audioRef.current = null;
     setPlayingVoiceId(input.key);
@@ -584,7 +692,7 @@ export default function AppAgentsPageClient({
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          voice_id: input.voiceId,
+          voice_id: voiceId,
           text: input.text,
           settings: {
             stability: input.settings.stability,
@@ -681,6 +789,8 @@ export default function AppAgentsPageClient({
 
   const handleDelete = async () => {
     if (!selected) return;
+    const confirmed = typeof window !== "undefined" && window.confirm(`Delete "${selected.name}"? This cannot be undone.`);
+    if (!confirmed) return;
     try {
       const res = await fetch(`/api/agents/${selected.id}`, {
         method: "DELETE",
@@ -738,7 +848,7 @@ export default function AppAgentsPageClient({
       const next = [...agents, { ...persisted, vapiAgentId: assistantId }];
       setAgents(next);
       setSelectedId(persisted.id);
-      setTab("profile");
+      setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId ?? null }));
       setShowTemplateModal(false);
       setToast("Agent created and synced");
     } catch {
@@ -778,7 +888,7 @@ export default function AppAgentsPageClient({
       const next = [...agents, { ...persisted, vapiAgentId: assistantId }];
       setAgents(next);
       setSelectedId(persisted.id);
-      setTab("profile");
+      setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId ?? null }));
       setShowTemplateModal(false);
       setToast("Agent created and synced");
     } catch {
@@ -787,7 +897,8 @@ export default function AppAgentsPageClient({
   };
 
   return (
-    <div className="relative max-w-5xl mx-auto p-4 md:p-6">
+    <div className="relative max-w-5xl mx-auto p-4 md:p-6 overflow-x-hidden min-w-0">
+      {showConfetti && <Confetti key="agent-activate-confetti" />}
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-lg md:text-xl font-semibold text-white">AI Agents</h1>
@@ -812,12 +923,25 @@ export default function AppAgentsPageClient({
         + Create Agent
       </button>
 
-      {loading && (
-        <div className="mb-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-500">
-          Loading your agents…
+      {loading ? (
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1.7fr)] gap-4 lg:gap-6 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 animate-pulse" aria-hidden>
+                <div className="h-4 w-3/4 rounded bg-zinc-700/80 mb-3" />
+                <div className="h-3 w-1/2 rounded bg-zinc-800 mb-2" />
+                <div className="h-3 w-full rounded bg-zinc-800 mb-2" />
+                <div className="h-3 w-2/3 rounded bg-zinc-800" />
+              </div>
+            ))}
+          </div>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 animate-pulse" aria-hidden>
+            <div className="h-4 w-1/3 rounded bg-zinc-700/80 mb-4" />
+            <div className="h-20 rounded bg-zinc-800 mb-4" />
+            <div className="h-32 rounded bg-zinc-800" />
+          </div>
         </div>
-      )}
-
+      ) : (
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1.7fr)] gap-4 lg:gap-6 items-start">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {agents.map((agent) => (
@@ -826,7 +950,7 @@ export default function AppAgentsPageClient({
               type="button"
               onClick={() => {
                 setSelectedId(agent.id);
-                setTab("profile");
+                setActiveStep(getFirstIncompleteStep(agent));
               }}
               className={`text-left p-4 rounded-2xl border bg-zinc-900/50 hover:bg-zinc-900 transition-colors ${
                 selected?.id === agent.id ? "border-zinc-500" : "border-zinc-800"
@@ -881,136 +1005,125 @@ export default function AppAgentsPageClient({
 
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 md:p-5">
           {selected ? (
-            <>
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <div>
-                  <h2 className="text-sm font-semibold text-white">{selected.name}</h2>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">
-                    Configure how this agent answers, books, and follows through.
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="w-full lg:w-64 flex-shrink-0 space-y-4">
+                <div className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-4">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <p className="font-medium text-sm text-white truncate">{selected.name}</p>
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${selected.active ? "bg-green-500/15 text-green-400" : "bg-zinc-800 text-zinc-400"}`}>
+                      {selected.active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500">
+                    <span className={getAgentReadiness(selected).percent >= 80 ? "text-green-500/80" : getAgentReadiness(selected).percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
+                      {getAgentReadiness(selected).percent}% ready
+                    </span>
+                    {" · "}{selected.stats.totalCalls} calls
                   </p>
-                  {(() => {
-                    const r = getAgentReadiness(selected);
-                    return (
-                      <div className="mt-2">
-                        <p className="text-[11px] text-zinc-500">
-                          <span className={r.percent >= 80 ? "text-green-500/90" : r.percent >= 40 ? "text-amber-500/90" : "text-zinc-500"}>
-                            {r.percent}% ready
-                          </span>
-                        </p>
-                        {r.recommendations.length > 0 && (
-                          <ul className="mt-1 list-disc list-inside text-[11px] text-zinc-500 space-y-0.5">
-                            {r.recommendations.map((rec, i) => (
-                              <li key={i}>{rec}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    );
-                  })()}
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      void playAudioPreview({
-                        key: `agent-${selected.id}`,
-                        voiceId: selected.voice,
-                        text:
-                          selected.greeting.trim() ||
-                          "Thanks for calling. How can I help you today?",
-                        settings: selected.voiceSettings,
-                        agentId: selected.id,
-                      })
-                    }
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
-                  >
-                    {isHearPlaying ? (
-                      <Waveform isPlaying />
-                    ) : (
-                      <Play className="h-3 w-3 fill-current" />
-                    )}
-                    {isHearPlaying ? "Stop preview" : "Hear This Agent"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    className="px-3 py-1.5 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
-                  >
+                <div className="space-y-1">
+                  <p className="text-[11px] font-medium text-zinc-500 mb-2">Agent setup</p>
+                  <div className="lg:hidden mb-2">
+                    <p className="text-[11px] text-zinc-500 mb-1.5">
+                      Step {SETUP_STEPS.findIndex((s) => s.id === activeStep) + 1} of {SETUP_STEPS.length}
+                    </p>
+                    <label htmlFor="agent-step-select" className="sr-only">Jump to setup step</label>
+                    <select
+                      id="agent-step-select"
+                      value={activeStep}
+                      onChange={(e) => setActiveStep(e.target.value as StepId)}
+                      aria-label="Jump to setup step"
+                      className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+                    >
+                      {SETUP_STEPS.map((step, i) => (
+                        <option key={step.id} value={step.id}>
+                          {i + 1}. {step.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="hidden lg:block space-y-1">
+                  {SETUP_STEPS.map((step, i) => {
+                    const complete = isStepComplete(step.id, selected);
+                    const active = activeStep === step.id;
+                    return (
+                      <button
+                        key={step.id}
+                        type="button"
+                        onClick={() => setActiveStep(step.id)}
+                        aria-label={`${step.label}: ${step.description}${complete ? ", completed" : ""}${active ? ", current step" : ""}`}
+                        aria-current={active ? "step" : undefined}
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                          active ? "bg-white/[0.06] border border-white/[0.1]" : "hover:bg-white/[0.03] border border-transparent"
+                        }`}
+                      >
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          complete ? "bg-emerald-500/20" : active ? "bg-white/10" : "bg-white/[0.04]"
+                        }`}>
+                          {complete ? (
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" aria-hidden />
+                          ) : (
+                            <span className="text-xs text-white/30">{i + 1}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-sm font-medium ${active ? "text-white" : "text-white/60"}`}>{step.label}</p>
+                          <p className="text-xs text-white/25 truncate">{step.description}</p>
+                        </div>
+                        {active && <ChevronRight className="w-4 h-4 text-white/20 flex-shrink-0" aria-hidden />}
+                      </button>
+                    );
+                  })}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <button type="button" onClick={handleDelete} aria-label="Delete this agent" className="px-3 py-1.5 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Delete</button>
+                  <button type="button" onClick={handleSave} disabled={saving} aria-label={saving ? "Saving agent" : "Save agent and sync to voice"} className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
                     {saving ? "Saving…" : "Save"}
                   </button>
                 </div>
               </div>
-              <div className="flex gap-2 mb-4 border-b border-zinc-800 text-xs">
-                {[
-                  { id: "profile" as TabId, label: "Profile" },
-                  { id: "knowledge" as TabId, label: "Knowledge" },
-                  { id: "rules" as TabId, label: "Rules" },
-                  { id: "test" as TabId, label: "Test" },
-                ].map(({ id, label }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => handleTabClick(id)}
-                    role="tab"
-                    aria-selected={tab === id}
-                    className={`px-3 py-2 border-b-2 -mb-px ${
-                      tab === id ? "border-white text-white" : "border-transparent text-zinc-500"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+              <div className="flex-1 min-w-0 bg-white/[0.01] border border-white/[0.06] rounded-2xl p-6 overflow-y-auto relative" aria-labelledby="agent-step-heading">
+                {saving && <div className="absolute top-3 right-3 text-xs text-white/30">Saving...</div>}
+                <h2 id="agent-step-heading" className="text-xs text-zinc-500 mb-4 font-normal">
+                  Currently on: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
+                </h2>
+                <div role="status" aria-live="polite" className="sr-only">
+                  Step {SETUP_STEPS.findIndex((s) => s.id === activeStep) + 1} of {SETUP_STEPS.length}: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
+                </div>
+                {activeStep === "identity" && (
+                  <IdentityStepContent agent={selected} onChange={updateSelected} onNext={async () => { await persistAgent(selected, { showToast: false }); const idx = SETUP_STEPS.findIndex((s) => s.id === activeStep); if (idx < SETUP_STEPS.length - 1) setActiveStep(SETUP_STEPS[idx + 1].id); }} />
+                )}
+                {activeStep === "voice" && (
+                  <VoiceStepContent agent={selected} voices={elevenLabsVoices} onChange={updateSelected} onVoicePreview={(voiceId) => void playAudioPreview({ key: voiceId, voiceId, text: selected.greeting.trim() || "Thanks for calling. How can I help you today?", settings: selected.voiceSettings })} previewingVoiceId={playingVoiceId} onBack={() => setActiveStep("identity")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("knowledge"); }} />
+                )}
+                {activeStep === "knowledge" && (
+                  <KnowledgeStepContent agent={selected} onChange={updateSelected} onBack={() => setActiveStep("voice")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("behavior"); }} />
+                )}
+                {activeStep === "behavior" && (
+                  <BehaviorStepContent agent={selected} onChange={updateSelected} onBack={() => setActiveStep("knowledge")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("test"); }} />
+                )}
+                {activeStep === "test" && (
+                  <TestStepContent agent={selected} onPrepareAgent={async () => { const id = await persistAgent(selected, { showToast: false }); if (id) setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: id } : a))); return id; }} onBack={() => setActiveStep("behavior")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("golive"); }} />
+                )}
+                {activeStep === "golive" && (
+                  <GoLiveStepContent agent={selected} voices={elevenLabsVoices} getReadiness={getAgentReadiness} onBack={() => setActiveStep("test")} onActivate={async () => { const id = await persistAgent(selected, { showToast: true }); if (id) { setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: id } : a))); setToast("Your AI agent is live!"); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000); } }} activating={saving} />
+                )}
               </div>
-
-              {tab === "profile" && (
-                <ProfileTab
-                  agent={selected}
-                  voices={elevenLabsVoices}
-                  onChange={updateSelected}
-                  onVoicePreview={(voiceId) =>
-                    void playAudioPreview({
-                      key: voiceId,
-                      voiceId,
-                      text:
-                        selected.greeting.trim() ||
-                        "Thanks for calling. How can I help you today?",
-                      settings: selected.voiceSettings,
-                    })
-                  }
-                  previewingVoiceId={playingVoiceId}
-                />
-              )}
-              {tab === "knowledge" && (
-                <KnowledgeTab agent={selected} onChange={updateSelected} />
-              )}
-              {tab === "rules" && <RulesTab agent={selected} onChange={updateSelected} />}
-              {tab === "test" && (
-                <TestTab
-                  agent={selected}
-                  onPrepareAgent={async () => {
-                    const assistantId = await persistAgent(selected, { showToast: false });
-                    if (assistantId) {
-                      setAgents((current) =>
-                        current.map((agent) =>
-                          agent.id === selected.id
-                            ? { ...agent, vapiAgentId: assistantId }
-                            : agent,
-                        ),
-                      );
-                    }
-                    return assistantId;
-                  }}
-                />
-              )}
-            </>
+            </div>
+          ) : agents.length === 0 ? (
+            <div className="py-12 text-center">
+              <p className="text-sm font-medium text-white mb-1">No agents yet</p>
+              <p className="text-xs text-zinc-500 mb-6 max-w-sm mx-auto">Create your first AI agent to answer calls, capture leads, and book appointments.</p>
+              <button
+                type="button"
+                onClick={() => setShowTemplateModal(true)}
+                className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                aria-label="Create your first agent"
+              >
+                + Create Agent
+              </button>
+            </div>
           ) : (
             <p className="text-sm text-zinc-500">
               Select or create an agent to edit how it answers calls.
@@ -1018,6 +1131,7 @@ export default function AppAgentsPageClient({
           )}
         </div>
       </div>
+      )}
 
       <p className="mt-6">
         <Link
@@ -1029,7 +1143,7 @@ export default function AppAgentsPageClient({
       </p>
 
       {toast && (
-        <div className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 shadow-lg">
+        <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 shadow-lg">
           {toast}
         </div>
       )}
@@ -1039,23 +1153,27 @@ export default function AppAgentsPageClient({
           className="fixed inset-0 z-40 bg-black/70 flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
+          aria-labelledby="create-agent-dialog-title"
           onClick={() => setShowTemplateModal(false)}
         >
           <div
+            ref={templateModalContentRef}
             className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-sm font-semibold text-white">Create agent</h2>
+                <h2 id="create-agent-dialog-title" className="text-sm font-semibold text-white">Create agent</h2>
                 <p className="text-xs text-zinc-500 mt-0.5">
                   Start from a proven pattern instead of configuring from scratch.
                 </p>
               </div>
               <button
+                ref={templateModalCloseRef}
                 type="button"
                 onClick={() => setShowTemplateModal(false)}
-                className="text-xs text-zinc-400 hover:text-white"
+                aria-label="Close create agent dialog"
+                className="text-xs text-zinc-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
               >
                 Close
               </button>
@@ -1192,8 +1310,13 @@ function VoiceCard(props: {
   const { voice, selected, previewing, onSelect, onPreview } = props;
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={onSelect}
-      className={`relative cursor-pointer rounded-xl p-3 transition-all ${
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(); } }}
+      aria-pressed={selected}
+      aria-label={`${voice.name}, ${voice.description}. ${selected ? "Selected." : "Select this voice."}`}
+      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
         selected
           ? "border-2 border-white bg-white/[0.06] ring-1 ring-white/20"
           : "border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12]"
@@ -1205,8 +1328,8 @@ function VoiceCard(props: {
           e.stopPropagation();
           onPreview();
         }}
-        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.06] transition-colors hover:bg-white/[0.12]"
-        title="Preview voice"
+        aria-label={`Preview ${voice.name} voice`}
+        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.06] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         {previewing ? (
           <Square className="h-3 w-3 fill-current text-white/70" />
@@ -1277,7 +1400,7 @@ function ProfileTab({
           type="text"
           value={agent.name}
           onChange={(e) => onChange({ name: e.target.value })}
-          className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+          className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           placeholder="Receptionist"
         />
       </div>
@@ -1585,7 +1708,8 @@ function KnowledgeTab({
           rows={3}
           value={agent.specialInstructions}
           onChange={(e) => onChange({ specialInstructions: e.target.value })}
-          className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+          aria-label="Special instructions for the agent"
+          className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
           placeholder="Anything the agent should always remember on calls."
         />
       </div>
@@ -1637,7 +1761,8 @@ function RulesTab({
             value={agent.transferPhone}
             onChange={(e) => onChange({ transferPhone: e.target.value })}
             placeholder="+1 (555) 000-0000"
-            className="mt-1 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none"
+            aria-label="Transfer to phone number"
+            className="mt-1 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           />
         </div>
       </div>
@@ -1655,7 +1780,8 @@ function RulesTab({
                 .filter(Boolean),
             })
           }
-          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none resize-none"
+          aria-label="Words or phrases the agent should never say"
+          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
           placeholder="Competitor names, legal advice, pricing specifics..."
         />
       </div>
@@ -1666,7 +1792,8 @@ function RulesTab({
           <button
             type="button"
             onClick={addTransferRule}
-            className="text-[11px] text-zinc-300 underline underline-offset-2"
+            aria-label="Add phrase-based transfer rule"
+            className="text-[11px] text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
           >
             + Add rule
           </button>
@@ -1735,7 +1862,8 @@ function RulesTab({
         <select
           value={agent.afterHoursMode}
           onChange={(e) => onChange({ afterHoursMode: e.target.value as Agent["afterHoursMode"] })}
-          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none"
+          aria-label="After-hours behavior"
+          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <option value="messages">Take a message and notify the owner</option>
           <option value="forward">Offer to schedule a callback</option>
@@ -1748,7 +1876,8 @@ function RulesTab({
         <select
           value={[0, 5, 10, 12, 15, 30].includes(agent.maxCallDuration) ? String(agent.maxCallDuration) : "15"}
           onChange={(e) => onChange({ maxCallDuration: Number(e.target.value) })}
-          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none"
+          aria-label="Maximum call duration in minutes"
+          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <option value="0">No limit</option>
           <option value="5">5 minutes</option>
@@ -1762,13 +1891,15 @@ function RulesTab({
   );
 }
 
-function TestTab({
-  agent,
-  onPrepareAgent,
-}: {
+type TestTabRef = { startTestCall: () => Promise<void> };
+
+const TestTab = forwardRef<TestTabRef, {
   agent: Agent;
   onPrepareAgent: () => Promise<string | null>;
-}) {
+  suggestedOpener?: { title: string; phrase: string } | null;
+  onCallEnded?: () => void;
+  onTryAgain?: () => void;
+}>(function TestTab({ agent, onPrepareAgent, suggestedOpener, onCallEnded, onTryAgain }, ref) {
   const [status, setStatus] = useState<"idle" | "connecting" | "active" | "ended">(
     "idle",
   );
@@ -1787,13 +1918,17 @@ function TestTab({
     };
   }, []);
 
+  useEffect(() => {
+    if (status === "ended" && transcript.length > 0) onCallEnded?.();
+  }, [status, transcript.length, onCallEnded]);
+
   const endCall = () => {
     clientRef.current?.stop();
     clientRef.current = null;
     setStatus("ended");
   };
 
-  const startTestCall = async () => {
+  const startTestCall = useCallback(async () => {
     setStatus("connecting");
     setTranscript([]);
     setError(null);
@@ -1850,10 +1985,18 @@ function TestTab({
       setStatus("idle");
       setError(err instanceof Error ? err.message : "Could not start test call");
     }
-  };
+  }, [agent.vapiAgentId, onPrepareAgent]);
+
+  useImperativeHandle(ref, () => ({ startTestCall }), [startTestCall]);
 
   return (
     <div className="py-4 text-center">
+      {suggestedOpener && (status === "idle" || status === "connecting" || status === "active") && (
+        <div className="mx-auto mb-4 max-w-md rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-left">
+          <p className="text-xs text-white/50 mb-1">Suggested: {suggestedOpener.title}</p>
+          <p className="text-sm text-white/80">&ldquo;{suggestedOpener.phrase}&rdquo;</p>
+        </div>
+      )}
       {status === "idle" && (
         <div>
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/[0.06]">
@@ -1867,7 +2010,8 @@ function TestTab({
           <button
             type="button"
             onClick={() => void startTestCall()}
-            className="min-h-[44px] rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100 touch-manipulation"
+            aria-label="Start a test call with this agent"
+            className="min-h-[44px] rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100 touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             Start test call
           </button>
@@ -1899,19 +2043,22 @@ function TestTab({
             )}
           </div>
           <p
-            className={`mb-4 text-sm font-medium ${
+            className={`mb-2 text-sm font-medium ${
               status === "active" ? "text-emerald-400" : "text-zinc-300"
             }`}
           >
             {status === "active" ? "Call active — speak now" : "Test call complete"}
           </p>
+          {transcript.length > 0 && (
+            <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-white/40">Live transcript</p>
+          )}
           <div className="mx-auto max-h-56 max-w-md space-y-2 overflow-y-auto text-left">
             {transcript.map((item, index) => (
               <div
                 key={`${item.role}-${index}`}
                 className={`rounded-lg px-3 py-2 text-sm ${
                   item.role === "assistant"
-                    ? "bg-blue-500/10 text-blue-300"
+                    ? "bg-zinc-800 text-zinc-200"
                     : "bg-white/[0.04] text-white/70"
                 }`}
               >
@@ -1926,7 +2073,8 @@ function TestTab({
             <button
               type="button"
               onClick={endCall}
-              className="mt-4 inline-flex items-center gap-2 text-sm text-red-400 hover:text-red-300"
+              aria-label="End the test call"
+              className="mt-4 inline-flex items-center gap-2 text-sm text-red-400 hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               <Square className="h-3 w-3 fill-current" />
               End call
@@ -1934,11 +2082,9 @@ function TestTab({
           ) : (
             <button
               type="button"
-              onClick={() => {
-                setStatus("idle");
-                setTranscript([]);
-              }}
-              className="mt-4 text-sm text-white hover:text-zinc-300"
+              onClick={() => { setStatus("idle"); setTranscript([]); onTryAgain?.(); }}
+              aria-label="Try another test call"
+              className="mt-4 text-sm text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               Try again
             </button>
@@ -1951,6 +2097,355 @@ function TestTab({
           {error}
         </p>
       ) : null}
+    </div>
+  );
+});
+
+function IdentityStepContent({
+  agent,
+  onChange,
+  onNext,
+}: {
+  agent: Agent;
+  onChange: (p: Partial<Agent>) => void;
+  onNext: () => void;
+}) {
+  const purpose = agent.purpose ?? "both";
+  const nameValid = (agent.name ?? "").trim().length > 0;
+  const greetingValid = (agent.greeting ?? "").trim().length > 0;
+  const canContinue = nameValid && greetingValid;
+  const [triedContinue, setTriedContinue] = useState(false);
+  const showNameError = triedContinue && !nameValid;
+  const showGreetingError = triedContinue && !greetingValid;
+  return (
+    <div className="space-y-6">
+      <h3 id="identity-heading" className="text-sm font-semibold text-white">Who is this agent?</h3>
+      <div>
+        <label htmlFor="agent-name" className="block text-xs text-zinc-500 mb-1.5">Agent name</label>
+        <input
+          id="agent-name"
+          type="text"
+          value={agent.name}
+          onChange={(e) => onChange({ name: e.target.value })}
+          placeholder="Receptionist"
+          aria-describedby={showNameError ? "agent-name-error" : "agent-name-hint"}
+          aria-invalid={showNameError}
+          className={`w-full bg-white/[0.03] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black border ${showNameError ? "border-red-500/60" : "border-white/[0.08]"}`}
+        />
+        {showNameError ? (
+          <p id="agent-name-error" className="mt-1 text-[11px] text-red-400" role="alert">Enter an agent name.</p>
+        ) : (
+          <p id="agent-name-hint" className="mt-1 text-[11px] text-white/25">This is just for your reference — callers won&apos;t hear it.</p>
+        )}
+      </div>
+      <div role="group" aria-labelledby="agent-purpose-label">
+        <span id="agent-purpose-label" className="block text-xs text-zinc-500 mb-2">What does this agent do?</span>
+        <div className="grid grid-cols-3 gap-2">
+          {(["inbound", "outbound", "both"] as const).map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => onChange({ purpose: p })}
+              aria-pressed={purpose === p}
+              className={`rounded-xl border p-3 text-left text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                purpose === p
+                  ? "border-white bg-white/10 text-white"
+                  : "border-white/[0.08] bg-white/[0.02] text-white/60 hover:border-white/[0.12]"
+              }`}
+            >
+              {p === "inbound" && "Answer calls — Inbound only"}
+              {p === "outbound" && "Make calls — Outbound only"}
+              {p === "both" && "Both — Inbound + outbound"}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div>
+        <label htmlFor="agent-greeting" className="block text-xs text-zinc-500 mb-1.5">Opening greeting</label>
+        <textarea
+          id="agent-greeting"
+          value={agent.greeting}
+          onChange={(e) => onChange({ greeting: e.target.value })}
+          placeholder="Thanks for calling. How can I help you today?"
+          rows={3}
+          aria-describedby={showGreetingError ? "agent-greeting-error" : "agent-greeting-hint"}
+          aria-invalid={showGreetingError}
+          className={`w-full bg-white/[0.03] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none border ${showGreetingError ? "border-red-500/60" : "border-white/[0.08]"}`}
+        />
+        {showGreetingError ? (
+          <p id="agent-greeting-error" className="mt-1 text-[11px] text-red-400" role="alert">Enter an opening greeting.</p>
+        ) : (
+          <p id="agent-greeting-hint" className="mt-1 text-[11px] text-white/25">This is the first thing callers hear.</p>
+        )}
+      </div>
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={() => { if (canContinue) onNext(); else setTriedContinue(true); }}
+          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          aria-label="Continue to Voice"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function VoiceStepContent({
+  agent,
+  voices,
+  onChange,
+  onVoicePreview,
+  previewingVoiceId,
+  onBack,
+  onNext,
+}: {
+  agent: Agent;
+  voices: CuratedVoice[];
+  onChange: (p: Partial<Agent>) => void;
+  onVoicePreview: (voiceId: string) => void;
+  previewingVoiceId: string | null;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  return (
+    <div className="space-y-6">
+      <h3 className="text-sm font-semibold text-white">How should your agent sound?</h3>
+      <ProfileTab agent={agent} voices={voices} onChange={onChange} onVoicePreview={onVoicePreview} previewingVoiceId={previewingVoiceId} />
+      <div className="flex justify-between pt-4">
+        <button type="button" onClick={onBack} aria-label="Back to Identity" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          Back
+        </button>
+        <button type="button" onClick={onNext} aria-label="Continue to Knowledge" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function KnowledgeStepContent({
+  agent,
+  onChange,
+  onBack,
+  onNext,
+}: {
+  agent: Agent;
+  onChange: (p: Partial<Agent>) => void;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  const [seeding, setSeeding] = useState(false);
+  const seedFive = async () => {
+    setSeeding(true);
+    try {
+      const res = await fetch("/api/agent/seed-knowledge", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agent_id: agent.id }),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { knowledge_base?: { faq?: Array<{ q?: string; a?: string }> } };
+        const faq = data.knowledge_base?.faq ?? [];
+        onChange({ faq: faq.map((item, i) => ({ id: `seed-${i}`, question: item.q ?? "", answer: item.a ?? "" })) });
+      }
+    } finally {
+      setSeeding(false);
+    }
+  };
+  return (
+    <div className="space-y-6">
+      <h3 id="knowledge-heading" className="text-sm font-semibold text-white">What does your agent know?</h3>
+      <section aria-labelledby="knowledge-quick-label" className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+        <p id="knowledge-quick-label" className="text-xs text-white/70 mb-2">Quick start: Add 5 common Q&As for your business (hours, location, booking, services, pricing).</p>
+        <button type="button" onClick={seedFive} disabled={seeding} aria-busy={seeding} aria-label={seeding ? "Adding default Q&As" : "Add 5 default Q&As now"} className="rounded-xl bg-white/[0.06] border border-white/[0.08] px-3 py-2 text-xs font-medium text-white hover:bg-white/10 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          {seeding ? "Adding…" : "Add them now"}
+        </button>
+      </section>
+      <KnowledgeTab agent={agent} onChange={onChange} />
+      {(agent.faq?.length ?? 0) === 0 && (
+        <p className="text-[11px] text-amber-500/90">Add at least one Q&A for better results. You can also continue and add knowledge later.</p>
+      )}
+      <div className="flex justify-between pt-4">
+        <button type="button" onClick={onBack} aria-label="Back to Voice" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Behavior" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+      </div>
+    </div>
+  );
+}
+
+function BehaviorStepContent({
+  agent,
+  onChange,
+  onBack,
+  onNext,
+}: {
+  agent: Agent;
+  onChange: (p: Partial<Agent>) => void;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  return (
+    <div className="space-y-6">
+      <h3 id="behavior-heading" className="text-sm font-semibold text-white">How should your agent behave?</h3>
+      <RulesTab agent={agent} onChange={onChange} />
+      <div className="flex justify-between pt-4">
+        <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Test" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+      </div>
+    </div>
+  );
+}
+
+function TestStepContent({
+  agent,
+  onPrepareAgent,
+  onBack,
+  onNext,
+}: {
+  agent: Agent;
+  onPrepareAgent: () => Promise<string | null>;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  const testTabRef = useRef<TestTabRef | null>(null);
+  const [suggestedOpener, setSuggestedOpener] = useState<{ title: string; phrase: string } | null>(null);
+  const [showGoLiveCta, setShowGoLiveCta] = useState(false);
+
+  const tryScenario = useCallback((scenario: (typeof TEST_SCENARIOS)[number]) => {
+    setSuggestedOpener({ title: scenario.title, phrase: scenario.phrase });
+    void testTabRef.current?.startTestCall();
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      <h3 className="text-sm font-semibold text-white">Test your agent</h3>
+      <p className="text-xs text-white/50">Talk to your AI right now. It will use your voice, greeting, knowledge base, and rules.</p>
+      <TestTab ref={testTabRef} agent={agent} onPrepareAgent={onPrepareAgent} suggestedOpener={suggestedOpener} onCallEnded={() => setShowGoLiveCta(true)} onTryAgain={() => setShowGoLiveCta(false)} />
+      {showGoLiveCta && (
+        <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center justify-between gap-3">
+          <p className="text-sm text-white/90">Ready to go live?</p>
+          <button type="button" onClick={() => { onNext(); setShowGoLiveCta(false); }} className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded">
+            Continue →
+          </button>
+        </div>
+      )}
+      <section aria-labelledby="test-scenarios-label">
+        <p id="test-scenarios-label" className="mb-3 text-xs font-medium text-white/70">Or try a simulated scenario</p>
+        <p className="mb-3 text-[11px] text-white/40">These scenarios test specific behaviors. Your agent will respond based on your exact configuration.</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" role="list">
+          {TEST_SCENARIOS.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => tryScenario(s)}
+              role="listitem"
+              aria-label={`Try scenario: ${s.title}. ${s.description}`}
+              className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 text-left text-xs transition-colors hover:border-white/[0.12] hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            >
+              <span className="font-medium text-white/90">{s.title}</span>
+              <p className="mt-0.5 text-white/50">{s.description}</p>
+              <span className="mt-2 inline-block text-[10px] text-white/40">Try this scenario</span>
+            </button>
+          ))}
+        </div>
+      </section>
+      <div className="flex justify-between pt-4">
+        <button type="button" onClick={onBack} aria-label="Back to Behavior" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Go live" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+      </div>
+    </div>
+  );
+}
+
+function GoLiveStepContent({
+  agent,
+  voices,
+  getReadiness,
+  onBack,
+  onActivate,
+  activating,
+}: {
+  agent: Agent;
+  voices: CuratedVoice[];
+  getReadiness: (a: Agent) => AgentReadiness;
+  onBack: () => void;
+  onActivate: () => void | Promise<void>;
+  activating: boolean;
+}) {
+  const r = getReadiness(agent);
+  const voiceName = agent.voice?.trim() ? (voices.find((v) => v.id === agent.voice)?.name ?? agent.voice) : null;
+  const canActivate =
+    !!(agent.name?.trim() && agent.greeting?.trim()) &&
+    !!agent.voice?.trim() &&
+    (agent.faq?.length ?? 0) >= 3;
+  return (
+    <div className="space-y-6">
+      <h3 className="text-sm font-semibold text-white">Your agent is ready</h3>
+      <div>
+        <p className="text-xs text-white/50 mb-1.5">Agent readiness: {r.percent}%</p>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
+          <div
+            className="h-full rounded-full bg-white/20 transition-[width] duration-300"
+            style={{ width: `${r.percent}%` }}
+          />
+        </div>
+      </div>
+      <ul className="space-y-1 text-xs text-white/60">
+        <li>{agent.name?.trim() && agent.greeting?.trim() ? "✓ Identity configured" : "○ Identity configured"}</li>
+        <li>{agent.voice?.trim() ? `✓ Voice selected (${voiceName ?? agent.voice})` : "○ Voice selected"}</li>
+        <li>{(agent.faq?.length ?? 0) >= 3 ? `✓ ${agent.faq.length} knowledge entries` : "○ Knowledge entries"}</li>
+        <li>{agent.alwaysTransfer?.length || agent.transferPhone ? "✓ Transfer rules set" : "○ Transfer rules set"}</li>
+        <li className="flex items-center gap-2">
+          {agent.vapiAgentId ? "✓ Voice assistant created" : "○ Voice assistant not yet created"}
+          {canActivate && !agent.vapiAgentId && (
+            <button
+              type="button"
+              onClick={() => void onActivate()}
+              disabled={activating}
+              className="text-[11px] font-medium text-white/80 hover:text-white underline underline-offset-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded disabled:opacity-50"
+            >
+              {activating ? "Syncing…" : "Retry sync"}
+            </button>
+          )}
+        </li>
+      </ul>
+      <p className="text-xs text-white/40">To go live, connect your phone number or activate for test calls and outbound only.</p>
+      <div className="grid gap-3 sm:grid-cols-2" role="list">
+        <Link
+          href="/app/settings/phone"
+          aria-label="Forward your existing number. Set up call forwarding to your AI."
+          className="flex flex-col rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-colors hover:border-white/[0.12] hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        >
+          <span className="text-sm font-medium text-white/90">Forward your existing number</span>
+          <span className="mt-1 text-xs text-white/50">Keep your current number. Forward calls to your AI.</span>
+          <span className="mt-3 text-xs font-medium text-white/70">Set up forwarding →</span>
+        </Link>
+        <Link
+          href="/app/settings/phone"
+          aria-label="Get a new phone number. We'll assign you a local number instantly."
+          className="flex flex-col rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-colors hover:border-white/[0.12] hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        >
+          <span className="text-sm font-medium text-white/90">Get a new number</span>
+          <span className="mt-1 text-xs text-white/50">We&apos;ll assign you a local number instantly.</span>
+          <span className="mt-3 text-xs font-medium text-white/70">Get number →</span>
+        </Link>
+      </div>
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.01] p-4">
+        <p className="text-xs font-medium text-white/70">Or activate without a phone number</p>
+        <p className="mt-1 text-[11px] text-white/40">Your AI will be available for test calls and outbound campaigns only.</p>
+      </div>
+      {!canActivate && (
+        <p className="text-[11px] text-amber-500/90">Complete Identity, Voice, and at least 3 knowledge entries to activate.</p>
+      )}
+      <div className="flex justify-between pt-4">
+        <button type="button" onClick={onBack} aria-label="Back to Test" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={() => void onActivate()} disabled={activating || !canActivate} aria-busy={activating} aria-label={activating ? "Activating agent" : canActivate ? "Activate agent and create voice assistant" : "Complete Identity, Voice, and Knowledge to activate"} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          {activating ? "Activating…" : "Activate agent"}
+        </button>
+      </div>
     </div>
   );
 }
