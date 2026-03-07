@@ -239,6 +239,7 @@ export async function POST(req: NextRequest) {
       summary: updates.summary ?? undefined,
       recording_url: updates.recording_url ?? undefined,
       caller_phone: call?.customer?.number ?? undefined,
+      send_confirmation_sms: true,
     }),
   }).catch(() => {});
 

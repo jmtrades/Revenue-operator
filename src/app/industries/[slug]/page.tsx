@@ -31,10 +31,17 @@ export default async function IndustryPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const industry = getIndustryBySlug(slug);
+  let slug: string | null = null;
+  let industry: Awaited<ReturnType<typeof getIndustryBySlug>> = null;
+  try {
+    const p = await params;
+    slug = p.slug;
+    industry = getIndustryBySlug(slug);
+  } catch {
+    // Params or data failure: show fallback below
+  }
 
-  if (!industry) {
+  if (!industry || !slug) {
     return (
       <div
         className="min-h-screen"
