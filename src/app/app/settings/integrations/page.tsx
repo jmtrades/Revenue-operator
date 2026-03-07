@@ -274,13 +274,28 @@ export default function AppSettingsIntegrationsPage() {
         </div>
 
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
-          <p className="text-sm font-medium text-white">Contact sync planning</p>
+          <p className="text-sm font-medium text-white">Connect to any CRM</p>
           <p className="text-xs text-zinc-500 mt-1">
-            We&apos;re keeping CRM sync focused on safe contact import and outcome updates instead of workflow automation.
+            Use the webhook URL above with Zapier, Make, or your CRM&apos;s native webhook. One URL receives lead captured, appointment booked, deal won, and more — so you can push events into HubSpot, Salesforce, Pipedrive, Zoho, or any tool that accepts webhooks.
           </p>
-          <Link href="/app/contacts" className="inline-block mt-3 text-xs font-medium text-white underline underline-offset-2">
-            Manage contacts →
-          </Link>
+          <p className="text-[11px] text-zinc-500 mt-2">
+            Works with: HubSpot, Salesforce, Pipedrive, Zoho CRM, Zapier, Make, and any platform that accepts incoming webhooks.
+          </p>
+          <p className="text-xs font-medium text-white mt-3 mb-1">Send leads into Recall Touch</p>
+          <p className="text-[11px] text-zinc-500">
+            POST to <code className="rounded bg-zinc-800 px-1">/api/webhooks/lead-inbound</code> with body: <code className="rounded bg-zinc-800 px-1">{`{ "workspace_id": "...", "name": "...", "phone": "...", "email": "..." }`}</code>. Use your session (same origin) or set <code className="rounded bg-zinc-800 px-1">LEAD_INBOUND_WEBHOOK_SECRET</code> and send it in the <code className="rounded bg-zinc-800 px-1">x-api-key</code> header.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link href="/app/leads" className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
+              Add leads
+            </Link>
+            <Link href="/app/contacts" className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
+              Manage contacts
+            </Link>
+            <Link href="/docs#integrations" className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
+              Integration guide
+            </Link>
+          </div>
         </div>
       </div>
 

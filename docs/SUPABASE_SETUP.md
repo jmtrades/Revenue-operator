@@ -2,6 +2,8 @@
 
 This app uses **Supabase** as the single backend: **database** and **auth**. There is no separate database or auth provider.
 
+**Code:** Clone from GitHub (`https://github.com/jmtrades/Revenue-operator`), then follow the steps below. See the main [README](../README.md) for the full Supabase + GitHub flow (clone → env → migrate → deploy).
+
 ---
 
 ## 1. Create a Supabase project

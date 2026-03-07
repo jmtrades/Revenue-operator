@@ -9,6 +9,11 @@ import {
   Filter,
   X,
   ChevronRight,
+  Phone,
+  MessageSquare,
+  UserPlus,
+  Archive,
+  Plus,
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -19,12 +24,14 @@ interface ApiLead {
   id: string;
   name?: string | null;
   email?: string | null;
+  phone?: string | null;
   company?: string | null;
   state: string;
   last_activity_at: string;
   opt_out?: boolean | null;
   deal_id?: string | null;
   value_cents?: number | null;
+  metadata?: { source?: string; service_requested?: string; notes?: string; score?: number } | null;
 }
 
 type LeadView = {
@@ -89,6 +96,57 @@ function timeSince(iso: string): string {
   return `${weeks} weeks ago`;
 }
 
+const SOURCE_TO_LABEL: Record<string, LeadSource> = {
+  inbound_call: "Inbound Call",
+  outbound: "Outbound Outreach",
+  website: "Website",
+  referral: "Referral",
+  csv_import: "Website",
+  api: "Outbound Outreach",
+  other: "Inbound Call",
+};
+
+function mapApiLeadToView(l: ApiLead, index: number): LeadView {
+  const name = l.name?.trim() || l.company?.trim() || "Lead";
+  const status: LeadStatus =
+    (l.state === "new" && "New") ||
+    (l.state === "contacted" && "Contacted") ||
+    (l.state === "qualified" && "Qualified") ||
+    (l.state === "appointment_set" && "Appointment Set") ||
+    (l.state === "won" && "Won") ||
+    (l.state === "lost" && "Lost") ||
+    "New";
+  const meta = l.metadata;
+  const source: LeadSource = meta?.source ? (SOURCE_TO_LABEL[meta.source] ?? "Inbound Call") : "Inbound Call";
+  const score = typeof meta?.score === "number" ? meta.score : 60 + (index * 7) % 40;
+  const service = meta?.service_requested?.trim() || l.company || "Service request";
+  const createdAt = l.last_activity_at;
+  const lastContactAt = l.last_activity_at;
+  const notes =
+    meta?.notes?.trim() ||
+    (l.company && l.value_cents ? `${l.company} with potential value ~$${Math.round((l.value_cents ?? 0) / 100).toLocaleString()}.` : "Lead captured from a recent conversation and kept in your pipeline.");
+  const timeline = [
+    { at: createdAt, label: "Created from recent activity" },
+    { at: createdAt, label: "Lead added to active pipeline" },
+  ];
+  return {
+    id: l.id,
+    name,
+    phone: (l.phone ?? "").toString().trim(),
+    email: l.email ?? "",
+    source,
+    status,
+    score,
+    service,
+    createdAt,
+    lastContactAt,
+    assignedAgent: "Sarah",
+    notes,
+    linkedCallId: undefined,
+    timeline,
+  };
+}
+
 type SortKey = "newest" | "score" | "recent-contact";
 
 const LEADS_SNAPSHOT_PREFIX = "rt_leads_snapshot:";
@@ -133,12 +191,37 @@ export default function LeadsPage() {
   const [sort, setSort] = useState<SortKey>("newest");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [drawerLead, setDrawerLead] = useState<LeadView | null>(null);
+  const [drawerCalls, setDrawerCalls] = useState<Array<{ id: string; call_started_at?: string; outcome?: string }>>([]);
+  const [drawerCallsLoading, setDrawerCallsLoading] = useState(false);
+  const [actionToast, setActionToast] = useState<string | null>(null);
   const [leads, setLeads] = useState<LeadView[]>(initialLeads);
+  const [addLeadOpen, setAddLeadOpen] = useState(false);
+  const [addLeadForm, setAddLeadForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    company: "",
+    service_requested: "",
+    source: "website",
+    status: "New" as LeadStatus,
+    notes: "",
+  });
+  const [addLeadSaving, setAddLeadSaving] = useState(false);
+  const [addLeadError, setAddLeadError] = useState<string | null>(null);
+  const [csvPreviewRows, setCsvPreviewRows] = useState<Array<{ name: string; phone: string; email?: string; service_requested?: string; notes?: string }>>([]);
+  const [csvImporting, setCsvImporting] = useState(false);
+  const [outboundCalling, setOutboundCalling] = useState(false);
 
   useEffect(() => {
     document.title = PAGE_TITLE;
     return () => { document.title = ""; };
   }, []);
+
+  useEffect(() => {
+    if (!actionToast) return;
+    const t = window.setTimeout(() => setActionToast(null), 2500);
+    return () => window.clearTimeout(t);
+  }, [actionToast]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -151,49 +234,7 @@ export default function LeadsPage() {
       })
       .then((data: { leads?: ApiLead[] }) => {
         const apiLeads = data.leads ?? [];
-        const mapped: LeadView[] = apiLeads.map((l, index) => {
-          const name = l.name?.trim() || l.company?.trim() || "Lead";
-          const status: LeadStatus =
-            (l.state === "new" && "New") ||
-            (l.state === "contacted" && "Contacted") ||
-            (l.state === "qualified" && "Qualified") ||
-            (l.state === "appointment_set" && "Appointment Set") ||
-            (l.state === "won" && "Won") ||
-            (l.state === "lost" && "Lost") ||
-            "New";
-          const source: LeadSource = "Inbound Call";
-          const score: number = 60 + (index * 7) % 40;
-          const service = l.company || "Service request";
-          const createdAt = l.last_activity_at;
-          const lastContactAt = l.last_activity_at;
-          const assignedAgent = "Sarah";
-          const notes =
-            l.company && l.value_cents
-              ? `${l.company} with potential value ~$${Math.round(
-                  (l.value_cents ?? 0) / 100
-                ).toLocaleString()}.`
-              : "Lead captured from a recent conversation and kept in your pipeline.";
-          const timeline = [
-            { at: createdAt, label: "Created from recent activity" },
-            { at: createdAt, label: "Lead added to active pipeline" },
-          ];
-          return {
-            id: l.id,
-            name,
-            phone: "",
-            email: l.email ?? "",
-            source,
-            status,
-            score,
-            service,
-            createdAt,
-            lastContactAt,
-            assignedAgent,
-            notes,
-            linkedCallId: undefined,
-            timeline,
-          };
-        });
+        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i));
         setError(null);
         setLeads(mapped);
         persistLeadsSnapshot(workspaceId, mapped);
@@ -283,6 +324,10 @@ export default function LeadsPage() {
     setLeads((prev) =>
       prev.map((l) => (selectedIds.has(l.id) ? { ...l, status: nextStatus } : l))
     );
+    if (drawerLead && selectedIds.has(drawerLead.id)) {
+      setDrawerLead({ ...drawerLead, status: nextStatus });
+    }
+    selectedIds.forEach((leadId) => persistLeadStatus(leadId, nextStatus));
   };
 
   const bulkAssignAgent = (agent: string) => {
@@ -292,17 +337,128 @@ export default function LeadsPage() {
     );
   };
 
+  const moveLeadStatus = (leadId: string, newStatus: LeadStatus) => {
+    setLeads((prev) =>
+      prev.map((l) => (l.id === leadId ? { ...l, status: newStatus } : l))
+    );
+    if (drawerLead?.id === leadId) {
+      setDrawerLead({ ...drawerLead, status: newStatus });
+    }
+    persistLeadStatus(leadId, newStatus);
+  };
+
   const openDrawer = (lead: LeadView) => {
     setDrawerLead(lead);
+    setDrawerCalls([]);
+    setDrawerCallsLoading(true);
+    fetch(`/api/leads/${lead.id}/calls`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { calls?: Array<{ id: string; call_started_at?: string; outcome?: string }> } | null) => {
+        setDrawerCalls(Array.isArray(data?.calls) ? data.calls : []);
+      })
+      .catch(() => setDrawerCalls([]))
+      .finally(() => setDrawerCallsLoading(false));
   };
 
   const closeDrawer = () => {
     setDrawerLead(null);
+    setDrawerCalls([]);
   };
 
   const scoreBadgeClass = (score: number): string => {
     const bucket = scoreBucket(score);
     return SCORE_COLORS[bucket];
+  };
+
+  const refetchLeads = () => {
+    if (!workspaceId) return;
+    fetch(`/api/leads?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { leads?: ApiLead[] }) => {
+        const apiLeads = data?.leads ?? [];
+        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i));
+        setLeads(mapped);
+        persistLeadsSnapshot(workspaceId, mapped);
+      })
+      .catch(() => {});
+  };
+
+  const persistLeadStatus = (leadId: string, status: LeadStatus) => {
+    fetch(`/api/leads/${leadId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ state: status }),
+    }).catch(() => {});
+  };
+
+  const handleAddLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!workspaceId || !addLeadForm.name.trim() || !addLeadForm.phone.trim() || addLeadSaving) return;
+    setAddLeadError(null);
+    setAddLeadSaving(true);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: addLeadForm.name.trim(),
+          phone: addLeadForm.phone.trim(),
+          email: addLeadForm.email.trim() || undefined,
+          service_requested: addLeadForm.service_requested.trim() || addLeadForm.company.trim() || undefined,
+          source: addLeadForm.source,
+          status: addLeadForm.status.replace(/\s+/g, "_").toLowerCase(),
+          notes: addLeadForm.notes.trim() || undefined,
+        }),
+      });
+      const data = (await res.json().catch(() => null)) as { id?: string; error?: string } | null;
+      if (!res.ok) {
+        setAddLeadError(data?.error ?? "Could not add lead.");
+        return;
+      }
+      refetchLeads();
+      setAddLeadOpen(false);
+      setAddLeadForm({
+        name: "",
+        phone: "",
+        email: "",
+        company: "",
+        service_requested: "",
+        source: "website",
+        status: "New",
+        notes: "",
+      });
+      setActionToast("Lead added.");
+    } catch {
+      setAddLeadError("Could not add lead.");
+    } finally {
+      setAddLeadSaving(false);
+    }
+  };
+
+  const handleHaveAICall = async () => {
+    if (!drawerLead?.id || outboundCalling) return;
+    setOutboundCalling(true);
+    try {
+      const res = await fetch("/api/outbound/call", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lead_id: drawerLead.id }),
+      });
+      const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      if (res.ok && data?.ok) {
+        setActionToast("Call started. Check Calls for status.");
+        closeDrawer();
+      } else {
+        setActionToast(data?.error ?? "Could not start call.");
+      }
+    } catch {
+      setActionToast("Could not start call.");
+    } finally {
+      setOutboundCalling(false);
+    }
   };
 
   const sources: LeadSource[] = ["Inbound Call", "Outbound Outreach", "Website", "Referral"];
@@ -321,6 +477,15 @@ export default function LeadsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => { setAddLeadOpen(true); setAddLeadError(null); }}
+              disabled={!workspaceId}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-4 py-2 hover:bg-zinc-100 disabled:opacity-50"
+            >
+              <Plus className="w-4 h-4" />
+              Add lead
+            </button>
             <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-3 py-1 text-xs text-zinc-300">
               Total: <span className="ml-1 font-semibold text-white">{totalCount}</span>
             </span>
@@ -475,9 +640,21 @@ export default function LeadsPage() {
           ) : filteredLeads.length === 0 ? (
             <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-12 text-center">
               <Users className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-              <p className="text-sm font-medium text-white mb-1">Leads appear when your AI captures them</p>
-              <p className="text-xs text-zinc-500 mb-4">Leads are created automatically from calls. Try a test call to see it in action.</p>
-              <Link href="/demo" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Try demo →</Link>
+              <p className="text-sm font-medium text-white mb-1">Leads appear when your AI captures them — or add your own</p>
+              <p className="text-xs text-zinc-500 mb-4">Create leads from calls or add leads manually. Connect your CRM via Settings → Integrations to sync with HubSpot, Salesforce, and more.</p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setAddLeadOpen(true); setAddLeadError(null); }}
+                  disabled={!workspaceId}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-sm font-semibold px-4 py-2.5 hover:bg-zinc-100 disabled:opacity-50"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add lead
+                </button>
+                <Link href="/demo" className="text-sm font-medium text-zinc-300 hover:text-white underline underline-offset-2">Try demo →</Link>
+                <Link href="/app/settings/integrations" className="text-sm font-medium text-zinc-300 hover:text-white underline underline-offset-2">Connect CRM →</Link>
+              </div>
             </div>
           ) : (
           <div className="hidden md:block rounded-2xl border border-zinc-800 bg-zinc-950/60 overflow-hidden">
@@ -620,6 +797,19 @@ export default function LeadsPage() {
                 <div
                   key={status}
                   className="flex flex-col rounded-2xl border border-zinc-800 bg-zinc-950/70 p-3 min-h-[220px]"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.add("ring-1", "ring-zinc-600");
+                  }}
+                  onDragLeave={(e) => {
+                    e.currentTarget.classList.remove("ring-1", "ring-zinc-600");
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove("ring-1", "ring-zinc-600");
+                    const leadId = e.dataTransfer.getData("application/x-lead-id");
+                    if (leadId) moveLeadStatus(leadId, status);
+                  }}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-semibold text-zinc-200">
@@ -634,11 +824,23 @@ export default function LeadsPage() {
                       const sb = scoreBucket(lead.score);
                       const scoreClass = SCORE_COLORS[sb];
                       return (
-                        <button
+                        <div
                           key={lead.id}
-                          type="button"
+                          draggable
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("application/x-lead-id", lead.id);
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          role="button"
+                          tabIndex={0}
                           onClick={() => openDrawer(lead)}
-                          className="w-full text-left rounded-xl border border-zinc-800 bg-zinc-950/90 px-3 py-2 text-xs hover:border-zinc-600"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              openDrawer(lead);
+                            }
+                          }}
+                          className="w-full text-left rounded-xl border border-zinc-800 bg-zinc-950/90 px-3 py-2 text-xs hover:border-zinc-600 cursor-grab active:cursor-grabbing"
                         >
                           <p className="font-medium text-zinc-100 truncate">
                             {lead.name}
@@ -657,7 +859,7 @@ export default function LeadsPage() {
                               {timeSince(lead.createdAt)}
                             </span>
                           </div>
-                        </button>
+                        </div>
                       );
                     })}
                     {columnLeads.length === 0 && (
@@ -675,6 +877,236 @@ export default function LeadsPage() {
           )}
         </div>
       </div>
+
+      {/* Add lead slide-out */}
+      {addLeadOpen && (
+        <div className="fixed inset-0 z-50">
+          <button
+            type="button"
+            onClick={() => { setAddLeadOpen(false); setAddLeadError(null); setCsvPreviewRows([]); }}
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            aria-label="Close"
+          />
+          <aside className="absolute inset-y-0 right-0 w-full max-w-md bg-black border-l border-zinc-800 shadow-2xl flex flex-col overflow-y-auto">
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white">Add a lead</h2>
+              <button
+                type="button"
+                onClick={() => { setAddLeadOpen(false); setAddLeadError(null); setCsvPreviewRows([]); }}
+                className="text-zinc-400 hover:text-white"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleAddLeadSubmit} className="space-y-4">
+              {addLeadError && (
+                <p className="text-sm text-red-400">{addLeadError}</p>
+              )}
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={addLeadForm.name}
+                  onChange={(e) => setAddLeadForm((prev) => ({ ...prev, name: e.target.value }))}
+                  placeholder="Full name"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Phone *</label>
+                <input
+                  type="tel"
+                  required
+                  value={addLeadForm.phone}
+                  onChange={(e) => setAddLeadForm((prev) => ({ ...prev, phone: e.target.value }))}
+                  placeholder="+1 (555) 000-0000"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={addLeadForm.email}
+                  onChange={(e) => setAddLeadForm((prev) => ({ ...prev, email: e.target.value }))}
+                  placeholder="email@example.com"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">What do they need?</label>
+                <input
+                  type="text"
+                  value={addLeadForm.service_requested}
+                  onChange={(e) => setAddLeadForm((prev) => ({ ...prev, service_requested: e.target.value }))}
+                  placeholder="e.g. monthly cleaning, consultation"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Source</label>
+                <div className="flex flex-wrap gap-3 mt-1">
+                  {(["website", "referral", "inbound_call", "other"] as const).map((src) => (
+                    <label key={src} className="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="source"
+                        checked={addLeadForm.source === src}
+                        onChange={() => setAddLeadForm((prev) => ({ ...prev, source: src }))}
+                        className="rounded-full border-zinc-600 bg-zinc-900 text-white"
+                      />
+                      {src === "inbound_call" ? "Inbound Call" : src === "website" ? "Website" : src === "referral" ? "Referral" : "Other"}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Status</label>
+                <select
+                  value={addLeadForm.status}
+                  onChange={(e) => setAddLeadForm((prev) => ({ ...prev, status: e.target.value as LeadStatus }))}
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:outline-none"
+                >
+                  {STATUS_ORDER.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Notes</label>
+                <textarea
+                  value={addLeadForm.notes}
+                  onChange={(e) => setAddLeadForm((prev) => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Optional notes"
+                  rows={2}
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none resize-none"
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => { setAddLeadOpen(false); setAddLeadError(null); setCsvPreviewRows([]); }}
+                  className="flex-1 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-sm font-medium hover:border-zinc-500"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addLeadSaving || !addLeadForm.name.trim() || !addLeadForm.phone.trim()}
+                  className="flex-1 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-50"
+                >
+                  {addLeadSaving ? "Adding…" : "Save lead"}
+                </button>
+              </div>
+            </form>
+            {csvPreviewRows.length > 0 ? (
+              <div className="mt-6 pt-4 border-t border-zinc-800">
+                <p className="text-sm font-medium text-white mb-1">We found {csvPreviewRows.length} leads</p>
+                <p className="text-[11px] text-zinc-500 mb-2">Preview (first 5):</p>
+                <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2 max-h-32 overflow-y-auto text-xs text-zinc-300">
+                  {csvPreviewRows.slice(0, 5).map((r, i) => (
+                    <div key={i} className="py-1 border-b border-zinc-800 last:border-0">
+                      {r.name} · {r.phone}
+                      {r.email ? ` · ${r.email}` : ""}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCsvPreviewRows([])}
+                    className="px-3 py-2 rounded-xl border border-zinc-700 text-zinc-300 text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={csvImporting}
+                    onClick={async () => {
+                      setCsvImporting(true);
+                      try {
+                        const res = await fetch("/api/leads/import", {
+                          method: "POST",
+                          credentials: "include",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ leads: csvPreviewRows }),
+                        });
+                        const data = (await res.json().catch(() => null)) as { imported?: number; error?: string } | null;
+                        if (res.ok && typeof data?.imported === "number") {
+                          refetchLeads();
+                          setCsvPreviewRows([]);
+                          setAddLeadOpen(false);
+                          setActionToast(`${data.imported} leads imported.`);
+                        } else {
+                          setActionToast(data?.error ?? "Import failed.");
+                        }
+                      } catch {
+                        setActionToast("Import failed.");
+                      } finally {
+                        setCsvImporting(false);
+                      }
+                    }}
+                    className="flex-1 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50"
+                  >
+                    {csvImporting ? "Importing…" : `Import all ${csvPreviewRows.length} leads`}
+                  </button>
+                </div>
+              </div>
+            ) : (
+            <div className="mt-6 pt-4 border-t border-zinc-800">
+              <p className="text-xs text-zinc-500 mb-2">— or —</p>
+              <label className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white cursor-pointer">
+                <span className="text-base">📎</span>
+                Import from CSV
+                <input
+                  type="file"
+                  accept=".csv"
+                  className="sr-only"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      const text = String(reader.result ?? "");
+                      const lines = text.split(/\r?\n/).filter((l) => l.trim());
+                      const header = (lines[0] ?? "").toLowerCase();
+                      const parts = header.split(",").map((p) => p.trim());
+                      const nameIdx = parts.findIndex((p) => p === "name" || p === "full name") >= 0 ? parts.findIndex((p) => p === "name" || p === "full name") : 0;
+                      const phoneIdx = parts.findIndex((p) => p === "phone" || p === "phone number") >= 0 ? parts.findIndex((p) => p === "phone" || p === "phone number") : 1;
+                      const emailIdx = parts.findIndex((p) => p === "email");
+                      const notesIdx = parts.findIndex((p) => p === "notes" || p === "service" || p === "service_requested");
+                      const toObj = (line: string) => {
+                        const cells = line.split(",").map((c) => c.trim().replace(/^["']|["']$/g, ""));
+                        return {
+                          name: cells[nameIdx] ?? "",
+                          phone: (cells[phoneIdx] ?? "").replace(/\D/g, "").length >= 10 ? cells[phoneIdx] ?? "" : "",
+                          email: emailIdx >= 0 ? cells[emailIdx] ?? "" : "",
+                          service_requested: notesIdx >= 0 ? cells[notesIdx] ?? "" : "",
+                          notes: notesIdx >= 0 ? cells[notesIdx] ?? "" : "",
+                        };
+                      };
+                      const parsed = lines.slice(1).map(toObj).filter((r) => r.name && r.phone);
+                      if (parsed.length === 0) {
+                        setActionToast("No valid rows (need name and phone).");
+                        return;
+                      }
+                      setCsvPreviewRows(parsed);
+                    };
+                    reader.readAsText(file);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+              <p className="text-[11px] text-zinc-500 mt-1">Upload CSV with name, phone, email columns</p>
+            </div>
+            )}
+          </div>
+          </aside>
+        </div>
+      )}
 
       {/* Detail drawer */}
       {drawerLead && (
@@ -748,12 +1180,22 @@ export default function LeadsPage() {
                 </div>
               </section>
 
+              {drawerLead.service && drawerLead.service !== "Service request" && (
+                <section>
+                  <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+                    What they need
+                  </h3>
+                  <p className="text-sm text-zinc-200 leading-relaxed">
+                    {drawerLead.service}
+                  </p>
+                </section>
+              )}
               <section>
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
                   Notes
                 </h3>
                 <p className="text-sm text-zinc-200 leading-relaxed">
-                  {drawerLead.notes}
+                  {drawerLead.notes || "—"}
                 </p>
               </section>
 
@@ -774,6 +1216,48 @@ export default function LeadsPage() {
                     </li>
                   ))}
                 </ol>
+              </section>
+
+              <section>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+                  Call history
+                </h3>
+                {drawerCallsLoading ? (
+                  <p className="text-xs text-zinc-500">Loading…</p>
+                ) : drawerCalls.length === 0 ? (
+                  <p className="text-xs text-zinc-500 mb-2">No calls yet for this lead.</p>
+                ) : null}
+                {drawerLead.phone ? (
+                  <button
+                    type="button"
+                    onClick={() => void handleHaveAICall()}
+                    disabled={outboundCalling}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-3 py-2 hover:bg-zinc-100 disabled:opacity-50"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    {outboundCalling ? "Starting…" : "Have AI call this lead"}
+                  </button>
+                ) : (
+                  <p className="text-xs text-zinc-500">Add a phone number to enable outbound calls.</p>
+                )}
+                {drawerCalls.length > 0 ? (
+                  <ul className="space-y-2 text-xs">
+                    {drawerCalls.map((call) => (
+                      <li key={call.id}>
+                        <Link
+                          href={`/app/calls/${call.id}`}
+                          className="flex items-center justify-between gap-2 rounded-xl border border-zinc-800 bg-zinc-950/70 px-3 py-2 text-zinc-100 hover:border-zinc-600"
+                        >
+                          <span>
+                            {call.call_started_at ? formatDate(call.call_started_at) : "Call"}
+                            {call.outcome ? ` · ${call.outcome}` : ""}
+                          </span>
+                          <ChevronRight className="w-3 h-3 text-zinc-500" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </section>
 
               {drawerLead.linkedCallId && (
@@ -807,6 +1291,7 @@ export default function LeadsPage() {
                         )
                       );
                       setDrawerLead({ ...drawerLead, status: next });
+                      persistLeadStatus(drawerLead.id, next);
                     }}
                     className="text-xs rounded-xl bg-zinc-900 border border-zinc-800 px-2 py-1 text-zinc-200 focus:outline-none focus:border-zinc-600"
                   >
@@ -819,21 +1304,61 @@ export default function LeadsPage() {
                 </label>
               </div>
               <div className="flex flex-wrap gap-2">
+                {drawerLead.phone ? (
+                  <a
+                    href={`tel:${drawerLead.phone.replace(/\s/g, "")}`}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    Call back
+                  </a>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-800 text-zinc-500 text-xs font-medium px-3 py-2">
+                    <Phone className="w-3.5 h-3.5" />
+                    Call back (no phone)
+                  </span>
+                )}
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
+                  onClick={() => setActionToast("SMS coming soon.")}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
                 >
-                  Add note
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Send SMS
                 </button>
+                <Link
+                  href="/app/campaigns"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  Add to campaign
+                </Link>
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
+                  onClick={() => {
+                    const lost: LeadStatus = "Lost";
+                    setLeads((prev) =>
+                      prev.map((l) =>
+                        l.id === drawerLead.id ? { ...l, status: lost } : l
+                      )
+                    );
+                    setDrawerLead({ ...drawerLead, status: lost });
+                    persistLeadStatus(drawerLead.id, lost);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
                 >
-                  Schedule follow-up
+                  <Archive className="w-3.5 h-3.5" />
+                  Archive
                 </button>
               </div>
             </div>
           </aside>
+        </div>
+      )}
+
+      {actionToast && (
+        <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 shadow-lg">
+          {actionToast}
         </div>
       )}
     </>

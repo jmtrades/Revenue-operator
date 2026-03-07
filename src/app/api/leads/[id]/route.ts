@@ -26,12 +26,21 @@ export async function GET(
   });
 }
 
+const STATUS_TO_STATE: Record<string, string> = {
+  new: "new",
+  contacted: "contacted",
+  qualified: "qualified",
+  appointment_set: "appointment_set",
+  won: "won",
+  lost: "lost",
+};
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  let body: { paused_for_followup?: boolean } = {};
+  let body: { paused_for_followup?: boolean; state?: string } = {};
   try {
     body = await req.json();
   } catch {
@@ -40,10 +49,20 @@ export async function PATCH(
   const db = getDb();
   const { data: existing } = await db.from("leads").select("metadata").eq("id", id).single();
   const meta = (existing as { metadata?: Record<string, unknown> })?.metadata ?? {};
-  const nextMeta = { ...meta, paused_for_followup: body.paused_for_followup ?? false };
+  const nextMeta =
+    body.paused_for_followup !== undefined
+      ? { ...meta, paused_for_followup: body.paused_for_followup }
+      : meta;
+  const stateInput = body.state != null ? String(body.state).toLowerCase().replace(/\s+/g, "_") : undefined;
+  const dbState = stateInput != null ? STATUS_TO_STATE[stateInput] ?? stateInput : undefined;
+  const updatePayload: { metadata: Record<string, unknown>; updated_at: string; state?: string } = {
+    metadata: nextMeta,
+    updated_at: new Date().toISOString(),
+  };
+  if (dbState != null) updatePayload.state = dbState;
   const { data: updated, error } = await db
     .from("leads")
-    .update({ metadata: nextMeta, updated_at: new Date().toISOString() })
+    .update(updatePayload)
     .eq("id", id)
     .select()
     .single();
