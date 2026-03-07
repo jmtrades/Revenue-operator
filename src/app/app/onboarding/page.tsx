@@ -336,7 +336,8 @@ export default function AppOnboardingPage() {
               })}
             </div>
             <div>
-              <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-zinc-400">Your AI will say</label>
+              <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-zinc-400">Opening greeting</label>
+              <p className="text-[11px] text-white/40 mb-2">This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge and rules.</p>
               <textarea
                 id="onboarding-greeting"
                 value={greeting}

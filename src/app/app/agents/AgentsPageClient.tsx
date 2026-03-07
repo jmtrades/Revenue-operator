@@ -532,10 +532,12 @@ function toAgentPatchPayload(agent: Agent) {
 
 export default function AppAgentsPageClient({
   initialWorkspaceId = "",
+  initialWorkspaceName = "",
   initialAgentsRows = [],
   initialFallbackAgent = null,
 }: {
   initialWorkspaceId?: string;
+  initialWorkspaceName?: string;
   initialAgentsRows?: Array<Record<string, unknown>>;
   initialFallbackAgent?: InitialFallbackAgent;
 }) {
@@ -1047,33 +1049,29 @@ export default function AppAgentsPageClient({
                 </span>
               </div>
               <p className="text-[11px] text-zinc-500 mb-1">
-                Template:{" "}
-                {agent.template === "receptionist"
-                  ? "Receptionist"
-                  : agent.template === "after_hours"
-                    ? "After-Hours"
-                    : agent.template === "emergency"
-                      ? "Emergency"
-                      : agent.template === "lead_qualifier"
-                        ? "Lead Qualifier"
-                        : agent.template === "follow_up"
-                          ? "Follow-Up"
-                          : agent.template === "review_request"
-                            ? "Review Request"
-                            : "Custom"}
+                Voice: {elevenLabsVoices.find((v) => v.id === agent.voice)?.name ?? "Voice"}
+                {" · "}
+                {agent.purpose === "inbound" ? "Inbound" : agent.purpose === "outbound" ? "Outbound" : "Inbound + Outbound"}
               </p>
               <p className="text-[11px] text-zinc-500">
-                Voice: {elevenLabsVoices.find((v) => v.id === agent.voice)?.name ?? "Voice"}
+                Knows: {(agent.faq?.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()).length ?? 0)} Q&As
+                {(agent.services?.length ?? 0) > 0 && ` · ${agent.services.length} services`}
               </p>
-              <p className="mt-2 text-[11px] text-zinc-500 line-clamp-2">
-                {agent.greeting}
+              <p className="text-[11px] text-zinc-500">
+                Rules:{" "}
+                {[
+                  ((agent.alwaysTransfer?.length ?? 0) > 0 || (agent.transferRules?.length ?? 0) > 0) && "Transfer on request",
+                  agent.afterHoursMode && agent.afterHoursMode !== "messages" && "After-hours",
+                ]
+                  .filter(Boolean)
+                  .join(", ") || "Default"}
               </p>
               {(() => {
                 const readiness = getAgentReadiness(agent);
                 return (
-                  <p className="mt-3 text-[11px] text-zinc-500">
+                  <p className="mt-2 text-[11px] text-zinc-500">
                     <span className={readiness.percent >= 80 ? "text-green-500/80" : readiness.percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
-                      {readiness.percent}% configured
+                      {readiness.percent}% ready
                     </span>
                     {" · "}{agent.stats.totalCalls} calls
                   </p>
@@ -1175,7 +1173,7 @@ export default function AppAgentsPageClient({
                   <IdentityStepContent agent={selected} onChange={updateSelected} onNext={async () => { await persistAgent(selected, { showToast: false }); const idx = SETUP_STEPS.findIndex((s) => s.id === activeStep); if (idx < SETUP_STEPS.length - 1) setActiveStep(SETUP_STEPS[idx + 1].id); }} />
                 )}
                 {activeStep === "voice" && (
-                  <VoiceStepContent agent={selected} voices={elevenLabsVoices} onChange={updateSelected} onVoicePreview={(voiceId) => void playAudioPreview({ key: voiceId, voiceId, text: selected.greeting.trim() || "Thanks for calling. How can I help you today?", settings: selected.voiceSettings })} previewingVoiceId={playingVoiceId} onBack={() => setActiveStep("identity")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("knowledge"); }} />
+                  <VoiceStepContent agent={selected} workspaceName={initialWorkspaceName} voices={elevenLabsVoices} onChange={updateSelected} onVoicePreview={(voiceId) => void playAudioPreview({ key: voiceId, voiceId, text: selected.greeting.trim() || "Thanks for calling. How can I help you today?", settings: selected.voiceSettings })} previewingVoiceId={playingVoiceId} onBack={() => setActiveStep("identity")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("knowledge"); }} />
                 )}
                 {activeStep === "knowledge" && (
                   <KnowledgeStepContent agent={selected} onChange={updateSelected} onBack={() => setActiveStep("voice")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("behavior"); }} />
@@ -1459,15 +1457,67 @@ function RangeSetting(props: {
   );
 }
 
+function ConversationPreview({ agent, workspaceName }: { agent: Agent; workspaceName: string }) {
+  const previews = useMemo(() => {
+    const items: Array<{ question: string; answer: string }> = [];
+    const faq = agent.faq?.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()) ?? [];
+    faq.slice(0, 3).forEach((e) => {
+      items.push({ question: e.question, answer: e.answer });
+    });
+    const hasTransfer = (agent.alwaysTransfer?.length ?? 0) > 0 || (agent.transferRules?.length ?? 0) > 0;
+    if (hasTransfer) {
+      items.push({
+        question: "I need to speak to someone",
+        answer: "Of course. Let me transfer you now.",
+      });
+    }
+    items.push({
+      question: "Something not in your knowledge base",
+      answer: "That's a great question. Let me have someone get back to you on that. Can I get your name and number?",
+    });
+    const businessName = workspaceName.trim() || "this business";
+    items.push({
+      question: "Are you a robot?",
+      answer: `I'm the phone assistant for ${businessName}. How can I help you today?`,
+    });
+    return items;
+  }, [agent.faq, agent.alwaysTransfer, agent.transferRules, workspaceName]);
+
+  return (
+    <div className="mt-6">
+      <h3 className="text-sm font-medium text-white/80 mb-1">How your AI handles calls</h3>
+      <p className="text-xs text-white/30 mb-4">
+        Your agent has a natural conversation after the greeting. Here&apos;s how it responds:
+      </p>
+      <div className="space-y-0 border border-white/[0.06] rounded-xl overflow-hidden">
+        {previews.map((p, i) => (
+          <div key={i} className={`p-3 ${i > 0 ? "border-t border-white/[0.06]" : ""}`}>
+            <p className="text-xs text-white/40 mb-1.5">&ldquo;{p.question}&rdquo;</p>
+            <p className="text-sm text-white/70">
+              <span className="text-blue-400/60 text-xs mr-1.5">AI:</span>
+              {p.answer}
+            </p>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-white/20 mt-3">
+        Generated from your knowledge base and rules. Add more entries to make your AI smarter.
+      </p>
+    </div>
+  );
+}
+
 function ProfileTab({
   agent,
   voices,
+  workspaceName,
   onChange,
   onVoicePreview,
   previewingVoiceId,
 }: {
   agent: Agent;
   voices: CuratedVoice[];
+  workspaceName: string;
   onChange: (partial: Partial<Agent>) => void;
   onVoicePreview: (voiceId: string) => void;
   previewingVoiceId: string | null;
@@ -1582,14 +1632,18 @@ function ProfileTab({
       </div>
 
       <div className="space-y-1">
-        <label className="block text-[11px] text-zinc-500">Greeting</label>
+        <label className="block text-[11px] text-zinc-500">Opening greeting</label>
+        <p className="text-[11px] text-white/30 mb-2">This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge and rules.</p>
         <textarea
           rows={3}
           value={agent.greeting}
           onChange={(e) => onChange({ greeting: e.target.value })}
+          placeholder="Thanks for calling. How can I help you today?"
           className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
         />
       </div>
+
+      <ConversationPreview agent={agent} workspaceName={workspaceName} />
 
       <div className="space-y-2">
         <div className="flex items-center justify-between text-[11px] text-zinc-500">
@@ -2650,6 +2704,7 @@ function IdentityStepContent({
 
 function VoiceStepContent({
   agent,
+  workspaceName,
   voices,
   onChange,
   onVoicePreview,
@@ -2658,6 +2713,7 @@ function VoiceStepContent({
   onNext,
 }: {
   agent: Agent;
+  workspaceName: string;
   voices: CuratedVoice[];
   onChange: (p: Partial<Agent>) => void;
   onVoicePreview: (voiceId: string) => void;
@@ -2668,7 +2724,7 @@ function VoiceStepContent({
   return (
     <div className="space-y-6">
       <h3 className="text-sm font-semibold text-white">How should your agent sound?</h3>
-      <ProfileTab agent={agent} voices={voices} onChange={onChange} onVoicePreview={onVoicePreview} previewingVoiceId={previewingVoiceId} />
+      <ProfileTab agent={agent} voices={voices} workspaceName={workspaceName} onChange={onChange} onVoicePreview={onVoicePreview} previewingVoiceId={previewingVoiceId} />
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label="Back to Identity" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           Back
@@ -2775,11 +2831,33 @@ function TestStepContent({
     void testTabRef.current?.startTestCall();
   }, []);
 
+  const suggestedQuestions = (agent.faq ?? [])
+    .filter((e) => (e.question ?? "").trim())
+    .slice(0, 3)
+    .map((e) => e.question!.trim());
+
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-white">Test your agent</h3>
-      <p className="text-xs text-white/50">Talk to your AI right now. It will use your voice, greeting, knowledge base, and rules.</p>
+      <h3 className="text-sm font-semibold text-white">Talk to your AI</h3>
+      <p className="text-xs text-white/50">Your agent uses your voice, knowledge, and rules to have a real conversation. Try it now.</p>
       <TestTab ref={testTabRef} agent={agent} onPrepareAgent={onPrepareAgent} suggestedOpener={suggestedOpener} onCallEnded={() => setShowGoLiveCta(true)} onTryAgain={() => setShowGoLiveCta(false)} />
+      {suggestedQuestions.length > 0 && (
+        <div>
+          <p className="text-xs font-medium text-white/70 mb-2">Or try asking:</p>
+          <div className="flex flex-wrap gap-2">
+            {suggestedQuestions.map((q, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => tryScenario({ id: `faq-${i}`, title: q.slice(0, 20), description: q, phrase: q })}
+                className="text-[11px] bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-white/60 hover:text-white/80 hover:border-white/[0.12] transition-colors"
+              >
+                &ldquo;{q.length > 40 ? q.slice(0, 40) + "…" : q}&rdquo;
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {showGoLiveCta && (
         <>
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-2">

@@ -2,11 +2,12 @@ import Link from "next/link";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
+import { HomepageVoiceWidget } from "@/components/demo/HomepageVoiceWidget";
 
 export function Hero() {
   return (
     <section
-      className="pt-28 pb-16 md:pt-32 md:pb-20 relative overflow-hidden"
+      className="min-h-screen flex items-center pt-28 pb-16 md:pt-32 md:pb-20 relative overflow-hidden"
       style={{ background: "#0F1729" }}
     >
       <div
@@ -18,7 +19,8 @@ export function Hero() {
         }}
       />
       <Container className="relative z-10">
-        <div className="max-w-3xl">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left: copy + CTA */}
           <div>
             <SectionLabel>AI phone intelligence</SectionLabel>
             <h1
@@ -30,7 +32,9 @@ export function Hero() {
                 color: "#F8FAFC",
               }}
             >
-              Your phone calls. Handled.
+              Your phone calls.
+              <br />
+              Handled.
             </h1>
             <p
               className="text-base md:text-lg max-w-lg mb-6"
@@ -38,35 +42,30 @@ export function Hero() {
             >
               The AI layer for every call, text, and follow-up. For businesses, teams, and anyone who communicates by phone.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-3">
+            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6">
               <Link
                 href={ROUTES.START}
-                className="bg-white text-black font-semibold rounded-xl px-5 py-2.5 hover:bg-zinc-100 transition-colors no-underline w-full sm:w-auto text-center"
+                className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors no-underline w-full sm:w-auto text-center"
               >
-                Try it free →
-              </Link>
-              <Link
-                href="/demo"
-                className="border border-white/30 text-white font-semibold rounded-xl px-5 py-2.5 hover:bg-white/10 transition-colors no-underline w-full sm:w-auto text-center inline-flex items-center justify-center gap-2"
-              >
-                Try the demo ▶
+                Start free →
               </Link>
               <Link
                 href={ROUTES.SIGN_IN}
-                className="border border-white/20 text-white/90 font-medium rounded-xl px-5 py-2.5 hover:bg-white/10 transition-colors no-underline w-full sm:w-auto text-center sm:ml-2"
+                className="border border-white/20 text-white/90 font-medium rounded-xl px-5 py-2.5 hover:bg-white/10 transition-colors no-underline w-full sm:w-auto text-center"
               >
                 Sign in
               </Link>
             </div>
-            <p
-              className="text-sm mb-6"
-              style={{ color: "#64748B" }}
-            >
-              ✓ Works with your existing number &nbsp; ✓ 5-minute setup &nbsp; ✓ No credit card required
-            </p>
-            <p className="text-xs font-medium" style={{ color: "#64748B" }}>
-              Built for businesses across 50+ industries
-            </p>
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm" style={{ color: "#64748B" }}>
+              <span>✓ Works with your existing number</span>
+              <span>✓ 5-minute setup</span>
+              <span>✓ No credit card required</span>
+            </div>
+          </div>
+
+          {/* Right: embedded demo */}
+          <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 max-w-md lg:ml-auto">
+            <HomepageVoiceWidget />
           </div>
         </div>
       </Container>

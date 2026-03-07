@@ -44,12 +44,13 @@ async function getInitialUserContext(): Promise<{
 
 async function getInitialAgentsPayload(): Promise<{
   workspaceId: string;
+  workspaceName: string;
   initialAgentsRows: Array<Record<string, unknown>>;
   initialFallbackAgent: InitialFallbackAgent;
 }> {
   const { userId, workspaceId: sessionWorkspaceId } = await getInitialUserContext();
   if (!userId) {
-    return { workspaceId: "", initialAgentsRows: [], initialFallbackAgent: null };
+    return { workspaceId: "", workspaceName: "", initialAgentsRows: [], initialFallbackAgent: null };
   }
 
   const db = getDb();
@@ -60,16 +61,17 @@ async function getInitialAgentsPayload(): Promise<{
     .order("created_at", { ascending: false });
 
   const workspaceList = Array.isArray(ownedWorkspaces)
-    ? (ownedWorkspaces as Array<{ id: string }>)
+    ? (ownedWorkspaces as Array<{ id: string; name?: string | null }>)
     : [];
   const resolvedWorkspaceId =
     (sessionWorkspaceId &&
       workspaceList.find((workspace) => workspace.id === sessionWorkspaceId)?.id) ||
     workspaceList[0]?.id ||
     "";
+  const workspaceName = workspaceList.find((w) => w.id === resolvedWorkspaceId)?.name?.trim() ?? "";
 
   if (!resolvedWorkspaceId) {
-    return { workspaceId: "", initialAgentsRows: [], initialFallbackAgent: null };
+    return { workspaceId: "", workspaceName: "", initialAgentsRows: [], initialFallbackAgent: null };
   }
 
   const { data: agents } = await db
@@ -83,8 +85,10 @@ async function getInitialAgentsPayload(): Promise<{
     : [];
 
   if (initialAgentsRows.length > 0) {
+    const wsName = workspaceList.find((w) => w.id === resolvedWorkspaceId)?.name?.trim() ?? "";
     return {
       workspaceId: resolvedWorkspaceId,
+      workspaceName: wsName,
       initialAgentsRows,
       initialFallbackAgent: null,
     };
@@ -108,6 +112,7 @@ async function getInitialAgentsPayload(): Promise<{
 
   return {
     workspaceId: resolvedWorkspaceId,
+    workspaceName,
     initialAgentsRows: [],
     initialFallbackAgent: fallbackRow
       ? {
@@ -128,6 +133,7 @@ export default async function AppAgentsPage() {
   return (
     <AgentsPageClient
       initialWorkspaceId={initial.workspaceId}
+      initialWorkspaceName={initial.workspaceName}
       initialAgentsRows={initial.initialAgentsRows}
       initialFallbackAgent={initial.initialFallbackAgent}
     />
