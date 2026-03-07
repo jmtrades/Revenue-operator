@@ -27,8 +27,8 @@ test.describe("Critical path", () => {
 
   test("demo page has demo section", async ({ page }) => {
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
-    await expect(
-      page.getByText(/Watch a sample call|Try the AI|Starts automatically/i)
-    ).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole("heading", { name: /Watch a sample call/i })).toBeVisible({
+      timeout: 8000,
+    });
   });
 });

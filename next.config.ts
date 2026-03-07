@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Force new JS chunk hashes every build so browsers don't load stale bundles (fixes #418 from mixed deploys).
+  generateBuildId: async () => `build-${Date.now()}`,
   async headers() {
     // Next.js App Router requires inline styles/scripts for hydration and streaming.
     // Keep this policy strict on origins, but allow inline for style/script so pages do not render blank.
