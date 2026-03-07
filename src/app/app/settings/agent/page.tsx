@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
+import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 
@@ -16,41 +17,73 @@ type AgentConfig = {
   knowledgeItems: Array<{ q?: string; a?: string }>;
 };
 
+const AGENT_SETTINGS_SNAPSHOT_PREFIX = "rt_agent_settings_snapshot:";
+
+function readAgentSettingsSnapshot(workspaceId: string): AgentConfig | null {
+  if (typeof window === "undefined" || !workspaceId) return null;
+  try {
+    const raw = window.localStorage.getItem(
+      `${AGENT_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`,
+    );
+    return raw ? (JSON.parse(raw) as AgentConfig) : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistAgentSettingsSnapshot(workspaceId: string, config: AgentConfig) {
+  if (typeof window === "undefined" || !workspaceId) return;
+  try {
+    window.localStorage.setItem(
+      `${AGENT_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`,
+      JSON.stringify(config),
+    );
+  } catch {
+    // ignore persistence errors
+  }
+}
+
 export default function AppSettingsAgentPage() {
-  const [loading, setLoading] = useState(true);
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+  const snapshotWorkspaceId = workspaceSnapshot?.id?.trim() || "default";
+  const initialConfig = readAgentSettingsSnapshot(snapshotWorkspaceId);
+  const [loading, setLoading] = useState(initialConfig == null);
   const [saving, setSaving] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-  const [config, setConfig] = useState<AgentConfig>({
-    businessName: "",
-    greeting: "",
-    agentName: "Receptionist",
-    preferredLanguage: "en",
-    elevenlabsVoiceId: DEFAULT_VOICE_ID,
-    knowledgeItems: [],
-  });
+  const [config, setConfig] = useState<AgentConfig>(
+    initialConfig ?? {
+      businessName: "",
+      greeting: "",
+      agentName: "Receptionist",
+      preferredLanguage: "en",
+      elevenlabsVoiceId: DEFAULT_VOICE_ID,
+      knowledgeItems: [],
+    },
+  );
 
   const load = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await fetch("/api/workspace/agent", { credentials: "include" });
       if (res.ok) {
         const data = (await res.json()) as AgentConfig;
-        setConfig({
+        const nextConfig = {
           businessName: data.businessName ?? "",
           greeting: data.greeting ?? "",
           agentName: data.agentName ?? "Receptionist",
           preferredLanguage: data.preferredLanguage ?? "en",
           elevenlabsVoiceId: data.elevenlabsVoiceId || DEFAULT_VOICE_ID,
           knowledgeItems: Array.isArray(data.knowledgeItems) ? data.knowledgeItems : [],
-        });
+        };
+        setConfig(nextConfig);
+        persistAgentSettingsSnapshot(snapshotWorkspaceId, nextConfig);
       }
     } catch {
       setToast("Could not load agent settings.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [snapshotWorkspaceId]);
 
   useEffect(() => {
     load();

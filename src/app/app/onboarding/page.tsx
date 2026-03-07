@@ -122,14 +122,20 @@ function getSignupPrefill(): { businessName?: string; industry?: string; website
 
 export default function AppOnboardingPage() {
   const router = useRouter();
+  const signupPrefill = getSignupPrefill();
   const [step, setStep] = useState(1);
-  const [mounted, setMounted] = useState(false);
 
-  const [businessName, setBusinessName] = useState("");
-  const [website, setWebsite] = useState("");
-  const [industry, setIndustry] = useState("");
+  const [businessName, setBusinessName] = useState(signupPrefill.businessName ?? "");
+  const [website, setWebsite] = useState(signupPrefill.website ?? "");
+  const [industry, setIndustry] = useState(signupPrefill.industry ?? "");
   const [address, setAddress] = useState("");
-  const [timezone, setTimezone] = useState("");
+  const [timezone] = useState(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
+    } catch {
+      return "America/Los_Angeles";
+    }
+  });
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>("receptionist");
   const [agentName, setAgentName] = useState<string>(ONBOARDING_TEMPLATES[0].agentName);
@@ -150,29 +156,7 @@ export default function AppOnboardingPage() {
   const [_numberOption, _setNumberOption] = useState<"forward" | "new" | "skip">("new");
   const [showConfetti, setShowConfetti] = useState(false);
 
-  useEffect(() => {
-    const id = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(id);
-  }, []);
-
   const onboardingCtx = useOnboardingStep();
-
-  useEffect(() => {
-    if (!mounted) return;
-    const id = setTimeout(() => {
-      const prefill = getSignupPrefill();
-      setBusinessName(prefill.businessName ?? "");
-      setIndustry(prefill.industry ?? "");
-      setWebsite(prefill.website ?? "");
-      try {
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        setTimezone(tz);
-      } catch {
-        setTimezone("America/Los_Angeles");
-      }
-    }, 0);
-    return () => clearTimeout(id);
-  }, [mounted]);
 
   useEffect(() => {
     onboardingCtx?.setStep(step);
@@ -275,14 +259,6 @@ export default function AppOnboardingPage() {
       : callStyle === "conversational"
         ? `${agentName} will keep it natural: brief greeting, confirm the reason for the call, then suggest an appointment or follow-up.`
         : `${agentName} will get straight to the point: quick greeting, confirm need, then offer the next step.`;
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="h-16 w-64 bg-zinc-900 rounded-xl animate-pulse" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col p-6 md:p-12">

@@ -27,8 +27,18 @@ function getProgress(): { completed: number; done: Set<string> } {
   }
 }
 
-export function OnboardingChecklist() {
-  const [progress, setProgress] = useState({ completed: 0, done: new Set<string>() });
+export function OnboardingChecklist({
+  initialItems,
+}: {
+  initialItems?: Array<{ key: string; completed: boolean }>;
+}) {
+  const [progress, setProgress] = useState(() => {
+    if (Array.isArray(initialItems) && initialItems.length > 0) {
+      const done = new Set(initialItems.filter((item) => item.completed).map((item) => item.key));
+      return { completed: done.size, done };
+    }
+    return { completed: 0, done: new Set<string>() };
+  });
 
   useEffect(() => {
     let cancelled = false;

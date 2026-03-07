@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { createAssistant, createCallForTwilio } from "@/lib/vapi";
+import { hasVapiServerKey } from "@/lib/vapi/env";
 
 const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
 
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (
-    process.env.VAPI_API_KEY &&
+    hasVapiServerKey() &&
     process.env.VAPI_PHONE_NUMBER_ID &&
     workspaceId &&
     callSessionId &&

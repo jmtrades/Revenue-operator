@@ -2,14 +2,26 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
+import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
 type CancelStep = 0 | 1 | 2 | 3 | 4;
 
+const defaultUsage = { minutesUsed: 0, minutesLimit: 400, calls: 0, leads: 0, estRevenue: 0 };
+
 export default function AppSettingsBillingPage() {
   const [cancelStep, setCancelStep] = useState<CancelStep>(0);
-  const [usage, setUsage] = useState({ minutesUsed: 0, minutesLimit: 400, calls: 0, leads: 0, estRevenue: 0 });
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+  const [usage, setUsage] = useState(() => {
+    if (typeof window === "undefined") return defaultUsage;
+    const snapshot = getWorkspaceMeSnapshotSync() as { stats?: typeof defaultUsage } | null;
+    return snapshot?.stats && typeof snapshot.stats === "object"
+      ? { ...defaultUsage, ...snapshot.stats }
+      : defaultUsage;
+  });
+  const [workspaceId, setWorkspaceId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const snapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+    return snapshot && typeof snapshot.id === "string" ? snapshot.id : null;
+  });
   const [billingStatus, setBillingStatus] = useState("trial");
   const [renewalAt, setRenewalAt] = useState<string | null>(null);
   const [pausing, setPausing] = useState(false);
@@ -17,7 +29,7 @@ export default function AppSettingsBillingPage() {
 
   useEffect(() => {
     fetchWorkspaceMeCached()
-      .then((data: { id?: string | null; stats?: typeof usage } | null) => {
+      .then((data: { id?: string | null; stats?: typeof defaultUsage } | null) => {
         setWorkspaceId(data?.id ?? null);
         if (data?.stats) setUsage(data.stats);
       })

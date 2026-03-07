@@ -4,12 +4,38 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import type { InboxThread, InboxMessage, InboxChannel } from "@/lib/mock/inbox";
 
 const PAGE_TITLE = "Inbox — Recall Touch";
 
 type Filter = "all" | "unread" | "phone" | "sms" | "email" | "whatsapp";
 type ReplyChannel = "sms" | "email" | "whatsapp";
+
+const INBOX_SNAPSHOT_PREFIX = "rt_inbox_snapshot:";
+
+function readInboxSnapshot(workspaceId: string): InboxThread[] {
+  if (typeof window === "undefined" || !workspaceId) return [];
+  try {
+    const raw = window.localStorage.getItem(`${INBOX_SNAPSHOT_PREFIX}${workspaceId}`);
+    const parsed = raw ? (JSON.parse(raw) as InboxThread[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistInboxSnapshot(workspaceId: string, threads: InboxThread[]) {
+  if (typeof window === "undefined" || !workspaceId) return;
+  try {
+    window.localStorage.setItem(
+      `${INBOX_SNAPSHOT_PREFIX}${workspaceId}`,
+      JSON.stringify(threads),
+    );
+  } catch {
+    // ignore persistence errors
+  }
+}
 
 function formatRelative(timestamp: string): string {
   const d = new Date(timestamp).getTime();
@@ -357,12 +383,18 @@ function ConversationDetail({
 
 export default function InboxPage() {
   const { workspaceId } = useWorkspace();
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+  const snapshotWorkspaceId =
+    workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const initialThreads = readInboxSnapshot(snapshotWorkspaceId);
   useEffect(() => {
     document.title = PAGE_TITLE;
     return () => { document.title = ""; };
   }, []);
-  const [threads, setThreads] = useState<InboxThread[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [threads, setThreads] = useState<InboxThread[]>(initialThreads);
+  const [selectedId, setSelectedId] = useState<string | null>(
+    initialThreads[0]?.id ?? null,
+  );
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
   const [replyChannel, setReplyChannel] = useState<ReplyChannel>("sms");
@@ -378,11 +410,21 @@ export default function InboxPage() {
         const list = data.threads ?? [];
         if (list.length > 0) {
           setThreads(list);
-          setSelectedId(list[0]?.id ?? null);
+          setSelectedId((current) =>
+            current && list.some((thread) => thread.id === current)
+              ? current
+              : (list[0]?.id ?? null),
+          );
+          persistInboxSnapshot(workspaceId, list);
         }
       })
       .catch(() => {});
   }, [workspaceId]);
+
+  useEffect(() => {
+    if (!workspaceId || threads.length === 0) return;
+    persistInboxSnapshot(workspaceId, threads);
+  }, [workspaceId, threads]);
 
   const activeThread = useMemo(
     () => threads.find((t) => t.id === selectedId) ?? threads[0] ?? null,

@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { AlertTriangle, BadgeCheck, BarChart3, Lightbulb, TrendingUp } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
 type RangeKey = "today" | "7d" | "30d" | "90d";
 
@@ -41,13 +42,47 @@ interface LeadRecord {
 }
 
 const PAGE_TITLE = "Analytics — Recall Touch";
+const ANALYTICS_CALLS_SNAPSHOT_PREFIX = "rt_analytics_calls_snapshot:";
+const ANALYTICS_LEADS_SNAPSHOT_PREFIX = "rt_analytics_leads_snapshot:";
+
+function readAnalyticsSnapshot<T>(prefix: string, workspaceId: string): T[] {
+  if (typeof window === "undefined" || !workspaceId) return [];
+  try {
+    const raw = window.localStorage.getItem(`${prefix}${workspaceId}`);
+    const parsed = raw ? (JSON.parse(raw) as T[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistAnalyticsSnapshot<T>(prefix: string, workspaceId: string, data: T[]) {
+  if (typeof window === "undefined" || !workspaceId) return;
+  try {
+    window.localStorage.setItem(`${prefix}${workspaceId}`, JSON.stringify(data));
+  } catch {
+    // ignore persistence errors
+  }
+}
 
 export default function AppAnalyticsPage() {
   const [range, setRange] = useState<RangeKey>("30d");
   const { workspaceId } = useWorkspace();
-  const [calls, setCalls] = useState<CallRecord[]>([]);
-  const [leads, setLeads] = useState<LeadRecord[]>([]);
-  const [loading, setLoading] = useState(false);
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+  const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const initialCalls = readAnalyticsSnapshot<CallRecord>(
+    ANALYTICS_CALLS_SNAPSHOT_PREFIX,
+    snapshotWorkspaceId,
+  );
+  const initialLeads = readAnalyticsSnapshot<LeadRecord>(
+    ANALYTICS_LEADS_SNAPSHOT_PREFIX,
+    snapshotWorkspaceId,
+  );
+  const [calls, setCalls] = useState<CallRecord[]>(initialCalls);
+  const [leads, setLeads] = useState<LeadRecord[]>(initialLeads);
+  const [loading, setLoading] = useState(
+    initialCalls.length === 0 && initialLeads.length === 0,
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -57,11 +92,6 @@ export default function AppAnalyticsPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    setTimeout(() => {
-      setLoading(true);
-      setError(null);
-    }, 0);
-
     Promise.all([
       fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
         credentials: "include",
@@ -83,8 +113,11 @@ export default function AppAnalyticsPage() {
         .catch(() => [] as LeadRecord[]),
     ])
       .then(([c, l]) => {
+        setError(null);
         setCalls(c);
         setLeads(l);
+        persistAnalyticsSnapshot(ANALYTICS_CALLS_SNAPSHOT_PREFIX, workspaceId, c);
+        persistAnalyticsSnapshot(ANALYTICS_LEADS_SNAPSHOT_PREFIX, workspaceId, l);
       })
       .catch(() => setError("Could not load analytics for this workspace."))
       .finally(() => setLoading(false));

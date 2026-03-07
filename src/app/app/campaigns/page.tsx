@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
 type CampaignRow = {
   id: string;
@@ -29,10 +30,38 @@ const TYPE_OPTIONS = [
   { id: "custom", label: "Custom recovery" },
 ];
 
+const CAMPAIGNS_SNAPSHOT_PREFIX = "rt_campaigns_snapshot:";
+
+function readCampaignsSnapshot(workspaceId: string): CampaignRow[] {
+  if (typeof window === "undefined" || !workspaceId) return [];
+  try {
+    const raw = window.localStorage.getItem(`${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`);
+    const parsed = raw ? (JSON.parse(raw) as CampaignRow[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistCampaignsSnapshot(workspaceId: string, campaigns: CampaignRow[]) {
+  if (typeof window === "undefined" || !workspaceId) return;
+  try {
+    window.localStorage.setItem(
+      `${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`,
+      JSON.stringify(campaigns),
+    );
+  } catch {
+    // ignore persistence errors
+  }
+}
+
 export default function CampaignsPage() {
   const { workspaceId } = useWorkspace();
-  const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
-  const [loading, setLoading] = useState(true);
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+  const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const initialCampaigns = readCampaignsSnapshot(snapshotWorkspaceId);
+  const [campaigns, setCampaigns] = useState<CampaignRow[]>(initialCampaigns);
+  const [loading, setLoading] = useState(initialCampaigns.length === 0);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -54,12 +83,15 @@ export default function CampaignsPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    setLoading(true);
     fetch(`/api/campaigns?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : { campaigns: [] }))
-      .then((data: { campaigns?: CampaignRow[] }) => setCampaigns(data.campaigns ?? []))
+      .then((data: { campaigns?: CampaignRow[] }) => {
+        const next = data.campaigns ?? [];
+        setCampaigns(next);
+        persistCampaignsSnapshot(workspaceId, next);
+      })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 

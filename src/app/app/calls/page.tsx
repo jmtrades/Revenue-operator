@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
 const PAGE_TITLE = "Calls — Recall Touch";
 
@@ -25,6 +26,7 @@ interface CallRecord {
 }
 
 const PAGE_SIZE = 10;
+const CALLS_SNAPSHOT_PREFIX = "rt_calls_snapshot:";
 
 const OUTCOME_LABELS: Record<Exclude<CallOutcome, null>, string> = {
   appointment: "Appointment",
@@ -56,12 +58,38 @@ function durationSeconds(c: CallRecord): number {
   return Math.max(0, Math.floor((e - s) / 1000));
 }
 
+function readCallsSnapshot(workspaceId: string): CallRecord[] {
+  if (typeof window === "undefined" || !workspaceId) return [];
+  try {
+    const raw = window.localStorage.getItem(`${CALLS_SNAPSHOT_PREFIX}${workspaceId}`);
+    const parsed = raw ? (JSON.parse(raw) as CallRecord[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistCallsSnapshot(workspaceId: string, calls: CallRecord[]) {
+  if (typeof window === "undefined" || !workspaceId) return;
+  try {
+    window.localStorage.setItem(
+      `${CALLS_SNAPSHOT_PREFIX}${workspaceId}`,
+      JSON.stringify(calls),
+    );
+  } catch {
+    // ignore persistence errors
+  }
+}
+
 export default function CallsPage() {
   const router = useRouter();
   const { workspaceId } = useWorkspace();
-  const [loading, setLoading] = useState(false);
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+  const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const initialRecords = readCallsSnapshot(snapshotWorkspaceId);
+  const [loading, setLoading] = useState(initialRecords.length === 0);
   const [error, setError] = useState<string | null>(null);
-  const [records, setRecords] = useState<CallRecord[]>([]);
+  const [records, setRecords] = useState<CallRecord[]>(initialRecords);
   const [query, setQuery] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState<NonNullable<CallOutcome> | "all">("all");
   const [sentimentFilter, setSentimentFilter] =
@@ -71,10 +99,6 @@ export default function CallsPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    setTimeout(() => {
-      setLoading(true);
-      setError(null);
-    }, 0);
     fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -83,7 +107,10 @@ export default function CallsPage() {
         return r.json();
       })
       .then((data: { calls?: CallRecord[] }) => {
-        setRecords(data.calls ?? []);
+        const next = data.calls ?? [];
+        setError(null);
+        setRecords(next);
+        persistCallsSnapshot(workspaceId, next);
       })
       .catch(() => setError("Could not load calls for this workspace."))
       .finally(() => setLoading(false));

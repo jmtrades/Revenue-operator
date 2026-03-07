@@ -113,12 +113,14 @@ function DemoTranscript({
   onComplete,
   skipCount,
   onSkip,
+  forceShowResult,
 }: {
   script: DemoScript;
   isActive: boolean;
   onComplete: (elapsedSeconds: number) => void;
   skipCount: number;
   onSkip: () => void;
+  forceShowResult: boolean;
 }) {
   const [visibleLines, setVisibleLines] = useState<{ index: number; text: string }[]>([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
@@ -126,6 +128,11 @@ function DemoTranscript({
   const [showResult, setShowResult] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    if (forceShowResult) setShowResult(true);
+  }, [forceShowResult]);
 
   const reset = useCallback(() => {
     setVisibleLines([]);
@@ -139,23 +146,30 @@ function DemoTranscript({
   useEffect(() => {
     if (!isActive) {
       reset();
+      setStarted(false);
       return;
     }
+    const t = window.setTimeout(() => setStarted(true), 150);
+    return () => window.clearTimeout(t);
+  }, [isActive, reset]);
+
+  useEffect(() => {
+    if (!isActive || !started) return;
     setVisibleLines([]);
     setCurrentLineIndex(0);
     setCurrentCharIndex(0);
     setShowResult(false);
     setShowTyping(script.lines[0]?.role === "ai");
     setElapsed(0);
-  }, [isActive, script.title, reset, script.lines]);
+  }, [isActive, started, script.title, script.lines]);
 
   useEffect(() => {
-    if (!isActive || showResult) return;
-    // Demo call simulator: live timer is required by product spec (FIX 2 — "timer counts up from 0:00")
+    if (!isActive || !started || showResult) return;
+    // Demo call simulator: live timer counts up from 0:00
     // eslint-disable-next-line ui-doctrine/no-live-ui -- demo simulator only
     const id = setInterval(() => setElapsed((e) => e + 1), 1000);
     return () => clearInterval(id);
-  }, [isActive, showResult]);
+  }, [isActive, started, showResult]);
 
   useEffect(() => {
     if (!showTyping) return;
@@ -164,7 +178,7 @@ function DemoTranscript({
   }, [showTyping]);
 
   useEffect(() => {
-    if (!isActive || showResult || currentLineIndex >= script.lines.length) return;
+    if (!isActive || !started || showResult || currentLineIndex >= script.lines.length) return;
     const line = script.lines[currentLineIndex];
     const fullText = line?.text ?? "";
     if (line?.role === "ai" && showTyping) return;
@@ -195,7 +209,7 @@ function DemoTranscript({
       if (nextLine?.role === "ai") setShowTyping(true);
     }, TYPING_DELAY_MS);
     return () => clearTimeout(t);
-  }, [isActive, script.lines, currentLineIndex, currentCharIndex, showResult, showTyping]);
+  }, [isActive, started, script.lines, currentLineIndex, currentCharIndex, showResult, showTyping]);
 
   useEffect(() => {
     if (showResult && isActive) onComplete(elapsed);
@@ -241,7 +255,7 @@ function DemoTranscript({
       </div>
 
       <div className="space-y-3 min-h-[220px]">
-        {showTyping && (
+        {(!started || showTyping) && (
           <div className="flex gap-2 items-center">
             <span className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-zinc-700/50">
               <Bot className="w-4 h-4 text-zinc-400" />
@@ -349,7 +363,7 @@ export function CallSimulator() {
   const [tab, setTab] = useState<"inbound" | "appointment" | "outbound">("inbound");
   const [key, setKey] = useState(0);
   const [_completed, setCompleted] = useState(false);
-  const [skipCount, setSkipCount] = useState(0);
+  const [skipToResult, setSkipToResult] = useState(false);
   const [completedSeconds, setCompletedSeconds] = useState<number | null>(null);
 
   const script =
@@ -367,9 +381,10 @@ export function CallSimulator() {
     setTab(t);
     setKey((k) => k + 1);
     setCompleted(false);
-    setSkipCount(0);
+    setSkipToResult(false);
     setCompletedSeconds(null);
   };
+  const handleSkipToResult = useCallback(() => setSkipToResult(true), []);
 
   return (
     <Container className="max-w-2xl">
@@ -396,8 +411,9 @@ export function CallSimulator() {
         script={script}
         isActive={true}
         onComplete={handleComplete}
-        skipCount={skipCount}
-        onSkip={() => setSkipCount((c) => c + 1)}
+        skipCount={0}
+        onSkip={handleSkipToResult}
+        forceShowResult={skipToResult}
       />
 
       {completedSeconds != null ? (

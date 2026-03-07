@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
-import { fetchWorkspaceMeCached, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
+import {
+  fetchWorkspaceMeCached,
+  getWorkspaceMeSnapshotSync,
+  invalidateWorkspaceMeCache,
+} from "@/lib/client/workspace-me";
 
 function getInitialTimezone(): string {
   try {
@@ -14,12 +18,25 @@ function getInitialTimezone(): string {
 }
 
 export default function AppSettingsBusinessPage() {
-  const [loading, setLoading] = useState(true);
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [website, setWebsite] = useState("");
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as
+    | { name?: string; address?: string; website?: string; industry?: string }
+    | null;
+  const hasSnapshot =
+    Boolean(workspaceSnapshot?.name) ||
+    Boolean(workspaceSnapshot?.address) ||
+    Boolean(workspaceSnapshot?.website) ||
+    Boolean(workspaceSnapshot?.industry);
+  const [loading, setLoading] = useState(!hasSnapshot);
+  const [name, setName] = useState(workspaceSnapshot?.name ?? "");
+  const [address, setAddress] = useState(workspaceSnapshot?.address ?? "");
+  const [website, setWebsite] = useState(workspaceSnapshot?.website ?? "");
   const [timezone, setTimezone] = useState(getInitialTimezone);
-  const [industry, setIndustry] = useState("other");
+  const [industry, setIndustry] = useState(
+    workspaceSnapshot?.industry &&
+      INDUSTRY_OPTIONS.some((item) => item.id === workspaceSnapshot.industry)
+      ? workspaceSnapshot.industry
+      : "other",
+  );
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {

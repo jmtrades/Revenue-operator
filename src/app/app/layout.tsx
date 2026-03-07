@@ -1,351 +1,146 @@
-"use client";
+import { cookies } from "next/headers";
+import { getDb } from "@/lib/db/queries";
+import { createClient } from "@/lib/supabase/server";
+import { getSessionFromCookie } from "@/lib/auth/session";
+import { buildWorkspaceReadiness } from "@/lib/workspace/readiness";
+import AppShellClient, { type AppShellWorkspaceMeta } from "./AppShellClient";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { WorkspaceProvider } from "@/components/WorkspaceContext";
-import { WorkspaceName } from "@/components/WorkspaceName";
-import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
-import {
-  LayoutList,
-  PhoneCall,
-  Users,
-  Megaphone,
-  MessageSquare,
-  Calendar,
-  BarChart3,
-  BookOpen,
-  Code,
-  Shield,
-  Settings,
-  CreditCard,
-  Menu,
-  X,
-  type LucideIcon,
-} from "lucide-react";
-import { OnboardingChecklist } from "./OnboardingChecklist";
-import { OnboardingStepProvider, useOnboardingStep, ONBOARDING_STEP_LABELS } from "./OnboardingStepContext";
+async function getInitialShellData(): Promise<{
+  workspaceId: string;
+  workspaceName: string;
+  workspaceMeta: AppShellWorkspaceMeta;
+}> {
+  let userId: string | null = null;
+  let workspaceId: string | null = null;
 
-const NAV_MAIN: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/activity", label: "Dashboard", icon: LayoutList },
-  { href: "/app/calls", label: "Calls", icon: PhoneCall },
-  { href: "/app/leads", label: "Leads", icon: Users },
-  { href: "/app/appointments", label: "Appointments", icon: Calendar },
-  { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
-  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
-  { href: "/app/compliance", label: "Compliance", icon: Shield },
-];
-
-const NAV_UTILITY: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/team", label: "Team", icon: Users },
-  { href: "/app/settings", label: "Settings", icon: Settings },
-  { href: "/app/settings/billing", label: "Billing", icon: CreditCard },
-  { href: "/app/developer", label: "Developer", icon: Code },
-];
-
-const MOBILE_TABS = [
-  { href: "/app/activity", label: "Dashboard", icon: LayoutList },
-  { href: "/app/calls", label: "Calls", icon: PhoneCall },
-  { href: "/app/leads", label: "Leads", icon: Users },
-  { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
-] as const;
-
-const MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/appointments", label: "Appointments", icon: Calendar },
-  { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
-  { href: "/app/compliance", label: "Compliance", icon: Shield },
-  { href: "/app/team", label: "Team", icon: Users },
-  { href: "/app/settings", label: "Settings", icon: Settings },
-  { href: "/app/settings/billing", label: "Billing", icon: CreditCard },
-  { href: "/app/developer", label: "Developer", icon: Code },
-];
-
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-  const [workspaceMeta, setWorkspaceMeta] = useState<{
-    banner?: { show?: boolean; text?: string | null; href?: string; cta?: string };
-    onboardingCompletedAt?: string | null;
-    stats?: { calls?: number };
-  } | null>(null);
-  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
-  const inboxUnread = 0;
-
-  useEffect(() => {
-    const id = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(id);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    let cancelled = false;
-    fetchWorkspaceMeCached()
-      .then((data: {
-        banner?: { show?: boolean; text?: string | null; href?: string; cta?: string };
-        onboardingCompletedAt?: string | null;
-        stats?: { calls?: number };
-      } | null) => {
-        if (cancelled) return;
-        setWorkspaceMeta(data);
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted || pathname === "/app/onboarding") return;
-    try {
-      const serverOnboarded = Boolean(workspaceMeta?.onboardingCompletedAt);
-      const localOnboarded = localStorage.getItem("rt_onboarded") === "true";
-      if (!serverOnboarded && !localOnboarded) {
-        router.replace("/app/onboarding");
-      }
-    } catch {
-      // ignore
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.id) {
+      userId = user.id;
     }
-  }, [mounted, pathname, router, workspaceMeta?.onboardingCompletedAt]);
-
-  useEffect(() => {
-    if (!mobileMoreOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMobileMoreOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [mobileMoreOpen]);
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#080d19" }}>
-        <div className="h-16 w-64 bg-zinc-900 rounded-xl animate-pulse" />
-      </div>
-    );
+  } catch {
+    // fall through to revenue_session cookie
   }
 
-  const isActive = (href: string) =>
-    pathname === href || (href !== "/app/activity" && pathname.startsWith(href));
+  if (!userId) {
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore
+      .getAll()
+      .map(({ name, value }) => `${name}=${value}`)
+      .join("; ");
+    const session = getSessionFromCookie(cookieHeader);
+    userId = session?.userId ?? null;
+    workspaceId = session?.workspaceId ?? null;
+  }
 
-  const isMoreActive = MOBILE_MORE_LINKS.some(({ href }) => isActive(href));
+  if (!userId) {
+    return { workspaceId: "", workspaceName: "", workspaceMeta: null };
+  }
 
-  const isOnboarding = pathname === "/app/onboarding";
+  const db = getDb();
+  const { data: ownedWorkspaces } = await db
+    .from("workspaces")
+    .select("id, name, created_at")
+    .eq("owner_id", userId)
+    .order("created_at", { ascending: false });
 
-  return (
-    <WorkspaceProvider>
-    <OnboardingStepProvider>
-      <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#080d19" }}>
-        {workspaceMeta?.banner?.show && workspaceMeta.banner.text && (
-        <div
-          className="shrink-0 border-b border-blue-500/10 bg-blue-500/5 px-4 py-2 text-center text-[13px] text-white/70"
-          role="status"
-          aria-label="Workspace status"
-        >
-          <span>{workspaceMeta.banner.text}</span>
-          <Link
-            href={workspaceMeta.banner.href || "/app/settings/phone"}
-            className="font-medium text-white underline underline-offset-2 hover:no-underline"
-          >
-            {workspaceMeta.banner.cta || "Set up →"}
-          </Link>
-        </div>
-        )}
-        <div className="flex flex-1 min-h-0">
-          {isOnboarding ? (
-            <OnboardingSidebar />
-          ) : (
-          <aside className="hidden md:flex md:w-[220px] flex-col shrink-0 bg-[#0a0f1c] border-r border-white/[0.04]">
-            <div className="p-5 border-b border-zinc-800">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                  <span className="text-black font-bold text-sm">RT</span>
-                </div>
-                <WorkspaceName className="truncate block text-[15px] font-semibold text-white/90" />
-              </div>
-            </div>
-            <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-              {NAV_MAIN.map(({ href, label, icon: Icon }) => {
-                const effectiveLabel =
-                  href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label;
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors ${
-                      isActive(href)
-                        ? "border-l-blue-500 bg-white/[0.06] text-white"
-                        : "border-l-transparent text-white/50 hover:text-white/80"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                    {effectiveLabel}
-                  </Link>
-                );
-              })}
-              <div className="my-2 border-t border-zinc-800" aria-hidden />
-              {NAV_UTILITY.map(({ href, label, icon: Icon }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors ${
-                    isActive(href)
-                      ? "border-l-blue-500 bg-white/[0.06] text-white"
-                      : "border-l-transparent text-white/50 hover:text-white/80"
-                  }`}
-                >
-                  <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                  {label}
-                </Link>
-              ))}
-            </nav>
-            <div className="p-3 border-t border-zinc-800 space-y-2">
-              <div className="rounded-lg bg-white/[0.03] px-3 py-3">
-                <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
-                <span className="block text-[12px] text-white/30">
-                  12 days left{(workspaceMeta?.stats?.calls ?? 0) > 0 ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered` : ""}
-                </span>
-              </div>
-              <OnboardingChecklist />
-            </div>
-          </aside>
-        )}
-        <main id="main" className="flex-1 overflow-auto min-w-0" style={{ background: "#080d19" }} tabIndex={-1}>{children}</main>
-      </div>
-      {!isOnboarding && (
-        <>
-          <nav
-            className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-zinc-950 border-t border-zinc-800 safe-area-pb"
-            aria-label="Mobile navigation"
-          >
-            {MOBILE_TABS.map(({ href, label, icon: Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation ${
-                  isActive(href) ? "text-white" : "text-zinc-500"
-                }`}
-                aria-current={isActive(href) ? "page" : undefined}
-              >
-                <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
-                <span className="text-[10px] font-medium">{label}</span>
-              </Link>
-            ))}
-            <button
-              type="button"
-              onClick={() => setMobileMoreOpen(true)}
-              className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation ${
-                isMoreActive ? "text-white" : "text-zinc-500"
-              }`}
-              aria-label="More menu"
-              aria-expanded={mobileMoreOpen}
-            >
-              <Menu className="w-5 h-5 shrink-0 mx-auto" strokeWidth={1.5} aria-hidden />
-              <span className="text-[10px] font-medium">More</span>
-            </button>
-          </nav>
-          {mobileMoreOpen && (
-            <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="More menu">
-              <div
-                className="absolute inset-0 bg-black/60"
-                onClick={() => setMobileMoreOpen(false)}
-                onKeyDown={(e) => e.key === "Escape" && setMobileMoreOpen(false)}
-              />
-              <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-zinc-800 bg-zinc-950 shadow-2xl">
-                <div className="sticky top-0 flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-950">
-                  <span className="text-sm font-medium text-white">More</span>
-                  <button
-                    type="button"
-                    onClick={() => setMobileMoreOpen(false)}
-                    className="p-2 rounded-lg text-zinc-400 hover:text-white"
-                    aria-label="Close"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-                <nav className="p-2" aria-label="More pages">
-                  {MOBILE_MORE_LINKS.map(({ href, label, icon: Icon }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setMobileMoreOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm ${
-                        isActive(href) ? "bg-zinc-800/50 text-white" : "text-zinc-300"
-                      }`}
-                    >
-                      <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} />
-                      {href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-      </div>
-    </OnboardingStepProvider>
-    </WorkspaceProvider>
-  );
+  const workspaceList = Array.isArray(ownedWorkspaces)
+    ? (ownedWorkspaces as Array<{ id: string; name?: string | null }>)
+    : [];
+  const initialWorkspace =
+    (workspaceId && workspaceList.find((item) => item.id === workspaceId)) || workspaceList[0] || null;
+
+  if (!initialWorkspace) {
+    return { workspaceId: "", workspaceName: "", workspaceMeta: null };
+  }
+
+  workspaceId = initialWorkspace.id;
+
+  const [{ data }, { data: phoneCfg }, { count: callCount }, { data: calendar }, { count: teamCount }] =
+    await Promise.all([
+      db
+        .from("workspaces")
+        .select("id, name, agent_name, knowledge_items, website, address, onboarding_completed_at")
+        .eq("id", workspaceId)
+        .single(),
+      db.from("phone_configs").select("id").eq("workspace_id", workspaceId).eq("status", "active").maybeSingle(),
+      db.from("call_sessions").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
+      db.from("google_calendar_tokens").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle(),
+      db.from("team_members").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
+    ]);
+
+  const row = (data ?? null) as {
+    id: string;
+    name?: string | null;
+    agent_name?: string | null;
+    knowledge_items?: Array<{ q?: string; a?: string }> | null;
+    website?: string | null;
+    address?: string | null;
+    onboarding_completed_at?: string | null;
+  } | null;
+
+  if (!row) {
+    return {
+      workspaceId,
+      workspaceName: initialWorkspace.name?.trim() || "My Workspace",
+      workspaceMeta: null,
+    };
+  }
+
+  const knowledgeCount = Array.isArray(row.knowledge_items)
+    ? row.knowledge_items.filter((item) => (item.q ?? "").trim() && (item.a ?? "").trim()).length
+    : 0;
+  const readiness = buildWorkspaceReadiness({
+    businessName: row.name,
+    agentName: row.agent_name,
+    knowledgeCount,
+    phoneConnected: Boolean(phoneCfg),
+    callCount: callCount ?? 0,
+    calendarConnected: Boolean(calendar),
+    teamCount: teamCount ?? 0,
+  });
+
+  return {
+    workspaceId,
+    workspaceName: row.name?.trim() || "My Workspace",
+    workspaceMeta: {
+      onboardingCompletedAt: row.onboarding_completed_at ?? null,
+      banner: {
+        show: readiness.showBanner,
+        text: readiness.bannerText,
+        href: readiness.bannerHref,
+        cta: readiness.bannerCta,
+      },
+      progress: {
+        items: readiness.items.map((item) => ({
+          key: item.key,
+          completed: item.completed,
+        })),
+      },
+      stats: {
+        calls: callCount ?? 0,
+      },
+    },
+  };
 }
 
-function OnboardingSidebar() {
-  const ctx = useOnboardingStep();
-  const step = ctx?.step ?? 1;
+export default async function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const initial = await getInitialShellData();
 
   return (
-    <aside className="hidden md:flex md:w-52 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800 py-5 px-4">
-      <Link href="/" className="flex flex-col items-center gap-1 mb-6">
-        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-          <span className="text-black font-bold text-sm">RT</span>
-        </div>
-        <WorkspaceName className="text-[10px] text-zinc-500 text-center block" />
-      </Link>
-      <nav className="flex-1" aria-label="Onboarding steps">
-        <div className="flex flex-col gap-0">
-          {ONBOARDING_STEP_LABELS.map((label, i) => {
-            const stepNum = i + 1;
-            const isComplete = step > stepNum;
-            const isCurrent = step === stepNum;
-            return (
-              <div key={stepNum} className="flex items-center gap-3">
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium shrink-0 ${
-                      isComplete
-                        ? "bg-green-500 text-white"
-                        : isCurrent
-                          ? "bg-white text-black"
-                          : "bg-zinc-800 text-zinc-600"
-                    } ${isCurrent ? "ring-2 ring-white/50" : ""}`}
-                  >
-                    {isComplete ? "✓" : stepNum}
-                  </div>
-                  {i < ONBOARDING_STEP_LABELS.length - 1 && (
-                    <div className={`w-0.5 min-h-[14px] ${step > stepNum ? "bg-green-500/50" : "bg-zinc-800"}`} />
-                  )}
-                </div>
-                <span
-                  className={`text-sm py-1 ${
-                    isComplete ? "text-white" : isCurrent ? "text-white font-medium" : "text-zinc-600"
-                  }`}
-                >
-                  {label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </nav>
-      <div className="mt-4 pt-4 border-t border-zinc-800 space-y-2">
-        <div className="px-3 py-2 rounded-lg bg-zinc-800/50 border border-zinc-700">
-          <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
-          <span className="block text-[10px] text-zinc-500">14 days left</span>
-        </div>
-        <OnboardingChecklist />
-      </div>
-    </aside>
+    <AppShellClient
+      initialWorkspaceId={initial.workspaceId}
+      initialWorkspaceName={initial.workspaceName}
+      initialWorkspaceMeta={initial.workspaceMeta}
+    >
+      {children}
+    </AppShellClient>
   );
 }

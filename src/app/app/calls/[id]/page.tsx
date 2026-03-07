@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import {
   ArrowLeft,
   PhoneCall,
@@ -59,20 +60,49 @@ function formatDuration(
   return `${Math.floor(sec / 60)}m ${sec % 60}s`;
 }
 
+const CALL_DETAIL_SNAPSHOT_PREFIX = "rt_call_detail_snapshot:";
+
+function readCallDetailSnapshot(workspaceId: string, callId: string): CallDetail | null {
+  if (typeof window === "undefined" || !workspaceId || !callId) return null;
+  try {
+    const raw = window.localStorage.getItem(
+      `${CALL_DETAIL_SNAPSHOT_PREFIX}${workspaceId}:${callId}`,
+    );
+    return raw ? (JSON.parse(raw) as CallDetail) : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistCallDetailSnapshot(
+  workspaceId: string,
+  callId: string,
+  detail: CallDetail,
+) {
+  if (typeof window === "undefined" || !workspaceId || !callId) return;
+  try {
+    window.localStorage.setItem(
+      `${CALL_DETAIL_SNAPSHOT_PREFIX}${workspaceId}:${callId}`,
+      JSON.stringify(detail),
+    );
+  } catch {
+    // ignore persistence errors
+  }
+}
+
 export default function AppCallDetailPage() {
   const params = useParams();
   const { workspaceId } = useWorkspace();
   const id = typeof params.id === "string" ? params.id : "";
-  const [call, setCall] = useState<CallDetail | null>(null);
-  const [loading, setLoading] = useState(false);
+  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
+  const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const initialCall = readCallDetailSnapshot(snapshotWorkspaceId, id);
+  const [call, setCall] = useState<CallDetail | null>(initialCall);
+  const [loading, setLoading] = useState(initialCall == null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id || !workspaceId) return;
-    setTimeout(() => {
-      setLoading(true);
-      setError(null);
-    }, 0);
     fetch(`/api/calls/${id}?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -80,9 +110,14 @@ export default function AppCallDetailPage() {
         if (!r.ok) throw new Error("Failed to load");
         return r.json();
       })
-      .then((data) =>
-        setCall((data as { call?: CallDetail }).call ?? null),
-      )
+      .then((data) => {
+        const nextCall = (data as { call?: CallDetail }).call ?? null;
+        setError(null);
+        setCall(nextCall);
+        if (nextCall) {
+          persistCallDetailSnapshot(workspaceId, id, nextCall);
+        }
+      })
       .catch(() => setError("Could not load this call."))
       .finally(() => setLoading(false));
   }, [id, workspaceId]);
