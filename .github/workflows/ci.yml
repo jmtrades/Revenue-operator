@@ -1,4 +1,4 @@
-# CI: build and lint on push/PR to main. Keeps Supabase + GitHub flow green.
+# CI: build, lint, and e2e on push/PR to main.
 name: CI
 
 on:
@@ -7,8 +7,15 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+  SESSION_SECRET: placeholder-32-char-secret-for-ci-build
+  NEXT_PUBLIC_APP_URL: http://localhost:3000
+  CRON_SECRET: placeholder
+
 jobs:
-  build:
+  build-lint-e2e:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,12 +31,22 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
-          SESSION_SECRET: placeholder-32-char-secret-for-ci-build
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
-          CRON_SECRET: placeholder
 
       - name: Lint
         run: npm run lint
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E (server + tests in same step so server stays up)
+        run: |
+          npm run start &
+          SERVER_PID=$!
+          for i in $(seq 1 30); do
+            curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q 200 && break
+            sleep 2
+          done
+          PLAYWRIGHT_BASE_URL=http://localhost:3000 npm run test:e2e -- --grep "Critical path|App routes|Activate"
+          kill $SERVER_PID 2>/dev/null || true
+        env:
+          PORT: 3000
