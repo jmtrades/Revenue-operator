@@ -3,6 +3,7 @@
  * 2) App session: restore auth cookie on dashboard; missing session → redirect (GET only).
  * 3) Public and API bypass: explicit list; never redirect POST, never block webhooks or public API.
  *
+ * CRITICAL: Public and static paths are checked first so crawlers/bots (no cookies) never get 401.
  * Next.js 16: proxy (formerly middleware) — request boundary in front of the app.
  */
 
@@ -14,13 +15,21 @@ import {
   isSessionEnabled,
 } from "@/lib/auth/session-edge";
 
-function isPublicPage(pathname: string): boolean {
+/** Paths that must never require auth (crawlers, OG, link previews). Checked first. */
+function isPublicOrStaticPath(pathname: string): boolean {
   if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
-  if (pathname === "/sign-in" || pathname.startsWith("/auth/")) return true;
-  if (pathname.startsWith("/onboard") || pathname.startsWith("/onboarding") || pathname.startsWith("/public/work")) return true;
-  if (pathname === "/demo" || pathname === "/product" || pathname === "/pricing" || pathname === "/docs") return true;
+  if (pathname === "/sign-in" || pathname === "/demo" || pathname === "/product" || pathname === "/pricing" || pathname === "/docs") return true;
   if (pathname === "/contact" || pathname === "/blog" || pathname === "/privacy" || pathname === "/terms") return true;
-  if (pathname.startsWith("/industries/")) return true;
+  if (pathname === "/favicon.ico" || pathname === "/robots.txt" || pathname === "/sitemap.xml" || pathname === "/manifest.json") return true;
+  if (pathname.startsWith("/auth/") || pathname.startsWith("/industries/")) return true;
+  if (pathname.startsWith("/onboard") || pathname.startsWith("/onboarding") || pathname.startsWith("/public/work")) return true;
+  if (pathname.startsWith("/_next/") || pathname.startsWith("/_next/static")) return true;
+  if (pathname === "/setup" || pathname === "/reset-password" || pathname === "/solo") return true;
+  return false;
+}
+
+function isPublicPage(pathname: string): boolean {
+  if (isPublicOrStaticPath(pathname)) return true;
   return false;
 }
 
@@ -100,6 +109,10 @@ function getRedirectTarget(pathname: string): string {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const method = req.method ?? "GET";
+
+  // ——— Public/static first: crawlers and bots must never get 401 ———
+  if (isPublicOrStaticPath(pathname)) return NextResponse.next();
+  if (pathname.startsWith("/api/webhooks/") || pathname.startsWith("/api/cron/")) return NextResponse.next();
 
   // ——— API routes: never return HTML, never redirect POST ———
   if (pathname.startsWith("/api/")) {
@@ -183,6 +196,10 @@ export async function proxy(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
+    "/favicon.ico",
+    "/robots.txt",
+    "/sitemap.xml",
+    "/manifest.json",
     "/activate",
     "/connect",
     "/live",
@@ -195,6 +212,9 @@ export const config = {
     "/blog",
     "/privacy",
     "/terms",
+    "/setup",
+    "/reset-password",
+    "/solo",
     "/industries/:path*",
     "/onboard/:path*",
     "/onboarding",

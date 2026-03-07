@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
       "form-action 'self'",
       "connect-src 'self' https: wss:",
       "img-src 'self' data: https:",
-      "media-src 'self' data: blob: https:",
+      "media-src 'self' data: blob: https: https://api.elevenlabs.io",
       "font-src 'self' data:",
       "worker-src 'self' blob:",
       "style-src 'self' 'unsafe-inline'",

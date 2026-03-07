@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -9,8 +9,131 @@ import {
   PhoneCall,
   CalendarClock,
   Clock3,
+  Play,
+  Pause,
+  Download,
 } from "lucide-react";
 import Link from "next/link";
+
+const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
+
+function formatPlaybackTime(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function CallRecordingPlayer({ src }: { src: string }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [speed, setSpeed] = useState<number>(1);
+
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    el.playbackRate = speed;
+  }, [speed]);
+
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    const onTimeUpdate = () => setCurrentTime(el.currentTime);
+    const onDurationChange = () => setDuration(Number.isFinite(el.duration) ? el.duration : 0);
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    const onEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
+    el.addEventListener("timeupdate", onTimeUpdate);
+    el.addEventListener("durationchange", onDurationChange);
+    el.addEventListener("play", onPlay);
+    el.addEventListener("pause", onPause);
+    el.addEventListener("ended", onEnded);
+    return () => {
+      el.removeEventListener("timeupdate", onTimeUpdate);
+      el.removeEventListener("durationchange", onDurationChange);
+      el.removeEventListener("play", onPlay);
+      el.removeEventListener("pause", onPause);
+      el.removeEventListener("ended", onEnded);
+    };
+  }, []);
+
+  const togglePlay = () => {
+    const el = audioRef.current;
+    if (!el) return;
+    if (el.paused) {
+      el.play().catch(() => {});
+    } else {
+      el.pause();
+    }
+  };
+
+  const seek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const el = audioRef.current;
+    const value = Number(e.target.value);
+    if (el && Number.isFinite(value)) {
+      el.currentTime = value;
+      setCurrentTime(value);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <audio ref={audioRef} src={src} preload="metadata" />
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={togglePlay}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-black hover:bg-zinc-200 transition"
+          aria-label={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
+        </button>
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          <input
+            type="range"
+            min={0}
+            max={duration || 100}
+            value={currentTime}
+            onChange={seek}
+            className="w-full h-2 rounded-full appearance-none bg-zinc-800 accent-white cursor-pointer"
+            aria-label="Seek"
+          />
+          <div className="flex justify-between text-[11px] text-zinc-500">
+            <span>{formatPlaybackTime(currentTime)}</span>
+            <span>{formatPlaybackTime(duration)}</span>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 flex-wrap">
+        <span className="text-[11px] text-zinc-500">Speed</span>
+        {PLAYBACK_SPEEDS.map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => setSpeed(s)}
+            className={`text-xs px-2 py-1 rounded ${speed === s ? "bg-white text-black" : "text-zinc-400 hover:text-white bg-zinc-800"}`}
+          >
+            {s}x
+          </button>
+        ))}
+        <a
+          href={src}
+          download
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white"
+        >
+          <Download className="h-3.5 w-3.5" />
+          Download
+        </a>
+      </div>
+    </div>
+  );
+}
 
 interface CallDetail {
   id: string;
@@ -220,9 +343,7 @@ export default function AppCallDetailPage() {
             <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
               Recording
             </h2>
-            <audio controls className="w-full">
-              <source src={call.recording_url} />
-            </audio>
+            <CallRecordingPlayer src={call.recording_url} />
           </section>
         )}
 

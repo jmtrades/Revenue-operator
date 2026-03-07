@@ -17,10 +17,15 @@ import { Footer } from "@/components/sections/Footer";
 import { VoiceOrbClient } from "@/components/VoiceOrbClient";
 
 export default async function HomePage() {
-  const cookieStore = await cookies();
-  const initialAuthenticated =
-    cookieStore.has("revenue_session") ||
-    cookieStore.getAll().some((cookie) => cookie.name.startsWith("sb-"));
+  let initialAuthenticated = false;
+  try {
+    const cookieStore = await cookies();
+    initialAuthenticated =
+      cookieStore.has("revenue_session") ||
+      cookieStore.getAll().some((cookie) => cookie.name.startsWith("sb-"));
+  } catch {
+    // Prefetch/RSC without cookies: render public homepage
+  }
 
   return (
     <div

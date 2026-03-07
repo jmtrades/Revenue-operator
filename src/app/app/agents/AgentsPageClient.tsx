@@ -97,21 +97,13 @@ function generateAgentId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
+/** 5 starter Q&A entries (aligned with workspace onboarding seed). */
 const DEFAULT_FAQ_SEED = [
-  {
-    question: "What are your hours?",
-    answer:
-      "We can help you during our normal business hours, and I can still take details any time.",
-  },
-  {
-    question: "Where are you located?",
-    answer:
-      "I can share our location details and make sure the right person follows up if you need anything specific.",
-  },
-  {
-    question: "How do I book an appointment?",
-    answer: "I can help you book that right now and confirm the next available time.",
-  },
+  { question: "What are your hours?", answer: "We are open Monday through Friday, 9 AM to 5 PM." },
+  { question: "Where are you located?", answer: "I can have someone share our address with you. What is the best way to reach you?" },
+  { question: "How do I book an appointment?", answer: "I can help you with that right now. What day works best for you?" },
+  { question: "What services do you offer?", answer: "We offer a full range of services. What specifically are you looking for help with?" },
+  { question: "What is your pricing?", answer: "Pricing depends on your specific needs. I can have our team send you a detailed quote. Can I get your name and email?" },
 ];
 
 const ALWAYS_TRANSFER_OPTIONS = [
@@ -1388,14 +1380,12 @@ function KnowledgeTab({
   };
 
   const seedDefaults = () => {
-    if (agent.faq.length > 0) return;
-    onChange({
-      faq: DEFAULT_FAQ_SEED.map((item, index) => ({
-        id: `seed-${index}`,
-        question: item.question,
-        answer: item.answer,
-      })),
-    });
+    const entries = DEFAULT_FAQ_SEED.map((item, index) => ({
+      id: `seed-${Date.now()}-${index}`,
+      question: item.question,
+      answer: item.answer,
+    }));
+    onChange({ faq: agent.faq.length === 0 ? entries : [...agent.faq, ...entries] });
   };
 
   return (
@@ -1407,13 +1397,22 @@ function KnowledgeTab({
             Q&A pairs your agent uses to answer callers clearly and consistently.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={addFaqRow}
-          className="text-sm text-white hover:text-zinc-300"
-        >
-          + Add entry
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={seedDefaults}
+            className="text-xs text-zinc-400 hover:text-zinc-200"
+          >
+            {agent.faq.length === 0 ? "Seed 5 starter entries" : "Add 5 starter entries"}
+          </button>
+          <button
+            type="button"
+            onClick={addFaqRow}
+            className="text-sm text-white hover:text-zinc-300"
+          >
+            + Add entry
+          </button>
+        </div>
       </div>
 
       {agent.faq.length === 0 ? (
@@ -1428,7 +1427,7 @@ function KnowledgeTab({
             onClick={seedDefaults}
             className="mt-4 rounded-xl border border-zinc-700 px-3 py-2 text-xs text-zinc-200 hover:border-zinc-500"
           >
-            Add starter entries
+            Seed 5 starter entries
           </button>
         </div>
       ) : (
@@ -1652,12 +1651,14 @@ function RulesTab({
       <div className="space-y-1">
         <label className="block text-[11px] text-zinc-500">Maximum call duration</label>
         <select
-          value={String(agent.maxCallDuration)}
+          value={[0, 5, 10, 12, 15, 30].includes(agent.maxCallDuration) ? String(agent.maxCallDuration) : "15"}
           onChange={(e) => onChange({ maxCallDuration: Number(e.target.value) })}
           className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none"
         >
+          <option value="0">No limit</option>
           <option value="5">5 minutes</option>
           <option value="10">10 minutes</option>
+          <option value="12">12 minutes</option>
           <option value="15">15 minutes</option>
           <option value="30">30 minutes</option>
         </select>
