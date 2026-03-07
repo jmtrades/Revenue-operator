@@ -56,18 +56,21 @@ export function WorkspaceProvider({
   initialWorkspaceId?: string;
   initialWorkspaceName?: string;
 }) {
-  const [workspaceId, setWorkspaceIdState] = useState(() => {
-    const snapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
-    return snapshot?.id?.trim() || initialWorkspaceId || getSavedWorkspaceId() || "";
-  });
-  const [workspaceName, setWorkspaceName] = useState(() => {
-    const snapshot = getWorkspaceMeSnapshotSync() as { name?: string | null } | null;
-    return snapshot?.name?.trim() || initialWorkspaceName || "";
-  });
+  const [workspaceId, setWorkspaceIdState] = useState(initialWorkspaceId || "");
+  const [workspaceName, setWorkspaceName] = useState(initialWorkspaceName || "");
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const initialRun = useRef(true);
+
+  useEffect(() => {
+    const snapshot = getWorkspaceMeSnapshotSync() as { id?: string | null; name?: string | null } | null;
+    const savedId = getSavedWorkspaceId();
+    const id = snapshot?.id?.trim() || savedId || "";
+    const name = snapshot?.name?.trim() || "";
+    if (id) setWorkspaceIdState((prev) => prev || id);
+    if (name) setWorkspaceName((prev) => prev || name);
+  }, []);
 
   const FETCH_TIMEOUT_MS = 12_000;
 

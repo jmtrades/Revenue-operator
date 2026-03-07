@@ -228,7 +228,6 @@ export default function AppShellClient({
                         : ""}
                     </span>
                   </div>
-                  <OnboardingChecklist initialItems={workspaceMeta?.progress?.items} />
                 </div>
               </aside>
             )}
@@ -321,6 +320,7 @@ export default function AppShellClient({
 function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: string }) {
   const ctx = useOnboardingStep();
   const step = ctx?.step ?? 1;
+  const setStep = ctx?.setStep;
 
   return (
     <aside className="hidden md:flex md:w-52 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800 py-5 px-4">
@@ -337,7 +337,14 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
             const isComplete = step > stepNum;
             const isCurrent = step === stepNum;
             return (
-              <div key={stepNum} className="flex items-center gap-3">
+              <button
+                key={stepNum}
+                type="button"
+                onClick={() => setStep?.(stepNum)}
+                className="flex items-center gap-3 w-full text-left rounded-lg py-1 -ml-1 pl-1 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                aria-current={isCurrent ? "step" : undefined}
+                aria-label={`Step ${stepNum}: ${label}`}
+              >
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium shrink-0 ${
@@ -361,7 +368,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                 >
                   {label}
                 </span>
-              </div>
+              </button>
             );
           })}
         </div>

@@ -2159,6 +2159,9 @@ function IdentityStepContent({
             </button>
           ))}
         </div>
+        <p className="mt-1.5 text-[11px] text-white/25">
+          Outbound agents are used when you click &ldquo;Have AI call this lead&rdquo; on Leads and when you run outbound campaigns. Set to Outbound or Both so this agent can make calls.
+        </p>
       </div>
       <div>
         <label htmlFor="agent-greeting" className="block text-xs text-zinc-500 mb-1.5">Opening greeting</label>
