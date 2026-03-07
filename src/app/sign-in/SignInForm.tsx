@@ -139,7 +139,7 @@ export default function SignInForm() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full py-2.5 bg-white text-[#080d19] font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08]"
+              className="w-full py-2.5 bg-white text-[#080d19] font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080d19]"
             >
               {busy
                 ? isCreate
@@ -161,7 +161,7 @@ export default function SignInForm() {
             type="button"
             onClick={google}
             disabled={googleBusy}
-            className="w-full py-2.5 bg-white/[0.03] border border-white/[0.08] text-white/80 font-medium text-[14px] rounded-xl hover:bg-white/[0.06] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5 disabled:opacity-50"
+            className="w-full py-2.5 bg-white/[0.03] border border-white/[0.08] text-white/80 font-medium text-[14px] rounded-xl hover:bg-white/[0.06] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080d19]"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path

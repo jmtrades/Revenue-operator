@@ -75,7 +75,7 @@ export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
           id: "agent-created",
           title: "Agent created",
           body: `${input.agentName || "Your agent"} is ready to answer calls.`,
-          href: "/app/settings/agent",
+          href: "/app/agents",
         }
       : null,
     hasBusiness
@@ -91,7 +91,23 @@ export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
           id: "knowledge-seeded",
           title: "Starter knowledge added",
           body: `${input.knowledgeCount} answers are ready for your agent.`,
-          href: "/app/settings/agent",
+          href: "/app/agents",
+        }
+      : null,
+    hasPhone
+      ? {
+          id: "phone-connected",
+          title: "Phone connected",
+          body: "Your number is ready to receive AI-answered calls.",
+          href: "/app/settings/phone",
+        }
+      : null,
+    hasFirstCall
+      ? {
+          id: "first-call",
+          title: "First call completed",
+          body: "Your AI has handled its first call. Check the call log for details.",
+          href: "/app/calls",
         }
       : null,
   ].filter(Boolean) as WorkspaceReadiness["systemEvents"];
