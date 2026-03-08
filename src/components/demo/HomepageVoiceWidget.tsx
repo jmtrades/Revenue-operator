@@ -152,6 +152,7 @@ export function HomepageVoiceWidget() {
   }, []);
 
   const configured = Boolean(config?.publicKey && config?.assistantId);
+  const configLoading = config === null;
 
   return (
     <div className="flex flex-col">
@@ -162,15 +163,30 @@ export function HomepageVoiceWidget() {
 
       {/* Voice orb */}
       <div className="flex justify-center mb-5">
-        {!configured && config !== null ? (
-          <p className="text-xs text-white/40 text-center py-6">
-            Voice demo — configure in app
-          </p>
+        {configLoading ? (
+          <div
+            className="flex h-20 w-20 items-center justify-center rounded-full bg-white/[0.06] animate-pulse"
+            aria-hidden
+          >
+            <Mic className="h-9 w-9 text-white/30" />
+          </div>
+        ) : !configured ? (
+          <div className="text-center py-4">
+            <p className="text-xs text-white/40 mb-3">
+              Voice demo will be available here soon.
+            </p>
+            <a
+              href="/demo"
+              className="inline-flex items-center justify-center rounded-xl bg-white text-black font-semibold text-sm px-4 py-2 hover:bg-zinc-100 transition-colors no-underline"
+            >
+              Try full demo →
+            </a>
+          </div>
         ) : active ? (
           <button
             type="button"
             onClick={endCall}
-            className="flex h-20 w-20 items-center justify-center rounded-full bg-red-500/90 text-white hover:bg-red-500 transition-colors"
+            className="flex h-20 w-20 items-center justify-center rounded-full bg-red-500/90 text-white hover:bg-red-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F1729]"
             aria-label="End call"
           >
             <Square className="h-8 w-8 fill-current" />
@@ -180,40 +196,54 @@ export function HomepageVoiceWidget() {
             type="button"
             onClick={() => startCall()}
             disabled={loading}
-            className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors"
-            aria-label="Start voice call"
+            className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F1729]"
+            aria-label={loading ? "Connecting…" : "Start voice call"}
           >
-            <Mic className="h-9 w-9" />
+            {loading ? (
+              <span className="flex h-6 w-6 animate-spin rounded-full border-2 border-[#0F1729] border-t-transparent" aria-hidden />
+            ) : (
+              <Mic className="h-9 w-9" />
+            )}
           </button>
         )}
       </div>
 
-      {suggestedPhrase && (active || transcript.length > 0) && (
+      {configured && suggestedPhrase && (active || transcript.length > 0) && (
         <p className="text-xs text-white/40 mb-2 text-center">
           Try: &ldquo;{suggestedPhrase}&rdquo;
         </p>
       )}
 
-      {/* Scenario chips */}
-      <p className="text-xs text-white/40 mb-2">Or try a scenario:</p>
-      <div className="flex flex-wrap gap-2 mb-4">
-        {SCENARIO_CHIPS.map((label) => (
-          <button
-            key={label}
-            type="button"
-            onClick={() => startCall(label)}
-            disabled={!configured || loading}
-            className="text-xs bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-white/50 hover:text-white/70 hover:border-white/[0.12] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      {/* Scenario chips — only when voice is configured */}
+      {configured && (
+        <>
+          <p className="text-xs text-white/40 mb-2">Or try a scenario:</p>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {SCENARIO_CHIPS.map((label) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => startCall(label)}
+                disabled={loading}
+                className="text-xs bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-white/50 hover:text-white/70 hover:border-white/[0.12] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Compact transcript */}
-      <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 h-32 overflow-y-auto text-sm">
+      <div
+        className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 h-32 overflow-y-auto text-sm"
+        aria-live="polite"
+        aria-label="Live transcript"
+      >
         {transcript.length === 0 ? (
-          <p className="text-white/25 text-center mt-6">Tap the mic to start</p>
+          <p className="text-white/25 text-center mt-6">
+            {configured ? "Tap the mic to start" : "Conversation will appear here"}
+          </p>
         ) : (
           <div className="space-y-2">
             {transcript.map((entry, i) => (
@@ -233,9 +263,20 @@ export function HomepageVoiceWidget() {
       </div>
 
       {error && (
-        <p className="text-xs text-red-400 mt-2 text-center" role="alert">
-          {error}
-        </p>
+        <div className="mt-2 flex flex-col items-center gap-2">
+          <p className="text-xs text-red-400 text-center" role="alert">
+            {error}
+          </p>
+          {configured && (
+            <button
+              type="button"
+              onClick={() => { setError(null); startCall(); }}
+              className="text-xs font-medium text-white/60 hover:text-white transition-colors"
+            >
+              Try again
+            </button>
+          )}
+        </div>
       )}
     </div>
   );
