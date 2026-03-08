@@ -6,6 +6,7 @@ const STORAGE_KEY = "rt_build_id";
 
 export function StaleBuildBanner() {
   const [show, setShow] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const check = useCallback(() => {
     fetch("/api/build-id", { cache: "no-store", credentials: "same-origin" })
@@ -34,6 +35,7 @@ export function StaleBuildBanner() {
   }, [check]);
 
   const handleRefresh = () => {
+    setRefreshing(true);
     try {
       sessionStorage.setItem(STORAGE_KEY, "");
     } catch {
@@ -50,7 +52,7 @@ export function StaleBuildBanner() {
         regs.forEach((r) => r.unregister());
       });
     }
-    window.location.reload();
+    setTimeout(() => window.location.reload(), 500);
   };
 
   if (!show) return null;
@@ -65,9 +67,10 @@ export function StaleBuildBanner() {
       <button
         type="button"
         onClick={handleRefresh}
-        className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-black hover:bg-zinc-100"
+        disabled={refreshing}
+        className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-black hover:bg-zinc-100 disabled:opacity-70"
       >
-        Refresh
+        {refreshing ? "Refreshing…" : "Refresh"}
       </button>
     </div>
   );

@@ -273,16 +273,16 @@ export default function AppSettingsPhonePage() {
 
   return (
     <div className="max-w-[560px] mx-auto p-4 md:p-6">
-      <h1 className="text-xl font-semibold text-white mb-1">Phone number</h1>
-      <p className="text-sm text-zinc-400 mb-6">Where your AI answers calls. Add one in one click.</p>
+      <h1 className="text-xl font-semibold text-white mb-1">Connect your phone number</h1>
+      <p className="text-sm text-zinc-400 mb-6">Get a dedicated AI number or forward your existing line.</p>
 
       {loading ? (
         <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 animate-pulse h-24 mb-4" />
       ) : phoneNumber ? (
         <>
-          {/* Main number card — prominent and easy to copy */}
+          {/* Option A — Your AI number */}
           <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Your AI answers at</p>
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Option A — Your AI number</p>
             <div className="flex flex-wrap items-center gap-3">
               <p ref={numberHeadingRef} tabIndex={-1} className="text-2xl font-semibold text-white font-mono tracking-tight outline-none" aria-label={`Your number: ${formatPhoneNumber(phoneNumber)}`}>{formatPhoneNumber(phoneNumber)}</p>
               <button
@@ -299,13 +299,20 @@ export default function AppSettingsPhonePage() {
 
           {/* Forward your current number — simple steps */}
           <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
-            <p className="text-sm font-medium text-white mb-1">Use your current phone number</p>
-            <p className="text-xs text-zinc-400 mb-4">Forward your existing line so callers still dial your number and your AI answers.</p>
+            <p className="text-sm font-medium text-white mb-1">Option B — Forward your existing number</p>
+            <p className="text-xs text-zinc-400 mb-4">Keep your current number. Forward unanswered calls to your AI number below.</p>
             <ol className="space-y-2 text-sm text-zinc-300 list-decimal list-inside">
               <li>Open your phone carrier’s app or website (AT&T, Verizon, T-Mobile, etc.).</li>
               <li>Find “Call forwarding” or “Forward when busy.”</li>
-              <li>Enter this number: <span className="font-mono text-white">{formatPhoneNumber(phoneNumber)}</span></li>
+              <li>Enter the number below in your carrier or device settings.</li>
             </ol>
+            <p className="text-xs text-zinc-500 mt-2 mb-2">Forward to: <span className="font-mono text-white">{formatPhoneNumber(phoneNumber)}</span></p>
+            <p className="text-xs font-medium text-zinc-400 mb-1">Or by device:</p>
+            <ul className="space-y-1 text-xs text-zinc-400 mb-3">
+              <li><span className="text-zinc-300">iPhone:</span> Settings → Phone → Call Forwarding</li>
+              <li><span className="text-zinc-300">Android:</span> Phone → ⋮ → Settings → Call Forwarding</li>
+              <li><span className="text-zinc-300">Business line:</span> Call your carrier; ask to forward to {formatPhoneNumber(phoneNumber)}</li>
+            </ul>
             <details className="mt-4 group">
               <summary className="text-xs text-zinc-500 cursor-pointer hover:text-zinc-400 list-none flex items-center gap-1">
                 <span className="group-open:inline hidden">▼</span><span className="group-open:hidden inline">▶</span> Quick dial codes
@@ -318,9 +325,9 @@ export default function AppSettingsPhonePage() {
             </details>
           </div>
 
-          {/* Test call — one field, one button */}
+          {/* Test forwarding */}
           <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
-            <p className="text-sm font-medium text-white mb-1">Hear your AI on a real call</p>
+            <p className="text-sm font-medium text-white mb-1">Test forwarding</p>
             <p className="text-xs text-zinc-400 mb-3">We’ll call you so you can talk to your agent right now.</p>
             {!primaryAgentId ? (
               <div className="rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-sm text-zinc-400">
@@ -515,7 +522,7 @@ export default function AppSettingsPhonePage() {
               disabled={connecting}
               className="w-full max-w-xs mx-auto py-4 px-6 rounded-xl text-base font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors"
             >
-              {connecting ? "Getting your number…" : "Get my number"}
+              {connecting ? "Getting your number…" : "Get a number →"}
             </button>
             {connectError ? (
               <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300 text-left" role="alert">
@@ -535,8 +542,11 @@ export default function AppSettingsPhonePage() {
             </p>
           </div>
           <div className="p-5 rounded-2xl border border-zinc-800/80 bg-zinc-900/30 mb-6">
-            <p className="text-sm font-medium text-zinc-300 mb-1">Want to use your current number?</p>
-            <p className="text-xs text-zinc-500">Get a Recall Touch number above first, then set up call forwarding from your carrier to that number. You’ll see simple steps once your number is added.</p>
+            <p className="text-sm font-medium text-zinc-300 mb-1">Option B — Forward your existing number</p>
+            <p className="text-sm text-zinc-400">Get a number above first, then we&apos;ll show you exactly how to set up forwarding with your carrier. You can verify your number by SMS and test that your AI picks up.</p>
+            <p className="mt-4 text-sm text-zinc-500">
+              <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">I&apos;ll add a number later</Link>
+            </p>
           </div>
         </>
       )}

@@ -1,6 +1,6 @@
 /**
- * POST /api/billing/change-plan — Update subscription to a new plan (Stripe subscription update).
- * Body: { workspace_id, plan_id: "starter" | "growth" | "scale" } (enterprise = contact us, no API).
+ * POST /api/billing/change-plan — Update subscription to a new plan, or start one (trial → checkout).
+ * Body: { workspace_id, plan_id?: string, planId?: string } (plan_id or planId).
  */
 
 export const dynamic = "force-dynamic";
@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getPriceId } from "@/lib/stripe-prices";
+import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import type { BillingTier } from "@/lib/feature-gate/types";
 
 const PLAN_TO_TIER: Record<string, BillingTier> = {
@@ -16,19 +17,27 @@ const PLAN_TO_TIER: Record<string, BillingTier> = {
   scale: "team",
 };
 
+function getOrigin(req: NextRequest): string | null {
+  const url = new URL(req.url);
+  const o = url.origin;
+  if (o.includes("localhost") || o.includes("127.0.0.1")) return process.env.NEXT_PUBLIC_APP_URL ?? null;
+  return o || (process.env.NEXT_PUBLIC_APP_URL ?? null);
+}
+
 export async function POST(req: NextRequest) {
-  let body: { workspace_id?: string; plan_id?: string };
+  let body: { workspace_id?: string; plan_id?: string; planId?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
-  const { workspace_id, plan_id } = body;
+  const planId = body.plan_id ?? body.planId;
+  const { workspace_id } = body;
   if (!workspace_id) return NextResponse.json({ ok: false, error: "workspace_id required" }, { status: 400 });
-  if (!plan_id || typeof plan_id !== "string") return NextResponse.json({ ok: false, error: "plan_id required" }, { status: 400 });
+  if (!planId || typeof planId !== "string") return NextResponse.json({ ok: false, error: "plan_id or planId required" }, { status: 400 });
 
-  const tier = PLAN_TO_TIER[plan_id.toLowerCase()];
-  if (!tier) return NextResponse.json({ ok: false, error: "Invalid plan_id. Use starter, growth, or scale. For Enterprise contact us." }, { status: 400 });
+  const tier = PLAN_TO_TIER[planId.toLowerCase()];
+  if (!tier) return NextResponse.json({ ok: false, error: "Invalid plan. Use starter, growth, or scale. For Enterprise contact us." }, { status: 400 });
 
   const priceResult = await getPriceId(tier, "month");
   if (!priceResult.ok) {
@@ -41,26 +50,68 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const { data: ws } = await db
     .from("workspaces")
-    .select("id, stripe_subscription_id")
+    .select("id, stripe_subscription_id, stripe_customer_id, owner_id")
     .eq("id", workspace_id)
     .single();
   if (!ws) return NextResponse.json({ ok: false, error: "Workspace not found" }, { status: 404 });
 
-  const row = ws as { stripe_subscription_id?: string | null };
-  if (!row.stripe_subscription_id) {
-    return NextResponse.json({ ok: false, error: "No active subscription. Start a trial or checkout first." }, { status: 400 });
-  }
-
+  const row = ws as { stripe_subscription_id?: string | null; stripe_customer_id?: string | null; owner_id?: string };
   const Stripe = (await import("stripe")).default;
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+  // No subscription yet (trial): create checkout session and return URL
+  if (!row.stripe_subscription_id) {
+    const origin = getOrigin(req);
+    if (!origin) return NextResponse.json({ ok: false, error: "App URL not configured" }, { status: 400 });
+    let customerId = row.stripe_customer_id ?? null;
+    if (!customerId) {
+      const ownerId = row.owner_id;
+      let email = "";
+      if (ownerId) {
+        const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
+        email = (user as { email?: string } | null)?.email ?? "";
+      }
+      const customer = await stripe.customers.create({
+        email: email || undefined,
+        metadata: { workspace_id },
+        invoice_settings: { footer: RECEIPT_FOOTER },
+      });
+      customerId = customer.id;
+      await db.from("workspaces").update({ stripe_customer_id: customerId }).eq("id", workspace_id);
+    }
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      metadata: { workspace_id },
+      payment_method_collection: "always",
+      payment_method_types: ["card"],
+      line_items: [{ price: priceResult.price_id, quantity: 1 }],
+      subscription_data: {
+        trial_period_days: 14,
+        metadata: { workspace_id },
+      },
+      success_url: `${origin}/app/settings/billing?plan_changed=1`,
+      cancel_url: `${origin}/app/settings/billing`,
+      allow_promotion_codes: true,
+    });
+    return NextResponse.json({
+      ok: true,
+      checkout_url: session.url,
+      message: "Redirect to checkout to start your plan.",
+    });
+  }
+
+  // Existing subscription: update item
   try {
     const sub = await stripe.subscriptions.retrieve(row.stripe_subscription_id);
     const itemId = sub.items?.data?.[0]?.id;
     if (!itemId) return NextResponse.json({ ok: false, error: "Subscription has no items" }, { status: 400 });
 
+    const currentPriceId = sub.items?.data?.[0]?.price?.id;
+    const isUpgrade = currentPriceId !== priceResult.price_id; // simple: different price = prorate
     await stripe.subscriptions.update(row.stripe_subscription_id, {
       items: [{ id: itemId, price: priceResult.price_id }],
-      proration_behavior: "always_invoice",
+      proration_behavior: isUpgrade ? "always_invoice" : "none",
     });
   } catch (e) {
     const err = e as Error;
@@ -71,8 +122,8 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     ok: true,
-    message: `Plan changed to ${tier}. Your new features are available now.`,
-    plan_id: plan_id,
+    message: `Plan changed. Your new features are available now.`,
+    plan_id: planId,
     tier,
   });
 }
