@@ -37,6 +37,8 @@ export default function AppSettingsIntegrationsPage() {
   const [availabilityPreview, setAvailabilityPreview] = useState<string[]>([]);
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>(DEFAULT_WEBHOOK_CONFIG);
   const [webhookSecret, setWebhookSecret] = useState("");
+  const [whatsappEmail, setWhatsappEmail] = useState("");
+  const [whatsappSubmitting, setWhatsappSubmitting] = useState(false);
   const searchParams = useSearchParams();
   const calendarParam = searchParams.get("calendar");
 
@@ -134,9 +136,33 @@ export default function AppSettingsIntegrationsPage() {
     }
   };
 
-  const handleWhatsAppNotify = () => {
-    setToast("You're on the list. We'll notify you when WhatsApp is available.");
-    setTimeout(() => setToast(null), 4000);
+  const handleWhatsAppNotify = async () => {
+    const email = whatsappEmail.trim();
+    if (!email) {
+      setToast("Enter your email to join the WhatsApp waitlist.");
+      setTimeout(() => setToast(null), 3000);
+      return;
+    }
+    setWhatsappSubmitting(true);
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setToast("You're on the list. We'll notify you when WhatsApp is available.");
+        setWhatsappEmail("");
+      } else {
+        setToast("Something went wrong. Try again.");
+      }
+    } catch {
+      setToast("Something went wrong. Try again.");
+    } finally {
+      setWhatsappSubmitting(false);
+      setTimeout(() => setToast(null), 4000);
+    }
   };
 
   return (
@@ -160,17 +186,24 @@ export default function AppSettingsIntegrationsPage() {
               </div>
             </div>
             <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-medium text-white">WhatsApp Business</p>
-                  <p className="text-xs text-zinc-500 mt-1">Let your AI respond on WhatsApp too. Coming soon.</p>
-                </div>
+              <p className="text-sm font-medium text-white">WhatsApp Business</p>
+              <p className="text-xs text-zinc-500 mt-1">Let your AI respond on WhatsApp too. Coming soon — we&apos;ll notify you when it&apos;s available.</p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <input
+                  type="email"
+                  value={whatsappEmail}
+                  onChange={(e) => setWhatsappEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="flex-1 min-w-[180px] px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                  aria-label="Email for WhatsApp waitlist"
+                />
                 <button
                   type="button"
                   onClick={handleWhatsAppNotify}
-                  className="px-3 py-1.5 rounded-xl text-xs font-medium bg-white text-black hover:bg-zinc-100 shrink-0 transition-colors"
+                  disabled={whatsappSubmitting}
+                  className="px-4 py-2 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 shrink-0 disabled:opacity-60 transition-colors"
                 >
-                  Notify me →
+                  {whatsappSubmitting ? "Adding…" : "Notify me →"}
                 </button>
               </div>
             </div>
@@ -319,9 +352,9 @@ export default function AppSettingsIntegrationsPage() {
         <section>
           <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">CRM</h2>
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
-          <p className="text-sm font-medium text-white">Connect to any CRM</p>
+          <p className="text-sm font-medium text-white">Webhook (any CRM)</p>
           <p className="text-xs text-zinc-500 mt-1">
-            Use the webhook URL above with Zapier, Make, or your CRM&apos;s native webhook. One URL receives lead captured, appointment booked, deal won, and more — so you can push events into HubSpot, Salesforce, Pipedrive, Zoho, or any tool that accepts webhooks.
+            Set your webhook URL in <strong className="text-zinc-400">Automation & webhooks</strong> above. We POST lead captured, appointment booked, deal won, and more to that URL — so you can connect HubSpot, Salesforce, Pipedrive, Zoho, Zapier, or any tool that accepts webhooks.
           </p>
           <p className="text-[11px] text-zinc-500 mt-2">
             Works with: HubSpot, Salesforce, Pipedrive, Zoho CRM, Zapier, Make, and any platform that accepts incoming webhooks.
