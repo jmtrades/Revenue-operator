@@ -7,10 +7,12 @@ import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { createAssistant, createOutboundCall } from "@/lib/vapi";
 import { hasVapiServerKey } from "@/lib/vapi/env";
+import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
 
 export async function executeLeadOutboundCall(
   workspaceId: string,
-  leadId: string
+  leadId: string,
+  options?: { campaignType?: CampaignType; campaignPromptOptions?: Parameters<typeof buildCampaignPrompt>[2] }
 ): Promise<{ ok: true; call_session_id: string } | { ok: false; error: string }> {
   const db = getDb();
 
@@ -36,13 +38,21 @@ export async function executeLeadOutboundCall(
     db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
     db
       .from("agents")
-      .select("id, name, greeting, knowledge_base, vapi_agent_id, purpose")
+      .select("id, name, greeting, knowledge_base, rules, vapi_agent_id, purpose")
       .eq("workspace_id", workspaceId)
       .order("created_at", { ascending: false })
       .limit(20),
   ]);
   const ctx = ctxRes.data as { business_name?: string; offer_summary?: string; business_hours?: Record<string, unknown>; faq?: Array<{ q?: string; a?: string }> } | null;
-  const rows = (agentRowsRes.data ?? []) as Array<{ id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; vapi_agent_id?: string | null; purpose?: string }>;
+  const rows = (agentRowsRes.data ?? []) as Array<{
+    id: string;
+    name?: string;
+    greeting?: string;
+    knowledge_base?: Record<string, unknown>;
+    rules?: { learnedBehaviors?: string[] };
+    vapi_agent_id?: string | null;
+    purpose?: string;
+  }>;
   const agent =
     rows.find((r) => r.purpose === "outbound") ??
     rows.find((r) => r.purpose === "both") ??
@@ -60,6 +70,7 @@ export async function executeLeadOutboundCall(
   const emergencies_after_hours = typeof kb.emergencies_after_hours === "string" ? kb.emergencies_after_hours : undefined;
   const appointment_handling = typeof kb.appointment_handling === "string" ? kb.appointment_handling : undefined;
   const faq_extra = typeof kb.faq_extra === "string" ? kb.faq_extra : undefined;
+  const rules = (agent.rules ?? {}) as { learnedBehaviors?: string[] };
 
   const baseSystemPrompt = compileSystemPrompt({
     business_name,
@@ -72,12 +83,38 @@ export async function executeLeadOutboundCall(
     emergencies_after_hours,
     appointment_handling,
     faq_extra,
+    primary_goal: typeof kb.primaryGoal === "string" ? kb.primaryGoal : undefined,
+    business_context: typeof kb.businessContext === "string" ? kb.businessContext : undefined,
+    target_audience: typeof kb.targetAudience === "string" ? kb.targetAudience : undefined,
+    assertiveness: typeof kb.assertiveness === "number" ? kb.assertiveness : undefined,
+    when_hesitation: typeof kb.whenHesitation === "string" ? kb.whenHesitation : undefined,
+    when_think_about_it: typeof kb.whenThinkAboutIt === "string" ? kb.whenThinkAboutIt : undefined,
+    when_pricing: typeof kb.whenPricing === "string" ? kb.whenPricing : undefined,
+    when_competitor: typeof kb.whenCompetitor === "string" ? kb.whenCompetitor : undefined,
+    learned_behaviors: Array.isArray(rules.learnedBehaviors) ? rules.learnedBehaviors : undefined,
   });
 
   const leadName = leadRow.name?.trim() || "there";
   const serviceRequested = leadRow.metadata?.service_requested?.trim() || leadRow.company?.trim() || "your services";
   const notes = leadRow.metadata?.notes?.trim() || "";
-  const outboundAddition = `
+  const leadForPrompt: LeadForPrompt = {
+    name: leadRow.name,
+    phone: leadRow.phone,
+    company: leadRow.company,
+    metadata: leadRow.metadata,
+  };
+  const campaignType = options?.campaignType;
+  const outboundAddition =
+    campaignType != null
+      ? `
+OUTBOUND CALL CONTEXT:
+You are making an outbound call to ${leadName}.
+${buildCampaignPrompt(campaignType, leadForPrompt, options?.campaignPromptOptions)}
+
+YOUR OPENER:
+Start with a brief, natural opener. Then work toward the campaign goal above. Never be pushy.
+`
+      : `
 
 OUTBOUND CALL CONTEXT:
 You are making an outbound call to ${leadName}.

@@ -201,7 +201,7 @@ function OnboardingWizard() {
         <div className="max-w-lg text-center">
           <h1 className="text-2xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started</h1>
           <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>Create an account first. Your phone system will be ready in minutes.</p>
-          <Link href="/activate" className="inline-block py-2.5 px-4 rounded-lg font-medium text-sm" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>Start free</Link>
+          <Link href="/activate" className="inline-block py-2.5 px-4 rounded-xl font-semibold text-sm bg-white text-black hover:bg-zinc-100 transition-colors">Start free</Link>
         </div>
       </div>
     );

@@ -15,6 +15,7 @@ import type { ActionCommand } from "@/lib/action-queue/types";
 import { analyzeClosingCall } from "@/lib/zoom/analysis";
 import { sendCallOutcomeEmail } from "@/lib/email/call-alert";
 import { sendGoLiveEmail } from "@/lib/email/welcome";
+import { analyzeTranscriptForAnalytics } from "@/lib/analytics/post-call-insights";
 
 const EMERGENCY_KEYWORDS = /\b(emergency|urgent|burst|leak|flood|flooding|flooded|fire|break-in|break in|broken in|no heat|no a\/c|no ac|out of power|power out|flooding|flooded)\b/i;
 
@@ -206,6 +207,66 @@ export async function POST(req: NextRequest) {
     } catch {
       // non-blocking
     }
+  }
+
+  // Post-call analytics: extract outcome, transfer reason, topics, unanswered questions for optimization
+  if (sessionId && transcript && String(transcript).trim().length >= 80) {
+    void (async () => {
+      try {
+        const insight = await analyzeTranscriptForAnalytics(transcript);
+        if (!insight) return;
+        await db.from("call_analytics").insert({
+          workspace_id: workspace_id,
+          call_session_id: sessionId,
+          call_outcome: insight.call_outcome,
+          transfer_reason: insight.transfer_reason,
+          topics_discussed: insight.topics_discussed.length ? insight.topics_discussed : null,
+          unanswered_questions: insight.unanswered_questions.length ? insight.unanswered_questions : null,
+        });
+
+        // If transferred for a recurring reason, suggest adding knowledge
+        if (insight.transfer_reason && insight.transfer_reason.length > 0) {
+          const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+          const reasonLower = insight.transfer_reason.toLowerCase();
+          const { count } = await db
+            .from("call_analytics")
+            .select("id", { count: "exact", head: true })
+            .eq("workspace_id", workspace_id)
+            .not("transfer_reason", "is", null)
+            .gte("created_at", sevenDaysAgo);
+          const totalWithTransfer = Number(count ?? 0);
+          if (totalWithTransfer >= 2) {
+            const title =
+              reasonLower.includes("pricing") || reasonLower.includes("price")
+                ? "Calls transferred for pricing questions"
+                : reasonLower.includes("person") || reasonLower.includes("someone")
+                  ? "Calls transferred to specific person"
+                  : `Calls transferred: ${insight.transfer_reason}`;
+            const { data: existingRows } = await db
+              .from("optimization_suggestions")
+              .select("id, title")
+              .eq("workspace_id", workspace_id)
+              .eq("dismissed", false)
+              .limit(50);
+            const prefix = title.slice(0, 50);
+            const existing = (existingRows ?? []).find(
+              (r: { title?: string | null }) => r.title && (r.title === title || r.title.startsWith(prefix) || prefix.startsWith(r.title.slice(0, 50))),
+            );
+            if (!existing) {
+              await db.from("optimization_suggestions").insert({
+                workspace_id: workspace_id,
+                title,
+                description: `${totalWithTransfer} calls in the last 7 days were transferred. Consider adding this to your knowledge base so the AI can handle it.`,
+                action_label: "Add to knowledge",
+                action_href: "/app/knowledge",
+              });
+            }
+          }
+        }
+      } catch {
+        // non-blocking
+      }
+    })();
   }
 
   if (send_confirmation_sms && leadId) {

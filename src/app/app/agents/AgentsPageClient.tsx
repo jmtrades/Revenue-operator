@@ -6,16 +6,15 @@ import { usePathname } from "next/navigation";
 import {
   BellRing,
   BookOpen,
+  Calendar,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
   ClipboardList,
   Mic,
-  MoonStar,
   Play,
   PhoneCall,
   PhoneForwarded,
-  ShieldAlert,
   Square,
   Star,
   type LucideIcon,
@@ -43,15 +42,29 @@ type AgentTemplateId =
   | "lead_qualifier"
   | "follow_up"
   | "review_request"
+  | "appointment_setter"
+  | "support"
   | "scratch";
 
 type AgentPurpose = "inbound" | "outbound" | "both";
+
+type PrimaryGoalId =
+  | "answer_route"
+  | "book_appointments"
+  | "qualify_leads"
+  | "support"
+  | "sales"
+  | "follow_up"
+  | "custom";
 
 type Agent = {
   id: string;
   name: string;
   template: AgentTemplateId;
   purpose?: AgentPurpose;
+  primaryGoal: PrimaryGoalId;
+  businessContext: string;
+  targetAudience: string;
   voice: string;
   greeting: string;
   personality: number;
@@ -72,6 +85,7 @@ type Agent = {
   escalationChain: string[];
   transferPhone: string;
   transferRules: Array<{ id: string; phrase: string; phone: string }>;
+  learnedBehaviors: string[];
   afterHoursMode: "messages" | "emergency" | "forward" | "closed";
   bookingEnabled: boolean;
   bookingDefaultDurationMinutes: number;
@@ -92,6 +106,11 @@ type Agent = {
   voicemailMessage: string;
   confusedCallerHandling: string;
   offTopicHandling: string;
+  assertiveness: number;
+  whenHesitation: string;
+  whenThinkAboutIt: string;
+  whenPricing: string;
+  whenCompetitor: string;
   voiceSettings: {
     stability: number;
     speed: number;
@@ -236,6 +255,10 @@ function templateGreeting(id: AgentTemplateId): string {
       return "Hi, this is your AI following up so nothing falls through the cracks. Can I check in on your last visit?";
     case "review_request":
       return "Hi, this is your AI assistant with a quick favor about your recent visit. It will only take a moment.";
+    case "appointment_setter":
+      return "Hi, I'm calling to help schedule a time that works for you. What does your week look like?";
+    case "support":
+      return "Hi, thanks for calling. I'm here to help with questions and get you to the right person if needed.";
     case "receptionist":
     default:
       return "Hi, thanks for calling. I’m your AI receptionist — I’ll get the right details and make sure nothing is missed.";
@@ -248,6 +271,9 @@ function defaultAgent(): Agent {
     name: "Receptionist",
     template: "receptionist",
     purpose: "both",
+    primaryGoal: "answer_route",
+    businessContext: "",
+    targetAudience: "",
     voice: DEFAULT_VOICE_ID,
     greeting: templateGreeting("receptionist"),
     personality: 60,
@@ -268,6 +294,7 @@ function defaultAgent(): Agent {
     escalationChain: [],
     transferPhone: "",
     transferRules: [],
+    learnedBehaviors: [],
     afterHoursMode: "messages",
     bookingEnabled: true,
     bookingDefaultDurationMinutes: 30,
@@ -295,6 +322,11 @@ function defaultAgent(): Agent {
     voicemailMessage: "",
     confusedCallerHandling: "I'm sorry, let me try to help. Could you tell me what you need?",
     offTopicHandling: "I'm the phone assistant here. I can help with appointments, pricing, and general questions. What can I help with?",
+    assertiveness: 50,
+    whenHesitation: "acknowledge_offer_info",
+    whenThinkAboutIt: "offer_follow_up",
+    whenPricing: "range_then_pivot",
+    whenCompetitor: "acknowledge_differentiate",
     voiceSettings: {
       stability: 0.55,
       speed: 1,
@@ -330,6 +362,9 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     faq?: Array<{ q?: string; a?: string }>;
     specialInstructions?: string;
     websiteUrl?: string;
+    primaryGoal?: PrimaryGoalId;
+    businessContext?: string;
+    targetAudience?: string;
     afterHoursMode?: "messages" | "emergency" | "forward" | "closed";
     bookingEnabled?: boolean;
     bookingDefaultDurationMinutes?: number;
@@ -352,6 +387,11 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     voicemailMessage?: string;
     confusedCallerHandling?: string;
     offTopicHandling?: string;
+    assertiveness?: number;
+    whenHesitation?: string;
+    whenThinkAboutIt?: string;
+    whenPricing?: string;
+    whenCompetitor?: string;
   };
   const rules = (row.rules ?? {}) as {
     neverSay?: string[];
@@ -359,6 +399,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     escalationChain?: string[];
     transferPhone?: string;
     transferRules?: Array<{ phrase?: string; phone?: string }>;
+    learnedBehaviors?: string[];
   };
   const stats = (row.stats ?? {}) as {
     avgRating?: number;
@@ -368,11 +409,18 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
 
   const rawPurpose = row.purpose ?? (row.template === "follow_up" || row.template === "review_request" ? "outbound" : "both");
   const purpose: AgentPurpose = rawPurpose === "inbound" || rawPurpose === "outbound" || rawPurpose === "both" ? rawPurpose : "both";
+  const validGoal: PrimaryGoalId =
+    knowledgeBase.primaryGoal && ["answer_route", "book_appointments", "qualify_leads", "support", "sales", "follow_up", "custom"].includes(knowledgeBase.primaryGoal)
+      ? (knowledgeBase.primaryGoal as PrimaryGoalId)
+      : "answer_route";
   return {
     ...defaultAgent(),
     id: String(row.id ?? generateAgentId("a")),
     name: String(row.name ?? "Receptionist"),
     purpose,
+    primaryGoal: validGoal,
+    businessContext: typeof knowledgeBase.businessContext === "string" ? knowledgeBase.businessContext : "",
+    targetAudience: typeof knowledgeBase.targetAudience === "string" ? knowledgeBase.targetAudience : "",
     greeting: String(row.greeting ?? ""),
     voice: String(row.voice_id ?? DEFAULT_VOICE_ID),
     personality: mapPersonalityToSlider(row.personality),
@@ -415,6 +463,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
           phone: item.phone ?? "",
         }))
       : [],
+    learnedBehaviors: Array.isArray(rules.learnedBehaviors) ? rules.learnedBehaviors.filter(Boolean) : [],
     afterHoursMode: (knowledgeBase.afterHoursMode === "closed" || knowledgeBase.afterHoursMode === "messages" || knowledgeBase.afterHoursMode === "emergency" || knowledgeBase.afterHoursMode === "forward") ? knowledgeBase.afterHoursMode : "messages",
     bookingEnabled: knowledgeBase.bookingEnabled ?? true,
     bookingDefaultDurationMinutes: typeof knowledgeBase.bookingDefaultDurationMinutes === "number" ? knowledgeBase.bookingDefaultDurationMinutes : 30,
@@ -453,6 +502,11 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     voicemailMessage: typeof knowledgeBase.voicemailMessage === "string" ? knowledgeBase.voicemailMessage : "",
     confusedCallerHandling: typeof knowledgeBase.confusedCallerHandling === "string" ? knowledgeBase.confusedCallerHandling : defaultAgent().confusedCallerHandling,
     offTopicHandling: typeof knowledgeBase.offTopicHandling === "string" ? knowledgeBase.offTopicHandling : defaultAgent().offTopicHandling,
+    assertiveness: typeof knowledgeBase.assertiveness === "number" ? Math.max(0, Math.min(100, knowledgeBase.assertiveness)) : 50,
+    whenHesitation: typeof knowledgeBase.whenHesitation === "string" ? knowledgeBase.whenHesitation : "acknowledge_offer_info",
+    whenThinkAboutIt: typeof knowledgeBase.whenThinkAboutIt === "string" ? knowledgeBase.whenThinkAboutIt : "offer_follow_up",
+    whenPricing: typeof knowledgeBase.whenPricing === "string" ? knowledgeBase.whenPricing : "range_then_pivot",
+    whenCompetitor: typeof knowledgeBase.whenCompetitor === "string" ? knowledgeBase.whenCompetitor : "acknowledge_differentiate",
     active: Boolean(row.is_active ?? true),
     voiceSettings: {
       ...defaultAgent().voiceSettings,
@@ -493,6 +547,9 @@ function toAgentPatchPayload(agent: Agent) {
       faq: agent.faq.map((item) => ({ q: item.question, a: item.answer })),
       specialInstructions: agent.specialInstructions,
       websiteUrl: agent.websiteUrl,
+      primaryGoal: agent.primaryGoal,
+      businessContext: agent.businessContext,
+      targetAudience: agent.targetAudience,
       afterHoursMode: agent.afterHoursMode,
       bookingEnabled: agent.bookingEnabled,
       bookingDefaultDurationMinutes: agent.bookingDefaultDurationMinutes,
@@ -515,6 +572,11 @@ function toAgentPatchPayload(agent: Agent) {
       voicemailMessage: agent.voicemailMessage,
       confusedCallerHandling: agent.confusedCallerHandling,
       offTopicHandling: agent.offTopicHandling,
+      assertiveness: agent.assertiveness,
+      whenHesitation: agent.whenHesitation,
+      whenThinkAboutIt: agent.whenThinkAboutIt,
+      whenPricing: agent.whenPricing,
+      whenCompetitor: agent.whenCompetitor,
     },
     rules: {
       neverSay: agent.neverSay,
@@ -525,6 +587,7 @@ function toAgentPatchPayload(agent: Agent) {
         phrase: rule.phrase,
         phone: rule.phone,
       })),
+      learnedBehaviors: agent.learnedBehaviors,
     },
     is_active: agent.active,
   };
@@ -895,9 +958,11 @@ export default function AppAgentsPageClient({
       receptionist: "Receptionist",
       after_hours: "After-Hours",
       emergency: "Emergency Line",
-      lead_qualifier: "Lead Qualifier",
+      lead_qualifier: "Sales Caller",
       follow_up: "Follow-Up",
       review_request: "Review Request",
+      appointment_setter: "Appointment Setter",
+      support: "Support",
       scratch: "Custom Agent",
     };
     const agent: Agent = {
@@ -1260,47 +1325,43 @@ export default function AppAgentsPageClient({
               <TemplateCard
                 title="Receptionist"
                 icon={PhoneCall}
-                description="Answers every call, captures details, and books when ready."
+                description="Answer calls, route, and handle FAQs."
                 onClick={() => createAgentFromTemplate("receptionist")}
               />
               <TemplateCard
-                title="After-Hours"
-                icon={MoonStar}
-                description="Handles calls when the office is closed, forwards true emergencies."
-                onClick={() => createAgentFromTemplate("after_hours")}
-              />
-              <TemplateCard
-                title="Emergency"
-                icon={ShieldAlert}
-                description="Keeps callers calm, routes urgent issues, and records every detail."
-                onClick={() => createAgentFromTemplate("emergency")}
-              />
-              <TemplateCard
-                title="Lead Qualifier"
+                title="Sales Caller"
                 icon={ClipboardList}
-                description="Asks a short set of questions so only qualified leads reach you."
+                description="Call leads, qualify, and pitch."
                 onClick={() => createAgentFromTemplate("lead_qualifier")}
+              />
+              <TemplateCard
+                title="Appointment Setter"
+                icon={Calendar}
+                description="Book meetings, confirm, and remind."
+                onClick={() => createAgentFromTemplate("appointment_setter")}
+              />
+              <TemplateCard
+                title="Support"
+                icon={PhoneForwarded}
+                description="Triage, answer, and escalate."
+                onClick={() => createAgentFromTemplate("support")}
               />
               <TemplateCard
                 title="Follow-Up"
                 icon={BellRing}
-                description="Calls back enquiries and missed callers so nothing is dropped."
+                description="Re-engage cold leads and check in."
                 onClick={() => createAgentFromTemplate("follow_up")}
               />
               <TemplateCard
-                title="Review Request"
+                title="Custom"
                 icon={Star}
-                description="Follows up after visits to collect reviews without pressure."
-                onClick={() => createAgentFromTemplate("review_request")}
+                description="Start from scratch."
+                onClick={() => createAgentFromTemplate("scratch")}
               />
             </div>
-            <button
-              type="button"
-              onClick={() => createAgentFromTemplate("scratch")}
-              className="mt-2 text-xs text-zinc-400 hover:text-white underline underline-offset-2"
-            >
-              Create from scratch
-            </button>
+            <p className="text-xs text-zinc-500 mt-2">
+              More options: <button type="button" onClick={() => setTemplateCategory("all")} className="underline hover:text-white">After-hours</button>, <button type="button" onClick={() => createAgentFromTemplate("emergency")} className="underline hover:text-white">Emergency</button>, <button type="button" onClick={() => createAgentFromTemplate("review_request")} className="underline hover:text-white">Review Request</button>
+            </p>
             <div className="mt-6 pt-4 border-t border-zinc-800">
               <p className="text-xs font-medium text-zinc-400 mb-2">
                 Or pick by communication style (20+ templates)
@@ -1878,8 +1939,101 @@ function RulesTab({
     });
   };
 
+  const WHEN_HESITATION_OPTIONS = [
+    { id: "wait_patiently", label: "Wait patiently" },
+    { id: "ask_what_thinking", label: "Ask what they're thinking" },
+    { id: "acknowledge_offer_info", label: "Acknowledge their concern and offer more information" },
+    { id: "offer_alternatives", label: "Offer alternatives" },
+    { id: "redirect", label: "Redirect to the main point" },
+  ];
+  const WHEN_THINK_OPTIONS = [
+    { id: "accept_gracefully", label: "Accept gracefully" },
+    { id: "offer_follow_up", label: "Offer to follow up: \"I can call you back tomorrow — what time works?\"" },
+    { id: "create_urgency", label: "Create gentle urgency" },
+    { id: "ask_what_help", label: "Ask what would help them decide" },
+  ];
+  const WHEN_PRICING_OPTIONS = [
+    { id: "give_full", label: "Give full pricing" },
+    { id: "range_then_pivot", label: "Give range if available, then pivot to booking" },
+    { id: "redirect_consultation", label: "Redirect to consultation" },
+    { id: "defer_human", label: "Defer to human" },
+  ];
+  const WHEN_COMPETITOR_OPTIONS = [
+    { id: "acknowledge", label: "Acknowledge only" },
+    { id: "acknowledge_differentiate", label: "Acknowledge and differentiate without criticizing" },
+    { id: "redirect_strengths", label: "Redirect to your strengths" },
+    { id: "defer_human", label: "Defer to human" },
+  ];
+
   return (
     <div className="space-y-4 text-xs md:text-sm">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
+        <h3 className="mb-3 text-sm font-medium text-white/80">Conversation style</h3>
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center justify-between text-[11px] text-zinc-500">
+            <span>Assertiveness</span>
+            <span>Gentle ←→ Direct</span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={agent.assertiveness}
+            onChange={(e) => onChange({ assertiveness: Number(e.target.value) })}
+            className="w-full accent-white"
+          />
+        </div>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-[11px] text-zinc-500 mb-1">When the caller hesitates</label>
+            <select
+              value={agent.whenHesitation}
+              onChange={(e) => onChange({ whenHesitation: e.target.value })}
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-600"
+            >
+              {WHEN_HESITATION_OPTIONS.map((o) => (
+                <option key={o.id} value={o.id}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] text-zinc-500 mb-1">When the caller says &ldquo;let me think about it&rdquo;</label>
+            <select
+              value={agent.whenThinkAboutIt}
+              onChange={(e) => onChange({ whenThinkAboutIt: e.target.value })}
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-600"
+            >
+              {WHEN_THINK_OPTIONS.map((o) => (
+                <option key={o.id} value={o.id}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] text-zinc-500 mb-1">When the caller asks about pricing</label>
+            <select
+              value={agent.whenPricing}
+              onChange={(e) => onChange({ whenPricing: e.target.value })}
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-600"
+            >
+              {WHEN_PRICING_OPTIONS.map((o) => (
+                <option key={o.id} value={o.id}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] text-zinc-500 mb-1">When the caller mentions a competitor</label>
+            <select
+              value={agent.whenCompetitor}
+              onChange={(e) => onChange({ whenCompetitor: e.target.value })}
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-600"
+            >
+              {WHEN_COMPETITOR_OPTIONS.map((o) => (
+                <option key={o.id} value={o.id}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
       <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
         <h3 className="mb-2 text-sm font-medium text-white/80">Transfer to a human when...</h3>
         <div className="space-y-2">
@@ -2003,6 +2157,31 @@ function RulesTab({
           </div>
         )}
       </div>
+
+      {agent.learnedBehaviors.length > 0 && (
+        <div>
+          <label className="mb-2 block text-[11px] text-zinc-500">Learned behaviors (from Call Intelligence)</label>
+          <div className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/40 p-3">
+            {agent.learnedBehaviors.map((line, idx) => (
+              <div key={idx} className="flex items-start gap-2 text-sm text-zinc-300">
+                <span className="flex-1">{line}</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onChange({
+                      learnedBehaviors: agent.learnedBehaviors.filter((_, i) => i !== idx),
+                    })
+                  }
+                  className="shrink-0 text-zinc-500 hover:text-white text-xs"
+                  aria-label="Remove"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <label className="mb-2 block text-[11px] text-zinc-500">After-hours behavior</label>
@@ -2688,6 +2867,45 @@ function IdentityStepContent({
         <p className="mt-1.5 text-[11px] text-white/25">
           Outbound agents are used when you click &ldquo;Have AI call this lead&rdquo; on Leads and when you run outbound campaigns. Set to Outbound or Both so this agent can make calls.
         </p>
+      </div>
+      <div role="group" aria-labelledby="primary-goal-label">
+        <span id="primary-goal-label" className="block text-xs text-zinc-500 mb-2">Primary goal</span>
+        <select
+          value={agent.primaryGoal}
+          onChange={(e) => onChange({ primaryGoal: e.target.value as PrimaryGoalId })}
+          aria-label="Primary goal"
+          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+        >
+          <option value="answer_route">Answer questions and route callers</option>
+          <option value="book_appointments">Book appointments for my business</option>
+          <option value="qualify_leads">Qualify leads before human follow-up</option>
+          <option value="support">Handle customer support requests</option>
+          <option value="sales">Make sales or pitch calls</option>
+          <option value="follow_up">Follow up with existing contacts</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div>
+        <label htmlFor="agent-business-context" className="block text-xs text-zinc-500 mb-1.5">Business context</label>
+        <textarea
+          id="agent-business-context"
+          value={agent.businessContext}
+          onChange={(e) => onChange({ businessContext: e.target.value })}
+          placeholder="What you do, who you serve (so the AI can represent you accurately)"
+          rows={2}
+          className="w-full bg-white/[0.03] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 border border-white/[0.08] resize-none"
+        />
+      </div>
+      <div>
+        <label htmlFor="agent-target-audience" className="block text-xs text-zinc-500 mb-1.5">Target audience</label>
+        <input
+          id="agent-target-audience"
+          type="text"
+          value={agent.targetAudience}
+          onChange={(e) => onChange({ targetAudience: e.target.value })}
+          placeholder="e.g. homeowners needing plumbing, small business owners, patients calling a dental office"
+          className="w-full bg-white/[0.03] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 border border-white/[0.08]"
+        />
       </div>
       <div>
         <label htmlFor="agent-greeting" className="block text-xs text-zinc-500 mb-1.5">Opening greeting</label>

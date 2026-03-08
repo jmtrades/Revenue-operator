@@ -32,6 +32,14 @@ type AgentKnowledgeBase = {
   objections?: Array<{ trigger?: string; response?: string }>;
   confusedCallerHandling?: string | null;
   offTopicHandling?: string | null;
+  primaryGoal?: string | null;
+  businessContext?: string | null;
+  targetAudience?: string | null;
+  assertiveness?: number | null;
+  whenHesitation?: string | null;
+  whenThinkAboutIt?: string | null;
+  whenPricing?: string | null;
+  whenCompetitor?: string | null;
 };
 
 type AgentRules = {
@@ -39,6 +47,7 @@ type AgentRules = {
   alwaysTransfer?: string[];
   transferPhone?: string | null;
   transferRules?: Array<{ phrase?: string; phone?: string }>;
+  learnedBehaviors?: string[];
 };
 
 type AgentRow = {
@@ -156,6 +165,15 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
       offTopicHandling: knowledgeBase.offTopicHandling ?? null,
       businessHours,
       address: workspace.address?.trim() || null,
+      primaryGoal: knowledgeBase.primaryGoal ?? null,
+      businessContext: knowledgeBase.businessContext ?? null,
+      targetAudience: knowledgeBase.targetAudience ?? null,
+      assertiveness: knowledgeBase.assertiveness ?? null,
+      whenHesitation: knowledgeBase.whenHesitation ?? null,
+      whenThinkAboutIt: knowledgeBase.whenThinkAboutIt ?? null,
+      whenPricing: knowledgeBase.whenPricing ?? null,
+      whenCompetitor: knowledgeBase.whenCompetitor ?? null,
+      learnedBehaviors: Array.isArray(rules.learnedBehaviors) ? rules.learnedBehaviors : [],
     }),
     firstMessage: greeting,
     endCallMessage: "Thanks for calling. Have a great day!",

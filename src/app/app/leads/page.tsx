@@ -211,6 +211,7 @@ export default function LeadsPage() {
   const [csvPreviewRows, setCsvPreviewRows] = useState<Array<{ name: string; phone: string; email?: string; service_requested?: string; notes?: string }>>([]);
   const [csvImporting, setCsvImporting] = useState(false);
   const [outboundCalling, setOutboundCalling] = useState(false);
+  const [outboundCallType, setOutboundCallType] = useState<string>("");
 
   useEffect(() => {
     document.title = PAGE_TITLE;
@@ -449,11 +450,13 @@ export default function LeadsPage() {
     if (!drawerLead?.id || outboundCalling) return;
     setOutboundCalling(true);
     try {
+      const body: { lead_id: string; campaign_type?: string } = { lead_id: drawerLead.id };
+      if (outboundCallType && outboundCallType !== "default") body.campaign_type = outboundCallType;
       const res = await fetch("/api/outbound/call", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lead_id: drawerLead.id }),
+        body: JSON.stringify(body),
       });
       const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
       if (res.ok && data?.ok) {
@@ -1234,15 +1237,33 @@ export default function LeadsPage() {
                   <p className="text-xs text-zinc-500 mb-2">No calls yet for this lead.</p>
                 ) : null}
                 {drawerLead.phone ? (
-                  <button
-                    type="button"
-                    onClick={() => void handleHaveAICall()}
-                    disabled={outboundCalling}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-3 py-2 hover:bg-zinc-100 disabled:opacity-50"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    {outboundCalling ? "Starting…" : "Have AI call this lead"}
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select
+                      value={outboundCallType || "default"}
+                      onChange={(e) => setOutboundCallType(e.target.value === "default" ? "" : e.target.value)}
+                      className="text-xs rounded-xl bg-zinc-900 border border-zinc-800 px-2 py-1.5 text-zinc-200 focus:outline-none focus:border-zinc-600"
+                      aria-label="Call type"
+                    >
+                      <option value="default">Default follow-up</option>
+                      <option value="lead_followup">Lead follow-up</option>
+                      <option value="lead_qualification">Lead qualification</option>
+                      <option value="appointment_reminder">Appointment reminder</option>
+                      <option value="appointment_setting">Appointment setting</option>
+                      <option value="reactivation">Reactivation</option>
+                      <option value="cold_outreach">Cold outreach</option>
+                      <option value="review_request">Review request</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => void handleHaveAICall()}
+                      disabled={outboundCalling}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-3 py-2 hover:bg-zinc-100 disabled:opacity-50"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      {outboundCalling ? "Starting…" : "Have AI call"}
+                    </button>
+                  </div>
                 ) : (
                   <p className="text-xs text-zinc-500">Add a phone number to enable outbound calls.</p>
                 )}
