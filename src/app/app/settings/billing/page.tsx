@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { PlanChangeModal, type PlanId } from "@/components/PlanChangeModal";
 
@@ -31,6 +32,11 @@ export default function AppSettingsBillingPage() {
   const [pausing, setPausing] = useState(false);
   const [pauseStep, setPauseStep] = useState<PauseStep>(0);
   const [toast, setToast] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("plan_changed") === "1") setToast("Plan updated. Your new features are available now.");
+  }, [searchParams]);
 
   useEffect(() => {
     fetchWorkspaceMeCached()

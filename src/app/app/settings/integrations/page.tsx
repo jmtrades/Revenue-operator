@@ -134,13 +134,52 @@ export default function AppSettingsIntegrationsPage() {
     }
   };
 
+  const handleWhatsAppNotify = () => {
+    setToast("You're on the list. We'll notify you when WhatsApp is available.");
+    setTimeout(() => setToast(null), 4000);
+  };
+
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <h1 className="text-lg font-semibold text-white mb-2">Integrations</h1>
-      <p className="text-sm text-zinc-500 mb-6">Connect scheduling and operator-safe outbound events.</p>
+      <p className="text-sm text-zinc-500 mb-6">Connect your tools: channels, CRM, calendar, and automation.</p>
 
-      <div className="space-y-4">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+      <div className="space-y-6">
+        <section>
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Channels</h2>
+          <div className="space-y-3">
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-white">Phone</p>
+                  <p className="text-xs text-zinc-500 mt-1">Your AI answers calls on your connected number.</p>
+                </div>
+                <Link href="/app/settings/phone" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
+                  Manage →
+                </Link>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-white">WhatsApp Business</p>
+                  <p className="text-xs text-zinc-500 mt-1">Let your AI respond on WhatsApp too. Coming soon.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleWhatsAppNotify}
+                  className="px-3 py-1.5 rounded-xl text-xs font-medium bg-white text-black hover:bg-zinc-100 shrink-0 transition-colors"
+                >
+                  Notify me →
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Calendar</h2>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-medium text-white">Google Calendar</p>
@@ -168,9 +207,12 @@ export default function AppSettingsIntegrationsPage() {
               </div>
             </div>
           )}
-        </div>
+          </div>
+        </section>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+        <section>
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Automation & webhooks</h2>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
           <p className="text-sm font-medium text-white">Slack / Zapier webhook destination</p>
           <p className="text-xs text-zinc-500 mt-1">
             Paste a Slack incoming webhook or Zapier catch hook URL. We&apos;ll send operator-safe events only.
@@ -271,9 +313,12 @@ export default function AppSettingsIntegrationsPage() {
               </button>
             </div>
           </div>
-        </div>
+          </div>
+        </section>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+        <section>
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">CRM</h2>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
           <p className="text-sm font-medium text-white">Connect to any CRM</p>
           <p className="text-xs text-zinc-500 mt-1">
             Use the webhook URL above with Zapier, Make, or your CRM&apos;s native webhook. One URL receives lead captured, appointment booked, deal won, and more — so you can push events into HubSpot, Salesforce, Pipedrive, Zoho, or any tool that accepts webhooks.
@@ -296,7 +341,8 @@ export default function AppSettingsIntegrationsPage() {
               Integration guide
             </Link>
           </div>
-        </div>
+          </div>
+        </section>
       </div>
 
       {toast && (
