@@ -77,7 +77,7 @@ export default function SignInForm() {
             {isCreate ? "Create your account" : "Sign in"}
           </h1>
           <p className="text-white/40 text-[13px] text-center mt-1 mb-7">
-            {isCreate ? "Start your 14-day free trial" : "Sign in to continue"}
+            {isCreate ? "Start your 14-day free trial" : "Welcome back to Recall Touch"}
           </p>
 
           <form onSubmit={submit} className="space-y-3.5">

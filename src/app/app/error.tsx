@@ -37,7 +37,7 @@ export default function AppError({
             href="/app/activity"
             className="px-4 py-2.5 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition"
           >
-            Dashboard
+            Go home
           </Link>
         </div>
       </div>
