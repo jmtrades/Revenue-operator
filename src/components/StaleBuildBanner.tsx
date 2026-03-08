@@ -34,6 +34,13 @@ export function StaleBuildBanner() {
     return () => window.removeEventListener("focus", check);
   }, [check]);
 
+  // Auto-dismiss after 5 seconds if user doesn't refresh
+  useEffect(() => {
+    if (!show) return;
+    const t = window.setTimeout(() => setShow(false), 5000);
+    return () => window.clearTimeout(t);
+  }, [show]);
+
   const handleRefresh = () => {
     setRefreshing(true);
     try {
