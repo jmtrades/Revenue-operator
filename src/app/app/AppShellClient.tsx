@@ -15,13 +15,11 @@ import {
   Calendar,
   BarChart3,
   BookOpen,
-  Code,
-  Shield,
   Settings,
-  CreditCard,
   Menu,
   X,
   Lightbulb,
+  Bot,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -30,24 +28,39 @@ import {
   ONBOARDING_STEP_LABELS,
 } from "./OnboardingStepContext";
 
-const NAV_MAIN: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/activity", label: "Dashboard", icon: LayoutList },
-  { href: "/app/calls", label: "Calls", icon: PhoneCall },
-  { href: "/app/leads", label: "Leads", icon: Users },
-  { href: "/app/appointments", label: "Appointments", icon: Calendar },
-  { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
-  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
-  { href: "/app/call-intelligence", label: "Call Intelligence", icon: Lightbulb },
-  { href: "/app/compliance", label: "Compliance", icon: Shield },
-];
-
-const NAV_UTILITY: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/team", label: "Team", icon: Users },
-  { href: "/app/settings", label: "Settings", icon: Settings },
-  { href: "/app/settings/billing", label: "Billing", icon: CreditCard },
-  { href: "/app/developer", label: "Developer", icon: Code },
+const SIDEBAR_GROUPS: { label: string; items: { href: string; label: string; icon: LucideIcon }[] }[] = [
+  {
+    label: "Main",
+    items: [
+      { href: "/app/activity", label: "Dashboard", icon: LayoutList },
+      { href: "/app/agents", label: "Agents", icon: Bot },
+      { href: "/app/calls", label: "Calls", icon: PhoneCall },
+      { href: "/app/leads", label: "Leads", icon: Users },
+      { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
+    ],
+  },
+  {
+    label: "Communication",
+    items: [
+      { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
+      { href: "/app/appointments", label: "Appointments", icon: Calendar },
+    ],
+  },
+  {
+    label: "Intelligence",
+    items: [
+      { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
+      { href: "/app/call-intelligence", label: "Call Intelligence", icon: Lightbulb },
+      { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
+    ],
+  },
+  {
+    label: "Workspace",
+    items: [
+      { href: "/app/team", label: "Team", icon: Users },
+      { href: "/app/settings", label: "Settings", icon: Settings },
+    ],
+  },
 ];
 
 const MOBILE_TABS = [
@@ -58,16 +71,14 @@ const MOBILE_TABS = [
 ] as const;
 
 const MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/app/agents", label: "Agents", icon: Bot },
   { href: "/app/appointments", label: "Appointments", icon: Calendar },
   { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
   { href: "/app/call-intelligence", label: "Call Intelligence", icon: Lightbulb },
-  { href: "/app/compliance", label: "Compliance", icon: Shield },
   { href: "/app/team", label: "Team", icon: Users },
   { href: "/app/settings", label: "Settings", icon: Settings },
-  { href: "/app/settings/billing", label: "Billing", icon: CreditCard },
-  { href: "/app/developer", label: "Developer", icon: Code },
 ];
 
 export type AppShellWorkspaceMeta = {
@@ -185,39 +196,33 @@ export default function AppShellClient({
                     />
                   </div>
                 </div>
-                <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-                  {NAV_MAIN.map(({ href, label, icon: Icon }) => {
-                    const effectiveLabel =
-                      href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label;
-                    return (
-                      <Link
-                        key={href}
-                        href={href}
-                        className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors ${
-                          isActive(href)
-                            ? "border-l-blue-500 bg-white/[0.06] text-white"
-                            : "border-l-transparent text-white/50 hover:text-white/80"
-                        }`}
-                      >
-                        <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                        {effectiveLabel}
-                      </Link>
-                    );
-                  })}
-                  <div className="my-2 border-t border-zinc-800" aria-hidden />
-                  {NAV_UTILITY.map(({ href, label, icon: Icon }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors ${
-                        isActive(href)
-                          ? "border-l-blue-500 bg-white/[0.06] text-white"
-                          : "border-l-transparent text-white/50 hover:text-white/80"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                      {label}
-                    </Link>
+                <nav className="flex-1 p-3 space-y-4 overflow-y-auto" aria-label="App navigation">
+                  {SIDEBAR_GROUPS.map((group) => (
+                    <div key={group.label}>
+                      <p className="px-3 mb-1 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                        {group.label}
+                      </p>
+                      <div className="space-y-0.5">
+                        {group.items.map(({ href, label, icon: Icon }) => {
+                          const effectiveLabel =
+                            href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label;
+                          return (
+                            <Link
+                              key={href}
+                              href={href}
+                              className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors ${
+                                isActive(href)
+                                  ? "border-l-white bg-white/[0.06] text-white"
+                                  : "border-l-transparent text-white/50 hover:text-white/80"
+                              }`}
+                            >
+                              <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                              {effectiveLabel}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
                   ))}
                 </nav>
                 <div className="p-3 border-t border-zinc-800 space-y-2">

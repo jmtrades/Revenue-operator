@@ -7,6 +7,7 @@ import {
   Building2,
   ChevronRight,
   CreditCard,
+  Code,
   Link2,
   Mic2,
   Phone,
@@ -23,8 +24,9 @@ const SETTINGS_LINKS = [
   { href: "/app/settings/team", label: "Team", desc: "Members, invite, roles, escalation", icon: Users },
   { href: "/app/settings/notifications", label: "Notifications", desc: "Alerts for calls, leads, appointments", icon: Bell },
   { href: "/app/settings/integrations", label: "Integrations", desc: "Calendar, contacts, Zapier, Slack", icon: Link2 },
-  { href: "/app/settings/compliance", label: "Compliance", desc: "Recording, HIPAA, retention, export", icon: Shield },
   { href: "/app/settings/billing", label: "Billing", desc: "Plan, payment, invoices, cancel", icon: CreditCard },
+  { href: "/app/settings/compliance", label: "Compliance", desc: "Consent, recording, do-not-call", icon: Shield },
+  { href: "/app/developer", label: "Developer", desc: "API keys, webhooks, documentation", icon: Code },
 ];
 
 export default function AppSettingsPage() {

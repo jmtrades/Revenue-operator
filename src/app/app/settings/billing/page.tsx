@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { PlanChangeModal, type PlanId } from "@/components/PlanChangeModal";
 
 type CancelStep = 0 | 1 | 2 | 3 | 4;
+type PauseStep = 0 | 1;
 
 const defaultUsage = { minutesUsed: 0, minutesLimit: 400, calls: 0, leads: 0, estRevenue: 0 };
 
@@ -24,7 +26,10 @@ export default function AppSettingsBillingPage() {
   });
   const [billingStatus, setBillingStatus] = useState("trial");
   const [renewalAt, setRenewalAt] = useState<string | null>(null);
+  const [currentPlanId, setCurrentPlanId] = useState<PlanId>("starter");
+  const [planChangeOpen, setPlanChangeOpen] = useState(false);
   const [pausing, setPausing] = useState(false);
+  const [pauseStep, setPauseStep] = useState<PauseStep>(0);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,9 +47,13 @@ export default function AppSettingsBillingPage() {
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : null))
-      .then((data: { billing_status?: string; renewal_at?: string | null } | null) => {
+      .then((data: { billing_status?: string; renewal_at?: string | null; billing_tier?: string } | null) => {
         setBillingStatus(data?.billing_status ?? "trial");
         setRenewalAt(data?.renewal_at ?? null);
+        const tier = (data as { billing_tier?: string })?.billing_tier?.toLowerCase();
+        if (tier === "solo" || tier === "starter") setCurrentPlanId("starter");
+        else if (tier === "growth") setCurrentPlanId("growth");
+        else if (tier === "team" || tier === "scale") setCurrentPlanId("scale");
       })
       .catch(() => {});
   }, [workspaceId]);
@@ -56,6 +65,7 @@ export default function AppSettingsBillingPage() {
   }, [toast]);
 
   const handlePauseCoverage = async () => {
+    setPauseStep(0);
     if (!workspaceId) return;
     setPausing(true);
     try {
@@ -90,14 +100,68 @@ export default function AppSettingsBillingPage() {
           Status: {billingStatus}{renewalAt ? ` · renews ${new Date(renewalAt).toLocaleDateString()}` : ""}
         </p>
       </div>
-      <button type="button" className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-600 text-zinc-300 mb-4 block">Change plan</button>
-        <p className="text-xs text-zinc-500 mb-4">Payment method: •••• 4242</p>
+      <button
+        type="button"
+        onClick={() => setPlanChangeOpen(true)}
+        className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-600 text-zinc-300 mb-4 block hover:bg-zinc-800/50"
+        data-testid="billing-change-plan"
+        aria-haspopup="dialog"
+        aria-expanded={planChangeOpen}
+      >
+        Change plan
+      </button>
+      <PlanChangeModal
+        currentPlanId={currentPlanId}
+        isOpen={planChangeOpen}
+        onClose={() => setPlanChangeOpen(false)}
+        onSuccess={(name) => setToast(`Plan changed to ${name}. Your new features are available now.`)}
+        workspaceId={workspaceId}
+      />
+        <p className="text-xs text-zinc-500 mb-4">
+          Payment method: •••• 4242{" "}
+          <button
+            type="button"
+            onClick={async () => {
+              if (!workspaceId) return;
+              const res = await fetch("/api/billing/portal", {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ workspace_id: workspaceId, return_url: window.location.href }),
+              });
+              const data = (await res.json().catch(() => null)) as { url?: string } | null;
+              if (data?.url) window.location.href = data.url;
+              else setToast("Could not open payment settings.");
+            }}
+            className="text-zinc-400 hover:text-white ml-2"
+          >
+            Update
+          </button>
+        </p>
       <p className="text-sm text-zinc-400 mb-2">Invoice history</p>
       <div className="rounded-xl border border-zinc-800 p-3 mb-6">
-        <p className="text-xs text-zinc-500">March 2026 — $297.00</p>
+        <p className="text-xs text-zinc-500 mb-2">View and download invoices in Stripe.</p>
+        <button
+          type="button"
+          onClick={async () => {
+            if (!workspaceId) return;
+            const res = await fetch("/api/billing/portal", {
+              method: "POST",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ workspace_id: workspaceId, return_url: window.location.href }),
+            });
+            const data = (await res.json().catch(() => null)) as { url?: string } | null;
+            if (data?.url) window.location.href = data.url;
+            else setToast("Could not open billing portal.");
+          }}
+          className="text-sm text-zinc-300 hover:text-white underline underline-offset-2"
+        >
+          View invoices and payment history →
+        </button>
       </div>
       <div className="flex gap-2">
-        <button type="button" onClick={handlePauseCoverage} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-400 disabled:opacity-60">{pausing ? "Pausing…" : "Pause account"}</button>
+        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-400 disabled:opacity-60 hover:bg-zinc-800/50">{pausing ? "Pausing…" : "Pause account"}</button>
         <button
           type="button"
           onClick={() => setCancelStep(1)}
@@ -106,6 +170,21 @@ export default function AppSettingsBillingPage() {
           Cancel
         </button>
       </div>
+
+      {pauseStep === 1 && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={() => setPauseStep(0)}>
+          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-semibold text-white mb-2">Pause account</h2>
+            <p className="text-sm text-zinc-400 mb-4">
+              Pausing stops all AI calls and preserves your setup. You can resume anytime.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button type="button" onClick={() => setPauseStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">Cancel</button>
+              <button type="button" onClick={() => { void handlePauseCoverage(); }} disabled={pausing} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60">{pausing ? "Pausing…" : "Pause"}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {cancelStep >= 1 && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={() => setCancelStep(0)}>

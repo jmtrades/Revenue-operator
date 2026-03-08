@@ -39,6 +39,17 @@ export function StaleBuildBanner() {
     } catch {
       // ignore
     }
+    // Clear caches and unregister service workers so reload gets latest
+    if ("caches" in window) {
+      window.caches.keys().then((names) => {
+        names.forEach((name) => window.caches.delete(name));
+      });
+    }
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((r) => r.unregister());
+      });
+    }
     window.location.reload();
   };
 
