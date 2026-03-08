@@ -117,7 +117,7 @@ export function DemoVoiceButton() {
   return (
     <div className="flex flex-col items-center gap-2">
       {!configured && config !== null ? (
-        <p className="text-xs text-zinc-500 text-center">Voice demo — configure in app</p>
+        <p className="text-xs text-zinc-500 text-center">Voice demo not available yet. Try the text chat above.</p>
       ) : null}
       {active ? (
         <button
