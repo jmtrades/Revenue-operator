@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight } from "lucide-react";
+import { useWorkspace } from "@/components/WorkspaceContext";
 import {
   ROLE_LABELS,
+  ROLE_LABEL_OVERRIDE,
   PERMISSIONS_MATRIX,
   INVITABLE_ROLES,
   type TeamMember,
@@ -53,16 +55,87 @@ function avatarStyle(id: string): { backgroundColor: string; color: string } {
 }
 
 export default function TeamPage() {
+  const { workspaceId } = useWorkspace();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([]);
+  const [loading, setLoading] = useState(true);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<TeamRole>("agent");
+  const [inviteSending, setInviteSending] = useState(false);
+  const [inviteError, setInviteError] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const [menuMemberId, setMenuMemberId] = useState<string | null>(null);
   const [roleModalMember, setRoleModalMember] = useState<TeamMember | null>(null);
   const [removeConfirmMember, setRemoveConfirmMember] = useState<TeamMember | null>(null);
   const [rolesExpanded, setRolesExpanded] = useState(false);
+  const [resendingId, setResendingId] = useState<string | null>(null);
+  const [revokingId, setRevokingId] = useState<string | null>(null);
+
+  const fetchTeam = useCallback(() => {
+    if (!workspaceId) return;
+    setLoading(true);
+    fetch(`/api/team?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => r.json())
+      .then((data: { team?: Array<{ id: string; name: string; email: string; role: string; created_at?: string }>; pendingInvites?: Array<{ id: string; email: string; role: string; invitedAt: string }> }) => {
+        const team = data.team ?? [];
+        const now = new Date().toISOString();
+        setMembers(
+          team.map((m) => ({
+            id: m.id,
+            name: m.name,
+            email: m.email,
+            role: m.role as TeamRole,
+            lastActive: now,
+            joinedAt: m.created_at ?? now,
+          }))
+        );
+        setPendingInvites(
+          (data.pendingInvites ?? []).map((p) => ({
+            id: p.id,
+            email: p.email,
+            role: p.role as TeamRole,
+            invitedAt: p.invitedAt,
+          }))
+        );
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [workspaceId]);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    let cancelled = false;
+    queueMicrotask(() => setLoading(true));
+    fetch(`/api/team?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => r.json())
+      .then((data: { team?: Array<{ id: string; name: string; email: string; role: string; created_at?: string }>; pendingInvites?: Array<{ id: string; email: string; role: string; invitedAt: string }> }) => {
+        if (cancelled) return;
+        const team = data.team ?? [];
+        const now = new Date().toISOString();
+        setMembers(
+          team.map((m) => ({
+            id: m.id,
+            name: m.name,
+            email: m.email,
+            role: m.role as TeamRole,
+            lastActive: now,
+            joinedAt: m.created_at ?? now,
+          }))
+        );
+        setPendingInvites(
+          (data.pendingInvites ?? []).map((p) => ({
+            id: p.id,
+            email: p.email,
+            role: p.role as TeamRole,
+            invitedAt: p.invitedAt,
+          }))
+        );
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [workspaceId]);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -71,21 +144,34 @@ export default function TeamPage() {
   }, []);
 
   const handleSendInvite = useCallback(() => {
-    if (!inviteEmail.trim()) return;
-    setPendingInvites((prev) => [
-      ...prev,
-      {
-        id: `inv-${Date.now()}`,
+    if (!inviteEmail.trim() || !workspaceId || inviteSending) return;
+    setInviteError(null);
+    setInviteSending(true);
+    fetch("/api/team/invite", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        workspace_id: workspaceId,
         email: inviteEmail.trim(),
         role: inviteRole,
-        invitedAt: new Date().toISOString(),
-      },
-    ]);
-    showToast(`Invitation sent to ${inviteEmail.trim()}`);
-    setInviteModalOpen(false);
-    setInviteEmail("");
-    setInviteRole("agent");
-  }, [inviteEmail, inviteRole, showToast]);
+      }),
+    })
+      .then((r) => r.json())
+      .then((data: { ok?: boolean; error?: string }) => {
+        if (data.ok) {
+          showToast(`Invite sent to ${inviteEmail.trim()}`);
+          setInviteModalOpen(false);
+          setInviteEmail("");
+          setInviteRole("agent");
+          fetchTeam();
+        } else {
+          setInviteError(data.error ?? "Failed to send invite. Try again.");
+        }
+      })
+      .catch(() => setInviteError("Failed to send invite. Try again."))
+      .finally(() => setInviteSending(false));
+  }, [inviteEmail, inviteRole, workspaceId, inviteSending, showToast, fetchTeam]);
 
   const handleChangeRole = useCallback((memberId: string, newRole: TeamRole) => {
     setMembers((prev) =>
@@ -103,13 +189,57 @@ export default function TeamPage() {
 
   const invitableRoleOptions = INVITABLE_ROLES.map((r) => ({ value: r, label: ROLE_LABELS[r] }));
 
+  const handleResendInvite = useCallback((inviteId: string) => {
+    if (!workspaceId || resendingId) return;
+    setResendingId(inviteId);
+    fetch("/api/team/invite/resend", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workspace_id: workspaceId, invite_id: inviteId }),
+    })
+      .then((r) => r.json())
+      .then((data: { ok?: boolean; error?: string }) => {
+        if (data.ok) {
+          showToast("Invite resent.");
+          fetchTeam();
+        } else {
+          showToast(data.error ?? "Failed to resend.");
+        }
+      })
+      .catch(() => showToast("Failed to resend."))
+      .finally(() => setResendingId(null));
+  }, [workspaceId, resendingId, showToast, fetchTeam]);
+
+  const handleRevokeInvite = useCallback((inviteId: string) => {
+    if (!workspaceId || revokingId) return;
+    setRevokingId(inviteId);
+    fetch("/api/team/invite/revoke", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workspace_id: workspaceId, invite_id: inviteId }),
+    })
+      .then((r) => r.json())
+      .then((data: { ok?: boolean; error?: string }) => {
+        if (data.ok) {
+          showToast("Invite revoked.");
+          fetchTeam();
+        } else {
+          showToast(data.error ?? "Failed to revoke.");
+        }
+      })
+      .catch(() => showToast("Failed to revoke."))
+      .finally(() => setRevokingId(null));
+  }, [workspaceId, revokingId, showToast, fetchTeam]);
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="p-4 md:p-6 lg:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold text-white">Team</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">{members.length} members</p>
+            <p className="text-sm text-zinc-500 mt-0.5">{loading ? "Loading…" : `${members.length} member${members.length === 1 ? "" : "s"}`}</p>
           </div>
           <button
             type="button"
@@ -198,7 +328,7 @@ export default function TeamPage() {
                             : "bg-zinc-700 text-zinc-400"
                     }`}
                   >
-                    {ROLE_LABELS[member.role]}
+                    {ROLE_LABEL_OVERRIDE[member.role] ?? ROLE_LABELS[member.role]}
                   </span>
                   <span className="text-[10px] text-zinc-500">Last active {formatRelative(member.lastActive)}</span>
                 </div>
@@ -215,12 +345,30 @@ export default function TeamPage() {
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-4">
               <ul className="space-y-2">
                 {pendingInvites.map((inv) => (
-                  <li key={inv.id} className="flex items-center justify-between gap-2 py-2 border-b border-zinc-800/80 last:border-0">
+                  <li key={inv.id} className="flex flex-wrap items-center justify-between gap-2 py-2 border-b border-zinc-800/80 last:border-0">
                     <div>
                       <span className="text-sm text-zinc-300">{inv.email}</span>
                       <span className="ml-2 text-xs text-zinc-500">— {ROLE_LABELS[inv.role]}</span>
                     </div>
-                    <span className="text-[10px] text-zinc-600">Invited {formatRelative(inv.invitedAt)}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-zinc-600">Invited {formatRelative(inv.invitedAt)}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleResendInvite(inv.id)}
+                        disabled={resendingId === inv.id}
+                        className="text-xs font-medium text-zinc-400 hover:text-white disabled:opacity-50"
+                      >
+                        {resendingId === inv.id ? "Sending…" : "Resend"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRevokeInvite(inv.id)}
+                        disabled={revokingId === inv.id}
+                        className="text-xs font-medium text-red-400 hover:text-red-300 disabled:opacity-50"
+                      >
+                        {revokingId === inv.id ? "Revoking…" : "Revoke"}
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -273,12 +421,15 @@ export default function TeamPage() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-white mb-4">Invite team member</h3>
             <div className="space-y-4">
+              {inviteError && (
+                <p className="text-sm text-red-400" role="alert">{inviteError}</p>
+              )}
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
                 <input
                   type="email"
                   value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
+                  onChange={(e) => { setInviteEmail(e.target.value); setInviteError(null); }}
                   placeholder="colleague@company.com"
                   className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 text-sm"
                 />
@@ -297,11 +448,11 @@ export default function TeamPage() {
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button type="button" onClick={() => setInviteModalOpen(false)} className="px-4 py-2 rounded-xl text-sm text-zinc-400 border border-zinc-700 hover:bg-zinc-800">
+              <button type="button" onClick={() => { setInviteModalOpen(false); setInviteError(null); }} className="px-4 py-2 rounded-xl text-sm text-zinc-400 border border-zinc-700 hover:bg-zinc-800">
                 Cancel
               </button>
-              <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
-                Send Invite
+              <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim() || inviteSending} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
+                {inviteSending ? "Sending…" : "Send Invite"}
               </button>
             </div>
           </div>

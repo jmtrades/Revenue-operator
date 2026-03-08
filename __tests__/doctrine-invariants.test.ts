@@ -134,7 +134,10 @@ describe("Doctrine invariants", () => {
     for (const file of apiFiles) {
       const content = readFileSync(join(process.cwd(), file), "utf-8");
       const lines = content.split("\n");
-      const isWorkspaceOrLeadScoped = file.includes("workspaces/[id]") || file.includes("leads/[id]");
+      const isWorkspaceOrLeadScoped =
+        file.includes("workspaces/[id]") ||
+        file.includes("leads/[id]") ||
+        file.includes("leads/by-phone"); // workspace-scoped lookup for messages
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];

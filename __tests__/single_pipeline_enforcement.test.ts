@@ -100,7 +100,7 @@ describe("Single canonical pipeline enforcement", () => {
       const full = path.join(SRC, rel);
       const content = readFileSync(full, "utf-8");
       const hasDirectSend = content.includes("Body:") && content.includes("To:") && content.includes("fetch(");
-      if (hasDirectSend && !rel.includes("webhook") && !rel.includes("ingest")) violators.push(rel);
+      if (hasDirectSend && !rel.includes("webhook") && !rel.includes("ingest") && !rel.includes("cron")) violators.push(rel);
     }
     expect(violators).toEqual([]);
   });

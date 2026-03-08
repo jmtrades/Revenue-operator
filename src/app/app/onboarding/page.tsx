@@ -16,12 +16,8 @@ import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
-import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
-
-const ONBOARDING_INDUSTRY_PRIMARY = INDUSTRY_OPTIONS.slice(0, 8);
-const ONBOARDING_INDUSTRY_REST = INDUSTRY_OPTIONS.slice(8);
+import { USE_CASE_OPTIONS } from "@/lib/constants/use-cases";
 import { buildStarterKnowledge, mergeKnowledgeItems, type KnowledgeItem } from "@/lib/workspace/starter-knowledge";
-import { getIndustryLabel } from "@/lib/constants/industries";
 import { invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 const STEPS = 5;
@@ -100,11 +96,10 @@ export default function AppOnboardingPage() {
 
   const [businessName, setBusinessName] = useState("");
   const [website, setWebsite] = useState("");
-  const [industry, setIndustry] = useState("");
+  const [useCases, setUseCases] = useState<string[]>([]);
   const [address, setAddress] = useState("");
   const [_timezone, setTimezone] = useState("America/Los_Angeles");
   const [businessPhone, setBusinessPhone] = useState("");
-  const [showAllIndustries, setShowAllIndustries] = useState(false);
 
   useEffect(() => {
     const apply = () => {
@@ -113,7 +108,6 @@ export default function AppOnboardingPage() {
         if (raw) {
           const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
           if (d?.businessName?.trim()) setBusinessName(d.businessName.trim());
-          if (d?.industry?.trim() || d?.businessType?.trim()) setIndustry(d?.industry ?? d?.businessType ?? "");
           if (d?.website?.trim()) setWebsite(d.website.trim());
         }
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
@@ -165,7 +159,7 @@ export default function AppOnboardingPage() {
       thursday: { start: "09:00", end: "17:00" },
       friday: { start: "09:00", end: "17:00" },
     };
-    const starter = buildStarterKnowledge({ industry, address, businessHours: defaultHours, services });
+    const starter = buildStarterKnowledge({ useCases, address, businessHours: defaultHours, services });
     const merged = mergeKnowledgeItems(knowledgeItems, starter);
 
     try {
@@ -178,7 +172,7 @@ export default function AppOnboardingPage() {
           businessPhone: businessPhone || null,
           website,
           address,
-          industry,
+          useCases: useCases.length ? useCases : undefined,
           agentName,
           greeting: greetingToPlay,
           knowledgeItems: merged,
@@ -256,33 +250,50 @@ export default function AppOnboardingPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">Industry</label>
+              <label className="block text-xs font-medium mb-1.5 text-zinc-400">What will your AI handle?</label>
+              <p className="text-[11px] text-white/40 mb-2">Select all that apply. This shapes your default knowledge and agent behavior.</p>
               <div className="flex flex-wrap gap-2">
-                {(showAllIndustries ? INDUSTRY_OPTIONS : ONBOARDING_INDUSTRY_PRIMARY).map(({ id, label }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => setIndustry(id)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
-                      industry === id ? "bg-white/[0.1] border-white/30 text-white" : "bg-transparent border-white/[0.08] text-white/70 hover:text-white"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+                {USE_CASE_OPTIONS.map(({ id, label }) => {
+                  const selected = useCases.includes(id);
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setUseCases((prev) => (selected ? prev.filter((x) => x !== id) : [...prev, id]))}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                        selected ? "bg-white/[0.1] border-white/30 text-white" : "bg-transparent border-white/[0.08] text-white/70 hover:text-white"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
-              {ONBOARDING_INDUSTRY_REST.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllIndustries((v) => !v)}
-                  className="mt-2 text-xs text-zinc-400 hover:text-white underline underline-offset-2"
-                >
-                  {showAllIndustries ? "Show less" : "See all industries"}
-                </button>
-              )}
             </div>
             <div>
-              <label htmlFor="onboarding-phone" className="block text-xs font-medium mb-1.5 text-zinc-400">Phone number (we&apos;ll call it to verify)</label>
+              <label htmlFor="onboarding-website" className="block text-xs font-medium mb-1.5 text-zinc-400">Website</label>
+              <input
+                id="onboarding-website"
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://yoursite.com"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none text-base"
+              />
+            </div>
+            <div>
+              <label htmlFor="onboarding-address" className="block text-xs font-medium mb-1.5 text-zinc-400">Address</label>
+              <input
+                id="onboarding-address"
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="123 Main St, City, State"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none text-base"
+              />
+            </div>
+            <div>
+              <label htmlFor="onboarding-phone" className="block text-xs font-medium mb-1.5 text-zinc-400">Phone number (we&apos;ll send a code to verify)</label>
               <input
                 id="onboarding-phone"
                 type="tel"
@@ -452,13 +463,13 @@ export default function AppOnboardingPage() {
             {!starterAdded && (
               <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <p className="text-sm text-zinc-300">
-                  <span className="text-white font-medium">We&apos;ve prepared 5 starter entries</span> for {getIndustryLabel(industry || null)} businesses. You can edit them or add your own.
+                  <span className="text-white font-medium">We&apos;ve prepared starter entries</span> based on what you selected. You can edit them or add your own.
                 </p>
                 <button
                   type="button"
                   onClick={() => {
                     const starter = buildStarterKnowledge({
-                      industry: industry || null,
+                      useCases: useCases.length > 0 ? useCases : null,
                       address: address || null,
                       businessHours: { monday: { start: "09:00", end: "17:00" }, tuesday: { start: "09:00", end: "17:00" }, wednesday: { start: "09:00", end: "17:00" }, thursday: { start: "09:00", end: "17:00" }, friday: { start: "09:00", end: "17:00" } },
                       services: services.length > 0 ? services : null,

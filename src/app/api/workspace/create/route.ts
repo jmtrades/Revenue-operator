@@ -17,6 +17,7 @@ interface OnboardingPayload {
   website?: string;
   address?: string;
   industry?: string;
+  useCases?: string[];
   orgType?: string;
   agentTemplate?: string;
   agentName?: string;
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
   const website = typeof body.website === "string" ? body.website.trim() || null : null;
   const address = typeof body.address === "string" ? body.address.trim() || null : null;
   const industry = typeof body.industry === "string" ? body.industry.trim() || null : null;
+  const useCases = Array.isArray(body.useCases) ? body.useCases.filter((u): u is string => typeof u === "string") : null;
   const agentTemplate = typeof body.agentTemplate === "string" ? body.agentTemplate : null;
   const agentName = typeof body.agentName === "string" ? body.agentName : null;
   const greeting = typeof body.greeting === "string" ? body.greeting : null;
@@ -72,6 +74,7 @@ export async function POST(req: NextRequest) {
 
     const starterKnowledge = buildStarterKnowledge({
       industry,
+      useCases,
       address,
       businessHours,
     });

@@ -21,7 +21,7 @@ You are implementing the Recall Touch marketing website to Linear/Stripe-grade q
 ## Components
 
 - **Navbar**: Sticky, backdrop-blur on scroll, 64px height. Logo + Product, Pricing, Documentation + Sign in (ghost) + Start free (primary).
-- **Buttons**: `.btn-marketing-primary` (filled blue), `.btn-marketing-ghost` (border only). Large variant: `.btn-lg`.
+- **Buttons**: `.btn-marketing-primary` (filled white, text black — no blue). `.btn-marketing-ghost` (border only). Large variant: `.btn-lg`.
 - **Cards**: `.card-marketing` — surface bg, 1px border, 12px radius, hover border/background transition.
 - **Section label**: `.section-label` — 12px uppercase, letter-spacing 0.1em, `--accent-primary` color.
 

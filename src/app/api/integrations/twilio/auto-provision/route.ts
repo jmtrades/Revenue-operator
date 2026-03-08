@@ -12,17 +12,17 @@ import { getSession } from "@/lib/auth/request-session";
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
   let workspaceId = session?.workspaceId;
-  if (!workspaceId) {
-    try {
-      const body = await req.json().catch(() => ({}));
-      workspaceId = (body as { workspace_id?: string }).workspace_id?.trim();
-    } catch {
-      // ignore
-    }
+  let body: { workspace_id?: string; area_code?: string } = {};
+  try {
+    body = (await req.json().catch(() => ({}))) as { workspace_id?: string; area_code?: string };
+  } catch {
+    // ignore
   }
+  if (!workspaceId) workspaceId = body.workspace_id?.trim() ?? undefined;
   if (!workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const areaCode = body.area_code?.replace(/\D/g, "").slice(0, 3);
 
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).single();
@@ -61,9 +61,11 @@ export async function POST(req: NextRequest) {
     let phoneNumber: string | null = null;
     let phoneSid: string | null = null;
 
-    // Try to purchase a new number first
+    // Try to purchase a new number first (optionally in user's area code)
     try {
-      const searchUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/Local.json?SmsEnabled=true&Limit=1`;
+      const searchParams = new URLSearchParams({ SmsEnabled: "true", Limit: "1" });
+      if (areaCode && areaCode.length === 3) searchParams.set("AreaCode", areaCode);
+      const searchUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/Local.json?${searchParams.toString()}`;
       const searchRes = await fetch(searchUrl, {
         headers: {
           Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),

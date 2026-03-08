@@ -99,8 +99,7 @@ export function WorkspaceVoiceButton({
       },
     ]);
     try {
-      const pkg = ["@vapi-", String.fromCharCode(97, 105), "/web"].join("");
-      const { default: Vapi } = await import(pkg);
+      const { default: Vapi } = await import("@vapi-ai/web");
       const client = new Vapi(config.publicKey) as VapiClient;
       setVapi(client);
 

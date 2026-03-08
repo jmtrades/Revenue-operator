@@ -16,12 +16,15 @@ export async function GET(req: NextRequest) {
   }
 
   const db = getDb();
-  const { data } = await db
-    .from("phone_configs")
-    .select("proxy_number, status, outbound_from_number, whatsapp_enabled")
-    .eq("workspace_id", session.workspaceId)
-    .eq("status", "active")
-    .maybeSingle();
+  const [{ data }, { data: ws }] = await Promise.all([
+    db
+      .from("phone_configs")
+      .select("proxy_number, status, outbound_from_number, whatsapp_enabled")
+      .eq("workspace_id", session.workspaceId)
+      .eq("status", "active")
+      .maybeSingle(),
+    db.from("workspaces").select("verified_phone").eq("id", session.workspaceId).single(),
+  ]);
 
   const cfg = data as {
     proxy_number?: string | null;
@@ -29,11 +32,13 @@ export async function GET(req: NextRequest) {
     outbound_from_number?: string | null;
     whatsapp_enabled?: boolean | null;
   } | null;
+  const workspace = ws as { verified_phone?: string | null } | null;
   return NextResponse.json({
     phone_number: cfg?.proxy_number ?? null,
     status: cfg?.status ?? null,
     outbound_from_number: cfg?.outbound_from_number ?? null,
     whatsapp_enabled: cfg?.whatsapp_enabled ?? false,
+    verified_phone: workspace?.verified_phone ?? null,
   });
 }
 
