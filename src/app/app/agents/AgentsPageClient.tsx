@@ -1006,7 +1006,7 @@ export default function AppAgentsPageClient({
       </button>
 
       {loading ? (
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1.7fr)] gap-4 lg:gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1.7fr)] gap-4 lg:gap-6 items-start">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 animate-pulse" aria-hidden>
@@ -1024,7 +1024,7 @@ export default function AppAgentsPageClient({
           </div>
         </div>
       ) : (
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1.7fr)] gap-4 lg:gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1.7fr)] gap-4 lg:gap-6 items-start">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {agents.map((agent) => (
             <button
@@ -1161,7 +1161,7 @@ export default function AppAgentsPageClient({
                   </button>
                 </div>
               </div>
-              <div className="flex-1 min-w-0 bg-white/[0.01] border border-white/[0.06] rounded-2xl p-6 overflow-y-auto relative" aria-labelledby="agent-step-heading">
+              <div className="flex-1 min-w-[280px] bg-white/[0.01] border border-white/[0.06] rounded-2xl p-6 overflow-y-auto overflow-x-auto relative" aria-labelledby="agent-step-heading">
                 {saving && <div className="absolute top-3 right-3 text-xs text-white/30">Saving...</div>}
                 <h2 id="agent-step-heading" className="text-xs text-zinc-500 mb-4 font-normal">
                   Currently on: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}

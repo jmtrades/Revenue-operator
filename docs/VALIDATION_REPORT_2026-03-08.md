@@ -68,8 +68,9 @@ Returning users with old cached bundles may still see #418 until they hard-refre
 
 ## Visual / polish
 
+- **Behavior panel:** Right-side content panel widened so labels (e.g. "Take message and notify") don't truncate: grid right column `minmax(320px, 1.7fr)`, content panel `min-w-[280px]` and `overflow-x-auto` (AgentsPageClient).
 - **5/8 widget:** Removed from `/app` sidebar (AppShellClient). The `/dashboard` layout does not render OnboardingChecklist (only nav + WorkspaceSelect). If you still see it, try a hard refresh or incognito.
-- **Workspace name:** Align "My Workspace" vs "Live Test Company" (single source of truth).
+- **Workspace name:** Align "My Workspace" vs "Live Test Company" (single source of truth; fallbacks use "My Workspace", user-set business name may show elsewhere).
 - **Performance:** Initial load 8+ seconds on onboarding — investigate (code-split, RSC payload, network).
 
 ---
