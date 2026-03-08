@@ -45,6 +45,14 @@ export default function HydrationGate({
 }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    // Unregister service workers so deploys don't serve stale cached responses
+    if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((r) => r.unregister());
+      });
+    }
+  }, []);
+  useEffect(() => {
     // Defer so setState is not synchronous in effect (avoids lint); ensures client-only render of app.
     const t = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(t);

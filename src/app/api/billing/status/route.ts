@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const { data: ws } = await db
     .from("workspaces")
-    .select("billing_status, protection_renewal_at, stripe_customer_id, stripe_subscription_id, created_at, status, pause_reason")
+    .select("billing_status, protection_renewal_at, stripe_customer_id, stripe_subscription_id, created_at, status, pause_reason, billing_tier")
     .eq("id", workspaceId)
     .single();
 
@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
     created_at?: string;
     status?: string | null;
     pause_reason?: string | null;
+    billing_tier?: string | null;
   };
 
   const trialEnd = row.protection_renewal_at
@@ -56,5 +57,6 @@ export async function GET(req: NextRequest) {
     stripe_customer_id: row.stripe_customer_id,
     has_subscription: Boolean(row.stripe_subscription_id),
     has_upcoming_booking_24h: has_upcoming_booking_24h,
+    billing_tier: row.billing_tier ?? "solo",
   });
 }
