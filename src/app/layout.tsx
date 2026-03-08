@@ -84,7 +84,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <head>
+      <head suppressHydrationWarning>
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
       </head>
       <body
