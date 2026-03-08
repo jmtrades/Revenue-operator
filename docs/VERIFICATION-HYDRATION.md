@@ -2,6 +2,8 @@
 
 After deploying the Recall Touch app, run these checks in an **incognito/private** window to confirm that the hydration fix is effective and that interactive elements work.
 
+**Hydration hardening in place:** Root layout has `suppressHydrationWarning` on `<html>`, `<head>`, and `<body>` to avoid #418 from html-level mismatches (e.g. browser extensions). App layout uses HydrationGate + skeleton; SwCleanup unregisters Service Workers and clears caches; `generateBuildId` forces new chunk names per build.
+
 ## 1. Console: no React #418 errors
 
 1. Open your deployed app URL (e.g. `https://www.recall-touch.com`).
