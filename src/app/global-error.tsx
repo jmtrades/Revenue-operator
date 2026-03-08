@@ -28,19 +28,17 @@ export default function GlobalError({
             <p className="text-sm mb-6" style={{ color: "#9ca3af" }}>
               Something went wrong. You can try again or go home.
             </p>
-            <div className="flex gap-3 justify-center">
+            <div className="flex gap-3 justify-center flex-wrap">
               <button
                 type="button"
                 onClick={() => reset()}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
-                style={{ background: "#1f2937", borderColor: "#374151", borderWidth: "1px", color: "#e5e7eb" }}
+                className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition"
               >
                 Try again
               </button>
               <Link
                 href="/"
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
-                style={{ background: "#1f2937", borderColor: "#374151", borderWidth: "1px", color: "#e5e7eb" }}
+                className="px-6 py-3 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:text-white transition"
               >
                 Go home
               </Link>

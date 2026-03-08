@@ -107,7 +107,7 @@ type Agent = {
 export type StepId = "identity" | "voice" | "knowledge" | "behavior" | "test" | "golive";
 
 const SETUP_STEPS: { id: StepId; label: string; description: string }[] = [
-  { id: "identity", label: "Identity", description: "Who is this agent?" },
+  { id: "identity", label: "Mission", description: "What does this agent do?" },
   { id: "voice", label: "Voice", description: "How does it sound?" },
   { id: "knowledge", label: "Knowledge", description: "What does it know?" },
   { id: "behavior", label: "Behavior", description: "How does it act?" },
@@ -1161,7 +1161,7 @@ export default function AppAgentsPageClient({
                   </button>
                 </div>
               </div>
-              <div className="flex-1 min-w-[280px] bg-white/[0.01] border border-white/[0.06] rounded-2xl p-6 overflow-y-auto overflow-x-auto relative" aria-labelledby="agent-step-heading">
+              <div className="flex-1 min-w-[340px] max-w-[560px] bg-white/[0.01] border border-white/[0.06] rounded-2xl p-6 overflow-y-auto overflow-x-auto relative" aria-labelledby="agent-step-heading">
                 {saving && <div className="absolute top-3 right-3 text-xs text-white/30">Saving...</div>}
                 <h2 id="agent-step-heading" className="text-xs text-zinc-500 mb-4 font-normal">
                   Currently on: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
@@ -2461,14 +2461,32 @@ const TestTab = forwardRef<TestTabRef, {
       };
       clientRef.current = client;
 
-      client.on("call-start", () => setStatus("active"));
+      const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
+        if (clientRef.current) {
+          clientRef.current.stop();
+          clientRef.current = null;
+          setStatus("idle");
+          setError("Connection timed out. Check your microphone and try again.");
+        }
+      }, 15000);
+
+      client.on("call-start", () => {
+        clearTimeout(timeoutId);
+        setStatus("active");
+      });
       client.on("call-end", () => {
+        clearTimeout(timeoutId);
         setStatus("ended");
         clientRef.current = null;
       });
-      client.on("error", () => {
+      client.on("error", (payload?: unknown) => {
+        clearTimeout(timeoutId);
         setStatus("idle");
-        setError("Call failed. Check your microphone and try again.");
+        const msg =
+          payload && typeof payload === "object" && payload !== null && "message" in payload
+            ? String((payload as { message?: unknown }).message || "").trim()
+            : "";
+        setError(msg || "Call failed. Check your microphone and try again.");
         clientRef.current = null;
       });
       client.on("message", (payload?: unknown) => {
@@ -2490,7 +2508,8 @@ const TestTab = forwardRef<TestTabRef, {
       await client.start(assistantId);
     } catch (err) {
       setStatus("idle");
-      setError(err instanceof Error ? err.message : "Could not start test call");
+      const msg = err instanceof Error ? err.message : typeof err === "string" ? err : "";
+      setError(msg.trim() || "Could not start test call");
     }
   }, [agent.vapiAgentId, onPrepareAgent]);
 
@@ -2626,7 +2645,7 @@ function IdentityStepContent({
   const showGreetingError = triedContinue && !greetingValid;
   return (
     <div className="space-y-6">
-      <h3 id="identity-heading" className="text-sm font-semibold text-white">Who is this agent?</h3>
+      <h3 id="identity-heading" className="text-sm font-semibold text-white">What does this agent do?</h3>
       <div>
         <label htmlFor="agent-name" className="block text-xs text-zinc-500 mb-1.5">Agent name</label>
         <input

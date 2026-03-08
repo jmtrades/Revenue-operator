@@ -27,6 +27,9 @@ export const ROLE_LABELS: Record<TeamRole, string> = {
   manager: "Manager",
   agent: "Agent",
 };
+export const ROLE_LABEL_OVERRIDE: Record<string, string> = {
+  operator: "Agent",
+};
 
 export const ROLE_DESCRIPTIONS: Record<TeamRole, string> = {
   owner: "Full access, billing, can delete account",

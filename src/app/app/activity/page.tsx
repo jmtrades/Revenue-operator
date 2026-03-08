@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   CalendarCheck,
@@ -152,6 +153,7 @@ function persistActivitySnapshot(cards: ActivityCard[]) {
 }
 
 export default function AppActivityPage() {
+  const searchParams = useSearchParams();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as
     | {
@@ -170,9 +172,25 @@ export default function AppActivityPage() {
   const [selectedCard, setSelectedCard] = useState<ActivityCard | null>(null);
   const [cards, setCards] = useState<ActivityCard[]>(() => readActivitySnapshot());
   const [loading, setLoading] = useState(() => readActivitySnapshot().length === 0);
+  const [loadError, setLoadError] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [systemEvents, setSystemEvents] = useState<Array<{ id: string; title: string; body: string; href: string }>>(
     () => workspaceSnapshot?.systemEvents ?? [],
   );
+  const [welcomeToast, setWelcomeToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    const welcome = searchParams.get("welcome");
+    if (welcome && typeof welcome === "string") {
+      const message = `Welcome to ${decodeURIComponent(welcome)}!`;
+      const url = new URL(window.location.href);
+      url.searchParams.delete("welcome");
+      window.history.replaceState({}, "", url.pathname + url.search);
+      queueMicrotask(() => setWelcomeToast(message));
+      const t = setTimeout(() => setWelcomeToast(null), 4000);
+      return () => clearTimeout(t);
+    }
+  }, [searchParams]);
   const [nextStepHref, setNextStepHref] = useState(
     () => workspaceSnapshot?.progress?.nextStep?.href || "/app/settings/phone",
   );
@@ -201,6 +219,7 @@ export default function AppActivityPage() {
         return r.json();
       })
       .then((data: { calls?: CallRecord[] }) => {
+        setLoadError(false);
         const calls = (data.calls ?? []).slice(0, 20);
         const mapped: ActivityCard[] = calls.map((c) => {
           const name =
@@ -242,9 +261,9 @@ export default function AppActivityPage() {
         setCards(mapped);
         persistActivitySnapshot(mapped);
       })
-      .catch(() => {})
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
-  }, [workspaceId]);
+  }, [workspaceId, refreshKey]);
 
   useEffect(() => {
     fetchWorkspaceMeCached()
@@ -294,6 +313,11 @@ export default function AppActivityPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
+      {welcomeToast && (
+        <div role="status" aria-live="polite" className="fixed right-4 top-4 z-50 max-w-[calc(100vw-2rem)] rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white shadow-lg">
+          {welcomeToast}
+        </div>
+      )}
       <div className="flex items-center justify-between gap-4 mb-4">
         <h1 className="text-lg font-semibold text-white">Activity</h1>
         <ActivityDateLabel />
@@ -396,7 +420,20 @@ export default function AppActivityPage() {
         ))}
       </div>
 
-      {loading && cards.length === 0 && (
+      {loadError && (
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4 mb-4" role="alert">
+          <p className="text-sm text-red-200">We couldn’t load activity. Check your connection and try again.</p>
+          <button
+            type="button"
+            onClick={() => { setLoadError(false); setLoading(true); setRefreshKey((k) => k + 1); }}
+            className="mt-3 px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-black hover:bg-zinc-100"
+            aria-label="Retry loading activity"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+      {loading && cards.length === 0 && !loadError && (
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-500 mb-4">
           Loading recent activity…
         </div>

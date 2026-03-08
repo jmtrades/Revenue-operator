@@ -49,7 +49,9 @@ export default function SignInForm() {
         setBusy(false);
         return;
       }
-      const redirect = (d as { redirectTo?: string }).redirectTo || "/app/activity";
+      const nextUrl = sp?.get("next")?.trim();
+      const safeNext = nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//") ? nextUrl : null;
+      const redirect = safeNext || (d as { redirectTo?: string }).redirectTo || "/app/activity";
       window.location.href = redirect;
     } catch {
       setErr("Network error — please try again");
@@ -60,7 +62,9 @@ export default function SignInForm() {
   async function google() {
     setGoogleBusy(true);
     const params = new URLSearchParams();
-    params.set("next", isCreate ? "/app/onboarding" : "/app/activity");
+    const nextUrl = sp?.get("next")?.trim();
+    const safeNext = nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//") ? nextUrl : null;
+    params.set("next", safeNext || (isCreate ? "/app/onboarding" : "/app/activity"));
     window.location.href = `/api/auth/google?${params.toString()}`;
   }
 
@@ -132,8 +136,18 @@ export default function SignInForm() {
               </div>
             )}
             {(err || oauthErrorMessage) && (
-              <div className="px-3.5 py-2.5 bg-red-500/[0.08] border border-red-500/20 rounded-xl text-red-400 text-[13px]">
-                {err || oauthErrorMessage}
+              <div className="space-y-2">
+                <div className="px-3.5 py-2.5 bg-red-500/[0.08] border border-red-500/20 rounded-xl text-red-400 text-[13px]">
+                  {err || oauthErrorMessage}
+                </div>
+                {!isCreate && (
+                  <p className="text-[13px] text-white/50">
+                    No account?{" "}
+                    <Link href="/sign-in?create=1" className="text-white font-medium hover:underline">
+                      Start free →
+                    </Link>
+                  </p>
+                )}
               </div>
             )}
             <button

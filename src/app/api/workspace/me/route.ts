@@ -20,6 +20,7 @@ type WorkspaceRow = {
   industry?: string | null;
   address?: string | null;
   onboarding_completed_at?: string | null;
+  verified_phone?: string | null;
 };
 
 export async function GET(req: NextRequest) {
@@ -114,6 +115,7 @@ export async function GET(req: NextRequest) {
       industry: row.industry ?? "",
       address: row.address ?? "",
       onboardingCompletedAt: row.onboarding_completed_at ?? null,
+      verifiedPhone: row.verified_phone ?? null,
       demoMode: readiness.showBanner,
       banner: {
         show: readiness.showBanner,

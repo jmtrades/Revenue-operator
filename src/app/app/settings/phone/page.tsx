@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   fetchWorkspaceMeCached,
@@ -18,6 +18,19 @@ function formatPhoneNumber(num: string | null): string {
     return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
   }
   return num;
+}
+
+/** Normalize to E.164 for API: 10 digits → +1..., 11 starting with 1 → +1... */
+function toE164(value: string): string | null {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+  if (digits.length >= 10 && digits.length <= 15) return `+${digits}`;
+  return null;
+}
+
+function digitsOnly(value: string): string {
+  return value.replace(/\D/g, "");
 }
 
 type PhoneSettingsSnapshot = {
@@ -78,6 +91,16 @@ export default function AppSettingsPhonePage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [connectError, setConnectError] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [testCallError, setTestCallError] = useState<string | null>(null);
+  const numberHeadingRef = useRef<HTMLParagraphElement>(null);
+  const [areaCode, setAreaCode] = useState("");
+  const [verifyPhone, setVerifyPhone] = useState("");
+  const [verifyCode, setVerifyCode] = useState("");
+  const [verifySending, setVerifySending] = useState(false);
+  const [verifyChecking, setVerifyChecking] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+  const [verifiedNumber, setVerifiedNumber] = useState<string | null>(null);
 
   const fetchPhone = useCallback(async () => {
     try {
@@ -88,11 +111,13 @@ export default function AppSettingsPhonePage() {
           status?: string | null;
           outbound_from_number?: string | null;
           whatsapp_enabled?: boolean;
+          verified_phone?: string | null;
         };
         setPhoneNumber(data.phone_number ?? null);
         setStatus(data.status ?? null);
         setOutboundFrom(data.outbound_from_number ?? "");
         setWhatsappEnabled(data.whatsapp_enabled ?? false);
+        setVerifiedNumber(data.verified_phone ?? null);
         persistPhoneSettingsSnapshot(snapshotWorkspaceId, {
           phoneNumber: data.phone_number ?? null,
           status: data.status ?? null,
@@ -147,9 +172,11 @@ export default function AppSettingsPhonePage() {
       if (data.phone_number) {
         setPhoneNumber(data.phone_number);
         setStatus("active");
+        setConnectError(null);
         await fetchPhone();
         invalidateWorkspaceMeCache();
         setToast(data.message ?? "Number connected. You can now receive calls and texts.");
+        setTimeout(() => numberHeadingRef.current?.focus({ preventScroll: true }), 100);
       } else {
         const message = data.error ?? data.message ?? "Could not connect a number. Check Twilio config or try again.";
         setConnectError(message);
@@ -194,11 +221,17 @@ export default function AppSettingsPhonePage() {
   };
 
   const handleTestCall = async () => {
-    if (!primaryAgentId) {
-      setToast("Your primary agent is still loading. Try again in a moment.");
-      setTimeout(() => setToast(null), 3000);
+    const normalized = toE164(testCallNumber);
+    if (!normalized || digitsOnly(testCallNumber).length < 10) {
+      setTestCallError("Enter a valid 10-digit US number.");
       return;
     }
+    if (!primaryAgentId) {
+      setToast("Create an agent first in the Agents section, then try again.");
+      setTimeout(() => setToast(null), 4000);
+      return;
+    }
+    setTestCallError(null);
     setTestingCall(true);
     setToast(null);
     try {
@@ -206,138 +239,313 @@ export default function AppSettingsPhonePage() {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone_number: testCallNumber.trim() }),
+        body: JSON.stringify({ phone_number: normalized }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string; error?: string };
       if (!res.ok) {
-        setToast(data.error ?? "Could not start a test call.");
+        const msg = data.error ?? "Could not start a test call.";
+        setToast(msg);
+        setTestCallError(msg);
       } else {
-        setToast(data.message ?? "Test call started. Answer your phone to hear your agent.");
+        setTestCallError(null);
+        setToast(data.message ?? "Calling you now — answer your phone to hear your agent.");
       }
     } catch {
-      setToast("Something went wrong.");
+      setToast("Something went wrong. Try again.");
+      setTestCallError("Something went wrong. Try again.");
     } finally {
       setTestingCall(false);
-      setTimeout(() => setToast(null), 4000);
+      setTimeout(() => setToast(null), 5000);
     }
   };
 
+  const handleCopyNumber = () => {
+    if (!phoneNumber) return;
+    const toCopy = toE164(phoneNumber) ?? phoneNumber;
+    navigator.clipboard.writeText(toCopy).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }).catch(() => {});
+  };
+
+  const testCallDigits = digitsOnly(testCallNumber);
+  const testCallValid = testCallDigits.length >= 10;
+
   return (
-    <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-lg font-semibold text-white mb-2">Phone</h1>
-      <p className="text-sm text-zinc-500 mb-6">Get a new number for your AI, or forward your personal or existing business number so your agent answers.</p>
+    <div className="max-w-[560px] mx-auto p-4 md:p-6">
+      <h1 className="text-xl font-semibold text-white mb-1">Phone number</h1>
+      <p className="text-sm text-zinc-400 mb-6">Where your AI answers calls. Add one in one click.</p>
 
       {loading ? (
-        <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-4 animate-pulse h-20" />
+        <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 animate-pulse h-24 mb-4" />
       ) : phoneNumber ? (
         <>
-          <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-white font-mono">{formatPhoneNumber(phoneNumber)}</p>
-                <p className="text-xs text-zinc-500 mt-1">Your AI number · Voice & SMS active</p>
+          {/* Main number card — prominent and easy to copy */}
+          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Your AI answers at</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <p ref={numberHeadingRef} tabIndex={-1} className="text-2xl font-semibold text-white font-mono tracking-tight outline-none" aria-label={`Your number: ${formatPhoneNumber(phoneNumber)}`}>{formatPhoneNumber(phoneNumber)}</p>
+              <button
+                type="button"
+                onClick={handleCopyNumber}
+                aria-label={copySuccess ? "Copied to clipboard" : "Copy number"}
+                className="px-4 py-2 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 transition-colors"
+              >
+                {copySuccess ? "Copied" : "Copy number"}
+              </button>
+            </div>
+            <p className="text-xs text-zinc-500 mt-2">Calls and texts to this number are handled by your AI.</p>
+          </div>
+
+          {/* Forward your current number — simple steps */}
+          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+            <p className="text-sm font-medium text-white mb-1">Use your current phone number</p>
+            <p className="text-xs text-zinc-400 mb-4">Forward your existing line so callers still dial your number and your AI answers.</p>
+            <ol className="space-y-2 text-sm text-zinc-300 list-decimal list-inside">
+              <li>Open your phone carrier’s app or website (AT&T, Verizon, T-Mobile, etc.).</li>
+              <li>Find “Call forwarding” or “Forward when busy.”</li>
+              <li>Enter this number: <span className="font-mono text-white">{formatPhoneNumber(phoneNumber)}</span></li>
+            </ol>
+            <details className="mt-4 group">
+              <summary className="text-xs text-zinc-500 cursor-pointer hover:text-zinc-400 list-none flex items-center gap-1">
+                <span className="group-open:inline hidden">▼</span><span className="group-open:hidden inline">▶</span> Quick dial codes
+              </summary>
+              <div className="mt-2 pt-2 border-t border-zinc-800 space-y-1.5 text-xs text-zinc-400">
+                <p><span className="text-zinc-300">AT&T:</span> *21*{phoneNumber.replace(/\D/g, "")}#</p>
+                <p><span className="text-zinc-300">Verizon:</span> *72 then {formatPhoneNumber(phoneNumber)}</p>
+                <p><span className="text-zinc-300">T-Mobile:</span> **21*{phoneNumber.replace(/\D/g, "")}#</p>
               </div>
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500/15 text-green-400">Active</span>
-            </div>
+            </details>
           </div>
-          <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
-            <p className="text-sm font-medium text-white mb-2">Use your personal or existing number</p>
-            <p className="text-xs text-zinc-500 mb-3">Forward your current line (personal or business) to the number above. Callers still reach you at your number; your AI answers on this line.</p>
-            <div className="space-y-2 text-xs text-zinc-400">
-              <p><span className="text-zinc-300 font-medium">AT&T:</span> Dial *21*{phoneNumber.replace(/\D/g, "")}#</p>
-              <p><span className="text-zinc-300 font-medium">Verizon:</span> Dial *72 {formatPhoneNumber(phoneNumber)}</p>
-              <p><span className="text-zinc-300 font-medium">T-Mobile:</span> Dial **21*{phoneNumber.replace(/\D/g, "")}#</p>
-              <p className="text-zinc-500 mt-2">Other carriers: use your carrier’s “call forwarding” or “forward when busy” and enter the number above.</p>
-            </div>
+
+          {/* Test call — one field, one button */}
+          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+            <p className="text-sm font-medium text-white mb-1">Hear your AI on a real call</p>
+            <p className="text-xs text-zinc-400 mb-3">We’ll call you so you can talk to your agent right now.</p>
+            {!primaryAgentId ? (
+              <div className="rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-sm text-zinc-400">
+                <p>Create an agent first so we know who should answer.</p>
+                <Link href="/app/agents" className="mt-2 inline-block text-white font-medium hover:underline">Go to Agents →</Link>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="tel"
+                  value={testCallNumber}
+                  onChange={(e) => { setTestCallNumber(e.target.value); setTestCallError(null); }}
+                  placeholder="(555) 123-4567"
+                  aria-label="Your phone number for test call"
+                  aria-invalid={!!testCallError}
+                  aria-describedby={testCallError ? "test-call-error" : undefined}
+                  className={`w-full px-4 py-3 rounded-xl bg-zinc-900 border text-white placeholder:text-zinc-500 text-base focus:ring-1 focus:ring-zinc-600 focus:outline-none mb-2 ${testCallError ? "border-red-500/50" : "border-zinc-800 focus:border-zinc-600"}`}
+                />
+                {testCallError ? <p id="test-call-error" className="text-sm text-red-400 mb-3" role="alert">{testCallError}</p> : null}
+                <button
+                  type="button"
+                  onClick={handleTestCall}
+                  disabled={testingCall || !testCallValid}
+                  aria-label={testCallValid ? "Call my phone to test" : "Enter a valid 10-digit number to enable"}
+                  className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {testingCall ? "Calling you…" : "Call my phone to test"}
+                </button>
+              </>
+            )}
           </div>
-          <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-4">
-            <p className="text-sm font-medium text-white mb-2">Outbound from your number</p>
-            <p className="text-xs text-zinc-500 mb-3">Send calls and texts from your personal or existing business number. Enter an E.164 number (e.g. +15551234567) that’s in your Twilio account (provisioned or ported). Leave blank to use your connected number above.</p>
+
+          {/* Optional: outbound caller ID — collapsed by default */}
+          <details className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-4 group">
+            <summary className="text-sm font-medium text-zinc-400 cursor-pointer hover:text-zinc-300 list-none flex items-center justify-between gap-2">
+              Outbound caller ID (optional)
+              <span className="text-zinc-500 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p className="text-xs text-zinc-500 mt-3 mb-3">Show a different number when your AI places outbound calls. Leave blank to use your AI number above.</p>
             <input
               type="tel"
               value={outboundFrom}
               onChange={(e) => setOutboundFrom(e.target.value)}
-              placeholder="+1 555 123 4567"
-              className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none mb-3"
+              placeholder="(555) 123-4567"
+              aria-label="Outbound caller ID number"
+              className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none mb-3"
             />
-            <div className="flex items-center justify-between gap-3">
-              <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={whatsappEnabled}
-                  onChange={(e) => setWhatsappEnabled(e.target.checked)}
-                  className="rounded border-zinc-600 bg-zinc-800 text-white focus:ring-zinc-500"
-                />
-                Enable WhatsApp (same number; enable in Twilio first)
-              </label>
-            </div>
+            <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer mb-3">
+              <input
+                type="checkbox"
+                checked={whatsappEnabled}
+                onChange={(e) => setWhatsappEnabled(e.target.checked)}
+                className="rounded border-zinc-600 bg-zinc-800 text-white focus:ring-zinc-500"
+              />
+              Enable WhatsApp on this number
+            </label>
             <button
               type="button"
               onClick={handleSaveOutbound}
               disabled={saving}
-              className="mt-3 px-4 py-2.5 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
+              className="px-4 py-2.5 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
             >
               {saving ? "Saving…" : "Save"}
             </button>
+          </details>
+
+          {/* Verify a number by SMS */}
+          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+            <p className="text-sm font-medium text-white mb-1">Verify a number by SMS</p>
+            <p className="text-xs text-zinc-400 mb-3">We’ll send a 6-digit code to confirm you own this number. Useful for forwarding numbers.</p>
+            {verifiedNumber ? (
+              <p className="text-sm text-green-400">Phone verified ✓ {formatPhoneNumber(verifiedNumber)}</p>
+            ) : (
+              <>
+                <input
+                  type="tel"
+                  value={verifyPhone}
+                  onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
+                  placeholder="(555) 123-4567"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:ring-1 focus:outline-none mb-2"
+                />
+                <div className="flex gap-2 mb-2">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const num = toE164(verifyPhone);
+                      if (!num || digitsOnly(verifyPhone).length < 10) {
+                        setVerifyError("Enter a valid 10-digit US number.");
+                        return;
+                      }
+                      setVerifyError(null);
+                      setVerifySending(true);
+                      try {
+                        const r = await fetch("/api/phone/verify-start", {
+                          method: "POST",
+                          credentials: "include",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ phone_number: num }),
+                        });
+                        const d = await r.json();
+                        if (r.ok && (d as { sent?: boolean }).sent) {
+                          setToast("Code sent. Check your phone.");
+                        } else {
+                          setVerifyError((d as { error?: string }).error ?? "Failed to send code.");
+                        }
+                      } catch {
+                        setVerifyError("Failed to send code.");
+                      } finally {
+                        setVerifySending(false);
+                      }
+                    }}
+                    disabled={verifySending || digitsOnly(verifyPhone).length < 10}
+                    className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:bg-zinc-800 disabled:opacity-50"
+                  >
+                    {verifySending ? "Sending…" : "Send code"}
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={verifyCode}
+                  onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="000000"
+                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:ring-1 focus:outline-none mb-2"
+                />
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const num = toE164(verifyPhone);
+                    if (!num || verifyCode.length < 4) {
+                      setVerifyError("Enter the 6-digit code from your phone.");
+                      return;
+                    }
+                    setVerifyError(null);
+                    setVerifyChecking(true);
+                    try {
+                      const r = await fetch("/api/phone/verify-check", {
+                        method: "POST",
+                        credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ phone_number: num, code: verifyCode }),
+                      });
+                      const d = await r.json();
+                      if (r.ok && (d as { verified?: boolean }).verified) {
+                        setVerifiedNumber(num);
+                        setVerifyCode("");
+                        setToast("Phone verified ✓");
+                      } else {
+                        setVerifyError((d as { error?: string }).error ?? "Code didn’t match. Try again or resend.");
+                      }
+                    } catch {
+                      setVerifyError("Verification failed.");
+                    } finally {
+                      setVerifyChecking(false);
+                    }
+                  }}
+                  disabled={verifyChecking || verifyCode.length < 4}
+                  className="w-full py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-50"
+                >
+                  {verifyChecking ? "Verifying…" : "Verify"}
+                </button>
+                {verifyError && <p className="mt-2 text-sm text-red-400" role="alert">{verifyError}</p>}
+              </>
+            )}
           </div>
-          <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-4">
-            <p className="text-sm font-medium text-white mb-2">Test your live phone flow</p>
-            <p className="text-xs text-zinc-500 mb-3">
-              Enter the phone number you want to call. We&apos;ll place a live test call using your current primary agent.
-            </p>
-            <input
-              type="tel"
-              value={testCallNumber}
-              onChange={(e) => setTestCallNumber(e.target.value)}
-              placeholder="+1 555 123 4567"
-              className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none mb-3"
-            />
-            <button
-              type="button"
-              onClick={handleTestCall}
-              disabled={testingCall || !testCallNumber.trim()}
-              className="px-4 py-2.5 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
-            >
-              {testingCall ? "Starting test call…" : "Start test call"}
-            </button>
-          </div>
-          <button
-            type="button"
-            onClick={() => { setToast("Additional numbers are available on Growth and Scale plans."); setTimeout(() => setToast(null), 4000); }}
-            className="px-4 py-2.5 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition-colors"
-          >
-            + Add number
-          </button>
+
+          <p className="text-xs text-zinc-500">Need another number? Available on Growth and Scale plans.</p>
         </>
       ) : (
         <>
-          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-4">
-            <p className="text-sm font-medium text-white mb-1">Get a new number</p>
-            <p className="text-sm text-zinc-400 mb-4">We’ll assign a dedicated number that your AI answers. Use it as-is or give it out as your business line.</p>
+          {/* No number — one clear CTA */}
+          <div className="p-8 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6 text-center">
+            <p className="text-lg font-medium text-white mb-2">Add your first number</p>
+            <p className="text-sm text-zinc-400 mb-4 max-w-sm mx-auto">We’ll assign a local number. Optionally choose your area code (e.g. 503 for Portland).</p>
+            <div className="max-w-xs mx-auto mb-4">
+              <label htmlFor="phone-area-code" className="block text-left text-xs text-zinc-500 mb-1">Area code (optional)</label>
+              <input
+                id="phone-area-code"
+                type="tel"
+                inputMode="numeric"
+                maxLength={3}
+                value={areaCode}
+                onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                placeholder="503"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-center text-lg focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+              />
+            </div>
             <button
               type="button"
               onClick={handleConnectNumber}
               disabled={connecting}
-              className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors"
+              className="w-full max-w-xs mx-auto py-4 px-6 rounded-xl text-base font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors"
             >
-              {connecting ? "Connecting…" : "Get a number"}
+              {connecting ? "Getting your number…" : "Get my number"}
             </button>
             {connectError ? (
-              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                {connectError}
+              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300 text-left" role="alert">
+                <p>{connectError}</p>
+                <button
+                  type="button"
+                  onClick={() => { setConnectError(null); setToast(null); handleConnectNumber(); }}
+                  disabled={connecting}
+                  className="mt-3 px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
+                >
+                  Try again
+                </button>
               </div>
             ) : null}
+            <p className="mt-4 text-sm text-zinc-500">
+              <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">I’ll add a number later</Link>
+            </p>
           </div>
-          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
-            <p className="text-sm font-medium text-white mb-1">Use your personal or existing number</p>
-            <p className="text-sm text-zinc-400">Forward your current line to a Recall Touch number so your AI answers. Get a number above first, then set up forwarding with your carrier using the instructions that appear. Works with personal and business lines.</p>
+          <div className="p-5 rounded-2xl border border-zinc-800/80 bg-zinc-900/30 mb-6">
+            <p className="text-sm font-medium text-zinc-300 mb-1">Want to use your current number?</p>
+            <p className="text-xs text-zinc-500">Get a Recall Touch number above first, then set up call forwarding from your carrier to that number. You’ll see simple steps once your number is added.</p>
           </div>
         </>
       )}
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">
-          {toast}
+        <div role="status" aria-live="polite" className="fixed right-4 z-50 bottom-4 sm:bottom-auto sm:top-4 max-w-[calc(100vw-2rem)]">
+          <div className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">
+            {toast}
+          </div>
         </div>
       )}
 

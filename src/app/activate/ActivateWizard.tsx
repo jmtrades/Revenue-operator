@@ -241,6 +241,7 @@ export function ActivateWizard() {
         fetch("/api/vapi/create-agent", { method: "POST", credentials: "include" }).catch(() => {});
       }
     } catch { /* ignore */ }
+    if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "true");
     window.location.href = "/app/activity";
   }, [state]);
 

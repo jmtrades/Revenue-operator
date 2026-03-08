@@ -46,9 +46,9 @@ export async function GET(req: NextRequest) {
   if (authErr) return authErr;
 
   const db = getDb();
-  const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
 
-  // Find workspaces created >12 hours ago, no conversations, email not sent
+  // Find workspaces created >4 hours ago, onboarding not completed, first-day email not sent
+  const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
   const { data: workspaces, error } = await db
     .from("workspaces")
     .select(`
@@ -56,13 +56,13 @@ export async function GET(req: NextRequest) {
       owner_id,
       created_at,
       first_day_email_sent_at,
+      onboarding_completed_at,
       users!workspaces_owner_id_fkey (
         email
       )
     `)
-    .lt("created_at", twelveHoursAgo)
-    .is("first_day_email_sent_at", null)
-    .eq("billing_status", "trial");
+    .lt("created_at", fourHoursAgo)
+    .is("first_day_email_sent_at", null);
 
   if (error) {
     console.error("[first-day-check] Query error", error);
@@ -82,24 +82,30 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    // Check conversation count
+    // Skip if onboarding already completed (workspace has onboarding_completed_at)
+    const wsRow = ws as { onboarding_completed_at?: string } | null;
+    if (wsRow?.onboarding_completed_at) continue;
+
+    // Check conversation count — if they have calls, skip
     const { count } = await db
       .from("conversations")
       .select("*", { count: "exact", head: true })
       .eq("workspace_id", workspaceId);
+    if (count && count > 0) continue;
 
-    if (count && count > 0) {
-      // Has conversations, skip
-      continue;
-    }
+    const userName = (email as string).split("@")[0]?.replace(/[._-]/g, " ") || "there";
+    const subject = "Quick question — did you get stuck?";
+    const body = `Hi ${userName},
 
-    // Send email
-    const subject = "Your phone flow is ready";
-    const body = `Your Recall Touch workspace is ready for calls.
+I noticed you signed up but haven't finished setting up your AI agent yet.
 
-Connect your number, run a test call, and you can start taking live conversations right away.
+If something was confusing or didn't work, reply to this email and I'll help personally.
 
-Open: ${APP_URL}/app/activity`;
+If you're just busy, no worries — your trial doesn't start counting until you make your first call.
+
+Continue setup: ${APP_URL}/app/onboarding
+
+— Junior`;
 
     const sent = await sendEmail(email, subject, body);
 

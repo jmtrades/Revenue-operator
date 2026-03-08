@@ -92,6 +92,7 @@ describe("UI doctrine: forbidden language in dashboard/components", () => {
     if (s.startsWith("/") || s.includes("workspace_id") || (s.includes("?") && s.length > 30)) return false;
     if (s.includes("window.location") || s.includes("location.origin")) return false; // redirect/API URLs, not displayed copy
     if (s.includes("@/") || s.includes("var(--")) return false;
+    if (s.startsWith("@") && s.includes("/") && !s.includes(" ")) return false; // npm package specifier (e.g. @vapi-ai/web), not user-facing copy
     if (s.includes("../") || s.includes("/page") || /^(\.\.\/)?[a-z-]+\/page$/i.test(s)) return false; // import paths
     if (/^\[.*\]/.test(s)) return false; // log/debug prefixes not user-facing
     if (/^[a-z0-9_-]+$/i.test(s) && s.includes("-")) return false;

@@ -17,11 +17,13 @@ const SCENARIO_CHIPS = [
 const CONNECTION_TIMEOUT_MS = 15000;
 
 function getErrorMessage(e: unknown): string {
-  if (e && typeof e === "object" && "message" in e) {
-    const m = (e as { message?: unknown }).message;
+  if (e && typeof e === "object") {
+    const o = e as Record<string, unknown>;
+    const m = o.message ?? o.error ?? o.reason;
     if (typeof m === "string" && m.trim()) return m.trim();
+    if (typeof o.code === "string" && o.code.trim()) return `Connection failed (${o.code}). Try again.`;
   }
-  return "Couldn't connect. Try again.";
+  return "Couldn't connect. Check your connection and try again.";
 }
 
 interface TranscriptEntry {
@@ -42,8 +44,8 @@ export function HomepageVoiceWidget() {
 
   useEffect(() => {
     fetch("/api/vapi/demo-config", { credentials: "include" })
-      .then((r) => r.json())
-      .then((data: DemoConfig) => setConfig(data))
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("Config unavailable"))))
+      .then((data: DemoConfig) => setConfig(data ?? { publicKey: null, assistantId: null }))
       .catch(() => setConfig({ publicKey: null, assistantId: null }));
   }, []);
 
@@ -91,8 +93,12 @@ export function HomepageVoiceWidget() {
           };
           vapiRef.current = client;
 
-          client.on("error", () => {
-            finishWithError(getErrorMessage(null));
+          client.on("error", (payload?: unknown) => {
+            const msg =
+              payload && typeof payload === "object" && payload !== null && "message" in payload
+                ? String((payload as { message?: unknown }).message || "").trim()
+                : "";
+            finishWithError(msg || getErrorMessage(null));
           });
           client.on("call-start", () => {
             clearConnectionTimeout();
@@ -126,9 +132,9 @@ export function HomepageVoiceWidget() {
 
           await client.start(assistantId);
         } catch (err) {
-          finishWithError(
-            err instanceof Error ? err.message : "Couldn't connect. Try again."
-          );
+          const msg =
+            err instanceof Error ? err.message : typeof err === "string" ? err : "";
+          finishWithError(msg.trim() || getErrorMessage(err));
         }
       })();
     },
