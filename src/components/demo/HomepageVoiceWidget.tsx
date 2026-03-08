@@ -156,9 +156,9 @@ export function HomepageVoiceWidget() {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-base font-semibold text-white mb-1">Speak to our agent</h3>
+      <h3 className="text-base font-semibold text-white mb-1">Try it right now — ask anything</h3>
       <p className="text-sm text-white/40 mb-5">
-        Tap the mic to talk.
+        Tap the mic to start a real conversation.
       </p>
 
       {/* Voice orb */}
@@ -217,7 +217,7 @@ export function HomepageVoiceWidget() {
       {/* Scenario chips — only when voice is configured */}
       {configured && (
         <>
-          <p className="text-xs text-white/40 mb-2">Try saying:</p>
+          <p className="text-xs font-medium text-white/60 mb-2">Ask anything, e.g.:</p>
           <div className="flex flex-wrap gap-2 mb-4">
             {SCENARIO_CHIPS.map((label) => (
               <button
@@ -225,7 +225,7 @@ export function HomepageVoiceWidget() {
                 type="button"
                 onClick={() => startCall(label)}
                 disabled={loading}
-                className="text-xs bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-white/50 hover:text-white/70 hover:border-white/[0.12] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30"
+                className="text-sm bg-white/[0.06] border border-white/[0.12] rounded-xl px-3.5 py-2 text-white/70 hover:text-white hover:bg-white/[0.1] hover:border-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
               >
                 {label}
               </button>

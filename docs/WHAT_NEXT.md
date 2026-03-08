@@ -50,12 +50,14 @@ After hydration is **zero #418** in production (incognito), use this roadmap.
 
 ---
 
-## Hydration hardening (current)
+## Hydration and cache hardening (current)
 
 - Root layout: `suppressHydrationWarning` on `<html>`, `<head>`, `<body>` (avoids #418 from html-level mismatches / extensions).
 - App layout: HydrationGate + AppShellSkeleton (client-only mount for app shell).
 - `generateBuildId: build-${Date.now()}` in next.config (new chunk names per build).
 - SwCleanup: unregister Service Workers + clear caches on load.
+- `experimental.staleTimes: { dynamic: 0, static: 0 }` so RSC/router does not serve stale segments.
 - Static chunks: `Cache-Control: public, max-age=31536000, immutable`; HTML: `no-store`.
+- **Verify only in incognito** after deploy; normal windows may still have stale bundles.
 
-See [VERIFICATION-HYDRATION.md](./VERIFICATION-HYDRATION.md) and [LAUNCH.md](./LAUNCH.md).
+See [VERIFICATION-HYDRATION.md](./VERIFICATION-HYDRATION.md), [STALE_CACHE_AND_ROADMAP.md](./STALE_CACHE_AND_ROADMAP.md), and [LAUNCH.md](./LAUNCH.md).

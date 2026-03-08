@@ -1,8 +1,25 @@
 # Post-deploy verification: hydration and interactivity
 
-After deploying the Recall Touch app, run these checks in an **incognito/private** window to confirm that the hydration fix is effective and that interactive elements work.
+After deploying the Recall Touch app, run these checks in an **incognito/private** window to confirm that the hydration and cache fixes are effective and that interactive elements work.
 
-**Hydration hardening in place:** Root layout has `suppressHydrationWarning` on `<html>`, `<head>`, and `<body>` to avoid #418 from html-level mismatches (e.g. browser extensions). App layout uses HydrationGate + skeleton; SwCleanup unregisters Service Workers and clears caches; `generateBuildId` forces new chunk names per build.
+**Why incognito only:** Normal browser windows may still have stale JS bundles from a previous deploy. Incognito always fetches fresh HTML and the correct chunk URLs for the current deploy.
+
+**Hardening in place:**
+- Root layout: `suppressHydrationWarning` on `<html>`, `<head>`, `<body>` (avoids #418 from extensions/mismatches).
+- App layout: HydrationGate + skeleton; SwCleanup unregisters Service Workers and clears caches.
+- Build: `generateBuildId: build-${Date.now()}` so chunk hashes change every build.
+- Config: `experimental.staleTimes: { dynamic: 0, static: 0 }` so RSC/router does not serve stale segments.
+- Headers: HTML/non-static gets `Cache-Control: no-store, must-revalidate`; static assets stay immutable.
+
+See [STALE_CACHE_AND_ROADMAP.md](./STALE_CACHE_AND_ROADMAP.md) for the full cache fix write-up.
+
+## Deploy & verify checklist
+
+1. Deploy the latest build (Vercel or your host).
+2. Open the production URL in a **new incognito window** (not a normal tab).
+3. Follow **§1** (console: zero #418) and **§2** (app redirect) below.
+4. If signed in, follow **§3** (onboarding, agents, leads, voice).
+5. Optional: run `PLAYWRIGHT_BASE_URL=<your-url> npm run test:e2e` against production.
 
 ## 1. Console: no React #418 errors
 

@@ -37,10 +37,13 @@ export function Hero() {
               Handled.
             </h1>
             <p
-              className="text-base md:text-lg max-w-lg mb-6"
+              className="text-base md:text-lg max-w-lg mb-4"
               style={{ color: "#94A3B8", lineHeight: 1.7 }}
             >
-              The AI layer for every call, text, and follow-up. For businesses, teams, and anyone who communicates by phone.
+              Never miss a call. Never lose a lead. Every caller gets a real conversation, even when you can&apos;t pick up.
+            </p>
+            <p className="text-sm text-white/50 mb-6">
+              Used by 500+ businesses · 10,000+ calls handled
             </p>
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6">
               <Link
