@@ -21,6 +21,7 @@ import {
   CreditCard,
   Menu,
   X,
+  Lightbulb,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -38,6 +39,7 @@ const NAV_MAIN: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
   { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
+  { href: "/app/call-intelligence", label: "Call Intelligence", icon: Lightbulb },
   { href: "/app/compliance", label: "Compliance", icon: Shield },
 ];
 
@@ -60,6 +62,7 @@ const MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
   { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
+  { href: "/app/call-intelligence", label: "Call Intelligence", icon: Lightbulb },
   { href: "/app/compliance", label: "Compliance", icon: Shield },
   { href: "/app/team", label: "Team", icon: Users },
   { href: "/app/settings", label: "Settings", icon: Settings },

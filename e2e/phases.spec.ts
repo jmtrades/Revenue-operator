@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 
+/** Dashboard key routes — skipped: require authenticated session to assert content. */
 test.describe("v7 phases — key routes load", () => {
   test.skip("dashboard activity route loads", async ({ page }) => {
     await page.goto("/dashboard/activity?workspace_id=00000000-0000-0000-0000-000000000001");

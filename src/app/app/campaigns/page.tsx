@@ -30,10 +30,12 @@ type CampaignRow = {
 const PAGE_TITLE = "Campaigns — Recall Touch";
 
 const TYPE_OPTIONS = [
-  { id: "lead_followup", label: "Lead follow-up" },
-  { id: "appointment_reminder", label: "Appointment reminder" },
+  { id: "lead_followup", label: "Lead qualification / follow-up" },
+  { id: "appointment_reminder", label: "Appointment setting / reminder" },
   { id: "reactivation", label: "Reactivation" },
-  { id: "custom", label: "Custom recovery" },
+  { id: "cold_outreach", label: "Announcement / cold outreach" },
+  { id: "review_request", label: "Review request" },
+  { id: "custom", label: "Custom" },
 ];
 
 const LEAD_STATUS_OPTIONS = [

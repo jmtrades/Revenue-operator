@@ -84,11 +84,30 @@ export default function AppAnalyticsPage() {
     initialCalls.length === 0 && initialLeads.length === 0,
   );
   const [error, setError] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<Array<{ id: string; title: string; description: string | null; actionLabel: string | null; actionHref: string | null }>>([]);
 
   useEffect(() => {
     document.title = PAGE_TITLE;
     return () => { document.title = ""; };
   }, []);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/analytics/suggestions`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { suggestions: [] }))
+      .then((data: { suggestions?: Array<{ id: string; title: string; description?: string | null; actionLabel?: string | null; actionHref?: string | null }> }) => {
+        setSuggestions(
+          (data.suggestions ?? []).map((s) => ({
+            id: s.id,
+            title: s.title,
+            description: s.description ?? null,
+            actionLabel: s.actionLabel ?? null,
+            actionHref: s.actionHref ?? null,
+          })),
+        );
+      })
+      .catch(() => setSuggestions([]));
+  }, [workspaceId]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -337,6 +356,49 @@ export default function AppAnalyticsPage() {
           </div>
         ))}
       </div>
+
+      {suggestions.length > 0 && (
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 md:p-5 mb-6">
+          <h2 className="text-sm font-medium text-white flex items-center gap-2 mb-3">
+            <Lightbulb className="w-4 h-4 text-amber-500" aria-hidden />
+            Optimization suggestions
+          </h2>
+          <ul className="space-y-3">
+            {suggestions.map((s) => (
+              <li key={s.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-xl bg-zinc-950/70 border border-zinc-800">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white">{s.title}</p>
+                  {s.description && <p className="text-xs text-zinc-500 mt-0.5">{s.description}</p>}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {s.actionHref && s.actionLabel && (
+                    <Link
+                      href={s.actionHref}
+                      className="text-xs font-medium text-white underline underline-offset-2 hover:no-underline"
+                    >
+                      {s.actionLabel} →
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      fetch(`/api/analytics/suggestions/${s.id}`, {
+                        method: "PATCH",
+                        credentials: "include",
+                      })
+                        .then((r) => r.ok && setSuggestions((prev) => prev.filter((x) => x.id !== s.id)))
+                        .catch(() => {});
+                    }}
+                    className="text-xs text-zinc-500 hover:text-zinc-400"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Row 2: charts */}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-6">
