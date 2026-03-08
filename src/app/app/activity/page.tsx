@@ -458,10 +458,10 @@ export default function AppActivityPage() {
                 Watch the sample call walkthrough to hear how a real lead is answered, qualified, and booked before you connect your line.
               </p>
               <Link
-                href="/demo"
+                href="/"
                 className="mt-3 inline-flex items-center justify-center rounded-xl border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:border-zinc-500"
               >
-                Watch the call demo →
+                Try our agent →
               </Link>
             </div>
           </div>

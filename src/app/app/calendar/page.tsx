@@ -218,7 +218,7 @@ export default function AppCalendarPage() {
           </div>
         ) : (
           <div className="p-4 text-xs text-zinc-400">
-            Month view is simplified in this demo. Week view shows detailed blocks.
+            Month view is simplified here. Week view shows detailed blocks.
           </div>
         )}
       </div>

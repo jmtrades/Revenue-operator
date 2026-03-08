@@ -18,7 +18,7 @@ function getErrorMessage(e: unknown): string {
     const m = (e as { error?: unknown }).error;
     if (typeof m === "string" && m.trim()) return m.trim();
   }
-  return "Voice call failed. Please try again.";
+  return "Couldn't connect. Try again.";
 }
 
 export function DemoVoiceButton() {
@@ -51,7 +51,7 @@ export function DemoVoiceButton() {
 
   const startCall = useCallback(async () => {
     if (!config?.publicKey || !config?.assistantId) {
-      setError("Voice demo not configured");
+      setError("Voice not configured");
       return;
     }
     setError(null);
@@ -117,7 +117,7 @@ export function DemoVoiceButton() {
   return (
     <div className="flex flex-col items-center gap-2">
       {!configured && config !== null ? (
-        <p className="text-xs text-zinc-500 text-center">Voice demo not available yet. Try the text chat above.</p>
+        <p className="text-xs text-zinc-500 text-center">Voice not available yet. Try the text chat above.</p>
       ) : null}
       {active ? (
         <button
@@ -143,7 +143,7 @@ export function DemoVoiceButton() {
           type="button"
           disabled
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-400 cursor-not-allowed"
-          aria-label="Voice demo not configured"
+          aria-label="Voice not configured"
         >
           Talk with voice
         </button>

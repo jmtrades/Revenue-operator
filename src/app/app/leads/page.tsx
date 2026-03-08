@@ -658,7 +658,7 @@ export default function LeadsPage() {
                   <Plus className="w-4 h-4" />
                   Add lead
                 </button>
-                <Link href="/demo" className="text-sm font-medium text-zinc-300 hover:text-white underline underline-offset-2">Try demo →</Link>
+                <Link href="/" className="text-sm font-medium text-zinc-300 hover:text-white underline underline-offset-2">Try our agent →</Link>
                 <Link href="/app/settings/integrations" className="text-sm font-medium text-zinc-300 hover:text-white underline underline-offset-2">Connect CRM →</Link>
               </div>
             </div>

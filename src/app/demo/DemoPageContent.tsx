@@ -8,7 +8,7 @@ import { DemoVoiceButton } from "@/components/demo/DemoVoiceButton";
 import { ROUTES } from "@/lib/constants";
 
 const DEMO_GREETING =
-  "Hi! This is the Recall Touch demo. I can help with scheduling, pricing, callbacks, or anything else. What do you need?";
+  "Hi! I'm the Recall Touch agent. I can help with scheduling, pricing, callbacks, or anything else. What do you need?";
 
 const SCENARIOS = [
   "Schedule an appointment",

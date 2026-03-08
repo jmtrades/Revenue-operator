@@ -851,7 +851,7 @@ export default function AppAgentsPageClient({
       if (options?.showToast !== false) {
         setToast(
           syncRes.status === 503
-            ? "Agent saved; voice sync unavailable (check Vapi config)"
+            ? "Agent saved; voice sync unavailable (check voice config)"
             : "Agent saved; voice sync failed",
         );
       }
@@ -2443,7 +2443,7 @@ const TestTab = forwardRef<TestTabRef, {
     try {
       const assistantId = (await onPrepareAgent()) || agent.vapiAgentId;
       if (!assistantId) {
-        throw new Error("This agent has not been synced to Vapi yet. Save the agent first.");
+        throw new Error("This agent has not been synced to voice yet. Save the agent first.");
       }
 
       const configRes = await fetch("/api/vapi/workspace-config", { credentials: "include" });

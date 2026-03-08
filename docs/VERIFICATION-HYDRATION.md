@@ -56,8 +56,11 @@ Sign in (or use a test account), then:
 
 E2E tests cover:
 
-- Unauthenticated `/app/onboarding` and `/app/activity` redirect to sign-in.
-- Sign-in and activate pages load without console errors containing `418` or `Hydration`.
+- **Critical path:** Homepage → Start free → `/activate`; sign-in and demo pages load.
+- **App hydration:** Unauthenticated `/app/onboarding` and `/app/activity` redirect to sign-in; sign-in and activate load without console errors containing `418` or `Hydration`.
+- **Activate:** Wizard visible, step progress, no "Select account" when not applicable.
+- **Dashboard:** `/dashboard` and `/dashboard?workspace_id=...` do not show "Select an account" dead state (tests use `domcontentloaded` to avoid flaky `networkidle` timeouts).
+- Some dashboard sub-routes (campaigns, contacts, etc.) are skipped when they require authenticated workspace context.
 
 Run locally (Playwright will start the dev server automatically, or use an already-running server):
 
