@@ -21,7 +21,7 @@ function getErrorMessage(e: unknown): string {
     const m = (e as { message?: unknown }).message;
     if (typeof m === "string" && m.trim()) return m.trim();
   }
-  return "Voice call failed. Please try again.";
+  return "Couldn't connect. Try again.";
 }
 
 interface TranscriptEntry {
@@ -61,7 +61,7 @@ export function HomepageVoiceWidget() {
   const startCall = useCallback(
     (phraseHint?: string) => {
       if (!config?.publicKey || !config?.assistantId) {
-        setError("Voice demo not configured");
+        setError("Agent isn't ready yet.");
         return;
       }
       setError(null);
@@ -81,7 +81,7 @@ export function HomepageVoiceWidget() {
       (async () => {
         const publicKey = config.publicKey;
         const assistantId = config.assistantId;
-        if (!publicKey || !assistantId) return finishWithError("Voice demo not configured");
+        if (!publicKey || !assistantId) return finishWithError("Agent isn't ready yet.");
         try {
           const { default: Vapi } = await import("@vapi-ai/web");
           const client = new Vapi(publicKey) as {
@@ -121,13 +121,13 @@ export function HomepageVoiceWidget() {
 
           timeoutRef.current = setTimeout(() => {
             timeoutRef.current = null;
-            finishWithError("Connection timed out. Try again.");
+            finishWithError("Connection timed out.");
           }, CONNECTION_TIMEOUT_MS);
 
           await client.start(assistantId);
         } catch (err) {
           finishWithError(
-            err instanceof Error ? err.message : "Could not start voice call."
+            err instanceof Error ? err.message : "Couldn't connect. Try again."
           );
         }
       })();
@@ -156,9 +156,9 @@ export function HomepageVoiceWidget() {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-base font-semibold text-white mb-1">Talk to our AI</h3>
+      <h3 className="text-base font-semibold text-white mb-1">Speak to our agent</h3>
       <p className="text-sm text-white/40 mb-5">
-        Tap the mic and ask anything. This is a real AI agent.
+        Tap the mic to talk.
       </p>
 
       {/* Voice orb */}
@@ -173,13 +173,13 @@ export function HomepageVoiceWidget() {
         ) : !configured ? (
           <div className="text-center py-4">
             <p className="text-xs text-white/40 mb-3">
-              Voice demo will be available here soon.
+              Your own agent is one click away.
             </p>
             <a
-              href="/demo"
+              href="/activate"
               className="inline-flex items-center justify-center rounded-xl bg-white text-black font-semibold text-sm px-4 py-2 hover:bg-zinc-100 transition-colors no-underline"
             >
-              Try full demo →
+              Start free →
             </a>
           </div>
         ) : active ? (
@@ -197,7 +197,7 @@ export function HomepageVoiceWidget() {
             onClick={() => startCall()}
             disabled={loading}
             className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F1729]"
-            aria-label={loading ? "Connecting…" : "Start voice call"}
+            aria-label={loading ? "Connecting…" : "Speak to agent"}
           >
             {loading ? (
               <span className="flex h-6 w-6 animate-spin rounded-full border-2 border-[#0F1729] border-t-transparent" aria-hidden />
@@ -217,7 +217,7 @@ export function HomepageVoiceWidget() {
       {/* Scenario chips — only when voice is configured */}
       {configured && (
         <>
-          <p className="text-xs text-white/40 mb-2">Or try a scenario:</p>
+          <p className="text-xs text-white/40 mb-2">Try saying:</p>
           <div className="flex flex-wrap gap-2 mb-4">
             {SCENARIO_CHIPS.map((label) => (
               <button
@@ -242,7 +242,7 @@ export function HomepageVoiceWidget() {
       >
         {transcript.length === 0 ? (
           <p className="text-white/25 text-center mt-6">
-            {configured ? "Tap the mic to start" : "Conversation will appear here"}
+            {configured ? "Tap the mic to talk" : "Your conversation will appear here"}
           </p>
         ) : (
           <div className="space-y-2">

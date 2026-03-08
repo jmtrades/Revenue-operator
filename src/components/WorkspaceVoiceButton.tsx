@@ -144,7 +144,7 @@ export function WorkspaceVoiceButton({
     return (
       <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
         <p className="text-sm font-medium text-white">{title}</p>
-        <p className="mt-1 text-xs text-zinc-500">Voice testing will appear here once Vapi is configured for this workspace.</p>
+        <p className="mt-1 text-xs text-zinc-500">Voice testing will appear here once voice is configured for this workspace.</p>
       </div>
     );
   }

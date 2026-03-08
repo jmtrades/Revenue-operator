@@ -67,7 +67,7 @@ export function SocialProof() {
                 Notify me
               </button>
             ) : (
-              <span className="inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" /> You&apos;re on the list.</span>
+              <span className="inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" /> You&apos;re on the list! 🎉</span>
             )}
           </p>
           {!submitted && (
@@ -82,8 +82,8 @@ export function SocialProof() {
                 className="flex-1 px-3 py-2 rounded-lg text-sm border"
                 style={{ background: "var(--bg-primary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               />
-              <button type="submit" className="text-sm text-zinc-300 hover:text-white border border-zinc-600 rounded-lg px-4 py-2 shrink-0 transition-colors">
-                Subscribe
+              <button type="submit" className="text-sm font-semibold bg-white text-black rounded-xl px-4 py-2 shrink-0 hover:bg-zinc-100 transition-colors">
+                Join waitlist
               </button>
             </form>
           )}

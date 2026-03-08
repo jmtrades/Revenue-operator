@@ -65,7 +65,7 @@ export function VoiceOrb() {
         {
           role: "assistant",
           content:
-            "Hi! I'm the Recall Touch demo. I can help with anything a phone agent would — scheduling, questions, follow-up. What can I do for you?",
+            "Hi! I'm the Recall Touch agent. I can help with anything a phone agent would — scheduling, questions, follow-up. What can I do for you?",
         },
       ]);
     }
@@ -170,10 +170,10 @@ export function VoiceOrb() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="fixed bottom-6 right-6 z-40 rounded-full bg-white text-black flex items-center justify-center border border-zinc-300 hover:bg-zinc-100 transition-transform duration-200 shadow-lg hover:shadow-[0_0_24px_rgba(59,130,246,0.35)] animate-[breathing_3s_ease-in-out_infinite]"
+        className="fixed bottom-6 right-6 z-40 rounded-full bg-white text-black flex items-center justify-center border border-zinc-300 hover:bg-zinc-100 transition-transform duration-200 shadow-lg hover:shadow-[0_0_24px_rgba(255,255,255,0.25)] animate-[breathing_3s_ease-in-out_infinite]"
         style={{ width: 56, height: 56 }}
-        aria-label={open ? "Close voice demo" : "Talk to Recall Touch"}
-        title="Talk to Recall Touch"
+        aria-label={open ? "Close agent" : "Speak to our agent"}
+        title="Speak to our agent"
       >
         <Mic className="h-5 w-5" aria-hidden="true" />
       </button>
@@ -189,7 +189,7 @@ export function VoiceOrb() {
                   Recall Touch
                 </span>
                 <span className="text-[11px] text-zinc-500">
-                  Voice demo
+                  Speak to agent
                 </span>
               </div>
             </div>
@@ -237,7 +237,7 @@ export function VoiceOrb() {
             )}
             {showFallbackNotice && (
               <p className="text-[11px] text-zinc-500 mt-1">
-                Full voice demo uses your microphone. If it&apos;s blocked, try
+                This uses your microphone. If it&apos;s blocked, try
                 enabling it in your browser, or use the text chat above.
               </p>
             )}
@@ -253,7 +253,7 @@ export function VoiceOrb() {
               }`}
             >
               <span aria-hidden>{listening ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-4 w-4" />}</span>
-              <span>{listening ? "Stop demo" : "Talk"}</span>
+              <span>{listening ? "Stop" : "Talk"}</span>
             </button>
             <button
               type="button"

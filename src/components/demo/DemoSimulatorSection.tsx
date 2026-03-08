@@ -8,7 +8,7 @@ const CallSimulator = dynamic(
     ssr: false,
     loading: () => (
       <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 min-h-[280px] flex items-center justify-center">
-        <p className="text-sm text-zinc-500">Loading demo…</p>
+        <p className="text-sm text-zinc-500">Loading…</p>
       </div>
     ),
   }
