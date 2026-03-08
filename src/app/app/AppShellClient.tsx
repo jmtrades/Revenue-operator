@@ -23,7 +23,6 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { OnboardingChecklist } from "./OnboardingChecklist";
 import {
   OnboardingStepProvider,
   useOnboardingStep,
@@ -378,7 +377,6 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
           <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
           <span className="block text-[10px] text-zinc-500">14 days left</span>
         </div>
-        <OnboardingChecklist />
       </div>
     </aside>
   );

@@ -1,6 +1,8 @@
 import { cookies } from "next/headers";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
+import { OutcomeCardsSection } from "@/components/sections/OutcomeCardsSection";
+import { TrustStackSection } from "@/components/sections/TrustStackSection";
 import { ProblemStatement } from "@/components/sections/ProblemStatement";
 import { HomepageActivitySection } from "@/components/sections/HomepageActivitySection";
 import { HomepageLiveDemo } from "@/components/sections/HomepageLiveDemo";
@@ -10,6 +12,7 @@ import { WhoUsesSection } from "@/components/sections/WhoUsesSection";
 import { MetricsSection } from "@/components/sections/MetricsSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { PricingPreview } from "@/components/sections/PricingPreview";
+import { WhatMakesUsDifferentSection } from "@/components/sections/WhatMakesUsDifferentSection";
 import { EnterpriseComparisonCard } from "@/components/sections/EnterpriseComparisonCard";
 import { SocialProof } from "@/components/sections/SocialProof";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -35,6 +38,8 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
+        <OutcomeCardsSection />
+        <TrustStackSection />
         <HomepageLiveDemo />
         <HomepageActivitySection />
         <ProblemStatement />
@@ -44,6 +49,7 @@ export default async function HomePage() {
         <MetricsSection />
         <TestimonialsSection />
         <PricingPreview />
+        <WhatMakesUsDifferentSection />
         <EnterpriseComparisonCard />
         <SocialProof />
         <FinalCTA />
