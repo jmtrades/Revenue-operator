@@ -10,7 +10,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 
 function log(event: string, data: Record<string, unknown>): void {
-  console.log(JSON.stringify({ type: event, ...data, timestamp: new Date().toISOString() }));
+  if (process.env.NODE_ENV === "development") {
+    console.warn(`[billing/portal] ${event}`, data);
+  }
 }
 
 export async function POST(req: NextRequest) {

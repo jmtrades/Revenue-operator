@@ -10,7 +10,11 @@ function escapeHtml(value: string): string {
 }
 
 export async function sendWelcomeEmail(email: string, nameOrBusiness?: string | null): Promise<boolean> {
-  if (!email || !process.env.RESEND_API_KEY) return false;
+  if (!email) return false;
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("[Email] RESEND_API_KEY not configured — skipping welcome email");
+    return false;
+  }
 
   const name = nameOrBusiness?.trim() || "there";
   const subject = "Welcome to Recall Touch — let's set up your AI";
@@ -51,7 +55,11 @@ export async function sendWelcomeEmail(email: string, nameOrBusiness?: string | 
 }
 
 export async function sendGoLiveEmail(email: string, workspaceName?: string | null): Promise<boolean> {
-  if (!email || !process.env.RESEND_API_KEY) return false;
+  if (!email) return false;
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("[Email] RESEND_API_KEY not configured — skipping go-live email");
+    return false;
+  }
   const safeName = workspaceName?.trim() || "Your workspace";
   const subject = "Your first call is in — you're live";
   const html = `

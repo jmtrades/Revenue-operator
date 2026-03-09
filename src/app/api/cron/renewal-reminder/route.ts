@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 
   const results: Array<{ workspaceId: string; email: string; sent: boolean }> = [];
 
-  for (const { workspaceId, ownerEmail, renewalAt } of toNotify) {
+  for (const { workspaceId, ownerEmail, renewalAt: _renewalAt } of toNotify) {
     const subject = "Your billing renews tomorrow";
     const body = `Recall Touch renews automatically tomorrow.
 
@@ -84,7 +84,6 @@ If you need to pause instead, open billing in the app today.`;
           results.push({ workspaceId, email: ownerEmail, sent: false });
         }
       } else {
-        console.log("[renewal-reminder] Would send to", ownerEmail, "renewal at", renewalAt);
         await db.from("workspaces").update({ renewal_reminder_sent_at: new Date().toISOString() }).eq("id", workspaceId);
         results.push({ workspaceId, email: ownerEmail, sent: true });
       }

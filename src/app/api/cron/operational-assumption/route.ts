@@ -107,7 +107,6 @@ export async function GET(req: NextRequest) {
           results.push({ workspaceId: row.id, sent: false });
         }
       } else {
-        console.log("[operational-assumption] Would send to", email, subject);
         await db
           .from("workspaces")
           .update({ operational_assumption_sent_at: now.toISOString() })

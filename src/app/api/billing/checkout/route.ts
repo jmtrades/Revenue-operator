@@ -12,8 +12,10 @@ import { getDb } from "@/lib/db/queries";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import { getPriceId } from "@/lib/stripe-prices";
 
-function log(event: string, data: Record<string, unknown>): void {
-  console.log(JSON.stringify({ type: event, ...data, timestamp: new Date().toISOString() }));
+function log(_event: string, _data: Record<string, unknown>): void {
+  if (process.env.NODE_ENV === "development") {
+    console.warn(`[billing/checkout]`, _event, _data);
+  }
 }
 
 /** Build production-safe origin: never localhost, never preview. Prefer request origin. */

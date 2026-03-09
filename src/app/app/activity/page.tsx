@@ -342,7 +342,7 @@ export default function AppActivityPage() {
         <ActivityDateLabel />
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
         <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-blue)]">
           <p className="text-lg font-semibold text-[var(--text-primary)]">{callCount}</p>
           <p className="text-[10px] text-[var(--text-tertiary)]">Calls today</p>
