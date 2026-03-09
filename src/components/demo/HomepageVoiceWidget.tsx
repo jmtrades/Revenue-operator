@@ -98,7 +98,8 @@ export function HomepageVoiceWidget() {
               payload && typeof payload === "object" && payload !== null && "message" in payload
                 ? String((payload as { message?: unknown }).message || "").trim()
                 : "";
-            finishWithError(msg || getErrorMessage(null));
+            // Use the richer helper so Vapi error codes / reasons surface in the UI
+            finishWithError(msg || getErrorMessage(payload));
           });
           client.on("call-start", () => {
             clearConnectionTimeout();
