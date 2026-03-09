@@ -166,6 +166,20 @@ export default function CallIntelligencePage() {
   const categoryOrder = ["tone", "opening", "discovery", "objection_handling", "qualification", "closing", "empathy", "persistence", "pacing", "recovery", "other"];
   const appliedCount = callInsights.filter((i) => i.applied).length;
 
+  const analyzedCount = callExamples.length;
+  const insightCount = callInsights.length;
+  const confidenceValues = callInsights
+    .map((i) => (typeof i.confidence === "number" ? i.confidence : null))
+    .filter((v): v is number => v !== null);
+  const avgConfidence =
+    confidenceValues.length > 0
+      ? Math.round(
+          (confidenceValues.reduce((sum, v) => sum + v, 0) /
+            confidenceValues.length) *
+            10,
+        ) / 10
+      : null;
+
   return (
     <div className="max-w-4xl mx-auto space-y-8 p-6">
       <div>
@@ -214,7 +228,7 @@ export default function CallIntelligencePage() {
           </button>
       </div>
 
-        <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">
         <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">
           Analyzed calls <span className="text-[var(--text-tertiary)] font-normal">({callExamples.length})</span>
         </h2>
@@ -255,6 +269,40 @@ export default function CallIntelligencePage() {
             })}
           </div>
         )}
+      </div>
+
+      <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">
+        <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">
+          Performance overview
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center p-3 rounded-lg bg-[var(--bg-input)]">
+            <p className="text-2xl font-bold text-white">{analyzedCount}</p>
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">
+              Calls analyzed
+            </p>
+          </div>
+          <div className="text-center p-3 rounded-lg bg-[var(--bg-input)]">
+            <p className="text-2xl font-bold text-white">{insightCount}</p>
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">
+              Insights extracted
+            </p>
+          </div>
+          <div className="text-center p-3 rounded-lg bg-[var(--bg-input)]">
+            <p className="text-2xl font-bold text-white">{appliedCount}</p>
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">
+              Applied to agent
+            </p>
+          </div>
+          <div className="text-center p-3 rounded-lg bg-[var(--bg-input)]">
+            <p className="text-2xl font-bold text-emerald-400">
+              {avgConfidence != null ? `${avgConfidence}/1` : "—"}
+            </p>
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">
+              Avg insight confidence
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">

@@ -24,6 +24,8 @@ interface CallRecord {
   matched_lead?: { name?: string | null; email?: string | null; company?: string | null } | null;
   analysis_outcome?: unknown;
   started_at?: string | null;
+  transcript_text?: string | null;
+  summary?: string | null;
 }
 
 const PAGE_SIZE = 10;
@@ -97,6 +99,8 @@ export default function CallsPage() {
     useState<NonNullable<CallSentiment> | "all">("all");
   const [sort, setSort] = useState<SortKey>("newest");
   const [page, setPage] = useState(1);
+  const [selectedCall, setSelectedCall] = useState<CallRecord | null>(null);
+  const [drawerLoading, setDrawerLoading] = useState(false);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -177,7 +181,35 @@ export default function CallsPage() {
   }, []);
 
   const handleRowClick = (id: string) => {
-    router.push(`/app/calls/${id}`);
+    const existing = records.find((c) => c.id === id);
+    if (existing && existing.summary && existing.transcript_text) {
+      setSelectedCall(existing);
+      return;
+    }
+    setDrawerLoading(true);
+    fetch(`/api/calls/${encodeURIComponent(id)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then(
+        (
+          data:
+            | {
+                call?: CallRecord;
+              }
+            | null,
+        ) => {
+          if (data?.call) {
+            setSelectedCall(data.call);
+          } else if (existing) {
+            setSelectedCall(existing);
+          }
+        },
+      )
+      .catch(() => {
+        if (existing) {
+          setSelectedCall(existing);
+        }
+      })
+      .finally(() => setDrawerLoading(false));
   };
 
   const sentimentDotColor = (s: CallSentiment): string => {
@@ -198,6 +230,35 @@ export default function CallsPage() {
             Every answered call, decision, and follow-up in one place.
           </p>
         </div>
+        <button
+          type="button"
+          onClick={async () => {
+            if (!workspaceId) return;
+            try {
+              const res = await fetch(
+                `/api/calls/export?workspace_id=${encodeURIComponent(workspaceId)}`,
+                { credentials: "include" },
+              );
+              if (!res.ok) return;
+              const blob = await res.blob();
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `recall-touch-calls-${new Date()
+                .toISOString()
+                .slice(0, 10)}.csv`;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              URL.revokeObjectURL(url);
+            } catch {
+              // silent failure; future: toast
+            }
+          }}
+          className="text-xs md:text-sm rounded-xl border border-[var(--border-default)] px-4 py-2 text-zinc-200 hover:bg-[var(--bg-input)]"
+        >
+          Export CSV
+        </button>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
@@ -401,12 +462,12 @@ export default function CallsPage() {
             null;
           const kind: Exclude<CallType, null> = "inbound";
           return (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => handleRowClick(c.id)}
-              className="w-full text-left rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col gap-1.5"
-            >
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => router.push(`/app/calls/${c.id}`)}
+                className="w-full text-left rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col gap-1.5"
+              >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-medium text-zinc-100 truncate">{name}</p>
                 <span className="inline-flex items-center gap-1 text-[11px] text-zinc-400">
@@ -490,6 +551,86 @@ export default function CallsPage() {
           </button>
         </div>
       </div>
+
+      {selectedCall && (
+        <div className="fixed inset-0 z-40">
+          <button
+            type="button"
+            onClick={() => setSelectedCall(null)}
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            aria-label="Close call details"
+          />
+          <aside className="absolute inset-y-0 right-0 w-full max-w-lg bg-black border-l border-[var(--border-default)] shadow-2xl flex flex-col">
+            <div className="px-5 py-4 border-b border-[var(--border-default)] flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs text-zinc-500 mb-1">Call</p>
+                <h2 className="text-lg font-semibold text-white">
+                  {selectedCall.matched_lead?.name ??
+                    selectedCall.matched_lead?.company ??
+                    selectedCall.matched_lead?.email ??
+                    "Caller"}
+                </h2>
+                <p className="text-xs text-zinc-500 mt-1">
+                  {selectedCall.call_started_at
+                    ? new Date(
+                        selectedCall.call_started_at,
+                      ).toLocaleString()
+                    : "Time unknown"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedCall(null)}
+                className="text-zinc-500 hover:text-white text-sm"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+              <section>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+                  Summary
+                </h3>
+                <p className="text-sm text-zinc-200 leading-relaxed">
+                  {selectedCall.summary || "No summary available for this call yet."}
+                </p>
+              </section>
+              <section>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+                  Transcript
+                </h3>
+                {drawerLoading ? (
+                  <p className="text-xs text-zinc-500">Loading transcript…</p>
+                ) : selectedCall.transcript_text ? (
+                  <p className="text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed">
+                    {selectedCall.transcript_text}
+                  </p>
+                ) : (
+                  <p className="text-xs text-zinc-500">
+                    No transcript stored for this call.
+                  </p>
+                )}
+              </section>
+            </div>
+            <div className="px-5 py-4 border-t border-[var(--border-default)] flex justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => router.push(`/app/calls/${selectedCall.id}`)}
+                className="flex-1 rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-zinc-200 hover:bg-[var(--bg-input)]"
+              >
+                Open full call
+              </button>
+              <button
+                type="button"
+                className="flex-1 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100"
+              >
+                Add to knowledge
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
     </div>
   );
 }

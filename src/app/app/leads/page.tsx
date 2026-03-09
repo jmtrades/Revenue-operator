@@ -15,6 +15,7 @@ import {
   Archive,
   Plus,
 } from "lucide-react";
+import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
@@ -193,7 +194,6 @@ export default function LeadsPage() {
   const [drawerLead, setDrawerLead] = useState<LeadView | null>(null);
   const [drawerCalls, setDrawerCalls] = useState<Array<{ id: string; call_started_at?: string; outcome?: string }>>([]);
   const [drawerCallsLoading, setDrawerCallsLoading] = useState(false);
-  const [actionToast, setActionToast] = useState<string | null>(null);
   const [leads, setLeads] = useState<LeadView[]>(initialLeads);
   const [addLeadOpen, setAddLeadOpen] = useState(false);
   const [addLeadForm, setAddLeadForm] = useState({
@@ -227,12 +227,6 @@ export default function LeadsPage() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [addLeadOpen, drawerLead]);
-
-  useEffect(() => {
-    if (!actionToast) return;
-    const t = window.setTimeout(() => setActionToast(null), 2500);
-    return () => window.clearTimeout(t);
-  }, [actionToast]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -431,9 +425,13 @@ export default function LeadsPage() {
           notes: addLeadForm.notes.trim() || undefined,
         }),
       });
-      const data = (await res.json().catch(() => null)) as { id?: string; error?: string } | null;
+      const data = (await res.json().catch(() => null)) as {
+        id?: string;
+        error?: string;
+      } | null;
       if (!res.ok) {
         setAddLeadError(data?.error ?? "Could not add lead.");
+        toast.error(data?.error ?? "Could not add lead.");
         return;
       }
       refetchLeads();
@@ -448,9 +446,10 @@ export default function LeadsPage() {
         status: "New",
         notes: "",
       });
-      setActionToast("Lead added.");
+      toast.success("Lead added.");
     } catch {
       setAddLeadError("Could not add lead.");
+      toast.error("Could not add lead.");
     } finally {
       setAddLeadSaving(false);
     }
@@ -470,13 +469,13 @@ export default function LeadsPage() {
       });
       const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
       if (res.ok && data?.ok) {
-        setActionToast("Call started. Check Calls for status.");
+        toast.success("Call started. Check Calls for status.");
         closeDrawer();
       } else {
-        setActionToast(data?.error ?? "Could not start call.");
+        toast.error(data?.error ?? "Could not start call.");
       }
     } catch {
-      setActionToast("Could not start call.");
+      toast.error("Could not start call.");
     } finally {
       setOutboundCalling(false);
     }
@@ -509,6 +508,37 @@ export default function LeadsPage() {
             <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1 text-xs text-zinc-300">
               Total: <span className="ml-1 font-semibold text-white">{totalCount}</span>
             </span>
+            <button
+              type="button"
+              onClick={async () => {
+                if (!workspaceId) return;
+                try {
+                  const res = await fetch(
+                    `/api/leads/export?workspace_id=${encodeURIComponent(
+                      workspaceId,
+                    )}`,
+                    { credentials: "include" },
+                  );
+                  if (!res.ok) return;
+                  const blob = await res.blob();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `recall-touch-leads-${new Date()
+                    .toISOString()
+                    .slice(0, 10)}.csv`;
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  URL.revokeObjectURL(url);
+                } catch {
+                  // no-op for now
+                }
+              }}
+              className="hidden md:inline-flex items-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-300 hover:bg-[var(--bg-input)]"
+            >
+              Export CSV
+            </button>
             <div className="hidden md:inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-0.5 text-xs">
               <button
                 type="button"
@@ -568,6 +598,104 @@ export default function LeadsPage() {
               })}
             </div>
           </div>
+        </div>
+
+        <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+          <form
+            className="flex-1 flex flex-col sm:flex-row gap-2"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!workspaceId) return;
+              const name = addLeadForm.name.trim();
+              const phone = addLeadForm.phone.trim();
+              const email = addLeadForm.email.trim();
+              if (!name || !phone) {
+                setAddLeadError(
+                  !name ? "Name is required." : "Phone is required.",
+                );
+                return;
+              }
+              if (addLeadSaving) return;
+              setAddLeadError(null);
+              setAddLeadSaving(true);
+              try {
+                const res = await fetch("/api/leads", {
+                  method: "POST",
+                  credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    name,
+                    phone,
+                    email: email || undefined,
+                    source: "website",
+                    status: "New",
+                  }),
+                });
+                const data = (await res.json().catch(() => null)) as {
+                  error?: string;
+                } | null;
+                if (!res.ok) {
+                  setAddLeadError(data?.error ?? "Could not add lead.");
+                  return;
+                }
+                refetchLeads();
+                setAddLeadForm((prev) => ({
+                  ...prev,
+                  name: "",
+                  phone: "",
+                  email: "",
+                }));
+              } catch {
+                setAddLeadError("Could not add lead.");
+              } finally {
+                setAddLeadSaving(false);
+              }
+            }}
+          >
+            <input
+              type="text"
+              value={addLeadForm.name}
+              onChange={(e) =>
+                setAddLeadForm((prev) => ({ ...prev, name: e.target.value }))
+              }
+              placeholder="Name"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+            />
+            <input
+              type="tel"
+              value={addLeadForm.phone}
+              onChange={(e) =>
+                setAddLeadForm((prev) => ({ ...prev, phone: e.target.value }))
+              }
+              placeholder="Phone"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+            />
+            <input
+              type="email"
+              value={addLeadForm.email}
+              onChange={(e) =>
+                setAddLeadForm((prev) => ({ ...prev, email: e.target.value }))
+              }
+              placeholder="Email (optional)"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+            />
+            <button
+              type="submit"
+              disabled={
+                addLeadSaving ||
+                !addLeadForm.name.trim() ||
+                !addLeadForm.phone.trim()
+              }
+              className="px-4 py-2 text-xs font-semibold rounded-xl bg-white text-black hover:bg-zinc-100 disabled:opacity-50"
+            >
+              + Add
+            </button>
+          </form>
+          {addLeadError && (
+            <p className="text-[11px] text-[var(--accent-red)]" role="alert">
+              {addLeadError}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2 mb-4 text-xs">
@@ -1058,12 +1186,12 @@ export default function LeadsPage() {
                           refetchLeads();
                           setCsvPreviewRows([]);
                           setAddLeadOpen(false);
-                          setActionToast(`${data.imported} leads imported.`);
+                          toast.success(`${data.imported} leads imported.`);
                         } else {
-                          setActionToast(data?.error ?? "Import failed.");
+                          toast.error(data?.error ?? "Import failed.");
                         }
                       } catch {
-                        setActionToast("Import failed.");
+                        toast.error("Import failed.");
                       } finally {
                         setCsvImporting(false);
                       }
@@ -1109,7 +1237,7 @@ export default function LeadsPage() {
                       };
                       const parsed = lines.slice(1).map(toObj).filter((r) => r.name && r.phone);
                       if (parsed.length === 0) {
-                        setActionToast("No valid rows (need name and phone).");
+                        toast.error("No valid rows (need name and phone).");
                         return;
                       }
                       setCsvPreviewRows(parsed);
@@ -1392,11 +1520,6 @@ export default function LeadsPage() {
         </div>
       )}
 
-      {actionToast && (
-        <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-zinc-100 shadow-lg">
-          {actionToast}
-        </div>
-      )}
     </>
   );
 }

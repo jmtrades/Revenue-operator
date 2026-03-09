@@ -315,6 +315,13 @@ export default function KnowledgePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<KnowledgeEntry | null>(null);
   const [createFromGapTopic, setCreateFromGapTopic] = useState<string | null>(null);
+  const [showImport, setShowImport] = useState(false);
+  const [importUrl, setImportUrl] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importedEntries, setImportedEntries] = useState<
+    Array<{ question: string; answer: string }>
+  >([]);
 
   const filtered = useMemo(() => {
     let list = entries;
@@ -450,16 +457,142 @@ export default function KnowledgePage() {
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
-            <button
-              type="button"
-              onClick={() => openAddModal()}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
-            >
-              <Plus className="w-4 h-4" />
-              Add Entry
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => openAddModal()}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
+              >
+                <Plus className="w-4 h-4" />
+                Add Entry
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowImport((prev) => !prev);
+                  setImportError(null);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-sm text-zinc-200 hover:bg-[var(--bg-card)]"
+              >
+                <Globe className="w-4 h-4" />
+                Import from URL
+              </button>
+            </div>
           </div>
         </div>
+
+        {showImport && (
+          <div className="mb-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <p className="text-sm font-medium text-white">
+                  Turn your website into call-ready knowledge
+                </p>
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  Paste a public FAQ, services, or pricing page. We&apos;ll
+                  suggest Q&A pairs you can add.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="url"
+                value={importUrl}
+                onChange={(e) => setImportUrl(e.target.value)}
+                placeholder="https://yourbusiness.com/faq"
+                className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+              />
+              <button
+                type="button"
+                disabled={importing || !importUrl.trim()}
+                onClick={async () => {
+                  if (!importUrl.trim() || importing) return;
+                  setImportError(null);
+                  setImportedEntries([]);
+                  setImporting(true);
+                  try {
+                    const res = await fetch("/api/knowledge/import-url", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      credentials: "include",
+                      body: JSON.stringify({ url: importUrl.trim() }),
+                    });
+                    const data = (await res
+                      .json()
+                      .catch(() => null)) as
+                      | { entries?: Array<{ question: string; answer: string }>; error?: string }
+                      | null;
+                    if (!res.ok || !data?.entries) {
+                      setImportError(
+                        data?.error ??
+                          "Could not import this URL. Check that it is public and try again.",
+                      );
+                      return;
+                    }
+                    setImportedEntries(data.entries);
+                  } catch {
+                    setImportError(
+                      "Something went wrong importing this URL. Try again in a moment.",
+                    );
+                  } finally {
+                    setImporting(false);
+                  }
+                }}
+                className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold disabled:opacity-60 hover:bg-zinc-200"
+              >
+                {importing ? "Importing…" : "Import"}
+              </button>
+            </div>
+            {importError && (
+              <p className="text-xs text-[var(--accent-red)]" role="alert">
+                {importError}
+              </p>
+            )}
+            {importedEntries.length > 0 && (
+              <div className="mt-3 space-y-2">
+                <p className="text-xs text-zinc-500">
+                  Click a suggestion to add it to your knowledge.
+                </p>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {importedEntries.map((entry, idx) => (
+                    <button
+                      key={`${entry.question}-${idx}`}
+                      type="button"
+                      onClick={() => {
+                        setEntries((prev) => [
+                          ...prev,
+                          {
+                            id: `kb-url-${Date.now()}-${idx}`,
+                            title: entry.question,
+                            type: "FAQ",
+                            status: "Draft",
+                            content: entry.answer,
+                            wordCount: entry.answer.split(/\s+/).filter(Boolean)
+                              .length,
+                            lastUpdated: new Date().toISOString(),
+                            usageCount: 0,
+                            gapFlag: false,
+                            question: entry.question,
+                            url: importUrl.trim(),
+                            fileName: undefined,
+                          },
+                        ]);
+                      }}
+                      className="w-full text-left rounded-lg border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-xs text-zinc-200 hover:border-[var(--border-medium)]"
+                    >
+                      <p className="font-semibold mb-1 line-clamp-1">
+                        {entry.question}
+                      </p>
+                      <p className="text-[11px] text-zinc-400 line-clamp-2">
+                        {entry.answer}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-[1fr_320px] gap-8">
           {/* Card grid */}

@@ -2869,9 +2869,109 @@ function IdentityStepContent({
   const [triedContinue, setTriedContinue] = useState(false);
   const showNameError = triedContinue && !nameValid;
   const showGreetingError = triedContinue && !greetingValid;
+
+  const TEMPLATES = [
+    {
+      id: "receptionist" as const,
+      label: "Receptionist",
+      desc: "Answer calls, take messages, and route cleanly.",
+      defaults: {
+        purpose: "inbound" as AgentPurpose,
+        primaryGoal: "answer_route" as PrimaryGoalId,
+        greeting:
+          "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?",
+      },
+    },
+    {
+      id: "appointment_setter" as const,
+      label: "Appointment Booker",
+      desc: "Book appointments and confirm details.",
+      defaults: {
+        purpose: "inbound" as AgentPurpose,
+        primaryGoal: "book_appointments" as PrimaryGoalId,
+        greeting:
+          "Hi, I can help you schedule an appointment right now. What day works best for you?",
+      },
+    },
+    {
+      id: "lead_qualifier" as const,
+      label: "Lead Qualifier",
+      desc: "Qualify leads, then route hot prospects.",
+      defaults: {
+        purpose: "inbound" as AgentPurpose,
+        primaryGoal: "qualify_leads" as PrimaryGoalId,
+        greeting:
+          "Thanks for reaching out. I’ll ask a few quick questions so we can get you to the right next step.",
+      },
+    },
+    {
+      id: "follow_up" as const,
+      label: "Follow-up Caller",
+      desc: "Call back leads and re-engage.",
+      defaults: {
+        purpose: "outbound" as AgentPurpose,
+        primaryGoal: "follow_up" as PrimaryGoalId,
+        greeting:
+          "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?",
+      },
+    },
+  ];
+
+  const applyTemplate = (tpl: (typeof TEMPLATES)[number]) => {
+    onChange({
+      template: tpl.id,
+      purpose: tpl.defaults.purpose,
+      primaryGoal: tpl.defaults.primaryGoal,
+      greeting: (agent.greeting ?? "").trim() ? agent.greeting : tpl.defaults.greeting,
+    });
+  };
+
   return (
     <div className="space-y-6">
-      <h3 id="identity-heading" className="text-sm font-semibold text-white">What does this agent do?</h3>
+      <h3
+        id="identity-heading"
+        className="text-sm font-semibold text-white"
+      >
+        What does this agent do?
+      </h3>
+      <section
+        aria-label="Quick start templates"
+        className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3"
+      >
+        <div>
+          <p className="text-xs font-semibold text-white/80">
+            Quick start — choose a template
+          </p>
+          <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">
+            Pick a starting mission. You can still edit details below.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {TEMPLATES.map((tpl) => {
+            const active = agent.template === tpl.id;
+            return (
+              <button
+                key={tpl.id}
+                type="button"
+                onClick={() => applyTemplate(tpl)}
+                className={`text-left rounded-xl border px-3 py-2.5 text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                  active
+                    ? "border-white bg-[var(--bg-hover)] text-white"
+                    : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
+                }`}
+                aria-pressed={active}
+              >
+                <p className="font-medium text-[13px] text-white">
+                  {tpl.label}
+                </p>
+                <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">
+                  {tpl.desc}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </section>
       <div>
         <label htmlFor="agent-name" className="block text-xs text-zinc-500 mb-1.5">Agent name</label>
         <input
@@ -3083,9 +3183,82 @@ function BehaviorStepContent({
   onBack: () => void;
   onNext: () => void;
 }) {
+  const NEVER_DO_PRESETS = [
+    "Never discuss pricing or give quotes",
+    "Never schedule outside business hours",
+    "Never make promises about delivery dates",
+    "Never discuss competitors",
+    "Never share internal information",
+  ];
+
+  const neverDo = Array.isArray(agent.neverSay) ? agent.neverSay : [];
+
+  const addNeverDo = (rule: string) => {
+    if (!rule.trim() || neverDo.includes(rule)) return;
+    onChange({ neverSay: [...neverDo, rule] });
+  };
+
+  const removeNeverDo = (rule: string) => {
+    onChange({ neverSay: neverDo.filter((r) => r !== rule) });
+  };
+
   return (
     <div className="space-y-6">
       <h3 id="behavior-heading" className="text-sm font-semibold text-white">How should your agent behave?</h3>
+      <section
+        aria-label="Guardrails"
+        className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3"
+      >
+        <div>
+          <p className="text-xs font-semibold text-white/80">
+            What should your AI never do?
+          </p>
+          <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">
+            Set clear boundaries so calls stay on-brand and in-bounds.
+          </p>
+        </div>
+        <div className="space-y-1.5">
+          {NEVER_DO_PRESETS.map((rule) => (
+            <label
+              key={rule}
+              className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer hover:text-white"
+            >
+              <input
+                type="checkbox"
+                className="h-3.5 w-3.5 rounded border-[var(--border-default)] bg-[var(--bg-input)]"
+                checked={neverDo.includes(rule)}
+                onChange={(e) =>
+                  e.target.checked ? addNeverDo(rule) : removeNeverDo(rule)
+                }
+              />
+              <span>{rule}</span>
+            </label>
+          ))}
+        </div>
+        <div className="pt-2">
+          <label
+            htmlFor="custom-never-do"
+            className="block text-[11px] text-[var(--text-tertiary)] mb-1"
+          >
+            Add custom rule
+          </label>
+          <input
+            id="custom-never-do"
+            type="text"
+            placeholder="Add custom rule… (press Enter)"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-xs text-white placeholder:text-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const value = e.currentTarget.value.trim();
+                if (value) {
+                  addNeverDo(value);
+                  e.currentTarget.value = "";
+                }
+              }
+            }}
+          />
+        </div>
+      </section>
       <RulesTab agent={agent} onChange={onChange} />
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>

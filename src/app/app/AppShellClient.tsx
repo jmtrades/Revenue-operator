@@ -105,6 +105,7 @@ export default function AppShellClient({
   const [workspaceMetaLoaded, setWorkspaceMetaLoaded] = useState(Boolean(initialWorkspaceMeta));
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const inboxUnread = 0;
 
   useEffect(() => {
@@ -143,6 +144,44 @@ export default function AppShellClient({
       // ignore
     }
   }, [workspaceMetaLoaded, pathname, router, workspaceMeta?.onboardingCompletedAt]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const isMeta = event.metaKey || event.ctrlKey;
+      if (!isMeta) return;
+      const key = event.key.toLowerCase();
+
+      if (key === "k") {
+        event.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+        return;
+      }
+
+      if (key === "1") {
+        event.preventDefault();
+        router.push("/app/activity");
+        return;
+      }
+      if (key === "2") {
+        event.preventDefault();
+        router.push("/app/agents");
+        return;
+      }
+      if (key === "3") {
+        event.preventDefault();
+        router.push("/app/calls");
+        return;
+      }
+      if (key === "4") {
+        event.preventDefault();
+        router.push("/app/leads");
+        return;
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [router]);
 
   useEffect(() => {
     if (!mobileMoreOpen) return;
@@ -352,6 +391,62 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
             </>
           )}
         </div>
+        {commandPaletteOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/70"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Quick navigation"
+            onClick={() => setCommandPaletteOpen(false)}
+          >
+            <div
+              className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card-elevated)] shadow-2xl p-4 space-y-3"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">
+                    Quick navigation
+                  </p>
+                  <p className="text-[11px] text-[var(--text-tertiary)]">
+                    Press ⌘ + 1–4 to jump between core views.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCommandPaletteOpen(false)}
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="mt-2 space-y-1">
+                {[
+                  { href: "/app/activity", label: "Dashboard", shortcut: "⌘1" },
+                  { href: "/app/agents", label: "Agents", shortcut: "⌘2" },
+                  { href: "/app/calls", label: "Calls", shortcut: "⌘3" },
+                  { href: "/app/leads", label: "Leads", shortcut: "⌘4" },
+                ].map((item) => (
+                  <button
+                    key={item.href}
+                    type="button"
+                    onClick={() => {
+                      setCommandPaletteOpen(false);
+                      router.push(item.href);
+                    }}
+                    className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+                  >
+                    <span>{item.label}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-input)] text-[var(--text-tertiary)]">
+                      {item.shortcut}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </OnboardingStepProvider>
     </WorkspaceProvider>
   );

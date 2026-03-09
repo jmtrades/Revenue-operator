@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 import { SwCleanup } from "@/components/SwCleanup";
 import { StaleBuildBanner } from "@/components/StaleBuildBanner";
 
@@ -102,13 +103,22 @@ export default function RootLayout({
         />
         <SwCleanup />
         <StaleBuildBanner />
-        <a
-          href="#main"
-          className="skip-link"
-        >
+        <a href="#main" className="skip-link">
           Skip to content
         </a>
         {children}
+        <Toaster
+          position="top-right"
+          theme="dark"
+          richColors
+          closeButton
+          toastOptions={{
+            classNames: {
+              toast:
+                "rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card-elevated)] text-[var(--text-primary)] text-sm shadow-xl",
+            },
+          }}
+        />
       </body>
     </html>
   );
