@@ -316,16 +316,20 @@ function StaticConversationDemo() {
   const [visibleLines, setVisibleLines] = useState(1);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setVisibleLines((prev) => {
-        if (prev >= 6) {
-          clearInterval(interval);
-          return 6;
-        }
-        return prev + 1;
-      });
-    }, 1200);
-    return () => clearInterval(interval);
+    const timeouts: Array<ReturnType<typeof setTimeout>> = [];
+    const maxLines = 6;
+    const delayMs = 1200;
+
+    for (let i = 2; i <= maxLines; i += 1) {
+      const handle = setTimeout(() => {
+        setVisibleLines((prev) => (prev >= i ? prev : i));
+      }, delayMs * (i - 1));
+      timeouts.push(handle);
+    }
+
+    return () => {
+      for (const id of timeouts) clearTimeout(id);
+    };
   }, []);
 
   const lines = [
