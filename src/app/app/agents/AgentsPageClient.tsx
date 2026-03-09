@@ -24,6 +24,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Confetti } from "@/components/Confetti";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   AGENT_TEMPLATES,
   AGENT_TEMPLATE_CATEGORIES,
@@ -646,6 +647,7 @@ export default function AppAgentsPageClient({
   >("all");
   const templateModalCloseRef = useRef<HTMLButtonElement | null>(null);
   const templateModalContentRef = useRef<HTMLDivElement | null>(null);
+  const [deleteConfirmAgent, setDeleteConfirmAgent] = useState<Agent | null>(null);
   useEffect(() => {
     if (!showTemplateModal) return;
     templateModalCloseRef.current?.focus();
@@ -970,22 +972,26 @@ export default function AppAgentsPageClient({
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!selected) return;
-    const confirmed = typeof window !== "undefined" && window.confirm(`Delete "${selected.name}"? This cannot be undone.`);
-    if (!confirmed) return;
+    setDeleteConfirmAgent(selected);
+  };
+
+  const doDeleteAgent = async (agent: Agent) => {
     try {
-      const res = await fetch(`/api/agents/${selected.id}`, {
+      const res = await fetch(`/api/agents/${agent.id}`, {
         method: "DELETE",
         credentials: "include",
       });
       if (!res.ok) throw new Error("delete_failed");
-      const next = agents.filter((a) => a.id !== selected.id);
+      const next = agents.filter((a) => a.id !== agent.id);
       setAgents(next);
       setSelectedId(next[0]?.id ?? null);
       setToast("Agent deleted");
     } catch {
       setToast("Could not delete agent");
+    } finally {
+      setDeleteConfirmAgent(null);
     }
   };
 
@@ -1496,6 +1502,17 @@ export default function AppAgentsPageClient({
             </div>
           </div>
         </div>
+      )}
+      {deleteConfirmAgent && (
+        <ConfirmDialog
+          open
+          title="Delete agent"
+          message={`Delete "${deleteConfirmAgent.name}"? This cannot be undone.`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={() => void doDeleteAgent(deleteConfirmAgent)}
+          onClose={() => setDeleteConfirmAgent(null)}
+        />
       )}
     </div>
   );
