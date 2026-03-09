@@ -3445,6 +3445,40 @@ function GoLiveStepContent({
           ))}
         </ul>
       </div>
+      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4" aria-label="Preview what your AI will say">
+        <p className="text-xs font-semibold text-white/90">Preview what your AI will say</p>
+        <p className="text-[11px] text-[var(--text-tertiary)]">Based on your greeting, knowledge, and rules.</p>
+        <div className="space-y-3">
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-3">
+            <p className="text-[11px] font-medium text-white/70 mb-1">Someone calls to book an appointment</p>
+            <p className="text-xs text-[var(--text-secondary)]">
+              {agent.primaryGoal === "book_appointments" && agent.greeting?.trim()
+                ? agent.greeting.trim().slice(0, 120) + (agent.greeting.trim().length > 120 ? "…" : "")
+                : agent.greeting?.trim()?.slice(0, 100) ?? "Your agent will greet them and offer to schedule, using your greeting and calendar."}
+            </p>
+          </div>
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-3">
+            <p className="text-[11px] font-medium text-white/70 mb-1">Someone asks about pricing</p>
+            <p className="text-xs text-[var(--text-secondary)]">
+              {(agent.faq ?? []).some((e) => (e.question ?? "").toLowerCase().includes("price") || (e.answer ?? "").toLowerCase().includes("price"))
+                ? (agent.faq ?? []).find((e) => (e.question ?? "").toLowerCase().includes("price") || (e.answer ?? "").toLowerCase().includes("price"))?.answer?.slice(0, 100) ?? "Your agent would answer from your knowledge."
+                : (agent.neverSay ?? []).some((r) => r.toLowerCase().includes("pricing") || r.toLowerCase().includes("quote"))
+                  ? "Your agent won't discuss pricing (per your rules). It would redirect or take a message."
+                  : "Your agent would look up pricing in your knowledge or say it doesn't have that info and offer to have someone follow up."}
+            </p>
+          </div>
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-3">
+            <p className="text-[11px] font-medium text-white/70 mb-1">Someone calls after hours</p>
+            <p className="text-xs text-[var(--text-secondary)]">
+              {agent.afterHoursMode === "forward"
+                ? "Your agent will forward the call to your number or take a message, depending on your settings."
+                : agent.afterHoursMode === "messages"
+                  ? "Your agent will take a message and let the caller know someone will follow up."
+                  : "Your agent will take a message or handle per your after-hours settings."}
+            </p>
+          </div>
+        </div>
+      </section>
       <p className="text-xs text-white/40">Connect your phone number or activate for test calls and outbound only.</p>
       <div className="grid gap-3 sm:grid-cols-2" role="list">
         <Link
