@@ -105,7 +105,11 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
   const knowledgeBase = agent.knowledge_base ?? {};
   const rules = agent.rules ?? {};
   const voiceSettings = knowledgeBase.voiceSettings ?? {};
-  const businessName = workspace.name?.trim() || "My Workspace";
+  const businessName =
+    workspace.name?.trim() ||
+    // prefer explicit business_name column if present on the row
+    (workspace as { business_name?: string | null }).business_name?.trim() ||
+    "My Workspace";
   const greeting =
     agent.greeting?.trim() ||
     `Thanks for calling ${businessName}. How can I help you today?`;

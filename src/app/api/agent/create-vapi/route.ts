@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!hasVapiServerKey()) {
-    return NextResponse.json({ error: "Vapi is not configured" }, { status: 503 });
+    return NextResponse.json({ error: "Voice service is being configured." }, { status: 503 });
   }
 
   try {
