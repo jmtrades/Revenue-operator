@@ -64,7 +64,7 @@ export function StaleBuildBanner() {
   return (
     <div
       role="alert"
-      className="fixed bottom-4 right-4 z-50 bg-[var(--bg-card-elevated)] border border-[var(--border-medium)] rounded-lg shadow-xl px-4 py-3 flex items-center gap-3 max-w-sm"
+      className="fixed bottom-4 right-4 z-50 bg-[var(--bg-card)] border border-[var(--border-medium)] rounded-lg shadow-2xl px-4 py-3 flex items-center gap-3 max-w-xs"
       aria-live="polite"
     >
       <p className="text-sm text-[var(--text-secondary)]">Update available</p>
@@ -72,7 +72,7 @@ export function StaleBuildBanner() {
         type="button"
         onClick={handleRefresh}
         disabled={refreshing}
-        className="text-sm font-medium text-[var(--accent-blue)] hover:opacity-80 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
+        className="text-sm font-medium text-[var(--accent-blue)] hover:underline whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
       >
         {refreshing ? "Refreshing…" : "Refresh"}
       </button>

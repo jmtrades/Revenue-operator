@@ -242,7 +242,7 @@ export function HomepageVoiceWidget() {
 
       {/* Compact transcript */}
       <div
-        className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3 h-32 overflow-y-auto text-sm"
+        className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-3 h-32 overflow-y-auto text-sm"
         aria-live="polite"
         aria-label="Live transcript"
       >

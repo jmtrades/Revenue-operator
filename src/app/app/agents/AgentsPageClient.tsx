@@ -1089,8 +1089,9 @@ export default function AppAgentsPageClient({
           </div>
         </div>
       ) : (
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)] gap-4 lg:gap-6 items-stretch lg:min-h-[480px]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
+      <div className="flex flex-col lg:flex-row h-full min-h-0 gap-4 lg:gap-0 lg:min-h-[480px]">
+        <div className="w-full lg:w-[280px] lg:shrink-0 lg:border-r lg:border-[var(--border-default)] lg:overflow-y-auto lg:pr-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 content-start">
           {agents.map((agent) => (
             <button
               key={agent.id}
@@ -1144,12 +1145,13 @@ export default function AppAgentsPageClient({
               })()}
             </button>
           ))}
+          </div>
         </div>
 
-        <div className="flex-1 min-w-0 flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
+        <div className="flex-1 min-w-0 flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] lg:overflow-hidden">
           {selected ? (
-            <div className="flex flex-col lg:flex-row flex-1 min-h-0">
-              <div className="w-full lg:w-[260px] flex-shrink-0 border-r border-[var(--border-default)] p-4 space-y-4 overflow-y-auto">
+            <div className="flex flex-col lg:flex-row flex-1 min-h-0 min-w-0">
+              <div className="w-full lg:w-[240px] flex-shrink-0 border-r border-[var(--border-default)] p-4 space-y-4 overflow-y-auto">
                 <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <p className="font-medium text-sm text-white truncate">{selected.name}</p>
@@ -1226,7 +1228,7 @@ export default function AppAgentsPageClient({
                   </button>
                 </div>
               </div>
-              <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-6 relative break-words" aria-labelledby="agent-step-heading">
+              <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-6 relative break-words" style={{ overflowWrap: "anywhere" }} aria-labelledby="agent-step-heading">
                 {saving && <div className="absolute top-3 right-3 text-xs text-white/30">Saving...</div>}
                 <h2 id="agent-step-heading" className="text-xs text-zinc-500 mb-4 font-normal">
                   Currently on: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
@@ -1458,7 +1460,7 @@ function VoiceCard(props: {
       className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
         selected
           ? "border-2 border-white bg-[var(--bg-hover)] ring-1 ring-white/20"
-          : "border border-[var(--border-default)] bg-white/[0.02] hover:border-[var(--border-medium)]"
+          : "border border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--border-medium)]"
       }`}
     >
       <button
@@ -1848,7 +1850,7 @@ function KnowledgeTab({
           {agent.faq.map((item, index) => (
             <div
               key={item.id}
-              className="rounded-xl border border-[var(--border-default)] bg-white/[0.02] p-4"
+              className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4"
             >
               <div className="mb-3 flex items-center justify-between">
                 <p className="text-[11px] text-zinc-500">Entry {index + 1}</p>
@@ -2855,7 +2857,7 @@ function IdentityStepContent({
               className={`rounded-xl border p-3 text-left text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                 purpose === p
                   ? "border-white bg-[var(--bg-hover)] text-white"
-                  : "border-[var(--border-default)] bg-white/[0.02] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
+                  : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
               }`}
             >
               {p === "inbound" && "Answer calls — Inbound only"}
@@ -3007,7 +3009,7 @@ function KnowledgeStepContent({
   return (
     <div className="space-y-6">
       <h3 id="knowledge-heading" className="text-sm font-semibold text-white">What does your agent know?</h3>
-      <section aria-labelledby="knowledge-quick-label" className="rounded-xl border border-[var(--border-default)] bg-white/[0.02] p-4">
+      <section aria-labelledby="knowledge-quick-label" className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
         <p id="knowledge-quick-label" className="text-xs text-[var(--text-secondary)] mb-2">Quick start: Add 5 common Q&As for your business (hours, location, booking, services, pricing).</p>
         <button type="button" onClick={seedFive} disabled={seeding} aria-busy={seeding} aria-label={seeding ? "Adding default Q&As" : "Add 5 default Q&As now"} className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           {seeding ? "Adding…" : "Add them now"}
@@ -3129,7 +3131,7 @@ function TestStepContent({
               onClick={() => tryScenario(s)}
               role="listitem"
               aria-label={`Try scenario: ${s.title}. ${s.description}`}
-              className="rounded-xl border border-[var(--border-default)] bg-white/[0.02] p-3 text-left text-xs transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 text-left text-xs transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               <span className="font-medium text-[var(--text-primary)]">{s.title}</span>
               <p className="mt-0.5 text-[var(--text-secondary)]">{s.description}</p>
@@ -3210,7 +3212,7 @@ function GoLiveStepContent({
         <Link
           href="/app/settings/phone"
           aria-label="Forward your existing number. Set up call forwarding to your AI."
-          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <span className="text-sm font-medium text-[var(--text-primary)]">Forward your existing number</span>
           <span className="mt-1 text-xs text-[var(--text-secondary)]">Keep your current number. Forward calls to your AI.</span>
@@ -3219,7 +3221,7 @@ function GoLiveStepContent({
         <Link
           href="/app/settings/phone"
           aria-label="Get a new phone number. We'll assign you a local number instantly."
-          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <span className="text-sm font-medium text-[var(--text-primary)]">Get a new number</span>
           <span className="mt-1 text-xs text-[var(--text-secondary)]">We&apos;ll assign you a local number instantly.</span>

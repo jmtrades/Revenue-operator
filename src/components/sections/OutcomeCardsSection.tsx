@@ -37,7 +37,7 @@ export function OutcomeCardsSection() {
           {CARDS.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
-              className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6"
+              className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6"
             >
               <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4">
                 <Icon className="w-5 h-5 text-white/80" aria-hidden />
