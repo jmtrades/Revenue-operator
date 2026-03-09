@@ -66,11 +66,20 @@ export default function AppSettingsPage() {
         ))}
       </div>
       <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
+        <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">Danger zone</p>
+        <div className="rounded-xl border border-zinc-700/50 bg-zinc-900/30 p-4 space-y-3">
+          <Link
+            href="/app/settings/billing"
+            className="block text-sm text-zinc-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
+          >
+            Cancel subscription →
+          </Link>
+        </div>
         <button
           type="button"
           onClick={handleSignOut}
           disabled={signingOut}
-          className="px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+          className="mt-4 px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </button>

@@ -1129,14 +1129,22 @@ export default function AppAgentsPageClient({
         <div className="w-full lg:w-[280px] lg:shrink-0 lg:border-r lg:border-[var(--border-default)] lg:overflow-y-auto lg:pr-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 content-start">
           {agents.map((agent) => (
-            <button
+            <div
               key={agent.id}
-              type="button"
+              role="button"
+              tabIndex={0}
               onClick={() => {
                 setSelectedId(agent.id);
                 setActiveStep(getFirstIncompleteStep(agent));
               }}
-              className={`text-left p-4 rounded-2xl border bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] transition-colors ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelectedId(agent.id);
+                  setActiveStep(getFirstIncompleteStep(agent));
+                }
+              }}
+              className={`text-left p-4 rounded-2xl border bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] ${
                 selected?.id === agent.id ? "border-[var(--border-medium)]" : "border-[var(--border-default)]"
               }`}
             >
@@ -1184,7 +1192,32 @@ export default function AppAgentsPageClient({
                   </p>
                 );
               })()}
-            </button>
+              <div className="mt-3 pt-2 border-t border-[var(--border-default)] flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                <button
+                  type="button"
+                  className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
+                  onClick={() => { setSelectedId(agent.id); setActiveStep(getFirstIncompleteStep(agent)); }}
+                >
+                  Edit
+                </button>
+                <span className="text-zinc-600">·</span>
+                <button
+                  type="button"
+                  className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
+                  onClick={() => { setSelectedId(agent.id); setActiveStep("test"); }}
+                >
+                  Test
+                </button>
+                <span className="text-zinc-600">·</span>
+                <button
+                  type="button"
+                  className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
+                  onClick={() => { setSelectedId(agent.id); setActiveStep("golive"); }}
+                >
+                  Launch
+                </button>
+              </div>
+            </div>
           ))}
           </div>
         </div>
