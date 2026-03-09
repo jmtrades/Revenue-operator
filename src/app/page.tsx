@@ -17,7 +17,6 @@ import { EnterpriseComparisonCard } from "@/components/sections/EnterpriseCompar
 import { SocialProof } from "@/components/sections/SocialProof";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Footer } from "@/components/sections/Footer";
-import { VoiceOrbClient } from "@/components/VoiceOrbClient";
 
 export default async function HomePage() {
   let initialAuthenticated = false;
@@ -54,7 +53,6 @@ export default async function HomePage() {
         <SocialProof />
         <FinalCTA />
       </main>
-      <VoiceOrbClient />
       <Footer />
     </div>
   );

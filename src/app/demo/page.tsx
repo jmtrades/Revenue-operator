@@ -3,7 +3,6 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { DemoSimulatorSection } from "@/components/demo/DemoSimulatorSection";
 import { DemoPageContent } from "./DemoPageContent";
-import { VoiceOrbClient } from "@/components/VoiceOrbClient";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 
@@ -42,7 +41,6 @@ export default async function DemoPage() {
           <DemoSimulatorSection />
         </div>
       </main>
-      <VoiceOrbClient />
       <Footer />
     </div>
   );
