@@ -519,7 +519,10 @@ export default function LeadsPage() {
                     )}`,
                     { credentials: "include" },
                   );
-                  if (!res.ok) return;
+                  if (!res.ok) {
+                    toast.error("Export failed. Try again.");
+                    return;
+                  }
                   const blob = await res.blob();
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement("a");
@@ -531,8 +534,9 @@ export default function LeadsPage() {
                   a.click();
                   a.remove();
                   URL.revokeObjectURL(url);
+                  toast.success("Leads exported. Check your downloads.");
                 } catch {
-                  // no-op for now
+                  toast.error("Export failed. Try again.");
                 }
               }}
               className="hidden md:inline-flex items-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-300 hover:bg-[var(--bg-input)]"

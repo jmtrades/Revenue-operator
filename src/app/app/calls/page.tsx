@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Search, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -239,7 +240,10 @@ export default function CallsPage() {
                 `/api/calls/export?workspace_id=${encodeURIComponent(workspaceId)}`,
                 { credentials: "include" },
               );
-              if (!res.ok) return;
+              if (!res.ok) {
+                toast.error("Export failed. Try again.");
+                return;
+              }
               const blob = await res.blob();
               const url = URL.createObjectURL(blob);
               const a = document.createElement("a");
@@ -251,8 +255,9 @@ export default function CallsPage() {
               a.click();
               a.remove();
               URL.revokeObjectURL(url);
+              toast.success("Calls exported. Check your downloads.");
             } catch {
-              // silent failure; future: toast
+              toast.error("Export failed. Try again.");
             }
           }}
           className="text-xs md:text-sm rounded-xl border border-[var(--border-default)] px-4 py-2 text-zinc-200 hover:bg-[var(--bg-input)]"
