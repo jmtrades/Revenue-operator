@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   Bell,
   Building2,
@@ -66,14 +67,36 @@ export default function AppSettingsPage() {
         ))}
       </div>
       <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
-        <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">Danger zone</p>
-        <div className="rounded-xl border border-zinc-700/50 bg-zinc-900/30 p-4 space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-wider text-red-400/90 mb-3">Danger zone</p>
+        <div className="rounded-xl border border-red-900/40 bg-red-950/20 p-4 space-y-3">
           <Link
             href="/app/settings/billing"
             className="block text-sm text-zinc-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
           >
             Cancel subscription →
           </Link>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== "undefined" && window.confirm("Delete all workspace data (calls, leads, agents)? This cannot be undone. Contact support to complete.")) {
+                toast.info("Contact support to permanently delete your data.");
+              }
+            }}
+            className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded text-left"
+          >
+            Delete all data
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== "undefined" && window.confirm("Permanently delete your account and all associated data? This cannot be undone. Contact support to complete.")) {
+                toast.info("Contact support to permanently delete your account.");
+              }
+            }}
+            className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded text-left"
+          >
+            Delete account
+          </button>
         </div>
         <button
           type="button"
