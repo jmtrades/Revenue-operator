@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type {
   ApiKeyRow,
   ApiKeyPermission,
@@ -283,18 +284,19 @@ function ApiKeysTab({
         </div>
       )}
 
-      {/* Revoke confirm */}
       {revokeId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setRevokeId(null)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-white mb-2">Revoke API key?</h3>
-            <p className="text-sm text-zinc-400 mb-4">This key will stop working immediately. This can&apos;t be undone.</p>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => setRevokeId(null)} className="flex-1 py-2 rounded-xl text-sm text-zinc-300 border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">Cancel</button>
-              <button type="button" onClick={() => { onRevoke(revokeId); setRevokeId(null); }} className="flex-1 py-2 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-500">Revoke</button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          open
+          title="Revoke API key?"
+          message="This key will stop working immediately. This can't be undone."
+          confirmLabel="Revoke"
+          variant="danger"
+          onConfirm={() => {
+            onRevoke(revokeId);
+            setRevokeId(null);
+          }}
+          onClose={() => setRevokeId(null)}
+        />
       )}
 
     </div>
