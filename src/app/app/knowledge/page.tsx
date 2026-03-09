@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import {
   Search,
   Plus,
@@ -337,6 +338,7 @@ export default function KnowledgePage() {
           fileName: data.callId ? `Call ${data.callId.slice(0, 8)}` : undefined,
         },
       ]);
+      toast.success("Call summary added as draft. Edit and save when ready.");
     } catch {
       // ignore
     }
