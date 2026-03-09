@@ -301,6 +301,8 @@ function KnowledgeModal({
 
 const PAGE_TITLE = "Knowledge — Recall Touch";
 
+const ADD_FROM_CALL_KEY = "rt_add_to_knowledge";
+
 export default function KnowledgePage() {
   useEffect(() => {
     document.title = PAGE_TITLE;
@@ -308,6 +310,37 @@ export default function KnowledgePage() {
   }, []);
 
   const [entries, setEntries] = useState<KnowledgeEntry[]>([]);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(ADD_FROM_CALL_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw) as { summary?: string; callId?: string };
+      sessionStorage.removeItem(ADD_FROM_CALL_KEY);
+      const summary = (data.summary ?? "").trim();
+      if (!summary) return;
+      const title = summary.slice(0, 60) + (summary.length > 60 ? "…" : "");
+      setEntries((prev) => [
+        ...prev,
+        {
+          id: `kb-call-${Date.now()}`,
+          title: title || "From call",
+          type: "FAQ",
+          status: "Draft",
+          content: summary,
+          wordCount: summary.split(/\s+/).filter(Boolean).length,
+          lastUpdated: new Date().toISOString(),
+          usageCount: 0,
+          gapFlag: false,
+          question: title,
+          url: undefined,
+          fileName: data.callId ? `Call ${data.callId.slice(0, 8)}` : undefined,
+        },
+      ]);
+    } catch {
+      // ignore
+    }
+  }, []);
   const [knowledgeGaps] = useState<KnowledgeGap[]>([]);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<KnowledgeType | "all">("all");
