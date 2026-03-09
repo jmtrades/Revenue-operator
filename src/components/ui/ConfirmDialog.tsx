@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export interface ConfirmDialogProps {
   open: boolean;
@@ -21,8 +21,11 @@ export function ConfirmDialog({
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (!open) return;
+    cancelRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -53,6 +56,7 @@ export function ConfirmDialog({
         </p>
         <div className="flex justify-end gap-2 pt-2">
           <button
+            ref={cancelRef}
             type="button"
             onClick={onClose}
             className="rounded-xl border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"

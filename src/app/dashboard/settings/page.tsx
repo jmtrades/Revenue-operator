@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, Card, CardHeader, CardBody, EmptyState } from "@/components/ui";
 
@@ -39,6 +40,7 @@ export default function SettingsPage() {
   } | null>(null);
   const [disconnectStatements, setDisconnectStatements] = useState<string[] | null>(null);
   const [operationalProfile, setOperationalProfile] = useState<string>("org");
+  const [pauseConfirmOpen, setPauseConfirmOpen] = useState(false);
   const [businessContext, setBusinessContext] = useState({
     business_name: "",
     offer_summary: "",
@@ -535,20 +537,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
               </Link>
               <button
                 type="button"
-                onClick={async () => {
-                  if (!workspaceId || !confirm("Pause protection? Coverage runs until period end. Resume anytime.")) return;
-                  const res = await fetch("/api/billing/pause-coverage", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ workspace_id: workspaceId }),
-                  });
-                  const data = await res.json().catch(() => ({}));
-                  if (data?.absence_statements && (data.absence_statements.what_would_fail?.length || data.absence_statements.recent_operation?.length || data.absence_statements.current_dependency?.length || data.absence_statements.if_disabled?.length)) {
-                    setAbsenceStatements(data.absence_statements);
-                  } else {
-                    window.location.reload();
-                  }
-                }}
+                onClick={() => workspaceId && setPauseConfirmOpen(true)}
                 className="px-4 py-2 rounded-lg font-medium text-sm"
                 style={{ borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-secondary)" }}
               >
@@ -734,6 +723,30 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
             )}
           </div>
         </div>
+      )}
+      {pauseConfirmOpen && (
+        <ConfirmDialog
+          open
+          title="Pause protection?"
+          message="Coverage runs until period end. You can resume anytime."
+          confirmLabel="Pause coverage"
+          variant="default"
+          onConfirm={async () => {
+            if (!workspaceId) return;
+            const res = await fetch("/api/billing/pause-coverage", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ workspace_id: workspaceId }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (data?.absence_statements && (data.absence_statements.what_would_fail?.length || data.absence_statements.recent_operation?.length || data.absence_statements.current_dependency?.length || data.absence_statements.if_disabled?.length)) {
+              setAbsenceStatements(data.absence_statements);
+            } else {
+              window.location.reload();
+            }
+          }}
+          onClose={() => setPauseConfirmOpen(false)}
+        />
       )}
     </div>
   );

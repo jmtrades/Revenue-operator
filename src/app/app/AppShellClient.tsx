@@ -192,6 +192,15 @@ export default function AppShellClient({
     return () => window.removeEventListener("keydown", onKey);
   }, [mobileMoreOpen]);
 
+  useEffect(() => {
+    if (!commandPaletteOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCommandPaletteOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [commandPaletteOpen]);
+
   const isActive = (href: string) =>
     pathname === href || (href !== "/app/activity" && pathname.startsWith(href));
 

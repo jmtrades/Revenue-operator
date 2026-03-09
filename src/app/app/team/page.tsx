@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import {
   ROLE_LABELS,
@@ -64,13 +66,15 @@ export default function TeamPage() {
   const [inviteRole, setInviteRole] = useState<TeamRole>("agent");
   const [inviteSending, setInviteSending] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
-  const [toast, setToast] = useState("");
   const [menuMemberId, setMenuMemberId] = useState<string | null>(null);
   const [roleModalMember, setRoleModalMember] = useState<TeamMember | null>(null);
   const [removeConfirmMember, setRemoveConfirmMember] = useState<TeamMember | null>(null);
   const [rolesExpanded, setRolesExpanded] = useState(false);
   const [resendingId, setResendingId] = useState<string | null>(null);
   const [revokingId, setRevokingId] = useState<string | null>(null);
+  const showToast = useCallback((msg: string, isError?: boolean) => {
+    if (isError) toast.error(msg); else toast.success(msg);
+  }, []);
 
   const fetchTeam = useCallback(() => {
     if (!workspaceId) return;
@@ -137,12 +141,6 @@ export default function TeamPage() {
     return () => { cancelled = true; };
   }, [workspaceId]);
 
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    const t = setTimeout(() => setToast(""), 2500);
-    return () => clearTimeout(t);
-  }, []);
-
   const handleSendInvite = useCallback(() => {
     if (!inviteEmail.trim() || !workspaceId || inviteSending) return;
     setInviteError(null);
@@ -204,10 +202,10 @@ export default function TeamPage() {
           showToast("Invite resent.");
           fetchTeam();
         } else {
-          showToast(data.error ?? "Failed to resend.");
+          showToast(data.error ?? "Failed to resend.", true);
         }
       })
-      .catch(() => showToast("Failed to resend."))
+      .catch(() => showToast("Failed to resend.", true))
       .finally(() => setResendingId(null));
   }, [workspaceId, resendingId, showToast, fetchTeam]);
 
@@ -226,10 +224,10 @@ export default function TeamPage() {
           showToast("Invite revoked.");
           fetchTeam();
         } else {
-          showToast(data.error ?? "Failed to revoke.");
+          showToast(data.error ?? "Failed to revoke.", true);
         }
       })
-      .catch(() => showToast("Failed to revoke."))
+      .catch(() => showToast("Failed to revoke.", true))
       .finally(() => setRevokingId(null));
   }, [workspaceId, revokingId, showToast, fetchTeam]);
 
@@ -484,30 +482,16 @@ export default function TeamPage() {
         </div>
       )}
 
-      {/* Remove confirmation */}
       {removeConfirmMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setRemoveConfirmMember(null)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-white mb-2">Remove member?</h3>
-            <p className="text-sm text-zinc-400 mb-4">
-              {removeConfirmMember.name} will lose access to this workspace. This can&apos;t be undone.
-            </p>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => setRemoveConfirmMember(null)} className="flex-1 py-2 rounded-xl text-sm text-zinc-300 border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">
-                Cancel
-              </button>
-              <button type="button" onClick={() => handleRemoveMember(removeConfirmMember.id)} className="flex-1 py-2 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-500">
-                Remove
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {toast && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-medium)] text-white text-sm font-medium shadow-lg">
-          {toast}
-        </div>
+        <ConfirmDialog
+          open
+          title="Remove member?"
+          message={`${removeConfirmMember.name} will lose access to this workspace. This can't be undone.`}
+          confirmLabel="Remove"
+          variant="danger"
+          onConfirm={() => handleRemoveMember(removeConfirmMember.id)}
+          onClose={() => setRemoveConfirmMember(null)}
+        />
       )}
     </div>
   );
