@@ -636,6 +636,20 @@ export default function CallsPage() {
               </button>
               <button
                 type="button"
+                onClick={() => {
+                  try {
+                    sessionStorage.setItem(
+                      "rt_add_to_knowledge",
+                      JSON.stringify({
+                        summary: selectedCall.summary ?? "",
+                        callId: selectedCall.id,
+                      }),
+                    );
+                  } catch {
+                    // ignore
+                  }
+                  router.push("/app/knowledge");
+                }}
                 className="flex-1 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100"
               >
                 Add to knowledge
