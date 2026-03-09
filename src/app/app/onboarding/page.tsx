@@ -246,7 +246,7 @@ export default function AppOnboardingPage() {
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="Portland Plumbing Co"
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
               />
             </div>
             <div>
@@ -278,7 +278,7 @@ export default function AppOnboardingPage() {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://yoursite.com"
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
               />
             </div>
             <div>
@@ -289,7 +289,7 @@ export default function AppOnboardingPage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="123 Main St, City, State"
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
               />
             </div>
             <div>
@@ -300,7 +300,7 @@ export default function AppOnboardingPage() {
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
                 placeholder="+1 (555) 000-0000"
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
               />
             </div>
             <button
@@ -326,7 +326,7 @@ export default function AppOnboardingPage() {
                     type="button"
                     onClick={() => { setVoiceId(v.id); setAgentName(v.name); }}
                     className={`rounded-xl border p-4 text-left transition-all ${
-                      selected ? "border-[var(--border-medium)] bg-[var(--bg-hover)] ring-2 ring-[var(--accent-blue)]/30" : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)]"
+                      selected ? "border-[var(--border-medium)] bg-[var(--bg-hover)] ring-2 ring-zinc-500/40" : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)]"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -355,7 +355,7 @@ export default function AppOnboardingPage() {
                 onChange={(e) => setGreeting(e.target.value)}
                 placeholder={defaultGreeting}
                 rows={2}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none resize-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none resize-none text-base"
               />
               <button
                 type="button"
@@ -407,7 +407,7 @@ export default function AppOnboardingPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="123 Main St, City, State"
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
                 />
               </div>
               <div>
@@ -418,7 +418,7 @@ export default function AppOnboardingPage() {
                   value={businessHoursDisplay}
                   onChange={(e) => setBusinessHoursDisplay(e.target.value)}
                   placeholder="e.g. Monday–Friday 9 AM–5 PM"
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
                 />
               </div>
               <div>
@@ -448,7 +448,7 @@ export default function AppOnboardingPage() {
                     onChange={(e) => setServiceInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addService(); } }}
                     placeholder="Add a service"
-                    className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none"
+                    className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
                   />
                   <button
                     type="button"

@@ -177,11 +177,11 @@ export default function AppSettingsIntegrationsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
               <div className="flex items-center gap-3 mb-2">
-                <Phone className="w-5 h-5 text-[var(--accent-blue)]" aria-hidden />
+                <Phone className="w-5 h-5 text-zinc-400" aria-hidden />
                 <p className="text-sm font-medium text-[var(--text-primary)]">Phone</p>
               </div>
               <p className="text-xs text-[var(--text-secondary)] mb-3">AI phone number for calls</p>
-              <Link href="/app/settings/phone" className="text-sm text-[var(--accent-blue)] hover:underline focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded">
+              <Link href="/app/settings/phone" className="text-sm text-zinc-300 hover:text-white hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">
                 Manage →
               </Link>
             </div>
@@ -189,7 +189,7 @@ export default function AppSettingsIntegrationsPage() {
               <div className="flex items-center gap-3 mb-2">
                 <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
                 <p className="text-sm font-medium text-[var(--text-primary)]">WhatsApp</p>
-                <span className="text-xs text-[var(--text-tertiary)] bg-white/5 px-2 py-0.5 rounded">Coming soon</span>
+                <span className="text-xs text-[var(--text-tertiary)] bg-white/5 px-2 py-0.5 rounded">Notify me when available</span>
               </div>
               <p className="text-xs text-[var(--text-secondary)] mb-3">Let your AI respond on WhatsApp</p>
               <div className="flex flex-wrap items-center gap-2">
@@ -205,7 +205,7 @@ export default function AppSettingsIntegrationsPage() {
                   type="button"
                   onClick={handleWhatsAppNotify}
                   disabled={whatsappSubmitting}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-gray-900 hover:bg-gray-100 shrink-0 disabled:opacity-60 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-gray-900 hover:bg-gray-100 shrink-0 disabled:opacity-60 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 >
                   {whatsappSubmitting ? "Adding…" : "Notify me →"}
                 </button>

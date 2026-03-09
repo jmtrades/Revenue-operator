@@ -49,6 +49,7 @@ export function DemoPageContent() {
                 key={label}
                 type="button"
                 onClick={() => chatRef.current?.send(label)}
+                aria-label={`Try scenario: ${label}`}
                 className="rounded-full border border-[var(--border-medium)] bg-zinc-800/80 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-600 hover:text-white transition-colors"
               >
                 {label}
@@ -97,7 +98,7 @@ export function DemoPageContent() {
 
       <div className="max-w-5xl mx-auto px-4 mt-8 text-center">
         <p className="text-sm text-zinc-500 mb-2">Voice: click the round widget in the corner to talk.</p>
-        <Link href={ROUTES.START} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>
+        <Link href={ROUTES.START} className="text-sm font-medium text-zinc-300 hover:text-white transition-colors" aria-label="Get this for your number">
           Get this for your number →
         </Link>
       </div>

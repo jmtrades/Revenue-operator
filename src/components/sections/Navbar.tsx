@@ -189,7 +189,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
           type="button"
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
-          className="lg:hidden p-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]"
+          className="lg:hidden p-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]"
           style={{ color: "var(--text-primary)" }}
           onClick={() => setMobileOpen((o) => !o)}
         >

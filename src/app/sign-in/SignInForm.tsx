@@ -94,7 +94,8 @@ export default function SignInForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 autoComplete="email"
-                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]/30 focus:border-[var(--border-focus)] transition-all"
+                aria-label="Email address"
+                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-[var(--border-focus)] transition-all"
               />
             </div>
             <div>
@@ -110,11 +111,13 @@ export default function SignInForm() {
                   onChange={(e) => setPw(e.target.value)}
                   placeholder={isCreate ? "Create a password" : "Enter password"}
                   autoComplete={isCreate ? "new-password" : "current-password"}
-                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]/30 focus:border-[var(--border-focus)] transition-all"
+                  aria-label="Password"
+                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-[var(--border-focus)] transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
+                  aria-label={showPw ? "Hide password" : "Show password"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] text-[13px] font-medium transition"
                 >
                   {showPw ? "Hide" : "Show"}
@@ -131,7 +134,7 @@ export default function SignInForm() {
                   value={biz}
                   onChange={(e) => setBiz(e.target.value)}
                   placeholder="Acme Co"
-                  className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]/30 focus:border-[var(--border-focus)] transition-all"
+                  className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-[var(--border-focus)] transition-all"
                 />
               </div>
             )}
@@ -153,7 +156,8 @@ export default function SignInForm() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full py-2.5 bg-white text-gray-900 font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
+              aria-label={isCreate ? "Create account" : "Sign in"}
+              className="w-full py-2.5 bg-white text-gray-900 font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             >
               {busy
                 ? isCreate
@@ -175,7 +179,7 @@ export default function SignInForm() {
             type="button"
             onClick={google}
             disabled={googleBusy}
-            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl hover:bg-[var(--bg-hover)] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
+            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl hover:bg-[var(--bg-hover)] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path

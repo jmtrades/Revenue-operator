@@ -85,8 +85,8 @@ export function Hero() {
                     &ldquo;Hi, I&apos;d like to schedule an appointment for Thursday.&rdquo;
                   </p>
                 </div>
-                <div className="rounded-lg p-3 bg-blue-500/[0.08] border border-blue-500/[0.15] ml-6">
-                  <p className="text-xs font-medium text-blue-400 mb-0.5">AI Agent</p>
+                <div className="rounded-lg p-3 bg-zinc-500/[0.12] border border-zinc-500/20 ml-6">
+                  <p className="text-xs font-medium text-zinc-300 mb-0.5">AI Agent</p>
                   <p className="text-sm text-white">
                     &ldquo;Of course! I have openings at 10 AM, 2 PM, and 4 PM. Which works best?&rdquo;
                   </p>
@@ -97,8 +97,8 @@ export function Hero() {
                     &ldquo;2 PM sounds perfect.&rdquo;
                   </p>
                 </div>
-                <div className="rounded-lg p-3 bg-blue-500/[0.08] border border-blue-500/[0.15] ml-6">
-                  <p className="text-xs font-medium text-blue-400 mb-0.5">AI Agent</p>
+                <div className="rounded-lg p-3 bg-zinc-500/[0.12] border border-zinc-500/20 ml-6">
+                  <p className="text-xs font-medium text-zinc-300 mb-0.5">AI Agent</p>
                   <p className="text-sm text-white">
                     &ldquo;Great — Thursday at 2 PM is booked. Can I get your name and number?&rdquo;
                   </p>
@@ -109,8 +109,8 @@ export function Hero() {
                     &ldquo;Sarah, 555-0142.&rdquo;
                   </p>
                 </div>
-                <div className="rounded-lg p-3 bg-blue-500/[0.08] border border-blue-500/[0.15] ml-6">
-                  <p className="text-xs font-medium text-blue-400 mb-0.5">AI Agent</p>
+                <div className="rounded-lg p-3 bg-zinc-500/[0.12] border border-zinc-500/20 ml-6">
+                  <p className="text-xs font-medium text-zinc-300 mb-0.5">AI Agent</p>
                   <p className="text-sm text-white">
                     &ldquo;All set, Sarah! You&apos;ll get a confirmation text shortly.&rdquo;
                   </p>
