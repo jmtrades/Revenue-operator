@@ -32,6 +32,29 @@ interface TranscriptEntry {
 }
 
 export function HomepageVoiceWidget() {
+  const [configured, setConfigured] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // NEXT_PUBLIC_ env vars are inlined at build; this reflects whether a public Vapi key is configured.
+    setConfigured(Boolean(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY));
+  }, []);
+
+  if (configured === null) {
+    return (
+      <div className="bg-[var(--bg-card,#161B22)] border border-[var(--border-default,rgba(255,255,255,0.08))] rounded-2xl p-6 min-h-[320px] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!configured) {
+    return <StaticConversationDemo />;
+  }
+
+  return <LiveVoiceWidget />;
+}
+
+function LiveVoiceWidget() {
   const [config, setConfig] = useState<DemoConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(false);
@@ -285,6 +308,89 @@ export function HomepageVoiceWidget() {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function StaticConversationDemo() {
+  const [visibleLines, setVisibleLines] = useState(1);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisibleLines((prev) => {
+        if (prev >= 6) {
+          clearInterval(interval);
+          return 6;
+        }
+        return prev + 1;
+      });
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
+
+  const lines = [
+    { speaker: "Caller", text: '"Hi, I\'d like to schedule an appointment for Thursday."' },
+    {
+      speaker: "AI Agent",
+      text: '"Of course! I have openings at 10 AM, 2 PM, and 4 PM on Thursday. Which works best?"',
+    },
+    { speaker: "Caller", text: '"2 PM sounds perfect."' },
+    {
+      speaker: "AI Agent",
+      text: '"Great, I\'ve booked you for Thursday at 2 PM. Can I get your name and phone number?"',
+    },
+    { speaker: "Caller", text: '"Sarah, 555-0142."' },
+    {
+      speaker: "AI Agent",
+      text: '"You\'re all set, Sarah! You\'ll get a confirmation text shortly. Anything else I can help with?"',
+    },
+  ];
+
+  return (
+    <div className="bg-[var(--bg-card,#161B22)] border border-[var(--border-default,rgba(255,255,255,0.08))] rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-1">
+        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <h3 className="text-base font-semibold text-[var(--text-primary,rgba(255,255,255,0.95))]">
+          Live conversation preview
+        </h3>
+      </div>
+      <p className="text-sm text-[var(--text-secondary,rgba(255,255,255,0.6))] mb-5">
+        This is how your AI handles a real call.
+      </p>
+
+      <div className="space-y-3">
+        {lines.slice(0, visibleLines).map((line, i) => (
+          <div
+            key={i}
+            className={`rounded-lg p-3 animate-fadeIn ${
+              line.speaker === "Caller"
+                ? "bg-white/[0.04] ml-0 mr-8"
+                : "bg-[var(--accent-primary-subtle,rgba(79,140,255,0.1))] border border-[var(--border-accent,rgba(79,140,255,0.5))] ml-8 mr-0"
+            }`}
+          >
+            <p
+              className={`text-xs font-medium mb-0.5 ${
+                line.speaker === "Caller" ? "text-white/40" : "text-[var(--accent-primary,#4F8CFF)]"
+              }`}
+            >
+              {line.speaker}
+            </p>
+            <p className="text-sm text-[var(--text-primary,rgba(255,255,255,0.95))]">{line.text}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 flex items-center gap-3">
+        <a
+          href="/sign-in?create=1"
+          className="px-5 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors no-underline"
+        >
+          Build yours free →
+        </a>
+        <span className="text-xs text-[var(--text-tertiary,rgba(255,255,255,0.35))]">
+          No credit card required
+        </span>
+      </div>
     </div>
   );
 }
