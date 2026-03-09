@@ -35,27 +35,31 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://recall-touch.com"),
+  metadataBase: new URL("https://www.recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — AI Phone & Text Communication",
+    default: "Recall Touch — AI Phone Calls, Handled",
   },
   description:
-    "Recall Touch is the AI phone system that handles your calls, texts, follow-ups, and scheduling automatically. Works with any number. Set up in 5 minutes.",
+    "Never miss a call. Never lose a lead. Recall Touch answers your phone with AI that books appointments, qualifies leads, and handles customer calls 24/7.",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://recall-touch.com",
+    url: "https://www.recall-touch.com",
     siteName: "Recall Touch",
-    title: "Recall Touch — AI Phone & Text Communication",
-    description: "AI that handles your calls, texts, follow-ups, and scheduling. For any business or team.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Phone & Text Communication" }],
+    title: "Recall Touch — AI Phone Calls, Handled",
+    description: "Never miss a call. Never lose a lead. AI that answers your phone 24/7.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Phone Calls, Handled" }],
   },
   icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — AI Phone & Text Communication",
-    description: "AI that handles your calls, texts, follow-ups, and scheduling. For any business or team.",
+    title: "Recall Touch — AI Phone Calls, Handled",
+    description: "Never miss a call. Never lose a lead.",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
   manifest: "/manifest.json",
 };
@@ -67,7 +71,7 @@ const softwareApplicationJsonLd = {
   applicationCategory: "BusinessApplication",
   description:
     "AI phone system for every business. Answer every call 24/7, follow up with leads in 60 seconds, book appointments. Set up in 5 minutes.",
-  url: "https://recall-touch.com",
+  url: "https://www.recall-touch.com",
   offers: {
     "@type": "AggregateOffer",
     lowPrice: "297",

@@ -46,7 +46,10 @@ export async function POST(req: NextRequest) {
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: "Call intelligence is not configured." }, { status: 503 });
+    return NextResponse.json(
+      { error: "This feature is being configured. Please try again later or contact support." },
+      { status: 503 }
+    );
   }
 
   try {
@@ -146,6 +149,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     console.error("[call-intelligence/analyze]", e);
-    return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Something went wrong with this service. Please try again." },
+      { status: 502 }
+    );
   }
 }

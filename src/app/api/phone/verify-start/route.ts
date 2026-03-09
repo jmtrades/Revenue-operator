@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   if (!VERIFY_SID || !ACCOUNT_SID || !AUTH_TOKEN) {
     return NextResponse.json(
-      { error: "Phone verification not configured. Set TWILIO_VERIFY_SERVICE_SID and Twilio credentials." },
+      { error: "This feature is being configured. Please try again later or contact support." },
       { status: 503 }
     );
   }

@@ -114,7 +114,6 @@ export async function GET(req: NextRequest) {
           results.push({ workspaceId, email, sent: false });
         }
       } else {
-        console.log("[absence-confidence] Would send to", email, message);
         await db
           .from("workspaces")
           .update({ absence_confidence_sent_at: now.toISOString() })

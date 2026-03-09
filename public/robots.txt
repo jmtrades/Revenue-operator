@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /app/
+Disallow: /api/
 Disallow: /dashboard/
 Disallow: /activate
 
-Sitemap: https://recall-touch.com/sitemap.xml
+Sitemap: https://www.recall-touch.com/sitemap.xml

@@ -39,6 +39,13 @@ export async function POST(req: NextRequest) {
   const tier = PLAN_TO_TIER[planId.toLowerCase()];
   if (!tier) return NextResponse.json({ ok: false, error: "Invalid plan. Use starter, growth, or scale. For Enterprise contact us." }, { status: 400 });
 
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json(
+      { ok: false, error: "This feature is being configured. Please try again later or contact support." },
+      { status: 503 }
+    );
+  }
+
   const priceResult = await getPriceId(tier, "month");
   if (!priceResult.ok) {
     return NextResponse.json(
@@ -61,44 +68,53 @@ export async function POST(req: NextRequest) {
 
   // No subscription yet (trial): create checkout session and return URL
   if (!row.stripe_subscription_id) {
-    const origin = getOrigin(req);
-    if (!origin) return NextResponse.json({ ok: false, error: "App URL not configured" }, { status: 400 });
-    let customerId = row.stripe_customer_id ?? null;
-    if (!customerId) {
-      const ownerId = row.owner_id;
-      let email = "";
-      if (ownerId) {
-        const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
-        email = (user as { email?: string } | null)?.email ?? "";
+    try {
+      const origin = getOrigin(req);
+      if (!origin) return NextResponse.json({ ok: false, error: "App URL not configured" }, { status: 400 });
+      let customerId = row.stripe_customer_id ?? null;
+      if (!customerId) {
+        const ownerId = row.owner_id;
+        let email = "";
+        if (ownerId) {
+          const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
+          email = (user as { email?: string } | null)?.email ?? "";
+        }
+        const customer = await stripe.customers.create({
+          email: email || undefined,
+          metadata: { workspace_id },
+          invoice_settings: { footer: RECEIPT_FOOTER },
+        });
+        customerId = customer.id;
+        await db.from("workspaces").update({ stripe_customer_id: customerId }).eq("id", workspace_id);
       }
-      const customer = await stripe.customers.create({
-        email: email || undefined,
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        mode: "subscription",
         metadata: { workspace_id },
-        invoice_settings: { footer: RECEIPT_FOOTER },
+        payment_method_collection: "always",
+        payment_method_types: ["card"],
+        line_items: [{ price: priceResult.price_id, quantity: 1 }],
+        subscription_data: {
+          trial_period_days: 14,
+          metadata: { workspace_id },
+        },
+        success_url: `${origin}/app/settings/billing?plan_changed=1`,
+        cancel_url: `${origin}/app/settings/billing`,
+        allow_promotion_codes: true,
       });
-      customerId = customer.id;
-      await db.from("workspaces").update({ stripe_customer_id: customerId }).eq("id", workspace_id);
+      return NextResponse.json({
+        ok: true,
+        checkout_url: session.url,
+        message: "Redirect to checkout to start your plan.",
+      });
+    } catch (e) {
+      const err = e as Error;
+      console.error("[billing/change-plan] Stripe error:", err?.message ?? e);
+      return NextResponse.json(
+        { ok: false, error: "Something went wrong with this service. Please try again." },
+        { status: 502 }
+      );
     }
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      mode: "subscription",
-      metadata: { workspace_id },
-      payment_method_collection: "always",
-      payment_method_types: ["card"],
-      line_items: [{ price: priceResult.price_id, quantity: 1 }],
-      subscription_data: {
-        trial_period_days: 14,
-        metadata: { workspace_id },
-      },
-      success_url: `${origin}/app/settings/billing?plan_changed=1`,
-      cancel_url: `${origin}/app/settings/billing`,
-      allow_promotion_codes: true,
-    });
-    return NextResponse.json({
-      ok: true,
-      checkout_url: session.url,
-      message: "Redirect to checkout to start your plan.",
-    });
   }
 
   // Existing subscription: update item
@@ -115,7 +131,11 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     const err = e as Error;
-    return NextResponse.json({ ok: false, error: err.message || "Stripe update failed" }, { status: 502 });
+    console.error("[billing/change-plan] Stripe update error:", err?.message ?? e);
+    return NextResponse.json(
+      { ok: false, error: "Something went wrong with this service. Please try again." },
+      { status: 502 }
+    );
   }
 
   await db.from("workspaces").update({ billing_tier: tier }).eq("id", workspace_id);

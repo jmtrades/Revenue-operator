@@ -12,8 +12,10 @@ import { createSessionCookie } from "@/lib/auth/session";
 import { getPriceId } from "@/lib/stripe-prices";
 import { randomUUID } from "crypto";
 
-function log(event: string, data: Record<string, unknown>): void {
-  console.log(JSON.stringify({ type: event, ...data, timestamp: new Date().toISOString() }));
+function log(_event: string, _data: Record<string, unknown>): void {
+  if (process.env.NODE_ENV === "development") {
+    console.warn("[trial/start]", _event, _data);
+  }
 }
 
 function effectiveOrigin(req: NextRequest): string | null {

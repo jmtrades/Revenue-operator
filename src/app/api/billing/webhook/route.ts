@@ -20,19 +20,23 @@ import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
 import Stripe from "stripe";
 
-// Structured logging for webhook events
+// Structured logging for webhook events (errors only in production)
 function logWebhookEvent(type: string, workspaceId: string | null, status: "success" | "error", details?: unknown) {
-  const logData: Record<string, unknown> = {
-    type: "webhook_event",
-    event_type: type,
-    workspace_id: workspaceId,
-    status,
-    timestamp: new Date().toISOString(),
-  };
-  if (details) {
-    logData.details = details;
+  if (status === "error" || process.env.NODE_ENV === "development") {
+    const logData: Record<string, unknown> = {
+      type: "webhook_event",
+      event_type: type,
+      workspace_id: workspaceId,
+      status,
+      timestamp: new Date().toISOString(),
+    };
+    if (details) logData.details = details;
+    if (status === "error") {
+      console.error("[billing/webhook]", JSON.stringify(logData));
+    } else {
+      console.warn("[billing/webhook]", JSON.stringify(logData));
+    }
   }
-  console.log(JSON.stringify(logData));
 }
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
