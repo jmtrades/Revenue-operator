@@ -2,7 +2,6 @@ import Link from "next/link";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
-import { HomepageVoiceWidget } from "@/components/demo/HomepageVoiceWidget";
 
 export function Hero() {
   return (
@@ -65,9 +64,68 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right: speak to agent */}
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-6 max-w-md lg:ml-auto">
-            <HomepageVoiceWidget />
+          {/* Right: static conversation demo (no live voice) */}
+          <div className="max-w-md lg:ml-auto">
+            <div className="bg-[var(--bg-card,#161B22)] border border-[var(--border-default,rgba(255,255,255,0.08))] rounded-2xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+              <div className="flex items-center gap-2 mb-1">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
+                <h3 className="text-base font-semibold text-white">See how your AI handles a call</h3>
+              </div>
+              <p className="text-sm text-white/60 mb-5">
+                Real-time appointment booking — fully automated
+              </p>
+              <div className="space-y-3">
+                <div className="rounded-lg p-3 bg-white/[0.04] mr-6">
+                  <p className="text-xs font-medium text-white/35 mb-0.5">Caller</p>
+                  <p className="text-sm text-white">
+                    &ldquo;Hi, I&apos;d like to schedule an appointment for Thursday.&rdquo;
+                  </p>
+                </div>
+                <div className="rounded-lg p-3 bg-blue-500/[0.08] border border-blue-500/[0.15] ml-6">
+                  <p className="text-xs font-medium text-blue-400 mb-0.5">AI Agent</p>
+                  <p className="text-sm text-white">
+                    &ldquo;Of course! I have openings at 10 AM, 2 PM, and 4 PM. Which works best?&rdquo;
+                  </p>
+                </div>
+                <div className="rounded-lg p-3 bg-white/[0.04] mr-6">
+                  <p className="text-xs font-medium text-white/35 mb-0.5">Caller</p>
+                  <p className="text-sm text-white">
+                    &ldquo;2 PM sounds perfect.&rdquo;
+                  </p>
+                </div>
+                <div className="rounded-lg p-3 bg-blue-500/[0.08] border border-blue-500/[0.15] ml-6">
+                  <p className="text-xs font-medium text-blue-400 mb-0.5">AI Agent</p>
+                  <p className="text-sm text-white">
+                    &ldquo;Great — Thursday at 2 PM is booked. Can I get your name and number?&rdquo;
+                  </p>
+                </div>
+                <div className="rounded-lg p-3 bg-white/[0.04] mr-6">
+                  <p className="text-xs font-medium text-white/35 mb-0.5">Caller</p>
+                  <p className="text-sm text-white">
+                    &ldquo;Sarah, 555-0142.&rdquo;
+                  </p>
+                </div>
+                <div className="rounded-lg p-3 bg-blue-500/[0.08] border border-blue-500/[0.15] ml-6">
+                  <p className="text-xs font-medium text-blue-400 mb-0.5">AI Agent</p>
+                  <p className="text-sm text-white">
+                    &ldquo;All set, Sarah! You&apos;ll get a confirmation text shortly.&rdquo;
+                  </p>
+                </div>
+              </div>
+              <div className="mt-5 pt-4 border-t border-white/[0.08] flex items-center gap-3">
+                <Link
+                  href="/sign-in?create=1"
+                  className="px-5 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors"
+                >
+                  Build yours free →
+                </Link>
+                <span className="text-xs text-white/35">No credit card · 14-day trial</span>
+              </div>
+            </div>
           </div>
         </div>
       </Container>

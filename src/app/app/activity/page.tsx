@@ -357,9 +357,17 @@ export default function AppActivityPage() {
     fallbackProgressItems.length === 0
       ? 0
       : Math.round((fallbackProgressItems.filter((p) => p.completed).length / fallbackProgressItems.length) * 100);
-  const progressItems = readiness?.items ?? fallbackProgressItems.map((p) => ({ ...p, label: PROGRESS_LABELS[p.key] ?? p.key, href: "/app/settings/phone", weight: 0 }));
+  const progressItems =
+    readiness?.items ??
+    fallbackProgressItems.map((p) => ({
+      ...p,
+      label: PROGRESS_LABELS[p.key] ?? p.key,
+      href: "/app/settings/phone",
+      weight: 0,
+    }));
   const progressPct = readiness ? readiness.percentage : fallbackPct;
-  const continueSetupHref = readiness?.nextAction?.href ?? nextStepHref ?? "/app/settings/phone";
+  const continueSetupHref =
+    readiness?.nextAction?.href ?? nextStepHref ?? "/app/settings/phone";
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
@@ -416,7 +424,25 @@ export default function AppActivityPage() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
           {progressItems.slice(0, 10).map((item) => {
             const done = "done" in item ? item.done : item.completed;
-            const label = "label" in item && item.label ? item.label : (PROGRESS_LABELS[item.key] ?? item.key);
+            const label =
+              "label" in item && item.label
+                ? item.label
+                : PROGRESS_LABELS[item.key] ?? item.key;
+            const href =
+              "href" in item && item.href
+                ? item.href
+                : "/app/settings/phone";
+            const content = (
+              <span
+                className={
+                  done
+                    ? "text-[var(--text-secondary)]"
+                    : "text-[var(--text-primary)]"
+                }
+              >
+                {label}
+              </span>
+            );
             return (
               <div key={item.key} className="flex items-center gap-2">
                 {done ? (
@@ -424,9 +450,16 @@ export default function AppActivityPage() {
                 ) : (
                   <span className="h-4 w-4 rounded-full border border-[var(--border-medium)] shrink-0" />
                 )}
-                <span className={done ? "text-[var(--text-secondary)]" : "text-[var(--text-primary)]"}>
-                  {label}
-                </span>
+                {done ? (
+                  content
+                ) : (
+                  <Link
+                    href={href}
+                    className="underline underline-offset-2 decoration-dotted hover:decoration-solid"
+                  >
+                    {content}
+                  </Link>
+                )}
               </div>
             );
           })}
