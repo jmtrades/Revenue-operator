@@ -99,7 +99,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
       onClick={(e) => e.target === e.currentTarget && (setStep("select"), setError(null), onClose())}
     >
       <div
-        className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl"
+        className="bg-[var(--bg-card-elevated)] border border-[var(--border-default)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-zinc-800">
@@ -127,10 +127,10 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                       onClick={() => setSelected(plan.id)}
                       className={`text-left p-4 rounded-xl border transition-all ${
                         isSelected
-                          ? "border-zinc-500 bg-white/10 ring-1 ring-white/20"
+                          ? "border-[var(--accent-blue)] bg-[var(--accent-blue)]/10 ring-1 ring-[var(--accent-blue)]/30"
                           : isCurrent
-                          ? "border-zinc-600 bg-zinc-800/50"
-                          : "border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800/30"
+                          ? "border-[var(--accent-green)]/30 bg-[var(--accent-green)]/5"
+                          : "border-[var(--border-default)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-hover)]"
                       }`}
                     >
                       <p className="text-sm font-medium text-white">{plan.name}</p>
@@ -144,7 +144,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                         ))}
                       </ul>
                       {isCurrent && (
-                        <span className="inline-block mt-2 text-[10px] uppercase tracking-wide text-zinc-500 bg-zinc-700 px-2 py-0.5 rounded">
+                        <span className="inline-block mt-2 text-[10px] uppercase tracking-wide text-[var(--text-tertiary)] bg-[var(--bg-hover)] px-2 py-0.5 rounded">
                           Current
                         </span>
                       )}
@@ -152,16 +152,16 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   );
                 })}
               </div>
-              {error && <p className="text-sm text-red-400 mb-4" role="alert">{error}</p>}
+              {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
               <div className="flex justify-end gap-3">
-                <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-zinc-400 hover:text-white rounded-xl border border-zinc-700">
+                <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-xl border border-[var(--border-medium)]">
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleContinue}
                   disabled={selected === currentPlanId}
-                  className="px-6 py-2.5 bg-white text-black font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-zinc-100"
+                  className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
                 >
                   {selected === "enterprise" ? "Contact us" : "Continue"}
                 </button>
@@ -184,16 +184,16 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   <span className="text-white font-medium">{selectedPlan?.name}{selectedPlan?.price != null ? ` — $${selectedPlan.price}/mo` : " — Contact us"}</span>
                 </div>
               </div>
-              {error && <p className="text-sm text-red-400 mb-4" role="alert">{error}</p>}
+              {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
               <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => { setStep("select"); setError(null); }} className="px-4 py-2 text-sm text-zinc-400 hover:text-white rounded-xl border border-zinc-700">
+                <button type="button" onClick={() => { setStep("select"); setError(null); }} className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-xl border border-[var(--border-medium)]">
                   Back
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirm}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-white text-black font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-zinc-100"
+                  className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
                 >
                   {loading ? "Processing…" : isUpgrade ? "Upgrade now" : "Confirm downgrade"}
                 </button>

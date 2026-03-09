@@ -277,11 +277,11 @@ export default function AppSettingsPhonePage() {
       <p className="text-sm text-zinc-400 mb-6">Get a dedicated AI number or forward your existing line.</p>
 
       {loading ? (
-        <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 animate-pulse h-24 mb-4" />
+        <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse h-24 mb-4" />
       ) : phoneNumber ? (
         <>
           {/* Option A — Your AI number */}
-          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+          <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Option A — Your AI number</p>
             <div className="flex flex-wrap items-center gap-3">
               <p ref={numberHeadingRef} tabIndex={-1} className="text-2xl font-semibold text-white font-mono tracking-tight outline-none" aria-label={`Your number: ${formatPhoneNumber(phoneNumber)}`}>{formatPhoneNumber(phoneNumber)}</p>
@@ -298,7 +298,7 @@ export default function AppSettingsPhonePage() {
           </div>
 
           {/* Forward your current number — simple steps */}
-          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+          <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
             <p className="text-sm font-medium text-white mb-1">Option B — Forward your existing number</p>
             <p className="text-xs text-zinc-400 mb-4">Keep your current number. Forward unanswered calls to your AI number below.</p>
             <ol className="space-y-2 text-sm text-zinc-300 list-decimal list-inside">
@@ -317,7 +317,7 @@ export default function AppSettingsPhonePage() {
               <summary className="text-xs text-zinc-500 cursor-pointer hover:text-zinc-400 list-none flex items-center gap-1">
                 <span className="group-open:inline hidden">▼</span><span className="group-open:hidden inline">▶</span> Quick dial codes
               </summary>
-              <div className="mt-2 pt-2 border-t border-zinc-800 space-y-1.5 text-xs text-zinc-400">
+              <div className="mt-2 pt-2 border-t border-[var(--border-default)] space-y-1.5 text-xs text-zinc-400">
                 <p><span className="text-zinc-300">AT&T:</span> *21*{phoneNumber.replace(/\D/g, "")}#</p>
                 <p><span className="text-zinc-300">Verizon:</span> *72 then {formatPhoneNumber(phoneNumber)}</p>
                 <p><span className="text-zinc-300">T-Mobile:</span> **21*{phoneNumber.replace(/\D/g, "")}#</p>
@@ -326,11 +326,11 @@ export default function AppSettingsPhonePage() {
           </div>
 
           {/* Test forwarding */}
-          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+          <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
             <p className="text-sm font-medium text-white mb-1">Test forwarding</p>
             <p className="text-xs text-zinc-400 mb-3">We’ll call you so you can talk to your agent right now.</p>
             {!primaryAgentId ? (
-              <div className="rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-sm text-zinc-400">
+              <div className="rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card)]/50 px-4 py-3 text-sm text-zinc-400">
                 <p>Create an agent first so we know who should answer.</p>
                 <Link href="/app/agents" className="mt-2 inline-block text-white font-medium hover:underline">Go to Agents →</Link>
               </div>
@@ -344,9 +344,9 @@ export default function AppSettingsPhonePage() {
                   aria-label="Your phone number for test call"
                   aria-invalid={!!testCallError}
                   aria-describedby={testCallError ? "test-call-error" : undefined}
-                  className={`w-full px-4 py-3 rounded-xl bg-zinc-900 border text-white placeholder:text-zinc-500 text-base focus:ring-1 focus:ring-zinc-600 focus:outline-none mb-2 ${testCallError ? "border-red-500/50" : "border-zinc-800 focus:border-zinc-600"}`}
+                  className={`w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border text-white placeholder:text-zinc-500 text-base focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-2 ${testCallError ? "border-red-500/50" : "border-[var(--border-default)] focus:border-[var(--border-medium)]"}`}
                 />
-                {testCallError ? <p id="test-call-error" className="text-sm text-red-400 mb-3" role="alert">{testCallError}</p> : null}
+                {testCallError ? <p id="test-call-error" className="text-sm text-[var(--accent-red)] mb-3" role="alert">{testCallError}</p> : null}
                 <button
                   type="button"
                   onClick={handleTestCall}
@@ -361,7 +361,7 @@ export default function AppSettingsPhonePage() {
           </div>
 
           {/* Optional: outbound caller ID — collapsed by default */}
-          <details className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-4 group">
+          <details className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4 group">
             <summary className="text-sm font-medium text-zinc-400 cursor-pointer hover:text-zinc-300 list-none flex items-center justify-between gap-2">
               Outbound caller ID (optional)
               <span className="text-zinc-500 group-open:rotate-180 transition-transform">▼</span>
@@ -373,14 +373,14 @@ export default function AppSettingsPhonePage() {
               onChange={(e) => setOutboundFrom(e.target.value)}
               placeholder="(555) 123-4567"
               aria-label="Outbound caller ID number"
-              className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none mb-3"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-3"
             />
             <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer mb-3">
               <input
                 type="checkbox"
                 checked={whatsappEnabled}
                 onChange={(e) => setWhatsappEnabled(e.target.checked)}
-                className="rounded border-zinc-600 bg-zinc-800 text-white focus:ring-zinc-500"
+                className="rounded border-[var(--border-medium)] bg-[var(--bg-card)] text-white focus:ring-[var(--border-medium)]"
               />
               Enable WhatsApp on this number
             </label>
@@ -395,7 +395,7 @@ export default function AppSettingsPhonePage() {
           </details>
 
           {/* Verify a number by SMS */}
-          <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+          <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
             <p className="text-sm font-medium text-white mb-1">Verify a number by SMS</p>
             <p className="text-xs text-zinc-400 mb-3">We’ll send a 6-digit code to confirm you own this number. Useful for forwarding numbers.</p>
             {verifiedNumber ? (
@@ -407,7 +407,7 @@ export default function AppSettingsPhonePage() {
                   value={verifyPhone}
                   onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
                   placeholder="(555) 123-4567"
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:ring-1 focus:outline-none mb-2"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
                 />
                 <div className="flex gap-2 mb-2">
                   <button
@@ -440,7 +440,7 @@ export default function AppSettingsPhonePage() {
                       }
                     }}
                     disabled={verifySending || digitsOnly(verifyPhone).length < 10}
-                    className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:bg-zinc-800 disabled:opacity-50"
+                    className="px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:bg-[var(--bg-card)] disabled:opacity-50"
                   >
                     {verifySending ? "Sending…" : "Send code"}
                   </button>
@@ -452,7 +452,7 @@ export default function AppSettingsPhonePage() {
                   value={verifyCode}
                   onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   placeholder="000000"
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:ring-1 focus:outline-none mb-2"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
                 />
                 <button
                   type="button"
@@ -490,7 +490,7 @@ export default function AppSettingsPhonePage() {
                 >
                   {verifyChecking ? "Verifying…" : "Verify"}
                 </button>
-                {verifyError && <p className="mt-2 text-sm text-red-400" role="alert">{verifyError}</p>}
+                {verifyError && <p className="mt-2 text-sm text-[var(--accent-red)]" role="alert">{verifyError}</p>}
               </>
             )}
           </div>
@@ -500,7 +500,7 @@ export default function AppSettingsPhonePage() {
       ) : (
         <>
           {/* No number — one clear CTA */}
-          <div className="p-8 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6 text-center">
+          <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6 text-center">
             <p className="text-lg font-medium text-white mb-2">Add your first number</p>
             <p className="text-sm text-zinc-400 mb-4 max-w-sm mx-auto">We’ll assign a local number. Optionally choose your area code (e.g. 503 for Portland).</p>
             <div className="max-w-xs mx-auto mb-4">
@@ -513,7 +513,7 @@ export default function AppSettingsPhonePage() {
                 value={areaCode}
                 onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
                 placeholder="503"
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-center text-lg focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-center text-lg focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
               />
             </div>
             <button
@@ -541,7 +541,7 @@ export default function AppSettingsPhonePage() {
               <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">I’ll add a number later</Link>
             </p>
           </div>
-          <div className="p-5 rounded-2xl border border-zinc-800/80 bg-zinc-900/30 mb-6">
+          <div className="p-5 rounded-2xl border border-[var(--border-default)]/80 bg-[var(--bg-input)]/30 mb-6">
             <p className="text-sm font-medium text-zinc-300 mb-1">Option B — Forward your existing number</p>
             <p className="text-sm text-zinc-400">Get a number above first, then we&apos;ll show you exactly how to set up forwarding with your carrier. You can verify your number by SMS and test that your AI picks up.</p>
             <p className="mt-4 text-sm text-zinc-500">
@@ -553,7 +553,7 @@ export default function AppSettingsPhonePage() {
 
       {toast && (
         <div role="status" aria-live="polite" className="fixed right-4 z-50 bottom-4 sm:bottom-auto sm:top-4 max-w-[calc(100vw-2rem)]">
-          <div className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">
+          <div className="px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">
             {toast}
           </div>
         </div>

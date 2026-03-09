@@ -7,8 +7,7 @@ import { HomepageVoiceWidget } from "@/components/demo/HomepageVoiceWidget";
 export function Hero() {
   return (
     <section
-      className="min-h-screen flex items-center pt-28 pb-16 md:pt-32 md:pb-20 relative overflow-hidden"
-      style={{ background: "#0F1729" }}
+      className="min-h-screen flex items-center pt-28 pb-16 md:pt-32 md:pb-20 relative overflow-hidden bg-[var(--bg-base)]"
     >
       <div
         className="absolute inset-0 pointer-events-none z-0"

@@ -305,7 +305,7 @@ export default function AppAnalyticsPage() {
             See how conversations turn into kept appointments and real revenue.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950/70 p-0.5 text-xs">
+        <div className="flex items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-0.5 text-xs">
           {([
             { key: "today", label: "Today" },
             { key: "7d", label: "7D" },
@@ -331,9 +331,9 @@ export default function AppAnalyticsPage() {
       {loading && (
         <p className="text-sm text-zinc-500 mb-4">Loading analytics…</p>
       )}
-      {error && <p className="text-sm text-red-400 mb-4">{error}</p>}
+      {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
       {!hasData && !loading && !error && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 mb-6 text-center">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 mb-6 text-center">
           <BarChart3 className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
           <p className="text-sm font-medium text-white mb-1">Analytics populate as calls come in</p>
           <p className="text-xs text-zinc-500 mb-4">Your first chart will appear after your first call.</p>
@@ -346,7 +346,7 @@ export default function AppAnalyticsPage() {
         {summaryCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4 hover:bg-zinc-900/70 transition-colors"
+            className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 hover:bg-[var(--bg-hover)] transition-colors"
           >
             <p className="text-[11px] text-zinc-500 mb-1">{card.label}</p>
             <p className="text-lg md:text-xl font-semibold text-white">
@@ -358,14 +358,14 @@ export default function AppAnalyticsPage() {
       </div>
 
       {suggestions.length > 0 && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 md:p-5 mb-6">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6">
           <h2 className="text-sm font-medium text-white flex items-center gap-2 mb-3">
             <Lightbulb className="w-4 h-4 text-amber-500" aria-hidden />
             Optimization suggestions
           </h2>
           <ul className="space-y-3">
             {suggestions.map((s) => (
-              <li key={s.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-xl bg-zinc-950/70 border border-zinc-800">
+              <li key={s.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-white">{s.title}</p>
                   {s.description && <p className="text-xs text-zinc-500 mt-0.5">{s.description}</p>}
@@ -402,7 +402,7 @@ export default function AppAnalyticsPage() {
 
       {/* Row 2: charts */}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-6">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4 md:p-5">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
           <p className="text-sm font-medium text-white mb-4">
             Call volume (by day)
           </p>
@@ -450,7 +450,7 @@ export default function AppAnalyticsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4 md:p-5">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
           <p className="text-sm font-medium text-white mb-4">Call outcomes</p>
           <div className="h-52 flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -489,7 +489,7 @@ export default function AppAnalyticsPage() {
 
       {/* Row 3: heatmap + insights */}
       <div className="grid gap-4 lg:grid-cols-2 mb-6">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4 md:p-5">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
           <p className="text-sm font-medium text-white mb-3">Peak hours</p>
           <div className="overflow-x-auto">
             <div className="min-w-[640px]">
@@ -537,7 +537,7 @@ export default function AppAnalyticsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4 md:p-5 flex flex-col gap-3">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 flex flex-col gap-3">
           <p className="text-sm font-medium text-white">AI insights</p>
           <ul className="space-y-2 text-sm text-zinc-300">
             <li className="flex items-start gap-2">
@@ -561,9 +561,9 @@ export default function AppAnalyticsPage() {
       </div>
 
       {/* Row 4: sentiment overview */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4 md:p-5">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
         <p className="text-sm font-medium text-white mb-3">Sentiment overview</p>
-        <div className="h-4 w-full rounded-full bg-zinc-900 overflow-hidden flex">
+        <div className="h-4 w-full rounded-full bg-[var(--border-default)] overflow-hidden flex">
           <div
             className="h-full bg-emerald-500"
             style={{ width: `${positivePct}%` }}

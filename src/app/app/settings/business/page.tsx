@@ -74,23 +74,23 @@ export default function AppSettingsBusinessPage() {
       <div className="space-y-4 mb-6">
         <div>
           <label htmlFor="biz-name" className="block text-xs font-medium text-zinc-400 mb-1">Business name</label>
-          <input id="biz-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Acme Plumbing" className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none" />
+          <input id="biz-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Acme Plumbing" className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
           <label htmlFor="biz-address" className="block text-xs font-medium text-zinc-400 mb-1">Address</label>
-          <input id="biz-address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St, Portland, OR" className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none" />
+          <input id="biz-address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St, Portland, OR" className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
           <label htmlFor="biz-website" className="block text-xs font-medium text-zinc-400 mb-1">Website</label>
-          <input id="biz-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://yourbusiness.com" className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none" />
+          <input id="biz-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://yourbusiness.com" className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
           <label htmlFor="biz-tz" className="block text-xs font-medium text-zinc-400 mb-1">Timezone</label>
-          <input id="biz-tz" type="text" value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none" />
+          <input id="biz-tz" type="text" value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
           <label htmlFor="biz-industry" className="block text-xs font-medium text-zinc-400 mb-1">Industry</label>
-          <select id="biz-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:outline-none">
+          <select id="biz-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none">
             {INDUSTRY_OPTIONS.map((opt) => (
               <option key={opt.id} value={opt.id}>{opt.label}</option>
             ))}
@@ -100,7 +100,7 @@ export default function AppSettingsBusinessPage() {
       <button type="button" disabled={loading} onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60">Save changes</button>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">
           {toast}
         </div>
       )}

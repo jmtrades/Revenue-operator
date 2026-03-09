@@ -99,7 +99,7 @@ export default function AppSettingsBillingPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <h1 className="text-lg font-semibold text-white mb-4">Billing</h1>
-      <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/50 mb-4">
+      <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
         <p className="text-sm font-medium text-white">Starter — $297/mo</p>
         <p className="text-xs text-zinc-500 mt-1">{usage.minutesUsed} / {usage.minutesLimit} min used</p>
         <p className="text-xs text-zinc-500 mt-1">
@@ -145,7 +145,7 @@ export default function AppSettingsBillingPage() {
           </button>
         </p>
       <p className="text-sm text-zinc-400 mb-2">Invoice history</p>
-      <div className="rounded-xl border border-zinc-800 p-3 mb-6">
+      <div className="rounded-xl border border-[var(--border-default)] p-3 mb-6">
         <p className="text-xs text-zinc-500 mb-2">View and download invoices in Stripe.</p>
         <button
           type="button"
@@ -171,7 +171,7 @@ export default function AppSettingsBillingPage() {
         <button
           type="button"
           onClick={() => setCancelStep(1)}
-          className="px-4 py-2 rounded-xl text-sm border border-red-900/50 text-red-400"
+          className="px-4 py-2 rounded-xl text-sm border border-[var(--accent-red)]/30 text-[var(--accent-red)]"
         >
           Cancel
         </button>
@@ -179,7 +179,7 @@ export default function AppSettingsBillingPage() {
 
       {pauseStep === 1 && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={() => setPauseStep(0)}>
-          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-medium)] rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-lg font-semibold text-white mb-2">Pause account</h2>
             <p className="text-sm text-zinc-400 mb-4">
               Pausing stops all AI calls and preserves your setup. You can resume anytime.
@@ -194,7 +194,7 @@ export default function AppSettingsBillingPage() {
 
       {cancelStep >= 1 && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={() => setCancelStep(0)}>
-          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-medium)] rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
             {cancelStep === 1 && (
               <>
                 <h2 className="text-lg font-semibold text-white mb-2">Before you go</h2>
@@ -248,7 +248,7 @@ export default function AppSettingsBillingPage() {
       )}
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">
           {toast}
         </div>
       )}

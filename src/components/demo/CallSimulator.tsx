@@ -417,7 +417,7 @@ export function CallSimulator() {
       />
 
       {completedSeconds != null ? (
-        <div className="mt-5 rounded-2xl border border-zinc-800 bg-zinc-900/50 px-5 py-4 text-center">
+        <div className="mt-5 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] px-5 py-4 text-center">
           <p className="text-sm text-zinc-400">
             That call took <span className="font-medium text-white">{completedSeconds} seconds</span>. Your AI handles this 24/7.
           </p>

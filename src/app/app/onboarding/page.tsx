@@ -217,14 +217,14 @@ export default function AppOnboardingPage() {
   const greetingToPlay = greeting.trim() || defaultGreeting;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#080d19] to-[#0a0f1e] text-white flex flex-col p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--bg-base)] to-[var(--bg-surface)] text-white flex flex-col p-6 md:p-12">
       <div className="max-w-2xl mx-auto w-full">
         <div className="mb-6">
           <div className="flex items-center justify-center gap-2 mb-2" aria-label={`Step ${step} of ${STEPS}`}>
             {Array.from({ length: STEPS }, (_, i) => (
               <span
                 key={i}
-                className={`inline-block w-2.5 h-2.5 rounded-full ${i + 1 <= step ? "bg-white" : "bg-zinc-700"}`}
+                className={`inline-block w-2.5 h-2.5 rounded-full ${i + 1 <= step ? "bg-white" : "bg-[var(--border-medium)]"}`}
                 aria-hidden
               />
             ))}
@@ -232,11 +232,11 @@ export default function AppOnboardingPage() {
           <p className="text-xs text-center text-zinc-500">Step {step} of {STEPS}</p>
         </div>
 
-        <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 md:p-8">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-6 md:p-8">
         {/* Step 1 — YOUR BUSINESS */}
         {step === 1 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-white">Tell us about your business</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Tell us about your business</h1>
             <p className="text-sm text-zinc-400">We&apos;ll configure your AI based on this.</p>
             <div>
               <label htmlFor="onboarding-business-name" className="block text-xs font-medium mb-1.5 text-zinc-400">Business name</label>
@@ -246,12 +246,12 @@ export default function AppOnboardingPage() {
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="Portland Plumbing Co"
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none text-base"
               />
             </div>
             <div>
               <label className="block text-xs font-medium mb-1.5 text-zinc-400">What will your AI handle?</label>
-              <p className="text-[11px] text-white/40 mb-2">Select all that apply. This shapes your default knowledge and agent behavior.</p>
+              <p className="text-[11px] text-[var(--text-secondary)] mb-2">Select all that apply. This shapes your default knowledge and agent behavior.</p>
               <div className="flex flex-wrap gap-2">
                 {USE_CASE_OPTIONS.map(({ id, label }) => {
                   const selected = useCases.includes(id);
@@ -261,7 +261,7 @@ export default function AppOnboardingPage() {
                       type="button"
                       onClick={() => setUseCases((prev) => (selected ? prev.filter((x) => x !== id) : [...prev, id]))}
                       className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
-                        selected ? "bg-white/[0.1] border-white/30 text-white" : "bg-transparent border-white/[0.08] text-white/70 hover:text-white"
+                        selected ? "bg-[var(--bg-hover)] border-[var(--border-medium)] text-[var(--text-primary)]" : "bg-transparent border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                       }`}
                     >
                       {label}
@@ -278,7 +278,7 @@ export default function AppOnboardingPage() {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://yoursite.com"
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none text-base"
               />
             </div>
             <div>
@@ -289,7 +289,7 @@ export default function AppOnboardingPage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="123 Main St, City, State"
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none text-base"
               />
             </div>
             <div>
@@ -300,13 +300,13 @@ export default function AppOnboardingPage() {
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
                 placeholder="+1 (555) 000-0000"
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none text-base"
               />
             </div>
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="w-full py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+              className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
             >
               Continue →
             </button>
@@ -316,7 +316,7 @@ export default function AppOnboardingPage() {
         {/* Step 2 — YOUR AI AGENT */}
         {step === 2 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-white">Choose how your AI sounds</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Choose how your AI sounds</h1>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {ONBOARDING_VOICES.map((v) => {
                 const selected = voiceId === v.id;
@@ -326,36 +326,36 @@ export default function AppOnboardingPage() {
                     type="button"
                     onClick={() => { setVoiceId(v.id); setAgentName(v.name); }}
                     className={`rounded-xl border p-4 text-left transition-all ${
-                      selected ? "border-white/30 bg-white/[0.1] ring-2 ring-white/20" : "border-white/[0.08] bg-transparent hover:border-white/20"
+                      selected ? "border-[var(--border-medium)] bg-[var(--bg-hover)] ring-2 ring-[var(--accent-blue)]/30" : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)]"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-white">{v.name}</span>
+                      <span className="text-sm font-medium text-[var(--text-primary)]">{v.name}</span>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); void speakTextViaApi(v.preview, { gender: v.gender, voiceId: v.id }); }}
-                        className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white text-xs"
+                        className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-primary)] text-xs"
                         aria-label={`Preview ${v.name}`}
                       >
                         ▶
                       </button>
                     </div>
                     <p className="text-xs text-zinc-400 mt-0.5">{v.desc}</p>
-                    {selected && <p className="text-[10px] text-white/80 mt-1">✓ Selected</p>}
+                    {selected && <p className="text-[10px] text-[var(--text-primary)] mt-1">✓ Selected</p>}
                   </button>
                 );
               })}
             </div>
             <div>
               <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-zinc-400">Opening greeting</label>
-              <p className="text-[11px] text-white/40 mb-2">This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge and rules.</p>
+              <p className="text-[11px] text-[var(--text-secondary)] mb-2">This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge and rules.</p>
               <textarea
                 id="onboarding-greeting"
                 value={greeting}
                 onChange={(e) => setGreeting(e.target.value)}
                 placeholder={defaultGreeting}
                 rows={2}
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none resize-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none resize-none text-base"
               />
               <button
                 type="button"
@@ -367,7 +367,7 @@ export default function AppOnboardingPage() {
                     onEnd: () => setGreetingPlaying(false),
                   });
                 }}
-                className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl border border-white/[0.08] text-zinc-300 hover:text-white hover:border-white/20 text-sm"
+                className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl border border-[var(--border-default)] text-zinc-300 hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
               >
                 {greetingPlaying ? <Waveform isPlaying /> : <span>▶</span>}
                 Hear it
@@ -377,14 +377,14 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-white/[0.08] text-zinc-400 hover:text-white"
+                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]"
               >
                 ← Back
               </button>
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="flex-1 py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+                className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
               >
                 Continue →
               </button>
@@ -395,10 +395,10 @@ export default function AppOnboardingPage() {
         {/* Step 3 — TEACH YOUR AI */}
         {step === 3 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-white">What should your AI know?</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">What should your AI know?</h1>
             <p className="text-sm text-zinc-400">Add business details and Q&As so your AI can answer real questions.</p>
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-4">
-              <p className="text-xs font-medium text-white/70">Business info</p>
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
+              <p className="text-xs font-medium text-[var(--text-secondary)]">Business info</p>
               <div>
                 <label htmlFor="onboarding-address" className="block text-[11px] text-zinc-500 mb-1">Address</label>
                 <input
@@ -407,7 +407,7 @@ export default function AppOnboardingPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="123 Main St, City, State"
-                  className="w-full px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none"
                 />
               </div>
               <div>
@@ -418,7 +418,7 @@ export default function AppOnboardingPage() {
                   value={businessHoursDisplay}
                   onChange={(e) => setBusinessHoursDisplay(e.target.value)}
                   placeholder="e.g. Monday–Friday 9 AM–5 PM"
-                  className="w-full px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none"
                 />
               </div>
               <div>
@@ -427,13 +427,13 @@ export default function AppOnboardingPage() {
                   {services.map((s) => (
                     <span
                       key={s}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.08] text-white/90 text-xs"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--bg-hover)] text-[var(--text-primary)] text-xs"
                     >
                       {s}
                       <button
                         type="button"
                         onClick={() => setServices((prev) => prev.filter((x) => x !== s))}
-                        className="text-white/50 hover:text-white"
+                        className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                         aria-label={`Remove ${s}`}
                       >
                         &#215;
@@ -448,12 +448,12 @@ export default function AppOnboardingPage() {
                     onChange={(e) => setServiceInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addService(); } }}
                     placeholder="Add a service"
-                    className="flex-1 px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/20 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-500/25 focus:outline-none"
+                    className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={addService}
-                    className="shrink-0 px-4 py-2.5 rounded-xl border border-white/[0.08] text-white/80 hover:text-white hover:bg-white/[0.04] text-sm"
+                    className="shrink-0 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-[var(--text-primary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] text-sm"
                   >
                     Add
                   </button>
@@ -461,9 +461,9 @@ export default function AppOnboardingPage() {
               </div>
             </div>
             {!starterAdded && (
-              <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <p className="text-sm text-zinc-300">
-                  <span className="text-white font-medium">We&apos;ve prepared starter entries</span> based on what you selected. You can edit them or add your own.
+                  <span className="text-[var(--text-primary)] font-medium">We&apos;ve prepared starter entries</span> based on what you selected. You can edit them or add your own.
                 </p>
                 <button
                   type="button"
@@ -484,7 +484,7 @@ export default function AppOnboardingPage() {
                     setKnowledgeItems(withHours);
                     setStarterAdded(true);
                   }}
-                  className="shrink-0 py-2.5 px-4 rounded-xl bg-white text-[#080d19] font-semibold text-sm hover:bg-white/90"
+                  className="shrink-0 py-2.5 px-4 rounded-xl bg-white text-gray-900 font-semibold text-sm hover:bg-white/90"
                 >
                   Add them now
                 </button>
@@ -492,7 +492,7 @@ export default function AppOnboardingPage() {
             )}
             <div className="space-y-3">
               {knowledgeItems.map((item, i) => (
-                <div key={i} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+                <div key={i} className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
                   <p className="text-xs font-medium text-zinc-400 mb-0.5">Q: {item.q}</p>
                   <p className="text-sm text-zinc-300 mb-2">A: {item.a}</p>
                   <div className="flex gap-2">
@@ -505,7 +505,7 @@ export default function AppOnboardingPage() {
                         next[i] = { q, a };
                         setKnowledgeItems(next);
                       }}
-                      className="text-xs text-zinc-400 hover:text-white"
+                      className="text-xs text-zinc-400 hover:text-[var(--text-primary)]"
                     >
                       Edit
                     </button>
@@ -523,15 +523,15 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={() => setKnowledgeItems((prev) => [...prev, { q: "", a: "" }])}
-                className="w-full py-2.5 rounded-xl border border-dashed border-white/[0.12] text-zinc-400 hover:text-white hover:border-white/20 text-sm"
+                className="w-full py-2.5 rounded-xl border border-dashed border-[var(--border-medium)] text-zinc-400 hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
               >
                 + Add another Q&A
               </button>
             </div>
             <p className="text-xs text-zinc-500">You can always add more later in your agent settings.</p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-white/[0.08] text-zinc-400 hover:text-white">← Back</button>
-              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">Continue →</button>
+              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← Back</button>
+              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">Continue →</button>
             </div>
           </div>
         )}
@@ -539,7 +539,7 @@ export default function AppOnboardingPage() {
         {/* Step 4 — TEST YOUR AI */}
         {step === 4 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-white">Talk to your AI</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Talk to your AI</h1>
             <p className="text-sm text-zinc-400">It&apos;s using your voice, greeting, and knowledge base.</p>
             <div className="flex justify-center py-6">
               <WorkspaceVoiceButton
@@ -551,25 +551,25 @@ export default function AppOnboardingPage() {
               />
             </div>
             <div>
-              <p className="text-xs font-medium text-white/70 mb-2">Scenario simulator</p>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Scenario simulator</p>
               <p className="text-[11px] text-zinc-500 mb-3">When you&apos;re on the test call, try saying one of these to see how your AI responds.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="list">
                 {ONBOARDING_TEST_SCENARIOS.map((s) => (
                   <div
                     key={s.id}
                     role="listitem"
-                    className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 text-left"
+                    className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 text-left"
                   >
-                    <p className="font-medium text-sm text-white/90">{s.title}</p>
+                    <p className="font-medium text-sm text-[var(--text-primary)]">{s.title}</p>
                     <p className="text-[11px] text-zinc-500 mt-0.5">{s.description}</p>
-                    <p className="text-xs text-white/60 mt-2">&ldquo;{s.phrase}&rdquo;</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-2">&ldquo;{s.phrase}&rdquo;</p>
                   </div>
                 ))}
               </div>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-white/[0.08] text-zinc-400 hover:text-white">← Back</button>
-              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">Continue →</button>
+              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← Back</button>
+              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">Continue →</button>
             </div>
           </div>
         )}
@@ -577,47 +577,47 @@ export default function AppOnboardingPage() {
         {/* Step 5 — GO LIVE */}
         {step === 5 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-white">You&apos;re ready.</h1>
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
-              <p className="text-xs font-medium text-white/70 mb-3">Readiness checklist</p>
-              <ul className="space-y-2 text-xs text-white/60">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">You&apos;re ready.</h1>
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">Readiness checklist</p>
+              <ul className="space-y-2 text-xs text-[var(--text-secondary)]">
                 <li className="flex items-center gap-2">
-                  {greeting.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />}
-                  <span className={greeting.trim() ? "text-white/80" : "text-white/50"}>Greeting configured</span>
+                  {greeting.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
+                  <span className={greeting.trim() ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>Greeting configured</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  {voiceId?.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />}
-                  <span className={voiceId?.trim() ? "text-white/80" : "text-white/50"}>Voice selected</span>
+                  {voiceId?.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
+                  <span className={voiceId?.trim() ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>Voice selected</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  {knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />}
-                  <span className={knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? "text-white/80" : "text-white/50"}>At least 3 knowledge entries</span>
+                  {knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
+                  <span className={knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>At least 3 knowledge entries</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />
-                  <span className="text-white/50">Phone connection (optional now)</span>
+                  <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />
+                  <span className="text-[var(--text-secondary)]">Phone connection (optional now)</span>
                 </li>
               </ul>
             </div>
             <p className="text-sm text-zinc-400">Your AI will answer calls at:</p>
-            <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
-              <p className="text-sm font-medium text-white mb-1">Forward your existing number</p>
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <p className="text-sm font-medium text-[var(--text-primary)] mb-1">Forward your existing number</p>
               <p className="text-xs text-zinc-400 mb-2">Call your carrier and set up forwarding to your Recall Touch number.</p>
-              <p className="text-sm font-mono text-white/90 mb-2">{phoneDisplay}</p>
-              <a href="/app/settings/phone" className="text-xs text-white/80 hover:text-white underline">Show me how</a>
+              <p className="text-sm font-mono text-[var(--text-primary)] mb-2">{phoneDisplay}</p>
+              <a href="/app/settings/phone" className="text-xs text-[var(--text-primary)] hover:text-[var(--text-primary)] underline">Show me how</a>
             </div>
             <p className="text-xs text-zinc-500 text-center">— or —</p>
-            <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
-              <p className="text-sm font-medium text-white mb-1">Get a new phone number</p>
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <p className="text-sm font-medium text-[var(--text-primary)] mb-1">Get a new phone number</p>
               <p className="text-xs text-zinc-400 mb-2">We&apos;ll assign you a local number instantly.</p>
-              <a href="/app/settings/phone" className="inline-block py-2 px-4 rounded-xl bg-white/10 text-white text-sm font-medium hover:bg-white/20">Get my number →</a>
+              <a href="/app/settings/phone" className="inline-block py-2 px-4 rounded-xl bg-[var(--bg-hover)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--bg-active)]">Get my number →</a>
             </div>
             <p className="text-xs text-zinc-500 text-center">— or —</p>
             <p className="text-sm text-zinc-500 text-center">Skip for now — I&apos;ll connect a number later.</p>
             <button
               type="button"
               onClick={handleGoToDashboard}
-              className="w-full py-3.5 px-8 bg-white text-[#080d19] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+              className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
             >
               Launch my AI →
             </button>

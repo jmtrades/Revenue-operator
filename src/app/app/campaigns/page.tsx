@@ -241,7 +241,7 @@ export default function CampaignsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-            className="px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm"
+            className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm"
           >
             <option value="all">All statuses</option>
             <option value="draft">Draft</option>
@@ -261,11 +261,11 @@ export default function CampaignsPage() {
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-4">
             {loading ? (
-              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 text-sm text-zinc-500">
+              <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-sm text-zinc-500">
                 Loading runs…
               </div>
             ) : filtered.length === 0 ? (
-              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8 text-center">
+              <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center">
                 <p className="text-sm font-medium text-white">No runs yet</p>
                 <p className="text-xs text-zinc-500 mt-2">
                   Start with a lead follow-up, appointment reminder, or reactivation run.
@@ -279,7 +279,7 @@ export default function CampaignsPage() {
               </div>
             ) : (
               filtered.map((campaign) => (
-                <div key={campaign.id} className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+                <div key={campaign.id} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-white">{campaign.name}</p>
@@ -305,10 +305,10 @@ export default function CampaignsPage() {
                         })()}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <span className="rounded-full border border-zinc-700 px-2.5 py-1 text-[11px] text-zinc-300">
+                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300">
                           {campaign.type.replace(/_/g, " ")}
                         </span>
-                        <span className="rounded-full border border-zinc-700 px-2.5 py-1 text-[11px] text-zinc-300">
+                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300">
                           {campaign.status}
                         </span>
                       </div>
@@ -317,14 +317,14 @@ export default function CampaignsPage() {
                       <button
                         type="button"
                         onClick={() => loadCampaignIntoForm(campaign)}
-                        className="px-3 py-2 rounded-xl border border-zinc-700 text-xs font-medium text-zinc-300 hover:border-zinc-500"
+                        className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
                       >
                         Edit
                       </button>
                       <button
                         type="button"
                         onClick={() => { void toggleCampaign(campaign); }}
-                        className="px-3 py-2 rounded-xl border border-zinc-700 text-xs font-medium text-zinc-300 hover:border-zinc-500"
+                        className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
                       >
                         {campaign.status === "active" ? "Pause" : "Resume"}
                       </button>
@@ -349,7 +349,7 @@ export default function CampaignsPage() {
             )}
           </div>
 
-          <div id="create-run" className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 h-fit scroll-mt-4">
+          <div id="create-run" className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 h-fit scroll-mt-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-white">{editingId ? "Edit run" : "Create run"}</p>
@@ -388,7 +388,7 @@ export default function CampaignsPage() {
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="Missed-call recovery"
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                 />
               </div>
               <div>
@@ -396,7 +396,7 @@ export default function CampaignsPage() {
                 <select
                   value={form.type}
                   onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                 >
                   {TYPE_OPTIONS.map((option) => (
                     <option key={option.id} value={option.id}>
@@ -412,7 +412,7 @@ export default function CampaignsPage() {
                   value={form.audience}
                   onChange={(e) => setForm((prev) => ({ ...prev, audience: e.target.value }))}
                   placeholder="e.g. Leads waiting on follow-up"
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                 />
               </div>
               <div>
@@ -433,7 +433,7 @@ export default function CampaignsPage() {
                                 : [...prev.audienceStatuses, status],
                             }));
                           }}
-                          className="rounded border-zinc-600 bg-zinc-900 text-white"
+                          className="rounded border-[var(--border-default)] bg-[var(--bg-input)] text-white"
                         />
                         {status}
                       </label>
@@ -447,7 +447,7 @@ export default function CampaignsPage() {
                 <select
                   value={form.audienceSource}
                   onChange={(e) => setForm((prev) => ({ ...prev, audienceSource: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                 >
                   {SOURCE_OPTIONS.map((opt) => (
                     <option key={opt.id || "any"} value={opt.id}>
@@ -469,7 +469,7 @@ export default function CampaignsPage() {
                       setForm((prev) => ({ ...prev, audienceMinScore: v === "" ? "" : Number(v) }));
                     }}
                     placeholder="Any"
-                    className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                   />
                 </div>
                 <div>
@@ -483,7 +483,7 @@ export default function CampaignsPage() {
                       setForm((prev) => ({ ...prev, audienceNotContactedDays: v === "" ? "" : Number(v) }));
                     }}
                     placeholder="Any"
-                    className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                   />
                 </div>
               </div>
@@ -493,7 +493,7 @@ export default function CampaignsPage() {
                   rows={4}
                   value={form.template}
                   onChange={(e) => setForm((prev) => ({ ...prev, template: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm resize-none"
                 />
               </div>
               <div>
@@ -502,7 +502,7 @@ export default function CampaignsPage() {
                   type="datetime-local"
                   value={form.schedule}
                   onChange={(e) => setForm((prev) => ({ ...prev, schedule: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                 />
               </div>
               <button
@@ -518,7 +518,7 @@ export default function CampaignsPage() {
         </div>
 
         {toast && (
-          <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-2 text-sm text-zinc-100 shadow-xl">
+          <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-4 py-2 text-sm text-zinc-100 shadow-xl">
             {toast}
           </div>
         )}
@@ -529,7 +529,7 @@ export default function CampaignsPage() {
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-950/50 p-3">
+    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3">
       <p className="text-[10px] text-zinc-500">{label}</p>
       <p className="mt-1 text-sm font-semibold text-white">{value}</p>
     </div>

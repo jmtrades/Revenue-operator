@@ -167,41 +167,41 @@ export default function AppSettingsIntegrationsPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-lg font-semibold text-white mb-2">Integrations</h1>
-      <p className="text-sm text-zinc-500 mb-6">Connect your tools: channels, CRM, calendar, and automation.</p>
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Integrations</h1>
+      <p className="text-sm text-[var(--text-secondary)] mb-6">Connect your tools: channels, CRM, calendar, and automation.</p>
 
       <div className="space-y-6">
         <section>
-          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Channels</h2>
-          <div className="space-y-3">
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Channels</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-medium text-white">Phone</p>
-                  <p className="text-xs text-zinc-500 mt-1">Your AI answers calls on your connected number.</p>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">📞 AI Phone Number</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Not connected</p>
                 </div>
-                <Link href="/app/settings/phone" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
-                  Manage →
+                <Link href="/app/settings/phone" className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-gray-900 hover:bg-gray-100 shrink-0 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none">
+                  Connect →
                 </Link>
               </div>
             </div>
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
-              <p className="text-sm font-medium text-white">WhatsApp Business</p>
-              <p className="text-xs text-zinc-500 mt-1">Let your AI respond on WhatsApp too. Coming soon — we&apos;ll notify you when it&apos;s available.</p>
+            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 opacity-90">
+              <p className="text-sm font-medium text-[var(--text-primary)]">💬 WhatsApp Business</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">Notify me when available</p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <input
                   type="email"
                   value={whatsappEmail}
                   onChange={(e) => setWhatsappEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="flex-1 min-w-[180px] px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                  className="flex-1 min-w-[180px] px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
                   aria-label="Email for WhatsApp waitlist"
                 />
                 <button
                   type="button"
                   onClick={handleWhatsAppNotify}
                   disabled={whatsappSubmitting}
-                  className="px-4 py-2 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 shrink-0 disabled:opacity-60 transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-gray-900 hover:bg-gray-100 shrink-0 disabled:opacity-60 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
                 >
                   {whatsappSubmitting ? "Adding…" : "Notify me →"}
                 </button>
@@ -211,8 +211,16 @@ export default function AppSettingsIntegrationsPage() {
         </section>
 
         <section>
-          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Calendar</h2>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">CRM</h2>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 mb-4">
+          <p className="text-sm font-medium text-[var(--text-primary)]">🔗 Send leads to any CRM</p>
+          <p className="text-xs text-[var(--text-secondary)] mt-1">Use the webhook below to send lead and appointment events to HubSpot, Salesforce, Zapier, or any tool that accepts webhooks.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Calendar</h2>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-medium text-white">Google Calendar</p>
@@ -223,7 +231,7 @@ export default function AppSettingsIntegrationsPage() {
                 Connected
               </span>
             ) : (
-              <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
+              <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
                 Connect
               </Link>
             )}
@@ -233,7 +241,7 @@ export default function AppSettingsIntegrationsPage() {
               <p className="text-[11px] font-medium text-zinc-400 mb-2">Today&apos;s first open slots</p>
               <div className="flex flex-wrap gap-2">
                 {availabilityPreview.map((slot) => (
-                  <span key={slot} className="rounded-full border border-zinc-700 px-3 py-1 text-[11px] text-zinc-300">
+                  <span key={slot} className="rounded-full border border-[var(--border-medium)] px-3 py-1 text-[11px] text-zinc-300">
                     {slot}
                   </span>
                 ))}
@@ -245,7 +253,7 @@ export default function AppSettingsIntegrationsPage() {
 
         <section>
           <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Automation & webhooks</h2>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-4">
           <p className="text-sm font-medium text-white">Slack / Zapier webhook destination</p>
           <p className="text-xs text-zinc-500 mt-1">
             Paste a Slack incoming webhook or Zapier catch hook URL. We&apos;ll send operator-safe events only.
@@ -255,7 +263,7 @@ export default function AppSettingsIntegrationsPage() {
             value={webhookConfig.endpoint_url}
             onChange={(e) => setWebhookConfig((prev) => ({ ...prev, endpoint_url: e.target.value, enabled: true }))}
             placeholder="https://hooks.slack.com/... or https://hooks.zapier.com/..."
-            className="mt-4 w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+            className="mt-4 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
           <div className="mt-3">
             <label className="block text-[11px] font-medium text-zinc-400 mb-1">Signing secret (optional)</label>
@@ -264,7 +272,7 @@ export default function AppSettingsIntegrationsPage() {
               value={webhookSecret}
               onChange={(e) => setWebhookSecret(e.target.value)}
               placeholder={webhookConfig.has_secret ? "Secret saved. Enter a new value to rotate it." : "Add a secret to sign deliveries"}
-              className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
             />
             {webhookConfig.has_secret ? (
               <p className="mt-1 text-[11px] text-zinc-500">A signing secret is already stored for this destination.</p>
@@ -304,7 +312,7 @@ export default function AppSettingsIntegrationsPage() {
               Reactivated lead
             </label>
           </div>
-          <div className="mt-4 rounded-xl border border-zinc-800 bg-black/20 p-3">
+          <div className="mt-4 rounded-xl border border-[var(--border-default)] bg-black/20 p-3">
             <p className="text-[11px] font-medium text-zinc-400">Events you can send</p>
             <p className="mt-1 text-[11px] text-zinc-500">
               Lead captured, appointment booked, deal at risk, deal won, and reactivated lead.
@@ -324,7 +332,7 @@ export default function AppSettingsIntegrationsPage() {
                     max_attempts: Math.max(1, Math.min(10, Number(e.target.value || 3))),
                   }))
                 }
-                className="mt-1 w-24 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                className="mt-1 w-24 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -332,7 +340,7 @@ export default function AppSettingsIntegrationsPage() {
                 type="button"
                 onClick={handleTestWebhook}
                 disabled={testingWebhook || !workspaceId || !webhookConfig.endpoint_url.trim()}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 disabled:opacity-60"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 disabled:opacity-60"
               >
                 {testingWebhook ? "Testing…" : "Send test"}
               </button>
@@ -351,7 +359,7 @@ export default function AppSettingsIntegrationsPage() {
 
         <section>
           <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">CRM</h2>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-4">
           <p className="text-sm font-medium text-white">Webhook (any CRM)</p>
           <p className="text-xs text-zinc-500 mt-1">
             Set your webhook URL in <strong className="text-zinc-400">Automation & webhooks</strong> above. We POST lead captured, appointment booked, deal won, and more to that URL — so you can connect HubSpot, Salesforce, Pipedrive, Zoho, Zapier, or any tool that accepts webhooks.
@@ -364,13 +372,13 @@ export default function AppSettingsIntegrationsPage() {
             POST to <code className="rounded bg-zinc-800 px-1">/api/webhooks/lead-inbound</code> with body: <code className="rounded bg-zinc-800 px-1">{`{ "workspace_id": "...", "name": "...", "phone": "...", "email": "..." }`}</code>. Use your session (same origin) or set <code className="rounded bg-zinc-800 px-1">LEAD_INBOUND_WEBHOOK_SECRET</code> and send it in the <code className="rounded bg-zinc-800 px-1">x-api-key</code> header.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/app/leads" className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
+            <Link href="/app/leads" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
               Add leads
             </Link>
-            <Link href="/app/contacts" className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
+            <Link href="/app/contacts" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
               Manage contacts
             </Link>
-            <Link href="/docs#integrations" className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
+            <Link href="/docs#integrations" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
               Integration guide
             </Link>
           </div>
@@ -379,7 +387,7 @@ export default function AppSettingsIntegrationsPage() {
       </div>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
       )}
 
       <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>

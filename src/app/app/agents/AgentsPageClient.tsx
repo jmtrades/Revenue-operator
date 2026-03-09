@@ -1071,26 +1071,26 @@ export default function AppAgentsPageClient({
       </button>
 
       {loading ? (
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1.7fr)] gap-4 lg:gap-6 items-start">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)] gap-4 lg:gap-6 items-stretch lg:min-h-[480px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 animate-pulse" aria-hidden>
-                <div className="h-4 w-3/4 rounded bg-zinc-700/80 mb-3" />
-                <div className="h-3 w-1/2 rounded bg-zinc-800 mb-2" />
-                <div className="h-3 w-full rounded bg-zinc-800 mb-2" />
-                <div className="h-3 w-2/3 rounded bg-zinc-800" />
+              <div key={i} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 animate-pulse" aria-hidden>
+                <div className="h-4 w-3/4 rounded bg-[var(--border-default)] mb-3" />
+                <div className="h-3 w-1/2 rounded bg-[var(--border-default)] mb-2" />
+                <div className="h-3 w-full rounded bg-[var(--border-default)] mb-2" />
+                <div className="h-3 w-2/3 rounded bg-[var(--border-default)]" />
               </div>
             ))}
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 animate-pulse" aria-hidden>
-            <div className="h-4 w-1/3 rounded bg-zinc-700/80 mb-4" />
-            <div className="h-20 rounded bg-zinc-800 mb-4" />
-            <div className="h-32 rounded bg-zinc-800" />
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 animate-pulse" aria-hidden>
+            <div className="h-4 w-1/3 rounded bg-[var(--border-default)] mb-4" />
+            <div className="h-20 rounded bg-[var(--border-default)] mb-4" />
+            <div className="h-32 rounded bg-[var(--border-default)]" />
           </div>
         </div>
       ) : (
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1.7fr)] gap-4 lg:gap-6 items-start">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)] gap-4 lg:gap-6 items-stretch lg:min-h-[480px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
           {agents.map((agent) => (
             <button
               key={agent.id}
@@ -1099,8 +1099,8 @@ export default function AppAgentsPageClient({
                 setSelectedId(agent.id);
                 setActiveStep(getFirstIncompleteStep(agent));
               }}
-              className={`text-left p-4 rounded-2xl border bg-zinc-900/50 hover:bg-zinc-900 transition-colors ${
-                selected?.id === agent.id ? "border-zinc-500" : "border-zinc-800"
+              className={`text-left p-4 rounded-2xl border bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] transition-colors ${
+                selected?.id === agent.id ? "border-[var(--border-medium)]" : "border-[var(--border-default)]"
               }`}
             >
               <div className="flex items-center justify-between gap-2 mb-2">
@@ -1146,11 +1146,11 @@ export default function AppAgentsPageClient({
           ))}
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 md:p-5">
+        <div className="flex-1 min-w-0 flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
           {selected ? (
-            <div className="flex flex-col lg:flex-row gap-6">
-              <div className="w-full lg:w-64 flex-shrink-0 space-y-4">
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-4">
+            <div className="flex flex-col lg:flex-row flex-1 min-h-0">
+              <div className="w-full lg:w-[260px] flex-shrink-0 border-r border-[var(--border-default)] p-4 space-y-4 overflow-y-auto">
+                <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <p className="font-medium text-sm text-white truncate">{selected.name}</p>
                     <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${selected.active ? "bg-green-500/15 text-green-400" : "bg-zinc-800 text-zinc-400"}`}>
@@ -1176,7 +1176,7 @@ export default function AppAgentsPageClient({
                       value={activeStep}
                       onChange={(e) => setActiveStep(e.target.value as StepId)}
                       aria-label="Jump to setup step"
-                      className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+                      className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50"
                     >
                       {SETUP_STEPS.map((step, i) => (
                         <option key={step.id} value={step.id}>
@@ -1196,12 +1196,12 @@ export default function AppAgentsPageClient({
                         onClick={() => setActiveStep(step.id)}
                         aria-label={`${step.label}: ${step.description}${complete ? ", completed" : ""}${active ? ", current step" : ""}`}
                         aria-current={active ? "step" : undefined}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
-                          active ? "bg-white/[0.06] border border-white/[0.1]" : "hover:bg-white/[0.03] border border-transparent"
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                          active ? "bg-[var(--bg-hover)] border border-[var(--border-medium)]" : "hover:bg-[var(--bg-card)] border border-transparent"
                         }`}
                       >
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          complete ? "bg-emerald-500/20" : active ? "bg-white/10" : "bg-white/[0.04]"
+                          complete ? "bg-emerald-500/20" : active ? "bg-[var(--bg-hover)]" : "bg-[var(--bg-input)]"
                         }`}>
                           {complete ? (
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" aria-hidden />
@@ -1210,8 +1210,8 @@ export default function AppAgentsPageClient({
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className={`text-sm font-medium ${active ? "text-white" : "text-white/60"}`}>{step.label}</p>
-                          <p className="text-xs text-white/25 truncate">{step.description}</p>
+                          <p className={`text-sm font-medium ${active ? "text-white" : "text-[var(--text-secondary)]"}`}>{step.label}</p>
+                          <p className="text-xs text-[var(--text-tertiary)] truncate">{step.description}</p>
                         </div>
                         {active && <ChevronRight className="w-4 h-4 text-white/20 flex-shrink-0" aria-hidden />}
                       </button>
@@ -1220,13 +1220,13 @@ export default function AppAgentsPageClient({
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  <button type="button" onClick={handleDelete} aria-label="Delete this agent" className="px-3 py-1.5 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Delete</button>
-                  <button type="button" onClick={handleSave} disabled={saving} aria-label={saving ? "Saving agent" : "Save agent and sync to voice"} className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+                  <button type="button" onClick={handleDelete} aria-label="Delete this agent" className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Delete</button>
+                  <button type="button" onClick={handleSave} disabled={saving} aria-label={saving ? "Saving agent" : "Save agent and sync to voice"} className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
                     {saving ? "Saving…" : "Save"}
                   </button>
                 </div>
               </div>
-              <div className="flex-1 min-w-[340px] max-w-[560px] bg-white/[0.01] border border-white/[0.06] rounded-2xl p-6 overflow-y-auto overflow-x-auto relative" aria-labelledby="agent-step-heading">
+              <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-6 relative break-words" aria-labelledby="agent-step-heading">
                 {saving && <div className="absolute top-3 right-3 text-xs text-white/30">Saving...</div>}
                 <h2 id="agent-step-heading" className="text-xs text-zinc-500 mb-4 font-normal">
                   Currently on: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
@@ -1261,7 +1261,7 @@ export default function AppAgentsPageClient({
               <button
                 type="button"
                 onClick={() => setShowTemplateModal(true)}
-                className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 aria-label="Create your first agent"
               >
                 + Create Agent
@@ -1286,7 +1286,7 @@ export default function AppAgentsPageClient({
       </p>
 
       {toast && (
-        <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 shadow-lg">
+        <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-zinc-100 shadow-lg">
           {toast}
         </div>
       )}
@@ -1301,7 +1301,7 @@ export default function AppAgentsPageClient({
         >
           <div
             ref={templateModalContentRef}
-            className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-[var(--bg-base)] border border-[var(--border-default)] rounded-2xl p-5 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -1316,7 +1316,7 @@ export default function AppAgentsPageClient({
                 type="button"
                 onClick={() => setShowTemplateModal(false)}
                 aria-label="Close create agent dialog"
-                className="text-xs text-zinc-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
+                className="text-xs text-zinc-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
               >
                 Close
               </button>
@@ -1362,7 +1362,7 @@ export default function AppAgentsPageClient({
             <p className="text-xs text-zinc-500 mt-2">
               More options: <button type="button" onClick={() => setTemplateCategory("all")} className="underline hover:text-white">After-hours</button>, <button type="button" onClick={() => createAgentFromTemplate("emergency")} className="underline hover:text-white">Emergency</button>, <button type="button" onClick={() => createAgentFromTemplate("review_request")} className="underline hover:text-white">Review Request</button>
             </p>
-            <div className="mt-6 pt-4 border-t border-zinc-800">
+            <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
               <p className="text-xs font-medium text-zinc-400 mb-2">
                 Or pick by communication style (20+ templates)
               </p>
@@ -1372,8 +1372,8 @@ export default function AppAgentsPageClient({
                   onClick={() => setTemplateCategory("all")}
                   className={`rounded-full border px-2.5 py-1 text-[11px] ${
                     templateCategory === "all"
-                      ? "border-zinc-500 bg-zinc-800 text-white"
-                      : "border-zinc-700 text-zinc-400 hover:text-white"
+                      ? "border-[var(--border-medium)] bg-zinc-800 text-white"
+                      : "border-[var(--border-medium)] text-zinc-400 hover:text-white"
                   }`}
                 >
                   All
@@ -1385,8 +1385,8 @@ export default function AppAgentsPageClient({
                     onClick={() => setTemplateCategory(c.id)}
                     className={`rounded-full border px-2.5 py-1 text-[11px] ${
                       templateCategory === c.id
-                        ? "border-zinc-500 bg-zinc-800 text-white"
-                        : "border-zinc-700 text-zinc-400 hover:text-white"
+                        ? "border-[var(--border-medium)] bg-zinc-800 text-white"
+                        : "border-[var(--border-medium)] text-zinc-400 hover:text-white"
                     }`}
                   >
                     {c.label}
@@ -1402,7 +1402,7 @@ export default function AppAgentsPageClient({
                     key={t.id}
                     type="button"
                     onClick={() => createAgentFromSharedTemplate(t.id)}
-                    className="w-full text-left px-3 py-2 rounded-xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 hover:border-zinc-600 text-xs transition-colors"
+                    className="w-full text-left px-3 py-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] hover:border-zinc-600 text-xs transition-colors"
                   >
                     <span className="font-medium text-white">{t.name}</span>
                     <span className="text-zinc-500 ml-1">· {t.styleLabel}</span>
@@ -1428,9 +1428,9 @@ function TemplateCard(props: {
     <button
       type="button"
       onClick={onClick}
-      className="text-left p-3 rounded-2xl border border-zinc-800 bg-zinc-900/60 hover:bg-zinc-900 hover:border-zinc-600 transition-colors"
+      className="text-left p-3 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-input)] hover:border-zinc-600 transition-colors"
     >
-      <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.04] text-zinc-300">
+      <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-zinc-300">
         <Icon className="h-4 w-4" />
       </div>
       <p className="text-sm font-medium text-white mb-1">{title}</p>
@@ -1455,10 +1455,10 @@ function VoiceCard(props: {
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(); } }}
       aria-pressed={selected}
       aria-label={`${voice.name}, ${voice.description}. ${selected ? "Selected." : "Select this voice."}`}
-      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
         selected
-          ? "border-2 border-white bg-white/[0.06] ring-1 ring-white/20"
-          : "border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12]"
+          ? "border-2 border-white bg-[var(--bg-hover)] ring-1 ring-white/20"
+          : "border border-[var(--border-default)] bg-white/[0.02] hover:border-[var(--border-medium)]"
       }`}
     >
       <button
@@ -1468,17 +1468,17 @@ function VoiceCard(props: {
           onPreview();
         }}
         aria-label={`Preview ${voice.name} voice`}
-        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.06] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-hover)] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         {previewing ? (
-          <Square className="h-3 w-3 fill-current text-white/70" />
+          <Square className="h-3 w-3 fill-current text-[var(--text-secondary)]" />
         ) : (
-          <Play className="h-3 w-3 fill-current text-white/50" />
+          <Play className="h-3 w-3 fill-current text-[var(--text-secondary)]" />
         )}
       </button>
-      <p className="text-sm font-medium text-white/90">{voice.name}</p>
+      <p className="text-sm font-medium text-[var(--text-primary)]">{voice.name}</p>
       <p className="mt-0.5 text-xs text-white/40">{voice.description}</p>
-      <p className="mt-0.5 text-xs text-white/25">{voice.accent}</p>
+      <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{voice.accent}</p>
       <p className="mt-2 pr-8 text-[10px] leading-tight text-white/20">{voice.bestFor}</p>
     </div>
   );
@@ -1546,15 +1546,15 @@ function ConversationPreview({ agent, workspaceName }: { agent: Agent; workspace
 
   return (
     <div className="mt-6">
-      <h3 className="text-sm font-medium text-white/80 mb-1">How your AI handles calls</h3>
+      <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">How your AI handles calls</h3>
       <p className="text-xs text-white/30 mb-4">
         Your agent has a natural conversation after the greeting. Here&apos;s how it responds:
       </p>
-      <div className="space-y-0 border border-white/[0.06] rounded-xl overflow-hidden">
+      <div className="space-y-0 border border-[var(--border-default)] rounded-xl overflow-hidden">
         {previews.map((p, i) => (
-          <div key={i} className={`p-3 ${i > 0 ? "border-t border-white/[0.06]" : ""}`}>
+          <div key={i} className={`p-3 ${i > 0 ? "border-t border-[var(--border-default)]" : ""}`}>
             <p className="text-xs text-white/40 mb-1.5">&ldquo;{p.question}&rdquo;</p>
-            <p className="text-sm text-white/70">
+            <p className="text-sm text-[var(--text-secondary)]">
               <span className="text-blue-400/60 text-xs mr-1.5">AI:</span>
               {p.answer}
             </p>
@@ -1591,7 +1591,7 @@ function ProfileTab({
           type="text"
           value={agent.name}
           onChange={(e) => onChange({ name: e.target.value })}
-          className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           placeholder="Receptionist"
         />
       </div>
@@ -1610,7 +1610,7 @@ function ProfileTab({
             />
           ))}
         </div>
-        <details className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
+        <details className="mt-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
           <summary className="cursor-pointer text-xs text-zinc-400 hover:text-white">
             Advanced voice settings
           </summary>
@@ -1700,7 +1700,7 @@ function ProfileTab({
           value={agent.greeting}
           onChange={(e) => onChange({ greeting: e.target.value })}
           placeholder="Thanks for calling. How can I help you today?"
-          className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none resize-none"
         />
       </div>
 
@@ -1743,8 +1743,8 @@ function ProfileTab({
               onClick={() => onChange({ callStyle: id })}
               className={`text-left p-2 rounded-xl border text-[11px] ${
                 agent.callStyle === id
-                  ? "border-white bg-zinc-900 text-white"
-                  : "border-zinc-800 bg-zinc-900/50 text-zinc-300"
+                  ? "border-white bg-[var(--bg-input)] text-white"
+                  : "border-[var(--border-default)] bg-[var(--bg-input)]/50 text-zinc-300"
               }`}
             >
               <p className="font-medium mb-0.5">{label}</p>
@@ -1754,7 +1754,7 @@ function ProfileTab({
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
+      <div className="flex items-center justify-between pt-2 border-t border-[var(--border-default)]">
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -1805,7 +1805,7 @@ function KnowledgeTab({
     <div className="space-y-4 text-xs md:text-sm">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium text-white/80">Knowledge base</h3>
+          <h3 className="text-sm font-medium text-[var(--text-primary)]">Knowledge base</h3>
           <p className="text-xs text-white/40">
             Q&A pairs your agent uses to answer callers clearly and consistently.
           </p>
@@ -1829,7 +1829,7 @@ function KnowledgeTab({
       </div>
 
       {agent.faq.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 px-4 py-8 text-center">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-8 text-center">
           <BookOpen className="mx-auto h-8 w-8 text-zinc-600" />
           <p className="mt-3 text-sm text-zinc-300">No knowledge entries yet</p>
           <p className="mt-1 text-xs text-zinc-500">
@@ -1838,7 +1838,7 @@ function KnowledgeTab({
           <button
             type="button"
             onClick={seedDefaults}
-            className="mt-4 rounded-xl border border-zinc-700 px-3 py-2 text-xs text-zinc-200 hover:border-zinc-500"
+            className="mt-4 rounded-xl border border-[var(--border-medium)] px-3 py-2 text-xs text-zinc-200 hover:border-[var(--border-medium)]"
           >
             Seed 5 starter entries
           </button>
@@ -1848,7 +1848,7 @@ function KnowledgeTab({
           {agent.faq.map((item, index) => (
             <div
               key={item.id}
-              className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4"
+              className="rounded-xl border border-[var(--border-default)] bg-white/[0.02] p-4"
             >
               <div className="mb-3 flex items-center justify-between">
                 <p className="text-[11px] text-zinc-500">Entry {index + 1}</p>
@@ -1875,7 +1875,7 @@ function KnowledgeTab({
                     ),
                   })
                 }
-                className="mt-1 w-full border-b border-white/[0.08] bg-transparent py-1 text-sm text-white/80 focus:outline-none"
+                className="mt-1 w-full border-b border-[var(--border-default)] bg-transparent py-1 text-sm text-[var(--text-primary)] focus:outline-none"
                 placeholder="What do callers usually ask?"
               />
               <label className="mt-3 block text-xs text-zinc-500">Agent responds with...</label>
@@ -1889,7 +1889,7 @@ function KnowledgeTab({
                     ),
                   })
                 }
-                className="mt-1 w-full border-b border-white/[0.08] bg-transparent py-1 text-sm text-white/80 focus:outline-none resize-none"
+                className="mt-1 w-full border-b border-[var(--border-default)] bg-transparent py-1 text-sm text-[var(--text-primary)] focus:outline-none resize-none"
                 placeholder="How should the agent respond?"
               />
             </div>
@@ -1904,7 +1904,7 @@ function KnowledgeTab({
           value={agent.specialInstructions}
           onChange={(e) => onChange({ specialInstructions: e.target.value })}
           aria-label="Special instructions for the agent"
-          className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
+          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
           placeholder="Anything the agent should always remember on calls."
         />
       </div>
@@ -1967,8 +1967,8 @@ function RulesTab({
 
   return (
     <div className="space-y-4 text-xs md:text-sm">
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
-        <h3 className="mb-3 text-sm font-medium text-white/80">Conversation style</h3>
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+        <h3 className="mb-3 text-sm font-medium text-[var(--text-primary)]">Conversation style</h3>
         <div className="space-y-2 mb-4">
           <div className="flex items-center justify-between text-[11px] text-zinc-500">
             <span>Assertiveness</span>
@@ -1989,7 +1989,7 @@ function RulesTab({
             <select
               value={agent.whenHesitation}
               onChange={(e) => onChange({ whenHesitation: e.target.value })}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-600"
+              className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--border-medium)]"
             >
               {WHEN_HESITATION_OPTIONS.map((o) => (
                 <option key={o.id} value={o.id}>{o.label}</option>
@@ -2001,7 +2001,7 @@ function RulesTab({
             <select
               value={agent.whenThinkAboutIt}
               onChange={(e) => onChange({ whenThinkAboutIt: e.target.value })}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-600"
+              className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--border-medium)]"
             >
               {WHEN_THINK_OPTIONS.map((o) => (
                 <option key={o.id} value={o.id}>{o.label}</option>
@@ -2013,7 +2013,7 @@ function RulesTab({
             <select
               value={agent.whenPricing}
               onChange={(e) => onChange({ whenPricing: e.target.value })}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-600"
+              className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--border-medium)]"
             >
               {WHEN_PRICING_OPTIONS.map((o) => (
                 <option key={o.id} value={o.id}>{o.label}</option>
@@ -2025,7 +2025,7 @@ function RulesTab({
             <select
               value={agent.whenCompetitor}
               onChange={(e) => onChange({ whenCompetitor: e.target.value })}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-600"
+              className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--border-medium)]"
             >
               {WHEN_COMPETITOR_OPTIONS.map((o) => (
                 <option key={o.id} value={o.id}>{o.label}</option>
@@ -2034,8 +2034,8 @@ function RulesTab({
           </div>
         </div>
       </div>
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
-        <h3 className="mb-2 text-sm font-medium text-white/80">Transfer to a human when...</h3>
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+        <h3 className="mb-2 text-sm font-medium text-[var(--text-primary)]">Transfer to a human when...</h3>
         <div className="space-y-2">
           {ALWAYS_TRANSFER_OPTIONS.map((option) => (
             <label key={option} className="flex items-center gap-2 text-sm text-zinc-300">
@@ -2063,7 +2063,7 @@ function RulesTab({
             onChange={(e) => onChange({ transferPhone: e.target.value })}
             placeholder="+1 (555) 000-0000"
             aria-label="Transfer to phone number"
-            className="mt-1 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="mt-1 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           />
         </div>
       </div>
@@ -2082,7 +2082,7 @@ function RulesTab({
             })
           }
           aria-label="Words or phrases the agent should never say"
-          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
           placeholder="Competitor names, legal advice, pricing specifics..."
         />
       </div>
@@ -2094,7 +2094,7 @@ function RulesTab({
             type="button"
             onClick={addTransferRule}
             aria-label="Add phrase-based transfer rule"
-            className="text-[11px] text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
+            className="text-[11px] text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
           >
             + Add rule
           </button>
@@ -2109,7 +2109,7 @@ function RulesTab({
             {agent.transferRules.map((rule) => (
               <div
                 key={rule.id}
-                className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2"
+                className="p-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] space-y-2"
               >
                 <div className="flex items-center justify-between">
                   <p className="text-[11px] text-zinc-500">When caller says…</p>
@@ -2135,7 +2135,7 @@ function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder="e.g., emergency, billing, new patient"
                 />
                 <p className="text-[11px] text-zinc-500">→ Call this number</p>
@@ -2149,7 +2149,7 @@ function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder="(503) 555-0199"
                 />
               </div>
@@ -2161,7 +2161,7 @@ function RulesTab({
       {agent.learnedBehaviors.length > 0 && (
         <div>
           <label className="mb-2 block text-[11px] text-zinc-500">Learned behaviors (from Call Intelligence)</label>
-          <div className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/40 p-3">
+          <div className="space-y-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3">
             {agent.learnedBehaviors.map((line, idx) => (
               <div key={idx} className="flex items-start gap-2 text-sm text-zinc-300">
                 <span className="flex-1">{line}</span>
@@ -2189,7 +2189,7 @@ function RulesTab({
           value={agent.afterHoursMode}
           onChange={(e) => onChange({ afterHoursMode: e.target.value as Agent["afterHoursMode"] })}
           aria-label="After-hours behavior"
-          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
         >
           <option value="messages">Take message and notify</option>
           <option value="forward">Schedule callback</option>
@@ -2204,7 +2204,7 @@ function RulesTab({
           value={[0, 5, 10, 12, 15, 30].includes(agent.maxCallDuration) ? String(agent.maxCallDuration) : "15"}
           onChange={(e) => onChange({ maxCallDuration: Number(e.target.value) })}
           aria-label="Maximum call duration in minutes"
-          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
         >
           <option value="0">No limit</option>
           <option value="5">5 minutes</option>
@@ -2215,8 +2215,8 @@ function RulesTab({
         </select>
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-4">
-        <h3 className="text-sm font-medium text-white/80">Appointment booking</h3>
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
+        <h3 className="text-sm font-medium text-[var(--text-primary)]">Appointment booking</h3>
         <label className="flex items-center gap-2 text-sm text-zinc-300">
           <input
             type="checkbox"
@@ -2233,7 +2233,7 @@ function RulesTab({
               value={[15, 30, 45, 60].includes(agent.bookingDefaultDurationMinutes) ? String(agent.bookingDefaultDurationMinutes) : "30"}
               onChange={(e) => onChange({ bookingDefaultDurationMinutes: Number(e.target.value) })}
               aria-label="Default appointment duration"
-              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
             >
               <option value="15">15 min</option>
               <option value="30">30 min</option>
@@ -2245,8 +2245,8 @@ function RulesTab({
         )}
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-3">
-        <h3 className="text-sm font-medium text-white/80">Follow-up behavior</h3>
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
+        <h3 className="text-sm font-medium text-[var(--text-primary)]">Follow-up behavior</h3>
         <label className="flex items-center gap-2 text-sm text-zinc-300">
           <input
             type="checkbox"
@@ -2276,15 +2276,15 @@ function RulesTab({
         </label>
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-4">
-        <h3 className="text-sm font-medium text-white/80">Conversation style</h3>
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
+        <h3 className="text-sm font-medium text-[var(--text-primary)]">Conversation style</h3>
         <div>
           <label className="block text-[11px] text-zinc-500 mb-1">Pace</label>
           <select
             value={agent.callStyle}
             onChange={(e) => onChange({ callStyle: e.target.value as CallStyle })}
             aria-label="Conversation pace"
-            className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+            className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
           >
             <option value="thorough">Thorough</option>
             <option value="conversational">Conversational</option>
@@ -2298,7 +2298,7 @@ function RulesTab({
               value={agent.persistence}
               onChange={(e) => onChange({ persistence: e.target.value as Agent["persistence"] })}
               aria-label="Outbound persistence"
-              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -2309,18 +2309,18 @@ function RulesTab({
       </div>
 
       {/* Qualification framework — collapsed by default */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
         <button
           type="button"
           onClick={() => setOpenAdvanced((s) => ({ ...s, qualification: !s.qualification }))}
-          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-white/80 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-inset"
+          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset"
           aria-expanded={openAdvanced.qualification}
         >
           Qualification framework
-          <ChevronDown className={`h-4 w-4 shrink-0 text-white/50 transition-transform ${openAdvanced.qualification ? "rotate-180" : ""}`} />
+          <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${openAdvanced.qualification ? "rotate-180" : ""}`} />
         </button>
         {openAdvanced.qualification && (
-          <div className="border-t border-zinc-800 p-4 space-y-3">
+          <div className="border-t border-[var(--border-default)] p-4 space-y-3">
             <p className="text-[11px] text-zinc-500">What makes someone a qualified lead?</p>
             {(agent.qualification?.criteria ?? []).map((c) => (
               <label key={c.id} className="flex items-center gap-2 text-sm text-zinc-300">
@@ -2353,7 +2353,7 @@ function RulesTab({
                   })
                 }
                 placeholder="e.g., Has authority to sign"
-                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
               />
             </div>
           </div>
@@ -2361,21 +2361,21 @@ function RulesTab({
       </div>
 
       {/* Objection handling — collapsed by default */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
         <button
           type="button"
           onClick={() => setOpenAdvanced((s) => ({ ...s, objection: !s.objection }))}
-          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-white/80 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-inset"
+          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset"
           aria-expanded={openAdvanced.objection}
         >
           Objection handling
-          <ChevronDown className={`h-4 w-4 shrink-0 text-white/50 transition-transform ${openAdvanced.objection ? "rotate-180" : ""}`} />
+          <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${openAdvanced.objection ? "rotate-180" : ""}`} />
         </button>
         {openAdvanced.objection && (
-          <div className="border-t border-zinc-800 p-4 space-y-4">
+          <div className="border-t border-[var(--border-default)] p-4 space-y-4">
             <p className="text-[11px] text-zinc-500">Common objections and how to respond.</p>
             {(agent.objections ?? []).map((o) => (
-              <div key={o.id} className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2">
+              <div key={o.id} className="p-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-zinc-500">If they say…</span>
                   <button
@@ -2400,7 +2400,7 @@ function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder='e.g., "Too expensive"'
                 />
                 <span className="text-[11px] text-zinc-500">Response</span>
@@ -2414,7 +2414,7 @@ function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder="We offer flexible pricing..."
                 />
               </div>
@@ -2426,7 +2426,7 @@ function RulesTab({
                   const id = `obj-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
                   onChange({ objections: [...(agent.objections ?? []), { id, trigger: "", response: "" }] });
                 }}
-                className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded"
+                className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 rounded"
               >
                 Add objection
               </button>
@@ -2441,7 +2441,7 @@ function RulesTab({
                     }));
                     onChange({ objections: next });
                   }}
-                  className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded"
+                  className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 rounded"
                 >
                   Add from suggestions
                 </button>
@@ -2453,18 +2453,18 @@ function RulesTab({
 
       {/* Outbound call settings — when purpose = outbound or both */}
       {(agent.purpose === "outbound" || agent.purpose === "both") && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
           <button
             type="button"
             onClick={() => setOpenAdvanced((s) => ({ ...s, outbound: !s.outbound }))}
-            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-white/80 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-inset"
+            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset"
             aria-expanded={openAdvanced.outbound}
           >
             Outbound call settings
-            <ChevronDown className={`h-4 w-4 shrink-0 text-white/50 transition-transform ${openAdvanced.outbound ? "rotate-180" : ""}`} />
+            <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${openAdvanced.outbound ? "rotate-180" : ""}`} />
           </button>
           {openAdvanced.outbound && (
-            <div className="border-t border-zinc-800 p-4 space-y-4">
+            <div className="border-t border-[var(--border-default)] p-4 space-y-4">
               <div>
                 <label className="block text-[11px] text-zinc-500 mb-1">Opening strategy</label>
                 <input
@@ -2472,7 +2472,7 @@ function RulesTab({
                   value={agent.outboundOpening}
                   onChange={(e) => onChange({ outboundOpening: e.target.value })}
                   placeholder="Hi {name}, this is calling from {business}. I'm following up on..."
-                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                  className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 />
               </div>
               <div>
@@ -2480,7 +2480,7 @@ function RulesTab({
                 <select
                   value={agent.outboundGoal}
                   onChange={(e) => onChange({ outboundGoal: e.target.value as Agent["outboundGoal"] })}
-                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                  className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 >
                   <option value="book">Book an appointment</option>
                   <option value="qualify">Qualify the lead</option>
@@ -2493,7 +2493,7 @@ function RulesTab({
                     value={agent.outboundGoalCustom}
                     onChange={(e) => onChange({ outboundGoalCustom: e.target.value })}
                     placeholder="Describe the goal"
-                    className="mt-2 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                    className="mt-2 w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                   />
                 )}
               </div>
@@ -2502,7 +2502,7 @@ function RulesTab({
                 <select
                   value={agent.outboundNotInterested}
                   onChange={(e) => onChange({ outboundNotInterested: e.target.value as Agent["outboundNotInterested"] })}
-                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                  className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 >
                   <option value="thank_end">Thank and end politely</option>
                   <option value="callback">Offer to call back later</option>
@@ -2514,7 +2514,7 @@ function RulesTab({
                 <select
                   value={agent.voicemailBehavior}
                   onChange={(e) => onChange({ voicemailBehavior: e.target.value as Agent["voicemailBehavior"] })}
-                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                  className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 >
                   <option value="leave">Leave a message</option>
                   <option value="hangup">Hang up and try again later</option>
@@ -2526,7 +2526,7 @@ function RulesTab({
                     value={agent.voicemailMessage}
                     onChange={(e) => onChange({ voicemailMessage: e.target.value })}
                     placeholder="Hi {name}, this is {business}..."
-                    className="mt-2 w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25 resize-none"
+                    className="mt-2 w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)] resize-none"
                   />
                 )}
               </div>
@@ -2537,18 +2537,18 @@ function RulesTab({
 
       {/* Inbound call settings — when purpose = inbound or both */}
       {(agent.purpose === "inbound" || agent.purpose === "both") && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
           <button
             type="button"
             onClick={() => setOpenAdvanced((s) => ({ ...s, inbound: !s.inbound }))}
-            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-white/80 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-inset"
+            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset"
             aria-expanded={openAdvanced.inbound}
           >
             Inbound call settings
-            <ChevronDown className={`h-4 w-4 shrink-0 text-white/50 transition-transform ${openAdvanced.inbound ? "rotate-180" : ""}`} />
+            <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${openAdvanced.inbound ? "rotate-180" : ""}`} />
           </button>
           {openAdvanced.inbound && (
-            <div className="border-t border-zinc-800 p-4 space-y-4">
+            <div className="border-t border-[var(--border-default)] p-4 space-y-4">
               <div>
                 <label className="block text-[11px] text-zinc-500 mb-1">Confused caller handling</label>
                 <input
@@ -2556,7 +2556,7 @@ function RulesTab({
                   value={agent.confusedCallerHandling}
                   onChange={(e) => onChange({ confusedCallerHandling: e.target.value })}
                   placeholder="I'm sorry, let me try to help. Could you tell me what you need?"
-                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25"
+                  className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 />
               </div>
               <div>
@@ -2566,7 +2566,7 @@ function RulesTab({
                   value={agent.offTopicHandling}
                   onChange={(e) => onChange({ offTopicHandling: e.target.value })}
                   placeholder="I'm the phone assistant for {business}. I can help with..."
-                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 text-sm text-white/90 placeholder:text-white/20 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500/25 resize-none"
+                  className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)] resize-none"
                 />
               </div>
             </div>
@@ -2697,17 +2697,17 @@ const TestTab = forwardRef<TestTabRef, {
   return (
     <div className="py-4 text-center">
       {suggestedOpener && (status === "idle" || status === "connecting" || status === "active") && (
-        <div className="mx-auto mb-4 max-w-md rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-left">
-          <p className="text-xs text-white/50 mb-1">Suggested: {suggestedOpener.title}</p>
-          <p className="text-sm text-white/80">&ldquo;{suggestedOpener.phrase}&rdquo;</p>
+        <div className="mx-auto mb-4 max-w-md rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-3 text-left">
+          <p className="text-xs text-[var(--text-secondary)] mb-1">Suggested: {suggestedOpener.title}</p>
+          <p className="text-sm text-[var(--text-primary)]">&ldquo;{suggestedOpener.phrase}&rdquo;</p>
         </div>
       )}
       {status === "idle" && (
         <div>
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/[0.06]">
-            <Mic className="h-8 w-8 text-white/70" />
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--bg-hover)]">
+            <Mic className="h-8 w-8 text-[var(--text-secondary)]" />
           </div>
-          <h3 className="mb-1 text-lg font-medium text-white/90">Test your agent</h3>
+          <h3 className="mb-1 text-lg font-medium text-[var(--text-primary)]">Test your agent</h3>
           <p className="mx-auto mb-6 max-w-xs text-sm text-white/40">
             Have a real browser conversation with this agent using its current voice,
             greeting, and knowledge.
@@ -2716,7 +2716,7 @@ const TestTab = forwardRef<TestTabRef, {
             type="button"
             onClick={() => void startTestCall()}
             aria-label="Start a test call with this agent"
-            className="min-h-[44px] rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100 touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="min-h-[44px] rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100 touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             Start test call
           </button>
@@ -2726,7 +2726,7 @@ const TestTab = forwardRef<TestTabRef, {
       {status === "connecting" && (
         <div>
           <div className="mx-auto mb-4 flex h-20 w-20 animate-pulse items-center justify-center rounded-full bg-white/[0.08]">
-            <PhoneForwarded className="h-8 w-8 text-white/70" />
+            <PhoneForwarded className="h-8 w-8 text-[var(--text-secondary)]" />
           </div>
           <p className="text-sm text-zinc-400">Connecting...</p>
         </div>
@@ -2764,7 +2764,7 @@ const TestTab = forwardRef<TestTabRef, {
                 className={`rounded-lg px-3 py-2 text-sm ${
                   item.role === "assistant"
                     ? "bg-zinc-800 text-zinc-200"
-                    : "bg-white/[0.04] text-white/70"
+                    : "bg-[var(--bg-input)] text-[var(--text-secondary)]"
                 }`}
               >
                 <span className="mr-2 text-xs text-white/30">
@@ -2779,7 +2779,7 @@ const TestTab = forwardRef<TestTabRef, {
               type="button"
               onClick={endCall}
               aria-label="End the test call"
-              className="mt-4 inline-flex items-center gap-2 text-sm text-red-400 hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              className="mt-4 inline-flex items-center gap-2 text-sm text-[var(--accent-red)] hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-red)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               <Square className="h-3 w-3 fill-current" />
               End call
@@ -2789,7 +2789,7 @@ const TestTab = forwardRef<TestTabRef, {
               type="button"
               onClick={() => { setStatus("idle"); setTranscript([]); onTryAgain?.(); }}
               aria-label="Try another test call"
-              className="mt-4 text-sm text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              className="mt-4 text-sm text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               Try again
             </button>
@@ -2798,7 +2798,7 @@ const TestTab = forwardRef<TestTabRef, {
       )}
 
       {error ? (
-        <p className="mt-4 text-xs text-red-400" role="alert">
+        <p className="mt-4 text-xs text-[var(--accent-red)]" role="alert">
           {error}
         </p>
       ) : null}
@@ -2835,12 +2835,12 @@ function IdentityStepContent({
           placeholder="Receptionist"
           aria-describedby={showNameError ? "agent-name-error" : "agent-name-hint"}
           aria-invalid={showNameError}
-          className={`w-full bg-white/[0.03] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black border ${showNameError ? "border-red-500/60" : "border-white/[0.08]"}`}
+          className={`w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black border ${showNameError ? "border-red-500/60" : "border-[var(--border-default)]"}`}
         />
         {showNameError ? (
-          <p id="agent-name-error" className="mt-1 text-[11px] text-red-400" role="alert">Enter an agent name.</p>
+          <p id="agent-name-error" className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">Enter an agent name.</p>
         ) : (
-          <p id="agent-name-hint" className="mt-1 text-[11px] text-white/25">This is just for your reference — callers won&apos;t hear it.</p>
+          <p id="agent-name-hint" className="mt-1 text-[11px] text-[var(--text-tertiary)]">This is just for your reference — callers won&apos;t hear it.</p>
         )}
       </div>
       <div role="group" aria-labelledby="agent-purpose-label">
@@ -2852,10 +2852,10 @@ function IdentityStepContent({
               type="button"
               onClick={() => onChange({ purpose: p })}
               aria-pressed={purpose === p}
-              className={`rounded-xl border p-3 text-left text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+              className={`rounded-xl border p-3 text-left text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                 purpose === p
-                  ? "border-white bg-white/10 text-white"
-                  : "border-white/[0.08] bg-white/[0.02] text-white/60 hover:border-white/[0.12]"
+                  ? "border-white bg-[var(--bg-hover)] text-white"
+                  : "border-[var(--border-default)] bg-white/[0.02] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
               }`}
             >
               {p === "inbound" && "Answer calls — Inbound only"}
@@ -2864,7 +2864,7 @@ function IdentityStepContent({
             </button>
           ))}
         </div>
-        <p className="mt-1.5 text-[11px] text-white/25">
+        <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">
           Outbound agents are used when you click &ldquo;Have AI call this lead&rdquo; on Leads and when you run outbound campaigns. Set to Outbound or Both so this agent can make calls.
         </p>
       </div>
@@ -2874,7 +2874,7 @@ function IdentityStepContent({
           value={agent.primaryGoal}
           onChange={(e) => onChange({ primaryGoal: e.target.value as PrimaryGoalId })}
           aria-label="Primary goal"
-          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-2.5 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50"
         >
           <option value="answer_route">Answer questions and route callers</option>
           <option value="book_appointments">Book appointments for my business</option>
@@ -2893,7 +2893,7 @@ function IdentityStepContent({
           onChange={(e) => onChange({ businessContext: e.target.value })}
           placeholder="What you do, who you serve (so the AI can represent you accurately)"
           rows={2}
-          className="w-full bg-white/[0.03] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 border border-white/[0.08] resize-none"
+          className="w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 border border-[var(--border-default)] resize-none"
         />
       </div>
       <div>
@@ -2904,7 +2904,7 @@ function IdentityStepContent({
           value={agent.targetAudience}
           onChange={(e) => onChange({ targetAudience: e.target.value })}
           placeholder="e.g. homeowners needing plumbing, small business owners, patients calling a dental office"
-          className="w-full bg-white/[0.03] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 border border-white/[0.08]"
+          className="w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 border border-[var(--border-default)]"
         />
       </div>
       <div>
@@ -2917,19 +2917,19 @@ function IdentityStepContent({
           rows={3}
           aria-describedby={showGreetingError ? "agent-greeting-error" : "agent-greeting-hint"}
           aria-invalid={showGreetingError}
-          className={`w-full bg-white/[0.03] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none border ${showGreetingError ? "border-red-500/60" : "border-white/[0.08]"}`}
+          className={`w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none border ${showGreetingError ? "border-red-500/60" : "border-[var(--border-default)]"}`}
         />
         {showGreetingError ? (
-          <p id="agent-greeting-error" className="mt-1 text-[11px] text-red-400" role="alert">Enter an opening greeting.</p>
+          <p id="agent-greeting-error" className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">Enter an opening greeting.</p>
         ) : (
-          <p id="agent-greeting-hint" className="mt-1 text-[11px] text-white/25">This is the first thing callers hear.</p>
+          <p id="agent-greeting-hint" className="mt-1 text-[11px] text-[var(--text-tertiary)]">This is the first thing callers hear.</p>
         )}
       </div>
       <div className="flex justify-end">
         <button
           type="button"
           onClick={() => { if (canContinue) onNext(); else setTriedContinue(true); }}
-          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           aria-label="Continue to Voice"
         >
           Continue
@@ -2963,10 +2963,10 @@ function VoiceStepContent({
       <h3 className="text-sm font-semibold text-white">How should your agent sound?</h3>
       <ProfileTab agent={agent} voices={voices} workspaceName={workspaceName} onChange={onChange} onVoicePreview={onVoicePreview} previewingVoiceId={previewingVoiceId} />
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Identity" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+        <button type="button" onClick={onBack} aria-label="Back to Identity" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           Back
         </button>
-        <button type="button" onClick={onNext} aria-label="Continue to Knowledge" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+        <button type="button" onClick={onNext} aria-label="Continue to Knowledge" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           Continue
         </button>
       </div>
@@ -3007,9 +3007,9 @@ function KnowledgeStepContent({
   return (
     <div className="space-y-6">
       <h3 id="knowledge-heading" className="text-sm font-semibold text-white">What does your agent know?</h3>
-      <section aria-labelledby="knowledge-quick-label" className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-        <p id="knowledge-quick-label" className="text-xs text-white/70 mb-2">Quick start: Add 5 common Q&As for your business (hours, location, booking, services, pricing).</p>
-        <button type="button" onClick={seedFive} disabled={seeding} aria-busy={seeding} aria-label={seeding ? "Adding default Q&As" : "Add 5 default Q&As now"} className="rounded-xl bg-white/[0.06] border border-white/[0.08] px-3 py-2 text-xs font-medium text-white hover:bg-white/10 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+      <section aria-labelledby="knowledge-quick-label" className="rounded-xl border border-[var(--border-default)] bg-white/[0.02] p-4">
+        <p id="knowledge-quick-label" className="text-xs text-[var(--text-secondary)] mb-2">Quick start: Add 5 common Q&As for your business (hours, location, booking, services, pricing).</p>
+        <button type="button" onClick={seedFive} disabled={seeding} aria-busy={seeding} aria-label={seeding ? "Adding default Q&As" : "Add 5 default Q&As now"} className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           {seeding ? "Adding…" : "Add them now"}
         </button>
       </section>
@@ -3018,8 +3018,8 @@ function KnowledgeStepContent({
         <p className="text-[11px] text-amber-500/90">Add at least one Q&A for better results. You can also continue and add knowledge later.</p>
       )}
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Voice" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={onNext} aria-label="Continue to Behavior" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+        <button type="button" onClick={onBack} aria-label="Back to Voice" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Behavior" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
       </div>
     </div>
   );
@@ -3041,8 +3041,8 @@ function BehaviorStepContent({
       <h3 id="behavior-heading" className="text-sm font-semibold text-white">How should your agent behave?</h3>
       <RulesTab agent={agent} onChange={onChange} />
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={onNext} aria-label="Continue to Test" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+        <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Test" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
       </div>
     </div>
   );
@@ -3076,18 +3076,18 @@ function TestStepContent({
   return (
     <div className="space-y-6">
       <h3 className="text-sm font-semibold text-white">Talk to your AI</h3>
-      <p className="text-xs text-white/50">Your agent uses your voice, knowledge, and rules to have a real conversation. Try it now.</p>
+      <p className="text-xs text-[var(--text-secondary)]">Your agent uses your voice, knowledge, and rules to have a real conversation. Try it now.</p>
       <TestTab ref={testTabRef} agent={agent} onPrepareAgent={onPrepareAgent} suggestedOpener={suggestedOpener} onCallEnded={() => setShowGoLiveCta(true)} onTryAgain={() => setShowGoLiveCta(false)} />
       {suggestedQuestions.length > 0 && (
         <div>
-          <p className="text-xs font-medium text-white/70 mb-2">Or try asking:</p>
+          <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Or try asking:</p>
           <div className="flex flex-wrap gap-2">
             {suggestedQuestions.map((q, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => tryScenario({ id: `faq-${i}`, title: q.slice(0, 20), description: q, phrase: q })}
-                className="text-[11px] bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-white/60 hover:text-white/80 hover:border-white/[0.12] transition-colors"
+                className="text-[11px] bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] transition-colors"
               >
                 &ldquo;{q.length > 40 ? q.slice(0, 40) + "…" : q}&rdquo;
               </button>
@@ -3097,29 +3097,29 @@ function TestStepContent({
       )}
       {showGoLiveCta && (
         <>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-2">
-            <p className="text-sm font-medium text-white/90">Your agent handled the call well.</p>
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-2">
+            <p className="text-sm font-medium text-[var(--text-primary)]">Your agent handled the call well.</p>
             {(() => {
               const r = getAgentReadiness(agent);
               const tips = r.recommendations.slice(0, 2);
               if (tips.length === 0) return null;
               return (
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-[var(--text-secondary)]">
                   To improve readiness: {tips.join(". ")}
                 </p>
               );
             })()}
           </div>
-          <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center justify-between gap-3">
-            <p className="text-sm text-white/90">Ready to go live?</p>
-            <button type="button" onClick={() => { onNext(); setShowGoLiveCta(false); }} className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded">
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-3">
+            <p className="text-sm text-[var(--text-primary)]">Ready to go live?</p>
+            <button type="button" onClick={() => { onNext(); setShowGoLiveCta(false); }} className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 rounded">
               Continue
             </button>
           </div>
         </>
       )}
       <section aria-labelledby="test-scenarios-label">
-        <p id="test-scenarios-label" className="mb-3 text-xs font-medium text-white/70">Or try a simulated scenario</p>
+        <p id="test-scenarios-label" className="mb-3 text-xs font-medium text-[var(--text-secondary)]">Or try a simulated scenario</p>
         <p className="mb-3 text-[11px] text-white/40">These scenarios test specific behaviors. Your agent will respond based on your exact configuration.</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" role="list">
           {TEST_SCENARIOS.map((s) => (
@@ -3129,18 +3129,18 @@ function TestStepContent({
               onClick={() => tryScenario(s)}
               role="listitem"
               aria-label={`Try scenario: ${s.title}. ${s.description}`}
-              className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 text-left text-xs transition-colors hover:border-white/[0.12] hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              className="rounded-xl border border-[var(--border-default)] bg-white/[0.02] p-3 text-left text-xs transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              <span className="font-medium text-white/90">{s.title}</span>
-              <p className="mt-0.5 text-white/50">{s.description}</p>
+              <span className="font-medium text-[var(--text-primary)]">{s.title}</span>
+              <p className="mt-0.5 text-[var(--text-secondary)]">{s.description}</p>
               <span className="mt-2 inline-block text-[10px] text-white/40">Try this scenario</span>
             </button>
           ))}
         </div>
       </section>
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Behavior" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={onNext} aria-label="Continue to Go live" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+        <button type="button" onClick={onBack} aria-label="Back to Behavior" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Go live" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
       </div>
     </div>
   );
@@ -3172,17 +3172,17 @@ function GoLiveStepContent({
     <div className="space-y-6">
       <h3 className="text-sm font-semibold text-white">Go live</h3>
       <div>
-        <p className="text-xs text-white/50 mb-1.5">Readiness: {r.percent}%</p>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
+        <p className="text-xs text-[var(--text-secondary)] mb-1.5">Readiness: {r.percent}%</p>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-hover)]">
           <div
             className="h-full rounded-full bg-white/20 transition-[width] duration-300"
             style={{ width: `${r.percent}%` }}
           />
         </div>
       </div>
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
-        <p className="text-xs font-medium text-white/70 mb-3">Readiness checklist</p>
-        <ul className="space-y-2 text-xs text-white/60" role="list">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">Readiness checklist</p>
+        <ul className="space-y-2 text-xs text-[var(--text-secondary)]" role="list">
           {r.tasks.map((t) => (
             <li key={t.label} className="flex items-center gap-2">
               {t.complete ? (
@@ -3190,13 +3190,13 @@ function GoLiveStepContent({
               ) : (
                 <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />
               )}
-              <span className={t.complete ? "text-white/80" : "text-white/50"}>{t.label}</span>
+              <span className={t.complete ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>{t.label}</span>
               {t.label === "Voice assistant created" && !agent.vapiAgentId && allowActivate && (
                 <button
                   type="button"
                   onClick={() => void onActivate()}
                   disabled={activating}
-                  className="text-[11px] font-medium text-white/80 hover:text-white underline underline-offset-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded disabled:opacity-50 ml-auto"
+                  className="text-[11px] font-medium text-[var(--text-primary)] hover:text-white underline underline-offset-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 rounded disabled:opacity-50 ml-auto"
                 >
                   {activating ? "Syncing…" : "Retry sync"}
                 </button>
@@ -3210,24 +3210,24 @@ function GoLiveStepContent({
         <Link
           href="/app/settings/phone"
           aria-label="Forward your existing number. Set up call forwarding to your AI."
-          className="flex flex-col rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-colors hover:border-white/[0.12] hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          <span className="text-sm font-medium text-white/90">Forward your existing number</span>
-          <span className="mt-1 text-xs text-white/50">Keep your current number. Forward calls to your AI.</span>
-          <span className="mt-3 text-xs font-medium text-white/70">Set up forwarding</span>
+          <span className="text-sm font-medium text-[var(--text-primary)]">Forward your existing number</span>
+          <span className="mt-1 text-xs text-[var(--text-secondary)]">Keep your current number. Forward calls to your AI.</span>
+          <span className="mt-3 text-xs font-medium text-[var(--text-secondary)]">Set up forwarding</span>
         </Link>
         <Link
           href="/app/settings/phone"
           aria-label="Get a new phone number. We'll assign you a local number instantly."
-          className="flex flex-col rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-colors hover:border-white/[0.12] hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          <span className="text-sm font-medium text-white/90">Get a new number</span>
-          <span className="mt-1 text-xs text-white/50">We&apos;ll assign you a local number instantly.</span>
-          <span className="mt-3 text-xs font-medium text-white/70">Get number</span>
+          <span className="text-sm font-medium text-[var(--text-primary)]">Get a new number</span>
+          <span className="mt-1 text-xs text-[var(--text-secondary)]">We&apos;ll assign you a local number instantly.</span>
+          <span className="mt-3 text-xs font-medium text-[var(--text-secondary)]">Get number</span>
         </Link>
       </div>
-      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.01] p-4">
-        <p className="text-xs font-medium text-white/70">Or activate without a phone number</p>
+      <div className="rounded-2xl border border-[var(--border-default)] bg-white/[0.01] p-4">
+        <p className="text-xs font-medium text-[var(--text-secondary)]">Or activate without a phone number</p>
         <p className="mt-1 text-[11px] text-white/40">Your AI will be available for test calls and outbound campaigns only.</p>
       </div>
       {!allowActivate && r.percent < 40 && (
@@ -3237,8 +3237,8 @@ function GoLiveStepContent({
         <p className="text-[11px] text-amber-500/90">Complete greeting, voice, and at least 3 knowledge entries to activate.</p>
       )}
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Test" className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/60 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={() => void onActivate()} disabled={activating || !allowActivate} aria-busy={activating} aria-label={activating ? "Activating agent" : allowActivate ? "Launch my AI" : "Complete required items to activate"} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#080d19] hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+        <button type="button" onClick={onBack} aria-label="Back to Test" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={() => void onActivate()} disabled={activating || !allowActivate} aria-busy={activating} aria-label={activating ? "Activating agent" : allowActivate ? "Launch my AI" : "Complete required items to activate"} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           {activating ? "Activating…" : "Launch my AI"}
         </button>
       </div>

@@ -186,7 +186,7 @@ export default function AppSettingsAgentPage() {
             value={config.businessName}
             onChange={(e) => setConfig((c) => ({ ...c, businessName: e.target.value }))}
             placeholder="Your business"
-            className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div>
@@ -197,7 +197,7 @@ export default function AppSettingsAgentPage() {
             value={config.agentName}
             onChange={(e) => setConfig((c) => ({ ...c, agentName: e.target.value }))}
             placeholder="Receptionist"
-            className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div>
@@ -209,7 +209,7 @@ export default function AppSettingsAgentPage() {
             value={config.greeting}
             onChange={(e) => setConfig((c) => ({ ...c, greeting: e.target.value }))}
             placeholder={`Thanks for calling ${config.businessName || "your business"}. How can I help you today?`}
-            className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none resize-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
           />
           <button type="button" onClick={playGreeting} className="mt-1 text-xs text-zinc-400 hover:text-white transition-colors">Preview voice →</button>
         </div>
@@ -228,7 +228,7 @@ export default function AppSettingsAgentPage() {
                 onEnd: () => setPreviewing(false),
               });
             }}
-            className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           >
             {CURATED_VOICES.map((v) => (
               <option key={v.id} value={v.id}>{v.name} — {v.desc}</option>
@@ -241,7 +241,7 @@ export default function AppSettingsAgentPage() {
             id="agent-lang"
             value={config.preferredLanguage}
             onChange={(e) => setConfig((c) => ({ ...c, preferredLanguage: e.target.value }))}
-            className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           >
             {SUPPORTED_LANGUAGES.map((l) => (
               <option key={l.code} value={l.code}>{l.name}</option>
@@ -261,14 +261,14 @@ export default function AppSettingsAgentPage() {
                   value={item.q ?? ""}
                   onChange={(e) => updateKnowledge(idx, "q", e.target.value)}
                   placeholder="Question"
-                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:outline-none"
+                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
                 <input
                   type="text"
                   value={item.a ?? ""}
                   onChange={(e) => updateKnowledge(idx, "a", e.target.value)}
                   placeholder="Answer"
-                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:outline-none"
+                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
                 <button type="button" onClick={() => removeKnowledge(idx)} className="shrink-0 text-zinc-500 hover:text-red-400 text-sm px-1" aria-label="Remove">×</button>
               </div>
@@ -301,7 +301,7 @@ export default function AppSettingsAgentPage() {
       </div>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">
           {toast}
         </div>
       )}

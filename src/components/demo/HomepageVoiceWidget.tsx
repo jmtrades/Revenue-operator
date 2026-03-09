@@ -192,7 +192,7 @@ export function HomepageVoiceWidget() {
           <button
             type="button"
             onClick={endCall}
-            className="flex h-20 w-20 items-center justify-center rounded-full bg-red-500/90 text-white hover:bg-red-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F1729]"
+            className="flex h-20 w-20 items-center justify-center rounded-full bg-red-500/90 text-white hover:bg-red-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             aria-label="End call"
           >
             <Square className="h-8 w-8 fill-current" />
@@ -202,11 +202,11 @@ export function HomepageVoiceWidget() {
             type="button"
             onClick={() => startCall()}
             disabled={loading}
-            className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F1729]"
+            className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             aria-label={loading ? "Connecting…" : "Speak to agent"}
           >
             {loading ? (
-              <span className="flex h-6 w-6 animate-spin rounded-full border-2 border-[#0F1729] border-t-transparent" aria-hidden />
+              <span className="flex h-6 w-6 animate-spin rounded-full border-2 border-[var(--bg-base)] border-t-transparent" aria-hidden />
             ) : (
               <Mic className="h-9 w-9" />
             )}

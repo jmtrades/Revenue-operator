@@ -77,16 +77,16 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black px-4 py-12 text-white">
-      <div className="mx-auto mt-16 max-w-[420px] rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
+    <div className="min-h-screen bg-[var(--bg-base)] px-4 py-12 text-[var(--text-primary)]">
+      <div className="mx-auto mt-16 max-w-[420px] rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8">
         <h1 className="text-2xl font-semibold">Choose a new password</h1>
-        <p className="mt-2 text-sm text-zinc-400">
+        <p className="mt-2 text-sm text-[var(--text-secondary)]">
           Open the reset link from your email, then set a new password here.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={submit}>
           <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm text-zinc-300">
+            <label htmlFor="password" className="mb-1.5 block text-sm text-[var(--text-secondary)]">
               New password
             </label>
             <input
@@ -96,12 +96,12 @@ export default function ResetPasswordPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-blue)]/30"
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="mb-1.5 block text-sm text-zinc-300">
+            <label htmlFor="confirmPassword" className="mb-1.5 block text-sm text-[var(--text-secondary)]">
               Confirm password
             </label>
             <input
@@ -111,12 +111,12 @@ export default function ResetPasswordPage() {
               minLength={6}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-blue)]/30"
             />
           </div>
 
           {!ready && !message ? (
-            <div className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-300">
+            <div className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-[var(--text-secondary)]">
               Open the email reset link first, then return to this page if needed.
             </div>
           ) : null}
@@ -136,14 +136,14 @@ export default function ResetPasswordPage() {
           <button
             type="submit"
             disabled={busy || !ready}
-            className="w-full rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-zinc-100 disabled:opacity-60"
+            className="w-full rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none disabled:opacity-60"
           >
             {busy ? "Saving..." : "Save password"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-zinc-500">
-          <Link href="/sign-in" className="text-zinc-300 transition hover:text-white">
+        <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
+          <Link href="/sign-in" className="text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]">
             Back to sign in
           </Link>
         </p>

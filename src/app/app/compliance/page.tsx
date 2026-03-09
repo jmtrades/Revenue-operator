@@ -136,7 +136,7 @@ export default function CompliancePage() {
                 )}
                 {std.status === "partial" && std.progressPercent != null && (
                   <div className="mt-3">
-                    <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                    <div className="h-1.5 rounded-full bg-[var(--border-default)] overflow-hidden">
                       <div
                         className="h-full rounded-full bg-amber-500/60"
                         style={{ width: `${std.progressPercent}%` }}
@@ -153,14 +153,14 @@ export default function CompliancePage() {
         {/* Section 2: Recording & Data Policies */}
         <section>
           <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">Recording & data policies</h2>
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 md:p-6 max-w-2xl">
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-6 max-w-2xl">
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1.5">Consent mode</label>
                 <select
                   value={policies.consentMode}
                   onChange={(e) => setPolicies((p) => ({ ...p, consentMode: e.target.value as ConsentMode }))}
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-sm focus:outline-none focus:border-zinc-600"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white text-sm focus:outline-none focus:border-[var(--border-medium)]"
                 >
                   {CONSENT_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
@@ -172,7 +172,7 @@ export default function CompliancePage() {
                 <select
                   value={policies.retentionDays}
                   onChange={(e) => setPolicies((p) => ({ ...p, retentionDays: Number(e.target.value) }))}
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-sm focus:outline-none focus:border-zinc-600"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white text-sm focus:outline-none focus:border-[var(--border-medium)]"
                 >
                   {RETENTION_OPTIONS.map((d) => (
                     <option key={d} value={d}>{d} days</option>
@@ -186,7 +186,7 @@ export default function CompliancePage() {
                   role="switch"
                   aria-checked={policies.piiRedaction}
                   onClick={() => setPolicies((p) => ({ ...p, piiRedaction: !p.piiRedaction }))}
-                  className={`relative w-10 h-6 rounded-full transition-colors ${policies.piiRedaction ? "bg-emerald-600" : "bg-zinc-700"}`}
+                  className={`relative w-10 h-6 rounded-full transition-colors ${policies.piiRedaction ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
                 >
                   <span
                     className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${policies.piiRedaction ? "left-5" : "left-1"}`}
@@ -200,7 +200,7 @@ export default function CompliancePage() {
                   role="switch"
                   aria-checked={policies.autoTranscribe}
                   onClick={() => setPolicies((p) => ({ ...p, autoTranscribe: !p.autoTranscribe }))}
-                  className={`relative w-10 h-6 rounded-full transition-colors ${policies.autoTranscribe ? "bg-emerald-600" : "bg-zinc-700"}`}
+                  className={`relative w-10 h-6 rounded-full transition-colors ${policies.autoTranscribe ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
                 >
                   <span
                     className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${policies.autoTranscribe ? "left-5" : "left-1"}`}
@@ -213,7 +213,7 @@ export default function CompliancePage() {
                   value={policies.consentAnnouncement}
                   onChange={(e) => setPolicies((p) => ({ ...p, consentAnnouncement: e.target.value }))}
                   rows={3}
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-sm placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white text-sm placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] resize-none"
                 />
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function CompliancePage() {
             <button
               type="button"
               onClick={handleExportReport}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-zinc-700 text-sm font-medium text-zinc-300 hover:bg-zinc-800"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-zinc-300 hover:bg-[var(--bg-input)]"
             >
               <Download className="w-4 h-4" />
               Export Audit Report
@@ -246,12 +246,12 @@ export default function CompliancePage() {
               value={auditSearch}
               onChange={(e) => setAuditSearch(e.target.value)}
               placeholder="Search actions…"
-              className="flex-1 min-w-0 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:border-zinc-600"
+              className="flex-1 min-w-0 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:border-[var(--border-medium)]"
             />
             <select
               value={auditUserFilter}
               onChange={(e) => { setAuditUserFilter(e.target.value); setAuditPage(0); }}
-              className="px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm focus:outline-none focus:border-zinc-600"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm focus:outline-none focus:border-[var(--border-medium)]"
             >
               <option value="all">All users</option>
               {uniqueUsers.map((u) => (
@@ -261,7 +261,7 @@ export default function CompliancePage() {
             <select
               value={auditActionFilter}
               onChange={(e) => { setAuditActionFilter(e.target.value); setAuditPage(0); }}
-              className="px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm focus:outline-none focus:border-zinc-600"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm focus:outline-none focus:border-[var(--border-medium)]"
             >
               <option value="all">All actions</option>
               {uniqueActions.map((a) => (
@@ -270,10 +270,10 @@ export default function CompliancePage() {
             </select>
           </div>
 
-          <div className="rounded-xl border border-zinc-800 overflow-hidden">
+          <div className="rounded-xl border border-[var(--border-default)] overflow-hidden">
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-zinc-900/80 border-b border-zinc-800">
+                <thead className="bg-[var(--bg-input)]/80 border-b border-[var(--border-default)]">
                   <tr>
                     <th className="py-3 px-4 font-medium text-zinc-400">Timestamp</th>
                     <th className="py-3 px-4 font-medium text-zinc-400">User</th>
@@ -284,7 +284,7 @@ export default function CompliancePage() {
                 </thead>
                 <tbody>
                   {paginatedAudit.map((row) => (
-                    <tr key={row.id} className="border-b border-zinc-800/80 hover:bg-zinc-900/50">
+                    <tr key={row.id} className="border-b border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]">
                       <td className="py-3 px-4 text-zinc-500 text-xs">{formatDateTime(row.timestamp)}</td>
                       <td className="py-3 px-4 text-zinc-300">{row.user}</td>
                       <td className="py-3 px-4 text-white">{row.action}</td>
@@ -295,7 +295,7 @@ export default function CompliancePage() {
                 </tbody>
               </table>
             </div>
-            <div className="md:hidden divide-y divide-zinc-800">
+            <div className="md:hidden divide-y divide-[var(--border-default)]">
               {paginatedAudit.map((row) => (
                 <div key={row.id} className="p-4">
                   <p className="text-xs text-zinc-500">{formatDateTime(row.timestamp)}</p>
@@ -317,7 +317,7 @@ export default function CompliancePage() {
                   type="button"
                   onClick={() => setAuditPage((p) => Math.max(0, p - 1))}
                   disabled={auditPage === 0}
-                  className="px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white disabled:opacity-40 border border-zinc-700"
+                  className="px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white disabled:opacity-40 border border-[var(--border-medium)]"
                 >
                   Previous
                 </button>
@@ -325,7 +325,7 @@ export default function CompliancePage() {
                   type="button"
                   onClick={() => setAuditPage((p) => Math.min(totalPages - 1, p + 1))}
                   disabled={auditPage >= totalPages - 1}
-                  className="px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white disabled:opacity-40 border border-zinc-700"
+                  className="px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white disabled:opacity-40 border border-[var(--border-medium)]"
                 >
                   Next
                 </button>
@@ -336,7 +336,7 @@ export default function CompliancePage() {
       </div>
 
       {toast && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm font-medium shadow-lg">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-medium)] text-white text-sm font-medium shadow-lg">
           {toast}
         </div>
       )}

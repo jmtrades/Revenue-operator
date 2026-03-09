@@ -177,7 +177,7 @@ export function ActivateForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Jane Smith"
-          className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
+          className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
@@ -190,7 +190,7 @@ export function ActivateForm() {
           value={businessName}
           onChange={(e) => setBusinessName(e.target.value)}
           placeholder="Acme Plumbing"
-          className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
+          className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
@@ -204,7 +204,7 @@ export function ActivateForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@company.com"
           required
-          className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
+          className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
@@ -217,7 +217,7 @@ export function ActivateForm() {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="(555) 123-4567"
-          className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
+          className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
@@ -231,7 +231,7 @@ export function ActivateForm() {
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
           placeholder="https://yourbusiness.com"
-          className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
+          className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>

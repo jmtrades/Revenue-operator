@@ -100,9 +100,9 @@ function ApiKeysTab({
       </div>
 
       {/* Desktop table */}
-      <div className="hidden md:block rounded-xl border border-zinc-800 overflow-hidden">
+      <div className="hidden md:block rounded-xl border border-[var(--border-default)] overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-zinc-900/80 border-b border-zinc-800">
+          <thead className="bg-[var(--bg-card)]/80 border-b border-[var(--border-default)]">
             <tr>
               <th className="py-3 px-4 font-medium text-zinc-400">Label</th>
               <th className="py-3 px-4 font-medium text-zinc-400">Key</th>
@@ -115,7 +115,7 @@ function ApiKeysTab({
           </thead>
           <tbody>
             {keys.filter((k) => k.status === "active").map((key) => (
-              <tr key={key.id} className="border-b border-zinc-800/80 hover:bg-zinc-900/50">
+              <tr key={key.id} className="border-b border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]">
                 <td className="py-3 px-4 text-white font-medium">{key.label}</td>
                 <td className="py-3 px-4">
                   <span className="font-mono text-zinc-400">{maskKey(key.keyPrefix, key.keySuffix)}</span>
@@ -124,7 +124,7 @@ function ApiKeysTab({
                     onClick={() => {
                       copyToClipboard(key.fullKey, () => onCopyKey(key.fullKey));
                     }}
-                    className="ml-2 inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-800"
+                    className="ml-2 inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-[var(--bg-card)]"
                   >
                     <Copy className="w-3 h-3" /> Copy
                   </button>
@@ -143,21 +143,21 @@ function ApiKeysTab({
                   <button
                     type="button"
                     onClick={() => setMenuOpen(menuOpen === key.id ? null : key.id)}
-                    className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800"
+                    className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-[var(--bg-card)]"
                   >
                     <MoreVertical className="w-4 h-4" />
                   </button>
                   {menuOpen === key.id && (
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
-                      <div className="absolute right-2 top-10 z-20 py-1 rounded-lg bg-zinc-800 border border-zinc-700 shadow-xl">
+                      <div className="absolute right-2 top-10 z-20 py-1 rounded-lg bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-xl">
                         <button
                           type="button"
                           onClick={() => {
                             setRevokeId(key.id);
                             setMenuOpen(null);
                           }}
-                          className="block w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-zinc-700"
+                          className="block w-full text-left px-3 py-2 text-sm text-[var(--accent-red)] hover:bg-[var(--bg-hover)]"
                         >
                           Revoke
                         </button>
@@ -176,7 +176,7 @@ function ApiKeysTab({
         {keys.filter((k) => k.status === "active").map((key) => (
           <div
             key={key.id}
-            className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 space-y-2"
+            className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] space-y-2"
           >
             <div className="flex items-start justify-between">
               <span className="font-medium text-white">{key.label}</span>
@@ -187,13 +187,13 @@ function ApiKeysTab({
               <button
                 type="button"
                 onClick={() => copyToClipboard(key.fullKey, () => onCopyKey(key.fullKey))}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-zinc-400 hover:text-white hover:bg-zinc-800"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-zinc-400 hover:text-white hover:bg-[var(--bg-card)]"
               >
                 <Copy className="w-3 h-3" /> Copy
               </button>
             </div>
             <div className="flex items-center gap-2 text-xs text-zinc-500">
-              <span className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">
+              <span className="px-2 py-0.5 rounded bg-[var(--bg-card)] text-zinc-400">
                 {key.permission === "admin" ? "Admin" : key.permission === "read_write" ? "Read/Write" : "Read only"}
               </span>
               <span>Created {formatDate(key.createdAt)}</span>
@@ -202,7 +202,7 @@ function ApiKeysTab({
             <button
               type="button"
               onClick={() => setRevokeId(key.id)}
-              className="text-xs text-red-400 hover:underline"
+              className="text-xs text-[var(--accent-red)] hover:underline"
             >
               Revoke key
             </button>
@@ -213,7 +213,7 @@ function ApiKeysTab({
       {/* Create key modal */}
       {createModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setCreateModal(false)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-white mb-4">Create API Key</h3>
             <div className="space-y-4">
               <div>
@@ -223,7 +223,7 @@ function ApiKeysTab({
                   value={createLabel}
                   onChange={(e) => setCreateLabel(e.target.value)}
                   placeholder="e.g. Production"
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
               </div>
               <div>
@@ -236,7 +236,7 @@ function ApiKeysTab({
                         name="permission"
                         checked={createPermission === p}
                         onChange={() => setCreatePermission(p)}
-                        className="rounded-full border-zinc-600 text-white focus:ring-zinc-500"
+                        className="rounded-full border-[var(--border-medium)] text-white focus:ring-[var(--border-medium)]"
                       />
                       <span className="text-sm text-zinc-300">
                         {p === "read" ? "Read only" : p === "read_write" ? "Read + Write" : "Admin"}
@@ -247,7 +247,7 @@ function ApiKeysTab({
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button type="button" onClick={() => setCreateModal(false)} className="px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-zinc-700">
+              <button type="button" onClick={() => setCreateModal(false)} className="px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-[var(--border-medium)]">
                 Cancel
               </button>
               <button type="button" onClick={handleCreateSubmit} disabled={!createLabel.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
@@ -261,10 +261,10 @@ function ApiKeysTab({
       {/* New key shown once */}
       {newKeyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)}>
-          <div className="bg-zinc-900 border border-amber-500/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-amber-500/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-amber-200 mb-2">API Key created: {newKeyModal.label}</h3>
             <p className="text-sm text-amber-200/80 mb-4">Save this key — you won&apos;t see it again.</p>
-            <div className="p-3 rounded-xl bg-black/40 border border-zinc-700 mb-4">
+            <div className="p-3 rounded-xl bg-black/40 border border-[var(--border-medium)] mb-4">
               <code className="font-mono text-xs text-zinc-300 break-all">{newKeyModal.fullKey}</code>
             </div>
             <button
@@ -276,7 +276,7 @@ function ApiKeysTab({
             >
               <Copy className="w-4 h-4" /> Copy key
             </button>
-            <button type="button" onClick={() => setNewKeyModal(null)} className="w-full mt-2 px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-zinc-700">
+            <button type="button" onClick={() => setNewKeyModal(null)} className="w-full mt-2 px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-[var(--border-medium)]">
               I&apos;ve saved it
             </button>
           </div>
@@ -286,11 +286,11 @@ function ApiKeysTab({
       {/* Revoke confirm */}
       {revokeId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setRevokeId(null)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-white mb-2">Revoke API key?</h3>
             <p className="text-sm text-zinc-400 mb-4">This key will stop working immediately. This can&apos;t be undone.</p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setRevokeId(null)} className="flex-1 py-2 rounded-xl text-sm text-zinc-300 border border-zinc-700 hover:bg-zinc-800">Cancel</button>
+              <button type="button" onClick={() => setRevokeId(null)} className="flex-1 py-2 rounded-xl text-sm text-zinc-300 border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">Cancel</button>
               <button type="button" onClick={() => { onRevoke(revokeId); setRevokeId(null); }} className="flex-1 py-2 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-500">Revoke</button>
             </div>
           </div>
@@ -357,11 +357,11 @@ function WebhooksTab({
 
       <div className="space-y-3">
         {webhooks.map((wh) => (
-          <div key={wh.id} className="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/30">
+          <div key={wh.id} className="rounded-xl border border-[var(--border-default)] overflow-hidden bg-[var(--bg-card)]/30">
             <button
               type="button"
               onClick={() => setExpandedId(expandedId === wh.id ? null : wh.id)}
-              className="w-full flex items-center justify-between p-4 text-left hover:bg-zinc-800/30"
+              className="w-full flex items-center justify-between p-4 text-left hover:bg-[var(--bg-card)]/30"
             >
               <div className="flex items-center gap-3 min-w-0">
                 {expandedId === wh.id ? <ChevronDown className="w-4 h-4 text-zinc-500 shrink-0" /> : <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />}
@@ -369,7 +369,7 @@ function WebhooksTab({
                   <p className="font-mono text-sm text-zinc-300 truncate">{truncateUrl(wh.url)}</p>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     {wh.events.map((ev) => (
-                      <span key={ev} className="px-2 py-0.5 rounded text-[10px] bg-zinc-800 text-zinc-400">{ev}</span>
+                      <span key={ev} className="px-2 py-0.5 rounded text-[10px] bg-[var(--bg-card)] text-zinc-400">{ev}</span>
                     ))}
                   </div>
                 </div>
@@ -381,11 +381,11 @@ function WebhooksTab({
               </div>
             </button>
             {expandedId === wh.id && (
-              <div className="border-t border-zinc-800 p-4 bg-zinc-950/50">
+              <div className="border-t border-[var(--border-default)] p-4 bg-[var(--bg-card)]">
                 <p className="text-xs font-medium text-zinc-500 mb-3">Recent deliveries (last 5)</p>
                 <div className="space-y-2">
                   {wh.deliveries.slice(0, 5).map((d) => (
-                    <div key={d.id} className="flex items-center justify-between gap-2 py-2 border-b border-zinc-800/80 last:border-0">
+                    <div key={d.id} className="flex items-center justify-between gap-2 py-2 border-b border-[var(--border-default)]/80 last:border-0">
                       <div>
                         <span className="text-xs text-zinc-400">{d.eventType}</span>
                         <span className="text-[10px] text-zinc-600 ml-2">{formatRelative(d.timestamp)}</span>
@@ -412,7 +412,7 @@ function WebhooksTab({
 
       {addModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 overflow-y-auto" onClick={(e) => e.target === e.currentTarget && setAddModal(false)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6 my-8" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6 my-8" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-white mb-4">Add Webhook</h3>
             <div className="space-y-4">
               <div>
@@ -422,14 +422,14 @@ function WebhooksTab({
                   value={newUrl}
                   onChange={(e) => setNewUrl(e.target.value)}
                   placeholder="https://..."
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white font-mono text-sm placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white font-mono text-sm placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
                 />
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1.5">Secret (auto-generated)</label>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 text-xs text-zinc-400 font-mono truncate">{newSecret}</code>
-                  <button type="button" onClick={() => copyToClipboard(newSecret, () => {})} className="px-2 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800" title="Copy"><Copy className="w-4 h-4" /></button>
+                  <code className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-xs text-zinc-400 font-mono truncate">{newSecret}</code>
+                  <button type="button" onClick={() => copyToClipboard(newSecret, () => {})} className="px-2 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[var(--bg-card)]" title="Copy"><Copy className="w-4 h-4" /></button>
                 </div>
               </div>
               <div>
@@ -445,7 +445,7 @@ function WebhooksTab({
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button type="button" onClick={() => setAddModal(false)} className="px-4 py-2 rounded-xl text-sm text-zinc-400 border border-zinc-700">Cancel</button>
+              <button type="button" onClick={() => setAddModal(false)} className="px-4 py-2 rounded-xl text-sm text-zinc-400 border border-[var(--border-medium)]">Cancel</button>
               <button type="button" onClick={handleAddSubmit} disabled={!newUrl.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">Save</button>
             </div>
           </div>
@@ -454,8 +454,8 @@ function WebhooksTab({
 
       {payloadModal !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setPayloadModal(null)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
               <h3 className="text-sm font-semibold text-white">Payload</h3>
               <button type="button" onClick={() => setPayloadModal(null)} className="p-2 rounded-lg text-zinc-400 hover:text-white"><X className="w-4 h-4" /></button>
             </div>
@@ -492,7 +492,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             key={k}
             type="button"
             onClick={() => onKindFilter(k === "all" ? "all" : k)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${kindFilter === k ? "bg-zinc-700 text-white" : "bg-zinc-800/50 text-zinc-400 hover:text-zinc-300"}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${kindFilter === k ? "bg-zinc-700 text-white" : "bg-[var(--bg-card)]/50 text-zinc-400 hover:text-zinc-300"}`}
           >
             {k === "all" ? "All" : k === "api_call" ? "API Call" : "Webhook Delivery"}
           </button>
@@ -503,16 +503,16 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             key={s}
             type="button"
             onClick={() => onStatusFilter(s === "all" ? "all" : s)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusFilter === s ? "bg-zinc-700 text-white" : "bg-zinc-800/50 text-zinc-400 hover:text-zinc-300"}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusFilter === s ? "bg-zinc-700 text-white" : "bg-[var(--bg-card)]/50 text-zinc-400 hover:text-zinc-300"}`}
           >
             {s === "all" ? "All" : s === "success" ? "Success" : "Failed"}
           </button>
         ))}
       </div>
 
-      <div className="hidden md:block rounded-xl border border-zinc-800 overflow-hidden">
+      <div className="hidden md:block rounded-xl border border-[var(--border-default)] overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-zinc-900/80 border-b border-zinc-800">
+          <thead className="bg-[var(--bg-card)]/80 border-b border-[var(--border-default)]">
             <tr>
               <th className="py-3 px-4 font-medium text-zinc-400">Time</th>
               <th className="py-3 px-4 font-medium text-zinc-400">Event</th>
@@ -523,7 +523,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
           </thead>
           <tbody>
             {filtered.map((row) => (
-              <tr key={row.id} className="border-b border-zinc-800/80 hover:bg-zinc-900/50">
+              <tr key={row.id} className="border-b border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]">
                 <td className="py-3 px-4 text-zinc-500 text-xs">{formatRelative(row.timestamp)}</td>
                 <td className="py-3 px-4 text-zinc-300">{row.kind === "api_call" ? "API Call" : "Webhook Delivery"}</td>
                 <td className="py-3 px-4 font-mono text-xs text-zinc-400">
@@ -541,7 +541,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
 
       <div className="md:hidden space-y-2">
         {filtered.map((row) => (
-          <div key={row.id} className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
+          <div key={row.id} className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-zinc-500">{formatRelative(row.timestamp)}</span>
               <span className={`font-mono text-xs ${row.statusCode >= 200 && row.statusCode < 300 ? "text-emerald-400" : "text-red-400"}`}>{row.statusCode}</span>
@@ -625,7 +625,7 @@ export default function DeveloperPage() {
       <div className="p-4 md:p-6 lg:p-8">
         <h1 className="text-xl md:text-2xl font-semibold text-white mb-6">Developer</h1>
 
-        <div className="flex border-b border-zinc-800 mb-6">
+        <div className="flex border-b border-[var(--border-default)] mb-6">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -668,7 +668,7 @@ export default function DeveloperPage() {
       </div>
 
       {toast && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm font-medium shadow-lg">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-medium)] text-white text-sm font-medium shadow-lg">
           {toast}
         </div>
       )}

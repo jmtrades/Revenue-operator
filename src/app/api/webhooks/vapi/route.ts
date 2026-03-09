@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { logLeadCreated, logAppointmentBooked } from "@/lib/log/revenue-events";
 
 interface VapiWebhookPayload {
   message?: {
@@ -116,7 +117,9 @@ export async function POST(req: NextRequest) {
           };
           if (leadId) apptPayload.lead_id = leadId;
           if (notes) apptPayload.notes = notes;
-          await db.from("appointments").insert(apptPayload);
+          const { data: appt } = await db.from("appointments").insert(apptPayload).select("id").single();
+          const apptId = (appt as { id: string } | null)?.id;
+          if (apptId) logAppointmentBooked(workspaceId, apptId, "voice");
           results.push({ name: "book_appointment", toolCallId: toolId, result: JSON.stringify({ ok: true, message: `Appointment booked for ${dateStr} at ${timeStr}` }) });
         } else if (name === "send_sms") {
           const to = typeof params.to === "string" ? params.to.replace(/\D/g, "") : "";

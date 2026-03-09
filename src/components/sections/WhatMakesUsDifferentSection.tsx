@@ -41,7 +41,7 @@ export function WhatMakesUsDifferentSection() {
           {ROWS.map(({ icon: Icon, label, items, color }) => (
             <div
               key={label}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6"
+              className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6"
             >
               <div className="flex items-center gap-2 mb-4">
                 <div className={`flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 ${color}`}>

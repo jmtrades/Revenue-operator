@@ -164,33 +164,33 @@ export default function CallIntelligencePage() {
     }, {});
 
   const categoryOrder = ["tone", "opening", "discovery", "objection_handling", "qualification", "closing", "empathy", "persistence", "pacing", "recovery", "other"];
+  const appliedCount = callInsights.filter((i) => i.applied).length;
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-3xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-2xl font-semibold text-white">Call Intelligence</h1>
-          <p className="text-zinc-400 text-sm mt-1">
-            Learn from your best calls to make your AI even better.
-          </p>
-        </div>
+    <div className="max-w-4xl mx-auto space-y-8 p-6">
+      <div>
+        <h1 className="text-xl font-semibold text-[var(--text-primary)]">Call Intelligence</h1>
+        <p className="text-sm text-[var(--text-secondary)] mt-1">
+          Analyze real conversations to make your AI agent smarter.
+        </p>
+      </div>
 
-        <section className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
-          <h2 className="text-lg font-medium text-white mb-2">Upload a call</h2>
-          <p className="text-zinc-500 text-sm mb-4">
-            Paste a transcript. We’ll analyze the conversation and suggest improvements for your AI agent.
-          </p>
+      <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">
+        <h2 className="text-base font-medium text-[var(--text-primary)] mb-1">Analyze a call</h2>
+        <p className="text-sm text-[var(--text-secondary)] mb-4">
+          Paste a transcript from a great call. We&apos;ll extract what makes it effective.
+        </p>
           <input
             type="text"
             placeholder="Call title (optional)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none mb-3"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none mb-3"
           />
           <select
             value={callType}
             onChange={(e) => setCallType(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:outline-none mb-3"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none mb-3"
           >
             <option value="">Call type (optional)</option>
             {Object.entries(CALL_TYPE_LABELS).map(([k, v]) => (
@@ -202,110 +202,114 @@ export default function CallIntelligencePage() {
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}
             rows={6}
-            className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none resize-none"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none resize-none"
           />
           <button
             type="button"
             onClick={handleAnalyze}
             disabled={analyzing || pasteText.trim().length < 100}
-            className="mt-3 px-6 py-3 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-100 disabled:opacity-50 disabled:pointer-events-none"
+            className="mt-3 px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
           >
             {analyzing ? "Analyzing…" : "Analyze transcript"}
           </button>
-        </section>
+      </div>
 
-        {callExamples.length > 0 && (
-          <section>
-            <h2 className="text-lg font-medium text-white mb-3">Analyzed calls ({callExamples.length})</h2>
-            <div className="space-y-3">
-              {callExamples.map((ex) => {
-                const count = callInsights.filter((i) => i.call_example_id === ex.id && !i.dismissed).length;
-                const date = ex.created_at ? new Date(ex.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "";
-                return (
-                  <div
-                    key={ex.id}
-                    className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="font-medium text-white">{ex.title || "Untitled call"}</p>
-                      <p className="text-zinc-500 text-sm">
-                        {ex.call_type ? CALL_TYPE_LABELS[ex.call_type] ?? ex.call_type : "Call"} · Analyzed {date}
-                      </p>
-                      <p className="text-zinc-500 text-xs mt-0.5">{count} insights extracted</p>
-                    </div>
-                    <Link
-                      href={`/app/call-intelligence?example=${ex.id}`}
-                      className="text-sm font-medium text-white hover:underline"
-                    >
-                      View insights
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {Object.keys(insightsByCategory).length > 0 && (
-          <section>
-            <h2 className="text-lg font-medium text-white mb-3">Insights summary</h2>
-            <p className="text-zinc-500 text-sm mb-4">
-              From your analyzed calls. Apply an insight to add it to an agent’s learned behaviors.
-            </p>
-            <div className="space-y-4">
-              {categoryOrder.filter((c) => insightsByCategory[c]?.length).map((cat) => (
-                <div key={cat} className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
-                  <h3 className="text-sm font-medium text-zinc-300 uppercase tracking-wide mb-2">
-                    {cat.replace(/_/g, " ")}
-                  </h3>
-                  {insightsByCategory[cat].map((i) => (
-                    <div
-                      key={i.id}
-                      className="flex items-start justify-between gap-3 py-2 border-b border-zinc-800 last:border-0"
-                    >
-                      <p className="text-white text-sm flex-1">{i.insight}</p>
-                      <div className="flex items-center gap-2 shrink-0">
-                        {i.applied ? (
-                          <span className="text-xs text-green-500">Applied</span>
-                        ) : (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => setApplyModal({ insightId: i.id, insight: i.insight })}
-                              className="text-xs font-medium text-white hover:underline"
-                            >
-                              Apply to agent
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDismiss(i.id)}
-                              className="text-xs text-zinc-500 hover:text-zinc-400"
-                            >
-                              Dismiss
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {loading && callExamples.length === 0 && !Object.keys(insightsByCategory).length && (
-          <p className="text-zinc-500 text-sm">Loading…</p>
-        )}
-        {!loading && callExamples.length === 0 && (
-          <p className="text-zinc-500 text-sm">
-            No analyzed calls yet. Paste a transcript above and click Analyze.
+        <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">
+        <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">
+          Analyzed calls <span className="text-[var(--text-tertiary)] font-normal">({callExamples.length})</span>
+        </h2>
+        {loading && callExamples.length === 0 ? (
+          <div className="py-8 flex flex-col items-center justify-center text-center">
+            <div className="h-8 w-48 rounded bg-[var(--bg-hover)] animate-pulse mb-3" />
+            <div className="h-4 w-32 rounded bg-[var(--bg-hover)] animate-pulse" />
+          </div>
+        ) : callExamples.length === 0 ? (
+          <p className="text-sm text-[var(--text-secondary)] py-6">
+            No calls yet. Paste a transcript above and click Analyze to see insights here.
           </p>
+        ) : (
+          <div className="space-y-3">
+            {callExamples.map((ex) => {
+              const count = callInsights.filter((i) => i.call_example_id === ex.id && !i.dismissed).length;
+              const date = ex.created_at ? new Date(ex.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "";
+              return (
+                <div
+                  key={ex.id}
+                  className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl p-4 flex items-center justify-between gap-4"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-[var(--text-primary)]">{ex.title || "Untitled call"}</p>
+                    <p className="text-[var(--text-secondary)] text-sm">
+                      {ex.call_type ? CALL_TYPE_LABELS[ex.call_type] ?? ex.call_type : "Call"} · {date}
+                    </p>
+                    <p className="text-[var(--text-tertiary)] text-xs mt-0.5">{count} insights</p>
+                  </div>
+                  <Link
+                    href={`/app/call-intelligence?example=${ex.id}`}
+                    className="shrink-0 text-sm font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
+                  >
+                    View
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">
+        <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">
+          Applied insights <span className="text-[var(--text-tertiary)] font-normal">({appliedCount})</span>
+        </h2>
+        {Object.keys(insightsByCategory).length === 0 ? (
+          <p className="text-sm text-[var(--text-secondary)] py-4">
+            Insights you apply will shape your AI agent&apos;s behavior. Analyze a call above, then apply insights to an agent.
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {categoryOrder.filter((c) => insightsByCategory[c]?.length).map((cat) => (
+              <div key={cat} className="border border-[var(--border-default)] rounded-xl p-4 bg-[var(--bg-input)]">
+                <h3 className="text-sm font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-2">
+                  {cat.replace(/_/g, " ")}
+                </h3>
+                {insightsByCategory[cat].map((i) => (
+                  <div
+                    key={i.id}
+                    className="flex items-start justify-between gap-3 py-2 border-b border-[var(--border-default)] last:border-0"
+                  >
+                    <p className="text-[var(--text-primary)] text-sm flex-1 min-w-0">{i.insight}</p>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {i.applied ? (
+                        <span className="text-xs text-[var(--accent-green)]">Applied</span>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => setApplyModal({ insightId: i.id, insight: i.insight })}
+                            className="text-xs font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
+                          >
+                            Apply to agent
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDismiss(i.id)}
+                            className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
+                          >
+                            Dismiss
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-sm shadow-lg z-50">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl bg-[var(--bg-card-elevated)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm shadow-lg z-50">
           {toast}
         </div>
       )}
@@ -313,21 +317,21 @@ export default function CallIntelligencePage() {
       {applyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={() => setApplyModal(null)}>
           <div
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-md w-full"
+            className="bg-[var(--bg-card-elevated)] border border-[var(--border-default)] rounded-2xl p-6 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-semibold text-white mb-2">Apply to agent</h3>
             <p className="text-zinc-400 text-sm mb-4 line-clamp-2">{applyModal.insight}</p>
             <div className="space-y-2">
               {agents.length === 0 ? (
-                <p className="text-zinc-500 text-sm">No agents yet. Create one in Agents.</p>
+                <p className="text-[var(--text-secondary)] text-sm">No agents yet. Create one in Agents.</p>
               ) : (
                 agents.map((a) => (
                   <button
                     key={a.id}
                     type="button"
                     onClick={() => handleApply(applyModal.insightId, a.id)}
-                    className="w-full px-4 py-2 rounded-xl border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800"
+                    className="w-full px-4 py-2 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
                   >
                     {a.name}
                   </button>
@@ -337,7 +341,7 @@ export default function CallIntelligencePage() {
             <button
               type="button"
               onClick={() => setApplyModal(null)}
-              className="mt-4 w-full px-4 py-2 rounded-xl text-zinc-400 text-sm hover:text-white"
+              className="mt-4 w-full px-4 py-2 rounded-xl text-[var(--text-secondary)] text-sm hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
             >
               Cancel
             </button>

@@ -116,7 +116,7 @@ export default function AppCalendarPage() {
           <h1 className="text-lg md:text-xl font-semibold text-white">Calendar</h1>
           <button
             type="button"
-            className="px-2 py-1 rounded-xl border border-zinc-700 text-[11px] text-zinc-300 hover:border-zinc-500"
+            className="px-2 py-1 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
           >
             Today
           </button>
@@ -127,7 +127,7 @@ export default function AppCalendarPage() {
               type="button"
               onClick={() => setView("week")}
               className={`px-3 py-1.5 rounded-xl text-[11px] font-medium ${
-                view === "week" ? "bg-white text-black" : "bg-zinc-900 border border-zinc-800 text-zinc-400"
+                view === "week" ? "bg-white text-black" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-400"
               }`}
             >
               Week
@@ -136,7 +136,7 @@ export default function AppCalendarPage() {
               type="button"
               onClick={() => setView("month")}
               className={`px-3 py-1.5 rounded-xl text-[11px] font-medium ${
-                view === "month" ? "bg-white text-black" : "bg-zinc-900 border border-zinc-800 text-zinc-400"
+                view === "month" ? "bg-white text-black" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-400"
               }`}
             >
               Month
@@ -160,8 +160,8 @@ export default function AppCalendarPage() {
         + New Appointment
       </button>
 
-      <div className="mb-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
-        <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between">
+      <div className="mb-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
+        <div className="px-4 py-2 border-b border-[var(--border-default)] flex items-center justify-between">
           <p className="text-xs text-zinc-400">8 AM – 8 PM · This {view === "week" ? "week" : "month"}</p>
           <p className="text-[11px] text-zinc-500">
             {appointments.length} appointments
@@ -169,11 +169,11 @@ export default function AppCalendarPage() {
         </div>
         {view === "week" ? (
           <div className="grid grid-cols-[48px_repeat(7,minmax(0,1fr))] text-[10px]">
-            <div className="border-r border-zinc-800 bg-black/40" />
+            <div className="border-r border-[var(--border-default)] bg-black/40" />
             {weekDays.map((d) => (
               <div
                 key={d}
-                className="border-r border-zinc-800 px-2 py-1 text-center text-zinc-400 bg-black/40"
+                className="border-r border-[var(--border-default)] px-2 py-1 text-center text-zinc-400 bg-black/40"
               >
                 {d}
               </div>
@@ -182,14 +182,14 @@ export default function AppCalendarPage() {
               <>
                 <div
                   key={`h-${h}`}
-                  className="border-t border-zinc-800 px-1 py-2 text-right text-[10px] text-zinc-500 bg-black/40"
+                  className="border-t border-[var(--border-default)] px-1 py-2 text-right text-[10px] text-zinc-500 bg-black/40"
                 >
                   {h === 12 ? "12 PM" : h < 12 ? `${h} AM` : `${h - 12} PM`}
                 </div>
                 {weekDays.map((d) => (
                   <div
                     key={`${h}-${d}`}
-                    className="border-t border-r border-zinc-900 relative min-h-[40px]"
+                    className="border-t border-r border-[var(--border-default)] relative min-h-[40px]"
                   >
                     {appointments
                       .filter((a) => a.time.startsWith(h.toString().padStart(2, "0")))
@@ -223,7 +223,7 @@ export default function AppCalendarPage() {
         )}
       </div>
 
-      <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+      <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
         <div>
           <p className="text-sm font-medium text-white">Connect Google Calendar</p>
           <p className="text-xs text-zinc-500">
@@ -246,7 +246,7 @@ export default function AppCalendarPage() {
       </p>
 
       {googleToast && (
-        <div className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 shadow-lg">
+        <div className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-zinc-100 shadow-lg">
           {googleToast}
         </div>
       )}
@@ -259,7 +259,7 @@ export default function AppCalendarPage() {
           onClick={() => setSelected(null)}
         >
           <div
-            className="max-w-sm w-full rounded-2xl border border-zinc-800 bg-zinc-950 p-5 space-y-3"
+            className="max-w-sm w-full rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-2">
@@ -274,24 +274,24 @@ export default function AppCalendarPage() {
               <select
                 value={selected.status}
                 onChange={(e) => handleUpdateSelected({ status: e.target.value as Status })}
-                className="px-2 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-200 focus:outline-none"
+                className="px-2 py-1 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[11px] text-zinc-200 focus:outline-none"
               >
                 <option value="confirmed">Confirmed</option>
                 <option value="pending">Pending</option>
               </select>
             </div>
-            <div className="flex items-center gap-2 pt-2 border-t border-zinc-800">
+            <div className="flex items-center gap-2 pt-2 border-t border-[var(--border-default)]">
               <button
                 type="button"
                 onClick={handleCancelSelected}
-                className="px-3 py-1.5 rounded-xl border border-zinc-700 text-[11px] text-zinc-300 hover:border-zinc-500"
+                className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
                 Reschedule
               </button>
               <button
                 type="button"
                 onClick={handleDeleteSelected}
-                className="px-3 py-1.5 rounded-xl border border-zinc-700 text-[11px] text-zinc-300 hover:border-zinc-500"
+                className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
                 Cancel
               </button>
@@ -308,7 +308,7 @@ export default function AppCalendarPage() {
           onClick={() => setShowNew(false)}
         >
           <div
-            className="max-w-sm w-full rounded-2xl border border-zinc-800 bg-zinc-950 p-5 space-y-3"
+            className="max-w-sm w-full rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-sm font-semibold text-white mb-1">New appointment</h2>
@@ -319,7 +319,7 @@ export default function AppCalendarPage() {
                   type="text"
                   value={formContact}
                   onChange={(e) => setFormContact(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder="Sarah Chen"
                 />
               </div>
@@ -329,7 +329,7 @@ export default function AppCalendarPage() {
                   type="text"
                   value={formService}
                   onChange={(e) => setFormService(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder="Cleaning, estimate, consultation…"
                 />
               </div>
@@ -340,7 +340,7 @@ export default function AppCalendarPage() {
                     type="date"
                     value={formDate}
                     onChange={(e) => setFormDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white focus:border-zinc-600 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white focus:border-[var(--border-medium)] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -349,7 +349,7 @@ export default function AppCalendarPage() {
                     type="time"
                     value={formTime}
                     onChange={(e) => setFormTime(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white focus:border-zinc-600 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white focus:border-[var(--border-medium)] focus:outline-none"
                   />
                 </div>
               </div>
@@ -364,7 +364,7 @@ export default function AppCalendarPage() {
                     onChange={(e) =>
                       setFormDuration(Number(e.target.value || 0) || formDuration)
                     }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white focus:border-zinc-600 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white focus:border-[var(--border-medium)] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -372,7 +372,7 @@ export default function AppCalendarPage() {
                   <select
                     value={formStatus}
                     onChange={(e) => setFormStatus(e.target.value as Status)}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-zinc-200 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-zinc-200 focus:outline-none"
                   >
                     <option value="confirmed">Confirmed</option>
                     <option value="pending">Pending</option>
@@ -380,11 +380,11 @@ export default function AppCalendarPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between gap-3 pt-3 border-t border-zinc-800">
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-[var(--border-default)]">
               <button
                 type="button"
                 onClick={() => setShowNew(false)}
-                className="px-3 py-2 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
+                className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)]"
               >
                 Cancel
               </button>

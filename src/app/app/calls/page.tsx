@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Search, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { EmptyState } from "@/components/EmptyState";
 
 const PAGE_TITLE = "Calls — Recall Touch";
 
@@ -209,7 +210,7 @@ export default function CallsPage() {
               setQuery(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)]"
             placeholder="Search by caller or phone…"
           />
         </div>
@@ -220,7 +221,7 @@ export default function CallsPage() {
               setOutcomeFilter(e.target.value as NonNullable<CallOutcome> | "all");
               setPage(1);
             }}
-            className="text-xs md:text-sm rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-zinc-600"
+            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
           >
             <option value="all">All outcomes</option>
             {Object.entries(OUTCOME_LABELS).map(([key, label]) => (
@@ -235,7 +236,7 @@ export default function CallsPage() {
               setSentimentFilter(e.target.value as NonNullable<CallSentiment> | "all");
               setPage(1);
             }}
-            className="text-xs md:text-sm rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-zinc-600"
+            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
           >
             <option value="all">All sentiment</option>
             <option value="positive">Positive</option>
@@ -245,7 +246,7 @@ export default function CallsPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
-            className="text-xs md:text-sm rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-zinc-600"
+            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
           >
             <option value="newest">Newest first</option>
             <option value="duration">Longest calls</option>
@@ -255,24 +256,41 @@ export default function CallsPage() {
       </div>
 
       {loading ? (
-        <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
+        <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8">
           <div className="h-8 w-48 rounded-lg bg-zinc-800 animate-pulse mb-4" />
           <div className="h-4 w-full max-w-xl rounded bg-zinc-800/80 animate-pulse mb-2" />
           <div className="h-4 w-3/4 max-w-md rounded bg-zinc-800/60 animate-pulse" />
         </div>
       ) : error ? (
-        <div className="mt-6 text-sm text-red-400">{error}</div>
+        <div className="mt-6 text-sm text-[var(--accent-red)]" role="alert">{error}</div>
       ) : filtered.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-12 text-center">
-          <PhoneCall className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-          <p className="text-sm font-medium text-white mb-1">Your AI is ready to answer calls</p>
-          <p className="text-xs text-zinc-500 mb-4">Connect your phone number to get started. Calls will appear here with transcripts and summaries.</p>
-          <Link href="/app/settings/phone" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Connect number →</Link>
+        <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
+          <EmptyState
+            icon={<PhoneCall className="h-6 w-6" />}
+            title="No calls yet"
+            description="Connect your phone number to get started. Calls will appear here with transcripts and summaries."
+            actions={
+              <>
+                <Link
+                  href="/app/settings/phone"
+                  className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-gray-900 text-sm font-semibold hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                >
+                  Connect number →
+                </Link>
+                <Link
+                  href="/app/agents"
+                  className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                >
+                  Test your agent →
+                </Link>
+              </>
+            }
+          />
         </div>
       ) : (
-      <div className="hidden md:block rounded-2xl border border-zinc-800 bg-zinc-950/60 overflow-hidden">
+      <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="border-b border-zinc-800 bg-zinc-950/80">
+          <thead className="border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
             <tr>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Date / time</th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Caller</th>
@@ -302,7 +320,7 @@ export default function CallsPage() {
               return (
                 <tr
                   key={c.id}
-                  className="border-t border-zinc-900/70 hover:bg-zinc-900/60 cursor-pointer"
+                  className="border-t border-zinc-900/70 hover:bg-[var(--bg-hover)] cursor-pointer"
                   onClick={() => handleRowClick(c.id)}
                 >
                   <td className="py-3 px-4 text-xs text-zinc-400 whitespace-nowrap">
@@ -327,12 +345,12 @@ export default function CallsPage() {
                     )}
                   </td>
                   <td className="py-3 px-4 text-xs">
-                    <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-200">
+                    <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
                       {TYPE_LABELS[kind]}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-xs">
-                    <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-200">
+                    <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
                       {OUTCOME_LABELS[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
                     </span>
                   </td>
@@ -387,7 +405,7 @@ export default function CallsPage() {
               key={c.id}
               type="button"
               onClick={() => handleRowClick(c.id)}
-              className="w-full text-left rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4 flex flex-col gap-1.5"
+              className="w-full text-left rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col gap-1.5"
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-medium text-zinc-100 truncate">{name}</p>
@@ -417,10 +435,10 @@ export default function CallsPage() {
               </p>
               <div className="mt-2 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-[11px] text-zinc-300">
-                  <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5">
+                  <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5">
                     {TYPE_LABELS[kind]}
                   </span>
-                  <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5">
+                  <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5">
                     {OUTCOME_LABELS[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
                   </span>
                 </div>
@@ -455,7 +473,7 @@ export default function CallsPage() {
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={pageSafe === 1}
-            className="inline-flex items-center justify-center h-7 w-7 rounded-full border border-zinc-800 text-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-900"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-full border border-[var(--border-default)] text-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-input)]"
           >
             <ChevronLeft className="w-3 h-3" />
           </button>
@@ -466,7 +484,7 @@ export default function CallsPage() {
             type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={pageSafe === totalPages}
-            className="inline-flex items-center justify-center h-7 w-7 rounded-full border border-zinc-800 text-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-900"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-full border border-[var(--border-default)] text-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-input)]"
           >
             <ChevronRight className="w-3 h-3" />
           </button>

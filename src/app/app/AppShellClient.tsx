@@ -164,10 +164,10 @@ export default function AppShellClient({
       initialWorkspaceName={initialWorkspaceName}
     >
       <OnboardingStepProvider>
-        <div className="min-h-screen flex flex-col pb-20 md:pb-0" style={{ background: "#080d19" }}>
+        <div className="min-h-screen flex flex-col pb-20 md:pb-0 bg-[var(--bg-base)]">
           {workspaceMeta?.banner?.show && workspaceMeta.banner.text && (
             <div
-              className="shrink-0 border-b border-zinc-700 bg-zinc-900/80 px-4 py-2 text-center text-[13px] text-zinc-300"
+              className="shrink-0 border-b border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-2 text-center text-[13px] text-[var(--text-secondary)]"
               role="status"
               aria-label="Workspace status"
             >
@@ -184,22 +184,22 @@ export default function AppShellClient({
             {isOnboarding ? (
               <OnboardingSidebar initialWorkspaceName={initialWorkspaceName} />
             ) : (
-              <aside className="hidden md:flex md:w-[220px] flex-col shrink-0 bg-[#0a0f1c] border-r border-white/[0.04]">
-                <div className="p-5 border-b border-zinc-800">
+              <aside className="hidden md:flex md:w-[220px] flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)]">
+                <div className="p-5 border-b border-[var(--border-default)]">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                       <span className="text-black font-bold text-sm">RT</span>
                     </div>
                     <WorkspaceName
                       initialName={initialWorkspaceName}
-                      className="truncate block text-[15px] font-semibold text-white/90"
+                      className="truncate block text-[15px] font-semibold text-[var(--text-primary)]"
                     />
                   </div>
                 </div>
                 <nav className="flex-1 p-3 space-y-4 overflow-y-auto" aria-label="App navigation">
                   {SIDEBAR_GROUPS.map((group) => (
                     <div key={group.label}>
-                      <p className="px-3 mb-1 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                      <p className="px-3 mb-1 text-[11px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
                         {group.label}
                       </p>
                       <div className="space-y-0.5">
@@ -210,10 +210,10 @@ export default function AppShellClient({
                             <Link
                               key={href}
                               href={href}
-                              className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors ${
+                              className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none ${
                                 isActive(href)
-                                  ? "border-l-white bg-white/[0.06] text-white"
-                                  : "border-l-transparent text-white/50 hover:text-white/80"
+                                  ? "border-l-[var(--accent-blue)] bg-white/[0.08] text-[var(--text-primary)]"
+                                  : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                               }`}
                             >
                               <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
@@ -225,10 +225,10 @@ export default function AppShellClient({
                     </div>
                   ))}
                 </nav>
-                <div className="p-3 border-t border-zinc-800 space-y-2">
-                  <div className="rounded-lg bg-white/[0.03] px-3 py-3">
-                    <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
-                    <span className="block text-[12px] text-white/30">
+                <div className="p-3 border-t border-[var(--border-default)] space-y-2">
+                  <div className="rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20 px-3 py-2">
+                    <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Trial</span>
+                    <span className="block text-[12px] text-[var(--text-secondary)]">
                       12 days left
                       {(workspaceMeta?.stats?.calls ?? 0) > 0
                         ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered`
@@ -240,9 +240,9 @@ export default function AppShellClient({
             )}
             <main
               id="main"
-              className="flex-1 overflow-auto min-w-0"
-              style={{ background: "#080d19" }}
+              className="flex-1 overflow-auto min-w-0 bg-[var(--bg-base)]"
               tabIndex={-1}
+              role="main"
             >
               {children}
             </main>
@@ -250,16 +250,16 @@ export default function AppShellClient({
           {!isOnboarding && (
             <>
               <nav
-                className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-zinc-950 border-t border-zinc-800 safe-area-pb"
+                className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-[var(--bg-surface)] border-t border-[var(--border-default)] safe-area-pb"
                 aria-label="Mobile navigation"
               >
                 {MOBILE_TABS.map(({ href, label, icon: Icon }) => (
                   <Link
                     key={href}
                     href={href}
-                    className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation ${
-                      isActive(href) ? "text-white" : "text-zinc-500"
-                    }`}
+className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
+                    isActive(href) ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
+                  }`}
                     aria-current={isActive(href) ? "page" : undefined}
                   >
                     <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
@@ -269,8 +269,8 @@ export default function AppShellClient({
                 <button
                   type="button"
                   onClick={() => setMobileMoreOpen(true)}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation ${
-                    isMoreActive ? "text-white" : "text-zinc-500"
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
+                    isMoreActive ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                   }`}
                   aria-label="More menu"
                   aria-expanded={mobileMoreOpen}
@@ -286,14 +286,14 @@ export default function AppShellClient({
                     onClick={() => setMobileMoreOpen(false)}
                     onKeyDown={(e) => e.key === "Escape" && setMobileMoreOpen(false)}
                   />
-                  <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-zinc-800 bg-zinc-950 shadow-2xl">
-                    <div className="sticky top-0 flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-950">
-                      <span className="text-sm font-medium text-white">More</span>
+                  <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[var(--border-default)] bg-[var(--bg-surface)] shadow-2xl">
+                    <div className="sticky top-0 flex items-center justify-between px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
+                      <span className="text-sm font-medium text-[var(--text-primary)]">More</span>
                       <button
                         type="button"
                         onClick={() => setMobileMoreOpen(false)}
-                        className="p-2 rounded-lg text-zinc-400 hover:text-white"
-                        aria-label="Close"
+className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                                        aria-label="Close more menu"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -304,8 +304,8 @@ export default function AppShellClient({
                           key={href}
                           href={href}
                           onClick={() => setMobileMoreOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm ${
-                            isActive(href) ? "bg-zinc-800/50 text-white" : "text-zinc-300"
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none ${
+                            isActive(href) ? "bg-[var(--bg-hover)] text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                           }`}
                         >
                           <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} />
@@ -330,12 +330,12 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
   const setStep = ctx?.setStep;
 
   return (
-    <aside className="hidden md:flex md:w-52 flex-col shrink-0 bg-zinc-950 border-r border-zinc-800 py-5 px-4">
+    <aside className="hidden md:flex md:w-52 flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] py-5 px-4">
       <Link href="/" className="flex flex-col items-center gap-1 mb-6">
         <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
           <span className="text-black font-bold text-sm">RT</span>
         </div>
-        <WorkspaceName initialName={initialWorkspaceName} className="text-[10px] text-zinc-500 text-center block" />
+        <WorkspaceName initialName={initialWorkspaceName} className="text-[10px] text-[var(--text-secondary)] text-center block" />
       </Link>
       <nav className="flex-1" aria-label="Onboarding steps">
         <div className="flex flex-col gap-0">
@@ -348,7 +348,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                 key={stepNum}
                 type="button"
                 onClick={() => setStep?.(stepNum)}
-                className="flex items-center gap-3 w-full text-left rounded-lg py-1 -ml-1 pl-1 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                className="flex items-center gap-3 w-full text-left rounded-lg py-1 -ml-1 pl-1 hover:bg-[var(--bg-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 aria-current={isCurrent ? "step" : undefined}
                 aria-label={`Step ${stepNum}: ${label}`}
               >
@@ -359,18 +359,18 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                         ? "bg-green-500 text-white"
                         : isCurrent
                           ? "bg-white text-black"
-                          : "bg-zinc-800 text-zinc-600"
+                          : "bg-[var(--bg-input)] text-[var(--text-tertiary)]"
                     } ${isCurrent ? "ring-2 ring-white/50" : ""}`}
                   >
                     {isComplete ? "✓" : stepNum}
                   </div>
                   {i < ONBOARDING_STEP_LABELS.length - 1 && (
-                    <div className={`w-0.5 min-h-[14px] ${step > stepNum ? "bg-green-500/50" : "bg-zinc-800"}`} />
+                    <div className={`w-0.5 min-h-[14px] ${step > stepNum ? "bg-green-500/50" : "bg-[var(--border-default)]"}`} />
                   )}
                 </div>
                 <span
                   className={`text-sm py-1 ${
-                    isComplete ? "text-white" : isCurrent ? "text-white font-medium" : "text-zinc-600"
+                    isComplete ? "text-[var(--text-primary)]" : isCurrent ? "text-[var(--text-primary)] font-medium" : "text-[var(--text-tertiary)]"
                   }`}
                 >
                   {label}
@@ -380,10 +380,10 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
           })}
         </div>
       </nav>
-      <div className="mt-4 pt-4 border-t border-zinc-800 space-y-2">
-        <div className="px-3 py-2 rounded-lg bg-zinc-800/50 border border-zinc-700">
-          <span className="block text-xs font-medium text-zinc-300">Starter · Trial</span>
-          <span className="block text-[10px] text-zinc-500">14 days left</span>
+      <div className="mt-4 pt-4 border-t border-[var(--border-default)] space-y-2">
+        <div className="px-3 py-2 rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20">
+          <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Trial</span>
+          <span className="block text-[10px] text-[var(--text-secondary)]">14 days left</span>
         </div>
       </div>
     </aside>

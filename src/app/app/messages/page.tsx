@@ -214,7 +214,7 @@ export default function AppMessagesPage() {
         <h1 className="text-lg md:text-xl font-semibold text-white">Messages</h1>
       </div>
       <div className="flex flex-col md:flex-row gap-4 min-h-[420px]">
-        <div className="md:w-72 shrink-0 border border-zinc-800 rounded-2xl bg-zinc-900/60 overflow-hidden">
+        <div className="md:w-72 shrink-0 border border-[var(--border-default)] rounded-2xl bg-[var(--bg-card)] overflow-hidden">
           {loadingThreads ? (
             <div className="p-4 text-center text-xs text-zinc-500">Loading…</div>
           ) : threads.length === 0 ? (
@@ -227,8 +227,8 @@ export default function AppMessagesPage() {
                 key={t.id}
                 type="button"
                 onClick={() => setSelected(t.id)}
-                className={`w-full text-left px-3 py-3 border-b border-zinc-800 flex gap-2 items-start ${
-                  (active?.id ?? selected) === t.id ? "bg-zinc-900" : "hover:bg-zinc-900/60"
+                className={`w-full text-left px-3 py-3 border-b border-[var(--border-default)] flex gap-2 items-start ${
+                  (active?.id ?? selected) === t.id ? "bg-[var(--bg-input)]" : "hover:bg-[var(--bg-card)]"
                 }`}
               >
                 <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-[11px] font-medium text-white shrink-0">
@@ -253,10 +253,10 @@ export default function AppMessagesPage() {
             ))
           )}
         </div>
-        <div className="flex-1 border border-zinc-800 rounded-2xl bg-zinc-900/40 flex flex-col">
+        <div className="flex-1 border border-[var(--border-default)] rounded-2xl bg-[var(--bg-input)]/40 flex flex-col">
           {active ? (
             <>
-              <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+              <div className="px-4 py-3 border-b border-[var(--border-default)] flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white">{active.name}</p>
                   <p className="text-[11px] text-zinc-500">SMS · Two-way</p>
@@ -293,7 +293,7 @@ export default function AppMessagesPage() {
                   ))
                 )}
               </div>
-              <div className="px-4 py-3 border-t border-zinc-800 flex items-center gap-2">
+              <div className="px-4 py-3 border-t border-[var(--border-default)] flex items-center gap-2">
                 <input
                   type="text"
                   value={input}
@@ -306,7 +306,7 @@ export default function AppMessagesPage() {
                   }}
                   placeholder={active.lead_id ? "Type a message…" : "Add contact in Leads to send"}
                   disabled={!active.lead_id}
-                  className="flex-1 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none disabled:opacity-60"
+                  className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none disabled:opacity-60"
                 />
                 <button
                   type="button"
@@ -326,7 +326,7 @@ export default function AppMessagesPage() {
         </div>
       </div>
       {toast && (
-        <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 shadow-lg">
+        <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-zinc-100 shadow-lg">
           {toast}
         </div>
       )}

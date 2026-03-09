@@ -52,7 +52,7 @@ export function HomepageLiveDemo() {
             })}
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 md:p-6">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 md:p-6">
             <p className="text-xs font-semibold uppercase text-zinc-500 mb-3">{active.label}</p>
             <div className="space-y-3 text-sm">
               <div className="rounded-xl px-3 py-2 bg-zinc-800/80 border border-zinc-700/60 text-zinc-200">

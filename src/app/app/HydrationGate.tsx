@@ -6,24 +6,24 @@ import AppShellClient, { type AppShellWorkspaceMeta } from "./AppShellClient";
 /** Static skeleton only. No dynamic data so server and client output match. */
 function AppShellSkeleton() {
   return (
-    <div className="flex h-screen bg-[#080d19]" aria-busy="true" aria-label="Loading app">
-      <div className="hidden md:block w-[200px] bg-[#080d19] border-r border-white/[0.06] shrink-0">
+    <div className="flex h-screen bg-[var(--bg-base)]" aria-busy="true" aria-label="Loading app">
+      <div className="hidden md:block w-[200px] bg-[var(--bg-surface)] border-r border-[var(--border-default)] shrink-0">
         <div className="p-4 space-y-3">
-          <div className="h-8 w-8 rounded-full bg-white/[0.04]" />
-          <div className="h-4 w-24 rounded bg-white/[0.04]" />
+          <div className="h-8 w-8 rounded-full bg-[var(--bg-card)]" />
+          <div className="h-4 w-24 rounded bg-[var(--bg-card)]" />
           <div className="space-y-2 mt-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-8 rounded bg-white/[0.04]" />
+              <div key={i} className="h-8 rounded bg-[var(--bg-card)]" />
             ))}
           </div>
         </div>
       </div>
       <div className="flex-1 flex items-center justify-center min-w-0">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#080d19] text-sm font-bold">
+          <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[var(--bg-base)] text-sm font-bold">
             RT
           </div>
-          <p className="text-sm text-white/30">Loading…</p>
+          <p className="text-sm text-[var(--text-tertiary)]">Loading…</p>
         </div>
       </div>
     </div>
