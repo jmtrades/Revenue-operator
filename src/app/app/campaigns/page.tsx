@@ -91,6 +91,7 @@ export default function CampaignsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CampaignRow["status"]>("all");
+  const [campaignType, setCampaignType] = useState<string>("followup");
   const [form, setForm] = useState({
     name: "",
     type: "lead_followup",
@@ -362,6 +363,7 @@ export default function CampaignsPage() {
                   type="button"
                   onClick={() => {
                     setEditingId(null);
+                    setCampaignType("followup");
                     setForm({
                       name: "",
                       type: "lead_followup",
@@ -381,6 +383,42 @@ export default function CampaignsPage() {
               ) : null}
             </div>
             <div className="mt-4 space-y-4">
+              <div className="mb-4">
+                <label className="text-xs text-white/40 mb-2 block">Campaign type</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: "followup", label: "Lead follow-up", desc: "Call leads who showed interest" },
+                    { id: "reactivation", label: "Reactivation", desc: "Re-engage cold leads" },
+                    { id: "reminder", label: "Appointment reminder", desc: "Confirm upcoming appointments" },
+                    { id: "qualification", label: "Qualification", desc: "Qualify new leads by phone" },
+                  ].map((typeOption) => {
+                    const typeId = typeOption.id === "followup" ? "lead_followup" : typeOption.id === "reminder" ? "appointment_reminder" : typeOption.id === "qualification" ? "lead_followup" : typeOption.id;
+                    const selected = campaignType === typeOption.id;
+                    return (
+                      <button
+                        key={typeOption.id}
+                        type="button"
+                        onClick={() => {
+                          setCampaignType(typeOption.id);
+                          setForm((prev) => ({
+                            ...prev,
+                            type: typeId,
+                            name: prev.name.trim() ? prev.name : typeOption.label,
+                            audience: typeOption.id === "followup" ? "Leads waiting on follow-up" : typeOption.id === "reactivation" ? "Cold or stale leads" : typeOption.id === "reminder" ? "Leads with upcoming appointments" : "New leads to qualify",
+                            template: typeOption.id === "followup" ? "Just checking in after your last conversation. Reply here if you want to continue." : typeOption.id === "reactivation" ? "We haven't heard from you in a while. Got a quick moment to see if we can help?" : typeOption.id === "reminder" ? "Reminder: you have an appointment coming up. Reply to confirm or reschedule." : "Hi, we're following up on your interest. A few quick questions when you have a moment.",
+                          }));
+                        }}
+                        className={`p-3 rounded-lg border text-left text-xs transition-colors ${
+                          selected ? "border-blue-500/40 bg-blue-500/[0.06]" : "border-white/[0.08] hover:bg-white/[0.04]"
+                        }`}
+                      >
+                        <p className="font-medium text-white">{typeOption.label}</p>
+                        <p className="text-white/40 mt-0.5">{typeOption.desc}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">Run name</label>
                 <input

@@ -296,7 +296,7 @@ export default function AppSettingsPhonePage() {
                 {copySuccess ? "Copied" : "Copy number"}
               </button>
             </div>
-            <p className="text-xs text-zinc-500 mt-2">Calls and texts to this number are handled by your AI.</p>
+            <p className="text-sm text-zinc-400 mt-2">Your AI number is ready! Calls to this number will be answered by your AI agent.</p>
           </div>
 
           {/* Forward your current number — simple steps */}
@@ -328,7 +328,7 @@ export default function AppSettingsPhonePage() {
           </div>
 
           {/* Test forwarding */}
-          <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
+          <div id="test" className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
             <p className="text-sm font-medium text-white mb-1">Test forwarding</p>
             <p className="text-xs text-zinc-400 mb-3">We’ll call you so you can talk to your agent right now.</p>
             {!primaryAgentId ? (
@@ -527,8 +527,8 @@ export default function AppSettingsPhonePage() {
           {/* No number — two-option flow */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-[#161B22] border border-white/[0.08] rounded-2xl p-6">
-              <div className="w-10 h-10 rounded-xl bg-zinc-700/50 flex items-center justify-center mb-4">
-                <Phone className="w-5 h-5 text-zinc-300" />
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+                <Phone className="w-5 h-5 text-blue-400" />
               </div>
               <h2 className="text-base font-semibold text-white mb-1">Get a new AI number</h2>
               <p className="text-sm text-white/50 mb-1">Recommended</p>
@@ -618,9 +618,18 @@ export default function AppSettingsPhonePage() {
               <p className="text-xs text-white/30 mt-2 text-center">We&apos;ll send a verification code</p>
               {verifyError && <p className="mt-2 text-xs text-red-400" role="alert">{verifyError}</p>}
               {verifiedNumber ? (
-                <div className="mt-4 pt-4 border-t border-white/[0.08]">
-                  <p className="text-sm text-emerald-400 mb-2">✓ Verified {formatPhoneNumber(verifiedNumber)}</p>
-                  <p className="text-xs text-white/50">Get an AI number (left card) first, then forward calls to it from your carrier.</p>
+                <div className="mt-4 pt-4 border-t border-white/[0.08] space-y-3">
+                  <p className="text-sm text-emerald-400">✓ Verified {formatPhoneNumber(verifiedNumber)}</p>
+                  <p className="text-xs text-white/50 mb-2">Forward unanswered calls to your AI number (get one from the left card first).</p>
+                  <div className="space-y-2 text-xs text-white/60">
+                    <p className="font-medium text-white/70">iPhone:</p>
+                    <p>Settings → Phone → Call Forwarding → [your AI number]</p>
+                    <p className="font-medium text-white/70 mt-2">Android:</p>
+                    <p>Phone → ⋮ → Settings → Call Forwarding → [your AI number]</p>
+                    <p className="font-medium text-white/70 mt-2">Business line:</p>
+                    <p>Call your provider: &quot;Forward unanswered calls to [your AI number]&quot;</p>
+                  </div>
+                  <Link href="/app/settings/phone#test" className="inline-block mt-2 text-sm font-medium text-emerald-400 hover:text-emerald-300">Test forwarding →</Link>
                 </div>
               ) : (verifyCodeSent || verifyCode.length >= 4) && (
                 <div className="mt-4 space-y-2">

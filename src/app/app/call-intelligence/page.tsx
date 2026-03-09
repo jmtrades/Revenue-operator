@@ -307,6 +307,30 @@ export default function CallIntelligencePage() {
 
       <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">
         <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">
+          Common caller questions
+        </h2>
+        <p className="text-sm text-[var(--text-secondary)] mb-3">
+          Frequently asked questions from analyzed transcripts. Add these to your knowledge base to improve answers.
+        </p>
+        {callInsights.filter((i) => i.insight.trim().endsWith("?") || i.example_from_transcript?.trim().endsWith("?")).length > 0 ? (
+          <ul className="space-y-2">
+            {callInsights
+              .filter((i) => i.insight.trim().endsWith("?") || i.example_from_transcript?.trim().endsWith("?"))
+              .slice(0, 10)
+              .map((i) => (
+                <li key={i.id} className="text-sm text-[var(--text-primary)] flex items-start gap-2">
+                  <span className="text-[var(--text-tertiary)]">•</span>
+                  <span>{i.insight.trim().endsWith("?") ? i.insight : i.example_from_transcript ?? i.insight}</span>
+                </li>
+              ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-[var(--text-tertiary)]">Analyze more calls to see common questions from transcripts.</p>
+        )}
+      </div>
+
+      <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-6">
+        <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">
           Applied insights <span className="text-[var(--text-tertiary)] font-normal">({appliedCount})</span>
         </h2>
         {Object.keys(insightsByCategory).length === 0 ? (

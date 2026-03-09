@@ -477,6 +477,67 @@ export default function KnowledgePage() {
                 <Globe className="w-4 h-4" />
                 Import from URL
               </button>
+              <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-sm text-zinc-200 hover:bg-[var(--bg-card)] cursor-pointer">
+                <Upload className="w-4 h-4" />
+                Bulk upload (CSV)
+                <input
+                  type="file"
+                  accept=".csv"
+                  className="sr-only"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      const text = String(reader.result ?? "");
+                      const lines = text.split(/\r?\n/).filter((l) => l.trim());
+                      if (lines.length < 2) return;
+                      const header = lines[0].toLowerCase();
+                      const cols = header.includes("question") && header.includes("answer")
+                        ? { q: header.split(",").map((c) => c.trim()).indexOf("question"), a: header.split(",").map((c) => c.trim()).indexOf("answer") }
+                        : { q: 0, a: 1 };
+                      const parseRow = (row: string) => {
+                        const out: string[] = [];
+                        let inQuotes = false;
+                        let cell = "";
+                        for (let i = 0; i < row.length; i++) {
+                          if (row[i] === '"') { inQuotes = !inQuotes; continue; }
+                          if (!inQuotes && row[i] === ",") { out.push(cell.trim()); cell = ""; continue; }
+                          cell += row[i];
+                        }
+                        out.push(cell.trim());
+                        return out;
+                      };
+                      for (let i = 1; i < lines.length; i++) {
+                        const cells = parseRow(lines[i]);
+                        const question = cells[cols.q] ?? "";
+                        const answer = cells[cols.a] ?? "";
+                        if (question && answer) {
+                          setEntries((prev) => [
+                            ...prev,
+                            {
+                              id: `kb-csv-${Date.now()}-${i}`,
+                              title: question.slice(0, 80),
+                              type: "FAQ",
+                              status: "Draft",
+                              content: answer,
+                              wordCount: answer.split(/\s+/).filter(Boolean).length,
+                              lastUpdated: new Date().toISOString(),
+                              usageCount: 0,
+                              gapFlag: false,
+                              question,
+                              url: "",
+                              fileName: file.name,
+                            },
+                          ]);
+                        }
+                      }
+                    };
+                    reader.readAsText(file);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
             </div>
           </div>
         </div>

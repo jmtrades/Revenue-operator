@@ -582,6 +582,14 @@ export default function CallsPage() {
                       ).toLocaleString()
                     : "Time unknown"}
                 </p>
+                {selectedCall.call_started_at && selectedCall.call_ended_at && (
+                  <p className="text-xs text-zinc-500 mt-0.5">
+                    Duration: {Math.round((new Date(selectedCall.call_ended_at).getTime() - new Date(selectedCall.call_started_at).getTime()) / 1000)}s
+                  </p>
+                )}
+                {selectedCall.outcome && (
+                  <p className="text-xs text-zinc-500 mt-0.5">Outcome: {selectedCall.outcome}</p>
+                )}
               </div>
               <button
                 type="button"
