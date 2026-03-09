@@ -11,12 +11,16 @@ import {
   ChevronDown,
   ChevronRight,
   ClipboardList,
+  Headphones,
   Mic,
   Play,
   PhoneCall,
   PhoneForwarded,
+  PhoneOutgoing,
+  Settings,
   Square,
   Star,
+  UserCheck,
   type LucideIcon,
 } from "lucide-react";
 import { Confetti } from "@/components/Confetti";
@@ -2665,7 +2669,8 @@ const TestTab = forwardRef<TestTabRef, {
   suggestedOpener?: { title: string; phrase: string } | null;
   onCallEnded?: () => void;
   onTryAgain?: () => void;
-}>(function TestTab({ agent, onPrepareAgent, suggestedOpener, onCallEnded, onTryAgain }, ref) {
+  onSkipToLaunch?: () => void;
+}>(function TestTab({ agent, onPrepareAgent, suggestedOpener, onCallEnded, onTryAgain, onSkipToLaunch }, ref) {
   const [status, setStatus] = useState<"idle" | "connecting" | "active" | "ended">(
     "idle",
   );
@@ -2702,14 +2707,14 @@ const TestTab = forwardRef<TestTabRef, {
     try {
       const assistantId = (await onPrepareAgent()) || agent.vapiAgentId;
       if (!assistantId) {
-        throw new Error("This agent has not been synced to voice yet. Save the agent first.");
+        throw new Error("Test calls require voice service configuration. Contact support or skip to launch.");
       }
 
       const configRes = await fetch("/api/vapi/workspace-config", { credentials: "include" });
       const config = (await configRes.json().catch(() => null)) as { publicKey?: string | null } | null;
       const publicKey = config?.publicKey?.trim() ?? null;
       if (!publicKey) {
-        throw new Error("Voice is not configured for this workspace");
+        throw new Error("Test calls require voice service configuration. Contact support or skip to launch.");
       }
 
       const { default: Vapi } = await import("@vapi-ai/web");
@@ -2768,7 +2773,7 @@ const TestTab = forwardRef<TestTabRef, {
     } catch (err) {
       setStatus("idle");
       const msg = err instanceof Error ? err.message : typeof err === "string" ? err : "";
-      setError(msg.trim() || "Could not start test call");
+      setError(msg.trim() || "Test calls require voice service configuration. Contact support or skip to launch.");
     }
   }, [agent.vapiAgentId, onPrepareAgent]);
 
@@ -2878,9 +2883,20 @@ const TestTab = forwardRef<TestTabRef, {
       )}
 
       {error ? (
-        <p className="mt-4 text-xs text-[var(--accent-red)]" role="alert">
-          {error}
-        </p>
+        <div className="mt-4 space-y-2">
+          <p className="text-xs text-[var(--accent-red)]" role="alert">
+            {error}
+          </p>
+          {error.includes("voice service configuration") && onSkipToLaunch ? (
+            <button
+              type="button"
+              onClick={() => { setError(null); onSkipToLaunch(); }}
+              className="text-xs font-medium text-white hover:text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
+            >
+              Skip to launch →
+            </button>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );
@@ -2948,15 +2964,44 @@ function IdentityStepContent({
           "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?",
       },
     },
+    {
+      id: "support" as const,
+      label: "Customer Support",
+      desc: "Answer questions, troubleshoot, resolve issues",
+      defaults: {
+        purpose: "inbound" as AgentPurpose,
+        primaryGoal: "support" as PrimaryGoalId,
+        greeting: "Thanks for calling support! What can I help you with?",
+      },
+    },
+    {
+      id: "scratch" as const,
+      label: "Custom",
+      desc: "Build from scratch with full control",
+      defaults: {},
+    },
   ];
 
+  const PLAYBOOK_ICONS: Record<string, LucideIcon> = {
+    receptionist: PhoneCall,
+    appointment_setter: Calendar,
+    lead_qualifier: UserCheck,
+    follow_up: PhoneOutgoing,
+    support: Headphones,
+    scratch: Settings,
+  };
+
   const applyTemplate = (tpl: (typeof TEMPLATES)[number]) => {
-    onChange({
-      template: tpl.id,
-      purpose: tpl.defaults.purpose,
-      primaryGoal: tpl.defaults.primaryGoal,
-      greeting: (agent.greeting ?? "").trim() ? agent.greeting : tpl.defaults.greeting,
-    });
+    if ("purpose" in tpl.defaults && tpl.defaults.purpose != null) {
+      onChange({
+        template: tpl.id,
+        purpose: tpl.defaults.purpose,
+        primaryGoal: (tpl.defaults as { primaryGoal?: PrimaryGoalId }).primaryGoal ?? "answer_route",
+        greeting: (agent.greeting ?? "").trim() ? agent.greeting : ((tpl.defaults as { greeting?: string }).greeting ?? ""),
+      });
+    } else {
+      onChange({ template: tpl.id });
+    }
   };
 
   return (
@@ -2968,36 +3013,38 @@ function IdentityStepContent({
         What does this agent do?
       </h3>
       <section
-        aria-label="Quick start templates"
+        aria-label="Playbook templates"
         className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3"
       >
         <div>
-          <p className="text-xs font-semibold text-white/80">
-            Quick start — choose a template
+          <p className="text-sm font-medium text-white/70">
+            Start with a playbook
           </p>
           <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">
             Pick a starting mission. You can still edit details below.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 gap-3">
           {TEMPLATES.map((tpl) => {
             const active = agent.template === tpl.id;
+            const Icon = PLAYBOOK_ICONS[tpl.id] ?? PhoneCall;
             return (
               <button
                 key={tpl.id}
                 type="button"
                 onClick={() => applyTemplate(tpl)}
-                className={`text-left rounded-xl border px-3 py-2.5 text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                className={`text-left rounded-xl border p-4 transition-all hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                   active
-                    ? "border-white bg-[var(--bg-hover)] text-white"
-                    : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
+                    ? "border-blue-500/40 bg-blue-500/[0.06]"
+                    : "border-white/[0.08]"
                 }`}
                 aria-pressed={active}
               >
-                <p className="font-medium text-[13px] text-white">
+                <Icon className="w-5 h-5 text-white/50 mb-2" />
+                <p className="font-medium text-sm text-white">
                   {tpl.label}
                 </p>
-                <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">
+                <p className="mt-0.5 text-xs text-white/40">
                   {tpl.desc}
                 </p>
               </button>
@@ -3350,6 +3397,7 @@ function TestStepContent({
           }
         }}
         onTryAgain={() => setShowGoLiveCta(false)}
+        onSkipToLaunch={onNext}
       />
       {suggestedQuestions.length > 0 && (
         <div>
@@ -3478,21 +3526,20 @@ function GoLiveStepContent({
           ))}
         </ul>
       </div>
-      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4" aria-label="Preview what your AI will say">
-        <p className="text-xs font-semibold text-white/90">Preview what your AI will say</p>
-        <p className="text-[11px] text-[var(--text-tertiary)]">Based on your greeting, knowledge, and rules.</p>
-        <div className="space-y-3">
-          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-3">
-            <p className="text-[11px] font-medium text-white/70 mb-1">Someone calls to book an appointment</p>
-            <p className="text-xs text-[var(--text-secondary)]">
+      <section className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-5 space-y-4" aria-label="Preview how your AI will respond">
+        <h3 className="text-sm font-medium text-white/70 mb-4">Preview — how your AI will respond</h3>
+        <div className="space-y-4">
+          <div>
+            <p className="text-xs text-white/40 mb-1">Someone calls to book an appointment</p>
+            <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
               {agent.primaryGoal === "book_appointments" && agent.greeting?.trim()
                 ? agent.greeting.trim().slice(0, 120) + (agent.greeting.trim().length > 120 ? "…" : "")
                 : agent.greeting?.trim()?.slice(0, 100) ?? "Your agent will greet them and offer to schedule, using your greeting and calendar."}
             </p>
           </div>
-          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-3">
-            <p className="text-[11px] font-medium text-white/70 mb-1">Someone asks about pricing</p>
-            <p className="text-xs text-[var(--text-secondary)]">
+          <div>
+            <p className="text-xs text-white/40 mb-1">Someone asks about pricing</p>
+            <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
               {(agent.faq ?? []).some((e) => (e.question ?? "").toLowerCase().includes("price") || (e.answer ?? "").toLowerCase().includes("price"))
                 ? (agent.faq ?? []).find((e) => (e.question ?? "").toLowerCase().includes("price") || (e.answer ?? "").toLowerCase().includes("price"))?.answer?.slice(0, 100) ?? "Your agent would answer from your knowledge."
                 : (agent.neverSay ?? []).some((r) => r.toLowerCase().includes("pricing") || r.toLowerCase().includes("quote"))
@@ -3500,9 +3547,9 @@ function GoLiveStepContent({
                   : "Your agent would look up pricing in your knowledge or say it doesn't have that info and offer to have someone follow up."}
             </p>
           </div>
-          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-3">
-            <p className="text-[11px] font-medium text-white/70 mb-1">Someone calls after hours</p>
-            <p className="text-xs text-[var(--text-secondary)]">
+          <div>
+            <p className="text-xs text-white/40 mb-1">Someone calls after hours</p>
+            <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
               {agent.afterHoursMode === "forward"
                 ? "Your agent will forward the call to your number or take a message, depending on your settings."
                 : agent.afterHoursMode === "messages"
