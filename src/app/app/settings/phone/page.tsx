@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { Phone, PhoneForwarded } from "lucide-react";
 import {
   fetchWorkspaceMeCached,
   getWorkspaceMeSnapshotSync,
@@ -101,6 +102,7 @@ export default function AppSettingsPhonePage() {
   const [verifyChecking, setVerifyChecking] = useState(false);
   const [verifyError, setVerifyError] = useState<string | null>(null);
   const [verifiedNumber, setVerifiedNumber] = useState<string | null>(null);
+  const [verifyCodeSent, setVerifyCodeSent] = useState(false);
 
   const fetchPhone = useCallback(async () => {
     try {
@@ -162,7 +164,7 @@ export default function AppSettingsPhonePage() {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        body: JSON.stringify(areaCode ? { area_code: areaCode } : {}),
       });
       const data = (await res.json().catch(() => ({}))) as {
         phone_number?: string;
@@ -272,9 +274,9 @@ export default function AppSettingsPhonePage() {
   const testCallValid = testCallDigits.length >= 10;
 
   return (
-    <div className="max-w-[560px] mx-auto p-4 md:p-6">
+    <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-xl font-semibold text-white mb-1">Connect your phone number</h1>
-      <p className="text-sm text-zinc-400 mb-6">Get a dedicated AI number or forward your existing line.</p>
+      <p className="text-sm text-white/60 mb-8">Choose how you want your AI to receive calls.</p>
 
       {loading ? (
         <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse h-24 mb-4" />
@@ -522,55 +524,155 @@ export default function AppSettingsPhonePage() {
         </>
       ) : (
         <>
-          {/* No number — one clear CTA */}
-          <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6 text-center">
-            <p className="text-lg font-medium text-white mb-2">Add your first number</p>
-            <p className="text-sm text-zinc-400 mb-4 max-w-sm mx-auto">We’ll assign a local number. Optionally choose your area code (e.g. 503 for Portland).</p>
-            <div className="max-w-xs mx-auto mb-4">
-              <label htmlFor="phone-area-code" className="block text-left text-xs text-zinc-500 mb-1">Area code (optional)</label>
-              <input
-                id="phone-area-code"
-                type="tel"
-                inputMode="numeric"
-                maxLength={3}
-                value={areaCode}
-                onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
-                placeholder="503"
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-center text-lg focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
-              />
-            </div>
-            <button
-              type="button"
-              onClick={handleConnectNumber}
-              disabled={connecting}
-              className="w-full max-w-xs mx-auto py-4 px-6 rounded-xl text-base font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors"
-            >
-              {connecting ? "Getting your number…" : "Get a number →"}
-            </button>
-            {connectError ? (
-              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300 text-left" role="alert">
-                <p>{connectError}</p>
-                <button
-                  type="button"
-                  onClick={() => { setConnectError(null); setToast(null); handleConnectNumber(); }}
-                  disabled={connecting}
-                  className="mt-3 px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
-                >
-                  Try again
-                </button>
+          {/* No number — two-option flow */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-[#161B22] border border-white/[0.08] rounded-2xl p-6">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+                <Phone className="w-5 h-5 text-blue-400" />
               </div>
-            ) : null}
-            <p className="mt-4 text-sm text-zinc-500">
-              <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">I’ll add a number later</Link>
-            </p>
+              <h2 className="text-base font-semibold text-white mb-1">Get a new AI number</h2>
+              <p className="text-sm text-white/50 mb-1">Recommended</p>
+              <p className="text-sm text-white/60 mb-4">We&apos;ll give you a dedicated number. Give it out as your business line, or forward calls to it.</p>
+              <div className="mb-4">
+                <label htmlFor="phone-area-code" className="text-xs text-white/40 mb-1 block">Area code (optional)</label>
+                <input
+                  id="phone-area-code"
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={3}
+                  value={areaCode}
+                  onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                  placeholder="e.g. 503"
+                  className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleConnectNumber}
+                disabled={connecting}
+                className="w-full py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 disabled:opacity-60 transition-colors"
+              >
+                {connecting ? "Getting your number…" : "Get my number →"}
+              </button>
+              <p className="text-xs text-white/30 mt-2 text-center">Takes about 10 seconds</p>
+              {connectError ? (
+                <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300" role="alert">
+                  <p>{connectError}</p>
+                  <button type="button" onClick={() => { setConnectError(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-xs font-medium underline">Try again</button>
+                </div>
+              ) : null}
+            </div>
+            <div className="bg-[#161B22] border border-white/[0.08] rounded-2xl p-6">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
+                <PhoneForwarded className="w-5 h-5 text-emerald-400" />
+              </div>
+              <h2 className="text-base font-semibold text-white mb-1">Use your existing number</h2>
+              <p className="text-sm text-white/50 mb-1">Forward calls to AI</p>
+              <p className="text-sm text-white/60 mb-4">Keep your current number. Set up call forwarding so unanswered calls go to your AI.</p>
+              <div className="mb-4">
+                <label htmlFor="verify-phone-existing" className="text-xs text-white/40 mb-1 block">Your phone number</label>
+                <input
+                  id="verify-phone-existing"
+                  type="tel"
+                  value={verifyPhone}
+                  onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
+                  placeholder="+1 (555) 000-0000"
+                  className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  const num = toE164(verifyPhone);
+                  if (!num || digitsOnly(verifyPhone).length < 10) {
+                    setVerifyError("Enter a valid 10-digit US number.");
+                    return;
+                  }
+                  setVerifyError(null);
+                  setVerifySending(true);
+                  try {
+                    const r = await fetch("/api/phone/verify-start", {
+                      method: "POST",
+                      credentials: "include",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ phone_number: num }),
+                    });
+                    const d = await r.json();
+                    if (r.ok && (d as { sent?: boolean }).sent) {
+                      setToast("Code sent. Check your phone.");
+                      setVerifyCodeSent(true);
+                    } else {
+                      setVerifyError((d as { error?: string }).error ?? "Failed to send code.");
+                    }
+                  } catch {
+                    setVerifyError("Failed to send code.");
+                  } finally {
+                    setVerifySending(false);
+                  }
+                }}
+                disabled={verifySending || digitsOnly(verifyPhone).length < 10}
+                className="w-full py-2.5 bg-white/[0.06] border border-white/[0.1] text-white font-semibold rounded-lg text-sm hover:bg-white/[0.1] disabled:opacity-50 transition-colors"
+              >
+                {verifySending ? "Sending code…" : "Verify my number →"}
+              </button>
+              <p className="text-xs text-white/30 mt-2 text-center">We&apos;ll send a verification code</p>
+              {verifyError && <p className="mt-2 text-xs text-red-400" role="alert">{verifyError}</p>}
+              {verifiedNumber ? (
+                <div className="mt-4 pt-4 border-t border-white/[0.08]">
+                  <p className="text-sm text-emerald-400 mb-2">✓ Verified {formatPhoneNumber(verifiedNumber)}</p>
+                  <p className="text-xs text-white/50">Get an AI number (left card) first, then forward calls to it from your carrier.</p>
+                </div>
+              ) : (verifyCodeSent || verifyCode.length >= 4) && (
+                <div className="mt-4 space-y-2">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={verifyCode}
+                    onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="000000"
+                    className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30"
+                  />
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const num = toE164(verifyPhone);
+                      if (!num || verifyCode.length < 4) return;
+                      setVerifyChecking(true);
+                      try {
+                        const r = await fetch("/api/phone/verify-check", {
+                          method: "POST",
+                          credentials: "include",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ phone_number: num, code: verifyCode }),
+                        });
+                        const d = await r.json();
+                        if (r.ok && (d as { verified?: boolean }).verified) {
+                          setVerifiedNumber(num);
+                          setVerifyCode("");
+                          setToast("Phone verified ✓");
+                        } else {
+                          setVerifyError((d as { error?: string }).error ?? "Code didn't match.");
+                        }
+                      } catch {
+                        setVerifyError("Verification failed.");
+                      } finally {
+                        setVerifyChecking(false);
+                      }
+                    }}
+                    disabled={verifyChecking || verifyCode.length < 4}
+                    className="w-full py-2 rounded-lg text-sm font-medium bg-white text-black hover:bg-gray-100 disabled:opacity-50"
+                  >
+                    {verifyChecking ? "Verifying…" : "Confirm code"}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="p-5 rounded-2xl border border-[var(--border-default)]/80 bg-[var(--bg-input)]/30 mb-6">
-            <p className="text-sm font-medium text-zinc-300 mb-1">Option B — Forward your existing number</p>
-            <p className="text-sm text-zinc-400">Get a number above first, then we&apos;ll show you exactly how to set up forwarding with your carrier. You can verify your number by SMS and test that your AI picks up.</p>
-            <p className="mt-4 text-sm text-zinc-500">
-              <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">I&apos;ll add a number later</Link>
-            </p>
-          </div>
+          <p className="mt-6 text-sm text-zinc-500 text-center">
+            <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">I&apos;ll add a number later</Link>
+          </p>
+
         </>
       )}
 
