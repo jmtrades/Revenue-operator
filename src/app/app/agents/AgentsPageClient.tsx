@@ -3124,7 +3124,27 @@ function TestStepContent({
     <div className="space-y-6">
       <h3 className="text-sm font-semibold text-white">Talk to your AI</h3>
       <p className="text-xs text-[var(--text-secondary)]">Your agent uses your voice, knowledge, and rules to have a real conversation. Try it now.</p>
-      <TestTab ref={testTabRef} agent={agent} onPrepareAgent={onPrepareAgent} suggestedOpener={suggestedOpener} onCallEnded={() => setShowGoLiveCta(true)} onTryAgain={() => setShowGoLiveCta(false)} />
+      <TestTab
+        ref={testTabRef}
+        agent={agent}
+        onPrepareAgent={onPrepareAgent}
+        suggestedOpener={suggestedOpener}
+        onCallEnded={async () => {
+          setShowGoLiveCta(true);
+          // Mark agent as tested for readiness scoring
+          try {
+            await fetch(`/api/agents/${agent.id}`, {
+              method: "PATCH",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ tested_at: new Date().toISOString() }),
+            });
+          } catch {
+            // Non-blocking; readiness can still infer from calls
+          }
+        }}
+        onTryAgain={() => setShowGoLiveCta(false)}
+      />
       {suggestedQuestions.length > 0 && (
         <div>
           <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Or try asking:</p>
