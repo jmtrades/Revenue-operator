@@ -99,7 +99,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
             max={duration || 100}
             value={currentTime}
             onChange={seek}
-            className="w-full h-2 rounded-full appearance-none bg-zinc-800 accent-white cursor-pointer"
+            className="w-full h-2 rounded-full appearance-none bg-[var(--border-default)] accent-white cursor-pointer"
             aria-label="Seek"
           />
           <div className="flex justify-between text-[11px] text-zinc-500">
@@ -115,7 +115,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
             key={s}
             type="button"
             onClick={() => setSpeed(s)}
-            className={`text-xs px-2 py-1 rounded ${speed === s ? "bg-white text-black" : "text-zinc-400 hover:text-white bg-zinc-800"}`}
+            className={`text-xs px-2 py-1 rounded ${speed === s ? "bg-white text-black" : "text-zinc-400 hover:text-white bg-[var(--border-default)]"}`}
           >
             {s}x
           </button>
@@ -266,7 +266,7 @@ export default function AppCallDetailPage() {
           <ArrowLeft className="w-4 h-4 text-zinc-500" />
           <span className="text-sm text-zinc-400">Back to calls</span>
         </div>
-        <div className="h-32 rounded-lg animate-pulse bg-zinc-900" />
+        <div className="h-32 rounded-lg animate-pulse bg-[var(--bg-card)]" />
       </div>
     );
   }
@@ -282,7 +282,7 @@ export default function AppCallDetailPage() {
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-6">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
           <p className="text-sm text-zinc-400">
             {error ?? "This call could not be found."}
           </p>
@@ -320,24 +320,24 @@ export default function AppCallDetailPage() {
         </div>
         <div className="flex flex-wrap gap-2 text-xs text-zinc-300">
           {call.outcome && (
-            <span className="inline-flex items-center rounded-full border border-zinc-700 px-3 py-1">
+            <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-3 py-1">
               Outcome: {call.outcome}
             </span>
           )}
           {call.analysis_outcome && (
-            <span className="inline-flex items-center rounded-full border border-zinc-700 px-3 py-1">
+            <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-3 py-1">
               AI: {call.analysis_outcome}
             </span>
           )}
           {sentiment && (
-            <span className="inline-flex items-center rounded-full border border-zinc-700 px-3 py-1">
+            <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-3 py-1">
               Sentiment: {sentiment}
             </span>
           )}
         </div>
       </header>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-5 space-y-5">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 space-y-5">
         {call.recording_url && (
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
@@ -407,7 +407,7 @@ export default function AppCallDetailPage() {
             Transcript
           </h2>
           {call.transcript_text ? (
-            <pre className="text-sm whitespace-pre-wrap font-sans p-4 rounded-xl bg-zinc-900 text-zinc-300 leading-relaxed">
+            <pre className="text-sm whitespace-pre-wrap font-sans p-4 rounded-xl bg-[var(--bg-card)] text-zinc-300 leading-relaxed">
               {call.transcript_text}
             </pre>
           ) : (

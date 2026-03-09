@@ -67,7 +67,7 @@ export function OnboardingChecklist({
       <p className="text-[10px] font-medium text-zinc-400 mb-1.5">
         {progress.completed}/{total} complete
       </p>
-      <div className="h-1 rounded-full bg-zinc-800 overflow-hidden mb-2">
+      <div className="h-1 rounded-full bg-[var(--border-default)] overflow-hidden mb-2">
         <div
           className="h-full rounded-full bg-green-500/80 transition-all duration-300"
           style={{ width: `${pct}%` }}

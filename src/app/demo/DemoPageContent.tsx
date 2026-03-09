@@ -34,8 +34,8 @@ export function DemoPageContent() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-[1fr_1.2fr] gap-6 md:gap-8 items-start">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 flex flex-col items-center gap-4">
-          <div className="w-32 h-56 rounded-3xl border-2 border-zinc-700 bg-zinc-900 flex flex-col items-center justify-center gap-3 p-4 shadow-xl">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 flex flex-col items-center gap-4">
+          <div className="w-32 h-56 rounded-3xl border-2 border-[var(--border-medium)] bg-[var(--bg-card)] flex flex-col items-center justify-center gap-3 p-4 shadow-xl">
             <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-xl" aria-hidden>
               <Mic className="h-5 w-5 text-zinc-300" />
             </div>
@@ -49,7 +49,7 @@ export function DemoPageContent() {
                 key={label}
                 type="button"
                 onClick={() => chatRef.current?.send(label)}
-                className="rounded-full border border-zinc-700 bg-zinc-800/80 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-600 hover:text-white transition-colors"
+                className="rounded-full border border-[var(--border-medium)] bg-zinc-800/80 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-600 hover:text-white transition-colors"
               >
                 {label}
               </button>
@@ -57,8 +57,8 @@ export function DemoPageContent() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 overflow-hidden flex flex-col">
-          <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden flex flex-col">
+          <div className="px-4 py-2 border-b border-[var(--border-default)] flex items-center justify-between">
             <span className="text-xs font-medium text-zinc-500">Live transcript</span>
           </div>
           <LiveAgentChat
@@ -78,7 +78,7 @@ export function DemoPageContent() {
       </div>
 
       {messageCount >= 3 && (
-        <div className="max-w-5xl mx-auto px-4 mt-8 rounded-2xl border border-zinc-700 bg-zinc-900/80 p-6">
+        <div className="max-w-5xl mx-auto px-4 mt-8 rounded-2xl border border-[var(--border-medium)] bg-[var(--bg-card)]/80 p-6">
           <h3 className="font-semibold text-white mb-3">What just happened</h3>
           <p className="text-sm text-zinc-400 mb-2">The agent captured the conversation and would:</p>
           <ul className="text-sm text-zinc-300 space-y-1 list-disc list-inside mb-4">

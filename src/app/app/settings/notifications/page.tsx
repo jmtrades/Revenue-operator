@@ -44,7 +44,7 @@ export default function AppSettingsNotificationsPage() {
 
       <div className="space-y-3 mb-6">
         {EVENTS.map((event) => (
-          <div key={event.key} className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50">
+          <div key={event.key} className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <p className="text-sm font-medium text-white">{event.label}</p>
@@ -66,7 +66,7 @@ export default function AppSettingsNotificationsPage() {
       <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors">Save preferences</button>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
       )}
 
       <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>

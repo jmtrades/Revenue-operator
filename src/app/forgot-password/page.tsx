@@ -37,16 +37,16 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black px-4 py-12 text-white">
-      <div className="mx-auto mt-16 max-w-[420px] rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
-        <h1 className="text-2xl font-semibold">Reset password</h1>
-        <p className="mt-2 text-sm text-zinc-400">
+    <div className="min-h-screen bg-[var(--bg-base)] px-4 py-12 text-[var(--text-primary)]">
+      <div className="mx-auto mt-16 max-w-[420px] rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8">
+        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Reset password</h1>
+        <p className="mt-2 text-sm text-[var(--text-secondary)]">
           Enter your email and we&apos;ll send you a secure link to choose a new password.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={submit}>
           <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm text-zinc-300">
+            <label htmlFor="email" className="mb-1.5 block text-sm text-[var(--text-secondary)]">
               Email address
             </label>
             <input
@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               autoComplete="email"
-              className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-blue)]/30"
             />
           </div>
 
@@ -76,14 +76,14 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-zinc-100 disabled:opacity-60"
+            className="w-full rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-100 disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
           >
             {busy ? "Sending..." : "Send reset link"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-zinc-500">
-          <Link href="/sign-in" className="text-zinc-300 transition hover:text-white">
+        <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
+          <Link href="/sign-in" className="text-[var(--text-secondary)] transition hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded">
             Back to sign in
           </Link>
         </p>

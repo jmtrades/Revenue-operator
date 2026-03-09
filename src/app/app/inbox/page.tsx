@@ -104,7 +104,7 @@ function ConversationList({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-3 border-b border-zinc-800">
+      <div className="p-3 border-b border-[var(--border-default)]">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
@@ -112,7 +112,7 @@ function ConversationList({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search conversations…"
-            className="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
+            className="w-full pl-9 pr-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
           />
         </div>
         <div className="flex flex-wrap gap-2 mt-3 text-xs">
@@ -124,7 +124,7 @@ function ConversationList({
               className={`px-3 py-1.5 rounded-full font-medium border ${
                 filter === f
                   ? "bg-white text-black border-white"
-                  : "bg-zinc-900 text-zinc-400 border-zinc-700 hover:border-zinc-500"
+                  : "bg-[var(--bg-input)] text-[var(--text-secondary)] border-[var(--border-medium)] hover:border-[var(--border-medium)]"
               }`}
             >
               {f === "all"
@@ -158,8 +158,8 @@ function ConversationList({
               key={thread.id}
               type="button"
               onClick={() => onSelect(thread.id)}
-              className={`w-full flex items-start gap-3 px-3 py-3 border-b border-zinc-800 text-left hover:bg-zinc-900/60 ${
-                isActive ? "bg-zinc-900/80 border-l-2 border-l-sky-500" : ""
+              className={`w-full flex items-start gap-3 px-3 py-3 border-b border-[var(--border-default)] text-left hover:bg-[var(--bg-hover)] ${
+                isActive ? "bg-[var(--bg-card)] border-l-2 border-l-sky-500" : ""
               }`}
             >
               <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0">
@@ -203,7 +203,7 @@ function CallCard({ message }: { message: InboxMessage }) {
         ).padStart(2, "0")} min`
       : null;
   return (
-    <div className="px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 mb-2 max-w-md">
+    <div className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 mb-2 max-w-md">
       <div className="flex items-center gap-2 mb-1">
         <PhoneCall className="w-3.5 h-3.5 text-sky-400" />
         <span className="font-medium">Phone call</span>
@@ -260,8 +260,8 @@ function ConversationDetail({
   const channel = thread.channel;
 
   return (
-    <div className="flex flex-col h-full border-l border-zinc-800 md:border-l-0">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-950/80">
+    <div className="flex flex-col h-full border-l border-[var(--border-default)] md:border-l-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-card)]/80">
         <div className="flex items-center gap-3 min-w-0">
           {isMobile && onBack && (
             <button
@@ -289,7 +289,7 @@ function ConversationDetail({
                 ? "bg-emerald-500/20 text-emerald-300"
                 : thread.status === "Pending"
                   ? "bg-amber-500/20 text-amber-200"
-                  : "bg-zinc-700 text-zinc-300"
+                  : "bg-[var(--bg-card)] text-zinc-300"
             }`}
           >
             {thread.status}
@@ -298,7 +298,7 @@ function ConversationDetail({
         <button
           type="button"
           onClick={onToggleStatus}
-          className="text-xs font-medium px-3 py-1.5 rounded-xl border border-zinc-700 text-zinc-200 hover:bg-zinc-800 shrink-0"
+          className="text-xs font-medium px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 hover:bg-zinc-800 shrink-0"
         >
           {isOpen ? "Mark resolved" : "Reopen"}
         </button>
@@ -319,7 +319,7 @@ function ConversationDetail({
                 className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
                   isAgent
                     ? "bg-sky-500 text-black rounded-br-sm"
-                    : "bg-zinc-900 text-zinc-100 rounded-bl-sm border border-zinc-800"
+                    : "bg-[var(--bg-input)] text-[var(--text-primary)] rounded-bl-sm border border-[var(--border-default)]"
                 }`}
               >
                 <p className="whitespace-pre-wrap break-words">{m.content}</p>
@@ -341,7 +341,7 @@ function ConversationDetail({
         })}
       </div>
 
-      <div className="border-t border-zinc-800 px-3 py-3 bg-zinc-950/80">
+      <div className="border-t border-[var(--border-default)] px-3 py-3 bg-[var(--bg-card)]/80">
         <div className="flex items-center gap-2 mb-2 text-[11px] text-zinc-400">
           <span>Reply as</span>
           {(["sms", "email", "whatsapp"] as ReplyChannel[]).map((ch) => (
@@ -352,7 +352,7 @@ function ConversationDetail({
               className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
                 replyChannel === ch
                   ? "bg-white text-black border-white"
-                  : "bg-zinc-900 text-zinc-300 border-zinc-700 hover:border-zinc-500"
+                  : "bg-[var(--bg-input)] text-[var(--text-secondary)] border-[var(--border-medium)] hover:border-[var(--border-medium)]"
               }`}
             >
               {ch === "sms" ? "SMS" : ch === "whatsapp" ? "WhatsApp" : "Email"}
@@ -365,7 +365,7 @@ function ConversationDetail({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message…"
-            className="flex-1 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
+            className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
           />
           <button
             type="button"
@@ -505,7 +505,7 @@ export default function InboxPage() {
         <h1 className="text-xl md:text-2xl font-semibold text-white mb-4">Inbox</h1>
         <p className="text-sm text-zinc-400 mb-4">All conversations in one place.</p>
         {/* Mobile layout */}
-        <div className="md:hidden h-[calc(100vh-7rem)] border border-zinc-800 rounded-2xl overflow-hidden">
+        <div className="md:hidden h-[calc(100vh-7rem)] border border-[var(--border-default)] rounded-2xl overflow-hidden">
           {mobileMode === "list" ? (
             <ConversationList
               threads={threads}
@@ -533,8 +533,8 @@ export default function InboxPage() {
         </div>
 
         {/* Desktop layout */}
-        <div className="hidden md:flex h-[calc(100vh-8rem)] rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-950/60">
-          <div className="w-80 border-r border-zinc-800 bg-zinc-950/80">
+        <div className="hidden md:flex h-[calc(100vh-8rem)] rounded-2xl border border-[var(--border-default)] overflow-hidden bg-[var(--bg-card)]/60">
+          <div className="w-80 border-r border-[var(--border-default)] bg-[var(--bg-card)]/80">
             <ConversationList
               threads={threads}
               selectedId={activeThread?.id ?? null}

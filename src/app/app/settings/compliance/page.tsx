@@ -25,7 +25,7 @@ export default function AppSettingsCompliancePage() {
       <p className="text-sm text-zinc-500 mb-6">Recording, privacy, and data retention settings.</p>
 
       <div className="space-y-4 mb-6">
-        <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50">
+        <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <label className="flex items-center justify-between cursor-pointer">
             <div>
               <p className="text-sm font-medium text-white">Call recording</p>
@@ -37,7 +37,7 @@ export default function AppSettingsCompliancePage() {
           </label>
         </div>
 
-        <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50">
+        <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <label className="flex items-center justify-between cursor-pointer">
             <div>
               <p className="text-sm font-medium text-white">HIPAA mode</p>
@@ -51,7 +51,7 @@ export default function AppSettingsCompliancePage() {
 
         <div>
           <label htmlFor="retention" className="block text-xs font-medium text-zinc-400 mb-1">Data retention</label>
-          <select id="retention" value={retention} onChange={(e) => setRetention(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:outline-none">
+          <select id="retention" value={retention} onChange={(e) => setRetention(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none">
             <option value="30">30 days</option>
             <option value="90">90 days</option>
             <option value="180">180 days</option>
@@ -63,11 +63,11 @@ export default function AppSettingsCompliancePage() {
 
       <div className="flex gap-3">
         <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors">Save changes</button>
-        <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:border-zinc-500 transition-colors">Export all data</button>
+        <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-colors">Export all data</button>
       </div>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
       )}
 
       <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>

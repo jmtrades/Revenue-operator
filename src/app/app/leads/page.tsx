@@ -70,7 +70,7 @@ const SCORE_COLORS: Record<ScoreBucket, string> = {
   high: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
   medium: "bg-amber-500/15 text-amber-200 border-amber-500/40",
   low: "bg-rose-500/15 text-rose-200 border-rose-500/40",
-  all: "bg-zinc-800 text-zinc-300 border-zinc-700",
+  all: "bg-[var(--bg-card)] text-zinc-300 border-[var(--border-medium)]",
 };
 
 function scoreBucket(score: number): ScoreBucket {
@@ -217,6 +217,16 @@ export default function LeadsPage() {
     document.title = PAGE_TITLE;
     return () => { document.title = ""; };
   }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (addLeadOpen) setAddLeadOpen(false);
+      else if (drawerLead) setDrawerLead(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [addLeadOpen, drawerLead]);
 
   useEffect(() => {
     if (!actionToast) return;
@@ -496,10 +506,10 @@ export default function LeadsPage() {
               <Plus className="w-4 h-4" />
               Add lead
             </button>
-            <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-3 py-1 text-xs text-zinc-300">
+            <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1 text-xs text-zinc-300">
               Total: <span className="ml-1 font-semibold text-white">{totalCount}</span>
             </span>
-            <div className="hidden md:inline-flex items-center gap-1 rounded-xl border border-zinc-800 bg-zinc-950/60 p-0.5 text-xs">
+            <div className="hidden md:inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-0.5 text-xs">
               <button
                 type="button"
                 onClick={() => setView("table")}
@@ -529,7 +539,7 @@ export default function LeadsPage() {
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
+              className="w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)]"
               placeholder="Search by name, phone, or email…"
             />
           </div>
@@ -549,7 +559,7 @@ export default function LeadsPage() {
                     className={`px-2.5 py-1 rounded-full border text-[11px] ${
                       active
                         ? "border-white bg-white text-black"
-                        : "border-zinc-700 text-zinc-300 hover:border-zinc-500"
+                        : "border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
                     }`}
                   >
                     {status}
@@ -571,7 +581,7 @@ export default function LeadsPage() {
                 className={`px-2.5 py-1 rounded-full border ${
                   active
                     ? "border-white bg-white text-black"
-                    : "border-zinc-700 text-zinc-300 hover:border-zinc-500"
+                    : "border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
                 }`}
               >
                 {source}
@@ -582,7 +592,7 @@ export default function LeadsPage() {
             <select
               value={scoreFilter}
               onChange={(e) => setScoreFilter(e.target.value as ScoreBucket)}
-              className="text-xs rounded-xl bg-zinc-900 border border-zinc-800 px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-zinc-600"
+              className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
             >
               <option value="all">All scores</option>
               <option value="high">High (70+)</option>
@@ -592,7 +602,7 @@ export default function LeadsPage() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="text-xs rounded-xl bg-zinc-900 border border-zinc-800 px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-zinc-600"
+              className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
             >
               <option value="newest">Newest</option>
               <option value="score">Highest score</option>
@@ -602,7 +612,7 @@ export default function LeadsPage() {
         </div>
 
         {selectedIds.size > 0 && (
-          <div className="mb-3 flex flex-wrap items-center gap-2 text-xs rounded-xl border border-zinc-800 bg-zinc-950/70 px-3 py-2">
+          <div className="mb-3 flex flex-wrap items-center gap-2 text-xs rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2">
             <span className="text-zinc-400">
               {selectedIds.size} selected
             </span>
@@ -614,26 +624,26 @@ export default function LeadsPage() {
               <X className="w-3 h-3" />
               Clear
             </button>
-            <span className="h-4 w-px bg-zinc-800" />
+            <span className="h-4 w-px bg-[var(--bg-card)]" />
             <span className="text-zinc-500">Change status:</span>
             {STATUS_ORDER.map((status) => (
               <button
                 key={status}
                 type="button"
                 onClick={() => bulkChangeStatus(status)}
-                className="px-2 py-1 rounded-full border border-zinc-800 text-[11px] text-zinc-300 hover:border-zinc-600"
+                className="px-2 py-1 rounded-full border border-[var(--border-default)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
                 {status}
               </button>
             ))}
-            <span className="h-4 w-px bg-zinc-800" />
+            <span className="h-4 w-px bg-[var(--bg-card)]" />
             <span className="text-zinc-500">Assign:</span>
             {["Sarah", "Alex", "Emma"].map((agent) => (
               <button
                 key={agent}
                 type="button"
                 onClick={() => bulkAssignAgent(agent)}
-                className="px-2 py-1 rounded-full border border-zinc-800 text-[11px] text-zinc-300 hover:border-zinc-600"
+                className="px-2 py-1 rounded-full border border-[var(--border-default)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
                 {agent}
               </button>
@@ -646,9 +656,9 @@ export default function LeadsPage() {
           {loading ? (
             <div className="mt-6 text-sm text-zinc-500">Loading leads…</div>
           ) : error ? (
-            <div className="mt-6 text-sm text-red-400">{error}</div>
+            <div className="mt-6 text-sm text-[var(--accent-red)]" role="alert">{error}</div>
           ) : filteredLeads.length === 0 ? (
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-12 text-center">
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-12 text-center">
               <Users className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
               <p className="text-sm font-medium text-white mb-1">Leads appear when your AI captures them — or add your own</p>
               <p className="text-xs text-zinc-500 mb-4">Create leads from calls or add leads manually. Connect your CRM via Settings → Integrations to sync with HubSpot, Salesforce, and more.</p>
@@ -666,14 +676,14 @@ export default function LeadsPage() {
               </div>
             </div>
           ) : (
-          <div className="hidden md:block rounded-2xl border border-zinc-800 bg-zinc-950/60 overflow-hidden">
+          <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="border-b border-zinc-800 bg-zinc-950/80">
+              <thead className="border-b border-[var(--border-default)] bg-[var(--bg-card)]">
                 <tr>
                   <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
                     <input
                       type="checkbox"
-                      className="h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-900 text-white"
+                      className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
                       checked={
                         filteredLeads.length > 0 &&
                         selectedIds.size === filteredLeads.length
@@ -702,7 +712,7 @@ export default function LeadsPage() {
                   return (
                     <tr
                       key={lead.id}
-                      className="border-t border-zinc-900/70 hover:bg-zinc-900/60 cursor-pointer"
+                      className="border-t border-[var(--border-default)]/70 hover:bg-[var(--bg-input)]/60 cursor-pointer"
                       onClick={() => openDrawer(lead)}
                     >
                       <td
@@ -713,7 +723,7 @@ export default function LeadsPage() {
                       >
                         <input
                           type="checkbox"
-                          className="h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-900 text-white"
+                          className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
                           checked={checked}
                           onChange={() => toggleSelected(lead.id)}
                         />
@@ -721,7 +731,7 @@ export default function LeadsPage() {
                       <td className="py-3 px-4 text-sm text-zinc-100">{lead.name}</td>
                       <td className="py-3 px-4 text-xs text-zinc-400">{lead.phone}</td>
                       <td className="py-3 px-4 text-xs">
-                        <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-200">
+                        <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
                           {lead.status}
                         </span>
                       </td>
@@ -767,7 +777,7 @@ export default function LeadsPage() {
                   key={lead.id}
                   type="button"
                   onClick={() => openDrawer(lead)}
-                  className="w-full text-left rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4 flex flex-col gap-1.5"
+                  className="w-full text-left rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col gap-1.5"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-zinc-100 truncate">
@@ -780,7 +790,7 @@ export default function LeadsPage() {
                   <p className="text-xs text-zinc-400">{lead.phone}</p>
                   <p className="text-xs text-zinc-500">{lead.service}</p>
                   <div className="mt-1 flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-200">
+                    <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
                       {lead.status}
                     </span>
                     <span className="text-[11px] text-zinc-500">
@@ -805,7 +815,7 @@ export default function LeadsPage() {
               return (
                 <div
                   key={status}
-                  className="flex flex-col rounded-2xl border border-zinc-800 bg-zinc-950/70 p-3 min-h-[220px]"
+                  className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 min-h-[220px]"
                   onDragOver={(e) => {
                     e.preventDefault();
                     e.currentTarget.classList.add("ring-1", "ring-zinc-600");
@@ -849,7 +859,7 @@ export default function LeadsPage() {
                               openDrawer(lead);
                             }
                           }}
-                          className="w-full text-left rounded-xl border border-zinc-800 bg-zinc-950/90 px-3 py-2 text-xs hover:border-zinc-600 cursor-grab active:cursor-grabbing"
+                          className="w-full text-left rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-xs hover:border-[var(--border-medium)] cursor-grab active:cursor-grabbing"
                         >
                           <p className="font-medium text-zinc-100 truncate">
                             {lead.name}
@@ -896,7 +906,7 @@ export default function LeadsPage() {
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             aria-label="Close"
           />
-          <aside className="absolute inset-y-0 right-0 w-full max-w-md bg-black border-l border-zinc-800 shadow-2xl flex flex-col overflow-y-auto">
+          <aside className="absolute inset-y-0 right-0 w-full max-w-md bg-black border-l border-[var(--border-default)] shadow-2xl flex flex-col overflow-y-auto">
           <div className="p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white">Add a lead</h2>
@@ -911,7 +921,7 @@ export default function LeadsPage() {
             </div>
             <form onSubmit={handleAddLeadSubmit} className="space-y-4">
               {addLeadError && (
-                <p className="text-sm text-red-400">{addLeadError}</p>
+                <p className="text-sm text-[var(--accent-red)]" role="alert">{addLeadError}</p>
               )}
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">Name *</label>
@@ -921,7 +931,7 @@ export default function LeadsPage() {
                   value={addLeadForm.name}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="Full name"
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
@@ -932,7 +942,7 @@ export default function LeadsPage() {
                   value={addLeadForm.phone}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, phone: e.target.value }))}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
@@ -942,7 +952,7 @@ export default function LeadsPage() {
                   value={addLeadForm.email}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, email: e.target.value }))}
                   placeholder="email@example.com"
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
@@ -952,7 +962,7 @@ export default function LeadsPage() {
                   value={addLeadForm.service_requested}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, service_requested: e.target.value }))}
                   placeholder="e.g. monthly cleaning, consultation"
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
@@ -965,7 +975,7 @@ export default function LeadsPage() {
                         name="source"
                         checked={addLeadForm.source === src}
                         onChange={() => setAddLeadForm((prev) => ({ ...prev, source: src }))}
-                        className="rounded-full border-zinc-600 bg-zinc-900 text-white"
+                        className="rounded-full border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
                       />
                       {src === "inbound_call" ? "Inbound Call" : src === "website" ? "Website" : src === "referral" ? "Referral" : "Other"}
                     </label>
@@ -977,7 +987,7 @@ export default function LeadsPage() {
                 <select
                   value={addLeadForm.status}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, status: e.target.value as LeadStatus }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 >
                   {STATUS_ORDER.map((s) => (
                     <option key={s} value={s}>{s}</option>
@@ -991,14 +1001,14 @@ export default function LeadsPage() {
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, notes: e.target.value }))}
                   placeholder="Optional notes"
                   rows={2}
-                  className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 text-sm focus:border-zinc-600 focus:outline-none resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none resize-none"
                 />
               </div>
               <div className="flex gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => { setAddLeadOpen(false); setAddLeadError(null); setCsvPreviewRows([]); }}
-                  className="flex-1 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 text-sm font-medium hover:border-zinc-500"
+                  className="flex-1 py-2.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-sm font-medium hover:border-[var(--border-medium)]"
                 >
                   Cancel
                 </button>
@@ -1012,12 +1022,12 @@ export default function LeadsPage() {
               </div>
             </form>
             {csvPreviewRows.length > 0 ? (
-              <div className="mt-6 pt-4 border-t border-zinc-800">
+              <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
                 <p className="text-sm font-medium text-white mb-1">We found {csvPreviewRows.length} leads</p>
                 <p className="text-[11px] text-zinc-500 mb-2">Preview (first 5):</p>
-                <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2 max-h-32 overflow-y-auto text-xs text-zinc-300">
+                <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-2 max-h-32 overflow-y-auto text-xs text-zinc-300">
                   {csvPreviewRows.slice(0, 5).map((r, i) => (
-                    <div key={i} className="py-1 border-b border-zinc-800 last:border-0">
+                    <div key={i} className="py-1 border-b border-[var(--border-default)] last:border-0">
                       {r.name} · {r.phone}
                       {r.email ? ` · ${r.email}` : ""}
                     </div>
@@ -1027,7 +1037,7 @@ export default function LeadsPage() {
                   <button
                     type="button"
                     onClick={() => setCsvPreviewRows([])}
-                    className="px-3 py-2 rounded-xl border border-zinc-700 text-zinc-300 text-xs"
+                    className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs"
                   >
                     Cancel
                   </button>
@@ -1065,7 +1075,7 @@ export default function LeadsPage() {
                 </div>
               </div>
             ) : (
-            <div className="mt-6 pt-4 border-t border-zinc-800">
+            <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
               <p className="text-xs text-zinc-500 mb-2">— or —</p>
               <label className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white cursor-pointer">
                 <span className="text-base">📎</span>
@@ -1126,8 +1136,8 @@ export default function LeadsPage() {
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             aria-label="Close lead details"
           />
-          <aside className="absolute inset-y-0 right-0 w-full max-w-md bg-black border-l border-zinc-800 shadow-2xl flex flex-col">
-            <div className="flex items-start justify-between px-5 py-4 border-b border-zinc-800">
+          <aside className="absolute inset-y-0 right-0 w-full max-w-md bg-black border-l border-[var(--border-default)] shadow-2xl flex flex-col">
+            <div className="flex items-start justify-between px-5 py-4 border-b border-[var(--border-default)]">
               <div>
                 <p className="text-sm text-zinc-500 mb-1">Lead</p>
                 <h2 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -1150,15 +1160,15 @@ export default function LeadsPage() {
               </button>
             </div>
 
-            <div className="px-5 py-3 border-b border-zinc-800 flex flex-wrap items-center gap-2 text-xs">
-              <span className="inline-flex items-center rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-200">
+            <div className="px-5 py-3 border-b border-[var(--border-default)] flex flex-wrap items-center gap-2 text-xs">
+              <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-zinc-200">
                 {drawerLead.status}
               </span>
-              <span className="h-4 w-px bg-zinc-800" />
+              <span className="h-4 w-px bg-[var(--bg-card)]" />
               <span className="text-zinc-500">
                 Agent: <span className="text-zinc-200">{drawerLead.assignedAgent}</span>
               </span>
-              <span className="h-4 w-px bg-zinc-800" />
+              <span className="h-4 w-px bg-[var(--bg-card)]" />
               <span className="text-zinc-500">
                 Created {formatDate(drawerLead.createdAt)}
               </span>
@@ -1173,7 +1183,7 @@ export default function LeadsPage() {
                   <button
                     type="button"
                     onClick={() => navigator.clipboard?.writeText(drawerLead.phone)}
-                    className="flex items-center justify-between gap-2 rounded-xl border border-zinc-800 bg-zinc-950/70 px-3 py-2 text-left text-zinc-100 hover:border-zinc-600"
+                    className="flex items-center justify-between gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-left text-zinc-100 hover:border-[var(--border-medium)]"
                   >
                     <span>{drawerLead.phone}</span>
                     <span className="text-[11px] text-zinc-500">Copy</span>
@@ -1181,7 +1191,7 @@ export default function LeadsPage() {
                   <button
                     type="button"
                     onClick={() => navigator.clipboard?.writeText(drawerLead.email)}
-                    className="flex items-center justify-between gap-2 rounded-xl border border-zinc-800 bg-zinc-950/70 px-3 py-2 text-left text-zinc-100 hover:border-zinc-600"
+                    className="flex items-center justify-between gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-left text-zinc-100 hover:border-[var(--border-medium)]"
                   >
                     <span className="truncate">{drawerLead.email}</span>
                     <span className="text-[11px] text-zinc-500">Copy</span>
@@ -1241,7 +1251,7 @@ export default function LeadsPage() {
                     <select
                       value={outboundCallType || "default"}
                       onChange={(e) => setOutboundCallType(e.target.value === "default" ? "" : e.target.value)}
-                      className="text-xs rounded-xl bg-zinc-900 border border-zinc-800 px-2 py-1.5 text-zinc-200 focus:outline-none focus:border-zinc-600"
+                      className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
                       aria-label="Call type"
                     >
                       <option value="default">Default follow-up</option>
@@ -1273,7 +1283,7 @@ export default function LeadsPage() {
                       <li key={call.id}>
                         <Link
                           href={`/app/calls/${call.id}`}
-                          className="flex items-center justify-between gap-2 rounded-xl border border-zinc-800 bg-zinc-950/70 px-3 py-2 text-zinc-100 hover:border-zinc-600"
+                          className="flex items-center justify-between gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-zinc-100 hover:border-[var(--border-medium)]"
                         >
                           <span>
                             {call.call_started_at ? formatDate(call.call_started_at) : "Call"}
@@ -1304,7 +1314,7 @@ export default function LeadsPage() {
               )}
             </div>
 
-            <div className="px-5 py-4 border-t border-zinc-800 space-y-3">
+            <div className="px-5 py-4 border-t border-[var(--border-default)] space-y-3">
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 <label className="flex items-center gap-2">
                   <span className="text-zinc-500">Change status</span>
@@ -1320,7 +1330,7 @@ export default function LeadsPage() {
                       setDrawerLead({ ...drawerLead, status: next });
                       persistLeadStatus(drawerLead.id, next);
                     }}
-                    className="text-xs rounded-xl bg-zinc-900 border border-zinc-800 px-2 py-1 text-zinc-200 focus:outline-none focus:border-zinc-600"
+                    className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2 py-1 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
                   >
                     {STATUS_ORDER.map((status) => (
                       <option key={status} value={status}>
@@ -1334,27 +1344,27 @@ export default function LeadsPage() {
                 {drawerLead.phone ? (
                   <a
                     href={`tel:${drawerLead.phone.replace(/\s/g, "")}`}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:border-[var(--border-medium)]"
                   >
                     <Phone className="w-3.5 h-3.5" />
                     Call back
                   </a>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-800 text-zinc-500 text-xs font-medium px-3 py-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] text-zinc-500 text-xs font-medium px-3 py-2">
                     <Phone className="w-3.5 h-3.5" />
                     Call back (no phone)
                   </span>
                 )}
                 <Link
                   href={drawerLead.id ? `/app/messages?lead_id=${encodeURIComponent(drawerLead.id)}` : drawerLead.phone ? `/app/messages?to=${encodeURIComponent(drawerLead.phone)}` : "/app/messages"}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:border-[var(--border-medium)]"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   Send message
                 </Link>
                 <Link
                   href="/app/campaigns"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:border-[var(--border-medium)]"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
                   Add to campaign
@@ -1371,7 +1381,7 @@ export default function LeadsPage() {
                     setDrawerLead({ ...drawerLead, status: lost });
                     persistLeadStatus(drawerLead.id, lost);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 text-zinc-200 text-xs font-medium px-3 py-2 hover:border-zinc-500"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:border-[var(--border-medium)]"
                 >
                   <Archive className="w-3.5 h-3.5" />
                   Archive
@@ -1383,7 +1393,7 @@ export default function LeadsPage() {
       )}
 
       {actionToast && (
-        <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 shadow-lg">
+        <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-zinc-100 shadow-lg">
           {actionToast}
         </div>
       )}

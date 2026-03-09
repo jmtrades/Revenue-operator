@@ -76,57 +76,57 @@ export default function AcceptInvitePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900/50 p-8">
+    <div className="min-h-screen bg-[var(--bg-base)] flex flex-col items-center justify-center p-6 text-[var(--text-primary)]">
+      <div className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8">
         {state.status === "loading" && (
-          <p className="text-zinc-400 text-center">Checking invite…</p>
+          <p className="text-[var(--text-secondary)] text-center">Checking invite…</p>
         )}
         {state.status === "invalid" && (
           <>
-            <h1 className="text-xl font-semibold text-white mb-2">Invalid invite link</h1>
-            <p className="text-zinc-400 text-sm mb-6">This link may be broken or already used.</p>
-            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100">
+            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Invalid invite link</h1>
+            <p className="text-[var(--text-secondary)] text-sm mb-6">This link may be broken or already used.</p>
+            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none">
               Go home
             </Link>
           </>
         )}
         {state.status === "expired" && (
           <>
-            <h1 className="text-xl font-semibold text-white mb-2">This invite has expired</h1>
-            <p className="text-zinc-400 text-sm mb-6">Ask the person who invited you to send a new one.</p>
-            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100">
+            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">This invite has expired</h1>
+            <p className="text-[var(--text-secondary)] text-sm mb-6">Ask the person who invited you to send a new one.</p>
+            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none">
               Go home
             </Link>
           </>
         )}
         {state.status === "valid" && (
           <>
-            <h1 className="text-xl font-semibold text-white mb-2">Join {state.workspaceName}</h1>
-            <p className="text-zinc-400 text-sm mb-6">
+            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Join {state.workspaceName}</h1>
+            <p className="text-[var(--text-secondary)] text-sm mb-6">
               {state.inviterName} invited you to join this workspace on Recall Touch.
             </p>
-            {acceptError && <p className="text-red-400 text-sm mb-4" role="alert">{acceptError}</p>}
+            {acceptError && <p className="text-[var(--accent-red)] text-sm mb-4" role="alert">{acceptError}</p>}
             <div className="flex flex-col gap-3">
               <button
                 type="button"
                 onClick={handleAccept}
                 disabled={accepting}
-                className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-50"
+                className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
               >
                 {accepting ? "Accepting…" : "Accept invitation"}
               </button>
-              <p className="text-xs text-zinc-500 text-center">Don’t have an account?</p>
+              <p className="text-xs text-[var(--text-tertiary)] text-center">Don’t have an account?</p>
               <div className="flex gap-3 justify-center">
                 <Link
                   href={`/sign-in?next=${encodeURIComponent(`/accept-invite?token=${token}`)}`}
-                  className="text-sm text-zinc-400 hover:text-white"
+                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 >
                   Sign in
                 </Link>
-                <span className="text-zinc-600">·</span>
+                <span className="text-[var(--text-tertiary)]">·</span>
                 <Link
                   href={`/sign-in?create=1&next=${encodeURIComponent(`/accept-invite?token=${token}`)}`}
-                  className="text-sm text-zinc-400 hover:text-white"
+                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 >
                   Create account
                 </Link>

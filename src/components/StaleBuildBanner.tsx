@@ -34,32 +34,29 @@ export function StaleBuildBanner() {
     return () => window.removeEventListener("focus", check);
   }, [check]);
 
-  // Auto-dismiss after 5 seconds if user doesn't refresh
+  // Auto-dismiss after 10 seconds if user doesn't refresh
   useEffect(() => {
     if (!show) return;
-    const t = window.setTimeout(() => setShow(false), 5000);
+    const t = window.setTimeout(() => setShow(false), 10000);
     return () => window.clearTimeout(t);
   }, [show]);
 
   const handleRefresh = () => {
     setRefreshing(true);
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((r) => r.unregister()));
+    }
+    if ("caches" in window) {
+      window.caches.keys().then((names) => names.forEach((n) => window.caches.delete(n)));
+    }
     try {
       sessionStorage.setItem(STORAGE_KEY, "");
     } catch {
       // ignore
     }
-    // Clear caches and unregister service workers so reload gets latest
-    if ("caches" in window) {
-      window.caches.keys().then((names) => {
-        names.forEach((name) => window.caches.delete(name));
-      });
-    }
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then((regs) => {
-        regs.forEach((r) => r.unregister());
-      });
-    }
-    setTimeout(() => window.location.reload(), 500);
+    setTimeout(() => {
+      window.location.href = window.location.pathname;
+    }, 300);
   };
 
   if (!show) return null;
@@ -67,15 +64,15 @@ export function StaleBuildBanner() {
   return (
     <div
       role="alert"
-      className="fixed bottom-4 left-4 right-4 z-[100] flex items-center justify-between gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 shadow-lg sm:left-auto sm:right-4 sm:max-w-md"
+      className="fixed bottom-4 right-4 z-50 bg-[var(--bg-card-elevated)] border border-[var(--border-medium)] rounded-lg shadow-xl px-4 py-3 flex items-center gap-3 max-w-sm"
       aria-live="polite"
     >
-      <p className="text-sm text-amber-200">A new version is available. Refresh to get the latest.</p>
+      <p className="text-sm text-[var(--text-secondary)]">Update available</p>
       <button
         type="button"
         onClick={handleRefresh}
         disabled={refreshing}
-        className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-black hover:bg-zinc-100 disabled:opacity-70"
+        className="text-sm font-medium text-[var(--accent-blue)] hover:opacity-80 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
       >
         {refreshing ? "Refreshing…" : "Refresh"}
       </button>

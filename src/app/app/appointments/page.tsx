@@ -39,11 +39,11 @@ function statusColor(status: AppointmentStatus): string {
     case "Pending":
       return "bg-amber-500/20 text-amber-200 border-amber-500/30";
     case "Cancelled":
-      return "bg-zinc-600/30 text-zinc-400 border-zinc-500/30";
+      return "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]";
     case "Completed":
-      return "bg-zinc-500/20 text-zinc-300 border-zinc-500/30";
+      return "bg-[var(--bg-card)] text-[var(--text-tertiary)] border-[var(--border-medium)]";
     default:
-      return "bg-zinc-600/30 text-zinc-400 border-zinc-500/30";
+      return "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]";
   }
 }
 
@@ -96,7 +96,7 @@ export default function AppointmentsPage() {
   const isEmpty = appointments.length === 0;
 
   return (
-    <div className="min-h-screen text-white" style={{ background: "#080d19" }}>
+    <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
@@ -110,7 +110,7 @@ export default function AppointmentsPage() {
               type="button"
               onClick={() => setView("list")}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                view === "list" ? "bg-zinc-700 text-white" : "text-zinc-400 hover:text-white"
+                view === "list" ? "bg-[var(--bg-card)] text-white" : "text-zinc-400 hover:text-white"
               }`}
             >
               List
@@ -119,7 +119,7 @@ export default function AppointmentsPage() {
               type="button"
               onClick={() => setView("calendar")}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                view === "calendar" ? "bg-zinc-700 text-white" : "text-zinc-400 hover:text-white"
+                view === "calendar" ? "bg-[var(--bg-card)] text-white" : "text-zinc-400 hover:text-white"
               }`}
             >
               Calendar
@@ -129,7 +129,7 @@ export default function AppointmentsPage() {
 
         {isEmpty ? (
           <div
-            className="rounded-2xl border border-zinc-800 p-12 text-center"
+            className="rounded-2xl border border-[var(--border-default)] p-12 text-center"
             style={{ background: "#111827" }}
           >
             <Calendar className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
@@ -165,7 +165,7 @@ export default function AppointmentsPage() {
                   {appointments.map((apt) => (
                     <tr
                       key={apt.id}
-                      className="border-b hover:bg-zinc-800/50 transition-colors"
+                      className="border-b hover:bg-[var(--bg-hover)] transition-colors"
                       style={{ borderColor: "#1f2937" }}
                     >
                       <td className="py-3 px-4 text-white">
@@ -261,7 +261,7 @@ export default function AppointmentsPage() {
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="px-4 py-2 rounded-xl border text-sm font-medium text-zinc-300 hover:bg-zinc-800"
+                className="px-4 py-2 rounded-xl border text-sm font-medium text-zinc-300 hover:bg-[var(--bg-hover)]"
                 style={{ borderColor: "#374151" }}
               >
                 Close

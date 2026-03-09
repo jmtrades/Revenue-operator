@@ -22,8 +22,7 @@ const CARDS = [
 export function OutcomeCardsSection() {
   return (
     <section
-      className="py-16 md:py-20 border-t border-white/[0.06]"
-      style={{ background: "#0F1729" }}
+      className="py-16 md:py-20 border-t border-white/[0.06] bg-[var(--bg-base)]"
     >
       <Container>
         <div className="max-w-3xl mb-10">

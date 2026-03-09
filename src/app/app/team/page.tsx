@@ -258,7 +258,7 @@ export default function TeamPage() {
             return (
               <div
                 key={member.id}
-                className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 flex flex-col"
+                className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3 min-w-0">
@@ -281,7 +281,7 @@ export default function TeamPage() {
                       <button
                         type="button"
                         onClick={() => setMenuMemberId(menuMemberId === member.id ? null : member.id)}
-                        className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800"
+                        className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-[var(--bg-card)]"
                         aria-label="Options"
                       >
                         <MoreVertical className="w-4 h-4" />
@@ -289,7 +289,7 @@ export default function TeamPage() {
                       {menuMemberId === member.id && (
                         <>
                           <div className="fixed inset-0 z-10" onClick={() => setMenuMemberId(null)} />
-                          <div className="absolute right-0 top-full mt-1 z-20 py-1 rounded-lg bg-zinc-800 border border-zinc-700 shadow-xl min-w-[140px]">
+                          <div className="absolute right-0 top-full mt-1 z-20 py-1 rounded-lg bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-xl min-w-[140px]">
                             <button
                               type="button"
                               onClick={() => {
@@ -342,10 +342,10 @@ export default function TeamPage() {
         {pendingInvites.length > 0 && (
           <section className="mb-8">
             <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Pending invitations</h2>
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-4">
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]/30 p-4">
               <ul className="space-y-2">
                 {pendingInvites.map((inv) => (
-                  <li key={inv.id} className="flex flex-wrap items-center justify-between gap-2 py-2 border-b border-zinc-800/80 last:border-0">
+                  <li key={inv.id} className="flex flex-wrap items-center justify-between gap-2 py-2 border-b border-[var(--border-default)]/80 last:border-0">
                     <div>
                       <span className="text-sm text-zinc-300">{inv.email}</span>
                       <span className="ml-2 text-xs text-zinc-500">— {ROLE_LABELS[inv.role]}</span>
@@ -364,7 +364,7 @@ export default function TeamPage() {
                         type="button"
                         onClick={() => handleRevokeInvite(inv.id)}
                         disabled={revokingId === inv.id}
-                        className="text-xs font-medium text-red-400 hover:text-red-300 disabled:opacity-50"
+                        className="text-xs font-medium text-[var(--accent-red)] hover:text-red-300 disabled:opacity-50"
                       >
                         {revokingId === inv.id ? "Revoking…" : "Revoke"}
                       </button>
@@ -381,7 +381,7 @@ export default function TeamPage() {
           <button
             type="button"
             onClick={() => setRolesExpanded((e) => !e)}
-            className="flex items-center gap-2 w-full text-left py-3 border-b border-zinc-800"
+            className="flex items-center gap-2 w-full text-left py-3 border-b border-[var(--border-default)]"
           >
             {rolesExpanded ? <ChevronDown className="w-4 h-4 text-zinc-500" /> : <ChevronRight className="w-4 h-4 text-zinc-500" />}
             <span className="text-sm font-semibold text-zinc-300">Roles & Permissions</span>
@@ -390,7 +390,7 @@ export default function TeamPage() {
             <div className="pt-4 overflow-x-auto">
               <table className="w-full text-left text-sm border-collapse">
                 <thead>
-                  <tr className="border-b border-zinc-800">
+                  <tr className="border-b border-[var(--border-default)]">
                     <th className="py-2 pr-4 font-medium text-zinc-500">Permission</th>
                     <th className="py-2 px-2 font-medium text-zinc-500">Owner</th>
                     <th className="py-2 px-2 font-medium text-zinc-500">Admin</th>
@@ -400,7 +400,7 @@ export default function TeamPage() {
                 </thead>
                 <tbody>
                   {PERMISSIONS_MATRIX.map((row) => (
-                    <tr key={row.id} className="border-b border-zinc-800/80">
+                    <tr key={row.id} className="border-b border-[var(--border-default)]/80">
                       <td className="py-2.5 pr-4 text-zinc-300">{row.label}</td>
                       <td className="py-2.5 px-2 text-center">{row.roles.owner ? "✓" : "—"}</td>
                       <td className="py-2.5 px-2 text-center">{row.roles.admin ? "✓" : "—"}</td>
@@ -418,11 +418,11 @@ export default function TeamPage() {
       {/* Invite modal */}
       {inviteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setInviteModalOpen(false)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-white mb-4">Invite team member</h3>
             <div className="space-y-4">
               {inviteError && (
-                <p className="text-sm text-red-400" role="alert">{inviteError}</p>
+                <p className="text-sm text-[var(--accent-red)]" role="alert">{inviteError}</p>
               )}
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
@@ -431,7 +431,7 @@ export default function TeamPage() {
                   value={inviteEmail}
                   onChange={(e) => { setInviteEmail(e.target.value); setInviteError(null); }}
                   placeholder="colleague@company.com"
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
               </div>
               <div>
@@ -439,7 +439,7 @@ export default function TeamPage() {
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value as TeamRole)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-sm focus:outline-none focus:border-zinc-600"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white text-sm focus:outline-none focus:border-[var(--border-medium)]"
                 >
                   {invitableRoleOptions.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
@@ -448,7 +448,7 @@ export default function TeamPage() {
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button type="button" onClick={() => { setInviteModalOpen(false); setInviteError(null); }} className="px-4 py-2 rounded-xl text-sm text-zinc-400 border border-zinc-700 hover:bg-zinc-800">
+              <button type="button" onClick={() => { setInviteModalOpen(false); setInviteError(null); }} className="px-4 py-2 rounded-xl text-sm text-zinc-400 border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">
                 Cancel
               </button>
               <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim() || inviteSending} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
@@ -462,7 +462,7 @@ export default function TeamPage() {
       {/* Change role modal */}
       {roleModalMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setRoleModalMember(null)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-white mb-2">Change role</h3>
             <p className="text-sm text-zinc-500 mb-4">{roleModalMember.name} — {roleModalMember.email}</p>
             <div className="space-y-1">
@@ -471,13 +471,13 @@ export default function TeamPage() {
                   key={r}
                   type="button"
                   onClick={() => handleChangeRole(roleModalMember.id, r)}
-                  className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"}`}
+                  className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-[var(--bg-card)] hover:text-zinc-200"}`}
                 >
                   {ROLE_LABELS[r]}
                 </button>
               ))}
             </div>
-            <button type="button" onClick={() => setRoleModalMember(null)} className="w-full mt-4 py-2 rounded-xl text-sm text-zinc-400 border border-zinc-700">
+            <button type="button" onClick={() => setRoleModalMember(null)} className="w-full mt-4 py-2 rounded-xl text-sm text-zinc-400 border border-[var(--border-medium)]">
               Cancel
             </button>
           </div>
@@ -487,13 +487,13 @@ export default function TeamPage() {
       {/* Remove confirmation */}
       {removeConfirmMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setRemoveConfirmMember(null)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-white mb-2">Remove member?</h3>
             <p className="text-sm text-zinc-400 mb-4">
               {removeConfirmMember.name} will lose access to this workspace. This can&apos;t be undone.
             </p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setRemoveConfirmMember(null)} className="flex-1 py-2 rounded-xl text-sm text-zinc-300 border border-zinc-700 hover:bg-zinc-800">
+              <button type="button" onClick={() => setRemoveConfirmMember(null)} className="flex-1 py-2 rounded-xl text-sm text-zinc-300 border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">
                 Cancel
               </button>
               <button type="button" onClick={() => handleRemoveMember(removeConfirmMember.id)} className="flex-1 py-2 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-500">
@@ -505,7 +505,7 @@ export default function TeamPage() {
       )}
 
       {toast && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm font-medium shadow-lg">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-medium)] text-white text-sm font-medium shadow-lg">
           {toast}
         </div>
       )}

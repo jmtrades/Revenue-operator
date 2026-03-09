@@ -4,10 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
-  CalendarCheck,
   CheckCircle2,
   Phone,
-  Sparkles,
   UserPlus,
   Video,
 } from "lucide-react";
@@ -17,6 +15,7 @@ import {
 } from "@/lib/client/workspace-me";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
+import { EmptyState } from "@/components/EmptyState";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 type ActivityType = "lead" | "appointment" | "follow-up" | "urgent";
@@ -95,6 +94,17 @@ function formatDuration(start?: string | null, end?: string | null): string {
 
 const PAGE_TITLE = "Dashboard — Recall Touch";
 
+const PROGRESS_LABELS: Record<string, string> = {
+  business: "Business info added",
+  agent: "Agent created",
+  services: "Knowledge added",
+  phone: "Connect phone number",
+  test_call: "Make your first call",
+  first_call: "Capture first lead",
+  calendar: "Calendar connected",
+  team: "Team member invited",
+};
+
 function ActivityDateLabel() {
   const [dateLabel, setDateLabel] = useState("");
   useEffect(() => {
@@ -109,7 +119,7 @@ function ActivityDateLabel() {
     }, 0);
     return () => window.clearTimeout(id);
   }, []);
-  return <span className="text-xs text-zinc-500">{dateLabel}</span>;
+  return <span className="text-xs text-[var(--text-tertiary)]">{dateLabel}</span>;
 }
 
 const NEXT_ACTIONS = [
@@ -192,7 +202,7 @@ export default function AppActivityPage() {
     }
   }, [searchParams]);
   const [nextStepHref, setNextStepHref] = useState(
-    () => workspaceSnapshot?.progress?.nextStep?.href || "/app/settings/phone",
+    () => (workspaceSnapshot as { progress?: { nextStep?: { href?: string } } } | null)?.progress?.nextStep?.href || "/app/settings/phone",
   );
   const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(() =>
     workspaceSnapshot?.stats?.lastCallAt ? Date.now() : null,
@@ -311,94 +321,87 @@ export default function AppActivityPage() {
     return cards;
   }, [cards, filter]);
 
+  const progressItems =
+    (workspaceSnapshot as { progress?: { items?: Array<{ key: string; completed: boolean }> } } | null)?.progress
+      ?.items ?? [];
+  const progressPct =
+    progressItems.length === 0
+      ? 0
+      : Math.round((progressItems.filter((p) => p.completed).length / progressItems.length) * 100);
+  const continueSetupHref = nextStepHref || "/app/settings/phone";
+
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       {welcomeToast && (
-        <div role="status" aria-live="polite" className="fixed right-4 top-4 z-50 max-w-[calc(100vw-2rem)] rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-white shadow-lg">
+        <div role="status" aria-live="polite" className="fixed right-4 top-4 z-50 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card-elevated)] px-4 py-2.5 text-sm text-[var(--text-primary)] shadow-lg">
           {welcomeToast}
         </div>
       )}
       <div className="flex items-center justify-between gap-4 mb-4">
-        <h1 className="text-lg font-semibold text-white">Activity</h1>
+        <h1 className="text-xl font-semibold text-[var(--text-primary)]">Dashboard</h1>
         <ActivityDateLabel />
       </div>
 
       <div className="grid grid-cols-4 gap-2 mb-6">
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
-          <p className="text-lg font-semibold text-white">{callCount}</p>
-          <p className="text-[10px] text-zinc-500">Calls</p>
+        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-blue)]">
+          <p className="text-lg font-semibold text-[var(--text-primary)]">{callCount}</p>
+          <p className="text-[10px] text-[var(--text-tertiary)]">Calls today</p>
         </div>
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
-          <p className="text-lg font-semibold text-white">{answerRate}%</p>
-          <p className="text-[10px] text-zinc-500">Answered</p>
+        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-cyan)]">
+          <p className="text-lg font-semibold text-[var(--text-primary)]">{answerRate}%</p>
+          <p className="text-[10px] text-[var(--text-tertiary)]">Answer rate</p>
         </div>
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
-          <p className="text-lg font-semibold text-white">{leadCount}</p>
-          <p className="text-[10px] text-zinc-500">Leads</p>
+        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-green)]">
+          <p className="text-lg font-semibold text-[var(--text-primary)]">{leadCount}</p>
+          <p className="text-[10px] text-[var(--text-tertiary)]">Leads captured</p>
         </div>
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2.5 text-center">
-          <p className="text-lg font-semibold text-white">
+        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-amber)]">
+          <p className="text-lg font-semibold text-[var(--text-primary)]">
             {estRevenue > 0 ? `~$${estRevenue.toLocaleString()}` : "$0"}
           </p>
-          <p className="text-[10px] text-zinc-500">Est. revenue</p>
+          <p className="text-[10px] text-[var(--text-tertiary)]">Revenue est.</p>
         </div>
       </div>
 
       {showInactivityBanner && (
-        <div className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10">
-          <p className="text-sm text-amber-200">
+        <div className="mb-4 p-4 rounded-xl border border-[var(--accent-amber)]/30 bg-[var(--accent-amber)]/10">
+          <p className="text-sm text-[var(--text-primary)]">
             No calls in the last 3+ days. Is your number forwarded?
           </p>
           <Link
             href="/app/settings/phone"
-            className="inline-block mt-2 text-xs font-medium text-amber-400 hover:text-amber-300 underline"
+            className="inline-block mt-2 text-xs font-medium text-[var(--accent-amber)] hover:opacity-90 underline"
           >
             Check setup →
           </Link>
         </div>
       )}
 
-      <div className="mb-6 p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10">
-            <Sparkles className="h-5 w-5 text-amber-400" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-white">
-              Welcome! Complete your setup for the best experience.
-            </p>
-            <p className="text-xs text-zinc-500 mt-1">
-              Connect your phone number to start receiving real calls.
-            </p>
-            <Link
-              href="/app/onboarding"
-              className="inline-block mt-3 px-4 py-2 bg-white text-black text-xs font-semibold rounded-xl hover:bg-zinc-100 transition-colors"
-            >
-              Finish setup →
-            </Link>
-          </div>
+      <div className="mb-6 p-5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
+        <p className="text-base font-medium text-[var(--text-primary)] mb-2">Your AI is {progressPct}% ready</p>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-input)] mb-4">
+          <div className="h-full rounded-full bg-[var(--accent-green)] transition-all" style={{ width: `${progressPct}%` }} />
         </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2 mb-6">
-        <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] p-3 text-center">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
-            <Phone className="h-5 w-5 text-emerald-400" />
-          </div>
-          <p className="mt-2 text-[11px] font-medium text-emerald-400">First call</p>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {progressItems.slice(0, 6).map((item) => (
+            <div key={item.key} className="flex items-center gap-2">
+              {item.completed ? (
+                <CheckCircle2 className="h-4 w-4 text-[var(--accent-green)] shrink-0" />
+              ) : (
+                <span className="h-4 w-4 rounded-full border border-[var(--border-medium)] shrink-0" />
+              )}
+              <span className={item.completed ? "text-[var(--text-secondary)]" : "text-[var(--text-primary)]"}>
+                {PROGRESS_LABELS[item.key] ?? item.key}
+              </span>
+            </div>
+          ))}
         </div>
-        <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] p-3 text-center">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
-            <UserPlus className="h-5 w-5 text-emerald-400" />
-          </div>
-          <p className="mt-2 text-[11px] font-medium text-emerald-400">Lead captured</p>
-        </div>
-        <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] p-3 text-center">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
-            <CalendarCheck className="h-5 w-5 text-emerald-400" />
-          </div>
-          <p className="mt-2 text-[11px] font-medium text-emerald-400">Appt booked</p>
-        </div>
+        <Link
+          href={continueSetupHref}
+          className="inline-block mt-4 px-4 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors"
+        >
+          Continue setup →
+        </Link>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-6" role="tablist" aria-label="Filter activity">
@@ -411,8 +414,8 @@ export default function AppActivityPage() {
             onClick={() => setFilter(f.id)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
               filter === f.id
-                ? "bg-zinc-700 text-white"
-                : "bg-zinc-800/50 text-zinc-400 hover:text-zinc-300"
+                ? "bg-[var(--bg-hover)] text-[var(--text-primary)]"
+                : "bg-[var(--bg-card)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-default)]"
             }`}
           >
             {f.label}
@@ -421,12 +424,12 @@ export default function AppActivityPage() {
       </div>
 
       {loadError && (
-        <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4 mb-4" role="alert">
-          <p className="text-sm text-red-200">We couldn’t load activity. Check your connection and try again.</p>
+        <div className="rounded-xl border border-[var(--accent-red)]/30 bg-[var(--accent-red)]/10 p-4 mb-4" role="alert">
+          <p className="text-sm text-[var(--text-primary)]">We couldn’t load activity. Check your connection and try again.</p>
           <button
             type="button"
             onClick={() => { setLoadError(false); setLoading(true); setRefreshKey((k) => k + 1); }}
-            className="mt-3 px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-black hover:bg-zinc-100"
+            className="mt-3 px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-gray-900 hover:bg-gray-100"
             aria-label="Retry loading activity"
           >
             Retry
@@ -434,49 +437,53 @@ export default function AppActivityPage() {
         </div>
       )}
       {loading && cards.length === 0 && !loadError && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-500 mb-4">
-          Loading recent activity…
+        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 mb-4 animate-pulse">
+          <div className="h-4 w-3/4 rounded bg-[var(--bg-hover)] mb-3" />
+          <div className="h-4 w-1/2 rounded bg-[var(--bg-hover)]" />
         </div>
       )}
 
       {filtered.length === 0 && !loading ? (
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center text-white/10">
-              <Phone className="h-12 w-12" />
-            </div>
-            <p className="mt-4 text-[16px] font-medium text-white/80">No calls yet</p>
-            <p className="mt-2 max-w-sm mx-auto text-[13px] text-white/40">
-              Forward your number in Settings to start receiving calls. Your AI will answer, capture leads, and book appointments.
-            </p>
-            <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link
-                href="/app/settings/phone"
-                className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 transition-colors"
-              >
-                Connect phone →
-              </Link>
-              <Link
-                href={nextStepHref}
-                className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:border-zinc-500 transition-colors"
-              >
-                Finish setup
-              </Link>
+        <div className="space-y-6">
+          <div>
+            <p className="text-base font-medium text-[var(--text-primary)] mb-3">Recent activity</p>
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
+              <EmptyState
+                icon={<Phone className="h-6 w-6" />}
+                title="No calls yet"
+                description="Connect a phone number and your AI will start handling calls automatically."
+                actions={
+                  <>
+                    <Link
+                      href="/app/settings/phone"
+                      className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-gray-900 text-sm font-semibold hover:bg-gray-100 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                    >
+                      Connect number →
+                    </Link>
+                    <Link
+                      href="/app/agents?tab=test"
+                      className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                    >
+                      Test your agent →
+                    </Link>
+                  </>
+                }
+              />
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
-            <p className="text-sm font-semibold text-white">What to do next</p>
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">What to do next</p>
             <div className="mt-3 space-y-3">
               {NEXT_ACTIONS.map((item, index) => (
-                <div key={item.href} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-[#0f1623] p-3">
-                  <div className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white/[0.04] text-zinc-400">
+                <div key={item.href} className="flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-3">
+                  <div className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--bg-card)] text-[var(--text-tertiary)]">
                     {index === 0 ? <Phone className="h-3.5 w-3.5" /> : index === 1 ? <CheckCircle2 className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-white/80">{item.title}</p>
-                    <p className="mt-1 text-[13px] text-white/40">{item.body}</p>
-                    <Link href={item.href} className="mt-2 inline-block text-xs font-medium text-zinc-300 underline underline-offset-2">
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
+                    <p className="mt-1 text-[13px] text-[var(--text-secondary)]">{item.body}</p>
+                    <Link href={item.href} className="mt-2 inline-block text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2">
                       Open →
                     </Link>
                   </div>
@@ -485,42 +492,42 @@ export default function AppActivityPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <div className="flex items-center gap-2">
-              <Video className="h-4 w-4 text-white/30" />
-              <p className="text-sm font-semibold text-white">See it handled live</p>
+              <Video className="h-4 w-4 text-[var(--text-tertiary)]" />
+              <p className="text-sm font-semibold text-[var(--text-primary)]">See it handled live</p>
             </div>
-            <div className="mt-3 rounded-2xl border border-white/[0.06] bg-[#0f1623] p-4">
-              <p className="text-[13px] text-white/40">
+            <div className="mt-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-4">
+              <p className="text-[13px] text-[var(--text-secondary)]">
                 Watch the sample call walkthrough to hear how a real lead is answered, qualified, and booked before you connect your line.
               </p>
               <Link
                 href="/"
-                className="mt-3 inline-flex items-center justify-center rounded-xl border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-200 hover:border-zinc-500"
+                className="mt-3 inline-flex items-center justify-center rounded-lg border border-[var(--border-medium)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors"
               >
                 Try our agent →
               </Link>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
-            <p className="text-sm font-semibold text-white">Estimated ROI</p>
-            <p className="mt-1 text-[13px] text-white/40">
-              Businesses at your stage typically recover <span className="font-medium text-white/80">$2,400+</span> a month once every missed call turns into a captured lead.
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">Estimated ROI</p>
+            <p className="mt-1 text-[13px] text-[var(--text-secondary)]">
+              Businesses at your stage typically recover <span className="font-medium text-[var(--text-primary)]">$2,400+</span> a month once every missed call turns into a captured lead.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
-            <p className="text-sm font-semibold text-white">Recent system events</p>
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">Recent system events</p>
             {systemEvents.length === 0 ? (
-              <p className="text-xs text-zinc-500 mt-2">Your setup events will appear here.</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-2">Your setup events will appear here.</p>
             ) : (
               <ul className="mt-3 space-y-3">
                 {systemEvents.map((event) => (
-                  <li key={event.id} className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3">
-                    <p className="text-xs font-medium text-white">{event.title}</p>
-                    <p className="text-xs text-zinc-500 mt-1">{event.body}</p>
-                    <Link href={event.href} className="inline-block mt-2 text-[11px] text-zinc-300 underline underline-offset-2">
+                  <li key={event.id} className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-3">
+                    <p className="text-xs font-medium text-[var(--text-primary)]">{event.title}</p>
+                    <p className="text-xs text-[var(--text-tertiary)] mt-1">{event.body}</p>
+                    <Link href={event.href} className="inline-block mt-2 text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2">
                       View →
                     </Link>
                   </li>
@@ -529,14 +536,14 @@ export default function AppActivityPage() {
             )}
           </div>
 
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center justify-between gap-4">
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-white">Want to see your AI in action?</p>
-              <p className="text-xs text-zinc-500 mt-1">Use the Test tab on Agents to place a real voice call with your configured agent.</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">Want to see your AI in action?</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">Use the Test tab on Agents to place a real voice call with your configured agent.</p>
             </div>
             <Link
               href="/app/agents?tab=test"
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-gray-900 text-xs font-semibold hover:bg-gray-100 transition-colors"
             >
               Try a test call →
             </Link>
@@ -551,20 +558,20 @@ export default function AppActivityPage() {
               tabIndex={0}
               onClick={() => setSelectedCard(card)}
               onKeyDown={(e) => e.key === "Enter" && setSelectedCard(card)}
-              className="rounded-xl border-l-4 overflow-hidden bg-zinc-900/50 border-zinc-800 cursor-pointer hover:bg-zinc-800/50 transition-colors"
+              className="rounded-xl border-l-4 overflow-hidden bg-[var(--bg-card)] border border-[var(--border-default)] cursor-pointer hover:bg-[var(--bg-hover)] transition-colors"
               style={{ borderLeftColor: TYPE_COLORS[card.type] }}
             >
               <div className="p-4">
                 <div className="flex justify-between items-start gap-2">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-white truncate">
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                       {card.name}
                     </p>
-                    <p className="text-[11px] text-zinc-500 mt-0.5">
+                    <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">
                       {card.duration !== "—" ? `${card.time} · ${card.duration}` : card.time}
                     </p>
                   </div>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-300">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-[var(--text-secondary)]">
                     {card.type === "lead"
                       ? "Lead"
                       : card.type === "appointment"
@@ -574,11 +581,11 @@ export default function AppActivityPage() {
                           : "Follow-up"}
                   </span>
                 </div>
-                <p className="text-xs text-zinc-400 mt-2 line-clamp-2">
+                <p className="text-xs text-[var(--text-secondary)] mt-2 line-clamp-2">
                   {card.summary}
                 </p>
                 {card.score != null && (
-                  <p className="text-[11px] text-zinc-500 mt-1">
+                  <p className="text-[11px] text-[var(--text-tertiary)] mt-1">
                     Score {card.score}
                   </p>
                 )}
@@ -594,7 +601,7 @@ export default function AppActivityPage() {
                         onEnd: () => setPlayingId(null),
                       });
                     }}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 px-3 py-1.5 text-[11px] text-zinc-200 hover:border-zinc-500"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border-medium)] px-3 py-1.5 text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-strong)]"
                   >
                     {playingId === card.id ? (
                       <Waveform isPlaying />
@@ -605,7 +612,7 @@ export default function AppActivityPage() {
                   </button>
                   <Link
                     href={`/app/calls/${card.id}`}
-                    className="text-[11px] text-zinc-400 hover:text-zinc-200 underline"
+                    className="text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline"
                     onClick={(e) => e.stopPropagation()}
                   >
                     View call →
@@ -625,24 +632,24 @@ export default function AppActivityPage() {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             aria-label="Close details"
           />
-          <div className="absolute inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[360px] bg-black border-t md:border-t-0 md:border-l border-zinc-800 rounded-t-2xl md:rounded-none shadow-2xl">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+          <div className="absolute inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[360px] bg-[var(--bg-card-elevated)] border-t md:border-t-0 md:border-l border-[var(--border-default)] rounded-t-2xl md:rounded-none shadow-2xl">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-default)]">
               <div>
-                <p className="text-xs text-zinc-500">Call</p>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-xs text-[var(--text-tertiary)]">Call</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">
                   {selectedCard.name}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedCard(null)}
-                className="text-zinc-500 hover:text-white text-sm"
+                className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-sm"
               >
                 ✕
               </button>
             </div>
-            <div className="p-4 space-y-2 text-sm text-zinc-200">
-              <p className="text-xs text-zinc-500">
+            <div className="p-4 space-y-2 text-sm text-[var(--text-secondary)]">
+              <p className="text-xs text-[var(--text-tertiary)]">
                 {selectedCard.time} · {selectedCard.duration}
               </p>
               <p>{selectedCard.summary}</p>

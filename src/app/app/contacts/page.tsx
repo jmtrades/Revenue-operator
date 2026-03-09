@@ -254,7 +254,7 @@ export default function AppContactsPage() {
             placeholder="Search by name, phone, or email…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -262,7 +262,7 @@ export default function AppContactsPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortId)}
-            className="px-3 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 focus:outline-none"
+            className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 focus:outline-none"
           >
             <option value="newest">Newest</option>
             <option value="score">Score</option>
@@ -278,7 +278,7 @@ export default function AppContactsPage() {
             type="button"
             onClick={() => setTab(t)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize ${
-              tab === t ? "bg-zinc-800 text-white" : "bg-zinc-900 border border-zinc-800 text-zinc-400"
+              tab === t ? "bg-zinc-800 text-white" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-400"
             }`}
           >
             {t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -298,7 +298,7 @@ export default function AppContactsPage() {
       </button>
 
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 py-12 px-6 text-center">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] py-12 px-6 text-center">
           <p className="text-sm text-zinc-400 mb-2">No contacts yet.</p>
           <p className="text-xs text-zinc-500">
             Your AI adds contacts from every call. Manual contacts appear here too.
@@ -314,9 +314,9 @@ export default function AppContactsPage() {
                   <button
                     type="button"
                     onClick={() => setSelectedId(c.id)}
-                    className={`w-full text-left flex items-center gap-4 p-4 rounded-2xl border bg-zinc-900/50 ${
+                    className={`w-full text-left flex items-center gap-4 p-4 rounded-2xl border bg-[var(--bg-card)] ${
                       typeStyles(c.type)
-                    } border-zinc-800 hover:bg-zinc-900 transition-colors ${selectedId === c.id ? "ring-1 ring-zinc-600" : ""}`}
+                    } border-[var(--border-default)] hover:bg-[var(--bg-input)] transition-colors ${selectedId === c.id ? "ring-1 ring-[var(--border-medium)]" : ""}`}
                   >
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-white shrink-0 ${avatarColorFromName(
@@ -345,7 +345,7 @@ export default function AppContactsPage() {
                       </p>
                     </div>
                     {typeof c.score === "number" && (
-                      <div className="w-12 h-12 rounded-full border border-zinc-700 flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0">
+                      <div className="w-12 h-12 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0">
                         {c.score}
                       </div>
                     )}
@@ -359,7 +359,7 @@ export default function AppContactsPage() {
             {selected ? (
               <ContactDetail contact={selected} />
             ) : (
-              <div className="rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 p-6 text-sm text-zinc-500">
+              <div className="rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-input)]/40 p-6 text-sm text-zinc-500">
                 Select a contact to see call history and notes.
               </div>
             )}
@@ -374,7 +374,7 @@ export default function AppContactsPage() {
       </p>
 
       {toast && (
-        <div className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 shadow-lg">
+        <div className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-zinc-100 shadow-lg">
           {toast}
         </div>
       )}
@@ -387,7 +387,7 @@ export default function AppContactsPage() {
           onClick={() => setShowAdd(false)}
         >
           <div
-            className="w-full max-w-xs sm:max-w-sm h-full bg-black border-l border-zinc-800 p-5 flex flex-col"
+            className="w-full max-w-xs sm:max-w-sm h-full bg-black border-l border-[var(--border-default)] p-5 flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -412,11 +412,11 @@ export default function AppContactsPage() {
                     type="text"
                     value={formFirstName}
                     onChange={(e) => setFormFirstName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder="Mike"
                   />
                   {formErrors.firstName && (
-                    <p className="mt-1 text-[11px] text-red-500">{formErrors.firstName}</p>
+                    <p className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">{formErrors.firstName}</p>
                   )}
                 </div>
                 <div className="flex-1">
@@ -425,11 +425,11 @@ export default function AppContactsPage() {
                     type="text"
                     value={formLastName}
                     onChange={(e) => setFormLastName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder="Johnson"
                   />
                   {formErrors.lastName && (
-                    <p className="mt-1 text-[11px] text-red-500">{formErrors.lastName}</p>
+                    <p className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">{formErrors.lastName}</p>
                   )}
                 </div>
               </div>
@@ -439,11 +439,11 @@ export default function AppContactsPage() {
                   type="tel"
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder="(503) 555-0199"
                 />
                 {formErrors.phone && (
-                  <p className="mt-1 text-[11px] text-red-500">{formErrors.phone}</p>
+                  <p className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">{formErrors.phone}</p>
                 )}
               </div>
               <div>
@@ -452,7 +452,7 @@ export default function AppContactsPage() {
                   type="email"
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder="name@email.com"
                 />
               </div>
@@ -461,7 +461,7 @@ export default function AppContactsPage() {
                 <select
                   value={formType}
                   onChange={(e) => setFormType(e.target.value as ContactType)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-zinc-200 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-zinc-200 focus:outline-none"
                 >
                   <option value="lead">Lead</option>
                   <option value="customer">Customer</option>
@@ -481,13 +481,13 @@ export default function AppContactsPage() {
                         handleAddTag();
                       }
                     }}
-                    className="flex-1 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                    className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder="Type and press Enter"
                   />
                   <button
                     type="button"
                     onClick={handleAddTag}
-                    className="px-3 py-2 rounded-xl border border-zinc-700 text-xs text-zinc-300 hover:border-zinc-500"
+                    className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)]"
                   >
                     Add
                   </button>
@@ -513,16 +513,16 @@ export default function AppContactsPage() {
                   rows={3}
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none resize-none"
                   placeholder="What matters for this contact…"
                 />
               </div>
             </div>
-            <div className="pt-4 mt-2 border-t border-zinc-800 flex items-center justify-between gap-3">
+            <div className="pt-4 mt-2 border-t border-[var(--border-default)] flex items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setShowAdd(false)}
-                className="px-4 py-2 rounded-xl border border-zinc-700 text-sm text-zinc-300 hover:border-zinc-500"
+                className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm text-zinc-300 hover:border-[var(--border-medium)]"
               >
                 Cancel
               </button>
@@ -546,7 +546,7 @@ export default function AppContactsPage() {
           onClick={() => setSelectedId(null)}
         >
           <div
-            className="w-full max-w-sm h-full bg-black border-l border-zinc-800 p-5 overflow-y-auto"
+            className="w-full max-w-sm h-full bg-black border-l border-[var(--border-default)] p-5 overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <ContactDetail contact={selected} />
@@ -560,14 +560,14 @@ export default function AppContactsPage() {
 function ContactDetail({ contact }: { contact: Contact }) {
   const fullName = `${contact.firstName} ${contact.lastName}`;
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 text-sm text-zinc-200">
+    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/60 p-5 text-sm text-zinc-200">
       <div className="flex items-start justify-between gap-3 mb-4">
         <div>
           <h2 className="text-sm font-semibold text-white">{fullName}</h2>
           <p className="text-xs text-zinc-500 mt-0.5">{typeLabel(contact.type)}</p>
         </div>
         {typeof contact.score === "number" && (
-          <div className="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center text-xs font-semibold text-zinc-200">
+          <div className="w-10 h-10 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-zinc-200">
             {contact.score}
           </div>
         )}
@@ -577,14 +577,14 @@ function ContactDetail({ contact }: { contact: Contact }) {
         <div className="flex flex-wrap gap-2 text-xs">
           <a
             href={`tel:${encodeURIComponent(contact.phone)}`}
-            className="px-2 py-1 rounded-lg border border-zinc-700 text-zinc-200 hover:border-zinc-500"
+            className="px-2 py-1 rounded-lg border border-[var(--border-medium)] text-zinc-200 hover:border-[var(--border-medium)]"
           >
             Call {contact.phone}
           </a>
           {contact.email && (
             <a
               href={`mailto:${encodeURIComponent(contact.email)}`}
-              className="px-2 py-1 rounded-lg border border-zinc-700 text-zinc-200 hover:border-zinc-500"
+              className="px-2 py-1 rounded-lg border border-[var(--border-medium)] text-zinc-200 hover:border-[var(--border-medium)]"
             >
               Email
             </a>

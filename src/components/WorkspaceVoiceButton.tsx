@@ -141,7 +141,7 @@ export function WorkspaceVoiceButton({
   if (!config?.publicKey || !config?.assistantId) {
     if (!showUnavailable) return null;
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
         <p className="text-sm font-medium text-white">{title}</p>
         <p className="mt-1 text-xs text-zinc-500">Voice testing will appear here once voice is configured for this workspace.</p>
       </div>
@@ -149,7 +149,7 @@ export function WorkspaceVoiceButton({
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
       <p className="text-sm font-medium text-white">{title}</p>
       <p className="mt-1 text-xs text-zinc-500">
         {description}
@@ -188,7 +188,7 @@ export function WorkspaceVoiceButton({
           </button>
         )}
       </div>
-      <div className="mt-4 rounded-2xl border border-zinc-800 bg-black/20 p-3">
+      <div className="mt-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)] p-3">
         <p className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">Live transcript</p>
         <div className="mt-3 space-y-2">
           {transcript.length === 0 ? (

@@ -118,17 +118,17 @@ function KnowledgeModal({
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="bg-zinc-900 border border-zinc-800 w-full max-w-2xl h-[90vh] md:h-auto md:max-h-[85vh] overflow-hidden flex flex-col md:rounded-2xl rounded-t-2xl border-0 border-t border-zinc-800 md:border"
+        className="bg-[var(--bg-card)] border border-[var(--border-default)] w-full max-w-2xl h-[90vh] md:h-auto md:max-h-[85vh] overflow-hidden flex flex-col md:rounded-2xl rounded-t-2xl border-0 border-t border-[var(--border-default)] md:border"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
           <h2 className="text-lg font-semibold text-white">
             {isNew ? "Add entry" : "Edit entry"}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800"
+            className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[var(--bg-input)]"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -142,7 +142,7 @@ function KnowledgeModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Entry title"
-              className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none text-sm"
+              className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
             />
           </div>
           <div>
@@ -150,7 +150,7 @@ function KnowledgeModal({
             <select
               value={type}
               onChange={(e) => setType(e.target.value as KnowledgeType)}
-              className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white focus:border-zinc-600 focus:outline-none text-sm"
+              className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white focus:border-[var(--border-medium)] focus:outline-none text-sm"
             >
               {TYPE_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -167,7 +167,7 @@ function KnowledgeModal({
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder="e.g. What are your hours?"
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
                 />
               </div>
               <div>
@@ -177,7 +177,7 @@ function KnowledgeModal({
                   onChange={(e) => setContent(e.target.value)}
                   rows={4}
                   placeholder="Answer text…"
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none text-sm resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm resize-none"
                 />
               </div>
             </>
@@ -187,7 +187,7 @@ function KnowledgeModal({
             <div>
               <label className="block text-xs font-medium text-zinc-400 mb-1.5">Upload file</label>
               <div
-                className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center hover:border-zinc-600 transition-colors"
+                className="border-2 border-dashed border-[var(--border-medium)] rounded-xl p-8 text-center hover:border-[var(--border-medium)] transition-colors"
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                   e.preventDefault();
@@ -226,7 +226,7 @@ function KnowledgeModal({
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://..."
-                  className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
                 />
               </div>
               <div>
@@ -234,7 +234,7 @@ function KnowledgeModal({
                   type="button"
                   onClick={handleMockFetch}
                   disabled={websiteFetchState === "fetching"}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-800 border border-zinc-700 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
                 >
                   <ExternalLink className="w-4 h-4" />
                   {websiteFetchState === "idle" && "Fetch"}
@@ -253,7 +253,7 @@ function KnowledgeModal({
                 onChange={(e) => setContent(e.target.value)}
                 rows={8}
                 placeholder="Freeform text…"
-                className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none text-sm resize-none"
+                className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm resize-none"
               />
             </div>
           )}
@@ -269,7 +269,7 @@ function KnowledgeModal({
                   className={`px-4 py-2 rounded-xl text-sm font-medium border transition-colors ${
                     status === s
                       ? "bg-white text-black border-white"
-                      : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:border-zinc-600"
+                      : "bg-[var(--bg-input)] border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
                   }`}
                 >
                   {s}
@@ -278,11 +278,11 @@ function KnowledgeModal({
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-end gap-2 p-4 border-t border-zinc-800">
+        <div className="flex items-center justify-end gap-2 p-4 border-t border-[var(--border-default)]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-300 border border-zinc-700 hover:bg-zinc-800"
+            className="px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-300 border border-[var(--border-medium)] hover:bg-[var(--bg-input)]"
           >
             Cancel
           </button>
@@ -427,13 +427,13 @@ export default function KnowledgePage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search entries…"
-                className="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none text-sm"
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
               />
             </div>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as KnowledgeType | "all")}
-              className="px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm focus:border-zinc-600 focus:outline-none"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-zinc-300 text-sm focus:border-[var(--border-medium)] focus:outline-none"
             >
               <option value="all">All types</option>
               {TYPE_OPTIONS.map((o) => (
@@ -443,7 +443,7 @@ export default function KnowledgePage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as KnowledgeStatus | "all")}
-              className="px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm focus:border-zinc-600 focus:outline-none"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-zinc-300 text-sm focus:border-[var(--border-medium)] focus:outline-none"
             >
               <option value="all">All statuses</option>
               {STATUS_OPTIONS.map((o) => (
@@ -465,7 +465,7 @@ export default function KnowledgePage() {
           {/* Card grid */}
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.length === 0 ? (
-              <div className="col-span-full py-12 text-center rounded-xl bg-zinc-900/30 border border-zinc-800">
+              <div className="col-span-full py-12 text-center rounded-xl bg-[var(--bg-card)]/30 border border-[var(--border-default)]">
                 <BookOpen className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
                 <p className="text-sm font-medium text-white mb-1">No entries found</p>
                 <p className="text-xs text-zinc-500 mb-4">Try adjusting your filters.</p>
@@ -484,11 +484,11 @@ export default function KnowledgePage() {
                   key={entry.id}
                   type="button"
                   onClick={() => openEditModal(entry)}
-                  className="text-left p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+                  className="text-left p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] hover:border-[var(--border-medium)] transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="font-medium text-white truncate flex-1">{entry.title}</h3>
-                    <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-zinc-800 text-zinc-400">
+                    <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-[var(--bg-input)] text-zinc-400">
                       <TypeIcon className="w-3 h-3" />
                       {entry.type}
                     </span>
@@ -552,7 +552,7 @@ export default function KnowledgePage() {
             </div>
 
             {/* Most Referenced */}
-            <div className="rounded-xl bg-zinc-900/50 border border-zinc-800 p-4">
+            <div className="rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] p-4">
               <h3 className="text-sm font-semibold text-white mb-3">Most Referenced</h3>
               <p className="text-xs text-zinc-500 mb-3">Top 5 entries used by your agent in calls.</p>
               <div className="space-y-3">
@@ -562,7 +562,7 @@ export default function KnowledgePage() {
                       <span className="text-xs text-zinc-300 truncate">{entry.title}</span>
                       <span className="text-[10px] text-zinc-500">{entry.usageCount}×</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                    <div className="h-1.5 rounded-full bg-[var(--bg-input)] overflow-hidden">
                       <div
                         className="h-full rounded-full bg-emerald-500/60"
                         style={{ width: `${(entry.usageCount / maxUsage) * 100}%` }}

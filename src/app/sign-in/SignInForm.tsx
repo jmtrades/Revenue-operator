@@ -69,24 +69,24 @@ export default function SignInForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080d19] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
       <div className="w-full max-w-[420px] space-y-5">
-        <div className="bg-gradient-to-b from-[#111827] to-[#0f1623] border border-white/[0.08] rounded-2xl p-8 shadow-2xl shadow-black/40">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-8 shadow-2xl shadow-black/40">
           <div className="flex justify-center mb-5">
-            <div className="w-11 h-11 rounded-full bg-white text-[#080d19] flex items-center justify-center font-bold text-sm tracking-tight">
+            <div className="w-11 h-11 rounded-full bg-white text-gray-900 flex items-center justify-center font-bold text-sm tracking-tight">
               RT
             </div>
           </div>
-          <h1 className="text-[22px] font-semibold text-white text-center tracking-tight">
+          <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center tracking-tight">
             {isCreate ? "Create your account" : "Sign in"}
           </h1>
-          <p className="text-white/40 text-[13px] text-center mt-1 mb-7">
+          <p className="text-[var(--text-secondary)] text-[13px] text-center mt-1 mb-7">
             {isCreate ? "Start your 14-day free trial" : "Welcome back to Recall Touch"}
           </p>
 
           <form onSubmit={submit} className="space-y-3.5">
             <div>
-              <label className="block text-[13px] font-medium text-white/50 mb-1.5">Email</label>
+              <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">Email</label>
               <input
                 type="email"
                 required
@@ -94,11 +94,11 @@ export default function SignInForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 autoComplete="email"
-                className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-[15px] text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20 transition-all"
+                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]/30 focus:border-[var(--border-focus)] transition-all"
               />
             </div>
             <div>
-              <label className="block text-[13px] font-medium text-white/50 mb-1.5">
+              <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">
                 Password{isCreate ? " (min 6 characters)" : ""}
               </label>
               <div className="relative">
@@ -110,12 +110,12 @@ export default function SignInForm() {
                   onChange={(e) => setPw(e.target.value)}
                   placeholder={isCreate ? "Create a password" : "Enter password"}
                   autoComplete={isCreate ? "new-password" : "current-password"}
-                  className="w-full px-3.5 py-2.5 pr-16 bg-white/[0.04] border border-white/[0.08] rounded-xl text-[15px] text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20 transition-all"
+                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]/30 focus:border-[var(--border-focus)] transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/50 text-[13px] font-medium transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] text-[13px] font-medium transition"
                 >
                   {showPw ? "Hide" : "Show"}
                 </button>
@@ -123,27 +123,27 @@ export default function SignInForm() {
             </div>
             {isCreate && (
               <div>
-                <label className="block text-[13px] font-medium text-white/50 mb-1.5">
-                  Business name <span className="text-white/25">(optional)</span>
+                <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">
+                  Business name <span className="text-[var(--text-tertiary)]">(optional)</span>
                 </label>
                 <input
                   type="text"
                   value={biz}
                   onChange={(e) => setBiz(e.target.value)}
                   placeholder="Acme Co"
-                  className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-[15px] text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20 transition-all"
+                  className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]/30 focus:border-[var(--border-focus)] transition-all"
                 />
               </div>
             )}
             {(err || oauthErrorMessage) && (
               <div className="space-y-2">
-                <div className="px-3.5 py-2.5 bg-red-500/[0.08] border border-red-500/20 rounded-xl text-red-400 text-[13px]">
+                <div className="px-3.5 py-2.5 bg-[var(--accent-red)]/10 border border-[var(--accent-red)]/20 rounded-xl text-[var(--accent-red)] text-[13px]">
                   {err || oauthErrorMessage}
                 </div>
                 {!isCreate && (
-                  <p className="text-[13px] text-white/50">
+                  <p className="text-[13px] text-[var(--text-secondary)]">
                     No account?{" "}
-                    <Link href="/sign-in?create=1" className="text-white font-medium hover:underline">
+                    <Link href="/sign-in?create=1" className="text-[var(--text-primary)] font-medium hover:underline">
                       Start free →
                     </Link>
                   </p>
@@ -153,7 +153,7 @@ export default function SignInForm() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full py-2.5 bg-white text-[#080d19] font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080d19]"
+              className="w-full py-2.5 bg-white text-gray-900 font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             >
               {busy
                 ? isCreate
@@ -166,16 +166,16 @@ export default function SignInForm() {
           </form>
 
           <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-white/[0.06]" />
-            <span className="text-white/20 text-[11px] font-medium uppercase tracking-wider">or</span>
-            <div className="flex-1 h-px bg-white/[0.06]" />
+            <div className="flex-1 h-px bg-[var(--border-default)]" />
+            <span className="text-[var(--text-tertiary)] text-[11px] font-medium uppercase tracking-wider">or</span>
+            <div className="flex-1 h-px bg-[var(--border-default)]" />
           </div>
 
           <button
             type="button"
             onClick={google}
             disabled={googleBusy}
-            className="w-full py-2.5 bg-white/[0.03] border border-white/[0.08] text-white/80 font-medium text-[14px] rounded-xl hover:bg-white/[0.06] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080d19]"
+            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl hover:bg-[var(--bg-hover)] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -199,26 +199,26 @@ export default function SignInForm() {
           </button>
 
           {!isCreate && (
-            <p className="text-center text-white/25 text-[13px] mt-4">
-              <Link href="/forgot-password" className="hover:text-white/40 transition">
+            <p className="text-center text-[var(--text-tertiary)] text-[13px] mt-4">
+              <Link href="/forgot-password" className="hover:text-[var(--text-secondary)] transition">
                 Forgot password?
               </Link>
             </p>
           )}
         </div>
 
-        <p className="text-center text-white/30 text-[13px]">
+        <p className="text-center text-[var(--text-secondary)] text-[13px]">
           {isCreate ? (
             <>
               Already have an account?{" "}
-              <Link href="/sign-in" className="text-white/60 hover:text-white transition">
+              <Link href="/sign-in" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
                 Sign in
               </Link>
             </>
           ) : (
             <>
               New to Recall Touch?{" "}
-              <Link href="/activate" className="text-white/60 hover:text-white transition">
+              <Link href="/activate" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
                 Create free account →
               </Link>
             </>

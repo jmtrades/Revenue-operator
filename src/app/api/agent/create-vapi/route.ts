@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
       source: "agent",
     });
   } catch (error) {
+    console.error("[create-vapi] sync failed", error);
     try {
       const fallback = await fetch(new URL("/api/vapi/create-agent", req.url), {
         method: "POST",

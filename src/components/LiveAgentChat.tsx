@@ -177,7 +177,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
   const SUGGESTIONS = ["I'd like to schedule an appointment", "Can someone call me back about pricing?", "What services do you offer?"];
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
       <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-zinc-800 bg-zinc-950/40">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-xs font-medium text-zinc-500 shrink-0">Recall Touch</span>

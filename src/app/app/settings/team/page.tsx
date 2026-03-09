@@ -26,7 +26,7 @@ export default function AppSettingsTeamPage() {
 
       <div className="space-y-2 mb-6">
         {DEMO_MEMBERS.map((m) => (
-          <div key={m.email} className="flex items-center justify-between p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50">
+          <div key={m.email} className="flex items-center justify-between p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
             <div>
               <p className="text-sm font-medium text-white">{m.name}</p>
               <p className="text-xs text-zinc-500">{m.email}</p>
@@ -39,7 +39,7 @@ export default function AppSettingsTeamPage() {
         ))}
       </div>
 
-      <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 mb-6">
+      <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
         <p className="text-sm font-medium text-white mb-3">Invite a team member</p>
         <div className="flex gap-2">
           <input
@@ -47,10 +47,10 @@ export default function AppSettingsTeamPage() {
             value={inviteEmail}
             onChange={(e) => setInviteEmail(e.target.value)}
             placeholder="colleague@business.com"
-            className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
             onKeyDown={(e) => e.key === "Enter" && handleInvite()}
           />
-          <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="px-3 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 focus:outline-none">
+          <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 focus:outline-none">
             <option value="admin">Admin</option>
             <option value="manager">Manager</option>
             <option value="viewer">Viewer</option>
@@ -61,7 +61,7 @@ export default function AppSettingsTeamPage() {
         </button>
       </div>
 
-      <div className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50">
+      <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
         <p className="text-sm font-medium text-white mb-2">Escalation order</p>
         <p className="text-xs text-zinc-500">When your AI needs a human, it contacts team members in this order. Drag to reorder.</p>
         <div className="mt-3 space-y-1.5">
@@ -72,7 +72,7 @@ export default function AppSettingsTeamPage() {
       </div>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 shadow-lg text-sm text-zinc-200">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
       )}
 
       <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
