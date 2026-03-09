@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   Bell,
   Building2,
@@ -30,8 +31,11 @@ const SETTINGS_LINKS = [
   { href: "/app/developer", label: "Developer", desc: "API keys, webhooks, documentation", icon: Code },
 ];
 
+type ConfirmType = "data" | "account" | null;
+
 export default function AppSettingsPage() {
   const [signingOut, setSigningOut] = useState(false);
+  const [confirm, setConfirm] = useState<ConfirmType>(null);
 
   const handleSignOut = async () => {
     if (signingOut) return;
@@ -77,22 +81,14 @@ export default function AppSettingsPage() {
           </Link>
           <button
             type="button"
-            onClick={() => {
-              if (typeof window !== "undefined" && window.confirm("Delete all workspace data (calls, leads, agents)? This cannot be undone. Contact support to complete.")) {
-                toast.info("Contact support to permanently delete your data.");
-              }
-            }}
+            onClick={() => setConfirm("data")}
             className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded text-left"
           >
             Delete all data
           </button>
           <button
             type="button"
-            onClick={() => {
-              if (typeof window !== "undefined" && window.confirm("Permanently delete your account and all associated data? This cannot be undone. Contact support to complete.")) {
-                toast.info("Contact support to permanently delete your account.");
-              }
-            }}
+            onClick={() => setConfirm("account")}
             className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded text-left"
           >
             Delete account
@@ -110,6 +106,28 @@ export default function AppSettingsPage() {
       <p className="mt-6">
         <Link href="/app/activity" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">← Dashboard</Link>
       </p>
+      {confirm === "data" && (
+        <ConfirmDialog
+          open
+          title="Delete all data"
+          message="Delete all workspace data (calls, leads, agents)? This cannot be undone. Contact support to complete."
+          confirmLabel="Delete all data"
+          variant="danger"
+          onConfirm={() => toast.info("Contact support to permanently delete your data.")}
+          onClose={() => setConfirm(null)}
+        />
+      )}
+      {confirm === "account" && (
+        <ConfirmDialog
+          open
+          title="Delete account"
+          message="Permanently delete your account and all associated data? This cannot be undone. Contact support to complete."
+          confirmLabel="Delete account"
+          variant="danger"
+          onConfirm={() => toast.info("Contact support to permanently delete your account.")}
+          onClose={() => setConfirm(null)}
+        />
+      )}
     </div>
   );
 }
