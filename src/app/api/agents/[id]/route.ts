@@ -28,7 +28,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const allowed = ["name", "voice_id", "personality", "purpose", "greeting", "knowledge_base", "rules", "is_active"];
+  const allowed = ["name", "voice_id", "personality", "purpose", "greeting", "knowledge_base", "rules", "is_active", "tested_at"];
   const validPersonality = ["friendly", "professional", "casual", "empathetic"] as const;
   const validPurpose = ["inbound", "outbound", "both"] as const;
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -36,9 +36,18 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     if (body[k] === undefined) continue;
     if (k === "personality" && typeof body[k] === "string" && !validPersonality.includes(body[k] as (typeof validPersonality)[number])) continue;
     if (k === "purpose" && typeof body[k] === "string" && !validPurpose.includes(body[k] as (typeof validPurpose)[number])) continue;
-    if (k === "name" && typeof body[k] === "string") updates[k] = body[k].trim().slice(0, 500) || "Receptionist";
-    else if (k === "greeting" && typeof body[k] === "string") updates[k] = body[k].trim().slice(0, 2000);
-    else updates[k] = body[k];
+    if (k === "name" && typeof body[k] === "string") {
+      updates[k] = body[k].trim().slice(0, 500) || "Receptionist";
+    } else if (k === "greeting" && typeof body[k] === "string") {
+      updates[k] = body[k].trim().slice(0, 2000);
+    } else if (k === "tested_at") {
+      if (typeof body[k] === "string" && body[k]) {
+        // Rely on Postgres to validate timestamp format; just trim.
+        updates[k] = (body[k] as string).trim();
+      }
+    } else {
+      updates[k] = body[k];
+    }
   }
   const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

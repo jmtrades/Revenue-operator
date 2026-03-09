@@ -6,6 +6,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { hasVapiServerKey } from "@/lib/vapi/env";
+import { syncVapiAgent } from "@/lib/agents/sync-vapi-agent";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +25,49 @@ export async function GET(req: NextRequest) {
           .select("vapi_assistant_id")
           .eq("id", session.workspaceId)
           .maybeSingle();
-        const id = (data as { vapi_assistant_id?: string | null } | null)?.vapi_assistant_id?.trim() ?? null;
-        if (id) assistantId = id;
+        const id =
+          (data as { vapi_assistant_id?: string | null } | null)?.vapi_assistant_id?.trim() ??
+          null;
+        if (id) {
+          assistantId = id;
+        } else if (hasVapiServerKey()) {
+          // Try to reuse or provision a workspace assistant from existing agents
+          const { data: agents } = await db
+            .from("agents")
+            .select("id, vapi_agent_id, is_active")
+            .eq("workspace_id", session.workspaceId)
+            .order("created_at", { ascending: true });
+          const list =
+            (agents as Array<{
+              id: string;
+              vapi_agent_id?: string | null;
+              is_active?: boolean | null;
+            }>) ?? [];
+
+          // Prefer an already-synced voice agent
+          const existing = list.find(
+            (a) => (a.vapi_agent_id ?? "").toString().trim().length > 0,
+          );
+          if (existing) {
+            assistantId = existing.vapi_agent_id!.toString().trim();
+            // Keep workspace in sync for future fast lookups
+            await db
+              .from("workspaces")
+              .update({
+                vapi_assistant_id: assistantId,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", session.workspaceId);
+          } else if (list[0]) {
+            // No assistant yet — provision one from the first agent
+            try {
+              const result = await syncVapiAgent(db, list[0].id);
+              assistantId = result.assistantId;
+            } catch {
+              // Demo widget will gracefully fall back if this fails
+            }
+          }
+        }
       } catch {
         // ignore
       }
