@@ -209,7 +209,7 @@ function getAgentReadiness(agent: Agent): AgentReadiness {
   const snapshot = getWorkspaceMeSnapshotSync() as { name?: string; progress?: { items?: Array<{ key: string; completed?: boolean }> } } | null;
   const phoneConnected = snapshot?.progress?.items?.find((i) => i.key === "phone")?.completed ?? false;
   const workspace = { name: snapshot?.name ?? null, phoneConnected };
-  const { percentage, items, nextAction } = calculateReadiness(workspace, agentToReadinessAgent(agent));
+  const { percentage, items } = calculateReadiness(workspace, agentToReadinessAgent(agent));
   const percent = percentage;
   const tasks: ReadinessTask[] = items.map((item) => ({
     label: item.label,
@@ -1223,7 +1223,7 @@ export default function AppAgentsPageClient({
                       value={activeStep}
                       onChange={(e) => void handleStepChange(e.target.value as StepId)}
                       aria-label="Jump to setup step"
-                      className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50"
+                      className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
                     >
                       {SETUP_STEPS.map((step, i) => (
                         <option key={step.id} value={step.id}>
@@ -1243,7 +1243,7 @@ export default function AppAgentsPageClient({
                         onClick={() => void handleStepChange(step.id)}
                         aria-label={`${step.label}: ${step.description}${complete ? ", completed" : ""}${active ? ", current step" : ""}`}
                         aria-current={active ? "step" : undefined}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                           active ? "bg-[var(--bg-hover)] border border-[var(--border-medium)]" : "hover:bg-[var(--bg-card)] border border-transparent"
                         }`}
                       >
@@ -1267,8 +1267,8 @@ export default function AppAgentsPageClient({
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  <button type="button" onClick={handleDelete} aria-label="Delete this agent" className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Delete</button>
-                  <button type="button" onClick={handleSave} disabled={saving} aria-label={saving ? "Saving agent" : "Save agent and sync to voice"} className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+                  <button type="button" onClick={handleDelete} aria-label="Delete this agent" className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Delete</button>
+                  <button type="button" onClick={handleSave} disabled={saving} aria-label={saving ? "Saving agent" : "Save agent and sync to voice"} className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
                     {saving ? "Saving…" : "Save"}
                   </button>
                 </div>
@@ -1308,7 +1308,7 @@ export default function AppAgentsPageClient({
               <button
                 type="button"
                 onClick={() => setShowTemplateModal(true)}
-                className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 aria-label="Create your first agent"
               >
                 + Create Agent
@@ -1363,7 +1363,7 @@ export default function AppAgentsPageClient({
                 type="button"
                 onClick={() => setShowTemplateModal(false)}
                 aria-label="Close create agent dialog"
-                className="text-xs text-zinc-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
+                className="text-xs text-zinc-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
               >
                 Close
               </button>
@@ -1502,7 +1502,7 @@ function VoiceCard(props: {
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(); } }}
       aria-pressed={selected}
       aria-label={`${voice.name}, ${voice.description}. ${selected ? "Selected." : "Select this voice."}`}
-      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
         selected
           ? "border-2 border-white bg-[var(--bg-hover)] ring-1 ring-white/20"
           : "border border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--border-medium)]"
@@ -1515,7 +1515,7 @@ function VoiceCard(props: {
           onPreview();
         }}
         aria-label={`Preview ${voice.name} voice`}
-        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-hover)] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-hover)] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         {previewing ? (
           <Square className="h-3 w-3 fill-current text-[var(--text-secondary)]" />
@@ -1638,7 +1638,7 @@ function ProfileTab({
           type="text"
           value={agent.name}
           onChange={(e) => onChange({ name: e.target.value })}
-          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           placeholder="Receptionist"
         />
       </div>
@@ -1951,7 +1951,7 @@ function KnowledgeTab({
           value={agent.specialInstructions}
           onChange={(e) => onChange({ specialInstructions: e.target.value })}
           aria-label="Special instructions for the agent"
-          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
+          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
           placeholder="Anything the agent should always remember on calls."
         />
       </div>
@@ -2110,7 +2110,7 @@ function RulesTab({
             onChange={(e) => onChange({ transferPhone: e.target.value })}
             placeholder="+1 (555) 000-0000"
             aria-label="Transfer to phone number"
-            className="mt-1 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="mt-1 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           />
         </div>
       </div>
@@ -2129,7 +2129,7 @@ function RulesTab({
             })
           }
           aria-label="Words or phrases the agent should never say"
-          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
           placeholder="Competitor names, legal advice, pricing specifics..."
         />
       </div>
@@ -2141,7 +2141,7 @@ function RulesTab({
             type="button"
             onClick={addTransferRule}
             aria-label="Add phrase-based transfer rule"
-            className="text-[11px] text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
+            className="text-[11px] text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
           >
             + Add rule
           </button>
@@ -2360,7 +2360,7 @@ function RulesTab({
         <button
           type="button"
           onClick={() => setOpenAdvanced((s) => ({ ...s, qualification: !s.qualification }))}
-          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset"
+          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset"
           aria-expanded={openAdvanced.qualification}
         >
           Qualification framework
@@ -2412,7 +2412,7 @@ function RulesTab({
         <button
           type="button"
           onClick={() => setOpenAdvanced((s) => ({ ...s, objection: !s.objection }))}
-          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset"
+          className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset"
           aria-expanded={openAdvanced.objection}
         >
           Objection handling
@@ -2473,7 +2473,7 @@ function RulesTab({
                   const id = `obj-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
                   onChange({ objections: [...(agent.objections ?? []), { id, trigger: "", response: "" }] });
                 }}
-                className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 rounded"
+                className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
               >
                 Add objection
               </button>
@@ -2488,7 +2488,7 @@ function RulesTab({
                     }));
                     onChange({ objections: next });
                   }}
-                  className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 rounded"
+                  className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
                 >
                   Add from suggestions
                 </button>
@@ -2504,7 +2504,7 @@ function RulesTab({
           <button
             type="button"
             onClick={() => setOpenAdvanced((s) => ({ ...s, outbound: !s.outbound }))}
-            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset"
+            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset"
             aria-expanded={openAdvanced.outbound}
           >
             Outbound call settings
@@ -2588,7 +2588,7 @@ function RulesTab({
           <button
             type="button"
             onClick={() => setOpenAdvanced((s) => ({ ...s, inbound: !s.inbound }))}
-            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset"
+            className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset"
             aria-expanded={openAdvanced.inbound}
           >
             Inbound call settings
@@ -2763,7 +2763,7 @@ const TestTab = forwardRef<TestTabRef, {
             type="button"
             onClick={() => void startTestCall()}
             aria-label="Start a test call with this agent"
-            className="min-h-[44px] rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100 touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="min-h-[44px] rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100 touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             Start test call
           </button>
@@ -2836,7 +2836,7 @@ const TestTab = forwardRef<TestTabRef, {
               type="button"
               onClick={() => { setStatus("idle"); setTranscript([]); onTryAgain?.(); }}
               aria-label="Try another test call"
-              className="mt-4 text-sm text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              className="mt-4 text-sm text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               Try again
             </button>
@@ -2954,7 +2954,7 @@ function IdentityStepContent({
                 key={tpl.id}
                 type="button"
                 onClick={() => applyTemplate(tpl)}
-                className={`text-left rounded-xl border px-3 py-2.5 text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                className={`text-left rounded-xl border px-3 py-2.5 text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                   active
                     ? "border-white bg-[var(--bg-hover)] text-white"
                     : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
@@ -2982,7 +2982,7 @@ function IdentityStepContent({
           placeholder="Receptionist"
           aria-describedby={showNameError ? "agent-name-error" : "agent-name-hint"}
           aria-invalid={showNameError}
-          className={`w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black border ${showNameError ? "border-red-500/60" : "border-[var(--border-default)]"}`}
+          className={`w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black border ${showNameError ? "border-red-500/60" : "border-[var(--border-default)]"}`}
         />
         {showNameError ? (
           <p id="agent-name-error" className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">Enter an agent name.</p>
@@ -2999,7 +2999,7 @@ function IdentityStepContent({
               type="button"
               onClick={() => onChange({ purpose: p })}
               aria-pressed={purpose === p}
-              className={`rounded-xl border p-3 text-left text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+              className={`rounded-xl border p-3 text-left text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                 purpose === p
                   ? "border-white bg-[var(--bg-hover)] text-white"
                   : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
@@ -3021,7 +3021,7 @@ function IdentityStepContent({
           value={agent.primaryGoal}
           onChange={(e) => onChange({ primaryGoal: e.target.value as PrimaryGoalId })}
           aria-label="Primary goal"
-          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-2.5 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-2.5 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
         >
           <option value="answer_route">Answer questions and route callers</option>
           <option value="book_appointments">Book appointments for my business</option>
@@ -3040,7 +3040,7 @@ function IdentityStepContent({
           onChange={(e) => onChange({ businessContext: e.target.value })}
           placeholder="What you do, who you serve (so the AI can represent you accurately)"
           rows={2}
-          className="w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 border border-[var(--border-default)] resize-none"
+          className="w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 border border-[var(--border-default)] resize-none"
         />
       </div>
       <div>
@@ -3051,7 +3051,7 @@ function IdentityStepContent({
           value={agent.targetAudience}
           onChange={(e) => onChange({ targetAudience: e.target.value })}
           placeholder="e.g. homeowners needing plumbing, small business owners, patients calling a dental office"
-          className="w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 border border-[var(--border-default)]"
+          className="w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 border border-[var(--border-default)]"
         />
       </div>
       <div>
@@ -3064,7 +3064,7 @@ function IdentityStepContent({
           rows={3}
           aria-describedby={showGreetingError ? "agent-greeting-error" : "agent-greeting-hint"}
           aria-invalid={showGreetingError}
-          className={`w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none border ${showGreetingError ? "border-red-500/60" : "border-[var(--border-default)]"}`}
+          className={`w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none border ${showGreetingError ? "border-red-500/60" : "border-[var(--border-default)]"}`}
         />
         {showGreetingError ? (
           <p id="agent-greeting-error" className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">Enter an opening greeting.</p>
@@ -3076,7 +3076,7 @@ function IdentityStepContent({
         <button
           type="button"
           onClick={() => { if (canContinue) onNext(); else setTriedContinue(true); }}
-          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           aria-label="Continue to Voice"
         >
           Continue
@@ -3110,10 +3110,10 @@ function VoiceStepContent({
       <h3 className="text-sm font-semibold text-white">How should your agent sound?</h3>
       <ProfileTab agent={agent} voices={voices} workspaceName={workspaceName} onChange={onChange} onVoicePreview={onVoicePreview} previewingVoiceId={previewingVoiceId} />
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Identity" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+        <button type="button" onClick={onBack} aria-label="Back to Identity" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           Back
         </button>
-        <button type="button" onClick={onNext} aria-label="Continue to Knowledge" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+        <button type="button" onClick={onNext} aria-label="Continue to Knowledge" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           Continue
         </button>
       </div>
@@ -3156,7 +3156,7 @@ function KnowledgeStepContent({
       <h3 id="knowledge-heading" className="text-sm font-semibold text-white">What does your agent know?</h3>
       <section aria-labelledby="knowledge-quick-label" className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
         <p id="knowledge-quick-label" className="text-xs text-[var(--text-secondary)] mb-2">Quick start: Add 5 common Q&As for your business (hours, location, booking, services, pricing).</p>
-        <button type="button" onClick={seedFive} disabled={seeding} aria-busy={seeding} aria-label={seeding ? "Adding default Q&As" : "Add 5 default Q&As now"} className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+        <button type="button" onClick={seedFive} disabled={seeding} aria-busy={seeding} aria-label={seeding ? "Adding default Q&As" : "Add 5 default Q&As now"} className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           {seeding ? "Adding…" : "Add them now"}
         </button>
       </section>
@@ -3165,8 +3165,8 @@ function KnowledgeStepContent({
         <p className="text-[11px] text-amber-500/90">Add at least one Q&A for better results. You can also continue and add knowledge later.</p>
       )}
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Voice" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={onNext} aria-label="Continue to Behavior" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+        <button type="button" onClick={onBack} aria-label="Back to Voice" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Behavior" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
       </div>
     </div>
   );
@@ -3246,7 +3246,7 @@ function BehaviorStepContent({
             id="custom-never-do"
             type="text"
             placeholder="Add custom rule… (press Enter)"
-            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-xs text-white placeholder:text-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-xs text-white placeholder:text-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 const value = e.currentTarget.value.trim();
@@ -3261,8 +3261,8 @@ function BehaviorStepContent({
       </section>
       <RulesTab agent={agent} onChange={onChange} />
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={onNext} aria-label="Continue to Test" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+        <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Test" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
       </div>
     </div>
   );
@@ -3352,7 +3352,7 @@ function TestStepContent({
           </div>
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-3">
             <p className="text-sm text-[var(--text-primary)]">Ready to go live?</p>
-            <button type="button" onClick={() => { onNext(); setShowGoLiveCta(false); }} className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 rounded">
+            <button type="button" onClick={() => { onNext(); setShowGoLiveCta(false); }} className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded">
               Continue
             </button>
           </div>
@@ -3369,7 +3369,7 @@ function TestStepContent({
               onClick={() => tryScenario(s)}
               role="listitem"
               aria-label={`Try scenario: ${s.title}. ${s.description}`}
-              className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 text-left text-xs transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 text-left text-xs transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               <span className="font-medium text-[var(--text-primary)]">{s.title}</span>
               <p className="mt-0.5 text-[var(--text-secondary)]">{s.description}</p>
@@ -3379,8 +3379,8 @@ function TestStepContent({
         </div>
       </section>
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Behavior" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={onNext} aria-label="Continue to Go live" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+        <button type="button" onClick={onBack} aria-label="Back to Behavior" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onNext} aria-label="Continue to Go live" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
       </div>
     </div>
   );
@@ -3436,7 +3436,7 @@ function GoLiveStepContent({
                   type="button"
                   onClick={() => void onActivate()}
                   disabled={activating}
-                  className="text-[11px] font-medium text-[var(--text-primary)] hover:text-white underline underline-offset-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 rounded disabled:opacity-50 ml-auto"
+                  className="text-[11px] font-medium text-[var(--text-primary)] hover:text-white underline underline-offset-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded disabled:opacity-50 ml-auto"
                 >
                   {activating ? "Syncing…" : "Retry sync"}
                 </button>
@@ -3450,7 +3450,7 @@ function GoLiveStepContent({
         <Link
           href="/app/settings/phone"
           aria-label="Forward your existing number. Set up call forwarding to your AI."
-          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <span className="text-sm font-medium text-[var(--text-primary)]">Forward your existing number</span>
           <span className="mt-1 text-xs text-[var(--text-secondary)]">Keep your current number. Forward calls to your AI.</span>
@@ -3459,7 +3459,7 @@ function GoLiveStepContent({
         <Link
           href="/app/settings/phone"
           aria-label="Get a new phone number. We'll assign you a local number instantly."
-          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <span className="text-sm font-medium text-[var(--text-primary)]">Get a new number</span>
           <span className="mt-1 text-xs text-[var(--text-secondary)]">We&apos;ll assign you a local number instantly.</span>
@@ -3477,8 +3477,8 @@ function GoLiveStepContent({
         <p className="text-[11px] text-amber-500/90">Complete greeting, voice, and at least 3 knowledge entries to activate.</p>
       )}
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Test" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={() => void onActivate()} disabled={activating || !allowActivate} aria-busy={activating} aria-label={activating ? "Activating agent" : allowActivate ? "Launch my AI" : "Complete required items to activate"} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+        <button type="button" onClick={onBack} aria-label="Back to Test" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={() => void onActivate()} disabled={activating || !allowActivate} aria-busy={activating} aria-label={activating ? "Activating agent" : allowActivate ? "Launch my AI" : "Complete required items to activate"} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           {activating ? "Activating…" : "Launch my AI"}
         </button>
       </div>

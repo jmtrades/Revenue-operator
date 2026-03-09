@@ -395,7 +395,7 @@ h3.headline {
   border-radius: 12px;
 }
 .btn-marketing-ghost:focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid #71717a;
   outline-offset: 2px;
 }
 .btn-marketing-ghost {

@@ -85,7 +85,7 @@ export default function AcceptInvitePage() {
           <>
             <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Invalid invite link</h1>
             <p className="text-[var(--text-secondary)] text-sm mb-6">This link may be broken or already used.</p>
-            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none">
+            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none">
               Go home
             </Link>
           </>
@@ -94,7 +94,7 @@ export default function AcceptInvitePage() {
           <>
             <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">This invite has expired</h1>
             <p className="text-[var(--text-secondary)] text-sm mb-6">Ask the person who invited you to send a new one.</p>
-            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none">
+            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none">
               Go home
             </Link>
           </>
@@ -111,7 +111,7 @@ export default function AcceptInvitePage() {
                 type="button"
                 onClick={handleAccept}
                 disabled={accepting}
-                className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
               >
                 {accepting ? "Accepting…" : "Accept invitation"}
               </button>

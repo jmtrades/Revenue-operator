@@ -199,12 +199,12 @@ export default function CallIntelligencePage() {
             placeholder="Call title (optional)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none mb-3"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none mb-3"
           />
           <select
             value={callType}
             onChange={(e) => setCallType(e.target.value)}
-            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none mb-3"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none mb-3"
           >
             <option value="">Call type (optional)</option>
             {Object.entries(CALL_TYPE_LABELS).map(([k, v]) => (
@@ -216,13 +216,13 @@ export default function CallIntelligencePage() {
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}
             rows={6}
-            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-blue)]/30 focus:outline-none resize-none"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none resize-none"
           />
           <button
             type="button"
             onClick={handleAnalyze}
             disabled={analyzing || pasteText.trim().length < 100}
-            className="mt-3 px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+            className="mt-3 px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
           >
             {analyzing ? "Analyzing…" : "Analyze transcript"}
           </button>
@@ -260,7 +260,7 @@ export default function CallIntelligencePage() {
                   </div>
                   <Link
                     href={`/app/call-intelligence?example=${ex.id}`}
-                    className="shrink-0 text-sm font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
+                    className="shrink-0 text-sm font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
                   >
                     View
                   </Link>
@@ -334,14 +334,14 @@ export default function CallIntelligencePage() {
                           <button
                             type="button"
                             onClick={() => setApplyModal({ insightId: i.id, insight: i.insight })}
-                            className="text-xs font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
+                            className="text-xs font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
                           >
                             Apply to agent
                           </button>
                           <button
                             type="button"
                             onClick={() => handleDismiss(i.id)}
-                            className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none rounded"
+                            className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
                           >
                             Dismiss
                           </button>
@@ -379,7 +379,7 @@ export default function CallIntelligencePage() {
                     key={a.id}
                     type="button"
                     onClick={() => handleApply(applyModal.insightId, a.id)}
-                    className="w-full px-4 py-2 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                    className="w-full px-4 py-2 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                   >
                     {a.name}
                   </button>
@@ -389,7 +389,7 @@ export default function CallIntelligencePage() {
             <button
               type="button"
               onClick={() => setApplyModal(null)}
-              className="mt-4 w-full px-4 py-2 rounded-xl text-[var(--text-secondary)] text-sm hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+              className="mt-4 w-full px-4 py-2 rounded-xl text-[var(--text-secondary)] text-sm hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
             >
               Cancel
             </button>

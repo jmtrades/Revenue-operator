@@ -212,7 +212,7 @@ export default function AppActivityPage() {
   const [nextStepHref, setNextStepHref] = useState(
     () => (workspaceSnapshot as { progress?: { nextStep?: { href?: string } } } | null)?.progress?.nextStep?.href || "/app/settings/phone",
   );
-  const [agents, setAgents] = useState<Array<{ id: string; name?: string | null; voice_id?: string | null; greeting?: string | null; knowledge_base?: { faq?: Array<{ q?: string; a?: string }> }; rules?: { alwaysTransfer?: unknown[]; neverSay?: unknown[] }; vapi_agent_id?: string | null; tested_at?: string | null }>>([]);
+  const [_agents, setAgents] = useState<Array<{ id: string; name?: string | null; voice_id?: string | null; greeting?: string | null; knowledge_base?: { faq?: Array<{ q?: string; a?: string }> }; rules?: { alwaysTransfer?: unknown[]; neverSay?: unknown[] }; vapi_agent_id?: string | null; tested_at?: string | null }>>([]);
   const [readiness, setReadiness] = useState<ReturnType<typeof calculateReadiness> | null>(null);
   const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(() =>
     workspaceSnapshot?.stats?.lastCallAt ? Date.now() : null,
@@ -312,14 +312,14 @@ export default function AppActivityPage() {
       .then((r) => (r.ok ? r.json() : Promise.resolve({ agents: [] })))
       .then((data: { agents?: unknown[] }) => {
         const list = data?.agents ?? [];
-        setAgents(list as typeof agents);
+        setAgents(list as typeof _agents);
         const snapshot = getWorkspaceMeSnapshotSync() as { name?: string; progress?: { items?: Array<{ key: string; completed?: boolean }> } } | null;
         const phoneConnected = snapshot?.progress?.items?.find((i) => i.key === "phone")?.completed ?? false;
         const workspaceForReadiness = {
           name: snapshot?.name ?? null,
           phoneConnected,
         };
-        setReadiness(calculateReadiness(workspaceForReadiness, (list as typeof agents)[0] ?? null));
+        setReadiness(calculateReadiness(workspaceForReadiness, (list as typeof _agents)[0] ?? null));
       })
       .catch(() => setReadiness(null));
   }, [workspaceId]);
@@ -382,7 +382,7 @@ export default function AppActivityPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
-        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-blue)]">
+        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-zinc-500">
           <p className="text-lg font-semibold text-[var(--text-primary)]">{callCount}</p>
           <p className="text-[10px] text-[var(--text-tertiary)]">Calls today</p>
         </div>
@@ -524,13 +524,13 @@ export default function AppActivityPage() {
                   <>
                     <Link
                       href="/app/settings/phone"
-                      className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-gray-900 text-sm font-semibold hover:bg-gray-100 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                      className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-gray-900 text-sm font-semibold hover:bg-gray-100 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                     >
                       Connect number →
                     </Link>
                     <Link
                       href="/app/agents?tab=test"
-                      className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                      className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                     >
                       Test your agent →
                     </Link>

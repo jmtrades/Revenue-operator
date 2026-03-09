@@ -251,7 +251,7 @@ export default function AppShellClient({
                   <button
                     type="button"
                     onClick={() => setMobileSidebarOpen(false)}
-                    className="md:hidden p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                    className="md:hidden p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                     aria-label="Close menu"
                   >
                     <X className="w-5 h-5" />
@@ -272,9 +272,9 @@ export default function AppShellClient({
                               key={href}
                               href={href}
                               onClick={() => setMobileSidebarOpen(false)}
-                              className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none ${
+                              className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none ${
                                 isActive(href)
-                                  ? "border-l-[var(--accent-blue)] bg-white/[0.08] text-[var(--text-primary)]"
+                                  ? "border-l-zinc-400 bg-white/[0.08] text-[var(--text-primary)]"
                                   : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                               }`}
                             >
@@ -302,7 +302,7 @@ export default function AppShellClient({
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen(true)}
-                className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 aria-label="Open menu"
                 aria-expanded={mobileSidebarOpen}
               >
@@ -312,7 +312,7 @@ export default function AppShellClient({
             )}
             <main
               id="main"
-              className="flex-1 overflow-auto min-w-0 bg-[var(--bg-base)]"
+              className="flex-1 overflow-auto overflow-x-hidden min-w-0 bg-[var(--bg-base)]"
               tabIndex={-1}
               role="main"
             >
@@ -329,7 +329,7 @@ export default function AppShellClient({
                   <Link
                     key={href}
                     href={href}
-className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
+className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
                     isActive(href) ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                   }`}
                     aria-current={isActive(href) ? "page" : undefined}
@@ -341,7 +341,7 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                 <button
                   type="button"
                   onClick={() => setMobileMoreOpen(true)}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
                     isMoreActive ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                   }`}
                   aria-label="More menu"
@@ -364,7 +364,7 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                       <button
                         type="button"
                         onClick={() => setMobileMoreOpen(false)}
-className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                                         aria-label="Close more menu"
                       >
                         <X className="h-4 w-4" />
@@ -376,7 +376,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                           key={href}
                           href={href}
                           onClick={() => setMobileMoreOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none ${
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none ${
                             isActive(href) ? "bg-[var(--bg-hover)] text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                           }`}
                         >
@@ -415,7 +415,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                 <button
                   type="button"
                   onClick={() => setCommandPaletteOpen(false)}
-                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                   aria-label="Close"
                 >
                   <X className="w-4 h-4" />
@@ -476,7 +476,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                 key={stepNum}
                 type="button"
                 onClick={() => setStep?.(stepNum)}
-                className="flex items-center gap-3 w-full text-left rounded-lg py-1 -ml-1 pl-1 hover:bg-[var(--bg-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                className="flex items-center gap-3 w-full text-left rounded-lg py-1 -ml-1 pl-1 hover:bg-[var(--bg-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 aria-current={isCurrent ? "step" : undefined}
                 aria-label={`Step ${stepNum}: ${label}`}
               >

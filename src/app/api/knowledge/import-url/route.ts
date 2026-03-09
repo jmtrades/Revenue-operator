@@ -1,8 +1,14 @@
 import { NextRequest } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const session = await getSession(req);
+  if (!session?.userId || !session?.workspaceId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   let body: { url?: string } = {};
   try {
     body = (await req.json()) as { url?: string };

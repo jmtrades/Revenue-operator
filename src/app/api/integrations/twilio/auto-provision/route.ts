@@ -57,127 +57,154 @@ export async function POST(req: NextRequest) {
     }, { status: 500 });
   }
 
+  const authHeader = "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64");
+
+  const purchaseNumber = async (phoneNumberToBuy: string): Promise<{ phone_number: string | null; sid: string | null }> => {
+    const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
+    const purchaseParams = new URLSearchParams({
+      PhoneNumber: phoneNumberToBuy,
+      VoiceUrl: `${baseUrl}/api/webhooks/twilio/voice`,
+      VoiceMethod: "POST",
+      SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
+      SmsMethod: "POST",
+      StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
+      StatusCallbackMethod: "POST",
+    });
+    const purchaseRes = await fetch(purchaseUrl, {
+      method: "POST",
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: purchaseParams.toString(),
+    });
+    if (!purchaseRes.ok) {
+      const errText = await purchaseRes.text().catch(() => "");
+      console.warn("[twilio-auto-provision] Purchase failed", purchaseRes.status, errText.slice(0, 200));
+      return { phone_number: null, sid: null };
+    }
+    const purchaseData = (await purchaseRes.json()) as { phone_number?: string; sid?: string };
+    return {
+      phone_number: purchaseData.phone_number ?? null,
+      sid: purchaseData.sid ?? null,
+    };
+  };
+
   try {
-    let phoneNumber: string | null = null;
-    let phoneSid: string | null = null;
+  let phoneNumber: string | null = null;
+  let phoneSid: string | null = null;
 
-    // Try to purchase a new number first (optionally in user's area code)
+  // 1) Try Local numbers (optionally in user's area code)
+  try {
+    const searchParams = new URLSearchParams({ SmsEnabled: "true", Limit: "1" });
+    if (areaCode && areaCode.length === 3) searchParams.set("AreaCode", areaCode);
+    const searchUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/Local.json?${searchParams.toString()}`;
+    const searchRes = await fetch(searchUrl, { headers: { Authorization: authHeader } });
+
+    if (searchRes.ok) {
+      const searchData = (await searchRes.json()) as { available_phone_numbers?: Array<{ phone_number: string }> };
+      const available = searchData.available_phone_numbers?.[0];
+      if (available) {
+        const result = await purchaseNumber(available.phone_number);
+        phoneNumber = result.phone_number;
+        phoneSid = result.sid;
+      }
+    }
+  } catch (error) {
+    console.warn("[twilio-auto-provision] Local search/purchase failed", error);
+  }
+
+  // 2) If no Local availability, try Toll-Free (often has inventory)
+  if (!phoneNumber) {
     try {
-      const searchParams = new URLSearchParams({ SmsEnabled: "true", Limit: "1" });
-      if (areaCode && areaCode.length === 3) searchParams.set("AreaCode", areaCode);
-      const searchUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/Local.json?${searchParams.toString()}`;
-      const searchRes = await fetch(searchUrl, {
-        headers: {
-          Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
-        },
-      });
+      const tollFreeParams = new URLSearchParams({ Limit: "1" });
+      const tollFreeUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/TollFree.json?${tollFreeParams.toString()}`;
+      const tollFreeRes = await fetch(tollFreeUrl, { headers: { Authorization: authHeader } });
 
-      if (searchRes.ok) {
-        const searchData = await searchRes.json() as { available_phone_numbers?: Array<{ phone_number: string }> };
-        const available = searchData.available_phone_numbers?.[0];
-        
+      if (tollFreeRes.ok) {
+        const tollFreeData = (await tollFreeRes.json()) as { available_phone_numbers?: Array<{ phone_number: string }> };
+        const available = tollFreeData.available_phone_numbers?.[0];
         if (available) {
-          // Purchase the number
-          const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
-          const purchaseParams = new URLSearchParams({
-            PhoneNumber: available.phone_number,
-            VoiceUrl: `${baseUrl}/api/webhooks/twilio/voice`,
-            VoiceMethod: "POST",
-            SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
-            SmsMethod: "POST",
-            StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
-            StatusCallbackMethod: "POST",
-          });
-
-          const purchaseRes = await fetch(purchaseUrl, {
-            method: "POST",
-            headers: {
-              Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: purchaseParams.toString(),
-          });
-
-          if (purchaseRes.ok) {
-            const purchaseData = await purchaseRes.json() as { phone_number?: string; sid?: string };
-            phoneNumber = purchaseData.phone_number ?? null;
-            phoneSid = purchaseData.sid ?? null;
-          }
+          const result = await purchaseNumber(available.phone_number);
+          phoneNumber = result.phone_number;
+          phoneSid = result.sid;
         }
       }
     } catch (error) {
-      console.warn("[twilio-auto-provision] Failed to purchase number, using proxy", error);
+      console.warn("[twilio-auto-provision] Toll-free search/purchase failed", error);
     }
+  }
 
-    // Fallback: use proxy number if purchase failed
-    if (!phoneNumber) {
-      const proxyNumber = process.env.TWILIO_PROXY_NUMBER;
-      if (proxyNumber) {
-        phoneNumber = proxyNumber;
-        // Configure webhooks on existing proxy number (look up SID then update)
-        try {
-          const listUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json?PhoneNumber=${encodeURIComponent(proxyNumber.replace(/\s/g, ""))}`;
-          const listRes = await fetch(listUrl, {
-            headers: { Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64") },
-          });
-          if (listRes.ok) {
-            const listData = (await listRes.json()) as { incoming_phone_numbers?: Array<{ sid: string }> };
-            const sid = listData.incoming_phone_numbers?.[0]?.sid;
-            if (sid) {
-              const updateUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers/${sid}.json`;
-              await fetch(updateUrl, {
-                method: "POST",
-                headers: {
-                  Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
-                  "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams({
-                  VoiceUrl: `${baseUrl}/api/webhooks/twilio/voice`,
-                  VoiceMethod: "POST",
-                  SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
-                  SmsMethod: "POST",
-                  StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
-                  StatusCallbackMethod: "POST",
-                }).toString(),
-              });
-            }
+  // 3) Fallback: use proxy number if purchase failed
+  if (!phoneNumber) {
+    const proxyNumber = process.env.TWILIO_PROXY_NUMBER;
+    if (proxyNumber) {
+      phoneNumber = proxyNumber;
+      try {
+        const listUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json?PhoneNumber=${encodeURIComponent(proxyNumber.replace(/\s/g, ""))}`;
+        const listRes = await fetch(listUrl, {
+          headers: { Authorization: authHeader },
+        });
+        if (listRes.ok) {
+          const listData = (await listRes.json()) as { incoming_phone_numbers?: Array<{ sid: string }> };
+          const sid = listData.incoming_phone_numbers?.[0]?.sid;
+          if (sid) {
+            const updateUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers/${sid}.json`;
+            await fetch(updateUrl, {
+              method: "POST",
+              headers: {
+                Authorization: authHeader,
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: new URLSearchParams({
+                VoiceUrl: `${baseUrl}/api/webhooks/twilio/voice`,
+                VoiceMethod: "POST",
+                SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
+                SmsMethod: "POST",
+                StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
+                StatusCallbackMethod: "POST",
+              }).toString(),
+            });
           }
-        } catch {
-          // Proxy number may not be configurable, continue anyway
         }
+      } catch {
+        // Proxy number may not be configurable, continue anyway
       }
     }
+  }
 
-    if (!phoneNumber) {
-      return NextResponse.json({
-        error: "Unable to provision phone number. Contact support.",
-      }, { status: 500 });
-    }
-
-    // Store in phone_configs
-    await db.from("phone_configs").upsert(
-      {
-        workspace_id: workspaceId,
-        mode: "direct",
-        proxy_number: phoneNumber,
-        twilio_account_sid: accountSid,
-        twilio_phone_sid: phoneSid,
-        status: "active",
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "workspace_id" }
-    );
-
+  if (!phoneNumber) {
     return NextResponse.json({
-      success: true,
-      phone_number: phoneNumber,
+      error: "No phone numbers are available right now. Try again in a few minutes, or contact support to use a shared line.",
+    }, { status: 503 });
+  }
+
+  // Store in phone_configs
+  await db.from("phone_configs").upsert(
+    {
+      workspace_id: workspaceId,
+      mode: "direct",
+      proxy_number: phoneNumber,
+      twilio_account_sid: accountSid,
+      twilio_phone_sid: phoneSid,
       status: "active",
-      message: "Text handling activated",
-    });
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "workspace_id" }
+  );
+
+  return NextResponse.json({
+    success: true,
+    phone_number: phoneNumber,
+    status: "active",
+    message: "Text handling activated",
+  });
   } catch (error) {
     console.error("[twilio-auto-provision]", error);
+    const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({
-      error: "Failed to provision phone number",
+      error: "Could not provision a number. Try again in a few minutes, or contact support.",
+      detail: process.env.NODE_ENV === "development" ? message : undefined,
     }, { status: 500 });
   }
 }

@@ -132,7 +132,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                       onClick={() => setSelected(plan.id)}
                       className={`text-left p-4 rounded-xl border transition-all ${
                         isSelected
-                          ? "border-[var(--accent-blue)] bg-[var(--accent-blue)]/10 ring-1 ring-[var(--accent-blue)]/30"
+                          ? "border-zinc-500 bg-zinc-800/80 ring-1 ring-zinc-500/30"
                           : isCurrent
                           ? "border-[var(--accent-green)]/30 bg-[var(--accent-green)]/5"
                           : "border-[var(--border-default)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-hover)]"
@@ -166,7 +166,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   type="button"
                   onClick={handleContinue}
                   disabled={selected === currentPlanId}
-                  className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                  className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 >
                   {selected === "enterprise" ? "Contact us" : "Continue"}
                 </button>
@@ -198,7 +198,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   type="button"
                   onClick={handleConfirm}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:outline-none"
+                  className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 >
                   {loading ? "Processing…" : isUpgrade ? "Upgrade now" : "Confirm downgrade"}
                 </button>
