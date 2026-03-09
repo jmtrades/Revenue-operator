@@ -66,7 +66,7 @@ export function Hero() {
           </div>
 
           {/* Right: speak to agent */}
-          <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 max-w-md lg:ml-auto">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-6 max-w-md lg:ml-auto">
             <HomepageVoiceWidget />
           </div>
         </div>

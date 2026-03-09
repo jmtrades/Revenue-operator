@@ -63,7 +63,7 @@ export function OnboardingChecklist({
   const pct = total ? Math.round((progress.completed / total) * 100) : 0;
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3">
       <p className="text-[10px] font-medium text-zinc-400 mb-1.5">
         {progress.completed}/{total} complete
       </p>

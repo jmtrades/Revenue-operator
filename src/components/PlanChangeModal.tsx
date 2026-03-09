@@ -77,7 +77,12 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
         return;
       }
       if (!res.ok || !data?.ok) {
-        setError(data?.error ?? "Could not change plan.");
+        const msg = data?.error ?? "Could not change plan.";
+        setError(
+          msg === "Plan not configured" || msg === "Billing not configured"
+            ? "Billing is being set up. Contact support."
+            : msg
+        );
         return;
       }
       onSuccess?.(selectedPlan?.name ?? selected);

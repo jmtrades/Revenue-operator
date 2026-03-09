@@ -399,7 +399,30 @@ export default function AppSettingsPhonePage() {
             <p className="text-sm font-medium text-white mb-1">Verify a number by SMS</p>
             <p className="text-xs text-zinc-400 mb-3">We’ll send a 6-digit code to confirm you own this number. Useful for forwarding numbers.</p>
             {verifiedNumber ? (
-              <p className="text-sm text-green-400">Phone verified ✓ {formatPhoneNumber(verifiedNumber)}</p>
+              <>
+                <p className="text-sm text-green-400">Phone verified ✓ {formatPhoneNumber(verifiedNumber)}</p>
+                {phoneNumber && (
+                  <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 mt-4">
+                    <h3 className="text-base font-medium text-[var(--text-primary)] mb-3">
+                      Forward calls to your AI
+                    </h3>
+                    <div className="space-y-2">
+                      <div className="bg-[var(--bg-input)] rounded-lg p-3">
+                        <p className="text-sm font-medium text-[var(--text-primary)]">iPhone</p>
+                        <p className="text-xs text-[var(--text-secondary)]">Settings → Phone → Call Forwarding → {formatPhoneNumber(phoneNumber)}</p>
+                      </div>
+                      <div className="bg-[var(--bg-input)] rounded-lg p-3">
+                        <p className="text-sm font-medium text-[var(--text-primary)]">Android</p>
+                        <p className="text-xs text-[var(--text-secondary)]">Phone → ⋮ → Settings → Call Forwarding → {formatPhoneNumber(phoneNumber)}</p>
+                      </div>
+                      <div className="bg-[var(--bg-input)] rounded-lg p-3">
+                        <p className="text-sm font-medium text-[var(--text-primary)]">Business line</p>
+                        <p className="text-xs text-[var(--text-secondary)]">Call your provider: &quot;Forward unanswered calls to {formatPhoneNumber(phoneNumber)}&quot;</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             ) : (
               <>
                 <input

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { logLeadCreated, logAppointmentBooked } from "@/lib/log/revenue-events";
+import { logAppointmentBooked } from "@/lib/log/revenue-events";
 
 interface VapiWebhookPayload {
   message?: {
