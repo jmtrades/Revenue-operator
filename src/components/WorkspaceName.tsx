@@ -18,8 +18,12 @@ export function WorkspaceName({
   const [name, setName] = useState<string | null>(() => {
     const fromServer = initialName?.trim();
     if (fromServer) return fromServer;
-    const snapshot = getWorkspaceMeSnapshotSync() as { name?: string | null } | null;
-    return snapshot?.name?.trim() || null;
+    const snapshot = getWorkspaceMeSnapshotSync() as
+      | { name?: string | null; business_name?: string | null }
+      | null;
+    const businessName = snapshot?.business_name?.trim();
+    const workspaceName = snapshot?.name?.trim();
+    return businessName || workspaceName || null;
   });
 
   useEffect(() => {
@@ -27,11 +31,13 @@ export function WorkspaceName({
     fetchWorkspaceMeCached()
       .then((data) => {
         if (cancelled) return null;
-        return data as { name?: string } | null;
+        return data as { name?: string | null; business_name?: string | null } | null;
       })
-      .then((data: { name?: string } | null) => {
+      .then((data: { name?: string | null; business_name?: string | null } | null) => {
         if (cancelled || data == null) return;
-        const fromApi = data?.name?.trim();
+        const businessName = data.business_name?.trim();
+        const workspaceName = data.name?.trim();
+        const fromApi = businessName || workspaceName;
         if (fromApi) {
           setName(fromApi);
           return;

@@ -13,6 +13,7 @@ import {
   fetchWorkspaceMeCached,
   getWorkspaceMeSnapshotSync,
 } from "@/lib/client/workspace-me";
+import { calculateReadiness } from "@/lib/readiness";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { EmptyState } from "@/components/EmptyState";
@@ -103,6 +104,13 @@ const PROGRESS_LABELS: Record<string, string> = {
   first_call: "Capture first lead",
   calendar: "Calendar connected",
   team: "Team member invited",
+  use_cases: "Use cases selected",
+  voice: "Voice selected",
+  greeting: "Opening greeting set",
+  knowledge: "3+ knowledge entries",
+  behavior: "Behavior configured",
+  tested: "Agent tested",
+  launched: "Agent launched",
 };
 
 function ActivityDateLabel() {
@@ -204,6 +212,8 @@ export default function AppActivityPage() {
   const [nextStepHref, setNextStepHref] = useState(
     () => (workspaceSnapshot as { progress?: { nextStep?: { href?: string } } } | null)?.progress?.nextStep?.href || "/app/settings/phone",
   );
+  const [agents, setAgents] = useState<Array<{ id: string; name?: string | null; voice_id?: string | null; greeting?: string | null; knowledge_base?: { faq?: Array<{ q?: string; a?: string }> }; rules?: { alwaysTransfer?: unknown[]; neverSay?: unknown[] }; vapi_agent_id?: string | null; tested_at?: string | null }>>([]);
+  const [readiness, setReadiness] = useState<ReturnType<typeof calculateReadiness> | null>(null);
   const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(() =>
     workspaceSnapshot?.stats?.lastCallAt ? Date.now() : null,
   );
@@ -278,8 +288,9 @@ export default function AppActivityPage() {
   useEffect(() => {
     fetchWorkspaceMeCached()
       .then((data: {
+        name?: string;
         systemEvents?: Array<{ id: string; title: string; body: string; href: string }>;
-        progress?: { nextStep?: { href?: string } | null };
+        progress?: { nextStep?: { href?: string } | null; items?: Array<{ key: string; completed?: boolean }> };
         stats?: { calls?: number; leads?: number; estRevenue?: number; lastCallAt?: string | null };
       } | null) => {
         setSystemEvents(data?.systemEvents ?? []);
@@ -294,6 +305,24 @@ export default function AppActivityPage() {
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/agents?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : Promise.resolve({ agents: [] })))
+      .then((data: { agents?: unknown[] }) => {
+        const list = data?.agents ?? [];
+        setAgents(list as typeof agents);
+        const snapshot = getWorkspaceMeSnapshotSync() as { name?: string; progress?: { items?: Array<{ key: string; completed?: boolean }> } } | null;
+        const phoneConnected = snapshot?.progress?.items?.find((i) => i.key === "phone")?.completed ?? false;
+        const workspaceForReadiness = {
+          name: snapshot?.name ?? null,
+          phoneConnected,
+        };
+        setReadiness(calculateReadiness(workspaceForReadiness, (list as typeof agents)[0] ?? null));
+      })
+      .catch(() => setReadiness(null));
+  }, [workspaceId]);
 
   const callCount = cards.length;
   const leadCount = cards.filter((c) => c.type === "lead").length;
@@ -321,14 +350,16 @@ export default function AppActivityPage() {
     return cards;
   }, [cards, filter]);
 
-  const progressItems =
+  const fallbackProgressItems =
     (workspaceSnapshot as { progress?: { items?: Array<{ key: string; completed: boolean }> } } | null)?.progress
       ?.items ?? [];
-  const progressPct =
-    progressItems.length === 0
+  const fallbackPct =
+    fallbackProgressItems.length === 0
       ? 0
-      : Math.round((progressItems.filter((p) => p.completed).length / progressItems.length) * 100);
-  const continueSetupHref = nextStepHref || "/app/settings/phone";
+      : Math.round((fallbackProgressItems.filter((p) => p.completed).length / fallbackProgressItems.length) * 100);
+  const progressItems = readiness?.items ?? fallbackProgressItems.map((p) => ({ ...p, label: PROGRESS_LABELS[p.key] ?? p.key, href: "/app/settings/phone", weight: 0 }));
+  const progressPct = readiness ? readiness.percentage : fallbackPct;
+  const continueSetupHref = readiness?.nextAction?.href ?? nextStepHref ?? "/app/settings/phone";
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
@@ -383,18 +414,22 @@ export default function AppActivityPage() {
           <div className="h-full rounded-full bg-[var(--accent-green)] transition-all" style={{ width: `${progressPct}%` }} />
         </div>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-          {progressItems.slice(0, 6).map((item) => (
-            <div key={item.key} className="flex items-center gap-2">
-              {item.completed ? (
-                <CheckCircle2 className="h-4 w-4 text-[var(--accent-green)] shrink-0" />
-              ) : (
-                <span className="h-4 w-4 rounded-full border border-[var(--border-medium)] shrink-0" />
-              )}
-              <span className={item.completed ? "text-[var(--text-secondary)]" : "text-[var(--text-primary)]"}>
-                {PROGRESS_LABELS[item.key] ?? item.key}
-              </span>
-            </div>
-          ))}
+          {progressItems.slice(0, 10).map((item) => {
+            const done = "done" in item ? item.done : item.completed;
+            const label = "label" in item && item.label ? item.label : (PROGRESS_LABELS[item.key] ?? item.key);
+            return (
+              <div key={item.key} className="flex items-center gap-2">
+                {done ? (
+                  <CheckCircle2 className="h-4 w-4 text-[var(--accent-green)] shrink-0" />
+                ) : (
+                  <span className="h-4 w-4 rounded-full border border-[var(--border-medium)] shrink-0" />
+                )}
+                <span className={done ? "text-[var(--text-secondary)]" : "text-[var(--text-primary)]"}>
+                  {label}
+                </span>
+              </div>
+            );
+          })}
         </div>
         <Link
           href={continueSetupHref}

@@ -106,6 +106,51 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  logLeadCreated(workspaceId, (lead as { id: string }).id, (metadata.source as string) ?? "app");
+
+  const createdLead = lead as {
+    id: string;
+    name?: string | null;
+    phone?: string | null;
+    email?: string | null;
+  };
+
+  logLeadCreated(workspaceId, createdLead.id, (metadata.source as string) ?? "app");
+
+  try {
+    const { data: ws } = await db
+      .from("workspaces")
+      .select("webhook_url")
+      .eq("id", workspaceId)
+      .maybeSingle();
+    const webhookUrl =
+      (ws as { webhook_url?: string | null } | null)?.webhook_url?.toString().trim() ??
+      "";
+    if (webhookUrl) {
+      // Fire-and-forget CRM webhook for lead capture
+      void fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event: "lead.created",
+          timestamp: new Date().toISOString(),
+          data: {
+            lead: {
+              id: createdLead.id,
+              name: (createdLead.name ?? "").toString().trim() || null,
+              phone: (createdLead.phone ?? "").toString().trim() || null,
+              email: (createdLead.email ?? "").toString().trim() || null,
+              score,
+            },
+            source: metadata.source,
+          },
+        }),
+      }).catch((err) => {
+        console.error("[Webhook] Failed to deliver lead.created", err);
+      });
+    }
+  } catch {
+    // Do not block lead creation on webhook issues
+  }
+
   return NextResponse.json(lead);
 }

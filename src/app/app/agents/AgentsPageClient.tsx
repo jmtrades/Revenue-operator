@@ -32,6 +32,8 @@ import {
 } from "@/lib/constants/curated-voices";
 import { getTemplateVoiceId } from "@/lib/data/agent-templates";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { calculateReadiness, type ReadinessAgent } from "@/lib/readiness";
 
 type CallStyle = "thorough" | "conversational" | "quick";
 
@@ -190,29 +192,43 @@ type AgentReadiness = {
   recommendations: string[];
 };
 
-function getAgentReadiness(agent: Agent): AgentReadiness {
-  const tasks: ReadinessTask[] = [
-    { label: "Greeting configured", complete: !!agent.greeting?.trim(), weight: 10, category: "required" },
-    { label: "Voice selected", complete: !!agent.voice?.trim(), weight: 10, category: "required" },
-    { label: "At least 3 knowledge entries", complete: (agent.faq?.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()).length ?? 0) >= 3, weight: 15, category: "required" },
-    { label: "Transfer number configured", complete: !!(agent.transferPhone?.trim() || agent.transferRules?.some((r) => (r.phone ?? "").trim())), weight: 10, category: "required" },
-    { label: "Voice assistant created", complete: !!(agent.vapiAgentId?.trim()), weight: 15, category: "required" },
-    { label: "Transfer rules configured", complete: (agent.alwaysTransfer?.length ?? 0) > 0 || (agent.transferRules?.length ?? 0) > 0, weight: 10, category: "recommended" },
-    { label: "Safety guardrails set", complete: (agent.neverSay?.length ?? 0) > 0, weight: 5, category: "recommended" },
-    { label: "After-hours behavior set", complete: !!agent.afterHoursMode, weight: 5, category: "recommended" },
-    { label: "Agent tested", complete: (agent.stats?.totalCalls ?? 0) > 0, weight: 10, category: "recommended" },
-    { label: "Follow-up behavior configured", complete: !!(agent.followUpSMS || agent.notifyOwnerOnLead || agent.sendSummaryEmail), weight: 5, category: "advanced" },
-    { label: "Appointment booking configured", complete: agent.bookingEnabled, weight: 5, category: "advanced" },
-  ];
+/** Map client Agent to ReadinessAgent for shared readiness calculation. */
+function agentToReadinessAgent(agent: Agent): ReadinessAgent {
+  const faq = agent.faq?.filter((e) => (e?.question ?? "").trim() && (e?.answer ?? "").trim()).map((e) => ({ q: e.question, a: e.answer })) ?? [];
+  return {
+    voice_id: agent.voice?.trim() || null,
+    greeting: agent.greeting?.trim() || null,
+    knowledge_base: { faq },
+    rules: { alwaysTransfer: agent.alwaysTransfer, neverSay: agent.neverSay },
+    vapi_agent_id: agent.vapiAgentId?.trim() || null,
+    tested_at: (agent.stats?.totalCalls ?? 0) > 0 ? "1" : null,
+  };
+}
 
-  const score = tasks.filter((t) => t.complete).reduce((sum, t) => sum + t.weight, 0);
-  const total = 100;
-  const percent = Math.min(100, Math.round(score));
+function getAgentReadiness(agent: Agent): AgentReadiness {
+  const snapshot = getWorkspaceMeSnapshotSync() as { name?: string; progress?: { items?: Array<{ key: string; completed?: boolean }> } } | null;
+  const phoneConnected = snapshot?.progress?.items?.find((i) => i.key === "phone")?.completed ?? false;
+  const workspace = { name: snapshot?.name ?? null, phoneConnected };
+  const { percentage, items, nextAction } = calculateReadiness(workspace, agentToReadinessAgent(agent));
+  const percent = percentage;
+  const tasks: ReadinessTask[] = items.map((item) => ({
+    label: item.label,
+    complete: item.done,
+    weight: item.weight,
+    category: "required" as const,
+  }));
   const status =
     percent >= 90 ? "excellent" : percent >= 70 ? "good" : percent >= 40 ? "basic" : "not_ready";
-  const recommendations = tasks.filter((t) => !t.complete).map((t) => t.label);
+  const recommendations = items.filter((i) => !i.done).map((i) => i.label);
 
-  return { score, total, percent, status, tasks, recommendations };
+  return {
+    score: percent,
+    total: 100,
+    percent,
+    status,
+    tasks,
+    recommendations,
+  };
 }
 
 type InitialFallbackAgent = {
@@ -878,7 +894,10 @@ export default function AppAgentsPageClient({
     }
   };
 
-  const persistAgent = async (agentToSave: Agent, options?: { showToast?: boolean }) => {
+  const persistAgent = async (
+    agentToSave: Agent,
+    options?: { showToast?: boolean; successToast?: string }
+  ): Promise<{ patchOk: boolean; vapiId?: string | null }> => {
     setSaving(true);
     try {
       const res = await fetch(`/api/agents/${agentToSave.id}`, {
@@ -887,7 +906,10 @@ export default function AppAgentsPageClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(toAgentPatchPayload(agentToSave)),
       });
-      if (!res.ok) throw new Error("save_failed");
+      if (!res.ok) {
+        if (options?.showToast !== false) setToast("Could not save agent");
+        return { patchOk: false };
+      }
 
       const syncRes = await fetch("/api/agent/create-vapi", {
         method: "POST",
@@ -907,21 +929,23 @@ export default function AppAgentsPageClient({
               : agent,
           ),
         );
-        if (options?.showToast !== false) setToast("Agent saved and synced live");
-        return syncData.vapi_agent_id;
+        const successMsg = options?.successToast ?? "Agent saved and synced live";
+        if (options?.showToast !== false) setToast(successMsg);
+        return { patchOk: true, vapiId: syncData.vapi_agent_id };
       }
 
       if (options?.showToast !== false) {
         setToast(
-          syncRes.status === 503
-            ? "Agent saved; voice sync unavailable (check voice config)"
-            : "Agent saved; voice sync failed",
+          options?.successToast
+            ?? (syncRes.status === 503
+              ? "Agent saved; voice sync unavailable (check voice config)"
+              : "Agent saved; voice sync failed"),
         );
       }
-      return null;
+      return { patchOk: true, vapiId: null };
     } catch {
       if (options?.showToast !== false) setToast("Could not save agent");
-      return null;
+      return { patchOk: false };
     } finally {
       setSaving(false);
     }
@@ -929,7 +953,17 @@ export default function AppAgentsPageClient({
 
   const handleSave = async () => {
     if (!selected) return;
-    await persistAgent(selected, { showToast: true });
+    await persistAgent(selected, { showToast: true, successToast: "Changes saved ✓" });
+  };
+
+  const handleStepChange = async (newStepId: StepId) => {
+    if (!selected || newStepId === activeStep) return;
+    const result = await persistAgent(selected, { showToast: false });
+    if (result.patchOk) {
+      setActiveStep(newStepId);
+    } else {
+      setToast("Changes couldn't be saved. Try again.");
+    }
   };
 
   const handleDelete = async () => {
@@ -991,11 +1025,12 @@ export default function AppAgentsPageClient({
       if (!createdRes.ok) throw new Error("create_failed");
       const created = (await createdRes.json()) as { id: string };
       const persisted = { ...agent, id: created.id };
-      const assistantId = await persistAgent(persisted, { showToast: false });
+      const result = await persistAgent(persisted, { showToast: false });
+      const assistantId = result?.vapiId ?? null;
       const next = [...agents, { ...persisted, vapiAgentId: assistantId }];
       setAgents(next);
       setSelectedId(persisted.id);
-      setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId ?? null }));
+      setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId }));
       setShowTemplateModal(false);
       setToast("Agent created and synced");
     } catch {
@@ -1031,11 +1066,12 @@ export default function AppAgentsPageClient({
       if (!createdRes.ok) throw new Error("create_failed");
       const created = (await createdRes.json()) as { id: string };
       const persisted = { ...agent, id: created.id };
-      const assistantId = await persistAgent(persisted, { showToast: false });
+      const result = await persistAgent(persisted, { showToast: false });
+      const assistantId = result?.vapiId ?? null;
       const next = [...agents, { ...persisted, vapiAgentId: assistantId }];
       setAgents(next);
       setSelectedId(persisted.id);
-      setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId ?? null }));
+      setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId }));
       setShowTemplateModal(false);
       setToast("Agent created and synced");
     } catch {
@@ -1134,11 +1170,16 @@ export default function AppAgentsPageClient({
               </p>
               {(() => {
                 const readiness = getAgentReadiness(agent);
+                const isLive = !!(agent.vapiAgentId?.trim());
                 return (
                   <p className="mt-2 text-[11px] text-zinc-500">
-                    <span className={readiness.percent >= 80 ? "text-green-500/80" : readiness.percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
-                      {readiness.percent}% ready
-                    </span>
+                    {isLive ? (
+                      <span className="text-green-500/80">Live</span>
+                    ) : (
+                      <span className={readiness.percent >= 80 ? "text-green-500/80" : readiness.percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
+                        {readiness.percent}% ready
+                      </span>
+                    )}
                     {" · "}{agent.stats.totalCalls} calls
                   </p>
                 );
@@ -1160,9 +1201,13 @@ export default function AppAgentsPageClient({
                     </span>
                   </div>
                   <p className="text-[11px] text-zinc-500">
-                    <span className={getAgentReadiness(selected).percent >= 80 ? "text-green-500/80" : getAgentReadiness(selected).percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
-                      {getAgentReadiness(selected).percent}% ready
-                    </span>
+                    {selected.vapiAgentId?.trim() ? (
+                      <span className="text-green-500/80">Live</span>
+                    ) : (
+                      <span className={getAgentReadiness(selected).percent >= 80 ? "text-green-500/80" : getAgentReadiness(selected).percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
+                        {getAgentReadiness(selected).percent}% ready
+                      </span>
+                    )}
                     {" · "}{selected.stats.totalCalls} calls
                   </p>
                 </div>
@@ -1176,7 +1221,7 @@ export default function AppAgentsPageClient({
                     <select
                       id="agent-step-select"
                       value={activeStep}
-                      onChange={(e) => setActiveStep(e.target.value as StepId)}
+                      onChange={(e) => void handleStepChange(e.target.value as StepId)}
                       aria-label="Jump to setup step"
                       className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50"
                     >
@@ -1195,7 +1240,7 @@ export default function AppAgentsPageClient({
                       <button
                         key={step.id}
                         type="button"
-                        onClick={() => setActiveStep(step.id)}
+                        onClick={() => void handleStepChange(step.id)}
                         aria-label={`${step.label}: ${step.description}${complete ? ", completed" : ""}${active ? ", current step" : ""}`}
                         aria-current={active ? "step" : undefined}
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
@@ -1237,22 +1282,22 @@ export default function AppAgentsPageClient({
                   Step {SETUP_STEPS.findIndex((s) => s.id === activeStep) + 1} of {SETUP_STEPS.length}: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
                 </div>
                 {activeStep === "identity" && (
-                  <IdentityStepContent agent={selected} onChange={updateSelected} onNext={async () => { await persistAgent(selected, { showToast: false }); const idx = SETUP_STEPS.findIndex((s) => s.id === activeStep); if (idx < SETUP_STEPS.length - 1) setActiveStep(SETUP_STEPS[idx + 1].id); }} />
+                  <IdentityStepContent agent={selected} onChange={updateSelected} onNext={async () => { await handleStepChange("voice"); }} />
                 )}
                 {activeStep === "voice" && (
-                  <VoiceStepContent agent={selected} workspaceName={initialWorkspaceName} voices={elevenLabsVoices} onChange={updateSelected} onVoicePreview={(voiceId) => void playAudioPreview({ key: voiceId, voiceId, text: selected.greeting.trim() || "Thanks for calling. How can I help you today?", settings: selected.voiceSettings })} previewingVoiceId={playingVoiceId} onBack={() => setActiveStep("identity")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("knowledge"); }} />
+                  <VoiceStepContent agent={selected} workspaceName={initialWorkspaceName} voices={elevenLabsVoices} onChange={updateSelected} onVoicePreview={(voiceId) => void playAudioPreview({ key: voiceId, voiceId, text: selected.greeting.trim() || "Thanks for calling. How can I help you today?", settings: selected.voiceSettings })} previewingVoiceId={playingVoiceId} onBack={() => void handleStepChange("identity")} onNext={async () => { await handleStepChange("knowledge"); }} />
                 )}
                 {activeStep === "knowledge" && (
-                  <KnowledgeStepContent agent={selected} onChange={updateSelected} onBack={() => setActiveStep("voice")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("behavior"); }} />
+                  <KnowledgeStepContent agent={selected} onChange={updateSelected} onBack={() => void handleStepChange("voice")} onNext={async () => { await handleStepChange("behavior"); }} />
                 )}
                 {activeStep === "behavior" && (
-                  <BehaviorStepContent agent={selected} onChange={updateSelected} onBack={() => setActiveStep("knowledge")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("test"); }} />
+                  <BehaviorStepContent agent={selected} onChange={updateSelected} onBack={() => void handleStepChange("knowledge")} onNext={async () => { await handleStepChange("test"); }} />
                 )}
                 {activeStep === "test" && (
-                  <TestStepContent agent={selected} onPrepareAgent={async () => { const id = await persistAgent(selected, { showToast: false }); if (id) setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: id } : a))); return id; }} onBack={() => setActiveStep("behavior")} onNext={async () => { await persistAgent(selected, { showToast: false }); setActiveStep("golive"); }} />
+                  <TestStepContent agent={selected} onPrepareAgent={async () => { const result = await persistAgent(selected, { showToast: false }); if (result.vapiId) setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: result.vapiId ?? null } : a))); return result.vapiId ?? null; }} onBack={() => void handleStepChange("behavior")} onNext={async () => { await handleStepChange("golive"); }} />
                 )}
                 {activeStep === "golive" && (
-                  <GoLiveStepContent agent={selected} voices={elevenLabsVoices} getReadiness={getAgentReadiness} onBack={() => setActiveStep("test")} onActivate={async () => { const id = await persistAgent(selected, { showToast: true }); if (id) { setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: id } : a))); setToast("Your AI agent is live!"); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000); } }} activating={saving} />
+                  <GoLiveStepContent agent={selected} voices={elevenLabsVoices} getReadiness={getAgentReadiness} onBack={() => void handleStepChange("test")} onActivate={async () => { const result = await persistAgent(selected, { showToast: true }); if (result.vapiId) { setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: result.vapiId ?? null } : a))); setToast("Your AI agent is live! 🎉"); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000); } }} activating={saving} />
                 )}
               </div>
             </div>
