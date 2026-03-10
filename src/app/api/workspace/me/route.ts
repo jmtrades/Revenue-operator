@@ -42,46 +42,59 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = getDb();
-    const [{ data, error }, { data: phoneCfg }, { count: callCount }, { data: calendar }, { count: teamCount }, { count: leadCount }, { data: lastCall }] =
-      await Promise.all([
-        db
-          .from("workspaces")
-          .select(
-            "id, name, agent_name, vapi_assistant_id, knowledge_items, website, industry, address, onboarding_completed_at",
-          )
-          .eq("id", workspaceId)
-          .single(),
-        db
-          .from("phone_configs")
-          .select("id")
-          .eq("workspace_id", workspaceId)
-          .eq("status", "active")
-          .maybeSingle(),
-        db
-          .from("call_sessions")
-          .select("id", { count: "exact", head: true })
-          .eq("workspace_id", workspaceId),
-        db
-          .from("google_calendar_tokens")
-          .select("workspace_id")
-          .eq("workspace_id", workspaceId)
-          .maybeSingle(),
-        db
-          .from("team_members")
-          .select("id", { count: "exact", head: true })
-          .eq("workspace_id", workspaceId),
-        db
-          .from("leads")
-          .select("id", { count: "exact", head: true })
-          .eq("workspace_id", workspaceId),
-        db
-          .from("call_sessions")
-          .select("call_started_at")
-          .eq("workspace_id", workspaceId)
-          .order("call_started_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ]);
+    const [
+      { data, error },
+      { data: ctx },
+      { data: phoneCfg },
+      { count: callCount },
+      { data: calendar },
+      { count: teamCount },
+      { count: leadCount },
+      { data: lastCall },
+    ] = await Promise.all([
+      db
+        .from("workspaces")
+        .select(
+          "id, name, agent_name, vapi_assistant_id, knowledge_items, website, industry, address, onboarding_completed_at",
+        )
+        .eq("id", workspaceId)
+        .single(),
+      db
+        .from("workspace_business_context")
+        .select("business_name")
+        .eq("workspace_id", workspaceId)
+        .maybeSingle(),
+      db
+        .from("phone_configs")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("status", "active")
+        .maybeSingle(),
+      db
+        .from("call_sessions")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", workspaceId),
+      db
+        .from("google_calendar_tokens")
+        .select("workspace_id")
+        .eq("workspace_id", workspaceId)
+        .maybeSingle(),
+      db
+        .from("team_members")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", workspaceId),
+      db
+        .from("leads")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", workspaceId),
+      db
+        .from("call_sessions")
+        .select("call_started_at")
+        .eq("workspace_id", workspaceId)
+        .order("call_started_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
     if (error || !data) {
       return NextResponse.json({
@@ -94,11 +107,15 @@ export async function GET(req: NextRequest) {
     }
 
     const row = data as WorkspaceRow;
+    const ctxRow = ctx as { business_name?: string | null } | null;
+    const businessName =
+      (ctxRow?.business_name ?? "").trim() || (row.name ?? "").trim() || "My Workspace";
+
     const knowledgeCount = Array.isArray(row.knowledge_items)
       ? row.knowledge_items.filter((item) => (item.q ?? "").trim() && (item.a ?? "").trim()).length
       : 0;
     const readiness = buildWorkspaceReadiness({
-      businessName: row.name,
+      businessName,
       agentName: row.agent_name,
       knowledgeCount,
       phoneConnected: Boolean(phoneCfg),
@@ -110,7 +127,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       authenticated: true,
       id: row.id,
-      name: row.name || "My Workspace",
+      name: businessName,
       website: row.website ?? "",
       industry: row.industry ?? "",
       address: row.address ?? "",
