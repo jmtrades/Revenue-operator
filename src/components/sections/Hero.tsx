@@ -40,8 +40,8 @@ export function Hero() {
             >
               Never miss a call. Never lose a lead. Every caller gets a real conversation, even when you can&apos;t pick up.
             </p>
-            <p className="text-sm text-white/50 mb-6">
-              Used by 500+ businesses · 10,000+ calls handled
+            <p className="text-sm text-white/40 mt-4">
+              Trusted by growing businesses to handle thousands of calls every week.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6">
               <Link
