@@ -2803,7 +2803,7 @@ function IdentityStepContent({
                 onClick={() => applyTemplate(tpl)}
                 className={`text-left rounded-xl border p-4 transition-all hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                   active
-                    ? "border-blue-500/40 bg-blue-500/[0.06]"
+                    ? "border-zinc-500/50 bg-zinc-800/50"
                     : "border-white/[0.08]"
                 }`}
                 aria-pressed={active}
