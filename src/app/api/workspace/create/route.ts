@@ -101,6 +101,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to update workspace" }, { status: 500 });
     }
 
+    // Ensure workspace_business_context has the business_name for sidebar and brain.
+    try {
+      await db
+        .from("workspace_business_context")
+        .upsert(
+          {
+            workspace_id: workspaceId,
+            business_name: name,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "workspace_id" },
+        );
+    } catch {
+      // Non-fatal; business context can be completed later.
+    }
+
     await syncPrimaryAgent(db, {
       workspaceId,
       businessName: name,
