@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 type TargetFilter = {
   audience?: string;
@@ -91,6 +92,7 @@ export default function CampaignsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CampaignRow["status"]>("all");
+  const [pauseConfirm, setPauseConfirm] = useState<CampaignRow | null>(null);
   const [campaignType, setCampaignType] = useState<string>("followup");
   const [form, setForm] = useState({
     name: "",
@@ -324,7 +326,11 @@ export default function CampaignsPage() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => { void toggleCampaign(campaign); }}
+                        onClick={() =>
+                          campaign.status === "active"
+                            ? setPauseConfirm(campaign)
+                            : void toggleCampaign(campaign)
+                        }
                         className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
                       >
                         {campaign.status === "active" ? "Pause" : "Resume"}
@@ -555,6 +561,19 @@ export default function CampaignsPage() {
           </div>
         </div>
 
+        {pauseConfirm && (
+          <ConfirmDialog
+            open
+            title="Pause this run?"
+            message={`Pause "${pauseConfirm.name}"? You can resume it later from this page.`}
+            confirmLabel="Pause"
+            onConfirm={() => {
+              void toggleCampaign(pauseConfirm);
+              setPauseConfirm(null);
+            }}
+            onClose={() => setPauseConfirm(null)}
+          />
+        )}
         {toast && (
           <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-4 py-2 text-sm text-zinc-100 shadow-xl">
             {toast}

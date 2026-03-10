@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 type Status = "confirmed" | "pending";
 
@@ -101,11 +102,19 @@ export default function AppCalendarPage() {
     handleUpdateSelected({ status: "pending" });
   };
 
+  const [deleteConfirm, setDeleteConfirm] = useState<typeof selected>(null);
+
   const handleDeleteSelected = () => {
     if (!selected) return;
-    const next = appointments.filter((a) => a.id !== selected.id);
+    setDeleteConfirm(selected);
+  };
+
+  const confirmDeleteAppointment = () => {
+    if (!deleteConfirm) return;
+    const next = appointments.filter((a) => a.id !== deleteConfirm.id);
     setAppointments(next);
     setSelected(null);
+    setDeleteConfirm(null);
     saveAppointments(next);
   };
 
@@ -293,11 +302,23 @@ export default function AppCalendarPage() {
                 onClick={handleDeleteSelected}
                 className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
-                Cancel
+                Remove
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {deleteConfirm && (
+        <ConfirmDialog
+          open
+          title="Remove appointment?"
+          message={`Remove "${deleteConfirm.contact} — ${deleteConfirm.service}"? This cannot be undone.`}
+          confirmLabel="Remove"
+          variant="danger"
+          onConfirm={confirmDeleteAppointment}
+          onClose={() => setDeleteConfirm(null)}
+        />
       )}
 
       {showNew && (
