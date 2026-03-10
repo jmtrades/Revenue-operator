@@ -20,8 +20,14 @@ import {
   X,
   Lightbulb,
   Bot,
+  Bell,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Command as CommandIcon,
   type LucideIcon,
 } from "lucide-react";
+import { CommandPalette } from "@/components/ui/CommandPalette";
+import { cn } from "@/lib/cn";
 import {
   OnboardingStepProvider,
   useOnboardingStep,
@@ -106,7 +112,29 @@ export default function AppShellClient({
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const inboxUnread = 0;
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("rt_sidebar");
+      setSidebarCollapsed(stored === "collapsed");
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const toggleSidebarCollapse = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("rt_sidebar", next ? "collapsed" : "expanded");
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (initialWorkspaceMeta) {
@@ -242,20 +270,29 @@ export default function AppShellClient({
             ) : (
               <>
               <aside
-                className={`fixed inset-y-0 left-0 z-40 w-[220px] flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] transform transition-transform duration-200 ease-out ${
-                  mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
-                } md:relative md:translate-x-0`}
+                className={cn(
+                  "fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] transform transition-all duration-200 ease-out",
+                  mobileSidebarOpen ? "translate-x-0" : "-translate-x-full",
+                  "md:relative md:translate-x-0",
+                  sidebarCollapsed ? "md:w-16" : "md:w-[220px]",
+                  "w-[220px] md:transition-[width]"
+                )}
                 aria-label="App navigation"
               >
-                <div className="p-5 border-b border-[var(--border-default)] flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
+                <div className={cn(
+                  "border-b border-[var(--border-default)] flex items-center gap-2 shrink-0 transition-all duration-200",
+                  sidebarCollapsed ? "md:justify-center md:px-0 p-5 md:p-3" : "p-5 justify-between"
+                )}>
+                  <div className={cn("flex items-center min-w-0", sidebarCollapsed && "md:justify-center")}>
                     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shrink-0">
                       <span className="text-black font-bold text-sm">RT</span>
                     </div>
-                    <WorkspaceName
-                      initialName={initialWorkspaceName}
-                      className="truncate block text-[15px] font-semibold text-[var(--text-primary)]"
-                    />
+                    {!sidebarCollapsed && (
+                      <WorkspaceName
+                        initialName={initialWorkspaceName}
+                        className="truncate block text-[15px] font-semibold text-[var(--text-primary)] ml-2"
+                      />
+                    )}
                   </div>
                   <button
                     type="button"
@@ -269,9 +306,11 @@ export default function AppShellClient({
                 <nav className="flex-1 p-3 space-y-4 overflow-y-auto" aria-label="App navigation">
                   {SIDEBAR_GROUPS.map((group) => (
                     <div key={group.label}>
-                      <p className="px-3 mb-1 text-[11px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                        {group.label}
-                      </p>
+                      {!sidebarCollapsed && (
+                        <p className="text-[10px] uppercase tracking-[0.1em] text-[var(--text-tertiary)] px-4 pt-6 pb-1.5 font-medium">
+                          {group.label}
+                        </p>
+                      )}
                       <div className="space-y-0.5">
                         {group.items.map(({ href, label, icon: Icon }) => {
                           const effectiveLabel =
@@ -281,14 +320,16 @@ export default function AppShellClient({
                               key={href}
                               href={href}
                               onClick={() => setMobileSidebarOpen(false)}
-                              className={`flex items-center gap-2.5 border-l-2 py-2.5 px-3 rounded-r-xl text-[13px] font-medium transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none ${
+                              className={cn(
+                                "flex items-center border-l-2 py-2.5 rounded-r-xl text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
+                                sidebarCollapsed ? "md:justify-center md:px-0 md:pl-0 md:pr-0 px-3" : "gap-2.5 px-3",
                                 isActive(href)
-                                  ? "border-l-zinc-400 bg-white/[0.08] text-[var(--text-primary)]"
-                                  : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                              }`}
+                                  ? "border-l-[var(--accent-primary)] bg-white/[0.04] text-[var(--text-primary)]"
+                                  : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03]"
+                              )}
                             >
                               <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                              {effectiveLabel}
+                              {!sidebarCollapsed && <span>{effectiveLabel}</span>}
                             </Link>
                           );
                         })}
@@ -297,15 +338,35 @@ export default function AppShellClient({
                   ))}
                 </nav>
                 <div className="p-3 border-t border-[var(--border-default)] space-y-2">
-                  <div className="rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20 px-3 py-2">
-                    <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Trial</span>
-                    <span className="block text-[12px] text-[var(--text-secondary)]">
-                      12 days left
-                      {(workspaceMeta?.stats?.calls ?? 0) > 0
-                        ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered`
-                        : ""}
-                    </span>
-                  </div>
+                  {!sidebarCollapsed && (
+                    <div className="rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20 px-3 py-2">
+                      <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Trial</span>
+                      <span className="block text-[12px] text-[var(--text-secondary)]">
+                        12 days left
+                        {(workspaceMeta?.stats?.calls ?? 0) > 0
+                          ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered`
+                          : ""}
+                      </span>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={toggleSidebarCollapse}
+                    className={cn(
+                      "hidden md:flex w-full items-center justify-center gap-2 py-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
+                      sidebarCollapsed && "md:justify-center"
+                    )}
+                    aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  >
+                    {sidebarCollapsed ? (
+                      <PanelLeftOpen className="w-4 h-4" />
+                    ) : (
+                      <>
+                        <PanelLeftClose className="w-4 h-4" />
+                        <span className="text-xs">Collapse</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </aside>
               <button
@@ -321,11 +382,31 @@ export default function AppShellClient({
             )}
             <main
               id="main"
-              className="flex-1 overflow-auto overflow-x-hidden min-w-0 bg-[var(--bg-base)]"
+              className="flex-1 overflow-auto overflow-x-hidden min-w-0 bg-[var(--bg-base)] flex flex-col"
               tabIndex={-1}
               role="main"
             >
-              {children}
+              {!isOnboarding && (
+                <div className="sticky top-0 z-10 shrink-0 flex items-center justify-end gap-2 px-4 py-2 border-b border-[var(--border-default)] bg-[var(--bg-surface)]/80 backdrop-blur-sm">
+                  <button
+                    type="button"
+                    onClick={() => setCommandPaletteOpen(true)}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] border border-[var(--border-default)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                    aria-label="Open command palette"
+                  >
+                    <CommandIcon className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">⌘K</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                    aria-label="Notifications"
+                  >
+                    <Bell className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+              <div className="flex-1 min-h-0">{children}</div>
             </main>
           </div>
           {!isOnboarding && (
@@ -400,62 +481,10 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
             </>
           )}
         </div>
-        {commandPaletteOpen && (
-          <div
-            className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/70"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Quick navigation"
-            onClick={() => setCommandPaletteOpen(false)}
-          >
-            <div
-              className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card-elevated)] shadow-2xl p-4 space-y-3"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <p className="text-sm font-semibold text-[var(--text-primary)]">
-                    Quick navigation
-                  </p>
-                  <p className="text-[11px] text-[var(--text-tertiary)]">
-                    Press ⌘ + 1–4 to jump between core views.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setCommandPaletteOpen(false)}
-                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
-                  aria-label="Close"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="mt-2 space-y-1">
-                {[
-                  { href: "/app/activity", label: "Dashboard", shortcut: "⌘1" },
-                  { href: "/app/agents", label: "Agents", shortcut: "⌘2" },
-                  { href: "/app/calls", label: "Calls", shortcut: "⌘3" },
-                  { href: "/app/leads", label: "Leads", shortcut: "⌘4" },
-                ].map((item) => (
-                  <button
-                    key={item.href}
-                    type="button"
-                    onClick={() => {
-                      setCommandPaletteOpen(false);
-                      router.push(item.href);
-                    }}
-                    className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
-                  >
-                    <span>{item.label}</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-input)] text-[var(--text-tertiary)]">
-                      {item.shortcut}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        <CommandPalette
+          open={commandPaletteOpen}
+          onClose={() => setCommandPaletteOpen(false)}
+        />
       </OnboardingStepProvider>
     </WorkspaceProvider>
   );

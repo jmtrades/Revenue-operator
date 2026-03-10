@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
+import { Watch, Activity } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 
@@ -9,10 +9,14 @@ type ActionLink =
   | { label: string; href: string; onClick?: never }
   | { label: string; onClick: () => void; href?: never };
 
+const STRING_ICONS: Record<string, LucideIcon> = { watch: Watch, pulse: Activity };
+
 interface EmptyStateProps {
-  icon?: LucideIcon;
+  icon?: LucideIcon | keyof typeof STRING_ICONS;
   title: string;
   description?: string;
+  /** @deprecated Use description */
+  subtitle?: string;
   primaryAction?: ActionLink;
   secondaryAction?: ActionLink;
   footnote?: string;
@@ -20,14 +24,18 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  icon: Icon,
+  icon: iconProp,
   title,
   description,
+  subtitle,
   primaryAction,
   secondaryAction,
   footnote,
   className,
 }: EmptyStateProps) {
+  const Icon =
+    typeof iconProp === "string" ? STRING_ICONS[iconProp] ?? Watch : iconProp;
+  const desc = description ?? subtitle;
   return (
     <div
       className={cn(
@@ -41,8 +49,8 @@ export function EmptyState({
         </div>
       )}
       <h3 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
-      {description && (
-        <p className="mt-2 max-w-md text-sm text-[var(--text-secondary)]">{description}</p>
+      {desc && (
+        <p className="mt-2 max-w-md text-sm text-[var(--text-secondary)]">{desc}</p>
       )}
       {(primaryAction || secondaryAction) && (
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">

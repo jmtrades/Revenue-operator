@@ -1,7 +1,6 @@
 "use client";
 
 import type { HTMLAttributes, MouseEventHandler, ReactNode } from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 
 type CardVariant = "default" | "elevated" | "interactive";
@@ -22,17 +21,15 @@ export function Card({ children, className, variant = "default", onClick, ...res
     interactive: "cursor-pointer hover:border-[var(--border-hover)] hover:shadow-lg hover:shadow-black/40",
   };
 
-  const Comp = variant === "interactive" ? motion.div : "div";
-
   return (
-    <Comp
+    <div
       className={cn(baseClasses, variantClasses[variant], className)}
-      {...(variant === "interactive" ? { whileHover: { scale: 1.01 } } : {})}
       onClick={onClick}
+      role={variant === "interactive" && onClick ? "button" : undefined}
       {...rest}
     >
       {children}
-    </Comp>
+    </div>
   );
 }
 

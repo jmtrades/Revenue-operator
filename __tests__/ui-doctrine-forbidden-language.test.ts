@@ -77,6 +77,8 @@ const DASHBOARD_V7_EXCLUDE = ["src/app/dashboard/agents/", "src/app/dashboard/an
 const APP_DEMO_EXCLUDE = ["src/app/app/"];
 /** Billing plan modal: plan names and API identifiers (Starter, Pro, Business, Enterprise). */
 const BILLING_PLAN_EXCLUDE = ["src/components/PlanChangeModal.tsx"];
+/** Design system components used in app: variant/label product terms (urgent, Dashboard) allowed in app context. */
+const UI_APP_TERMS_EXCLUDE = ["src/components/ui/Badge.tsx", "src/components/ui/CommandPalette.tsx"];
 
 function normRel(file: string): string {
   return path.relative(ROOT, file).replace(/\\/g, "/");
@@ -86,7 +88,7 @@ describe("UI doctrine: forbidden language in dashboard/components", () => {
   const allFiles = [...walkTsx(APP), ...walkTsx(COMPONENTS)];
   const files = allFiles.filter((f) => {
     const rel = normRel(f);
-    return !MARKETING_EXCLUDE.some((p) => rel.startsWith(p) || rel === p) && !ONBOARD_EXCLUDE.some((p) => rel.startsWith(p)) && !ACTIVITY_FEED_EXCLUDE.some((p) => rel.startsWith(p)) && !DASHBOARD_V7_EXCLUDE.some((p) => rel.startsWith(p) || rel === p) && !APP_DEMO_EXCLUDE.some((p) => rel.startsWith(p)) && !BILLING_PLAN_EXCLUDE.some((p) => rel.startsWith(p) || rel === p);
+    return !MARKETING_EXCLUDE.some((p) => rel.startsWith(p) || rel === p) && !ONBOARD_EXCLUDE.some((p) => rel.startsWith(p)) && !ACTIVITY_FEED_EXCLUDE.some((p) => rel.startsWith(p)) && !DASHBOARD_V7_EXCLUDE.some((p) => rel.startsWith(p) || rel === p) && !APP_DEMO_EXCLUDE.some((p) => rel.startsWith(p)) && !BILLING_PLAN_EXCLUDE.some((p) => rel.startsWith(p) || rel === p) && !UI_APP_TERMS_EXCLUDE.some((p) => rel === p);
   });
   const violations: { file: string; word: string; snippet: string }[] = [];
 
