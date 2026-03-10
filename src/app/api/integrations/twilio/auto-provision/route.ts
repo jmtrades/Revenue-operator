@@ -53,8 +53,9 @@ export async function POST(req: NextRequest) {
 
   if (!accountSid || !authToken) {
     return NextResponse.json({
-      error: "Twilio not configured. Contact support.",
-    }, { status: 500 });
+      error: "Phone service is being configured. Your account will be notified when numbers are available.",
+      action: "notify",
+    }, { status: 503 });
   }
 
   const authHeader = "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64");
@@ -175,8 +176,9 @@ export async function POST(req: NextRequest) {
 
   if (!phoneNumber) {
     return NextResponse.json({
-      error: "No phone numbers are available right now. Try again in a few minutes, or contact support to use a shared line.",
-    }, { status: 503 });
+      error: "No numbers available in this region right now. We can notify you when one becomes available, or try a different area code.",
+      action: "retry_or_notify",
+    }, { status: 404 });
   }
 
   // Store in phone_configs
@@ -199,12 +201,19 @@ export async function POST(req: NextRequest) {
     status: "active",
     message: "Text handling activated",
   });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("[twilio-auto-provision]", error);
-    const message = error instanceof Error ? error.message : "Unknown error";
+    const err = error as { code?: number; message?: string };
+    const msg = err?.message ?? (error instanceof Error ? error.message : "Unknown error");
+    if (err.code === 21422 || (typeof msg === "string" && msg.toLowerCase().includes("not available"))) {
+      return NextResponse.json({
+        error: "This area code has no available numbers. Try a different area code or leave it blank for the nearest available number.",
+        action: "retry",
+      }, { status: 404 });
+    }
     return NextResponse.json({
-      error: "Could not provision a number. Try again in a few minutes, or contact support.",
-      detail: process.env.NODE_ENV === "development" ? message : undefined,
-    }, { status: 500 });
+      error: "Phone service encountered an error. Please try again or contact support.",
+      action: "retry",
+    }, { status: 502 });
   }
 }
