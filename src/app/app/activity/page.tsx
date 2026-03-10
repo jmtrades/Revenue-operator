@@ -16,7 +16,7 @@ import {
 import { calculateReadiness } from "@/lib/readiness";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
-import { EmptyState } from "@/components/EmptyState";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 type ActivityType = "lead" | "appointment" | "follow-up" | "urgent";

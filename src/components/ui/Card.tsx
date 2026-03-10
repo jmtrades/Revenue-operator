@@ -1,35 +1,50 @@
 "use client";
 
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
+import type { HTMLAttributes, MouseEventHandler, ReactNode } from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/cn";
+
+type CardVariant = "default" | "elevated" | "interactive";
+
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+  variant?: CardVariant;
+  onClick?: MouseEventHandler<HTMLDivElement>;
 }
 
-export function Card({ children, className = "" }: CardProps) {
+export function Card({ children, className, variant = "default", onClick, ...rest }: CardProps) {
+  const baseClasses =
+    "rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 transition-all duration-200";
+
+  const variantClasses: Record<CardVariant, string> = {
+    default: "",
+    elevated: "shadow-md shadow-black/40",
+    interactive: "cursor-pointer hover:border-[var(--border-hover)] hover:shadow-lg hover:shadow-black/40",
+  };
+
+  const Comp = variant === "interactive" ? motion.div : "div";
+
   return (
-    <div
-      className={`rounded-2xl border p-6 ${className}`}
-      style={{
-        background: "var(--card)",
-        borderColor: "var(--border)",
-        borderWidth: "1px",
-        boxShadow: "var(--shadow-sm)",
-        borderRadius: "var(--radius-container)",
-      }}
+    <Comp
+      className={cn(baseClasses, variantClasses[variant], className)}
+      {...(variant === "interactive" ? { whileHover: { scale: 1.01 } } : {})}
+      onClick={onClick}
+      {...rest}
     >
       {children}
-    </div>
+    </Comp>
   );
 }
 
-export function CardHeader({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function CardHeader({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`mb-4 text-sm font-medium ${className}`} style={{ color: "var(--text-secondary)" }}>
+    <div className={cn("mb-4 text-sm font-medium text-[var(--text-secondary)]", className)}>
       {children}
     </div>
   );
 }
 
-export function CardBody({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function CardBody({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={className}>{children}</div>;
 }
+

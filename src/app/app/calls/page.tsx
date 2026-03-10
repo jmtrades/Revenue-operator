@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Search, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
-import { EmptyState } from "@/components/EmptyState";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 const PAGE_TITLE = "Calls — Recall Touch";
 
