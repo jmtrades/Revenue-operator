@@ -3092,21 +3092,45 @@ function IdentityStepContent({
         />
       </div>
       <div>
-        <label htmlFor="agent-greeting" className="block text-xs text-zinc-500 mb-1.5">Opening greeting</label>
+        <label htmlFor="agent-greeting" className="block text-xs text-white/40 mb-1">
+          Opening greeting
+        </label>
+        <p className="text-xs text-white/30 mb-2">
+          What your AI says when it answers a call.
+        </p>
         <textarea
           id="agent-greeting"
           value={agent.greeting}
           onChange={(e) => onChange({ greeting: e.target.value })}
-          placeholder="Thanks for calling. How can I help you today?"
-          rows={3}
+          placeholder="Thanks for calling! How can I help you today?"
+          rows={2}
           aria-describedby={showGreetingError ? "agent-greeting-error" : "agent-greeting-hint"}
           aria-invalid={showGreetingError}
-          className={`w-full bg-[var(--bg-card)] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none border ${showGreetingError ? "border-red-500/60" : "border-[var(--border-default)]"}`}
+          className={`w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:border-zinc-500 focus:outline-none resize-none ${
+            showGreetingError ? "border-red-500/60" : ""
+          }`}
         />
+        <div className="mt-2 p-3 rounded-lg bg-white/[0.03] border border-zinc-700/60">
+          <p className="text-xs text-zinc-400 mb-0.5">Your caller will hear:</p>
+          <p className="text-sm text-white/80">
+            {agent.greeting?.trim() || "Thanks for calling! How can I help you today?"}
+          </p>
+        </div>
         {showGreetingError ? (
-          <p id="agent-greeting-error" className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">Enter an opening greeting.</p>
+          <p
+            id="agent-greeting-error"
+            className="mt-1 text-[11px] text-[var(--accent-red)]"
+            role="alert"
+          >
+            Enter an opening greeting.
+          </p>
         ) : (
-          <p id="agent-greeting-hint" className="mt-1 text-[11px] text-[var(--text-tertiary)]">This is the first thing callers hear.</p>
+          <p
+            id="agent-greeting-hint"
+            className="mt-1 text-[11px] text-[var(--text-tertiary)]"
+          >
+            This is the first thing callers hear.
+          </p>
         )}
       </div>
       <div className="flex justify-end">
