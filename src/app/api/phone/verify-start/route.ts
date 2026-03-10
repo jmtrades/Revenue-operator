@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   if (!VERIFY_SID || !ACCOUNT_SID || !AUTH_TOKEN) {
     return NextResponse.json(
-      { error: "This feature is being configured. Please try again later or contact support." },
+      { error: "Phone verification is being set up. You can use 'Get a new AI number' instead.", action: "redirect" },
       { status: 503 }
     );
   }
@@ -59,10 +59,17 @@ export async function POST(req: NextRequest) {
       body: params.toString(),
     });
 
-    const data = (await res.json().catch(() => ({}))) as { status?: string; error_message?: string };
+    const data = (await res.json().catch(() => ({}))) as { status?: string; error_message?: string; code?: number } & Record<string, unknown>;
     if (!res.ok) {
+      const code = data.code as number | undefined;
+      let message = (data.error_message as string) ?? "Failed to send code.";
+      if (code === 60200 || (typeof message === "string" && message.toLowerCase().includes("invalid"))) {
+        message = "Invalid phone number. Enter a valid number with country code (e.g., +1 555 000 0000).";
+      } else if (code === 20429 || (typeof message === "string" && message.toLowerCase().includes("rate") || message.toLowerCase().includes("too many"))) {
+        message = "Too many attempts. Please wait a few minutes before trying again.";
+      }
       return NextResponse.json(
-        { error: data.error_message ?? "Failed to send code" },
+        { error: message },
         { status: res.status >= 500 ? 503 : 400 }
       );
     }
