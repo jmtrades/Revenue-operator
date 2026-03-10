@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Mic } from "lucide-react";
+import { toast } from "sonner";
 import { speakText } from "@/lib/voice-preview";
 
 function canUseSpeechRecognition(): boolean {
@@ -182,6 +183,7 @@ export function AgentTestPanel({
     rec.onerror = () => {
       recognitionRef.current = null;
       setIsListening(false);
+      toast.error("Microphone access denied or no speech detected. Try again or type your message.");
     };
     try {
       recognitionRef.current = rec;
@@ -286,6 +288,7 @@ export function AgentTestPanel({
             }
             stopListening();
             if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+            testedRef.current = false;
             setTestStarted(false);
             setMessages([]);
             setIsSpeaking(false);
@@ -373,14 +376,14 @@ export function AgentTestPanel({
               }
             }}
             placeholder="Or type your reply…"
-            disabled={loading}
+            disabled={loading || isListening}
             aria-label="Type your message"
             className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-zinc-600 focus:outline-none disabled:opacity-50"
           />
           <button
             type="button"
             onClick={() => sendMessage()}
-            disabled={loading || !input.trim()}
+            disabled={loading || isListening || !input.trim()}
             className="px-4 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-zinc-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
           >
             Send
