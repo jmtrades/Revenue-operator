@@ -699,6 +699,13 @@ export default function AppAgentsPageClient({
       window.removeEventListener("agents:test-link-copied", handler as EventListener);
     };
   }, []);
+  const defaultAgentId = useMemo(() => {
+    if (agents.length === 0) return null;
+    const primary = agents.find(
+      (a) => (a.purpose === "inbound" || a.purpose === "both") && a.active,
+    );
+    return primary?.id ?? agents[0]?.id ?? null;
+  }, [agents]);
   useEffect(() => {
     if (!showTemplateModal) return;
     templateModalCloseRef.current?.focus();
@@ -1152,7 +1159,7 @@ export default function AppAgentsPageClient({
         </div>
         <button
           type="button"
-          onClick={() => setShowTemplateModal(true)}
+          onClick={() => void createAgentFromTemplate("scratch")}
           className="hidden sm:inline-flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
         >
           + Create Agent
@@ -1161,7 +1168,7 @@ export default function AppAgentsPageClient({
 
       <button
         type="button"
-        onClick={() => setShowTemplateModal(true)}
+        onClick={() => void createAgentFromTemplate("scratch")}
         className="sm:hidden mb-4 w-full bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
       >
         + Create Agent
@@ -1256,9 +1263,18 @@ export default function AppAgentsPageClient({
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <p className="font-medium text-sm text-white truncate">
-                      {agent.name}
-                    </p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm text-white truncate">
+                        {agent.name}
+                      </p>
+                      {agent.id === defaultAgentId && (
+                        <p className="text-[10px] text-zinc-500 mt-0.5">
+                          <span className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-zinc-300">
+                            Default agent
+                          </span>
+                        </p>
+                      )}
+                    </div>
                     <span
                       className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
                         agent.active
@@ -1374,6 +1390,13 @@ export default function AppAgentsPageClient({
                     >
                       Launch
                     </button>
+                    <span className="text-zinc-600">·</span>
+                    <Link
+                      href="/app/settings/phone"
+                      className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
+                    >
+                      Assign to number
+                    </Link>
                   </div>
                 </div>
               );
@@ -1505,7 +1528,7 @@ export default function AppAgentsPageClient({
               <p className="text-xs text-zinc-500 mb-6 max-w-sm mx-auto">Create your first AI agent to answer calls, capture leads, and book appointments.</p>
               <button
                 type="button"
-                onClick={() => setShowTemplateModal(true)}
+                onClick={() => void createAgentFromTemplate("scratch")}
                 className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 aria-label="Create your first agent"
               >
