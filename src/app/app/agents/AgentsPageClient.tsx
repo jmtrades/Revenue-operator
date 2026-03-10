@@ -3693,34 +3693,115 @@ function GoLiveStepContent({
       <section className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-5 space-y-4" aria-label="Preview how your AI will respond">
         <h3 className="text-sm font-medium text-white/70 mb-4">Preview — how your AI will respond</h3>
         <div className="space-y-4">
+          {/* 1. Booking scenario */}
           <div>
-            <p className="text-xs text-white/40 mb-1">Someone calls to book an appointment</p>
+            <p className="text-xs text-white/40 mb-1">
+              Caller wants to book an appointment
+            </p>
             <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
-              {agent.primaryGoal === "book_appointments" && agent.greeting?.trim()
-                ? agent.greeting.trim().slice(0, 120) + (agent.greeting.trim().length > 120 ? "…" : "")
-                : agent.greeting?.trim()?.slice(0, 100) ?? "Your agent will greet them and offer to schedule, using your greeting and calendar."}
+              {(() => {
+                const greeting = agent.greeting?.trim();
+                if (greeting) {
+                  const sliceLen = agent.primaryGoal === "book_appointments" ? 140 : 110;
+                  return (
+                    greeting.slice(0, sliceLen) +
+                    (greeting.length > sliceLen ? "…" : "")
+                  );
+                }
+                if (agent.bookingEnabled !== false) {
+                  return "Your agent will greet the caller, confirm what they need, and offer to book a time on your calendar.";
+                }
+                return "Your agent will greet the caller, gather details, and take a clear message for your team to schedule.";
+              })()}
             </p>
           </div>
+
+          {/* 2. Pricing question */}
           <div>
-            <p className="text-xs text-white/40 mb-1">Someone asks about pricing</p>
+            <p className="text-xs text-white/40 mb-1">Caller asks about pricing</p>
             <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
-              {(agent.faq ?? []).some((e) => (e.question ?? "").toLowerCase().includes("price") || (e.answer ?? "").toLowerCase().includes("price"))
-                ? (agent.faq ?? []).find((e) => (e.question ?? "").toLowerCase().includes("price") || (e.answer ?? "").toLowerCase().includes("price"))?.answer?.slice(0, 100) ?? "Your agent would answer from your knowledge."
-                : (agent.neverSay ?? []).some((r) => r.toLowerCase().includes("pricing") || r.toLowerCase().includes("quote"))
-                  ? "Your agent won't discuss pricing (per your rules). It would redirect or take a message."
-                  : "Your agent would look up pricing in your knowledge or say it doesn't have that info and offer to have someone follow up."}
+              {(() => {
+                const faq = agent.faq ?? [];
+                const pricingFromFaq = faq.find((e) => {
+                  const q = (e.question ?? "").toLowerCase();
+                  const a = (e.answer ?? "").toLowerCase();
+                  return q.includes("price") || q.includes("pricing") || a.includes("price");
+                });
+                if (pricingFromFaq?.answer?.trim()) {
+                  const ans = pricingFromFaq.answer.trim();
+                  return ans.slice(0, 110) + (ans.length > 110 ? "…" : "");
+                }
+                const never = (agent.neverSay ?? []).some((r) =>
+                  r.toLowerCase().includes("pricing") || r.toLowerCase().includes("quote"),
+                );
+                if (never) {
+                  return "Your agent will not give exact pricing (per your rules). It will explain that a human will follow up with a quote and capture contact details.";
+                }
+                if (agent.pricingEnabled && (agent.priceList ?? "").trim()) {
+                  return "Your agent will share your saved pricing overview and then guide the caller toward booking or a follow-up.";
+                }
+                return "Your agent will explain that pricing depends on the situation, offer a rough range if appropriate, and collect details so your team can send a precise quote.";
+              })()}
             </p>
           </div>
+
+          {/* 3. After-hours behavior */}
           <div>
-            <p className="text-xs text-white/40 mb-1">Someone calls after hours</p>
+            <p className="text-xs text-white/40 mb-1">Caller reaches you after hours</p>
             <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
-              {agent.afterHoursMode === "forward"
-                ? "Your agent will forward the call to your number or take a message, depending on your settings."
-                : agent.afterHoursMode === "messages"
-                  ? "Your agent will take a message and let the caller know someone will follow up."
-                  : "Your agent will take a message or handle per your after-hours settings."}
+              {(() => {
+                switch (agent.afterHoursMode) {
+                  case "forward":
+                    return "Your agent will explain that the office is closed and forward urgent calls to your transfer number, or take a message when forwarding isn’t appropriate.";
+                  case "messages":
+                    return "Your agent will let the caller know you’re closed, capture their name, number, and reason for calling, and confirm that someone will follow up.";
+                  case "emergency":
+                    return "Your agent will quickly check if it’s an emergency and, if so, transfer to your emergency contact. Otherwise it will take a detailed message.";
+                  case "closed":
+                    return "Your agent will state that the office is closed right now, share basic hours if known, and invite the caller to leave a message.";
+                  default:
+                    return "Your agent will check basic details, let the caller know your team is currently unavailable, and take a message for follow-up.";
+                }
+              })()}
             </p>
           </div>
+
+          {/* 4. Pricing objection */}
+          {(() => {
+            const priceObj = agent.objectionHandling?.price?.trim();
+            if (!priceObj) return null;
+            return (
+              <div>
+                <p className="text-xs text-white/40 mb-1">
+                  Caller says the price feels too high
+                </p>
+                <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
+                  {priceObj.slice(0, 160) + (priceObj.length > 160 ? "…" : "")}
+                </p>
+              </div>
+            );
+          })()}
+
+          {/* 5. Escalation / speak to human */}
+          {(() => {
+            const hasEscalationTriggers =
+              Array.isArray(agent.escalationTriggers) &&
+              agent.escalationTriggers.length > 0;
+            const hasTransferNumber = (agent.transferPhone ?? "").trim().length > 0;
+            if (!hasEscalationTriggers && !hasTransferNumber) return null;
+            return (
+              <div>
+                <p className="text-xs text-white/40 mb-1">
+                  Caller asks to speak to someone else
+                </p>
+                <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
+                  {hasTransferNumber
+                    ? "Your agent will stay calm, confirm why they’d like a human, and then transfer to your saved number when your escalation rules match."
+                    : "Your agent will stay calm, explain what it can help with, and if needed, take a message with the caller’s details for a human to follow up."}
+                </p>
+              </div>
+            );
+          })()}
         </div>
       </section>
       <p className="text-xs text-white/40">Connect your phone number or activate for test calls and outbound only.</p>
