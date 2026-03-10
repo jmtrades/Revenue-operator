@@ -39,10 +39,13 @@ export function AgentTestPanel({
   agent,
   workspace,
   onTested,
+  defaultScenarioPrompt,
 }: {
   agent: AgentTestPanelAgent;
   workspace?: AgentTestPanelWorkspace | null;
   onTested?: () => void;
+  /** When set, "Start conversation" will begin with this caller prompt. */
+  defaultScenarioPrompt?: string;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -249,7 +252,7 @@ export function AgentTestPanel({
 
         <button
           type="button"
-          onClick={() => startTest()}
+          onClick={() => startTest(defaultScenarioPrompt)}
           className="w-full py-3 bg-white text-gray-900 font-semibold rounded-xl hover:bg-zinc-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
         >
           Start conversation
