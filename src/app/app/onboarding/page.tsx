@@ -21,6 +21,13 @@ import { buildStarterKnowledge, mergeKnowledgeItems, type KnowledgeItem } from "
 import { invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 const STEPS = 5;
+const STEP_LABELS: { id: number; title: string; subtitle: string }[] = [
+  { id: 1, title: "Business", subtitle: "Who you are" },
+  { id: 2, title: "AI Agent", subtitle: "How it sounds" },
+  { id: 3, title: "Knowledge", subtitle: "What it knows" },
+  { id: 4, title: "Phone", subtitle: "How calls reach it" },
+  { id: 5, title: "Test", subtitle: "Make sure it works" },
+];
 const ONBOARDING_VOICES = CURATED_VOICES.slice(0, 6).map((v) => ({
   id: v.id,
   name: v.name,
@@ -217,27 +224,72 @@ export default function AppOnboardingPage() {
   const greetingToPlay = greeting.trim() || defaultGreeting;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--bg-base)] to-[var(--bg-surface)] text-white flex flex-col p-6 md:p-12">
-      <div className="max-w-2xl mx-auto w-full">
-        <div className="mb-6">
-          <div className="flex items-center justify-center gap-2 mb-2" aria-label={`Step ${step} of ${STEPS}`}>
-            {Array.from({ length: STEPS }, (_, i) => (
-              <span
-                key={i}
-                className={`inline-block w-2.5 h-2.5 rounded-full ${i + 1 <= step ? "bg-white" : "bg-[var(--border-medium)]"}`}
-                aria-hidden
-              />
-            ))}
-          </div>
-          <p className="text-xs text-center text-zinc-500">Step {step} of {STEPS}</p>
+    <div className="min-h-screen bg-black text-white flex">
+      <aside className="hidden md:flex w-64 flex-col border-r border-zinc-900 bg-zinc-950 px-6 py-8 gap-8">
+        <div>
+          <p className="text-xs font-semibold tracking-wide text-zinc-400">
+            Recall Touch
+          </p>
+          <p className="text-sm text-zinc-500 mt-1">Onboarding</p>
         </div>
+        <nav aria-label="Onboarding steps" className="space-y-4">
+          {STEP_LABELS.map((s) => {
+            const active = step === s.id;
+            return (
+              <div key={s.id} className="flex items-start gap-3">
+                <span
+                  className={`mt-1 inline-flex h-2.5 w-2.5 rounded-full ${
+                    active ? "bg-white" : "bg-zinc-700"
+                  }`}
+                  aria-hidden
+                />
+                <div>
+                  <p
+                    className={`text-xs font-medium ${
+                      active ? "text-white" : "text-zinc-400"
+                    }`}
+                  >
+                    {s.id}. {s.title}
+                  </p>
+                  <p className="text-[11px] text-zinc-500">{s.subtitle}</p>
+                </div>
+              </div>
+            );
+          })}
+        </nav>
+      </aside>
+      <div className="flex-1 flex flex-col px-4 py-6 md:px-10 md:py-10">
+        <div className="max-w-2xl mx-auto w-full">
+          <div className="mb-6 md:hidden">
+            <div
+              className="flex items-center justify-center gap-2 mb-2"
+              aria-label={`Step ${step} of ${STEPS}`}
+            >
+              {Array.from({ length: STEPS }, (_, i) => (
+                <span
+                  key={i}
+                  className={`inline-block w-2.5 h-2.5 rounded-full ${
+                    i + 1 <= step ? "bg-white" : "bg-zinc-700"
+                  }`}
+                  aria-hidden
+                />
+              ))}
+            </div>
+            <p className="text-xs text-center text-zinc-500">
+              Step {step} of {STEPS}
+            </p>
+          </div>
 
-        <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-6 md:p-8">
+          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">
         {/* Step 1 — YOUR BUSINESS */}
         {step === 1 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Tell us about your business</h1>
-            <p className="text-sm text-zinc-400">We&apos;ll configure your AI based on this.</p>
+            <h1 className="text-xl font-bold text-white">
+              Welcome to Recall Touch!
+            </h1>
+            <p className="text-sm text-zinc-400">
+              Let&apos;s get your AI phone system running in 2 minutes.
+            </p>
             <div>
               <label htmlFor="onboarding-business-name" className="block text-xs font-medium mb-1.5 text-zinc-400">Business name</label>
               <input
@@ -278,8 +330,11 @@ export default function AppOnboardingPage() {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://yoursite.com"
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
+              <p className="mt-1 text-[11px] text-zinc-500">
+                If you have a site, we&apos;ll use it to pre-fill your hours, services, and FAQs.
+              </p>
             </div>
             <div>
               <label htmlFor="onboarding-address" className="block text-xs font-medium mb-1.5 text-zinc-400">Address</label>
@@ -289,8 +344,11 @@ export default function AppOnboardingPage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="123 Main St, City, State"
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
+              <p className="mt-1 text-[11px] text-zinc-500">
+                This helps your AI answer &ldquo;Where are you located?&rdquo; and give directions.
+              </p>
             </div>
             <div>
               <label htmlFor="onboarding-phone" className="block text-xs font-medium mb-1.5 text-zinc-400">Phone number (we&apos;ll send a code to verify)</label>
@@ -300,7 +358,7 @@ export default function AppOnboardingPage() {
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
                 placeholder="+1 (555) 000-0000"
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
             </div>
             <button
@@ -619,16 +677,15 @@ export default function AppOnboardingPage() {
               onClick={handleGoToDashboard}
               className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
             >
-              Launch my AI →
+              Go to my dashboard →
             </button>
           </div>
         )}
+          </div>
         </div>
-      </div>
 
-      {showConfetti && (
-        <ConfettiOverlay />
-      )}
+        {showConfetti && <ConfettiOverlay />}
+      </div>
     </div>
   );
 }

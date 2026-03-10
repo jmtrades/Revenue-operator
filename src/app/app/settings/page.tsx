@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -36,6 +36,68 @@ type ConfirmType = "data" | "account" | null;
 export default function AppSettingsPage() {
   const [signingOut, setSigningOut] = useState(false);
   const [confirm, setConfirm] = useState<ConfirmType>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState("");
+  const [timezone, setTimezone] = useState(
+    () =>
+      (typeof Intl !== "undefined" &&
+        Intl.DateTimeFormat().resolvedOptions().timeZone) ||
+      "America/Los_Angeles",
+  );
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/session", {
+      credentials: "include",
+      cache: "no-store",
+      headers: { "Cache-Control": "no-store" },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then(
+        (data: { session?: { userId?: string | null; email?: string | null; displayName?: string | null; timezone?: string | null } } | null) => {
+          if (cancelled || !data?.session) return;
+          setEmail(data.session.email ?? null);
+          setDisplayName(data.session.displayName ?? "");
+          if (data.session.timezone?.trim()) {
+            setTimezone(data.session.timezone.trim());
+          }
+        },
+      )
+      .catch(() => {
+        // ignore; profile is optional
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleSaveProfile = async () => {
+    if (savingProfile) return;
+    setSavingProfile(true);
+    try {
+      const res = await fetch("/api/auth/profile", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          displayName: displayName.trim() || null,
+          timezone: timezone.trim() || null,
+        }),
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error || "Could not save profile");
+      }
+      toast.success("Profile saved");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Could not save profile. Try again.",
+      );
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
   const handleSignOut = async () => {
     if (signingOut) return;
@@ -52,6 +114,51 @@ export default function AppSettingsPage() {
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Settings</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">Preferences and configuration</p>
+      <div className="bg-[#161B22] border border-white/[0.08] rounded-xl p-6 mb-6">
+        <h2 className="text-base font-medium text-white/90 mb-4">Profile</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs text-white/40 mb-1 block">Email</label>
+            <p className="text-sm text-white/60">{email ?? "—"}</p>
+          </div>
+          <div>
+            <label className="text-xs text-white/40 mb-1 block">
+              Display name
+            </label>
+            <input
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="Your name"
+              className="w-full max-w-sm bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white focus:border-zinc-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-white/40 mb-1 block">Timezone</label>
+            <select
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              className="bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white focus:border-zinc-500 focus:outline-none max-w-sm"
+            >
+              {typeof Intl !== "undefined" &&
+                Intl.supportedValuesOf("timeZone")
+                  .filter((tz) => tz.includes("/"))
+                  .map((tz) => (
+                    <option key={tz} value={tz}>
+                      {tz.replace(/_/g, " ")}
+                    </option>
+                  ))}
+            </select>
+          </div>
+          <button
+            type="button"
+            onClick={handleSaveProfile}
+            disabled={savingProfile}
+            className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors disabled:opacity-60"
+          >
+            {savingProfile ? "Saving…" : "Save profile"}
+          </button>
+        </div>
+      </div>
       <div className="grid gap-3">
         {SETTINGS_LINKS.map((s) => (
           <Link

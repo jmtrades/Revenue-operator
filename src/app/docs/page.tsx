@@ -17,22 +17,56 @@ const DOC_SIDEBAR = [
 ] as const;
 
 const DOC_CARDS = [
-  { icon: BookOpen, title: "Getting Started", desc: "Set up your first governed environment in minutes.", href: null },
-  { icon: Code, title: "API Reference", desc: "Integrate Recall Touch into your existing systems.", href: null },
-  { icon: Shield, title: "Compliance Framework", desc: "Configure jurisdiction, review depth, and controls.", href: null },
-  { icon: Plug, title: "Integrations", desc: "Connect Recall Touch with your existing sales and communication tools.", href: null },
-  { icon: HelpCircle, title: "FAQ", desc: "Common questions about governance, records, and billing.", href: `${ROUTES.PRICING}#faq` },
-  { icon: MessageCircle, title: "Contact Support", desc: "Talk to our team for technical or compliance questions.", href: ROUTES.CONTACT },
-];
+  {
+    icon: BookOpen,
+    title: "Getting Started",
+    desc: "Set up your first governed environment in minutes.",
+    href: null,
+  },
+  {
+    icon: Code,
+    title: "API Reference",
+    desc: "Integrate Recall Touch into your existing systems.",
+    href: null,
+  },
+  {
+    icon: Shield,
+    title: "Compliance Framework",
+    desc: "Configure jurisdiction, review depth, and controls.",
+    href: null,
+  },
+  {
+    icon: Plug,
+    title: "Integrations",
+    desc: "Connect Recall Touch with your existing sales and communication tools.",
+    href: null,
+  },
+  {
+    icon: HelpCircle,
+    title: "FAQ",
+    desc: "Common questions about governance, records, and billing.",
+    href: `${ROUTES.PRICING}#faq`,
+  },
+  {
+    icon: MessageCircle,
+    title: "Contact Support",
+    desc: "Talk to our team for technical or compliance questions.",
+    href: ROUTES.CONTACT,
+  },
+] as const;
 
 export const metadata = {
   title: "Docs",
-  description: "Step-by-step guides for forwarding your number, setting up your voice agent, launching campaigns, and integrating Recall Touch.",
+  description:
+    "Step-by-step guides for forwarding your number, setting up your voice agent, launching campaigns, and integrating Recall Touch.",
 };
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+    <div
+      className="min-h-screen"
+      style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
+    >
       <Navbar />
       <main className="pt-28 pb-24">
         <Container>
@@ -54,77 +88,222 @@ export default function DocsPage() {
             <div className="min-w-0 flex-1 max-w-3xl">
               <div className="max-w-2xl mb-16">
                 <p className="section-label mb-4">Documentation</p>
-                <h1 className="font-bold text-3xl md:text-4xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+                <h1
+                  className="font-bold text-3xl md:text-4xl mb-4"
+                  style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}
+                >
                   Documentation
                 </h1>
-                <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Step-by-step guides for forwarding your number, setting up your voice agent, and connecting Recall Touch to the tools your business already uses.
+                <p
+                  className="text-base"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  Step-by-step guides for forwarding your number, setting up your voice
+                  agent, and connecting Recall Touch to the tools your business already
+                  uses.
                 </p>
               </div>
 
               <section id="quick-start" className="scroll-mt-28 mb-12">
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Quick Start</h2>
-                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Set up your first governed environment in minutes. Sign up, add your business details, configure your AI agent, and connect your phone number. Your AI will answer calls and capture leads from day one.
+                <h2
+                  className="font-semibold text-xl mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Quick Start
+                </h2>
+                <p
+                  className="text-base mb-4"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  Set up your first governed environment in minutes. Sign up, add your
+                  business details, configure your AI agent, and connect your phone
+                  number. Your AI will answer calls and capture leads from day one.
                 </p>
-                <Link href={ROUTES.START} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Start free →</Link>
+                <Link
+                  href={ROUTES.START}
+                  className="text-sm font-medium"
+                  style={{ color: "var(--accent-primary)" }}
+                >
+                  Start free →
+                </Link>
               </section>
 
-              <section id="call-forwarding" className="scroll-mt-28 mb-12 pt-8 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Call Forwarding</h2>
-                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7.
+              <section
+                id="call-forwarding"
+                className="scroll-mt-28 mb-12 pt-8 border-t"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <h2
+                  className="font-semibold text-xl mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Call Forwarding
+                </h2>
+                <p
+                  className="text-base mb-4"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  Forward your existing business number to your Recall Touch number, or
+                  use the provisioned number as your primary line. Incoming calls are
+                  answered by your agent 24/7.
                 </p>
-                <p className="text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>Carrier-specific steps</p>
-                <ul className="text-sm space-y-2 mb-4 list-disc pl-5" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  <li><strong>AT&T:</strong> Dial <code className="px-1 rounded bg-black/10">*21*[your RT number]#</code> then call. To cancel: <code className="px-1 rounded bg-black/10">#21#</code></li>
-                  <li><strong>Verizon:</strong> Dial <code className="px-1 rounded bg-black/10">*72</code> then your Recall Touch number. Wait for confirmation. To cancel: <code className="px-1 rounded bg-black/10">*73</code></li>
-                  <li><strong>T-Mobile:</strong> Dial <code className="px-1 rounded bg-black/10">**21*[RT number]#</code>. To cancel: <code className="px-1 rounded bg-black/10">##21#</code></li>
-                  <li><strong>Comcast Business:</strong> Log in to the Comcast Business portal → Voice → Call Forwarding → enter your Recall Touch number.</li>
-                  <li><strong>Google Voice:</strong> Settings → Calls → turn on “Forward calls to linked numbers” or add your RT number.</li>
-                  <li><strong>Vonage:</strong> Admin portal → Phone numbers → Forwarding → set your RT number.</li>
+                <p
+                  className="text-sm font-medium mb-2"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Carrier-specific steps
+                </p>
+                <ul
+                  className="text-sm space-y-2 mb-4 list-disc pl-5"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  <li>
+                    <strong>AT&amp;T:</strong> Dial{" "}
+                    <code className="px-1 rounded bg-black/10">
+                      *21*[your RT number]#
+                    </code>{" "}
+                    then call. To cancel:{" "}
+                    <code className="px-1 rounded bg-black/10">#21#</code>
+                  </li>
+                  <li>
+                    <strong>Verizon:</strong> Dial{" "}
+                    <code className="px-1 rounded bg-black/10">*72</code> then your
+                    Recall Touch number. Wait for confirmation. To cancel:{" "}
+                    <code className="px-1 rounded bg-black/10">*73</code>
+                  </li>
+                  <li>
+                    <strong>T-Mobile:</strong> Dial{" "}
+                    <code className="px-1 rounded bg-black/10">
+                      **21*[RT number]#
+                    </code>
+                    . To cancel:{" "}
+                    <code className="px-1 rounded bg-black/10">##21#</code>
+                  </li>
+                  <li>
+                    <strong>Comcast Business:</strong> Log in to the Comcast Business
+                    portal → Voice → Call Forwarding → enter your Recall Touch number.
+                  </li>
+                  <li>
+                    <strong>Google Voice:</strong> Settings → Calls → turn on “Forward
+                    calls to linked numbers” or add your RT number.
+                  </li>
+                  <li>
+                    <strong>Vonage:</strong> Admin portal → Phone numbers → Forwarding →
+                    set your RT number.
+                  </li>
                 </ul>
-                <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>Generic: Call your carrier and say “I want to forward my calls to [your Recall Touch number].” Questions: hello@recall-touch.com</p>
-              </section>
-
-              <section id="ai-agents" className="scroll-mt-28 mb-12 pt-8 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>AI Agents</h2>
-                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Configure your AI agent name, voice, greeting, and capabilities. Teach it your services, hours, and how to handle appointments. No coding required.
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  Generic: Call your carrier and say “I want to forward my calls to
+                  [your Recall Touch number].” Questions: hello@recall-touch.com
                 </p>
               </section>
 
-              <section id="campaigns" className="scroll-mt-28 mb-12 pt-8 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Campaigns</h2>
-                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Run outbound follow-up, reminders, and recovery flows. Create campaigns from the dashboard, set audiences and scripts, and track outcomes.
+              <section
+                id="ai-agents"
+                className="scroll-mt-28 mb-12 pt-8 border-t"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <h2
+                  className="font-semibold text-xl mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  AI Agents
+                </h2>
+                <p
+                  className="text-base mb-4"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  Configure your AI agent name, voice, greeting, and capabilities. Teach
+                  it your services, hours, and how to handle appointments. No coding
+                  required.
                 </p>
               </section>
 
-              <section id="integrations" className="scroll-mt-28 mb-12 pt-8 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Integrations</h2>
-                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Business and Enterprise plans.
+              <section
+                id="campaigns"
+                className="scroll-mt-28 mb-12 pt-8 border-t"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <h2
+                  className="font-semibold text-xl mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Campaigns
+                </h2>
+                <p
+                  className="text-base mb-4"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  Run outbound follow-up, reminders, and recovery flows. Create
+                  campaigns from the dashboard, set audiences and scripts, and track
+                  outcomes.
+                </p>
+              </section>
+
+              <section
+                id="integrations"
+                className="scroll-mt-28 mb-12 pt-8 border-t"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <h2
+                  className="font-semibold text-xl mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Integrations
+                </h2>
+                <p
+                  className="text-base mb-4"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  Connect Recall Touch with your phone provider (Twilio), calendar, and
+                  CRM. Webhooks and API access available on Business and Enterprise
+                  plans.
                 </p>
               </section>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 my-12">
                 {DOC_CARDS.map((card) => (
-                  <div
-                    key={card.title}
-                    className="card-marketing p-6 flex flex-col"
-                  >
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>
+                  <div key={card.title} className="card-marketing p-6 flex flex-col">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                      style={{
+                        background: "var(--accent-primary-subtle)",
+                        color: "var(--accent-primary)",
+                      }}
+                    >
                       <card.icon className="w-5 h-5" />
                     </div>
-                    <h2 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>{card.title}</h2>
-                    <p className="text-sm flex-1 mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.55 }}>{card.desc}</p>
+                    <h2
+                      className="font-semibold text-lg mb-2"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      {card.title}
+                    </h2>
+                    <p
+                      className="text-sm flex-1 mb-4"
+                      style={{ color: "var(--text-secondary)", lineHeight: 1.55 }}
+                    >
+                      {card.desc}
+                    </p>
                     {card.href ? (
-                      <Link href={card.href} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>
+                      <Link
+                        href={card.href}
+                        className="text-sm font-medium"
+                        style={{ color: "var(--accent-primary)" }}
+                      >
                         View →
                       </Link>
                     ) : (
-                      <span className="text-xs font-medium px-2.5 py-1 rounded-full inline-block w-fit" style={{ background: "var(--bg-elevated)", color: "var(--text-tertiary)" }}>
+                      <span
+                        className="text-xs font-medium px-2.5 py-1 rounded-full inline-block w-fit"
+                        style={{
+                          background: "var(--bg-elevated)",
+                          color: "var(--text-tertiary)",
+                        }}
+                      >
                         Contact for access
                       </span>
                     )}
@@ -132,47 +311,89 @@ export default function DocsPage() {
                 ))}
               </div>
 
-              <section id="billing" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Billing</h2>
-                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Plans are billed monthly or annually. Annual billing includes two months free. Included minutes and overage rates are listed on the pricing page. You can change or cancel your plan from Settings → Billing. Invoices are available in the dashboard.
+              <section
+                id="billing"
+                className="scroll-mt-28 mt-16 pt-12 border-t"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <h2
+                  className="font-semibold text-xl mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Billing
+                </h2>
+                <p
+                  className="text-base mb-4"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  Plans are billed monthly or annually. Annual billing includes two
+                  months free. Included minutes and overage rates are listed on the
+                  pricing page. You can change or cancel your plan from Settings →
+                  Billing. Invoices are available in the dashboard.
                 </p>
-                <Link href={ROUTES.PRICING} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>View pricing →</Link>
-              </section>
-
-              <section id="api" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>API</h2>
-                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  REST and webhook APIs for integrating Recall Touch with your existing systems. Scale and Enterprise plans include full API access. Contact us for access.
-                </p>
-                <Link href={ROUTES.CONTACT} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Contact for API access →</Link>
-              </section>
-
-              <section id="faq" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>FAQ</h2>
-                <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Common questions about setup, call forwarding, agents, and billing are answered on the pricing page.
-                </p>
-                <Link href={`${ROUTES.PRICING}#faq`} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>View FAQ →</Link>
-              </section>
-
-              <section id="changelog" className="scroll-mt-28 mt-16 pt-12 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Changelog</h2>
-                <div className="space-y-4">
-                  <div>
-                    <p className="font-medium text-sm mb-1" style={{ color: "var(--text-primary)" }}>v1.0 — March 2026</p>
-                    <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                      Launch. Governed call handling, compliance records, follow-up automation, and multi-channel support.
-                    </p>
-                  </div>
-                </div>
-              </section>
-
-              <div className="mt-12 text-center">
-                <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-block">
-                  Start free →
+                <Link
+                  href={ROUTES.PRICING}
+                  className="text-sm font-medium"
+                  style={{ color: "var(--accent-primary)" }}
+                >
+                  View pricing →
                 </Link>
-              </div>
+              </section>
+
+              <section
+                id="api"
+                className="scroll-mt-28 mt-16 pt-12 border-t"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <h2
+                  className="font-semibold text-xl mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  API
+                </h2>
+                <p
+                  className="text-base mb-4"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  REST and webhook APIs for integrating Recall Touch with your existing
+                  systems. Scale and Enterprise plans include full API access. Contact us
+                  for access.
+                </p>
+                <Link
+                  href={ROUTES.CONTACT}
+                  className="text-sm font-medium"
+                  style={{ color: "var(--accent-primary)" }}
+                >
+                  Contact for API access →
+                </Link>
+              </section>
+
+              <section
+                id="faq"
+                className="scroll-mt-28 mt-16 pt-12 border-t"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <h2
+                  className="font-semibold text-xl mb-4"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  FAQ
+                </h2>
+                <p
+                  className="text-base mb-4"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
+                >
+                  Common questions about setup, call forwarding, agents, and billing are
+                  answered on the pricing page.
+                </p>
+                <Link
+                  href={`${ROUTES.PRICING}#faq`}
+                  className="text-sm font-medium"
+                  style={{ color: "var(--accent-primary)" }}
+                >
+                  View FAQ →
+                </Link>
+              </section>
             </div>
           </div>
         </Container>
@@ -181,3 +402,4 @@ export default function DocsPage() {
     </div>
   );
 }
+

@@ -177,53 +177,55 @@ export default function AppCalendarPage() {
           </p>
         </div>
         {view === "week" ? (
-          <div className="grid grid-cols-[48px_repeat(7,minmax(0,1fr))] text-[10px]">
-            <div className="border-r border-[var(--border-default)] bg-black/40" />
-            {weekDays.map((d) => (
-              <div
-                key={d}
-                className="border-r border-[var(--border-default)] px-2 py-1 text-center text-zinc-400 bg-black/40"
-              >
-                {d}
-              </div>
-            ))}
-            {hours.map((h) => (
-              <>
+          <div className="overflow-x-auto">
+            <div className="min-w-[720px] grid grid-cols-[48px_repeat(7,minmax(0,1fr))] text-[10px]">
+              <div className="border-r border-[var(--border-default)] bg-black/40" />
+              {weekDays.map((d) => (
                 <div
-                  key={`h-${h}`}
-                  className="border-t border-[var(--border-default)] px-1 py-2 text-right text-[10px] text-zinc-500 bg-black/40"
+                  key={d}
+                  className="border-r border-[var(--border-default)] px-2 py-1 text-center text-zinc-400 bg-black/40"
                 >
-                  {h === 12 ? "12 PM" : h < 12 ? `${h} AM` : `${h - 12} PM`}
+                  {d}
                 </div>
-                {weekDays.map((d) => (
+              ))}
+              {hours.map((h) => (
+                <>
                   <div
-                    key={`${h}-${d}`}
-                    className="border-t border-r border-[var(--border-default)] relative min-h-[40px]"
+                    key={`h-${h}`}
+                    className="border-t border-[var(--border-default)] px-1 py-2 text-right text-[10px] text-zinc-500 bg-black/40"
                   >
-                    {appointments
-                      .filter((a) => a.time.startsWith(h.toString().padStart(2, "0")))
-                      .map((a) => {
-                        const statusClasses =
-                          a.status === "confirmed"
-                            ? "border-green-500 bg-green-500/15"
-                            : "border-amber-500 bg-amber-500/15";
-                        return (
-                          <button
-                            key={a.id}
-                            type="button"
-                            onClick={() => setSelected(a)}
-                            className={`absolute inset-x-1 top-1 rounded-md border-l-4 px-1.5 py-1 text-[10px] text-left text-white ${statusClasses}`}
-                          >
-                            <span className="block truncate">
-                              {a.contact} — {a.service}
-                            </span>
-                          </button>
-                        );
-                      })}
+                    {h === 12 ? "12 PM" : h < 12 ? `${h} AM` : `${h - 12} PM`}
                   </div>
-                ))}
-              </>
-            ))}
+                  {weekDays.map((d) => (
+                    <div
+                      key={`${h}-${d}`}
+                      className="border-t border-r border-[var(--border-default)] relative min-h-[40px]"
+                    >
+                      {appointments
+                        .filter((a) => a.time.startsWith(h.toString().padStart(2, "0")))
+                        .map((a) => {
+                          const statusClasses =
+                            a.status === "confirmed"
+                              ? "border-green-500 bg-green-500/15"
+                              : "border-amber-500 bg-amber-500/15";
+                          return (
+                            <button
+                              key={a.id}
+                              type="button"
+                              onClick={() => setSelected(a)}
+                              className={`absolute inset-x-1 top-1 rounded-md border-l-4 px-1.5 py-1 text-[10px] text-left text-white ${statusClasses}`}
+                            >
+                              <span className="block truncate">
+                                {a.contact} — {a.service}
+                              </span>
+                            </button>
+                          );
+                        })}
+                    </div>
+                  ))}
+                </>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="p-4 text-xs text-zinc-400">
