@@ -12,6 +12,8 @@ import {
   ChevronRight,
   ClipboardList,
   Headphones,
+  Moon,
+  Pencil,
   Play,
   PhoneCall,
   PhoneForwarded,
@@ -19,11 +21,16 @@ import {
   Settings,
   Square,
   Star,
+  Trash2,
   UserCheck,
   type LucideIcon,
 } from "lucide-react";
 import { AgentTestPanel } from "@/app/app/agents/AgentTestPanel";
 import { Confetti } from "@/components/Confetti";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Tabs } from "@/components/ui/Tabs";
+import { AccordionItem } from "@/components/ui/Accordion";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   AGENT_TEMPLATES,
@@ -1194,211 +1201,93 @@ export default function AppAgentsPageClient({
         </div>
       ) : (
       <div className="flex flex-col lg:flex-row h-full min-h-0 gap-4 lg:gap-0 lg:min-h-[480px]">
-        <div className="w-full lg:w-[280px] lg:shrink-0 lg:border-r lg:border-[var(--border-default)] lg:overflow-y-auto lg:pr-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 content-start">
+        <div className="w-full lg:w-[320px] xl:w-[360px] lg:shrink-0 lg:border-r lg:border-[var(--border-default)] lg:overflow-y-auto lg:pr-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 content-start">
             {agents.map((agent) => {
-              const faqCount =
-                agent.faq?.filter(
-                  (e) => (e.question ?? "").trim() && (e.answer ?? "").trim(),
-                ).length ?? 0;
-              const servicesCount = agent.services?.length ?? 0;
-              const guardrailCount =
-                (agent.neverSay?.length ?? 0) +
-                (agent.alwaysTransfer?.length ?? 0) +
-                (agent.transferRules?.length ?? 0) +
-                (agent.escalationTriggers?.length ?? 0) +
-                (agent.objectionHandling?.price ? 1 : 0) +
-                (agent.objectionHandling?.timing ? 1 : 0) +
-                (agent.objectionHandling?.competitor ? 1 : 0) +
-                (agent.objectionHandling?.notInterested ? 1 : 0);
-              const guardrailLabel =
-                guardrailCount > 0 ? `${guardrailCount} rules set` : "No guardrails";
-              const hasCalls = (agent.stats.totalCalls ?? 0) > 0;
-              const lastTestedLabel = hasCalls ? "Tested via calls" : "Never tested";
-
               const templateLabel = (() => {
                 switch (agent.template) {
-                  case "appointment_setter":
-                    return "Appointment Booker";
-                  case "lead_qualifier":
-                    return "Lead Qualifier";
-                  case "follow_up":
-                    return "Follow-up Caller";
-                  case "support":
-                    return "Customer Support";
-                  case "after_hours":
-                    return "After-hours";
-                  case "emergency":
-                    return "Emergency";
-                  case "review_request":
-                    return "Review Request";
-                  case "scratch":
-                    return "Custom";
+                  case "appointment_setter": return "Appointment";
+                  case "lead_qualifier": return "Sales";
+                  case "follow_up": return "Follow-up";
+                  case "support": return "Support";
+                  case "after_hours": return "After-Hours";
+                  case "emergency": return "Emergency";
+                  case "review_request": return "Review";
+                  case "scratch": return "Custom";
                   case "receptionist":
-                  default:
-                    return "Receptionist";
+                  default: return "Receptionist";
                 }
               })();
+              const lastActiveLabel = (agent.stats?.totalCalls ?? 0) > 0
+                ? `${agent.stats.totalCalls} calls`
+                : "No calls yet";
 
               return (
-                <div
+                <Card
                   key={agent.id}
-                  role="button"
-                  tabIndex={0}
+                  variant="interactive"
+                  className={`text-left p-4 ${selected?.id === agent.id ? "ring-1 ring-[var(--accent-primary)]/50 border-[var(--border-medium)]" : ""}`}
                   onClick={() => {
                     setSelectedId(agent.id);
                     setActiveStep(getFirstIncompleteStep(agent));
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedId(agent.id);
-                      setActiveStep(getFirstIncompleteStep(agent));
-                    }
-                  }}
-                  className={`text-left p-4 rounded-2xl border bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] ${
-                    selected?.id === agent.id
-                      ? "border-[var(--border-medium)]"
-                      : "border-[var(--border-default)]"
-                  }`}
                 >
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <div className="min-w-0">
-                      <p className="font-medium text-sm text-white truncate">
-                        {agent.name}
-                      </p>
-                      {agent.id === defaultAgentId && (
-                        <p className="text-[10px] text-zinc-500 mt-0.5">
-                          <span className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-zinc-300">
-                            Default agent
-                          </span>
-                        </p>
-                      )}
-                    </div>
-                    <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                        agent.active
-                          ? "bg-green-500/15 text-green-400"
-                          : "bg-zinc-800 text-zinc-400"
-                      }`}
-                    >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <p className="font-semibold text-sm text-[var(--text-primary)] truncate flex-1 min-w-0">
+                      {agent.name}
+                    </p>
+                    <Badge variant={agent.active ? "success" : "neutral"} dot>
                       {agent.active ? "Active" : "Inactive"}
-                    </span>
+                    </Badge>
                   </div>
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-zinc-300">
-                      {templateLabel}
-                    </span>
-                    <span className="text-[10px] text-zinc-500">
-                      {agent.purpose === "inbound"
-                        ? "Inbound"
-                        : agent.purpose === "outbound"
-                          ? "Outbound"
-                          : "Inbound + outbound"}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-zinc-500 mb-1">
-                    Voice:{" "}
-                    {elevenLabsVoices.find((v) => v.id === agent.voice)?.name ??
-                      "Voice"}
-                  </p>
-                  <p className="text-[11px] text-zinc-500">
-                    {(faqCount || servicesCount) > 0 ? (
-                      <>
-                        {faqCount} Q&As
-                        {servicesCount > 0 && ` · ${servicesCount} services`}
-                      </>
-                    ) : (
-                      <span className="text-amber-500/80">No knowledge added</span>
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    <Badge variant="neutral">{templateLabel}</Badge>
+                    {agent.id === defaultAgentId && (
+                      <span className="text-[10px] text-[var(--text-tertiary)]">Default</span>
                     )}
-                  </p>
-                  <p className="text-[11px] mt-1">
-                    <span
-                      className={
-                        guardrailCount > 0 ? "text-zinc-500" : "text-amber-500/80"
-                      }
-                    >
-                      {guardrailLabel}
-                    </span>
-                    {" · "}
-                    <span
-                      className={
-                        hasCalls ? "text-zinc-500" : "text-amber-500/80"
-                      }
-                    >
-                      {lastTestedLabel}
-                    </span>
-                  </p>
-                  {(() => {
-                    const readiness = getAgentReadiness(agent);
-                    const isLive = !!agent.vapiAgentId?.trim();
-                    return (
-                      <p className="mt-2 text-[11px] text-zinc-500">
-                        {isLive ? (
-                          <span className="text-green-500/80">Live</span>
-                        ) : (
-                          <span
-                            className={
-                              readiness.percent >= 80
-                                ? "text-green-500/80"
-                                : readiness.percent >= 40
-                                  ? "text-amber-500/80"
-                                  : "text-zinc-500"
-                            }
-                          >
-                            {readiness.percent}% ready
-                          </span>
-                        )}
-                        {" · "}
-                        {agent.stats.totalCalls} calls
-                      </p>
-                    );
-                  })()}
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
+                    <span>{agent.stats?.totalCalls ?? 0} calls</span>
+                    <span>·</span>
+                    <span>{lastActiveLabel}</span>
+                  </div>
                   <div
-                    className="mt-3 pt-2 border-t border-[var(--border-default)] flex items-center gap-2"
+                    className="flex items-center gap-2 pt-2 border-t border-[var(--border-default)]"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <button
                       type="button"
-                      className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
+                      aria-label={agent.active ? "Deactivate" : "Activate"}
+                      className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
+                      onClick={async () => {
+                        const next = { ...agent, active: !agent.active };
+                        setAgents((c) => c.map((a) => (a.id === agent.id ? next : a)));
+                        await persistAgent(next, { showToast: true, successToast: agent.active ? "Agent paused" : "Agent active" });
+                      }}
+                    >
+                      <span className="text-[10px] font-medium">{agent.active ? "Pause" : "On"}</span>
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Edit agent"
+                      className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
                       onClick={() => {
                         setSelectedId(agent.id);
                         setActiveStep(getFirstIncompleteStep(agent));
                       }}
                     >
-                      Edit
+                      <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <span className="text-zinc-600">·</span>
                     <button
                       type="button"
-                      className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
-                      onClick={() => {
-                        setSelectedId(agent.id);
-                        setActiveStep("test");
-                      }}
+                      aria-label="Delete agent"
+                      className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-red-400 hover:bg-red-500/10"
+                      onClick={() => setDeleteConfirmAgent(agent)}
                     >
-                      Test
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
-                    <span className="text-zinc-600">·</span>
-                    <button
-                      type="button"
-                      className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
-                      onClick={() => {
-                        setSelectedId(agent.id);
-                        setActiveStep("golive");
-                      }}
-                    >
-                      Launch
-                    </button>
-                    <span className="text-zinc-600">·</span>
-                    <Link
-                      href="/app/settings/phone"
-                      className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
-                    >
-                      Assign to number
-                    </Link>
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>
@@ -1515,7 +1404,7 @@ export default function AppAgentsPageClient({
                   <BehaviorStepContent agent={selected} onChange={updateSelected} onBack={() => void handleStepChange("knowledge")} onNext={async () => { await handleStepChange("test"); }} />
                 )}
                 {activeStep === "test" && (
-                  <TestStepContent agent={selected} workspaceName={initialWorkspaceName} onBack={() => void handleStepChange("behavior")} onNext={async () => { await handleStepChange("golive"); }} />
+                  <TestStepContent agent={selected} workspaceName={initialWorkspaceName} getAgentReadiness={getAgentReadiness} onBack={() => void handleStepChange("behavior")} onNext={async () => { await handleStepChange("golive"); }} />
                 )}
                 {activeStep === "golive" && (
                   <GoLiveStepContent agent={selected} voices={elevenLabsVoices} getReadiness={getAgentReadiness} onBack={() => void handleStepChange("test")} onActivate={async () => { const result = await persistAgent(selected, { showToast: true }); if (result.vapiId) { setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: result.vapiId ?? null } : a))); setToast("Your AI agent is live! 🎉"); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000); } }} activating={saving} />
@@ -1619,6 +1508,12 @@ export default function AppAgentsPageClient({
                 icon={BellRing}
                 description="Re-engage cold leads and check in."
                 onClick={() => createAgentFromTemplate("follow_up")}
+              />
+              <TemplateCard
+                title="After-Hours"
+                icon={Moon}
+                description="Handle calls when the office is closed."
+                onClick={() => createAgentFromTemplate("after_hours")}
               />
               <TemplateCard
                 title="Custom"
@@ -2059,6 +1954,24 @@ function ProfileTab({
   );
 }
 
+const FAQ_CATEGORY_TABS = [
+  { id: "all", label: "All" },
+  { id: "hours", label: "Hours" },
+  { id: "services", label: "Services" },
+  { id: "pricing", label: "Pricing" },
+  { id: "policies", label: "Policies" },
+];
+
+function faqMatchesCategory(q: string, category: string): boolean {
+  if (category === "all") return true;
+  const lower = q.toLowerCase();
+  if (category === "hours") return lower.includes("hour") || lower.includes("open") || lower.includes("close") || lower.includes("when");
+  if (category === "services") return lower.includes("service") || lower.includes("offer") || lower.includes("do you");
+  if (category === "pricing") return lower.includes("price") || lower.includes("cost") || lower.includes("rate") || lower.includes("fee");
+  if (category === "policies") return lower.includes("policy") || lower.includes("cancel") || lower.includes("refund") || lower.includes("accept");
+  return true;
+}
+
 function KnowledgeTab({
   agent,
   onChange,
@@ -2066,6 +1979,7 @@ function KnowledgeTab({
   agent: Agent;
   onChange: (partial: Partial<Agent>) => void;
 }) {
+  const [faqCategory, setFaqCategory] = useState("all");
   const addFaqRow = () => {
     const id = `f-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     onChange({ faq: [...agent.faq, { id, question: "", answer: "" }] });
@@ -2079,6 +1993,10 @@ function KnowledgeTab({
     }));
     onChange({ faq: agent.faq.length === 0 ? entries : [...agent.faq, ...entries] });
   };
+
+  const filteredFaq = faqCategory === "all"
+    ? agent.faq
+    : agent.faq.filter((item) => faqMatchesCategory(item.question ?? "", faqCategory));
 
   return (
     <div className="space-y-4 text-xs md:text-sm">
@@ -2107,6 +2025,15 @@ function KnowledgeTab({
         </div>
       </div>
 
+      {agent.faq.length > 0 && (
+        <Tabs
+          tabs={FAQ_CATEGORY_TABS}
+          activeTab={faqCategory}
+          onChange={setFaqCategory}
+          className="mb-2"
+        />
+      )}
+
       {agent.faq.length === 0 ? (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-8 text-center">
           <BookOpen className="mx-auto h-8 w-8 text-zinc-600" />
@@ -2124,7 +2051,7 @@ function KnowledgeTab({
         </div>
       ) : (
         <div className="space-y-3">
-          {agent.faq.map((item, index) => (
+          {filteredFaq.map((item, index) => (
             <div
               key={item.id}
               className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4"
@@ -3073,6 +3000,31 @@ function IdentityStepContent({
     }
   };
 
+  const INDUSTRY_OPTIONS = [
+    { id: "", label: "General" },
+    { id: "dental", label: "Dental", greeting: "Thanks for calling our dental office. How can we help you today?" },
+    { id: "legal", label: "Legal", greeting: "Thank you for calling. How may I direct your call?" },
+    { id: "plumbing", label: "Plumbing", greeting: "Thanks for calling. Are you calling about an emergency or to schedule a visit?" },
+    { id: "real_estate", label: "Real Estate", greeting: "Hi, thanks for calling. Are you looking to buy, sell, or schedule a viewing?" },
+    { id: "auto", label: "Auto", greeting: "Thanks for calling. Is this about a service appointment or a question?" },
+    { id: "salon", label: "Salon", greeting: "Thanks for calling! Would you like to book an appointment or ask about our services?" },
+    { id: "restaurant", label: "Restaurant", greeting: "Thanks for calling. Do you need a reservation or have a question?" },
+    { id: "medical", label: "Medical", greeting: "Thank you for calling. How can we help you today?" },
+    { id: "consulting", label: "Consulting", greeting: "Thanks for reaching out. How can I help you?" },
+    { id: "contractor", label: "Contractor", greeting: "Thanks for calling. Are you calling about an estimate or scheduling work?" },
+  ] as const;
+
+  type ToneId = "professional" | "friendly" | "casual" | "formal";
+  const TONE_OPTIONS: { id: ToneId; label: string }[] = [
+    { id: "professional", label: "Professional" },
+    { id: "friendly", label: "Friendly" },
+    { id: "casual", label: "Casual" },
+    { id: "formal", label: "Formal" },
+  ];
+  const agentTone = (agent.personality >= 0 && agent.personality <= 100
+    ? agent.personality <= 25 ? "formal" : agent.personality <= 50 ? "professional" : agent.personality <= 75 ? "friendly" : "casual"
+    : "professional") as ToneId;
+
   return (
     <div className="space-y-6">
       <h3
@@ -3081,6 +3033,48 @@ function IdentityStepContent({
       >
         What does this agent do?
       </h3>
+      <section aria-label="Industry and tone" className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
+        <div>
+          <label htmlFor="identity-industry" className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">Industry template</label>
+          <select
+            id="identity-industry"
+            value=""
+            onChange={(e) => {
+              const opt = INDUSTRY_OPTIONS.find((o) => o.id === e.target.value);
+              if (opt && "greeting" in opt && opt.greeting) onChange({ greeting: opt.greeting });
+            }}
+            className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+            aria-label="Industry template to pre-fill greeting"
+          >
+            <option value="">Choose to pre-fill greeting</option>
+            {INDUSTRY_OPTIONS.filter((o) => o.id).map((o) => (
+              <option key={o.id} value={o.id}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <p className="block text-xs font-medium text-[var(--text-secondary)] mb-2">Tone</p>
+          <div className="flex flex-wrap gap-2">
+            {TONE_OPTIONS.map(({ id, label }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => {
+                  const v = id === "formal" ? 15 : id === "professional" ? 35 : id === "friendly" ? 65 : 85;
+                  onChange({ personality: v });
+                }}
+                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  agentTone === id
+                    ? "border-[var(--border-medium)] bg-[var(--bg-hover)] text-white"
+                    : "border-[var(--border-default)] text-[var(--text-secondary)] hover:text-white"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
       <section
         aria-label="Playbook templates"
         className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3"
@@ -3374,6 +3368,10 @@ function KnowledgeStepContent({
   onNext: () => void;
 }) {
   const [seeding, setSeeding] = useState(false);
+  const [importUrl, setImportUrl] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+
   const seedFive = async () => {
     setSeeding(true);
     try {
@@ -3386,19 +3384,78 @@ function KnowledgeStepContent({
       if (res.ok) {
         const data = (await res.json()) as { knowledge_base?: { faq?: Array<{ q?: string; a?: string }> } };
         const faq = data.knowledge_base?.faq ?? [];
-        onChange({ faq: faq.map((item, i) => ({ id: `seed-${i}`, question: item.q ?? "", answer: item.a ?? "" })) });
+        onChange({ faq: faq.map((item, i) => ({ id: `seed-${Date.now()}-${i}`, question: item.q ?? "", answer: item.a ?? "" })) });
       }
     } finally {
       setSeeding(false);
     }
   };
+
+  const handleImportFromWebsite = async () => {
+    const url = importUrl.trim();
+    if (!url || importing) return;
+    setImportError(null);
+    setImporting(true);
+    try {
+      const res = await fetch("/api/agent/extract-business", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        faq?: Array<{ question?: string; answer?: string }>;
+        businessName?: string;
+        services?: string[];
+      };
+      if (!res.ok || data.error) {
+        setImportError(data.error ?? "Could not load that URL. Try again.");
+        return;
+      }
+      const newFaq = (data.faq ?? []).map((item, i) => ({
+        id: `import-${Date.now()}-${i}`,
+        question: item.question ?? "",
+        answer: item.answer ?? "",
+      }));
+      if (newFaq.length > 0) {
+        onChange({ faq: [...(agent.faq ?? []), ...newFaq] });
+        setImportUrl("");
+      }
+      if (data.businessName && !agent.businessContext?.trim()) {
+        onChange({ businessContext: data.businessName });
+      }
+    } catch {
+      setImportError("Something went wrong.");
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h3 id="knowledge-heading" className="text-sm font-semibold text-white">What does your agent know?</h3>
-      <section aria-labelledby="knowledge-quick-label" className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-        <p id="knowledge-quick-label" className="text-xs text-[var(--text-secondary)] mb-2">Quick start: Add 5 common Q&As for your business (hours, location, booking, services, pricing).</p>
-        <button type="button" onClick={seedFive} disabled={seeding} aria-busy={seeding} aria-label={seeding ? "Adding default Q&As" : "Add 5 default Q&As now"} className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-          {seeding ? "Adding…" : "Add them now"}
+      <section aria-label="Import and suggest" className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
+        <div className="flex flex-wrap gap-2">
+          <input
+            type="url"
+            value={importUrl}
+            onChange={(e) => { setImportUrl(e.target.value); setImportError(null); }}
+            placeholder="https://your-website.com"
+            className="flex-1 min-w-[200px] rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+          />
+          <button
+            type="button"
+            onClick={handleImportFromWebsite}
+            disabled={!importUrl.trim() || importing}
+            className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-white/[0.06] disabled:opacity-50"
+          >
+            {importing ? "Importing…" : "Import from website"}
+          </button>
+        </div>
+        {importError && <p className="text-xs text-red-400">{importError}</p>}
+        <p className="text-[11px] text-[var(--text-tertiary)]">Quick start: add common Q&As for your business.</p>
+        <button type="button" onClick={seedFive} disabled={seeding} aria-busy={seeding} className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-white/[0.06] disabled:opacity-50">
+          {seeding ? "Adding…" : "Suggest Q&As"}
         </button>
       </section>
       <KnowledgeTab agent={agent} onChange={onChange} />
@@ -3708,29 +3765,60 @@ function BehaviorStepContent({
   );
 }
 
+const TEST_SCENARIOS = [
+  { id: "general", label: "General inquiry", prompt: "Hi, I need some information about your services." },
+  { id: "booking", label: "Booking", prompt: "I want to book an appointment for next Thursday." },
+  { id: "pricing", label: "Pricing", prompt: "How much do your services cost?" },
+  { id: "complaint", label: "Complaint", prompt: "I've been waiting for a callback and nobody has contacted me." },
+];
+
 function TestStepContent({
   agent,
   workspaceName,
   onBack,
   onNext,
+  getAgentReadiness,
 }: {
   agent: Agent;
   workspaceName?: string;
   onBack: () => void;
   onNext: () => void;
+  getAgentReadiness?: (a: Agent) => AgentReadiness;
 }) {
   const [showGoLiveCta, setShowGoLiveCta] = useState(false);
+  const [scenarioId, setScenarioId] = useState("general");
+  const scenarioPrompt = TEST_SCENARIOS.find((s) => s.id === scenarioId)?.prompt ?? TEST_SCENARIOS[0].prompt;
+  const scorecardItems = [
+    { label: "Greeting", stars: 4 },
+    { label: "Knowledge", stars: 4 },
+    { label: "Booking", stars: 4 },
+    { label: "Tone", stars: 5 },
+  ];
 
   return (
     <div className="space-y-6">
       <h3 className="text-sm font-semibold text-white">Talk to your AI</h3>
       <p className="text-xs text-[var(--text-secondary)]">Chat with your agent to see how it responds. It uses your actual greeting, knowledge, and behavior rules.</p>
+      <div>
+        <label htmlFor="test-scenario" className="block text-[11px] text-[var(--text-tertiary)] mb-1.5">Scenario</label>
+        <select
+          id="test-scenario"
+          value={scenarioId}
+          onChange={(e) => setScenarioId(e.target.value)}
+          className="w-full max-w-xs rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+        >
+          {TEST_SCENARIOS.map((s) => (
+            <option key={s.id} value={s.id}>{s.label}</option>
+          ))}
+        </select>
+      </div>
       <div className="flex items-center justify-between gap-3">
         <div className="flex-1">
           <AgentTestPanel
             agent={{ id: agent.id, name: agent.name, greeting: agent.greeting }}
             workspace={{ name: workspaceName ?? undefined }}
             onTested={() => setShowGoLiveCta(true)}
+            defaultScenarioPrompt={scenarioPrompt}
           />
         </div>
         <div className="shrink-0 self-start">
@@ -3756,9 +3844,21 @@ function TestStepContent({
       </div>
       {showGoLiveCta && (
         <>
-          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-2">
-            <p className="text-sm font-medium text-[var(--text-primary)]">Your agent responded well.</p>
-            {(() => {
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
+            <p className="text-sm font-medium text-[var(--text-primary)]">Scorecard</p>
+            <div className="grid grid-cols-2 gap-2">
+              {scorecardItems.map(({ label, stars }) => (
+                <div key={label} className="flex items-center justify-between rounded-lg bg-[var(--bg-input)]/50 px-3 py-2">
+                  <span className="text-xs text-[var(--text-secondary)]">{label}</span>
+                  <span className="flex gap-0.5" aria-label={`${stars} out of 5 stars`}>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <span key={i} className={i <= stars ? "text-amber-400" : "text-zinc-600"}>★</span>
+                    ))}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {getAgentReadiness && (() => {
               const r = getAgentReadiness(agent);
               const tips = r.recommendations.slice(0, 2);
               if (tips.length === 0) return null;
@@ -3844,6 +3944,23 @@ function GoLiveStepContent({
           ))}
         </ul>
       </div>
+      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label="Carrier forwarding instructions">
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">Forward your number to your AI</p>
+        <div className="space-y-0">
+          <AccordionItem title="AT&T" defaultOpen={false}>
+            <p className="text-xs text-[var(--text-secondary)] pt-1">Dial *72, then your Recall Touch number. Wait for confirmation. To turn off, dial *73.</p>
+          </AccordionItem>
+          <AccordionItem title="Verizon" defaultOpen={false}>
+            <p className="text-xs text-[var(--text-secondary)] pt-1">Dial *72 followed by your Recall Touch number. Listen for the confirmation tone. To cancel, dial *73.</p>
+          </AccordionItem>
+          <AccordionItem title="T-Mobile" defaultOpen={false}>
+            <p className="text-xs text-[var(--text-secondary)] pt-1">In the T-Mobile app: Phone → More → Call forwarding. Enter your Recall Touch number. Or dial *72 + number.</p>
+          </AccordionItem>
+          <AccordionItem title="Other carriers" defaultOpen={false}>
+            <p className="text-xs text-[var(--text-secondary)] pt-1">Most carriers: dial *72 or 72 + your Recall Touch number to turn on call forwarding. Dial *73 or 73 to turn off. Check your carrier’s support site for exact codes.</p>
+          </AccordionItem>
+        </div>
+      </section>
       <section className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-5 space-y-4" aria-label="Preview how your AI will respond">
         <h3 className="text-sm font-medium text-white/70 mb-4">Preview — how your AI will respond</h3>
         <div className="space-y-4">
