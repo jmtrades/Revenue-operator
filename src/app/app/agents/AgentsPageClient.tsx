@@ -691,6 +691,15 @@ export default function AppAgentsPageClient({
   const templateModalContentRef = useRef<HTMLDivElement | null>(null);
   const [deleteConfirmAgent, setDeleteConfirmAgent] = useState<Agent | null>(null);
   useEffect(() => {
+    const handler = () => {
+      setToast("Test link copied!");
+    };
+    window.addEventListener("agents:test-link-copied", handler as EventListener);
+    return () => {
+      window.removeEventListener("agents:test-link-copied", handler as EventListener);
+    };
+  }, []);
+  useEffect(() => {
     if (!showTemplateModal) return;
     templateModalCloseRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
@@ -3595,11 +3604,35 @@ function TestStepContent({
     <div className="space-y-6">
       <h3 className="text-sm font-semibold text-white">Talk to your AI</h3>
       <p className="text-xs text-[var(--text-secondary)]">Chat with your agent to see how it responds. It uses your actual greeting, knowledge, and behavior rules.</p>
-      <AgentTestPanel
-        agent={{ id: agent.id, name: agent.name, greeting: agent.greeting }}
-        workspace={{ name: workspaceName ?? undefined }}
-        onTested={() => setShowGoLiveCta(true)}
-      />
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex-1">
+          <AgentTestPanel
+            agent={{ id: agent.id, name: agent.name, greeting: agent.greeting }}
+            workspace={{ name: workspaceName ?? undefined }}
+            onTested={() => setShowGoLiveCta(true)}
+          />
+        </div>
+        <div className="shrink-0 self-start">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                const url = `${window.location.origin}/test/${agent.id}`;
+                await navigator.clipboard.writeText(url);
+                // use lightweight inline toast pattern from this page
+                window.dispatchEvent(
+                  new CustomEvent("agents:test-link-copied", { detail: { url } }),
+                );
+              } catch {
+                // no-op; clipboard may be blocked
+              }
+            }}
+            className="text-xs text-white/40 hover:text-white/60 border border-white/[0.08] rounded-lg px-3 py-1.5"
+          >
+            Copy test link
+          </button>
+        </div>
+      </div>
       {showGoLiveCta && (
         <>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-2">
