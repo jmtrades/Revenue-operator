@@ -49,6 +49,12 @@ type AgentRules = {
   transferRules?: Array<{ phrase?: string; phone?: string }>;
   learnedBehaviors?: string[];
   qualificationQuestions?: string[];
+  objectionHandling?: {
+    price?: string;
+    timing?: string;
+    competitor?: string;
+    notInterested?: string;
+  };
 };
 
 type AgentRow = {
@@ -152,6 +158,28 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
           .filter((q) => q.length > 0)
       : [];
 
+  const objectionsFromKnowledge =
+    Array.isArray(knowledgeBase.objections) && knowledgeBase.objections.length > 0
+      ? knowledgeBase.objections
+      : [];
+
+  const objectionsFromRules: Array<{ trigger: string; response: string }> = [];
+  const ruleObj = rules.objectionHandling ?? {};
+  const pushIf = (trigger: string, maybe: unknown) => {
+    const response = typeof maybe === "string" ? maybe.trim() : "";
+    if (!response) return;
+    objectionsFromRules.push({ trigger, response });
+  };
+  pushIf("Price feels too high", ruleObj.price);
+  pushIf("Now is not the right time", ruleObj.timing);
+  pushIf("They are comparing you to competitors", ruleObj.competitor);
+  pushIf("They say they're not interested", ruleObj.notInterested);
+
+  const objectionsCombined: Array<{ trigger?: string; response?: string }> = [
+    ...objectionsFromKnowledge,
+    ...objectionsFromRules,
+  ];
+
   const assistantPayload = {
     name: `${businessName} - ${agent.name?.trim() || "Receptionist"}`,
     systemPrompt: buildVapiSystemPrompt({
@@ -173,7 +201,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
       personality: agent.personality ?? null,
       qualificationCriteria,
       qualificationQuestions,
-      objections: Array.isArray(knowledgeBase.objections) ? knowledgeBase.objections : [],
+      objections: objectionsCombined,
       confusedCallerHandling: knowledgeBase.confusedCallerHandling ?? null,
       offTopicHandling: knowledgeBase.offTopicHandling ?? null,
       businessHours,
