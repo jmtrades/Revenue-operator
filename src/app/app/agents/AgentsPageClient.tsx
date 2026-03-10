@@ -1189,97 +1189,195 @@ export default function AppAgentsPageClient({
       <div className="flex flex-col lg:flex-row h-full min-h-0 gap-4 lg:gap-0 lg:min-h-[480px]">
         <div className="w-full lg:w-[280px] lg:shrink-0 lg:border-r lg:border-[var(--border-default)] lg:overflow-y-auto lg:pr-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 content-start">
-          {agents.map((agent) => (
-            <div
-              key={agent.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => {
-                setSelectedId(agent.id);
-                setActiveStep(getFirstIncompleteStep(agent));
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setSelectedId(agent.id);
-                  setActiveStep(getFirstIncompleteStep(agent));
+            {agents.map((agent) => {
+              const faqCount =
+                agent.faq?.filter(
+                  (e) => (e.question ?? "").trim() && (e.answer ?? "").trim(),
+                ).length ?? 0;
+              const servicesCount = agent.services?.length ?? 0;
+              const guardrailCount =
+                (agent.neverSay?.length ?? 0) +
+                (agent.alwaysTransfer?.length ?? 0) +
+                (agent.transferRules?.length ?? 0) +
+                (agent.escalationTriggers?.length ?? 0) +
+                (agent.objectionHandling?.price ? 1 : 0) +
+                (agent.objectionHandling?.timing ? 1 : 0) +
+                (agent.objectionHandling?.competitor ? 1 : 0) +
+                (agent.objectionHandling?.notInterested ? 1 : 0);
+              const guardrailLabel =
+                guardrailCount > 0 ? `${guardrailCount} rules set` : "No guardrails";
+              const hasCalls = (agent.stats.totalCalls ?? 0) > 0;
+              const lastTestedLabel = hasCalls ? "Tested via calls" : "Never tested";
+
+              const templateLabel = (() => {
+                switch (agent.template) {
+                  case "appointment_setter":
+                    return "Appointment Booker";
+                  case "lead_qualifier":
+                    return "Lead Qualifier";
+                  case "follow_up":
+                    return "Follow-up Caller";
+                  case "support":
+                    return "Customer Support";
+                  case "after_hours":
+                    return "After-hours";
+                  case "emergency":
+                    return "Emergency";
+                  case "review_request":
+                    return "Review Request";
+                  case "scratch":
+                    return "Custom";
+                  case "receptionist":
+                  default:
+                    return "Receptionist";
                 }
-              }}
-              className={`text-left p-4 rounded-2xl border bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] ${
-                selected?.id === agent.id ? "border-[var(--border-medium)]" : "border-[var(--border-default)]"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <p className="font-medium text-sm text-white truncate">{agent.name}</p>
-                <span
-                  className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                    agent.active ? "bg-green-500/15 text-green-400" : "bg-zinc-800 text-zinc-400"
+              })();
+
+              return (
+                <div
+                  key={agent.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    setSelectedId(agent.id);
+                    setActiveStep(getFirstIncompleteStep(agent));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedId(agent.id);
+                      setActiveStep(getFirstIncompleteStep(agent));
+                    }
+                  }}
+                  className={`text-left p-4 rounded-2xl border bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] ${
+                    selected?.id === agent.id
+                      ? "border-[var(--border-medium)]"
+                      : "border-[var(--border-default)]"
                   }`}
                 >
-                  {agent.active ? "Active" : "Inactive"}
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-500 mb-1">
-                Voice: {elevenLabsVoices.find((v) => v.id === agent.voice)?.name ?? "Voice"}
-                {" · "}
-                {agent.purpose === "inbound" ? "Inbound" : agent.purpose === "outbound" ? "Outbound" : "Inbound + Outbound"}
-              </p>
-              <p className="text-[11px] text-zinc-500">
-                Knows: {(agent.faq?.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()).length ?? 0)} Q&As
-                {(agent.services?.length ?? 0) > 0 && ` · ${agent.services.length} services`}
-              </p>
-              <p className="text-[11px] text-zinc-500">
-                Rules:{" "}
-                {[
-                  ((agent.alwaysTransfer?.length ?? 0) > 0 || (agent.transferRules?.length ?? 0) > 0) && "Transfer on request",
-                  agent.afterHoursMode && agent.afterHoursMode !== "messages" && "After-hours",
-                ]
-                  .filter(Boolean)
-                  .join(", ") || "Default"}
-              </p>
-              {(() => {
-                const readiness = getAgentReadiness(agent);
-                const isLive = !!(agent.vapiAgentId?.trim());
-                return (
-                  <p className="mt-2 text-[11px] text-zinc-500">
-                    {isLive ? (
-                      <span className="text-green-500/80">Live</span>
-                    ) : (
-                      <span className={readiness.percent >= 80 ? "text-green-500/80" : readiness.percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
-                        {readiness.percent}% ready
-                      </span>
-                    )}
-                    {" · "}{agent.stats.totalCalls} calls
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <p className="font-medium text-sm text-white truncate">
+                      {agent.name}
+                    </p>
+                    <span
+                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                        agent.active
+                          ? "bg-green-500/15 text-green-400"
+                          : "bg-zinc-800 text-zinc-400"
+                      }`}
+                    >
+                      {agent.active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <span className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-zinc-300">
+                      {templateLabel}
+                    </span>
+                    <span className="text-[10px] text-zinc-500">
+                      {agent.purpose === "inbound"
+                        ? "Inbound"
+                        : agent.purpose === "outbound"
+                          ? "Outbound"
+                          : "Inbound + outbound"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 mb-1">
+                    Voice:{" "}
+                    {elevenLabsVoices.find((v) => v.id === agent.voice)?.name ??
+                      "Voice"}
                   </p>
-                );
-              })()}
-              <div className="mt-3 pt-2 border-t border-[var(--border-default)] flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                <button
-                  type="button"
-                  className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
-                  onClick={() => { setSelectedId(agent.id); setActiveStep(getFirstIncompleteStep(agent)); }}
-                >
-                  Edit
-                </button>
-                <span className="text-zinc-600">·</span>
-                <button
-                  type="button"
-                  className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
-                  onClick={() => { setSelectedId(agent.id); setActiveStep("test"); }}
-                >
-                  Test
-                </button>
-                <span className="text-zinc-600">·</span>
-                <button
-                  type="button"
-                  className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
-                  onClick={() => { setSelectedId(agent.id); setActiveStep("golive"); }}
-                >
-                  Launch
-                </button>
-              </div>
-            </div>
-          ))}
+                  <p className="text-[11px] text-zinc-500">
+                    {(faqCount || servicesCount) > 0 ? (
+                      <>
+                        {faqCount} Q&As
+                        {servicesCount > 0 && ` · ${servicesCount} services`}
+                      </>
+                    ) : (
+                      <span className="text-amber-500/80">No knowledge added</span>
+                    )}
+                  </p>
+                  <p className="text-[11px] mt-1">
+                    <span
+                      className={
+                        guardrailCount > 0 ? "text-zinc-500" : "text-amber-500/80"
+                      }
+                    >
+                      {guardrailLabel}
+                    </span>
+                    {" · "}
+                    <span
+                      className={
+                        hasCalls ? "text-zinc-500" : "text-amber-500/80"
+                      }
+                    >
+                      {lastTestedLabel}
+                    </span>
+                  </p>
+                  {(() => {
+                    const readiness = getAgentReadiness(agent);
+                    const isLive = !!agent.vapiAgentId?.trim();
+                    return (
+                      <p className="mt-2 text-[11px] text-zinc-500">
+                        {isLive ? (
+                          <span className="text-green-500/80">Live</span>
+                        ) : (
+                          <span
+                            className={
+                              readiness.percent >= 80
+                                ? "text-green-500/80"
+                                : readiness.percent >= 40
+                                  ? "text-amber-500/80"
+                                  : "text-zinc-500"
+                            }
+                          >
+                            {readiness.percent}% ready
+                          </span>
+                        )}
+                        {" · "}
+                        {agent.stats.totalCalls} calls
+                      </p>
+                    );
+                  })()}
+                  <div
+                    className="mt-3 pt-2 border-t border-[var(--border-default)] flex items-center gap-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      type="button"
+                      className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
+                      onClick={() => {
+                        setSelectedId(agent.id);
+                        setActiveStep(getFirstIncompleteStep(agent));
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <span className="text-zinc-600">·</span>
+                    <button
+                      type="button"
+                      className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
+                      onClick={() => {
+                        setSelectedId(agent.id);
+                        setActiveStep("test");
+                      }}
+                    >
+                      Test
+                    </button>
+                    <span className="text-zinc-600">·</span>
+                    <button
+                      type="button"
+                      className="text-[10px] font-medium text-zinc-400 hover:text-white transition-colors"
+                      onClick={() => {
+                        setSelectedId(agent.id);
+                        setActiveStep("golive");
+                      }}
+                    >
+                      Launch
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
