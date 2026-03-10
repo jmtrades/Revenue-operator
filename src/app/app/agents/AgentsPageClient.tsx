@@ -2685,6 +2685,121 @@ function IdentityStepContent({
   onChange: (p: Partial<Agent>) => void;
   onNext: () => void;
 }) {
+  const [websiteUrl, setWebsiteUrl] = useState(agent.websiteUrl ?? "");
+  const [extracting, setExtracting] = useState(false);
+  const [extractError, setExtractError] = useState<string | null>(null);
+  const [pendingExtract, setPendingExtract] = useState<{
+    businessName: string;
+    industry?: string;
+    services?: string[];
+    location?: string;
+    targetAudience?: string;
+    faq?: Array<{ question: string; answer: string }>;
+  } | null>(null);
+
+  useEffect(() => {
+    setWebsiteUrl(agent.websiteUrl ?? "");
+  }, [agent.websiteUrl]);
+
+  const applyExtractedDetails = (data: {
+    businessName: string;
+    industry?: string;
+    services?: string[];
+    location?: string;
+    targetAudience?: string;
+    faq?: Array<{ question: string; answer: string }>;
+  }) => {
+    const services = Array.isArray(data.services)
+      ? data.services.map((s) => String(s ?? "").trim()).filter(Boolean)
+      : [];
+    const faqSource = Array.isArray(data.faq) ? data.faq : [];
+    const existingFaq = Array.isArray(agent.faq) ? agent.faq : [];
+    const newFaq = faqSource
+      .map((entry, index) => {
+        const question = String(entry?.question ?? "").trim();
+        const answer = String(entry?.answer ?? "").trim();
+        if (!question || !answer) return null;
+        return {
+          id: generateAgentId(`faq-${index}`),
+          question,
+          answer,
+        };
+      })
+      .filter((e): e is { id: string; question: string; answer: string } => !!e);
+
+    const contextParts: string[] = [];
+    if (data.industry?.trim()) contextParts.push(data.industry.trim());
+    if (services.length) contextParts.push(services.join(", "));
+    if (data.location?.trim()) contextParts.push(data.location.trim());
+    const businessContext =
+      contextParts.join(" · ") ||
+      agent.businessContext ||
+      "Describe what you do and who you serve so your AI can represent you accurately.";
+
+    onChange({
+      name: (agent.name ?? "").trim() ? agent.name : data.businessName || agent.name,
+      businessContext,
+      targetAudience:
+        (agent.targetAudience ?? "").trim() ||
+        (data.targetAudience ?? "").trim() ||
+        agent.targetAudience,
+      websiteUrl: websiteUrl.trim(),
+      services: services.length ? services : agent.services,
+      faq: newFaq.length ? [...existingFaq, ...newFaq] : existingFaq,
+    });
+  };
+
+  const handleWebsiteExtract = async () => {
+    const url = websiteUrl.trim();
+    if (!url || extracting) return;
+    setExtractError(null);
+    setPendingExtract(null);
+    setExtracting(true);
+    try {
+      const res = await fetch("/api/agent/extract-business", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        businessName?: string;
+        industry?: string;
+        services?: string[];
+        location?: string;
+        targetAudience?: string;
+        faq?: Array<{ question: string; answer: string }>;
+      };
+      if (!res.ok || data.error) {
+        setExtractError(
+          data.error ||
+            "We couldn't read that website. Check the URL and try again.",
+        );
+        return;
+      }
+      if (!data.businessName && !data.industry && !data.services?.length) {
+        setExtractError(
+          "We couldn't find clear business details on that page. You can still fill them in manually.",
+        );
+        return;
+      }
+      setPendingExtract({
+        businessName: String(data.businessName ?? "").trim(),
+        industry: data.industry,
+        services: data.services,
+        location: data.location,
+        targetAudience: data.targetAudience,
+        faq: data.faq,
+      });
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : "Something went wrong while reading that site.";
+      setExtractError(message);
+    } finally {
+      setExtracting(false);
+    }
+  };
+
   const purpose = agent.purpose ?? "both";
   const nameValid = (agent.name ?? "").trim().length > 0;
   const greetingValid = (agent.greeting ?? "").trim().length > 0;
@@ -2826,6 +2941,74 @@ function IdentityStepContent({
           })}
         </div>
       </section>
+      <div className="mb-2 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02]">
+        <p className="text-sm text-white/60 mb-2">
+          Have a website? We&apos;ll auto-fill your business details.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            placeholder="https://yourbusiness.com"
+            value={websiteUrl}
+            onChange={(e) => {
+              setWebsiteUrl(e.target.value);
+              onChange({ websiteUrl: e.target.value });
+            }}
+            className="flex-1 bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:border-zinc-500 focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={handleWebsiteExtract}
+            disabled={extracting || !websiteUrl.trim()}
+            className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm disabled:opacity-30 whitespace-nowrap"
+          >
+            {extracting ? "Extracting..." : "Extract"}
+          </button>
+        </div>
+        {extractError && (
+          <p className="mt-2 text-xs text-red-400" role="alert">
+            {extractError}
+          </p>
+        )}
+        {pendingExtract && (
+          <div className="mt-3 rounded-lg border border-white/[0.08] bg-white/[0.03] p-3 text-sm text-white/80">
+            <p className="text-xs text-white/40 mb-1">
+              We found:
+            </p>
+            <p className="text-sm mb-2">
+              <span className="font-medium">
+                {pendingExtract.businessName || "Unnamed business"}
+              </span>
+              {pendingExtract.industry && ` — ${pendingExtract.industry}`}
+              {Array.isArray(pendingExtract.services) &&
+                pendingExtract.services.length > 0 && (
+                  <> — {pendingExtract.services.join(", ")}</>
+                )}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  applyExtractedDetails(pendingExtract);
+                  setPendingExtract(null);
+                }}
+                className="px-3 py-1.5 rounded-lg bg-white text-xs font-semibold text-gray-900 hover:bg-zinc-100"
+              >
+                Confirm
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  applyExtractedDetails(pendingExtract);
+                  setPendingExtract(null);
+                }}
+                className="px-3 py-1.5 rounded-lg border border-white/[0.12] text-xs text-white/80 hover:bg-white/[0.04]"
+              >
+                Edit details below
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
       <div>
         <label htmlFor="agent-name" className="block text-xs text-zinc-500 mb-1.5">Agent name</label>
         <input
