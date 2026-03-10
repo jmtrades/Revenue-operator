@@ -110,6 +110,7 @@ type Agent = {
     competitor?: string;
     notInterested?: string;
   };
+  escalationTriggers: string[];
   qualification: { criteria: Array<{ id: string; label: string; enabled: boolean }>; customCriterion: string };
   objections: Array<{ id: string; trigger: string; response: string }>;
   outboundOpening: string;
@@ -310,7 +311,8 @@ function defaultAgent(): Agent {
       appointmentsBooked: 0,
     },
     qualificationQuestions: [],
-    objectionHandling: {},
+  objectionHandling: {},
+  escalationTriggers: [],
     neverSay: [],
     alwaysTransfer: [],
     escalationChain: [],
@@ -429,6 +431,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
       competitor?: string;
       notInterested?: string;
     };
+    escalationTriggers?: string[];
   };
   const stats = (row.stats ?? {}) as {
     avgRating?: number;
@@ -499,6 +502,11 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
           ? rules.objectionHandling.notInterested
           : "",
     },
+    escalationTriggers: Array.isArray(rules.escalationTriggers)
+      ? rules.escalationTriggers
+          .map((t) => String(t ?? "").trim())
+          .filter((t) => t.length > 0)
+      : [],
     neverSay: Array.isArray(rules.neverSay) ? rules.neverSay.filter(Boolean) : [],
     alwaysTransfer: Array.isArray(rules.alwaysTransfer)
       ? rules.alwaysTransfer.filter(Boolean)
@@ -642,6 +650,7 @@ function toAgentPatchPayload(agent: Agent) {
       learnedBehaviors: agent.learnedBehaviors,
       qualificationQuestions: agent.qualificationQuestions,
       objectionHandling: agent.objectionHandling,
+      escalationTriggers: agent.escalationTriggers,
     },
     is_active: agent.active,
   };
@@ -3503,6 +3512,62 @@ function BehaviorStepContent({
               />
             </div>
           ))}
+        </div>
+      </section>
+      <section className="mt-6">
+        <h3 className="text-sm font-medium text-white/70 mb-1">
+          Escalation &amp; transfer
+        </h3>
+        <p className="text-xs text-white/40 mb-3">
+          When should your AI hand off to a human?
+        </p>
+
+        <div className="space-y-3">
+          <div>
+            <label className="text-xs text-white/50 mb-1 block">
+              Transfer to this number when escalating
+            </label>
+            <input
+              value={agent.transferPhone || ""}
+              onChange={(e) => onChange({ transferPhone: e.target.value })}
+              placeholder="+1 (555) 000-0000"
+              className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:border-zinc-500 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-white/50 mb-1 block">
+              Transfer when the caller...
+            </label>
+            <div className="space-y-1.5">
+              {[
+                "Asks to speak to a manager",
+                "Gets angry or frustrated",
+                "Has a complex legal or medical question",
+                "Explicitly requests a human",
+                "Mentions an emergency",
+              ].map((trigger) => (
+                <label
+                  key={trigger}
+                  className="flex items-center gap-2 text-sm text-white/50 cursor-pointer hover:text-white/70"
+                >
+                  <input
+                    type="checkbox"
+                    className="rounded border-white/20 bg-transparent"
+                    checked={(agent.escalationTriggers || []).includes(trigger)}
+                    onChange={(e) => {
+                      const current = agent.escalationTriggers || [];
+                      const updated = e.target.checked
+                        ? [...current, trigger]
+                        : current.filter((t) => t !== trigger);
+                      onChange({ escalationTriggers: updated });
+                    }}
+                  />
+                  {trigger}
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
       <div className="flex justify-between pt-4">

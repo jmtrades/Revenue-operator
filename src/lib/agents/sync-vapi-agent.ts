@@ -55,6 +55,7 @@ type AgentRules = {
     competitor?: string;
     notInterested?: string;
   };
+  escalationTriggers?: string[];
 };
 
 type AgentRow = {
@@ -158,6 +159,13 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
           .filter((q) => q.length > 0)
       : [];
 
+  const escalationTriggers =
+    Array.isArray(rules.escalationTriggers) && rules.escalationTriggers.length > 0
+      ? rules.escalationTriggers
+          .map((t) => String(t ?? "").trim())
+          .filter((t) => t.length > 0)
+      : [];
+
   const objectionsFromKnowledge =
     Array.isArray(knowledgeBase.objections) && knowledgeBase.objections.length > 0
       ? knowledgeBase.objections
@@ -193,6 +201,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
       rules: {
         neverSay: Array.isArray(rules.neverSay) ? rules.neverSay : [],
         alwaysTransfer: Array.isArray(rules.alwaysTransfer) ? rules.alwaysTransfer : [],
+        escalationTriggers,
         transferPhone: rules.transferPhone ?? null,
         transferRules: Array.isArray(rules.transferRules) ? rules.transferRules : [],
       },

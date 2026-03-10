@@ -23,6 +23,7 @@ type AgentPromptInput = {
   rules?: {
     neverSay?: string[];
     alwaysTransfer?: string[];
+    escalationTriggers?: string[];
     transferPhone?: string | null;
     transferRules?: TransferRule[];
   };
@@ -191,7 +192,12 @@ export function buildVapiSystemPrompt(input: AgentPromptInput): string {
   const neverSay = (input.rules?.neverSay ?? []).map((v) => String(v).trim()).filter(Boolean);
   if (neverSay.length > 0) rules.push(`NEVER mention: ${neverSay.join(", ")}`);
 
-  const alwaysTransfer = (input.rules?.alwaysTransfer ?? []).map((v) => String(v).trim()).filter(Boolean);
+  const alwaysTransfer = [
+    ...(input.rules?.alwaysTransfer ?? []),
+    ...(input.rules?.escalationTriggers ?? []),
+  ]
+    .map((v) => String(v).trim())
+    .filter(Boolean);
   const transferPhone = input.rules?.transferPhone?.trim() || "";
   const transferRules = (input.rules?.transferRules ?? []).filter(
     (r) => (r.phrase ?? "").trim() && (r.phone ?? "").trim()
