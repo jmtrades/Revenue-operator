@@ -27,8 +27,18 @@ export async function POST(req: NextRequest) {
 
   const agentId = body.agentId?.trim();
   const messages = body.messages;
-  if (!agentId || !Array.isArray(messages) || messages.length === 0) {
-    return NextResponse.json({ error: "Missing agentId or messages" }, { status: 400 });
+  if (!agentId) {
+    return NextResponse.json({ error: "Missing agentId" }, { status: 400 });
+  }
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return NextResponse.json({ error: "Missing or empty messages" }, { status: 400 });
+  }
+  const validMessages = messages.filter(
+    (m): m is { role: string; text: string } =>
+      m != null && typeof m === "object" && typeof (m as { role?: unknown }).role === "string" && typeof (m as { text?: unknown }).text === "string"
+  );
+  if (validMessages.length === 0) {
+    return NextResponse.json({ error: "Messages must have role and text" }, { status: 400 });
   }
 
   const db = getDb();
@@ -77,7 +87,11 @@ export async function POST(req: NextRequest) {
   const greeting =
     agent.greeting?.trim() ||
     `Thanks for calling ${businessName}. How can I help you today?`;
-  const faq = Array.isArray(kb.faq) ? kb.faq : [];
+  const rawFaq = Array.isArray(kb.faq) ? kb.faq : [];
+  const faq = rawFaq.map((f: { question?: string; answer?: string; q?: string; a?: string }) => ({
+    question: f.question ?? f.q ?? "",
+    answer: f.answer ?? f.a ?? "",
+  })).filter((f) => (f.question ?? "").trim() && (f.answer ?? "").trim());
   let businessHours: string | null = null;
   if (workspace.working_hours && typeof workspace.working_hours === "object" && !Array.isArray(workspace.working_hours)) {
     businessHours =
@@ -158,9 +172,9 @@ export async function POST(req: NextRequest) {
       .join("\n\n");
   }
 
-  const claudeMessages = messages.map((m: { role: string; text: string }) => ({
-    role: m.role === "agent" ? "assistant" : "user",
-    content: m.text,
+  const claudeMessages = validMessages.map((m) => ({
+    role: m.role === "agent" ? "assistant" as const : "user" as const,
+    content: String(m.text).trim() || "(no content)",
   }));
 
   try {
@@ -180,12 +194,18 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      const err = await res.text();
-      console.error("[test-chat] Anthropic error:", err);
-      return NextResponse.json({ error: "AI service error" }, { status: 502 });
+      const errText = await res.text();
+      console.error("[test-chat] Anthropic error:", res.status, errText.slice(0, 500));
+      return NextResponse.json({ error: "AI service is temporarily unavailable. Please try again." }, { status: 502 });
     }
 
-    const data = (await res.json()) as { content?: Array<{ text?: string }> };
+    let data: { content?: Array<{ text?: string }> };
+    try {
+      data = (await res.json()) as { content?: Array<{ text?: string }> };
+    } catch {
+      console.error("[test-chat] Invalid JSON from Anthropic");
+      return NextResponse.json({ error: "Invalid response from AI service." }, { status: 502 });
+    }
     const response = data.content?.[0]?.text?.trim() || "I apologize, I had trouble generating a response.";
 
     return NextResponse.json({ response });
