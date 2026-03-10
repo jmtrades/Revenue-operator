@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -12,7 +12,6 @@ import {
   ChevronRight,
   ClipboardList,
   Headphones,
-  Mic,
   Play,
   PhoneCall,
   PhoneForwarded,
@@ -23,6 +22,7 @@ import {
   UserCheck,
   type LucideIcon,
 } from "lucide-react";
+import { AgentTestPanel } from "@/app/app/agents/AgentTestPanel";
 import { Confetti } from "@/components/Confetti";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
@@ -139,14 +139,6 @@ const SETUP_STEPS: { id: StepId; label: string; description: string }[] = [
   { id: "behavior", label: "Behavior", description: "How does it act?" },
   { id: "test", label: "Test", description: "Does it work?" },
   { id: "golive", label: "Go live", description: "Connect to your phone" },
-];
-
-const TEST_SCENARIOS: { id: string; title: string; description: string; phrase: string }[] = [
-  { id: "normal", title: "Normal call", description: "I need info about services", phrase: "Hi, I need some information about your services." },
-  { id: "angry", title: "Angry caller", description: "I've been waiting for a callback!", phrase: "I've been waiting for a callback for days. I'm really frustrated." },
-  { id: "booking", title: "Booking request", description: "I want to schedule an appointment", phrase: "I'd like to schedule an appointment for this week." },
-  { id: "afterhours", title: "After hours", description: "Are you open right now?", phrase: "Are you open right now? What are your hours?" },
-  { id: "unknown", title: "Unknown question", description: "Do you offer XYZ service?", phrase: "Do you offer XYZ service? I didn't see it on your website." },
 ];
 
 function isStepComplete(stepId: StepId, agent: Agent): boolean {
@@ -1337,7 +1329,7 @@ export default function AppAgentsPageClient({
                   <BehaviorStepContent agent={selected} onChange={updateSelected} onBack={() => void handleStepChange("knowledge")} onNext={async () => { await handleStepChange("test"); }} />
                 )}
                 {activeStep === "test" && (
-                  <TestStepContent agent={selected} onPrepareAgent={async () => { const result = await persistAgent(selected, { showToast: false }); if (result.vapiId) setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: result.vapiId ?? null } : a))); return result.vapiId ?? null; }} onBack={() => void handleStepChange("behavior")} onNext={async () => { await handleStepChange("golive"); }} />
+                  <TestStepContent agent={selected} workspaceName={initialWorkspaceName} onBack={() => void handleStepChange("behavior")} onNext={async () => { await handleStepChange("golive"); }} />
                 )}
                 {activeStep === "golive" && (
                   <GoLiveStepContent agent={selected} voices={elevenLabsVoices} getReadiness={getAgentReadiness} onBack={() => void handleStepChange("test")} onActivate={async () => { const result = await persistAgent(selected, { showToast: true }); if (result.vapiId) { setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: result.vapiId ?? null } : a))); setToast("Your AI agent is live! 🎉"); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000); } }} activating={saving} />
@@ -2678,247 +2670,6 @@ function RulesTab({
   );
 }
 
-type TestTabRef = { startTestCall: () => Promise<void> };
-
-const TestTab = forwardRef<TestTabRef, {
-  agent: Agent;
-  onPrepareAgent: () => Promise<string | null>;
-  suggestedOpener?: { title: string; phrase: string } | null;
-  onCallEnded?: () => void;
-  onTryAgain?: () => void;
-  onSkipToLaunch?: () => void;
-}>(function TestTab({ agent, onPrepareAgent, suggestedOpener, onCallEnded, onTryAgain, onSkipToLaunch }, ref) {
-  const [status, setStatus] = useState<"idle" | "connecting" | "active" | "ended">(
-    "idle",
-  );
-  const [transcript, setTranscript] = useState<Array<{ role: string; text: string }>>([]);
-  const [error, setError] = useState<string | null>(null);
-  const clientRef = useRef<{
-    start: (assistantId: string) => Promise<unknown>;
-    stop: () => void;
-    on: (event: string, handler: (payload?: unknown) => void) => void;
-  } | null>(null);
-
-  useEffect(() => {
-    return () => {
-      clientRef.current?.stop();
-      clientRef.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (status === "ended" && transcript.length > 0) onCallEnded?.();
-  }, [status, transcript.length, onCallEnded]);
-
-  const endCall = () => {
-    clientRef.current?.stop();
-    clientRef.current = null;
-    setStatus("ended");
-  };
-
-  const startTestCall = useCallback(async () => {
-    setStatus("connecting");
-    setTranscript([]);
-    setError(null);
-
-    try {
-      const assistantId = (await onPrepareAgent()) || agent.vapiAgentId;
-      if (!assistantId) {
-        throw new Error("Test calls require voice service configuration. Contact support or skip to launch.");
-      }
-
-      const configRes = await fetch("/api/vapi/workspace-config", { credentials: "include" });
-      const config = (await configRes.json().catch(() => null)) as { publicKey?: string | null } | null;
-      const publicKey = config?.publicKey?.trim() ?? null;
-      if (!publicKey) {
-        throw new Error("Test calls require voice service configuration. Contact support or skip to launch.");
-      }
-
-      const { default: Vapi } = await import("@vapi-ai/web");
-      const client = new Vapi(publicKey) as {
-        start: (assistantId: string) => Promise<unknown>;
-        stop: () => void;
-        on: (event: string, handler: (payload?: unknown) => void) => void;
-      };
-      clientRef.current = client;
-
-      const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
-        if (clientRef.current) {
-          clientRef.current.stop();
-          clientRef.current = null;
-          setStatus("idle");
-          setError("Connection timed out. Check your microphone and try again.");
-        }
-      }, 15000);
-
-      client.on("call-start", () => {
-        clearTimeout(timeoutId);
-        setStatus("active");
-      });
-      client.on("call-end", () => {
-        clearTimeout(timeoutId);
-        setStatus("ended");
-        clientRef.current = null;
-      });
-      client.on("error", (payload?: unknown) => {
-        clearTimeout(timeoutId);
-        setStatus("idle");
-        const msg =
-          payload && typeof payload === "object" && payload !== null && "message" in payload
-            ? String((payload as { message?: unknown }).message || "").trim()
-            : "";
-        setError(msg || "Call failed. Check your microphone and try again.");
-        clientRef.current = null;
-      });
-      client.on("message", (payload?: unknown) => {
-        const data = payload as
-          | {
-              role?: string;
-              transcript?: string;
-              text?: string;
-              transcriptType?: string;
-              type?: string;
-            }
-          | undefined;
-        const text = data?.transcript ?? data?.text ?? "";
-        if (!text || data?.transcriptType === "partial") return;
-        const role = data?.role === "assistant" ? "assistant" : "user";
-        setTranscript((current) => [...current, { role, text }]);
-      });
-
-      await client.start(assistantId);
-    } catch (err) {
-      setStatus("idle");
-      const msg = err instanceof Error ? err.message : typeof err === "string" ? err : "";
-      setError(msg.trim() || "Test calls require voice service configuration. Contact support or skip to launch.");
-    }
-  }, [agent.vapiAgentId, onPrepareAgent]);
-
-  useImperativeHandle(ref, () => ({ startTestCall }), [startTestCall]);
-
-  return (
-    <div className="py-4 text-center">
-      {suggestedOpener && (status === "idle" || status === "connecting" || status === "active") && (
-        <div className="mx-auto mb-4 max-w-md rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-3 text-left">
-          <p className="text-xs text-[var(--text-secondary)] mb-1">Suggested: {suggestedOpener.title}</p>
-          <p className="text-sm text-[var(--text-primary)]">&ldquo;{suggestedOpener.phrase}&rdquo;</p>
-        </div>
-      )}
-      {status === "idle" && (
-        <div>
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--bg-hover)]">
-            <Mic className="h-8 w-8 text-[var(--text-secondary)]" />
-          </div>
-          <h3 className="mb-1 text-lg font-medium text-[var(--text-primary)]">Test your agent</h3>
-          <p className="mx-auto mb-6 max-w-xs text-sm text-white/40">
-            Have a real browser conversation with this agent using its current voice,
-            greeting, and knowledge.
-          </p>
-          <button
-            type="button"
-            onClick={() => void startTestCall()}
-            aria-label="Start a test call with this agent"
-            className="min-h-[44px] rounded-xl bg-white px-6 py-3 font-medium text-black transition-colors hover:bg-zinc-100 touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          >
-            Start test call
-          </button>
-        </div>
-      )}
-
-      {status === "connecting" && (
-        <div>
-          <div className="mx-auto mb-4 flex h-20 w-20 animate-pulse items-center justify-center rounded-full bg-white/[0.08]">
-            <PhoneForwarded className="h-8 w-8 text-[var(--text-secondary)]" />
-          </div>
-          <p className="text-sm text-zinc-400">Connecting...</p>
-        </div>
-      )}
-
-      {(status === "active" || status === "ended") && (
-        <div>
-          <div
-            className={`mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full ${
-              status === "active"
-                ? "animate-pulse bg-emerald-500/20 text-emerald-300"
-                : "bg-zinc-800 text-zinc-300"
-            }`}
-          >
-            {status === "active" ? (
-              <Mic className="h-8 w-8" />
-            ) : (
-              <CheckCircle2 className="h-8 w-8" />
-            )}
-          </div>
-          <p
-            className={`mb-2 text-sm font-medium ${
-              status === "active" ? "text-emerald-400" : "text-zinc-300"
-            }`}
-          >
-            {status === "active" ? "Call active — speak now" : "Test call complete"}
-          </p>
-          {transcript.length > 0 && (
-            <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-white/40">Live transcript</p>
-          )}
-          <div className="mx-auto max-h-56 max-w-md space-y-2 overflow-y-auto text-left">
-            {transcript.map((item, index) => (
-              <div
-                key={`${item.role}-${index}`}
-                className={`rounded-lg px-3 py-2 text-sm ${
-                  item.role === "assistant"
-                    ? "bg-zinc-800 text-zinc-200"
-                    : "bg-[var(--bg-input)] text-[var(--text-secondary)]"
-                }`}
-              >
-                <span className="mr-2 text-xs text-white/30">
-                  {item.role === "assistant" ? "Agent" : "You"}
-                </span>
-                {item.text}
-              </div>
-            ))}
-          </div>
-          {status === "active" ? (
-            <button
-              type="button"
-              onClick={endCall}
-              aria-label="End the test call"
-              className="mt-4 inline-flex items-center gap-2 text-sm text-[var(--accent-red)] hover:text-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-red)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            >
-              <Square className="h-3 w-3 fill-current" />
-              End call
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => { setStatus("idle"); setTranscript([]); onTryAgain?.(); }}
-              aria-label="Try another test call"
-              className="mt-4 text-sm text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            >
-              Try again
-            </button>
-          )}
-        </div>
-      )}
-
-      {error ? (
-        <div className="mt-4 space-y-2">
-          <p className="text-xs text-[var(--accent-red)]" role="alert">
-            {error}
-          </p>
-          {error.includes("voice service configuration") && onSkipToLaunch ? (
-            <button
-              type="button"
-              onClick={() => { setError(null); onSkipToLaunch(); }}
-              className="text-xs font-medium text-white hover:text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
-            >
-              Skip to launch →
-            </button>
-          ) : null}
-        </div>
-      ) : null}
-    </div>
-  );
-});
-
 function IdentityStepContent({
   agent,
   onChange,
@@ -3367,76 +3118,30 @@ function BehaviorStepContent({
 
 function TestStepContent({
   agent,
-  onPrepareAgent,
+  workspaceName,
   onBack,
   onNext,
 }: {
   agent: Agent;
-  onPrepareAgent: () => Promise<string | null>;
+  workspaceName?: string;
   onBack: () => void;
   onNext: () => void;
 }) {
-  const testTabRef = useRef<TestTabRef | null>(null);
-  const [suggestedOpener, setSuggestedOpener] = useState<{ title: string; phrase: string } | null>(null);
   const [showGoLiveCta, setShowGoLiveCta] = useState(false);
-
-  const tryScenario = useCallback((scenario: (typeof TEST_SCENARIOS)[number]) => {
-    setSuggestedOpener({ title: scenario.title, phrase: scenario.phrase });
-    void testTabRef.current?.startTestCall();
-  }, []);
-
-  const suggestedQuestions = (agent.faq ?? [])
-    .filter((e) => (e.question ?? "").trim())
-    .slice(0, 3)
-    .map((e) => e.question!.trim());
 
   return (
     <div className="space-y-6">
       <h3 className="text-sm font-semibold text-white">Talk to your AI</h3>
-      <p className="text-xs text-[var(--text-secondary)]">Your agent uses your voice, knowledge, and rules to have a real conversation. Try it now.</p>
-      <TestTab
-        ref={testTabRef}
-        agent={agent}
-        onPrepareAgent={onPrepareAgent}
-        suggestedOpener={suggestedOpener}
-        onCallEnded={async () => {
-          setShowGoLiveCta(true);
-          // Mark agent as tested for readiness scoring
-          try {
-            await fetch(`/api/agents/${agent.id}`, {
-              method: "PATCH",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ tested_at: new Date().toISOString() }),
-            });
-          } catch {
-            // Non-blocking; readiness can still infer from calls
-          }
-        }}
-        onTryAgain={() => setShowGoLiveCta(false)}
-        onSkipToLaunch={onNext}
+      <p className="text-xs text-[var(--text-secondary)]">Chat with your agent to see how it responds. It uses your actual greeting, knowledge, and behavior rules.</p>
+      <AgentTestPanel
+        agent={{ id: agent.id, name: agent.name, greeting: agent.greeting }}
+        workspace={{ name: workspaceName ?? undefined }}
+        onTested={() => setShowGoLiveCta(true)}
       />
-      {suggestedQuestions.length > 0 && (
-        <div>
-          <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Or try asking:</p>
-          <div className="flex flex-wrap gap-2">
-            {suggestedQuestions.map((q, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => tryScenario({ id: `faq-${i}`, title: q.slice(0, 20), description: q, phrase: q })}
-                className="text-[11px] bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] transition-colors"
-              >
-                &ldquo;{q.length > 40 ? q.slice(0, 40) + "…" : q}&rdquo;
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
       {showGoLiveCta && (
         <>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-2">
-            <p className="text-sm font-medium text-[var(--text-primary)]">Your agent handled the call well.</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">Your agent responded well.</p>
             {(() => {
               const r = getAgentReadiness(agent);
               const tips = r.recommendations.slice(0, 2);
@@ -3456,26 +3161,6 @@ function TestStepContent({
           </div>
         </>
       )}
-      <section aria-labelledby="test-scenarios-label">
-        <p id="test-scenarios-label" className="mb-3 text-xs font-medium text-[var(--text-secondary)]">Or try a simulated scenario</p>
-        <p className="mb-3 text-[11px] text-white/40">These scenarios test specific behaviors. Your agent will respond based on your exact configuration.</p>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" role="list">
-          {TEST_SCENARIOS.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => tryScenario(s)}
-              role="listitem"
-              aria-label={`Try scenario: ${s.title}. ${s.description}`}
-              className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 text-left text-xs transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            >
-              <span className="font-medium text-[var(--text-primary)]">{s.title}</span>
-              <p className="mt-0.5 text-[var(--text-secondary)]">{s.description}</p>
-              <span className="mt-2 inline-block text-[10px] text-white/40">Try this scenario</span>
-            </button>
-          ))}
-        </div>
-      </section>
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label="Back to Behavior" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
         <button type="button" onClick={onNext} aria-label="Continue to Go live" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
