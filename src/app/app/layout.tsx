@@ -62,13 +62,14 @@ async function getInitialShellData(): Promise<{
 
   workspaceId = initialWorkspace.id;
 
-  const [{ data }, { data: phoneCfg }, { count: callCount }, { data: calendar }, { count: teamCount }] =
+  const [{ data }, { data: ctxData }, { data: phoneCfg }, { count: callCount }, { data: calendar }, { count: teamCount }] =
     await Promise.all([
       db
         .from("workspaces")
         .select("id, name, agent_name, knowledge_items, website, address, onboarding_completed_at")
         .eq("id", workspaceId)
         .single(),
+      db.from("workspace_business_context").select("business_name").eq("workspace_id", workspaceId).maybeSingle(),
       db.from("phone_configs").select("id").eq("workspace_id", workspaceId).eq("status", "active").maybeSingle(),
       db.from("call_sessions").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
       db.from("google_calendar_tokens").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle(),
@@ -93,6 +94,9 @@ async function getInitialShellData(): Promise<{
     };
   }
 
+  const businessName = (ctxData as { business_name?: string | null } | null)?.business_name?.trim();
+  const displayName = businessName || row.name?.trim() || "My Workspace";
+
   const knowledgeCount = Array.isArray(row.knowledge_items)
     ? row.knowledge_items.filter((item) => (item.q ?? "").trim() && (item.a ?? "").trim()).length
     : 0;
@@ -108,7 +112,7 @@ async function getInitialShellData(): Promise<{
 
   return {
     workspaceId,
-    workspaceName: row.name?.trim() || "My Workspace",
+    workspaceName: displayName,
     workspaceMeta: {
       onboardingCompletedAt: row.onboarding_completed_at ?? null,
       banner: {
