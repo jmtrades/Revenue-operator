@@ -542,7 +542,7 @@ export default function AppSettingsPhonePage() {
           {/* No number — two-option flow */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-[#161B22] border border-white/[0.08] rounded-2xl p-6">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+              <div className="w-10 h-10 rounded-xl bg-zinc-800/70 flex items-center justify-center mb-4">
                 <Phone className="w-5 h-5 text-blue-400" />
               </div>
               <h2 className="text-base font-semibold text-white mb-1">Get a new AI number</h2>

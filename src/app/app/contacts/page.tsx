@@ -85,15 +85,15 @@ function avatarColorFromName(name: string) {
 }
 
 function typeStyles(type: ContactType) {
-  if (type === "lead") return "border-l-4 border-blue-500";
+  if (type === "lead") return "border-l-4 border-zinc-500";
   if (type === "customer") return "border-l-4 border-green-500";
   return "border-l-4 border-amber-500";
 }
 
 function typeBadgeStyles(type: ContactType) {
-  if (type === "lead") return "bg-blue-500/15 text-blue-400";
-  if (type === "customer") return "bg-green-500/15 text-green-400";
-  return "bg-amber-500/15 text-amber-400";
+  if (type === "lead") return "bg-zinc-800/60 text-blue-400";
+  if (type === "customer") return "bg-zinc-800/60 text-green-400";
+  return "bg-zinc-800/60 text-amber-400";
 }
 
 function typeLabel(type: ContactType) {

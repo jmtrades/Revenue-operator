@@ -3852,7 +3852,7 @@ function GoLiveStepContent({
             <p className="text-xs text-white/40 mb-1">
               Caller wants to book an appointment
             </p>
-            <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
+            <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
               {(() => {
                 const greeting = agent.greeting?.trim();
                 if (greeting) {
@@ -3873,7 +3873,7 @@ function GoLiveStepContent({
           {/* 2. Pricing question */}
           <div>
             <p className="text-xs text-white/40 mb-1">Caller asks about pricing</p>
-            <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
+            <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
               {(() => {
                 const faq = agent.faq ?? [];
                 const pricingFromFaq = faq.find((e) => {
@@ -3902,7 +3902,7 @@ function GoLiveStepContent({
           {/* 3. After-hours behavior */}
           <div>
             <p className="text-xs text-white/40 mb-1">Caller reaches you after hours</p>
-            <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
+            <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
               {(() => {
                 switch (agent.afterHoursMode) {
                   case "forward":
@@ -3929,7 +3929,7 @@ function GoLiveStepContent({
                 <p className="text-xs text-white/40 mb-1">
                   Caller says the price feels too high
                 </p>
-                <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
+                <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
                   {priceObj.slice(0, 160) + (priceObj.length > 160 ? "…" : "")}
                 </p>
               </div>
@@ -3948,7 +3948,7 @@ function GoLiveStepContent({
                 <p className="text-xs text-white/40 mb-1">
                   Caller asks to speak to someone else
                 </p>
-                <p className="text-sm text-white/70 bg-blue-500/[0.06] border border-blue-500/[0.1] rounded-lg p-3">
+                <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
                   {hasTransferNumber
                     ? "Your agent will stay calm, confirm why they’d like a human, and then transfer to your saved number when your escalation rules match."
                     : "Your agent will stay calm, explain what it can help with, and if needed, take a message with the caller’s details for a human to follow up."}

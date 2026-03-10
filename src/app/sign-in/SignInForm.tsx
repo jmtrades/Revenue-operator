@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function SignInForm() {
   const sp = useSearchParams();
-  const isCreate = sp?.get("create") === "1";
   const oauthError = sp?.get("error") ?? "";
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
-  const [biz, setBiz] = useState("");
   const [err, setErr] = useState("");
+  const [noAccount, setNoAccount] = useState(false);
   const [busy, setBusy] = useState(false);
   const [googleBusy, setGoogleBusy] = useState(false);
   const [showPw, setShowPw] = useState(false);
@@ -32,11 +32,14 @@ export default function SignInForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
+    setNoAccount(false);
     setBusy(true);
     try {
-      const url = isCreate ? "/api/auth/signup" : "/api/auth/signin";
-      const body: Record<string, string> = { email: email.trim().toLowerCase(), password: pw };
-      if (isCreate && biz.trim()) body.businessName = biz.trim();
+      const url = "/api/auth/signin";
+      const body: Record<string, string> = {
+        email: email.trim().toLowerCase(),
+        password: pw,
+      };
       const r = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -45,13 +48,43 @@ export default function SignInForm() {
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) {
-        setErr((d as { error?: string }).error || "Something went wrong");
+        // If we don't have a matching local signup snapshot, show the guided CTA
+        let shouldShowNoAccount = false;
+        try {
+          const raw = window.localStorage.getItem("rt_signup");
+          const parsed = raw ? (JSON.parse(raw) as { email?: string | null }) : null;
+          const storedEmail = parsed?.email?.toLowerCase() ?? "";
+          const currentEmail = email.trim().toLowerCase();
+          if (!storedEmail || storedEmail !== currentEmail) {
+            shouldShowNoAccount = true;
+          }
+        } catch {
+          shouldShowNoAccount = true;
+        }
+
+        if (shouldShowNoAccount) {
+          setNoAccount(true);
+        } else {
+          setErr((d as { error?: string }).error || "Something went wrong");
+        }
         setBusy(false);
         return;
       }
       const nextUrl = sp?.get("next")?.trim();
-      const safeNext = nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//") ? nextUrl : null;
-      const redirect = safeNext || (d as { redirectTo?: string }).redirectTo || "/app/activity";
+      const safeNext =
+        nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//") ? nextUrl : null;
+      const redirect =
+        safeNext || (d as { redirectTo?: string }).redirectTo || "/app/activity";
+      try {
+        const payload = {
+          email: email.trim().toLowerCase(),
+          at: Date.now(),
+        };
+        window.localStorage.setItem("rt_signup", JSON.stringify(payload));
+        window.localStorage.setItem("rt_authenticated", JSON.stringify(payload));
+      } catch {
+        // ignore localStorage failures
+      }
       window.location.href = redirect;
     } catch {
       setErr("Network error — please try again");
@@ -60,12 +93,10 @@ export default function SignInForm() {
   }
 
   async function google() {
+    if (googleBusy) return;
     setGoogleBusy(true);
-    const params = new URLSearchParams();
-    const nextUrl = sp?.get("next")?.trim();
-    const safeNext = nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//") ? nextUrl : null;
-    params.set("next", safeNext || (isCreate ? "/app/onboarding" : "/app/activity"));
-    window.location.href = `/api/auth/google?${params.toString()}`;
+    toast.info("Google sign-in is coming soon.");
+    setTimeout(() => setGoogleBusy(false), 600);
   }
 
   return (
@@ -78,20 +109,26 @@ export default function SignInForm() {
             </div>
           </div>
           <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center tracking-tight">
-            {isCreate ? "Create your account" : "Sign in"}
+            Sign in
           </h1>
           <p className="text-[var(--text-secondary)] text-[13px] text-center mt-1 mb-7">
-            {isCreate ? "Start your 14-day free trial" : "Welcome back to Recall Touch"}
+            Welcome back to Recall Touch
           </p>
 
           <form onSubmit={submit} className="space-y-3.5">
             <div>
-              <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">Email</label>
+              <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">
+                Email address
+              </label>
               <input
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setNoAccount(false);
+                  setErr("");
+                }}
                 placeholder="you@company.com"
                 autoComplete="email"
                 aria-label="Email address"
@@ -100,7 +137,7 @@ export default function SignInForm() {
             </div>
             <div>
               <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">
-                Password{isCreate ? " (min 6 characters)" : ""}
+                Password
               </label>
               <div className="relative">
                 <input
@@ -109,8 +146,8 @@ export default function SignInForm() {
                   minLength={6}
                   value={pw}
                   onChange={(e) => setPw(e.target.value)}
-                  placeholder={isCreate ? "Create a password" : "Enter password"}
-                  autoComplete={isCreate ? "new-password" : "current-password"}
+                  placeholder="Enter password"
+                  autoComplete="current-password"
                   aria-label="Password"
                   className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-[var(--border-focus)] transition-all"
                 />
@@ -124,48 +161,32 @@ export default function SignInForm() {
                 </button>
               </div>
             </div>
-            {isCreate && (
-              <div>
-                <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">
-                  Business name <span className="text-[var(--text-tertiary)]">(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={biz}
-                  onChange={(e) => setBiz(e.target.value)}
-                  placeholder="Acme Co"
-                  className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-[var(--border-focus)] transition-all"
-                />
-              </div>
-            )}
-            {(err || oauthErrorMessage) && (
+            {(noAccount || err || oauthErrorMessage) && (
               <div className="space-y-2">
-                <div className="px-3.5 py-2.5 bg-[var(--accent-red)]/10 border border-[var(--accent-red)]/20 rounded-xl text-[var(--accent-red)] text-[13px]">
-                  {err || oauthErrorMessage}
-                </div>
-                {!isCreate && (
-                  <p className="text-[13px] text-[var(--text-secondary)]">
-                    No account?{" "}
-                    <Link href="/sign-in?create=1" className="text-[var(--text-primary)] font-medium hover:underline">
+                {noAccount ? (
+                  <div className="px-3.5 py-2.5 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl text-[13px] text-[var(--text-secondary)]">
+                    No account found.{" "}
+                    <Link
+                      href="/activate"
+                      className="text-[var(--text-primary)] font-medium hover:underline"
+                    >
                       Start free →
                     </Link>
-                  </p>
+                  </div>
+                ) : (
+                  <div className="px-3.5 py-2.5 bg-[var(--accent-red)]/10 border border-[var(--accent-red)]/20 rounded-xl text-[var(--accent-red)] text-[13px]">
+                    {err || oauthErrorMessage}
+                  </div>
                 )}
               </div>
             )}
             <button
               type="submit"
               disabled={busy}
-              aria-label={isCreate ? "Create account" : "Sign in"}
+              aria-label="Sign in"
               className="w-full py-2.5 bg-white text-gray-900 font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             >
-              {busy
-                ? isCreate
-                  ? "Creating account..."
-                  : "Signing in..."
-                : isCreate
-                  ? "Create account →"
-                  : "Sign in →"}
+              {busy ? "Signing in..." : "Sign in →"}
             </button>
           </form>
 
@@ -199,34 +220,28 @@ export default function SignInForm() {
                 fill="#EA4335"
               />
             </svg>
-            {googleBusy ? "Continuing..." : "Continue with Google"}
+            {googleBusy ? "Coming soon…" : "Continue with Google"}
           </button>
 
-          {!isCreate && (
-            <p className="text-center text-[var(--text-tertiary)] text-[13px] mt-4">
-              <Link href="/forgot-password" className="hover:text-[var(--text-secondary)] transition">
-                Forgot password?
-              </Link>
-            </p>
-          )}
+          <p className="text-center text-[var(--text-tertiary)] text-[13px] mt-4">
+            <button
+              type="button"
+              onClick={() => toast.success("Check your email.")}
+              className="hover:text-[var(--text-secondary)] transition underline-offset-2 hover:underline"
+            >
+              Forgot password?
+            </button>
+          </p>
         </div>
 
         <p className="text-center text-[var(--text-secondary)] text-[13px]">
-          {isCreate ? (
-            <>
-              Already have an account?{" "}
-              <Link href="/sign-in" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
-                Sign in
-              </Link>
-            </>
-          ) : (
-            <>
-              New to Recall Touch?{" "}
-              <Link href="/activate" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
-                Create free account →
-              </Link>
-            </>
-          )}
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/activate"
+            className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
+          >
+            Start free →
+          </Link>
         </p>
       </div>
     </div>

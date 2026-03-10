@@ -9,9 +9,9 @@ const CARDS = [
 ];
 
 const CARD_STYLES: Record<string, { border: string; badge: string }> = {
-  lead: { border: "border-l-blue-500", badge: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
-  appointment: { border: "border-l-green-500", badge: "bg-green-500/10 text-green-400 border-green-500/20" },
-  "follow-up": { border: "border-l-purple-500", badge: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
+  lead: { border: "border-l-zinc-500", badge: "bg-zinc-800/60 text-blue-400 border-zinc-700" },
+  appointment: { border: "border-l-green-500", badge: "bg-zinc-800/60 text-green-400 border-green-500/20" },
+  "follow-up": { border: "border-l-zinc-500", badge: "bg-zinc-800/60 text-purple-400 border-zinc-700" },
 };
 
 const TYPE_LABELS: Record<string, string> = {
