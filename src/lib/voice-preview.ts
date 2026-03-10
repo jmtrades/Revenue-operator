@@ -89,6 +89,7 @@ export function speakText(
   utterance.pitch = options?.pitch ?? (gender === "female" ? 1.05 : 0.9);
   utterance.onstart = () => options?.onStart?.();
   utterance.onend = () => options?.onEnd?.();
+  utterance.onerror = () => options?.onEnd?.();
   synth.speak(utterance);
   return () => synth.cancel();
 }
