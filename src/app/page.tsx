@@ -14,6 +14,7 @@ import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { PricingPreview } from "@/components/sections/PricingPreview";
 import { WhatMakesUsDifferentSection } from "@/components/sections/WhatMakesUsDifferentSection";
 import { EnterpriseComparisonCard } from "@/components/sections/EnterpriseComparisonCard";
+import { UseCaseSection } from "@/components/sections/UseCaseSection";
 import { SocialProof } from "@/components/sections/SocialProof";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Footer } from "@/components/sections/Footer";
@@ -50,6 +51,7 @@ export default async function HomePage() {
         <PricingPreview />
         <WhatMakesUsDifferentSection />
         <EnterpriseComparisonCard />
+        <UseCaseSection />
         <SocialProof />
         <FinalCTA />
       </main>
