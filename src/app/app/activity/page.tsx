@@ -17,6 +17,9 @@ import { calculateReadiness } from "@/lib/readiness";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { StatCard } from "@/components/ui/StatCard";
+import { KPIRow } from "@/components/ui/KPIRow";
+import { Timeline } from "@/components/ui/Timeline";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 type ActivityType = "lead" | "appointment" | "follow-up" | "urgent";
@@ -324,11 +327,6 @@ export default function AppActivityPage() {
       .catch(() => setReadiness(null));
   }, [workspaceId]);
 
-  const callCount = cards.length;
-  const leadCount = cards.filter((c) => c.type === "lead").length;
-  const estRevenue = leadCount * 800;
-  const answerRate = callCount > 0 ? 100 : 0;
-
   let showInactivityBanner = false;
   if (workspaceStats.lastCallAt && lastCheckedAt != null) {
     const last = new Date(workspaceStats.lastCallAt).getTime();
@@ -369,38 +367,117 @@ export default function AppActivityPage() {
   const continueSetupHref =
     readiness?.nextAction?.href ?? nextStepHref ?? "/app/settings/phone";
 
+  const callCount = cards.length;
+  const leadCount = cards.filter((c) => c.type === "lead").length;
+  const estRevenue = leadCount * 800;
+  const answerRate = callCount > 0 ? 100 : 0;
+
+  const phoneConnected =
+    progressItems.some((item) => {
+      const done = "done" in item ? item.done : item.completed;
+      return item.key === "phone" && done;
+    }) ||
+    Boolean(
+      (workspaceSnapshot as
+        | { progress?: { items?: Array<{ key: string; completed?: boolean }> } }
+        | null)?.progress?.items?.find((i) => i.key === "phone")?.completed,
+    );
+
+  const [checklistDismissed, setChecklistDismissed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem("rt_activity_checklist_dismissed") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        "rt_activity_checklist_dismissed",
+        checklistDismissed ? "true" : "false",
+      );
+    } catch {
+      // ignore
+    }
+  }, [checklistDismissed]);
+
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  }, []);
+
+  const needsAttention = useMemo(() => {
+    const items: { id: string; label: string; tone: "red" | "amber" | "green" }[] = [];
+    for (const c of cards.slice(0, 10)) {
+      if (c.type === "urgent") {
+        items.push({
+          id: `urgent-${c.id}`,
+          label: `${c.name} — needs follow-up after transfer`,
+          tone: "red",
+        });
+      } else if (c.type === "lead") {
+        items.push({
+          id: `lead-${c.id}`,
+          label: `${c.name} — new lead to review`,
+          tone: "amber",
+        });
+      }
+    }
+    return items;
+  }, [cards]);
+
   return (
-    <div className="max-w-[600px] mx-auto p-4 md:p-6">
+    <div className="max-w-[960px] mx-auto p-4 md:p-6 space-y-6">
       {welcomeToast && (
         <div role="status" aria-live="polite" className="fixed right-4 top-4 z-50 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card-elevated)] px-4 py-2.5 text-sm text-[var(--text-primary)] shadow-lg">
           {welcomeToast}
         </div>
       )}
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <h1 className="text-xl font-semibold text-[var(--text-primary)]">Dashboard</h1>
-        <ActivityDateLabel />
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
+            {greeting}.
+          </h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Here&apos;s what happened today.
+          </p>
+        </div>
+        <div className="hidden sm:flex flex-col items-end gap-1">
+          <ActivityDateLabel />
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
-        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-zinc-500">
-          <p className="text-lg font-semibold text-[var(--text-primary)]">{callCount}</p>
-          <p className="text-[10px] text-[var(--text-tertiary)]">Calls today</p>
-        </div>
-        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-cyan)]">
-          <p className="text-lg font-semibold text-[var(--text-primary)]">{answerRate}%</p>
-          <p className="text-[10px] text-[var(--text-tertiary)]">Answer rate</p>
-        </div>
-        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-green)]">
-          <p className="text-lg font-semibold text-[var(--text-primary)]">{leadCount}</p>
-          <p className="text-[10px] text-[var(--text-tertiary)]">Leads captured</p>
-        </div>
-        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center border-t-4 border-t-[var(--accent-amber)]">
-          <p className="text-lg font-semibold text-[var(--text-primary)]">
-            {estRevenue > 0 ? `~$${estRevenue.toLocaleString()}` : "$0"}
-          </p>
-          <p className="text-[10px] text-[var(--text-tertiary)]">Revenue est.</p>
-        </div>
-      </div>
+      <KPIRow>
+        <StatCard
+          label="Calls"
+          value={callCount}
+          prefix=""
+          suffix=""
+          trend={0}
+        />
+        <StatCard
+          label="Answer rate"
+          value={answerRate}
+          suffix="%"
+          trend={0}
+        />
+        <StatCard
+          label="Leads"
+          value={leadCount}
+          suffix=""
+          trend={0}
+        />
+        <StatCard
+          label="Est. revenue"
+          value={estRevenue}
+          prefix="$"
+          trend={0}
+        />
+      </KPIRow>
 
       {showInactivityBanner && (
         <div className="mb-4 p-4 rounded-xl border border-[var(--accent-amber)]/30 bg-[var(--accent-amber)]/10">
@@ -416,63 +493,82 @@ export default function AppActivityPage() {
         </div>
       )}
 
-      <div className="mb-6 p-5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
-        <p className="text-base font-medium text-[var(--text-primary)] mb-2">Your AI is {progressPct}% ready</p>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-input)] mb-4">
-          <div className="h-full rounded-full bg-[var(--accent-green)] transition-all" style={{ width: `${progressPct}%` }} />
+      {!checklistDismissed && progressPct < 100 && (
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                Setup checklist
+              </p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">
+                You&apos;re {progressPct}% of the way to a fully running AI phone line.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setChecklistDismissed(true)}
+              className="text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+            >
+              Dismiss
+            </button>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-input)]">
+            <div
+              className="h-full rounded-full bg-[var(--accent-green)] transition-all"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+          <div className="mt-4 space-y-2 text-sm">
+            {progressItems.slice(0, 6).map((item) => {
+              const done = "done" in item ? item.done : item.completed;
+              const label =
+                "label" in item && item.label
+                  ? item.label
+                  : PROGRESS_LABELS[item.key] ?? item.key;
+              const href =
+                "href" in item && item.href
+                  ? item.href
+                  : "/app/settings/phone";
+              return (
+                <div key={item.key} className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    {done ? (
+                      <CheckCircle2 className="h-4 w-4 text-[var(--accent-green)] shrink-0" />
+                    ) : (
+                      <span className="h-4 w-4 rounded-full border border-[var(--border-medium)] shrink-0" />
+                    )}
+                    <span
+                      className={
+                        done
+                          ? "text-[var(--text-secondary)] text-xs"
+                          : "text-[var(--text-primary)] text-xs"
+                      }
+                    >
+                      {label}
+                    </span>
+                  </div>
+                  {!done && (
+                    <Link
+                      href={href}
+                      className="text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2"
+                    >
+                      Open
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <Link
+            href={continueSetupHref}
+            className="mt-4 inline-flex items-center justify-center rounded-xl bg-white px-4 py-2.5 text-xs font-semibold text-black hover:bg-zinc-100 transition-colors"
+          >
+            Continue setup →
+          </Link>
         </div>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-          {progressItems.slice(0, 10).map((item) => {
-            const done = "done" in item ? item.done : item.completed;
-            const label =
-              "label" in item && item.label
-                ? item.label
-                : PROGRESS_LABELS[item.key] ?? item.key;
-            const href =
-              "href" in item && item.href
-                ? item.href
-                : "/app/settings/phone";
-            const content = (
-              <span
-                className={
-                  done
-                    ? "text-[var(--text-secondary)]"
-                    : "text-[var(--text-primary)]"
-                }
-              >
-                {label}
-              </span>
-            );
-            return (
-              <div key={item.key} className="flex items-center gap-2">
-                {done ? (
-                  <CheckCircle2 className="h-4 w-4 text-[var(--accent-green)] shrink-0" />
-                ) : (
-                  <span className="h-4 w-4 rounded-full border border-[var(--border-medium)] shrink-0" />
-                )}
-                {done ? (
-                  content
-                ) : (
-                  <Link
-                    href={href}
-                    className="underline underline-offset-2 decoration-dotted hover:decoration-solid"
-                  >
-                    {content}
-                  </Link>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <Link
-          href={continueSetupHref}
-          className="inline-block mt-4 px-4 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors"
-        >
-          Continue setup →
-        </Link>
-      </div>
+      )}
 
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6" role="tablist" aria-label="Filter activity">
+      <div className="flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Filter activity">
         {FILTERS.map((f) => (
           <button
             key={f.id}
@@ -511,17 +607,18 @@ export default function AppActivityPage() {
         </div>
       )}
 
-      {filtered.length === 0 && !loading ? (
+      {cards.length === 0 && !loading && !phoneConnected ? (
         <div className="space-y-6">
           <div>
             <p className="text-base font-medium text-[var(--text-primary)] mb-3">Recent activity</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
               <EmptyState
                 icon={Phone}
-                title="No calls yet"
-                description="Connect a phone number and your AI will start handling calls automatically."
-                primaryAction={{ label: "Connect number →", href: "/app/settings/phone" }}
-                secondaryAction={{ label: "Test your agent →", href: "/app/agents?tab=test" }}
+                title="Your AI agent is ready"
+                description="Connect your phone number to start receiving real calls."
+                primaryAction={{ label: "Connect phone", href: "/app/settings/phone" }}
+                secondaryAction={{ label: "Make a test call", href: "/app/agents" }}
+                footnote="Businesses like yours recover $2,400+/month in missed calls."
               />
             </div>
           </div>
@@ -567,7 +664,9 @@ export default function AppActivityPage() {
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <p className="text-sm font-semibold text-[var(--text-primary)]">Estimated ROI</p>
             <p className="mt-1 text-[13px] text-[var(--text-secondary)]">
-              Businesses at your stage typically recover <span className="font-medium text-[var(--text-primary)]">$2,400+</span> a month once every missed call turns into a captured lead.
+              Businesses at your stage typically recover{" "}
+              <span className="font-medium text-[var(--text-primary)]">$2,400+</span>{" "}
+              a month once every missed call turns into a captured lead.
             </p>
           </div>
 
@@ -604,28 +703,25 @@ export default function AppActivityPage() {
           </div>
         </div>
       ) : (
-        <ul className="space-y-3">
-          {filtered.map((card) => (
-            <li
-              key={card.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => setSelectedCard(card)}
-              onKeyDown={(e) => e.key === "Enter" && setSelectedCard(card)}
-              className="rounded-xl border-l-4 overflow-hidden bg-[var(--bg-card)] border border-[var(--border-default)] cursor-pointer hover:bg-[var(--bg-hover)] transition-colors"
-              style={{ borderLeftColor: TYPE_COLORS[card.type] }}
-            >
-              <div className="p-4">
-                <div className="flex justify-between items-start gap-2">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                      {card.name}
-                    </p>
-                    <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">
-                      {card.duration !== "—" ? `${card.time} · ${card.duration}` : card.time}
-                    </p>
-                  </div>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-[var(--text-secondary)]">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.1fr)]">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                Recent activity
+              </p>
+            </div>
+            <Timeline
+              items={filtered.map((card) => ({
+                id: card.id,
+                title: card.name,
+                description: card.summary,
+                timestamp:
+                  card.duration !== "—"
+                    ? `${card.time} · ${card.duration}`
+                    : card.time,
+                iconColor: TYPE_COLORS[card.type],
+                badge: (
+                  <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-[var(--text-secondary)]">
                     {card.type === "lead"
                       ? "Lead"
                       : card.type === "appointment"
@@ -634,48 +730,82 @@ export default function AppActivityPage() {
                           ? "Urgent"
                           : "Follow-up"}
                   </span>
-                </div>
-                <p className="text-xs text-[var(--text-secondary)] mt-2 line-clamp-2">
-                  {card.summary}
+                ),
+              }))}
+              className="mt-1"
+            />
+          </div>
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">
+                  Needs attention
                 </p>
-                {card.score != null && (
-                  <p className="text-[11px] text-[var(--text-tertiary)] mt-1">
-                    Score {card.score}
-                  </p>
-                )}
-                <div className="mt-3 flex justify-between items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (playingId === card.id) return;
-                      setPlayingId(card.id);
-                      void speakTextViaApi(getPlaySummary(card), {
-                        onStart: () => setPlayingId(card.id),
-                        onEnd: () => setPlayingId(null),
-                      });
-                    }}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border-medium)] px-3 py-1.5 text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-strong)]"
-                  >
-                    {playingId === card.id ? (
-                      <Waveform isPlaying />
-                    ) : (
-                      <span>▶</span>
-                    )}
-                    <span>Play summary</span>
-                  </button>
-                  <Link
-                    href={`/app/calls/${card.id}`}
-                    className="text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    View call →
-                  </Link>
-                </div>
               </div>
-            </li>
-          ))}
-        </ul>
+              {needsAttention.length === 0 ? (
+                <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    All caught up.
+                  </p>
+                </div>
+              ) : (
+                <ul className="space-y-2 text-xs text-[var(--text-secondary)]">
+                  {needsAttention.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex items-center justify-between gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2"
+                    >
+                      <span className="truncate">{item.label}</span>
+                      <span
+                        className={
+                          item.tone === "red"
+                            ? "h-2.5 w-2.5 rounded-full bg-red-500/80"
+                            : item.tone === "amber"
+                              ? "h-2.5 w-2.5 rounded-full bg-amber-400/80"
+                              : "h-2.5 w-2.5 rounded-full bg-emerald-400/80"
+                        }
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                Recent system events
+              </p>
+              {systemEvents.length === 0 ? (
+                <p className="text-xs text-[var(--text-tertiary)] mt-2">
+                  Your setup events will appear here.
+                </p>
+              ) : (
+                <ul className="mt-3 space-y-3">
+                  {systemEvents.map((event) => (
+                    <li
+                      key={event.id}
+                      className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-3"
+                    >
+                      <p className="text-xs font-medium text-[var(--text-primary)]">
+                        {event.title}
+                      </p>
+                      <p className="text-xs text-[var(--text-tertiary)] mt-1">
+                        {event.body}
+                      </p>
+                      <Link
+                        href={event.href}
+                        className="inline-block mt-2 text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2"
+                      >
+                        View →
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {selectedCard && (
