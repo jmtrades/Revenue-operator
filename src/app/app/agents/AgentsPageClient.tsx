@@ -103,6 +103,7 @@ type Agent = {
   notifyOwnerOnLead: boolean;
   sendSummaryEmail: boolean;
   persistence: "low" | "medium" | "high";
+  qualificationQuestions: string[];
   qualification: { criteria: Array<{ id: string; label: string; enabled: boolean }>; customCriterion: string };
   objections: Array<{ id: string; trigger: string; response: string }>;
   outboundOpening: string;
@@ -302,6 +303,7 @@ function defaultAgent(): Agent {
       totalCalls: 0,
       appointmentsBooked: 0,
     },
+    qualificationQuestions: [],
     neverSay: [],
     alwaysTransfer: [],
     escalationChain: [],
@@ -413,6 +415,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     transferPhone?: string;
     transferRules?: Array<{ phrase?: string; phone?: string }>;
     learnedBehaviors?: string[];
+    qualificationQuestions?: string[];
   };
   const stats = (row.stats ?? {}) as {
     avgRating?: number;
@@ -460,6 +463,11 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
           ? stats.appointmentsBooked
           : 0,
     },
+    qualificationQuestions: Array.isArray(rules.qualificationQuestions)
+      ? rules.qualificationQuestions
+          .map((q) => String(q ?? "").trim())
+          .filter((q) => q.length > 0)
+      : [],
     neverSay: Array.isArray(rules.neverSay) ? rules.neverSay.filter(Boolean) : [],
     alwaysTransfer: Array.isArray(rules.alwaysTransfer)
       ? rules.alwaysTransfer.filter(Boolean)
@@ -601,6 +609,7 @@ function toAgentPatchPayload(agent: Agent) {
         phone: rule.phone,
       })),
       learnedBehaviors: agent.learnedBehaviors,
+      qualificationQuestions: agent.qualificationQuestions,
     },
     is_active: agent.active,
   };
@@ -3263,6 +3272,31 @@ function BehaviorStepContent({
     onChange({ neverSay: neverDo.filter((r) => r !== rule) });
   };
 
+  const qualificationQuestions = Array.isArray(agent.qualificationQuestions)
+    ? agent.qualificationQuestions
+    : [];
+
+  const updateQuestion = (index: number, value: string) => {
+    const next = [...qualificationQuestions];
+    next[index] = value;
+    onChange({
+      qualificationQuestions: next
+        .map((q) => q.trim())
+        .filter((q, i) => q || i === index),
+    });
+  };
+
+  const removeQuestion = (index: number) => {
+    const next = qualificationQuestions.filter((_, i) => i !== index);
+    onChange({ qualificationQuestions: next });
+  };
+
+  const addQuestion = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    onChange({ qualificationQuestions: [...qualificationQuestions, trimmed] });
+  };
+
   return (
     <div className="space-y-6">
       <h3 id="behavior-heading" className="text-sm font-semibold text-white">How should your agent behave?</h3>
@@ -3321,6 +3355,60 @@ function BehaviorStepContent({
         </div>
       </section>
       <RulesTab agent={agent} onChange={onChange} />
+      <section className="mt-4">
+        <h3 className="text-sm font-medium text-white/70 mb-1">
+          Qualification questions
+        </h3>
+        <p className="text-xs text-white/40 mb-3">
+          Questions your AI asks to qualify leads. Drag to reorder priority.
+        </p>
+
+        {(qualificationQuestions || []).map((q, i) => (
+          <div key={i} className="flex items-center gap-2 mb-2">
+            <span className="text-xs text-white/20 w-5">{i + 1}.</span>
+            <input
+              value={q}
+              onChange={(e) => updateQuestion(i, e.target.value)}
+              className="flex-1 bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white focus:border-zinc-500 focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => removeQuestion(i)}
+              className="text-xs text-white/20 hover:text-red-400 p-1"
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => addQuestion("")}
+          className="mt-2 text-xs text-white/40 hover:text-white/60"
+        >
+          + Add question
+        </button>
+
+        {qualificationQuestions.length === 0 && (
+          <div className="mt-2 flex gap-2 flex-wrap">
+            {[
+              "What are you looking for?",
+              "What is your budget range?",
+              "When do you need this done?",
+              "How did you hear about us?",
+            ].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => addQuestion(preset)}
+                className="text-xs px-3 py-1.5 border border-white/[0.08] rounded-lg text-white/40 hover:bg-white/[0.04]"
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
         <button type="button" onClick={onNext} aria-label="Continue to Test" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>

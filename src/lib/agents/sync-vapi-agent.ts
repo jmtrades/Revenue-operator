@@ -48,6 +48,7 @@ type AgentRules = {
   transferPhone?: string | null;
   transferRules?: Array<{ phrase?: string; phone?: string }>;
   learnedBehaviors?: string[];
+  qualificationQuestions?: string[];
 };
 
 type AgentRow = {
@@ -144,6 +145,13 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
           .map((c) => (c.label ?? "").trim())
       : [];
 
+  const qualificationQuestions =
+    Array.isArray(rules.qualificationQuestions) && rules.qualificationQuestions.length > 0
+      ? rules.qualificationQuestions
+          .map((q) => String(q ?? "").trim())
+          .filter((q) => q.length > 0)
+      : [];
+
   const assistantPayload = {
     name: `${businessName} - ${agent.name?.trim() || "Receptionist"}`,
     systemPrompt: buildVapiSystemPrompt({
@@ -164,6 +172,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
       callStyle: knowledgeBase.callStyle ?? null,
       personality: agent.personality ?? null,
       qualificationCriteria,
+      qualificationQuestions,
       objections: Array.isArray(knowledgeBase.objections) ? knowledgeBase.objections : [],
       confusedCallerHandling: knowledgeBase.confusedCallerHandling ?? null,
       offTopicHandling: knowledgeBase.offTopicHandling ?? null,

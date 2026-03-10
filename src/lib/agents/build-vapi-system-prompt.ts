@@ -34,6 +34,8 @@ type AgentPromptInput = {
   personality?: string | null;
   /** qualification criteria labels when enabled */
   qualificationCriteria?: string[];
+  /** explicit qualification questions to ask */
+  qualificationQuestions?: string[];
   /** objection trigger -> response pairs */
   objections?: Array<{ trigger?: string; response?: string }>;
   /** phrase when caller seems confused */
@@ -212,9 +214,24 @@ export function buildVapiSystemPrompt(input: AgentPromptInput): string {
   if (rules.length > 0) sections.push(`RULES:\n${rules.join("\n")}`);
 
   // Layer 6: Qualification
-  const criteria = (input.qualificationCriteria ?? []).filter(Boolean);
-  if (criteria.length > 0) {
-    sections.push(`QUALIFICATION:\nAsk about: ${criteria.join(", ")}`);
+  const criteria = (input.qualificationCriteria ?? []).filter((c) =>
+    Boolean((c ?? "").trim()),
+  );
+  const qualQuestions = (input.qualificationQuestions ?? [])
+    .map((q) => String(q ?? "").trim())
+    .filter((q) => q.length > 0);
+  if (criteria.length > 0 || qualQuestions.length > 0) {
+    const parts: string[] = [];
+    if (criteria.length > 0) {
+      parts.push(`Ask about: ${criteria.join(", ")}`);
+    }
+    if (qualQuestions.length > 0) {
+      parts.push(
+        "Ask these qualification questions naturally during the call:\n" +
+          qualQuestions.map((q, i) => `${i + 1}. ${q}`).join("\n"),
+      );
+    }
+    sections.push(`QUALIFICATION:\n${parts.join("\n")}`);
   }
 
   // Layer 7: Objection handling
