@@ -53,8 +53,8 @@ export async function POST(req: NextRequest) {
 
   if (!accountSid || !authToken) {
     return NextResponse.json({
-      error: "Phone service is being configured. Your account will be notified when numbers are available.",
-      action: "notify",
+      error: "Phone service is being configured. Enter your email and we will notify you when numbers are available.",
+      code: "NOT_CONFIGURED",
     }, { status: 503 });
   }
 
@@ -176,8 +176,8 @@ export async function POST(req: NextRequest) {
 
   if (!phoneNumber) {
     return NextResponse.json({
-      error: "No numbers available in this region right now. We can notify you when one becomes available, or try a different area code.",
-      action: "retry_or_notify",
+      error: "No numbers available in this region. Try a different area code or leave it blank for the nearest available.",
+      code: "NO_INVENTORY",
     }, { status: 404 });
   }
 
@@ -207,13 +207,13 @@ export async function POST(req: NextRequest) {
     const msg = err?.message ?? (error instanceof Error ? error.message : "Unknown error");
     if (err.code === 21422 || (typeof msg === "string" && msg.toLowerCase().includes("not available"))) {
       return NextResponse.json({
-        error: "This area code has no available numbers. Try a different area code or leave it blank for the nearest available number.",
-        action: "retry",
-      }, { status: 404 });
+        error: "No numbers in that area code. Try a different one or leave blank.",
+        code: "PROVISION_ERROR",
+      }, { status: 502 });
     }
     return NextResponse.json({
-      error: "Phone service encountered an error. Please try again or contact support.",
-      action: "retry",
+      error: "Phone service error. Please try again.",
+      code: "PROVISION_ERROR",
     }, { status: 502 });
   }
 }
