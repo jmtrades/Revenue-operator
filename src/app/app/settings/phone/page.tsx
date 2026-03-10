@@ -92,6 +92,8 @@ export default function AppSettingsPhonePage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [connectError, setConnectError] = useState<string | null>(null);
+  const [connectAction, setConnectAction] = useState<string | null>(null);
+  const [notifyEmail, setNotifyEmail] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
   const [testCallError, setTestCallError] = useState<string | null>(null);
   const numberHeadingRef = useRef<HTMLParagraphElement>(null);
@@ -170,23 +172,27 @@ export default function AppSettingsPhonePage() {
         phone_number?: string;
         error?: string;
         message?: string;
+        action?: string;
       };
       if (data.phone_number) {
         setPhoneNumber(data.phone_number);
         setStatus("active");
         setConnectError(null);
+        setConnectAction(null);
         await fetchPhone();
         invalidateWorkspaceMeCache();
         setToast(data.message ?? "Number connected. You can now receive calls and texts.");
         setTimeout(() => numberHeadingRef.current?.focus({ preventScroll: true }), 100);
       } else {
-        const message = data.error ?? data.message ?? "Could not connect a number. Check Twilio config or try again.";
+        const message = data.error ?? data.message ?? "Could not connect a number. Try again.";
         setConnectError(message);
+        setConnectAction(data.action ?? null);
         setToast(message);
       }
     } catch {
       const message = "Something went wrong. Try again.";
       setConnectError(message);
+      setConnectAction("retry");
       setToast(message);
     } finally {
       setConnecting(false);
@@ -558,7 +564,35 @@ export default function AppSettingsPhonePage() {
               {connectError ? (
                 <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300" role="alert">
                   <p>{connectError}</p>
-                  <button type="button" onClick={() => { setConnectError(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-xs font-medium underline">Try again</button>
+                  {connectAction === "notify" ? (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs text-red-200/90">We&apos;re setting up phone service. Enter your email to be notified when numbers are available.</p>
+                      <input
+                        type="email"
+                        value={notifyEmail}
+                        onChange={(e) => setNotifyEmail(e.target.value)}
+                        placeholder="you@company.com"
+                        className="w-full bg-black/30 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-white placeholder:text-red-200/50"
+                      />
+                      <button type="button" onClick={() => { setToast("We'll notify you when numbers are available."); setTimeout(() => setToast(null), 4000); }} className="mt-1 text-xs font-medium underline">Notify me</button>
+                    </div>
+                  ) : connectAction === "retry_or_notify" ? (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs text-red-200/90">Try a different area code, or leave blank for any available number.</p>
+                      <input
+                        type="tel"
+                        inputMode="numeric"
+                        maxLength={3}
+                        value={areaCode}
+                        onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                        placeholder="e.g. 503"
+                        className="w-full bg-black/30 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-white placeholder:text-red-200/50"
+                      />
+                      <button type="button" onClick={() => { setConnectError(null); setConnectAction(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-xs font-medium underline">Try again</button>
+                    </div>
+                  ) : (
+                    <button type="button" onClick={() => { setConnectError(null); setConnectAction(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-xs font-medium underline">Try again</button>
+                  )}
                 </div>
               ) : null}
             </div>
