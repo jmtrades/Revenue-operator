@@ -4,15 +4,20 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Search, ChevronLeft, ChevronRight, PhoneCall } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Input } from "@/components/ui/Input";
+import { Badge } from "@/components/ui/Badge";
+import { Sheet } from "@/components/ui/Sheet";
+import { Button } from "@/components/ui/Button";
+import { AudioPlayer } from "@/components/ui/AudioPlayer";
 
 const PAGE_TITLE = "Calls — Recall Touch";
 
 type CallType = "inbound" | "outbound" | null;
-type CallOutcome = "appointment" | "lead" | "info" | "transfer" | "voicemail" | null;
+type CallOutcome = "appointment" | "lead" | "info" | "transfer" | "voicemail" | "missed" | null;
 type CallSentiment = "positive" | "neutral" | "negative" | null;
 
 interface CallRecord {
@@ -22,22 +27,24 @@ interface CallRecord {
   call_started_at?: string | null;
   call_ended_at?: string | null;
   outcome?: string | null;
-  matched_lead?: { name?: string | null; email?: string | null; company?: string | null } | null;
+  matched_lead?: { name?: string | null; email?: string | null; company?: string | null; phone?: string | null } | null;
   analysis_outcome?: unknown;
   started_at?: string | null;
   transcript_text?: string | null;
   summary?: string | null;
+  recording_url?: string | null;
 }
 
 const PAGE_SIZE = 10;
 const CALLS_SNAPSHOT_PREFIX = "rt_calls_snapshot:";
 
 const OUTCOME_LABELS: Record<Exclude<CallOutcome, null>, string> = {
-  appointment: "Appointment",
+  appointment: "Booked",
   lead: "Lead",
   info: "Info",
-  transfer: "Transfer",
+  transfer: "Transferred",
   voicemail: "Voicemail",
+  missed: "Missed",
 };
 
 const TYPE_LABELS: Record<Exclude<CallType, null>, string> = {
@@ -102,6 +109,17 @@ export default function CallsPage() {
   const [page, setPage] = useState(1);
   const [selectedCall, setSelectedCall] = useState<CallRecord | null>(null);
   const [drawerLoading, setDrawerLoading] = useState(false);
+  const [callNotes, setCallNotes] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!selectedCall?.id) return;
+    try {
+      const raw = localStorage.getItem(`rt_call_notes_${selectedCall.id}`);
+      if (raw) setCallNotes((prev) => ({ ...prev, [selectedCall.id]: raw }));
+    } catch {
+      // ignore
+    }
+  }, [selectedCall?.id]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -267,17 +285,17 @@ export default function CallsPage() {
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
-        <div className="relative flex-1 min-w-[180px]">
-          <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
+        <div className="flex-1 min-w-[180px]">
+          <Input
             type="search"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)]"
+            icon={Search}
             placeholder="Search by caller or phone…"
+            className="bg-[var(--bg-input)] border-[var(--border-default)]"
           />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -288,13 +306,15 @@ export default function CallsPage() {
               setPage(1);
             }}
             className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
+            aria-label="Filter by outcome"
           >
-            <option value="all">All outcomes</option>
-            {Object.entries(OUTCOME_LABELS).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
+            <option value="all">All</option>
+            <option value="appointment">Booked</option>
+            <option value="lead">Lead</option>
+            <option value="info">Info</option>
+            <option value="transfer">Transferred</option>
+            <option value="missed">Missed</option>
+            <option value="voicemail">Voicemail</option>
           </select>
           <select
             value={sentimentFilter}
@@ -303,8 +323,9 @@ export default function CallsPage() {
               setPage(1);
             }}
             className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
+            aria-label="Filter by sentiment"
           >
-            <option value="all">All sentiment</option>
+            <option value="all">All</option>
             <option value="positive">Positive</option>
             <option value="neutral">Neutral</option>
             <option value="negative">Negative</option>
@@ -348,10 +369,10 @@ export default function CallsPage() {
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Caller</th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Phone</th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Duration</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Type</th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Outcome</th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Sentiment</th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Agent</th>
+              <th className="py-3 px-4 text-right text-xs font-medium text-zinc-500 w-20" aria-label="Actions" />
             </tr>
           </thead>
           <tbody>
@@ -369,10 +390,13 @@ export default function CallsPage() {
                 (c.analysis_outcome as { sentiment?: CallSentiment } | undefined)?.sentiment ??
                 null;
               const kind: Exclude<CallType, null> = "inbound";
+              const outcomeKey = (c.outcome ?? "lead") as Exclude<CallOutcome, null>;
+              const sentimentEmoji = sentiment === "positive" ? "🙂" : sentiment === "negative" ? "😞" : sentiment === "neutral" ? "😐" : null;
+              const durationLabel = durSec > 0 ? `${durMin}m ${(durSec % 60).toString().padStart(2, "0")}s` : "—";
               return (
                 <tr
                   key={c.id}
-                  className="border-t border-zinc-900/70 hover:bg-[var(--bg-hover)] cursor-pointer"
+                  className="group border-t border-zinc-900/70 hover:bg-[var(--bg-hover)] cursor-pointer"
                   onClick={() => handleRowClick(c.id)}
                 >
                   <td className="py-3 px-4 text-xs text-zinc-400 whitespace-nowrap">
@@ -385,49 +409,50 @@ export default function CallsPage() {
                   </td>
                   <td className="py-3 px-4 text-sm text-zinc-100">{name}</td>
                   <td className="py-3 px-4 text-xs text-zinc-400">
-                    {c.matched_lead?.email ?? "—"}
-                  </td>
-                  <td className="py-3 px-4 text-xs text-zinc-300">
-                    {durSec > 0 ? (
-                      <>
-                        {durMin}m {durSec.toString().padStart(2, "0")}s
-                      </>
-                    ) : (
-                      "—"
-                    )}
+                    {(c.matched_lead as { phone?: string | null } | undefined)?.phone ?? c.matched_lead?.email ?? "—"}
                   </td>
                   <td className="py-3 px-4 text-xs">
-                    <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
-                      {TYPE_LABELS[kind]}
-                    </span>
+                    <Badge variant="neutral">{durationLabel}</Badge>
                   </td>
                   <td className="py-3 px-4 text-xs">
-                    <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
-                      {OUTCOME_LABELS[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
-                    </span>
+                    <Badge variant={outcomeKey === "appointment" ? "appointment" : outcomeKey === "lead" ? "lead" : "neutral"}>
+                      {OUTCOME_LABELS[outcomeKey] ?? c.outcome ?? "—"}
+                    </Badge>
                   </td>
-                  <td className="py-3 px-4 text-xs">
-                    <span className="inline-flex items-center gap-1 text-zinc-200">
-                      {sentiment && (
-                        <>
-                          <span
-                            className={`h-2 w-2 rounded-full ${sentimentDotColor(sentiment)}`}
-                          />
-                          <span>{SENTIMENT_LABELS[sentiment]}</span>
-                        </>
-                      )}
-                      {!sentiment && <span className="text-zinc-500">—</span>}
-                    </span>
+                  <td className="py-3 px-4 text-xs text-zinc-200">
+                    {sentimentEmoji && <span aria-hidden>{sentimentEmoji}</span>}
+                    {!sentimentEmoji && sentiment && <span>{SENTIMENT_LABELS[sentiment]}</span>}
+                    {!sentiment && !sentimentEmoji && <span className="text-zinc-500">—</span>}
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-300">
                     {c.matched_lead?.name ? "Agent" : "—"}
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        aria-label="Play recording"
+                        className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10"
+                        onClick={() => handleRowClick(c.id)}
+                      >
+                        <Play className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="View transcript"
+                        className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10"
+                        onClick={() => handleRowClick(c.id)}
+                      >
+                        <FileText className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
             })}
             {pageItems.length === 0 && (
               <tr>
-                <td colSpan={8} className="py-8 px-4 text-center text-sm text-zinc-500">
+                <td colSpan={9} className="py-8 px-4 text-center text-sm text-zinc-500">
                   No calls match these filters yet.
                 </td>
               </tr>
@@ -543,107 +568,140 @@ export default function CallsPage() {
         </div>
       </div>
 
-      {selectedCall && (
-        <div className="fixed inset-0 z-40">
-          <button
-            type="button"
-            onClick={() => setSelectedCall(null)}
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            aria-label="Close call details"
-          />
-          <aside className="absolute inset-y-0 right-0 w-full max-w-lg bg-black border-l border-[var(--border-default)] shadow-2xl flex flex-col">
-            <div className="px-5 py-4 border-b border-[var(--border-default)] flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs text-zinc-500 mb-1">Call</p>
-                <h2 className="text-lg font-semibold text-white">
-                  {selectedCall.matched_lead?.name ??
-                    selectedCall.matched_lead?.company ??
-                    selectedCall.matched_lead?.email ??
-                    "Caller"}
-                </h2>
-                <p className="text-xs text-zinc-500 mt-1">
-                  {selectedCall.call_started_at
-                    ? new Date(
-                        selectedCall.call_started_at,
-                      ).toLocaleString()
-                    : "Time unknown"}
-                </p>
-                {selectedCall.call_started_at && selectedCall.call_ended_at && (
-                  <p className="text-xs text-zinc-500 mt-0.5">
-                    Duration: {Math.round((new Date(selectedCall.call_ended_at).getTime() - new Date(selectedCall.call_started_at).getTime()) / 1000)}s
-                  </p>
-                )}
-                {selectedCall.outcome && (
-                  <p className="text-xs text-zinc-500 mt-0.5">Outcome: {selectedCall.outcome}</p>
-                )}
+      <Sheet
+        open={!!selectedCall}
+        onClose={() => setSelectedCall(null)}
+        title={selectedCall ? "Call details" : undefined}
+      >
+        {selectedCall && (
+          <div className="space-y-5">
+            <div>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+                {selectedCall.matched_lead?.name ??
+                  selectedCall.matched_lead?.company ??
+                  selectedCall.matched_lead?.email ??
+                  "Caller"}
+              </h3>
+              <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                {(selectedCall.matched_lead as { phone?: string | null })?.phone ?? selectedCall.matched_lead?.email ?? "—"}
+              </p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                {selectedCall.call_started_at
+                  ? new Date(selectedCall.call_started_at).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })
+                  : "—"}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <Badge variant="neutral">
+                  {selectedCall.call_started_at && selectedCall.call_ended_at
+                    ? `${Math.round((new Date(selectedCall.call_ended_at).getTime() - new Date(selectedCall.call_started_at).getTime()) / 60)}m`
+                    : "—"}
+                </Badge>
+                <Badge variant={(selectedCall.outcome ?? "lead") === "appointment" ? "appointment" : (selectedCall.outcome ?? "lead") === "lead" ? "lead" : "neutral"}>
+                  {OUTCOME_LABELS[(selectedCall.outcome ?? "lead") as Exclude<CallOutcome, null>] ?? selectedCall.outcome}
+                </Badge>
+                {(() => {
+                  const s = (selectedCall.analysis_outcome as { sentiment?: CallSentiment })?.sentiment ?? null;
+                  return s ? (
+                    <Badge variant={s === "positive" ? "success" : s === "negative" ? "error" : "neutral"}>
+                      {s === "positive" ? "🙂 Positive" : s === "negative" ? "😞 Negative" : "😐 Neutral"}
+                    </Badge>
+                  ) : null;
+                })()}
               </div>
-              <button
-                type="button"
-                onClick={() => setSelectedCall(null)}
-                className="text-zinc-500 hover:text-white text-sm"
-                aria-label="Close"
-              >
-                ✕
-              </button>
+              <p className="text-[11px] text-[var(--text-tertiary)] mt-1">Agent: —</p>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-              <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
-                  Summary
-                </h3>
-                <p className="text-sm text-zinc-200 leading-relaxed">
-                  {selectedCall.summary || "No summary available for this call yet."}
-                </p>
-              </section>
-              <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
-                  Transcript
-                </h3>
-                {drawerLoading ? (
-                  <p className="text-xs text-zinc-500">Loading transcript…</p>
-                ) : selectedCall.transcript_text ? (
-                  <p className="text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed">
+
+            {selectedCall.recording_url && (
+              <div>
+                <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Recording</p>
+                <AudioPlayer src={selectedCall.recording_url} className="w-full" />
+              </div>
+            )}
+
+            <div>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Transcript</p>
+              {drawerLoading ? (
+                <p className="text-xs text-[var(--text-tertiary)]">Loading…</p>
+              ) : selectedCall.transcript_text ? (
+                <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 max-h-48 overflow-y-auto">
+                  <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed">
                     {selectedCall.transcript_text}
                   </p>
-                ) : (
-                  <p className="text-xs text-zinc-500">
-                    No transcript stored for this call.
-                  </p>
-                )}
-              </section>
+                </div>
+              ) : (
+                <p className="text-xs text-[var(--text-tertiary)]">No transcript for this call.</p>
+              )}
             </div>
-            <div className="px-5 py-4 border-t border-[var(--border-default)] flex justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => router.push(`/app/calls/${selectedCall.id}`)}
-                className="flex-1 rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-zinc-200 hover:bg-[var(--bg-input)]"
-              >
-                Open full call
-              </button>
-              <button
-                type="button"
-                onClick={() => {
+
+            <div>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">AI Summary</p>
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                {selectedCall.summary ?? "No summary available."}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Actions taken</p>
+              <ul className="list-disc list-inside text-xs text-[var(--text-secondary)] space-y-0.5">
+                {selectedCall.outcome === "appointment" && <li>Appointment booked</li>}
+                {selectedCall.outcome === "lead" && <li>Lead captured</li>}
+                {selectedCall.outcome === "transfer" && <li>Call transferred</li>}
+                {selectedCall.outcome === "voicemail" && <li>Voicemail left</li>}
+                {!["appointment", "lead", "transfer", "voicemail"].includes(selectedCall.outcome ?? "") && (
+                  <li>Call handled</li>
+                )}
+              </ul>
+            </div>
+
+            <div>
+              <label htmlFor="call-notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">Notes</label>
+              <textarea
+                id="call-notes"
+                value={callNotes[selectedCall.id] ?? ""}
+                onChange={(e) => setCallNotes((prev) => ({ ...prev, [selectedCall.id]: e.target.value }))}
+                onBlur={() => {
                   try {
-                    sessionStorage.setItem(
-                      "rt_add_to_knowledge",
-                      JSON.stringify({
-                        summary: selectedCall.summary ?? "",
-                        callId: selectedCall.id,
-                      }),
-                    );
+                    const key = `rt_call_notes_${selectedCall.id}`;
+                    const v = callNotes[selectedCall.id] ?? "";
+                    if (v) localStorage.setItem(key, v);
+                    else localStorage.removeItem(key);
                   } catch {
                     // ignore
                   }
-                  router.push("/app/knowledge");
                 }}
-                className="flex-1 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100"
-              >
-                Add to knowledge
-              </button>
+                placeholder="Add notes…"
+                rows={3}
+                className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-primary)] resize-none"
+              />
             </div>
-          </aside>
-        </div>
-      )}
+
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border-default)]">
+              <a
+                href={(selectedCall.matched_lead as { phone?: string } | undefined)?.phone ? `tel:${(selectedCall.matched_lead as { phone: string }).phone}` : undefined}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border-hover)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] bg-transparent hover:bg-[var(--bg-hover)]"
+              >
+                <PhoneCall className="h-3.5 w-3.5" />
+                Call back
+              </a>
+              <Button variant="secondary" size="sm">
+                <MessageSquare className="h-3.5 w-3.5" />
+                Send SMS
+              </Button>
+              <Link
+                href="/app/leads"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border-hover)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] bg-transparent hover:bg-[var(--bg-hover)]"
+              >
+                <UserPlus className="h-3.5 w-3.5" />
+                Add to leads
+              </Link>
+              <Button variant="ghost" size="sm">
+                <Flag className="h-3.5 w-3.5" />
+                Flag
+              </Button>
+            </div>
+          </div>
+        )}
+      </Sheet>
     </div>
   );
 }
