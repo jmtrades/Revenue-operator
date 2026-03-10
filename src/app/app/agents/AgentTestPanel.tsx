@@ -40,14 +40,25 @@ export function AgentTestPanel({
   const [loading, setLoading] = useState(false);
   const [testStarted, setTestStarted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scenarioTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    return () => {
+      if (scenarioTimeoutRef.current) clearTimeout(scenarioTimeoutRef.current);
+    };
+  }, []);
+
   const businessName = workspace?.business_name?.trim() || workspace?.name?.trim() || "us";
 
-  async function startTest(scenarioPrompt?: string) {
+  function startTest(scenarioPrompt?: string) {
+    if (scenarioTimeoutRef.current) {
+      clearTimeout(scenarioTimeoutRef.current);
+      scenarioTimeoutRef.current = null;
+    }
     setTestStarted(true);
     setMessages([]);
     const greeting =
@@ -56,13 +67,16 @@ export function AgentTestPanel({
     setMessages([{ role: "agent", text: greeting }]);
 
     if (scenarioPrompt) {
-      setTimeout(() => sendMessage(scenarioPrompt, [{ role: "agent", text: greeting }]), 800);
+      scenarioTimeoutRef.current = setTimeout(() => {
+        scenarioTimeoutRef.current = null;
+        sendMessage(scenarioPrompt, [{ role: "agent", text: greeting }]);
+      }, 800);
     }
   }
 
   async function sendMessage(text?: string, existingMessages?: Message[]) {
-    const messageText = text ?? input;
-    if (!messageText.trim()) return;
+    const messageText = (text ?? input).trim();
+    if (!messageText || !agent.id) return;
 
     const currentMessages = existingMessages ?? messages;
     const newCallerMsg: Message = { role: "caller", text: messageText };
@@ -74,6 +88,7 @@ export function AgentTestPanel({
     try {
       const res = await fetch("/api/agent/test-chat", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           agentId: agent.id,
@@ -83,19 +98,18 @@ export function AgentTestPanel({
 
       if (!res.ok) {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
+        const errorText = err.error?.trim() || (res.status === 401 ? "Please sign in again." : res.status === 503 ? "AI service is not configured. Contact support." : "Failed to get a response. Please try again.");
         setMessages([
           ...updatedMessages,
-          {
-            role: "agent",
-            text: err.error ?? "Failed to generate response. Check that ANTHROPIC_API_KEY is configured.",
-          },
+          { role: "agent", text: errorText },
         ]);
       } else {
-        const data = (await res.json()) as { response?: string };
-        setMessages([...updatedMessages, { role: "agent", text: data.response ?? "I'm sorry, I couldn't generate a response." }]);
+        const data = (await res.json().catch(() => ({}))) as { response?: string };
+        const reply = (data.response ?? "I'm sorry, I couldn't generate a response.").trim() || "I'm sorry, I couldn't generate a response.";
+        setMessages([...updatedMessages, { role: "agent", text: reply }]);
       }
     } catch {
-      setMessages([...updatedMessages, { role: "agent", text: "Connection error. Please try again." }]);
+      setMessages([...updatedMessages, { role: "agent", text: "Connection error. Please check your network and try again." }]);
     } finally {
       setLoading(false);
     }
@@ -180,6 +194,10 @@ export function AgentTestPanel({
         <button
           type="button"
           onClick={() => {
+            if (scenarioTimeoutRef.current) {
+              clearTimeout(scenarioTimeoutRef.current);
+              scenarioTimeoutRef.current = null;
+            }
             setTestStarted(false);
             setMessages([]);
           }}
