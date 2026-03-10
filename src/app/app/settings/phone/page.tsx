@@ -92,7 +92,7 @@ export default function AppSettingsPhonePage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [connectError, setConnectError] = useState<string | null>(null);
-  const [connectAction, setConnectAction] = useState<string | null>(null);
+  const [connectErrorCode, setConnectErrorCode] = useState<string | null>(null);
   const [notifyEmail, setNotifyEmail] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
   const [testCallError, setTestCallError] = useState<string | null>(null);
@@ -172,13 +172,13 @@ export default function AppSettingsPhonePage() {
         phone_number?: string;
         error?: string;
         message?: string;
-        action?: string;
+        code?: string;
       };
       if (data.phone_number) {
         setPhoneNumber(data.phone_number);
         setStatus("active");
         setConnectError(null);
-        setConnectAction(null);
+        setConnectErrorCode(null);
         await fetchPhone();
         invalidateWorkspaceMeCache();
         setToast(data.message ?? "Number connected. You can now receive calls and texts.");
@@ -186,13 +186,13 @@ export default function AppSettingsPhonePage() {
       } else {
         const message = data.error ?? data.message ?? "Could not connect a number. Try again.";
         setConnectError(message);
-        setConnectAction(data.action ?? null);
+        setConnectErrorCode(data.code ?? null);
         setToast(message);
       }
     } catch {
       const message = "Something went wrong. Try again.";
       setConnectError(message);
-      setConnectAction("retry");
+      setConnectErrorCode("PROVISION_ERROR");
       setToast(message);
     } finally {
       setConnecting(false);
@@ -571,36 +571,39 @@ export default function AppSettingsPhonePage() {
               </button>
               <p className="text-xs text-white/30 mt-2 text-center">Takes about 10 seconds</p>
               {connectError ? (
-                <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300" role="alert">
-                  <p>{connectError}</p>
-                  {connectAction === "notify" ? (
-                    <div className="mt-3 space-y-2">
-                      <p className="text-xs text-red-200/90">We&apos;re setting up phone service. Enter your email to be notified when numbers are available.</p>
+                <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/[0.06] p-4" role="alert">
+                  <p className="text-sm text-red-400 mb-2">{connectError}</p>
+                  {connectErrorCode === "NOT_CONFIGURED" && (
+                    <div className="flex gap-2 mt-2">
                       <input
                         type="email"
                         value={notifyEmail}
                         onChange={(e) => setNotifyEmail(e.target.value)}
-                        placeholder="you@company.com"
-                        className="w-full bg-black/30 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-white placeholder:text-red-200/50"
+                        placeholder="your@email.com"
+                        className="flex-1 bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40"
                       />
-                      <button type="button" onClick={() => { setToast("We'll notify you when numbers are available."); setTimeout(() => setToast(null), 4000); }} className="mt-1 text-xs font-medium underline">Notify me</button>
+                      <button type="button" onClick={() => { setToast("We'll notify you when numbers are available."); setTimeout(() => setToast(null), 4000); }} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm shrink-0">Notify me</button>
                     </div>
-                  ) : connectAction === "retry_or_notify" ? (
-                    <div className="mt-3 space-y-2">
-                      <p className="text-xs text-red-200/90">Try a different area code, or leave blank for any available number.</p>
-                      <input
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={3}
-                        value={areaCode}
-                        onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
-                        placeholder="e.g. 503"
-                        className="w-full bg-black/30 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-white placeholder:text-red-200/50"
-                      />
-                      <button type="button" onClick={() => { setConnectError(null); setConnectAction(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-xs font-medium underline">Try again</button>
+                  )}
+                  {connectErrorCode === "NO_INVENTORY" && (
+                    <div className="mt-2">
+                      <p className="text-xs text-white/40 mb-2">Try a different area code or leave blank for any available number:</p>
+                      <div className="flex gap-2">
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={3}
+                          value={areaCode}
+                          onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                          placeholder="e.g. 212"
+                          className="w-24 bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white"
+                        />
+                        <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm">Try again</button>
+                      </div>
                     </div>
-                  ) : (
-                    <button type="button" onClick={() => { setConnectError(null); setConnectAction(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-xs font-medium underline">Try again</button>
+                  )}
+                  {connectErrorCode === "PROVISION_ERROR" && (
+                    <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-sm text-zinc-300 hover:text-white hover:underline">Try again</button>
                   )}
                 </div>
               ) : null}
