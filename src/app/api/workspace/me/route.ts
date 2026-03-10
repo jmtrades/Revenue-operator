@@ -111,6 +111,26 @@ export async function GET(req: NextRequest) {
     const businessName =
       (ctxRow?.business_name ?? "").trim() || (row.name ?? "").trim() || "My Workspace";
 
+    // Backfill workspace_business_context.business_name for older workspaces
+    // that predate onboarding propagation. This keeps sidebar and brain APIs
+    // consistent for legacy accounts.
+    if (!ctxRow?.business_name && businessName !== "My Workspace") {
+      try {
+        await db
+          .from("workspace_business_context")
+          .upsert(
+            {
+              workspace_id: workspaceId,
+              business_name: businessName,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "workspace_id" },
+          );
+      } catch {
+        // Non-fatal; UI can still use computed businessName.
+      }
+    }
+
     const knowledgeCount = Array.isArray(row.knowledge_items)
       ? row.knowledge_items.filter((item) => (item.q ?? "").trim() && (item.a ?? "").trim()).length
       : 0;
