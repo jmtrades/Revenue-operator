@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
   if (!VERIFY_SID || !ACCOUNT_SID || !AUTH_TOKEN) {
     return NextResponse.json(
-      { error: "This feature is being configured. Please try again later or contact support." },
+      { error: "Phone verification is being set up. You can use 'Get a new AI number' instead.", action: "redirect" },
       { status: 503 }
     );
   }

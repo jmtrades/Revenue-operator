@@ -437,16 +437,21 @@ export default function AppSettingsPhonePage() {
                   type="tel"
                   value={verifyPhone}
                   onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
-                  placeholder="(555) 123-4567"
+                  placeholder="+1 (555) 000-0000"
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
                 />
                 <div className="flex gap-2 mb-2">
                   <button
                     type="button"
                     onClick={async () => {
+                      const cleaned = digitsOnly(verifyPhone);
+                      if (cleaned.length < 10 || cleaned.length > 15) {
+                        setVerifyError("Enter a valid phone number with country code (e.g., +1 555 000 0000).");
+                        return;
+                      }
                       const num = toE164(verifyPhone);
-                      if (!num || digitsOnly(verifyPhone).length < 10) {
-                        setVerifyError("Enter a valid 10-digit US number.");
+                      if (!num) {
+                        setVerifyError("Enter a valid phone number with country code (e.g., +1 555 000 0000).");
                         return;
                       }
                       setVerifyError(null);
@@ -458,19 +463,23 @@ export default function AppSettingsPhonePage() {
                           headers: { "Content-Type": "application/json" },
                           body: JSON.stringify({ phone_number: num }),
                         });
-                        const d = await r.json();
-                        if (r.ok && (d as { sent?: boolean }).sent) {
+                        const d = (await r.json().catch(() => ({}))) as { sent?: boolean; error?: string; action?: string };
+                        if (r.ok && d.sent) {
                           setToast("Code sent. Check your phone.");
                         } else {
-                          setVerifyError((d as { error?: string }).error ?? "Failed to send code.");
+                          const msg = d.error ?? "Failed to send code.";
+                          setVerifyError(msg);
+                          if (d.action === "redirect") {
+                            setToast("Use 'Get a new AI number' to get a dedicated line.");
+                          }
                         }
                       } catch {
-                        setVerifyError("Failed to send code.");
+                        setVerifyError("Failed to send code. Check your connection and try again.");
                       } finally {
                         setVerifySending(false);
                       }
                     }}
-                    disabled={verifySending || digitsOnly(verifyPhone).length < 10}
+                    disabled={verifySending || digitsOnly(verifyPhone).length < 10 || digitsOnly(verifyPhone).length > 15}
                     className="px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:bg-[var(--bg-card)] disabled:opacity-50"
                   >
                     {verifySending ? "Sending…" : "Send code"}
@@ -625,27 +634,28 @@ export default function AppSettingsPhonePage() {
                   setVerifyError(null);
                   setVerifySending(true);
                   try {
-                    const r = await fetch("/api/phone/verify-start", {
-                      method: "POST",
-                      credentials: "include",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ phone_number: num }),
-                    });
-                    const d = await r.json();
-                    if (r.ok && (d as { sent?: boolean }).sent) {
-                      setToast("Code sent. Check your phone.");
-                      setVerifyCodeSent(true);
-                    } else {
-                      setVerifyError((d as { error?: string }).error ?? "Failed to send code.");
-                    }
-                  } catch {
-                    setVerifyError("Failed to send code.");
-                  } finally {
-                    setVerifySending(false);
-                  }
-                }}
-                disabled={verifySending || digitsOnly(verifyPhone).length < 10}
-                className="w-full py-2.5 bg-white/[0.06] border border-white/[0.1] text-white font-semibold rounded-lg text-sm hover:bg-white/[0.1] disabled:opacity-50 transition-colors"
+                        const r = await fetch("/api/phone/verify-start", {
+                          method: "POST",
+                          credentials: "include",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ phone_number: num }),
+                        });
+                        const d = (await r.json().catch(() => ({}))) as { sent?: boolean; error?: string; action?: string };
+                        if (r.ok && d.sent) {
+                          setToast("Code sent. Check your phone.");
+                          setVerifyCodeSent(true);
+                        } else {
+                          setVerifyError(d.error ?? "Failed to send code.");
+                          if (d.action === "redirect") setToast("Use 'Get a new AI number' to get a dedicated line.");
+                        }
+                      } catch {
+                        setVerifyError("Failed to send code. Check your connection and try again.");
+                      } finally {
+                        setVerifySending(false);
+                      }
+                    }}
+                    disabled={verifySending || digitsOnly(verifyPhone).length < 10 || digitsOnly(verifyPhone).length > 15}
+                    className="w-full py-2.5 bg-white/[0.06] border border-white/[0.1] text-white font-semibold rounded-lg text-sm hover:bg-white/[0.1] disabled:opacity-50 transition-colors"
               >
                 {verifySending ? "Sending code…" : "Verify my number →"}
               </button>
