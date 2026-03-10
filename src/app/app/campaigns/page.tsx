@@ -252,11 +252,11 @@ export default function CampaignsPage() {
           </select>
         </div>
 
-        <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Metric label="Total runs" value={campaigns.length} />
-          <Metric label="Active" value={campaigns.filter((campaign) => campaign.status === "active").length} />
-          <Metric label="Answered" value={campaigns.reduce((sum, campaign) => sum + campaign.answered, 0)} />
-          <Metric label="Appointments" value={campaigns.reduce((sum, campaign) => sum + campaign.appointments_booked, 0)} />
+        <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard label="Total runs" value={campaigns.length} color="blue" />
+          <StatCard label="Active" value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
+          <StatCard label="Calls made" value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
+          <StatCard label="Appointments" value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -409,7 +409,7 @@ export default function CampaignsPage() {
                           }));
                         }}
                         className={`p-3 rounded-lg border text-left text-xs transition-colors ${
-                          selected ? "border-blue-500/40 bg-blue-500/[0.06]" : "border-white/[0.08] hover:bg-white/[0.04]"
+                          selected ? "border-zinc-500/50 bg-zinc-800/50" : "border-white/[0.08] hover:bg-white/[0.04]"
                         }`}
                       >
                         <p className="font-medium text-white">{typeOption.label}</p>
@@ -565,9 +565,42 @@ export default function CampaignsPage() {
   );
 }
 
+function StatCard({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: "blue" | "emerald" | "cyan" | "amber";
+}) {
+  const border =
+    color === "blue"
+      ? "border-blue-500/30"
+      : color === "emerald"
+        ? "border-emerald-500/30"
+        : color === "cyan"
+          ? "border-cyan-500/30"
+          : "border-amber-500/30";
+  const text =
+    color === "blue"
+      ? "text-blue-400"
+      : color === "emerald"
+        ? "text-emerald-400"
+        : color === "cyan"
+          ? "text-cyan-400"
+          : "text-amber-400";
+  return (
+    <div className={`rounded-xl border bg-zinc-900/50 p-4 ${border}`}>
+      <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{label}</p>
+      <p className={`mt-1 text-xl font-bold ${text}`}>{value}</p>
+    </div>
+  );
+}
+
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3">
+    <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
       <p className="text-[10px] text-zinc-500">{label}</p>
       <p className="mt-1 text-sm font-semibold text-white">{value}</p>
     </div>
