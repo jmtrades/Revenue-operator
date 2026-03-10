@@ -422,7 +422,7 @@ export default function AppAnalyticsPage() {
                     borderRadius: 8,
                   }}
                   labelStyle={{ color: "#e5e7eb" }}
-                  formatter={(value: number | undefined) => [value ?? 0, "calls"]}
+                  formatter={(value) => [Number(value ?? 0), "calls"]}
                 />
                 <defs>
                   <linearGradient id="volumeFill" x1="0" y1="0" x2="0" y2="1">

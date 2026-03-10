@@ -332,25 +332,11 @@ export default function CallsPage() {
       ) : filtered.length === 0 ? (
         <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <EmptyState
-            icon={<PhoneCall className="h-6 w-6" />}
+            icon={PhoneCall}
             title="No calls yet"
             description="Connect your phone number to get started. Calls will appear here with transcripts and summaries."
-            actions={
-              <>
-                <Link
-                  href="/app/settings/phone"
-                  className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-gray-900 text-sm font-semibold hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
-                >
-                  Connect number →
-                </Link>
-                <Link
-                  href="/app/agents"
-                  className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
-                >
-                  Test your agent →
-                </Link>
-              </>
-            }
+            primaryAction={{ label: "Connect number →", href: "/app/settings/phone" }}
+            secondaryAction={{ label: "Test your agent →", href: "/app/agents" }}
           />
         </div>
       ) : (
