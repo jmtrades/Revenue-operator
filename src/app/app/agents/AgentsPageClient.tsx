@@ -104,6 +104,12 @@ type Agent = {
   sendSummaryEmail: boolean;
   persistence: "low" | "medium" | "high";
   qualificationQuestions: string[];
+  objectionHandling: {
+    price?: string;
+    timing?: string;
+    competitor?: string;
+    notInterested?: string;
+  };
   qualification: { criteria: Array<{ id: string; label: string; enabled: boolean }>; customCriterion: string };
   objections: Array<{ id: string; trigger: string; response: string }>;
   outboundOpening: string;
@@ -304,6 +310,7 @@ function defaultAgent(): Agent {
       appointmentsBooked: 0,
     },
     qualificationQuestions: [],
+    objectionHandling: {},
     neverSay: [],
     alwaysTransfer: [],
     escalationChain: [],
@@ -416,6 +423,12 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     transferRules?: Array<{ phrase?: string; phone?: string }>;
     learnedBehaviors?: string[];
     qualificationQuestions?: string[];
+    objectionHandling?: {
+      price?: string;
+      timing?: string;
+      competitor?: string;
+      notInterested?: string;
+    };
   };
   const stats = (row.stats ?? {}) as {
     avgRating?: number;
@@ -468,6 +481,24 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
           .map((q) => String(q ?? "").trim())
           .filter((q) => q.length > 0)
       : [],
+    objectionHandling: {
+      price:
+        typeof rules.objectionHandling?.price === "string"
+          ? rules.objectionHandling.price
+          : "",
+      timing:
+        typeof rules.objectionHandling?.timing === "string"
+          ? rules.objectionHandling.timing
+          : "",
+      competitor:
+        typeof rules.objectionHandling?.competitor === "string"
+          ? rules.objectionHandling.competitor
+          : "",
+      notInterested:
+        typeof rules.objectionHandling?.notInterested === "string"
+          ? rules.objectionHandling.notInterested
+          : "",
+    },
     neverSay: Array.isArray(rules.neverSay) ? rules.neverSay.filter(Boolean) : [],
     alwaysTransfer: Array.isArray(rules.alwaysTransfer)
       ? rules.alwaysTransfer.filter(Boolean)
@@ -610,6 +641,7 @@ function toAgentPatchPayload(agent: Agent) {
       })),
       learnedBehaviors: agent.learnedBehaviors,
       qualificationQuestions: agent.qualificationQuestions,
+      objectionHandling: agent.objectionHandling,
     },
     is_active: agent.active,
   };
@@ -3297,6 +3329,20 @@ function BehaviorStepContent({
     onChange({ qualificationQuestions: [...qualificationQuestions, trimmed] });
   };
 
+  const objections = agent.objectionHandling ?? {};
+
+  const setObjection = (
+    id: "price" | "timing" | "competitor" | "notInterested",
+    value: string,
+  ) => {
+    onChange({
+      objectionHandling: {
+        ...objections,
+        [id]: value,
+      },
+    });
+  };
+
   return (
     <div className="space-y-6">
       <h3 id="behavior-heading" className="text-sm font-semibold text-white">How should your agent behave?</h3>
@@ -3408,6 +3454,56 @@ function BehaviorStepContent({
             ))}
           </div>
         )}
+      </section>
+      <section className="mt-6">
+        <h3 className="text-sm font-medium text-white/70 mb-1">
+          Objection handling
+        </h3>
+        <p className="text-xs text-white/40 mb-3">
+          How your AI responds to common pushback.
+        </p>
+
+        <div className="space-y-3">
+          {[
+            {
+              id: "price" as const,
+              label: "Price objection",
+              placeholder:
+                "I understand budget is important. Our clients typically see ROI within the first month...",
+            },
+            {
+              id: "timing" as const,
+              label: '"Not the right time"',
+              placeholder:
+                "I completely understand. Would it help if I followed up in a week or two?",
+            },
+            {
+              id: "competitor" as const,
+              label: "Comparing competitors",
+              placeholder:
+                "That's a smart approach. What specifically are you comparing? I can highlight where we differ.",
+            },
+            {
+              id: "notInterested" as const,
+              label: '"Not interested"',
+              placeholder:
+                "No problem at all. Can I ask what would need to change for this to be useful?",
+            },
+          ].map((obj) => (
+            <div key={obj.id}>
+              <label className="text-xs text-white/50 mb-1 block">
+                {obj.label}
+              </label>
+              <textarea
+                value={(objections as Record<string, string | undefined>)[obj.id] ?? ""}
+                onChange={(e) => setObjection(obj.id, e.target.value)}
+                rows={2}
+                placeholder={obj.placeholder}
+                className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:border-zinc-500 focus:outline-none resize-none"
+              />
+            </div>
+          ))}
+        </div>
       </section>
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
