@@ -43,6 +43,7 @@ import {
   type CuratedVoice,
 } from "@/lib/constants/curated-voices";
 import { getTemplateVoiceId } from "@/lib/data/agent-templates";
+import { VOICEMAIL_DROP_TEMPLATES } from "@/lib/vapi/voicemail-detection";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { calculateReadiness, type ReadinessAgent } from "@/lib/readiness";
@@ -2812,13 +2813,28 @@ function RulesTab({
                   <option value="sms">Send SMS instead</option>
                 </select>
                 {agent.voicemailBehavior === "leave" && (
-                  <textarea
-                    rows={2}
-                    value={agent.voicemailMessage}
-                    onChange={(e) => onChange({ voicemailMessage: e.target.value })}
-                    placeholder="Hi {name}, this is {business}..."
-                    className="mt-2 w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)] resize-none"
-                  />
+                  <>
+                    <p className="text-[11px] text-zinc-500 mt-2 mb-1">Voicemail drop templates</p>
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {VOICEMAIL_DROP_TEMPLATES.map((t) => (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => onChange({ voicemailMessage: t.message })}
+                          className="px-2.5 py-1 rounded-lg border border-[var(--border-default)] bg-[var(--bg-card)] text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
+                        >
+                          {t.name}
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      rows={3}
+                      value={agent.voicemailMessage}
+                      onChange={(e) => onChange({ voicemailMessage: e.target.value })}
+                      placeholder="Hi {name}, this is {business}. Use templates above or type your own. Variables: {name}, {business}, {callback}, {service}, {date}"
+                      className="mt-1 w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)] resize-none"
+                    />
+                  </>
                 )}
               </div>
             </div>

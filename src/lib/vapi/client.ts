@@ -36,6 +36,15 @@ export interface CreateAssistantInput {
   };
   /** Optional: max call duration in seconds. Default 600 (10 min). */
   maxDurationSeconds?: number | null;
+  /** Optional: AMD config for outbound voicemail detection. */
+  voicemailDetection?: {
+    provider: "vapi" | "google" | "openai" | "twilio";
+    type?: "audio" | "transcript";
+    backoffPlan?: { startAtSeconds: number; frequencySeconds: number; maxRetries: number };
+    beepMaxAwaitSeconds?: number;
+  } | null;
+  /** Optional: message to leave when voicemail is detected (outbound). Omit or empty to hang up. */
+  voicemailMessage?: string | null;
 }
 
 export interface CreateCallInput {
@@ -184,6 +193,12 @@ export async function updateAssistant(
   };
 
   if (input.workspaceId) body.metadata = { workspace_id: input.workspaceId };
+  if (input.voicemailDetection && Object.keys(input.voicemailDetection).length > 0) {
+    body.voicemailDetection = input.voicemailDetection;
+  }
+  if (input.voicemailMessage != null && String(input.voicemailMessage).trim()) {
+    body.voicemailMessage = String(input.voicemailMessage).trim();
+  }
   if (Array.isArray(input.toolCalls) && input.toolCalls.length > 0) {
     (body.model as { tools?: unknown[] }).tools = input.toolCalls.map((t) => ({
       type: "function" as const,

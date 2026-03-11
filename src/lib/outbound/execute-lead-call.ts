@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { createAssistant, createOutboundCall } from "@/lib/vapi";
 import { hasVapiServerKey } from "@/lib/vapi/env";
+import { getVoicemailConfigForBehavior } from "@/lib/vapi/voicemail-detection";
 import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
 
 export async function executeLeadOutboundCall(
@@ -131,6 +132,12 @@ YOUR GOAL:
   const systemPrompt = baseSystemPrompt + outboundAddition;
   const outboundFirstMessage = `Hi ${leadName}, this is calling from ${business_name}. You reached out about ${serviceRequested} and I wanted to follow up. Do you have a quick moment?`;
 
+  const voicemailBehavior = (agent.knowledge_base?.voicemailBehavior === "hangup" || agent.knowledge_base?.voicemailBehavior === "sms")
+    ? agent.knowledge_base.voicemailBehavior
+    : "leave";
+  const voicemailMessage = typeof agent.knowledge_base?.voicemailMessage === "string" ? agent.knowledge_base.voicemailMessage : "";
+  const { voicemailDetection, voicemailMessage: vmMessage } = getVoicemailConfigForBehavior(voicemailBehavior, voicemailMessage);
+
   let assistantId: string;
   try {
     const { id } = await createAssistant({
@@ -138,6 +145,8 @@ YOUR GOAL:
       systemPrompt,
       firstMessage: outboundFirstMessage,
       workspaceId,
+      ...(voicemailDetection && { voicemailDetection }),
+      ...(vmMessage && { voicemailMessage: vmMessage }),
     });
     assistantId = id;
   } catch {
