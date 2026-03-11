@@ -59,9 +59,18 @@ export async function POST(req: NextRequest) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  let body: { title?: string; start?: string; end?: string };
+  let body: {
+    title?: string;
+    start?: string;
+    end?: string;
+    contactName?: string;
+    contactPhone?: string;
+    callSummary?: string;
+    agentName?: string;
+    recordingLink?: string;
+  };
   try {
-    body = (await req.json()) as { title?: string; start?: string; end?: string };
+    body = (await req.json()) as typeof body;
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -69,6 +78,14 @@ export async function POST(req: NextRequest) {
   const title = (body.title ?? "Appointment").trim();
   const start = body.start ?? new Date().toISOString();
   const end = body.end ?? new Date(Date.now() + 30 * 60 * 1000).toISOString();
+
+  const parts: string[] = [];
+  if (body.contactName?.trim()) parts.push(`Contact: ${body.contactName.trim()}`);
+  if (body.contactPhone?.trim()) parts.push(`Phone: ${body.contactPhone.trim()}`);
+  if (body.callSummary?.trim()) parts.push(`Summary: ${body.callSummary.trim()}`);
+  if (body.agentName?.trim()) parts.push(`AI Agent: ${body.agentName.trim()}`);
+  if (body.recordingLink?.trim()) parts.push(`Recording: ${body.recordingLink.trim()}`);
+  const description = parts.length > 0 ? parts.join("\n") : undefined;
 
   const token = await getAccessToken(session.workspaceId);
   if (!token) {
@@ -83,6 +100,7 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify({
       summary: title,
+      description: description ?? undefined,
       start: { dateTime: start, timeZone: "UTC" },
       end: { dateTime: end, timeZone: "UTC" },
     }),
