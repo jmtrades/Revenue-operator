@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -143,6 +143,17 @@ type Agent = {
     style: number;
     useSpeakerBoost: boolean;
   };
+};
+
+type WorkspacePhoneNumber = {
+  id: string;
+  phone_number: string;
+  friendly_name: string | null;
+  number_type: string;
+  status: string;
+  monthly_cost_cents: number;
+  capabilities: { voice?: boolean; sms?: boolean; mms?: boolean };
+  assigned_agent_id: string | null;
 };
 
 export type StepId = "identity" | "voice" | "knowledge" | "behavior" | "test" | "golive";
@@ -837,6 +848,22 @@ export default function AppAgentsPageClient({
 
   const [elevenLabsVoices, setElevenLabsVoices] =
     useState<CuratedVoice[]>(CURATED_VOICES);
+  const [workspaceNumbers, setWorkspaceNumbers] = useState<WorkspacePhoneNumber[]>([]);
+
+  const fetchWorkspaceNumbers = useCallback(() => {
+    if (!workspaceId) return;
+    fetch("/api/phone/numbers", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { numbers?: WorkspacePhoneNumber[] } | null) => {
+        setWorkspaceNumbers(data?.numbers ?? []);
+      })
+      .catch(() => setWorkspaceNumbers([]));
+  }, [workspaceId]);
+
+  useEffect(() => {
+    fetchWorkspaceNumbers();
+  }, [fetchWorkspaceNumbers]);
+
   useEffect(() => {
     fetch("/api/agent/voices")
       .then((r) => r.json())
@@ -1246,6 +1273,15 @@ export default function AppAgentsPageClient({
                       <span className="text-[10px] text-[var(--text-tertiary)]">Default</span>
                     )}
                   </div>
+                  {(() => {
+                    const assigned = workspaceNumbers.find((n) => n.assigned_agent_id === agent.id);
+                    return assigned ? (
+                      <div className="flex items-center gap-1.5 text-[11px] text-[var(--accent-primary)] mb-2">
+                        <PhoneCall className="w-3 h-3 shrink-0" />
+                        <span className="font-mono truncate">{assigned.phone_number}</span>
+                      </div>
+                    ) : null;
+                  })()}
                   <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
                     <span>{agent.stats?.totalCalls ?? 0} calls</span>
                     <span>·</span>
@@ -1431,7 +1467,25 @@ export default function AppAgentsPageClient({
                   <TestStepContent agent={selected} workspaceName={initialWorkspaceName} getAgentReadiness={getAgentReadiness} onBack={() => void handleStepChange("behavior")} onNext={async () => { await handleStepChange("golive"); }} />
                 )}
                 {activeStep === "golive" && (
-                  <GoLiveStepContent agent={selected} voices={elevenLabsVoices} getReadiness={getAgentReadiness} onBack={() => void handleStepChange("test")} onActivate={async () => { const result = await persistAgent(selected, { showToast: true }); if (result.vapiId) { setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: result.vapiId ?? null } : a))); setToast("Your AI agent is live! 🎉"); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000); } }} activating={saving} />
+                  <GoLiveStepContent
+                    agent={selected}
+                    voices={elevenLabsVoices}
+                    workspaceNumbers={workspaceNumbers}
+                    onAssignNumber={async (numberId, agentIdOrNull) => {
+                      const res = await fetch(`/api/phone/numbers/${numberId}/assign`, {
+                        method: "PATCH",
+                        credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ assigned_agent_id: agentIdOrNull }),
+                      });
+                      if (res.ok) fetchWorkspaceNumbers();
+                    }}
+                    refetchNumbers={fetchWorkspaceNumbers}
+                    getReadiness={getAgentReadiness}
+                    onBack={() => void handleStepChange("test")}
+                    onActivate={async () => { const result = await persistAgent(selected, { showToast: true }); if (result.vapiId) { setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: result.vapiId ?? null } : a))); setToast("Your AI agent is live! 🎉"); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000); } }}
+                    activating={saving}
+                  />
                 )}
               </div>
             </div>
@@ -3953,6 +4007,9 @@ function TestStepContent({
 function GoLiveStepContent({
   agent,
   voices,
+  workspaceNumbers,
+  onAssignNumber,
+  refetchNumbers,
   getReadiness,
   onBack,
   onActivate,
@@ -3960,6 +4017,9 @@ function GoLiveStepContent({
 }: {
   agent: Agent;
   voices: CuratedVoice[];
+  workspaceNumbers: WorkspacePhoneNumber[];
+  onAssignNumber: (numberId: string, agentId: string | null) => void | Promise<void>;
+  refetchNumbers: () => void;
   getReadiness: (a: Agent) => AgentReadiness;
   onBack: () => void;
   onActivate: () => void | Promise<void>;
@@ -3972,9 +4032,53 @@ function GoLiveStepContent({
     !!agent.voice?.trim() &&
     (agent.faq?.length ?? 0) >= 3;
   const allowActivate = canActivate && r.percent >= 40;
+  const assignedNumber = workspaceNumbers.find((n) => n.assigned_agent_id === agent.id);
+  const unassignedNumbers = workspaceNumbers.filter((n) => !n.assigned_agent_id || n.assigned_agent_id === agent.id);
+  const [assigning, setAssigning] = useState(false);
+  const handleAssign = async (numberId: string | "") => {
+    if (numberId === "") {
+      if (!assignedNumber) return;
+      setAssigning(true);
+      try {
+        await onAssignNumber(assignedNumber.id, null);
+        refetchNumbers();
+      } finally {
+        setAssigning(false);
+      }
+      return;
+    }
+    setAssigning(true);
+    try {
+      await onAssignNumber(numberId, agent.id);
+      refetchNumbers();
+    } finally {
+      setAssigning(false);
+    }
+  };
   return (
     <div className="space-y-6">
       <h3 className="text-sm font-semibold text-white">Go live</h3>
+      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label="Phone number assignment">
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Phone number</p>
+        <p className="text-[11px] text-[var(--text-tertiary)] mb-3">Assign a workspace number to this agent. Calls to that number will be answered by this agent.</p>
+        <select
+          value={assignedNumber?.id ?? ""}
+          onChange={(e) => void handleAssign(e.target.value)}
+          disabled={assigning || unassignedNumbers.length === 0}
+          className="w-full max-w-md px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
+          aria-label="Assign phone number"
+        >
+          <option value="">{unassignedNumbers.length === 0 ? "No numbers available" : "None"}</option>
+          {unassignedNumbers.map((n) => (
+            <option key={n.id} value={n.id}>
+              {n.phone_number} {n.assigned_agent_id === agent.id ? "(this agent)" : ""}
+            </option>
+          ))}
+        </select>
+        {assignedNumber && (
+          <p className="text-[11px] text-emerald-400/90 mt-1.5">Assigned: {assignedNumber.phone_number}</p>
+        )}
+      </section>
       <div>
         <p className="text-xs text-[var(--text-secondary)] mb-1.5">Readiness: {r.percent}%</p>
         <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-hover)]">
