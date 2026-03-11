@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const { data: lead } = await db.from("leads").select("id").eq("id", lead_id).eq("workspace_id", workspaceId).single();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
-  // Placeholder: in a full implementation we would enqueue a campaign run for this lead.
+  // Placeholder: in a full implementation we would enqueue a campaign run for this lead (calls, SMS, and email via enqueueSendMessage with channel "email" and options.email_subject).
   return NextResponse.json({
     ok: true,
     campaign_id,

@@ -76,6 +76,19 @@ export async function GET(req: NextRequest) {
       } catch {
         // best-effort
       }
+      try {
+        const { notifyAppointmentReminder } = await import("@/lib/integrations/slack");
+        const { data: leadRow } = await db.from("leads").select("name").eq("id", appt.lead_id).maybeSingle();
+        const leadName = (leadRow as { name?: string | null } | null)?.name ?? null;
+        await notifyAppointmentReminder(appt.workspace_id, {
+          appointment_id: appt.id,
+          lead_name: leadName,
+          title: appt.title,
+          start_time: appt.start_time,
+        });
+      } catch {
+        // non-blocking
+      }
     }
   }
 

@@ -24,7 +24,7 @@ export async function enqueueSendMessage(
   channel: string,
   content: string,
   dedupKey: string,
-  options?: { send_at?: Date; delay_seconds?: number; action_type?: string }
+  options?: { send_at?: Date; delay_seconds?: number; action_type?: string; email_subject?: string }
 ): Promise<string> {
   const { isAutomationAllowed } = await import("@/lib/adoption-acceleration/installation-state");
   if (!(await isAutomationAllowed(workspaceId))) return "";
@@ -59,6 +59,7 @@ export async function enqueueSendMessage(
     ...(sendAt && { send_at: sendAt.toISOString() }),
     ...(options?.delay_seconds != null && { delay_seconds: options.delay_seconds }),
     ...(options?.action_type && { action_type: options.action_type }),
+    ...(options?.email_subject != null && { email_subject: options.email_subject }),
   };
   const command: ActionCommand = {
     type: "SendMessage",

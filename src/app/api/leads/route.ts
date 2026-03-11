@@ -169,5 +169,18 @@ export async function POST(req: NextRequest) {
     // Do not block lead creation on sync enqueue
   }
 
+  // Slack/Teams new lead notifications (Task 24)
+  try {
+    const { notifyNewLead } = await import("@/lib/integrations/slack");
+    void notifyNewLead(workspaceId, {
+      lead_id: createdLead.id,
+      name: createdLead.name,
+      phone: createdLead.phone,
+      email: createdLead.email,
+    }).catch(() => {});
+  } catch {
+    // non-blocking
+  }
+
   return NextResponse.json(lead);
 }

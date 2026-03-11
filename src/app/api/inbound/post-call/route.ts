@@ -294,6 +294,40 @@ export async function POST(req: NextRequest) {
     }).catch(() => {});
   }
 
+  // Slack/Teams call summary notifications (Task 24)
+  if (sessionId) {
+    void (async () => {
+      try {
+        const { notifyCallSummary } = await import("@/lib/integrations/slack");
+        let leadName: string | null = null;
+        let durationSeconds: number | null = body.duration_seconds ?? null;
+        if (leadId) {
+          const { data: leadRow } = await db.from("leads").select("name").eq("id", leadId).maybeSingle();
+          leadName = (leadRow as { name?: string | null } | null)?.name ?? null;
+        }
+        if (durationSeconds == null) {
+          const { data: sess } = await db.from("call_sessions").select("call_started_at, call_ended_at").eq("id", sessionId).single();
+          if (sess) {
+            const s = sess as { call_started_at?: string | null; call_ended_at?: string | null };
+            const start = s.call_started_at ? new Date(s.call_started_at).getTime() : null;
+            const end = s.call_ended_at ? new Date(s.call_ended_at).getTime() : null;
+            if (start != null && end != null) durationSeconds = Math.round((end - start) / 1000);
+          }
+        }
+        await notifyCallSummary(workspace_id, {
+          call_session_id: sessionId,
+          lead_name: leadName,
+          caller_phone: body.caller_phone ?? null,
+          outcome: businessOutcome,
+          summary: summaryText || transcriptText.slice(0, 500) || null,
+          duration_seconds: durationSeconds,
+        });
+      } catch {
+        // non-blocking
+      }
+    })();
+  }
+
   const { count: completedCount } = await db
     .from("call_sessions")
     .select("id", { count: "exact", head: true })

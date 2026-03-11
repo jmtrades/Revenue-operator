@@ -121,7 +121,8 @@ export async function GET(request: NextRequest) {
       if (conv) {
         const c = conv as { id: string; channel: string };
         const dedupKey = `settlement-auth:${workspaceId}:${since.slice(0, 10)}`;
-        await enqueueSendMessage(workspaceId, leadId, c.id, c.channel || "sms", messageText, dedupKey);
+        const ch = c.channel || "sms";
+        await enqueueSendMessage(workspaceId, leadId, c.id, ch, messageText, dedupKey, ch === "email" ? { email_subject: "Settlement" } : undefined);
         didSend = true;
         sent++;
         break;
@@ -177,13 +178,15 @@ export async function GET(request: NextRequest) {
         .maybeSingle();
       if (conv) {
         const c = conv as { id: string; channel: string };
+        const ch = c.channel || "sms";
         await enqueueSendMessage(
           workspaceId,
           leadId,
           c.id,
-          c.channel || "sms",
+          ch,
           messageText,
-          `settlement-unconfigured:${workspaceId}:${now.toISOString().slice(0, 10)}`
+          `settlement-unconfigured:${workspaceId}:${now.toISOString().slice(0, 10)}`,
+          ch === "email" ? { email_subject: "Settlement" } : undefined
         );
         didSendUnconfigured = true;
         break;

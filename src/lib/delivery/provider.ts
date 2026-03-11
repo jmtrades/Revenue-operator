@@ -143,7 +143,8 @@ export async function sendOutbound(
   conversationId: string,
   channel: string,
   content: string,
-  to: { email?: string; phone?: string }
+  to: { email?: string; phone?: string },
+  emailSubject?: string
 ): Promise<{ status: MessageStatus; externalId?: string; error?: string }> {
   const db = getDb();
 
@@ -187,6 +188,10 @@ export async function sendOutbound(
       result = { sid: `web-${messageId}` };
     } else if ((ch === "sms" || ch === "whatsapp") && to.phone) {
       result = await sendViaTwilio(ch, to.phone, safeContent, workspaceId);
+    } else if (ch === "email" && to.email) {
+      const { sendEmail } = await import("@/lib/integrations/email");
+      const sendResult = await sendEmail(workspaceId, to.email, emailSubject ?? "Message from Recall Touch", safeContent);
+      result = sendResult.ok && sendResult.externalId ? { sid: sendResult.externalId } : { error: sendResult.error ?? "Send failed" };
     } else {
       result = { error: "Email provider not implemented" };
     }

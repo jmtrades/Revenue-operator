@@ -1,0 +1,65 @@
+/**
+ * GET /api/workspace/email-templates — List email templates for workspace.
+ * POST /api/workspace/email-templates — Create template (slug, name, subject, body_html).
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
+import { getDb } from "@/lib/db/queries";
+
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest) {
+  const session = await getSession(req);
+  if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const db = getDb();
+  const { data } = await db
+    .from("email_templates")
+    .select("id, slug, name, subject, body_html, created_at, updated_at")
+    .eq("workspace_id", session.workspaceId)
+    .order("slug");
+
+  const list = (data ?? []) as { id: string; slug: string; name: string; subject: string; body_html: string; created_at: string; updated_at: string }[];
+  return NextResponse.json({ templates: list });
+}
+
+export async function POST(req: NextRequest) {
+  const session = await getSession(req);
+  if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  let body: { slug: string; name: string; subject: string; body_html: string };
+  try {
+    body = (await req.json()) as typeof body;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const slug = typeof body.slug === "string" ? body.slug.trim().toLowerCase().replace(/\s+/g, "_") : "";
+  const name = typeof body.name === "string" ? body.name.trim() : "";
+  const subject = typeof body.subject === "string" ? body.subject.trim() : "";
+  const body_html = typeof body.body_html === "string" ? body.body_html : "";
+  if (!slug || !name) return NextResponse.json({ error: "slug and name required" }, { status: 400 });
+
+  const db = getDb();
+  const now = new Date().toISOString();
+  const { data, error } = await db
+    .from("email_templates")
+    .insert({
+      workspace_id: session.workspaceId,
+      slug,
+      name,
+      subject: subject || name,
+      body_html: body_html || "",
+      created_at: now,
+      updated_at: now,
+    })
+    .select("id, slug, name, subject, body_html, created_at, updated_at")
+    .single();
+
+  if (error) {
+    if ((error as { code?: string }).code === "23505") return NextResponse.json({ error: "Template slug already exists" }, { status: 409 });
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  }
+  return NextResponse.json({ template: data });
+}
