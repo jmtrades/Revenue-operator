@@ -1,17 +1,40 @@
 ---
-description: Governs all changes to Revenue Operator. Read DOCTRINE.md before adding or modifying features.
+description: Operational guidelines for Recall Touch development.
 globs: ["**/*"]
 ---
 
-# Operational Continuity Doctrine
+# Recall Touch — Operational Guidelines
 
-Revenue Operator is **Operational Continuity Infrastructure**, not a CRM, assistant, or marketing tool.
+When building features for Recall Touch:
 
-- **Design:** Environmental effect, not assistance. User should feel "I operate inside this", not "I use this."
-- **Output:** Short factual sentences only; past/present tense; ≤90 chars; no metrics, persuasion, or performance language.
-- **UI:** Ledger + OS + audit log feel. No KPIs, charts, progress bars, or bright alerts. Answer only: what continued, what required attention, what would fail without it.
-- **Never add:** Dashboards with KPIs, productivity analytics, AI advice, marketing copy, gamification, performance scoring.
-- **Always:** Environmental presence (neutral reference link on confirmations/follow-ups); absence moments (disable-impact + retention only when cancel/pause/disconnect/billing failure); multi-audience wording (same logic, tone by audience); billing from continuity_scope_units.
-- **Engineering:** Deterministic execution paths; no LLM deciding actions; all visible statements from stored events only.
+## Show outcomes
+- Calls answered, leads captured, appointments booked, revenue impact
+- Stat cards with animated numbers, trend arrows, sparklines
+- Charts and visualizations for analytics (area, donut, heatmap, funnel)
 
-Full rules: **README and DOCTRINE.md** in repo root. When in doubt, reject "helping the user work" and implement "work continues without them."
+## Show what needs attention
+- Missed calls, hot leads not yet contacted, stalled follow-ups
+- Upcoming appointments, failed integrations, usage limits approaching
+
+## Show activity
+- Real-time feed of calls, leads, appointments, SMS, and system events
+- Timeline components with timestamps, outcomes, and quick actions
+
+## Enable action
+- Quick paths to: make a call, send SMS, add lead, create agent, run campaign
+- Command palette (⌘K) for global search and actions
+- Inline actions on list items (play audio, view transcript, add to leads)
+
+## UI feel
+- Premium dark theme — Linear/Vercel quality
+- Smooth Framer Motion animations on all transitions
+- Skeleton loading states matching actual layout
+- Cards with subtle borders and hover effects
+- Proper focus-visible rings for accessibility
+
+## Engineering
+- Server Components by default
+- Supabase Realtime for live updates where applicable
+- Optimistic UI for CRUD operations
+- Proper error boundaries on every route
+- All user-visible data from stored events in Supabase

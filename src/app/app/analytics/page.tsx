@@ -11,13 +11,17 @@ import {
   PieChart,
   Pie,
   Cell,
+  Legend,
 } from "recharts";
 import Link from "next/link";
 import { AlertTriangle, BadgeCheck, BarChart3, Lightbulb, TrendingUp } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { KPIRow } from "@/components/ui/KPIRow";
+import { StatCard } from "@/components/ui/StatCard";
+import { tokens } from "@/lib/design-tokens";
 
-type RangeKey = "today" | "7d" | "30d" | "90d";
+type RangeKey = "today" | "7d" | "30d" | "90d" | "custom";
 
 type OutcomeSlice = {
   name: string;
@@ -65,8 +69,28 @@ function persistAnalyticsSnapshot<T>(prefix: string, workspaceId: string, data: 
   }
 }
 
+function getRangeBounds(range: RangeKey, dateFrom?: string, dateTo?: string): { start: Date; end: Date } {
+  const end = new Date();
+  const start = new Date();
+  if (range === "custom" && dateFrom && dateTo) {
+    start.setTime(new Date(dateFrom).getTime());
+    end.setTime(new Date(dateTo).getTime());
+    return { start, end };
+  }
+  if (range === "today") {
+    start.setHours(0, 0, 0, 0);
+    return { start, end };
+  }
+  if (range === "7d") start.setDate(start.getDate() - 7);
+  else if (range === "30d") start.setDate(start.getDate() - 30);
+  else if (range === "90d") start.setDate(start.getDate() - 90);
+  return { start, end };
+}
+
 export default function AppAnalyticsPage() {
   const [range, setRange] = useState<RangeKey>("30d");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
@@ -142,67 +166,54 @@ export default function AppAnalyticsPage() {
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
-  const totalCalls = calls.length;
+  const { start: rangeStart, end: rangeEnd } = useMemo(
+    () => getRangeBounds(range, dateFrom, dateTo),
+    [range, dateFrom, dateTo],
+  );
+
+  const filteredCalls = useMemo(() => {
+    return calls.filter((c) => {
+      const t = c.call_started_at ? new Date(c.call_started_at).getTime() : 0;
+      return t >= rangeStart.getTime() && t <= rangeEnd.getTime();
+    });
+  }, [calls, rangeStart, rangeEnd]);
+
+  const filteredLeads = useMemo(() => {
+    return leads; // lead created_at not in LeadRecord; keep all or filter if we had date
+  }, [leads]);
+
+  const totalCalls = filteredCalls.length;
 
   const avgHandleTime = useMemo(() => {
-    if (calls.length === 0) return 0;
-    const sum = calls.reduce((acc, c) => {
+    if (filteredCalls.length === 0) return 0;
+    const sum = filteredCalls.reduce((acc, c) => {
       if (!c.call_started_at || !c.call_ended_at) return acc;
       const start = new Date(c.call_started_at).getTime();
       const end = new Date(c.call_ended_at).getTime();
       const diff = Math.max(0, (end - start) / 1000);
       return acc + diff;
     }, 0);
-    return sum / calls.length;
-  }, [calls]);
+    return sum / filteredCalls.length;
+  }, [filteredCalls]);
 
   const callsWithLead = useMemo(() => {
-    const leadIds = new Set(leads.map((l) => l.id));
-    return calls.filter((c) => c.lead_id && leadIds.has(c.lead_id)).length;
-  }, [calls, leads]);
+    const leadIds = new Set(filteredLeads.map((l) => l.id));
+    return filteredCalls.filter((c) => c.lead_id && leadIds.has(c.lead_id)).length;
+  }, [filteredCalls, filteredLeads]);
 
-  const appointments = leads.filter(
+  const appointments = filteredLeads.filter(
     (l) => l.state === "appointment_set" || l.state === "won",
   ).length;
 
   const estRevenueImpact = appointments * 250;
 
-  const hasData = totalCalls > 0 || leads.length > 0;
-  const summaryCards = [
-    {
-      label: "Total calls",
-      value: totalCalls.toString(),
-      trend: hasData ? "+12% vs prior period" : "—",
-    },
-    {
-      label: "Avg handle time",
-      value: formatDuration(avgHandleTime),
-      trend: hasData ? "Stable" : "—",
-    },
-    {
-      label: "Lead conversion",
-      value:
-        totalCalls === 0
-          ? "0%"
-          : `${Math.round((callsWithLead / totalCalls) * 100)}%`,
-      trend: hasData ? "+8% vs prior period" : "—",
-    },
-    {
-      label: "Appointments booked",
-      value: appointments.toString(),
-      trend: hasData ? "+5 this month" : "—",
-    },
-    {
-      label: "Est. revenue impact",
-      value: `$${estRevenueImpact.toLocaleString()}`,
-      trend: hasData ? "+19% vs prior period" : "—",
-    },
-  ];
+  const hasData = totalCalls > 0 || filteredLeads.length > 0;
+  const leadConversionPct = totalCalls === 0 ? 0 : Math.round((callsWithLead / totalCalls) * 100);
 
   const volumeData = useMemo(() => {
-    if (calls.length === 0) return [];
+    if (filteredCalls.length === 0) return [];
     const byDay = new Map<string, number>();
-    for (const c of calls) {
+    for (const c of filteredCalls) {
       if (!c.call_started_at) continue;
       const d = new Date(c.call_started_at);
       const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
@@ -215,7 +226,7 @@ export default function AppAnalyticsPage() {
       const d = new Date(key);
       return { day: `${d.getMonth() + 1}/${d.getDate()}`, calls: value };
     });
-  }, [calls]);
+  }, [filteredCalls]);
 
   const outcomeSlices: OutcomeSlice[] = useMemo(() => {
     const base = {
@@ -223,9 +234,10 @@ export default function AppAnalyticsPage() {
       lead: 0,
       info: 0,
       transfer: 0,
+      missed: 0,
       voicemail: 0,
     };
-    for (const c of calls) {
+    for (const c of filteredCalls) {
       switch (c.outcome) {
         case "appointment":
           base.appointment += 1;
@@ -239,6 +251,9 @@ export default function AppAnalyticsPage() {
         case "transfer":
           base.transfer += 1;
           break;
+        case "missed":
+          base.missed += 1;
+          break;
         case "voicemail":
           base.voicemail += 1;
           break;
@@ -247,17 +262,18 @@ export default function AppAnalyticsPage() {
       }
     }
     return [
-      { name: "Appointment booked", value: base.appointment, color: "#22c55e" },
-      { name: "Lead captured", value: base.lead, color: "#3b82f6" },
-      { name: "Info provided", value: base.info, color: "#64748b" },
-      { name: "Transferred", value: base.transfer, color: "#fbbf24" },
+      { name: "Booked", value: base.appointment, color: "#22c55e" },
+      { name: "Lead", value: base.lead, color: "#3b82f6" },
+      { name: "Info", value: base.info, color: "#64748b" },
+      { name: "Transferred", value: base.transfer, color: "#a855f7" },
+      { name: "Missed", value: base.missed, color: "#ef4444" },
       { name: "Voicemail", value: base.voicemail, color: "#6b7280" },
     ];
-  }, [calls]);
+  }, [filteredCalls]);
 
   const { positivePct, neutralPct, negativePct } = useMemo(() => {
     const counts = { positive: 0, neutral: 0, negative: 0 };
-    for (const c of calls) {
+    for (const c of filteredCalls) {
       const sentiment = c.analysis_outcome?.sentiment ?? null;
       if (sentiment === "positive") counts.positive += 1;
       else if (sentiment === "neutral" || sentiment === null) counts.neutral += 1;
@@ -270,7 +286,7 @@ export default function AppAnalyticsPage() {
       neutralPct: Math.round((counts.neutral / total) * 100),
       negativePct: Math.round((counts.negative / total) * 100),
     };
-  }, [calls]);
+  }, [filteredCalls]);
 
   const heatmap = useMemo(() => {
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
@@ -281,7 +297,7 @@ export default function AppAnalyticsPage() {
         value: 0,
       })),
     }));
-    for (const c of calls) {
+    for (const c of filteredCalls) {
       if (!c.call_started_at) continue;
       const d = new Date(c.call_started_at);
       const weekday = days[d.getDay() === 0 ? 6 : d.getDay() - 1];
@@ -291,7 +307,22 @@ export default function AppAnalyticsPage() {
       row.hours[hour].value += 1;
     }
     return base;
-  }, [calls]);
+  }, [filteredCalls]);
+
+  const funnelData = useMemo(() => {
+    const totalCallsCount = totalCalls;
+    const leadsCount = filteredLeads.length;
+    const qualifiedCount = filteredLeads.filter((l) => l.state === "qualified").length;
+    const appointmentCount = filteredLeads.filter((l) => l.state === "appointment_set").length;
+    const wonCount = filteredLeads.filter((l) => l.state === "won").length;
+    return [
+      { stage: "Calls", count: totalCallsCount, pct: 100 },
+      { stage: "Leads", count: leadsCount, pct: totalCallsCount ? (leadsCount / totalCallsCount) * 100 : 0 },
+      { stage: "Qualified", count: qualifiedCount, pct: leadsCount ? (qualifiedCount / leadsCount) * 100 : 0 },
+      { stage: "Appointments", count: appointmentCount, pct: qualifiedCount ? (appointmentCount / qualifiedCount) * 100 : 0 },
+      { stage: "Won", count: wonCount, pct: appointmentCount ? (wonCount / appointmentCount) * 100 : 0 },
+    ];
+  }, [totalCalls, filteredLeads]);
 
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
@@ -305,26 +336,46 @@ export default function AppAnalyticsPage() {
             See how conversations turn into kept appointments and real revenue.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-0.5 text-xs">
-          {([
-            { key: "today", label: "Today" },
-            { key: "7d", label: "7D" },
-            { key: "30d", label: "30D" },
-            { key: "90d", label: "90D" },
-          ] as const).map((opt) => (
-            <button
-              key={opt.key}
-              type="button"
-              onClick={() => setRange(opt.key)}
-              className={`px-3 py-1.5 rounded-lg ${
-                range === opt.key
-                  ? "bg-white text-black font-medium"
-                  : "text-zinc-400"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-0.5 text-xs">
+            {([
+              { key: "today" as const, label: "Today" },
+              { key: "7d" as const, label: "7D" },
+              { key: "30d" as const, label: "30D" },
+              { key: "90d" as const, label: "90D" },
+              { key: "custom" as const, label: "Custom" },
+            ]).map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => setRange(opt.key)}
+                className={`px-3 py-1.5 rounded-lg ${
+                  range === opt.key
+                    ? "bg-white text-black font-medium"
+                    : "text-zinc-400"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {range === "custom" && (
+            <div className="flex items-center gap-2 text-xs">
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1.5 text-zinc-200"
+              />
+              <span className="text-zinc-500">→</span>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1.5 text-zinc-200"
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -341,64 +392,37 @@ export default function AppAnalyticsPage() {
         </div>
       )}
 
-      {/* Row 1: summary cards */}
-      <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-5 mb-6">
-        {summaryCards.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 hover:bg-[var(--bg-hover)] transition-colors"
-          >
-            <p className="text-[11px] text-zinc-500 mb-1">{card.label}</p>
-            <p className="text-lg md:text-xl font-semibold text-white">
-              {card.value}
-            </p>
-            <p className="text-[11px] text-emerald-400 mt-1">{card.trend}</p>
-          </div>
-        ))}
-      </div>
-
-      {suggestions.length > 0 && (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6">
-          <h2 className="text-sm font-medium text-white flex items-center gap-2 mb-3">
-            <Lightbulb className="w-4 h-4 text-amber-500" aria-hidden />
-            Optimization suggestions
-          </h2>
-          <ul className="space-y-3">
-            {suggestions.map((s) => (
-              <li key={s.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white">{s.title}</p>
-                  {s.description && <p className="text-xs text-zinc-500 mt-0.5">{s.description}</p>}
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  {s.actionHref && s.actionLabel && (
-                    <Link
-                      href={s.actionHref}
-                      className="text-xs font-medium text-white underline underline-offset-2 hover:no-underline"
-                    >
-                      {s.actionLabel} →
-                    </Link>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      fetch(`/api/analytics/suggestions/${s.id}`, {
-                        method: "PATCH",
-                        credentials: "include",
-                      })
-                        .then((r) => r.ok && setSuggestions((prev) => prev.filter((x) => x.id !== s.id)))
-                        .catch(() => {});
-                    }}
-                    className="text-xs text-zinc-500 hover:text-zinc-400"
-                  >
-                    Dismiss
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* KPI row — 5 stats with trends */}
+      <KPIRow className="mb-6 lg:grid-cols-5">
+        <StatCard
+          label="Total calls"
+          value={totalCalls}
+          trend={hasData ? 12 : undefined}
+        />
+        <StatCard
+          label="Avg handle time"
+          value={Math.round(avgHandleTime)}
+          suffix="s"
+          trend={hasData ? 0 : undefined}
+        />
+        <StatCard
+          label="Lead conversion"
+          value={leadConversionPct}
+          suffix="%"
+          trend={hasData ? 8 : undefined}
+        />
+        <StatCard
+          label="Appointments booked"
+          value={appointments}
+          trend={hasData ? 5 : undefined}
+        />
+        <StatCard
+          label="Est. revenue"
+          value={estRevenueImpact}
+          prefix="$"
+          trend={hasData ? 19 : undefined}
+        />
+      </KPIRow>
 
       {/* Row 2: charts */}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-6">
@@ -426,22 +450,14 @@ export default function AppAnalyticsPage() {
                 />
                 <defs>
                   <linearGradient id="volumeFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="#3b82f6"
-                      stopOpacity={0.25}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="#0f172a"
-                      stopOpacity={0}
-                    />
+                    <stop offset="0%" stopColor={tokens.colors.accentPrimary} stopOpacity={0.3} />
+                    <stop offset="100%" stopColor={tokens.colors.accentPrimary} stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <Area
                   type="monotone"
                   dataKey="calls"
-                  stroke="#3b82f6"
+                  stroke={tokens.colors.accentPrimary}
                   strokeWidth={2}
                   fill="url(#volumeFill)"
                 />
@@ -451,8 +467,8 @@ export default function AppAnalyticsPage() {
         </div>
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-          <p className="text-sm font-medium text-white mb-4">Call outcomes</p>
-          <div className="h-52 flex items-center justify-center">
+          <p className="text-sm font-medium text-white mb-4">Outcome breakdown</p>
+          <div className="h-52 flex items-center justify-center relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -461,7 +477,7 @@ export default function AppAnalyticsPage() {
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  innerRadius={40}
+                  innerRadius={45}
                   outerRadius={70}
                   paddingAngle={2}
                   stroke="transparent"
@@ -470,20 +486,37 @@ export default function AppAnalyticsPage() {
                     <Cell key={slice.name} fill={slice.color} />
                   ))}
                 </Pie>
+                <Tooltip
+                  contentStyle={{ background: "#0a0a0b", border: "1px solid #27272a", borderRadius: 8 }}
+                  formatter={(value) => [Number(value ?? 0), "calls"]}
+                />
+                <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: 10 }} />
               </PieChart>
             </ResponsiveContainer>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <span className="text-lg font-semibold text-white">
+                {outcomeSlices.reduce((s, x) => s + x.value, 0)}
+              </span>
+            </div>
           </div>
-          <div className="mt-2 grid grid-cols-2 gap-1 text-[11px] text-zinc-400">
-            {outcomeSlices.map((slice) => (
-              <div key={slice.name} className="flex items-center gap-1">
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: slice.color }}
-                />
-                <span>{slice.name}</span>
-              </div>
-            ))}
-          </div>
+        </div>
+      </div>
+
+      {/* Lead funnel */}
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6">
+        <p className="text-sm font-medium text-white mb-4">Lead funnel</p>
+        <div className="flex flex-col sm:flex-row items-stretch gap-2">
+          {funnelData.map((item, i) => (
+            <div key={item.stage} className="flex-1 min-w-0 flex flex-col items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 px-3 py-3">
+              <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-0.5">{item.stage}</p>
+              <p className="text-lg font-semibold text-white">{item.count}</p>
+              {i > 0 && (
+                <p className="text-[10px] text-zinc-500 mt-0.5">
+                  {item.pct > 0 ? `${Math.round(item.pct)}% conv.` : "—"}
+                </p>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -514,12 +547,13 @@ export default function AppAnalyticsPage() {
                     </div>
                     <div className="grid grid-cols-24 gap-0.5">
                       {row.hours.map((cell) => {
-                        const max = 8;
-                        const intensity = Math.min(1, cell.value / max);
+                        const maxVal = Math.max(1, ...heatmap.flatMap((r) => r.hours.map((h) => h.value)));
+                        const intensity = cell.value === 0 ? 0 : Math.min(1, cell.value / maxVal);
+                        const opacity = 0.1 + intensity * 0.9;
                         const bg =
                           cell.value === 0
                             ? "transparent"
-                            : `rgba(59,130,246,${0.1 + intensity * 0.6})`;
+                            : `rgba(79,140,255,${opacity})`;
                         return (
                           <div
                             key={cell.hour}
@@ -539,24 +573,63 @@ export default function AppAnalyticsPage() {
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 flex flex-col gap-3">
           <p className="text-sm font-medium text-white">AI insights</p>
-          <ul className="space-y-2 text-sm text-zinc-300">
-            <li className="flex items-start gap-2">
-              <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
-              <span>Busiest hour this week stays stable around mid-morning.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-              <span>Questions about availability often appear outside standard hours.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
-              <span>Calls that reach a live answer are much more likely to become appointments.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
-              <span>Make sure pricing and availability are easy to confirm in the first 30 seconds.</span>
-            </li>
-          </ul>
+          <div className="space-y-2">
+            {suggestions.length > 0
+              ? suggestions.slice(0, 5).map((s) => (
+                  <div
+                    key={s.id}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]"
+                  >
+                    <Lightbulb className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-white">{s.title}</p>
+                      {s.description && <p className="text-xs text-zinc-500 mt-0.5">{s.description}</p>}
+                      {s.actionHref && s.actionLabel && (
+                        <Link
+                          href={s.actionHref}
+                          className="inline-block text-xs font-medium text-[var(--accent-primary)] mt-1.5 hover:opacity-80"
+                        >
+                          {s.actionLabel} →
+                        </Link>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        fetch(`/api/analytics/suggestions/${s.id}`, { method: "PATCH", credentials: "include" })
+                          .then((r) => r.ok && setSuggestions((prev) => prev.filter((x) => x.id !== s.id)))
+                          .catch(() => {});
+                      }}
+                      className="text-xs text-zinc-500 hover:text-zinc-400 shrink-0"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                ))
+              : (
+                <>
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
+                    <TrendingUp className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
+                    <p className="text-sm text-zinc-300">Busiest hour this week stays stable around mid-morning.</p>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-zinc-300">Questions about availability often appear outside standard hours.</p>
+                      <Link href="/app/agents" className="text-xs text-[var(--accent-primary)] mt-1 inline-block">Add to knowledge base →</Link>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
+                    <BadgeCheck className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
+                    <p className="text-sm text-zinc-300">Calls that reach a live answer are much more likely to become appointments.</p>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
+                    <Lightbulb className="h-4 w-4 shrink-0 text-zinc-400 mt-0.5" />
+                    <p className="text-sm text-zinc-300">Make sure pricing and availability are easy to confirm in the first 30 seconds.</p>
+                  </div>
+                </>
+              )}
+          </div>
         </div>
       </div>
 

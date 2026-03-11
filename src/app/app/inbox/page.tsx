@@ -2,10 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft } from "lucide-react";
+import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, PanelRightOpen, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import type { InboxThread, InboxMessage, InboxChannel } from "@/lib/mock/inbox";
+import { Tabs } from "@/components/ui/Tabs";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { AudioPlayer } from "@/components/ui/AudioPlayer";
 
 const PAGE_TITLE = "Inbox — Recall Touch";
 
@@ -102,45 +108,31 @@ function ConversationList({
     );
   }, [threads, filter, search]);
 
+  const filterTabs = [
+    { id: "all" as const, label: "All" },
+    { id: "unread" as const, label: "Unread" },
+    { id: "phone" as const, label: "Phone" },
+    { id: "sms" as const, label: "SMS" },
+    { id: "email" as const, label: "Email" },
+    { id: "whatsapp" as const, label: "WhatsApp" },
+  ];
+
   return (
     <div className="flex flex-col h-full">
       <div className="p-3 border-b border-[var(--border-default)]">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search conversations…"
-            className="w-full pl-9 pr-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
-          />
-        </div>
-        <div className="flex flex-wrap gap-2 mt-3 text-xs">
-          {(["all", "unread", "phone", "sms", "email", "whatsapp"] as Filter[]).map((f) => (
-            <button
-              key={f}
-              type="button"
-              onClick={() => onFilterChange(f)}
-              className={`px-3 py-1.5 rounded-full font-medium border ${
-                filter === f
-                  ? "bg-white text-black border-white"
-                  : "bg-[var(--bg-input)] text-[var(--text-secondary)] border-[var(--border-medium)] hover:border-[var(--border-medium)]"
-              }`}
-            >
-              {f === "all"
-                ? "All"
-                : f === "unread"
-                  ? "Unread"
-                  : f === "phone"
-                    ? "Phone"
-                    : f === "sms"
-                      ? "SMS"
-                      : f === "whatsapp"
-                        ? "WhatsApp"
-                        : "Email"}
-            </button>
-          ))}
-        </div>
+        <Input
+          type="search"
+          icon={Search}
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Search conversations…"
+          className="rounded-xl mb-3"
+        />
+        <Tabs
+          tabs={filterTabs}
+          activeTab={filter}
+          onChange={(id) => onFilterChange(id as Filter)}
+        />
       </div>
       <div className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
@@ -159,7 +151,7 @@ function ConversationList({
               type="button"
               onClick={() => onSelect(thread.id)}
               className={`w-full flex items-start gap-3 px-3 py-3 border-b border-[var(--border-default)] text-left hover:bg-[var(--bg-hover)] ${
-                isActive ? "bg-[var(--bg-card)] border-l-2 border-l-sky-500" : ""
+                isActive ? "bg-[var(--bg-card)] border-l-2 border-l-[var(--accent-primary)]" : ""
               }`}
             >
               <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0">
@@ -185,7 +177,7 @@ function ConversationList({
                 <p className="text-xs text-zinc-500 truncate mt-0.5">{thread.lastMessage}</p>
               </div>
               {thread.unread && (
-                <span className="w-2 h-2 rounded-full bg-sky-400 shrink-0 mt-1" aria-hidden />
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] shrink-0 mt-1" aria-hidden />
               )}
             </button>
           );
@@ -204,18 +196,23 @@ function CallCard({ message }: { message: InboxMessage }) {
       : null;
   return (
     <div className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 mb-2 max-w-md">
-      <div className="flex items-center gap-2 mb-1">
-        <PhoneCall className="w-3.5 h-3.5 text-sky-400" />
+      <div className="flex items-center gap-2 mb-1 flex-wrap">
+        <PhoneCall className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
         <span className="font-medium">Phone call</span>
+        {message.outcome && (
+          <Badge variant="info" className="ml-1">{message.outcome}</Badge>
+        )}
       </div>
-      {message.outcome && (
-        <p className="text-[11px] text-zinc-300 mb-1">Outcome: {message.outcome}</p>
+      {message.recording_url && (
+        <div className="my-2">
+          <AudioPlayer src={message.recording_url} />
+        </div>
       )}
       {duration && <p className="text-[11px] text-zinc-400 mb-1">Duration: {duration}</p>}
-      {message.callId && (
+      {message.callId && !message.recording_url && (
         <a
           href={`/app/calls/${encodeURIComponent(message.callId)}`}
-          className="text-[11px] text-sky-400 hover:text-sky-300 underline"
+          className="text-[11px] text-[var(--accent-primary)] hover:opacity-80 underline"
         >
           View call →
         </a>
@@ -305,40 +302,64 @@ function ConversationDetail({
       </div>
 
       <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
-        {thread.messages.map((m) => {
-          if (m.isCall) {
-            return <CallCard key={m.id} message={m} />;
-          }
-          const isAgent = m.sender === "agent";
-          return (
-            <div
-              key={m.id}
-              className={`flex ${isAgent ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
-                  isAgent
-                    ? "bg-sky-500 text-black rounded-br-sm"
-                    : "bg-[var(--bg-input)] text-[var(--text-primary)] rounded-bl-sm border border-[var(--border-default)]"
-                }`}
+        <AnimatePresence initial={false}>
+          {thread.messages.map((m) => {
+            if (m.isCall) {
+              return (
+                <motion.div
+                  key={m.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  <CallCard message={m} />
+                </motion.div>
+              );
+            }
+            if (m.sender === "system") {
+              return (
+                <motion.div
+                  key={m.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-center py-1"
+                >
+                  <p className="text-[11px] text-zinc-500 text-center max-w-[85%]">{m.content}</p>
+                </motion.div>
+              );
+            }
+            const isAgent = m.sender === "agent";
+            return (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className={`flex ${isAgent ? "justify-end" : "justify-start"}`}
               >
-                <p className="whitespace-pre-wrap break-words">{m.content}</p>
-                <p
-                  className={`mt-1 text-[10px] ${
-                    isAgent ? "text-black/70" : "text-zinc-500"
+                <div
+                  className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
+                    isAgent
+                      ? "bg-[var(--accent-primary)] text-white rounded-br-sm"
+                      : "bg-[var(--bg-input)] text-[var(--text-primary)] rounded-bl-sm border border-[var(--border-default)]"
                   }`}
                 >
-                  {formatRelative(m.timestamp)}
-                  {m.channel !== thread.channel && (
-                    <span className="ml-1 uppercase">
-                      · {channelLabel(m.channel)}
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+                  <p className="whitespace-pre-wrap break-words">{m.content}</p>
+                  <p
+                    className={`mt-1 text-[10px] ${
+                      isAgent ? "text-white/80" : "text-zinc-500"
+                    }`}
+                  >
+                    {formatRelative(m.timestamp)}
+                    {m.channel !== thread.channel && (
+                      <span className="ml-1 uppercase">· {channelLabel(m.channel)}</span>
+                    )}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
       </div>
 
       <div className="border-t border-[var(--border-default)] px-3 py-3 bg-[var(--bg-card)]/80">
@@ -360,21 +381,21 @@ function ConversationDetail({
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <input
-            type="text"
+          <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message…"
-            className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+            className="flex-1 rounded-xl"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                onSend();
+              }
+            }}
           />
-          <button
-            type="button"
-            onClick={onSend}
-            disabled={!input.trim() || sending}
-            className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-200 disabled:opacity-50"
-          >
+          <Button variant="primary" size="md" onClick={onSend} disabled={!input.trim() || sending}>
             {sending ? "Sending…" : "Send"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -401,6 +422,7 @@ export default function InboxPage() {
   const [input, setInput] = useState("");
   const [mobileMode, setMobileMode] = useState<"list" | "detail">("list");
   const [sending, setSending] = useState(false);
+  const [rightPanelOpen, setRightPanelOpen] = useState(true);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -532,9 +554,9 @@ export default function InboxPage() {
           )}
         </div>
 
-        {/* Desktop layout */}
+        {/* Desktop: three-panel layout — left w-72, center thread, right w-72 collapsible */}
         <div className="hidden md:flex h-[calc(100vh-8rem)] rounded-2xl border border-[var(--border-default)] overflow-hidden bg-[var(--bg-card)]/60">
-          <div className="w-80 border-r border-[var(--border-default)] bg-[var(--bg-card)]/80">
+          <div className="w-72 shrink-0 border-r border-[var(--border-default)] bg-[var(--bg-card)]/80 flex flex-col">
             <ConversationList
               threads={threads}
               selectedId={activeThread?.id ?? null}
@@ -557,6 +579,56 @@ export default function InboxPage() {
               onToggleStatus={handleToggleStatus}
             />
           </div>
+          {/* Right panel: contact detail — collapsible */}
+          <div
+            className={`shrink-0 border-l border-[var(--border-default)] bg-[var(--bg-card)]/80 flex flex-col transition-[width] duration-200 ${
+              rightPanelOpen ? "w-72" : "w-0 overflow-hidden"
+            }`}
+          >
+            {rightPanelOpen && activeThread && (
+              <div className="w-72 flex flex-col h-full">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--border-default)]">
+                  <span className="text-xs font-medium text-zinc-400">Contact</span>
+                  <button
+                    type="button"
+                    onClick={() => setRightPanelOpen(false)}
+                    className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-[var(--bg-hover)]"
+                    aria-label="Close panel"
+                  >
+                    <PanelRightClose className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[var(--bg-input)] flex items-center justify-center text-sm font-semibold text-zinc-300">
+                      {activeThread.contactName.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white">{activeThread.contactName}</p>
+                      <p className="text-xs text-zinc-500">{activeThread.contactPhone}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/app/leads?highlight=${encodeURIComponent(activeThread.id)}`}
+                    className="inline-flex items-center gap-1.5 text-xs text-[var(--accent-primary)] hover:opacity-80"
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    View in Leads
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+          {!rightPanelOpen && (
+            <button
+              type="button"
+              onClick={() => setRightPanelOpen(true)}
+              className="shrink-0 p-2 border-l border-[var(--border-default)] text-zinc-500 hover:text-white hover:bg-[var(--bg-hover)]"
+              aria-label="Open contact panel"
+            >
+              <PanelRightOpen className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>

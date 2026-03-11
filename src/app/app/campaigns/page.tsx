@@ -28,7 +28,7 @@ type CampaignRow = {
   target_filter?: TargetFilter | null;
 };
 
-const PAGE_TITLE = "Campaigns — Recall Touch";
+const PAGE_TITLE = "Outbound runs — Recall Touch";
 
 const TYPE_OPTIONS = [
   { id: "lead_followup", label: "Lead qualification / follow-up" },
@@ -197,9 +197,9 @@ export default function CampaignsPage() {
     }
   };
 
-  const toggleCampaign = async (campaign: CampaignRow) => {
-    const nextStatus = campaign.status === "active" ? "paused" : "active";
-    const res = await fetch(`/api/campaigns/${campaign.id}`, {
+  const toggleCampaign = async (run: CampaignRow) => {
+    const nextStatus = run.status === "active" ? "paused" : "active";
+    const res = await fetch(`/api/campaigns/${run.id}`, {
       method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -210,17 +210,17 @@ export default function CampaignsPage() {
       return;
     }
     setCampaigns((prev) =>
-      prev.map((item) => (item.id === campaign.id ? { ...item, status: nextStatus } : item)),
+      prev.map((item) => (item.id === run.id ? { ...item, status: nextStatus } : item)),
     );
     setToast(nextStatus === "active" ? "Run resumed." : "Run paused.");
   };
 
-  const loadCampaignIntoForm = (campaign: CampaignRow) => {
-    setEditingId(campaign.id);
-    const tf = campaign.target_filter;
+  const loadCampaignIntoForm = (run: CampaignRow) => {
+    setEditingId(run.id);
+    const tf = run.target_filter;
     setForm({
-      name: campaign.name,
-      type: campaign.type,
+      name: run.name,
+      type: run.type,
       audience: tf?.audience ?? "",
       template: tf?.message_template ?? "",
       schedule: tf?.schedule ?? "",
@@ -238,7 +238,7 @@ export default function CampaignsPage() {
           <div>
             <h1 className="text-xl md:text-2xl font-semibold text-white">Outbound runs</h1>
             <p className="text-sm text-zinc-500 mt-1">
-              Reminders, follow-ups, reactivation, and recovery only.
+              Outcome-tied outbound runs for follow-up, reminders, recovery, and reactivation.
             </p>
           </div>
           <select
@@ -262,7 +262,7 @@ export default function CampaignsPage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
             {loading ? (
               <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-sm text-zinc-500">
                 Loading runs…
@@ -281,15 +281,15 @@ export default function CampaignsPage() {
                 </a>
               </div>
             ) : (
-              filtered.map((campaign) => (
-                <div key={campaign.id} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              filtered.map((run) => (
+                <div key={run.id} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-white">{campaign.name}</p>
+                      <p className="text-sm font-semibold text-white">{run.name}</p>
                       <p className="mt-2 text-xs text-zinc-500">
-                        {campaign.target_filter?.audience ?? "Outcome-based audience"}
+                        {run.target_filter?.audience ?? "Outcome-based audience"}
                         {(() => {
-                          const tf = campaign.target_filter;
+                          const tf = run.target_filter;
                           const parts: string[] = [];
                           if (Array.isArray(tf?.audience_statuses) && tf.audience_statuses.length > 0) {
                             parts.push(tf.audience_statuses.join(", "));
@@ -309,17 +309,17 @@ export default function CampaignsPage() {
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300">
-                          {campaign.type.replace(/_/g, " ")}
+                          {run.type.replace(/_/g, " ")}
                         </span>
                         <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300">
-                          {campaign.status}
+                          {run.status}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => loadCampaignIntoForm(campaign)}
+                        onClick={() => loadCampaignIntoForm(run)}
                         className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
                       >
                         Edit
@@ -327,28 +327,49 @@ export default function CampaignsPage() {
                       <button
                         type="button"
                         onClick={() =>
-                          campaign.status === "active"
-                            ? setPauseConfirm(campaign)
-                            : void toggleCampaign(campaign)
+                          run.status === "active"
+                            ? setPauseConfirm(run)
+                            : void toggleCampaign(run)
                         }
                         className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
                       >
-                        {campaign.status === "active" ? "Pause" : "Resume"}
+                        {run.status === "active" ? "Pause" : "Resume"}
                       </button>
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <Metric label="Contacts" value={campaign.total_contacts} />
-                    <Metric label="Called" value={campaign.called} />
-                    <Metric label="Answered" value={campaign.answered} />
-                    <Metric label="Appointments" value={campaign.appointments_booked} />
+                    <Metric label="Contacts" value={run.total_contacts} />
+                    <Metric label="Called" value={run.called} />
+                    <Metric label="Answered" value={run.answered} />
+                    <Metric label="Appointments" value={run.appointments_booked} />
                   </div>
+                  {run.total_contacts > 0 && (
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-1">
+                        <span>Progress</span>
+                        <span>
+                          {run.called}/{run.total_contacts} called
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-zinc-900 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-emerald-500"
+                          style={{
+                            width: `${Math.min(
+                              100,
+                              Math.round((run.called / run.total_contacts) * 100),
+                            )}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
                   <p className="mt-3 text-[11px] text-zinc-500">
-                    Created {new Date(campaign.created_at).toLocaleDateString()}
+                    Created {new Date(run.created_at).toLocaleDateString()}
                   </p>
-                  {campaign.target_filter?.schedule ? (
+                  {run.target_filter?.schedule ? (
                     <p className="mt-1 text-[11px] text-zinc-500">
-                      Scheduled {new Date(campaign.target_filter.schedule).toLocaleString()}
+                      Scheduled {new Date(run.target_filter.schedule).toLocaleString()}
                     </p>
                   ) : null}
                 </div>
@@ -390,7 +411,7 @@ export default function CampaignsPage() {
             </div>
             <div className="mt-4 space-y-4">
               <div className="mb-4">
-                <label className="text-xs text-white/40 mb-2 block">Campaign type</label>
+                <label className="text-xs text-white/40 mb-2 block">Run type</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { id: "followup", label: "Lead follow-up", desc: "Call leads who showed interest" },
