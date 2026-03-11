@@ -1455,7 +1455,14 @@ export default function AppAgentsPageClient({
                   <IdentityStepContent agent={selected} onChange={updateSelected} onNext={async () => { await handleStepChange("voice"); }} />
                 )}
                 {activeStep === "voice" && (
-                  <VoiceStepContent agent={selected} workspaceName={initialWorkspaceName} voices={elevenLabsVoices} onChange={updateSelected} onVoicePreview={(voiceId) => void playAudioPreview({ key: voiceId, voiceId, text: selected.greeting.trim() || "Thanks for calling. How can I help you today?", settings: selected.voiceSettings })} previewingVoiceId={playingVoiceId} onBack={() => void handleStepChange("identity")} onNext={async () => { await handleStepChange("knowledge"); }} />
+                  <>
+                    <VoiceStepContent agent={selected} workspaceName={initialWorkspaceName} voices={elevenLabsVoices} onChange={updateSelected} onVoicePreview={(voiceId) => void playAudioPreview({ key: voiceId, voiceId, text: selected.greeting.trim() || "Thanks for calling. How can I help you today?", settings: selected.voiceSettings })} previewingVoiceId={playingVoiceId} onBack={() => void handleStepChange("identity")} onNext={async () => { await handleStepChange("knowledge"); }} />
+                    <p className="mt-3 text-xs text-zinc-500">
+                      <Link href={`/app/agents/${selected.id}/voice-test`} className="text-[var(--accent-primary)] hover:underline">
+                        Preview all voices & A/B test →
+                      </Link>
+                    </p>
+                  </>
                 )}
                 {activeStep === "knowledge" && (
                   <KnowledgeStepContent agent={selected} onChange={updateSelected} onBack={() => void handleStepChange("voice")} onNext={async () => { await handleStepChange("behavior"); }} />
