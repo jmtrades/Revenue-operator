@@ -4,8 +4,24 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
+import type { CrmProviderId, CrmStatusResponse } from "@/app/api/integrations/crm/status/route";
+
+const CRM_INTEGRATIONS: Array<{
+  id: CrmProviderId;
+  name: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+}> = [
+  { id: "salesforce", name: "Salesforce", description: "Sync contacts and deals with Salesforce", icon: Cloud },
+  { id: "hubspot", name: "HubSpot", description: "Send leads and appointments to HubSpot", icon: Building2 },
+  { id: "zoho_crm", name: "Zoho CRM", description: "Connect to Zoho CRM", icon: Database },
+  { id: "pipedrive", name: "Pipedrive", description: "Push leads and deals to Pipedrive", icon: TrendingUp },
+  { id: "gohighlevel", name: "GoHighLevel", description: "Push qualified leads and calls into pipelines", icon: Layers },
+  { id: "google_contacts", name: "Google Contacts", description: "Sync contacts so your AI knows who's calling", icon: Users },
+  { id: "microsoft_365", name: "Microsoft 365", description: "Connect Outlook contacts and calendars", icon: Building },
+];
 
 type WebhookConfig = {
   endpoint_url: string;
@@ -41,8 +57,10 @@ export default function AppSettingsIntegrationsPage() {
   const [webhookSecret, setWebhookSecret] = useState("");
   const [whatsappEmail, setWhatsappEmail] = useState("");
   const [whatsappSubmitting, setWhatsappSubmitting] = useState(false);
+  const [crmStatus, setCrmStatus] = useState<CrmStatusResponse | null>(null);
   const searchParams = useSearchParams();
   const calendarParam = searchParams.get("calendar");
+  const crmParam = searchParams.get("crm");
 
   useEffect(() => {
     fetchWorkspaceMeCached()
@@ -59,6 +77,26 @@ export default function AppSettingsIntegrationsPage() {
       })
       .catch(() => setWorkspaceId(null));
   }, []);
+
+  useEffect(() => {
+    fetch("/api/integrations/crm/status", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: CrmStatusResponse | null) => data && setCrmStatus(data))
+      .catch(() => setCrmStatus(null));
+  }, []);
+
+  useEffect(() => {
+    if (crmParam === "oauth_coming_soon") {
+      setToast("OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.");
+      const t = setTimeout(() => setToast(null), 5000);
+      return () => clearTimeout(t);
+    }
+    if (crmParam === "invalid") {
+      setToast("Invalid integration.");
+      const t = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [crmParam]);
 
   useEffect(() => {
     fetch("/api/integrations/google-calendar/status", { credentials: "include" })
@@ -199,39 +237,88 @@ export default function AppSettingsIntegrationsPage() {
           </div>
         </section>
 
+        {/* CRM Integration Hub */}
         <section>
-          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">CRM</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-            {[
-              { name: "HubSpot", desc: "Send leads and appointments to HubSpot", icon: "🟠" },
-              { name: "Salesforce", desc: "Sync contacts and deals with Salesforce", icon: "☁️" },
-              { name: "Zoho CRM", desc: "Connect to Zoho CRM", icon: "🟢" },
-              { name: "Pipedrive", desc: "Push leads and deals to Pipedrive", icon: "🟣" },
-              { name: "Zapier", desc: "Connect to 5,000+ apps via Zapier", icon: "⚡" },
-            ].map((crm) => (
-              <div
-                key={crm.name}
-                className="bg-[#111113] border border-white/[0.06] rounded-2xl p-5 flex flex-col"
-              >
-                <div className="text-2xl mb-3">{crm.icon}</div>
-                <h4 className="text-sm font-medium text-[#EDEDEF]">{crm.name}</h4>
-                <p className="text-xs text-[#5A5A5C] mt-1 flex-1">{crm.desc}</p>
-                <button
-                  type="button"
-                  onClick={() =>
-                    document
-                      .getElementById("webhook-config")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="mt-4 text-xs text-[#4F8CFF] hover:text-[#4F8CFF]/80 font-medium transition-colors text-left"
-                >
-                  Set up via webhook →
-                </button>
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">CRM & contacts</h2>
+          <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+              <RefreshCw className="w-4 h-4 text-zinc-500" aria-hidden />
+              <span>
+                Last sync: {crmStatus?.global.lastSyncAt
+                  ? new Date(crmStatus.global.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
+                  : "—"}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+              <span>Records synced: {crmStatus?.global.recordsSynced ?? 0}</span>
+            </div>
+            {(crmStatus?.global.errors ?? 0) > 0 && (
+              <div className="flex items-center gap-2 text-sm text-amber-400">
+                <AlertCircle className="w-4 h-4" aria-hidden />
+                <span>{crmStatus?.global.errors ?? 0} sync error{(crmStatus?.global.errors ?? 0) !== 1 ? "s" : ""}</span>
               </div>
-            ))}
+            )}
+            <Link
+              href="/app/settings/integrations#webhook-config"
+              className="text-xs font-medium text-[var(--accent-primary)] hover:underline ml-auto"
+            >
+              View sync log / webhook →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+            {CRM_INTEGRATIONS.map((crm) => {
+              const status = crmStatus?.integrations[crm.id];
+              const connected = status?.connected ?? false;
+              const Icon = crm.icon;
+              return (
+                <div
+                  key={crm.id}
+                  className="bg-[#111113] border border-white/[0.06] rounded-2xl p-5 flex flex-col"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center">
+                      <Icon className="w-5 h-5 text-zinc-400" aria-hidden />
+                    </div>
+                    {connected ? (
+                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-green-500/30 text-green-400 shrink-0">
+                        Connected
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-white/[0.08] text-zinc-500 shrink-0">
+                        Not connected
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="text-sm font-medium text-[#EDEDEF]">{crm.name}</h4>
+                  <p className="text-xs text-[#5A5A5C] mt-1 flex-1">{crm.description}</p>
+                  {connected && status?.lastSyncAt && (
+                    <p className="text-[11px] text-zinc-500 mt-2">
+                      Last sync: {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+                    </p>
+                  )}
+                  <div className="mt-4">
+                    {connected ? (
+                      <Link
+                        href={`/app/settings/integrations/mapping?provider=${crm.id}`}
+                        className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
+                      >
+                        Configure
+                      </Link>
+                    ) : (
+                      <a
+                        href={`/api/integrations/crm/${crm.id}/connect`}
+                        className="inline-block px-3 py-2 rounded-xl text-xs font-semibold bg-white text-black hover:bg-zinc-100 transition-colors"
+                      >
+                        Connect
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 mb-4">
-            <p className="text-sm font-medium text-[var(--text-primary)]">🔗 Send leads to any CRM</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">Send leads to any CRM</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
               Use the webhook below to send lead and appointment events to HubSpot, Salesforce, Zapier, or any tool that accepts webhooks.
             </p>
