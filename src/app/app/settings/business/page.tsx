@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
 import {
   fetchWorkspaceMeCached,
@@ -61,8 +62,10 @@ export default function AppSettingsBusinessPage() {
       if (!res.ok) throw new Error("save_failed");
       invalidateWorkspaceMeCache();
       setToast("Settings saved");
+      toast.success("Settings saved");
     } catch {
       setToast("Could not save settings");
+      toast.error("Failed to save. Please try again.");
     }
     setTimeout(() => setToast(null), 3000);
   };

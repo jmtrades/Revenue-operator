@@ -3,6 +3,7 @@
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
 import { motion } from "framer-motion";
+import { PhoneMissed, Clock, Layers } from "lucide-react";
 
 const PROBLEM_INBOUND = {
   title: "Calls fall through the cracks",
@@ -34,7 +35,7 @@ const PROBLEM_HUMAN = {
   accent: "var(--accent-warning)",
 };
 
-const CARDS = [PROBLEM_INBOUND, PROBLEM_OUTBOUND, PROBLEM_HUMAN];
+const CARDS = [PROBLEM_INBOUND, PROBLEM_OUTBOUND, PROBLEM_HUMAN] as const;
 
 export function ProblemStatement() {
   return (
@@ -48,9 +49,24 @@ export function ProblemStatement() {
         </AnimateOnScroll>
 
         <StaggerChildren className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
-          {CARDS.map((card) => (
-            <motion.div key={card.title} variants={fadeUpVariants} className="card-marketing p-6 md:p-8">
-              <h3 className="text-sm font-semibold uppercase tracking-wider mb-5" style={{ color: "var(--text-tertiary)" }}>{card.title}</h3>
+          {CARDS.map((card, index) => {
+            const Icon =
+              index === 0 ? PhoneMissed : index === 1 ? Clock : Layers;
+            return (
+              <motion.div
+                key={card.title}
+                variants={fadeUpVariants}
+                className="card-marketing p-6 md:p-8"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-5">
+                  <Icon className="w-7 h-7 text-[#4F8CFF]" />
+                </div>
+                <h3
+                  className="text-sm font-semibold uppercase tracking-wider mb-5 text-center md:text-left"
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  {card.title}
+                </h3>
               <ul className="space-y-4">
                 {card.stats.map((s) => (
                   <li key={s.desc}>
@@ -59,8 +75,9 @@ export function ProblemStatement() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </StaggerChildren>
 
         <AnimateOnScroll className="text-center mt-10">

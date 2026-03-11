@@ -1,7 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { Watch, Activity } from "lucide-react";
+import { Watch, Clock } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 
@@ -9,7 +9,7 @@ type ActionLink =
   | { label: string; href: string; onClick?: never }
   | { label: string; onClick: () => void; href?: never };
 
-const STRING_ICONS: Record<string, LucideIcon> = { watch: Watch, pulse: Activity };
+const STRING_ICONS: Record<string, LucideIcon> = { watch: Watch, pulse: Clock };
 
 interface EmptyStateProps {
   icon?: LucideIcon | keyof typeof STRING_ICONS;

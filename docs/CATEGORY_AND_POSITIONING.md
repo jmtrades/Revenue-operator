@@ -1,38 +1,23 @@
-# Category Definition & Positioning
+# Recall Touch — Product Positioning
 
-**This product is not a SaaS product. It is the global standard for how revenue conversations are governed.**
+**Recall Touch is an AI phone communication platform.**
 
-**Full system spec (architecture, work units, governance, guarantees):** `docs/SYSTEM_SPEC.md`
+**Full system spec:** `docs/SYSTEM_SPEC.md`
 
 ---
 
-## I. Category Definition
+## I. Product Definition
 
-### This product is NOT
-- A chatbot
-- A CRM
-- An automation tool
-- A workflow builder
-- A marketing platform
-- A booking tool
-- A follow-up assistant
-- A call bot
-- A sales AI
+Recall Touch is a complete AI calling platform that handles:
+- Inbound and outbound calls
+- Lead capture and qualification
+- Appointment booking
+- Follow-up automation
+- SMS, Email, WhatsApp messaging
+- CRM integrations
+- Call analytics and intelligence
 
-### This product IS
-
-**Commercial Execution Infrastructure.**
-
-It governs revenue conversations across:
-- Inbound
-- Outbound
-- Voice
-- SMS, Email, WhatsApp, Web chat, Instagram DM
-- Payment confirmation
-- Legal disclosures
-- Cross-party commitments
-
-**If revenue conversations exist, this system governs them.**
+Standard SaaS product terminology is used throughout: Dashboard, Analytics, Campaigns, Leads, Agents, Inbox, Settings, AI, Automation, Workflow, CRM.
 
 ---
 

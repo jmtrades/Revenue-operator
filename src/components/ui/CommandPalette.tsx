@@ -1,9 +1,21 @@
 "use client";
 
-import type { KeyboardEvent } from "react";
+import type { ComponentType, KeyboardEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, LayoutList, Bot, PhoneCall, Users, Settings } from "lucide-react";
+import {
+  Search,
+  LayoutList,
+  Bot,
+  PhoneCall,
+  Users,
+  Settings,
+  Mail,
+  BarChart3,
+  Brain,
+  BookOpen,
+  CalendarDays,
+} from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { scaleIn } from "@/lib/animations";
 import { cn } from "@/lib/cn";
@@ -16,7 +28,7 @@ interface CommandPaletteProps {
 type CommandItem = {
   id: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   href?: string;
   action?: () => void;
   section: "Pages" | "Actions";
@@ -27,6 +39,13 @@ const STATIC_ITEMS: CommandItem[] = [
   { id: "page-agents", label: "Agents", icon: Bot, href: "/app/agents", section: "Pages" },
   { id: "page-calls", label: "Calls", icon: PhoneCall, href: "/app/calls", section: "Pages" },
   { id: "page-leads", label: "Leads", icon: Users, href: "/app/leads", section: "Pages" },
+  { id: "page-campaigns", label: "Campaigns", icon: Mail, href: "/app/campaigns", section: "Pages" },
+  { id: "page-inbox", label: "Inbox", icon: Mail, href: "/app/inbox", section: "Pages" },
+  { id: "page-appointments", label: "Appointments", icon: CalendarDays, href: "/app/appointments", section: "Pages" },
+  { id: "page-analytics", label: "Analytics", icon: BarChart3, href: "/app/analytics", section: "Pages" },
+  { id: "page-call-intelligence", label: "Call Intelligence", icon: Brain, href: "/app/call-intelligence", section: "Pages" },
+  { id: "page-knowledge", label: "Knowledge", icon: BookOpen, href: "/app/knowledge", section: "Pages" },
+  { id: "page-team", label: "Team", icon: Users, href: "/app/team", section: "Pages" },
   { id: "page-settings", label: "Settings", icon: Settings, href: "/app/settings", section: "Pages" },
   {
     id: "action-new-lead",
@@ -42,6 +61,20 @@ const STATIC_ITEMS: CommandItem[] = [
     href: "/app/agents?new=1",
     section: "Actions",
   },
+  {
+    id: "action-new-campaign",
+    label: "Create campaign",
+    icon: Mail,
+    href: "/app/campaigns?new=1",
+    section: "Actions",
+  },
+  {
+    id: "action-test-agent",
+    label: "Test agent",
+    icon: Bot,
+    href: "/app/agents?test=1",
+    section: "Actions",
+  },
 ];
 
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
@@ -54,8 +87,15 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     const onKey = (e: KeyboardEvent | KeyboardEventInit) => {
       if ("key" in e && e.key === "Escape") onClose();
     };
-    window.addEventListener("keydown", onKey as any);
-    return () => window.removeEventListener("keydown", onKey as any);
+    window.addEventListener(
+      "keydown",
+      onKey as (e: KeyboardEvent | KeyboardEventInit) => void,
+    );
+    return () =>
+      window.removeEventListener(
+        "keydown",
+        onKey as (e: KeyboardEvent | KeyboardEventInit) => void,
+      );
   }, [open, onClose]);
 
   useEffect(() => {

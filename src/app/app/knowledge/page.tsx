@@ -357,6 +357,47 @@ export default function KnowledgePage() {
   const [importedEntries, setImportedEntries] = useState<
     Array<{ question: string; answer: string }>
   >([]);
+  const [testQuestion, setTestQuestion] = useState("");
+  const [testAnswer, setTestAnswer] = useState("");
+  const [testingKnowledge, setTestingKnowledge] = useState(false);
+
+  const handleTestKnowledge = async () => {
+    const question = testQuestion.trim();
+    if (!question || testingKnowledge) return;
+    setTestingKnowledge(true);
+    setTestAnswer("");
+    try {
+      const res = await fetch("/api/agent/test-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "user",
+              text: question,
+            },
+          ],
+        }),
+      });
+      const data = (await res.json().catch(() => null)) as
+        | { response?: string; error?: string }
+        | null;
+      if (!res.ok || !data) {
+        toast.error(data?.error ?? "Failed to test knowledge. Please try again.");
+        return;
+      }
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+      setTestAnswer((data.response ?? "").trim() || "No response generated.");
+    } catch {
+      toast.error("Failed to test knowledge. Please try again.");
+    } finally {
+      setTestingKnowledge(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     let list = entries;
@@ -459,7 +500,15 @@ export default function KnowledgePage() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold text-white">Knowledge Base</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">{entries.length} entries</p>
+            <p className="text-sm text-zinc-500 mt-0.5">
+              {entries.length} entries ·{" "}
+              {entries.length} {entries.length === 1 ? "entry" : "entries"} ·{" "}
+              {entries.length >= 10
+                ? "Good coverage"
+                : entries.length >= 5
+                  ? "Basic coverage"
+                  : "Add more entries for better coverage"}
+            </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
             <div className="relative flex-1 sm:min-w-[200px]">
@@ -802,6 +851,47 @@ export default function KnowledgePage() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 mt-8">
+          <h3 className="text-sm font-medium text-[#EDEDEF] mb-3">
+            Test your knowledge base
+          </h3>
+          <p className="text-xs text-[#8B8B8D] mb-4">
+            Ask a question to see how your AI agent would respond using your knowledge entries.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              value={testQuestion}
+              onChange={(e) => setTestQuestion(e.target.value)}
+              onKeyDown={(e) => {
+                if (
+                  e.key === "Enter" &&
+                  !testingKnowledge &&
+                  testQuestion.trim()
+                ) {
+                  e.preventDefault();
+                  void handleTestKnowledge();
+                }
+              }}
+              placeholder="e.g. What are your business hours?"
+              className="flex-1 bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[#EDEDEF] placeholder:text-[#5A5A5C] focus:outline-none focus:ring-2 focus:ring-[#4F8CFF]/50"
+            />
+            <button
+              type="button"
+              onClick={() => void handleTestKnowledge()}
+              disabled={!testQuestion.trim() || testingKnowledge}
+              className="bg-[#4F8CFF] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#4F8CFF]/90 disabled:opacity-40 transition-all duration-200"
+            >
+              {testingKnowledge ? "Testing..." : "Test"}
+            </button>
+          </div>
+          {testAnswer && (
+            <div className="mt-4 bg-[#0A0A0B] border border-white/[0.06] rounded-xl p-4">
+              <p className="text-xs text-[#8B8B8D] mb-1">AI would respond:</p>
+              <p className="text-sm text-[#EDEDEF] leading-relaxed">{testAnswer}</p>
+            </div>
+          )}
         </div>
       </div>
 

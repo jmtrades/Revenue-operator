@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Megaphone } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -28,7 +29,7 @@ type CampaignRow = {
   target_filter?: TargetFilter | null;
 };
 
-const PAGE_TITLE = "Outbound runs — Recall Touch";
+const PAGE_TITLE = "Campaigns — Recall Touch";
 
 const TYPE_OPTIONS = [
   { id: "lead_followup", label: "Lead qualification / follow-up" },
@@ -114,17 +115,40 @@ export default function CampaignsPage() {
   }, []);
 
   useEffect(() => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 8000);
+
     fetch(`/api/campaigns?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
+      signal: controller.signal,
     })
       .then((res) => (res.ok ? res.json() : { campaigns: [] }))
       .then((data: { campaigns?: CampaignRow[] }) => {
+        if (cancelled) return;
         const next = data.campaigns ?? [];
         setCampaigns(next);
         persistCampaignsSnapshot(workspaceId, next);
       })
-      .finally(() => setLoading(false));
+      .catch(() => {
+        if (cancelled) return;
+        setCampaigns([]);
+      })
+      .finally(() => {
+        if (cancelled) return;
+        window.clearTimeout(timeoutId);
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [workspaceId]);
 
   useEffect(() => {
@@ -236,9 +260,9 @@ export default function CampaignsPage() {
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">Outbound runs</h1>
+            <h1 className="text-xl md:text-2xl font-semibold text-white">Campaigns</h1>
             <p className="text-sm text-zinc-500 mt-1">
-              Outcome-tied outbound runs for follow-up, reminders, recovery, and reactivation.
+              Reach your leads with automated outbound calls and messages.
             </p>
           </div>
           <select
@@ -255,8 +279,8 @@ export default function CampaignsPage() {
         </div>
 
         <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="Total runs" value={campaigns.length} color="blue" />
-          <StatCard label="Active" value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
+          <StatCard label="Total campaigns" value={campaigns.length} color="blue" />
+          <StatCard label="Active campaigns" value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
           <StatCard label="Calls made" value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
           <StatCard label="Appointments" value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
         </div>
@@ -265,19 +289,22 @@ export default function CampaignsPage() {
           <div className="grid gap-4 md:grid-cols-2">
             {loading ? (
               <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-sm text-zinc-500">
-                Loading runs…
+                Loading campaigns…
               </div>
             ) : filtered.length === 0 ? (
-              <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center">
-                <p className="text-sm font-medium text-white">No runs yet</p>
-                <p className="text-xs text-zinc-500 mt-2">
-                  Start with a lead follow-up, appointment reminder, or reactivation run.
+              <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center flex flex-col items-center">
+                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4">
+                  <Megaphone className="w-6 h-6 text-zinc-400" />
+                </div>
+                <p className="text-sm font-medium text-white">No campaigns yet</p>
+                <p className="text-xs text-zinc-500 mt-2 max-w-sm">
+                  Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts.
                 </p>
                 <a
                   href="#create-run"
                   className="mt-4 inline-block min-h-[44px] rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-zinc-100 touch-manipulation"
                 >
-                  Create your first run
+                  Create campaign
                 </a>
               </div>
             ) : (

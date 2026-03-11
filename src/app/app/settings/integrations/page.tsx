@@ -189,36 +189,50 @@ export default function AppSettingsIntegrationsPage() {
               <div className="flex items-center gap-3 mb-2">
                 <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
                 <p className="text-sm font-medium text-[var(--text-primary)]">WhatsApp</p>
-                <span className="text-xs text-[var(--text-tertiary)] bg-white/5 px-2 py-0.5 rounded">Notify me when available</span>
               </div>
-              <p className="text-xs text-[var(--text-secondary)] mb-3">Let your AI respond on WhatsApp</p>
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="email"
-                  value={whatsappEmail}
-                  onChange={(e) => setWhatsappEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="flex-1 min-w-[180px] px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
-                  aria-label="Email for WhatsApp waitlist"
-                />
-                <button
-                  type="button"
-                  onClick={handleWhatsAppNotify}
-                  disabled={whatsappSubmitting}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-gray-900 hover:bg-gray-100 shrink-0 disabled:opacity-60 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
-                >
-                  {whatsappSubmitting ? "Adding…" : "Notify me →"}
-                </button>
-              </div>
+              <p className="text-sm text-[#8B8B8D]">
+                WhatsApp integration coming soon. You&apos;ll be notified when it&apos;s available.
+              </p>
             </div>
           </div>
         </section>
 
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">CRM</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+            {[
+              { name: "HubSpot", desc: "Send leads and appointments to HubSpot", icon: "🟠" },
+              { name: "Salesforce", desc: "Sync contacts and deals with Salesforce", icon: "☁️" },
+              { name: "Zoho CRM", desc: "Connect to Zoho CRM", icon: "🟢" },
+              { name: "Pipedrive", desc: "Push leads and deals to Pipedrive", icon: "🟣" },
+              { name: "Zapier", desc: "Connect to 5,000+ apps via Zapier", icon: "⚡" },
+            ].map((crm) => (
+              <div
+                key={crm.name}
+                className="bg-[#111113] border border-white/[0.06] rounded-2xl p-5 flex flex-col"
+              >
+                <div className="text-2xl mb-3">{crm.icon}</div>
+                <h4 className="text-sm font-medium text-[#EDEDEF]">{crm.name}</h4>
+                <p className="text-xs text-[#5A5A5C] mt-1 flex-1">{crm.desc}</p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    document
+                      .getElementById("webhook-config")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                  className="mt-4 text-xs text-[#4F8CFF] hover:text-[#4F8CFF]/80 font-medium transition-colors text-left"
+                >
+                  Set up via webhook →
+                </button>
+              </div>
+            ))}
+          </div>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 mb-4">
-          <p className="text-sm font-medium text-[var(--text-primary)]">🔗 Send leads to any CRM</p>
-          <p className="text-xs text-[var(--text-secondary)] mt-1">Use the webhook below to send lead and appointment events to HubSpot, Salesforce, Zapier, or any tool that accepts webhooks.</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">🔗 Send leads to any CRM</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
+              Use the webhook below to send lead and appointment events to HubSpot, Salesforce, Zapier, or any tool that accepts webhooks.
+            </p>
           </div>
         </section>
 
@@ -255,7 +269,7 @@ export default function AppSettingsIntegrationsPage() {
           </div>
         </section>
 
-        <section>
+        <section id="webhook-config">
           <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Automation & webhooks</h2>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-4">
           <p className="text-sm font-medium text-white">Slack / Zapier webhook destination</p>

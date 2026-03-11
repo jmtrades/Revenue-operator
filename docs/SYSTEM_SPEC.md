@@ -6,17 +6,13 @@
 
 ---
 
-## I. Category Positioning (Non-Negotiable)
+## I. Product Language
 
-Every revenue conversation should be governed. This system replaces improvisation with execution.
-
-**Never use:** chatbot, automation, campaign, blast, workflow, funnel, sequence, marketing tool.
-
-**Always use:** governed execution, operational continuity, compliance enforcement, commitment confirmation, jurisdiction lock, structured strategy, recorded confirmation, execution infrastructure.
+Recall Touch is an AI phone communication platform. Use clear, standard SaaS product terminology throughout the product: Dashboard, Analytics, Campaigns, Leads, Agents, Inbox, Settings, AI, Automation, Workflow, CRM, etc.
 
 **Homepage:**
-- **Headline:** Every revenue conversation should be governed.
-- **Subheadline:** Revenue Operator runs inbound, outbound, voice, confirmations, and compliance without improvisation.
+- **Headline:** Your AI Receptionist That Never Misses a Call
+- **Subheadline:** Answer calls, book appointments, qualify leads, and follow up automatically.
 
 ---
 

@@ -31,7 +31,7 @@ It does **not**:
 
 ## Product rule
 
-If a feature does not directly increase **bookings**, **attendance**, or **recovered leads** → do not build it.
+If a feature does not directly increase **bookings**, **attendance**, or **recovered leads** → consider whether it helps users.
 
 ---
 

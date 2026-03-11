@@ -1,14 +1,8 @@
-# Recall-Touch Constitution
+# Recall-Touch Product Definition
 
-**Category integrity — the product must not drift from this identity.**
+**Recall Touch is an AI phone communication platform.**
 
-Recall-Touch is **not** an AI tool.  
-Recall-Touch is **not** an automation builder.  
-Recall-Touch is **not** a messaging platform.
-
-Recall-Touch is a **Revenue Conversation Operator**.
-
-Responsibility: prevent the product from drifting away from this identity.
+Recall Touch handles inbound/outbound calls, lead capture, appointment booking, follow-up automation, analytics, campaigns, CRM integrations, and all related features. All standard SaaS terminology and capabilities are authorized.
 
 ---
 

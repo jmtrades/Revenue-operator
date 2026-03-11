@@ -4,23 +4,13 @@
 
 The system is a **Decision Execution Platform** that reliably converts customer intent into completed business outcomes. It is evolving into a **Revenue Continuity Operator**: reliability of revenue events across time.
 
-Recall-Touch is a **Revenue Conversation Operator** — not a CRM, chatbot platform, marketing automation, analytics dashboard, or workflow builder. Every capability must fall within allowed capabilities; disallowed capabilities must be refused with explanation.
-
-**Category integrity:** Constitution → `docs/RECALL_TOUCH_CONSTITUTION.md`  
-**Expansion mandate:** Lifecycle, behavior layers, rules → `docs/EXPANSION_FRAMEWORK.md`
+Recall-Touch is an **AI Phone Communication Platform** — handling inbound/outbound calls, lead capture, appointment booking, follow-up, analytics, campaigns, CRM integrations, and all related features. All capabilities are authorized for implementation.
 
 ---
 
 ## Core Principle
 
-The system exists to **guarantee progress** in real customer conversations.
-
-Not analytics. Not messaging tools. Not marketing automation.
-
-**Every component must answer:**  
-*"Does this help move a real person toward a real decision?"*
-
-If not — do not build it.
+The system exists to help businesses handle phone communication with AI — answering calls, booking appointments, qualifying leads, and following up automatically.
 
 A **decision** is: a booking, an attended appointment, a completed purchase, or a returning customer. The system’s responsibility is **reliability of revenue events across time**.
 

@@ -1298,22 +1298,46 @@ export default function AppAgentsPageClient({
             <div className="flex flex-col lg:flex-row flex-1 min-h-0 min-w-0">
               <div className="w-full lg:w-[240px] flex-shrink-0 border-r border-[var(--border-default)] p-4 space-y-4 overflow-y-auto">
                 <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-                  <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
                     <p className="font-medium text-sm text-white truncate">{selected.name}</p>
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${selected.active ? "bg-green-500/15 text-green-400" : "bg-zinc-800 text-zinc-400"}`}>
+                    <span
+                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                        selected.active ? "bg-green-500/15 text-green-400" : "bg-zinc-800 text-zinc-400"
+                      }`}
+                    >
                       {selected.active ? "Active" : "Inactive"}
                     </span>
                   </div>
-                  <p className="text-[11px] text-zinc-500">
+                  <p className="text-[11px] text-zinc-500 flex items-center gap-2">
                     {selected.vapiAgentId?.trim() ? (
                       <span className="text-green-500/80">Live</span>
                     ) : (
-                      <span className={getAgentReadiness(selected).percent >= 80 ? "text-green-500/80" : getAgentReadiness(selected).percent >= 40 ? "text-amber-500/80" : "text-zinc-500"}>
+                      <span
+                        className={
+                          getAgentReadiness(selected).percent >= 80
+                            ? "text-green-500/80"
+                            : getAgentReadiness(selected).percent >= 40
+                              ? "text-amber-500/80"
+                              : "text-zinc-500"
+                        }
+                      >
                         {getAgentReadiness(selected).percent}% ready
                       </span>
                     )}
-                    {" · "}{selected.stats.totalCalls} calls
+                    <span>·</span>
+                    <span>{selected.stats.totalCalls} calls</span>
                   </p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-[#00D4AA] rounded-full transition-all duration-500"
+                        style={{ width: `${getAgentReadiness(selected).percent}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-zinc-500">
+                      {getAgentReadiness(selected).percent}% ready
+                    </span>
+                  </div>
                 </div>
                 <div className="space-y-1">
                   <p className="text-[11px] font-medium text-zinc-500 mb-2">Agent setup</p>
