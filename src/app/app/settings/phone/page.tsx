@@ -121,6 +121,7 @@ export default function AppSettingsPhonePage() {
   const [workspaceNumbers, setWorkspaceNumbers] = useState<WorkspacePhoneNumber[]>([]);
   const [numbersLoading, setNumbersLoading] = useState(true);
   const [totalMonthlyCents, setTotalMonthlyCents] = useState(0);
+  const [releasingId, setReleasingId] = useState<string | null>(null);
 
   const fetchWorkspaceNumbers = useCallback(async () => {
     try {
@@ -390,13 +391,32 @@ export default function AppSettingsPhonePage() {
                   <span className={`text-[10px] px-2 py-0.5 rounded capitalize ${n.status === "active" ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-zinc-400"}`}>
                     {n.status}
                   </span>
-                  <button
-                    type="button"
-                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-[var(--bg-hover)]"
-                    aria-label="Actions"
-                  >
-                    <MoreVertical className="w-4 h-4" />
-                  </button>
+                  {n.status === "active" && (
+                    <button
+                      type="button"
+                      disabled={!!n.assigned_agent_id || releasingId === n.id}
+                      title={n.assigned_agent_id ? "Unassign from agent in Agents first" : "Release number"}
+                      onClick={async () => {
+                        if (n.assigned_agent_id) return;
+                        setReleasingId(n.id);
+                        try {
+                          const res = await fetch(`/api/phone/numbers/${n.id}/release`, { method: "POST", credentials: "include" });
+                          const data = (await res.json()) as { error?: string };
+                          if (res.ok) {
+                            fetchWorkspaceNumbers();
+                            sonnerToast.success("Number released");
+                          } else {
+                            sonnerToast.error(data.error ?? "Could not release");
+                          }
+                        } finally {
+                          setReleasingId(null);
+                        }
+                      }}
+                      className="text-[10px] px-2 py-1 rounded-lg border border-[var(--border-default)] text-zinc-400 hover:text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {releasingId === n.id ? "…" : "Release"}
+                    </button>
+                  )}
                 </div>
               </li>
             ))}
