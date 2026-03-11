@@ -2,10 +2,25 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import {
+  Area,
+  AreaChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  Cell,
+} from "recharts";
 import Link from "next/link";
 import {
+  BarChart3,
   CheckCircle2,
+  Link2,
+  Megaphone,
   Phone,
+  Settings,
   UserPlus,
   Video,
 } from "lucide-react";
@@ -151,6 +166,20 @@ const NEXT_ACTIONS = [
   },
 ] as const;
 
+const QUICK_ACTIONS: {
+  icon: typeof Phone;
+  label: string;
+  href: string;
+  desc: string;
+}[] = [
+  { icon: Phone, label: "Make a test call", href: "/app/agents", desc: "Test your AI agent" },
+  { icon: UserPlus, label: "Add a lead", href: "/app/leads", desc: "Create a new lead record" },
+  { icon: Megaphone, label: "Create campaign", href: "/app/campaigns", desc: "Start outbound calls" },
+  { icon: Settings, label: "Agent settings", href: "/app/agents", desc: "Configure AI behavior" },
+  { icon: Link2, label: "Connect CRM", href: "/app/settings/integrations", desc: "Send leads to your CRM" },
+  { icon: BarChart3, label: "View analytics", href: "/app/analytics", desc: "See call performance" },
+];
+
 const ACTIVITY_SNAPSHOT_KEY = "rt_activity_snapshot";
 
 function readActivitySnapshot(): ActivityCard[] {
@@ -172,6 +201,21 @@ function persistActivitySnapshot(cards: ActivityCard[]) {
     // ignore persistence errors
   }
 }
+
+const PLACEHOLDER_AREA: { day: string; calls: number }[] = Array.from(
+  { length: 7 },
+  (_, i) => ({
+    day: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i],
+    calls: 0,
+  }),
+);
+
+const PLACEHOLDER_PIE: { name: string; value: number }[] = [
+  { name: "No data", value: 1 },
+];
+
+const PIE_COLORS = ["#2A2A2D"];
+const REAL_PIE_COLORS = ["#00D4AA", "#FF4D4D", "#FFB224", "#4F8CFF"];
 
 export default function AppActivityPage() {
   const searchParams = useSearchParams();
@@ -231,6 +275,8 @@ export default function AppActivityPage() {
     estRevenue: workspaceSnapshot?.stats?.estRevenue ?? 0,
     lastCallAt: workspaceSnapshot?.stats?.lastCallAt ?? null,
   }));
+  const [callVolumeData] = useState<{ day: string; calls: number }[]>([]);
+  const [outcomeData] = useState<{ name: string; value: number }[]>([]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -568,6 +614,23 @@ export default function AppActivityPage() {
         </div>
       )}
 
+      {/* Quick actions */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
+        {QUICK_ACTIONS.map((a) => (
+          <Link
+            key={a.label}
+            href={a.href}
+            className="bg-[#111113] border border-white/10 rounded-2xl p-4 hover:border-white/20 transition-all duration-200 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-white/10 transition-colors">
+              <a.icon className="w-5 h-5 text-[#8B8B8D] group-hover:text-[#EDEDEF] transition-colors" />
+            </div>
+            <p className="text-sm font-medium text-[#EDEDEF]">{a.label}</p>
+            <p className="text-xs text-[#5A5A5C] mt-0.5">{a.desc}</p>
+          </Link>
+        ))}
+      </div>
+
       <div className="flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Filter activity">
         {FILTERS.map((f) => (
           <button
@@ -807,6 +870,93 @@ export default function AppActivityPage() {
           </div>
         </div>
       )}
+
+      {/* Charts section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
+        <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
+          <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
+            Call Volume (7 days)
+          </h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={callVolumeData.length > 0 ? callVolumeData : PLACEHOLDER_AREA}>
+              <defs>
+                <linearGradient id="dashboardCallGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#4F8CFF" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="#4F8CFF" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis
+                dataKey="day"
+                tick={{ fontSize: 12, fill: "#5A5A5C" }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis hide />
+              <Tooltip
+                contentStyle={{
+                  background: "#1A1A1D",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  borderRadius: 12,
+                  fontSize: 13,
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="calls"
+                stroke="#4F8CFF"
+                fill="url(#dashboardCallGrad)"
+                strokeWidth={2}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+          {callVolumeData.length === 0 && (
+            <div className="absolute inset-0 flex items-center justifycenter rounded-2xl bg-[#111113]/60">
+              <p className="text-[#5A5A5C] text-sm">
+                Charts appear after your first call
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
+          <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
+            Call Outcomes
+          </h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie
+                data={outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE}
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={80}
+                paddingAngle={2}
+                dataKey="value"
+              >
+                {(outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE).map(
+                  (_slice, i) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <Cell
+                      key={i}
+                      fill={
+                        outcomeData.length > 0
+                          ? REAL_PIE_COLORS[i % REAL_PIE_COLORS.length]
+                          : PIE_COLORS[0]
+                      }
+                    />
+                  ),
+                )}
+              </Pie>
+              {outcomeData.length > 0 && <Tooltip />}
+            </PieChart>
+          </ResponsiveContainer>
+          {outcomeData.length === 0 && (
+            <div className="absolute inset-0 flex items-center justifycenter rounded-2xl bg-[#111113]/60">
+              <p className="text-[#5A5A5C] text-sm">No outcome data yet</p>
+            </div>
+          )}
+        </div>
+      </div>
 
       {selectedCard && (
         <div className="fixed inset-0 z-40">

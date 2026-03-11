@@ -107,22 +107,23 @@ export default function AppShellClient({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [workspaceMeta, setWorkspaceMeta] = useState<AppShellWorkspaceMeta>(initialWorkspaceMeta ?? null);
+  const [workspaceMeta, setWorkspaceMeta] = useState<AppShellWorkspaceMeta>(
+    initialWorkspaceMeta ?? null,
+  );
   const [workspaceMetaLoaded, setWorkspaceMetaLoaded] = useState(Boolean(initialWorkspaceMeta));
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const inboxUnread = 0;
-
-  useEffect(() => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
     try {
       const stored = localStorage.getItem("rt_sidebar");
-      setSidebarCollapsed(stored === "collapsed");
+      return stored === "collapsed";
     } catch {
-      // ignore
+      return false;
     }
-  }, []);
+  });
+  const inboxUnread = 0;
 
   const toggleSidebarCollapse = () => {
     setSidebarCollapsed((prev) => {

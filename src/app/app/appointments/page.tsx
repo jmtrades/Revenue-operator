@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Calendar, ChevronRight } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 const PAGE_TITLE = "Appointments — Recall Touch";
@@ -59,6 +59,8 @@ export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [view, setView] = useState<"list" | "calendar">("list");
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
 
   useEffect(() => {
     document.title = PAGE_TITLE;
@@ -94,6 +96,29 @@ export default function AppointmentsPage() {
   }, [workspaceId]);
 
   const isEmpty = appointments.length === 0;
+
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startOffset = (firstDay.getDay() + 6) % 7;
+    const days: (Date | null)[] = Array(startOffset).fill(null);
+    for (let d = 1; d <= lastDay.getDate(); d++) {
+      days.push(new Date(year, month, d));
+    }
+    return days;
+  };
+
+  const getAppointmentsForDay = (day: Date) =>
+    appointments.filter((a) => {
+      const d = new Date(`${a.date}T00:00:00`);
+      return (
+        d.getFullYear() === day.getFullYear() &&
+        d.getMonth() === day.getMonth() &&
+        d.getDate() === day.getDate()
+      );
+    });
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
@@ -198,12 +223,132 @@ export default function AppointmentsPage() {
             </div>
           </div>
         ) : (
-          <div
-            className="rounded-2xl border p-6 text-center text-zinc-400 text-sm"
-            style={{ borderColor: "#1f2937", background: "#111827" }}
-          >
-            Calendar view: switch to List to see all appointments. Full calendar syncs when you connect Google Calendar in Settings.
-          </div>
+          view === "calendar" && (
+            <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentMonth(
+                      new Date(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth() - 1,
+                      ),
+                    )
+                  }
+                  className="p-2 rounded-lg hover:bg-white/[0.04] text-[#8B8B8D] hover:text-[#EDEDEF] transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <h3 className="text-sm font-medium text-[#EDEDEF]">
+                  {currentMonth.toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentMonth(
+                      new Date(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth() + 1,
+                      ),
+                    )
+                  }
+                  className="p-2 rounded-lg hover:bg-white/[0.04] text-[#8B8B8D] hover:text-[#EDEDEF] transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="grid grid-cols-7 gap-1 mb-2">
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+                  <div
+                    key={d}
+                    className="text-center text-xs text-[#5A5A5C] py-1"
+                  >
+                    {d}
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 gap-1">
+                {getDaysInMonth(currentMonth).map((day, i) => {
+                  if (!day) return <div key={`empty-${i}`} />;
+                  const dayAppts = getAppointmentsForDay(day);
+                  const isToday =
+                    day.toDateString() === new Date().toDateString();
+                  const isSelected =
+                    selectedDay?.toDateString() === day.toDateString();
+                  return (
+                    <button
+                      key={day.toISOString()}
+                      type="button"
+                      onClick={() => setSelectedDay(day)}
+                      className={[
+                        "aspect-square rounded-xl flex flex-col items-center justify-center gap-1 text-sm transition-all",
+                        isSelected
+                          ? "bg-[#4F8CFF]/20 border border-[#4F8CFF]/40"
+                          : "hover:bg-white/[0.04]",
+                        !isSelected && isToday
+                          ? "border border-white/[0.12]"
+                          : "",
+                        dayAppts.length > 0
+                          ? "text-[#EDEDEF]"
+                          : "text-[#5A5A5C]",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
+                      <span>{day.getDate()}</span>
+                      {dayAppts.length > 0 && (
+                        <div className="flex gap-0.5">
+                          {dayAppts.slice(0, 3).map((_, j) => (
+                            <div
+                              key={j}
+                              className="w-1 h-1 rounded-full bg-[#4F8CFF]"
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              {selectedDay && (
+                <div className="mt-4 pt-4 border-t border-white/[0.06]">
+                  <h4 className="text-sm font-medium text-[#EDEDEF] mb-3">
+                    {selectedDay.toLocaleDateString("en-US", {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </h4>
+                  {getAppointmentsForDay(selectedDay).length === 0 ? (
+                    <p className="text-sm text-[#5A5A5C]">No appointments</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {getAppointmentsForDay(selectedDay).map((appt) => (
+                        <div
+                          key={appt.id}
+                          className="bg-[#0A0A0B] border border-white/[0.06] rounded-xl p-3"
+                        >
+                          <p className="text-sm text-[#EDEDEF]">
+                            {appt.type || appt.contactName}
+                          </p>
+                          <p className="text-xs text-[#5A5A5C] mt-0.5">
+                            {formatDate(appt.date)} · {appt.time}
+                          </p>
+                          <p className="text-xs text-[#8B8B8D] mt-0.5">
+                            {appt.contactName}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )
         )}
 
         {!isEmpty && (

@@ -388,7 +388,12 @@ export default function AppAnalyticsPage() {
           <BarChart3 className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
           <p className="text-sm font-medium text-white mb-1">Analytics populate as calls come in</p>
           <p className="text-xs text-zinc-500 mb-4">Your first chart will appear after your first call.</p>
-          <Link href="/" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Make a test call →</Link>
+          <Link
+            href="/app/agents"
+            className="text-[#4F8CFF] hover:underline text-sm mt-2 inline-block"
+          >
+            Make a test call →
+          </Link>
         </div>
       )}
 

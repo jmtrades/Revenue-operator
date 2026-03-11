@@ -23,8 +23,15 @@ export function Modal({ open, onClose, title, size = "md", children }: ModalProp
     const onKey = (e: KeyboardEvent | KeyboardEventInit) => {
       if ("key" in e && e.key === "Escape") onClose();
     };
-    window.addEventListener("keydown", onKey as any);
-    return () => window.removeEventListener("keydown", onKey as any);
+    window.addEventListener(
+      "keydown",
+      onKey as (e: KeyboardEvent | KeyboardEventInit) => void,
+    );
+    return () =>
+      window.removeEventListener(
+        "keydown",
+        onKey as (e: KeyboardEvent | KeyboardEventInit) => void,
+      );
   }, [open, onClose]);
 
   const maxWidth =

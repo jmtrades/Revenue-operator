@@ -48,7 +48,7 @@ export function Button({
     lg: "px-5 py-2.5 text-sm",
   };
 
-  const Comp: any = asChild ? "span" : "button";
+  const Comp = (asChild ? "span" : "button") as "span" | "button";
   const isDisabled = disabled || loading;
 
   return (

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { Phone, PhoneForwarded } from "lucide-react";
 import {
   fetchWorkspaceMeCached,
@@ -194,6 +195,7 @@ export default function AppSettingsPhonePage() {
       setConnectError(message);
       setConnectErrorCode("PROVISION_ERROR");
       setToast(message);
+      toast.error("Failed to connect number. Please try again.");
     } finally {
       setConnecting(false);
       setTimeout(() => setToast(null), 4000);
@@ -216,12 +218,16 @@ export default function AppSettingsPhonePage() {
       if (res.ok) {
         invalidateWorkspaceMeCache();
         setToast("Settings saved.");
+        toast.success("Settings saved");
       } else {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
-        setToast(err.error ?? "Could not save.");
+        const message = err.error ?? "Could not save.";
+        setToast(message);
+        toast.error("Failed to save. Please try again.");
       }
     } catch {
       setToast("Something went wrong.");
+      toast.error("Failed to save. Please try again.");
     } finally {
       setSaving(false);
       setTimeout(() => setToast(null), 3000);

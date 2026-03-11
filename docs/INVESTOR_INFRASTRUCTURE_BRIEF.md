@@ -10,7 +10,7 @@ Institutional summary. No hype. Fact-based.
 
 The product defines and occupies a category: **Commercial Execution Infrastructure**.
 
-It is not positioned as SaaS (chatbot, automation, workflow builder, campaign tool, sequence engine, CRM replacement). It is positioned as infrastructure that guarantees governed execution of revenue-critical conversations across industries. Category language is enforced in code and in user-facing copy; build fails if forbidden SaaS terminology appears.
+The product is an AI phone communication platform that handles inbound/outbound calls, lead capture, appointment booking, follow-up, analytics, and CRM integrations. Standard product terminology is used throughout.
 
 ---
 

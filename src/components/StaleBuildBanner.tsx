@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 
 const STORAGE_KEY = "rt_build_id";
+const BUILD_AGE_THRESHOLD = 24 * 60 * 60 * 1000;
 
 export function StaleBuildBanner() {
   const [show, setShow] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [eligible, setEligible] = useState(false);
 
   const check = useCallback(() => {
     fetch("/api/build-id", { cache: "no-store", credentials: "same-origin" })
@@ -29,10 +31,26 @@ export function StaleBuildBanner() {
   }, []);
 
   useEffect(() => {
+    const raw = process.env.NEXT_PUBLIC_BUILD_ID?.replace("build-", "") || "0";
+    const ts = parseInt(raw, 10);
+    if (!Number.isFinite(ts) || ts <= 0) {
+      setEligible(false);
+      return;
+    }
+    const now = Date.now();
+    if (now - ts < BUILD_AGE_THRESHOLD) {
+      setEligible(false);
+      return;
+    }
+    setEligible(true);
+  }, []);
+
+  useEffect(() => {
+    if (!eligible) return;
     check();
     window.addEventListener("focus", check);
     return () => window.removeEventListener("focus", check);
-  }, [check]);
+  }, [check, eligible]);
 
   // Auto-dismiss after 10 seconds if user doesn't refresh
   useEffect(() => {
@@ -59,7 +77,7 @@ export function StaleBuildBanner() {
     }, 300);
   };
 
-  if (!show) return null;
+  if (!eligible || !show) return null;
 
   return (
     <div

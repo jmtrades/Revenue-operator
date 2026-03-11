@@ -115,7 +115,12 @@ export default function CallsPage() {
     if (!selectedCall?.id) return;
     try {
       const raw = localStorage.getItem(`rt_call_notes_${selectedCall.id}`);
-      if (raw) setCallNotes((prev) => ({ ...prev, [selectedCall.id]: raw }));
+      if (raw) {
+        // This effect syncs localStorage into component state for the
+        // currently selected call. It is safe to update local state here.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCallNotes((prev) => ({ ...prev, [selectedCall.id]: raw }));
+      }
     } catch {
       // ignore
     }
