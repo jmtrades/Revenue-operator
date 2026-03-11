@@ -262,6 +262,36 @@ export default function DocsPage() {
                   CRM. Webhooks and API access available on Business and Enterprise
                   plans.
                 </p>
+                <h3
+                  className="font-semibold text-lg mt-6 mb-2"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Zapier & Make
+                </h3>
+                <p
+                  className="text-sm mb-3"
+                  style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}
+                >
+                  Use OAuth to connect your Recall Touch workspace, then poll triggers or invoke actions from Zapier or Make.
+                </p>
+                <ul className="text-sm mb-2 list-disc pl-5 space-y-1" style={{ color: "var(--text-secondary)" }}>
+                  <li><strong>Authorize:</strong> GET /api/integrations/zapier/oauth/authorize?redirect_uri=...&state=...</li>
+                  <li><strong>Token:</strong> POST /api/integrations/zapier/oauth/token (body: code, client_id, client_secret, redirect_uri, grant_type=authorization_code)</li>
+                </ul>
+                <p className="text-xs font-medium mt-3 mb-1" style={{ color: "var(--text-primary)" }}>Triggers (GET, Bearer token, ?limit=25&since=id)</p>
+                <ul className="text-sm list-disc pl-5 space-y-0.5 mb-3" style={{ color: "var(--text-secondary)" }}>
+                  <li>new_call — /api/integrations/zapier/triggers/new_call</li>
+                  <li>new_lead — /api/integrations/zapier/triggers/new_lead</li>
+                  <li>new_appointment — /api/integrations/zapier/triggers/new_appointment</li>
+                  <li>call_completed — /api/integrations/zapier/triggers/call_completed</li>
+                </ul>
+                <p className="text-xs font-medium mt-3 mb-1" style={{ color: "var(--text-primary)" }}>Actions (POST, Bearer token, JSON body)</p>
+                <ul className="text-sm list-disc pl-5 space-y-0.5" style={{ color: "var(--text-secondary)" }}>
+                  <li>create_lead — /api/integrations/zapier/actions/create_lead (name, phone, email?, company?)</li>
+                  <li>update_lead — /api/integrations/zapier/actions/update_lead (id, name?, phone?, email?, company?, state?)</li>
+                  <li>trigger_campaign — /api/integrations/zapier/actions/trigger_campaign (campaign_id, lead_id)</li>
+                  <li>create_appointment — /api/integrations/zapier/actions/create_appointment (lead_id, title, start_time, end_time?, location?, notes?)</li>
+                </ul>
               </section>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 my-12">
