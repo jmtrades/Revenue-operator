@@ -197,6 +197,7 @@ export async function POST(req: NextRequest) {
   const transcript = typeof msg?.transcript === "string" ? msg.transcript : undefined;
   const summary = typeof msg?.summary === "string" ? msg.summary : undefined;
   const recordingUrl = typeof msg?.recordingUrl === "string" ? msg.recordingUrl : undefined;
+  const endedReason = typeof msg?.endedReason === "string" ? msg.endedReason : (body as { endedReason?: string })?.endedReason;
   let callSessionId: string | null = metadata.call_session_id?.trim() ?? null;
 
   if (!callSessionId && workspaceId && vapiCallId) {
@@ -213,12 +214,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true, skipped: "no session id" });
   }
 
+  const outcomeMap: Record<string, string> = {
+    voicemail: "voicemail",
+    no_answer: "no_answer",
+    busy: "busy",
+    failed: "failed",
+    canceled: "canceled",
+    completed: "completed",
+  };
+  const outcome = endedReason && outcomeMap[endedReason] ? outcomeMap[endedReason] : null;
+
   const updates: Record<string, unknown> = {
     call_ended_at: new Date().toISOString(),
     transcript_text: transcript && String(transcript).trim() ? String(transcript).trim() : null,
     summary: summary && String(summary).trim() ? String(summary).trim() : null,
   };
   if (recordingUrl) (updates as Record<string, string>).recording_url = String(recordingUrl);
+  if (outcome) (updates as Record<string, string>).outcome = outcome;
 
   try {
     const { error } = await db
