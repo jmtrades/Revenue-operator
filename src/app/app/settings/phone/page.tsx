@@ -4,12 +4,23 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast as sonnerToast } from "sonner";
-import { Phone, PhoneForwarded } from "lucide-react";
+import { Phone, PhoneForwarded, Plus, FileInput, MoreVertical } from "lucide-react";
 import {
   fetchWorkspaceMeCached,
   getWorkspaceMeSnapshotSync,
   invalidateWorkspaceMeCache,
 } from "@/lib/client/workspace-me";
+
+type WorkspacePhoneNumber = {
+  id: string;
+  phone_number: string;
+  friendly_name: string | null;
+  number_type: string;
+  status: string;
+  monthly_cost_cents: number;
+  capabilities: { voice?: boolean; sms?: boolean; mms?: boolean };
+  assigned_agent_id: string | null;
+};
 
 function formatPhoneNumber(num: string | null): string {
   if (!num) return "—";
@@ -107,6 +118,28 @@ export default function AppSettingsPhonePage() {
   const [verifyError, setVerifyError] = useState<string | null>(null);
   const [verifiedNumber, setVerifiedNumber] = useState<string | null>(null);
   const [verifyCodeSent, setVerifyCodeSent] = useState(false);
+  const [workspaceNumbers, setWorkspaceNumbers] = useState<WorkspacePhoneNumber[]>([]);
+  const [numbersLoading, setNumbersLoading] = useState(true);
+  const [totalMonthlyCents, setTotalMonthlyCents] = useState(0);
+
+  const fetchWorkspaceNumbers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/phone/numbers", { credentials: "include" });
+      if (res.ok) {
+        const data = (await res.json()) as { numbers?: WorkspacePhoneNumber[]; total_monthly_cents?: number };
+        setWorkspaceNumbers(data.numbers ?? []);
+        setTotalMonthlyCents(data.total_monthly_cents ?? 0);
+      }
+    } catch {
+      setWorkspaceNumbers([]);
+    } finally {
+      setNumbersLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchWorkspaceNumbers();
+  }, [fetchWorkspaceNumbers]);
 
   const fetchPhone = useCallback(async () => {
     try {
@@ -291,8 +324,88 @@ export default function AppSettingsPhonePage() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Phone & numbers" }]} />
-      <h1 className="text-xl font-semibold text-white mb-1">Connect your phone number</h1>
-      <p className="text-sm text-white/60 mb-8">Choose how you want your AI to receive calls.</p>
+      <h1 className="text-xl font-semibold text-white mb-1">Phone numbers</h1>
+      <p className="text-sm text-white/60 mb-6">Manage your workspace numbers and connect your AI.</p>
+
+      {/* Management dashboard: list + Get New / Port */}
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-zinc-400">
+              {numbersLoading ? "…" : `${workspaceNumbers.length} number${workspaceNumbers.length !== 1 ? "s" : ""}`}
+            </span>
+            {!numbersLoading && totalMonthlyCents > 0 && (
+              <span className="text-sm text-zinc-400">${(totalMonthlyCents / 100).toFixed(2)}/mo total</span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/app/settings/phone/marketplace"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Get new number
+            </Link>
+            <Link
+              href="/app/settings/phone/port"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-default)] text-zinc-300 font-medium text-sm hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <FileInput className="w-4 h-4" />
+              Port existing number
+            </Link>
+          </div>
+        </div>
+        {numbersLoading ? (
+          <div className="py-6 text-center text-zinc-500 text-sm">Loading numbers…</div>
+        ) : workspaceNumbers.length === 0 ? (
+          <div className="py-8 text-center rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
+            <Phone className="w-10 h-10 text-zinc-500 mx-auto mb-2" />
+            <p className="text-sm font-medium text-white mb-1">No numbers yet</p>
+            <p className="text-xs text-zinc-500 mb-4">Get a new number or port your existing one to start receiving calls with your AI.</p>
+            <Link
+              href="/app/settings/phone/marketplace"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Get a number
+            </Link>
+          </div>
+        ) : (
+          <ul className="space-y-2">
+            {workspaceNumbers.map((n) => (
+              <li
+                key={n.id}
+                className="flex flex-wrap items-center justify-between gap-3 py-3 px-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]"
+              >
+                <div className="flex items-center gap-3">
+                  <Phone className="w-4 h-4 text-[var(--accent-primary)]" />
+                  <div>
+                    <p className="font-medium text-white font-mono text-sm">{formatPhoneNumber(n.phone_number)}</p>
+                    <p className="text-xs text-zinc-500 capitalize">{n.number_type.replace("_", " ")} · ${(n.monthly_cost_cents / 100).toFixed(2)}/mo</p>
+                  </div>
+                  {n.capabilities?.voice && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">Voice</span>}
+                  {n.capabilities?.sms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">SMS</span>}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[10px] px-2 py-0.5 rounded capitalize ${n.status === "active" ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-zinc-400"}`}>
+                    {n.status}
+                  </span>
+                  <button
+                    type="button"
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-[var(--bg-hover)]"
+                    aria-label="Actions"
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <h2 className="text-lg font-semibold text-white mb-2">Connect your phone number</h2>
+      <p className="text-sm text-white/60 mb-6">Legacy connection and forwarding. Your AI receives calls on the number above or via phone_config.</p>
 
       {loading ? (
         <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse h-24 mb-4" />
