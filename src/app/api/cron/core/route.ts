@@ -19,6 +19,7 @@ const CORE_STEPS = [
   "/api/cron/appointment-reminders",
   "/api/cron/campaign-process",
   "/api/cron/process-queue",
+  "/api/cron/process-sync-queue",
   "/api/cron/commitment-recovery",
   "/api/cron/opportunity-recovery",
   "/api/cron/payment-completion",
