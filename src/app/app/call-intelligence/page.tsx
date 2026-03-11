@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 type CallExample = {
   id: string;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast as sonnerToast } from "sonner";
 import { Phone, PhoneForwarded } from "lucide-react";
 import {
   fetchWorkspaceMeCached,
@@ -195,7 +195,7 @@ export default function AppSettingsPhonePage() {
       setConnectError(message);
       setConnectErrorCode("PROVISION_ERROR");
       setToast(message);
-      toast.error("Failed to connect number. Please try again.");
+      sonnerToast.error("Failed to connect number. Please try again.");
     } finally {
       setConnecting(false);
       setTimeout(() => setToast(null), 4000);
@@ -218,16 +218,16 @@ export default function AppSettingsPhonePage() {
       if (res.ok) {
         invalidateWorkspaceMeCache();
         setToast("Settings saved.");
-        toast.success("Settings saved");
+        sonnerToast.success("Settings saved");
       } else {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
         const message = err.error ?? "Could not save.";
         setToast(message);
-        toast.error("Failed to save. Please try again.");
+        sonnerToast.error("Failed to save. Please try again.");
       }
     } catch {
       setToast("Something went wrong.");
-      toast.error("Failed to save. Please try again.");
+      sonnerToast.error("Failed to save. Please try again.");
     } finally {
       setSaving(false);
       setTimeout(() => setToast(null), 3000);
@@ -242,6 +242,7 @@ export default function AppSettingsPhonePage() {
     }
     if (!primaryAgentId) {
       setToast("Create an agent first in the Agents section, then try again.");
+      sonnerToast.error("Create an agent first in the Agents section, then try again.");
       setTimeout(() => setToast(null), 4000);
       return;
     }
@@ -266,6 +267,7 @@ export default function AppSettingsPhonePage() {
       }
     } catch {
       setToast("Something went wrong. Try again.");
+      sonnerToast.error("Failed to start test call. Please try again.");
       setTestCallError("Something went wrong. Try again.");
     } finally {
       setTestingCall(false);

@@ -3625,9 +3625,50 @@ function BehaviorStepContent({
         <h3 className="text-sm font-medium text-white/70 mb-1">
           Qualification questions
         </h3>
-        <p className="text-xs text-white/40 mb-3">
+        <p className="text-xs text-white/40 mb-2">
           Questions your AI asks to qualify leads. Drag to reorder priority.
         </p>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span className="text-[11px] text-white/40">Preset:</span>
+          {(["bant", "meddic", "custom"] as const).map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              onClick={() => {
+                if (preset === "custom") {
+                  onChange({});
+                  return;
+                }
+                const next =
+                  preset === "bant"
+                    ? [
+                        "Do you have a budget set aside for this?",
+                        "When are you hoping to get this done?",
+                        "Are you the one making the final decision?",
+                        "What problem are you trying to solve?",
+                      ]
+                    : [
+                        "What metrics will you use to measure success?",
+                        "Who else is involved in the decision?",
+                        "What is the impact if you do nothing?",
+                        "Do you have a formal decision process or timeline?",
+                      ];
+                onChange({ qualificationQuestions: next });
+              }}
+              className={`px-2.5 py-1 rounded-full border text-[11px] ${
+                preset === "custom"
+                  ? "border-white bg-white text-black"
+                  : "border-white/20 text-white/70 hover:border-white/40"
+              }`}
+            >
+              {preset === "bant"
+                ? "BANT"
+                : preset === "meddic"
+                  ? "MEDDIC"
+                  : "Custom"}
+            </button>
+          ))}
+        </div>
 
         {(qualificationQuestions || []).map((q, i) => (
           <div key={i} className="flex items-center gap-2 mb-2">

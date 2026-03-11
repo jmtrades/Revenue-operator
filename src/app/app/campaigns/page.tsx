@@ -192,8 +192,8 @@ export default function CampaignsPage() {
           created && "error" in created && typeof created.error === "string"
             ? created.error
             : editingId
-              ? "Could not update run"
-              : "Could not create run";
+              ? "Could not update campaign"
+              : "Could not create campaign";
         throw new Error(errorMessage);
       }
       setCampaigns((prev) =>
@@ -213,38 +213,44 @@ export default function CampaignsPage() {
         audienceMinScore: "",
         audienceNotContactedDays: "",
       });
-      setToast(editingId ? "Run updated." : "Run created.");
+      setToast(editingId ? "Campaign updated." : "Campaign created.");
     } catch (error) {
-      setToast(error instanceof Error ? error.message : editingId ? "Could not update run." : "Could not create run.");
+      setToast(
+        error instanceof Error
+          ? error.message
+          : editingId
+            ? "Could not update campaign."
+            : "Could not create campaign.",
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  const toggleCampaign = async (run: CampaignRow) => {
-    const nextStatus = run.status === "active" ? "paused" : "active";
-    const res = await fetch(`/api/campaigns/${run.id}`, {
+  const toggleCampaign = async (campaign: CampaignRow) => {
+    const nextStatus = campaign.status === "active" ? "paused" : "active";
+    const res = await fetch(`/api/campaigns/${campaign.id}`, {
       method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: nextStatus }),
     });
     if (!res.ok) {
-      setToast("Could not update run.");
+      setToast("Could not update campaign.");
       return;
     }
     setCampaigns((prev) =>
-      prev.map((item) => (item.id === run.id ? { ...item, status: nextStatus } : item)),
+      prev.map((item) => (item.id === campaign.id ? { ...item, status: nextStatus } : item)),
     );
-    setToast(nextStatus === "active" ? "Run resumed." : "Run paused.");
+    setToast(nextStatus === "active" ? "Campaign resumed." : "Campaign paused.");
   };
 
-  const loadCampaignIntoForm = (run: CampaignRow) => {
-    setEditingId(run.id);
-    const tf = run.target_filter;
+  const loadCampaignIntoForm = (campaign: CampaignRow) => {
+    setEditingId(campaign.id);
+    const tf = campaign.target_filter;
     setForm({
-      name: run.name,
-      type: run.type,
+      name: campaign.name,
+      type: campaign.type,
       audience: tf?.audience ?? "",
       template: tf?.message_template ?? "",
       schedule: tf?.schedule ?? "",
@@ -301,22 +307,22 @@ export default function CampaignsPage() {
                   Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts.
                 </p>
                 <a
-                  href="#create-run"
+                  href="#create-campaign"
                   className="mt-4 inline-block min-h-[44px] rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-zinc-100 touch-manipulation"
                 >
                   Create campaign
                 </a>
               </div>
             ) : (
-              filtered.map((run) => (
-                <div key={run.id} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              filtered.map((campaign) => (
+                <div key={campaign.id} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-white">{run.name}</p>
+                      <p className="text-sm font-semibold text-white">{campaign.name}</p>
                       <p className="mt-2 text-xs text-zinc-500">
-                        {run.target_filter?.audience ?? "Outcome-based audience"}
+                        {campaign.target_filter?.audience ?? "Outcome-based audience"}
                         {(() => {
-                          const tf = run.target_filter;
+                          const tf = campaign.target_filter;
                           const parts: string[] = [];
                           if (Array.isArray(tf?.audience_statuses) && tf.audience_statuses.length > 0) {
                             parts.push(tf.audience_statuses.join(", "));
@@ -336,17 +342,17 @@ export default function CampaignsPage() {
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300">
-                          {run.type.replace(/_/g, " ")}
+                          {campaign.type.replace(/_/g, " ")}
                         </span>
                         <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300">
-                          {run.status}
+                          {campaign.status}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => loadCampaignIntoForm(run)}
+                        onClick={() => loadCampaignIntoForm(campaign)}
                         className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
                       >
                         Edit
@@ -354,28 +360,28 @@ export default function CampaignsPage() {
                       <button
                         type="button"
                         onClick={() =>
-                          run.status === "active"
-                            ? setPauseConfirm(run)
-                            : void toggleCampaign(run)
+                          campaign.status === "active"
+                            ? setPauseConfirm(campaign)
+                            : void toggleCampaign(campaign)
                         }
                         className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
                       >
-                        {run.status === "active" ? "Pause" : "Resume"}
+                        {campaign.status === "active" ? "Pause" : "Resume"}
                       </button>
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <Metric label="Contacts" value={run.total_contacts} />
-                    <Metric label="Called" value={run.called} />
-                    <Metric label="Answered" value={run.answered} />
-                    <Metric label="Appointments" value={run.appointments_booked} />
+                    <Metric label="Contacts" value={campaign.total_contacts} />
+                    <Metric label="Called" value={campaign.called} />
+                    <Metric label="Answered" value={campaign.answered} />
+                    <Metric label="Appointments" value={campaign.appointments_booked} />
                   </div>
-                  {run.total_contacts > 0 && (
+                  {campaign.total_contacts > 0 && (
                     <div className="mt-3">
                       <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-1">
                         <span>Progress</span>
                         <span>
-                          {run.called}/{run.total_contacts} called
+                          {campaign.called}/{campaign.total_contacts} called
                         </span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-zinc-900 overflow-hidden">
@@ -384,7 +390,9 @@ export default function CampaignsPage() {
                           style={{
                             width: `${Math.min(
                               100,
-                              Math.round((run.called / run.total_contacts) * 100),
+                              Math.round(
+                                (campaign.called / campaign.total_contacts) * 100,
+                              ),
                             )}%`,
                           }}
                         />
@@ -392,11 +400,11 @@ export default function CampaignsPage() {
                     </div>
                   )}
                   <p className="mt-3 text-[11px] text-zinc-500">
-                    Created {new Date(run.created_at).toLocaleDateString()}
+                    Created {new Date(campaign.created_at).toLocaleDateString()}
                   </p>
-                  {run.target_filter?.schedule ? (
+                  {campaign.target_filter?.schedule ? (
                     <p className="mt-1 text-[11px] text-zinc-500">
-                      Scheduled {new Date(run.target_filter.schedule).toLocaleString()}
+                      Scheduled {new Date(campaign.target_filter.schedule).toLocaleString()}
                     </p>
                   ) : null}
                 </div>
@@ -404,10 +412,15 @@ export default function CampaignsPage() {
             )}
           </div>
 
-          <div id="create-run" className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 h-fit scroll-mt-4">
+          <div
+            id="create-campaign"
+            className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 h-fit scroll-mt-4"
+          >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-white">{editingId ? "Edit run" : "Create run"}</p>
+                <p className="text-sm font-semibold text-white">
+                  {editingId ? "Edit campaign" : "Create campaign"}
+                </p>
                 <p className="text-xs text-zinc-500 mt-1">
                   Keep it tied to real outcomes: follow-up, reminders, recovery, or reactivation.
                 </p>
@@ -438,7 +451,7 @@ export default function CampaignsPage() {
             </div>
             <div className="mt-4 space-y-4">
               <div className="mb-4">
-                <label className="text-xs text-white/40 mb-2 block">Run type</label>
+                <label className="text-xs text-white/40 mb-2 block">Campaign type</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { id: "followup", label: "Lead follow-up", desc: "Call leads who showed interest" },
@@ -474,7 +487,9 @@ export default function CampaignsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Run name</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  Campaign name
+                </label>
                 <input
                   type="text"
                   value={form.name}
@@ -603,7 +618,13 @@ export default function CampaignsPage() {
                 disabled={saving || !form.name.trim()}
                 className="w-full px-4 py-3 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-60"
               >
-                {saving ? (editingId ? "Saving…" : "Creating…") : editingId ? "Save changes" : "Create run"}
+                {saving
+                  ? editingId
+                    ? "Saving…"
+                    : "Creating…"
+                  : editingId
+                    ? "Save changes"
+                    : "Create campaign"}
               </button>
             </div>
           </div>
@@ -612,7 +633,7 @@ export default function CampaignsPage() {
         {pauseConfirm && (
           <ConfirmDialog
             open
-            title="Pause this run?"
+            title="Pause this campaign?"
             message={`Pause "${pauseConfirm.name}"? You can resume it later from this page.`}
             confirmLabel="Pause"
             onConfirm={() => {

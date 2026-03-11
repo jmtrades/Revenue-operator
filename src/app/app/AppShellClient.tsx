@@ -340,15 +340,26 @@ export default function AppShellClient({
                 </nav>
                 <div className="p-3 border-t border-[var(--border-default)] space-y-2">
                   {!sidebarCollapsed && (
-                    <div className="rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20 px-3 py-2">
-                      <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Trial</span>
-                      <span className="block text-[12px] text-[var(--text-secondary)]">
-                        12 days left
-                        {(workspaceMeta?.stats?.calls ?? 0) > 0
-                          ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered`
-                          : ""}
-                      </span>
-                    </div>
+                    <>
+                      <div className="rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20 px-3 py-2">
+                        <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Trial</span>
+                        <span className="block text-[12px] text-[var(--text-secondary)]">
+                          12 days left
+                          {(workspaceMeta?.stats?.calls ?? 0) > 0
+                            ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered`
+                            : ""}
+                        </span>
+                      </div>
+                      <div className="px-1 pt-1 text-[10px] text-[#5A5A5C]">
+                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D]">
+                          ⌘
+                        </kbd>
+                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D] ml-0.5">
+                          K
+                        </kbd>
+                        <span className="ml-1.5">Quick search</span>
+                      </div>
+                    </>
                   )}
                   <button
                     type="button"

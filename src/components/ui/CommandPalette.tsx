@@ -161,6 +161,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             onKeyDown={handleKeyDown}
             role="dialog"
             aria-modal="true"
+            aria-label="Quick search"
           >
             <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--border-default)]">
               <Search className="h-4 w-4 text-[var(--text-tertiary)]" />
@@ -170,9 +171,17 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search pages and actions…"
                 className="h-8 flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none"
+                role="combobox"
+                aria-expanded={items.length > 0}
+                aria-haspopup="listbox"
+                aria-controls="command-palette-list"
               />
             </div>
-            <div className="max-h-80 overflow-y-auto py-2 text-sm">
+            <div
+              id="command-palette-list"
+              role="listbox"
+              className="max-h-80 overflow-y-auto py-2 text-sm"
+            >
               {Object.entries(grouped).map(([section, sectionItems]) => (
                 <div key={section}>
                   <p className="px-4 pt-2 pb-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
@@ -194,7 +203,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                             ? "bg-[var(--bg-hover)] text-[var(--text-primary)]"
                             : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]",
                         )}
-                      >
+                        >
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="truncate">{item.label}</span>
                       </button>

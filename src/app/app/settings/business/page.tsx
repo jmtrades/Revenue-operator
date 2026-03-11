@@ -38,7 +38,7 @@ export default function AppSettingsBusinessPage() {
       ? workspaceSnapshot.industry
       : "other",
   );
-  const [toast, setToast] = useState<string | null>(null);
+  const [inlineToast, setInlineToast] = useState<string | null>(null);
 
   useEffect(() => {
     fetchWorkspaceMeCached()
@@ -61,13 +61,13 @@ export default function AppSettingsBusinessPage() {
       });
       if (!res.ok) throw new Error("save_failed");
       invalidateWorkspaceMeCache();
-      setToast("Settings saved");
+      setInlineToast("Settings saved");
       toast.success("Settings saved");
     } catch {
-      setToast("Could not save settings");
+      setInlineToast("Could not save settings");
       toast.error("Failed to save. Please try again.");
     }
-    setTimeout(() => setToast(null), 3000);
+    setTimeout(() => setInlineToast(null), 3000);
   };
 
   return (
@@ -102,9 +102,9 @@ export default function AppSettingsBusinessPage() {
       </div>
       <button type="button" disabled={loading} onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60">Save changes</button>
 
-      {toast && (
+      {inlineToast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">
-          {toast}
+          {inlineToast}
         </div>
       )}
 

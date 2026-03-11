@@ -51,10 +51,10 @@ export function Hero() {
                 Start free →
               </Link>
               <Link
-                href={ROUTES.SIGN_IN}
+                href={ROUTES.DEMO}
                 className="border border-white/20 text-white/90 font-medium rounded-xl px-5 py-2.5 hover:bg-white/10 transition-colors no-underline w-full sm:w-auto text-center"
               >
-                Sign in
+                Watch demo →
               </Link>
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm" style={{ color: "#64748B" }}>

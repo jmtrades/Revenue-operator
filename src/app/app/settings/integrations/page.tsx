@@ -375,33 +375,7 @@ export default function AppSettingsIntegrationsPage() {
           </div>
         </section>
 
-        <section>
-          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">CRM</h2>
-          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-4">
-          <p className="text-sm font-medium text-white">Webhook (any CRM)</p>
-          <p className="text-xs text-zinc-500 mt-1">
-            Set your webhook URL in <strong className="text-zinc-400">Automation & webhooks</strong> above. We POST lead captured, appointment booked, deal won, and more to that URL — so you can connect HubSpot, Salesforce, Pipedrive, Zoho, Zapier, or any tool that accepts webhooks.
-          </p>
-          <p className="text-[11px] text-zinc-500 mt-2">
-            Works with: HubSpot, Salesforce, Pipedrive, Zoho CRM, Zapier, Make, and any platform that accepts incoming webhooks.
-          </p>
-          <p className="text-xs font-medium text-white mt-3 mb-1">Send leads into Recall Touch</p>
-          <p className="text-[11px] text-zinc-500">
-            POST to <code className="rounded bg-zinc-800 px-1">/api/webhooks/lead-inbound</code> with body: <code className="rounded bg-zinc-800 px-1">{`{ "workspace_id": "...", "name": "...", "phone": "...", "email": "..." }`}</code>. Use your session (same origin) or set <code className="rounded bg-zinc-800 px-1">LEAD_INBOUND_WEBHOOK_SECRET</code> and send it in the <code className="rounded bg-zinc-800 px-1">x-api-key</code> header.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/app/leads" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
-              Add leads
-            </Link>
-            <Link href="/app/contacts" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
-              Manage contacts
-            </Link>
-            <Link href="/docs#integrations" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs font-medium px-3 py-2 hover:border-zinc-500">
-              Integration guide
-            </Link>
-          </div>
-          </div>
-        </section>
+        {/* CRM webhook usage is already explained above the cards; duplicate CRM section removed */}
       </div>
 
       {toast && (
