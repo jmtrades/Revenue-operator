@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag, Brain } from "lucide-react";
@@ -12,7 +13,8 @@ import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { Sheet } from "@/components/ui/Sheet";
 import { Button } from "@/components/ui/Button";
-import { AudioPlayer } from "@/components/ui/AudioPlayer";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { apiFetch, ApiError } from "@/lib/api";
 
 const PAGE_TITLE = "Calls — Recall Touch";
 
@@ -57,6 +59,11 @@ const SENTIMENT_LABELS: Record<Exclude<CallSentiment, null>, string> = {
   neutral: "Neutral",
   negative: "Negative",
 };
+
+const AudioPlayer = dynamic(
+  () => import("@/components/ui/AudioPlayer").then((mod) => mod.AudioPlayer),
+  { ssr: false },
+);
 
 type SortKey = "newest" | "duration" | "sentiment";
 
@@ -128,20 +135,23 @@ export default function CallsPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
-      credentials: "include",
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to load calls");
-        return r.json();
-      })
-      .then((data: { calls?: CallRecord[] }) => {
+    apiFetch<{ calls?: CallRecord[] }>(
+      `/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`,
+      { credentials: "include", timeout: 8000, retries: 1 },
+    )
+      .then((data) => {
         const next = data.calls ?? [];
         setError(null);
         setRecords(next);
         persistCallsSnapshot(workspaceId, next);
       })
-      .catch(() => setError("Could not load calls for this workspace."))
+      .catch((err) => {
+        const message =
+          err instanceof ApiError && err.status === 408
+            ? "Request timed out. Try again."
+            : "Could not load calls for this workspace.";
+        setError(message);
+      })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -348,10 +358,41 @@ export default function CallsPage() {
       </div>
 
       {loading ? (
-        <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8">
-          <div className="h-8 w-48 rounded-lg bg-zinc-800 animate-pulse mb-4" />
-          <div className="h-4 w-full max-w-xl rounded bg-zinc-800/80 animate-pulse mb-2" />
-          <div className="h-4 w-3/4 max-w-md rounded bg-zinc-800/60 animate-pulse" />
+        <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div className="flex-1 flex items-center gap-3">
+              <Skeleton variant="rectangular" className="h-9 w-40 rounded-xl" />
+              <Skeleton variant="rectangular" className="h-9 w-32 rounded-xl" />
+              <Skeleton variant="rectangular" className="h-9 w-32 rounded-xl" />
+            </div>
+            <Skeleton variant="rectangular" className="h-9 w-28 rounded-xl" />
+          </div>
+          <div className="mt-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden">
+            <div className="grid grid-cols-[1.5fr,1.2fr,1fr,0.9fr,1fr,1fr,1fr,0.5fr] gap-2 px-4 py-3 border-b border-[var(--border-default)]">
+              <Skeleton variant="text" className="h-4 w-24" />
+              <Skeleton variant="text" className="h-4 w-20" />
+              <Skeleton variant="text" className="h-4 w-16" />
+              <Skeleton variant="text" className="h-4 w-16" />
+              <Skeleton variant="text" className="h-4 w-16" />
+              <Skeleton variant="text" className="h-4 w-16" />
+              <Skeleton variant="text" className="h-4 w-16" />
+              <Skeleton variant="text" className="h-4 w-10" />
+            </div>
+            <div className="divide-y divide-[var(--border-default)]">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="grid grid-cols-[1.5fr,1.2fr,1fr,0.9fr,1fr,1fr,1fr,0.5fr] gap-2 px-4 py-3">
+                  <Skeleton variant="text" className="h-4 w-32" />
+                  <Skeleton variant="text" className="h-4 w-28" />
+                  <Skeleton variant="text" className="h-4 w-24" />
+                  <Skeleton variant="text" className="h-4 w-16" />
+                  <Skeleton variant="text" className="h-4 w-20" />
+                  <Skeleton variant="text" className="h-4 w-16" />
+                  <Skeleton variant="text" className="h-4 w-24" />
+                  <Skeleton variant="circular" className="h-6 w-6" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       ) : error ? (
         <div className="mt-6 text-sm text-[var(--accent-red)]" role="alert">{error}</div>

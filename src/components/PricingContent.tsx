@@ -417,7 +417,15 @@ export function PricingContent() {
             Start free →
           </Link>
           <p className="text-xs text-zinc-500">
-            Trusted by hundreds of operators who can&apos;t afford to miss decisive calls.
+            Trusted by operators who can&apos;t afford to miss decisive calls.
+          </p>
+          <p className="text-xs">
+            <Link
+              href={ROUTES.CONTACT}
+              className="font-medium underline-offset-4 hover:underline"
+            >
+              Questions? Talk to us →
+            </Link>
           </p>
         </div>
       </Container>

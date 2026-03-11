@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { PlanChangeModal, type PlanId } from "@/components/PlanChangeModal";
@@ -98,6 +99,7 @@ export default function AppSettingsBillingPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
+      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Billing" }]} />
       <h1 className="text-lg font-semibold text-white mb-4">Billing</h1>
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
         <p className="text-sm font-medium text-white">Starter — $297/mo</p>

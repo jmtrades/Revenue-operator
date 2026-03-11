@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import { SwCleanup } from "@/components/SwCleanup";
 import { StaleBuildBanner } from "@/components/StaleBuildBanner";
 
@@ -108,17 +110,22 @@ export default function RootLayout({
         </a>
         {children}
         <Toaster
-          position="top-right"
+          position="bottom-right"
           theme="dark"
           richColors
           closeButton
           toastOptions={{
-            classNames: {
-              toast:
-                "rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card-elevated)] text-[var(--text-primary)] text-sm shadow-xl",
+            style: {
+              background: "#1A1A1D",
+              border: "1px solid rgba(255,255,255,0.06)",
+              color: "#EDEDEF",
+              fontSize: "14px",
+              borderRadius: "12px",
             },
           }}
         />
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

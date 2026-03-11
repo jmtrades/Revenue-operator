@@ -1,25 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  Area,
-  AreaChart,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { AlertTriangle, BadgeCheck, BarChart3, Lightbulb, TrendingUp } from "lucide-react";
+import { AlertTriangle, BadgeCheck, BarChart3, Lightbulb, TrendingUp, CalendarRange, Sparkles } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { KPIRow } from "@/components/ui/KPIRow";
 import { StatCard } from "@/components/ui/StatCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { tokens } from "@/lib/design-tokens";
+import { apiFetch, ApiError } from "@/lib/api";
 
 type RangeKey = "today" | "7d" | "30d" | "90d" | "custom";
 
@@ -48,6 +39,21 @@ interface LeadRecord {
 const PAGE_TITLE = "Analytics — Recall Touch";
 const ANALYTICS_CALLS_SNAPSHOT_PREFIX = "rt_analytics_calls_snapshot:";
 const ANALYTICS_LEADS_SNAPSHOT_PREFIX = "rt_analytics_leads_snapshot:";
+
+const AnalyticsCharts = dynamic(
+  () => import("./AnalyticsCharts").then((mod) => mod.AnalyticsCharts),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="mt-6">
+        <div className="grid md:grid-cols-2 gap-4">
+          <Skeleton variant="card" className="h-72" />
+          <Skeleton variant="card" className="h-72" />
+        </div>
+      </div>
+    ),
+  },
+);
 
 function readAnalyticsSnapshot<T>(prefix: string, workspaceId: string): T[] {
   if (typeof window === "undefined" || !workspaceId) return [];
@@ -87,6 +93,83 @@ function getRangeBounds(range: RangeKey, dateFrom?: string, dateTo?: string): { 
   return { start, end };
 }
 
+function generatePeriodSummary(
+  stats: {
+    totalCalls: number;
+    answerRate: number;
+    avgHandleTime: string;
+    conversionRate: number;
+    appointmentsBooked: number;
+    estimatedRevenue: number;
+  },
+  rangeLabel: string,
+): string {
+  if (stats.totalCalls === 0) {
+    return `No calls recorded${rangeLabel ? ` in the selected ${rangeLabel.toLowerCase()} period` : ""}. Make a test call to start seeing insights here.`;
+  }
+
+  const parts: string[] = [];
+
+  parts.push(
+    `You handled **${stats.totalCalls} call${stats.totalCalls !== 1 ? "s" : ""}** with a **${stats.answerRate}% answer rate**.`,
+  );
+
+  if (stats.appointmentsBooked > 0) {
+    parts.push(
+      `Your agents booked **${stats.appointmentsBooked} appointment${stats.appointmentsBooked !== 1 ? "s" : ""}**, converting **${stats.conversionRate}%** of qualified leads.`,
+    );
+  }
+
+  if (stats.estimatedRevenue > 0) {
+    parts.push(
+      `Estimated revenue impact: **$${stats.estimatedRevenue.toLocaleString()}**.`,
+    );
+  }
+
+  if (stats.avgHandleTime) {
+    parts.push(`Average call duration: **${stats.avgHandleTime}**.`);
+  }
+
+  return parts.join(" ");
+}
+
+function AnalyticsSkeleton() {
+  return (
+    <div className="space-y-6 mt-4">
+      <div className="flex items-center justify-between">
+        <Skeleton variant="text" className="h-8 w-48" />
+        <div className="flex gap-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <Skeleton
+              key={i}
+              variant="rectangular"
+              className="h-9 w-16 rounded-lg"
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {Array.from({ length: 5 }).map((_, i) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <Skeleton key={i} variant="card" className="h-24" />
+        ))}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <Skeleton variant="card" className="h-72" />
+        <Skeleton variant="card" className="h-72" />
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <Skeleton variant="card" className="h-48" />
+        <Skeleton variant="card" className="h-48" />
+      </div>
+    </div>
+  );
+}
+
 export default function AppAnalyticsPage() {
   const [range, setRange] = useState<RangeKey>("30d");
   const [dateFrom, setDateFrom] = useState("");
@@ -117,9 +200,11 @@ export default function AppAnalyticsPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/analytics/suggestions`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : { suggestions: [] }))
-      .then((data: { suggestions?: Array<{ id: string; title: string; description?: string | null; actionLabel?: string | null; actionHref?: string | null }> }) => {
+    apiFetch<{ suggestions?: Array<{ id: string; title: string; description?: string | null; actionLabel?: string | null; actionHref?: string | null }> }>(
+      "/api/analytics/suggestions",
+      { credentials: "include", timeout: 8000, retries: 1 },
+    )
+      .then((data) => {
         setSuggestions(
           (data.suggestions ?? []).map((s) => ({
             id: s.id,
@@ -136,23 +221,17 @@ export default function AppAnalyticsPage() {
   useEffect(() => {
     if (!workspaceId) return;
     Promise.all([
-      fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
-        credentials: "include",
-      })
-        .then((r) => {
-          if (!r.ok) throw new Error("calls failed");
-          return r.json();
-        })
-        .then((data: { calls?: CallRecord[] }) => data.calls ?? [])
+      apiFetch<{ calls?: CallRecord[] }>(
+        `/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { credentials: "include", timeout: 8000, retries: 1 },
+      )
+        .then((data) => data.calls ?? [])
         .catch(() => [] as CallRecord[]),
-      fetch(`/api/leads?workspace_id=${encodeURIComponent(workspaceId)}`, {
-        credentials: "include",
-      })
-        .then((r) => {
-          if (!r.ok) throw new Error("leads failed");
-          return r.json();
-        })
-        .then((data: { leads?: LeadRecord[] }) => data.leads ?? [])
+      apiFetch<{ leads?: LeadRecord[] }>(
+        `/api/leads?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { credentials: "include", timeout: 8000, retries: 1 },
+      )
+        .then((data) => data.leads ?? [])
         .catch(() => [] as LeadRecord[]),
     ])
       .then(([c, l]) => {
@@ -162,7 +241,13 @@ export default function AppAnalyticsPage() {
         persistAnalyticsSnapshot(ANALYTICS_CALLS_SNAPSHOT_PREFIX, workspaceId, c);
         persistAnalyticsSnapshot(ANALYTICS_LEADS_SNAPSHOT_PREFIX, workspaceId, l);
       })
-      .catch(() => setError("Could not load analytics for this workspace."))
+      .catch((err) => {
+        const message =
+          err instanceof ApiError && err.status === 408
+            ? "Analytics request timed out. Try again."
+            : "Could not load analytics for this workspace.";
+        setError(message);
+      })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -324,6 +409,55 @@ export default function AppAnalyticsPage() {
     ];
   }, [totalCalls, filteredLeads]);
 
+  const summaryLabel = useMemo(() => {
+    if (range === "today") return "Today";
+    if (range === "7d") return "Last 7 days";
+    if (range === "30d") return "Last 30 days";
+    if (range === "90d") return "Last 90 days";
+    return "Custom range";
+  }, [range]);
+
+  const handleExportCsv = () => {
+    if (!hasData) return;
+    const rows: string[] = [];
+    rows.push("type,id,started_at,ended_at,outcome,lead_id,lead_state");
+    for (const c of filteredCalls) {
+      rows.push(
+        [
+          "call",
+          `"${c.id}"`,
+          c.call_started_at ?? "",
+          c.call_ended_at ?? "",
+          c.outcome ?? "",
+          c.lead_id ?? "",
+          "",
+        ].join(","),
+      );
+    }
+    for (const l of filteredLeads) {
+      rows.push(
+        [
+          "lead",
+          `"${l.id}"`,
+          "",
+          "",
+          "",
+          l.id,
+          l.state,
+        ].join(","),
+      );
+    }
+    const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "recall-touch-analytics.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
@@ -376,12 +510,48 @@ export default function AppAnalyticsPage() {
               />
             </div>
           )}
+          <button
+            type="button"
+            onClick={handleExportCsv}
+            disabled={!hasData}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-200 hover:bg-[var(--bg-hover)] disabled:opacity-50"
+          >
+            Export CSV
+          </button>
         </div>
       </div>
 
-      {loading && (
-        <p className="text-sm text-zinc-500 mb-4">Loading analytics…</p>
+      {!loading && (
+        <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-5 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-[#4F8CFF]" />
+            <h3 className="text-sm font-medium text-[#EDEDEF]">Period Summary</h3>
+            <span className="text-xs text-[#5A5A5C] ml-auto">{summaryLabel}</span>
+          </div>
+          <p
+            className="text-sm text-[#8B8B8D] leading-relaxed"
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: generatePeriodSummary(
+                {
+                  totalCalls,
+                  answerRate: hasData ? 100 : 0,
+                  avgHandleTime: formatDuration(avgHandleTime),
+                  conversionRate: leadConversionPct,
+                  appointmentsBooked: appointments,
+                  estimatedRevenue: estRevenueImpact,
+                },
+                summaryLabel,
+              ).replace(
+                /\*\*(.*?)\*\*/g,
+                '<strong class="text-[#EDEDEF]">$1</strong>',
+              ),
+            }}
+          />
+        </div>
       )}
+
+      {loading && <AnalyticsSkeleton />}
       {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
       {!hasData && !loading && !error && (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 mb-6 text-center">
@@ -429,83 +599,7 @@ export default function AppAnalyticsPage() {
         />
       </KPIRow>
 
-      {/* Row 2: charts */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-6">
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-          <p className="text-sm font-medium text-white mb-4">
-            Call volume (by day)
-          </p>
-          <div className="h-52">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={volumeData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                <XAxis
-                  dataKey="day"
-                  tick={{ fill: "#71717a", fontSize: 10 }}
-                  axisLine={{ stroke: "#27272a" }}
-                />
-                <YAxis hide />
-                <Tooltip
-                  contentStyle={{
-                    background: "#020617",
-                    border: "1px solid #27272a",
-                    borderRadius: 8,
-                  }}
-                  labelStyle={{ color: "#e5e7eb" }}
-                  formatter={(value) => [Number(value ?? 0), "calls"]}
-                />
-                <defs>
-                  <linearGradient id="volumeFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={tokens.colors.accentPrimary} stopOpacity={0.3} />
-                    <stop offset="100%" stopColor={tokens.colors.accentPrimary} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <Area
-                  type="monotone"
-                  dataKey="calls"
-                  stroke={tokens.colors.accentPrimary}
-                  strokeWidth={2}
-                  fill="url(#volumeFill)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-          <p className="text-sm font-medium text-white mb-4">Outcome breakdown</p>
-          <div className="h-52 flex items-center justify-center relative">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={outcomeSlices}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={45}
-                  outerRadius={70}
-                  paddingAngle={2}
-                  stroke="transparent"
-                >
-                  {outcomeSlices.map((slice) => (
-                    <Cell key={slice.name} fill={slice.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{ background: "#0a0a0b", border: "1px solid #27272a", borderRadius: 8 }}
-                  formatter={(value) => [Number(value ?? 0), "calls"]}
-                />
-                <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: 10 }} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <span className="text-lg font-semibold text-white">
-                {outcomeSlices.reduce((s, x) => s + x.value, 0)}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AnalyticsCharts volumeData={volumeData} outcomeSlices={outcomeSlices} />
 
       {/* Lead funnel */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6">
@@ -523,6 +617,31 @@ export default function AppAnalyticsPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Period summary card */}
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 rounded-xl bg-[var(--bg-input)] p-2">
+            <CalendarRange className="h-4 w-4 text-zinc-400" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+              {summaryLabel} at a glance
+            </p>
+            <p className="text-sm text-zinc-300 mt-1">
+              {hasData
+                ? `Handled ${totalCalls} calls, created ${callsWithLead} leads, booked ${appointments} appointments, and protected an estimated $${estRevenueImpact.toLocaleString()} in revenue.`
+                : "Once calls start coming in, you’ll see a summary of how many became leads, appointments, and revenue."}
+            </p>
+          </div>
+        </div>
+        {hasData && (
+          <div className="flex flex-wrap gap-3 text-[11px] text-zinc-400">
+            <span>Lead conversion {leadConversionPct}%</span>
+            <span>Positive sentiment {positivePct}%</span>
+          </div>
+        )}
       </div>
 
       {/* Row 3: heatmap + insights */}

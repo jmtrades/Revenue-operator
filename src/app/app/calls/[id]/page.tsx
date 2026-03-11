@@ -12,8 +12,12 @@ import {
   Play,
   Pause,
   Download,
+  Bot,
+  User,
 } from "lucide-react";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { cn } from "@/lib/cn";
 
 const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
 
@@ -161,6 +165,12 @@ interface CallDetail {
     email?: string | null;
     company?: string | null;
   } | null;
+  utterances?: Array<{
+    id: string;
+    speaker: "caller" | "agent" | string;
+    text: string;
+    start_time?: number | null;
+  }> | null;
 }
 
 function formatTime(iso: string | null | undefined): string {
@@ -258,6 +268,13 @@ export default function AppCallDetailPage() {
   const summaryText = call?.summary || call?.analysis?.summary || null;
   const followupPlan = call?.analysis?.followup_plan || call?.analysis?.next_best_action || null;
   const sentiment = call?.analysis?.sentiment || null;
+  const utterances = call?.utterances ?? null;
+
+  const formatSpeaker = (speaker: string): string => {
+    if (speaker === "agent") return "AI agent";
+    if (speaker === "caller") return "Caller";
+    return speaker;
+  };
 
   if (loading) {
     return (
@@ -293,13 +310,12 @@ export default function AppCallDetailPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto">
-      <Link
-        href="/app/calls"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white mb-4"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to calls
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: "Calls", href: "/app/calls" },
+          { label: "Call detail" },
+        ]}
+      />
 
       <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
         <div>
@@ -406,7 +422,46 @@ export default function AppCallDetailPage() {
           <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
             Transcript
           </h2>
-          {call.transcript_text ? (
+          {utterances && utterances.length > 0 ? (
+            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+              {utterances.map((u) => (
+                <div
+                  key={u.id}
+                  className={cn(
+                    "flex gap-3 p-3 rounded-xl mb-1",
+                    u.speaker === "agent" ? "bg-[#4F8CFF]/5" : "bg-white/[0.02]",
+                  )}
+                >
+                  <div className="shrink-0 mt-0.5">
+                    {u.speaker === "agent" ? (
+                      <div className="w-7 h-7 rounded-full bg-[#4F8CFF]/20 flex items-center justify-center">
+                        <Bot className="w-3.5 h-3.5 text-[#4F8CFF]" />
+                      </div>
+                    ) : (
+                      <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center">
+                        <User className="w-3.5 h-3.5 text-[#8B8B8D]" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span
+                        className={cn(
+                          "text-xs font-medium",
+                          u.speaker === "agent" ? "text-[#4F8CFF]" : "text-[#8B8B8D]",
+                        )}
+                      >
+                        {formatSpeaker(u.speaker)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-[#EDEDEF] leading-relaxed">
+                      {u.text}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : call.transcript_text ? (
             <pre className="text-sm whitespace-pre-wrap font-sans p-4 rounded-xl bg-[var(--bg-card)] text-zinc-300 leading-relaxed">
               {call.transcript_text}
             </pre>

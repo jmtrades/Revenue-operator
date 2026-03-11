@@ -163,19 +163,32 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             aria-modal="true"
             aria-label="Quick search"
           >
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--border-default)]">
-              <Search className="h-4 w-4 text-[var(--text-tertiary)]" />
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search pages and actions…"
-                className="h-8 flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none"
-                role="combobox"
-                aria-expanded={items.length > 0}
-                aria-haspopup="listbox"
-                aria-controls="command-palette-list"
-              />
+            <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-[var(--border-default)]">
+              <div className="flex items-center gap-2 flex-1">
+                <Search className="h-4 w-4 text-[var(--text-tertiary)]" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search pages and actions…"
+                  className="h-8 flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none"
+                  role="combobox"
+                  aria-expanded={items.length > 0}
+                  aria-haspopup="listbox"
+                  aria-controls="command-palette-list"
+                />
+              </div>
+              <div className="hidden md:flex items-center gap-1 text-[10px] text-[var(--text-tertiary)]">
+                <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                  ⌘K
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                  ⌘/
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                  Esc
+                </span>
+              </div>
             </div>
             <div
               id="command-palette-list"
@@ -216,6 +229,28 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                   No matches.
                 </p>
               )}
+            </div>
+            <div className="border-t border-[var(--border-default)] px-4 py-2 flex items-center justify-between text-[10px] text-[var(--text-tertiary)]">
+              <div className="flex items-center gap-2">
+                <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                  ⌘K
+                </span>
+                <span>Quick search</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="flex items-center gap-1">
+                  <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                    ⌘/
+                  </span>
+                  <span>Show shortcuts</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                    Esc
+                  </span>
+                  <span>Close</span>
+                </span>
+              </div>
             </div>
           </motion.div>
         </div>

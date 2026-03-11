@@ -227,6 +227,22 @@ export default function AppSettingsPage() {
           </Link>
         ))}
       </div>
+      <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium text-[var(--text-primary)]">
+            Need to revisit onboarding?
+          </p>
+          <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+            Run the 5-step setup again to tune your AI agent and phone settings.
+          </p>
+        </div>
+        <Link
+          href="/app/onboarding"
+          className="px-4 py-2 bg-white text-black font-semibold rounded-xl text-xs hover:bg-zinc-100 transition-colors whitespace-nowrap"
+        >
+          Open setup
+        </Link>
+      </div>
       <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
         <p className="text-xs font-semibold uppercase tracking-wider text-red-400/90 mb-3">Danger zone</p>
         <div className="rounded-xl border border-red-900/40 bg-red-950/20 p-4 space-y-3">

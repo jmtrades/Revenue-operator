@@ -36,6 +36,35 @@ const CALL_TYPE_LABELS: Record<string, string> = {
   "follow-up": "Follow-up",
 };
 
+type QualityBucket = "all" | "excellent" | "good" | "review" | "flagged";
+
+function calculateQualityScore(call: {
+  sentiment?: string;
+  outcome?: string;
+  duration?: number;
+  actionItems?: string[];
+}): { score: number; label: string; color: string; bucket: QualityBucket } {
+  let score = 50;
+
+  if (call.sentiment === "positive") score += 20;
+  else if (call.sentiment === "negative") score -= 15;
+
+  if (call.outcome === "booked" || call.outcome === "lead") score += 20;
+  else if (call.outcome === "missed" || call.outcome === "voicemail") score -= 20;
+
+  if (call.duration && call.duration > 30 && call.duration < 600) score += 10;
+  else if (call.duration && call.duration < 10) score -= 10;
+
+  if (call.actionItems && call.actionItems.length > 0) score += 10;
+
+  score = Math.max(0, Math.min(100, score));
+
+  if (score >= 80) return { score, label: "Excellent", color: "#00D4AA", bucket: "excellent" };
+  if (score >= 60) return { score, label: "Good", color: "#4F8CFF", bucket: "good" };
+  if (score >= 40) return { score, label: "Needs Review", color: "#FFB224", bucket: "review" };
+  return { score, label: "Flagged", color: "#FF4D4D", bucket: "flagged" };
+}
+
 export default function CallIntelligencePage() {
   const [callExamples, setCallExamples] = useState<CallExample[]>([]);
   const [callInsights, setCallInsights] = useState<CallInsight[]>([]);
@@ -49,6 +78,7 @@ export default function CallIntelligencePage() {
   const [applyModal, setApplyModal] = useState<{ insightId: string; insight: string } | null>(null);
   const [activeTab, setActiveTab] = useState<"analyzed" | "manual">("analyzed");
   const [expandedCallId, setExpandedCallId] = useState<string | null>(null);
+  const [qualityFilter, setQualityFilter] = useState<QualityBucket>("all");
 
   const fetchData = useCallback(async () => {
     try {
@@ -247,9 +277,22 @@ export default function CallIntelligencePage() {
 
           {/* Analyzed calls list */}
           <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6">
-            <h2 className="text-base font-medium text-[#EDEDEF] mb-3">
-              Analyzed calls
-            </h2>
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <h2 className="text-base font-medium text-[#EDEDEF]">
+                Analyzed calls
+              </h2>
+              <select
+                value={qualityFilter}
+                onChange={(e) => setQualityFilter(e.target.value as QualityBucket)}
+                className="bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-[#EDEDEF] outline-none"
+              >
+                <option value="all">All quality</option>
+                <option value="excellent">Excellent (80+)</option>
+                <option value="good">Good (60-79)</option>
+                <option value="review">Needs Review (40-59)</option>
+                <option value="flagged">Flagged (0-39)</option>
+              </select>
+            </div>
             {loading && callExamples.length === 0 ? (
               <div className="py-6 flex flex-col items-center justify-center text-center">
                 <div className="h-8 w-48 rounded-xl bg-white/[0.04] animate-pulse mb-3" />
@@ -262,11 +305,13 @@ export default function CallIntelligencePage() {
               </p>
             ) : (
               <div className="space-y-3">
-                {callExamples.map((call) => {
+                {callExamples
+                  .map((call) => {
                   const insightsForCall = callInsights.filter(
                     (i) => i.call_example_id === call.id && !i.dismissed,
                   );
                   const primaryInsight = insightsForCall[0];
+                  const actionItems = insightsForCall.map((i) => i.insight);
                   const callDate = new Date(call.created_at).toLocaleString(undefined, {
                     month: "short",
                     day: "numeric",
@@ -276,6 +321,17 @@ export default function CallIntelligencePage() {
                   const badgeLabel =
                     (call.call_type && CALL_TYPE_LABELS[call.call_type]) || "Other";
                   const isExpanded = expandedCallId === call.id;
+
+                  const quality = calculateQualityScore({
+                    sentiment: primaryInsight?.category === "tone" ? primaryInsight.insight : undefined,
+                    outcome: primaryInsight?.category === "closing" ? primaryInsight.insight : undefined,
+                    duration: undefined,
+                    actionItems,
+                  });
+
+                  if (qualityFilter !== "all" && quality.bucket !== qualityFilter) {
+                    return null;
+                  }
 
                   const insightsByCatForCall = insightsForCall.reduce<
                     Record<string, CallInsight[]>
@@ -305,6 +361,19 @@ export default function CallIntelligencePage() {
                             </p>
                             <span className="inline-flex items-center rounded-full border border-white/[0.08] px-2 py-0.5 text-[11px] text-[#8B8B8D]">
                               {badgeLabel}
+                            </span>
+                            <span
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium"
+                              style={{
+                                backgroundColor: `${quality.color}15`,
+                                color: quality.color,
+                              }}
+                            >
+                              <span
+                                className="w-1.5 h-1.5 rounded-full"
+                                style={{ backgroundColor: quality.color }}
+                              />
+                              {quality.score} · {quality.label}
                             </span>
                           </div>
                           <p className="text-xs text-[#5A5A5C] mt-0.5">

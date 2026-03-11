@@ -1,23 +1,65 @@
 import { cookies } from "next/headers";
+import dynamic from "next/dynamic";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
-import { OutcomeCardsSection } from "@/components/sections/OutcomeCardsSection";
-import { TrustStackSection } from "@/components/sections/TrustStackSection";
-import { ProblemStatement } from "@/components/sections/ProblemStatement";
-import { HomepageActivitySection } from "@/components/sections/HomepageActivitySection";
-import { HomepageLiveDemo } from "@/components/sections/HomepageLiveDemo";
-import { HowItWorks } from "@/components/sections/HowItWorks";
-import { Features } from "@/components/sections/Features";
-import { WhoUsesSection } from "@/components/sections/WhoUsesSection";
-import { MetricsSection } from "@/components/sections/MetricsSection";
-import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
-import { PricingPreview } from "@/components/sections/PricingPreview";
-import { WhatMakesUsDifferentSection } from "@/components/sections/WhatMakesUsDifferentSection";
-import { EnterpriseComparisonCard } from "@/components/sections/EnterpriseComparisonCard";
-import { UseCaseSection } from "@/components/sections/UseCaseSection";
-import { SocialProof } from "@/components/sections/SocialProof";
-import { FinalCTA } from "@/components/sections/FinalCTA";
-import { Footer } from "@/components/sections/Footer";
+
+const OutcomeCardsSection = dynamic(
+  () => import("@/components/sections/OutcomeCardsSection").then((m) => m.OutcomeCardsSection),
+);
+const TrustStackSection = dynamic(
+  () => import("@/components/sections/TrustStackSection").then((m) => m.TrustStackSection),
+);
+const HomepageLiveDemo = dynamic(
+  () => import("@/components/sections/HomepageLiveDemo").then((m) => m.HomepageLiveDemo),
+);
+const HomepageActivitySection = dynamic(
+  () => import("@/components/sections/HomepageActivitySection").then((m) => m.HomepageActivitySection),
+);
+const ProblemStatement = dynamic(
+  () => import("@/components/sections/ProblemStatement").then((m) => m.ProblemStatement),
+);
+const HowItWorks = dynamic(
+  () => import("@/components/sections/HowItWorks").then((m) => m.HowItWorks),
+);
+const Features = dynamic(
+  () => import("@/components/sections/Features").then((m) => m.Features),
+);
+const WhoUsesSection = dynamic(
+  () => import("@/components/sections/WhoUsesSection").then((m) => m.WhoUsesSection),
+);
+const MetricsSection = dynamic(
+  () => import("@/components/sections/MetricsSection").then((m) => m.MetricsSection),
+);
+const TestimonialsSection = dynamic(
+  () => import("@/components/sections/TestimonialsSection").then((m) => m.TestimonialsSection),
+);
+const PricingPreview = dynamic(
+  () => import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
+);
+const WhatMakesUsDifferentSection = dynamic(
+  () =>
+    import("@/components/sections/WhatMakesUsDifferentSection").then(
+      (m) => m.WhatMakesUsDifferentSection,
+    ),
+);
+const EnterpriseComparisonCard = dynamic(
+  () =>
+    import("@/components/sections/EnterpriseComparisonCard").then(
+      (m) => m.EnterpriseComparisonCard,
+    ),
+);
+const UseCaseSection = dynamic(
+  () => import("@/components/sections/UseCaseSection").then((m) => m.UseCaseSection),
+);
+const SocialProof = dynamic(
+  () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
+);
+const FinalCTA = dynamic(
+  () => import("@/components/sections/FinalCTA").then((m) => m.FinalCTA),
+);
+const Footer = dynamic(
+  () => import("@/components/sections/Footer").then((m) => m.Footer),
+);
 
 export default async function HomePage() {
   let initialAuthenticated = false;

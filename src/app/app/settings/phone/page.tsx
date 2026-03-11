@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast as sonnerToast } from "sonner";
 import { Phone, PhoneForwarded } from "lucide-react";
 import {
@@ -289,6 +290,7 @@ export default function AppSettingsPhonePage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
+      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Phone & numbers" }]} />
       <h1 className="text-xl font-semibold text-white mb-1">Connect your phone number</h1>
       <p className="text-sm text-white/60 mb-8">Choose how you want your AI to receive calls.</p>
 
