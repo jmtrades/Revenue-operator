@@ -71,6 +71,22 @@ export async function PATCH(
   if (workspaceId) {
     const { recordProviderInteraction } = await import("@/lib/detachment");
     recordProviderInteraction(workspaceId, `lead:${id}`).catch(() => {});
+    // Enqueue outbound CRM sync for connected providers (Task 19)
+    try {
+      const { getConnectedCrmProviders, enqueueSync } = await import("@/lib/integrations/sync-engine");
+      const providers = await getConnectedCrmProviders(workspaceId);
+      for (const provider of providers) {
+        await enqueueSync({
+          workspaceId,
+          provider,
+          direction: "outbound",
+          entityType: "lead",
+          entityId: id,
+        });
+      }
+    } catch {
+      // Do not block lead update on sync enqueue
+    }
   }
   return NextResponse.json(updated);
 }

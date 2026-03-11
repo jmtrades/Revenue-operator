@@ -152,5 +152,22 @@ export async function POST(req: NextRequest) {
     // Do not block lead creation on webhook issues
   }
 
+  // Enqueue outbound CRM sync for connected providers (Task 19)
+  try {
+    const { getConnectedCrmProviders, enqueueSync } = await import("@/lib/integrations/sync-engine");
+    const providers = await getConnectedCrmProviders(workspaceId);
+    for (const provider of providers) {
+      await enqueueSync({
+        workspaceId,
+        provider,
+        direction: "outbound",
+        entityType: "lead",
+        entityId: createdLead.id,
+      });
+    }
+  } catch {
+    // Do not block lead creation on sync enqueue
+  }
+
   return NextResponse.json(lead);
 }

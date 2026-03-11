@@ -259,10 +259,10 @@ export default function AppSettingsIntegrationsPage() {
               </div>
             )}
             <Link
-              href="/app/settings/integrations#webhook-config"
+              href="/app/settings/integrations/sync-log"
               className="text-xs font-medium text-[var(--accent-primary)] hover:underline ml-auto"
             >
-              View sync log / webhook →
+              View sync log →
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
