@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { useWorkspace } from "@/components/WorkspaceContext";
 
 type Status = "confirmed" | "pending";
 
@@ -14,108 +15,164 @@ type Appointment = {
   time: string;
   durationMinutes: number;
   status: Status;
+  start_time?: string;
+  end_time?: string;
+  external_calendar_id?: string;
 };
 
-const STORAGE_KEY = "rt_calendar";
-
-const DEMO_APPOINTMENTS: Appointment[] = [
-  { id: "apt-demo-1", contact: "Mike Johnson", service: "Plumbing — sink", date: new Date().toISOString().slice(0, 10), time: "10:00", durationMinutes: 60, status: "confirmed" },
-  { id: "apt-demo-2", contact: "Sarah Chen", service: "Dental cleaning", date: new Date(Date.now() + 86400000).toISOString().slice(0, 10), time: "09:00", durationMinutes: 45, status: "confirmed" },
-  { id: "apt-demo-3", contact: "James Wilson", service: "Roof estimate", date: new Date(Date.now() + 172800000).toISOString().slice(0, 10), time: "15:00", durationMinutes: 90, status: "pending" },
-];
-
-function loadAppointments(): Appointment[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEMO_APPOINTMENTS;
-    const parsed = JSON.parse(raw) as Appointment[];
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEMO_APPOINTMENTS;
-  } catch {
-    return DEMO_APPOINTMENTS;
-  }
-}
-
-function saveAppointments(next: Appointment[]) {
-  try {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    // ignore
-  }
+function apiToAppointment(a: {
+  id: string;
+  title: string;
+  start_time: string;
+  end_time?: string | null;
+  status: string;
+  contactName?: string;
+  external_calendar_id?: string;
+}): Appointment {
+  const start = new Date(a.start_time);
+  const end = a.end_time ? new Date(a.end_time) : new Date(start.getTime() + 60 * 60 * 1000);
+  const durationMinutes = Math.round((end.getTime() - start.getTime()) / 60000);
+  return {
+    id: a.id,
+    contact: a.contactName ?? "Contact",
+    service: a.title,
+    date: start.toISOString().slice(0, 10),
+    time: start.toTimeString().slice(0, 5),
+    durationMinutes,
+    status: a.status === "cancelled" ? "pending" : "confirmed",
+    start_time: a.start_time,
+    end_time: a.end_time ?? undefined,
+    external_calendar_id: a.external_calendar_id,
+  };
 }
 
 export default function AppCalendarPage() {
+  const { workspaceId } = useWorkspace();
   const [view, setView] = useState<"week" | "month">("week");
-  const [appointments, setAppointments] = useState<Appointment[]>(() =>
-    typeof window === "undefined" ? DEMO_APPOINTMENTS : loadAppointments(),
-  );
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [showNew, setShowNew] = useState(false);
-  const [googleToast, setGoogleToast] = useState<string | null>(null);
+  const [googleConnected, setGoogleConnected] = useState(false);
+  const [outlookConnected, setOutlookConnected] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const [formContact, setFormContact] = useState("");
+  const [formPhone, setFormPhone] = useState("");
   const [formService, setFormService] = useState("");
   const [formDate, setFormDate] = useState("");
   const [formTime, setFormTime] = useState("09:00");
   const [formDuration, setFormDuration] = useState(60);
-  const [formStatus, setFormStatus] = useState<Status>("confirmed");
+  const [availabilitySlots, setAvailabilitySlots] = useState<string[]>([]);
+
+  const fetchAppointments = useCallback(() => {
+    if (!workspaceId) return;
+    fetch(`/api/appointments?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { appointments: [] }))
+      .then((data: { appointments?: Array<{ id: string; title: string; start_time: string; end_time?: string | null; status: string; contactName?: string; external_calendar_id?: string }> }) => {
+        const list = (data.appointments ?? []).filter((a) => a.status !== "cancelled");
+        setAppointments(list.map(apiToAppointment));
+      })
+      .catch(() => setAppointments([]))
+      .finally(() => setLoading(false));
+  }, [workspaceId]);
 
   useEffect(() => {
-    if (!googleToast) return;
-    const id = window.setTimeout(() => setGoogleToast(null), 2200);
-    return () => window.clearTimeout(id);
-  }, [googleToast]);
+    if (!workspaceId) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    fetchAppointments();
+    fetch("/api/integrations/google-calendar/status", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((d: { connected?: boolean }) => setGoogleConnected(Boolean(d.connected)))
+      .catch(() => setGoogleConnected(false));
+    setOutlookConnected(false);
+  }, [workspaceId, fetchAppointments]);
+
+  useEffect(() => {
+    if (!workspaceId || !formDate) {
+      setAvailabilitySlots([]);
+      return;
+    }
+    if (!googleConnected) return;
+    fetch(`/api/integrations/google-calendar/availability?workspace_id=${encodeURIComponent(workspaceId)}&date=${formDate}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { slots: [] }))
+      .then((d: { slots?: string[] }) => setAvailabilitySlots(d.slots ?? []))
+      .catch(() => setAvailabilitySlots([]));
+  }, [workspaceId, formDate, googleConnected]);
 
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const hours = Array.from({ length: 12 }, (_, i) => 8 + i); // 8–19
+  const hours = Array.from({ length: 12 }, (_, i) => 8 + i);
 
   const handleSaveNew = () => {
-    if (!formContact.trim() || !formService.trim() || !formDate.trim()) return;
-    const appt: Appointment = {
-      id: `a-${Date.now()}`,
-      contact: formContact.trim(),
-      service: formService.trim(),
-      date: formDate,
-      time: formTime,
-      durationMinutes: formDuration,
-      status: formStatus,
-    };
-    const next = [...appointments, appt];
-    setAppointments(next);
-    saveAppointments(next);
-    setShowNew(false);
-    setSelected(appt);
+    if (!formContact.trim() || !formService.trim() || !formDate.trim() || !workspaceId) return;
+    setSaving(true);
+    const start = new Date(`${formDate}T${formTime}:00`);
+    const end = new Date(start.getTime() + formDuration * 60 * 1000);
+    fetch("/api/appointments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        contactName: formContact.trim(),
+        contactPhone: formPhone.trim() || formContact.trim(),
+        title: formService.trim(),
+        start_time: start.toISOString(),
+        end_time: end.toISOString(),
+      }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((created) => {
+        if (created) {
+          setAppointments((prev) => [...prev, apiToAppointment(created)]);
+          setShowNew(false);
+          setSelected(apiToAppointment(created));
+        }
+      })
+      .finally(() => setSaving(false));
   };
 
-  const handleUpdateSelected = (partial: Partial<Appointment>) => {
-    if (!selected) return;
-    const nextSelected = { ...selected, ...partial };
-    setSelected(nextSelected);
-    const next = appointments.map((a) => (a.id === selected.id ? nextSelected : a));
-    setAppointments(next);
-    saveAppointments(next);
+  const handleReschedule = (newDate: string, newTime: string, newDuration: number) => {
+    if (!selected?.start_time) return;
+    const start = new Date(`${newDate}T${newTime}:00`);
+    const end = new Date(start.getTime() + newDuration * 60 * 1000);
+    setSaving(true);
+    fetch(`/api/appointments/${selected.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ start_time: start.toISOString(), end_time: end.toISOString() }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((updated) => {
+        if (updated) {
+          const apt = apiToAppointment(updated);
+          setSelected(apt);
+          setAppointments((prev) => prev.map((a) => (a.id === selected.id ? apt : a)));
+        }
+      })
+      .finally(() => setSaving(false));
   };
 
-  const handleCancelSelected = () => {
-    if (!selected) return;
-    handleUpdateSelected({ status: "pending" });
-  };
-
-  const [deleteConfirm, setDeleteConfirm] = useState<typeof selected>(null);
-
-  const handleDeleteSelected = () => {
-    if (!selected) return;
-    setDeleteConfirm(selected);
-  };
+  const [deleteConfirm, setDeleteConfirm] = useState<Appointment | null>(null);
 
   const confirmDeleteAppointment = () => {
     if (!deleteConfirm) return;
-    const next = appointments.filter((a) => a.id !== deleteConfirm.id);
-    setAppointments(next);
-    setSelected(null);
-    setDeleteConfirm(null);
-    saveAppointments(next);
+    setSaving(true);
+    fetch(`/api/appointments/${deleteConfirm.id}`, { method: "DELETE", credentials: "include" })
+      .then((r) => r.ok)
+      .then((ok) => {
+        if (ok) {
+          setAppointments((prev) => prev.filter((a) => a.id !== deleteConfirm.id));
+          setSelected(null);
+        }
+      })
+      .finally(() => {
+        setDeleteConfirm(null);
+        setSaving(false);
+      });
   };
 
   return (
@@ -173,10 +230,12 @@ export default function AppCalendarPage() {
         <div className="px-4 py-2 border-b border-[var(--border-default)] flex items-center justify-between">
           <p className="text-xs text-zinc-400">8 AM – 8 PM · This {view === "week" ? "week" : "month"}</p>
           <p className="text-[11px] text-zinc-500">
-            {appointments.length} appointments
+            {loading ? "Loading…" : `${appointments.length} appointments`}
           </p>
         </div>
-        {view === "week" ? (
+        {loading ? (
+          <div className="p-8 text-center text-zinc-500 text-sm">Loading calendar…</div>
+        ) : view === "week" ? (
           <div className="overflow-x-auto">
             <div className="min-w-[720px] grid grid-cols-[48px_repeat(7,minmax(0,1fr))] text-[10px]">
               <div className="border-r border-[var(--border-default)] bg-black/40" />
@@ -234,20 +293,44 @@ export default function AppCalendarPage() {
         )}
       </div>
 
-      <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
-        <div>
-          <p className="text-sm font-medium text-white">Connect Google Calendar</p>
-          <p className="text-xs text-zinc-500">
-            Sync availability and keep your AI and personal calendar aligned.
-          </p>
+      <div className="mb-4 grid gap-3 sm:grid-cols-2">
+        <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+          <div>
+            <p className="text-sm font-medium text-white">Google Calendar</p>
+            <p className="text-xs text-zinc-500">
+              {googleConnected ? "Synced. Availability and bookings sync two-way." : "Sync availability and keep your AI and personal calendar aligned."}
+            </p>
+          </div>
+          {googleConnected ? (
+            <span className="text-xs text-zinc-400">Connected</span>
+          ) : (
+            <a
+              href="/api/integrations/google-calendar/auth"
+              className="self-start sm:self-auto px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
+            >
+              Connect
+            </a>
+          )}
         </div>
-        <button
-          type="button"
-          onClick={() => setGoogleToast("Google Calendar integration is available on Growth and Scale plans.")}
-          className="self-start sm:self-auto px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
-        >
-          Connect
-        </button>
+        <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+          <div>
+            <p className="text-sm font-medium text-white">Microsoft Outlook</p>
+            <p className="text-xs text-zinc-500">
+              Two-way sync with Outlook Calendar (coming soon).
+            </p>
+          </div>
+          {outlookConnected ? (
+            <span className="text-xs text-zinc-400">Connected</span>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="self-start sm:self-auto px-4 py-2 rounded-xl border border-[var(--border-medium)] text-zinc-500 text-xs font-medium cursor-not-allowed"
+            >
+              Connect
+            </button>
+          )}
+        </div>
       </div>
 
       <p>
@@ -255,12 +338,6 @@ export default function AppCalendarPage() {
           ← Activity
         </Link>
       </p>
-
-      {googleToast && (
-        <div className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-zinc-100 shadow-lg">
-          {googleToast}
-        </div>
-      )}
 
       {selected && (
         <div
@@ -273,35 +350,19 @@ export default function AppCalendarPage() {
             className="max-w-sm w-full rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between gap-2">
-              <div>
-                <p className="text-sm font-semibold text-white">
-                  {selected.contact} — {selected.service}
-                </p>
-                <p className="text-xs text-zinc-500">
-                  {selected.date} · {selected.time} · {selected.durationMinutes} min
-                </p>
-              </div>
-              <select
-                value={selected.status}
-                onChange={(e) => handleUpdateSelected({ status: e.target.value as Status })}
-                className="px-2 py-1 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[11px] text-zinc-200 focus:outline-none"
-              >
-                <option value="confirmed">Confirmed</option>
-                <option value="pending">Pending</option>
-              </select>
+            <div>
+              <p className="text-sm font-semibold text-white">
+                {selected.contact} — {selected.service}
+              </p>
+              <p className="text-xs text-zinc-500">
+                {selected.date} · {selected.time} · {selected.durationMinutes} min
+                {selected.external_calendar_id ? " · Synced to calendar" : ""}
+              </p>
             </div>
             <div className="flex items-center gap-2 pt-2 border-t border-[var(--border-default)]">
               <button
                 type="button"
-                onClick={handleCancelSelected}
-                className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
-              >
-                Reschedule
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteSelected}
+                onClick={() => setDeleteConfirm(selected)}
                 className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
                 Remove
@@ -347,6 +408,16 @@ export default function AppCalendarPage() {
                 />
               </div>
               <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Phone</label>
+                <input
+                  type="text"
+                  value={formPhone}
+                  onChange={(e) => setFormPhone(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  placeholder="+1 555 000 0000"
+                />
+              </div>
+              <div>
                 <label className="block text-[11px] text-zinc-500 mb-1">Service</label>
                 <input
                   type="text"
@@ -376,33 +447,23 @@ export default function AppCalendarPage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[11px] text-zinc-500 mb-1">Duration (min)</label>
-                  <input
-                    type="number"
-                    min={15}
-                    max={180}
-                    value={formDuration}
-                    onChange={(e) =>
-                      setFormDuration(Number(e.target.value || 0) || formDuration)
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white focus:border-[var(--border-medium)] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-zinc-500 mb-1">Status</label>
-                  <select
-                    value={formStatus}
-                    onChange={(e) => setFormStatus(e.target.value as Status)}
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-zinc-200 focus:outline-none"
-                  >
-                    <option value="confirmed">Confirmed</option>
-                    <option value="pending">Pending</option>
-                  </select>
-                </div>
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Duration (min)</label>
+                <input
+                  type="number"
+                  min={15}
+                  max={180}
+                  value={formDuration}
+                  onChange={(e) =>
+                    setFormDuration(Number(e.target.value || 0) || formDuration)
+                  }
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white focus:border-[var(--border-medium)] focus:outline-none"
+                />
               </div>
             </div>
+            {availabilitySlots.length > 0 && (
+              <p className="text-[11px] text-zinc-500">Available times (Google): {availabilitySlots.slice(0, 8).join(", ")}{availabilitySlots.length > 8 ? "…" : ""}</p>
+            )}
             <div className="flex items-center justify-between gap-3 pt-3 border-t border-[var(--border-default)]">
               <button
                 type="button"
@@ -414,9 +475,10 @@ export default function AppCalendarPage() {
               <button
                 type="button"
                 onClick={handleSaveNew}
-                className="px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
+                disabled={saving}
+                className="px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50"
               >
-                Save
+                {saving ? "Saving…" : "Save"}
               </button>
             </div>
           </div>

@@ -64,6 +64,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ slots: [], connected: false });
   }
 
+  const db = getDb();
   const date = dateStr ?? new Date().toISOString().slice(0, 10);
   const timeMin = `${date}T09:00:00Z`;
   const timeMax = `${date}T17:00:00Z`;
@@ -87,18 +88,26 @@ export async function GET(req: NextRequest) {
   }
 
   const data = (await res.json()) as { calendars?: { primary?: { busy?: { start: string; end: string }[] } } };
-  const busy = data.calendars?.primary?.busy ?? [];
+  const busy = (data.calendars?.primary?.busy ?? []).map((b) => ({ start: new Date(b.start).getTime(), end: new Date(b.end).getTime() }));
   const slotMins = 30;
+  const bufferMs = await (async () => {
+    const { data: ws } = await db.from("workspaces").select("calendar_buffer_minutes").eq("id", workspaceId).single();
+    const mins = (ws as { calendar_buffer_minutes?: number } | null)?.calendar_buffer_minutes ?? 15;
+    return Math.min(120, Math.max(0, mins)) * 60 * 1000;
+  })();
   const slots: string[] = [];
   let t = new Date(timeMin).getTime();
   const end = new Date(timeMax).getTime();
   while (t + slotMins * 60 * 1000 <= end) {
-    const slotStart = new Date(t);
-    const slotEnd = new Date(t + slotMins * 60 * 1000);
-    const isBusy = busy.some(
-      (b) => slotStart < new Date(b.end) && slotEnd > new Date(b.start)
+    const slotStart = t;
+    const slotEnd = t + slotMins * 60 * 1000;
+    const overlaps = busy.some((b) => slotStart < b.end && slotEnd > b.start);
+    const bufferOk = busy.every(
+      (b) =>
+        (b.end <= slotStart ? slotStart >= b.end + bufferMs : true) &&
+        (b.start >= slotEnd ? slotEnd + bufferMs <= b.start : true)
     );
-    if (!isBusy) slots.push(slotStart.toISOString().slice(11, 16));
+    if (!overlaps && bufferOk) slots.push(new Date(t).toISOString().slice(11, 16));
     t += slotMins * 60 * 1000;
   }
 
