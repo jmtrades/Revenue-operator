@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { getClientOrNull } from "@/lib/supabase/client";
 import {
   OnboardingStepProvider,
@@ -437,6 +438,9 @@ export default function AppShellClient({
                           K
                         </kbd>
                         <span className="ml-1.5">Quick search</span>
+                      </div>
+                      <div className="pt-2">
+                        <LanguageSwitcher className="w-full" />
                       </div>
                     </>
                   )}
