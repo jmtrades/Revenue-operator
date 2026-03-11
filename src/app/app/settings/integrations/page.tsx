@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
 import { Phone, MessageCircle } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
@@ -168,6 +169,7 @@ export default function AppSettingsIntegrationsPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
+      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Integrations" }]} />
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Integrations</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">Connect your tools: channels, CRM, calendar, and automation.</p>
 

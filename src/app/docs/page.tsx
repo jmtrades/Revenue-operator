@@ -20,20 +20,20 @@ const DOC_CARDS = [
   {
     icon: BookOpen,
     title: "Getting Started",
-    desc: "Set up your first governed environment in minutes.",
-    href: null,
+    desc: "Set up your AI phone system in minutes.",
+    href: "#quick-start",
   },
   {
     icon: Code,
     title: "API Reference",
     desc: "Integrate Recall Touch into your existing systems.",
-    href: null,
+    href: "#api",
   },
   {
     icon: Shield,
     title: "Compliance Framework",
-    desc: "Configure jurisdiction, review depth, and controls.",
-    href: null,
+    desc: "Configure recording consent, retention, and regional rules.",
+    href: "/compliance",
   },
   {
     icon: Plug,
@@ -44,7 +44,7 @@ const DOC_CARDS = [
   {
     icon: HelpCircle,
     title: "FAQ",
-    desc: "Common questions about governance, records, and billing.",
+    desc: "Common questions about setup, calls, and billing.",
     href: `${ROUTES.PRICING}#faq`,
   },
   {
@@ -56,9 +56,9 @@ const DOC_CARDS = [
 ] as const;
 
 export const metadata = {
-  title: "Docs",
+  title: "Docs — Recall Touch",
   description:
-    "Step-by-step guides for forwarding your number, setting up your voice agent, launching campaigns, and integrating Recall Touch.",
+    "Step-by-step guides for forwarding your number, setting up your AI phone agent, launching campaigns, and integrating Recall Touch.",
 };
 
 export default function DocsPage() {
@@ -115,9 +115,9 @@ export default function DocsPage() {
                   className="text-base mb-4"
                   style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
                 >
-                  Set up your first governed environment in minutes. Sign up, add your
-                  business details, configure your AI agent, and connect your phone
-                  number. Your AI will answer calls and capture leads from day one.
+                  Set up Recall Touch in minutes. Sign up, add your business details,
+                  configure your AI agent, and connect your phone number. Your AI will
+                  answer calls and capture leads from day one.
                 </p>
                 <Link
                   href={ROUTES.START}

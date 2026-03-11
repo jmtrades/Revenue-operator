@@ -221,6 +221,27 @@ export default function AppOnboardingPage() {
     }, 1600);
   };
 
+  const skipOnboarding = async () => {
+    try {
+      await fetch("/api/workspace/me", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          onboardingCompletedAt: new Date().toISOString(),
+        }),
+      });
+    } catch {
+      // ignore
+    }
+    try {
+      localStorage.setItem("rt_onboarded", "true");
+    } catch {
+      // ignore
+    }
+    router.push("/app/activity");
+  };
+
   const greetingToPlay = greeting.trim() || defaultGreeting;
 
   return (
@@ -260,9 +281,9 @@ export default function AppOnboardingPage() {
       </aside>
       <div className="flex-1 flex flex-col px-4 py-6 md:px-10 md:py-10">
         <div className="max-w-2xl mx-auto w-full">
-          <div className="mb-6 md:hidden">
+          <div className="mb-6 flex items-center justify-between md:hidden">
             <div
-              className="flex items-center justify-center gap-2 mb-2"
+              className="flex items-center justify-center gap-2"
               aria-label={`Step ${step} of ${STEPS}`}
             >
               {Array.from({ length: STEPS }, (_, i) => (
@@ -275,9 +296,38 @@ export default function AppOnboardingPage() {
                 />
               ))}
             </div>
-            <p className="text-xs text-center text-zinc-500">
-              Step {step} of {STEPS}
-            </p>
+            <button
+              type="button"
+              onClick={skipOnboarding}
+              className="text-[11px] text-zinc-400 hover:text-white border border-zinc-800 rounded-xl px-3 py-1 transition-colors"
+            >
+              Skip for now
+            </button>
+          </div>
+          <div className="mb-6 hidden md:block">
+            <div
+              className="flex items-center justify-between gap-4"
+              aria-label={`Step ${step} of ${STEPS}`}
+            >
+              <div className="flex items-center gap-2">
+                {Array.from({ length: STEPS }, (_, i) => (
+                  <span
+                    key={i}
+                    className={`inline-block w-2.5 h-2.5 rounded-full ${
+                      i + 1 <= step ? "bg-white" : "bg-zinc-700"
+                    }`}
+                    aria-hidden
+                  />
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={skipOnboarding}
+                className="text-xs text-zinc-400 hover:text-white border border-zinc-800 rounded-xl px-3 py-1 transition-colors"
+              >
+                Skip for now →
+              </button>
+            </div>
           </div>
 
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">

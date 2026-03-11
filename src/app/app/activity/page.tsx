@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import {
   Area,
@@ -28,14 +29,18 @@ import {
   fetchWorkspaceMeCached,
   getWorkspaceMeSnapshotSync,
 } from "@/lib/client/workspace-me";
+import { apiFetch, ApiError } from "@/lib/api";
 import { calculateReadiness } from "@/lib/readiness";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { getClientOrNull } from "@/lib/supabase/client";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatCard } from "@/components/ui/StatCard";
 import { KPIRow } from "@/components/ui/KPIRow";
 import { Timeline } from "@/components/ui/Timeline";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { UpgradeBanner } from "@/components/ui/UpgradeBanner";
 
 type ActivityType = "lead" | "appointment" | "follow-up" | "urgent";
 
@@ -217,6 +222,36 @@ const PLACEHOLDER_PIE: { name: string; value: number }[] = [
 const PIE_COLORS = ["#2A2A2D"];
 const REAL_PIE_COLORS = ["#00D4AA", "#FF4D4D", "#FFB224", "#4F8CFF"];
 
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6 p-4 md:p-6">
+      <div className="space-y-2">
+        <Skeleton variant="text" className="h-8 w-64" />
+        <Skeleton variant="text" className="h-4 w-40" />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <Skeleton key={i} variant="card" className="h-24" />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <Skeleton key={i} variant="card" className="h-20" />
+        ))}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <Skeleton variant="card" className="h-64" />
+        <Skeleton variant="card" className="h-64" />
+      </div>
+    </div>
+  );
+}
+
 export default function AppActivityPage() {
   const searchParams = useSearchParams();
   const { workspaceId } = useWorkspace();
@@ -285,17 +320,15 @@ export default function AppActivityPage() {
   }));
   const [callVolumeData] = useState<{ day: string; calls: number }[]>([]);
   const [outcomeData] = useState<{ name: string; value: number }[]>([]);
+  const [recentActivity, setRecentActivity] = useState<ActivityCard[]>(() => readActivitySnapshot());
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, {
-      credentials: "include",
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("failed");
-        return r.json();
-      })
-      .then((data: { calls?: CallRecord[] }) => {
+    apiFetch<{ calls?: CallRecord[] }>(
+      `/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`,
+      { credentials: "include", timeout: 8000, retries: 1 },
+    )
+      .then((data) => {
         setLoadError(false);
         const calls = (data.calls ?? []).slice(0, 20);
         const mapped: ActivityCard[] = calls.map((c) => {
@@ -336,11 +369,71 @@ export default function AppActivityPage() {
           };
         });
         setCards(mapped);
+        setRecentActivity(mapped);
         persistActivitySnapshot(mapped);
       })
-      .catch(() => setLoadError(true))
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 408) {
+          setLoadError(true);
+        } else {
+          setLoadError(true);
+        }
+      })
       .finally(() => setLoading(false));
   }, [workspaceId, refreshKey]);
+
+  useEffect(() => {
+    const client = getClientOrNull?.() ?? null;
+    if (!client) return;
+    const channel = client
+      .channel("dashboard-calls")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "call_sessions",
+        },
+        (payload: { new?: { id: string; caller_name?: string | null; call_started_at?: string | null; call_ended_at?: string | null; outcome?: string | null } }) => {
+          const row = payload.new;
+          if (!row) return;
+          const time = formatTimeLabel(row.call_started_at ?? null);
+          const duration = formatDuration(row.call_started_at ?? null, row.call_ended_at ?? null);
+          const type: ActivityType =
+            row.outcome === "appointment"
+              ? "appointment"
+              : row.outcome === "lead"
+                ? "lead"
+                : row.outcome === "transfer"
+                  ? "urgent"
+                  : "follow-up";
+          const card: ActivityCard = {
+            id: row.id,
+            type,
+            name: row.caller_name || "Caller",
+            time,
+            duration,
+            summary:
+              row.outcome === "appointment"
+                ? "Appointment locked in from this call."
+                : row.outcome === "lead"
+                  ? "Lead captured and waiting for follow-up."
+                  : "Call handled by your system.",
+            score: type === "lead" ? 75 : null,
+          };
+          setRecentActivity((prev) => {
+            const next = [card, ...prev];
+            persistActivitySnapshot(next.slice(0, 20));
+            return next.slice(0, 20);
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  }, []);
 
   useEffect(() => {
     fetchWorkspaceMeCached()
@@ -569,6 +662,13 @@ export default function AppActivityPage() {
         />
       </KPIRow>
 
+      <UpgradeBanner
+        title="Ready for more volume?"
+        description="Upgrade your plan to increase included minutes and unlock higher outbound capacity as calls ramp up."
+        ctaLabel="View plans"
+        href="/app/settings/billing"
+      />
+
       {showInactivityBanner && (
         <div className="mb-4 p-4 rounded-xl border border-[var(--accent-amber)]/30 bg-[var(--accent-amber)]/10">
           <p className="text-sm text-[var(--text-primary)]">
@@ -666,17 +766,23 @@ export default function AppActivityPage() {
       {/* Quick actions */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
         {QUICK_ACTIONS.map((a) => (
-          <Link
+          <motion.div
             key={a.label}
-            href={a.href}
-            className="bg-[#111113] border border-white/10 rounded-2xl p-4 hover:border-white/20 transition-all duration-200 group"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
           >
-            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-white/10 transition-colors">
-              <a.icon className="w-5 h-5 text-[#8B8B8D] group-hover:text-[#EDEDEF] transition-colors" />
-            </div>
-            <p className="text-sm font-medium text-[#EDEDEF]">{a.label}</p>
-            <p className="text-xs text-[#5A5A5C] mt-0.5">{a.desc}</p>
-          </Link>
+            <Link
+              href={a.href}
+              className="bg-[#111113] border border-white/10 rounded-2xl p-4 cursor-pointer hover:border-white/20 hover:bg-[#1A1A1D] transition-colors duration-200 group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-white/10 transition-colors">
+                <a.icon className="w-5 h-5 text-[#8B8B8D] group-hover:text-[#EDEDEF] transition-colors" />
+              </div>
+              <p className="text-sm font-medium text-[#EDEDEF]">{a.label}</p>
+              <p className="text-xs text-[#5A5A5C] mt-0.5">{a.desc}</p>
+            </Link>
+          </motion.div>
         ))}
       </div>
 
@@ -712,12 +818,7 @@ export default function AppActivityPage() {
           </button>
         </div>
       )}
-      {loading && cards.length === 0 && !loadError && (
-        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 mb-4 animate-pulse">
-          <div className="h-4 w-3/4 rounded bg-[var(--bg-hover)] mb-3" />
-          <div className="h-4 w-1/2 rounded bg-[var(--bg-hover)]" />
-        </div>
-      )}
+      {loading && cards.length === 0 && !loadError && <DashboardSkeleton />}
 
       {cards.length === 0 && !loading && !phoneConnected ? (
         <div className="space-y-6">
@@ -818,12 +919,19 @@ export default function AppActivityPage() {
         <div className="grid gap-4 md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.1fr)]">
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <div className="mb-3 flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-[var(--text-primary)]">
-                Recent activity
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">
+                  Activity Timeline
+                </p>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-[#00D4AA] opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00D4AA]" />
+                </span>
+                <span className="text-xs text-[#5A5A5C]">Live</span>
+              </div>
             </div>
             <Timeline
-              items={filtered.map((card) => ({
+              items={recentActivity.map((card) => ({
                 id: card.id,
                 title: card.name,
                 description: card.summary,

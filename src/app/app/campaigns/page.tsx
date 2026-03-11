@@ -5,6 +5,7 @@ import { Megaphone } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 type TargetFilter = {
   audience?: string;
@@ -298,21 +299,12 @@ export default function CampaignsPage() {
                 Loading campaigns…
               </div>
             ) : filtered.length === 0 ? (
-              <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center flex flex-col items-center">
-                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4">
-                  <Megaphone className="w-6 h-6 text-zinc-400" />
-                </div>
-                <p className="text-sm font-medium text-white">No campaigns yet</p>
-                <p className="text-xs text-zinc-500 mt-2 max-w-sm">
-                  Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts.
-                </p>
-                <a
-                  href="#create-campaign"
-                  className="mt-4 inline-block min-h-[44px] rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-zinc-100 touch-manipulation"
-                >
-                  Create campaign
-                </a>
-              </div>
+              <EmptyState
+                icon={Megaphone}
+                title="No campaigns yet"
+                description="Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts."
+                primaryAction={{ label: "Create campaign", href: "#create-campaign" }}
+              />
             ) : (
               filtered.map((campaign) => (
                 <div key={campaign.id} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">

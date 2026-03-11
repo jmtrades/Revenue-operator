@@ -27,6 +27,8 @@ import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { DndContext, type DragEndEvent, useDraggable, useDroppable } from "@dnd-kit/core";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { getClientOrNull } from "@/lib/supabase/client";
 
 const PAGE_TITLE = "Leads — Recall Touch";
 
@@ -317,6 +319,40 @@ export default function LeadsPage() {
       .catch(() => setError("Could not load leads for this workspace."))
       .finally(() => setLoading(false));
   }, [workspaceId]);
+
+  useEffect(() => {
+    const client = getClientOrNull();
+    if (!client) return;
+    const channel = client
+      .channel("leads-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "leads" },
+        (payload: { eventType: "INSERT" | "UPDATE" | "DELETE"; new?: ApiLead; old?: { id: string } }) => {
+          const p = payload;
+          if (p.eventType === "INSERT" && p.new) {
+            setLeads((prev) => {
+              const mapped = mapApiLeadToView(p.new as ApiLead, prev.length);
+              return [mapped, ...prev];
+            });
+            const name = p.new.name || p.new.email || "Unknown lead";
+            toast.info(`New lead: ${name}`);
+          } else if (p.eventType === "UPDATE" && p.new) {
+            setLeads((prev) => {
+              const updated = mapApiLeadToView(p.new as ApiLead, 0);
+              return prev.map((l) => (l.id === updated.id ? { ...l, ...updated } : l));
+            });
+          } else if (p.eventType === "DELETE" && p.old) {
+            setLeads((prev) => prev.filter((l) => l.id !== p.old!.id));
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  }, []);
 
   const totalCount = leads.length;
 
@@ -844,7 +880,45 @@ export default function LeadsPage() {
         {/* Table view */}
         <div className={view === "board" ? "hidden md:block" : ""}>
           {loading ? (
-            <div className="mt-6 text-sm text-zinc-500">Loading leads…</div>
+            <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton variant="rectangular" className="h-9 w-40 rounded-xl" />
+                  <Skeleton variant="rectangular" className="h-9 w-32 rounded-xl" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton variant="rectangular" className="h-9 w-24 rounded-xl" />
+                  <Skeleton variant="rectangular" className="h-9 w-24 rounded-xl" />
+                </div>
+              </div>
+              <div className="mt-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden">
+                <div className="grid grid-cols-[0.4fr,1.2fr,1.2fr,1fr,1fr,1fr,1fr] gap-2 px-4 py-3 border-b border-[var(--border-default)]">
+                  <Skeleton variant="text" className="h-4 w-4" />
+                  <Skeleton variant="text" className="h-4 w-24" />
+                  <Skeleton variant="text" className="h-4 w-24" />
+                  <Skeleton variant="text" className="h-4 w-20" />
+                  <Skeleton variant="text" className="h-4 w-16" />
+                  <Skeleton variant="text" className="h-4 w-20" />
+                  <Skeleton variant="text" className="h-4 w-20" />
+                </div>
+                <div className="divide-y divide-[var(--border-default)]">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="grid grid-cols-[0.4fr,1.2fr,1.2fr,1fr,1fr,1fr,1fr] gap-2 px-4 py-3"
+                    >
+                      <Skeleton variant="text" className="h-4 w-4" />
+                      <Skeleton variant="text" className="h-4 w-32" />
+                      <Skeleton variant="text" className="h-4 w-28" />
+                      <Skeleton variant="text" className="h-4 w-20" />
+                      <Skeleton variant="text" className="h-4 w-16" />
+                      <Skeleton variant="text" className="h-4 w-20" />
+                      <Skeleton variant="text" className="h-4 w-20" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           ) : error ? (
             <div className="mt-6 text-sm text-[var(--accent-red)]" role="alert">{error}</div>
           ) : filteredLeads.length === 0 ? (

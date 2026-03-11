@@ -21,6 +21,7 @@ type WorkspaceRow = {
   address?: string | null;
   onboarding_completed_at?: string | null;
   verified_phone?: string | null;
+  notification_preferences?: Record<string, string[]> | null;
 };
 
 export async function GET(req: NextRequest) {
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
       db
         .from("workspaces")
         .select(
-          "id, name, agent_name, vapi_assistant_id, knowledge_items, website, industry, address, onboarding_completed_at",
+          "id, name, agent_name, vapi_assistant_id, knowledge_items, website, industry, address, onboarding_completed_at, notification_preferences",
         )
         .eq("id", workspaceId)
         .single(),
@@ -176,6 +177,7 @@ export async function GET(req: NextRequest) {
       },
       systemEvents: readiness.systemEvents,
       workspaceReady: !readiness.showBanner,
+      notification_preferences: (row.notification_preferences as Record<string, string[]> | null) ?? null,
     });
   } catch {
     return NextResponse.json({
@@ -208,6 +210,7 @@ export async function PATCH(req: NextRequest) {
     industry?: string;
     address?: string;
     onboardingCompletedAt?: string | null;
+    notification_preferences?: Record<string, string[]>;
   };
   try {
     body = (await req.json()) as typeof body;
@@ -223,6 +226,9 @@ export async function PATCH(req: NextRequest) {
   if (typeof body.industry === "string") update.industry = body.industry.trim() || null;
   if (typeof body.address === "string") update.address = body.address.trim() || null;
   if ("onboardingCompletedAt" in body) update.onboarding_completed_at = body.onboardingCompletedAt ?? null;
+  if (body.notification_preferences && typeof body.notification_preferences === "object") {
+    update.notification_preferences = body.notification_preferences;
+  }
 
   try {
     const db = getDb();

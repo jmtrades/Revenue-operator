@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast } from "sonner";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
 import {
@@ -72,6 +73,7 @@ export default function AppSettingsBusinessPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
+      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Business" }]} />
       <h1 className="text-lg font-semibold text-white mb-2">Business</h1>
       <p className="text-sm text-zinc-500 mb-6">Your business details help your AI answer calls accurately.</p>
       <div className="space-y-4 mb-6">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { WorkspaceProvider } from "@/components/WorkspaceContext";
 import { WorkspaceName } from "@/components/WorkspaceName";
@@ -26,13 +27,19 @@ import {
   Command as CommandIcon,
   type LucideIcon,
 } from "lucide-react";
-import { CommandPalette } from "@/components/ui/CommandPalette";
 import { cn } from "@/lib/cn";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { getClientOrNull } from "@/lib/supabase/client";
 import {
   OnboardingStepProvider,
   useOnboardingStep,
   ONBOARDING_STEP_LABELS,
 } from "./OnboardingStepContext";
+
+const CommandPalette = dynamic(
+  () => import("@/components/ui/CommandPalette").then((mod) => mod.CommandPalette),
+  { ssr: false },
+);
 
 const SIDEBAR_GROUPS: { label: string; items: { href: string; label: string; icon: LucideIcon }[] }[] = [
   {
@@ -114,6 +121,7 @@ export default function AppShellClient({
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [activeCalls, setActiveCalls] = useState(0);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -123,6 +131,8 @@ export default function AppShellClient({
       return false;
     }
   });
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const inboxUnread = 0;
 
   const toggleSidebarCollapse = () => {
@@ -175,42 +185,109 @@ export default function AppShellClient({
   }, [workspaceMetaLoaded, pathname, router, workspaceMeta?.onboardingCompletedAt]);
 
   useEffect(() => {
+    const client = getClientOrNull();
+    if (!client) return;
+    const fetchActive = () =>
+      client
+        .from("call_sessions")
+        .select("id", { count: "exact", head: true })
+        .is("call_ended_at", null)
+        .then((res: { count: number | null }) => {
+          setActiveCalls(res.count ?? 0);
+        })
+        .catch(() => {});
+
+    void fetchActive();
+
+    const channel = client
+      .channel("active-calls")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "call_sessions" },
+        () => {
+          void fetchActive();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  }, []);
+
+  useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       const isMeta = event.metaKey || event.ctrlKey;
-      if (!isMeta) return;
       const key = event.key.toLowerCase();
 
-      if (key === "k") {
-        event.preventDefault();
-        setCommandPaletteOpen((prev) => !prev);
-        return;
-      }
+      if (isMeta) {
+        if (key === "k") {
+          event.preventDefault();
+          setCommandPaletteOpen((prev) => !prev);
+          return;
+        }
 
-      if (key === "1") {
-        event.preventDefault();
-        router.push("/app/activity");
-        return;
-      }
-      if (key === "2") {
-        event.preventDefault();
-        router.push("/app/agents");
-        return;
-      }
-      if (key === "3") {
-        event.preventDefault();
-        router.push("/app/calls");
-        return;
-      }
-      if (key === "4") {
-        event.preventDefault();
-        router.push("/app/leads");
-        return;
+        if (key === "1") {
+          event.preventDefault();
+          router.push("/app/activity");
+          return;
+        }
+        if (key === "2") {
+          event.preventDefault();
+          router.push("/app/agents");
+          return;
+        }
+        if (key === "3") {
+          event.preventDefault();
+          router.push("/app/calls");
+          return;
+        }
+        if (key === "4") {
+          event.preventDefault();
+          router.push("/app/leads");
+          return;
+        }
+        if (key === "5") {
+          event.preventDefault();
+          router.push("/app/campaigns");
+          return;
+        }
+        if (key === "6") {
+          event.preventDefault();
+          router.push("/app/inbox");
+          return;
+        }
+      } else {
+        if (event.key === "?" && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          const active = document.activeElement;
+          if (
+            active &&
+            (active.tagName === "INPUT" ||
+              active.tagName === "TEXTAREA" ||
+              (active as HTMLElement).isContentEditable)
+          ) {
+            return;
+          }
+          event.preventDefault();
+          setShowShortcuts((s) => !s);
+          return;
+        }
+        if (event.key === "Escape") {
+          if (showShortcuts) {
+            setShowShortcuts(false);
+            return;
+          }
+          if (showNotifications) {
+            setShowNotifications(false);
+            return;
+          }
+        }
       }
     };
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [router]);
+  }, [router, showShortcuts, showNotifications]);
 
   useEffect(() => {
     if (!mobileMoreOpen) return;
@@ -316,6 +393,7 @@ export default function AppShellClient({
                         {group.items.map(({ href, label, icon: Icon }) => {
                           const effectiveLabel =
                             href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label;
+                          const active = isActive(href);
                           return (
                             <Link
                               key={href}
@@ -324,10 +402,11 @@ export default function AppShellClient({
                               className={cn(
                                 "flex items-center border-l-2 py-2.5 rounded-r-xl text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
                                 sidebarCollapsed ? "md:justify-center md:px-0 md:pl-0 md:pr-0 px-3" : "gap-2.5 px-3",
-                                isActive(href)
-                                  ? "border-l-[var(--accent-primary)] bg-white/[0.04] text-[var(--text-primary)]"
+                                active
+                                  ? "border-l-[#4F8CFF] bg-[#4F8CFF]/10 text-[#4F8CFF]"
                                   : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03]"
                               )}
+                              aria-current={active ? "page" : undefined}
                             >
                               <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
                               {!sidebarCollapsed && <span>{effectiveLabel}</span>}
@@ -411,14 +490,19 @@ export default function AppShellClient({
                   </button>
                   <button
                     type="button"
-                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                    onClick={() => setShowNotifications((s) => !s)}
+                    className="relative p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                     aria-label="Notifications"
+                    aria-expanded={showNotifications}
                   >
                     <Bell className="w-4 h-4" />
+                    {/* notification dot can be enabled when wired to real data */}
                   </button>
                 </div>
               )}
-              <div className="flex-1 min-h-0">{children}</div>
+              <div className="flex-1 min-h-0">
+                <PageTransition>{children}</PageTransition>
+              </div>
             </main>
           </div>
           {!isOnboarding && (
@@ -436,8 +520,19 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                   }`}
                     aria-current={isActive(href) ? "page" : undefined}
                   >
-                    <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
-                    <span className="text-[10px] font-medium">{label}</span>
+                    <div className="relative">
+                      <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
+                      {href === "/app/calls" && activeCalls > 0 && (
+                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                          <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-[#00D4AA] opacity-75" />
+                          <span className="relative inline-flex h-3 w-3 rounded-full bg-[#00D4AA]" />
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] font-medium">
+                      {label}
+                      {href === "/app/calls" && activeCalls > 0 ? ` · ${activeCalls}` : ""}
+                    </span>
                   </Link>
                 ))}
                 <button
@@ -453,6 +548,15 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                   <span className="text-[10px] font-medium">More</span>
                 </button>
               </nav>
+              <div className="hidden md:block border-t border-[var(--border-default)] px-4 py-2 text-[10px] text-[#5A5A5C]">
+                <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D]">
+                  ⌘
+                </kbd>
+                <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D] ml-0.5">
+                  K
+                </kbd>
+                <span className="ml-1.5">Quick search</span>
+              </div>
               {mobileMoreOpen && (
                 <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="More menu">
                   <div
@@ -487,6 +591,100 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                         </Link>
                       ))}
                     </nav>
+                  </div>
+                </div>
+              )}
+              {showNotifications && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowNotifications(false)}
+                    aria-hidden
+                  />
+                  <div className="fixed right-4 top-16 z-50 w-80 bg-[#111113] border border-white/[0.06] rounded-2xl shadow-2xl overflow-hidden">
+                    <div className="px-4 py-3 border-b border-white/[0.06]">
+                      <h3 className="text-sm font-medium text-[#EDEDEF]">
+                        Notifications
+                      </h3>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      <div className="px-4 py-8 text-center">
+                        <Bell className="w-8 h-8 text-[#5A5A5C] mx-auto mb-2" />
+                        <p className="text-sm text-[#8B8B8D]">
+                          No notifications yet
+                        </p>
+                        <p className="text-xs text-[#5A5A5C] mt-1">
+                          You&apos;ll see call alerts and system updates here
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+              {showShortcuts && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                  onClick={() => setShowShortcuts(false)}
+                >
+                  <div
+                    className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 w-full max-w-md shadow-2xl"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="text-lg font-semibold text-[#EDEDEF]">
+                        Keyboard Shortcuts
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={() => setShowShortcuts(false)}
+                        className="text-[#5A5A5C] hover:text-[#8B8B8D]"
+                        aria-label="Close shortcuts help"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <div className="space-y-3">
+                      {[
+                        { keys: ["⌘", "K"], label: "Open command palette" },
+                        { keys: ["⌘", "1"], label: "Go to Dashboard" },
+                        { keys: ["⌘", "2"], label: "Go to Agents" },
+                        { keys: ["⌘", "3"], label: "Go to Calls" },
+                        { keys: ["⌘", "4"], label: "Go to Leads" },
+                        { keys: ["⌘", "5"], label: "Go to Campaigns" },
+                        { keys: ["⌘", "6"], label: "Go to Inbox" },
+                        { keys: ["?"], label: "Show this help" },
+                      ].map((shortcut) => (
+                        <div
+                          key={shortcut.label}
+                          className="flex items-center justify-between py-1.5"
+                        >
+                          <span className="text-sm text-[#8B8B8D]">
+                            {shortcut.label}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            {shortcut.keys.map((key) => (
+                              <kbd
+                                key={key}
+                                className="bg-white/[0.04] border border-white/[0.06] px-2 py-1 rounded-lg text-xs text-[#EDEDEF] font-mono min-w-[28px] text-center"
+                              >
+                                {key}
+                              </kbd>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-[#5A5A5C] mt-5 pt-4 border-t border-white/[0.06]">
+                      Press{" "}
+                      <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D]">
+                        Esc
+                      </kbd>{" "}
+                      or{" "}
+                      <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D]">
+                        ?
+                      </kbd>{" "}
+                      to close
+                    </p>
                   </div>
                 </div>
               )}
