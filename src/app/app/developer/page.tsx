@@ -347,7 +347,13 @@ function WebhooksTab({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <a
+          href="/app/developer/webhooks"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-sm font-medium hover:text-white hover:border-zinc-500"
+        >
+          Manage webhooks
+        </a>
         <button
           type="button"
           onClick={() => setAddModal(true)}
