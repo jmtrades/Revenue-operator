@@ -51,7 +51,7 @@ export default function AppSettingsAgentPage() {
   const [loading, setLoading] = useState(initialConfig == null);
   const [saving, setSaving] = useState(false);
   const [previewing, setPreviewing] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const [inlineToast, setInlineToast] = useState<string | null>(null);
   const [config, setConfig] = useState<AgentConfig>(
     initialConfig ?? {
       businessName: "",
@@ -80,8 +80,9 @@ export default function AppSettingsAgentPage() {
         persistAgentSettingsSnapshot(snapshotWorkspaceId, nextConfig);
       }
     } catch {
-      setToast("Could not load agent settings.");
+      setInlineToast("Could not load agent settings.");
       toast.error("Failed to load agent settings. Please try again.");
+      setTimeout(() => setInlineToast(null), 4000);
     } finally {
       setLoading(false);
     }
@@ -93,7 +94,7 @@ export default function AppSettingsAgentPage() {
 
   const handleSave = async () => {
     setSaving(true);
-    setToast(null);
+    setInlineToast(null);
     try {
       const patchRes = await fetch("/api/workspace/agent", {
         method: "PATCH",
@@ -111,27 +112,27 @@ export default function AppSettingsAgentPage() {
       if (!patchRes.ok) {
         const err = await patchRes.json().catch(() => ({}));
         const message = (err as { error?: string }).error ?? "Failed to save.";
-        setToast(message);
+        setInlineToast(message);
         toast.error(message);
         setSaving(false);
-        setTimeout(() => setToast(null), 4000);
+        setTimeout(() => setInlineToast(null), 4000);
         return;
       }
       const agentRes = await fetch("/api/vapi/create-agent", { method: "POST", credentials: "include" });
       if (!agentRes.ok) {
         const message = "Saved, but voice agent could not be updated. Try again.";
-        setToast(message);
+        setInlineToast(message);
         toast.error(message);
       } else {
         const message = "Agent updated. Your next calls will use the new settings.";
-        setToast(message);
+        setInlineToast(message);
         toast.success("Settings saved");
       }
-      setTimeout(() => setToast(null), 4000);
+      setTimeout(() => setInlineToast(null), 4000);
     } catch {
-      setToast("Something went wrong.");
+      setInlineToast("Something went wrong.");
       toast.error("Failed to save. Please try again.");
-      setTimeout(() => setToast(null), 4000);
+      setTimeout(() => setInlineToast(null), 4000);
     } finally {
       setSaving(false);
     }
@@ -309,9 +310,9 @@ export default function AppSettingsAgentPage() {
         />
       </div>
 
-      {toast && (
+      {inlineToast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">
-          {toast}
+          {inlineToast}
         </div>
       )}
 

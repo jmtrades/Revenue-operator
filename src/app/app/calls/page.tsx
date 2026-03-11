@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag, Brain } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -597,9 +597,13 @@ export default function CallsPage() {
               </p>
               <div className="flex flex-wrap gap-2 mt-2">
                 <Badge variant="neutral">
-                  {selectedCall.call_started_at && selectedCall.call_ended_at
-                    ? `${Math.round((new Date(selectedCall.call_ended_at).getTime() - new Date(selectedCall.call_started_at).getTime()) / 60)}m`
-                    : "—"}
+                  {(() => {
+                    const secs = durationSeconds(selectedCall);
+                    if (!secs) return "—";
+                    const m = Math.floor(secs / 60);
+                    const s = secs % 60;
+                    return `${m}m ${s.toString().padStart(2, "0")}s`;
+                  })()}
                 </Badge>
                 <Badge variant={(selectedCall.outcome ?? "lead") === "appointment" ? "appointment" : (selectedCall.outcome ?? "lead") === "lead" ? "lead" : "neutral"}>
                   {OUTCOME_LABELS[(selectedCall.outcome ?? "lead") as Exclude<CallOutcome, null>] ?? selectedCall.outcome}
@@ -613,7 +617,25 @@ export default function CallsPage() {
                   ) : null;
                 })()}
               </div>
-              <p className="text-[11px] text-[var(--text-tertiary)] mt-1">Agent: —</p>
+              <p className="text-[11px] text-[var(--text-tertiary)] mt-1">
+                Agent: {selectedCall.matched_lead?.name ? "Assigned" : "—"}
+              </p>
+              {(selectedCall.lead_id || selectedCall.matched_lead_id) && (
+                <div className="mt-2">
+                  <Link
+                    href={
+                      selectedCall.lead_id
+                        ? `/app/leads?leadId=${encodeURIComponent(selectedCall.lead_id)}`
+                        : `/app/leads?leadId=${encodeURIComponent(
+                            selectedCall.matched_lead_id as string,
+                          )}`
+                    }
+                    className="inline-flex items-center gap-1 text-[11px] text-[var(--accent-primary)] hover:underline"
+                  >
+                    View lead details →
+                  </Link>
+                </div>
+              )}
             </div>
 
             {selectedCall.recording_url && (
@@ -629,6 +651,9 @@ export default function CallsPage() {
                 <p className="text-xs text-[var(--text-tertiary)]">Loading…</p>
               ) : selectedCall.transcript_text ? (
                 <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 max-h-48 overflow-y-auto">
+                  <p className="text-[11px] text-[var(--text-tertiary)] mb-1">
+                    Transcript (AI-processed, caller and agent turns)
+                  </p>
                   <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed">
                     {selectedCall.transcript_text}
                   </p>
@@ -643,6 +668,29 @@ export default function CallsPage() {
               <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 {selectedCall.summary ?? "No summary available."}
               </p>
+            </div>
+
+            <div>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">
+                Call intelligence
+              </p>
+              <p className="text-[11px] text-[var(--text-tertiary)] mb-2">
+                Send this call to Call Intelligence to compare patterns, coaching insights, and recurring objections over time.
+              </p>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  router.push(
+                    `/app/call-intelligence?call_id=${encodeURIComponent(selectedCall.id)}`,
+                  )
+                }
+                className="inline-flex items-center gap-1.5"
+              >
+                <Brain className="h-3.5 w-3.5" />
+                Add to Call Intelligence
+              </Button>
             </div>
 
             <div>

@@ -243,6 +243,14 @@ export default function AppActivityPage() {
     () => workspaceSnapshot?.systemEvents ?? [],
   );
   const [welcomeToast, setWelcomeToast] = useState<string | null>(null);
+  const [showFirstWelcome, setShowFirstWelcome] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem("rt_dashboard_welcome_dismissed") !== "true";
+    } catch {
+      return true;
+    }
+  });
 
   useEffect(() => {
     const welcome = searchParams.get("welcome");
@@ -413,6 +421,15 @@ export default function AppActivityPage() {
   const continueSetupHref =
     readiness?.nextAction?.href ?? nextStepHref ?? "/app/settings/phone";
 
+  const totalSteps = progressItems.length;
+  const completedSteps =
+    totalSteps === 0
+      ? 0
+      : progressItems.filter((item) => {
+          const done = "done" in item ? item.done : item.completed;
+          return done;
+        }).length;
+
   const callCount = cards.length;
   const leadCount = cards.filter((c) => c.type === "lead").length;
   const estRevenue = leadCount * 800;
@@ -428,6 +445,22 @@ export default function AppActivityPage() {
         | { progress?: { items?: Array<{ key: string; completed?: boolean }> } }
         | null)?.progress?.items?.find((i) => i.key === "phone")?.completed,
     );
+
+  const hasAnyCalls =
+    (workspaceStats.calls ?? 0) > 0 ||
+    cards.length > 0 ||
+    Boolean(workspaceStats.lastCallAt);
+
+  useEffect(() => {
+    if (!showFirstWelcome) return;
+    if (!hasAnyCalls) return;
+    setShowFirstWelcome(false);
+    try {
+      window.localStorage.setItem("rt_dashboard_welcome_dismissed", "true");
+    } catch {
+      // ignore
+    }
+  }, [hasAnyCalls, showFirstWelcome]);
 
   const [checklistDismissed, setChecklistDismissed] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -497,6 +530,17 @@ export default function AppActivityPage() {
         </div>
       </div>
 
+      {showFirstWelcome && !hasAnyCalls && (
+        <div className="mt-3 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+          <p className="text-sm font-semibold text-[var(--text-primary)]">
+            Welcome to your Recall Touch dashboard
+          </p>
+          <p className="mt-1 text-xs text-[var(--text-secondary)]">
+            Your AI phone system is almost ready. Connect a number and make your first test call to see calls start appearing here automatically.
+          </p>
+        </div>
+      )}
+
       <KPIRow>
         <StatCard
           label="Calls"
@@ -549,6 +593,11 @@ export default function AppActivityPage() {
               <p className="text-xs text-[var(--text-secondary)] mt-1">
                 You&apos;re {progressPct}% of the way to a fully running AI phone line.
               </p>
+              {totalSteps > 0 && (
+                <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">
+                  {completedSteps} of {totalSteps} steps complete
+                </p>
+              )}
             </div>
             <button
               type="button"

@@ -19,16 +19,66 @@ import {
 } from "lucide-react";
 
 const SETTINGS_LINKS = [
-  { href: "/app/settings/business", label: "Business", desc: "Name, address, website, timezone, industry", icon: Building2 },
-  { href: "/app/settings/agent", label: "Agent", desc: "Voice, greeting, knowledge, language", icon: Mic2 },
-  { href: "/app/settings/phone", label: "Phone", desc: "Numbers, forwarding status, add number", icon: Phone },
-  { href: "/app/settings/call-rules", label: "Call rules", desc: "Hours, after-hours, emergency, transfer", icon: SlidersHorizontal },
-  { href: "/app/settings/team", label: "Team", desc: "Members, invite, roles, escalation", icon: Users },
-  { href: "/app/settings/notifications", label: "Notifications", desc: "Alerts for calls, leads, appointments", icon: Bell },
-  { href: "/app/settings/integrations", label: "Integrations", desc: "Calendar, contacts, Zapier, Slack", icon: Link2 },
-  { href: "/app/settings/billing", label: "Billing", desc: "Plan, payment, invoices, cancel", icon: CreditCard },
-  { href: "/app/settings/compliance", label: "Compliance", desc: "Consent, recording, do-not-call", icon: Shield },
-  { href: "/app/developer", label: "Developer", desc: "API keys, webhooks, documentation", icon: Code },
+  {
+    href: "/app/settings/business",
+    label: "Business settings",
+    desc: "Business name, address, website, timezone, industry",
+    icon: Building2,
+  },
+  {
+    href: "/app/settings/phone",
+    label: "Phone & numbers",
+    desc: "Buy numbers, forwarding status, caller ID, routing",
+    icon: Phone,
+  },
+  {
+    href: "/app/settings/agent",
+    label: "AI agent configuration",
+    desc: "Voice, greeting, behavior, knowledge, languages",
+    icon: Mic2,
+  },
+  {
+    href: "/app/settings/call-rules",
+    label: "Call rules",
+    desc: "Hours, after-hours behavior, emergency, transfer logic",
+    icon: SlidersHorizontal,
+  },
+  {
+    href: "/app/settings/team",
+    label: "Team & permissions",
+    desc: "Members, roles, escalation contacts, login access",
+    icon: Users,
+  },
+  {
+    href: "/app/settings/notifications",
+    label: "Notifications",
+    desc: "Alerts for new calls, leads, appointments, missed calls",
+    icon: Bell,
+  },
+  {
+    href: "/app/settings/integrations",
+    label: "Integrations",
+    desc: "Calendar, CRM, webhooks, Slack, Zapier",
+    icon: Link2,
+  },
+  {
+    href: "/app/settings/billing",
+    label: "Billing & plans",
+    desc: "Current plan, usage, invoices, cancellation",
+    icon: CreditCard,
+  },
+  {
+    href: "/app/settings/compliance",
+    label: "Compliance",
+    desc: "Recording consent, do-not-call, regional rules",
+    icon: Shield,
+  },
+  {
+    href: "/app/developer",
+    label: "Developer",
+    desc: "API keys, webhooks, technical documentation",
+    icon: Code,
+  },
 ];
 
 type ConfirmType = "data" | "account" | null;

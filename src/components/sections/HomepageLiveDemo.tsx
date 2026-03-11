@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Mic2 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 
 const USE_CASES = [
@@ -77,12 +78,24 @@ export function HomepageLiveDemo() {
             <p className="text-sm text-zinc-400">
               Ready to make this your phone line?
             </p>
-            <a
-              href="/activate"
-              className="bg-white text-black font-semibold rounded-xl px-5 py-2.5 text-sm hover:bg-zinc-100 transition-colors"
-            >
-              Start free →
-            </a>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = "/demo";
+                }}
+                className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-zinc-700 text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                aria-label="Open interactive call demo"
+              >
+                <Mic2 className="w-4 h-4" />
+              </button>
+              <a
+                href="/activate"
+                className="bg-white text-black font-semibold rounded-xl px-5 py-2.5 text-sm hover:bg-zinc-100 transition-colors"
+              >
+                Start free →
+              </a>
+            </div>
           </div>
         </div>
       </Container>
