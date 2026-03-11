@@ -17,10 +17,10 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const { data: examples, error: exErr } = await db
     .from("call_examples")
-    .select("id, title, source, call_type, status, created_at, transcript")
+    .select("id, title, source, call_type, status, created_at, transcript, agent_id, duration_seconds, audio_url")
     .eq("workspace_id", session.workspaceId)
     .order("created_at", { ascending: false })
-    .limit(50);
+    .limit(100);
 
   if (exErr) {
     console.error("[call-intelligence] list examples", exErr);
