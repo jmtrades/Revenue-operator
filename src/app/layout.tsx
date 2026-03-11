@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { isRTL } from "@/lib/rtl";
 import { Inter, Playfair_Display, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
@@ -85,13 +88,17 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+  const t = await getTranslations("accessibility");
+
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang={locale} dir={isRTL(locale) ? "rtl" : "ltr"} className="dark" suppressHydrationWarning>
       <head suppressHydrationWarning>
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
       </head>
@@ -103,29 +110,31 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
         />
-        <SwCleanup />
-        <StaleBuildBanner />
-        <a href="#main" className="skip-link">
-          Skip to content
-        </a>
-        {children}
-        <Toaster
-          position="bottom-right"
-          theme="dark"
-          richColors
-          closeButton
-          toastOptions={{
-            style: {
-              background: "#1A1A1D",
-              border: "1px solid rgba(255,255,255,0.06)",
-              color: "#EDEDEF",
-              fontSize: "14px",
-              borderRadius: "12px",
-            },
-          }}
-        />
-        <SpeedInsights />
-        <Analytics />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <SwCleanup />
+          <StaleBuildBanner />
+          <a href="#main" className="skip-link">
+            {t("skipToContent")}
+          </a>
+          {children}
+          <Toaster
+            position="bottom-right"
+            theme="dark"
+            richColors
+            closeButton
+            toastOptions={{
+              style: {
+                background: "#1A1A1D",
+                border: "1px solid rgba(255,255,255,0.06)",
+                color: "#EDEDEF",
+                fontSize: "14px",
+                borderRadius: "12px",
+              },
+            }}
+          />
+          <SpeedInsights />
+          <Analytics />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

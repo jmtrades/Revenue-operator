@@ -1,7 +1,8 @@
 /**
- * 1) Ops routes: require staff session.
- * 2) App session: restore auth cookie on dashboard; missing session → redirect (GET only).
- * 3) Public and API bypass: explicit list; never redirect POST, never block webhooks or public API.
+ * 1) Locale (next-intl): detect locale, redirect to /[locale] when needed.
+ * 2) Ops routes: require staff session.
+ * 3) App session: restore auth cookie on dashboard; missing session → redirect (GET only).
+ * 4) Public and API bypass: explicit list; never redirect POST, never block webhooks or public API.
  *
  * CRITICAL: Public and static paths are checked first so crawlers/bots (no cookies) never get 401.
  * Next.js 16: proxy (formerly middleware) — request boundary in front of the app.
@@ -9,11 +10,15 @@
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
 import {
   getSessionFromCookieAsync,
   createSessionCookieAsync,
   isSessionEnabled,
 } from "@/lib/auth/session-edge";
+
+const intlMiddleware = createIntlMiddleware(routing);
 
 /** Paths that must never require auth (crawlers, OG, link previews). Checked first. */
 function isPublicOrStaticPath(pathname: string): boolean {
@@ -109,6 +114,10 @@ function getRedirectTarget(pathname: string): string {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const method = req.method ?? "GET";
+
+  // ——— next-intl: locale detection and redirect to /[locale] for public pages ———
+  const intlRes = await intlMiddleware(req);
+  if (intlRes && (intlRes.status === 307 || intlRes.status === 308)) return intlRes;
 
   // ——— Public/static first: crawlers and bots must never get 401 ———
   if (isPublicOrStaticPath(pathname)) return NextResponse.next();

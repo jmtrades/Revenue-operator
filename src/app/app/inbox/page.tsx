@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, PanelRightOpen, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,17 +44,20 @@ function persistInboxSnapshot(workspaceId: string, threads: InboxThread[]) {
   }
 }
 
-function formatRelative(timestamp: string): string {
+function formatRelative(
+  timestamp: string,
+  t: (key: string, params?: Record<string, string | number | Date>) => string
+): string {
   const d = new Date(timestamp).getTime();
   const diff = Date.now() - d;
   const min = Math.floor(diff / 60000);
   const hour = Math.floor(diff / 3600000);
   const day = Math.floor(diff / (24 * 60 * 60 * 1000));
-  if (min < 1) return "Just now";
-  if (min < 60) return `${min}m ago`;
-  if (hour < 24) return `${hour}h ago`;
-  if (day === 1) return "Yesterday";
-  return `${day}d ago`;
+  if (min < 1) return t("inbox.relative.justNow");
+  if (min < 60) return t("inbox.relative.minutesAgo", { count: min });
+  if (hour < 24) return t("inbox.relative.hoursAgo", { count: hour });
+  if (day === 1) return t("inbox.relative.yesterday");
+  return t("inbox.relative.daysAgo", { count: day });
 }
 
 function channelIcon(channel: InboxChannel) {
@@ -63,11 +67,14 @@ function channelIcon(channel: InboxChannel) {
   return Mail;
 }
 
-function channelLabel(channel: InboxChannel) {
-  if (channel === "phone") return "Phone";
-  if (channel === "sms") return "SMS";
-  if (channel === "whatsapp") return "WhatsApp";
-  return "Email";
+function channelLabel(
+  channel: InboxChannel,
+  t: (key: string) => string,
+) {
+  if (channel === "phone") return t("inbox.channel.phone");
+  if (channel === "sms") return t("inbox.channel.sms");
+  if (channel === "whatsapp") return t("inbox.channel.whatsapp");
+  return t("inbox.channel.email");
 }
 
 function ConversationList({
@@ -87,6 +94,7 @@ function ConversationList({
   onFilterChange: (f: Filter) => void;
   onSearchChange: (v: string) => void;
 }) {
+  const t = useTranslations();
   const filtered = useMemo(() => {
     let list = threads;
     if (filter === "unread") list = list.filter((t) => t.unread);
@@ -109,12 +117,12 @@ function ConversationList({
   }, [threads, filter, search]);
 
   const filterTabs = [
-    { id: "all" as const, label: "All" },
-    { id: "unread" as const, label: "Unread" },
-    { id: "phone" as const, label: "Phone" },
-    { id: "sms" as const, label: "SMS" },
-    { id: "email" as const, label: "Email" },
-    { id: "whatsapp" as const, label: "WhatsApp" },
+    { id: "all" as const, label: t("inbox.filters.all") },
+    { id: "unread" as const, label: t("inbox.filters.unread") },
+    { id: "phone" as const, label: t("inbox.filters.phone") },
+    { id: "sms" as const, label: t("inbox.filters.sms") },
+    { id: "email" as const, label: t("inbox.filters.email") },
+    { id: "whatsapp" as const, label: t("inbox.filters.whatsapp") },
   ];
 
   return (
@@ -125,7 +133,7 @@ function ConversationList({
           icon={Search}
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search conversations…"
+          placeholder={t("inbox.search.placeholder")}
           className="rounded-xl mb-3"
         />
         <Tabs
@@ -138,9 +146,18 @@ function ConversationList({
         {filtered.length === 0 ? (
           <div className="p-8 text-center">
             <MessageSquare className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-            <p className="text-sm font-medium text-white mb-1">Your conversations will appear here</p>
-            <p className="text-xs text-zinc-500 mb-4">Your AI can send follow-up texts after calls. Enable SMS in settings to get started.</p>
-            <Link href="/app/settings/integrations" className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline">Enable SMS →</Link>
+            <p className="text-sm font-medium text-white mb-1">
+              {t("inbox.empty.title")}
+            </p>
+            <p className="text-xs text-zinc-500 mb-4">
+              {t("inbox.empty.body")}
+            </p>
+            <Link
+              href="/app/settings/integrations"
+              className="text-sm font-medium text-white underline underline-offset-2 hover:no-underline"
+            >
+              {t("inbox.empty.cta")}
+            </Link>
           </div>
         ) : filtered.map((thread) => {
           const Icon = channelIcon(thread.channel);
@@ -171,7 +188,7 @@ function ConversationList({
                     <Icon className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
                   </div>
                   <span className="text-[10px] text-zinc-500 shrink-0">
-                    {formatRelative(thread.lastMessageAt)}
+                    {formatRelative(thread.lastMessageAt, t)}
                   </span>
                 </div>
                 <p className="text-xs text-zinc-500 truncate mt-0.5">{thread.lastMessage}</p>
@@ -188,6 +205,7 @@ function ConversationList({
 }
 
 function CallCard({ message }: { message: InboxMessage }) {
+  const t = useTranslations();
   const duration =
     message.durationSeconds != null
       ? `${Math.floor(message.durationSeconds / 60)}:${String(
@@ -198,7 +216,7 @@ function CallCard({ message }: { message: InboxMessage }) {
     <div className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 mb-2 max-w-md">
       <div className="flex items-center gap-2 mb-1 flex-wrap">
         <PhoneCall className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
-        <span className="font-medium">Phone call</span>
+        <span className="font-medium">{t("inbox.callCard.title")}</span>
         {message.outcome && (
           <Badge variant="info" className="ml-1">{message.outcome}</Badge>
         )}
@@ -208,16 +226,22 @@ function CallCard({ message }: { message: InboxMessage }) {
           <AudioPlayer src={message.recording_url} />
         </div>
       )}
-      {duration && <p className="text-[11px] text-zinc-400 mb-1">Duration: {duration}</p>}
+      {duration && (
+        <p className="text-[11px] text-zinc-400 mb-1">
+          {t("inbox.callCard.duration", { duration })}
+        </p>
+      )}
       {message.callId && !message.recording_url && (
         <a
           href={`/app/calls/${encodeURIComponent(message.callId)}`}
           className="text-[11px] text-[var(--accent-primary)] hover:opacity-80 underline"
         >
-          View call →
+          {t("inbox.callCard.viewCall")}
         </a>
       )}
-      <p className="text-[10px] text-zinc-500 mt-1">{formatRelative(message.timestamp)}</p>
+      <p className="text-[10px] text-zinc-500 mt-1">
+        {formatRelative(message.timestamp, t)}
+      </p>
     </div>
   );
 }
@@ -245,10 +269,12 @@ function ConversationDetail({
   isMobile?: boolean;
   onBack?: () => void;
 }) {
+  const t = useTranslations();
+
   if (!thread) {
     return (
       <div className="flex-1 flex items-center justify-center text-sm text-zinc-500">
-        Select a conversation to view details.
+        {t("inbox.detail.empty")}
       </div>
     );
   }
@@ -278,7 +304,7 @@ function ConversationDetail({
             {channel === "sms" && <MessageSquare className="w-3 h-3" />}
             {channel === "whatsapp" && <MessageSquare className="w-3 h-3" />}
             {channel === "email" && <Mail className="w-3 h-3" />}
-            {channelLabel(thread.channel)}
+            {channelLabel(thread.channel, t)}
           </span>
           <span
             className={`ml-1 inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${
@@ -297,7 +323,7 @@ function ConversationDetail({
           onClick={onToggleStatus}
           className="text-xs font-medium px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 hover:bg-zinc-800 shrink-0"
         >
-          {isOpen ? "Mark resolved" : "Reopen"}
+          {isOpen ? t("inbox.detail.actions.markResolved") : t("inbox.detail.actions.reopen")}
         </button>
       </div>
 
@@ -350,9 +376,9 @@ function ConversationDetail({
                       isAgent ? "text-white/80" : "text-zinc-500"
                     }`}
                   >
-                    {formatRelative(m.timestamp)}
+                    {formatRelative(m.timestamp, t)}
                     {m.channel !== thread.channel && (
-                      <span className="ml-1 uppercase">· {channelLabel(m.channel)}</span>
+                      <span className="ml-1 uppercase">· {channelLabel(m.channel, t)}</span>
                     )}
                   </p>
                 </div>
@@ -364,7 +390,7 @@ function ConversationDetail({
 
       <div className="border-t border-[var(--border-default)] px-3 py-3 bg-[var(--bg-card)]/80">
         <div className="flex items-center gap-2 mb-2 text-[11px] text-zinc-400">
-          <span>Reply as</span>
+          <span>{t("inbox.detail.replyAs")}</span>
           {(["sms", "email", "whatsapp"] as ReplyChannel[]).map((ch) => (
             <button
               key={ch}
@@ -376,7 +402,11 @@ function ConversationDetail({
                   : "bg-[var(--bg-input)] text-[var(--text-secondary)] border-[var(--border-medium)] hover:border-[var(--border-medium)]"
               }`}
             >
-              {ch === "sms" ? "SMS" : ch === "whatsapp" ? "WhatsApp" : "Email"}
+              {ch === "sms"
+                ? t("inbox.channel.sms")
+                : ch === "whatsapp"
+                  ? t("inbox.channel.whatsapp")
+                  : t("inbox.channel.email")}
             </button>
           ))}
         </div>
@@ -384,7 +414,7 @@ function ConversationDetail({
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a message…"
+            placeholder={t("inbox.detail.inputPlaceholder")}
             className="flex-1 rounded-xl"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -394,7 +424,7 @@ function ConversationDetail({
             }}
           />
           <Button variant="primary" size="md" onClick={onSend} disabled={!input.trim() || sending}>
-            {sending ? "Sending…" : "Send"}
+            {sending ? t("inbox.detail.sending") : t("inbox.detail.send")}
           </Button>
         </div>
       </div>
@@ -403,6 +433,7 @@ function ConversationDetail({
 }
 
 export default function InboxPage() {
+  const t = useTranslations();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId =

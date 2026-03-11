@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast } from "sonner";
+import { TIMEZONES_BY_REGION } from "@/lib/constants";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
 import {
   fetchWorkspaceMeCached,
@@ -50,17 +51,31 @@ export default function AppSettingsBusinessPage() {
         setIndustry(data?.industry && INDUSTRY_OPTIONS.some((item) => item.id === data.industry) ? data.industry : "other");
       })
       .finally(() => setLoading(false));
+    fetch("/api/workspace/timezone", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { timezone?: string } | null) => {
+        if (data?.timezone) setTimezone(data.timezone);
+      })
+      .catch(() => {});
   }, []);
 
   const handleSave = async () => {
     try {
-      const res = await fetch("/api/workspace/me", {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, address, website, industry }),
-      });
-      if (!res.ok) throw new Error("save_failed");
+      const [resMe, resTz] = await Promise.all([
+        fetch("/api/workspace/me", {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, address, website, industry }),
+        }),
+        fetch("/api/workspace/timezone", {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ timezone }),
+        }),
+      ]);
+      if (!resMe.ok) throw new Error("save_failed");
       invalidateWorkspaceMeCache();
       setInlineToast("Settings saved");
       toast.success("Settings saved");
@@ -91,7 +106,16 @@ export default function AppSettingsBusinessPage() {
         </div>
         <div>
           <label htmlFor="biz-tz" className="block text-xs font-medium text-zinc-400 mb-1">Timezone</label>
-          <input id="biz-tz" type="text" value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
+          <select id="biz-tz" value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none">
+            {TIMEZONES_BY_REGION.map(({ region, zones }) => (
+              <optgroup key={region} label={region}>
+                {zones.map((z) => (
+                  <option key={z} value={z}>{z}</option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          <p className="mt-1 text-[11px] text-zinc-500">Used for scheduling and display. Hover on times for UTC.</p>
         </div>
         <div>
           <label htmlFor="biz-industry" className="block text-xs font-medium text-zinc-400 mb-1">Industry</label>

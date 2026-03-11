@@ -173,3 +173,11 @@ export const COMPARISON_FEATURES = [
   { category: "Features", name: "Compliance export", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
   { category: "Support", name: "Priority support", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
 ] as const;
+
+/** Timezones grouped by region for workspace scheduling (Phase 1 Task 8) */
+export const TIMEZONES_BY_REGION: { region: string; zones: string[] }[] = [
+  { region: "Americas", zones: ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Phoenix", "America/Toronto", "America/Vancouver", "America/Mexico_City", "America/Sao_Paulo", "America/Buenos_Aires"] },
+  { region: "Europe", zones: ["Europe/London", "Europe/Paris", "Europe/Berlin", "Europe/Madrid", "Europe/Amsterdam", "Europe/Rome", "Europe/Stockholm", "Europe/Zurich"] },
+  { region: "Asia Pacific", zones: ["Asia/Tokyo", "Asia/Shanghai", "Asia/Hong_Kong", "Asia/Singapore", "Asia/Seoul", "Asia/Kolkata", "Australia/Sydney", "Australia/Melbourne", "Pacific/Auckland"] },
+  { region: "UTC", zones: ["UTC"] },
+];
