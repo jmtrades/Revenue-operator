@@ -1,9 +1,22 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Play, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
+import {
+  CRM_FIELDS_BY_PROVIDER,
+  RECALL_TOUCH_FIELDS,
+  getDefaultMappings,
+  testMapping,
+  SAMPLE_LEAD,
+  type CrmProviderId,
+  type FieldMappingConfig,
+  type MapEntry,
+  type TransformationType,
+} from "@/lib/integrations/field-mapper";
 
 const PROVIDER_NAMES: Record<string, string> = {
   salesforce: "Salesforce",
@@ -15,13 +28,121 @@ const PROVIDER_NAMES: Record<string, string> = {
   microsoft_365: "Microsoft 365",
 };
 
+const TRANSFORMATION_LABELS: Record<TransformationType, string> = {
+  none: "None",
+  format_phone: "Format phone (E.164)",
+  map_status: "Map status",
+  concatenate: "Concatenate fields",
+};
+
+function isCrmProviderId(s: string): s is CrmProviderId {
+  return Object.keys(CRM_FIELDS_BY_PROVIDER).includes(s);
+}
+
 export default function IntegrationsMappingPage() {
   const searchParams = useSearchParams();
-  const provider = searchParams.get("provider") ?? "";
+  const providerParam = searchParams.get("provider") ?? "";
+  const provider = isCrmProviderId(providerParam) ? providerParam : ("hubspot" as CrmProviderId);
   const name = (PROVIDER_NAMES[provider] ?? provider) || "CRM";
 
+  const [config, setConfig] = useState<FieldMappingConfig>({ mappings: [], customRtFields: [], customCrmFields: [] });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [testResult, setTestResult] = useState<{ output: Record<string, unknown>; errors: string[] } | null>(null);
+
+  const crmFields = CRM_FIELDS_BY_PROVIDER[provider] ?? [];
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetch(`/api/integrations/crm/${provider}/mapping`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: FieldMappingConfig | null) => {
+        if (!cancelled && data && Array.isArray(data.mappings)) {
+          setConfig({
+            mappings: data.mappings,
+            customRtFields: data.customRtFields ?? [],
+            customCrmFields: data.customCrmFields ?? [],
+          });
+        } else if (!cancelled) {
+          setConfig({ mappings: getDefaultMappings(provider), customRtFields: [], customCrmFields: [] });
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setConfig({ mappings: getDefaultMappings(provider), customRtFields: [], customCrmFields: [] });
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [provider]);
+
+  const updateMapping = (index: number, patch: Partial<MapEntry>) => {
+    setConfig((prev) => ({
+      ...prev,
+      mappings: prev.mappings.map((m, i) => (i === index ? { ...m, ...patch } : m)),
+    }));
+    setTestResult(null);
+  };
+
+  const addMapping = () => {
+    setConfig((prev) => ({
+      ...prev,
+      mappings: [...prev.mappings, { rtField: RECALL_TOUCH_FIELDS[0].key, crmField: crmFields[0]?.key ?? "", transformation: "none" }],
+    }));
+    setTestResult(null);
+  };
+
+  const removeMapping = (index: number) => {
+    setConfig((prev) => ({
+      ...prev,
+      mappings: prev.mappings.filter((_, i) => i !== index),
+    }));
+    setTestResult(null);
+  };
+
+  const loadDefaults = () => {
+    setConfig({ mappings: getDefaultMappings(provider), customRtFields: [], customCrmFields: [] });
+    setTestResult(null);
+    toast.info("Defaults loaded.");
+  };
+
+  const handleTest = () => {
+    const result = testMapping(SAMPLE_LEAD, config);
+    setTestResult(result);
+    if (result.errors.length > 0) {
+      toast.error(result.errors[0]);
+    } else {
+      toast.success("Test run complete. See output below.");
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/integrations/crm/${provider}/mapping`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(config),
+      });
+      if (!res.ok) {
+        const err = (await res.json()) as { error?: string };
+        toast.error(err.error ?? "Failed to save");
+        return;
+      }
+      toast.success("Mapping saved.");
+    } catch {
+      toast.error("Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="max-w-[600px] mx-auto p-4 md:p-6">
+    <div className="max-w-[800px] mx-auto p-4 md:p-6">
       <Breadcrumbs
         items={[
           { label: "Settings", href: "/app/settings" },
@@ -33,20 +154,134 @@ export default function IntegrationsMappingPage() {
         Field mapping — {name}
       </h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">
-        Map Recall Touch fields to {name} fields. Sync configuration will be available here.
+        Map Recall Touch contact/lead fields to {name} fields. Use transformations for phone format or status values.
       </p>
-      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-center">
-        <p className="text-sm text-zinc-400 mb-4">
-          Field mapping and sync configuration are coming in a future update.
-        </p>
+
+      {loading ? (
+        <div className="h-48 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-default)] animate-pulse" />
+      ) : (
+        <>
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
+            <div className="grid grid-cols-12 gap-2 p-4 border-b border-[var(--border-default)] text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+              <div className="col-span-4">Recall Touch</div>
+              <div className="col-span-1" aria-hidden />
+              <div className="col-span-4">CRM field ({name})</div>
+              <div className="col-span-2">Transform</div>
+              <div className="col-span-1" />
+            </div>
+            {config.mappings.map((m, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-12 gap-2 p-4 border-b border-[var(--border-default)] last:border-0 items-center"
+              >
+                <div className="col-span-4">
+                  <select
+                    value={m.rtField}
+                    onChange={(e) => updateMapping(index, { rtField: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  >
+                    {RECALL_TOUCH_FIELDS.map((f) => (
+                      <option key={f.key} value={f.key}>{f.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-span-1 flex justify-center text-zinc-500" aria-hidden>→</div>
+                <div className="col-span-4">
+                  <select
+                    value={m.crmField}
+                    onChange={(e) => updateMapping(index, { crmField: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  >
+                    {crmFields.map((f) => (
+                      <option key={f.key} value={f.key}>{f.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <select
+                    value={m.transformation ?? "none"}
+                    onChange={(e) => updateMapping(index, { transformation: e.target.value as TransformationType })}
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  >
+                    {(Object.entries(TRANSFORMATION_LABELS) as Array<[TransformationType, string]>).map(([val, label]) => (
+                      <option key={val} value={val}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-span-1">
+                  <button
+                    type="button"
+                    onClick={() => removeMapping(index)}
+                    className="p-2 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                    aria-label="Remove mapping"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className="p-4 border-t border-[var(--border-default)]">
+              <button
+                type="button"
+                onClick={addMapping}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
+              >
+                <Plus className="w-4 h-4" /> Add mapping
+              </button>
+              <button
+                type="button"
+                onClick={loadDefaults}
+                className="inline-flex items-center gap-2 ml-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
+              >
+                <RotateCcw className="w-4 h-4" /> Load defaults
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={handleTest}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
+            >
+              <Play className="w-4 h-4" /> Test with sample data
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-50 transition-colors"
+            >
+              {saving ? "Saving…" : "Save mapping"}
+            </button>
+          </div>
+
+          {testResult && (
+            <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-2">Test output (sample: {SAMPLE_LEAD.name})</h3>
+              {testResult.errors.length > 0 && (
+                <ul className="text-sm text-amber-400 mb-2">
+                  {testResult.errors.map((e, i) => (
+                    <li key={i}>{e}</li>
+                  ))}
+                </ul>
+              )}
+              <pre className="text-xs text-zinc-400 bg-black/30 rounded-xl p-3 overflow-x-auto">
+                {JSON.stringify(testResult.output, null, 2)}
+              </pre>
+            </div>
+          )}
+        </>
+      )}
+
+      <p className="mt-6">
         <Link
           href="/app/settings/integrations"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" aria-hidden />
-          Back to Integrations
+          <ArrowLeft className="w-4 h-4" /> Back to Integrations
         </Link>
-      </div>
+      </p>
     </div>
   );
 }
