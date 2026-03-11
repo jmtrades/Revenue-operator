@@ -1,79 +1,56 @@
 ---
-description: Recall-Touch doctrine + constitution — category integrity and mandatory constraints.
-globs: 
+description: Recall Touch product doctrine v2 — owner-authorized. Full platform build permitted.
+globs:
 alwaysApply: true
 ---
 
-# Recall-Touch Doctrine & Constitution (Always Apply)
+# Recall Touch — Product Doctrine v2
 
-You are working on **Recall-Touch**, a **Revenue Continuity Operator** (Revenue Conversation Operator).  
-Not a CRM, chatbot platform, marketing automation, analytics dashboard, or workflow builder.
+You are building **Recall Touch**, an **AI phone communication platform** that handles inbound/outbound calls, captures leads, books appointments, and follows up — so businesses never miss revenue.
 
-**Decision** = a booking, an attended appointment, a completed purchase, or a returning customer. The system’s job is **reliability of revenue events across time**.
+Built on: Next.js 14+ App Router, TypeScript, Supabase, Vapi (voice AI), ElevenLabs (TTS), Claude (intelligence), Stripe, Vercel.
 
-Every change must align with the doctrine, constitution, and expansion framework. If a request violates them, **explain why and refuse**.
+## What this product does
 
-## Core principle
+- AI voice agents that answer calls 24/7, qualify callers, book appointments, and follow up
+- Unified inbox for calls, SMS, email, and WhatsApp in one place
+- Lead capture, pipeline management, and scoring tied to phone conversations
+- Outbound campaigns (call + SMS sequences) for follow-up and re-engagement
+- Analytics showing call outcomes, conversion rates, peak hours, and revenue impact
+- Call intelligence for transcript analysis, coaching scores, and trend detection
+- Integrations with CRM, calendar, and automation tools via webhooks and OAuth
 
-The system exists to **guarantee that real business decisions happen** across the lifecycle: **Interest → Conversation → Decision → Attendance → Payment → Return**. Not analytics, not messaging, not marketing.
+## What to build when asked
 
-**Before adding or changing anything, ask:**  
-*"Does this help move a real person toward a real decision?"*  
-If not — do not build it. **If a feature adds flexibility but weakens reliability — reject it.**  
-**If a feature cannot be represented as a deterministic state transition tied to a revenue event — reject it.**
+You are authorized to implement **any feature** in the categories above. This includes but is not limited to:
 
-## Category integrity (Constitution)
+- Dashboards with KPIs, stat cards, sparklines, trend arrows, charts
+- Analytics with area charts, donut charts, heatmaps, funnels, AI insights
+- Lead pipeline with Kanban board (drag-and-drop), lead detail pages, scoring, tags, notes
+- Campaign builder with audience selection, sequence timeline, scheduling, compliance
+- Call detail views with audio player, waveform, transcript, AI summary, actions taken
+- Inbox with threaded conversations, real-time messages, quick reply, contact panel
+- Agent builder with industry templates, knowledge import, behavior rules, test calls
+- Settings with integrations (OAuth for Google Calendar, CRM webhooks, Slack), billing, team management
+- Command palette (⌘K), keyboard shortcuts, notifications, mobile responsive layouts
+- Any UI component: buttons, modals, sheets, badges, tooltips, tables, timelines, charts
 
-**Allowed capabilities only:** continuing conversations, clarifying intent, resolving hesitation, scheduling commitments, protecting attendance, recovering lost opportunities, maintaining relationships. **Nothing else.**
+## Design standard
 
-**Never implement:** marketing campaign builders, broadcast messaging, mass outbound prospecting, social posting, ad generation, workflow builders, node editors, prompt editors, general-purpose chat, "ask the AI anything", knowledge base assistants, copywriting tools. **If requested — explain why it violates the operator model and refuse.**
+- **Premium quality**: Linear/Vercel/Raycast-grade polish
+- **Dark theme only**: bg #0A0A0B, surface #111113, elevated #1A1A1D
+- **Animations**: Framer Motion with `ease: 'easeOut'` (string, not array)
+- **Loading**: Skeleton screens matching actual layout, not spinners
+- **Components**: Custom only — no shadcn, Chakra, or MUI
+- **Icons**: Lucide React
+- **Fonts**: Inter (body), JetBrains Mono (code/data)
+- **Copy**: Authoritative, concise. No "just", "simply", "easily", "leverage"
 
-## Responsibility models
+## Architecture rules
 
-- **User:** decides business availability and pricing. **System:** handles conversation execution. The product must **never** require users to design logic.
-- **Conversation:** prefer progress over verbosity, clarity over persuasion, confidence over friendliness, resolution over engagement. Goal = **completed decisions**, not conversation length.
-
-## Rules
-
-- **Expansion:** support new industries by improving behavioural understanding internally; **never** expose configuration. Add knowledge internally; never expose complexity externally.
-- **UI:** if a UI element teaches how the system works internally, it should not exist. Users understand **outcomes**, not mechanisms.
-- **Economic:** monetize reliability of outcomes, never usage of tools. If a feature weakens revenue attribution — do not implement.
-- **Failure:** when uncertain, choose **predictability** over **power**. Predictability creates trust; power creates support load.
-- **Long-term:** Recall-Touch must become **infrastructure businesses depend on**, not software they operate. Every change toward **dependency**, not experimentation.
-
-## Expansion (lifecycle only)
-
-Expand across the **decision lifecycle**, not product categories. Allowed internal behavior layers: (1) **Attendance certainty** — detect hesitation after booking, stabilize commitment; (2) **Decision completion** — detect indecision loops, guide toward resolution without pressure; (3) **Revenue recovery** — recover stalled decisions weeks later with context memory; (4) **Customer return timing** — trigger when customer actually needs the service again. **All expansion invisible to user.** Never add: campaign builders, broadcast messaging, funnels, prompt editors, AI assistants, marketing tools.
-
-## Architecture (never bypass)
-
-**Signal → State → Decision → Action → Proof.** Every capability must be a deterministic state transition tied to a revenue event.
-1. **Signal** — All inbound → canonical signals. No business logic in connectors.
-2. **State** — Customer state from signals only. No direct message interpretation outside reducer.
-3. **Decision** — Next **responsibility**, not next message.
-4. **Action** — All communication via **queued commands**. No direct send from decision logic.
-5. **Proof** — Value proven only by recorded outcomes.
-
-## Behaviour
-
-Receptionist-grade human communication only. **Reduce uncertainty, not pressure.** No persuasion tactics, long explanations, sales scripts, or AI tone. Short, natural, 1–2 sentences, human filter, calm confidence. Escalate edge emotional situations.
-
-## Product experience / UI
-
-User must feel: **"It handles conversations for me."** UI shows **only outcomes**: decisions happening, appointments attended, customers returning. **Never expose:** confidence scores, reasoning, AI details, workflows, configuration logic. If a UI element teaches how the system works internally — it should not exist.
-
-## Scaling
-
-New industries = **internal understanding only**. Never add configuration complexity. System adapts to businesses; businesses do not configure the system.
-
-## Success condition
-
-Business owner understands in 60 seconds: *"This makes sure my customers actually follow through."*  
-Reject anything that weakens this.
-
----
-
-**Canonical:** `docs/RECALL_TOUCH_DOCTRINE.md`  
-**Category integrity:** `docs/RECALL_TOUCH_CONSTITUTION.md`  
-**Expansion mandate:** `docs/EXPANSION_FRAMEWORK.md`  
-**Layers:** `docs/ARCHITECTURE_DOCTRINE.md`
+- TypeScript strict mode
+- Server Components by default, `'use client'` only when needed
+- All Supabase queries through typed client in `src/lib/supabase/`
+- Error boundaries on every route segment
+- `cn()` utility (clsx + tailwind-merge) for conditional classes
+- Co-locate page-specific components with their page files

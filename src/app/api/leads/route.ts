@@ -60,13 +60,13 @@ export async function POST(req: NextRequest) {
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
 
-  let body: { name: string; phone?: string; email?: string; service_requested?: string; source?: string; status?: string; notes?: string };
+  let body: { name: string; phone?: string; email?: string; company?: string; service_requested?: string; source?: string; status?: string; notes?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { name, phone, email, service_requested, source, status, notes } = body;
+  const { name, phone, email, company, service_requested, source, status, notes } = body;
   if (!name?.trim()) return NextResponse.json({ error: "Name is required" }, { status: 400 });
   const phoneStr = (phone ?? "").toString().trim();
   if (!phoneStr) return NextResponse.json({ error: "Phone is required" }, { status: 400 });
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
       name: name.trim(),
       phone: phoneStr,
       email: (email ?? "").trim() || null,
-      company: (service_requested ?? "").trim() || null,
+      company: (company ?? service_requested ?? "").trim() || null,
       state: dbState,
       metadata,
     })

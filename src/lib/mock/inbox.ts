@@ -8,7 +8,7 @@ export type InboxStatus = "Open" | "Resolved" | "Pending";
 
 export interface InboxMessage {
   id: string;
-  sender: "agent" | "contact";
+  sender: "agent" | "contact" | "system";
   content: string;
   timestamp: string;
   channel: InboxChannel;
@@ -16,6 +16,8 @@ export interface InboxMessage {
   callId?: string;
   durationSeconds?: number;
   outcome?: string;
+  /** When present, show AudioPlayer in thread */
+  recording_url?: string | null;
 }
 
 export interface InboxThread {

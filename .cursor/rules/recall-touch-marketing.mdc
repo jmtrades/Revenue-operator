@@ -1,17 +1,17 @@
 ---
-description: Recall Touch marketing site — design system and page structure. Apply to homepage, /pricing, /product, /docs and all sections in src/components/sections.
+description: Recall Touch marketing site — design system and page structure.
 globs: src/app/page.tsx, src/app/pricing/**/*, src/app/product/**/*, src/app/docs/**/*, src/components/sections/**/*
 ---
 
-# Recall Touch — Marketing Site (Design System)
+# Recall Touch — Marketing Site
 
-You are implementing the Recall Touch marketing website to Linear/Stripe-grade quality. Dark theme only. No light mode.
+Implementing the Recall Touch marketing website to Linear/Stripe-grade quality. Dark theme only.
 
-## Design tokens (use these; do not improvise)
+## Design tokens
 
 - **Backgrounds**: `--bg-primary` #0A0A0B, `--bg-surface` #111113, `--bg-elevated` #1A1A1D
 - **Borders**: `--border-default` rgba(255,255,255,0.06), `--border-hover` rgba(255,255,255,0.1)
-- **Accent**: `--accent-primary` #4F8CFF (CTAs, links), `--accent-secondary` #00D4AA (status, governed)
+- **Accent**: `--accent-primary` #4F8CFF (CTAs, links), `--accent-secondary` #00D4AA (status, success)
 - **Text**: `--text-primary` #EDEDEF, `--text-secondary` #8B8B8D, `--text-tertiary` #5A5A5C
 - **Warning**: `--accent-warning` #FFB224
 - **Container**: max-width 1200px, padding 24px / 40px / 48px by breakpoint
@@ -20,23 +20,22 @@ You are implementing the Recall Touch marketing website to Linear/Stripe-grade q
 
 ## Components
 
-- **Navbar**: Sticky, backdrop-blur on scroll, 64px height. Logo + Product, Pricing, Documentation + Sign in (ghost) + Start free (primary).
-- **Buttons**: `.btn-marketing-primary` (filled white, text black — no blue). `.btn-marketing-ghost` (border only). Large variant: `.btn-lg`.
-- **Cards**: `.card-marketing` — surface bg, 1px border, 12px radius, hover border/background transition.
-- **Section label**: `.section-label` — 12px uppercase, letter-spacing 0.1em, `--accent-primary` color.
+- **Navbar**: Sticky, backdrop-blur on scroll, 64px height.
+- **Buttons**: `.btn-marketing-primary` (filled white, text black). `.btn-marketing-ghost` (border only).
+- **Cards**: `.card-marketing` — surface bg, 1px border, 12px radius, hover transition.
+- **Section label**: `.section-label` — 12px uppercase, letter-spacing 0.1em, accent color.
 
 ## Copy voice
 
 - Authoritative, concise. No "just", "simply", "easily", "leverage", "utilize", "revolutionary".
-- The product **governs**; it doesn’t "help you manage". Use: governed, under record, auditable, compliant, infrastructure.
-- No questions as headlines. Statements only.
+- Use: AI-powered, automated, intelligent, 24/7, hands-free, real-time.
 
 ## Homepage sections (order)
 
-1. Navbar 2. Hero (eyebrow + H1 + subhead + CTAs + product visual) 3. Problem 4. How it works (3 steps) 5. Capabilities (bento) 6. Use cases 7. Pricing preview 8. Trust / social proof 9. Final CTA 10. Footer
+1. Navbar 2. Hero 3. Problem 4. How it works 5. Capabilities 6. Demo/Audio 7. Use cases 8. Pricing 9. Social proof 10. Final CTA 11. Footer
 
 ## Tech
 
 - Framer Motion: use `ease: "easeOut"` (not cubic-bezier array) for TypeScript compatibility.
-- Icons: Lucide React. Fonts: Inter (body), JetBrains Mono (code/records).
+- Icons: Lucide React. Fonts: Inter (body), JetBrains Mono (code/data).
 - No component libraries (no shadcn, Chakra, MUI). Custom components only.
