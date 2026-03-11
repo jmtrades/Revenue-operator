@@ -1,7 +1,16 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { ChevronDown, Flag, Music2 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { cn } from "@/lib/cn";
 
@@ -12,6 +21,9 @@ type CallExample = {
   call_type: string | null;
   status: string;
   created_at: string;
+  agent_id?: string | null;
+  duration_seconds?: number | null;
+  audio_url?: string | null;
 };
 
 type CallInsight = {
@@ -79,6 +91,8 @@ export default function CallIntelligencePage() {
   const [activeTab, setActiveTab] = useState<"analyzed" | "manual">("analyzed");
   const [expandedCallId, setExpandedCallId] = useState<string | null>(null);
   const [qualityFilter, setQualityFilter] = useState<QualityBucket>("all");
+  const [qualityTrendDays, setQualityTrendDays] = useState<7 | 30 | 90>(30);
+  const [callNotes, setCallNotes] = useState<Record<string, string>>({});
 
   const fetchData = useCallback(async () => {
     try {
@@ -111,6 +125,19 @@ export default function CallIntelligencePage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    const notes: Record<string, string> = {};
+    callExamples.forEach((c) => {
+      try {
+        const v = localStorage.getItem(`rt_call_note_${c.id}`);
+        if (v) notes[c.id] = v;
+      } catch {
+        // ignore
+      }
+    });
+    setCallNotes((prev) => ({ ...notes, ...prev }));
+  }, [callExamples.length]);
 
   const handleAnalyze = async () => {
     const transcript = pasteText.trim();
@@ -201,6 +228,95 @@ export default function CallIntelligencePage() {
 
   const analyzedCount = callExamples.length;
   const insightCount = callInsights.length;
+
+  const qualityPerCall = useMemo(() => {
+    return callExamples.map((call) => {
+      const insightsForCall = callInsights.filter(
+        (i) => i.call_example_id === call.id && !i.dismissed,
+      );
+      const primaryInsight = insightsForCall[0];
+      const actionItems = insightsForCall.map((i) => i.insight);
+      return {
+        call,
+        quality: calculateQualityScore({
+          sentiment: primaryInsight?.category === "tone" ? primaryInsight.insight : undefined,
+          outcome: primaryInsight?.category === "closing" ? primaryInsight.insight : undefined,
+          duration: call.duration_seconds ?? undefined,
+          actionItems,
+        }),
+      };
+    });
+  }, [callExamples, callInsights]);
+
+  const trendStart = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - qualityTrendDays);
+    return d.getTime();
+  }, [qualityTrendDays]);
+
+  const qualityTrendData = useMemo(() => {
+    const filtered = qualityPerCall.filter(
+      (p) => new Date(p.call.created_at).getTime() >= trendStart,
+    );
+    const byDay: Record<string, { total: number; sum: number }> = {};
+    filtered.forEach(({ call, quality }) => {
+      const day = new Date(call.created_at).toISOString().slice(0, 10);
+      if (!byDay[day]) byDay[day] = { total: 0, sum: 0 };
+      byDay[day].total += 1;
+      byDay[day].sum += quality.score;
+    });
+    return Object.entries(byDay)
+      .map(([isoDate, { total, sum }]) => ({
+        sortKey: isoDate,
+        date: new Date(isoDate).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+        avgScore: total > 0 ? Math.round(sum / total) : 0,
+        calls: total,
+      }))
+      .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+  }, [qualityPerCall, trendStart]);
+
+  const commonIssues = useMemo(() => {
+    const issues: { label: string; count: number }[] = [];
+    let negativeTone = 0;
+    let missedOutcome = 0;
+    let shortDuration = 0;
+    qualityPerCall.forEach(({ call, quality }) => {
+      if (quality.score < 60) {
+        const insightsForCall = callInsights.filter(
+          (i) => i.call_example_id === call.id && !i.dismissed,
+        );
+        const toneInsight = insightsForCall.find((i) => i.category === "tone");
+        const closingInsight = insightsForCall.find((i) => i.category === "closing");
+        if (toneInsight?.insight?.toLowerCase().includes("negative") || toneInsight?.insight?.toLowerCase().includes("poor")) negativeTone += 1;
+        if (closingInsight?.insight?.toLowerCase().includes("missed") || closingInsight?.insight?.toLowerCase().includes("voicemail")) missedOutcome += 1;
+        if (call.duration_seconds != null && call.duration_seconds < 10) shortDuration += 1;
+      }
+    });
+    if (negativeTone > 0) issues.push({ label: "Negative tone", count: negativeTone });
+    if (missedOutcome > 0) issues.push({ label: "Missed / voicemail outcome", count: missedOutcome });
+    if (shortDuration > 0) issues.push({ label: "Very short call (<10s)", count: shortDuration });
+    return issues;
+  }, [qualityPerCall, callInsights]);
+
+  const agentLeaderboard = useMemo(() => {
+    const byAgent: Record<string, { sum: number; count: number }> = {};
+    qualityPerCall.forEach(({ call, quality }) => {
+      const aid = call.agent_id ?? "_unknown_";
+      if (!byAgent[aid]) byAgent[aid] = { sum: 0, count: 0 };
+      byAgent[aid].sum += quality.score;
+      byAgent[aid].count += 1;
+    });
+    return Object.entries(byAgent)
+      .map(([agentId, { sum, count }]) => ({
+        agentId: agentId === "_unknown_" ? null : agentId,
+        agentName: agentId === "_unknown_" ? "Unassigned" : (agents.find((a) => a.id === agentId)?.name ?? "Unknown"),
+        avgScore: count > 0 ? Math.round(sum / count) : 0,
+        calls: count,
+      }))
+      .sort((a, b) => b.avgScore - a.avgScore)
+      .slice(0, 10);
+  }, [qualityPerCall, agents]);
+
   const confidenceValues = callInsights
     .map((i) => (typeof i.confidence === "number" ? i.confidence : null))
     .filter((v): v is number => v !== null);
@@ -275,23 +391,117 @@ export default function CallIntelligencePage() {
             </div>
           </div>
 
+          {/* Quality Trends */}
+          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h2 className="text-base font-medium text-white">Quality trends</h2>
+              <div className="flex gap-1">
+                {([7, 30, 90] as const).map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => setQualityTrendDays(d)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                      qualityTrendDays === d
+                        ? "bg-white text-black"
+                        : "text-zinc-400 hover:text-white bg-zinc-800/50",
+                    )}
+                  >
+                    {d}d
+                  </button>
+                ))}
+              </div>
+            </div>
+            {qualityTrendData.length === 0 ? (
+              <p className="text-sm text-zinc-500 py-6 text-center">No data in this range. Analyze more calls.</p>
+            ) : (
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={qualityTrendData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#8B8B8D" }} stroke="#5A5A5C" />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "#8B8B8D" }} stroke="#5A5A5C" />
+                    <Tooltip
+                      contentStyle={{ background: "#1A1A1D", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12 }}
+                      labelStyle={{ color: "#EDEDEF" }}
+                      formatter={(value) => [value != null ? String(value) : "—", "Avg score"]}
+                    />
+                    <Line type="monotone" dataKey="avgScore" stroke="#4F8CFF" strokeWidth={2} dot={{ fill: "#4F8CFF", r: 3 }} name="Avg quality" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+
+          {/* Common Issues + Agent Leaderboard row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+              <h2 className="text-base font-medium text-white mb-3">Common issues</h2>
+              {commonIssues.length === 0 ? (
+                <p className="text-sm text-zinc-500">No recurring issues in this period.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {commonIssues.map((issue) => (
+                    <li key={issue.label} className="flex items-center justify-between text-sm">
+                      <span className="text-zinc-300">{issue.label}</span>
+                      <span className="text-amber-400 font-medium">{issue.count} calls</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+              <h2 className="text-base font-medium text-white mb-3">Agent leaderboard (avg quality)</h2>
+              {agentLeaderboard.length === 0 ? (
+                <p className="text-sm text-zinc-500">No calls by agent yet.</p>
+              ) : (
+                <ol className="space-y-2">
+                  {agentLeaderboard.map((row, idx) => (
+                    <li key={row.agentId ?? "_unknown_"} className="flex items-center justify-between text-sm">
+                      <span className="text-zinc-300">
+                        {idx + 1}. {row.agentName}
+                      </span>
+                      <span className="text-white font-medium">{row.avgScore} · {row.calls} calls</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </div>
+          </div>
+
           {/* Analyzed calls list */}
           <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6">
-            <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
               <h2 className="text-base font-medium text-[#EDEDEF]">
                 Analyzed calls
               </h2>
-              <select
-                value={qualityFilter}
-                onChange={(e) => setQualityFilter(e.target.value as QualityBucket)}
-                className="bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-[#EDEDEF] outline-none"
-              >
-                <option value="all">All quality</option>
-                <option value="excellent">Excellent (80+)</option>
-                <option value="good">Good (60-79)</option>
-                <option value="review">Needs Review (40-59)</option>
-                <option value="flagged">Flagged (0-39)</option>
-              </select>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setQualityFilter("flagged")}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors",
+                    qualityFilter === "flagged"
+                      ? "bg-red-500/20 border-red-500/40 text-red-300"
+                      : "border-white/[0.08] text-zinc-400 hover:text-white",
+                  )}
+                >
+                  <Flag className="w-3.5 h-3.5" />
+                  Flagged (&lt;60)
+                </button>
+                <select
+                  value={qualityFilter}
+                  onChange={(e) => setQualityFilter(e.target.value as QualityBucket)}
+                  className="bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-[#EDEDEF] outline-none"
+                >
+                  <option value="all">All quality</option>
+                  <option value="excellent">Excellent (80+)</option>
+                  <option value="good">Good (60-79)</option>
+                  <option value="review">Needs Review (40-59)</option>
+                  <option value="flagged">Flagged (0-39)</option>
+                </select>
+              </div>
             </div>
             {loading && callExamples.length === 0 ? (
               <div className="py-6 flex flex-col items-center justify-center text-center">
@@ -305,13 +515,13 @@ export default function CallIntelligencePage() {
               </p>
             ) : (
               <div className="space-y-3">
-                {callExamples
-                  .map((call) => {
+                {qualityPerCall
+                  .filter(({ quality }) => qualityFilter === "all" || quality.bucket === qualityFilter)
+                  .map(({ call, quality }) => {
                   const insightsForCall = callInsights.filter(
                     (i) => i.call_example_id === call.id && !i.dismissed,
                   );
                   const primaryInsight = insightsForCall[0];
-                  const actionItems = insightsForCall.map((i) => i.insight);
                   const callDate = new Date(call.created_at).toLocaleString(undefined, {
                     month: "short",
                     day: "numeric",
@@ -321,17 +531,6 @@ export default function CallIntelligencePage() {
                   const badgeLabel =
                     (call.call_type && CALL_TYPE_LABELS[call.call_type]) || "Other";
                   const isExpanded = expandedCallId === call.id;
-
-                  const quality = calculateQualityScore({
-                    sentiment: primaryInsight?.category === "tone" ? primaryInsight.insight : undefined,
-                    outcome: primaryInsight?.category === "closing" ? primaryInsight.insight : undefined,
-                    duration: undefined,
-                    actionItems,
-                  });
-
-                  if (qualityFilter !== "all" && quality.bucket !== qualityFilter) {
-                    return null;
-                  }
 
                   const insightsByCatForCall = insightsForCall.reduce<
                     Record<string, CallInsight[]>
@@ -394,8 +593,61 @@ export default function CallIntelligencePage() {
                         />
                       </button>
 
-                      {isExpanded && insightsForCall.length > 0 && (
+                      {isExpanded && (
                         <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-3">
+                          {call.audio_url && (
+                            <div className="rounded-xl bg-[#0A0A0B]/80 p-3">
+                              <p className="text-[11px] font-medium text-zinc-500 mb-2 flex items-center gap-1.5">
+                                <Music2 className="w-3.5 h-3.5" />
+                                Recording
+                              </p>
+                              <audio
+                                src={call.audio_url}
+                                controls
+                                className="w-full h-9 rounded-lg"
+                                preload="metadata"
+                              />
+                              <div className="mt-2 h-8 flex items-end gap-0.5 overflow-hidden rounded" aria-hidden>
+                                {Array.from({ length: 32 }).map((_, i) => (
+                                  <div
+                                    key={i}
+                                    className="flex-1 min-w-[2px] bg-[var(--accent-primary)]/40 rounded-sm"
+                                    style={{ height: `${20 + Math.sin(i * 0.5) * 60}%` }}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-[11px] font-medium text-zinc-500 mb-1.5">Internal note</p>
+                            <textarea
+                              value={callNotes[call.id] ?? ""}
+                              onChange={(e) => setCallNotes((prev) => ({ ...prev, [call.id]: e.target.value }))}
+                              placeholder="Add a note for your team…"
+                              rows={2}
+                              className="w-full px-3 py-2 rounded-lg bg-[#0A0A0B] border border-white/[0.06] text-sm text-[#EDEDEF] placeholder:text-zinc-500 focus:border-[#4F8CFF] focus:outline-none resize-y"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const note = callNotes[call.id] ?? "";
+                                try {
+                                  const key = `rt_call_note_${call.id}`;
+                                  if (note) localStorage.setItem(key, note);
+                                  else localStorage.removeItem(key);
+                                  setToast("Note saved.");
+                                } catch {
+                                  setToast("Could not save note.");
+                                }
+                                setTimeout(() => setToast(null), 2000);
+                              }}
+                              className="mt-1 text-xs font-medium text-[var(--accent-primary)] hover:underline"
+                            >
+                              Save note
+                            </button>
+                          </div>
+                          {insightsForCall.length > 0 && (
+                            <>
                           {categoryOrder
                             .filter((cat) => insightsByCatForCall[cat]?.length)
                             .map((cat) => (
@@ -453,6 +705,8 @@ export default function CallIntelligencePage() {
                                 </div>
                               </div>
                             ))}
+                            </>
+                          )}
                         </div>
                       )}
                     </div>
