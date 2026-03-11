@@ -8,6 +8,7 @@ import { compileSystemPrompt } from "@/lib/business-brain";
 import { createAssistant, createOutboundCall } from "@/lib/vapi";
 import { hasVapiServerKey } from "@/lib/vapi/env";
 import { getVoicemailConfigForBehavior } from "@/lib/vapi/voicemail-detection";
+import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
 import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
 
 export async function executeLeadOutboundCall(
@@ -35,7 +36,7 @@ export async function executeLeadOutboundCall(
     return { ok: false, error: "Outbound calling not configured" };
   }
 
-  const [ctxRes, agentRowsRes] = await Promise.all([
+  const [ctxRes, agentRowsRes, wsConsentRes] = await Promise.all([
     db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
     db
       .from("agents")
@@ -43,6 +44,11 @@ export async function executeLeadOutboundCall(
       .eq("workspace_id", workspaceId)
       .order("created_at", { ascending: false })
       .limit(20),
+    db
+      .from("workspaces")
+      .select("recording_consent_mode, recording_consent_announcement, recording_pause_on_sensitive")
+      .eq("id", workspaceId)
+      .maybeSingle(),
   ]);
   const ctx = ctxRes.data as { business_name?: string; offer_summary?: string; business_hours?: Record<string, unknown>; faq?: Array<{ q?: string; a?: string }> } | null;
   const rows = (agentRowsRes.data ?? []) as Array<{
@@ -130,7 +136,22 @@ YOUR GOAL:
 - If not interested, thank them and end politely. Never be pushy.
 `;
   const systemPrompt = baseSystemPrompt + outboundAddition;
-  const outboundFirstMessage = `Hi ${leadName}, this is calling from ${business_name}. You reached out about ${serviceRequested} and I wanted to follow up. Do you have a quick moment?`;
+  const outboundFirstMessageBase = `Hi ${leadName}, this is calling from ${business_name}. You reached out about ${serviceRequested} and I wanted to follow up. Do you have a quick moment?`;
+
+  const consentRow = wsConsentRes.data as {
+    recording_consent_mode?: string;
+    recording_consent_announcement?: string | null;
+    recording_pause_on_sensitive?: boolean;
+  } | null;
+  const recordingConsentSettings =
+    consentRow?.recording_consent_mode != null
+      ? {
+          mode: consentRow.recording_consent_mode as "one_party" | "two_party" | "none",
+          announcementText: consentRow.recording_consent_announcement ?? null,
+          pauseOnSensitive: consentRow.recording_pause_on_sensitive ?? false,
+        }
+      : null;
+  const outboundFirstMessage = buildFirstMessageWithConsent(outboundFirstMessageBase, recordingConsentSettings);
 
   const voicemailBehavior = (agent.knowledge_base?.voicemailBehavior === "hangup" || agent.knowledge_base?.voicemailBehavior === "sms")
     ? agent.knowledge_base.voicemailBehavior
