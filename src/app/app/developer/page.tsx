@@ -631,7 +631,11 @@ export default function DeveloperPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="p-4 md:p-6 lg:p-8">
-        <h1 className="text-xl md:text-2xl font-semibold text-white mb-6">Developer</h1>
+        <h1 className="text-xl md:text-2xl font-semibold text-white mb-2">Developer</h1>
+        <p className="text-sm text-zinc-500 mb-6">
+          Zapier & Make: triggers and actions are documented in{" "}
+          <a href="/docs#integrations" className="text-[var(--accent-primary)] hover:underline">Docs → Integrations</a>.
+        </p>
 
         <div className="flex border-b border-[var(--border-default)] mb-6">
           {TABS.map((t) => (
