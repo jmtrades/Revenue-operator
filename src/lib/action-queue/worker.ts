@@ -146,7 +146,16 @@ async function runActionJobInner(
       const omId = (om as { id: string }).id;
       const attemptId = await createAttempt(actionCommandId, attemptNumber, omId);
       const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-      const result = await sendOutbound(omId, workspace_id, lead_id, p.conversation_id, p.channel, p.content, to);
+      const result = await sendOutbound(
+        omId,
+        workspace_id,
+        lead_id,
+        p.conversation_id,
+        p.channel,
+        p.content,
+        to,
+        (p as { email_subject?: string }).email_subject
+      );
 
       if (result.status === "failed") {
         const errMsg = result.error ?? "Send failed";
@@ -229,7 +238,16 @@ async function runActionJobInner(
       .single();
     if (om) {
       const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-      const result = await sendOutbound((om as { id: string }).id, workspace_id, lead_id, p.conversation_id, p.channel, p.content, to);
+      const result = await sendOutbound(
+        (om as { id: string }).id,
+        workspace_id,
+        lead_id,
+        p.conversation_id,
+        p.channel,
+        p.content,
+        to,
+        (p as { email_subject?: string }).email_subject
+      );
       if (result.status === "failed") throw new Error(result.error ?? "Send failed");
       const actionType = (p as { action_type?: string }).action_type;
       if (actionType) {
@@ -300,7 +318,16 @@ async function runActionJobInner(
       .single();
     if (om) {
       const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
-      const result = await sendOutbound((om as { id: string }).id, workspace_id, lead_id, p.conversation_id, p.channel, p.content, to);
+      const result = await sendOutbound(
+        (om as { id: string }).id,
+        workspace_id,
+        lead_id,
+        p.conversation_id,
+        p.channel,
+        p.content,
+        to,
+        (p as { email_subject?: string }).email_subject
+      );
       if (result.status === "failed") throw new Error(result.error ?? "Send failed");
     }
   }

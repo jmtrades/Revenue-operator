@@ -17,6 +17,8 @@ export interface SendMessagePayload {
   conversation_id: string;
   channel: string;
   content: string;
+  /** Email: subject line when channel is email */
+  email_subject?: string;
   /** Human presence: when to send (ISO). If past or within threshold, run immediately. */
   send_at?: string;
   /** Human presence: delay used for anti-pattern recording after send */
