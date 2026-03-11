@@ -10,6 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { createAssistant, createCallForTwilio } from "@/lib/vapi";
 import { hasVapiServerKey } from "@/lib/vapi/env";
+import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
 
 const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
 
@@ -81,7 +82,17 @@ export async function POST(req: NextRequest) {
       ]);
       const ctx = ctxRes.data as { business_name?: string; offer_summary?: string; business_hours?: Record<string, unknown>; faq?: Array<{ q?: string; a?: string }> } | null;
       const agent = agentRes.data as { id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; vapi_agent_id?: string | null } | null;
-      const workspace = wsRes.data as { id: string; name?: string; greeting?: string; agent_name?: string; vapi_assistant_id?: string | null; preferred_language?: string | null } | null;
+      const workspace = wsRes.data as {
+        id: string;
+        name?: string;
+        greeting?: string;
+        agent_name?: string;
+        vapi_assistant_id?: string | null;
+        preferred_language?: string | null;
+        recording_consent_mode?: string | null;
+        recording_consent_announcement?: string | null;
+        recording_pause_on_sensitive?: boolean;
+      } | null;
 
       const business_name = ctx?.business_name ?? workspace?.name ?? "The business";
       const offer_summary = ctx?.offer_summary ?? "";
@@ -110,7 +121,16 @@ export async function POST(req: NextRequest) {
         faq_extra,
         preferred_language: workspace?.preferred_language ?? undefined,
       });
-      const firstMessage = (greeting && String(greeting).trim()) || `Hello, this is ${agent_name}. How can I help you today?`;
+      const firstMessageBase = (greeting && String(greeting).trim()) || `Hello, this is ${agent_name}. How can I help you today?`;
+      const recordingConsentSettings =
+        workspace?.recording_consent_mode != null
+          ? {
+              mode: workspace.recording_consent_mode as "one_party" | "two_party" | "none",
+              announcementText: workspace.recording_consent_announcement ?? null,
+              pauseOnSensitive: workspace.recording_pause_on_sensitive ?? false,
+            }
+          : null;
+      const firstMessage = buildFirstMessageWithConsent(firstMessageBase, recordingConsentSettings);
 
       let assistantId: string | null = agent?.vapi_agent_id ?? workspace?.vapi_assistant_id ?? null;
       if (!assistantId) {
