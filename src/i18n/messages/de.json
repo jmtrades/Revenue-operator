@@ -296,6 +296,14 @@
     "empty": {
       "title": "Noch keine Anrufe",
       "body": "Sobald deine Agenten Anrufe bearbeiten, erscheinen sie hier."
+    },
+    "errors": {
+      "timeout": "Anfrage ist abgelaufen. Bitte versuche es erneut.",
+      "loadFailed": "Anrufe für diesen Workspace konnten nicht geladen werden.",
+      "exportFailed": "Export fehlgeschlagen. Bitte versuche es erneut."
+    },
+    "toast": {
+      "exportSuccess": "Anrufe exportiert. Prüfe deine Downloads."
     }
   },
   "callIntelligence": {

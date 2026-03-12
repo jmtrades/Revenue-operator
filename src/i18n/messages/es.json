@@ -305,6 +305,14 @@
     "empty": {
       "title": "Aún no hay llamadas",
       "body": "Cuando tus agentes empiecen a atender llamadas, las verás aquí."
+    },
+    "errors": {
+      "timeout": "La solicitud se agotó. Inténtalo de nuevo.",
+      "loadFailed": "No se pudieron cargar las llamadas para este espacio de trabajo.",
+      "exportFailed": "No se pudo exportar. Inténtalo de nuevo."
+    },
+    "toast": {
+      "exportSuccess": "Llamadas exportadas. Revisa tus descargas."
     }
   },
   "callIntelligence": {

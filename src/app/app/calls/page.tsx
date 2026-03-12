@@ -148,8 +148,8 @@ export default function CallsPage() {
       .catch((err) => {
         const message =
           err instanceof ApiError && err.status === 408
-            ? "Request timed out. Try again."
-            : "Could not load calls for this workspace.";
+            ? t("calls.errors.timeout")
+            : t("calls.errors.loadFailed");
         setError(message);
       })
       .finally(() => setLoading(false));
@@ -282,7 +282,7 @@ export default function CallsPage() {
                 { credentials: "include" },
               );
               if (!res.ok) {
-                toast.error("Export failed. Try again.");
+                toast.error(t("calls.errors.exportFailed"));
                 return;
               }
               const blob = await res.blob();
@@ -296,9 +296,9 @@ export default function CallsPage() {
               a.click();
               a.remove();
               URL.revokeObjectURL(url);
-              toast.success("Calls exported. Check your downloads.");
+              toast.success(t("calls.toast.exportSuccess"));
             } catch {
-              toast.error("Export failed. Try again.");
+              toast.error(t("calls.errors.exportFailed"));
             }
           }}
           className="text-xs md:text-sm rounded-xl border border-[var(--border-default)] px-4 py-2 text-zinc-200 hover:bg-[var(--bg-input)]"

@@ -296,6 +296,14 @@
     "empty": {
       "title": "Ainda não há chamadas",
       "body": "Quando seus agentes começarem a atender chamadas, você as verá aqui."
+    },
+    "errors": {
+      "timeout": "A solicitação expirou. Tente novamente.",
+      "loadFailed": "Não foi possível carregar as chamadas para este workspace.",
+      "exportFailed": "Falha ao exportar. Tente novamente."
+    },
+    "toast": {
+      "exportSuccess": "Chamadas exportadas. Verifique seus downloads."
     }
   },
   "callIntelligence": {
