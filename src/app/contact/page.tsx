@@ -1,9 +1,30 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 import { ContactForm } from "@/components/ContactForm";
+
+const BASE = "https://www.recall-touch.com";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Get in touch with Recall Touch. Sales, enterprise, and technical support. Response within 4 hours.",
+  alternates: { canonical: `${BASE}/contact` },
+  openGraph: {
+    title: "Contact — Recall Touch",
+    description: "Get in touch with Recall Touch. Sales, enterprise, and technical support.",
+    url: `${BASE}/contact`,
+    siteName: "Recall Touch",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact — Recall Touch",
+    description: "Get in touch with Recall Touch.",
+  },
+};
 
 export default function ContactPage() {
   return (

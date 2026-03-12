@@ -83,7 +83,8 @@ export default function DeveloperWebhooksPage() {
   }, [workspaceId]);
 
   useEffect(() => {
-    fetchEndpoints();
+    const id = setTimeout(() => fetchEndpoints(), 0);
+    return () => clearTimeout(id);
   }, [fetchEndpoints]);
 
   const fetchDeliveries = useCallback((id: string) => {

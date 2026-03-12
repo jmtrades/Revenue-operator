@@ -66,6 +66,14 @@ export async function executePostCallPlan(
     payload: { call_session_id: callSessionId, next_best_action: nextAction, plan },
   });
 
+  // Recalculate lead score from call interactions (Task 30)
+  try {
+    const { recalculateLeadScoreFromDb } = await import("@/lib/lead-scoring");
+    void recalculateLeadScoreFromDb(leadId);
+  } catch {
+    // non-blocking
+  }
+
   const commitmentScore = await getCommitmentScore(leadId);
 
   const immediateRecap = nextAction === "send_recap" || plan.some((p) => p.action_type === "send_recap" && p.when_hours_from_now <= 1);

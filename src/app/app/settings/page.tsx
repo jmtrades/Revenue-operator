@@ -5,16 +5,19 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
+  AlertTriangle,
   Bell,
   Building2,
   ChevronRight,
-  CreditCard,
   Code,
+  CreditCard,
+  History,
   Link2,
   Mic2,
   Phone,
   Shield,
   SlidersHorizontal,
+  Target,
   Users,
 } from "lucide-react";
 
@@ -56,6 +59,12 @@ const SETTINGS_LINKS = [
     icon: Bell,
   },
   {
+    href: "/app/settings/lead-scoring",
+    label: "Lead scoring",
+    desc: "Weights for scoring leads from calls and interactions",
+    icon: Target,
+  },
+  {
     href: "/app/settings/integrations",
     label: "Integrations",
     desc: "Calendar, CRM, webhooks, Slack, Zapier",
@@ -72,6 +81,18 @@ const SETTINGS_LINKS = [
     label: "Compliance",
     desc: "Recording consent, do-not-call, regional rules",
     icon: Shield,
+  },
+  {
+    href: "/app/settings/activity",
+    label: "Activity log",
+    desc: "Recent settings and workspace changes",
+    icon: History,
+  },
+  {
+    href: "/app/settings/errors",
+    label: "Error reports",
+    desc: "Client errors and reports from this workspace",
+    icon: AlertTriangle,
   },
   {
     href: "/app/developer",

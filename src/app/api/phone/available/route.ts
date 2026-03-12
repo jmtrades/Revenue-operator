@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
       const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/${subPath}.json?${params.toString()}`;
       const res = await fetch(url, { headers: { Authorization: authHeader } });
       if (!res.ok) {
-        const text = await res.text().catch(() => "");
+        await res.text().catch(() => "");
         return NextResponse.json({
           numbers: [],
           message: "No numbers available for this search. Try a different area code or type.",

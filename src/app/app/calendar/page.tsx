@@ -79,22 +79,26 @@ export default function AppCalendarPage() {
 
   useEffect(() => {
     if (!workspaceId) {
-      setLoading(false);
-      return;
+      const id = setTimeout(() => setLoading(false), 0);
+      return () => clearTimeout(id);
     }
-    setLoading(true);
+    const loadId = setTimeout(() => setLoading(true), 0);
     fetchAppointments();
     fetch("/api/integrations/google-calendar/status", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : {}))
       .then((d: { connected?: boolean }) => setGoogleConnected(Boolean(d.connected)))
       .catch(() => setGoogleConnected(false));
-    setOutlookConnected(false);
+    const outlookId = setTimeout(() => setOutlookConnected(false), 0);
+    return () => {
+      clearTimeout(loadId);
+      clearTimeout(outlookId);
+    };
   }, [workspaceId, fetchAppointments]);
 
   useEffect(() => {
     if (!workspaceId || !formDate) {
-      setAvailabilitySlots([]);
-      return;
+      const id = setTimeout(() => setAvailabilitySlots([]), 0);
+      return () => clearTimeout(id);
     }
     if (!googleConnected) return;
     fetch(`/api/integrations/google-calendar/availability?workspace_id=${encodeURIComponent(workspaceId)}&date=${formDate}`, { credentials: "include" })
@@ -134,7 +138,7 @@ export default function AppCalendarPage() {
       .finally(() => setSaving(false));
   };
 
-  const handleReschedule = (newDate: string, newTime: string, newDuration: number) => {
+  const _handleReschedule = (newDate: string, newTime: string, newDuration: number) => {
     if (!selected?.start_time) return;
     const start = new Date(`${newDate}T${newTime}:00`);
     const end = new Date(start.getTime() + newDuration * 60 * 1000);

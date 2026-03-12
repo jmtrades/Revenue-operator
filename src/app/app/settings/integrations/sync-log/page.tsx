@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowLeft, RefreshCw, Inbox, Send } from "lucide-react";
@@ -37,7 +37,7 @@ export default function IntegrationsSyncLogPage() {
   const [offset, setOffset] = useState(0);
   const limit = 30;
 
-  const fetchLog = (off: number) => {
+  const fetchLog = useCallback((off: number) => {
     setLoading(true);
     const params = new URLSearchParams({ limit: String(limit), offset: String(off) });
     if (provider) params.set("provider", provider);
@@ -50,12 +50,15 @@ export default function IntegrationsSyncLogPage() {
       })
       .catch(() => setEntries([]))
       .finally(() => setLoading(false));
-  };
+  }, [provider, direction]);
 
   useEffect(() => {
-    setOffset(0);
-    fetchLog(0);
-  }, [provider, direction]);
+    const id = setTimeout(() => {
+      setOffset(0);
+      fetchLog(0);
+    }, 0);
+    return () => clearTimeout(id);
+  }, [fetchLog]);
 
   const loadMore = () => {
     const next = offset + limit;

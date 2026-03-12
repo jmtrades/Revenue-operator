@@ -9,7 +9,6 @@ import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { KPIRow } from "@/components/ui/KPIRow";
 import { StatCard } from "@/components/ui/StatCard";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { tokens } from "@/lib/design-tokens";
 import { apiFetch, ApiError } from "@/lib/api";
 
 type RangeKey = "today" | "7d" | "30d" | "90d" | "custom";
@@ -140,7 +139,7 @@ function AnalyticsSkeleton() {
         <Skeleton variant="text" className="h-8 w-48" />
         <div className="flex gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            // eslint-disable-next-line react/no-array-index-key
+             
             <Skeleton
               key={i}
               variant="rectangular"
@@ -152,7 +151,7 @@ function AnalyticsSkeleton() {
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {Array.from({ length: 5 }).map((_, i) => (
-          // eslint-disable-next-line react/no-array-index-key
+           
           <Skeleton key={i} variant="card" className="h-24" />
         ))}
       </div>
@@ -530,7 +529,7 @@ export default function AppAnalyticsPage() {
           </div>
           <p
             className="text-sm text-[#8B8B8D] leading-relaxed"
-            // eslint-disable-next-line react/no-danger
+             
             dangerouslySetInnerHTML={{
               __html: generatePeriodSummary(
                 {

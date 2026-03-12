@@ -51,12 +51,14 @@ export async function GET(req: NextRequest) {
       { data: calendar },
       { count: teamCount },
       { count: leadCount },
+      { count: agentCount },
+      { count: campaignCount },
       { data: lastCall },
     ] = await Promise.all([
       db
         .from("workspaces")
         .select(
-          "id, name, agent_name, vapi_assistant_id, knowledge_items, website, industry, address, onboarding_completed_at, notification_preferences",
+          "id, name, agent_name, vapi_assistant_id, knowledge_items, website, industry, address, onboarding_completed_at, notification_preferences, verified_phone",
         )
         .eq("id", workspaceId)
         .single(),
@@ -86,6 +88,14 @@ export async function GET(req: NextRequest) {
         .eq("workspace_id", workspaceId),
       db
         .from("leads")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", workspaceId),
+      db
+        .from("agents")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", workspaceId),
+      db
+        .from("campaigns")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId),
       db
@@ -135,14 +145,20 @@ export async function GET(req: NextRequest) {
     const knowledgeCount = Array.isArray(row.knowledge_items)
       ? row.knowledge_items.filter((item) => (item.q ?? "").trim() && (item.a ?? "").trim()).length
       : 0;
+    const hasVerifiedPhone = Boolean((row.verified_phone ?? "").toString().trim());
     const readiness = buildWorkspaceReadiness({
       businessName,
+      businessAddress: (row.address ?? "").toString().trim() || null,
+      businessPhone: hasVerifiedPhone || Boolean(phoneCfg),
       agentName: row.agent_name,
+      agentCount: agentCount ?? 0,
       knowledgeCount,
       phoneConnected: Boolean(phoneCfg),
       callCount: callCount ?? 0,
       calendarConnected: Boolean(calendar),
       teamCount: teamCount ?? 0,
+      contactsCount: leadCount ?? 0,
+      campaignsCount: campaignCount ?? 0,
     });
 
     return NextResponse.json({
@@ -249,6 +265,17 @@ export async function PATCH(req: NextRequest) {
       .update(update)
       .eq("id", session.workspaceId);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    try {
+      await db.from("audit_log").insert({
+        workspace_id: session.workspaceId,
+        actor_user_id: session.userId,
+        actor_type: "user",
+        action_type: "settings_update",
+        details_json: { scope: "workspace_me", fields: Object.keys(update).filter((k) => k !== "updated_at") },
+      });
+    } catch {
+      // non-blocking
+    }
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });

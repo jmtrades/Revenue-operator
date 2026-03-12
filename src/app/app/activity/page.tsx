@@ -31,8 +31,6 @@ import {
 } from "@/lib/client/workspace-me";
 import { apiFetch, ApiError } from "@/lib/api";
 import { calculateReadiness } from "@/lib/readiness";
-import { speakTextViaApi } from "@/lib/voice-preview";
-import { Waveform } from "@/components/Waveform";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { getClientOrNull } from "@/lib/supabase/client";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -41,6 +39,7 @@ import { KPIRow } from "@/components/ui/KPIRow";
 import { Timeline } from "@/components/ui/Timeline";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { UpgradeBanner } from "@/components/ui/UpgradeBanner";
+import { Confetti } from "@/components/Confetti";
 
 type ActivityType = "lead" | "appointment" | "follow-up" | "urgent";
 
@@ -81,7 +80,7 @@ interface CallRecord {
   analysis_outcome?: unknown;
 }
 
-function getPlaySummary(card: ActivityCard): string {
+function _getPlaySummary(card: ActivityCard): string {
   const name = card.name;
   const summary = card.summary;
   if (card.type === "lead") {
@@ -119,14 +118,16 @@ function formatDuration(start?: string | null, end?: string | null): string {
 const PAGE_TITLE = "Dashboard — Recall Touch";
 
 const PROGRESS_LABELS: Record<string, string> = {
-  business: "Business info added",
-  agent: "Agent created",
-  services: "Knowledge added",
-  phone: "Connect phone number",
-  test_call: "Make your first call",
+  business: "Set up your business profile",
+  agent: "Configure your first AI agent",
+  phone: "Get a phone number",
+  test_call: "Make a test call",
+  contacts: "Import your contacts",
+  calendar: "Set up your calendar",
+  campaign: "Launch your first campaign",
+  team: "Invite your team",
+  services: "Services configured",
   first_call: "Capture first lead",
-  calendar: "Calendar connected",
-  team: "Team member invited",
   use_cases: "Use cases selected",
   voice: "Voice selected",
   greeting: "Opening greeting set",
@@ -232,14 +233,14 @@ function DashboardSkeleton() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          // eslint-disable-next-line react/no-array-index-key
+           
           <Skeleton key={i} variant="card" className="h-24" />
         ))}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          // eslint-disable-next-line react/no-array-index-key
+           
           <Skeleton key={i} variant="card" className="h-20" />
         ))}
       </div>
@@ -268,7 +269,7 @@ export default function AppActivityPage() {
     return () => { document.title = ""; };
   }, []);
   const [filter, setFilter] = useState<FilterId>("all");
-  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [_playingId, _setPlayingId] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<ActivityCard | null>(null);
   const [cards, setCards] = useState<ActivityCard[]>(() => readActivitySnapshot());
   const [loading, setLoading] = useState(() => readActivitySnapshot().length === 0);
@@ -482,7 +483,7 @@ export default function AppActivityPage() {
     }
   }
 
-  const filtered = useMemo(() => {
+  const _filtered = useMemo(() => {
     if (filter === "all") return cards;
     if (filter === "leads") return cards.filter((c) => c.type === "lead");
     if (filter === "appointments")
@@ -510,18 +511,41 @@ export default function AppActivityPage() {
       href: "/app/settings/phone",
       weight: 0,
     }));
-  const progressPct = readiness ? readiness.percentage : fallbackPct;
+  const serverProgressItems =
+    (workspaceSnapshot as { progress?: { items?: Array<{ key: string; completed?: boolean; label?: string; href?: string }> } } | null)?.progress?.items ?? [];
+  const useServerChecklist = serverProgressItems.length >= 8;
+  const progressItemsResolved = useServerChecklist
+    ? serverProgressItems.map((p) => ({
+        key: p.key,
+        completed: p.completed ?? false,
+        label: p.label ?? PROGRESS_LABELS[p.key] ?? p.key,
+        href: p.href ?? "/app/settings/phone",
+      }))
+    : progressItems;
+  const progressPct =
+    progressItemsResolved.length > 0
+      ? Math.round(
+          (progressItemsResolved.filter((p) =>
+            "completed" in p ? p.completed : (p as { done?: boolean }).done
+          ).length /
+            progressItemsResolved.length) *
+            100
+        )
+      : readiness
+        ? readiness.percentage
+        : fallbackPct;
   const continueSetupHref =
-    readiness?.nextAction?.href ?? nextStepHref ?? "/app/settings/phone";
+    (progressItemsResolved.find((p) =>
+      !("completed" in p ? p.completed : (p as { done?: boolean }).done)
+    ) as { href?: string } | undefined)?.href ??
+    readiness?.nextAction?.href ??
+    nextStepHref ??
+    "/app/settings/phone";
 
-  const totalSteps = progressItems.length;
-  const completedSteps =
-    totalSteps === 0
-      ? 0
-      : progressItems.filter((item) => {
-          const done = "done" in item ? item.done : item.completed;
-          return done;
-        }).length;
+  const totalSteps = progressItemsResolved.length;
+  const completedSteps = progressItemsResolved.filter((p) =>
+    "completed" in p ? p.completed : (p as { done?: boolean }).done
+  ).length;
 
   const callCount = cards.length;
   const leadCount = cards.filter((c) => c.type === "lead").length;
@@ -529,10 +553,9 @@ export default function AppActivityPage() {
   const answerRate = callCount > 0 ? 100 : 0;
 
   const phoneConnected =
-    progressItems.some((item) => {
-      const done = "done" in item ? item.done : item.completed;
-      return item.key === "phone" && done;
-    }) ||
+    progressItemsResolved.some((p) =>
+      p.key === "phone" && ("completed" in p ? p.completed : (p as { done?: boolean }).done)
+    ) ||
     Boolean(
       (workspaceSnapshot as
         | { progress?: { items?: Array<{ key: string; completed?: boolean }> } }
@@ -547,12 +570,13 @@ export default function AppActivityPage() {
   useEffect(() => {
     if (!showFirstWelcome) return;
     if (!hasAnyCalls) return;
-    setShowFirstWelcome(false);
     try {
       window.localStorage.setItem("rt_dashboard_welcome_dismissed", "true");
     } catch {
       // ignore
     }
+    const id = setTimeout(() => setShowFirstWelcome(false), 0);
+    return () => clearTimeout(id);
   }, [hasAnyCalls, showFirstWelcome]);
 
   const [checklistDismissed, setChecklistDismissed] = useState(() => {
@@ -563,6 +587,7 @@ export default function AppActivityPage() {
       return false;
     }
   });
+  const [showChecklistConfetti, setShowChecklistConfetti] = useState(false);
 
   useEffect(() => {
     try {
@@ -574,6 +599,19 @@ export default function AppActivityPage() {
       // ignore
     }
   }, [checklistDismissed]);
+
+  useEffect(() => {
+    if (totalSteps < 8 || completedSteps !== totalSteps || checklistDismissed) return;
+    const t1 = setTimeout(() => setShowChecklistConfetti(true), 0);
+    const t2 = setTimeout(() => {
+      setShowChecklistConfetti(false);
+      setChecklistDismissed(true);
+    }, 3500);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [totalSteps, completedSteps, checklistDismissed]);
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
@@ -604,6 +642,7 @@ export default function AppActivityPage() {
 
   return (
     <div className="max-w-[960px] mx-auto p-4 md:p-6 space-y-6">
+      {showChecklistConfetti && <Confetti key="checklist-100-confetti" />}
       {welcomeToast && (
         <div role="status" aria-live="polite" className="fixed right-4 top-4 z-50 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card-elevated)] px-4 py-2.5 text-sm text-[var(--text-primary)] shadow-lg">
           {welcomeToast}
@@ -683,7 +722,7 @@ export default function AppActivityPage() {
         </div>
       )}
 
-      {!checklistDismissed && progressPct < 100 && (
+      {!checklistDismissed && (progressPct < 100 || completedSteps < totalSteps) && (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div>
@@ -704,7 +743,7 @@ export default function AppActivityPage() {
               onClick={() => setChecklistDismissed(true)}
               className="text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             >
-              Dismiss
+              I know what I&apos;m doing
             </button>
           </div>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-input)]">
@@ -714,16 +753,10 @@ export default function AppActivityPage() {
             />
           </div>
           <div className="mt-4 space-y-2 text-sm">
-            {progressItems.slice(0, 6).map((item) => {
-              const done = "done" in item ? item.done : item.completed;
-              const label =
-                "label" in item && item.label
-                  ? item.label
-                  : PROGRESS_LABELS[item.key] ?? item.key;
-              const href =
-                "href" in item && item.href
-                  ? item.href
-                  : "/app/settings/phone";
+            {progressItemsResolved.map((item) => {
+              const done = "completed" in item ? item.completed : (item as { done?: boolean }).done;
+              const label = (item as { label?: string }).label ?? PROGRESS_LABELS[item.key] ?? item.key;
+              const href = (item as { href?: string }).href ?? "/app/settings/phone";
               return (
                 <div key={item.key} className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
@@ -1092,7 +1125,7 @@ export default function AppActivityPage() {
               >
                 {(outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE).map(
                   (_slice, i) => (
-                    // eslint-disable-next-line react/no-array-index-key
+                     
                     <Cell
                       key={i}
                       fill={

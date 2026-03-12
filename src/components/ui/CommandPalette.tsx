@@ -58,7 +58,7 @@ const STATIC_ITEMS: CommandItem[] = [
     id: "action-new-agent",
     label: "Create agent",
     icon: Bot,
-    href: "/app/agents?new=1",
+    href: "/app/agents/new",
     section: "Actions",
   },
   {

@@ -34,6 +34,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   const currentLocale = useLocale() as AppLocale;
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [redirectTo, setRedirectTo] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,12 +45,18 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (redirectTo) {
+      window.location.href = redirectTo;
+    }
+  }, [redirectTo]);
+
   function selectLocale(locale: AppLocale) {
     setLocaleCookie(locale);
     setOpen(false);
     const base = pathname?.replace(/^\/(en|es|fr|de|pt|ja)(\/|$)/, "$2") || "/";
     const newPath = locale === "en" ? base || "/" : `/${locale}${base === "/" ? "" : base}`;
-    window.location.href = newPath;
+    setRedirectTo(newPath);
   }
 
   return (

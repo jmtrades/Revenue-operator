@@ -137,6 +137,7 @@ export default function CallIntelligencePage() {
       }
     });
     setCallNotes((prev) => ({ ...notes, ...prev }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run when list length changes
   }, [callExamples.length]);
 
   const handleAnalyze = async () => {

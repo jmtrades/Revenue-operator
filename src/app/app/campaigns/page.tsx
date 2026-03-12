@@ -7,14 +7,18 @@ import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 
+type TouchpointType = "call" | "sms" | "email" | "wait";
+
 type TargetFilter = {
   audience?: string;
   message_template?: string;
   schedule?: string | null;
+  schedule_type?: "manual" | "once" | "recurring" | "trigger";
   audience_statuses?: string[];
   audience_source?: string;
   audience_min_score?: number | null;
   audience_not_contacted_days?: number | null;
+  sequence?: Array<{ type: TouchpointType; wait_days?: number }>;
 };
 
 type CampaignRow = {
@@ -102,10 +106,12 @@ export default function CampaignsPage() {
     audience: "Leads waiting on follow-up",
     template: "Just checking in after your last conversation. Reply here if you want to continue.",
     schedule: "",
+    scheduleType: "manual" as "manual" | "once" | "recurring" | "trigger",
     audienceStatuses: [] as string[],
     audienceSource: "",
     audienceMinScore: "" as number | "",
     audienceNotContactedDays: "" as number | "",
+    sequence: [{ type: "call" as TouchpointType }, { type: "wait" as TouchpointType, wait_days: 1 }, { type: "sms" as TouchpointType }] as Array<{ type: TouchpointType; wait_days?: number }>,
   });
 
   useEffect(() => {
@@ -171,6 +177,8 @@ export default function CampaignsPage() {
         audience: form.audience,
         message_template: form.template,
         schedule: form.schedule || null,
+        schedule_type: form.scheduleType,
+        sequence: form.sequence.length > 0 ? form.sequence : undefined,
         ...(form.audienceStatuses.length > 0 && { audience_statuses: form.audienceStatuses }),
         ...(form.audienceSource && { audience_source: form.audienceSource }),
         ...(typeof form.audienceMinScore === "number" && form.audienceMinScore >= 0 && { audience_min_score: form.audienceMinScore }),
@@ -209,10 +217,12 @@ export default function CampaignsPage() {
         audience: "Leads waiting on follow-up",
         template: "Just checking in after your last conversation. Reply here if you want to continue.",
         schedule: "",
+        scheduleType: "manual",
         audienceStatuses: [],
         audienceSource: "",
         audienceMinScore: "",
         audienceNotContactedDays: "",
+        sequence: [{ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" }],
       });
       setToast(editingId ? "Campaign updated." : "Campaign created.");
     } catch (error) {
@@ -249,16 +259,24 @@ export default function CampaignsPage() {
   const loadCampaignIntoForm = (campaign: CampaignRow) => {
     setEditingId(campaign.id);
     const tf = campaign.target_filter;
+    const rawSeq = Array.isArray(tf?.sequence) ? tf.sequence : [];
+    const seq: Array<{ type: TouchpointType; wait_days?: number }> = rawSeq.map((s: { type?: string; wait_days?: number }) => ({
+      type: (s?.type === "call" || s?.type === "sms" || s?.type === "email" || s?.type === "wait" ? s.type : "call") as TouchpointType,
+      ...(s?.type === "wait" && typeof s.wait_days === "number" && { wait_days: s.wait_days }),
+    }));
+    if (seq.length === 0) seq.push({ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" });
     setForm({
       name: campaign.name,
       type: campaign.type,
       audience: tf?.audience ?? "",
       template: tf?.message_template ?? "",
       schedule: tf?.schedule ?? "",
+      scheduleType: (tf?.schedule_type as "manual" | "once" | "recurring" | "trigger") ?? "manual",
       audienceStatuses: Array.isArray(tf?.audience_statuses) ? tf.audience_statuses : [],
       audienceSource: tf?.audience_source ?? "",
       audienceMinScore: typeof tf?.audience_min_score === "number" ? tf.audience_min_score : "",
       audienceNotContactedDays: typeof tf?.audience_not_contacted_days === "number" ? tf.audience_not_contacted_days : "",
+      sequence: seq,
     });
   };
 
@@ -285,11 +303,17 @@ export default function CampaignsPage() {
           </select>
         </div>
 
-        <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4">
           <StatCard label="Total campaigns" value={campaigns.length} color="blue" />
           <StatCard label="Active campaigns" value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
-          <StatCard label="Calls made" value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
-          <StatCard label="Appointments" value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
+          <StatCard label="Contacted" value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
+          <StatCard label="Converted" value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
+            <p className="text-[10px] text-zinc-500 uppercase tracking-wide">Est. ROI</p>
+            <p className="mt-1 text-sm font-semibold text-white">
+              Cost ~${(campaigns.reduce((s, c) => s + c.called * 0.05 + c.answered * 0.02, 0)).toFixed(0)} · Revenue ~${(campaigns.reduce((s, c) => s + c.appointments_booked * 250, 0)).toFixed(0)}
+            </p>
+          </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -364,16 +388,21 @@ export default function CampaignsPage() {
                   </div>
                   <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <Metric label="Contacts" value={campaign.total_contacts} />
-                    <Metric label="Called" value={campaign.called} />
-                    <Metric label="Answered" value={campaign.answered} />
-                    <Metric label="Appointments" value={campaign.appointments_booked} />
+                    <Metric label="Contacted" value={campaign.called} />
+                    <Metric label="Reached" value={campaign.answered} />
+                    <Metric label="Converted" value={campaign.appointments_booked} />
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-zinc-500">
+                    <span>Remaining: {Math.max(0, campaign.total_contacts - campaign.called)}</span>
+                    <span>·</span>
+                    <span>Failed: {Math.max(0, campaign.called - campaign.answered)}</span>
                   </div>
                   {campaign.total_contacts > 0 && (
                     <div className="mt-3">
                       <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-1">
                         <span>Progress</span>
                         <span>
-                          {campaign.called}/{campaign.total_contacts} called
+                          {campaign.called}/{campaign.total_contacts} contacted
                         </span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-zinc-900 overflow-hidden">
@@ -391,14 +420,31 @@ export default function CampaignsPage() {
                       </div>
                     </div>
                   )}
+                  {campaign.called > 0 && (
+                    <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
+                      <p className="text-[10px] text-zinc-500 uppercase tracking-wide">Campaign ROI</p>
+                      <p className="mt-1 text-xs text-zinc-400">
+                        Est. cost ~${(campaign.called * 0.05 + campaign.answered * 0.02).toFixed(2)} · Est. revenue ~${(campaign.appointments_booked * 250).toFixed(0)}
+                      </p>
+                    </div>
+                  )}
                   <p className="mt-3 text-[11px] text-zinc-500">
                     Created {new Date(campaign.created_at).toLocaleDateString()}
                   </p>
-                  {campaign.target_filter?.schedule ? (
+                  {campaign.target_filter?.schedule_type && campaign.target_filter.schedule_type !== "manual" && (
                     <p className="mt-1 text-[11px] text-zinc-500">
-                      Scheduled {new Date(campaign.target_filter.schedule).toLocaleString()}
+                      {campaign.target_filter.schedule_type === "once" || campaign.target_filter.schedule_type === "recurring"
+                        ? campaign.target_filter.schedule
+                          ? `Scheduled ${new Date(campaign.target_filter.schedule).toLocaleString()}`
+                          : `Schedule: ${campaign.target_filter.schedule_type}`
+                        : `Trigger: ${campaign.target_filter.schedule_type}`}
                     </p>
-                  ) : null}
+                  )}
+                  {Array.isArray(campaign.target_filter?.sequence) && campaign.target_filter.sequence.length > 0 && (
+                    <p className="mt-1 text-[11px] text-zinc-500">
+                      Sequence: {campaign.target_filter.sequence.map((s: { type: string; wait_days?: number }) => s.type === "wait" ? `Wait ${s.wait_days ?? 1}d` : s.type).join(" → ")}
+                    </p>
+                  )}
                 </div>
               ))
             )}
@@ -429,10 +475,12 @@ export default function CampaignsPage() {
                       audience: "Leads waiting on follow-up",
                       template: "Just checking in after your last conversation. Reply here if you want to continue.",
                       schedule: "",
+                      scheduleType: "manual",
                       audienceStatuses: [],
                       audienceSource: "",
                       audienceMinScore: "",
                       audienceNotContactedDays: "",
+                      sequence: [{ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" }],
                     });
                   }}
                   className="text-xs text-zinc-400 hover:text-white"
@@ -596,13 +644,102 @@ export default function CampaignsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Schedule (optional)</label>
-                <input
-                  type="datetime-local"
-                  value={form.schedule}
-                  onChange={(e) => setForm((prev) => ({ ...prev, schedule: e.target.value }))}
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Schedule type</label>
+                <select
+                  value={form.scheduleType}
+                  onChange={(e) => setForm((prev) => ({ ...prev, scheduleType: e.target.value as typeof form.scheduleType }))}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
-                />
+                >
+                  <option value="manual">Manual run</option>
+                  <option value="once">One-time</option>
+                  <option value="recurring">Recurring</option>
+                  <option value="trigger">When new lead added</option>
+                </select>
+              </div>
+              {(form.scheduleType === "once" || form.scheduleType === "recurring") && (
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                    {form.scheduleType === "once" ? "Run at (date & time)" : "Next run (date & time)"}
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={form.schedule}
+                    onChange={(e) => setForm((prev) => ({ ...prev, schedule: e.target.value }))}
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">Sequence (touchpoints)</label>
+                <p className="text-[11px] text-zinc-500 mb-2">Order of actions: call, SMS, email, or wait.</p>
+                <div className="space-y-2">
+                  {form.sequence.map((step, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span className="text-[11px] text-zinc-500 w-6">{idx + 1}.</span>
+                      <select
+                        value={step.type}
+                        onChange={(e) => {
+                          const type = e.target.value as TouchpointType;
+                          setForm((prev) => ({
+                            ...prev,
+                            sequence: prev.sequence.map((s, i) =>
+                              i === idx ? { ...s, type, wait_days: type === "wait" ? (s.wait_days ?? 1) : undefined } : s,
+                            ),
+                          }));
+                        }}
+                        className="flex-1 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                      >
+                        <option value="call">Call</option>
+                        <option value="sms">SMS</option>
+                        <option value="email">Email</option>
+                        <option value="wait">Wait</option>
+                      </select>
+                      {step.type === "wait" && (
+                        <input
+                          type="number"
+                          min={1}
+                          max={30}
+                          value={step.wait_days ?? 1}
+                          onChange={(e) =>
+                            setForm((prev) => ({
+                              ...prev,
+                              sequence: prev.sequence.map((s, i) =>
+                                i === idx ? { ...s, wait_days: Math.max(1, Number(e.target.value) || 1) } : s,
+                              ),
+                            }))
+                          }
+                          className="w-16 px-2 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                        />
+                      )}
+                      {step.type === "wait" && <span className="text-[11px] text-zinc-500">days</span>}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            sequence: prev.sequence.filter((_, i) => i !== idx),
+                          }))
+                        }
+                        className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:text-white text-xs"
+                        aria-label="Remove step"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((prev) => ({
+                        ...prev,
+                        sequence: [...prev.sequence, { type: "call" }],
+                      }))
+                    }
+                    className="mt-1 px-3 py-2 rounded-xl border border-zinc-700 text-zinc-400 hover:text-white text-xs"
+                  >
+                    + Add step
+                  </button>
+                </div>
               </div>
               <button
                 type="button"

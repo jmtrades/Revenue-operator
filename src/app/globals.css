@@ -520,6 +520,32 @@ h3.headline {
   }
 }
 
+/* Mobile: prevent zoom on input focus, min touch targets (Task 39) */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important; /* prevents iOS zoom on focus */
+  }
+}
+
+/* Utility for 44px min touch target on mobile (Task 39) */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Reduced motion: respect user preference (Task 37) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* RTL preparation (Phase 1 Task 6) */
 [dir="rtl"] {
   text-align: right;

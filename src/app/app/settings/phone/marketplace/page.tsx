@@ -64,6 +64,7 @@ export default function PhoneMarketplacePage() {
 
   useEffect(() => {
     search();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
   const handleProvision = async (num: AvailableNumber) => {

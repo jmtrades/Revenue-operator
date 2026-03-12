@@ -36,14 +36,14 @@ function playVoicePreview(voiceId: string, text: string): Promise<void> {
 
 export default function AgentVoiceTestPage() {
   const params = useParams();
-  const router = useRouter();
+  useRouter();
   const agentId = typeof params?.id === "string" ? params.id : "";
   const [agent, setAgent] = useState<{ id: string; name: string; voice_id: string | null } | null>(null);
   const [loading, setLoading] = useState(!!agentId);
   const [selectedVoiceId, setSelectedVoiceId] = useState<string | null>(null);
   const [customScript, setCustomScript] = useState(DEFAULT_PREVIEW_TEXT);
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const [generating, setGenerating] = useState(false);
+  const [_generating, _setGenerating] = useState(false);
   const [abVoiceA, setAbVoiceA] = useState<string>(CURATED_VOICES[0]?.id ?? "");
   const [abVoiceB, setAbVoiceB] = useState<string>(CURATED_VOICES[1]?.id ?? "");
   const [abWinner, setAbWinner] = useState<string | null>(null);

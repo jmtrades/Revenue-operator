@@ -1,6 +1,7 @@
 /**
  * Lead scoring: 0–100 from call/event signals.
- * Recalculate on each new call or event; store in leads.score or metadata.score.
+ * Recalculate on each new call or event; store in leads.metadata.score.
+ * Configurable per workspace via workspace_lead_scoring_config.
  */
 
 export interface LeadScoringEvent {
@@ -18,7 +19,21 @@ export interface LeadScoringEvent {
   justBrowsing?: boolean;
 }
 
-const SCORE_DELTAS = {
+/** Optional per-workspace weights. Omitted keys use defaults. */
+export interface LeadScoringConfig {
+  baseScore?: number;
+  callCount?: number;
+  durationOver2Min?: number;
+  positiveSentiment?: number;
+  pricingQuestion?: number;
+  booked?: number;
+  returnCaller?: number;
+  negativeSentiment?: number;
+  justBrowsing?: number;
+}
+
+const DEFAULT_DELTAS = {
+  baseScore: 50,
   callCount: 10,
   durationOver2Min: 15,
   positiveSentiment: 20,
@@ -32,23 +47,31 @@ const SCORE_DELTAS = {
 const MIN_SCORE = 0;
 const MAX_SCORE = 100;
 
+export function getDefaultScoringConfig(): Required<LeadScoringConfig> {
+  return { ...DEFAULT_DELTAS };
+}
+
 /**
  * Compute lead score from a list of events (e.g. calls, SMS, notes).
- * Clamps to 0–100.
+ * Clamps to 0–100. Uses config weights when provided.
  */
-export function calculateLeadScore(events: LeadScoringEvent[]): number {
-  let score = 50; // base
+export function calculateLeadScore(
+  events: LeadScoringEvent[],
+  config?: LeadScoringConfig | null
+): number {
+  const c = config ? { ...DEFAULT_DELTAS, ...config } : DEFAULT_DELTAS;
+  let score = c.baseScore;
 
   for (const e of events) {
     if (e.type === "call") {
-      score += SCORE_DELTAS.callCount;
-      if ((e.durationSeconds ?? 0) > 120) score += SCORE_DELTAS.durationOver2Min;
-      if (e.sentiment === "positive") score += SCORE_DELTAS.positiveSentiment;
-      if (e.sentiment === "negative") score += SCORE_DELTAS.negativeSentiment;
-      if (e.pricingQuestion) score += SCORE_DELTAS.pricingQuestion;
-      if (e.booked) score += SCORE_DELTAS.booked;
-      if (e.returnCaller) score += SCORE_DELTAS.returnCaller;
-      if (e.justBrowsing) score += SCORE_DELTAS.justBrowsing;
+      score += c.callCount;
+      if ((e.durationSeconds ?? 0) > 120) score += c.durationOver2Min;
+      if (e.sentiment === "positive") score += c.positiveSentiment;
+      if (e.sentiment === "negative") score += c.negativeSentiment;
+      if (e.pricingQuestion) score += c.pricingQuestion;
+      if (e.booked) score += c.booked;
+      if (e.returnCaller) score += c.returnCaller;
+      if (e.justBrowsing) score += c.justBrowsing;
     }
   }
 
@@ -75,4 +98,112 @@ export function eventFromCall(params: {
     returnCaller: params.isReturnCaller,
     justBrowsing: /just looking|browsing|not interested|just checking/.test(summary),
   };
+}
+
+/**
+ * Load workspace lead scoring config from DB (if table exists). Returns null for defaults.
+ */
+export async function getWorkspaceScoringConfig(
+  workspaceId: string
+): Promise<LeadScoringConfig | null> {
+  try {
+    const { getDb } = await import("@/lib/db/queries");
+    const db = getDb();
+    const { data: row } = await db
+      .from("workspace_lead_scoring_config")
+      .select("config")
+      .eq("workspace_id", workspaceId)
+      .maybeSingle();
+    const config = (row as { config?: LeadScoringConfig } | null)?.config;
+    return config && typeof config === "object" ? config : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Recalculate lead score from call (and optional) interactions and persist to lead.metadata.score.
+ * Call after post-call or when syncing lead state.
+ */
+export async function recalculateLeadScoreFromDb(leadId: string): Promise<number | null> {
+  const { getDb } = await import("@/lib/db/queries");
+  const db = getDb();
+
+  const { data: lead } = await db
+    .from("leads")
+    .select("id, workspace_id, metadata")
+    .eq("id", leadId)
+    .single();
+  if (!lead) return null;
+
+  const workspaceId = (lead as { workspace_id?: string }).workspace_id;
+  if (!workspaceId) return null;
+
+  const { data: sessions } = await db
+    .from("call_sessions")
+    .select("id, summary, outcome, call_started_at, call_ended_at")
+    .eq("lead_id", leadId)
+    .order("call_started_at", { ascending: true });
+
+  const sessionIds = (sessions ?? []).map((s: { id: string }) => s.id);
+  const analysisBySession: Record<string, { outcome?: string; summary?: string; sentiment?: string }> = {};
+  if (sessionIds.length > 0) {
+    const { data: analyses } = await db
+      .from("call_analysis")
+      .select("call_session_id, analysis_json")
+      .in("call_session_id", sessionIds);
+    for (const a of analyses ?? []) {
+      const row = a as { call_session_id: string; analysis_json?: { outcome?: string; summary?: string; sentiment?: string } };
+      if (row.call_session_id && row.analysis_json)
+        analysisBySession[row.call_session_id] = row.analysis_json;
+    }
+  }
+
+  const events: LeadScoringEvent[] = [];
+  let priorCalls = 0;
+  for (const s of sessions ?? []) {
+    const row = s as {
+      id: string;
+      summary?: string | null;
+      outcome?: string | null;
+      call_started_at?: string | null;
+      call_ended_at?: string | null;
+    };
+    const analysis = analysisBySession[row.id] ?? {};
+    const start = row.call_started_at ? new Date(row.call_started_at).getTime() : 0;
+    const end = row.call_ended_at ? new Date(row.call_ended_at).getTime() : 0;
+    const durationSeconds = start && end && end >= start ? Math.round((end - start) / 1000) : undefined;
+    const outcome = row.outcome ?? analysis.outcome ?? null;
+    const summary = (row.summary ?? analysis.summary ?? "").toString();
+    const sentiment =
+      analysis.sentiment === "positive" || analysis.sentiment === "negative"
+        ? (analysis.sentiment as "positive" | "negative")
+        : "neutral";
+    events.push(
+      eventFromCall({
+        durationSeconds,
+        sentiment,
+        outcome,
+        summary,
+        isReturnCaller: priorCalls > 0,
+      })
+    );
+    priorCalls += 1;
+  }
+
+  const config = await getWorkspaceScoringConfig(workspaceId);
+  const score = calculateLeadScore(events, config);
+
+  const meta = (lead as { metadata?: Record<string, unknown> }).metadata ?? {};
+  const nextMeta = { ...meta, score };
+
+  await db
+    .from("leads")
+    .update({
+      metadata: nextMeta,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", leadId);
+
+  return score;
 }
