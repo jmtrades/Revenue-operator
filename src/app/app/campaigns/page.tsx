@@ -239,21 +239,41 @@ export default function CampaignsPage() {
   };
 
   const toggleCampaign = async (campaign: CampaignRow) => {
-    const nextStatus = campaign.status === "active" ? "paused" : "active";
-    const res = await fetch(`/api/campaigns/${campaign.id}`, {
-      method: "PATCH",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: nextStatus }),
-    });
-    if (!res.ok) {
-      setToast("Could not update campaign.");
+    if (campaign.status === "active") {
+      const res = await fetch(`/api/campaigns/${campaign.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "paused" }),
+      });
+      if (!res.ok) {
+        setToast("Could not update campaign.");
+        return;
+      }
+      setCampaigns((prev) =>
+        prev.map((item) => (item.id === campaign.id ? { ...item, status: "paused" } : item)),
+      );
+      setToast("Campaign paused.");
       return;
     }
+
+    const res = await fetch(`/api/campaigns/${campaign.id}/launch`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!res.ok) {
+      setToast("Could not launch campaign.");
+      return;
+    }
+    const data = (await res.json().catch(() => null)) as { enqueued?: number } | null;
     setCampaigns((prev) =>
-      prev.map((item) => (item.id === campaign.id ? { ...item, status: nextStatus } : item)),
+      prev.map((item) => (item.id === campaign.id ? { ...item, status: "active" } : item)),
     );
-    setToast(nextStatus === "active" ? "Campaign resumed." : "Campaign paused.");
+    setToast(
+      data?.enqueued != null
+        ? `Campaign launched. ${data.enqueued} contacts queued.`
+        : "Campaign launched.",
+    );
   };
 
   const loadCampaignIntoForm = (campaign: CampaignRow) => {
@@ -365,26 +385,26 @@ export default function CampaignsPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => loadCampaignIntoForm(campaign)}
-                        className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          campaign.status === "active"
-                            ? setPauseConfirm(campaign)
-                            : void toggleCampaign(campaign)
-                        }
-                        className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
-                      >
-                        {campaign.status === "active" ? "Pause" : "Resume"}
-                      </button>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => loadCampaignIntoForm(campaign)}
+                      className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        campaign.status === "active"
+                          ? setPauseConfirm(campaign)
+                          : void toggleCampaign(campaign)
+                      }
+                      className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-zinc-100 hover:border-[var(--border-medium)]"
+                    >
+                      {campaign.status === "active" ? "Pause" : "Launch campaign"}
+                    </button>
+                  </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <Metric label="Contacts" value={campaign.total_contacts} />

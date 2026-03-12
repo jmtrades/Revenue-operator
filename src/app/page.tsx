@@ -80,21 +80,20 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
-        <OutcomeCardsSection />
-        <TrustStackSection />
-        <HomepageLiveDemo />
-        <HomepageActivitySection />
+        <SocialProof />
         <ProblemStatement />
         <HowItWorks />
+        <HomepageLiveDemo />
+        <OutcomeCardsSection />
+        <HomepageActivitySection />
         <Features />
+        <UseCaseSection />
         <WhoUsesSection />
         <MetricsSection />
         <TestimonialsSection />
         <PricingPreview />
         <WhatMakesUsDifferentSection />
         <EnterpriseComparisonCard />
-        <UseCaseSection />
-        <SocialProof />
         <FinalCTA />
       </main>
       <Footer />
