@@ -6,12 +6,15 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: workspaceId } = await params;
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
   const db = getDb();
   const { data: account } = await db
     .from("zoom_accounts")
