@@ -15,7 +15,6 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com
 
 async function sendEmail(to: string, subject: string, text: string): Promise<boolean> {
   if (!RESEND_API_KEY) {
-    console.warn("[first-day-check] RESEND_API_KEY not set, skipping email");
     return false;
   }
 
@@ -35,8 +34,7 @@ async function sendEmail(to: string, subject: string, text: string): Promise<boo
     });
 
     return res.ok;
-  } catch (error) {
-    console.error("[first-day-check] Email send failed", error);
+  } catch {
     return false;
   }
 }
@@ -65,7 +63,6 @@ export async function GET(req: NextRequest) {
     .is("first_day_email_sent_at", null);
 
   if (error) {
-    console.error("[first-day-check] Query error", error);
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 
@@ -78,7 +75,6 @@ export async function GET(req: NextRequest) {
     const email = user && typeof user === "object" && "email" in user ? user.email : null;
 
     if (!email) {
-      console.warn(`[first-day-check] No email for workspace ${workspaceId}`);
       continue;
     }
 

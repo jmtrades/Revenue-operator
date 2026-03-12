@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 
@@ -19,6 +20,8 @@ interface Policy {
 }
 
 export default function PolicyEditPage({ params }: { params: Promise<{ id: string }> }) {
+  const tCommon = useTranslations("common");
+  const tForms = useTranslations("forms.state");
   const [policyId, setPolicyId] = useState<string | null>(null);
   const [policy, setPolicy] = useState<Policy | null>(null);
   const [loading, setLoading] = useState(true);
@@ -173,7 +176,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
             className="px-4 py-2 rounded text-sm font-medium"
             style={{ background: "var(--meaning-blue)", color: "#fff" }}
           >
-            {saving ? "Saving…" : "Save"}
+            {saving ? tForms("saving") : tCommon("save")}
           </button>
         </div>
       </div>

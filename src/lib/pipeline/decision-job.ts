@@ -51,7 +51,6 @@ export async function runDecisionJob(
     .single();
 
   if (leadErr || !lead) {
-    console.error("[decisionJob] lead not found", redact({ leadId }));
     return;
   }
 
@@ -235,7 +234,6 @@ export async function runDecisionJob(
       // Validate message
       const validation = validateMessage(message, playbook);
       if (!validation.valid) {
-        console.warn("[decision-job] Message validation failed", { reason: validation.reason, message });
         message = "Hey — what were you looking to get done?";
       }
 
@@ -338,8 +336,7 @@ export async function runDecisionJob(
         }
       }
     }
-  } catch (err) {
-    console.error("[decisionJob] template fill failed", redact({ leadId, err: String(err) }));
+  } catch {
     action = getSafeFallback(settings, allowedActions);
     message = SAFE_FALLBACK_MESSAGES[action] ?? SAFE_FALLBACK_MESSAGES.clarifying_question;
   }

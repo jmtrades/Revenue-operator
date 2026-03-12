@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (e) {
-      console.error("Twilio provision error:", e);
+      // Provision error; response below
     }
   }
 

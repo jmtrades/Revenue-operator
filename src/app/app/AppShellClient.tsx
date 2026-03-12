@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { WorkspaceProvider } from "@/components/WorkspaceContext";
 import { WorkspaceName } from "@/components/WorkspaceName";
 import { fetchWorkspaceMeCached, primeWorkspaceMeCache } from "@/lib/client/workspace-me";
@@ -117,6 +118,66 @@ export default function AppShellClient({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations();
+  const sidebarGroups = useMemo(
+    () => [
+      {
+        label: "Main",
+        items: [
+          { href: "/app/activity", label: t("nav.dashboard"), icon: LayoutList },
+          { href: "/app/agents", label: t("nav.agents"), icon: Bot },
+          { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
+          { href: "/app/leads", label: t("nav.leads"), icon: Users },
+          { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
+        ],
+      },
+      {
+        label: "Communication",
+        items: [
+          { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
+          { href: "/app/appointments", label: t("nav.appointments"), icon: Calendar },
+        ],
+      },
+      {
+        label: "Intelligence",
+        items: [
+          { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+          { href: "/app/call-intelligence", label: t("nav.callIntelligence"), icon: Lightbulb },
+          { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
+        ],
+      },
+      {
+        label: "Workspace",
+        items: [
+          { href: "/app/team", label: t("nav.team"), icon: Users },
+          { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+        ],
+      },
+    ],
+    [t]
+  );
+  const mobileTabs = useMemo(
+    () => [
+      { href: "/app/activity", label: t("nav.dashboard"), icon: LayoutList },
+      { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
+      { href: "/app/leads", label: t("nav.leads"), icon: Users },
+      { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
+    ],
+    [t]
+  );
+  const mobileMoreLinks = useMemo(
+    () => [
+      { href: "/app/agents", label: t("nav.agents"), icon: Bot },
+      { href: "/app/appointments", label: t("nav.appointments"), icon: Calendar },
+      { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
+      { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+      { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
+      { href: "/app/call-intelligence", label: t("nav.callIntelligence"), icon: Lightbulb },
+      { href: "/app/team", label: t("nav.team"), icon: Users },
+      { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+    ],
+    [t]
+  );
   const [workspaceMeta, setWorkspaceMeta] = useState<AppShellWorkspaceMeta>(
     initialWorkspaceMeta ?? null,
   );
@@ -317,7 +378,7 @@ export default function AppShellClient({
   const isActive = (href: string) =>
     pathname === href || (href !== "/app/activity" && pathname.startsWith(href));
 
-  const isMoreActive = MOBILE_MORE_LINKS.some(({ href }) => isActive(href));
+  const isMoreActive = mobileMoreLinks.some(({ href }) => isActive(href));
   const isOnboarding = pathname === "/app/onboarding";
 
   return (
@@ -383,13 +444,13 @@ export default function AppShellClient({
                     type="button"
                     onClick={() => setMobileSidebarOpen(false)}
                     className="md:hidden p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
-                    aria-label="Close menu"
+                    aria-label={t("common.close")}
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
                 <nav className="flex-1 p-3 space-y-4 overflow-y-auto" aria-label="App navigation">
-                  {SIDEBAR_GROUPS.map((group) => (
+                  {sidebarGroups.map((group) => (
                     <div key={group.label}>
                       {!sidebarCollapsed && (
                         <p className="text-[10px] uppercase tracking-[0.1em] text-[var(--text-tertiary)] px-4 pt-6 pb-1.5 font-medium">
@@ -518,7 +579,7 @@ export default function AppShellClient({
                 className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-[var(--bg-surface)] border-t border-[var(--border-default)] safe-area-pb"
                 aria-label="Mobile navigation"
               >
-                {MOBILE_TABS.map(({ href, label, icon: Icon }) => (
+                {mobileTabs.map(({ href, label, icon: Icon }) => (
                   <Link
                     key={href}
                     href={href}
@@ -584,7 +645,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                       </button>
                     </div>
                     <nav className="p-2" aria-label="More pages">
-                      {MOBILE_MORE_LINKS.map(({ href, label, icon: Icon }) => (
+                      {mobileMoreLinks.map(({ href, label, icon: Icon }) => (
                         <Link
                           key={href}
                           href={href}

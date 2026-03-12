@@ -121,7 +121,7 @@ export async function GET(req: NextRequest) {
         results.push({ workspaceId, email, sent: true });
       }
     } catch (err) {
-      console.error("[absence-confidence]", err);
+      // Error; skip workspace
       results.push({ workspaceId, email, sent: false });
     }
   }

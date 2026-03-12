@@ -21,7 +21,7 @@ export async function GET(
     });
     return NextResponse.json(result);
   } catch (e) {
-    console.error("Next best action error:", e);
+    // Error response below
     return NextResponse.json({ error: "Failed to get next action" }, { status: 500 });
   }
 }

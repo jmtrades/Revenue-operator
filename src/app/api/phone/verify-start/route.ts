@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ sent: true });
   } catch (e) {
-    console.error("[phone/verify-start]", e);
+    // Verify start failed; error response returned below
     return NextResponse.json({ error: "Failed to send verification code" }, { status: 503 });
   }
 }

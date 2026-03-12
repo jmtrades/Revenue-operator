@@ -108,8 +108,8 @@ function ConnectPageContent() {
           if (convId) params.set("conversation_id", convId);
           router.push(`/live?${params.toString()}`);
         }
-      } catch (error) {
-        console.error("[connect] Failed to check for messages", error);
+      } catch {
+        // Non-blocking; error already handled by UI state
       }
     };
 
@@ -136,8 +136,7 @@ function ConnectPageContent() {
       if (data.success) {
         router.push(`/live?workspace_id=${encodeURIComponent(workspaceId)}`);
       }
-    } catch (error) {
-      console.error("[connect]", error);
+    } catch {
       setTesting(false);
     }
   };
@@ -165,8 +164,8 @@ function ConnectPageContent() {
           // Non-blocking
         }
       }
-    } catch (error) {
-      console.error("[connect] Copy failed", error);
+    } catch {
+      // Copy failed; user can retry
     }
   };
   

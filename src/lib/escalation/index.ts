@@ -179,7 +179,7 @@ export async function logEscalation(
 
   const { breakOperationalConfidenceStreak } = await import("@/lib/operational-confidence-streak");
   breakOperationalConfidenceStreak(workspaceId).catch((err) => {
-    console.warn("[operational-confidence-streak] break failed", workspaceId, err);
+    // Break failed; non-fatal
   });
 
   return id;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Megaphone } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -33,8 +34,6 @@ type CampaignRow = {
   created_at: string;
   target_filter?: TargetFilter | null;
 };
-
-const PAGE_TITLE = "Campaigns — Recall Touch";
 
 const TYPE_OPTIONS = [
   { id: "lead_followup", label: "Lead qualification / follow-up" },
@@ -88,6 +87,7 @@ function persistCampaignsSnapshot(workspaceId: string, campaigns: CampaignRow[])
 }
 
 export default function CampaignsPage() {
+  const t = useTranslations();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
@@ -115,11 +115,11 @@ export default function CampaignsPage() {
   });
 
   useEffect(() => {
-    document.title = PAGE_TITLE;
+    document.title = t("campaigns.pageTitle");
     return () => {
       document.title = "";
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (!workspaceId) {

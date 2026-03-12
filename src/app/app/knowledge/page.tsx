@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   Search,
@@ -300,15 +301,14 @@ function KnowledgeModal({
   );
 }
 
-const PAGE_TITLE = "Knowledge — Recall Touch";
-
 const ADD_FROM_CALL_KEY = "rt_add_to_knowledge";
 
 export default function KnowledgePage() {
+  const t = useTranslations();
   useEffect(() => {
-    document.title = PAGE_TITLE;
+    document.title = t("knowledge.pageTitle");
     return () => { document.title = ""; };
-  }, []);
+  }, [t]);
 
   const [entries, setEntries] = useState<KnowledgeEntry[]>([]);
 

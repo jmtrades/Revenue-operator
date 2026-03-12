@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
         {},
         originWorkspaceId
       );
-    } catch (err) {
-      console.warn("Shared entry protocol: mirror failed", err);
+    } catch {
+      // Mirror failed; primary response already returned
     }
   }
   return NextResponse.json({ ok: true });

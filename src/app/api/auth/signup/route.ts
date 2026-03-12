@@ -14,6 +14,7 @@ import {
   toFriendlySignupError,
 } from "@/lib/auth/validate";
 import { sendWelcomeEmail } from "@/lib/email/welcome";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
       sendWelcome();
       return NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding", session: "missing" });
     } catch (err) {
-      console.error("[signup] admin.createUser path failed:", err);
+      log("error", "[signup] admin.createUser path failed", { err: String(err) });
       // fall through to signUp path
     }
   }
@@ -198,10 +199,7 @@ export async function POST(req: NextRequest) {
   const cookie = createSessionCookie({ userId, workspaceId });
   if (!cookie) {
     // SESSION_SECRET/ENCRYPTION_KEY not configured. Degrade gracefully:
-    console.warn(
-      "[auth] Signup succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. " +
-        "App sessions are running without revenue_session cookie."
-    );
+    log("warn", "[auth] Signup succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. App sessions running without revenue_session cookie.");
     sendWelcome();
     return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/app/onboarding" });
   }

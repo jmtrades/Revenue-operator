@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Area,
   AreaChart,
@@ -115,8 +116,6 @@ function formatDuration(start?: string | null, end?: string | null): string {
   return `${m}:${rem.toString().padStart(2, "0")}`;
 }
 
-const PAGE_TITLE = "Dashboard — Recall Touch";
-
 const PROGRESS_LABELS: Record<string, string> = {
   business: "Set up your business profile",
   agent: "Configure your first AI agent",
@@ -153,38 +152,6 @@ function ActivityDateLabel() {
   }, []);
   return <span className="text-xs text-[var(--text-tertiary)]">{dateLabel}</span>;
 }
-
-const NEXT_ACTIONS = [
-  {
-    title: "Connect your phone",
-    body: "Route your existing number or claim a new one so your AI can start answering real calls.",
-    href: "/app/settings/phone",
-  },
-  {
-    title: "Make a test call",
-    body: "Hear the current greeting and confirm your call flow before going live.",
-    href: "/app/onboarding",
-  },
-  {
-    title: "Share with your team",
-    body: "Invite the people who should see leads, appointments, and inbox updates.",
-    href: "/app/team",
-  },
-] as const;
-
-const QUICK_ACTIONS: {
-  icon: typeof Phone;
-  label: string;
-  href: string;
-  desc: string;
-}[] = [
-  { icon: Phone, label: "Make a test call", href: "/app/agents", desc: "Test your AI agent" },
-  { icon: UserPlus, label: "Add a lead", href: "/app/leads", desc: "Create a new lead record" },
-  { icon: Megaphone, label: "Create campaign", href: "/app/campaigns", desc: "Start outbound calls" },
-  { icon: Settings, label: "Agent settings", href: "/app/agents", desc: "Configure AI behavior" },
-  { icon: Link2, label: "Connect CRM", href: "/app/settings/integrations", desc: "Send leads to your CRM" },
-  { icon: BarChart3, label: "View analytics", href: "/app/analytics", desc: "See call performance" },
-];
 
 const ACTIVITY_SNAPSHOT_KEY = "rt_activity_snapshot";
 
@@ -255,6 +222,7 @@ function DashboardSkeleton() {
 
 export default function AppActivityPage() {
   const searchParams = useSearchParams();
+  const t = useTranslations();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as
     | {
@@ -265,9 +233,20 @@ export default function AppActivityPage() {
     | null;
 
   useEffect(() => {
-    document.title = PAGE_TITLE;
+    document.title = t("dashboard.pageTitle");
     return () => { document.title = ""; };
-  }, []);
+  }, [t]);
+  const quickActions = useMemo(
+    () => [
+      { icon: Phone, label: t("dashboard.quickActions.testCall"), href: "/app/agents", desc: t("dashboard.quickActions.testCallDesc") },
+      { icon: UserPlus, label: t("dashboard.addLead"), href: "/app/leads", desc: t("dashboard.quickActions.addLeadDesc") },
+      { icon: Megaphone, label: t("dashboard.quickActions.createCampaign"), href: "/app/campaigns", desc: t("dashboard.quickActions.createCampaignDesc") },
+      { icon: Settings, label: t("dashboard.quickActions.agentSettings"), href: "/app/agents", desc: t("dashboard.quickActions.agentSettingsDesc") },
+      { icon: Link2, label: t("dashboard.quickActions.connectCrm"), href: "/app/settings/integrations", desc: t("dashboard.quickActions.connectCrmDesc") },
+      { icon: BarChart3, label: t("dashboard.quickActions.viewAnalytics"), href: "/app/analytics", desc: t("dashboard.quickActions.viewAnalyticsDesc") },
+    ],
+    [t],
+  );
   const [filter, setFilter] = useState<FilterId>("all");
   const [_playingId, _setPlayingId] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<ActivityCard | null>(null);
@@ -798,9 +777,9 @@ export default function AppActivityPage() {
 
       {/* Quick actions */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
-        {QUICK_ACTIONS.map((a) => (
+        {quickActions.map((a) => (
           <motion.div
-            key={a.label}
+            key={a.href}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
@@ -819,7 +798,7 @@ export default function AppActivityPage() {
         ))}
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Filter activity">
+      <div className="flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label={t("filter.activity")}>
         {FILTERS.map((f) => (
           <button
             key={f.id}
@@ -840,14 +819,14 @@ export default function AppActivityPage() {
 
       {loadError && (
         <div className="rounded-xl border border-[var(--accent-red)]/30 bg-[var(--accent-red)]/10 p-4 mb-4" role="alert">
-          <p className="text-sm text-[var(--text-primary)]">We couldn’t load activity. Check your connection and try again.</p>
+          <p className="text-sm text-[var(--text-primary)]">{t("dashboard.loadError.message")}</p>
           <button
             type="button"
             onClick={() => { setLoadError(false); setLoading(true); setRefreshKey((k) => k + 1); }}
             className="mt-3 px-3 py-1.5 rounded-lg text-sm font-medium bg-white text-gray-900 hover:bg-gray-100"
-            aria-label="Retry loading activity"
+            aria-label={t("dashboard.loadError.retryAria")}
           >
-            Retry
+            {t("dashboard.loadError.retry")}
           </button>
         </div>
       )}
@@ -856,23 +835,27 @@ export default function AppActivityPage() {
       {cards.length === 0 && !loading && !phoneConnected ? (
         <div className="space-y-6">
           <div>
-            <p className="text-base font-medium text-[var(--text-primary)] mb-3">Recent activity</p>
+            <p className="text-base font-medium text-[var(--text-primary)] mb-3">{t("dashboard.activity.title")}</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
               <EmptyState
                 icon={Phone}
-                title="Your AI agent is ready"
-                description="Connect your phone number to start receiving real calls."
-                primaryAction={{ label: "Connect phone", href: "/app/settings/phone" }}
-                secondaryAction={{ label: "Make a test call", href: "/app/agents" }}
-                footnote="Businesses like yours recover $2,400+/month in missed calls."
+                title={t("dashboard.agentReady.title")}
+                description={t("dashboard.agentReady.description")}
+                primaryAction={{ label: t("dashboard.agentReady.connectPhone"), href: "/app/settings/phone" }}
+                secondaryAction={{ label: t("dashboard.quickActions.testCall"), href: "/app/agents" }}
+                footnote={t("dashboard.agentReady.footnote")}
               />
             </div>
           </div>
 
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-            <p className="text-sm font-semibold text-[var(--text-primary)]">What to do next</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{t("dashboard.nextActions.title")}</p>
             <div className="mt-3 space-y-3">
-              {NEXT_ACTIONS.map((item, index) => (
+              {[
+                { title: t("dashboard.nextActions.connectPhone.title"), body: t("dashboard.nextActions.connectPhone.body"), href: "/app/settings/phone" },
+                { title: t("dashboard.nextActions.testCall.title"), body: t("dashboard.nextActions.testCall.body"), href: "/app/onboarding" },
+                { title: t("dashboard.nextActions.shareTeam.title"), body: t("dashboard.nextActions.shareTeam.body"), href: "/app/team" },
+              ].map((item, index) => (
                 <div key={item.href} className="flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-3">
                   <div className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--bg-card)] text-[var(--text-tertiary)]">
                     {index === 0 ? <Phone className="h-3.5 w-3.5" /> : index === 1 ? <CheckCircle2 className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
@@ -881,7 +864,7 @@ export default function AppActivityPage() {
                     <p className="text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
                     <p className="mt-1 text-[13px] text-[var(--text-secondary)]">{item.body}</p>
                     <Link href={item.href} className="mt-2 inline-block text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2">
-                      Open →
+                      {t("dashboard.nextActions.open")}
                     </Link>
                   </div>
                 </div>
@@ -892,34 +875,32 @@ export default function AppActivityPage() {
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <div className="flex items-center gap-2">
               <Video className="h-4 w-4 text-[var(--text-tertiary)]" />
-              <p className="text-sm font-semibold text-[var(--text-primary)]">See it handled live</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{t("dashboard.seeLive.title")}</p>
             </div>
             <div className="mt-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-4">
               <p className="text-[13px] text-[var(--text-secondary)]">
-                Watch the sample call walkthrough to hear how a real lead is answered, qualified, and booked before you connect your line.
+                {t("dashboard.seeLive.description")}
               </p>
               <Link
                 href="/"
                 className="mt-3 inline-flex items-center justify-center rounded-lg border border-[var(--border-medium)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-colors"
               >
-                Try our agent →
+                {t("dashboard.seeLive.cta")}
               </Link>
             </div>
           </div>
 
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-            <p className="text-sm font-semibold text-[var(--text-primary)]">Estimated ROI</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{t("dashboard.roi.title")}</p>
             <p className="mt-1 text-[13px] text-[var(--text-secondary)]">
-              Businesses at your stage typically recover{" "}
-              <span className="font-medium text-[var(--text-primary)]">$2,400+</span>{" "}
-              a month once every missed call turns into a captured lead.
+              {t("dashboard.roi.body")}
             </p>
           </div>
 
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-            <p className="text-sm font-semibold text-[var(--text-primary)]">Recent system events</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{t("dashboard.systemEvents.title")}</p>
             {systemEvents.length === 0 ? (
-              <p className="text-xs text-[var(--text-tertiary)] mt-2">Your setup events will appear here.</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-2">{t("dashboard.systemEvents.empty")}</p>
             ) : (
               <ul className="mt-3 space-y-3">
                 {systemEvents.map((event) => (
@@ -927,7 +908,7 @@ export default function AppActivityPage() {
                     <p className="text-xs font-medium text-[var(--text-primary)]">{event.title}</p>
                     <p className="text-xs text-[var(--text-tertiary)] mt-1">{event.body}</p>
                     <Link href={event.href} className="inline-block mt-2 text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2">
-                      View →
+                      {t("dashboard.systemEvents.view")}
                     </Link>
                   </li>
                 ))}
@@ -1154,12 +1135,12 @@ export default function AppActivityPage() {
             type="button"
             onClick={() => setSelectedCard(null)}
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            aria-label="Close details"
+            aria-label={t("common.closeDetails")}
           />
           <div className="absolute inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[360px] bg-[var(--bg-card-elevated)] border-t md:border-t-0 md:border-l border-[var(--border-default)] rounded-t-2xl md:rounded-none shadow-2xl">
             <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-default)]">
               <div>
-                <p className="text-xs text-[var(--text-tertiary)]">Call</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{t("dashboard.detail.callLabel")}</p>
                 <p className="text-sm font-semibold text-[var(--text-primary)]">
                   {selectedCard.name}
                 </p>

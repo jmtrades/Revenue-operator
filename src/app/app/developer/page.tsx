@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type {
   ApiKeyRow,
@@ -485,6 +486,8 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
   onKindFilter: (v: EventLogKind | "all") => void;
   onStatusFilter: (v: EventLogStatus | "all") => void;
 }) {
+  const tCommon = useTranslations("common");
+
   const filtered = events.filter((e) => {
     if (kindFilter !== "all" && e.kind !== kindFilter) return false;
     if (statusFilter !== "all" && e.status !== statusFilter) return false;
@@ -500,9 +503,13 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             key={k}
             type="button"
             onClick={() => onKindFilter(k === "all" ? "all" : k)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${kindFilter === k ? "bg-zinc-700 text-white" : "bg-[var(--bg-card)]/50 text-zinc-400 hover:text-zinc-300"}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
+              kindFilter === k
+                ? "bg-zinc-700 text-white"
+                : "bg-[var(--bg-card)]/50 text-zinc-400 hover:text-zinc-300"
+            }`}
           >
-            {k === "all" ? "All" : k === "api_call" ? "API Call" : "Webhook Delivery"}
+            {k === "all" ? tCommon("all") : k === "api_call" ? "API Call" : "Webhook Delivery"}
           </button>
         ))}
         <span className="text-xs text-zinc-500 self-center ml-4 mr-2">Status:</span>
@@ -511,9 +518,13 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             key={s}
             type="button"
             onClick={() => onStatusFilter(s === "all" ? "all" : s)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusFilter === s ? "bg-zinc-700 text-white" : "bg-[var(--bg-card)]/50 text-zinc-400 hover:text-zinc-300"}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
+              statusFilter === s
+                ? "bg-zinc-700 text-white"
+                : "bg-[var(--bg-card)]/50 text-zinc-400 hover:text-zinc-300"
+            }`}
           >
-            {s === "all" ? "All" : s === "success" ? "Success" : "Failed"}
+            {s === "all" ? tCommon("all") : s === "success" ? "Success" : "Failed"}
           </button>
         ))}
       </div>

@@ -179,7 +179,7 @@ export async function GET(req: NextRequest) {
       has_data: true,
     });
   } catch (error) {
-    console.error("[revenue-signals]", error);
+    // Error response returned below
     return NextResponse.json({
       conversations_likely_quiet: 0,
       follow_ups_missed: 0,

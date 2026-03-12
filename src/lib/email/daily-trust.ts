@@ -67,7 +67,7 @@ Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www.
         results.push({ workspaceId, email, sent: true });
       }
     } catch (err) {
-      console.error("[daily-trust]", err);
+      // Send failed; non-fatal
       results.push({ workspaceId, email, sent: false });
     }
   }

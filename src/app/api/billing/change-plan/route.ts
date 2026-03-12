@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
       });
     } catch (e) {
       const err = e as Error;
-      console.error("[billing/change-plan] Stripe error:", err?.message ?? e);
+      // Stripe error; return below
       return NextResponse.json(
         { ok: false, error: "Something went wrong with this service. Please try again." },
         { status: 502 }
@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     const err = e as Error;
-    console.error("[billing/change-plan] Stripe update error:", err?.message ?? e);
+    // Stripe update error; return below
     return NextResponse.json(
       { ok: false, error: "Something went wrong with this service. Please try again." },
       { status: 502 }

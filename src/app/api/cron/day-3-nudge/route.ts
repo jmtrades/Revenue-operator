@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
     .is("day_3_email_sent_at", null);
 
   if (error) {
-    console.error("[day-3-nudge] Query error", error);
+    // Error response below
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 

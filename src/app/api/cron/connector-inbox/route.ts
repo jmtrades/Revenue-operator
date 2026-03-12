@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       await markInboxEventProcessed(event.id);
       if (mapped) processed++;
     } catch (err) {
-      console.error("[connector-inbox] map failed", event.id, err);
+      // Map failed; skip event
     }
   }
   const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");

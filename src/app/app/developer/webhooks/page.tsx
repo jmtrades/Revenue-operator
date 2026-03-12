@@ -11,6 +11,7 @@ import {
   RefreshCw,
   Trash2,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
@@ -57,6 +58,7 @@ function formatTime(iso: string): string {
 }
 
 export default function DeveloperWebhooksPage() {
+  const tCommon = useTranslations("common");
   const { workspaceId } = useWorkspace();
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -232,7 +234,7 @@ export default function DeveloperWebhooksPage() {
                     type="button"
                     onClick={() => setDeleteConfirm(ep)}
                     className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10"
-                    aria-label="Delete"
+                    aria-label={tCommon("delete")}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -368,7 +370,7 @@ export default function DeveloperWebhooksPage() {
           open
           title="Delete webhook endpoint?"
           message={`Remove ${deleteConfirm.url}? Delivery history will be deleted.`}
-          confirmLabel="Delete"
+          confirmLabel={tCommon("delete")}
           variant="danger"
           onConfirm={() => handleDelete(deleteConfirm)}
           onClose={() => setDeleteConfirm(null)}

@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
       await enqueue({ type: "process_signal", signalId });
     }
   } catch (err) {
-    console.error("[inbound-generic]", err);
+    // Error response below
     return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
   }
 

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       checkpoints_count: result.checkpoints.length,
     });
   } catch (err) {
-    console.error("[rebuild-lead-state]", err);
+    // Error response below
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }

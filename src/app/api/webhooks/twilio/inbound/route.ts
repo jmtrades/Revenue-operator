@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
           return new NextResponse("OK", { status: 200, headers: { "Content-Type": "text/xml" } });
         }
       }
-      console.warn("[twilio-inbound] No workspace found", { to, from });
+      // No workspace; 404 below
       return new NextResponse("OK", { status: 200, headers: { "Content-Type": "text/xml" } });
     }
 
@@ -118,7 +118,6 @@ export async function POST(request: NextRequest) {
       });
       const validationUrl = getValidationUrl(request);
       if (!verifyTwilioSignature(validationUrl, params, signature, authToken)) {
-        console.warn("[twilio-inbound] Signature verification failed", { workspaceId });
         return new NextResponse("Forbidden", { status: 403 });
       }
     }
@@ -171,7 +170,7 @@ export async function POST(request: NextRequest) {
       headers: { "Content-Type": "text/xml" },
     });
   } catch (error) {
-    console.error("[twilio-inbound]", error);
+    // Error response below
     logWebhookFailure("twilio_inbound", error);
     return new NextResponse("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>", {
       status: 200,

@@ -1444,8 +1444,21 @@ export default function AppAgentsPageClient({
                   <button type="button" onClick={() => void handleStepChange("golive")} aria-label="Go live" className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Go live</button>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  <button type="button" onClick={handleDelete} aria-label="Delete this agent" className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Delete</button>
-                  <button type="button" onClick={handleSave} disabled={saving} aria-label={saving ? "Saving agent" : "Save agent and sync to voice"} className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    aria-label="Delete this agent"
+                    className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={saving}
+                    aria-label={saving ? "Saving agent" : "Save agent and sync to voice"}
+                    className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  >
                     {saving ? "Saving…" : "Save"}
                   </button>
                 </div>

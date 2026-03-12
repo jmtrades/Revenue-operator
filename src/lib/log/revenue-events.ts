@@ -4,6 +4,8 @@
  * No PII in logs; use opaque ids only.
  */
 
+import { log as logToLogger } from "@/lib/logger";
+
 export type RevenueEvent =
   | { event: "lead_created"; workspace_id: string; lead_id: string; source?: string }
   | { event: "appointment_booked"; workspace_id: string; appointment_id?: string; source?: string }
@@ -11,7 +13,7 @@ export type RevenueEvent =
 
 function logEvent(payload: RevenueEvent): void {
   try {
-    console.log(JSON.stringify({ ...payload, ts: new Date().toISOString() }));
+    logToLogger("info", payload.event, { ...payload } as Record<string, unknown>);
   } catch {
     // avoid logging failures breaking the request
   }

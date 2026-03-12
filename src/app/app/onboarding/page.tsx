@@ -144,7 +144,8 @@ export default function AppOnboardingPage() {
   const [starterAdded, setStarterAdded] = useState(false);
   const [businessHoursDisplay, setBusinessHoursDisplay] = useState("");
 
-  const [phoneDisplay] = useState("(503) 555-0100");
+  // No fake number: user gets a number in Settings → Phone or forwards existing
+  const [phoneDisplay] = useState<string | null>(null);
   const [_numberOption, _setNumberOption] = useState<"forward" | "new" | "skip">("new");
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -707,21 +708,19 @@ export default function AppOnboardingPage() {
                 </li>
               </ul>
             </div>
-            <p className="text-sm text-zinc-400">Your AI will answer calls at:</p>
+            <p className="text-sm text-zinc-400 mb-3">We&apos;ll help you get a phone number after setup. You can use your existing number or get a new one in Settings → Phone.</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
               <p className="text-sm font-medium text-[var(--text-primary)] mb-1">Forward your existing number</p>
-              <p className="text-xs text-zinc-400 mb-2">Call your carrier and set up forwarding to your Recall Touch number.</p>
-              <p className="text-sm font-mono text-[var(--text-primary)] mb-2">{phoneDisplay}</p>
+              <p className="text-xs text-zinc-400 mb-2">Call your carrier and set up forwarding to your Recall Touch number once you have it.</p>
               <a href="/app/settings/phone" className="text-xs text-[var(--text-primary)] hover:text-[var(--text-primary)] underline">Show me how</a>
             </div>
-            <p className="text-xs text-zinc-500 text-center">— or —</p>
+            <p className="text-xs text-zinc-500 text-center mt-3">— or —</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
               <p className="text-sm font-medium text-[var(--text-primary)] mb-1">Get a new phone number</p>
-              <p className="text-xs text-zinc-400 mb-2">We&apos;ll assign you a local number instantly.</p>
+              <p className="text-xs text-zinc-400 mb-2">We&apos;ll assign you a local number in Settings → Phone.</p>
               <a href="/app/settings/phone" className="inline-block py-2 px-4 rounded-xl bg-[var(--bg-hover)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--bg-active)]">Get my number →</a>
             </div>
-            <p className="text-xs text-zinc-500 text-center">— or —</p>
-            <p className="text-sm text-zinc-500 text-center">Skip for now — I&apos;ll connect a number later.</p>
+            <p className="text-xs text-zinc-500 text-center mt-3">— or skip for now and connect a number later in Settings.</p>
             <button
               type="button"
               onClick={handleGoToDashboard}

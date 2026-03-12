@@ -104,7 +104,6 @@ async function processPayload(payload: {
   if (workspaceId) {
     const alerts = await checkWorkspaceAlerts(workspaceId);
     if (alerts.length > 0) {
-      console.warn("[process-queue] workspace alerts", { workspaceId, alerts });
       await maybeAutoPause(workspaceId);
     }
   }
@@ -158,11 +157,6 @@ export async function GET(request: NextRequest) {
 
   const job = await dequeue();
   if (job) {
-    if (job.claim) {
-      console.info(
-        `QUEUE_CLAIMED job_id=${job.id} worker_id=${job.claim.worker_id} expires_at=${job.claim.expires_at}`
-      );
-    }
     try {
       const { runWithWriteContextAsync, getJobWriteContext } = await import("@/lib/safety/unsafe-write-guard");
       await runWithWriteContextAsync(getJobWriteContext(job.payload), async () => {
@@ -212,16 +206,14 @@ export async function GET(request: NextRequest) {
           const signal = await getSignalById(job.payload.signalId);
           const didMark = await markSignalIrrecoverable(job.payload.signalId, "signal_unprocessable");
           if (didMark) {
-            console.info(
-              JSON.stringify({
-                event: "SIGNAL_IRRECOVERABLE",
-                signal_id: job.payload.signalId,
-                lead_id: signal?.lead_id ?? null,
-                workspace_id: signal?.workspace_id ?? null,
-                attempts,
-                reason: "signal_unprocessable",
-              })
-            );
+            const { log } = await import("@/lib/logger");
+            log("info", "SIGNAL_IRRECOVERABLE", {
+              signal_id: job.payload.signalId,
+              lead_id: signal?.lead_id ?? null,
+              workspace_id: signal?.workspace_id ?? null,
+              attempts,
+              reason: "signal_unprocessable",
+            });
             if (signal?.workspace_id && signal?.lead_id) {
               await logEscalation(
                 signal.workspace_id,

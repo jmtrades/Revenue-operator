@@ -3,8 +3,11 @@
 import { useParams } from "next/navigation";
 import { BadgeCheck, CircleSlash, Clock3 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function WrapupPage() {
+  const tForms = useTranslations("forms.state");
+  const tCommon = useTranslations("common");
   const params = useParams();
   const token = params.token as string | undefined;
   const [status, setStatus] = useState<"loading" | "form" | "invalid" | "used" | "expired" | "done">(() => (!token ? "invalid" : "loading"));
@@ -40,7 +43,7 @@ export default function WrapupPage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-stone-950 text-stone-200 flex items-center justify-center p-4">
-        <p style={{ color: "var(--text-secondary)" }}>One moment…</p>
+        <p style={{ color: "var(--text-secondary)" }}>{tForms("loading")}</p>
       </div>
     );
   }
@@ -108,7 +111,7 @@ export default function WrapupPage() {
           disabled={!outcome || submitting}
           className="w-full px-4 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-stone-950 font-medium"
         >
-          {submitting ? "Submitting…" : "Submit"}
+          {submitting ? tForms("submitting") : tCommon("submit")}
         </button>
       </div>
     </div>

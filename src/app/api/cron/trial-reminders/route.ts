@@ -16,7 +16,7 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com
 
 async function sendEmail(to: string, subject: string, html: string): Promise<void> {
   if (!RESEND_API_KEY) {
-    console.warn("[trial-reminders] RESEND_API_KEY not set, skipping email");
+    // RESEND_API_KEY not set
     return;
   }
 
@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
         .eq("id", workspaceId);
       sent2d++;
     } catch (error) {
-      console.error(`[trial-reminders] Failed to send 2d reminder to ${email}`, error);
+      // Send failed; continue
     }
   }
 
@@ -154,7 +154,7 @@ export async function GET(req: NextRequest) {
         .eq("id", workspaceId);
       sent24h++;
     } catch (error) {
-      console.error(`[trial-reminders] Failed to send 24h reminder to ${email}`, error);
+      // Send failed; continue
     }
   }
 

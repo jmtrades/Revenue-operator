@@ -99,13 +99,21 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
 };
 
+// Force dynamic so getLocale/getMessages always run with request context (fixes hero i18n keys on /)
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
-  const messages = await getMessages();
+  let locale = await getLocale();
+  let messages = await getMessages();
+  // Fallback: ensure messages are never empty (e.g. static build or edge without request)
+  if (!messages || Object.keys(messages as object).length === 0) {
+    locale = "en";
+    messages = (await import("@/i18n/messages/en.json")).default as Record<string, unknown>;
+  }
   const t = await getTranslations("accessibility");
 
   return (

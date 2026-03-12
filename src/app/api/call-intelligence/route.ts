@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     .limit(100);
 
   if (exErr) {
-    console.error("[call-intelligence] list examples", exErr);
+    // List failed; error response below
     return NextResponse.json({ error: "Failed to load." }, { status: 500 });
   }
 

@@ -114,7 +114,7 @@ export async function GET(req: NextRequest) {
         results.push({ workspaceId: row.id, sent: true });
       }
     } catch (err) {
-      console.error("[operational-assumption]", err);
+      // Error; skip
       results.push({ workspaceId: row.id, sent: false });
     }
   }

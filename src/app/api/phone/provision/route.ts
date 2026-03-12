@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       const purchaseData = (await purchaseRes.json()) as { sid?: string };
       providerSid = purchaseData.sid ?? null;
     } catch (e) {
-      console.warn("[phone/provision] Twilio purchase failed", e);
+      // Twilio purchase failed; error response below
       return NextResponse.json({ error: "Provisioning failed. Try again later." }, { status: 500 });
     }
   }

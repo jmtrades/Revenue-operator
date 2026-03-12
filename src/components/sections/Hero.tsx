@@ -56,9 +56,9 @@ export function Hero() {
               </Link>
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm" style={{ color: "#64748B" }}>
-              <span>✓ Works with your existing number</span>
-              <span>✓ 5-minute setup</span>
-              <span>✓ No credit card required</span>
+              <span>✓ {t("hero.checkmark.existingNumber")}</span>
+              <span>✓ {t("hero.checkmark.setup")}</span>
+              <span>✓ {t("hero.checkmark.noCard")}</span>
             </div>
           </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 
 export type PlanId = "starter" | "growth" | "scale" | "enterprise";
@@ -16,8 +17,8 @@ export type PlanOption = {
 
 const PLANS: PlanOption[] = [
   { id: "starter", name: "Starter", price: 297, minutes: 400, features: ["1 AI agent", "1 phone number", "400 min/mo", "Usage insights"] },
-  { id: "growth", name: "Pro", price: 597, minutes: 1000, features: ["3 AI agents", "3 phone numbers", "1,000 min/mo", "Call Intelligence", "Priority support"] },
-  { id: "scale", name: "Business", price: 1197, minutes: 3000, features: ["10 AI agents", "10 phone numbers", "3,000 min/mo", "Detailed reporting", "API access"] },
+  { id: "growth", name: "Growth", price: 497, minutes: 1500, features: ["3 AI agents", "3 phone numbers", "1,500 min/mo", "Call Intelligence", "Priority support"] },
+  { id: "scale", name: "Scale", price: 2400, minutes: 5000, features: ["Unlimited AI agents", "10 numbers", "5,000 min/mo", "Detailed reporting", "API access"] },
   { id: "enterprise", name: "Enterprise", price: null, minutes: null, features: ["Unlimited agents", "Unlimited numbers", "Custom integrations", "Dedicated support", "SLA"] },
 ];
 
@@ -32,6 +33,7 @@ type PlanChangeModalProps = {
 };
 
 export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, workspaceId }: PlanChangeModalProps) {
+  const t = useTranslations("common");
   const [step, setStep] = useState<"select" | "confirm">("select");
   const [selected, setSelected] = useState<PlanId>(currentPlanId);
   const [loading, setLoading] = useState(false);
@@ -111,7 +113,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
           <h2 id="plan-change-title" className="text-lg font-semibold text-white">
             {step === "select" ? "Change your plan" : isUpgrade ? `Upgrade to ${selectedPlan?.name}` : `Downgrade to ${selectedPlan?.name}`}
           </h2>
-          <button type="button" onClick={() => { setStep("select"); setError(null); onClose(); }} className="p-2 rounded-lg text-zinc-400 hover:text-white" aria-label="Close">
+          <button type="button" onClick={() => { setStep("select"); setError(null); onClose(); }} className="p-2 rounded-lg text-zinc-400 hover:text-white" aria-label={t("close")}>
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -160,7 +162,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
               {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
               <div className="flex justify-end gap-3">
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-xl border border-[var(--border-medium)]">
-                  Cancel
+                  {t("cancel")}
                 </button>
                 <button
                   type="button"
@@ -192,7 +194,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
               {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
               <div className="flex justify-end gap-3">
                 <button type="button" onClick={() => { setStep("select"); setError(null); }} className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-xl border border-[var(--border-medium)]">
-                  Back
+                  {t("back")}
                 </button>
                 <button
                   type="button"

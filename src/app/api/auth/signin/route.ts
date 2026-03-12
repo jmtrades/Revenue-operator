@@ -82,10 +82,6 @@ export async function POST(req: NextRequest) {
     // - Do NOT block sign-in (return ok so the app remains usable in demo/preview envs)
     // - Session guard in proxy.ts is already disabled when secret is missing (isSessionEnabled() === false)
     // This means /app routes behave like public demo until SESSION_SECRET is set correctly.
-    console.warn(
-      "[auth] Sign-in succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. " +
-        "App sessions are running without revenue_session cookie."
-    );
     return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/app/activity" });
   }
   const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/activity" });

@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
       }));
       return NextResponse.json({ numbers: list });
     } catch (e) {
-      console.warn("[phone/available] Twilio search failed", e);
+      // Twilio search failed; fallback response already returned
     }
   }
 

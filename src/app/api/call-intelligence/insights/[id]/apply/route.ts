@@ -70,7 +70,7 @@ export async function POST(
     .eq("id", agentId);
 
   if (updateAgentErr) {
-    console.error("[call-intelligence/apply] update agent", updateAgentErr);
+    // Update agent failed; error response below
     return NextResponse.json({ error: "Failed to apply to agent." }, { status: 500 });
   }
 

@@ -14,7 +14,7 @@ import { getPriceId } from "@/lib/stripe-prices";
 
 function log(_event: string, _data: Record<string, unknown>): void {
   if (process.env.NODE_ENV === "development") {
-    console.warn(`[billing/checkout]`, _event, _data);
+    // Optional logging
   }
 }
 
