@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const authErr = await requireWorkspaceAccess(req, id);
+  if (authErr) return authErr;
   const db = getDb();
   const { data, error } = await db
     .from("workspace_business_context")
@@ -49,6 +52,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const authErr = await requireWorkspaceAccess(req, id);
+  if (authErr) return authErr;
   let body: Record<string, unknown>;
   try {
     body = await req.json();
