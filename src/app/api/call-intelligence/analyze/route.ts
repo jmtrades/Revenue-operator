@@ -74,8 +74,6 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      console.error("[call-intelligence/analyze] Anthropic error", res.status, errText);
       return NextResponse.json({ error: "Analysis failed." }, { status: 502 });
     }
 
@@ -124,7 +122,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (insertExampleErr || !example) {
-      console.error("[call-intelligence/analyze] insert call_example", insertExampleErr);
       return NextResponse.json({ error: "Failed to save." }, { status: 500 });
     }
 
@@ -147,8 +144,7 @@ export async function POST(req: NextRequest) {
       call_example: { id: exampleId, title: (example as { title: string }).title, status: "analyzed", created_at: (example as { created_at: string }).created_at },
       insights_count: insights.length,
     });
-  } catch (e) {
-    console.error("[call-intelligence/analyze]", e);
+  } catch {
     return NextResponse.json(
       { error: "Something went wrong with this service. Please try again." },
       { status: 502 }

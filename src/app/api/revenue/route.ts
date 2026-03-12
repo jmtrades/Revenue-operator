@@ -90,8 +90,7 @@ export async function GET(request: NextRequest) {
         opt_out: metrics.opt_out ?? 0,
       },
     });
-  } catch (err) {
-    console.error("Revenue report error:", err);
+  } catch {
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -13,7 +13,7 @@ export async function GET(
     const forensics = await generateForensics(leadId, dealId);
     return NextResponse.json(forensics);
   } catch (e) {
-    console.error("Forensics error:", e);
+    // Error response below
     return NextResponse.json(
       { error: "Failed to generate forensics" },
       { status: 500 }

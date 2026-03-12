@@ -88,7 +88,7 @@ If you need to pause instead, open billing in the app today.`;
         results.push({ workspaceId, email: ownerEmail, sent: true });
       }
     } catch (err) {
-      console.error("[renewal-reminder]", err);
+      // Error response below
       results.push({ workspaceId, email: ownerEmail, sent: false });
     }
   }

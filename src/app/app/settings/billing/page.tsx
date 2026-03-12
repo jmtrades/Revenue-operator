@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -13,6 +14,7 @@ type PauseStep = 0 | 1;
 const defaultUsage = { minutesUsed: 0, minutesLimit: 400, calls: 0, leads: 0, estRevenue: 0 };
 
 export default function AppSettingsBillingPage() {
+  const tNav = useTranslations("nav");
   const [cancelStep, setCancelStep] = useState<CancelStep>(0);
   const [usage, setUsage] = useState(() => {
     if (typeof window === "undefined") return defaultUsage;
@@ -33,6 +35,8 @@ export default function AppSettingsBillingPage() {
   const [pausing, setPausing] = useState(false);
   const [pauseStep, setPauseStep] = useState<PauseStep>(0);
   const [toast, setToast] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [billingError, setBillingError] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -45,16 +49,25 @@ export default function AppSettingsBillingPage() {
         setWorkspaceId(data?.id ?? null);
         if (data?.stats) setUsage(data.stats);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
     if (!workspaceId) return;
+    setBillingError(false);
     fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
-      .then((res) => (res.ok ? res.json() : null))
+      .then((res) => {
+        if (!res.ok) {
+          setBillingError(true);
+          return null;
+        }
+        return res.json();
+      })
       .then((data: { billing_status?: string; renewal_at?: string | null; billing_tier?: string } | null) => {
+        if (!data) return;
         setBillingStatus(data?.billing_status ?? "trial");
         setRenewalAt(data?.renewal_at ?? null);
         const tier = (data as { billing_tier?: string })?.billing_tier?.toLowerCase();
@@ -62,7 +75,7 @@ export default function AppSettingsBillingPage() {
         else if (tier === "growth") setCurrentPlanId("growth");
         else if (tier === "team" || tier === "scale") setCurrentPlanId("scale");
       })
-      .catch(() => {});
+      .catch(() => setBillingError(true));
   }, [workspaceId]);
 
   useEffect(() => {
@@ -97,10 +110,31 @@ export default function AppSettingsBillingPage() {
     }
   };
 
+  if (loading && !workspaceId) {
+    return (
+      <div className="max-w-[600px] mx-auto p-4 md:p-6">
+        <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Billing" }]} />
+        <h1 className="text-lg font-semibold text-white mb-4">Billing</h1>
+        <div className="animate-pulse space-y-3">
+          <div className="h-20 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]" />
+          <div className="h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] w-1/2" />
+          <div className="h-32 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Billing" }]} />
-      <h1 className="text-lg font-semibold text-white mb-4">Billing</h1>
+      <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
+      <h1 className="text-lg font-semibold text-white mb-4">{tNav("billing")}</h1>
+      {billingError && (
+        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-sm mb-4">
+          <p className="font-medium">Unable to load billing details.</p>
+          <p className="mt-1 text-amber-200/80">Connect your billing to manage your subscription, or try again in a moment.</p>
+          <Link href="/app/settings" className="inline-block mt-2 text-sm font-medium underline underline-offset-2">Back to Settings</Link>
+        </div>
+      )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
         <p className="text-sm font-medium text-white">Starter — $297/mo</p>
         <p className="text-xs text-zinc-500 mt-1">{usage.minutesUsed} / {usage.minutesLimit} min used</p>

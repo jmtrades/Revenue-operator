@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState, LoadingState } from "@/components/ui";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
@@ -21,6 +22,8 @@ interface Agent {
 const PERSONALITIES = ["friendly", "professional", "casual", "empathetic"];
 
 export default function AgentDetailPage() {
+  const tCommon = useTranslations("common");
+  const tForms = useTranslations("forms.state");
   const params = useParams();
   const id = typeof params.id === "string" ? params.id : "";
   const { workspaceId } = useWorkspace();
@@ -169,9 +172,23 @@ export default function AgentDetailPage() {
           />
         </div>
         <div className="flex flex-wrap gap-3">
-          <button type="button" onClick={save} disabled={saving} className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50" style={{ background: "var(--accent)", color: "var(--text-inverse)" }}>{saving ? "Saving…" : "Save"}</button>
+          <button
+            type="button"
+            onClick={save}
+            disabled={saving}
+            className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+            style={{ background: "var(--accent)", color: "var(--text-inverse)" }}
+          >
+            {saving ? tForms("saving") : tCommon("save")}
+          </button>
           <button type="button" onClick={testCall} disabled={testCalling} className="px-4 py-2 rounded-lg text-sm font-medium border disabled:opacity-50" style={{ borderColor: "var(--border)", color: "var(--text-primary)" }} aria-label="Request test call">{testCalling ? "Calling…" : "Test call"}</button>
-          <Link href="/dashboard/agents" className="inline-block px-4 py-2 text-sm" style={{ color: "var(--text-muted)" }}>Cancel</Link>
+          <Link
+            href="/dashboard/agents"
+            className="inline-block px-4 py-2 text-sm"
+            style={{ color: "var(--text-muted)" }}
+          >
+            {tCommon("cancel")}
+          </Link>
         </div>
       </div>
     </div>

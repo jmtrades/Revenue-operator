@@ -12,7 +12,7 @@ export async function GET(
     const prediction = await predictDealOutcome(id);
     return NextResponse.json(prediction);
   } catch (e) {
-    console.error("Deal prediction error:", e);
+    // Error response below
     return NextResponse.json(
       { error: "Failed to compute prediction" },
       { status: 500 }

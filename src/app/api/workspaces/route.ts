@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { isSessionEnabled } from "@/lib/auth/session";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const db = getDb();
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    console.error("Workspace create error:", error);
+    log("error", "Workspace create error", { error: String(error) });
     return NextResponse.json(
       { error: "Failed to create workspace" },
       { status: 500 }

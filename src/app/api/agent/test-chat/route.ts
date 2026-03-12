@@ -194,8 +194,6 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      console.error("[test-chat] Anthropic error:", res.status, errText.slice(0, 500));
       return NextResponse.json({ error: "AI service is temporarily unavailable. Please try again." }, { status: 502 });
     }
 
@@ -203,7 +201,7 @@ export async function POST(req: NextRequest) {
     try {
       data = (await res.json()) as { content?: Array<{ text?: string }> };
     } catch {
-      console.error("[test-chat] Invalid JSON from Anthropic");
+      // Invalid JSON; return below
       return NextResponse.json({ error: "Invalid response from AI service." }, { status: 502 });
     }
     const response = data.content?.[0]?.text?.trim() || "I apologize, I had trouble generating a response.";
@@ -211,7 +209,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ response });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
-    console.error("[test-chat] Error:", msg);
+    // Error response below
     return NextResponse.json({ error: "Failed to connect to AI service" }, { status: 500 });
   }
 }

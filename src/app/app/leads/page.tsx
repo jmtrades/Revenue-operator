@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Users,
   Search,
@@ -27,8 +28,6 @@ import { Button } from "@/components/ui/Button";
 import { DndContext, type DragEndEvent, useDraggable, useDroppable } from "@dnd-kit/core";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { getClientOrNull } from "@/lib/supabase/client";
-
-const PAGE_TITLE = "Leads — Recall Touch";
 
 interface ApiLead {
   id: string;
@@ -247,6 +246,7 @@ function persistLeadsSnapshot(workspaceId: string, leads: LeadView[]) {
 
 export default function LeadsPage() {
   useRouter();
+  const t = useTranslations();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId =
@@ -284,9 +284,9 @@ export default function LeadsPage() {
   const [outboundCallType, setOutboundCallType] = useState<string>("");
 
   useEffect(() => {
-    document.title = PAGE_TITLE;
+    document.title = t("leads.pageTitle");
     return () => { document.title = ""; };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

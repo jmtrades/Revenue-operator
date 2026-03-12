@@ -39,7 +39,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
     .single();
 
   if (fetchErr || !raw || raw.processed) {
-    if (fetchErr) console.error("[processWebhook] fetch error", redact({ webhookId, err: String(fetchErr) }));
+    if (fetchErr) { /* fetch error; response already returned */ }
     return undefined;
   }
 

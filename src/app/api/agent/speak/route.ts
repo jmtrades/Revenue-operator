@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error("[speak] ElevenLabs error:", res.status, errText);
+      // ElevenLabs error; return below
       return NextResponse.json(
         { error: "TTS failed", fallback: "browser" },
         { status: 502 }
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (e) {
-    console.error("[speak] Request failed:", e);
+    // Request failed; error response below
     return NextResponse.json(
       { error: "TTS request failed", fallback: "browser" },
       { status: 502 }

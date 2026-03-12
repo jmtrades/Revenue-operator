@@ -67,8 +67,8 @@ function LivePageContent() {
         try {
           await fetch("/api/dev/simulate-inbound", { method: "POST" });
           setAutoSimulated(true);
-        } catch (error) {
-          console.error("[live] Auto-simulate failed", error);
+        } catch {
+          // Non-blocking
         }
       }
     }, 10000);
@@ -166,8 +166,8 @@ function LivePageContent() {
 
               setTimeline(steps);
             }
-          } catch (error) {
-            console.error("[live] Failed to fetch messages", error);
+          } catch {
+            // Poll will retry
           }
         }
       }

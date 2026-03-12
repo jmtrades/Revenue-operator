@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
           },
         }),
       }).catch((err) => {
-        console.error("[Webhook] Failed to deliver lead.created", err);
+        // Webhook delivery failed; non-fatal
       });
     }
   } catch {

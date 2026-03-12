@@ -12,7 +12,7 @@ function escapeHtml(value: string): string {
 export async function sendWelcomeEmail(email: string, nameOrBusiness?: string | null): Promise<boolean> {
   if (!email) return false;
   if (!process.env.RESEND_API_KEY) {
-    console.warn("[Email] RESEND_API_KEY not configured — skipping welcome email");
+    // RESEND_API_KEY not configured
     return false;
   }
 
@@ -57,7 +57,7 @@ export async function sendWelcomeEmail(email: string, nameOrBusiness?: string | 
 export async function sendGoLiveEmail(email: string, workspaceName?: string | null): Promise<boolean> {
   if (!email) return false;
   if (!process.env.RESEND_API_KEY) {
-    console.warn("[Email] RESEND_API_KEY not configured — skipping go-live email");
+    // RESEND_API_KEY not configured
     return false;
   }
   const safeName = workspaceName?.trim() || "Your workspace";

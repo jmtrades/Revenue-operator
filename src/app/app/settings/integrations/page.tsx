@@ -16,9 +16,6 @@ const CRM_INTEGRATIONS: Array<{
 }> = [
   { id: "salesforce", name: "Salesforce", description: "Sync contacts and deals with Salesforce", icon: Cloud },
   { id: "hubspot", name: "HubSpot", description: "Send leads and appointments to HubSpot", icon: Building2 },
-  { id: "zoho_crm", name: "Zoho CRM", description: "Connect to Zoho CRM", icon: Database },
-  { id: "pipedrive", name: "Pipedrive", description: "Push leads and deals to Pipedrive", icon: TrendingUp },
-  { id: "gohighlevel", name: "GoHighLevel", description: "Push qualified leads and calls into pipelines", icon: Layers },
   { id: "google_contacts", name: "Google Contacts", description: "Sync contacts so your AI knows who's calling", icon: Users },
   { id: "microsoft_365", name: "Microsoft 365", description: "Connect Outlook contacts and calendars", icon: Building },
 ];

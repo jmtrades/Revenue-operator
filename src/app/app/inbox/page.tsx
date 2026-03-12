@@ -14,8 +14,6 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
 
-const PAGE_TITLE = "Inbox — Recall Touch";
-
 type Filter = "all" | "unread" | "phone" | "sms" | "email" | "whatsapp";
 type ReplyChannel = "sms" | "email" | "whatsapp";
 
@@ -433,16 +431,16 @@ function ConversationDetail({
 }
 
 export default function InboxPage() {
-  useTranslations();
+  const t = useTranslations();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId =
     workspaceId || workspaceSnapshot?.id?.trim() || "default";
   const initialThreads = readInboxSnapshot(snapshotWorkspaceId);
   useEffect(() => {
-    document.title = PAGE_TITLE;
+    document.title = t("inbox.pageTitle");
     return () => { document.title = ""; };
-  }, []);
+  }, [t]);
   const [threads, setThreads] = useState<InboxThread[]>(initialThreads);
   const [selectedId, setSelectedId] = useState<string | null>(
     initialThreads[0]?.id ?? null,
@@ -619,12 +617,12 @@ export default function InboxPage() {
             {rightPanelOpen && activeThread && (
               <div className="w-72 flex flex-col h-full">
                 <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--border-default)]">
-                  <span className="text-xs font-medium text-zinc-400">Contact</span>
+                  <span className="text-xs font-medium text-zinc-400">{t("inbox.contact")}</span>
                   <button
                     type="button"
                     onClick={() => setRightPanelOpen(false)}
                     className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-[var(--bg-hover)]"
-                    aria-label="Close panel"
+                    aria-label={t("common.closeDetails")}
                   >
                     <PanelRightClose className="w-4 h-4" />
                   </button>
@@ -655,7 +653,7 @@ export default function InboxPage() {
               type="button"
               onClick={() => setRightPanelOpen(true)}
               className="shrink-0 p-2 border-l border-[var(--border-default)] text-zinc-500 hover:text-white hover:bg-[var(--bg-hover)]"
-              aria-label="Open contact panel"
+              aria-label={t("inbox.openContactPanel")}
             >
               <PanelRightOpen className="w-4 h-4" />
             </button>

@@ -183,7 +183,7 @@ export default function DocsPageContent() {
               >
                 <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Integrations</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Business and Enterprise plans.
+                  Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Scale and Enterprise plans.
                 </p>
                 <h3 className="font-semibold text-lg mt-6 mb-2" style={{ color: "var(--text-primary)" }}>Zapier & Make</h3>
                 <p className="text-sm mb-3" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>

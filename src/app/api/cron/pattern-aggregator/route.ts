@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     const result = await runPatternAggregator();
     return NextResponse.json({ ok: true, patterns_updated: result.patterns_updated });
   } catch (err) {
-    console.error("[pattern-aggregator]", err);
+    // Error response below
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }

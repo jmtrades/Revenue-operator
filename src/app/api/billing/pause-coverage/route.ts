@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
       const Stripe = (await import("stripe")).default;
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
       await stripe.subscriptions.update(subId, { cancel_at_period_end: true });
-    } catch (e) {
-      console.error("[pause-coverage]", e);
+    } catch {
+      // Stripe update failed; continue with pause
     }
   }
 

@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 export default function SignInForm() {
+  const t = useTranslations("auth");
+  const tCommon = useTranslations("common");
   const sp = useSearchParams();
   const oauthError = sp?.get("error") ?? "";
   const [email, setEmail] = useState("");
@@ -26,7 +29,7 @@ export default function SignInForm() {
           : oauthError === "google_account" || oauthError === "google_workspace" || oauthError === "google_session"
             ? "Account setup could not be completed after Google sign-in."
             : oauthError === "auth"
-              ? "Sign-in could not be completed. Please try again."
+              ? t("toasts.signInFailed")
               : "";
 
   async function submit(e: React.FormEvent) {
@@ -183,10 +186,10 @@ export default function SignInForm() {
             <button
               type="submit"
               disabled={busy}
-              aria-label="Sign in"
+              aria-label={t("signIn.button")}
               className="w-full py-2.5 bg-white text-gray-900 font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             >
-              {busy ? "Signing in..." : "Sign in →"}
+              {busy ? t("signingIn") : `${t("signIn.button")} →`}
             </button>
           </form>
 

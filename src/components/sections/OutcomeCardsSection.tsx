@@ -28,7 +28,7 @@ const PRICING_TIERS = [
     price: "$297",
     tagline: "For solo operators and small teams getting started.",
     features: [
-      "Up to 500 answered calls / month",
+      "400 inbound min included",
       "1 AI phone number",
       "Basic call summaries & lead capture",
       "Standard support",
@@ -36,11 +36,11 @@ const PRICING_TIERS = [
     badge: null as "Most popular" | null,
   },
   {
-    name: "Pro",
-    price: "$597",
+    name: "Growth",
+    price: "$497",
     tagline: "For growing teams that need full coverage.",
     features: [
-      "Up to 2,000 answered calls / month",
+      "1,500 inbound min included",
       "3 AI phone numbers",
       "Advanced call intelligence & routing",
       "Priority support",
@@ -48,12 +48,12 @@ const PRICING_TIERS = [
     badge: "Most popular" as const,
   },
   {
-    name: "Business",
-    price: "$1,197",
+    name: "Scale",
+    price: "$2,400",
     tagline: "For multi-location and higher volume teams.",
     features: [
-      "Up to 5,000 answered calls / month",
-      "Unlimited AI phone numbers",
+      "5,000 inbound min included",
+      "10 phone numbers",
       "Dedicated success partner",
       "Custom reporting & integrations",
     ],

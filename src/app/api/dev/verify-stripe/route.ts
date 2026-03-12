@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
       renews_at: renewsAt?.toISOString(),
     });
   } catch (error) {
-    console.error("[verify-stripe]", error);
+    // Error response below
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }

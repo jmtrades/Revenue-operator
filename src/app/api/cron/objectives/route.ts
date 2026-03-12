@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         evaluated++;
       }
     } catch (err) {
-      console.error("[objectives] workspace error", { workspaceId, err: String(err) });
+      // Workspace error; skip
     }
   }
 

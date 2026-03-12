@@ -278,7 +278,7 @@ Classify the state.`;
       reasoning_tags,
     };
   } catch (error) {
-    console.error("[conversation-state-resolver] LLM classification failed", error);
+    // LLM classification failed; rethrow
     // Safe fallback
     return {
       state: "NEW_INTEREST",

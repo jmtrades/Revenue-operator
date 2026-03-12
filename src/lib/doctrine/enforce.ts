@@ -40,6 +40,6 @@ export async function logDoctrineViolation(entry: {
       detail: entry.detail ?? null,
     });
   } catch {
-    console.error("[doctrine] violation log failed", entry);
+    // Violation log failed; non-fatal
   }
 }

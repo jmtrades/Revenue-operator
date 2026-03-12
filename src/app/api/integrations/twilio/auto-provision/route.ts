@@ -80,8 +80,6 @@ export async function POST(req: NextRequest) {
       body: purchaseParams.toString(),
     });
     if (!purchaseRes.ok) {
-      const errText = await purchaseRes.text().catch(() => "");
-      console.warn("[twilio-auto-provision] Purchase failed", purchaseRes.status, errText.slice(0, 200));
       return { phone_number: null, sid: null };
     }
     const purchaseData = (await purchaseRes.json()) as { phone_number?: string; sid?: string };
@@ -112,7 +110,7 @@ export async function POST(req: NextRequest) {
       }
     }
   } catch (error) {
-    console.warn("[twilio-auto-provision] Local search/purchase failed", error);
+    // Local search/purchase failed; try toll-free
   }
 
   // 2) If no Local availability, try Toll-Free (often has inventory)
@@ -132,7 +130,7 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (error) {
-      console.warn("[twilio-auto-provision] Toll-free search/purchase failed", error);
+      // Toll-free search/purchase failed
     }
   }
 
@@ -202,7 +200,7 @@ export async function POST(req: NextRequest) {
     message: "Text handling activated",
   });
   } catch (error: unknown) {
-    console.error("[twilio-auto-provision]", error);
+    // Error response below
     const err = error as { code?: number; message?: string };
     const msg = err?.message ?? (error instanceof Error ? error.message : "Unknown error");
     if (err.code === 21422 || (typeof msg === "string" && msg.toLowerCase().includes("not available"))) {

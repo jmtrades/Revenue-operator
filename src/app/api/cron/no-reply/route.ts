@@ -84,8 +84,7 @@ export async function GET(request: NextRequest) {
 
     const scheduled = await scheduleReactivationAttempts();
     return NextResponse.json({ ok: true, transitioned, scheduled });
-  } catch (err) {
-    console.error("No-reply cron error:", err);
+  } catch {
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -6,7 +6,15 @@ const LOCALE_COOKIE = "rt_locale";
 
 export default getRequestConfig(async () => {
   const locale = await detectLocaleFromRequest();
-  const messages = (await import(`./messages/${locale}.json`)).default as Record<string, unknown>;
+  let messages: Record<string, unknown>;
+  try {
+    messages = (await import(`./messages/${locale}.json`)).default as Record<string, unknown>;
+  } catch {
+    messages = (await import("./messages/en.json")).default as Record<string, unknown>;
+  }
+  if (!messages || Object.keys(messages).length === 0) {
+    messages = (await import("./messages/en.json")).default as Record<string, unknown>;
+  }
   return {
     locale,
     messages,

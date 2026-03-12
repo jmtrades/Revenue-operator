@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ ok: true, workspaces_updated: updated });
   } catch (err) {
-    console.error("[learning] error:", err);
+    // Error response below
     return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
   }
 }

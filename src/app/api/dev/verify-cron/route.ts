@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     await burstDrain();
     results.queue = "ok";
   } catch (error) {
-    console.error("[verify-cron] Queue failed", error);
+    // Queue check failed
     results.queue = "error";
   }
 
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     if (error) throw error;
     results.noReply = "ok";
   } catch (error) {
-    console.error("[verify-cron] No-reply check failed", error);
+    // No-reply check failed
     results.noReply = "error";
   }
 
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     if (error && error.code !== "PGRST116") throw error;
     results.reminders = "ok";
   } catch (error) {
-    console.error("[verify-cron] Reminders check failed", error);
+    // Reminders check failed
     results.reminders = "error";
   }
 

@@ -11,7 +11,7 @@ import { getDb } from "@/lib/db/queries";
 
 function log(event: string, data: Record<string, unknown>): void {
   if (process.env.NODE_ENV === "development") {
-    console.warn(`[billing/portal] ${event}`, data);
+    // Portal event logged for debugging when needed
   }
 }
 

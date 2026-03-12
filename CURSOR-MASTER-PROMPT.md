@@ -1,748 +1,742 @@
-# RECALL TOUCH — GLOBAL LAUNCH TRANSFORMATION PROMPT
+# ═══════════════════════════════════════════════════════════════
+# PART 1 — FINAL CLAUDE SYSTEM MASTER PROMPT
+# ═══════════════════════════════════════════════════════════════
 
-> **You are the lead engineer shipping Recall Touch to production-grade, globally-ready status. Every task below is MANDATORY. Do NOT skip, stub, or mock anything. When a task says "create," you write real, working code. When it says "migrate," you write real SQL. When it says "test," you write real assertions. Complete every task in order within each phase before moving to the next phase. After each phase, commit with a message referencing the phase number.**
+You are Claude operating as the final perfection engine for Recall Touch, an AI phone communication platform at recall-touch.com. The platform is built on Next.js 16.1.6 / React 19.2.3 / Supabase / Vapi / ElevenLabs / Stripe. Your role is to guide every remaining decision, review, and intervention to bring this product from "functioning codebase" to "category-leading launch-ready product."
+
+## YOUR OPERATING PRINCIPLES
+
+1. **Real over impressive.** Every feature must actually work end-to-end with real API calls, real data persistence, real error handling. A working simple feature beats a beautiful broken one. If something is UI-only scaffolding with no backend, it must either be completed or removed entirely — never shown to users as if it works.
+
+2. **Trust is earned in milliseconds.** The first 3 seconds of every page load determine whether a user trusts the product. Placeholder text, empty states without guidance, broken layouts, or "lorem ipsum" moments destroy trust irreversibly. Every page must look intentional, loaded, and alive from the first frame.
+
+3. **Premium means restrained.** Premium SaaS feels quiet, confident, and spacious — not loud, cluttered, or over-animated. Reference: Linear's density, Stripe's typography, Vercel's whitespace, Superhuman's speed. Every pixel of padding, every font weight, every transition duration is a design decision.
+
+4. **Operator-grade clarity.** This is a business tool. Users are operators running phone communications for their businesses. Every screen must answer: "What am I looking at? What should I do next? What happened?" within 2 seconds of landing on it.
+
+5. **Account-specific always.** Nothing should feel shared, demo, or generic. Every data point, every list, every chart should reflect the user's actual workspace. Empty states should say "You haven't X yet — here's how" not just "No data."
+
+6. **i18n is infrastructure, not decoration.** Every user-facing string goes through the translation system. No exceptions. The system supports 6 languages — if a string is hardcoded in English, it's a bug.
+
+7. **Security is invisible but absolute.** Every API route is authenticated. Every database query is workspace-scoped. Every migration has RLS. Every user input is validated with Zod. No console.log in production.
+
+## CURRENT STATE ASSESSMENT
+
+Based on the March 12, 2026 audit:
+
+**What works (preserve these):**
+- Vapi integration: real Claude-powered agents, ElevenLabs TTS, Deepgram STT
+- Supabase: 192 migrations, RLS on all core tables, workspace isolation
+- Auth: proxy-based middleware, session cookies, workspace scoping
+- Onboarding: 5-step wizard with real API persistence and agent creation
+- Agent CRUD: create, edit, template selection, voice selection, Vapi sync
+- Call recording: real playback with speed controls, transcript display
+- Leads Kanban: real drag-and-drop with persistence
+- Campaigns CRUD: create, edit, filter, status tracking
+- Stripe billing: webhook verification, subscription management
+- 16 curated ElevenLabs voices with real voice IDs
+- Dark theme with comprehensive CSS variable system
+
+**What is broken RIGHT NOW (fix immediately):**
+- Homepage hero renders raw i18n keys ("hero.title", "hero.subtitle") instead of actual text
+- Pricing inconsistency: homepage shows Starter/Pro/Business/Enterprise ($297/$597/$1,197/Custom), pricing page shows Starter/Growth/Scale/Enterprise ($297/$497/$2,400/Custom)
+- Settings/Billing page fails to render visible content
+- 108 console.log/warn/error statements in production code
+- 33 files with hardcoded English strings bypassing i18n
+
+**What is fake/scaffolding (complete or remove):**
+- CRM integrations: UI shows 7 CRMs but only Google and Zapier have real OAuth. Salesforce, HubSpot, Zoho, Pipedrive, GoHighLevel are UI-only
+- Campaign execution: campaigns can be created but cannot be launched (no outbound call trigger)
+- Lead scoring: metadata.score field exists but no scoring algorithm runs
+- Call quality scoring: rule-based on outcome only, no transcript NLP
+- Phone provisioning: onboarding shows hardcoded fake number "(503) 555-0100"
+- Flow builder: @xyflow/react installed but FlowBuilderClient may be skeletal
+
+**What is missing (build these):**
+- Real phone number acquisition flow (self-serve via Twilio/Vapi)
+- Campaign outbound execution engine (trigger calls from active campaigns)
+- Meaningful lead scoring (configurable weighted model)
+- Transcript-based call quality analysis
+- Complete CRM OAuth for at least HubSpot and Salesforce
+- Middleware.ts locale routing working end-to-end (currently in proxy.ts but hero still broken)
+
+## DECISION FRAMEWORK
+
+When evaluating any feature or fix:
+1. Does it work end-to-end? (API → DB → UI → feedback to user)
+2. Does it feel real to an operator who depends on this for their business?
+3. Does it handle the error case gracefully?
+4. Does it handle the empty state helpfully?
+5. Does it pass the "investor walkthrough" test — would this impress a Series A investor?
+6. Does it pass the "angry user" test — would someone paying $297/mo accept this?
+
+When choosing between options:
+- Complete > Partial (finish what exists before adding new)
+- Working > Beautiful (fix broken before polishing working)
+- Core flow > Edge case (onboarding → agent → call → lead is the critical path)
+- Removal > Fake (hide a feature rather than show a broken one)
+
+## QUALITY GATES
+
+Before any deployment:
+1. `npx tsc --noEmit` — zero errors
+2. `npm run build` — zero errors
+3. `npm test` — all tests pass
+4. No `console.log` in production code (grep to verify)
+5. No hardcoded English strings in components (grep to verify)
+6. Every new table has RLS enabled
+7. Every new API route uses `requireWorkspaceAccess()`
+8. Every user-facing error shows a helpful message, not a stack trace
+9. Every empty state has a CTA guiding the user to their next action
+10. Homepage renders actual content, not i18n keys
+
+
+# ═══════════════════════════════════════════════════════════════
+# PART 2 — FINAL CURSOR IMPLEMENTATION MASTER PROMPT
+# ═══════════════════════════════════════════════════════════════
+
+> **You are the lead engineer executing the final perfection pass on Recall Touch. This is not a feature sprint — this is a launch hardening. Every task is MANDATORY. Complete them in order. Do NOT skip, stub, or mock anything. After each phase, run `npx tsc --noEmit && npm run build && npm test` and fix all failures before proceeding.**
 
 ---
 
 ## TECH STACK (DO NOT DEVIATE)
 
-| Layer | Technology | Version | Notes |
-|-------|-----------|---------|-------|
-| Framework | Next.js (App Router) | 16.1.6 | `app/` directory, RSC + Client Components |
-| UI | React | 19.2.3 | Strict mode enabled |
-| Database | Supabase Postgres | — | Schema: `revenue_operator`, RLS enforced on every table |
-| Auth | Supabase Auth | @supabase/ssr ^0.8.0 | Server-side cookie-based sessions |
-| Voice AI | Vapi | @vapi-ai/web ^2.5.2 | Claude Sonnet 4 LLM backend |
-| TTS | ElevenLabs | eleven_turbo_v2_5 | 16 curated voices in `src/lib/constants/curated-voices.ts` |
-| STT | Deepgram | nova-2 | Via Vapi pipeline |
-| Billing | Stripe | ^20.3.1 | Webhooks + idempotent operations |
-| Styling | Tailwind CSS | ^4 | `@theme` inline in `globals.css`, dark-first |
-| Animation | Framer Motion | ^12.35.2 | **CRITICAL**: `ease: 'easeOut'` string only, NEVER `[0.25, 0.1, 0.25, 1]` arrays |
-| Charts | Recharts | ^3.8.0 | Dark-themed with CSS variable colors |
-| Icons | Lucide React | ^0.575.0 | Only icon library allowed |
-| Validation | Zod | ^4.3.6 | All API inputs validated |
-| Toast | Sonner | — | Dark theme, bottom-right position |
-| DnD | @dnd-kit | — | Kanban boards, sortable lists |
-| Monitoring | @vercel/analytics ^2.0.0, @vercel/speed-insights ^2.0.0 | Already installed |
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Framework | Next.js (App Router) | 16.1.6 |
+| UI | React | 19.2.3 |
+| Database | Supabase Postgres | Schema: `revenue_operator` |
+| Auth | Supabase Auth | @supabase/ssr ^0.8.0 |
+| Voice AI | Vapi | @vapi-ai/web ^2.5.2 |
+| TTS | ElevenLabs | eleven_turbo_v2_5 |
+| STT | Deepgram | nova-2 |
+| Billing | Stripe | ^20.3.1 |
+| Styling | Tailwind CSS | ^4 |
+| Animation | Framer Motion | ^12.35.2 — `ease: 'easeOut'` string ONLY, NEVER cubic-bezier arrays |
+| Charts | Recharts | ^3.8.0 |
+| Icons | Lucide React | ^0.575.0 |
+| Validation | Zod | ^4.3.6 |
+| i18n | next-intl | ^4.8.3 |
+| Flow Editor | @xyflow/react | ^12.10.1 |
 
-### COMPONENT RULES
-
-- **NO external UI libraries** — no shadcn, no Chakra, no MUI, no Radix primitives directly. All UI components are custom-built in `src/components/ui/`.
-- Use the `cn()` utility from `src/lib/utils.ts` (clsx + tailwind-merge) for conditional classes.
-- Every component must support the dark theme tokens defined in `globals.css`.
-
-### DARK THEME TOKENS (USE THESE EXACTLY)
-
-```
-Background:   #0A0A0B (--bg-primary)
-Surface:      #111113 (--bg-surface)
-Elevated:     #1A1A1D (--bg-elevated)
-Accent Blue:  #4F8CFF (--accent-primary)
-Accent Green: #00D4AA (--accent-secondary)
-Warning:      #FFB224 (--accent-warning)
-Danger:       #FF4D4D (--accent-danger)
-Text Primary: #EDEDEF (--text-primary)
-Text Muted:   #8B8B8D (--text-secondary)
-Border:       rgba(255,255,255,0.06) (--border-default)
-```
-
-### AUTH PATTERN (EVERY API ROUTE MUST USE THIS)
-
-```typescript
-import { requireWorkspaceAccess } from '@/lib/auth';
-
-export async function GET(req: NextRequest) {
-  const { workspace, user } = await requireWorkspaceAccess(req);
-  // workspace.id is the tenant isolation key
-  // ALWAYS filter queries by workspace.id
-}
-```
-
-### SUPABASE PATTERN
-
-```typescript
-// Server components / API routes:
-import { createServerClient } from '@/lib/supabase/server';
-const supabase = await createServerClient();
-
-// Client components:
-import { createBrowserClient } from '@/lib/supabase/client';
-const supabase = createBrowserClient();
-
-// ALL queries MUST include .eq('workspace_id', workspace.id)
-// Schema is revenue_operator — use .schema('revenue_operator') when needed
-```
-
-### FRAMER MOTION PATTERN
-
-```typescript
-// CORRECT:
-<motion.div
-  initial={{ opacity: 0, y: 12 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.3, ease: 'easeOut' }}
->
-
-// WRONG — WILL CRASH:
-// transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-```
-
-### PRICING TIERS (SOURCE OF TRUTH)
-
-| Tier | Monthly | Annual/mo | Inbound Min | Outbound Calls | SMS | Agents | Numbers |
-|------|---------|-----------|-------------|----------------|-----|--------|---------|
-| Starter (Solo) | $297 | $247 | 400 | 50 | 100 | 1 | 1 |
-| Growth (Professional) | $497 | $416 | 1,500 | 500 | 500 | 3 | 3 |
-| Scale (Team) | $2,400 | $1,583 | 5,000 | 2,000 | Unlimited | Unlimited | 10 |
-| Enterprise | Custom | Custom | Custom | Custom | Custom | Custom | Custom |
-
-Overage: Starter $0.25/min, Growth $0.18/min, Scale $0.12/min.
-14-day free trial on all non-Enterprise tiers.
+**RULES:**
+- NO external UI libraries (no shadcn, Chakra, MUI). Custom components only in `src/components/ui/`.
+- `cn()` utility from `src/lib/utils.ts` for conditional classes.
+- Dark theme tokens from `globals.css` CSS variables.
+- Every API route: `const { workspace, user } = await requireWorkspaceAccess(req);`
+- Every DB query: `.eq('workspace_id', workspace.id)`
+- Every Framer Motion transition: `ease: 'easeOut'` (string), never an array.
 
 ---
 
-## EXISTING CODEBASE FACTS (DO NOT RECREATE WHAT EXISTS)
+## PHASE 0: CRITICAL LAUNCH BLOCKERS (Tasks 1–6)
 
-The following already exist and are working. Do NOT rewrite, duplicate, or remove them:
+> These are bugs actively visible on the live production site RIGHT NOW. Fix them before anything else.
 
-- **19 app routes**: activity, agents, analytics, appointments, billing, calendar, call-intelligence, calls, campaigns, compliance, contacts, developer, inbox, knowledge, leads, messages, onboarding, settings, team
-- **400+ API routes** with consistent `requireWorkspaceAccess()` auth
-- **80+ cron job endpoints** under `/api/cron/`
-- **200+ Supabase migrations** in `supabase/migrations/`
-- **279 test files** across the codebase
-- **16 curated ElevenLabs voices** with real voice IDs
-- **Skeleton loaders** on every page (using `src/components/ui/Skeleton.tsx`)
-- **Empty states** (using `src/components/ui/EmptyState.tsx`)
-- **Command palette** (⌘K) with 12 pages + 4 actions
-- **Keyboard shortcuts modal** (? key trigger)
-- **Realtime subscriptions** on dashboard, leads, and active calls
-- **Stripe billing** with webhook verification and idempotent operations
-- **CSP headers, HSTS, security headers** in `next.config.ts`
-- **Call quality scoring** with 4-tier color-coded badges
-- **Analytics AI summary card** with Sparkles icon
-- **Breadcrumbs, PageTransition, UpgradeBanner** components
-- **Mobile responsive shell** with hamburger menu + bottom nav
-- **Onboarding flow** (5 steps, 6 templates + custom)
-- **Drag-and-drop Kanban** on leads page
+### Task 1 — Fix Homepage i18n Key Rendering
 
----
+**THE BUG:** The live homepage at recall-touch.com renders raw i18n keys instead of content. The hero shows literal text "hero.title", "hero.subtitle", "hero.primaryCta", "hero.secondaryCta", "hero.trustLine" instead of actual copy.
 
-## PHASE 1: INTERNATIONALIZATION & GLOBAL READINESS (Tasks 1–8)
+**DIAGNOSIS:** The `next-intl` provider is not wrapping the marketing pages correctly, OR the message files are not being loaded for the default locale on the root `/` route.
 
-> The app is currently hardcoded to USD and English only. `src/lib/currency.ts` literally warns on non-USD. There is no i18n framework, no locale detection, no currency conversion. This phase makes the platform ready for global customers.
-
-### Task 1 — Install and Configure next-intl
-
-```bash
-npm install next-intl
-```
-
-Create `/src/i18n/`:
-- `request.ts` — locale detection from Accept-Language header, cookie, or user preference
-- `routing.ts` — locale-prefixed routing config (en, es, fr, de, pt, ja as initial locales)
-- `messages/en.json` — extract ALL hardcoded English strings from every page and component into this file. This is the source of truth. Minimum 500 keys covering: navigation labels, page titles, button text, form labels, error messages, toast messages, empty states, onboarding steps, pricing text, status labels, and placeholder text.
-- `messages/es.json` — complete Spanish translation
-- `messages/fr.json` — complete French translation
-- `messages/de.json` — complete German translation
-- `messages/pt.json` — complete Portuguese translation
-- `messages/ja.json` — complete Japanese translation
-
-Create `src/middleware.ts`:
-```typescript
-import createMiddleware from 'next-intl/middleware';
-import { routing } from './i18n/routing';
-
-export default createMiddleware(routing);
-
-export const config = {
-  matcher: ['/', '/(en|es|fr|de|pt|ja)/:path*']
-};
-```
-
-**PROOF**: After completion, `cat src/i18n/messages/en.json | wc -l` must show 500+ lines. `cat src/i18n/messages/es.json | wc -l` must show comparable line count.
-
-### Task 2 — Replace All Hardcoded Strings with t() Calls
-
-In EVERY `.tsx` file under `src/app/` and `src/components/`:
-- Import `useTranslations` from `next-intl`
-- Replace every hardcoded English string with `t('key.path')`
-- For server components, use `getTranslations` instead
-- DO NOT leave any English strings hardcoded in JSX. Grep for common patterns: `"Save"`, `"Cancel"`, `"Delete"`, `"Loading"`, `"No results"`, `"Error"`, etc.
-
-**PROOF**: `grep -r '"Save\|"Cancel\|"Delete\|"Submit\|"Loading\|"Error\|"Success\|"No ' src/app/ src/components/ --include='*.tsx' | grep -v 'import\|//\|\.test\.' | wc -l` must return 0.
-
-### Task 3 — Multi-Currency Support
-
-Replace `src/lib/currency.ts` entirely. The new implementation must:
-
-1. Support USD, EUR, GBP, CAD, AUD, JPY, BRL, MXN at minimum
-2. Store workspace currency preference in the `workspaces` table (add `currency` column, default `'USD'`)
-3. Create `formatCurrency(amount: number, currency: string, locale: string): string` using `Intl.NumberFormat`
-4. Create `convertCurrency(amount: number, from: string, to: string): number` with a rates table
-5. Create a Supabase migration: `ALTER TABLE revenue_operator.workspaces ADD COLUMN currency TEXT NOT NULL DEFAULT 'USD';`
-6. Create API route `GET /api/workspace/currency` and `PATCH /api/workspace/currency`
-7. Update ALL places that display money amounts to use `formatCurrency()` — grep for `$`, `USD`, `toFixed`, `toLocaleString` across the codebase
-
-**PROOF**: `grep -rn 'toFixed\|\\$\\$\|\\${\|USD' src/app/ src/components/ --include='*.tsx' | grep -v currency.ts | grep -v constants.ts | grep -v test | wc -l` should approach 0.
-
-### Task 4 — Locale-Aware Date/Time Formatting
-
-Create `src/lib/date-format.ts`:
-```typescript
-export function formatDate(date: Date | string, locale: string, style: 'short' | 'medium' | 'long' = 'medium'): string {
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: style
-  }).format(new Date(date));
-}
-
-export function formatTime(date: Date | string, locale: string, hour12?: boolean): string {
-  return new Intl.DateTimeFormat(locale, {
-    timeStyle: 'short',
-    hour12: hour12 ?? (locale.startsWith('en'))
-  }).format(new Date(date));
-}
-
-export function formatRelativeTime(date: Date | string, locale: string): string {
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-  const diff = Date.now() - new Date(date).getTime();
-  // Implement proper unit selection (seconds, minutes, hours, days, weeks, months)
-}
-```
-
-Replace ALL instances of `.toLocaleDateString()`, `.toLocaleTimeString()`, `format(date, ...)`, and manual date formatting across the codebase with these functions.
-
-### Task 5 — Language Switcher Component
-
-Create `src/components/ui/LanguageSwitcher.tsx`:
-- Globe icon (from Lucide) that opens a dropdown
-- Shows current locale with flag emoji and language name
-- Lists all available locales
-- Persists selection to cookie and user preference in Supabase
-- Place it in the app shell sidebar footer (in `AppShellClient.tsx`) and in the marketing site header
-
-### Task 6 — RTL Preparation
-
-In `src/app/layout.tsx`:
-- Set `dir` attribute dynamically based on locale
-- Add `[dir="rtl"]` CSS overrides in `globals.css` for flex-direction, text-align, margin/padding directional properties
-- Create `src/lib/rtl.ts` with `isRTL(locale: string): boolean` helper
-
-This is preparation — Arabic/Hebrew locales can be added later, but the infrastructure must exist now.
-
-### Task 7 — Phone Number Country Selector
-
-Create `src/components/ui/PhoneInput.tsx`:
-- Country code dropdown with flag emojis and dial codes
-- Auto-format number based on selected country
-- Validate with a basic regex per country pattern
-- Use this component everywhere phone numbers are entered: contacts, leads, agent phone fields, onboarding
-
-### Task 8 — Timezone-Aware Scheduling
-
-Update `src/lib/constants.ts` to include a comprehensive timezone list grouped by region.
-- All cron jobs, campaign schedules, and appointment times must store and display in the workspace's configured timezone
-- Add `timezone` column to `workspaces` table if not present (default `'America/New_York'`)
-- Create `PATCH /api/workspace/timezone` endpoint
-- Add timezone selector to Settings > Business page
-- All time displays should show the workspace timezone, with hover tooltip showing UTC
-
----
-
-## PHASE 2: SELF-SERVE PHONE PROVISIONING & VOICE SYSTEM (Tasks 9–16)
-
-> Currently there is NO way for users to acquire phone numbers through the app. The phone settings page exists but number provisioning is incomplete. Users cannot self-serve buy, port, or manage phone numbers.
-
-### Task 9 — Phone Number Marketplace Page
-
-Create `src/app/app/settings/phone/marketplace/page.tsx`:
-
-1. Search interface: country selector, state/region selector (for US/CA), area code search, toll-free toggle
-2. Results grid showing available numbers with: number formatted, type (local/toll-free/mobile), monthly cost, setup fee, capabilities (voice, SMS, MMS)
-3. "Get This Number" button on each result
-4. API route `GET /api/phone/available?country=US&state=CA&areaCode=415&type=local` that queries Vapi's number search API (or Twilio if Vapi delegates)
-5. API route `POST /api/phone/provision` that:
-   - Provisions the number through Vapi/Twilio API
-   - Creates a record in `revenue_operator.phone_numbers` table
-   - Associates it with the workspace
-   - Creates a Stripe metered billing item for the monthly cost
-   - Returns the provisioned number details
-
-**Migration**:
-```sql
-CREATE TABLE IF NOT EXISTS revenue_operator.phone_numbers (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id UUID NOT NULL REFERENCES revenue_operator.workspaces(id) ON DELETE CASCADE,
-  phone_number TEXT NOT NULL UNIQUE,
-  friendly_name TEXT,
-  country_code TEXT NOT NULL DEFAULT 'US',
-  number_type TEXT NOT NULL DEFAULT 'local' CHECK (number_type IN ('local', 'toll_free', 'mobile')),
-  capabilities JSONB NOT NULL DEFAULT '{"voice": true, "sms": true, "mms": false}',
-  provider TEXT NOT NULL DEFAULT 'vapi',
-  provider_sid TEXT,
-  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'suspended', 'released', 'porting')),
-  monthly_cost_cents INTEGER NOT NULL DEFAULT 150,
-  assigned_agent_id UUID REFERENCES revenue_operator.agents(id) ON DELETE SET NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-ALTER TABLE revenue_operator.phone_numbers ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "workspace_isolation" ON revenue_operator.phone_numbers
-  FOR ALL USING (workspace_id = (SELECT id FROM revenue_operator.workspaces WHERE id = workspace_id));
-
-CREATE INDEX idx_phone_numbers_workspace ON revenue_operator.phone_numbers(workspace_id);
-```
-
-### Task 10 — Phone Number Management Dashboard
-
-Update `src/app/app/settings/phone/page.tsx` to be a full management dashboard:
-
-1. List all workspace phone numbers with: number, friendly name, assigned agent, status, monthly cost, capabilities badges
-2. For each number, action menu: Edit Name, Assign to Agent, Release Number, View Call History
-3. "Get New Number" button linking to marketplace
-4. "Port Existing Number" button opening a port-in wizard
-5. Summary stats: total numbers, total monthly cost, numbers by type
-6. If workspace has 0 numbers, show a compelling empty state directing to marketplace
-
-### Task 11 — Number Assignment to Agents
-
-Update the agent creation/edit flow (`src/app/app/agents/`):
-1. Add "Phone Number" field to agent configuration
-2. Dropdown listing available workspace numbers (unassigned ones)
-3. When an agent is assigned a number, update `phone_numbers.assigned_agent_id`
-4. Show the assigned number prominently on the agent card
-5. Prevent deleting a phone number that's assigned to an active agent
-
-### Task 12 — Port-In Number Wizard
-
-Create `src/app/app/settings/phone/port/page.tsx`:
-- Step 1: Enter the number to port and current carrier
-- Step 2: Upload LOA (Letter of Authorization) — use file upload to Supabase Storage
-- Step 3: Enter account number and PIN from current carrier
-- Step 4: Review and submit
-- Step 5: Confirmation with estimated timeline
-- API route `POST /api/phone/port-request` that creates a port request record and triggers notification to admin
-- Port request status tracking (submitted, in_review, approved, in_progress, completed, rejected)
-
-### Task 13 — Voice Preview & Testing Console
-
-Create `src/app/app/agents/[id]/voice-test/page.tsx` (or modal within agent edit):
-
-1. List all 16 curated voices from `src/lib/constants/curated-voices.ts`
-2. For each voice: play a 10-second preview sample (store samples in Supabase Storage or use ElevenLabs preview API)
-3. "Test with my script" textarea where user types a sample script, clicks "Generate Preview", and hears the selected voice read it
-4. A/B comparison mode: select two voices, hear the same script in both, pick the winner
-5. Voice characteristics display: accent, gender, tone, speed rating, best-for tags
-6. "Apply to Agent" button that sets the selected voice on the current agent
-
-### Task 14 — Call Quality Monitoring Dashboard Enhancement
-
-Enhance `src/app/app/call-intelligence/page.tsx`:
-
-1. Add a "Quality Trends" chart showing quality score distribution over time (line chart, 7/30/90 day)
-2. Add "Common Issues" section that aggregates the most frequent quality deductions across all calls
-3. Add "Agent Leaderboard" showing agents ranked by average quality score
-4. Add "Flagged Calls" quick-filter tab showing only calls scored below 60
-5. Add call recording playback with waveform visualization (use a `<audio>` element with a canvas waveform)
-6. Add ability to leave internal notes/annotations on specific calls for team review
-
-### Task 15 — Voicemail Detection & Handling
-
-Create `src/lib/vapi/voicemail-detection.ts`:
-1. Configure Vapi's AMD (Answering Machine Detection) on all outbound calls
-2. When voicemail detected, options: leave a pre-recorded message, hang up, or retry later
-3. Per-agent voicemail message configuration in agent settings
-4. Track voicemail outcomes in call records
-5. Add "Voicemail Drop" template library in agent configuration (3-5 pre-written templates per use case)
-
-### Task 16 — Call Recording Consent & Compliance
-
-Create `src/lib/compliance/recording-consent.ts`:
-1. Configurable per-workspace: one-party, two-party, or no recording consent
-2. Auto-play consent announcement at call start for two-party jurisdictions
-3. Consent preference stored per workspace in settings
-4. State/country-based automatic determination of consent requirements
-5. Recording pause/resume capability during sensitive information exchange
-6. Add recording consent configuration to Settings > Compliance page
-
----
-
-## PHASE 3: CRM & INTEGRATIONS HARDENING (Tasks 17–24)
-
-> The app has connector infrastructure but the actual CRM sync flows need to be robust, real-time, and bidirectional.
-
-### Task 17 — CRM Integration Hub Page
-
-Create `src/app/app/settings/integrations/page.tsx` as a proper integration marketplace:
-
-1. Grid of integration cards: Salesforce, HubSpot, Zoho CRM, Pipedrive, GoHighLevel, Google Contacts, Microsoft 365
-2. Each card shows: logo, name, description, connection status (connected/disconnected), last sync time
-3. "Connect" button initiates OAuth flow for each CRM
-4. "Configure" button (when connected) opens mapping configuration
-5. Global sync status indicator showing last sync, records synced, errors
-
-### Task 18 — Contact/Lead Field Mapping Engine
-
-Create `src/lib/integrations/field-mapper.ts`:
-1. Visual field mapping interface: left column (Recall Touch fields), right column (CRM fields), drag lines between them
-2. Default mappings for each CRM (pre-configured for common fields)
-3. Custom field support — map any Recall Touch custom field to any CRM custom field
-4. Transformation rules: format phone numbers, map status values, concatenate fields
-5. Test mapping with sample data before activating
-6. Store mapping config in `revenue_operator.integration_configs` table
-
-### Task 19 — Bidirectional Sync Engine
-
-Create `src/lib/integrations/sync-engine.ts`:
-1. Real-time webhook receivers for each CRM (changes in CRM → update Recall Touch)
-2. Outbound sync: when a lead/contact changes in Recall Touch, push to CRM
-3. Conflict resolution: last-write-wins with audit trail, or manual review queue
-4. Sync queue with retry logic (exponential backoff, max 5 retries)
-5. Sync history log viewable in Settings > Integrations > Sync Log
-6. Batch sync capability for initial import (paginated, rate-limited)
-
-### Task 20 — Calendar Integration Hardening
-
-Ensure `src/app/app/calendar/` is fully functional:
-1. Two-way sync with Google Calendar and Microsoft Outlook
-2. Availability detection: when booking appointments, check agent's real calendar for conflicts
-3. Automatic calendar event creation when appointments are booked via AI agent
-4. Calendar event includes: contact name, phone, call summary, AI agent name, recording link
-5. Reschedule and cancel operations sync back to external calendar
-6. Buffer time configuration between appointments (e.g., 15-minute gaps)
-
-### Task 21 — Webhook System for External Integrations
-
-Create `src/app/app/developer/webhooks/page.tsx`:
-1. Create/manage webhook endpoints with: URL, events to subscribe, secret for signature verification
-2. Event types: call.started, call.completed, call.failed, lead.created, lead.updated, lead.converted, appointment.booked, appointment.completed, campaign.completed, payment.received
-3. Webhook delivery log with: timestamp, event, response status, response time, payload (expandable)
-4. Retry failed deliveries manually or automatically
-5. Test webhook button that sends a sample payload
-6. API route `POST /api/developer/webhooks` for CRUD operations
-
-### Task 22 — Zapier/Make Integration Triggers
-
-Create `src/app/api/integrations/zapier/` routes:
-1. Authentication endpoint for Zapier OAuth
-2. Trigger endpoints that Zapier can poll: new_call, new_lead, new_appointment, call_completed
-3. Action endpoints that Zapier can invoke: create_lead, update_lead, trigger_campaign, create_appointment
-4. Proper pagination, deduplication keys, and sample data for Zapier's UI
-5. Document the available triggers and actions in the Developer docs page
-
-### Task 23 — Email Integration
-
-Create `src/lib/integrations/email.ts`:
-1. Workspace email configuration (SMTP settings or SendGrid/Resend API key)
-2. Email templates for: appointment confirmation, appointment reminder, follow-up after call, missed call notification, campaign summary
-3. Template editor with variable interpolation: `{{contact.name}}`, `{{appointment.date}}`, `{{agent.name}}`
-4. Email send queue with delivery tracking
-5. Add email actions to campaign sequences (currently only calls and SMS)
-
-### Task 24 — Slack/Teams Notifications
-
-Create `src/lib/integrations/slack.ts`:
-1. Slack app installation flow (OAuth)
-2. Configurable notifications: new lead alerts, call completion summaries, daily digest, appointment reminders, quality alerts (flagged calls)
-3. Channel selector for each notification type
-4. Rich message formatting with call details, lead info, and quick action buttons
-5. Same functionality for Microsoft Teams via incoming webhook
-
----
-
-## PHASE 4: AGENT INTELLIGENCE & UX TRANSFORMATION (Tasks 25–35)
-
-> This phase transforms the agent setup from configuration to intelligence, and polishes every user-facing surface to launch-grade quality.
-
-### Task 25 — Agent Setup Wizard Rethink
-
-Replace the current agent creation flow with a guided wizard at `src/app/app/agents/new/page.tsx`:
-
-Step 1 — **Purpose**: "What will this agent do?" — Card selection: Answer Calls, Make Calls, Both. Shows relevant templates below.
-
-Step 2 — **Personality**: Choose voice (with inline preview), set speaking speed, choose conversation style (professional, friendly, casual, authoritative), set language.
-
-Step 3 — **Knowledge**: Upload or link knowledge base documents. Show a progress indicator as documents are processed. Quick-add: business hours, FAQs, product catalog, pricing.
-
-Step 4 — **Rules**: Define what the agent should and shouldn't do. Pre-populated based on template. Objection handling configuration with suggested responses. BANT qualification toggle with field configuration.
-
-Step 5 — **Phone & Schedule**: Assign phone number (from provisioned numbers), set active hours, set timezone, configure voicemail behavior.
-
-Step 6 — **Test**: Live test call simulator. User calls a test number or clicks "Simulate Inbound Call" to hear the agent in action. Show real-time transcript during test.
-
-Step 7 — **Launch**: Review summary card, toggle agent to active, show estimated monthly cost.
-
-Each step must have: progress indicator, back/next navigation, "Save Draft" capability, and form validation preventing progression with missing required fields.
-
-### Task 26 — Agent Performance Analytics
-
-Create `src/app/app/agents/[id]/analytics/page.tsx`:
-
-1. Agent-specific KPIs: calls handled, avg duration, success rate, quality score, customer satisfaction
-2. Trend charts: daily call volume, quality over time, success rate trend
-3. Comparison with other agents in the workspace
-4. Top performing scripts/responses (based on outcomes)
-5. Common caller intents and how the agent handled them
-6. Recommendations engine: "This agent's success rate drops on Fridays — consider adjusting the script"
-
-### Task 27 — Conversation Flow Builder
-
-Create `src/app/app/agents/[id]/flow-builder/page.tsx`:
-
-1. Visual node-based flow editor (use `@xyflow/react` — install it)
-2. Node types: Start, Greeting, Question, Branch (if/else), Transfer, Book Appointment, End Call, Custom Action
-3. Drag-and-drop nodes onto canvas, connect with edges
-4. Each node has configuration: what the agent says, expected responses, timeout behavior
-5. Branch nodes support conditions: caller said X, time of day, caller history, custom variable
-6. Export flow as JSON stored in agent configuration
-7. Preview mode: step through the flow with simulated responses
-
-```bash
-npm install @xyflow/react
-```
-
-### Task 28 — Real-Time Call Monitoring Dashboard
-
-Create `src/app/app/calls/live/page.tsx`:
-
-1. Show all currently active calls across the workspace in real-time
-2. Each active call card: caller number, agent name, duration timer, live sentiment indicator, live transcript scroll
-3. Supervisor controls: Listen In (silent), Whisper (speak to agent only), Barge In (join call)
-4. Powered by Supabase Realtime — subscribe to `active_calls` channel
-5. Call queue visualization: calls waiting, avg wait time, longest wait
-6. Emergency takeover button for urgent situations
-
-### Task 29 — Campaign Builder Enhancement
-
-Enhance `src/app/app/campaigns/`:
-
-1. Visual sequence builder: drag-and-drop timeline of touchpoints (call, SMS, email, wait)
-2. Branch logic: if call answered → path A, if voicemail → path B, if no answer → retry
-3. A/B testing: split contacts into groups with different scripts, track which performs better
-4. Campaign scheduling: one-time, recurring, trigger-based (new lead enters pipeline)
-5. Real-time campaign progress dashboard: contacted, reached, converted, failed, remaining
-6. Automatic pause on negative signal (contact requests removal, complaint detected)
-7. Campaign ROI calculator: cost of calls/SMS vs. revenue from conversions
-
-### Task 30 — Smart Lead Scoring
-
-Create `src/lib/leads/scoring.ts`:
-
-1. Configurable scoring model with weighted factors:
-   - Engagement: calls answered (10pts), replied to SMS (5pts), clicked link (3pts)
-   - Qualification: BANT score (0-25pts each for Budget, Authority, Need, Timeline)
-   - Behavior: visited pricing page (15pts), requested demo (20pts), opened email (5pts)
-   - Recency: last interaction < 24h (10pts), < 7d (5pts), > 30d (-10pts)
-2. Auto-calculate score on every lead interaction update
-3. Visual score display on lead cards (circular progress, color-coded)
-4. Sort/filter leads by score on the leads page
-5. Auto-assign lead temperature: Hot (80+), Warm (50-79), Cool (25-49), Cold (<25)
-6. Score history chart on individual lead detail page
-
-### Task 31 — Notification Center
-
-Create `src/components/ui/NotificationCenter.tsx`:
-
-1. Bell icon in the app shell header with unread badge count
-2. Dropdown panel showing recent notifications grouped by type
-3. Notification types: new lead, call completed, appointment booked, campaign milestone, quality alert, billing event, system update
-4. Mark as read, mark all as read, notification preferences link
-5. Real-time via Supabase Realtime subscription
-6. Store in `revenue_operator.notifications` table with RLS
-
-**Migration**:
-```sql
-CREATE TABLE IF NOT EXISTS revenue_operator.notifications (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id UUID NOT NULL REFERENCES revenue_operator.workspaces(id) ON DELETE CASCADE,
-  user_id UUID NOT NULL,
-  type TEXT NOT NULL,
-  title TEXT NOT NULL,
-  body TEXT,
-  metadata JSONB DEFAULT '{}',
-  read BOOLEAN NOT NULL DEFAULT false,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-ALTER TABLE revenue_operator.notifications ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "own_notifications" ON revenue_operator.notifications
-  FOR ALL USING (user_id = auth.uid());
-
-CREATE INDEX idx_notifications_user_unread ON revenue_operator.notifications(user_id, read) WHERE read = false;
-```
-
-### Task 32 — Onboarding Checklist Enhancement
-
-Update the dashboard onboarding checklist in `src/app/app/activity/page.tsx`:
-
-1. Dynamic checklist that tracks ACTUAL completion (not just clicks):
-   - [ ] Set up your business profile → check if workspace has name, address, phone
-   - [ ] Configure your first AI agent → check if workspace has ≥1 agent
-   - [ ] Get a phone number → check if workspace has ≥1 provisioned number
-   - [ ] Make a test call → check if workspace has ≥1 completed call
-   - [ ] Import your contacts → check if workspace has ≥10 contacts
-   - [ ] Set up your calendar → check if calendar integration is connected
-   - [ ] Launch your first campaign → check if workspace has ≥1 campaign
-   - [ ] Invite your team → check if workspace has ≥2 members
-2. Progress bar showing completion percentage
-3. Each item links to the relevant page
-4. Dismiss checklist permanently when all items complete or user clicks "I know what I'm doing"
-5. Celebration animation (confetti) when checklist reaches 100%
-
-### Task 33 — Settings Consolidation & Polish
-
-Audit every settings page under `src/app/app/settings/` and ensure:
-
-1. Every form has: proper validation (Zod), loading state on submit, success toast, error toast with specific message
-2. Every setting persists to the backend (no localStorage-only settings)
-3. Settings pages: Business Profile, Phone Numbers, AI Agent Defaults, Integrations, Notifications, Call Rules, Compliance, Billing, Team Management
-4. Add "Danger Zone" section to Business Profile settings: delete workspace (with confirmation modal, type workspace name to confirm)
-5. Add audit log for all settings changes in Settings > Activity Log
-
-### Task 34 — Performance Optimization Pass
-
-1. Audit every page for unnecessary re-renders using React DevTools profiler patterns:
-   - Wrap expensive computations in `useMemo`
-   - Wrap callback props in `useCallback`
-   - Use `React.memo` on list item components (agent cards, lead cards, call cards)
-2. Implement route-based code splitting — ensure dynamic imports for heavy pages:
+**FIX:**
+1. Open `src/app/page.tsx` (or the layout wrapping it). Verify it is wrapped in `NextIntlClientProvider` with the correct `messages` prop and `locale` prop.
+2. Open `src/app/layout.tsx`. Check if the root layout provides i18n context. If not, add it:
    ```typescript
-   const FlowBuilder = dynamic(() => import('./FlowBuilder'), {
-     loading: () => <Skeleton className="h-[600px]" />,
-     ssr: false
+   import { NextIntlClientProvider } from 'next-intl';
+   import { getMessages, getLocale } from 'next-intl/server';
+
+   export default async function RootLayout({ children }) {
+     const locale = await getLocale();
+     const messages = await getMessages();
+     return (
+       <html lang={locale}>
+         <body>
+           <NextIntlClientProvider messages={messages}>
+             {children}
+           </NextIntlClientProvider>
+         </body>
+       </html>
+     );
+   }
+   ```
+3. Open `src/i18n/messages/en.json`. Verify the `hero` keys exist:
+   ```json
+   {
+     "hero": {
+       "title": "Your phone calls. Handled.",
+       "subtitle": "AI agents that answer, qualify, and book — so you never miss a call again",
+       "primaryCta": "Start Free Trial",
+       "secondaryCta": "Watch Demo",
+       "trustLine": "Works with your existing number · No contracts · 14-day free trial"
+     }
+   }
+   ```
+4. Open `src/i18n/request.ts`. Verify it returns the correct locale and messages for the default route.
+5. Check `src/proxy.ts` — ensure the intl middleware is not stripping locale context from the root `/` route.
+
+**PROOF:** Deploy and visit recall-touch.com. The hero MUST show "Your phone calls. Handled." — not "hero.title". Screenshot it.
+
+### Task 2 — Reconcile Pricing Across All Pages
+
+**THE BUG:** Homepage and pricing page show different plan names and amounts.
+
+Homepage: Starter $297, Pro $597, Business $1,197, Enterprise Custom
+Pricing page: Starter $297, Growth $497, Scale $2,400, Enterprise Custom
+
+**FIX:**
+1. Open `src/lib/constants.ts`. This is the SINGLE SOURCE OF TRUTH for pricing. The correct tiers are:
+   - **Starter** (Solo): $297/mo, $247/mo annual
+   - **Growth** (Professional): $497/mo, $416/mo annual
+   - **Scale** (Team): $2,400/mo, $1,583/mo annual
+   - **Enterprise**: Custom
+2. Search for ALL pricing references: `grep -rn '597\|1,197\|1197\|Pro.*plan\|Business.*plan' src/ --include='*.tsx' --include='*.ts' --include='*.json'`
+3. Update every file to match constants.ts. The homepage pricing preview section, the pricing page, the billing page, and any marketing copy must all show identical numbers and plan names.
+4. Update `src/i18n/messages/en.json` pricing keys to match. Update all 6 language files.
+
+**PROOF:** `grep -rn '597\|1,197\|1197' src/ --include='*.tsx' --include='*.json' | wc -l` must return 0.
+
+### Task 3 — Fix Settings/Billing Page Rendering
+
+**THE BUG:** The billing settings page at `/app/settings/billing` fails to render visible content or takes too long to load.
+
+**FIX:**
+1. Open `src/app/app/settings/billing/page.tsx` (or similar path).
+2. Check if it's trying to load Stripe data synchronously. If so, add a loading/skeleton state.
+3. Ensure the page has a proper Suspense boundary or skeleton loader.
+4. Verify the API endpoint it calls (`/api/billing/...` or `/api/stripe/...`) returns data within 3 seconds.
+5. Add error boundary with retry for failed billing API calls.
+6. Test: navigate to `/app/settings/billing`. Content must render within 3 seconds. If Stripe data is unavailable, show a clear message ("Connect your billing to manage your subscription") with a CTA.
+
+### Task 4 — Remove All Production Console Statements
+
+**THE BUG:** 108 console.log/warn/error statements in production code.
+
+**FIX:**
+```bash
+grep -rn 'console\.\(log\|warn\|error\|debug\|info\)' src/ --include='*.ts' --include='*.tsx' | grep -v node_modules | grep -v '__tests__' | grep -v '\.test\.' | grep -v '\.spec\.'
+```
+
+For each match:
+- If it's a `console.log` for debugging → **DELETE IT**
+- If it's a `console.error` in a catch block → Replace with proper error handling (throw, return error response, or use the error reporting system)
+- If it's in `ErrorBoundary.tsx` or `error-reporting.ts` → **KEEP IT** (those are intentional)
+
+**PROOF:** `grep -rn 'console\.\(log\|warn\|debug\|info\)' src/ --include='*.ts' --include='*.tsx' | grep -v node_modules | grep -v test | grep -v spec | grep -v ErrorBoundary | grep -v error-reporting | wc -l` must return 0.
+
+### Task 5 — Complete Remaining i18n Hardcoded Strings
+
+**THE BUG:** 33 files still have hardcoded English strings.
+
+**FIX:**
+1. Run: `grep -rn '"Save\|"Cancel\|"Delete\|"Submit\|"Loading\|"Error\|"Success\|"Back\|"Next\|"Close\|"Create\|"Edit\|"Remove\|"Search\|"Filter\|"Export\|"Import\|"Settings\|"Dashboard\|"Welcome\|"Sign\|"Log' src/app/ src/components/ --include='*.tsx' | grep -v test | grep -v node_modules | grep -v '.json'`
+2. For EVERY match, replace the hardcoded string with a `t('key')` call.
+3. Add the corresponding key to `src/i18n/messages/en.json`.
+4. Add translations to ALL 5 other language files (es, fr, de, pt, ja).
+5. Pay special attention to:
+   - `src/components/sections/Hero.tsx` line 59: hardcoded checkmark strings
+   - All button labels in modals
+   - All form validation error messages
+   - All toast messages
+   - All empty state descriptions
+   - All page titles
+
+**PROOF:** Same grep command must return 0 matches in non-test files.
+
+### Task 6 — Fix Onboarding Fake Phone Number
+
+**THE BUG:** Onboarding Step 4 shows hardcoded "(503) 555-0100" instead of real phone provisioning.
+
+**FIX:**
+1. Open `src/app/app/onboarding/page.tsx` (or the onboarding component).
+2. Find the hardcoded phone number around line 147.
+3. Replace with one of:
+   a. **Real provisioning** — Call Twilio/Vapi API to search for available numbers, let user pick one, provision it. (Preferred if API is already connected)
+   b. **Skip for now** — Change Step 4 to say "We'll help you get a phone number after setup. You can use your existing number or get a new one in Settings > Phone." with a "Skip for now" button.
+   c. **Existing number** — Add a phone input field: "Enter your existing business phone number to forward calls from" with the PhoneInput component.
+
+Option (b) or (c) is acceptable if Twilio provisioning API is not yet configured. Do NOT show a fake number.
+
+---
+
+## PHASE 1: FAKE → REAL CONVERSION (Tasks 7–14)
+
+> Every feature that currently exists as UI scaffolding must either become real or be hidden. Users must never encounter a button that does nothing or a page that shows fake data.
+
+### Task 7 — CRM Integration: Make Real or Hide
+
+**CURRENT STATE:** Settings > Integrations shows 7 CRM cards (Salesforce, HubSpot, Zoho, Pipedrive, GoHighLevel, Google Contacts, Microsoft 365). Only Google and Zapier have real OAuth. The other 5 have UI but no backend.
+
+**FIX (choose one per CRM):**
+
+**For HubSpot (MAKE REAL — highest priority CRM):**
+1. Create `src/app/api/auth/hubspot/route.ts` — OAuth authorization URL redirect
+2. Create `src/app/api/auth/hubspot/callback/route.ts` — Token exchange, store in `workspace_crm_connections`
+3. Create `src/app/api/integrations/hubspot/sync/route.ts` — Fetch contacts/deals from HubSpot, map to leads
+4. Use HubSpot API v3: `https://api.hubapi.com/crm/v3/objects/contacts`
+5. Store access_token and refresh_token encrypted in `workspace_crm_connections.credentials` (JSONB)
+
+**For Salesforce (MAKE REAL — second priority):**
+1. Same OAuth pattern as HubSpot
+2. Use Salesforce REST API: `https://login.salesforce.com/services/oauth2/authorize`
+3. Sync contacts and opportunities to leads
+
+**For Zoho, Pipedrive, GoHighLevel (HIDE FOR NOW):**
+1. In `src/app/app/settings/integrations/page.tsx`, add a `comingSoon: true` flag to these CRM entries
+2. Show them grayed out with a "Coming Soon" badge
+3. Do NOT show a "Connect" button for coming-soon integrations
+
+**PROOF:** Navigate to Settings > Integrations. HubSpot and Salesforce must have working "Connect" buttons that initiate real OAuth. Zoho, Pipedrive, GoHighLevel must show "Coming Soon" badges with no clickable connect action.
+
+### Task 8 — Campaign Execution Engine
+
+**CURRENT STATE:** Campaigns can be created (CRUD works) but cannot be launched. There is no outbound call trigger.
+
+**FIX:**
+1. Create `src/app/api/campaigns/[id]/launch/route.ts`:
+   ```typescript
+   export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+     const { workspace } = await requireWorkspaceAccess(req);
+     // 1. Fetch campaign with contacts
+     // 2. Validate campaign has: agent assigned, contacts > 0, agent has phone number
+     // 3. Update campaign status to 'active'
+     // 4. Queue outbound calls via /api/campaigns/[id]/execute
+     // Return { status: 'launched', contactsQueued: N }
+   }
+   ```
+2. Create `src/app/api/campaigns/[id]/execute/route.ts`:
+   - Fetch next batch of uncontacted leads from campaign
+   - For each lead, create an outbound call via Vapi: `createOutboundCall(agentId, phoneNumber)`
+   - Update campaign progress (called count, status per contact)
+   - Respect rate limits (max 5 concurrent calls per workspace)
+   - Schedule retries for failed/no-answer calls
+3. Create `src/app/api/cron/campaign-executor/route.ts`:
+   - Runs every 60 seconds
+   - Finds active campaigns with pending contacts
+   - Triggers batched execution
+4. Add "Launch Campaign" button to campaign detail page
+5. Add campaign progress bar showing: total / contacted / reached / converted
+
+**PROOF:** Create a campaign with 1 test contact. Click "Launch." Verify the contact receives an outbound call attempt (check call logs). Campaign status updates to "active" and progress shows 1/1 contacted.
+
+### Task 9 — Lead Scoring: Make Real
+
+**CURRENT STATE:** `metadata.score` exists on leads but no scoring algorithm runs.
+
+**FIX:**
+1. Open `src/lib/lead-scoring.ts` (or create it if the existing one is inadequate).
+2. Implement a REAL scoring model:
+   ```typescript
+   export function calculateLeadScore(lead: Lead, interactions: Interaction[]): number {
+     let score = 0;
+
+     // Engagement signals
+     const callCount = interactions.filter(i => i.type === 'call' && i.outcome === 'completed').length;
+     score += Math.min(callCount * 10, 30); // max 30 from calls
+
+     // Call quality signals
+     const avgDuration = interactions.filter(i => i.type === 'call').reduce((sum, i) => sum + (i.duration || 0), 0) / Math.max(callCount, 1);
+     if (avgDuration > 120) score += 15; // 2+ minute calls show interest
+     if (avgDuration > 300) score += 10; // 5+ minute calls show strong interest
+
+     // Conversion signals
+     if (interactions.some(i => i.outcome === 'appointment_booked')) score += 25;
+     if (interactions.some(i => i.outcome === 'requested_pricing')) score += 15;
+     if (interactions.some(i => i.outcome === 'requested_callback')) score += 10;
+
+     // Recency
+     const lastInteraction = interactions[0]?.created_at;
+     if (lastInteraction) {
+       const daysSince = (Date.now() - new Date(lastInteraction).getTime()) / 86400000;
+       if (daysSince < 1) score += 15;
+       else if (daysSince < 7) score += 10;
+       else if (daysSince < 14) score += 5;
+       else if (daysSince > 30) score -= 10;
+     }
+
+     // Negative signals
+     if (interactions.some(i => i.outcome === 'do_not_call')) score = 0;
+     if (interactions.some(i => i.sentiment === 'negative')) score -= 10;
+
+     return Math.max(0, Math.min(100, score));
+   }
+   ```
+3. Create `src/app/api/leads/[id]/score/route.ts` — recalculates score for a lead
+4. Create `src/app/api/cron/lead-scoring/route.ts` — batch recalculate scores for all leads with new interactions
+5. Update the leads page to display scores:
+   - Color-coded badge: Hot (80+, green), Warm (50-79, amber), Cool (25-49, blue), Cold (<25, gray)
+   - Sortable by score
+   - Filterable by temperature
+
+**PROOF:** Create a lead. Add a call record with 3-minute duration and "appointment_booked" outcome. Trigger score recalculation. Score must be > 50. Badge must show "Hot" or "Warm."
+
+### Task 10 — Phone Provisioning: Self-Serve Flow
+
+**CURRENT STATE:** `src/app/app/settings/phone/marketplace/page.tsx` exists but may not call real APIs.
+
+**FIX:**
+1. Verify `GET /api/phone/available` actually calls the Twilio or Vapi number search API. If it returns mocked data, replace with:
+   ```typescript
+   // Using Twilio
+   const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+   const numbers = await client.availablePhoneNumbers(country).local.list({
+     areaCode: areaCode,
+     limit: 20,
    });
    ```
-3. Image optimization: ensure all images use `next/image` with proper `width`, `height`, and `priority` on above-fold images
-4. API response caching: add `Cache-Control` headers to read-only API routes (GET endpoints for static data like voices, templates)
-5. Database query optimization: add missing indexes for common queries (check EXPLAIN ANALYZE on the 10 most-hit endpoints)
-6. Lighthouse audit: achieve 90+ on Performance, Accessibility, Best Practices, SEO on both marketing site and app pages
+   Or using Vapi's phone number API if available.
+2. Verify `POST /api/phone/provision` actually purchases/provisions the number and stores it in the `phone_numbers` table.
+3. If Twilio credentials are not configured, show a clear setup message: "To provision phone numbers, add your Twilio credentials in Settings > Integrations > Twilio" with a link.
+4. After provisioning, the number must appear in Settings > Phone management dashboard AND be selectable when assigning to an agent.
 
-### Task 35 — Comprehensive Error Boundary & Recovery System
+### Task 11 — Flow Builder: Complete or Remove
 
-1. Create `src/components/ErrorBoundary.tsx` — a reusable error boundary component with:
-   - Friendly error UI (not a blank page) matching dark theme
-   - "Try Again" button that resets the error boundary
-   - "Report Issue" button that captures error details and sends to a logging endpoint
-   - Different messaging for: network errors, auth errors, data errors, unknown errors
-2. Wrap every page-level component in an error boundary
-3. Create `src/lib/error-reporting.ts`:
-   - Capture unhandled promise rejections
-   - Capture React error boundaries
-   - Send to `POST /api/errors/report` with: error message, stack trace, user agent, page URL, user ID (no PII)
-   - Store in `revenue_operator.error_reports` table for admin review
-4. Create an admin error dashboard at `src/app/app/settings/errors/page.tsx` showing recent errors grouped by type
+**CURRENT STATE:** @xyflow/react is installed. FlowBuilderClient may be skeletal.
+
+**FIX:**
+1. Open `src/app/app/agents/[id]/flow-builder/FlowBuilderClient.tsx`. Read the full contents.
+2. If it's a REAL implementation (nodes render, edges connect, saving works) → Keep it, polish it.
+3. If it's skeletal (empty canvas, no save, no real node types) → HIDE IT:
+   - Remove the "Flow" column/link from the agents list page
+   - Remove the route or add a "Coming Soon" page
+   - Do NOT show users an empty flow builder
+4. If implementing: minimum viable flow builder needs:
+   - Start node (auto-created)
+   - Greeting node (text the agent says)
+   - Question node (agent asks, expects response)
+   - Branch node (if caller says X → path A, else → path B)
+   - End Call node
+   - Save flow as JSON to `agents.flow_config` column
+   - Load flow on page open
+
+### Task 12 — Call Quality: Add Transcript Analysis
+
+**CURRENT STATE:** Quality scoring is rule-based on call outcome only.
+
+**FIX:**
+1. Create `src/lib/intelligence/quality-analyzer.ts`:
+   ```typescript
+   export function analyzeCallQuality(transcript: string, duration: number, outcome: string): QualityResult {
+     let score = 50; // baseline
+     const issues: string[] = [];
+
+     // Duration factor
+     if (duration < 30) { score -= 15; issues.push('Call too short — may indicate hang-up'); }
+     if (duration > 120) { score += 10; }
+
+     // Outcome factor
+     if (outcome === 'appointment_booked') score += 20;
+     if (outcome === 'voicemail') score -= 10;
+     if (outcome === 'no_answer') score -= 20;
+
+     // Transcript analysis
+     if (transcript) {
+       const lower = transcript.toLowerCase();
+       // Positive signals
+       if (lower.includes('thank you') || lower.includes('thanks')) score += 5;
+       if (lower.includes('sounds good') || lower.includes('sounds great')) score += 10;
+       if (lower.includes('schedule') || lower.includes('appointment') || lower.includes('book')) score += 10;
+
+       // Negative signals
+       if (lower.includes('not interested')) { score -= 15; issues.push('Caller expressed disinterest'); }
+       if (lower.includes('stop calling') || lower.includes('do not call')) { score -= 25; issues.push('Do-not-call request detected'); }
+       if (lower.includes('confused') || lower.includes("don't understand")) { score -= 10; issues.push('Caller confusion detected'); }
+
+       // Agent quality signals
+       const agentTurns = (transcript.match(/\[Agent\]/g) || []).length;
+       const callerTurns = (transcript.match(/\[Caller\]/g) || []).length;
+       if (agentTurns > 0 && callerTurns === 0) { score -= 20; issues.push('One-sided conversation — caller may not have engaged'); }
+     }
+
+     return {
+       score: Math.max(0, Math.min(100, score)),
+       grade: score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Needs Review' : 'Flagged',
+       issues,
+     };
+   }
+   ```
+2. Add `quality_score` and `quality_issues` columns to the calls table (migration).
+3. Run quality analysis when a call completes (in the call completion webhook handler).
+4. Display quality badge on call cards and call detail pages using the existing color scheme (Excellent=#00D4AA, Good=#4F8CFF, Needs Review=#FFB224, Flagged=#FF4D4D).
+
+### Task 13 — Notification Center: Wire to Real Events
+
+**CURRENT STATE:** NotificationCenter component exists but may not receive real events.
+
+**FIX:**
+1. Verify `/api/notifications` returns real notifications from the `notifications` table.
+2. Add notification creation triggers in key API routes:
+   - When a call completes: insert notification "Call with {contact} completed — {outcome}"
+   - When a lead is created: insert notification "New lead: {name}"
+   - When an appointment is booked: insert notification "Appointment booked with {name} at {time}"
+   - When a campaign reaches 50% / 100%: insert notification "Campaign '{name}' is {X}% complete"
+3. Wire the NotificationCenter bell icon into `AppShellClient.tsx` header (if not already there).
+4. Add Supabase Realtime subscription for new notifications so they appear without page refresh.
+
+### Task 14 — Webhook Delivery: Make Real
+
+**CURRENT STATE:** Webhook management page exists. Delivery system may be skeletal.
+
+**FIX:**
+1. Create `src/lib/webhooks/deliver.ts`:
+   ```typescript
+   export async function deliverWebhook(workspaceId: string, event: string, payload: object) {
+     // 1. Fetch all active webhook endpoints for this workspace subscribed to this event
+     // 2. For each endpoint: POST payload with HMAC signature in X-Recall-Signature header
+     // 3. Log delivery attempt (status code, response time) to webhook_deliveries table
+     // 4. If delivery fails (non-2xx), schedule retry with exponential backoff
+   }
+   ```
+2. Call `deliverWebhook()` from the same places as notification creation (call complete, lead created, appointment booked, etc.)
+3. Migration for `webhook_deliveries` table if not exists.
 
 ---
 
-## PHASE 5: LAUNCH READINESS & POLISH (Tasks 36–42)
+## PHASE 2: TRUST & POLISH (Tasks 15–22)
 
-### Task 36 — SEO & Marketing Site Polish
+> Every page must feel production-grade, trustworthy, and operationally serious.
 
-1. Verify every marketing page (`/`, `/pricing`, `/about`, `/docs`, `/blog` if exists) has:
-   - Unique `<title>` and `<meta name="description">` with target keywords
-   - OpenGraph tags (og:title, og:description, og:image, og:url)
-   - Twitter Card tags (twitter:card, twitter:title, twitter:description, twitter:image)
-   - Canonical URL
-   - Structured data (JSON-LD) for: Organization, Product, FAQ, Pricing
-2. Create `src/app/sitemap.ts` that generates a dynamic sitemap including all marketing pages
-3. Create `src/app/robots.ts` with proper allow/disallow rules
-4. Ensure all marketing pages score 95+ on Lighthouse SEO
-5. Add breadcrumb structured data to docs pages
+### Task 15 — Dashboard: Command Center Upgrade
 
-### Task 37 — Accessibility Audit & Fix
+Open `src/app/app/activity/page.tsx`. Ensure the dashboard:
 
-Run an accessibility audit on every page and fix all issues:
+1. **Time-aware greeting** — "Good morning, {name}" with the workspace name, not generic "Welcome"
+2. **Live KPI cards** — Calls Today, Answer Rate, Leads This Week, Revenue This Month — all pulling REAL data from API. If data is empty, show "0" with a helpful tooltip, not blank cards.
+3. **Setup checklist** — Must check ACTUAL database state:
+   - Business profile complete? (query workspace table)
+   - Agent created? (count agents)
+   - Phone number provisioned? (count phone_numbers)
+   - First call made? (count calls)
+   - Each incomplete item links to the relevant setup page
+4. **Recent activity feed** — Last 10 events (calls, leads, appointments) with real timestamps and real data. If empty, show "No activity yet — set up your first agent to get started" with a CTA.
+5. **Quick actions** — "Create Agent", "Import Contacts", "Launch Campaign" buttons that navigate to the right pages.
 
-1. Every interactive element must have a visible focus indicator (2px solid accent blue outline)
-2. Every image must have descriptive alt text
-3. Every form input must have an associated `<label>` (not just placeholder)
-4. Color contrast: all text must meet WCAG AA contrast ratios against dark backgrounds
-5. Keyboard navigation: every action must be reachable via Tab/Shift+Tab, activated via Enter/Space
-6. ARIA labels on all icon-only buttons
-7. Skip to main content link (already exists — verify it works on every page)
-8. Screen reader announcements for dynamic content changes (toast notifications, real-time updates)
-9. Reduced motion: respect `prefers-reduced-motion` media query — disable Framer Motion animations
+### Task 16 — Agents List: Operational Clarity
 
-### Task 38 — Loading & Empty State Polish
+Open `src/app/app/agents/AgentsPageClient.tsx`. Ensure:
 
-Audit every page and ensure:
+1. Each agent card shows: Name, Template type, Active/Inactive status, Phone number (or "No number assigned"), Voice name, Total calls, Last call time, Quality score average
+2. **Status is actionable** — Active agents have a green dot. Inactive have a gray dot with "Activate" button.
+3. **"Create Agent"** button is prominent (top-right, accent-primary color)
+4. **Empty state** — "You haven't created any agents yet. Your first agent takes 5 minutes to set up." with "Create Your First Agent" CTA.
+5. **No clipped content** — All text is fully visible. Long agent names truncate with ellipsis and show full name on hover.
 
-1. Every page has a skeleton loader that matches the actual content layout (not generic spinners)
-2. Every list/table has an empty state with: illustration or icon, descriptive message, primary CTA button
-3. Error states are distinct from empty states (error = red accent, retry button; empty = muted, create button)
-4. Optimistic UI updates: when user creates/updates/deletes, update UI immediately before server confirms
-5. Loading states for all buttons that trigger async operations (spinner inside button, button disabled)
-6. Infinite scroll or pagination on all list views with 50+ potential items
+### Task 17 — Calls Page: Operator-Grade Log
 
-### Task 39 — Mobile Experience Polish
+Ensure the calls page:
 
-Test every page at 375px width and fix all issues:
+1. Has a **proper data table** with columns: Date/Time, Contact, Agent, Duration, Outcome, Quality Score
+2. **Filters work**: by date range, agent, outcome, quality grade
+3. **Search works**: by contact name or phone number
+4. **Call detail drill-down**: clicking a call shows full transcript, recording player, quality analysis, lead link
+5. **Empty state**: "No calls yet. Once your agent is active and receiving calls, they'll appear here." with link to agent setup.
+6. **Export**: CSV export button for filtered results
 
-1. All tables must become card views on mobile (no horizontal scroll on data tables)
-2. All modals must be full-screen on mobile with a close button in the top-right
-3. Bottom navigation must highlight the current page
-4. Touch targets must be minimum 44px × 44px
-5. No content clipping or overflow on any page
-6. Drag-and-drop (Kanban boards) must work with touch events
-7. Charts must be readable on mobile with appropriate font sizes
-8. Form inputs must not zoom on focus (set font-size to 16px minimum on mobile)
+### Task 18 — Leads Page: Smart and Actionable
 
-### Task 40 — End-to-End Test Suite
+Ensure the leads page:
 
-Create `__tests__/e2e/` with critical user journey tests using the existing test framework:
+1. **Kanban view** — Columns for each lead state (New, Contacted, Qualified, Booked, Won, Lost)
+2. **List view toggle** — Table view with sortable columns
+3. **Lead cards** — Name, phone, score badge, last activity, source
+4. **Lead detail** — Click to expand: full history (calls, SMS, notes), score breakdown, assigned agent, next action
+5. **Add Lead** — Manual lead creation form with: name, phone, email, company, source, notes
+6. **Import** — CSV import for bulk lead upload
 
-1. `onboarding-flow.test.ts` — Complete onboarding: sign up → business setup → agent creation → phone number → first test call
-2. `lead-lifecycle.test.ts` — Create lead → update status → qualify → convert → won
-3. `campaign-flow.test.ts` — Create campaign → add contacts → launch → track results
-4. `billing-flow.test.ts` — Select plan → enter payment → verify subscription → upgrade → cancel
-5. `agent-management.test.ts` — Create agent → configure voice → assign number → activate → view analytics
-6. `call-flow.test.ts` — Initiate test call → verify transcript → check quality score → view in call intelligence
+### Task 19 — Settings: Complete and Consistent
 
-Each test must: assert API responses, verify database state changes, and check UI updates.
+Audit every page under `src/app/app/settings/`:
 
-### Task 41 — Documentation Site Upgrade
+1. **Business Profile** — Name, address, phone, website, timezone, currency, logo upload. All must save to backend and persist on refresh.
+2. **Phone Numbers** — List of provisioned numbers, assign to agent, release number. If no numbers, guide to marketplace.
+3. **Integrations** — CRM cards (real OAuth for HubSpot/Salesforce, "Coming Soon" for others), Google Calendar, Slack, Zapier status.
+4. **Notifications** — Toggle preferences for: email, in-app, Slack for each event type. Must persist to backend.
+5. **Compliance** — Recording consent mode (one-party/two-party), DNC list management, consent announcement text.
+6. **Billing** — Current plan, usage, next invoice, payment method, upgrade/downgrade buttons. Must render within 3 seconds.
+7. **Team** — Invite members by email, role assignment (admin/member), remove members. If solo plan, show upgrade prompt.
 
-Enhance `src/app/docs/page.tsx`:
+Every settings page must have:
+- Save button with loading spinner
+- Success toast on save
+- Error toast with specific message on failure
+- Cancel/Reset button
+- Zod validation on all inputs
 
-1. Add search functionality (filter docs sections by keyword)
-2. Add code examples with syntax highlighting for every API endpoint
-3. Add "Copy" button on all code blocks
-4. Add a "Quick Start" guide as the first section with a 5-minute setup flow
-5. Add API reference section documenting every public endpoint: method, path, auth requirement, request/response schema, example
-6. Add SDK examples (curl, JavaScript, Python) for common operations
-7. Add changelog section showing recent platform updates
-8. Add "Was this helpful?" feedback widget at the bottom of each section
+### Task 20 — Empty States: Every Single One
 
-### Task 42 — Pre-Launch Smoke Test & Hardening
+Search the entire codebase for empty state handling. For EVERY list, table, and data display:
 
-This is the final verification task. Do ALL of the following:
+1. If it shows nothing when empty → Add a proper empty state
+2. Every empty state must have:
+   - A relevant Lucide icon (muted, not colored)
+   - A helpful title ("No calls yet")
+   - A descriptive subtitle ("Once your agent is active, calls will appear here")
+   - A primary CTA button ("Set Up Your First Agent" / "Import Contacts" / "Create Campaign")
+3. Empty states must NOT:
+   - Show blank white/dark space
+   - Show "No data" with no guidance
+   - Show broken layouts (columns collapsing, tables with 0 rows)
 
-1. Run `npx tsc --noEmit` — must exit with 0 errors
-2. Run `next build` — must complete without errors
-3. Run all tests — must pass
-4. Verify every API route returns proper error responses for: missing auth (401), wrong workspace (403), invalid input (400), not found (404)
-5. Verify all Supabase RLS policies work: create a test that tries to access workspace A's data with workspace B's credentials — must be blocked
-6. Verify Stripe webhook signature verification rejects tampered payloads
-7. Verify CSP headers are present on all responses
-8. Verify no console.error or console.warn messages appear during normal app usage
-9. Run `npm audit` and fix any high/critical vulnerabilities
-10. Verify all environment variables are documented in `.env.example` with descriptions
+### Task 21 — Loading States: Every Single One
 
-**PROOF**: Paste the full output of `npx tsc --noEmit && echo "TYPECHECK PASSED" && npm run build && echo "BUILD PASSED" && npm test && echo "TESTS PASSED"`.
+For EVERY page and component that fetches data:
+
+1. Show a skeleton loader that matches the actual content layout
+2. Skeleton must appear within 100ms of navigation
+3. Content must replace skeleton smoothly (no layout shift)
+4. Buttons that trigger async operations must show a spinner and be disabled during the operation
+5. No page should show a blank screen for more than 200ms during data loading
+
+### Task 22 — Error States: Graceful Everywhere
+
+For EVERY API call in the app:
+
+1. Network errors → "Connection lost. Check your internet and try again." with retry button
+2. Auth errors (401/403) → Redirect to sign-in
+3. Validation errors (400) → Show specific field-level error messages
+4. Not found (404) → "This {resource} doesn't exist or has been deleted."
+5. Server errors (500) → "Something went wrong. We've been notified. Please try again." with retry button
+6. NEVER show: raw error objects, stack traces, "undefined", "null", or blank screens
+
+---
+
+## PHASE 3: VISUAL SYSTEM & MOBILE (Tasks 23–28)
+
+### Task 23 — Color System Cleanup
+
+1. Open `src/app/globals.css`. Identify ALL CSS variables.
+2. Remove any duplicate or legacy variables (e.g., if both `--accent` and `--accent-primary` exist and `--accent` is legacy, remove `--accent` and update all references).
+3. Search for hardcoded hex colors: `grep -rn '#[0-9A-Fa-f]\{6\}' src/components/ src/app/ --include='*.tsx' | grep -v globals.css | grep -v test`
+4. Replace each hardcoded color with the appropriate CSS variable using `var(--token-name)`.
+5. The final color system must use ONLY these tokens:
+   - Backgrounds: `--bg-primary`, `--bg-surface`, `--bg-elevated`
+   - Accents: `--accent-primary`, `--accent-secondary`, `--accent-warning`, `--accent-danger`
+   - Text: `--text-primary`, `--text-secondary`, `--text-tertiary`
+   - Borders: `--border-default`, `--border-hover`, `--border-active`
+
+### Task 24 — Typography Consistency
+
+Audit all pages for typography:
+
+1. Page titles: text-2xl font-semibold text-[var(--text-primary)]
+2. Section headings: text-lg font-medium text-[var(--text-primary)]
+3. Card titles: text-base font-medium text-[var(--text-primary)]
+4. Body text: text-sm text-[var(--text-secondary)]
+5. Labels: text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wide
+6. No font sizes below 12px (accessibility minimum)
+7. Line height: 1.5 for body text, 1.2 for headings
+
+Create a shared set of Tailwind classes or a `src/lib/typography.ts` with these constants if they don't exist.
+
+### Task 25 — Spacing & Layout Consistency
+
+Audit all pages:
+
+1. Page padding: consistent `px-6 py-6` (or `px-4 py-4` on mobile)
+2. Card padding: consistent `p-4` or `p-5`
+3. Card gap in grids: `gap-4` consistently
+4. Section spacing: `space-y-6` between page sections
+5. No elements touching viewport edges without padding
+6. No elements with inconsistent margins between pages
+
+### Task 26 — Mobile Responsive Audit
+
+Test every page at 375px width:
+
+1. **Sidebar** → Collapses to hamburger menu (already exists — verify it works)
+2. **Data tables** → Convert to card layouts (no horizontal scroll)
+3. **Modals** → Full-screen on mobile
+4. **Forms** → Single column, inputs stack vertically
+5. **Charts** → Readable at mobile width (reduce axis labels, increase font)
+6. **Touch targets** → All buttons/links minimum 44px × 44px
+7. **No overflow** → No horizontal scroll on any page
+8. **Font size** → No zoom on input focus (minimum 16px on mobile inputs)
+
+### Task 27 — Animation & Transition Polish
+
+1. Page transitions: subtle fade-in (opacity 0 → 1, 200ms, easeOut)
+2. Card hover: subtle border color change (--border-default → --border-hover, 150ms)
+3. Button hover: slight brightness increase (filter: brightness(1.1), 150ms)
+4. Modal open: fade-in + scale from 0.95 → 1, 200ms
+5. Skeleton shimmer: consistent speed across all pages
+6. **prefers-reduced-motion**: all animations disabled when user preference is set
+7. **No janky animations**: no layout shift, no flicker, no stuttering
+
+### Task 28 — Accessibility Final Pass
+
+1. Run `npx axe-core` or equivalent on the 5 most important pages (homepage, dashboard, agents, calls, leads)
+2. Fix all WCAG AA violations:
+   - Color contrast ratios (text on dark backgrounds)
+   - Missing alt text on images
+   - Missing labels on form inputs
+   - Missing ARIA labels on icon-only buttons
+   - Focus visible indicators on all interactive elements
+3. Keyboard navigation: Tab through every page, verify all actions are reachable
+4. Screen reader: Verify page titles, heading hierarchy, and landmark regions
+
+---
+
+## PHASE 4: FINAL VERIFICATION (Tasks 29–32)
+
+### Task 29 — Full TypeScript Strict Check
+
+```bash
+npx tsc --noEmit --strict
+```
+
+Fix EVERY error. Zero tolerance. Common fixes:
+- Add proper return types to functions
+- Replace `any` with proper types
+- Add null checks for optional values
+- Fix type mismatches in props
+
+### Task 30 — Build Verification
+
+```bash
+npm run build
+```
+
+Must complete with zero errors. Fix all warnings that indicate real issues.
+
+### Task 31 — Test Suite
+
+```bash
+npm test
+```
+
+All tests must pass. If any test broke from the changes in this prompt, fix the test OR the code — do NOT delete tests.
+
+### Task 32 — Production Smoke Test
+
+After deploying, manually verify these 10 critical flows:
+
+1. ✅ Homepage loads with real hero text (not i18n keys)
+2. ✅ Pricing page matches homepage pricing
+3. ✅ Sign up → Onboarding completes → Agent created
+4. ✅ Dashboard shows real data or helpful empty state
+5. ✅ Create agent → Configure voice → Save → Agent appears in list
+6. ✅ Navigate to all 19 app routes — no blank screens, no errors
+7. ✅ Settings pages all save and persist on refresh
+8. ✅ Billing page renders within 3 seconds
+9. ✅ Mobile: hamburger menu works, no horizontal scroll on any page
+10. ✅ All empty states show helpful guidance with CTAs
+
+**PROOF:** After all tasks complete, paste the output of:
+```bash
+npx tsc --noEmit && echo "✅ TYPECHECK" && npm run build && echo "✅ BUILD" && npm test && echo "✅ TESTS"
+```
 
 ---
 
 ## EXECUTION RULES
 
-1. **Complete every task in order within each phase.** Do not skip ahead.
-2. **After each phase**, run `npx tsc --noEmit` and `npm run build`. Fix any errors before proceeding.
-3. **Every new database table/column requires a migration file** in `supabase/migrations/`. Name format: `XXX_description.sql` where XXX is the next sequential number.
-4. **Every migration must include RLS policies.** No exceptions.
-5. **Every API route must use `requireWorkspaceAccess(req)`** and filter by `workspace.id`.
-6. **Never use `any` type in TypeScript.** Use proper types or `unknown` with type guards.
-7. **Never use `console.log` in production code.** Use proper error handling and logging.
-8. **Every user-facing string must go through the i18n system** (after Phase 1 is complete).
-9. **Test every feature you build.** Add at least one test file per major feature.
-10. **Commit after each phase** with message: `feat: Phase N — [description]`
-11. **Do not modify existing working features** unless explicitly required by a task.
-12. **When in doubt, read the existing code first.** Match patterns already established in the codebase.
+1. **Complete tasks in order within each phase.** Do not skip ahead.
+2. **After each phase**, run typecheck + build + test. Fix all failures.
+3. **Every migration must include RLS.** No exceptions.
+4. **Every API route must use `requireWorkspaceAccess(req)`.**
+5. **Never use `any` type.** Use proper types or `unknown` with type guards.
+6. **Never use `console.log` in production.** Only in test files.
+7. **Every string must use i18n.** No hardcoded English in components.
+8. **Framer Motion**: `ease: 'easeOut'` string. NEVER an array.
+9. **Commit after each phase**: `fix: Phase N — [description]`
+10. **Do not break existing working features.** Read before you edit.

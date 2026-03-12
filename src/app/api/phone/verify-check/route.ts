@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ verified: true });
   } catch (e) {
-    console.error("[phone/verify-check]", e);
+    // Verify check failed; error response returned below
     return NextResponse.json({ error: "Verification check failed" }, { status: 503 });
   }
 }

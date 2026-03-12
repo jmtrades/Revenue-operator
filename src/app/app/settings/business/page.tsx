@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast } from "sonner";
 import { TIMEZONES_BY_REGION } from "@/lib/constants";
@@ -21,6 +22,11 @@ function getInitialTimezone(): string {
 }
 
 export default function AppSettingsBusinessPage() {
+  const t = useTranslations("common");
+  const tForms = useTranslations("forms.state");
+  const tToast = useTranslations("toast");
+  const tNav = useTranslations("nav");
+  const tSettings = useTranslations("settings");
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as
     | { name?: string; address?: string; website?: string; industry?: string }
     | null;
@@ -82,8 +88,8 @@ export default function AppSettingsBusinessPage() {
       ]);
       if (!resMe.ok) throw new Error("save_failed");
       invalidateWorkspaceMeCache();
-      setInlineToast("Settings saved");
-      toast.success("Settings saved");
+      setInlineToast(tToast("saved"));
+      toast.success(tToast("saved"));
     } catch {
       setInlineToast("Could not save settings");
       toast.error("Failed to save. Please try again.");
@@ -122,7 +128,7 @@ export default function AppSettingsBusinessPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Business" }]} />
+      <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tSettings("business") }]} />
       <h1 className="text-lg font-semibold text-white mb-2">Business</h1>
       <p className="text-sm text-zinc-500 mb-6">Your business details help your AI answer calls accurately.</p>
       <div className="space-y-4 mb-6">
@@ -161,7 +167,7 @@ export default function AppSettingsBusinessPage() {
         </div>
       </div>
       <button type="button" disabled={loading || saving} onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60">
-        {saving ? "Saving…" : "Save changes"}
+        {saving ? tForms("saving") : t("saveChanges")}
       </button>
 
       <div className="mt-12 pt-8 border-t border-[var(--border-default)]">
@@ -182,7 +188,7 @@ export default function AppSettingsBusinessPage() {
             <div className="mt-4 flex gap-3 justify-end">
               <button type="button" onClick={() => { setDeleteConfirmOpen(false); setDeleteConfirmName(""); }} className="px-4 py-2 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:bg-zinc-800">Cancel</button>
               <button type="button" onClick={handleDeleteWorkspace} disabled={deleting} className="px-4 py-2 rounded-xl bg-[var(--accent-danger)] text-white text-sm font-medium hover:opacity-90 disabled:opacity-60">
-                {deleting ? "Deleting…" : "Delete permanently"}
+                {deleting ? tForms("deleting") : t("deletePermanently")}
               </button>
             </div>
           </div>

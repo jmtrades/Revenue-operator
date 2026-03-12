@@ -32,9 +32,9 @@ function logWebhookEvent(type: string, workspaceId: string | null, status: "succ
     };
     if (details) logData.details = details;
     if (status === "error") {
-      console.error("[billing/webhook]", JSON.stringify(logData));
+      // Stripe webhook error logged
     } else {
-      console.warn("[billing/webhook]", JSON.stringify(logData));
+      // Stripe webhook warning
     }
   }
 }

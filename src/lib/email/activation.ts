@@ -46,7 +46,7 @@ Open: ${(process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www
     }
     return true;
   } catch (err) {
-    console.error("[activation-email]", err);
+    // Send failed; non-fatal
     return false;
   }
 }

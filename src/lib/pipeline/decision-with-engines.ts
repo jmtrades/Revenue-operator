@@ -36,7 +36,6 @@ export async function runDecisionJobWithEngines(
 ): Promise<void> {
   const stateVector = await computeDealStateVector(workspaceId, leadId);
   if (!stateVector) {
-    console.error("[decisionJob] lead not found", redact({ leadId }));
     return;
   }
 

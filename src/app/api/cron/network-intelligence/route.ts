@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     await runNetworkIntelligenceJob();
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[network-intelligence]", err);
+    // Error response below
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }

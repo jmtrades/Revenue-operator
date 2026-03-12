@@ -12,7 +12,7 @@ export async function GET(
     const rec = await getFollowUpRecommendation(leadId);
     return NextResponse.json(rec);
   } catch (e) {
-    console.error("Follow-up recommendation error:", e);
+    // Error response below
     return NextResponse.json(
       { error: "Failed to get follow-up recommendation" },
       { status: 500 }

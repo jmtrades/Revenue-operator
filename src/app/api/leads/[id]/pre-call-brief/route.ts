@@ -51,7 +51,7 @@ export async function GET(
 
     return NextResponse.json(brief);
   } catch (e) {
-    console.error("Pre-call brief error:", e);
+    // Error response below
     return NextResponse.json({ error: "Failed to generate pre-call brief" }, { status: 500 });
   }
 }

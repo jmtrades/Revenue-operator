@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
       phone_number: phoneNumber,
     });
   } catch (error) {
-    console.error("[simulate-inbound]", error);
+    // Simulate failed; error response below
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to simulate inbound" },
       { status: 500 }

@@ -13,7 +13,7 @@ export async function GET(
     const packet = await generateCloserPacket(leadId, dealId ?? undefined);
     return NextResponse.json(packet);
   } catch (e) {
-    console.error("Closer packet error:", e);
+    // Error response below
     return NextResponse.json({ error: "Failed to generate closer packet" }, { status: 500 });
   }
 }

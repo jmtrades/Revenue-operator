@@ -14,7 +14,7 @@ import { randomUUID } from "crypto";
 
 function log(_event: string, _data: Record<string, unknown>): void {
   if (process.env.NODE_ENV === "development") {
-    console.warn("[trial/start]", _event, _data);
+    // Optional logging
   }
 }
 

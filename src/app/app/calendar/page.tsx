@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
@@ -47,6 +48,9 @@ function apiToAppointment(a: {
 }
 
 export default function AppCalendarPage() {
+  const t = useTranslations();
+  const tCommon = useTranslations("common");
+  const tForms = useTranslations("forms.state");
   const { workspaceId } = useWorkspace();
   const [view, setView] = useState<"week" | "month">("week");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -64,6 +68,11 @@ export default function AppCalendarPage() {
   const [formTime, setFormTime] = useState("09:00");
   const [formDuration, setFormDuration] = useState(60);
   const [availabilitySlots, setAvailabilitySlots] = useState<string[]>([]);
+
+  useEffect(() => {
+    document.title = t("calendar.pageTitle");
+    return () => { document.title = ""; };
+  }, [t]);
 
   const fetchAppointments = useCallback(() => {
     if (!workspaceId) return;
@@ -474,7 +483,7 @@ export default function AppCalendarPage() {
                 onClick={() => setShowNew(false)}
                 className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)]"
               >
-                Cancel
+                {tCommon("cancel")}
               </button>
               <button
                 type="button"
@@ -482,7 +491,7 @@ export default function AppCalendarPage() {
                 disabled={saving}
                 className="px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50"
               >
-                {saving ? "Saving…" : "Save"}
+                {saving ? tForms("saving") : tCommon("save")}
               </button>
             </div>
           </div>
