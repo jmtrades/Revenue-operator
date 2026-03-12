@@ -160,12 +160,12 @@ type WorkspacePhoneNumber = {
 export type StepId = "identity" | "voice" | "knowledge" | "behavior" | "test" | "golive";
 
 const SETUP_STEPS: { id: StepId; label: string; description: string }[] = [
-  { id: "identity", label: "Mission", description: "What does this agent do?" },
-  { id: "voice", label: "Voice", description: "How does it sound?" },
-  { id: "knowledge", label: "Knowledge", description: "What does it know?" },
-  { id: "behavior", label: "Behavior", description: "How does it act?" },
-  { id: "test", label: "Test", description: "Does it work?" },
-  { id: "golive", label: "Go live", description: "Connect to your phone" },
+  { id: "identity", label: "agents.steps.identity", description: "agents.steps.identityDescription" },
+  { id: "voice", label: "agents.steps.voice", description: "agents.steps.voiceDescription" },
+  { id: "knowledge", label: "agents.steps.knowledge", description: "agents.steps.knowledgeDescription" },
+  { id: "behavior", label: "agents.steps.behavior", description: "agents.steps.behaviorDescription" },
+  { id: "test", label: "agents.steps.test", description: "agents.steps.testDescription" },
+  { id: "golive", label: "agents.steps.golive", description: "agents.steps.goliveDescription" },
 ];
 
 function isStepComplete(stepId: StepId, agent: Agent): boolean {
