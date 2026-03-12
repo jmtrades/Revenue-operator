@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
-
-const PAGE_TITLE = "Appointments — Recall Touch";
+import { useTranslations } from "next-intl";
 
 type AppointmentStatus = "Confirmed" | "Pending" | "Cancelled" | "Completed";
 type AppointmentSource = "Inbound call" | "Outbound" | "Inbox" | "Manual";
@@ -55,6 +54,7 @@ function mapApiStatus(s: string): AppointmentStatus {
 }
 
 export default function AppointmentsPage() {
+  const t = useTranslations();
   const { workspaceId } = useWorkspace();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selected, setSelected] = useState<Appointment | null>(null);
@@ -63,11 +63,11 @@ export default function AppointmentsPage() {
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
 
   useEffect(() => {
-    document.title = PAGE_TITLE;
+    document.title = t("appointments.pageTitle");
     return () => {
       document.title = "";
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (!workspaceId) return;

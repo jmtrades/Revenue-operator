@@ -198,6 +198,7 @@
     }
   },
   "analytics": {
+    "pageTitle": "分析 — Recall Touch",
     "title": "分析",
     "periodSummary": {
       "title": "期間サマリー",
@@ -221,6 +222,7 @@
     "successRate": "成功率 %"
   },
   "agents": {
+    "pageTitle": "エージェント — Recall Touch",
     "title": "エージェント",
     "new": "新しいエージェント",
     "empty": {
@@ -274,6 +276,7 @@
     }
   },
   "calls": {
+    "pageTitle": "通話 — Recall Touch",
     "title": "通話",
     "filters": {
       "all": "すべての通話",
@@ -396,6 +399,7 @@
     "nextRun": "次回実行（日時）"
   },
   "settings": {
+    "pageTitle": "設定 — Recall Touch",
     "title": "設定",
     "nav": {
       "general": "一般",
@@ -753,6 +757,9 @@
     "toast": {
       "added": "連絡先を追加しました"
     }
+  },
+  "appointments": {
+    "pageTitle": "予約 — Recall Touch"
   },
   "keyboardShortcuts": {
     "modal": {

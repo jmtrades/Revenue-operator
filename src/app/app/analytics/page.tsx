@@ -10,6 +10,7 @@ import { KPIRow } from "@/components/ui/KPIRow";
 import { StatCard } from "@/components/ui/StatCard";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { apiFetch, ApiError } from "@/lib/api";
+import { useTranslations } from "next-intl";
 
 type RangeKey = "today" | "7d" | "30d" | "90d" | "custom";
 
@@ -35,7 +36,6 @@ interface LeadRecord {
   state: string;
 }
 
-const PAGE_TITLE = "Analytics — Recall Touch";
 const ANALYTICS_CALLS_SNAPSHOT_PREFIX = "rt_analytics_calls_snapshot:";
 const ANALYTICS_LEADS_SNAPSHOT_PREFIX = "rt_analytics_leads_snapshot:";
 
@@ -170,6 +170,7 @@ function AnalyticsSkeleton() {
 }
 
 export default function AppAnalyticsPage() {
+  const t = useTranslations();
   const [range, setRange] = useState<RangeKey>("30d");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -190,12 +191,22 @@ export default function AppAnalyticsPage() {
     initialCalls.length === 0 && initialLeads.length === 0,
   );
   const [error, setError] = useState<string | null>(null);
-  const [suggestions, setSuggestions] = useState<Array<{ id: string; title: string; description: string | null; actionLabel: string | null; actionHref: string | null }>>([]);
+  const [suggestions, setSuggestions] = useState<
+    Array<{
+      id: string;
+      title: string;
+      description: string | null;
+      actionLabel: string | null;
+      actionHref: string | null;
+    }>
+  >([]);
 
   useEffect(() => {
-    document.title = PAGE_TITLE;
-    return () => { document.title = ""; };
-  }, []);
+    document.title = t("analytics.pageTitle");
+    return () => {
+      document.title = "";
+    };
+  }, [t]);
 
   useEffect(() => {
     if (!workspaceId) return;

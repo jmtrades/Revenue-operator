@@ -198,6 +198,7 @@
     }
   },
   "analytics": {
+    "pageTitle": "Analytics — Recall Touch",
     "title": "Analytics",
     "periodSummary": {
       "title": "Period summary",
@@ -221,6 +222,7 @@
     "successRate": "Success %"
   },
   "agents": {
+    "pageTitle": "Agents — Recall Touch",
     "title": "Agents",
     "new": "New agent",
     "empty": {
@@ -297,6 +299,7 @@
     }
   },
   "calls": {
+    "pageTitle": "Calls — Recall Touch",
     "title": "Calls",
     "filters": {
       "all": "All calls",
@@ -419,6 +422,7 @@
     "nextRun": "Next run (date & time)"
   },
   "settings": {
+    "pageTitle": "Settings — Recall Touch",
     "title": "Settings",
     "nav": {
       "general": "General",
@@ -808,6 +812,9 @@
       "deleteError": "Could not delete contact. Try again.",
       "updateError": "Could not update contact. Try again."
     }
+  },
+  "appointments": {
+    "pageTitle": "Appointments — Recall Touch"
   },
   "keyboardShortcuts": {
     "modal": {
