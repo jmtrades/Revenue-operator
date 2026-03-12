@@ -1,4 +1,7 @@
 /**
+ * Phase 1 Task 1: next-intl locale routing via createIntlMiddleware(routing) from @/i18n/routing.
+ * Matcher for locale routes: "/" and "/(en|es|fr|de|pt|ja)/:path*" are covered by config.matcher below.
+ *
  * 1) Locale (next-intl): detect locale, redirect to /[locale] when needed.
  * 2) Ops routes: require staff session.
  * 3) App session: restore auth cookie on dashboard; missing session → redirect (GET only).
@@ -205,6 +208,7 @@ export async function proxy(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
+    "/(en|es|fr|de|pt|ja)/:path*",
     "/favicon.ico",
     "/robots.txt",
     "/sitemap.xml",
