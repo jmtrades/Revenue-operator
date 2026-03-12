@@ -47,6 +47,8 @@ if (typeof window === "undefined") {
   try {
     validateEnv();
   } catch (error) {
-    console.warn("[env] Missing environment variables (non-blocking):", error);
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[env] Missing environment variables (non-blocking):", error);
+    }
   }
 }

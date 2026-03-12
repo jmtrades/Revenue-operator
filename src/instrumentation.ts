@@ -13,7 +13,9 @@ export async function register() {
       // Always log the error
       console.error("[instrumentation] Environment validation failed:", errorMessage);
       // Never block startup based on env; log and continue in a degraded mode.
-      console.warn("[instrumentation] Continuing startup despite missing env vars (degraded mode).");
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("[instrumentation] Continuing startup despite missing env vars (degraded mode).");
+      }
     }
   }
 }

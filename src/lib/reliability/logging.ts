@@ -26,6 +26,7 @@ export function logWebhookFailure(webhookType: string, error: unknown, workspace
 
 export function logRetry(endpoint: string, attempt: number, workspaceId?: string): void {
   if (typeof window !== "undefined") return;
+  if (process.env.NODE_ENV === "production") return;
   console.log("[retry]", {
     endpoint,
     attempt,
@@ -36,6 +37,7 @@ export function logRetry(endpoint: string, attempt: number, workspaceId?: string
 
 export function logQueueDelay(jobType: string, delayMs: number, workspaceId?: string): void {
   if (typeof window !== "undefined") return;
+  if (process.env.NODE_ENV === "production") return;
   if (delayMs > 30_000) {
     console.warn("[queue-delay]", {
       jobType,
@@ -48,7 +50,7 @@ export function logQueueDelay(jobType: string, delayMs: number, workspaceId?: st
 
 export function logSessionRestore(userId: string, workspaceId: string): void {
   // Server-side only - but allow client-side calls (they just won't log)
-  if (typeof window === "undefined") {
+  if (typeof window === "undefined" && process.env.NODE_ENV !== "production") {
     console.log("[session-restore]", {
       userId,
       workspaceId,
