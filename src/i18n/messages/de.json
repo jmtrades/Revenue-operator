@@ -206,14 +206,18 @@
   "settings.billing.title": "Pläne & Abrechnung",
   "settings.team.title": "Team & Berechtigungen",
   "settings.compliance.title": "Compliance",
-  "hero.title": "KI, die das Telefon deines Unternehmens rund um die Uhr beantwortet",
-  "hero.subtitle": "Verpasse nie wieder einen Anruf. Verliere nie wieder einen Lead. Recall Touch übernimmt jede Unterhaltung, bucht Termine und schützt deinen Umsatz, während du arbeitest.",
-  "hero.primaryCta": "Kostenlose Testphase starten",
-  "hero.secondaryCta": "Demo ansehen",
-  "hero.trustLine": "Funktioniert mit deiner bestehenden Nummer · Keine Verträge · 14 Tage kostenlos testen",
-  "hero.checkmark.existingNumber": "Funktioniert mit deiner bestehenden Nummer",
-  "hero.checkmark.setup": "5-Minuten-Einrichtung",
-  "hero.checkmark.noCard": "Keine Kreditkarte erforderlich",
+  "hero": {
+    "title": "KI, die das Telefon deines Unternehmens rund um die Uhr beantwortet",
+    "subtitle": "Verpasse nie wieder einen Anruf. Verliere nie wieder einen Lead. Recall Touch übernimmt jede Unterhaltung, bucht Termine und schützt deinen Umsatz, während du arbeitest.",
+    "primaryCta": "Kostenlose Testphase starten",
+    "secondaryCta": "Demo ansehen",
+    "trustLine": "Funktioniert mit deiner bestehenden Nummer · Keine Verträge · 14 Tage kostenlos testen",
+    "checkmark": {
+      "existingNumber": "Funktioniert mit deiner bestehenden Nummer",
+      "setup": "5-Minuten-Einrichtung",
+      "noCard": "Keine Kreditkarte erforderlich"
+    }
+  },
   "pricing.title": "Preise",
   "pricing.subtitle": "Einfache, transparente Pläne, die mit deinem Umsatz wachsen.",
   "pricing.toggle.monthly": "Monatlich",
@@ -509,6 +513,9 @@
   "footer.links.docs": "Docs",
   "footer.links.terms": "Nutzungsbedingungen",
   "footer.links.privacy": "Datenschutz",
+  "accessibility": {
+    "skipToContent": "Zum Hauptinhalt springen"
+  },
   "footer.copyright": "Alle Rechte vorbehalten.",
   "languageSwitcher.tooltip": "Sprache der Oberfläche ändern",
   "timezone.label": "Zeitzone",

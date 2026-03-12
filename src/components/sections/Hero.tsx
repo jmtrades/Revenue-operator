@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
 export function Hero() {
-  const t = useTranslations();
+  const tHero = useTranslations("hero");
 
   return (
     <section
@@ -24,7 +24,7 @@ export function Hero() {
       <Container className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
-            <SectionLabel>{t("hero.trustLine")}</SectionLabel>
+            <SectionLabel>{tHero("trustLine")}</SectionLabel>
             <h1
               className="font-bold max-w-xl mt-4 mb-4"
               style={{
@@ -34,33 +34,33 @@ export function Hero() {
                 color: "#F8FAFC",
               }}
             >
-              {t("hero.title")}
+              {tHero("title")}
             </h1>
             <p
               className="text-base md:text-lg max-w-lg mb-4"
               style={{ color: "#94A3B8", lineHeight: 1.7 }}
             >
-              {t("hero.subtitle")}
+              {tHero("subtitle")}
             </p>
-            <p className="text-sm text-white/40 mt-4">{t("hero.trustLine")}</p>
+            <p className="text-sm text-white/40 mt-4">{tHero("trustLine")}</p>
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6">
               <Link
                 href={ROUTES.START}
                 className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors no-underline w-full sm:w-auto text-center"
               >
-                {t("hero.primaryCta")}
+                {tHero("primaryCta")}
               </Link>
               <Link
                 href={ROUTES.DEMO}
                 className="border border-white/20 text-white/90 font-medium rounded-xl px-5 py-2.5 hover:bg-white/10 transition-colors no-underline w-full sm:w-auto text-center"
               >
-                {t("hero.secondaryCta")}
+                {tHero("secondaryCta")}
               </Link>
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm" style={{ color: "#64748B" }}>
-              <span>✓ {t("hero.checkmark.existingNumber")}</span>
-              <span>✓ {t("hero.checkmark.setup")}</span>
-              <span>✓ {t("hero.checkmark.noCard")}</span>
+              <span>✓ {tHero("checkmark.existingNumber")}</span>
+              <span>✓ {tHero("checkmark.setup")}</span>
+              <span>✓ {tHero("checkmark.noCard")}</span>
             </div>
           </div>
 

@@ -206,14 +206,18 @@
   "settings.billing.title": "Planos e cobrança",
   "settings.team.title": "Equipe e permissões",
   "settings.compliance.title": "Conformidade",
-  "hero.title": "IA que atende o telefone da sua empresa 24/7",
-  "hero.subtitle": "Nunca perca uma chamada. Nunca perca um lead. O Recall Touch cuida de cada conversa, marca agendamentos e protege sua receita enquanto você trabalha.",
-  "hero.primaryCta": "Começar teste grátis",
-  "hero.secondaryCta": "Ver demo",
-  "hero.trustLine": "Funciona com seu número atual · Sem contratos · Teste grátis de 14 dias",
-  "hero.checkmark.existingNumber": "Funciona com seu número atual",
-  "hero.checkmark.setup": "Configuração em 5 minutos",
-  "hero.checkmark.noCard": "Nenhum cartão de crédito necessário",
+  "hero": {
+    "title": "IA que atende o telefone da sua empresa 24/7",
+    "subtitle": "Nunca perca uma chamada. Nunca perca um lead. O Recall Touch cuida de cada conversa, marca agendamentos e protege sua receita enquanto você trabalha.",
+    "primaryCta": "Começar teste grátis",
+    "secondaryCta": "Ver demo",
+    "trustLine": "Funciona com seu número atual · Sem contratos · Teste grátis de 14 dias",
+    "checkmark": {
+      "existingNumber": "Funciona com seu número atual",
+      "setup": "Configuração em 5 minutos",
+      "noCard": "Nenhum cartão de crédito necessário"
+    }
+  },
   "pricing.title": "Preços",
   "pricing.subtitle": "Planos simples e transparentes que crescem com sua receita.",
   "pricing.toggle.monthly": "Mensal",
@@ -509,6 +513,9 @@
   "footer.links.docs": "Docs",
   "footer.links.terms": "Termos",
   "footer.links.privacy": "Privacidade",
+  "accessibility": {
+    "skipToContent": "Ir para o conteúdo principal"
+  },
   "footer.copyright": "Todos os direitos reservados.",
   "languageSwitcher.tooltip": "Alterar idioma da interface",
   "timezone.label": "Fuso horário",

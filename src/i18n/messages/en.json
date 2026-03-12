@@ -206,14 +206,18 @@
   "settings.billing.title": "Billing & plans",
   "settings.team.title": "Team & permissions",
   "settings.compliance.title": "Compliance",
-  "hero.title": "Your phone calls. Handled.",
-  "hero.subtitle": "AI agents that answer, qualify, and book — so you never miss a call again",
-  "hero.primaryCta": "Start Free Trial",
-  "hero.secondaryCta": "Watch Demo",
-  "hero.trustLine": "Works with your existing number · No contracts · 14-day free trial",
-  "hero.checkmark.existingNumber": "Works with your existing number",
-  "hero.checkmark.setup": "5-minute setup",
-  "hero.checkmark.noCard": "No credit card required",
+  "hero": {
+    "title": "Your phone calls. Handled.",
+    "subtitle": "AI agents that answer, qualify, and book — so you never miss a call again",
+    "primaryCta": "Start Free Trial",
+    "secondaryCta": "Watch Demo",
+    "trustLine": "Works with your existing number · No contracts · 14-day free trial",
+    "checkmark": {
+      "existingNumber": "Works with your existing number",
+      "setup": "5-minute setup",
+      "noCard": "No credit card required"
+    }
+  },
   "pricing.title": "Pricing",
   "pricing.subtitle": "Simple, transparent plans that scale with your revenue.",
   "pricing.toggle.monthly": "Monthly",
@@ -718,7 +722,9 @@
   "api.errors.notFound": "We couldn’t find what you were looking for.",
   "api.errors.conflict": "This resource was updated in another tab. Refresh and try again.",
   "api.errors.server": "The server hit an unexpected error. Our team has been notified.",
-  "accessibility.skipToContent": "Skip to main content",
+  "accessibility": {
+    "skipToContent": "Skip to main content"
+  },
   "accessibility.mainContent": "Main content",
   "accessibility.openNavigation": "Open navigation",
   "accessibility.closeNavigation": "Close navigation",

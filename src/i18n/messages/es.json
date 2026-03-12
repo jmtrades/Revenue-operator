@@ -206,14 +206,18 @@
   "settings.billing.title": "Planes y facturación",
   "settings.team.title": "Equipo y permisos",
   "settings.compliance.title": "Cumplimiento",
-  "hero.title": "IA que atiende el teléfono de tu negocio 24/7",
-  "hero.subtitle": "Nunca pierdas una llamada. Nunca pierdas un lead. Recall Touch gestiona cada conversación, reserva citas y protege tus ingresos mientras trabajas.",
-  "hero.primaryCta": "Empieza prueba gratis",
-  "hero.secondaryCta": "Ver demo",
-  "hero.trustLine": "Funciona con tu número actual · Sin contratos · Prueba gratuita de 14 días",
-  "hero.checkmark.existingNumber": "Funciona con tu número actual",
-  "hero.checkmark.setup": "Configuración en 5 minutos",
-  "hero.checkmark.noCard": "No se requiere tarjeta de crédito",
+  "hero": {
+    "title": "IA que atiende el teléfono de tu negocio 24/7",
+    "subtitle": "Nunca pierdas una llamada. Nunca pierdas un lead. Recall Touch gestiona cada conversación, reserva citas y protege tus ingresos mientras trabajas.",
+    "primaryCta": "Empieza prueba gratis",
+    "secondaryCta": "Ver demo",
+    "trustLine": "Funciona con tu número actual · Sin contratos · Prueba gratuita de 14 días",
+    "checkmark": {
+      "existingNumber": "Funciona con tu número actual",
+      "setup": "Configuración en 5 minutos",
+      "noCard": "No se requiere tarjeta de crédito"
+    }
+  },
   "pricing.title": "Precios",
   "pricing.subtitle": "Planes simples y transparentes que escalan con tus ingresos.",
   "pricing.toggle.monthly": "Mensual",
@@ -682,7 +686,9 @@
   "api.errors.notFound": "No pudimos encontrar lo que buscabas.",
   "api.errors.conflict": "Este recurso se actualizó en otra pestaña. Actualiza la página e inténtalo de nuevo.",
   "api.errors.server": "El servidor encontró un error inesperado. Nuestro equipo ya fue notificado.",
-  "accessibility.skipToContent": "Saltar al contenido principal",
+  "accessibility": {
+    "skipToContent": "Saltar al contenido principal"
+  },
   "accessibility.mainContent": "Contenido principal",
   "accessibility.openNavigation": "Abrir navegación",
   "accessibility.closeNavigation": "Cerrar navegación",
