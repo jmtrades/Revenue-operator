@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { Container } from "@/components/ui/Container";
 
 const CallSimulator = dynamic(
   () => import("@/components/demo/CallSimulator").then((m) => ({ default: m.CallSimulator })),
@@ -15,5 +16,22 @@ const CallSimulator = dynamic(
 );
 
 export function DemoSimulatorSection() {
-  return <CallSimulator />;
+  return (
+    <section className="marketing-section" style={{ background: "var(--bg-surface)" }}>
+      <Container className="max-w-4xl mx-auto">
+        <div className="mb-6 text-center">
+          <p className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
+            Conversation preview
+          </p>
+          <h2 className="text-2xl md:text-3xl font-semibold mb-2" style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+            See how your AI handles a real call
+          </h2>
+          <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            This is a text-based preview of an actual AI conversation. In production, your agent speaks with premium ElevenLabs voices on every call.
+          </p>
+        </div>
+        <CallSimulator />
+      </Container>
+    </section>
+  );
 }

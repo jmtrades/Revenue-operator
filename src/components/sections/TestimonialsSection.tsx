@@ -42,7 +42,7 @@ const TESTIMONIALS = [
   },
 ];
 
-const INDUSTRY_BADGES = ["Used across 50+ industries — from solo operators to enterprise teams"];
+const INDUSTRY_BADGES = ["Trusted by businesses that never miss a call"];
 
 export function TestimonialsSection() {
   return (
@@ -50,7 +50,7 @@ export function TestimonialsSection() {
       <Container>
         <AnimateOnScroll className="text-center mb-10">
           <p className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
-            Built for businesses across 12 industries
+            Built for businesses that depend on every call
           </p>
           <SectionLabel>What customers say</SectionLabel>
         </AnimateOnScroll>

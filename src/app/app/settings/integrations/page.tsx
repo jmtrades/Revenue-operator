@@ -13,9 +13,13 @@ const CRM_INTEGRATIONS: Array<{
   name: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
+  comingSoon?: boolean;
 }> = [
   { id: "salesforce", name: "Salesforce", description: "Sync contacts and deals with Salesforce", icon: Cloud },
   { id: "hubspot", name: "HubSpot", description: "Send leads and appointments to HubSpot", icon: Building2 },
+  { id: "zoho_crm", name: "Zoho CRM", description: "Connect to Zoho CRM", icon: Database, comingSoon: true },
+  { id: "pipedrive", name: "Pipedrive", description: "Push leads and deals to Pipedrive", icon: TrendingUp, comingSoon: true },
+  { id: "gohighlevel", name: "GoHighLevel", description: "Push qualified leads and calls into pipelines", icon: Layers, comingSoon: true },
   { id: "google_contacts", name: "Google Contacts", description: "Sync contacts so your AI knows who's calling", icon: Users },
   { id: "microsoft_365", name: "Microsoft 365", description: "Connect Outlook contacts and calendars", icon: Building },
 ];
@@ -270,13 +274,19 @@ export default function AppSettingsIntegrationsPage() {
               return (
                 <div
                   key={crm.id}
-                  className="bg-[#111113] border border-white/[0.06] rounded-2xl p-5 flex flex-col"
+                  className={`bg-[#111113] border border-white/[0.06] rounded-2xl p-5 flex flex-col ${
+                    crm.comingSoon ? "opacity-60" : ""
+                  }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center">
                       <Icon className="w-5 h-5 text-zinc-400" aria-hidden />
                     </div>
-                    {connected ? (
+                    {crm.comingSoon ? (
+                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
+                        Coming soon
+                      </span>
+                    ) : connected ? (
                       <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-green-500/30 text-green-400 shrink-0">
                         Connected
                       </span>
@@ -294,7 +304,15 @@ export default function AppSettingsIntegrationsPage() {
                     </p>
                   )}
                   <div className="mt-4">
-                    {connected ? (
+                    {crm.comingSoon ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="inline-block px-3 py-2 rounded-xl text-xs font-semibold border border-[var(--border-default)] text-zinc-500 cursor-not-allowed"
+                      >
+                        Coming soon
+                      </button>
+                    ) : connected ? (
                       <Link
                         href={`/app/settings/integrations/mapping?provider=${crm.id}`}
                         className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
