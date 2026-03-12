@@ -305,6 +305,14 @@
     "empty": {
       "title": "Aucun appel pour le moment",
       "body": "Lorsque vos agents commenceront à traiter des appels, ils apparaîtront ici."
+    },
+    "errors": {
+      "timeout": "La demande a expiré. Réessayez.",
+      "loadFailed": "Impossible de charger les appels pour cet espace de travail.",
+      "exportFailed": "L’export a échoué. Réessayez."
+    },
+    "toast": {
+      "exportSuccess": "Appels exportés. Vérifiez vos téléchargements."
     }
   },
   "callIntelligence": {

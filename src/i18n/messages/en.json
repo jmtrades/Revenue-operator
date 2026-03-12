@@ -319,6 +319,14 @@
     "empty": {
       "title": "No calls yet",
       "body": "Once your agents start handling calls, you'll see them all here."
+    },
+    "errors": {
+      "timeout": "Request timed out. Try again.",
+      "loadFailed": "Could not load calls for this workspace.",
+      "exportFailed": "Export failed. Try again."
+    },
+    "toast": {
+      "exportSuccess": "Calls exported. Check your downloads."
     }
   },
   "callIntelligence": {
