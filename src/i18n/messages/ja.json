@@ -1,211 +1,440 @@
 {
-  "app.title": "Recall Touch — AI電話対応",
-  "nav.dashboard": "ダッシュボード",
-  "nav.agents": "エージェント",
-  "nav.calls": "通話",
-  "nav.leads": "リード",
-  "nav.campaigns": "キャンペーン",
-  "nav.inbox": "受信箱",
-  "nav.analytics": "分析",
-  "nav.settings": "設定",
-  "nav.team": "チーム",
-  "nav.calendar": "カレンダー",
-  "nav.appointments": "予約",
-  "nav.knowledge": "ナレッジ",
-  "nav.callIntelligence": "通話インテリジェンス",
-  "nav.compliance": "コンプライアンス",
-  "nav.billing": "請求",
-  "nav.signOut": "ログアウト",
-  "common.save": "保存",
-  "common.cancel": "キャンセル",
-  "common.delete": "削除",
-  "common.edit": "編集",
-  "common.close": "閉じる",
-  "common.continue": "続行",
-  "common.back": "戻る",
-  "common.next": "次へ",
-  "common.previous": "前へ",
-  "common.submit": "送信",
-  "common.loading": "読み込み中",
-  "common.error": "エラー",
-  "common.success": "成功",
-  "common.retry": "再試行",
-  "common.viewAll": "すべて表示",
-  "common.search": "検索",
-  "common.clear": "クリア",
-  "common.confirm": "確認",
-  "common.dismiss": "閉じる",
-  "common.optional": "任意",
-  "common.required": "必須",
-  "toast.saved": "設定を保存しました",
-  "toast.updated": "変更を更新しました",
-  "toast.deleted": "項目を削除しました",
-  "toast.error.generic": "問題が発生しました。もう一度お試しください。",
-  "auth.signIn.title": "ログイン",
-  "auth.signIn.subtitle": "Recall Touch へお帰りなさい",
-  "auth.email.label": "メールアドレス",
-  "auth.password.label": "パスワード",
-  "auth.signIn.button": "ログイン",
-  "auth.google.button": "Google で続行",
-  "auth.forgotPassword": "パスワードをお忘れですか？",
-  "auth.noAccount": "アカウントをお持ちではありませんか？",
-  "auth.startFree": "無料で始める",
-  "auth.toasts.noAccount": "アカウントが見つかりませんでした。無料で開始して作成してください。",
-  "auth.toasts.googleComingSoon": "Google ログインは近日公開予定です。",
-  "auth.toasts.signInFailed": "サインインを完了できませんでした。もう一度お試しください。",
-  "dashboard.greeting.morning": "おはようございます",
-  "dashboard.greeting.afternoon": "こんにちは",
-  "dashboard.greeting.evening": "こんばんは",
-  "dashboard.subtitle": "AI が支える売上オペレーターをひと目で確認。",
-  "dashboard.kpis.callsHandled": "対応した通話数",
-  "dashboard.kpis.answerRate": "応答率",
-  "dashboard.kpis.leadsCreated": "作成されたリード",
-  "dashboard.kpis.appointmentsBooked": "予約件数",
-  "dashboard.kpis.revenueProtected": "保護された売上",
-  "dashboard.quickActions.title": "クイックアクション",
-  "dashboard.quickActions.testCall": "テスト通話を行う",
-  "dashboard.quickActions.newAgent": "新しいエージェントを作成",
-  "dashboard.quickActions.importContacts": "連絡先をインポート",
-  "dashboard.quickActions.startCampaign": "キャンペーンを開始",
-  "dashboard.checklist.title": "数分でセットアップ完了",
-  "dashboard.checklist.progressLabel": "設定の進行状況",
-  "dashboard.checklist.item.businessProfile": "ビジネスプロフィールを設定",
-  "dashboard.checklist.item.agent": "最初のAIエージェントを設定",
-  "dashboard.checklist.item.number": "電話番号を取得",
-  "dashboard.checklist.item.testCall": "テスト通話を実施",
-  "dashboard.checklist.item.contacts": "連絡先をインポート",
-  "dashboard.checklist.item.calendar": "カレンダーを設定",
-  "dashboard.checklist.item.campaign": "最初のキャンペーンを開始",
-  "dashboard.checklist.item.team": "チームを招待",
-  "dashboard.checklist.dismiss": "自分で進めます",
-  "dashboard.welcome.title": "Recall Touch へようこそ",
-  "dashboard.welcome.body": "最初の通話が入るまで、このスペースを準備しておきます。",
-  "dashboard.needsAttention.title": "要対応",
-  "dashboard.needsAttention.empty": "すべて完了しています。対応が必要なものがあれば、ここに表示されます。",
-  "dashboard.activity.title": "最近のアクティビティ",
-  "dashboard.activity.empty": "まだアクティビティがありません。通話、リード、キャンペーンが動き始めると、ここに表示されます。",
-  "analytics.title": "分析",
-  "analytics.periodSummary.title": "期間サマリー",
-  "analytics.periodSummary.empty": "サマリーを生成するのに十分なデータがまだありません。",
-  "analytics.filters.range.7d": "直近7日間",
-  "analytics.filters.range.30d": "直近30日間",
-  "analytics.filters.range.90d": "直近90日間",
-  "analytics.filters.range.custom": "カスタム期間",
-  "analytics.kpi.totalCalls": "総通話数",
-  "analytics.kpi.answerRate": "応答率",
-  "analytics.kpi.conversionRate": "コンバージョン率",
-  "analytics.kpi.appointments": "予約件数",
-  "analytics.kpi.estimatedRevenue": "推定売上インパクト",
-  "agents.title": "エージェント",
-  "agents.new": "新しいエージェント",
-  "agents.empty.title": "まだエージェントがいません",
-  "agents.empty.body": "最初のエージェントを作成して、通話対応、予約、リードのスコアリングを自動化しましょう。",
-  "agents.readiness.label": "エージェントの準備状況",
-  "agents.steps.business": "ビジネス",
-  "agents.steps.behavior": "振る舞い",
-  "agents.steps.knowledge": "ナレッジ",
-  "agents.steps.phone": "電話",
-  "agents.steps.test": "テスト",
-  "agents.steps.launch": "ローンチ",
-  "agents.behavior.objectionHandling.title": "反論対応",
-  "agents.behavior.objectionHandling.subtitle": "よくある反論に対して、落ち着いた人間らしい応答でエージェントを導きます。",
-  "agents.behavior.qualification.title": "資格判定の基準",
-  "agents.behavior.qualification.subtitle": "ビジネスにとって「有望なリード」がどのようなものかをエージェントに伝えます。",
-  "calls.title": "通話",
-  "calls.filters.all": "すべての通話",
-  "calls.filters.missed": "不在着信",
-  "calls.filters.answered": "応答済み",
-  "calls.filters.voicemail": "留守番電話",
-  "calls.detail.summaryTitle": "通話サマリー",
-  "calls.detail.sentiment": "感情",
-  "calls.detail.outcome": "結果",
-  "calls.detail.duration": "通話時間",
-  "calls.detail.transcript": "書き起こし",
-  "calls.detail.addToCallIntelligence": "通話インテリジェンスに追加",
-  "calls.detail.leadInfo": "リード情報",
-  "calls.empty.title": "まだ通話がありません",
-  "calls.empty.body": "エージェントが通話を処理し始めると、ここに表示されます。",
-  "callIntelligence.title": "通話インテリジェンス",
-  "callIntelligence.tabs.analyzed": "分析済み通話",
-  "callIntelligence.tabs.manual": "手動分析",
-  "callIntelligence.quality.filter.all": "すべてのスコア",
-  "callIntelligence.quality.filter.excellent": "優秀 (80+)",
-  "callIntelligence.quality.filter.good": "良好 (60–79)",
-  "callIntelligence.quality.filter.review": "要確認 (40–59)",
-  "callIntelligence.quality.filter.flagged": "要注意 (0–39)",
-  "inbox.title": "受信箱",
-  "inbox.pageTitle": "受信箱 — Recall Touch",
-  "inbox.filters.all": "すべて",
-  "inbox.filters.unread": "未読",
-  "inbox.filters.phone": "電話",
-  "inbox.filters.sms": "SMS",
-  "inbox.filters.email": "メール",
-  "inbox.filters.whatsapp": "WhatsApp",
-  "inbox.empty.title": "今は静かです",
-  "inbox.empty.body": "通話、メッセージ、メールが届き始めると、ここからすべてを管理できます。",
-  "inbox.empty.cta": "設定で SMS を有効にする",
-  "inbox.search.placeholder": "会話を検索…",
-  "inbox.relative.justNow": "たった今",
-  "inbox.relative.minutesAgo": "{count} 分前",
-  "inbox.relative.hoursAgo": "{count} 時間前",
-  "inbox.relative.yesterday": "昨日",
-  "inbox.relative.daysAgo": "{count} 日前",
-  "inbox.channel.phone": "電話",
-  "inbox.channel.sms": "SMS",
-  "inbox.channel.email": "メール",
-  "inbox.channel.whatsapp": "WhatsApp",
-  "inbox.callCard.title": "電話の通話",
-  "inbox.callCard.duration": "通話時間: {duration}",
-  "inbox.callCard.viewCall": "通話を表示 →",
-  "inbox.detail.empty": "詳細を表示する会話を選択してください。",
-  "inbox.detail.actions.markResolved": "解決済みにする",
-  "inbox.detail.actions.reopen": "再オープン",
-  "inbox.detail.replyAs": "返信方法",
-  "inbox.detail.inputPlaceholder": "メッセージを入力…",
-  "inbox.detail.sending": "送信中…",
-  "inbox.detail.send": "送信",
-  "inbox.contact": "連絡先",
-  "inbox.viewInLeads": "リードで表示",
-  "inbox.openContactPanel": "連絡先パネルを開く",
-  "leads.title": "リード",
-  "leads.pageTitle": "リード — Recall Touch",
-  "leads.board.columns.new": "新規",
-  "leads.board.columns.contacted": "連絡済み",
-  "leads.board.columns.qualified": "有望",
-  "leads.board.columns.appointment": "予約済み",
-  "leads.board.columns.won": "成約",
-  "leads.board.columns.lost": "失注",
-  "leads.empty.title": "まだリードがいません",
-  "leads.empty.body": "AI が顧客と会話を重ねる中で、自動的にリードが作成されます。",
-  "campaigns.title": "キャンペーン",
-  "campaigns.pageTitle": "キャンペーン — Recall Touch",
-  "campaigns.create": "キャンペーンを作成",
-  "campaigns.empty.title": "まだキャンペーンがありません",
-  "campaigns.empty.body": "キャンペーンを使って不在着信を取り戻し、休眠リードを再活性化し、カレンダーを埋めましょう。",
-  "settings.title": "設定",
-  "settings.nav.general": "一般",
-  "settings.nav.phone": "電話",
-  "settings.nav.integrations": "連携",
-  "settings.nav.notifications": "通知",
-  "settings.nav.billing": "プラン",
-  "settings.nav.team": "チーム",
-  "settings.nav.compliance": "コンプライアンス",
-  "settings.business.title": "ビジネスプロフィール",
-  "settings.business.name": "会社名",
-  "settings.business.website": "Webサイト",
-  "settings.business.address": "会社住所",
-  "settings.business.timezone": "タイムゾーン",
-  "settings.business.currency": "通貨",
-  "settings.phone.title": "電話番号",
-  "settings.phone.getNewNumber": "新しい番号を取得",
-  "settings.phone.portNumber": "既存番号をポートイン",
-  "settings.phone.empty.title": "まだ番号がありません",
-  "settings.phone.empty.body": "新しい番号を取得するか既存番号をポートして、通話のルーティングを開始しましょう.",
-  "settings.integrations.title": "連携",
-  "settings.notifications.title": "通知",
-  "settings.billing.title": "プランと請求",
-  "settings.team.title": "チームと権限",
-  "settings.compliance.title": "コンプライアンス",
+  "app": {
+    "title": "Recall Touch — AI電話対応"
+  },
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "agents": "エージェント",
+    "calls": "通話",
+    "leads": "リード",
+    "campaigns": "キャンペーン",
+    "inbox": "受信箱",
+    "analytics": "分析",
+    "settings": "設定",
+    "team": "チーム",
+    "calendar": "カレンダー",
+    "appointments": "予約",
+    "knowledge": "ナレッジ",
+    "callIntelligence": "通話インテリジェンス",
+    "compliance": "コンプライアンス",
+    "billing": "請求",
+    "signOut": "ログアウト",
+    "notifications": "通知"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "close": "閉じる",
+    "continue": "続行",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "submit": "送信",
+    "loading": "読み込み中",
+    "error": "エラー",
+    "success": "成功",
+    "retry": "再試行",
+    "viewAll": "すべて表示",
+    "search": "検索",
+    "clear": "クリア",
+    "confirm": "確認",
+    "dismiss": "閉じる",
+    "optional": "任意",
+    "required": "必須",
+    "remove": "削除",
+    "saveChanges": "変更を保存",
+    "deletePermanently": "完全に削除",
+    "import": "インポート",
+    "all": "すべて",
+    "failed": "失敗",
+    "closeDetails": "詳細を閉じる",
+    "loadingApp": "アプリを読み込み中"
+  },
+  "toast": {
+    "saved": "設定を保存しました",
+    "updated": "変更を更新しました",
+    "deleted": "項目を削除しました",
+    "error": {
+      "generic": "問題が発生しました。もう一度お試しください。"
+    },
+    "exportFailed": "エクスポートに失敗しました。再試行してください。",
+    "importFailed": "インポートに失敗しました。",
+    "searchFailed": "検索に失敗しました。",
+    "createAgentFirst": "まずエージェントセクションでエージェントを作成してから再度お試しください。"
+  },
+  "auth": {
+    "signIn": {
+      "title": "ログイン",
+      "subtitle": "Recall Touch へお帰りなさい",
+      "button": "ログイン",
+      "pageTitle": "サインイン — Recall Touch"
+    },
+    "email": {
+      "label": "メールアドレス"
+    },
+    "password": {
+      "label": "パスワード"
+    },
+    "google": {
+      "button": "Google で続行"
+    },
+    "forgotPassword": "パスワードをお忘れですか？",
+    "noAccount": "アカウントをお持ちではありませんか？",
+    "startFree": "無料で始める",
+    "toasts": {
+      "noAccount": "アカウントが見つかりませんでした。無料で開始して作成してください。",
+      "googleComingSoon": "Google ログインは近日公開予定です。",
+      "signInFailed": "サインインを完了できませんでした。もう一度お試しください。"
+    },
+    "signingIn": "サインイン中…",
+    "savePassword": "パスワードを保存"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "おはようございます",
+      "afternoon": "こんにちは",
+      "evening": "こんばんは"
+    },
+    "subtitle": "AI が支える売上オペレーターをひと目で確認。",
+    "kpis": {
+      "callsHandled": "対応した通話数",
+      "answerRate": "応答率",
+      "leadsCreated": "作成されたリード",
+      "appointmentsBooked": "予約件数",
+      "revenueProtected": "保護された売上"
+    },
+    "quickActions": {
+      "title": "クイックアクション",
+      "testCall": "テスト通話を行う",
+      "newAgent": "新しいエージェントを作成",
+      "importContacts": "連絡先をインポート",
+      "startCampaign": "キャンペーンを開始",
+      "agentSettings": "エージェント設定",
+      "agentSettingsDesc": "AIの動作を設定",
+      "connectCrm": "CRMを接続",
+      "connectCrmDesc": "リードをCRMに送信",
+      "viewAnalytics": "分析を見る",
+      "viewAnalyticsDesc": "通話パフォーマンスを確認",
+      "createCampaign": "キャンペーンを作成",
+      "createCampaignDesc": "アウトバウンド通話を開始",
+      "testCallDesc": "AIエージェントをテスト",
+      "addLeadDesc": "新しいリードを作成"
+    },
+    "checklist": {
+      "title": "数分でセットアップ完了",
+      "progressLabel": "設定の進行状況",
+      "item": {
+        "businessProfile": "ビジネスプロフィールを設定",
+        "agent": "最初のAIエージェントを設定",
+        "number": "電話番号を取得",
+        "testCall": "テスト通話を実施",
+        "contacts": "連絡先をインポート",
+        "calendar": "カレンダーを設定",
+        "campaign": "最初のキャンペーンを開始",
+        "team": "チームを招待"
+      },
+      "dismiss": "自分で進めます"
+    },
+    "welcome": {
+      "title": "Recall Touch へようこそ",
+      "body": "最初の通話が入るまで、このスペースを準備しておきます。"
+    },
+    "needsAttention": {
+      "title": "要対応",
+      "empty": "すべて完了しています。対応が必要なものがあれば、ここに表示されます。"
+    },
+    "activity": {
+      "title": "最近のアクティビティ",
+      "empty": "まだアクティビティがありません。通話、リード、キャンペーンが動き始めると、ここに表示されます。"
+    },
+    "pageTitle": "ダッシュボード — Recall Touch",
+    "importContacts": "連絡先をインポート",
+    "addLead": "リードを追加",
+    "loadError": {
+      "message": "アクティビティを読み込めませんでした。接続を確認して再試行してください。",
+      "retry": "再試行",
+      "retryAria": "アクティビティの再読み込み"
+    },
+    "agentReady": {
+      "title": "AIエージェントの準備ができました",
+      "description": "電話番号を接続して、実際の着信を受け取りましょう。",
+      "connectPhone": "電話を接続",
+      "footnote": "お客様のようなビジネスは、取りこぼした通話で月2,400ドル以上を回収しています。"
+    },
+    "nextActions": {
+      "title": "次にやること",
+      "connectPhone": {
+        "title": "電話を接続",
+        "body": "既存の番号を転送するか、新しい番号を取得して、AIが実際の通話に応答できるようにします。"
+      },
+      "testCall": {
+        "title": "テスト通話をする",
+        "body": "現在の挨拶を聞き、公開前に通話フローを確認してください。"
+      },
+      "shareTeam": {
+        "title": "チームと共有",
+        "body": "リード、予定、受信トレイの更新を見るべき人を招待します。"
+      },
+      "open": "開く →"
+    },
+    "seeLive": {
+      "title": "ライブで見る",
+      "description": "ラインを接続する前に、実際のリードがどのように応答・認定・予約されるかサンプル通話でご確認ください。",
+      "cta": "エージェントを試す →"
+    },
+    "roi": {
+      "title": "推定ROI",
+      "body": "取りこぼした通話がキャプチャされたリードになると、お客様の段階のビジネスは通常月2,400ドル以上を回収します。"
+    },
+    "systemEvents": {
+      "title": "最近のシステムイベント",
+      "empty": "セットアップイベントはここに表示されます。",
+      "view": "表示 →"
+    },
+    "detail": {
+      "callLabel": "通話"
+    }
+  },
+  "analytics": {
+    "title": "分析",
+    "periodSummary": {
+      "title": "期間サマリー",
+      "empty": "サマリーを生成するのに十分なデータがまだありません。"
+    },
+    "filters": {
+      "range": {
+        "7d": "直近7日間",
+        "30d": "直近30日間",
+        "90d": "直近90日間",
+        "custom": "カスタム期間"
+      }
+    },
+    "kpi": {
+      "totalCalls": "総通話数",
+      "answerRate": "応答率",
+      "conversionRate": "コンバージョン率",
+      "appointments": "予約件数",
+      "estimatedRevenue": "推定売上インパクト"
+    },
+    "successRate": "成功率 %"
+  },
+  "agents": {
+    "title": "エージェント",
+    "new": "新しいエージェント",
+    "empty": {
+      "title": "まだエージェントがいません",
+      "body": "最初のエージェントを作成して、通話対応、予約、リードのスコアリングを自動化しましょう。"
+    },
+    "readiness": {
+      "label": "エージェントの準備状況"
+    },
+    "steps": {
+      "business": "ビジネス",
+      "behavior": "振る舞い",
+      "knowledge": "ナレッジ",
+      "phone": "電話",
+      "test": "テスト",
+      "launch": "ローンチ"
+    },
+    "behavior": {
+      "objectionHandling": {
+        "title": "反論対応",
+        "subtitle": "よくある反論に対して、落ち着いた人間らしい応答でエージェントを導きます。"
+      },
+      "qualification": {
+        "title": "資格判定の基準",
+        "subtitle": "ビジネスにとって「有望なリード」がどのようなものかをエージェントに伝えます。"
+      }
+    },
+    "deleteAgent": "エージェントを削除",
+    "deleteAgentTitle": "エージェントを削除",
+    "saveDraft": "下書きを保存",
+    "launch": "起動",
+    "importFromWebsite": "ウェブサイトからインポート",
+    "createFirst": "最初のエージェントを作成",
+    "saveAndUpdate": "保存してエージェントを更新",
+    "editSubtitle": "エージェントを編集。",
+    "newWizard": {
+      "title": "AIエージェントを作成",
+      "subtitle": "手順に沿って音声エージェントを設定します。",
+      "breadcrumbs": {
+        "newAgent": "新しいエージェント"
+      },
+      "errors": {
+        "nameRequired": "エージェントに名前を付けてください。"
+      },
+      "toast": {
+        "draftSaved": "下書きを保存しました。",
+        "saveError": "保存できませんでした。もう一度お試しください。",
+        "createError": "エージェントを作成できませんでした。",
+        "activateError": "エージェントを有効化できませんでした。"
+      }
+    }
+  },
+  "calls": {
+    "title": "通話",
+    "filters": {
+      "all": "すべての通話",
+      "missed": "不在着信",
+      "answered": "応答済み",
+      "voicemail": "留守番電話"
+    },
+    "detail": {
+      "summaryTitle": "通話サマリー",
+      "sentiment": "感情",
+      "outcome": "結果",
+      "duration": "通話時間",
+      "transcript": "書き起こし",
+      "addToCallIntelligence": "通話インテリジェンスに追加",
+      "leadInfo": "リード情報"
+    },
+    "empty": {
+      "title": "まだ通話がありません",
+      "body": "エージェントが通話を処理し始めると、ここに表示されます。"
+    }
+  },
+  "callIntelligence": {
+    "title": "通話インテリジェンス",
+    "tabs": {
+      "analyzed": "分析済み通話",
+      "manual": "手動分析"
+    },
+    "quality": {
+      "filter": {
+        "all": "すべてのスコア",
+        "excellent": "優秀 (80+)",
+        "good": "良好 (60–79)",
+        "review": "要確認 (40–59)",
+        "flagged": "要注意 (0–39)"
+      }
+    }
+  },
+  "inbox": {
+    "title": "受信箱",
+    "pageTitle": "受信箱 — Recall Touch",
+    "filters": {
+      "all": "すべて",
+      "unread": "未読",
+      "phone": "電話",
+      "sms": "SMS",
+      "email": "メール",
+      "whatsapp": "WhatsApp"
+    },
+    "empty": {
+      "title": "今は静かです",
+      "body": "通話、メッセージ、メールが届き始めると、ここからすべてを管理できます。",
+      "cta": "設定で SMS を有効にする"
+    },
+    "search": {
+      "placeholder": "会話を検索…"
+    },
+    "relative": {
+      "justNow": "たった今",
+      "minutesAgo": "{count} 分前",
+      "hoursAgo": "{count} 時間前",
+      "yesterday": "昨日",
+      "daysAgo": "{count} 日前"
+    },
+    "channel": {
+      "phone": "電話",
+      "sms": "SMS",
+      "email": "メール",
+      "whatsapp": "WhatsApp"
+    },
+    "callCard": {
+      "title": "電話の通話",
+      "duration": "通話時間: {duration}",
+      "viewCall": "通話を表示 →"
+    },
+    "detail": {
+      "empty": "詳細を表示する会話を選択してください。",
+      "actions": {
+        "markResolved": "解決済みにする",
+        "reopen": "再オープン"
+      },
+      "replyAs": "返信方法",
+      "inputPlaceholder": "メッセージを入力…",
+      "sending": "送信中…",
+      "send": "送信"
+    },
+    "contact": "連絡先",
+    "viewInLeads": "リードで表示",
+    "openContactPanel": "連絡先パネルを開く"
+  },
+  "leads": {
+    "title": "リード",
+    "pageTitle": "リード — Recall Touch",
+    "board": {
+      "columns": {
+        "new": "新規",
+        "contacted": "連絡済み",
+        "qualified": "有望",
+        "appointment": "予約済み",
+        "won": "成約",
+        "lost": "失注"
+      }
+    },
+    "empty": {
+      "title": "まだリードがいません",
+      "body": "AI が顧客と会話を重ねる中で、自動的にリードが作成されます。"
+    },
+    "saveLead": "リードを保存"
+  },
+  "campaigns": {
+    "title": "キャンペーン",
+    "pageTitle": "キャンペーン — Recall Touch",
+    "create": "キャンペーンを作成",
+    "empty": {
+      "title": "まだキャンペーンがありません",
+      "body": "キャンペーンを使って不在着信を取り戻し、休眠リードを再活性化し、カレンダーを埋めましょう。"
+    },
+    "new": "新規キャンペーン",
+    "removeStep": "ステップを削除",
+    "runAt": "実行日時",
+    "nextRun": "次回実行（日時）"
+  },
+  "settings": {
+    "title": "設定",
+    "nav": {
+      "general": "一般",
+      "phone": "電話",
+      "integrations": "連携",
+      "notifications": "通知",
+      "billing": "プラン",
+      "team": "チーム",
+      "compliance": "コンプライアンス"
+    },
+    "business": "ビジネス",
+    "phone": "電話と番号",
+    "integrations": {
+      "title": "連携"
+    },
+    "notifications": {
+      "title": "通知"
+    },
+    "billing": {
+      "title": "プランと請求"
+    },
+    "team": {
+      "title": "チームと権限"
+    },
+    "compliance": {
+      "title": "コンプライアンス"
+    },
+    "errorReports": "エラーレポート",
+    "saveMapping": "マッピングを保存",
+    "saveProfile": "プロフィールを保存",
+    "savePreferences": "設定を保存",
+    "saveWeights": "重みを保存",
+    "saveWebhook": "Webhookを保存",
+    "leadScoring": "リードスコアリング",
+    "activityLog": "アクティビティログ",
+    "deleteAllDataTitle": "すべてのデータを削除",
+    "deleteAllDataMessage": "ワークスペースの全データ（通話、リード、エージェント）を削除しますか？元に戻せません。サポートにお問い合わせください。",
+    "deleteAccountTitle": "アカウントを削除"
+  },
   "hero": {
     "title": "あなたのビジネス電話に24時間365日対応するAI",
     "subtitle": "二度と電話を取り逃がさない。二度とリードを失わない。Recall Touch がすべての会話を引き受け、予約を取り、働いている間も売上を守ります。",
@@ -218,464 +447,627 @@
       "noCard": "クレジットカード不要"
     }
   },
-  "pricing.title": "料金",
-  "pricing.subtitle": "売上規模に合わせて成長する、シンプルで透明なプラン。",
-  "pricing.toggle.monthly": "月額",
-  "pricing.toggle.annual": "年額（17%お得）",
-  "pricing.tier.starter.name": "スターター",
-  "pricing.tier.starter.description": "すべての通話をAIに任せたい個人事業者向け。",
-  "pricing.tier.growth.name": "グロース",
-  "pricing.tier.growth.description": "信頼できる対応とフォローアップが必要な成長中のチーム向け。",
-  "pricing.tier.scale.name": "スケール",
-  "pricing.tier.scale.description": "予約収入と複雑なパイプラインで動くチーム向け。",
-  "pricing.tier.enterprise.name": "エンタープライズ",
-  "pricing.tier.enterprise.description": "カスタムルーティングやセキュリティ、SLA が必要な組織向け。",
-  "pricing.cta": "無料で始める",
-  "pricing.contactSales": "営業担当に相談する",
-  "languageSwitcher.label": "言語",
-  "languageSwitcher.en": "英語",
-  "languageSwitcher.es": "スペイン語",
-  "languageSwitcher.fr": "フランス語",
-  "languageSwitcher.de": "ドイツ語",
-  "languageSwitcher.pt": "ポルトガル語",
-  "languageSwitcher.ja": "日本語",
-  "onboarding.title": "オンボーディング",
-  "onboarding.step.business": "ビジネス",
-  "onboarding.step.agent": "AIエージェント",
-  "onboarding.step.knowledge": "ナレッジ",
-  "onboarding.step.phone": "電話",
-  "onboarding.step.test": "テスト",
-  "onboarding.step.complete": "完了",
-  "onboarding.business.heading": "ビジネスについて教えてください",
-  "onboarding.business.description": "この情報を使って、AI がどのように電話に出て会社を紹介するかを最適化します。",
-  "onboarding.agent.heading": "最初のAIエージェントを設定",
-  "onboarding.agent.description": "テンプレートを選び、エージェントの話し方、対応方法、予約方法をカスタマイズします。",
-  "onboarding.knowledge.heading": "ナレッジを追加",
-  "onboarding.knowledge.description": "FAQ、サービス内容、料金、所在地など、エージェントに必要なコンテキストを与えます。",
-  "onboarding.phone.heading": "電話を接続",
-  "onboarding.phone.description": "新しい番号を用意するか既存の番号を接続して、顧客がAIに電話できるようにします。",
-  "onboarding.test.heading": "最初のテスト通話を実施",
-  "onboarding.test.description": "自分のAIに電話し、本番前に実際の会話の流れを確認します。",
-  "onboarding.complete.heading": "ローンチの準備ができました",
-  "onboarding.complete.description": "AI の設定と接続が完了し、ビジネスの電話対応を任せられる状態になりました。",
-  "onboarding.cta.next": "保存して次へ",
-  "onboarding.cta.skip": "後で行う",
-  "onboarding.cta.finish": "設定を完了する",
-  "onboarding.toast.saved": "オンボーディングの進行状況を保存しました",
-  "onboarding.toast.complete": "オンボーディングが完了しました。ダッシュボードへ移動します。",
-  "errors.generic.title": "問題が発生しました",
-  "errors.generic.body": "リクエストを完了できませんでした。ページを更新するか、再度お試しください。",
-  "errors.network.title": "ネットワークエラー",
-  "errors.network.body": "サーバーに接続できませんでした。接続を確認してから、もう一度お試しください。",
-  "errors.auth.title": "認証が必要です",
-  "errors.auth.body": "セッションの有効期限が切れたか無効になっています。再度ログインしてください。",
-  "errors.notFound.title": "ページが見つかりません",
-  "errors.notFound.body": "お探しのページまたはリソースは存在しません。",
-  "errors.permission.title": "アクセス権がありません",
-  "errors.permission.body": "現在の権限では、このワークスペースまたはリソースを利用できません。",
-  "errors.retry": "再試行する",
-  "errors.goHome": "ホームに戻る",
-  "errors.support": "サポートに連絡する",
-  "forms.validation.required": "この項目は必須です。",
-  "forms.validation.email": "有効なメールアドレスを入力してください。",
-  "forms.validation.url": "有効なURLを入力してください。",
-  "forms.validation.phone": "有効な電話番号を入力してください。",
-  "forms.validation.minLength": "入力が短すぎます。",
-  "forms.validation.maxLength": "入力が長すぎます。",
-  "forms.validation.number": "有効な数値を入力してください。",
-  "forms.validation.positive": "正の値を入力してください。",
-  "forms.validation.date": "有効な日付を入力してください。",
-  "forms.validation.time": "有効な時間を入力してください。",
-  "forms.validation.currency": "有効な金額を入力してください。",
-  "forms.state.saving": "保存中…",
-  "forms.state.deleting": "削除中…",
-  "forms.state.submitting": "送信中…",
-  "forms.state.loading": "読み込み中…",
-  "forms.state.creating": "作成中…",
-  "forms.state.importing": "インポート中…",
-  "common.remove": "削除",
-  "common.saveChanges": "変更を保存",
-  "common.deletePermanently": "完全に削除",
-  "common.import": "インポート",
-  "common.all": "すべて",
-  "common.failed": "失敗",
-  "common.closeDetails": "詳細を閉じる",
-  "common.loadingApp": "アプリを読み込み中",
-  "search.placeholderContacts": "名前・電話・メールで検索…",
-  "search.placeholderCalls": "発信者または電話で検索…",
-  "search.placeholderDocs": "ドキュメントを検索…",
-  "search.placeholderEntries": "エントリを検索…",
-  "search.placeholderActions": "アクションを検索…",
-  "toast.exportFailed": "エクスポートに失敗しました。再試行してください。",
-  "toast.importFailed": "インポートに失敗しました。",
-  "toast.searchFailed": "検索に失敗しました。",
-  "toast.createAgentFirst": "まずエージェントセクションでエージェントを作成してから再度お試しください。",
-  "auth.signingIn": "サインイン中…",
-  "auth.savePassword": "パスワードを保存",
-  "auth.signIn.pageTitle": "サインイン — Recall Touch",
-  "agents.deleteAgent": "エージェントを削除",
-  "agents.deleteAgentTitle": "エージェントを削除",
-  "agents.saveDraft": "下書きを保存",
-  "agents.launch": "起動",
-  "agents.importFromWebsite": "ウェブサイトからインポート",
-  "agents.createFirst": "最初のエージェントを作成",
-  "agents.saveAndUpdate": "保存してエージェントを更新",
-  "agents.editSubtitle": "エージェントを編集。",
-  "settings.business": "ビジネス",
-  "settings.phone": "電話と番号",
-  "settings.errorReports": "エラーレポート",
-  "settings.saveMapping": "マッピングを保存",
-  "settings.saveProfile": "プロフィールを保存",
-  "settings.savePreferences": "設定を保存",
-  "settings.saveWeights": "重みを保存",
-  "settings.saveWebhook": "Webhookを保存",
-  "settings.leadScoring": "リードスコアリング",
-  "settings.activityLog": "アクティビティログ",
-  "settings.deleteAllDataTitle": "すべてのデータを削除",
-  "settings.deleteAllDataMessage": "ワークスペースの全データ（通話、リード、エージェント）を削除しますか？元に戻せません。サポートにお問い合わせください。",
-  "settings.deleteAccountTitle": "アカウントを削除",
-  "compliance.saveConsent": "録音同意を保存",
-  "webhooks.deleteTitle": "Webhookエンドポイントを削除しますか？",
-  "campaigns.create": "キャンペーンを作成",
-  "campaigns.new": "新規キャンペーン",
-  "campaigns.removeStep": "ステップを削除",
-  "campaigns.runAt": "実行日時",
-  "campaigns.nextRun": "次回実行（日時）",
-  "calendar.removeAppointmentTitle": "予定を削除しますか？",
-  "calendar.pageTitle": "カレンダー — Recall Touch",
-  "team.removeMemberTitle": "メンバーを削除しますか？",
-  "knowledge.pageTitle": "ナレッジ — Recall Touch",
-  "knowledge.addEntry": "エントリを追加",
-  "knowledge.editEntry": "エントリを編集",
-  "dashboard.pageTitle": "ダッシュボード — Recall Touch",
-  "dashboard.importContacts": "連絡先をインポート",
-  "dashboard.addLead": "リードを追加",
-  "dashboard.loadError.message": "アクティビティを読み込めませんでした。接続を確認して再試行してください。",
-  "dashboard.loadError.retry": "再試行",
-  "dashboard.loadError.retryAria": "アクティビティの再読み込み",
-  "dashboard.agentReady.title": "AIエージェントの準備ができました",
-  "dashboard.agentReady.description": "電話番号を接続して、実際の着信を受け取りましょう。",
-  "dashboard.agentReady.connectPhone": "電話を接続",
-  "dashboard.agentReady.footnote": "お客様のようなビジネスは、取りこぼした通話で月2,400ドル以上を回収しています。",
-  "dashboard.nextActions.title": "次にやること",
-  "dashboard.nextActions.connectPhone.title": "電話を接続",
-  "dashboard.nextActions.connectPhone.body": "既存の番号を転送するか、新しい番号を取得して、AIが実際の通話に応答できるようにします。",
-  "dashboard.nextActions.testCall.title": "テスト通話をする",
-  "dashboard.nextActions.testCall.body": "現在の挨拶を聞き、公開前に通話フローを確認してください。",
-  "dashboard.nextActions.shareTeam.title": "チームと共有",
-  "dashboard.nextActions.shareTeam.body": "リード、予定、受信トレイの更新を見るべき人を招待します。",
-  "dashboard.nextActions.open": "開く →",
-  "dashboard.quickActions.agentSettings": "エージェント設定",
-  "dashboard.quickActions.agentSettingsDesc": "AIの動作を設定",
-  "dashboard.quickActions.connectCrm": "CRMを接続",
-  "dashboard.quickActions.connectCrmDesc": "リードをCRMに送信",
-  "dashboard.quickActions.viewAnalytics": "分析を見る",
-  "dashboard.quickActions.viewAnalyticsDesc": "通話パフォーマンスを確認",
-  "dashboard.quickActions.createCampaign": "キャンペーンを作成",
-  "dashboard.quickActions.createCampaignDesc": "アウトバウンド通話を開始",
-  "dashboard.quickActions.testCallDesc": "AIエージェントをテスト",
-  "dashboard.quickActions.addLeadDesc": "新しいリードを作成",
-  "dashboard.seeLive.title": "ライブで見る",
-  "dashboard.seeLive.description": "ラインを接続する前に、実際のリードがどのように応答・認定・予約されるかサンプル通話でご確認ください。",
-  "dashboard.seeLive.cta": "エージェントを試す →",
-  "dashboard.roi.title": "推定ROI",
-  "dashboard.roi.body": "取りこぼした通話がキャプチャされたリードになると、お客様の段階のビジネスは通常月2,400ドル以上を回収します。",
-  "dashboard.systemEvents.title": "最近のシステムイベント",
-  "dashboard.systemEvents.empty": "セットアップイベントはここに表示されます。",
-  "dashboard.systemEvents.view": "表示 →",
-  "dashboard.detail.callLabel": "通話",
-  "filter.byOutcome": "結果でフィルター",
-  "filter.bySentiment": "センチメントでフィルター",
-  "filter.activity": "アクティビティをフィルター",
-  "leads.saveLead": "リードを保存",
-  "analytics.successRate": "成功率 %",
-  "nav.billing": "請求",
-  "nav.notifications": "通知",
-  "empty.generic.title": "まだ何もありません",
-  "empty.generic.body": "Recall Touch にデータが流れ始めると、このビューが自動的に埋まります。",
-  "empty.search.title": "結果がありません",
-  "empty.search.body": "フィルターまたは検索キーワードを調整してみてください。",
-  "empty.filters.title": "フィルターに一致する項目がありません",
-  "empty.filters.body": "いくつかのフィルターを解除すると、より多くの結果が表示されます。",
-  "commandPalette.title": "クイック検索",
-  "commandPalette.placeholder": "ページ・アクション・設定を検索…",
-  "commandPalette.section.navigation": "ナビゲーション",
-  "commandPalette.section.actions": "アクション",
-  "commandPalette.section.settings": "設定",
-  "commandPalette.action.newLead": "新しいリードを作成",
-  "commandPalette.action.newAgent": "新しいエージェントを作成",
-  "commandPalette.action.newCampaign": "新しいキャンペーンを作成",
-  "commandPalette.action.importContacts": "連絡先をインポート",
-  "commandPalette.empty": "該当する項目がありません。別のキーワードを試してください。",
-  "commandPalette.shortcuts": "キーボードショートカット",
-  "agents.newWizard.title": "AIエージェントを作成",
-  "agents.newWizard.subtitle": "手順に沿って音声エージェントを設定します。",
-  "agents.newWizard.breadcrumbs.newAgent": "新しいエージェント",
-  "agents.newWizard.errors.nameRequired": "エージェントに名前を付けてください。",
-  "agents.newWizard.toast.draftSaved": "下書きを保存しました。",
-  "agents.newWizard.toast.saveError": "保存できませんでした。もう一度お試しください。",
-  "agents.newWizard.toast.createError": "エージェントを作成できませんでした。",
-  "agents.newWizard.toast.activateError": "エージェントを有効化できませんでした。",
-  "contacts.pageTitle": "連絡先",
-  "contacts.title": "連絡先",
-  "contacts.subtitle": "あなたのAIが話したすべての相手を、1か所で管理します。",
-  "contacts.savedCount": "{count, plural, one {# 件保存済み} other {# 件保存済み}}",
-  "contacts.addContactCta": "連絡先を追加",
-  "contacts.searchPlaceholder": "名前・電話番号・メールで検索…",
-  "contacts.sortLabel": "並び替え",
-  "contacts.sort.newest": "新着順",
-  "contacts.sort.score": "スコア順",
-  "contacts.sort.name": "名前順",
-  "contacts.tabs.all": "すべて",
-  "contacts.tabs.leads": "リード",
-  "contacts.tabs.customers": "顧客",
-  "contacts.tabs.vip": "VIP",
-  "contacts.empty.title": "まだ連絡先がありません。",
-  "contacts.empty.subtitle": "AIは通話ごとに自動で連絡先を追加します。手動で追加した連絡先もここに表示されます。",
-  "contacts.empty.detail": "連絡先を選択すると、通話履歴とメモを表示します。",
-  "contacts.drawer.title": "連絡先を追加",
-  "contacts.drawer.subtitle": "AIは今後の通話でこの情報を利用します。",
-  "contacts.form.firstNameLabel": "名*",
-  "contacts.form.firstNamePlaceholder": "Mike",
-  "contacts.form.lastNameLabel": "姓*",
-  "contacts.form.lastNamePlaceholder": "Johnson",
-  "contacts.form.phoneLabel": "電話番号*",
-  "contacts.form.phonePlaceholder": "(503) 555-0199",
-  "contacts.form.emailLabel": "メールアドレス",
-  "contacts.form.emailPlaceholder": "name@example.com",
-  "contacts.form.typeLabel": "種別",
-  "contacts.form.type.lead": "リード",
-  "contacts.form.type.customer": "顧客",
-  "contacts.form.type.vip": "VIP",
-  "contacts.form.tagsLabel": "タグ",
-  "contacts.form.tagsPlaceholder": "入力して Enter キーを押す",
-  "contacts.form.tagsHint": "タグごとに Enter キーを押して追加します",
-  "contacts.form.notesLabel": "メモ",
-  "contacts.form.notesPlaceholder": "この連絡先について重要なこと…",
-  "contacts.form.saveContact": "連絡先を保存",
-  "contacts.errors.firstNameRequired": "名は必須です",
-  "contacts.errors.lastNameRequired": "姓は必須です",
-  "contacts.errors.phoneRequired": "電話番号は必須です",
-  "contacts.toast.added": "連絡先を追加しました",
-  "keyboardShortcuts.modal.title": "キーボードショートカット",
-  "keyboardShortcuts.modal.closeHint": "Esc または ? で閉じます",
-  "keyboardShortcuts.item.commandPalette": "コマンドパレットを開く",
-  "keyboardShortcuts.item.dashboard": "ダッシュボードに移動",
-  "keyboardShortcuts.item.agents": "エージェントに移動",
-  "keyboardShortcuts.item.calls": "通話に移動",
-  "keyboardShortcuts.item.leads": "リードに移動",
-  "keyboardShortcuts.item.campaigns": "キャンペーンに移動",
-  "keyboardShortcuts.item.inbox": "受信箱に移動",
-  "keyboardShortcuts.item.shortcuts": "このショートカットヘルプを表示",
-  "notifications.center.title": "通知",
-  "notifications.center.empty.title": "まだ通知はありません",
-  "notifications.center.empty.body": "新しいリード、通話サマリー、重要な更新をここに表示します。",
-  "notifications.type.lead": "新しいリード",
-  "notifications.type.callCompleted": "通話完了",
-  "notifications.type.appointmentBooked": "予約が作成されました",
-  "notifications.type.qualityAlert": "品質アラート",
-  "notifications.type.billing": "請求",
-  "notifications.type.system": "システム更新",
-  "notifications.action.markRead": "既読にする",
-  "notifications.action.markAllRead": "すべて既読にする",
-  "notifications.action.preferences": "通知設定",
-  "docs.title": "ドキュメント",
-  "docs.quickStart.title": "クイックスタート",
-  "docs.quickStart.subtitle": "5分以内に Recall Touch を本番環境に導入。",
-  "docs.quickStart.step.signUp": "サインアップしてワークスペースを作成します。",
-  "docs.quickStart.step.connectPhone": "電話番号を接続するか、既存番号をポートインします。",
-  "docs.quickStart.step.createAgent": "最初のAIエージェントを作成します。",
-  "docs.quickStart.step.test": "テスト通話を行い、書き起こしを確認します。",
-  "docs.quickStart.step.launch": "会社の代表番号を Recall Touch に向け、本番運用を開始します。",
-  "docs.api.title": "API リファレンス",
-  "docs.api.description": "Recall Touch を既存のツールやワークフローに統合する方法を学びます。",
-  "docs.api.section.auth": "認証",
-  "docs.api.section.calls": "通話 API",
-  "docs.api.section.leads": "リード API",
-  "docs.api.section.appointments": "予約 API",
-  "docs.api.section.webhooks": "Webhook",
-  "docs.search.placeholder": "ドキュメントを検索…",
-  "docs.feedback.prompt": "このページは役に立ちましたか？",
-  "docs.feedback.yes": "はい",
-  "docs.feedback.no": "いいえ",
-  "docs.feedback.thankYou": "フィードバックありがとうございます。",
-  "pricing.faq.title": "料金に関するよくある質問",
-  "pricing.faq.trial": "無料トライアルはありますか？",
-  "pricing.faq.trialAnswer": "はい。Enterprise を除くすべてのプランで 14 日間の無料トライアルをご利用いただけます。",
-  "pricing.faq.overage": "利用分が上限を超えた場合はどうなりますか？",
-  "pricing.faq.overageAnswer": "超過分はプランに応じた1分あたりの料金で、ペナルティなしで請求されます。",
-  "pricing.faq.cancel": "いつでも解約できますか？",
-  "pricing.faq.cancelAnswer": "はい。請求設定からいつでもプランの解約や変更ができます。",
-  "footer.cta.bookDemo": "デモを予約",
-  "footer.cta.contact": "お問い合わせ",
-  "footer.links.product": "プロダクト",
-  "footer.links.pricing": "料金",
-  "footer.links.docs": "ドキュメント",
-  "footer.links.terms": "利用規約",
-  "footer.links.privacy": "プライバシー",
+  "pricing": {
+    "title": "料金",
+    "subtitle": "売上規模に合わせて成長する、シンプルで透明なプラン。",
+    "toggle": {
+      "monthly": "月額",
+      "annual": "年額（17%お得）"
+    },
+    "tier": {
+      "starter": {
+        "name": "スターター",
+        "description": "すべての通話をAIに任せたい個人事業者向け。"
+      },
+      "growth": {
+        "name": "グロース",
+        "description": "信頼できる対応とフォローアップが必要な成長中のチーム向け。"
+      },
+      "scale": {
+        "name": "スケール",
+        "description": "予約収入と複雑なパイプラインで動くチーム向け。"
+      },
+      "enterprise": {
+        "name": "エンタープライズ",
+        "description": "カスタムルーティングやセキュリティ、SLA が必要な組織向け。"
+      }
+    },
+    "cta": "無料で始める",
+    "contactSales": "営業担当に相談する",
+    "faq": {
+      "title": "料金に関するよくある質問",
+      "trial": "無料トライアルはありますか？",
+      "trialAnswer": "はい。Enterprise を除くすべてのプランで 14 日間の無料トライアルをご利用いただけます。",
+      "overage": "利用分が上限を超えた場合はどうなりますか？",
+      "overageAnswer": "超過分はプランに応じた1分あたりの料金で、ペナルティなしで請求されます。",
+      "cancel": "いつでも解約できますか？",
+      "cancelAnswer": "はい。請求設定からいつでもプランの解約や変更ができます。"
+    }
+  },
+  "languageSwitcher": {
+    "label": "言語",
+    "en": "英語",
+    "es": "スペイン語",
+    "fr": "フランス語",
+    "de": "ドイツ語",
+    "pt": "ポルトガル語",
+    "ja": "日本語",
+    "tooltip": "インターフェースの言語を変更"
+  },
+  "onboarding": {
+    "title": "オンボーディング",
+    "step": {
+      "business": "ビジネス",
+      "agent": "AIエージェント",
+      "knowledge": "ナレッジ",
+      "phone": "電話",
+      "test": "テスト",
+      "complete": "完了"
+    },
+    "business": {
+      "heading": "ビジネスについて教えてください",
+      "description": "この情報を使って、AI がどのように電話に出て会社を紹介するかを最適化します。"
+    },
+    "agent": {
+      "heading": "最初のAIエージェントを設定",
+      "description": "テンプレートを選び、エージェントの話し方、対応方法、予約方法をカスタマイズします。"
+    },
+    "knowledge": {
+      "heading": "ナレッジを追加",
+      "description": "FAQ、サービス内容、料金、所在地など、エージェントに必要なコンテキストを与えます。"
+    },
+    "phone": {
+      "heading": "電話を接続",
+      "description": "新しい番号を用意するか既存の番号を接続して、顧客がAIに電話できるようにします。"
+    },
+    "test": {
+      "heading": "最初のテスト通話を実施",
+      "description": "自分のAIに電話し、本番前に実際の会話の流れを確認します。"
+    },
+    "complete": {
+      "heading": "ローンチの準備ができました",
+      "description": "AI の設定と接続が完了し、ビジネスの電話対応を任せられる状態になりました。"
+    },
+    "cta": {
+      "next": "保存して次へ",
+      "skip": "後で行う",
+      "finish": "設定を完了する"
+    },
+    "toast": {
+      "saved": "オンボーディングの進行状況を保存しました",
+      "complete": "オンボーディングが完了しました。ダッシュボードへ移動します。"
+    }
+  },
+  "errors": {
+    "generic": {
+      "title": "問題が発生しました",
+      "body": "リクエストを完了できませんでした。ページを更新するか、再度お試しください。"
+    },
+    "network": {
+      "title": "ネットワークエラー",
+      "body": "サーバーに接続できませんでした。接続を確認してから、もう一度お試しください。"
+    },
+    "auth": {
+      "title": "認証が必要です",
+      "body": "セッションの有効期限が切れたか無効になっています。再度ログインしてください。"
+    },
+    "notFound": {
+      "title": "ページが見つかりません",
+      "body": "お探しのページまたはリソースは存在しません。"
+    },
+    "permission": {
+      "title": "アクセス権がありません",
+      "body": "現在の権限では、このワークスペースまたはリソースを利用できません。"
+    },
+    "retry": "再試行する",
+    "goHome": "ホームに戻る",
+    "support": "サポートに連絡する"
+  },
+  "forms": {
+    "validation": {
+      "required": "この項目は必須です。",
+      "email": "有効なメールアドレスを入力してください。",
+      "url": "有効なURLを入力してください。",
+      "phone": "有効な電話番号を入力してください。",
+      "minLength": "入力が短すぎます。",
+      "maxLength": "入力が長すぎます。",
+      "number": "有効な数値を入力してください。",
+      "positive": "正の値を入力してください。",
+      "date": "有効な日付を入力してください。",
+      "time": "有効な時間を入力してください。",
+      "currency": "有効な金額を入力してください。"
+    },
+    "state": {
+      "saving": "保存中…",
+      "deleting": "削除中…",
+      "submitting": "送信中…",
+      "loading": "読み込み中…",
+      "creating": "作成中…",
+      "importing": "インポート中…"
+    }
+  },
+  "search": {
+    "placeholderContacts": "名前・電話・メールで検索…",
+    "placeholderCalls": "発信者または電話で検索…",
+    "placeholderDocs": "ドキュメントを検索…",
+    "placeholderEntries": "エントリを検索…",
+    "placeholderActions": "アクションを検索…"
+  },
+  "compliance": {
+    "saveConsent": "録音同意を保存"
+  },
+  "webhooks": {
+    "deleteTitle": "Webhookエンドポイントを削除しますか？",
+    "title": "Webhook",
+    "subtitle": "Recall Touch のリアルタイムイベントを自社システムに送信します。",
+    "list": {
+      "empty": {
+        "title": "Webhook がまだありません",
+        "body": "新しいリードや通話、予約などのイベントを受け取るには、Webhook を作成してください。"
+      }
+    },
+    "form": {
+      "url": "Webhook URL",
+      "secret": "署名シークレット",
+      "events": "購読するイベント",
+      "event": {
+        "callStarted": "通話開始",
+        "callCompleted": "通話完了",
+        "callFailed": "通話失敗",
+        "leadCreated": "リード作成",
+        "leadUpdated": "リード更新",
+        "appointmentBooked": "予約作成",
+        "appointmentCompleted": "予約完了",
+        "paymentReceived": "支払い受領"
+      }
+    },
+    "button": {
+      "create": "Webhook を作成",
+      "update": "Webhook を更新",
+      "delete": "Webhook を削除"
+    },
+    "log": {
+      "title": "配信ログ",
+      "status": "ステータス",
+      "responseTime": "応答時間",
+      "payload": "ペイロード",
+      "retry": "再送信"
+    },
+    "test": {
+      "button": "テストイベントを送信"
+    }
+  },
+  "calendar": {
+    "removeAppointmentTitle": "予定を削除しますか？",
+    "pageTitle": "カレンダー — Recall Touch",
+    "empty": {
+      "title": "まだ予約はありません",
+      "body": "AI が予約を作成すると、このカレンダーに表示されます。"
+    },
+    "legend": {
+      "aiBooked": "AI が作成",
+      "userBooked": "手動で作成",
+      "cancelled": "キャンセル済み",
+      "noShow": "無断キャンセル"
+    }
+  },
+  "team": {
+    "removeMemberTitle": "メンバーを削除しますか？"
+  },
+  "knowledge": {
+    "pageTitle": "ナレッジ — Recall Touch",
+    "addEntry": "エントリを追加",
+    "editEntry": "エントリを編集"
+  },
+  "filter": {
+    "byOutcome": "結果でフィルター",
+    "bySentiment": "センチメントでフィルター",
+    "activity": "アクティビティをフィルター"
+  },
+  "empty": {
+    "generic": {
+      "title": "まだ何もありません",
+      "body": "Recall Touch にデータが流れ始めると、このビューが自動的に埋まります。"
+    },
+    "search": {
+      "title": "結果がありません",
+      "body": "フィルターまたは検索キーワードを調整してみてください。"
+    },
+    "filters": {
+      "title": "フィルターに一致する項目がありません",
+      "body": "いくつかのフィルターを解除すると、より多くの結果が表示されます。"
+    }
+  },
+  "commandPalette": {
+    "title": "クイック検索",
+    "placeholder": "ページ・アクション・設定を検索…",
+    "section": {
+      "navigation": "ナビゲーション",
+      "actions": "アクション",
+      "settings": "設定"
+    },
+    "action": {
+      "newLead": "新しいリードを作成",
+      "newAgent": "新しいエージェントを作成",
+      "newCampaign": "新しいキャンペーンを作成",
+      "importContacts": "連絡先をインポート"
+    },
+    "empty": "該当する項目がありません。別のキーワードを試してください。",
+    "shortcuts": "キーボードショートカット"
+  },
+  "contacts": {
+    "pageTitle": "連絡先",
+    "title": "連絡先",
+    "subtitle": "あなたのAIが話したすべての相手を、1か所で管理します。",
+    "savedCount": "{count, plural, one {# 件保存済み} other {# 件保存済み}}",
+    "addContactCta": "連絡先を追加",
+    "searchPlaceholder": "名前・電話番号・メールで検索…",
+    "sortLabel": "並び替え",
+    "sort": {
+      "newest": "新着順",
+      "score": "スコア順",
+      "name": "名前順"
+    },
+    "tabs": {
+      "all": "すべて",
+      "leads": "リード",
+      "customers": "顧客",
+      "vip": "VIP"
+    },
+    "empty": {
+      "title": "まだ連絡先がありません。",
+      "subtitle": "AIは通話ごとに自動で連絡先を追加します。手動で追加した連絡先もここに表示されます。",
+      "detail": "連絡先を選択すると、通話履歴とメモを表示します。"
+    },
+    "drawer": {
+      "title": "連絡先を追加",
+      "subtitle": "AIは今後の通話でこの情報を利用します。"
+    },
+    "form": {
+      "firstNameLabel": "名*",
+      "firstNamePlaceholder": "Mike",
+      "lastNameLabel": "姓*",
+      "lastNamePlaceholder": "Johnson",
+      "phoneLabel": "電話番号*",
+      "phonePlaceholder": "(503) 555-0199",
+      "emailLabel": "メールアドレス",
+      "emailPlaceholder": "name@example.com",
+      "typeLabel": "種別",
+      "type": {
+        "lead": "リード",
+        "customer": "顧客",
+        "vip": "VIP"
+      },
+      "tagsLabel": "タグ",
+      "tagsPlaceholder": "入力して Enter キーを押す",
+      "tagsHint": "タグごとに Enter キーを押して追加します",
+      "notesLabel": "メモ",
+      "notesPlaceholder": "この連絡先について重要なこと…",
+      "saveContact": "連絡先を保存"
+    },
+    "errors": {
+      "firstNameRequired": "名は必須です",
+      "lastNameRequired": "姓は必須です",
+      "phoneRequired": "電話番号は必須です"
+    },
+    "toast": {
+      "added": "連絡先を追加しました"
+    }
+  },
+  "keyboardShortcuts": {
+    "modal": {
+      "title": "キーボードショートカット",
+      "closeHint": "Esc または ? で閉じます"
+    },
+    "item": {
+      "commandPalette": "コマンドパレットを開く",
+      "dashboard": "ダッシュボードに移動",
+      "agents": "エージェントに移動",
+      "calls": "通話に移動",
+      "leads": "リードに移動",
+      "campaigns": "キャンペーンに移動",
+      "inbox": "受信箱に移動",
+      "shortcuts": "このショートカットヘルプを表示"
+    }
+  },
+  "notifications": {
+    "center": {
+      "title": "通知",
+      "empty": {
+        "title": "まだ通知はありません",
+        "body": "新しいリード、通話サマリー、重要な更新をここに表示します。"
+      }
+    },
+    "type": {
+      "lead": "新しいリード",
+      "callCompleted": "通話完了",
+      "appointmentBooked": "予約が作成されました",
+      "qualityAlert": "品質アラート",
+      "billing": "請求",
+      "system": "システム更新"
+    },
+    "action": {
+      "markRead": "既読にする",
+      "markAllRead": "すべて既読にする",
+      "preferences": "通知設定"
+    }
+  },
+  "docs": {
+    "title": "ドキュメント",
+    "quickStart": {
+      "title": "クイックスタート",
+      "subtitle": "5分以内に Recall Touch を本番環境に導入。",
+      "step": {
+        "signUp": "サインアップしてワークスペースを作成します。",
+        "connectPhone": "電話番号を接続するか、既存番号をポートインします。",
+        "createAgent": "最初のAIエージェントを作成します。",
+        "test": "テスト通話を行い、書き起こしを確認します。",
+        "launch": "会社の代表番号を Recall Touch に向け、本番運用を開始します。"
+      }
+    },
+    "api": {
+      "title": "API リファレンス",
+      "description": "Recall Touch を既存のツールやワークフローに統合する方法を学びます。",
+      "section": {
+        "auth": "認証",
+        "calls": "通話 API",
+        "leads": "リード API",
+        "appointments": "予約 API",
+        "webhooks": "Webhook"
+      }
+    },
+    "search": {
+      "placeholder": "ドキュメントを検索…"
+    },
+    "feedback": {
+      "prompt": "このページは役に立ちましたか？",
+      "yes": "はい",
+      "no": "いいえ",
+      "thankYou": "フィードバックありがとうございます。"
+    }
+  },
+  "footer": {
+    "cta": {
+      "bookDemo": "デモを予約",
+      "contact": "お問い合わせ"
+    },
+    "links": {
+      "product": "プロダクト",
+      "pricing": "料金",
+      "docs": "ドキュメント",
+      "terms": "利用規約",
+      "privacy": "プライバシー"
+    },
+    "copyright": "All rights reserved."
+  },
   "accessibility": {
     "skipToContent": "メインコンテンツへスキップ"
   },
-  "footer.copyright": "All rights reserved.",
-  "languageSwitcher.tooltip": "インターフェースの言語を変更",
-  "timezone.label": "タイムゾーン",
-  "timezone.helper": "このタイムゾーンはスケジューリング、レポート、通知に利用されます。",
-  "currency.label": "通貨",
-  "currency.helper": "料金・レポート・請求に使用する主要通貨を選択してください。",
-  "phoneInput.label": "電話番号",
-  "phoneInput.countryPlaceholder": "国",
-  "phoneInput.numberPlaceholder": "電話番号",
-  "phoneInput.error.invalid": "選択した国に有効な電話番号を入力してください。",
-  "scheduling.timezoneNote": "すべての時刻はワークスペースのタイムゾーンで表示されます。",
-  "scheduling.hoverUtc": "ホバーするとUTC時刻を表示します。",
-  "calendar.empty.title": "まだ予約はありません",
-  "calendar.empty.body": "AI が予約を作成すると、このカレンダーに表示されます。",
-  "calendar.legend.aiBooked": "AI が作成",
-  "calendar.legend.userBooked": "手動で作成",
-  "calendar.legend.cancelled": "キャンセル済み",
-  "calendar.legend.noShow": "無断キャンセル",
-  "leadScoring.label": "リードスコア",
-  "leadScoring.tooltip": "エンゲージメント、資格、行動、最新度に基づく総合スコアです。",
-  "leadScoring.temperature.hot": "ホット",
-  "leadScoring.temperature.warm": "ウォーム",
-  "leadScoring.temperature.cool": "クール",
-  "leadScoring.temperature.cold": "コールド",
-  "quality.badge.excellent": "優秀",
-  "quality.badge.good": "良好",
-  "quality.badge.review": "要確認",
-  "quality.badge.flagged": "要注意",
-  "liveCalls.title": "ライブ通話",
-  "liveCalls.empty.title": "アクティブな通話はありません",
-  "liveCalls.empty.body": "エージェントがライブ通話に入ると、ここにリアルタイムで表示されます。",
-  "liveCalls.actions.listenIn": "モニタリング",
-  "liveCalls.actions.whisper": "エージェントにだけ話す",
-  "liveCalls.actions.bargeIn": "通話に参加する",
-  "liveCalls.queue.title": "通話キュー",
-  "liveCalls.queue.waiting": "待ち",
-  "liveCalls.queue.avgWait": "平均待ち時間",
-  "liveCalls.queue.longestWait": "最長待ち時間",
-  "phone.marketplace.title": "電話番号マーケットプレイス",
-  "phone.marketplace.subtitle": "ビジネスを展開している国で、番号を検索・比較・取得できます。",
-  "phone.marketplace.search.country": "国",
-  "phone.marketplace.search.region": "都道府県 / 地域",
-  "phone.marketplace.search.areaCode": "市外局番",
-  "phone.marketplace.search.tollFree": "フリーダイヤルのみ",
-  "phone.marketplace.search.button": "番号を検索",
-  "phone.marketplace.results.title": "利用可能な番号",
-  "phone.marketplace.results.empty.title": "番号が見つかりませんでした",
-  "phone.marketplace.results.empty.body": "別の市外局番、地域、または番号タイプをお試しください。",
-  "phone.marketplace.results.headers.number": "番号",
-  "phone.marketplace.results.headers.type": "タイプ",
-  "phone.marketplace.results.headers.capabilities": "機能",
-  "phone.marketplace.results.headers.monthly": "月額料金",
-  "phone.marketplace.results.headers.setup": "初期費用",
-  "phone.marketplace.results.type.local": "市内",
-  "phone.marketplace.results.type.tollFree": "フリーダイヤル",
-  "phone.marketplace.results.type.mobile": "携帯",
-  "phone.marketplace.button.getNumber": "この番号を取得",
-  "phone.marketplace.toast.provisioning": "電話番号をプロビジョニングしています…",
-  "phone.marketplace.toast.provisioned": "電話番号が正常にプロビジョニングされました。",
-  "phone.marketplace.toast.error": "この番号をプロビジョニングできませんでした。別の番号をお試しください。",
-  "phone.porting.title": "既存番号をポートイン",
-  "phone.porting.subtitle": "既存のビジネス番号を中断なく Recall Touch に移行します。",
-  "phone.porting.step.number": "番号の詳細",
-  "phone.porting.step.documents": "承認",
-  "phone.porting.step.account": "アカウント情報",
-  "phone.porting.step.review": "確認と送信",
-  "phone.porting.step.confirmation": "確認",
-  "phone.porting.numberLabel": "ポートインする電話番号",
-  "phone.porting.carrierLabel": "現在の通信事業者",
-  "phone.porting.loaLabel": "委任状 (LOA)",
-  "phone.porting.uploadLoa": "LOA をアップロード",
-  "phone.porting.accountNumber": "アカウント番号",
-  "phone.porting.pin": "アカウント PIN / パスワード",
-  "phone.porting.notes": "サポートチームへのメモ",
-  "phone.porting.summary.title": "ポートイン申請の要約",
-  "phone.porting.summary.estimatedTimeline": "想定スケジュール",
-  "phone.porting.summary.estimatedTimelineBody": "多くのポートインは、現在の通信事業者に応じて 3〜7 営業日で完了します。",
-  "phone.porting.submit": "ポートイン申請を送信",
-  "phone.porting.toast.submitted": "ポートイン申請を送信しました。担当チームが確認し、進捗をお知らせします。",
-  "phone.porting.toast.error": "ポートイン申請を送信できませんでした。内容を確認して再度お試しください。",
-  "integrations.hub.title": "インテグレーション",
-  "integrations.hub.subtitle": "Recall Touch を CRM、カレンダー、メッセージングツールなどと連携します。",
-  "integrations.card.salesforce.title": "Salesforce",
-  "integrations.card.salesforce.body": "Salesforce CRM とリード・連絡先・アクティビティを同期します。",
-  "integrations.card.hubspot.title": "HubSpot",
-  "integrations.card.hubspot.body": "通話結果に合わせて HubSpot の連絡先や案件を最新状態に保ちます。",
-  "integrations.card.zoho.title": "Zoho CRM",
-  "integrations.card.zoho.body": "有望なリードや予約を Zoho CRM に直接送信します。",
-  "integrations.card.pipedrive.title": "Pipedrive",
-  "integrations.card.pipedrive.body": "通話結果とフォロー状況に応じて案件ステージを更新します。",
-  "integrations.card.googleContacts.title": "Google Contacts",
-  "integrations.card.googleContacts.body": "Google 連絡先を同期し、AI が相手を理解できるようにします。",
-  "integrations.card.microsoft365.title": "Microsoft 365",
-  "integrations.card.microsoft365.body": "Outlook の連絡先とカレンダーを接続し、コンテキストを揃えます。",
-  "integrations.card.gohighlevel.title": "GoHighLevel",
-  "integrations.card.gohighlevel.body": "有望なリードと通話を GoHighLevel のパイプラインに押し込みます。",
-  "integrations.status.connected": "接続済み",
-  "integrations.status.disconnected": "未接続",
-  "integrations.lastSync": "最終同期",
-  "integrations.button.connect": "接続",
-  "integrations.button.configure": "設定",
-  "integrations.button.disconnect": "切断",
-  "integrations.syncStatus.title": "同期ステータス",
-  "integrations.syncStatus.records": "同期済みレコード数",
-  "integrations.syncStatus.errors": "同期エラー",
-  "integrations.syncStatus.viewLog": "同期ログを表示",
-  "webhooks.title": "Webhook",
-  "webhooks.subtitle": "Recall Touch のリアルタイムイベントを自社システムに送信します。",
-  "webhooks.list.empty.title": "Webhook がまだありません",
-  "webhooks.list.empty.body": "新しいリードや通話、予約などのイベントを受け取るには、Webhook を作成してください。",
-  "webhooks.form.url": "Webhook URL",
-  "webhooks.form.secret": "署名シークレット",
-  "webhooks.form.events": "購読するイベント",
-  "webhooks.form.event.callStarted": "通話開始",
-  "webhooks.form.event.callCompleted": "通話完了",
-  "webhooks.form.event.callFailed": "通話失敗",
-  "webhooks.form.event.leadCreated": "リード作成",
-  "webhooks.form.event.leadUpdated": "リード更新",
-  "webhooks.form.event.appointmentBooked": "予約作成",
-  "webhooks.form.event.appointmentCompleted": "予約完了",
-  "webhooks.form.event.paymentReceived": "支払い受領",
-  "webhooks.button.create": "Webhook を作成",
-  "webhooks.button.update": "Webhook を更新",
-  "webhooks.button.delete": "Webhook を削除",
-  "webhooks.log.title": "配信ログ",
-  "webhooks.log.status": "ステータス",
-  "webhooks.log.responseTime": "応答時間",
-  "webhooks.log.payload": "ペイロード",
-  "webhooks.log.retry": "再送信",
-  "webhooks.test.button": "テストイベントを送信",
-  "email.templates.title": "メールテンプレート",
-  "email.templates.subtitle": "通話の前後に顧客へ送信されるメールをカスタマイズします。",
-  "email.templates.appointmentConfirmation": "予約確認メール",
-  "email.templates.appointmentReminder": "予約リマインダー",
-  "email.templates.followUp": "通話後フォローアップ",
-  "email.templates.missedCall": "不在着信のお知らせ",
-  "email.templates.campaignSummary": "キャンペーン要約",
-  "email.templates.variablesHint": "たとえば {{contact.name}} や {{appointment.date}} といった変数を使用できます。",
-  "email.templates.button.preview": "メールをプレビュー",
-  "email.templates.button.sendTest": "テストメールを送信",
-  "email.templates.button.save": "テンプレートを保存",
-  "slack.title": "Slack 通知",
-  "slack.subtitle": "重要なイベントを Slack ワークスペースに通知します。",
-  "slack.button.connect": "Slack に接続",
-  "slack.button.disconnect": "Slack を切断",
-  "slack.channelPicker.label": "チャンネル",
-  "slack.channelPicker.placeholder": "Slack チャンネルを選択",
-  "slack.notifications.newLead": "新規リードのアラート",
-  "slack.notifications.callSummary": "通話完了サマリー",
-  "slack.notifications.dailyDigest": "デイリーダイジェスト",
-  "slack.notifications.qualityAlerts": "品質アラート",
-  "slack.notifications.appointments": "予約リマインダー",
-  "slack.toast.connected": "Slack と正常に接続されました。",
-  "slack.toast.disconnected": "Slack との接続を解除しました。",
-  "api.errors.validation": "送信されたデータが正しくありません。各項目を確認してから、もう一度お試しください。",
-  "api.errors.rateLimited": "リクエストが多すぎます。少し待ってから再度お試しください。",
-  "api.errors.unauthorized": "この操作を行う権限がありません。",
-  "api.errors.forbidden": "このワークスペースでは、このリソースを利用できません。",
-  "api.errors.notFound": "お探しの内容は見つかりませんでした。",
-  "api.errors.conflict": "このリソースは別のタブで更新されました。ページを更新してから再度お試しください。",
-  "api.errors.server": "サーバーで予期しないエラーが発生しました。担当チームに通知されています。"
+  "timezone": {
+    "label": "タイムゾーン",
+    "helper": "このタイムゾーンはスケジューリング、レポート、通知に利用されます。"
+  },
+  "currency": {
+    "label": "通貨",
+    "helper": "料金・レポート・請求に使用する主要通貨を選択してください。"
+  },
+  "phoneInput": {
+    "label": "電話番号",
+    "countryPlaceholder": "国",
+    "numberPlaceholder": "電話番号",
+    "error": {
+      "invalid": "選択した国に有効な電話番号を入力してください。"
+    }
+  },
+  "scheduling": {
+    "timezoneNote": "すべての時刻はワークスペースのタイムゾーンで表示されます。",
+    "hoverUtc": "ホバーするとUTC時刻を表示します。"
+  },
+  "leadScoring": {
+    "label": "リードスコア",
+    "tooltip": "エンゲージメント、資格、行動、最新度に基づく総合スコアです。",
+    "temperature": {
+      "hot": "ホット",
+      "warm": "ウォーム",
+      "cool": "クール",
+      "cold": "コールド"
+    }
+  },
+  "quality": {
+    "badge": {
+      "excellent": "優秀",
+      "good": "良好",
+      "review": "要確認",
+      "flagged": "要注意"
+    }
+  },
+  "liveCalls": {
+    "title": "ライブ通話",
+    "empty": {
+      "title": "アクティブな通話はありません",
+      "body": "エージェントがライブ通話に入ると、ここにリアルタイムで表示されます。"
+    },
+    "actions": {
+      "listenIn": "モニタリング",
+      "whisper": "エージェントにだけ話す",
+      "bargeIn": "通話に参加する"
+    },
+    "queue": {
+      "title": "通話キュー",
+      "waiting": "待ち",
+      "avgWait": "平均待ち時間",
+      "longestWait": "最長待ち時間"
+    }
+  },
+  "phone": {
+    "marketplace": {
+      "title": "電話番号マーケットプレイス",
+      "subtitle": "ビジネスを展開している国で、番号を検索・比較・取得できます。",
+      "search": {
+        "country": "国",
+        "region": "都道府県 / 地域",
+        "areaCode": "市外局番",
+        "tollFree": "フリーダイヤルのみ",
+        "button": "番号を検索"
+      },
+      "results": {
+        "title": "利用可能な番号",
+        "empty": {
+          "title": "番号が見つかりませんでした",
+          "body": "別の市外局番、地域、または番号タイプをお試しください。"
+        },
+        "headers": {
+          "number": "番号",
+          "type": "タイプ",
+          "capabilities": "機能",
+          "monthly": "月額料金",
+          "setup": "初期費用"
+        },
+        "type": {
+          "local": "市内",
+          "tollFree": "フリーダイヤル",
+          "mobile": "携帯"
+        }
+      },
+      "button": {
+        "getNumber": "この番号を取得"
+      },
+      "toast": {
+        "provisioning": "電話番号をプロビジョニングしています…",
+        "provisioned": "電話番号が正常にプロビジョニングされました。",
+        "error": "この番号をプロビジョニングできませんでした。別の番号をお試しください。"
+      }
+    },
+    "porting": {
+      "title": "既存番号をポートイン",
+      "subtitle": "既存のビジネス番号を中断なく Recall Touch に移行します。",
+      "step": {
+        "number": "番号の詳細",
+        "documents": "承認",
+        "account": "アカウント情報",
+        "review": "確認と送信",
+        "confirmation": "確認"
+      },
+      "numberLabel": "ポートインする電話番号",
+      "carrierLabel": "現在の通信事業者",
+      "loaLabel": "委任状 (LOA)",
+      "uploadLoa": "LOA をアップロード",
+      "accountNumber": "アカウント番号",
+      "pin": "アカウント PIN / パスワード",
+      "notes": "サポートチームへのメモ",
+      "summary": {
+        "title": "ポートイン申請の要約",
+        "estimatedTimeline": "想定スケジュール",
+        "estimatedTimelineBody": "多くのポートインは、現在の通信事業者に応じて 3〜7 営業日で完了します。"
+      },
+      "submit": "ポートイン申請を送信",
+      "toast": {
+        "submitted": "ポートイン申請を送信しました。担当チームが確認し、進捗をお知らせします。",
+        "error": "ポートイン申請を送信できませんでした。内容を確認して再度お試しください。"
+      }
+    }
+  },
+  "integrations": {
+    "hub": {
+      "title": "インテグレーション",
+      "subtitle": "Recall Touch を CRM、カレンダー、メッセージングツールなどと連携します。"
+    },
+    "card": {
+      "salesforce": {
+        "title": "Salesforce",
+        "body": "Salesforce CRM とリード・連絡先・アクティビティを同期します。"
+      },
+      "hubspot": {
+        "title": "HubSpot",
+        "body": "通話結果に合わせて HubSpot の連絡先や案件を最新状態に保ちます。"
+      },
+      "zoho": {
+        "title": "Zoho CRM",
+        "body": "有望なリードや予約を Zoho CRM に直接送信します。"
+      },
+      "pipedrive": {
+        "title": "Pipedrive",
+        "body": "通話結果とフォロー状況に応じて案件ステージを更新します。"
+      },
+      "googleContacts": {
+        "title": "Google Contacts",
+        "body": "Google 連絡先を同期し、AI が相手を理解できるようにします。"
+      },
+      "microsoft365": {
+        "title": "Microsoft 365",
+        "body": "Outlook の連絡先とカレンダーを接続し、コンテキストを揃えます。"
+      },
+      "gohighlevel": {
+        "title": "GoHighLevel",
+        "body": "有望なリードと通話を GoHighLevel のパイプラインに押し込みます。"
+      }
+    },
+    "status": {
+      "connected": "接続済み",
+      "disconnected": "未接続"
+    },
+    "lastSync": "最終同期",
+    "button": {
+      "connect": "接続",
+      "configure": "設定",
+      "disconnect": "切断"
+    },
+    "syncStatus": {
+      "title": "同期ステータス",
+      "records": "同期済みレコード数",
+      "errors": "同期エラー",
+      "viewLog": "同期ログを表示"
+    }
+  },
+  "email": {
+    "templates": {
+      "title": "メールテンプレート",
+      "subtitle": "通話の前後に顧客へ送信されるメールをカスタマイズします。",
+      "appointmentConfirmation": "予約確認メール",
+      "appointmentReminder": "予約リマインダー",
+      "followUp": "通話後フォローアップ",
+      "missedCall": "不在着信のお知らせ",
+      "campaignSummary": "キャンペーン要約",
+      "variablesHint": "たとえば {{contact.name}} や {{appointment.date}} といった変数を使用できます。",
+      "button": {
+        "preview": "メールをプレビュー",
+        "sendTest": "テストメールを送信",
+        "save": "テンプレートを保存"
+      }
+    }
+  },
+  "slack": {
+    "title": "Slack 通知",
+    "subtitle": "重要なイベントを Slack ワークスペースに通知します。",
+    "button": {
+      "connect": "Slack に接続",
+      "disconnect": "Slack を切断"
+    },
+    "channelPicker": {
+      "label": "チャンネル",
+      "placeholder": "Slack チャンネルを選択"
+    },
+    "notifications": {
+      "newLead": "新規リードのアラート",
+      "callSummary": "通話完了サマリー",
+      "dailyDigest": "デイリーダイジェスト",
+      "qualityAlerts": "品質アラート",
+      "appointments": "予約リマインダー"
+    },
+    "toast": {
+      "connected": "Slack と正常に接続されました。",
+      "disconnected": "Slack との接続を解除しました。"
+    }
+  },
+  "api": {
+    "errors": {
+      "validation": "送信されたデータが正しくありません。各項目を確認してから、もう一度お試しください。",
+      "rateLimited": "リクエストが多すぎます。少し待ってから再度お試しください。",
+      "unauthorized": "この操作を行う権限がありません。",
+      "forbidden": "このワークスペースでは、このリソースを利用できません。",
+      "notFound": "お探しの内容は見つかりませんでした。",
+      "conflict": "このリソースは別のタブで更新されました。ページを更新してから再度お試しください。",
+      "server": "サーバーで予期しないエラーが発生しました。担当チームに通知されています。"
+    }
+  }
 }
-

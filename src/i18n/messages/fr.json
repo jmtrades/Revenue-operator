@@ -1,211 +1,449 @@
 {
-  "app.title": "Recall Touch — Appels téléphoniques IA",
-  "nav.dashboard": "Tableau de bord",
-  "nav.agents": "Agents",
-  "nav.calls": "Appels",
-  "nav.leads": "Leads",
-  "nav.campaigns": "Campagnes",
-  "nav.inbox": "Boîte de réception",
-  "nav.analytics": "Analyses",
-  "nav.settings": "Paramètres",
-  "nav.team": "Équipe",
-  "nav.calendar": "Calendrier",
-  "nav.appointments": "Rendez-vous",
-  "nav.knowledge": "Connaissance",
-  "nav.callIntelligence": "Intelligence d'appel",
-  "nav.compliance": "Conformité",
-  "nav.billing": "Facturation",
-  "nav.signOut": "Se déconnecter",
-  "common.save": "Enregistrer",
-  "common.cancel": "Annuler",
-  "common.delete": "Supprimer",
-  "common.edit": "Modifier",
-  "common.close": "Fermer",
-  "common.continue": "Continuer",
-  "common.back": "Retour",
-  "common.next": "Suivant",
-  "common.previous": "Précédent",
-  "common.submit": "Envoyer",
-  "common.loading": "Chargement",
-  "common.error": "Erreur",
-  "common.success": "Succès",
-  "common.retry": "Réessayer",
-  "common.viewAll": "Tout voir",
-  "common.search": "Rechercher",
-  "common.clear": "Effacer",
-  "common.confirm": "Confirmer",
-  "common.dismiss": "Ignorer",
-  "common.optional": "Optionnel",
-  "common.required": "Obligatoire",
-  "toast.saved": "Paramètres enregistrés",
-  "toast.updated": "Modifications enregistrées",
-  "toast.deleted": "Élément supprimé",
-  "toast.error.generic": "Un problème est survenu. Veuillez réessayer.",
-  "auth.signIn.title": "Se connecter",
-  "auth.signIn.subtitle": "Bienvenue à nouveau sur Recall Touch",
-  "auth.email.label": "Adresse e-mail",
-  "auth.password.label": "Mot de passe",
-  "auth.signIn.button": "Se connecter",
-  "auth.google.button": "Continuer avec Google",
-  "auth.forgotPassword": "Mot de passe oublié ?",
-  "auth.noAccount": "Vous n'avez pas de compte ?",
-  "auth.startFree": "Commencer gratuitement",
-  "auth.toasts.noAccount": "Aucun compte trouvé. Créez-en un en démarrant gratuitement.",
-  "auth.toasts.googleComingSoon": "La connexion Google arrive bientôt.",
-  "auth.toasts.signInFailed": "La connexion n'a pas pu être effectuée. Veuillez réessayer.",
-  "dashboard.greeting.morning": "Bonjour",
-  "dashboard.greeting.afternoon": "Bon après-midi",
-  "dashboard.greeting.evening": "Bonsoir",
-  "dashboard.subtitle": "Votre opérateur de revenus piloté par l'IA en un coup d'œil.",
-  "dashboard.kpis.callsHandled": "Appels traités",
-  "dashboard.kpis.answerRate": "Taux de réponse",
-  "dashboard.kpis.leadsCreated": "Leads créés",
-  "dashboard.kpis.appointmentsBooked": "Rendez-vous pris",
-  "dashboard.kpis.revenueProtected": "Revenus protégés",
-  "dashboard.quickActions.title": "Actions rapides",
-  "dashboard.quickActions.testCall": "Passer un appel test",
-  "dashboard.quickActions.newAgent": "Créer un nouvel agent",
-  "dashboard.quickActions.importContacts": "Importer des contacts",
-  "dashboard.quickActions.startCampaign": "Lancer une campagne",
-  "dashboard.checklist.title": "Configuration en quelques minutes",
-  "dashboard.checklist.progressLabel": "Progression de la configuration",
-  "dashboard.checklist.item.businessProfile": "Configurer le profil de votre entreprise",
-  "dashboard.checklist.item.agent": "Configurer votre premier agent IA",
-  "dashboard.checklist.item.number": "Obtenir un numéro de téléphone",
-  "dashboard.checklist.item.testCall": "Effectuer un appel test",
-  "dashboard.checklist.item.contacts": "Importer vos contacts",
-  "dashboard.checklist.item.calendar": "Configurer votre calendrier",
-  "dashboard.checklist.item.campaign": "Lancer votre première campagne",
-  "dashboard.checklist.item.team": "Inviter votre équipe",
-  "dashboard.checklist.dismiss": "Je sais ce que je fais",
-  "dashboard.welcome.title": "Bienvenue sur Recall Touch",
-  "dashboard.welcome.body": "Nous garderons cet espace prêt jusqu'à l'arrivée de vos premiers appels.",
-  "dashboard.needsAttention.title": "À surveiller",
-  "dashboard.needsAttention.empty": "Vous êtes à jour. Nous afficherons ici tout ce qui requiert votre attention.",
-  "dashboard.activity.title": "Activité récente",
-  "dashboard.activity.empty": "Aucune activité pour le moment. Lorsque les appels, leads et campagnes commenceront à arriver, ils apparaîtront ici.",
-  "analytics.title": "Analyses",
-  "analytics.periodSummary.title": "Résumé de la période",
-  "analytics.periodSummary.empty": "Pas encore assez de données pour générer un résumé.",
-  "analytics.filters.range.7d": "7 derniers jours",
-  "analytics.filters.range.30d": "30 derniers jours",
-  "analytics.filters.range.90d": "90 derniers jours",
-  "analytics.filters.range.custom": "Plage personnalisée",
-  "analytics.kpi.totalCalls": "Nombre total d'appels",
-  "analytics.kpi.answerRate": "Taux de réponse",
-  "analytics.kpi.conversionRate": "Taux de conversion",
-  "analytics.kpi.appointments": "Rendez-vous",
-  "analytics.kpi.estimatedRevenue": "Impact estimé sur les revenus",
-  "agents.title": "Agents",
-  "agents.new": "Nouvel agent",
-  "agents.empty.title": "Aucun agent pour le moment",
-  "agents.empty.body": "Créez votre premier agent pour commencer à traiter les appels, prendre des rendez-vous et qualifier les leads.",
-  "agents.readiness.label": "Préparation de l'agent",
-  "agents.steps.business": "Entreprise",
-  "agents.steps.behavior": "Comportement",
-  "agents.steps.knowledge": "Connaissance",
-  "agents.steps.phone": "Téléphone",
-  "agents.steps.test": "Test",
-  "agents.steps.launch": "Lancement",
-  "agents.behavior.objectionHandling.title": "Gestion des objections",
-  "agents.behavior.objectionHandling.subtitle": "Aidez votre agent à gérer les objections courantes avec des réponses humaines et calmes.",
-  "agents.behavior.qualification.title": "Critères de qualification",
-  "agents.behavior.qualification.subtitle": "Indiquez à votre agent à quoi ressemble un lead qualifié pour votre entreprise.",
-  "calls.title": "Appels",
-  "calls.filters.all": "Tous les appels",
-  "calls.filters.missed": "Manqués",
-  "calls.filters.answered": "Répondus",
-  "calls.filters.voicemail": "Messagerie vocale",
-  "calls.detail.summaryTitle": "Résumé de l'appel",
-  "calls.detail.sentiment": "Sentiment",
-  "calls.detail.outcome": "Résultat",
-  "calls.detail.duration": "Durée",
-  "calls.detail.transcript": "Transcription",
-  "calls.detail.addToCallIntelligence": "Ajouter à l'intelligence d'appel",
-  "calls.detail.leadInfo": "Informations sur le lead",
-  "calls.empty.title": "Aucun appel pour le moment",
-  "calls.empty.body": "Lorsque vos agents commenceront à traiter des appels, ils apparaîtront ici.",
-  "callIntelligence.title": "Intelligence d'appel",
-  "callIntelligence.tabs.analyzed": "Appels analysés",
-  "callIntelligence.tabs.manual": "Analyse manuelle",
-  "callIntelligence.quality.filter.all": "Toute qualité",
-  "callIntelligence.quality.filter.excellent": "Excellent (80+)",
-  "callIntelligence.quality.filter.good": "Bon (60-79)",
-  "callIntelligence.quality.filter.review": "À revoir (40-59)",
-  "callIntelligence.quality.filter.flagged": "Signalés (0-39)",
-  "inbox.title": "Boîte de réception",
-  "inbox.pageTitle": "Boîte de réception — Recall Touch",
-  "inbox.filters.all": "Tous",
-  "inbox.filters.unread": "Non lus",
-  "inbox.filters.phone": "Téléphone",
-  "inbox.filters.sms": "SMS",
-  "inbox.filters.email": "E-mail",
-  "inbox.filters.whatsapp": "WhatsApp",
-  "inbox.empty.title": "Calme pour le moment",
-  "inbox.empty.body": "Au fur et à mesure que vos appels, SMS et e-mails arriveront, vous pourrez tout gérer depuis ici.",
-  "inbox.empty.cta": "Activer les SMS dans les paramètres",
-  "inbox.search.placeholder": "Rechercher des conversations…",
-  "inbox.relative.justNow": "À l’instant",
-  "inbox.relative.minutesAgo": "Il y a {count} min",
-  "inbox.relative.hoursAgo": "Il y a {count} h",
-  "inbox.relative.yesterday": "Hier",
-  "inbox.relative.daysAgo": "Il y a {count} j",
-  "inbox.channel.phone": "Téléphone",
-  "inbox.channel.sms": "SMS",
-  "inbox.channel.email": "E-mail",
-  "inbox.channel.whatsapp": "WhatsApp",
-  "inbox.callCard.title": "Appel téléphonique",
-  "inbox.callCard.duration": "Durée : {duration}",
-  "inbox.callCard.viewCall": "Voir l’appel →",
-  "inbox.detail.empty": "Sélectionnez une conversation pour voir les détails.",
-  "inbox.detail.actions.markResolved": "Marquer comme résolue",
-  "inbox.detail.actions.reopen": "Rouvrir",
-  "inbox.detail.replyAs": "Répondre en tant que",
-  "inbox.detail.inputPlaceholder": "Écrire un message…",
-  "inbox.detail.sending": "Envoi…",
-  "inbox.detail.send": "Envoyer",
-  "inbox.contact": "Contact",
-  "inbox.viewInLeads": "Voir dans Leads",
-  "inbox.openContactPanel": "Ouvrir le panneau contact",
-  "leads.title": "Leads",
-  "leads.pageTitle": "Leads — Recall Touch",
-  "leads.board.columns.new": "Nouveaux",
-  "leads.board.columns.contacted": "Contactés",
-  "leads.board.columns.qualified": "Qualifiés",
-  "leads.board.columns.appointment": "Rendez-vous pris",
-  "leads.board.columns.won": "Gagnés",
-  "leads.board.columns.lost": "Perdus",
-  "leads.empty.title": "Aucun lead pour le moment",
-  "leads.empty.body": "Votre IA commencera à créer des leads automatiquement au fur et à mesure qu'elle parlera à vos clients.",
-  "campaigns.title": "Campagnes",
-  "campaigns.pageTitle": "Campagnes — Recall Touch",
-  "campaigns.create": "Créer une campagne",
-  "campaigns.empty.title": "Aucune campagne pour le moment",
-  "campaigns.empty.body": "Utilisez les campagnes pour relancer les appels manqués, réactiver les anciens leads et remplir votre calendrier.",
-  "settings.title": "Paramètres",
-  "settings.nav.general": "Général",
-  "settings.nav.phone": "Téléphone",
-  "settings.nav.integrations": "Intégrations",
-  "settings.nav.notifications": "Notifications",
-  "settings.nav.billing": "Facturation",
-  "settings.nav.team": "Équipe",
-  "settings.nav.compliance": "Conformité",
-  "settings.business.title": "Profil d'entreprise",
-  "settings.business.name": "Nom de l'entreprise",
-  "settings.business.website": "Site web",
-  "settings.business.address": "Adresse de l'entreprise",
-  "settings.business.timezone": "Fuseau horaire",
-  "settings.business.currency": "Devise",
-  "settings.phone.title": "Numéros de téléphone",
-  "settings.phone.getNewNumber": "Obtenir un nouveau numéro",
-  "settings.phone.portNumber": "Porter un numéro existant",
-  "settings.phone.empty.title": "Aucun numéro pour le moment",
-  "settings.phone.empty.body": "Provisionnez un nouveau numéro ou portez-en un existant pour commencer à router les appels.",
-  "settings.integrations.title": "Intégrations",
-  "settings.notifications.title": "Notifications",
-  "settings.billing.title": "Abonnements et facturation",
-  "settings.team.title": "Équipe et permissions",
-  "settings.compliance.title": "Conformité",
+  "app": {
+    "title": "Recall Touch — Appels téléphoniques IA"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "agents": "Agents",
+    "calls": "Appels",
+    "leads": "Leads",
+    "campaigns": "Campagnes",
+    "inbox": "Boîte de réception",
+    "analytics": "Analyses",
+    "settings": "Paramètres",
+    "team": "Équipe",
+    "calendar": "Calendrier",
+    "appointments": "Rendez-vous",
+    "knowledge": "Connaissance",
+    "callIntelligence": "Intelligence d'appel",
+    "compliance": "Conformité",
+    "billing": "Facturation",
+    "signOut": "Se déconnecter",
+    "notifications": "Notifications"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "continue": "Continuer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Envoyer",
+    "loading": "Chargement",
+    "error": "Erreur",
+    "success": "Succès",
+    "retry": "Réessayer",
+    "viewAll": "Tout voir",
+    "search": "Rechercher",
+    "clear": "Effacer",
+    "confirm": "Confirmer",
+    "dismiss": "Ignorer",
+    "optional": "Optionnel",
+    "required": "Obligatoire",
+    "remove": "Supprimer",
+    "saveChanges": "Enregistrer les modifications",
+    "deletePermanently": "Supprimer définitivement",
+    "import": "Importer",
+    "all": "Tous",
+    "failed": "Échec",
+    "closeDetails": "Fermer les détails",
+    "loadingApp": "Chargement de l'application"
+  },
+  "toast": {
+    "saved": "Paramètres enregistrés",
+    "updated": "Modifications enregistrées",
+    "deleted": "Élément supprimé",
+    "error": {
+      "generic": "Un problème est survenu. Veuillez réessayer."
+    },
+    "exportFailed": "Échec de l'export. Réessayez.",
+    "importFailed": "Échec de l'import.",
+    "searchFailed": "Échec de la recherche.",
+    "createAgentFirst": "Créez d'abord un agent dans la section Agents, puis réessayez."
+  },
+  "auth": {
+    "signIn": {
+      "title": "Se connecter",
+      "subtitle": "Bienvenue à nouveau sur Recall Touch",
+      "button": "Se connecter",
+      "pageTitle": "Connexion — Recall Touch"
+    },
+    "email": {
+      "label": "Adresse e-mail"
+    },
+    "password": {
+      "label": "Mot de passe"
+    },
+    "google": {
+      "button": "Continuer avec Google"
+    },
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "startFree": "Commencer gratuitement",
+    "toasts": {
+      "noAccount": "Aucun compte trouvé. Créez-en un en démarrant gratuitement.",
+      "googleComingSoon": "La connexion Google arrive bientôt.",
+      "signInFailed": "La connexion n'a pas pu être effectuée. Veuillez réessayer."
+    },
+    "signingIn": "Connexion…",
+    "savePassword": "Enregistrer le mot de passe"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Bonjour",
+      "afternoon": "Bon après-midi",
+      "evening": "Bonsoir"
+    },
+    "subtitle": "Votre opérateur de revenus piloté par l'IA en un coup d'œil.",
+    "kpis": {
+      "callsHandled": "Appels traités",
+      "answerRate": "Taux de réponse",
+      "leadsCreated": "Leads créés",
+      "appointmentsBooked": "Rendez-vous pris",
+      "revenueProtected": "Revenus protégés"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "testCall": "Passer un appel test",
+      "newAgent": "Créer un nouvel agent",
+      "importContacts": "Importer des contacts",
+      "startCampaign": "Lancer une campagne",
+      "agentSettings": "Paramètres de l'agent",
+      "agentSettingsDesc": "Configurer le comportement de l'IA",
+      "connectCrm": "Connecter le CRM",
+      "connectCrmDesc": "Envoyer les leads vers votre CRM",
+      "viewAnalytics": "Voir les analyses",
+      "viewAnalyticsDesc": "Voir les performances des appels",
+      "createCampaign": "Créer une campagne",
+      "createCampaignDesc": "Lancer des appels sortants",
+      "testCallDesc": "Tester votre agent IA",
+      "addLeadDesc": "Créer un nouveau lead"
+    },
+    "checklist": {
+      "title": "Configuration en quelques minutes",
+      "progressLabel": "Progression de la configuration",
+      "item": {
+        "businessProfile": "Configurer le profil de votre entreprise",
+        "agent": "Configurer votre premier agent IA",
+        "number": "Obtenir un numéro de téléphone",
+        "testCall": "Effectuer un appel test",
+        "contacts": "Importer vos contacts",
+        "calendar": "Configurer votre calendrier",
+        "campaign": "Lancer votre première campagne",
+        "team": "Inviter votre équipe"
+      },
+      "dismiss": "Je sais ce que je fais"
+    },
+    "welcome": {
+      "title": "Bienvenue sur Recall Touch",
+      "body": "Nous garderons cet espace prêt jusqu'à l'arrivée de vos premiers appels."
+    },
+    "needsAttention": {
+      "title": "À surveiller",
+      "empty": "Vous êtes à jour. Nous afficherons ici tout ce qui requiert votre attention."
+    },
+    "activity": {
+      "title": "Activité récente",
+      "empty": "Aucune activité pour le moment. Lorsque les appels, leads et campagnes commenceront à arriver, ils apparaîtront ici."
+    },
+    "pageTitle": "Tableau de bord — Recall Touch",
+    "importContacts": "Importer vos contacts",
+    "addLead": "Ajouter un lead",
+    "loadError": {
+      "message": "Impossible de charger l'activité. Vérifiez votre connexion et réessayez.",
+      "retry": "Réessayer",
+      "retryAria": "Réessayer le chargement de l'activité"
+    },
+    "agentReady": {
+      "title": "Votre agent IA est prêt",
+      "description": "Connectez votre numéro pour commencer à recevoir de vrais appels.",
+      "connectPhone": "Connecter le téléphone",
+      "footnote": "Des entreprises comme la vôtre récupèrent plus de 2 400 €/mois en appels manqués."
+    },
+    "nextActions": {
+      "title": "Prochaines étapes",
+      "connectPhone": {
+        "title": "Connectez votre téléphone",
+        "body": "Routez votre numéro existant ou réservez-en un nouveau pour que votre IA réponde aux appels."
+      },
+      "testCall": {
+        "title": "Faire un appel test",
+        "body": "Écoutez le message d'accueil et confirmez le flux avant de passer en direct."
+      },
+      "shareTeam": {
+        "title": "Partagez avec votre équipe",
+        "body": "Invitez les personnes qui doivent voir les leads, rendez-vous et mises à jour de la boîte de réception."
+      },
+      "open": "Ouvrir →"
+    },
+    "seeLive": {
+      "title": "Voir en direct",
+      "description": "Regardez l'exemple d'appel pour voir comment un lead est répondu, qualifié et réservé avant de connecter votre ligne.",
+      "cta": "Essayer notre agent →"
+    },
+    "roi": {
+      "title": "ROI estimé",
+      "body": "Les entreprises à votre stade récupèrent généralement plus de 2 400 €/mois une fois chaque appel manqué transformé en lead capté."
+    },
+    "systemEvents": {
+      "title": "Événements système récents",
+      "empty": "Les événements de configuration apparaîtront ici.",
+      "view": "Voir →"
+    },
+    "detail": {
+      "callLabel": "Appel"
+    }
+  },
+  "analytics": {
+    "title": "Analyses",
+    "periodSummary": {
+      "title": "Résumé de la période",
+      "empty": "Pas encore assez de données pour générer un résumé."
+    },
+    "filters": {
+      "range": {
+        "7d": "7 derniers jours",
+        "30d": "30 derniers jours",
+        "90d": "90 derniers jours",
+        "custom": "Plage personnalisée"
+      }
+    },
+    "kpi": {
+      "totalCalls": "Nombre total d'appels",
+      "answerRate": "Taux de réponse",
+      "conversionRate": "Taux de conversion",
+      "appointments": "Rendez-vous",
+      "estimatedRevenue": "Impact estimé sur les revenus"
+    },
+    "successRate": "% de succès"
+  },
+  "agents": {
+    "title": "Agents",
+    "new": "Nouvel agent",
+    "empty": {
+      "title": "Aucun agent pour le moment",
+      "body": "Créez votre premier agent pour commencer à traiter les appels, prendre des rendez-vous et qualifier les leads."
+    },
+    "readiness": {
+      "label": "Préparation de l'agent"
+    },
+    "steps": {
+      "business": "Entreprise",
+      "behavior": "Comportement",
+      "knowledge": "Connaissances",
+      "phone": "Téléphone",
+      "test": "Test",
+      "launch": "Lancement",
+      "identity": "Mission",
+      "identityDescription": "Que fait cet agent ?",
+      "voice": "Voix",
+      "voiceDescription": "Quel est son ton ?",
+      "knowledgeDescription": "Que sait-il ?",
+      "behaviorDescription": "Comment agit-il ?",
+      "testDescription": "Fonctionne-t-il correctement ?",
+      "golive": "Mise en production",
+      "goliveDescription": "Connecter à votre téléphone"
+    },
+    "behavior": {
+      "objectionHandling": {
+        "title": "Gestion des objections",
+        "subtitle": "Aidez votre agent à gérer les objections courantes avec des réponses humaines et calmes."
+      },
+      "qualification": {
+        "title": "Critères de qualification",
+        "subtitle": "Indiquez à votre agent à quoi ressemble un lead qualifié pour votre entreprise."
+      }
+    },
+    "deleteAgent": "Supprimer l'agent",
+    "deleteAgentTitle": "Supprimer l'agent",
+    "saveDraft": "Enregistrer le brouillon",
+    "launch": "Lancer",
+    "importFromWebsite": "Importer depuis le site",
+    "createFirst": "Créez votre premier agent",
+    "saveAndUpdate": "Enregistrer et mettre à jour l'agent",
+    "editSubtitle": "Modifier l'agent.",
+    "newWizard": {
+      "title": "Créez votre agent IA",
+      "subtitle": "Suivez les étapes pour configurer votre agent vocal.",
+      "breadcrumbs": {
+        "newAgent": "Nouvel agent"
+      },
+      "errors": {
+        "nameRequired": "Donnez un nom à votre agent."
+      },
+      "toast": {
+        "draftSaved": "Brouillon enregistré.",
+        "saveError": "Enregistrement impossible. Réessayez.",
+        "createError": "Impossible de créer l’agent.",
+        "activateError": "Impossible d’activer l’agent."
+      }
+    }
+  },
+  "calls": {
+    "title": "Appels",
+    "filters": {
+      "all": "Tous les appels",
+      "missed": "Manqués",
+      "answered": "Répondus",
+      "voicemail": "Messagerie vocale"
+    },
+    "detail": {
+      "summaryTitle": "Résumé de l'appel",
+      "sentiment": "Sentiment",
+      "outcome": "Résultat",
+      "duration": "Durée",
+      "transcript": "Transcription",
+      "addToCallIntelligence": "Ajouter à l'intelligence d'appel",
+      "leadInfo": "Informations sur le lead"
+    },
+    "empty": {
+      "title": "Aucun appel pour le moment",
+      "body": "Lorsque vos agents commenceront à traiter des appels, ils apparaîtront ici."
+    }
+  },
+  "callIntelligence": {
+    "title": "Intelligence d'appel",
+    "tabs": {
+      "analyzed": "Appels analysés",
+      "manual": "Analyse manuelle"
+    },
+    "quality": {
+      "filter": {
+        "all": "Toute qualité",
+        "excellent": "Excellent (80+)",
+        "good": "Bon (60-79)",
+        "review": "À revoir (40-59)",
+        "flagged": "Signalés (0-39)"
+      }
+    }
+  },
+  "inbox": {
+    "title": "Boîte de réception",
+    "pageTitle": "Boîte de réception — Recall Touch",
+    "filters": {
+      "all": "Tous",
+      "unread": "Non lus",
+      "phone": "Téléphone",
+      "sms": "SMS",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp"
+    },
+    "empty": {
+      "title": "Calme pour le moment",
+      "body": "Au fur et à mesure que vos appels, SMS et e-mails arriveront, vous pourrez tout gérer depuis ici.",
+      "cta": "Activer les SMS dans les paramètres"
+    },
+    "search": {
+      "placeholder": "Rechercher des conversations…"
+    },
+    "relative": {
+      "justNow": "À l’instant",
+      "minutesAgo": "Il y a {count} min",
+      "hoursAgo": "Il y a {count} h",
+      "yesterday": "Hier",
+      "daysAgo": "Il y a {count} j"
+    },
+    "channel": {
+      "phone": "Téléphone",
+      "sms": "SMS",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp"
+    },
+    "callCard": {
+      "title": "Appel téléphonique",
+      "duration": "Durée : {duration}",
+      "viewCall": "Voir l’appel →"
+    },
+    "detail": {
+      "empty": "Sélectionnez une conversation pour voir les détails.",
+      "actions": {
+        "markResolved": "Marquer comme résolue",
+        "reopen": "Rouvrir"
+      },
+      "replyAs": "Répondre en tant que",
+      "inputPlaceholder": "Écrire un message…",
+      "sending": "Envoi…",
+      "send": "Envoyer"
+    },
+    "contact": "Contact",
+    "viewInLeads": "Voir dans Leads",
+    "openContactPanel": "Ouvrir le panneau contact"
+  },
+  "leads": {
+    "title": "Leads",
+    "pageTitle": "Leads — Recall Touch",
+    "board": {
+      "columns": {
+        "new": "Nouveaux",
+        "contacted": "Contactés",
+        "qualified": "Qualifiés",
+        "appointment": "Rendez-vous pris",
+        "won": "Gagnés",
+        "lost": "Perdus"
+      }
+    },
+    "empty": {
+      "title": "Aucun lead pour le moment",
+      "body": "Votre IA commencera à créer des leads automatiquement au fur et à mesure qu'elle parlera à vos clients."
+    },
+    "saveLead": "Enregistrer le lead"
+  },
+  "campaigns": {
+    "title": "Campagnes",
+    "pageTitle": "Campagnes — Recall Touch",
+    "create": "Créer une campagne",
+    "empty": {
+      "title": "Aucune campagne pour le moment",
+      "body": "Utilisez les campagnes pour relancer les appels manqués, réactiver les anciens leads et remplir votre calendrier."
+    },
+    "new": "Nouvelle campagne",
+    "removeStep": "Supprimer l'étape",
+    "runAt": "Exécuter à (date et heure)",
+    "nextRun": "Prochaine exécution (date et heure)"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "nav": {
+      "general": "Général",
+      "phone": "Téléphone",
+      "integrations": "Intégrations",
+      "notifications": "Notifications",
+      "billing": "Facturation",
+      "team": "Équipe",
+      "compliance": "Conformité"
+    },
+    "business": "Entreprise",
+    "phone": "Téléphone et numéros",
+    "integrations": {
+      "title": "Intégrations"
+    },
+    "notifications": {
+      "title": "Notifications"
+    },
+    "billing": {
+      "title": "Abonnements et facturation"
+    },
+    "team": {
+      "title": "Équipe et permissions"
+    },
+    "compliance": {
+      "title": "Conformité"
+    },
+    "errorReports": "Rapports d'erreur",
+    "saveMapping": "Enregistrer le mappage",
+    "saveProfile": "Enregistrer le profil",
+    "savePreferences": "Enregistrer les préférences",
+    "saveWeights": "Enregistrer les pondérations",
+    "saveWebhook": "Enregistrer le webhook",
+    "leadScoring": "Score des leads",
+    "activityLog": "Journal d'activité",
+    "deleteAllDataTitle": "Supprimer toutes les données",
+    "deleteAllDataMessage": "Supprimer toutes les données de l'espace (appels, leads, agents) ? Irréversible. Contactez le support.",
+    "deleteAccountTitle": "Supprimer le compte"
+  },
   "hero": {
     "title": "Une IA qui répond au téléphone de votre entreprise 24h/24 et 7j/7",
     "subtitle": "Ne manquez plus jamais un appel. Ne perdez plus jamais un lead. Recall Touch gère chaque conversation, prend des rendez-vous et protège vos revenus pendant que vous travaillez.",
@@ -218,476 +456,627 @@
       "noCard": "Aucune carte bancaire requise"
     }
   },
-  "pricing.title": "Tarifs",
-  "pricing.subtitle": "Des plans simples et transparents qui évoluent avec vos revenus.",
-  "pricing.toggle.monthly": "Mensuel",
-  "pricing.toggle.annual": "Annuel (économisez 17 %)",
-  "pricing.tier.starter.name": "Starter",
-  "pricing.tier.starter.description": "Pour les indépendants qui veulent que l'IA réponde à chaque appel.",
-  "pricing.tier.growth.name": "Growth",
-  "pricing.tier.growth.description": "Pour les équipes en croissance qui ont besoin d'une couverture fiable et d'un suivi.",
-  "pricing.tier.scale.name": "Scale",
-  "pricing.tier.scale.description": "Pour les équipes qui fonctionnent avec des revenus planifiés et des pipelines complexes.",
-  "pricing.tier.enterprise.name": "Enterprise",
-  "pricing.tier.enterprise.description": "Pour les organisations qui ont besoin de routage personnalisé, de sécurité et de SLA.",
-  "pricing.cta": "Commencer gratuitement",
-  "pricing.contactSales": "Parler aux ventes",
-  "languageSwitcher.label": "Langue",
-  "languageSwitcher.en": "Anglais",
-  "languageSwitcher.es": "Espagnol",
-  "languageSwitcher.fr": "Français",
-  "languageSwitcher.de": "Allemand",
-  "languageSwitcher.pt": "Portugais",
-  "languageSwitcher.ja": "Japonais",
-  "onboarding.title": "Onboarding",
-  "onboarding.step.business": "Entreprise",
-  "onboarding.step.agent": "Agent IA",
-  "onboarding.step.knowledge": "Connaissance",
-  "onboarding.step.phone": "Téléphone",
-  "onboarding.step.test": "Test",
-  "onboarding.step.complete": "Terminé",
-  "onboarding.business.heading": "Parlez-nous de votre entreprise",
-  "onboarding.business.description": "Nous utilisons ces informations pour personnaliser la façon dont votre IA répond au téléphone et présente votre société.",
-  "onboarding.agent.heading": "Configurez votre premier agent IA",
-  "onboarding.agent.description": "Choisissez un modèle et personnalisez la façon dont votre agent parle, gère les appels et prend des rendez-vous.",
-  "onboarding.knowledge.heading": "Ajoutez des connaissances",
-  "onboarding.knowledge.description": "Fournissez à votre agent le contexte nécessaire : FAQ, services, tarifs, localisation, etc.",
-  "onboarding.phone.heading": "Connectez votre téléphone",
-  "onboarding.phone.description": "Provisionnez un nouveau numéro ou connectez-en un existant pour que vos clients puissent joindre votre IA.",
-  "onboarding.test.heading": "Passez votre premier appel test",
-  "onboarding.test.description": "Appelez votre propre IA et voyez comment elle gère des conversations réelles avant le lancement.",
-  "onboarding.complete.heading": "Prêt pour le lancement",
-  "onboarding.complete.description": "Votre IA est configurée, connectée et prête à répondre aux appels de votre entreprise.",
-  "onboarding.cta.next": "Enregistrer et continuer",
-  "onboarding.cta.skip": "Ignorer pour l’instant",
-  "onboarding.cta.finish": "Terminer la configuration",
-  "onboarding.toast.saved": "Progression de l’onboarding enregistrée",
-  "onboarding.toast.complete": "Onboarding terminé. Redirection vers le tableau de bord.",
-  "errors.generic.title": "Un problème est survenu",
-  "errors.generic.body": "Nous n’avons pas pu terminer cette requête. Réessayez ou actualisez la page.",
-  "errors.network.title": "Problème réseau",
-  "errors.network.body": "Impossible de joindre le serveur. Vérifiez votre connexion puis réessayez.",
-  "errors.auth.title": "Authentification requise",
-  "errors.auth.body": "Votre session a expiré ou n’est plus valide. Veuillez vous reconnecter.",
-  "errors.notFound.title": "Introuvable",
-  "errors.notFound.body": "La page ou la ressource demandée n’existe pas.",
-  "errors.permission.title": "Accès refusé",
-  "errors.permission.body": "Cet espace de travail ou cette ressource n’est pas disponible avec vos permissions actuelles.",
-  "errors.retry": "Réessayer",
-  "errors.goHome": "Retour à l’accueil",
-  "errors.support": "Contacter le support",
-  "forms.validation.required": "Ce champ est obligatoire.",
-  "forms.validation.email": "Entrez une adresse e-mail valide.",
-  "forms.validation.url": "Entrez une URL valide.",
-  "forms.validation.phone": "Entrez un numéro de téléphone valide.",
-  "forms.validation.minLength": "Ce champ est trop court.",
-  "forms.validation.maxLength": "Ce champ est trop long.",
-  "forms.validation.number": "Entrez un nombre valide.",
-  "forms.validation.positive": "Entrez une valeur positive.",
-  "forms.validation.date": "Entrez une date valide.",
-  "forms.validation.time": "Entrez une heure valide.",
-  "forms.validation.currency": "Entrez un montant valide.",
-  "forms.state.saving": "Enregistrement…",
-  "forms.state.deleting": "Suppression…",
-  "forms.state.submitting": "Envoi…",
-  "forms.state.loading": "Chargement…",
-  "forms.state.creating": "Création…",
-  "forms.state.importing": "Importation…",
-  "common.remove": "Supprimer",
-  "common.saveChanges": "Enregistrer les modifications",
-  "common.deletePermanently": "Supprimer définitivement",
-  "common.import": "Importer",
-  "common.all": "Tous",
-  "common.failed": "Échec",
-  "common.closeDetails": "Fermer les détails",
-  "common.loadingApp": "Chargement de l'application",
-  "search.placeholderContacts": "Rechercher par nom, tél. ou e-mail…",
-  "search.placeholderCalls": "Rechercher par appelant ou tél.…",
-  "search.placeholderDocs": "Rechercher dans la doc…",
-  "search.placeholderEntries": "Rechercher des entrées…",
-  "search.placeholderActions": "Rechercher des actions…",
-  "toast.exportFailed": "Échec de l'export. Réessayez.",
-  "toast.importFailed": "Échec de l'import.",
-  "toast.searchFailed": "Échec de la recherche.",
-  "toast.createAgentFirst": "Créez d'abord un agent dans la section Agents, puis réessayez.",
-  "auth.signingIn": "Connexion…",
-  "auth.savePassword": "Enregistrer le mot de passe",
-  "auth.signIn.pageTitle": "Connexion — Recall Touch",
-  "agents.deleteAgent": "Supprimer l'agent",
-  "agents.deleteAgentTitle": "Supprimer l'agent",
-  "agents.saveDraft": "Enregistrer le brouillon",
-  "agents.launch": "Lancer",
-  "agents.importFromWebsite": "Importer depuis le site",
-  "agents.createFirst": "Créez votre premier agent",
-  "agents.saveAndUpdate": "Enregistrer et mettre à jour l'agent",
-  "agents.editSubtitle": "Modifier l'agent.",
-  "settings.business": "Entreprise",
-  "settings.phone": "Téléphone et numéros",
-  "settings.errorReports": "Rapports d'erreur",
-  "settings.saveMapping": "Enregistrer le mappage",
-  "settings.saveProfile": "Enregistrer le profil",
-  "settings.savePreferences": "Enregistrer les préférences",
-  "settings.saveWeights": "Enregistrer les pondérations",
-  "settings.saveWebhook": "Enregistrer le webhook",
-  "settings.leadScoring": "Score des leads",
-  "settings.activityLog": "Journal d'activité",
-  "settings.deleteAllDataTitle": "Supprimer toutes les données",
-  "settings.deleteAllDataMessage": "Supprimer toutes les données de l'espace (appels, leads, agents) ? Irréversible. Contactez le support.",
-  "settings.deleteAccountTitle": "Supprimer le compte",
-  "compliance.saveConsent": "Enregistrer le consentement d'enregistrement",
-  "webhooks.deleteTitle": "Supprimer l'endpoint webhook ?",
-  "campaigns.create": "Créer une campagne",
-  "campaigns.new": "Nouvelle campagne",
-  "campaigns.removeStep": "Supprimer l'étape",
-  "campaigns.runAt": "Exécuter à (date et heure)",
-  "campaigns.nextRun": "Prochaine exécution (date et heure)",
-  "calendar.removeAppointmentTitle": "Supprimer le rendez-vous ?",
-  "calendar.pageTitle": "Calendrier — Recall Touch",
-  "team.removeMemberTitle": "Supprimer le membre ?",
-  "knowledge.pageTitle": "Base de connaissances — Recall Touch",
-  "knowledge.addEntry": "Ajouter une entrée",
-  "knowledge.editEntry": "Modifier l'entrée",
-  "dashboard.pageTitle": "Tableau de bord — Recall Touch",
-  "dashboard.importContacts": "Importer vos contacts",
-  "dashboard.addLead": "Ajouter un lead",
-  "dashboard.loadError.message": "Impossible de charger l'activité. Vérifiez votre connexion et réessayez.",
-  "dashboard.loadError.retry": "Réessayer",
-  "dashboard.loadError.retryAria": "Réessayer le chargement de l'activité",
-  "dashboard.agentReady.title": "Votre agent IA est prêt",
-  "dashboard.agentReady.description": "Connectez votre numéro pour commencer à recevoir de vrais appels.",
-  "dashboard.agentReady.connectPhone": "Connecter le téléphone",
-  "dashboard.agentReady.footnote": "Des entreprises comme la vôtre récupèrent plus de 2 400 €/mois en appels manqués.",
-  "dashboard.nextActions.title": "Prochaines étapes",
-  "dashboard.nextActions.connectPhone.title": "Connectez votre téléphone",
-  "dashboard.nextActions.connectPhone.body": "Routez votre numéro existant ou réservez-en un nouveau pour que votre IA réponde aux appels.",
-  "dashboard.nextActions.testCall.title": "Faire un appel test",
-  "dashboard.nextActions.testCall.body": "Écoutez le message d'accueil et confirmez le flux avant de passer en direct.",
-  "dashboard.nextActions.shareTeam.title": "Partagez avec votre équipe",
-  "dashboard.nextActions.shareTeam.body": "Invitez les personnes qui doivent voir les leads, rendez-vous et mises à jour de la boîte de réception.",
-  "dashboard.nextActions.open": "Ouvrir →",
-  "dashboard.quickActions.agentSettings": "Paramètres de l'agent",
-  "dashboard.quickActions.agentSettingsDesc": "Configurer le comportement de l'IA",
-  "dashboard.quickActions.connectCrm": "Connecter le CRM",
-  "dashboard.quickActions.connectCrmDesc": "Envoyer les leads vers votre CRM",
-  "dashboard.quickActions.viewAnalytics": "Voir les analyses",
-  "dashboard.quickActions.viewAnalyticsDesc": "Voir les performances des appels",
-  "dashboard.quickActions.createCampaign": "Créer une campagne",
-  "dashboard.quickActions.createCampaignDesc": "Lancer des appels sortants",
-  "dashboard.quickActions.testCallDesc": "Tester votre agent IA",
-  "dashboard.quickActions.addLeadDesc": "Créer un nouveau lead",
-  "dashboard.seeLive.title": "Voir en direct",
-  "dashboard.seeLive.description": "Regardez l'exemple d'appel pour voir comment un lead est répondu, qualifié et réservé avant de connecter votre ligne.",
-  "dashboard.seeLive.cta": "Essayer notre agent →",
-  "dashboard.roi.title": "ROI estimé",
-  "dashboard.roi.body": "Les entreprises à votre stade récupèrent généralement plus de 2 400 €/mois une fois chaque appel manqué transformé en lead capté.",
-  "dashboard.systemEvents.title": "Événements système récents",
-  "dashboard.systemEvents.empty": "Les événements de configuration apparaîtront ici.",
-  "dashboard.systemEvents.view": "Voir →",
-  "dashboard.detail.callLabel": "Appel",
-  "filter.byOutcome": "Filtrer par résultat",
-  "filter.bySentiment": "Filtrer par sentiment",
-  "filter.activity": "Filtrer l'activité",
-  "leads.saveLead": "Enregistrer le lead",
-  "analytics.successRate": "% de succès",
-  "nav.billing": "Facturation",
-  "nav.notifications": "Notifications",
-  "empty.generic.title": "Rien ici pour l’instant",
-  "empty.generic.body": "Lorsque l’activité commencera à circuler dans Recall Touch, nous remplirons cette vue.",
-  "empty.search.title": "Aucun résultat",
-  "empty.search.body": "Essayez d’ajuster vos filtres ou votre terme de recherche.",
-  "empty.filters.title": "Aucun élément ne correspond à vos filtres",
-  "empty.filters.body": "Supprimez certains filtres pour voir plus de résultats.",
-  "commandPalette.title": "Recherche rapide",
-  "commandPalette.placeholder": "Rechercher des pages, actions et paramètres…",
-  "commandPalette.section.navigation": "Navigation",
-  "commandPalette.section.actions": "Actions",
-  "commandPalette.section.settings": "Paramètres",
-  "commandPalette.action.newLead": "Créer un nouveau lead",
-  "commandPalette.action.newAgent": "Créer un nouvel agent",
-  "commandPalette.action.newCampaign": "Créer une nouvelle campagne",
-  "commandPalette.action.importContacts": "Importer des contacts",
-  "commandPalette.empty": "Aucune correspondance. Essayez une autre recherche.",
-  "commandPalette.shortcuts": "Raccourcis clavier",
-  "contacts.pageTitle": "Contacts",
-  "contacts.title": "Contacts",
-  "contacts.subtitle": "Toutes les personnes avec qui votre IA parle, au même endroit.",
-  "contacts.savedCount": "{count, plural, one {# enregistré} other {# enregistrés}}",
-  "contacts.addContactCta": "Ajouter un contact",
-  "contacts.searchPlaceholder": "Rechercher par nom, téléphone ou email…",
-  "contacts.sortLabel": "Trier",
-  "contacts.sort.newest": "Plus récents",
-  "contacts.sort.score": "Score",
-  "contacts.sort.name": "Nom",
-  "contacts.tabs.all": "Tous",
-  "contacts.tabs.leads": "Leads",
-  "contacts.tabs.customers": "Clients",
-  "contacts.tabs.vip": "VIP",
-  "contacts.empty.title": "Aucun contact pour le moment.",
-  "contacts.empty.subtitle": "Votre IA ajoute des contacts à partir de chaque appel. Les contacts manuels apparaissent aussi ici.",
-  "contacts.empty.detail": "Sélectionnez un contact pour voir l’historique d’appels et les notes.",
-  "contacts.drawer.title": "Ajouter un contact",
-  "contacts.drawer.subtitle": "Votre IA utilisera ces informations lors des futurs appels.",
-  "contacts.form.firstNameLabel": "Prénom*",
-  "contacts.form.firstNamePlaceholder": "Mike",
-  "contacts.form.lastNameLabel": "Nom*",
-  "contacts.form.lastNamePlaceholder": "Johnson",
-  "contacts.form.phoneLabel": "Téléphone*",
-  "contacts.form.phonePlaceholder": "(503) 555-0199",
-  "contacts.form.emailLabel": "Email",
-  "contacts.form.emailPlaceholder": "nom@email.com",
-  "contacts.form.typeLabel": "Type",
-  "contacts.form.type.lead": "Lead",
-  "contacts.form.type.customer": "Client",
-  "contacts.form.type.vip": "VIP",
-  "contacts.form.tagsLabel": "Étiquettes",
-  "contacts.form.tagsPlaceholder": "Saisissez et appuyez sur Entrée",
-  "contacts.form.tagsHint": "Appuyez sur Entrée pour ajouter chaque étiquette",
-  "contacts.form.notesLabel": "Notes",
-  "contacts.form.notesPlaceholder": "Ce qui compte pour ce contact…",
-  "contacts.form.saveContact": "Enregistrer le contact",
-  "contacts.errors.firstNameRequired": "Le prénom est obligatoire",
-  "contacts.errors.lastNameRequired": "Le nom est obligatoire",
-  "contacts.errors.phoneRequired": "Le téléphone est obligatoire",
-  "contacts.toast.added": "Contact ajouté",
-  "agents.steps.identity": "Mission",
-  "agents.steps.identityDescription": "Que fait cet agent ?",
-  "agents.steps.voice": "Voix",
-  "agents.steps.voiceDescription": "Quel est son ton ?",
-  "agents.steps.knowledge": "Connaissances",
-  "agents.steps.knowledgeDescription": "Que sait-il ?",
-  "agents.steps.behavior": "Comportement",
-  "agents.steps.behaviorDescription": "Comment agit-il ?",
-  "agents.steps.test": "Test",
-  "agents.steps.testDescription": "Fonctionne-t-il correctement ?",
-  "agents.steps.golive": "Mise en production",
-  "agents.steps.goliveDescription": "Connecter à votre téléphone",
-  "agents.newWizard.title": "Créez votre agent IA",
-  "agents.newWizard.subtitle": "Suivez les étapes pour configurer votre agent vocal.",
-  "agents.newWizard.breadcrumbs.newAgent": "Nouvel agent",
-  "agents.newWizard.errors.nameRequired": "Donnez un nom à votre agent.",
-  "agents.newWizard.toast.draftSaved": "Brouillon enregistré.",
-  "agents.newWizard.toast.saveError": "Enregistrement impossible. Réessayez.",
-  "agents.newWizard.toast.createError": "Impossible de créer l’agent.",
-  "agents.newWizard.toast.activateError": "Impossible d’activer l’agent.",
-  "keyboardShortcuts.modal.title": "Raccourcis clavier",
-  "keyboardShortcuts.modal.closeHint": "Appuyez sur Échap ou ? pour fermer",
-  "keyboardShortcuts.item.commandPalette": "Ouvrir la palette de commandes",
-  "keyboardShortcuts.item.dashboard": "Aller au tableau de bord",
-  "keyboardShortcuts.item.agents": "Aller aux agents",
-  "keyboardShortcuts.item.calls": "Aller aux appels",
-  "keyboardShortcuts.item.leads": "Aller aux leads",
-  "keyboardShortcuts.item.campaigns": "Aller aux campagnes",
-  "keyboardShortcuts.item.inbox": "Aller à la boîte de réception",
-  "keyboardShortcuts.item.shortcuts": "Afficher cette aide sur les raccourcis",
-  "notifications.center.title": "Notifications",
-  "notifications.center.empty.title": "Aucune notification pour le moment",
-  "notifications.center.empty.body": "Nous afficherons ici les nouveaux leads, résumés d’appels et mises à jour importantes.",
-  "notifications.type.lead": "Nouveau lead",
-  "notifications.type.callCompleted": "Appel terminé",
-  "notifications.type.appointmentBooked": "Rendez-vous pris",
-  "notifications.type.qualityAlert": "Alerte de qualité",
-  "notifications.type.billing": "Facturation",
-  "notifications.type.system": "Mise à jour système",
-  "notifications.action.markRead": "Marquer comme lue",
-  "notifications.action.markAllRead": "Tout marquer comme lu",
-  "notifications.action.preferences": "Préférences de notification",
-  "docs.title": "Documentation",
-  "docs.quickStart.title": "Démarrage rapide",
-  "docs.quickStart.subtitle": "Mettez Recall Touch en production en moins de 5 minutes.",
-  "docs.quickStart.step.signUp": "Inscrivez-vous et créez votre espace de travail.",
-  "docs.quickStart.step.connectPhone": "Connectez un numéro de téléphone ou portez un numéro existant.",
-  "docs.quickStart.step.createAgent": "Créez votre premier agent IA.",
-  "docs.quickStart.step.test": "Effectuez un appel test et examinez la transcription.",
-  "docs.quickStart.step.launch": "Pointez le téléphone de votre entreprise vers Recall Touch et lancez-vous.",
-  "docs.api.title": "Référence API",
-  "docs.api.description": "Apprenez à intégrer Recall Touch dans vos outils et flux de travail existants.",
-  "docs.api.section.auth": "Authentification",
-  "docs.api.section.calls": "API d’appels",
-  "docs.api.section.leads": "API de leads",
-  "docs.api.section.appointments": "API de rendez-vous",
-  "docs.api.section.webhooks": "Webhooks",
-  "docs.search.placeholder": "Rechercher dans la documentation…",
-  "docs.feedback.prompt": "Cette page vous a-t-elle été utile ?",
-  "docs.feedback.yes": "Oui",
-  "docs.feedback.no": "Non",
-  "docs.feedback.thankYou": "Merci pour votre retour.",
-  "pricing.faq.title": "Questions sur les tarifs",
-  "pricing.faq.trial": "Proposez-vous un essai gratuit ?",
-  "pricing.faq.trialAnswer": "Oui — tous les plans hors Enterprise incluent un essai gratuit de 14 jours.",
-  "pricing.faq.overage": "Que se passe-t-il si je dépasse mes minutes incluses ?",
-  "pricing.faq.overageAnswer": "Nous facturons simplement le dépassement au tarif par minute de votre plan, sans pénalités.",
-  "pricing.faq.cancel": "Puis-je annuler à tout moment ?",
-  "pricing.faq.cancelAnswer": "Oui — vous pouvez annuler ou changer de plan à tout moment depuis les paramètres de facturation.",
-  "footer.cta.bookDemo": "Réserver une démo",
-  "footer.cta.contact": "Contact",
-  "footer.links.product": "Produit",
-  "footer.links.pricing": "Tarifs",
-  "footer.links.docs": "Docs",
-  "footer.links.terms": "Conditions",
-  "footer.links.privacy": "Confidentialité",
+  "pricing": {
+    "title": "Tarifs",
+    "subtitle": "Des plans simples et transparents qui évoluent avec vos revenus.",
+    "toggle": {
+      "monthly": "Mensuel",
+      "annual": "Annuel (économisez 17 %)"
+    },
+    "tier": {
+      "starter": {
+        "name": "Starter",
+        "description": "Pour les indépendants qui veulent que l'IA réponde à chaque appel."
+      },
+      "growth": {
+        "name": "Growth",
+        "description": "Pour les équipes en croissance qui ont besoin d'une couverture fiable et d'un suivi."
+      },
+      "scale": {
+        "name": "Scale",
+        "description": "Pour les équipes qui fonctionnent avec des revenus planifiés et des pipelines complexes."
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "Pour les organisations qui ont besoin de routage personnalisé, de sécurité et de SLA."
+      }
+    },
+    "cta": "Commencer gratuitement",
+    "contactSales": "Parler aux ventes",
+    "faq": {
+      "title": "Questions sur les tarifs",
+      "trial": "Proposez-vous un essai gratuit ?",
+      "trialAnswer": "Oui — tous les plans hors Enterprise incluent un essai gratuit de 14 jours.",
+      "overage": "Que se passe-t-il si je dépasse mes minutes incluses ?",
+      "overageAnswer": "Nous facturons simplement le dépassement au tarif par minute de votre plan, sans pénalités.",
+      "cancel": "Puis-je annuler à tout moment ?",
+      "cancelAnswer": "Oui — vous pouvez annuler ou changer de plan à tout moment depuis les paramètres de facturation."
+    }
+  },
+  "languageSwitcher": {
+    "label": "Langue",
+    "en": "Anglais",
+    "es": "Espagnol",
+    "fr": "Français",
+    "de": "Allemand",
+    "pt": "Portugais",
+    "ja": "Japonais",
+    "tooltip": "Changer la langue de l’interface"
+  },
+  "onboarding": {
+    "title": "Onboarding",
+    "step": {
+      "business": "Entreprise",
+      "agent": "Agent IA",
+      "knowledge": "Connaissance",
+      "phone": "Téléphone",
+      "test": "Test",
+      "complete": "Terminé"
+    },
+    "business": {
+      "heading": "Parlez-nous de votre entreprise",
+      "description": "Nous utilisons ces informations pour personnaliser la façon dont votre IA répond au téléphone et présente votre société."
+    },
+    "agent": {
+      "heading": "Configurez votre premier agent IA",
+      "description": "Choisissez un modèle et personnalisez la façon dont votre agent parle, gère les appels et prend des rendez-vous."
+    },
+    "knowledge": {
+      "heading": "Ajoutez des connaissances",
+      "description": "Fournissez à votre agent le contexte nécessaire : FAQ, services, tarifs, localisation, etc."
+    },
+    "phone": {
+      "heading": "Connectez votre téléphone",
+      "description": "Provisionnez un nouveau numéro ou connectez-en un existant pour que vos clients puissent joindre votre IA."
+    },
+    "test": {
+      "heading": "Passez votre premier appel test",
+      "description": "Appelez votre propre IA et voyez comment elle gère des conversations réelles avant le lancement."
+    },
+    "complete": {
+      "heading": "Prêt pour le lancement",
+      "description": "Votre IA est configurée, connectée et prête à répondre aux appels de votre entreprise."
+    },
+    "cta": {
+      "next": "Enregistrer et continuer",
+      "skip": "Ignorer pour l’instant",
+      "finish": "Terminer la configuration"
+    },
+    "toast": {
+      "saved": "Progression de l’onboarding enregistrée",
+      "complete": "Onboarding terminé. Redirection vers le tableau de bord."
+    }
+  },
+  "errors": {
+    "generic": {
+      "title": "Un problème est survenu",
+      "body": "Nous n’avons pas pu terminer cette requête. Réessayez ou actualisez la page."
+    },
+    "network": {
+      "title": "Problème réseau",
+      "body": "Impossible de joindre le serveur. Vérifiez votre connexion puis réessayez."
+    },
+    "auth": {
+      "title": "Authentification requise",
+      "body": "Votre session a expiré ou n’est plus valide. Veuillez vous reconnecter."
+    },
+    "notFound": {
+      "title": "Introuvable",
+      "body": "La page ou la ressource demandée n’existe pas."
+    },
+    "permission": {
+      "title": "Accès refusé",
+      "body": "Cet espace de travail ou cette ressource n’est pas disponible avec vos permissions actuelles."
+    },
+    "retry": "Réessayer",
+    "goHome": "Retour à l’accueil",
+    "support": "Contacter le support"
+  },
+  "forms": {
+    "validation": {
+      "required": "Ce champ est obligatoire.",
+      "email": "Entrez une adresse e-mail valide.",
+      "url": "Entrez une URL valide.",
+      "phone": "Entrez un numéro de téléphone valide.",
+      "minLength": "Ce champ est trop court.",
+      "maxLength": "Ce champ est trop long.",
+      "number": "Entrez un nombre valide.",
+      "positive": "Entrez une valeur positive.",
+      "date": "Entrez une date valide.",
+      "time": "Entrez une heure valide.",
+      "currency": "Entrez un montant valide."
+    },
+    "state": {
+      "saving": "Enregistrement…",
+      "deleting": "Suppression…",
+      "submitting": "Envoi…",
+      "loading": "Chargement…",
+      "creating": "Création…",
+      "importing": "Importation…"
+    }
+  },
+  "search": {
+    "placeholderContacts": "Rechercher par nom, tél. ou e-mail…",
+    "placeholderCalls": "Rechercher par appelant ou tél.…",
+    "placeholderDocs": "Rechercher dans la doc…",
+    "placeholderEntries": "Rechercher des entrées…",
+    "placeholderActions": "Rechercher des actions…"
+  },
+  "compliance": {
+    "saveConsent": "Enregistrer le consentement d'enregistrement"
+  },
+  "webhooks": {
+    "deleteTitle": "Supprimer l'endpoint webhook ?",
+    "title": "Webhooks",
+    "subtitle": "Envoyez les événements Recall Touch en temps réel vers vos propres systèmes.",
+    "list": {
+      "empty": {
+        "title": "Aucun webhook configuré",
+        "body": "Créez un webhook pour recevoir des événements tels que nouveaux leads, appels et rendez-vous."
+      }
+    },
+    "form": {
+      "url": "URL du webhook",
+      "secret": "Secret de signature",
+      "events": "Événements à souscrire",
+      "event": {
+        "callStarted": "Appel commencé",
+        "callCompleted": "Appel terminé",
+        "callFailed": "Échec de l’appel",
+        "leadCreated": "Lead créé",
+        "leadUpdated": "Lead mis à jour",
+        "appointmentBooked": "Rendez-vous pris",
+        "appointmentCompleted": "Rendez-vous terminé",
+        "paymentReceived": "Paiement reçu"
+      }
+    },
+    "button": {
+      "create": "Créer un webhook",
+      "update": "Mettre à jour le webhook",
+      "delete": "Supprimer le webhook"
+    },
+    "log": {
+      "title": "Journal de livraison",
+      "status": "Statut",
+      "responseTime": "Temps de réponse",
+      "payload": "Payload",
+      "retry": "Réessayer"
+    },
+    "test": {
+      "button": "Envoyer un événement test"
+    }
+  },
+  "calendar": {
+    "removeAppointmentTitle": "Supprimer le rendez-vous ?",
+    "pageTitle": "Calendrier — Recall Touch",
+    "empty": {
+      "title": "Aucun rendez-vous pour le moment",
+      "body": "À mesure que votre IA prendra des rendez-vous, ils apparaîtront dans ce calendrier."
+    },
+    "legend": {
+      "aiBooked": "Réservé par l’IA",
+      "userBooked": "Réservé manuellement",
+      "cancelled": "Annulé",
+      "noShow": "Absent"
+    }
+  },
+  "team": {
+    "removeMemberTitle": "Supprimer le membre ?"
+  },
+  "knowledge": {
+    "pageTitle": "Base de connaissances — Recall Touch",
+    "addEntry": "Ajouter une entrée",
+    "editEntry": "Modifier l'entrée"
+  },
+  "filter": {
+    "byOutcome": "Filtrer par résultat",
+    "bySentiment": "Filtrer par sentiment",
+    "activity": "Filtrer l'activité"
+  },
+  "empty": {
+    "generic": {
+      "title": "Rien ici pour l’instant",
+      "body": "Lorsque l’activité commencera à circuler dans Recall Touch, nous remplirons cette vue."
+    },
+    "search": {
+      "title": "Aucun résultat",
+      "body": "Essayez d’ajuster vos filtres ou votre terme de recherche."
+    },
+    "filters": {
+      "title": "Aucun élément ne correspond à vos filtres",
+      "body": "Supprimez certains filtres pour voir plus de résultats."
+    }
+  },
+  "commandPalette": {
+    "title": "Recherche rapide",
+    "placeholder": "Rechercher des pages, actions et paramètres…",
+    "section": {
+      "navigation": "Navigation",
+      "actions": "Actions",
+      "settings": "Paramètres"
+    },
+    "action": {
+      "newLead": "Créer un nouveau lead",
+      "newAgent": "Créer un nouvel agent",
+      "newCampaign": "Créer une nouvelle campagne",
+      "importContacts": "Importer des contacts"
+    },
+    "empty": "Aucune correspondance. Essayez une autre recherche.",
+    "shortcuts": "Raccourcis clavier"
+  },
+  "contacts": {
+    "pageTitle": "Contacts",
+    "title": "Contacts",
+    "subtitle": "Toutes les personnes avec qui votre IA parle, au même endroit.",
+    "savedCount": "{count, plural, one {# enregistré} other {# enregistrés}}",
+    "addContactCta": "Ajouter un contact",
+    "searchPlaceholder": "Rechercher par nom, téléphone ou email…",
+    "sortLabel": "Trier",
+    "sort": {
+      "newest": "Plus récents",
+      "score": "Score",
+      "name": "Nom"
+    },
+    "tabs": {
+      "all": "Tous",
+      "leads": "Leads",
+      "customers": "Clients",
+      "vip": "VIP"
+    },
+    "empty": {
+      "title": "Aucun contact pour le moment.",
+      "subtitle": "Votre IA ajoute des contacts à partir de chaque appel. Les contacts manuels apparaissent aussi ici.",
+      "detail": "Sélectionnez un contact pour voir l’historique d’appels et les notes."
+    },
+    "drawer": {
+      "title": "Ajouter un contact",
+      "subtitle": "Votre IA utilisera ces informations lors des futurs appels."
+    },
+    "form": {
+      "firstNameLabel": "Prénom*",
+      "firstNamePlaceholder": "Mike",
+      "lastNameLabel": "Nom*",
+      "lastNamePlaceholder": "Johnson",
+      "phoneLabel": "Téléphone*",
+      "phonePlaceholder": "(503) 555-0199",
+      "emailLabel": "Email",
+      "emailPlaceholder": "nom@email.com",
+      "typeLabel": "Type",
+      "type": {
+        "lead": "Lead",
+        "customer": "Client",
+        "vip": "VIP"
+      },
+      "tagsLabel": "Étiquettes",
+      "tagsPlaceholder": "Saisissez et appuyez sur Entrée",
+      "tagsHint": "Appuyez sur Entrée pour ajouter chaque étiquette",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Ce qui compte pour ce contact…",
+      "saveContact": "Enregistrer le contact"
+    },
+    "errors": {
+      "firstNameRequired": "Le prénom est obligatoire",
+      "lastNameRequired": "Le nom est obligatoire",
+      "phoneRequired": "Le téléphone est obligatoire"
+    },
+    "toast": {
+      "added": "Contact ajouté"
+    }
+  },
+  "keyboardShortcuts": {
+    "modal": {
+      "title": "Raccourcis clavier",
+      "closeHint": "Appuyez sur Échap ou ? pour fermer"
+    },
+    "item": {
+      "commandPalette": "Ouvrir la palette de commandes",
+      "dashboard": "Aller au tableau de bord",
+      "agents": "Aller aux agents",
+      "calls": "Aller aux appels",
+      "leads": "Aller aux leads",
+      "campaigns": "Aller aux campagnes",
+      "inbox": "Aller à la boîte de réception",
+      "shortcuts": "Afficher cette aide sur les raccourcis"
+    }
+  },
+  "notifications": {
+    "center": {
+      "title": "Notifications",
+      "empty": {
+        "title": "Aucune notification pour le moment",
+        "body": "Nous afficherons ici les nouveaux leads, résumés d’appels et mises à jour importantes."
+      }
+    },
+    "type": {
+      "lead": "Nouveau lead",
+      "callCompleted": "Appel terminé",
+      "appointmentBooked": "Rendez-vous pris",
+      "qualityAlert": "Alerte de qualité",
+      "billing": "Facturation",
+      "system": "Mise à jour système"
+    },
+    "action": {
+      "markRead": "Marquer comme lue",
+      "markAllRead": "Tout marquer comme lu",
+      "preferences": "Préférences de notification"
+    }
+  },
+  "docs": {
+    "title": "Documentation",
+    "quickStart": {
+      "title": "Démarrage rapide",
+      "subtitle": "Mettez Recall Touch en production en moins de 5 minutes.",
+      "step": {
+        "signUp": "Inscrivez-vous et créez votre espace de travail.",
+        "connectPhone": "Connectez un numéro de téléphone ou portez un numéro existant.",
+        "createAgent": "Créez votre premier agent IA.",
+        "test": "Effectuez un appel test et examinez la transcription.",
+        "launch": "Pointez le téléphone de votre entreprise vers Recall Touch et lancez-vous."
+      }
+    },
+    "api": {
+      "title": "Référence API",
+      "description": "Apprenez à intégrer Recall Touch dans vos outils et flux de travail existants.",
+      "section": {
+        "auth": "Authentification",
+        "calls": "API d’appels",
+        "leads": "API de leads",
+        "appointments": "API de rendez-vous",
+        "webhooks": "Webhooks"
+      }
+    },
+    "search": {
+      "placeholder": "Rechercher dans la documentation…"
+    },
+    "feedback": {
+      "prompt": "Cette page vous a-t-elle été utile ?",
+      "yes": "Oui",
+      "no": "Non",
+      "thankYou": "Merci pour votre retour."
+    }
+  },
+  "footer": {
+    "cta": {
+      "bookDemo": "Réserver une démo",
+      "contact": "Contact"
+    },
+    "links": {
+      "product": "Produit",
+      "pricing": "Tarifs",
+      "docs": "Docs",
+      "terms": "Conditions",
+      "privacy": "Confidentialité"
+    },
+    "copyright": "Tous droits réservés."
+  },
   "accessibility": {
     "skipToContent": "Aller au contenu principal"
   },
-  "footer.copyright": "Tous droits réservés.",
-  "languageSwitcher.tooltip": "Changer la langue de l’interface",
-  "timezone.label": "Fuseau horaire",
-  "timezone.helper": "Nous utiliserons ce fuseau horaire pour la planification, les rapports et les notifications.",
-  "currency.label": "Devise",
-  "currency.helper": "Choisissez la devise principale pour les tarifs, les rapports et la facturation.",
-  "phoneInput.label": "Numéro de téléphone",
-  "phoneInput.countryPlaceholder": "Pays",
-  "phoneInput.numberPlaceholder": "Numéro de téléphone",
-  "phoneInput.error.invalid": "Entrez un numéro de téléphone valide pour le pays sélectionné.",
-  "scheduling.timezoneNote": "Toutes les heures sont affichées dans le fuseau horaire de votre espace de travail.",
-  "scheduling.hoverUtc": "Survolez pour voir l’heure UTC.",
-  "calendar.empty.title": "Aucun rendez-vous pour le moment",
-  "calendar.empty.body": "À mesure que votre IA prendra des rendez-vous, ils apparaîtront dans ce calendrier.",
-  "calendar.legend.aiBooked": "Réservé par l’IA",
-  "calendar.legend.userBooked": "Réservé manuellement",
-  "calendar.legend.cancelled": "Annulé",
-  "calendar.legend.noShow": "Absent",
-  "leadScoring.label": "Score de lead",
-  "leadScoring.tooltip": "Score combiné basé sur l’engagement, la qualification, le comportement et la récence.",
-  "leadScoring.temperature.hot": "Chaud",
-  "leadScoring.temperature.warm": "Tiède",
-  "leadScoring.temperature.cool": "Froid",
-  "leadScoring.temperature.cold": "Très froid",
-  "quality.badge.excellent": "Excellent",
-  "quality.badge.good": "Bon",
-  "quality.badge.review": "À revoir",
-  "quality.badge.flagged": "Signalé",
-  "liveCalls.title": "Appels en direct",
-  "liveCalls.empty.title": "Aucun appel actif",
-  "liveCalls.empty.body": "Lorsque vos agents seront en appel, vous les verrez ici en temps réel.",
-  "liveCalls.actions.listenIn": "Écouter",
-  "liveCalls.actions.whisper": "Parler à l’agent uniquement",
-  "liveCalls.actions.bargeIn": "Rejoindre l’appel",
-  "liveCalls.queue.title": "File d’attente des appels",
-  "liveCalls.queue.waiting": "En attente",
-  "liveCalls.queue.avgWait": "Attente moyenne",
-  "liveCalls.queue.longestWait": "Attente la plus longue",
-  "phone.marketplace.title": "Place de marché des numéros",
-  "phone.marketplace.subtitle": "Recherchez, comparez et provisionnez des numéros dans les pays où vous opérez.",
-  "phone.marketplace.search.country": "Pays",
-  "phone.marketplace.search.region": "État / région",
-  "phone.marketplace.search.areaCode": "Indicatif régional",
-  "phone.marketplace.search.tollFree": "Numéros verts uniquement",
-  "phone.marketplace.search.button": "Rechercher des numéros",
-  "phone.marketplace.results.title": "Numéros disponibles",
-  "phone.marketplace.results.empty.title": "Aucun numéro trouvé",
-  "phone.marketplace.results.empty.body": "Essayez un autre indicatif, une autre région ou un autre type de numéro.",
-  "phone.marketplace.results.headers.number": "Numéro",
-  "phone.marketplace.results.headers.type": "Type",
-  "phone.marketplace.results.headers.capabilities": "Capacités",
-  "phone.marketplace.results.headers.monthly": "Prix mensuel",
-  "phone.marketplace.results.headers.setup": "Frais d’activation",
-  "phone.marketplace.results.type.local": "Local",
-  "phone.marketplace.results.type.tollFree": "Numéro vert",
-  "phone.marketplace.results.type.mobile": "Mobile",
-  "phone.marketplace.button.getNumber": "Obtenir ce numéro",
-  "phone.marketplace.toast.provisioning": "Provisionnement du numéro de téléphone…",
-  "phone.marketplace.toast.provisioned": "Numéro de téléphone provisionné avec succès.",
-  "phone.marketplace.toast.error": "Impossible de provisionner ce numéro. Veuillez en essayer un autre.",
-  "phone.porting.title": "Porter un numéro existant",
-  "phone.porting.subtitle": "Apportez vos numéros actuels sur Recall Touch sans interruption.",
-  "phone.porting.step.number": "Détails du numéro",
-  "phone.porting.step.documents": "Autorisation",
-  "phone.porting.step.account": "Informations de compte",
-  "phone.porting.step.review": "Vérifier et envoyer",
-  "phone.porting.step.confirmation": "Confirmation",
-  "phone.porting.numberLabel": "Numéro à porter",
-  "phone.porting.carrierLabel": "Opérateur actuel",
-  "phone.porting.loaLabel": "Lettre d’autorisation (LOA)",
-  "phone.porting.uploadLoa": "Téléverser la LOA",
-  "phone.porting.accountNumber": "Numéro de compte",
-  "phone.porting.pin": "Code PIN / mot de passe du compte",
-  "phone.porting.notes": "Notes pour notre équipe",
-  "phone.porting.summary.title": "Récapitulatif de la demande de portabilité",
-  "phone.porting.summary.estimatedTimeline": "Délai estimé",
-  "phone.porting.summary.estimatedTimelineBody": "La plupart des portabilités sont réalisées en 3 à 7 jours ouvrés selon l’opérateur actuel.",
-  "phone.porting.submit": "Envoyer la demande de portabilité",
-  "phone.porting.toast.submitted": "Demande de portabilité envoyée. Notre équipe la examinera et vous tiendra informé.",
-  "phone.porting.toast.error": "Impossible d’envoyer la demande de portabilité. Vérifiez les informations et réessayez.",
-  "integrations.hub.title": "Intégrations",
-  "integrations.hub.subtitle": "Connectez Recall Touch à votre CRM, votre calendrier, vos outils de messagerie, et plus encore.",
-  "integrations.card.salesforce.title": "Salesforce",
-  "integrations.card.salesforce.body": "Synchronisez les leads, contacts et activités avec votre CRM Salesforce.",
-  "integrations.card.hubspot.title": "HubSpot",
-  "integrations.card.hubspot.body": "Gardez les contacts et opportunités HubSpot alignés sur les résultats d’appels.",
-  "integrations.card.zoho.title": "Zoho CRM",
-  "integrations.card.zoho.body": "Envoyez les leads qualifiés et rendez-vous directement dans Zoho CRM.",
-  "integrations.card.pipedrive.title": "Pipedrive",
-  "integrations.card.pipedrive.body": "Mettez à jour les opportunités en fonction des résultats d’appels et du suivi.",
-  "integrations.card.googleContacts.title": "Google Contacts",
-  "integrations.card.googleContacts.body": "Synchronisez vos contacts Google pour que votre IA sache qui appelle.",
-  "integrations.card.microsoft365.title": "Microsoft 365",
-  "integrations.card.microsoft365.body": "Connectez les contacts et calendriers Outlook pour un contexte complet.",
-  "integrations.card.gohighlevel.title": "GoHighLevel",
-  "integrations.card.gohighlevel.body": "Envoyez les leads qualifiés et appels dans vos pipelines GoHighLevel.",
-  "integrations.status.connected": "Connecté",
-  "integrations.status.disconnected": "Non connecté",
-  "integrations.lastSync": "Dernière synchronisation",
-  "integrations.button.connect": "Connecter",
-  "integrations.button.configure": "Configurer",
-  "integrations.button.disconnect": "Déconnecter",
-  "integrations.syncStatus.title": "État de synchronisation",
-  "integrations.syncStatus.records": "Enregistrements synchronisés",
-  "integrations.syncStatus.errors": "Erreurs de synchronisation",
-  "integrations.syncStatus.viewLog": "Voir le journal de synchronisation",
-  "webhooks.title": "Webhooks",
-  "webhooks.subtitle": "Envoyez les événements Recall Touch en temps réel vers vos propres systèmes.",
-  "webhooks.list.empty.title": "Aucun webhook configuré",
-  "webhooks.list.empty.body": "Créez un webhook pour recevoir des événements tels que nouveaux leads, appels et rendez-vous.",
-  "webhooks.form.url": "URL du webhook",
-  "webhooks.form.secret": "Secret de signature",
-  "webhooks.form.events": "Événements à souscrire",
-  "webhooks.form.event.callStarted": "Appel commencé",
-  "webhooks.form.event.callCompleted": "Appel terminé",
-  "webhooks.form.event.callFailed": "Échec de l’appel",
-  "webhooks.form.event.leadCreated": "Lead créé",
-  "webhooks.form.event.leadUpdated": "Lead mis à jour",
-  "webhooks.form.event.appointmentBooked": "Rendez-vous pris",
-  "webhooks.form.event.appointmentCompleted": "Rendez-vous terminé",
-  "webhooks.form.event.paymentReceived": "Paiement reçu",
-  "webhooks.button.create": "Créer un webhook",
-  "webhooks.button.update": "Mettre à jour le webhook",
-  "webhooks.button.delete": "Supprimer le webhook",
-  "webhooks.log.title": "Journal de livraison",
-  "webhooks.log.status": "Statut",
-  "webhooks.log.responseTime": "Temps de réponse",
-  "webhooks.log.payload": "Payload",
-  "webhooks.log.retry": "Réessayer",
-  "webhooks.test.button": "Envoyer un événement test",
-  "email.templates.title": "Modèles d’e-mail",
-  "email.templates.subtitle": "Personnalisez les e-mails que vos clients reçoivent avant et après les appels.",
-  "email.templates.appointmentConfirmation": "Confirmation de rendez-vous",
-  "email.templates.appointmentReminder": "Rappel de rendez-vous",
-  "email.templates.followUp": "Suivi après appel",
-  "email.templates.missedCall": "Notification d’appel manqué",
-  "email.templates.campaignSummary": "Résumé de campagne",
-  "email.templates.variablesHint": "Vous pouvez utiliser des variables comme {{contact.name}} et {{appointment.date}}.",
-  "email.templates.button.preview": "Prévisualiser l’e-mail",
-  "email.templates.button.sendTest": "Envoyer un e-mail de test",
-  "email.templates.button.save": "Enregistrer le modèle",
-  "slack.title": "Notifications Slack",
-  "slack.subtitle": "Envoyez les événements importants de Recall Touch vers votre espace de travail Slack.",
-  "slack.button.connect": "Connecter Slack",
-  "slack.button.disconnect": "Déconnecter Slack",
-  "slack.channelPicker.label": "Canal",
-  "slack.channelPicker.placeholder": "Sélectionnez un canal Slack",
-  "slack.notifications.newLead": "Alertes nouveaux leads",
-  "slack.notifications.callSummary": "Résumés d’appels terminés",
-  "slack.notifications.dailyDigest": "Récapitulatif quotidien",
-  "slack.notifications.qualityAlerts": "Alertes de qualité",
-  "slack.notifications.appointments": "Rappels de rendez-vous",
-  "slack.toast.connected": "Slack connecté avec succès.",
-  "slack.toast.disconnected": "Slack a été déconnecté.",
-  "api.errors.validation": "Les données envoyées ne sont pas valides. Vérifiez les champs et réessayez.",
-  "api.errors.rateLimited": "Vous envoyez trop de requêtes. Ralentissez et réessayez dans quelques instants.",
-  "api.errors.unauthorized": "Vous n’êtes pas autorisé à effectuer cette action.",
-  "api.errors.forbidden": "Cette ressource n’est pas disponible dans votre espace de travail.",
-  "api.errors.notFound": "Nous n’avons pas pu trouver ce que vous cherchiez.",
-  "api.errors.conflict": "Cette ressource a été modifiée dans un autre onglet. Actualisez et réessayez.",
-  "api.errors.server": "Le serveur a rencontré une erreur inattendue. Notre équipe a été prévenue."
+  "timezone": {
+    "label": "Fuseau horaire",
+    "helper": "Nous utiliserons ce fuseau horaire pour la planification, les rapports et les notifications."
+  },
+  "currency": {
+    "label": "Devise",
+    "helper": "Choisissez la devise principale pour les tarifs, les rapports et la facturation."
+  },
+  "phoneInput": {
+    "label": "Numéro de téléphone",
+    "countryPlaceholder": "Pays",
+    "numberPlaceholder": "Numéro de téléphone",
+    "error": {
+      "invalid": "Entrez un numéro de téléphone valide pour le pays sélectionné."
+    }
+  },
+  "scheduling": {
+    "timezoneNote": "Toutes les heures sont affichées dans le fuseau horaire de votre espace de travail.",
+    "hoverUtc": "Survolez pour voir l’heure UTC."
+  },
+  "leadScoring": {
+    "label": "Score de lead",
+    "tooltip": "Score combiné basé sur l’engagement, la qualification, le comportement et la récence.",
+    "temperature": {
+      "hot": "Chaud",
+      "warm": "Tiède",
+      "cool": "Froid",
+      "cold": "Très froid"
+    }
+  },
+  "quality": {
+    "badge": {
+      "excellent": "Excellent",
+      "good": "Bon",
+      "review": "À revoir",
+      "flagged": "Signalé"
+    }
+  },
+  "liveCalls": {
+    "title": "Appels en direct",
+    "empty": {
+      "title": "Aucun appel actif",
+      "body": "Lorsque vos agents seront en appel, vous les verrez ici en temps réel."
+    },
+    "actions": {
+      "listenIn": "Écouter",
+      "whisper": "Parler à l’agent uniquement",
+      "bargeIn": "Rejoindre l’appel"
+    },
+    "queue": {
+      "title": "File d’attente des appels",
+      "waiting": "En attente",
+      "avgWait": "Attente moyenne",
+      "longestWait": "Attente la plus longue"
+    }
+  },
+  "phone": {
+    "marketplace": {
+      "title": "Place de marché des numéros",
+      "subtitle": "Recherchez, comparez et provisionnez des numéros dans les pays où vous opérez.",
+      "search": {
+        "country": "Pays",
+        "region": "État / région",
+        "areaCode": "Indicatif régional",
+        "tollFree": "Numéros verts uniquement",
+        "button": "Rechercher des numéros"
+      },
+      "results": {
+        "title": "Numéros disponibles",
+        "empty": {
+          "title": "Aucun numéro trouvé",
+          "body": "Essayez un autre indicatif, une autre région ou un autre type de numéro."
+        },
+        "headers": {
+          "number": "Numéro",
+          "type": "Type",
+          "capabilities": "Capacités",
+          "monthly": "Prix mensuel",
+          "setup": "Frais d’activation"
+        },
+        "type": {
+          "local": "Local",
+          "tollFree": "Numéro vert",
+          "mobile": "Mobile"
+        }
+      },
+      "button": {
+        "getNumber": "Obtenir ce numéro"
+      },
+      "toast": {
+        "provisioning": "Provisionnement du numéro de téléphone…",
+        "provisioned": "Numéro de téléphone provisionné avec succès.",
+        "error": "Impossible de provisionner ce numéro. Veuillez en essayer un autre."
+      }
+    },
+    "porting": {
+      "title": "Porter un numéro existant",
+      "subtitle": "Apportez vos numéros actuels sur Recall Touch sans interruption.",
+      "step": {
+        "number": "Détails du numéro",
+        "documents": "Autorisation",
+        "account": "Informations de compte",
+        "review": "Vérifier et envoyer",
+        "confirmation": "Confirmation"
+      },
+      "numberLabel": "Numéro à porter",
+      "carrierLabel": "Opérateur actuel",
+      "loaLabel": "Lettre d’autorisation (LOA)",
+      "uploadLoa": "Téléverser la LOA",
+      "accountNumber": "Numéro de compte",
+      "pin": "Code PIN / mot de passe du compte",
+      "notes": "Notes pour notre équipe",
+      "summary": {
+        "title": "Récapitulatif de la demande de portabilité",
+        "estimatedTimeline": "Délai estimé",
+        "estimatedTimelineBody": "La plupart des portabilités sont réalisées en 3 à 7 jours ouvrés selon l’opérateur actuel."
+      },
+      "submit": "Envoyer la demande de portabilité",
+      "toast": {
+        "submitted": "Demande de portabilité envoyée. Notre équipe la examinera et vous tiendra informé.",
+        "error": "Impossible d’envoyer la demande de portabilité. Vérifiez les informations et réessayez."
+      }
+    }
+  },
+  "integrations": {
+    "hub": {
+      "title": "Intégrations",
+      "subtitle": "Connectez Recall Touch à votre CRM, votre calendrier, vos outils de messagerie, et plus encore."
+    },
+    "card": {
+      "salesforce": {
+        "title": "Salesforce",
+        "body": "Synchronisez les leads, contacts et activités avec votre CRM Salesforce."
+      },
+      "hubspot": {
+        "title": "HubSpot",
+        "body": "Gardez les contacts et opportunités HubSpot alignés sur les résultats d’appels."
+      },
+      "zoho": {
+        "title": "Zoho CRM",
+        "body": "Envoyez les leads qualifiés et rendez-vous directement dans Zoho CRM."
+      },
+      "pipedrive": {
+        "title": "Pipedrive",
+        "body": "Mettez à jour les opportunités en fonction des résultats d’appels et du suivi."
+      },
+      "googleContacts": {
+        "title": "Google Contacts",
+        "body": "Synchronisez vos contacts Google pour que votre IA sache qui appelle."
+      },
+      "microsoft365": {
+        "title": "Microsoft 365",
+        "body": "Connectez les contacts et calendriers Outlook pour un contexte complet."
+      },
+      "gohighlevel": {
+        "title": "GoHighLevel",
+        "body": "Envoyez les leads qualifiés et appels dans vos pipelines GoHighLevel."
+      }
+    },
+    "status": {
+      "connected": "Connecté",
+      "disconnected": "Non connecté"
+    },
+    "lastSync": "Dernière synchronisation",
+    "button": {
+      "connect": "Connecter",
+      "configure": "Configurer",
+      "disconnect": "Déconnecter"
+    },
+    "syncStatus": {
+      "title": "État de synchronisation",
+      "records": "Enregistrements synchronisés",
+      "errors": "Erreurs de synchronisation",
+      "viewLog": "Voir le journal de synchronisation"
+    }
+  },
+  "email": {
+    "templates": {
+      "title": "Modèles d’e-mail",
+      "subtitle": "Personnalisez les e-mails que vos clients reçoivent avant et après les appels.",
+      "appointmentConfirmation": "Confirmation de rendez-vous",
+      "appointmentReminder": "Rappel de rendez-vous",
+      "followUp": "Suivi après appel",
+      "missedCall": "Notification d’appel manqué",
+      "campaignSummary": "Résumé de campagne",
+      "variablesHint": "Vous pouvez utiliser des variables comme {{contact.name}} et {{appointment.date}}.",
+      "button": {
+        "preview": "Prévisualiser l’e-mail",
+        "sendTest": "Envoyer un e-mail de test",
+        "save": "Enregistrer le modèle"
+      }
+    }
+  },
+  "slack": {
+    "title": "Notifications Slack",
+    "subtitle": "Envoyez les événements importants de Recall Touch vers votre espace de travail Slack.",
+    "button": {
+      "connect": "Connecter Slack",
+      "disconnect": "Déconnecter Slack"
+    },
+    "channelPicker": {
+      "label": "Canal",
+      "placeholder": "Sélectionnez un canal Slack"
+    },
+    "notifications": {
+      "newLead": "Alertes nouveaux leads",
+      "callSummary": "Résumés d’appels terminés",
+      "dailyDigest": "Récapitulatif quotidien",
+      "qualityAlerts": "Alertes de qualité",
+      "appointments": "Rappels de rendez-vous"
+    },
+    "toast": {
+      "connected": "Slack connecté avec succès.",
+      "disconnected": "Slack a été déconnecté."
+    }
+  },
+  "api": {
+    "errors": {
+      "validation": "Les données envoyées ne sont pas valides. Vérifiez les champs et réessayez.",
+      "rateLimited": "Vous envoyez trop de requêtes. Ralentissez et réessayez dans quelques instants.",
+      "unauthorized": "Vous n’êtes pas autorisé à effectuer cette action.",
+      "forbidden": "Cette ressource n’est pas disponible dans votre espace de travail.",
+      "notFound": "Nous n’avons pas pu trouver ce que vous cherchiez.",
+      "conflict": "Cette ressource a été modifiée dans un autre onglet. Actualisez et réessayez.",
+      "server": "Le serveur a rencontré une erreur inattendue. Notre équipe a été prévenue."
+    }
+  }
 }
-
