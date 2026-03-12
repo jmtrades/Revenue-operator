@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { formatCurrencyCents } from "@/lib/currency";
 import { toast as sonnerToast } from "sonner";
 import { Phone, PhoneForwarded, Plus, FileInput } from "lucide-react";
 import {
@@ -84,6 +86,9 @@ function persistPhoneSettingsSnapshot(
 }
 
 export default function AppSettingsPhonePage() {
+  const locale = useLocale() || "en-US";
+  const t = useTranslations("common");
+  const tForms = useTranslations("forms.state");
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceSnapshot?.id?.trim() || "default";
   const initialSnapshot = readPhoneSettingsSnapshot(snapshotWorkspaceId);
@@ -336,7 +341,7 @@ export default function AppSettingsPhonePage() {
               {numbersLoading ? "…" : `${workspaceNumbers.length} number${workspaceNumbers.length !== 1 ? "s" : ""}`}
             </span>
             {!numbersLoading && totalMonthlyCents > 0 && (
-              <span className="text-sm text-zinc-400">${(totalMonthlyCents / 100).toFixed(2)}/mo total</span>
+              <span className="text-sm text-zinc-400">{formatCurrencyCents(totalMonthlyCents, "USD", locale)}/mo total</span>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -382,7 +387,7 @@ export default function AppSettingsPhonePage() {
                   <Phone className="w-4 h-4 text-[var(--accent-primary)]" />
                   <div>
                     <p className="font-medium text-white font-mono text-sm">{formatPhoneNumber(n.phone_number)}</p>
-                    <p className="text-xs text-zinc-500 capitalize">{n.number_type.replace("_", " ")} · ${(n.monthly_cost_cents / 100).toFixed(2)}/mo</p>
+                    <p className="text-xs text-zinc-500 capitalize">{n.number_type.replace("_", " ")} · {formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</p>
                   </div>
                   {n.capabilities?.voice && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">Voice</span>}
                   {n.capabilities?.sms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">SMS</span>}
@@ -541,7 +546,7 @@ export default function AppSettingsPhonePage() {
               disabled={saving}
               className="px-4 py-2.5 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
             >
-              {saving ? "Saving…" : "Save"}
+              {saving ? tForms("saving") : t("save")}
             </button>
           </details>
 

@@ -118,7 +118,6 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
         });
         results.push({ workspaceId, email, sent: res.ok });
       } else {
-        console.log("[weekly-trust] Would send to", email, "subject:", subject);
         results.push({ workspaceId, email, sent: true });
       }
     } catch (err) {

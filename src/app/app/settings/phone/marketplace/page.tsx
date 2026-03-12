@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLocale } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { formatCurrencyCents } from "@/lib/currency";
 import { toast } from "sonner";
 import { Phone, Search, Loader2, ArrowLeft } from "lucide-react";
 
@@ -27,6 +29,7 @@ function formatPhoneDisplay(num: string): string {
 }
 
 export default function PhoneMarketplacePage() {
+  const locale = useLocale() || "en-US";
   const [country, setCountry] = useState("US");
   const [state, setState] = useState("");
   const [areaCode, setAreaCode] = useState("");
@@ -206,7 +209,7 @@ export default function PhoneMarketplacePage() {
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm text-zinc-400">
-                <span>${(n.monthly_cost_cents / 100).toFixed(2)}/mo</span>
+                <span>{formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</span>
                 {n.capabilities.voice && <span>Voice</span>}
                 {n.capabilities.sms && <span>SMS</span>}
               </div>
