@@ -24,8 +24,11 @@ function leadScoreFromInput(input: { name?: string; phone?: string; email?: stri
 }
 
 export async function GET(req: NextRequest) {
-  const workspaceId = req.nextUrl.searchParams.get("workspace_id");
+  const session = await getSession(req);
+  const workspaceId = req.nextUrl.searchParams.get("workspace_id") || session?.workspaceId;
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: leads } = await db
