@@ -7,7 +7,34 @@ import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, P
 import { motion, AnimatePresence } from "framer-motion";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
-import type { InboxThread, InboxMessage, InboxChannel } from "@/lib/mock/inbox";
+
+type InboxChannel = "phone" | "sms" | "email" | "whatsapp";
+type InboxStatus = "Open" | "Resolved" | "Pending";
+
+interface InboxMessage {
+  id: string;
+  sender: "agent" | "contact" | "system";
+  content: string;
+  timestamp: string;
+  channel: InboxChannel;
+  isCall?: boolean;
+  callId?: string;
+  durationSeconds?: number;
+  outcome?: string;
+  recording_url?: string | null;
+}
+
+interface InboxThread {
+  id: string;
+  contactName: string;
+  contactPhone: string;
+  channel: InboxChannel;
+  lastMessage: string;
+  lastMessageAt: string;
+  unread: boolean;
+  status: InboxStatus;
+  messages: InboxMessage[];
+}
 import { Tabs } from "@/components/ui/Tabs";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
