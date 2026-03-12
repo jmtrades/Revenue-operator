@@ -6,33 +6,28 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   BellRing,
-  BookOpen,
   Calendar,
   CheckCircle2,
   ChevronDown,
-  ChevronRight,
   ClipboardList,
   Headphones,
   Moon,
-  Pencil,
-  Play,
   PhoneCall,
   PhoneForwarded,
   PhoneOutgoing,
   Settings,
-  Square,
   Star,
-  Trash2,
   UserCheck,
   type LucideIcon,
 } from "lucide-react";
 import { AgentTestPanel } from "@/app/app/agents/AgentTestPanel";
 import { Confetti } from "@/components/Confetti";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Tabs } from "@/components/ui/Tabs";
 import { AccordionItem } from "@/components/ui/Accordion";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AgentList } from "./components/AgentList";
+import { AgentDetail } from "./components/AgentDetail";
+import { VoiceSelector } from "./components/VoiceSelector";
+import { AgentKnowledgePanel } from "./components/AgentKnowledgePanel";
 import {
   AGENT_TEMPLATES,
   AGENT_TEMPLATE_CATEGORIES,
@@ -73,7 +68,7 @@ type PrimaryGoalId =
   | "follow_up"
   | "custom";
 
-type Agent = {
+export type Agent = {
   id: string;
   name: string;
   template: AgentTemplateId;
@@ -269,7 +264,7 @@ function generateAgentId(prefix: string): string {
 }
 
 /** 5 starter Q&A entries (aligned with workspace onboarding seed). */
-const DEFAULT_FAQ_SEED = [
+const _DEFAULT_FAQ_SEED = [
   { question: "What are your hours?", answer: "We are open Monday through Friday, 9 AM to 5 PM." },
   { question: "Where are you located?", answer: "I can have someone share our address with you. What is the best way to reach you?" },
   { question: "How do I book an appointment?", answer: "I can help you with that right now. What day works best for you?" },
@@ -687,9 +682,9 @@ export default function AppAgentsPageClient({
   initialAgentsRows?: Array<Record<string, unknown>>;
   initialFallbackAgent?: InitialFallbackAgent;
 }) {
-  const t = useTranslations("agents");
-  const tCommon = useTranslations("common");
-  const tForms = useTranslations("forms.state");
+  const _t = useTranslations("agents");
+  const _tCommon = useTranslations("common");
+  const _tForms = useTranslations("forms.state");
   const { workspaceId: contextWorkspaceId } = useWorkspace();
   const workspaceId = contextWorkspaceId || initialWorkspaceId;
   const initialAgents = useMemo(() => {
@@ -1230,278 +1225,112 @@ export default function AppAgentsPageClient({
           </div>
         </div>
       ) : (
-      <div className="flex flex-col lg:flex-row h-full min-h-0 gap-4 lg:gap-0 lg:min-h-[480px]">
-        <div className="w-full lg:w-[320px] xl:w-[360px] lg:shrink-0 lg:border-r lg:border-[var(--border-default)] lg:overflow-y-auto lg:pr-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 content-start">
-            {agents.map((agent) => {
-              const templateLabel = (() => {
-                switch (agent.template) {
-                  case "appointment_setter": return "Appointment";
-                  case "lead_qualifier": return "Sales";
-                  case "follow_up": return "Follow-up";
-                  case "support": return "Support";
-                  case "after_hours": return "After-Hours";
-                  case "emergency": return "Emergency";
-                  case "review_request": return "Review";
-                  case "scratch": return "Custom";
-                  case "receptionist":
-                  default: return "Receptionist";
-                }
-              })();
-              const lastActiveLabel = (agent.stats?.totalCalls ?? 0) > 0
-                ? `${agent.stats.totalCalls} calls`
-                : "No calls yet";
+        <div className="flex flex-col lg:flex-row h-full min-h-0 gap-4 lg:gap-0 lg:min-h-[480px]">
+          <AgentList
+            agents={agents}
+            selectedId={selected?.id ?? null}
+            defaultAgentId={defaultAgentId}
+            workspaceNumbers={workspaceNumbers}
+            setSelectedId={setSelectedId}
+            setActiveStep={setActiveStep}
+            setAgents={(updater) => setAgents((current) => updater(current))}
+            persistAgent={persistAgent}
+            setDeleteConfirmAgent={setDeleteConfirmAgent}
+            getFirstIncompleteStep={getFirstIncompleteStep}
+          />
 
-              return (
-                <Card
-                  key={agent.id}
-                  variant="interactive"
-                  className={`text-left p-4 ${selected?.id === agent.id ? "ring-1 ring-[var(--accent-primary)]/50 border-[var(--border-medium)]" : ""}`}
-                  onClick={() => {
-                    setSelectedId(agent.id);
-                    setActiveStep(getFirstIncompleteStep(agent));
-                  }}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <p className="font-semibold text-sm text-[var(--text-primary)] truncate flex-1 min-w-0">
-                      {agent.name}
-                    </p>
-                    <Badge variant={agent.active ? "success" : "neutral"} dot>
-                      {agent.active ? "Active" : "Inactive"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <Badge variant="neutral">{templateLabel}</Badge>
-                    {agent.id === defaultAgentId && (
-                      <span className="text-[10px] text-[var(--text-tertiary)]">Default</span>
-                    )}
-                  </div>
-                  {(() => {
-                    const assigned = workspaceNumbers.find((n) => n.assigned_agent_id === agent.id);
-                    return assigned ? (
-                      <div className="flex items-center gap-1.5 text-[11px] text-[var(--accent-primary)] mb-2">
-                        <PhoneCall className="w-3 h-3 shrink-0" />
-                        <span className="font-mono truncate">{assigned.phone_number}</span>
-                      </div>
-                    ) : null;
-                  })()}
-                  <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
-                    <span>{agent.stats?.totalCalls ?? 0} calls</span>
-                    <span>·</span>
-                    <span>{lastActiveLabel}</span>
-                  </div>
-                  <div
-                    className="flex items-center gap-2 pt-2 border-t border-[var(--border-default)]"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      type="button"
-                      aria-label={agent.active ? "Deactivate" : "Activate"}
-                      className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
-                      onClick={async () => {
-                        const next = { ...agent, active: !agent.active };
-                        setAgents((c) => c.map((a) => (a.id === agent.id ? next : a)));
-                        await persistAgent(next, { showToast: true, successToast: agent.active ? "Agent paused" : "Agent active" });
-                      }}
-                    >
-                      <span className="text-[10px] font-medium">{agent.active ? "Pause" : "On"}</span>
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Edit agent"
-                      className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
-                      onClick={() => {
-                        setSelectedId(agent.id);
-                        setActiveStep(getFirstIncompleteStep(agent));
-                      }}
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Delete agent"
-                      className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-red-400 hover:bg-red-500/10"
-                      onClick={() => setDeleteConfirmAgent(agent)}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="flex-1 min-w-0 flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] lg:overflow-hidden">
-          {selected ? (
-            <div className="flex flex-col lg:flex-row flex-1 min-h-0 min-w-0">
-              <div className="w-full lg:w-[240px] flex-shrink-0 border-r border-[var(--border-default)] p-4 space-y-4 overflow-y-auto">
-                <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <p className="font-medium text-sm text-white truncate">{selected.name}</p>
-                    <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                        selected.active ? "bg-green-500/15 text-green-400" : "bg-zinc-800 text-zinc-400"
-                      }`}
-                    >
-                      {selected.active ? "Active" : "Inactive"}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-zinc-500 flex items-center gap-2 flex-wrap">
-                    {selected.vapiAgentId?.trim() ? (
-                      <span className="text-green-500/80">Live</span>
-                    ) : (
-                      <span
-                        className={
-                          getAgentReadiness(selected).percent >= 80
-                            ? "text-green-500/80"
-                            : getAgentReadiness(selected).percent >= 40
-                              ? "text-amber-500/80"
-                              : "text-zinc-500"
-                        }
-                      >
-                        {getAgentReadiness(selected).percent}% ready
-                      </span>
-                    )}
-                    <span>·</span>
-                    <Link href={`/app/agents/${selected.id}/analytics`} className="text-[var(--accent-primary)] hover:underline">
-                      Analytics
-                    </Link>
-                    <span>·</span>
-                    <Link href={`/app/agents/${selected.id}/flow-builder`} className="text-[var(--accent-primary)] hover:underline">
-                      Flow
-                    </Link>
-                    <span>·</span>
-                    <span>{selected.stats.totalCalls} calls</span>
-                  </p>
-                  <div className="mt-2 flex items-center gap-3">
-                    <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#00D4AA] rounded-full transition-all duration-500"
-                        style={{ width: `${getAgentReadiness(selected).percent}%` }}
-                      />
-                    </div>
-                    <span className="text-[10px] text-zinc-500">
-                      {getAgentReadiness(selected).percent}% ready
-                    </span>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[11px] font-medium text-zinc-500 mb-2">Agent setup</p>
-                  <div className="lg:hidden mb-2">
-                    <p className="text-[11px] text-zinc-500 mb-1.5">
-                      Step {SETUP_STEPS.findIndex((s) => s.id === activeStep) + 1} of {SETUP_STEPS.length}
-                    </p>
-                    <label htmlFor="agent-step-select" className="sr-only">Jump to setup step</label>
-                    <select
-                      id="agent-step-select"
-                      value={activeStep}
-                      onChange={(e) => void handleStepChange(e.target.value as StepId)}
-                      aria-label="Jump to setup step"
-                      className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
-                    >
-                      {SETUP_STEPS.map((step, i) => (
-                        <option key={step.id} value={step.id}>
-                          {i + 1}. {step.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="hidden lg:block space-y-1">
-                  {SETUP_STEPS.map((step, i) => {
-                    const complete = isStepComplete(step.id, selected);
-                    const active = activeStep === step.id;
-                    return (
-                      <button
-                        key={step.id}
-                        type="button"
-                        onClick={() => void handleStepChange(step.id)}
-                        aria-label={`${step.label}: ${step.description}${complete ? ", completed" : ""}${active ? ", current step" : ""}`}
-                        aria-current={active ? "step" : undefined}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
-                          active ? "bg-[var(--bg-hover)] border border-[var(--border-medium)]" : "hover:bg-[var(--bg-card)] border border-transparent"
-                        }`}
-                      >
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          complete ? "bg-emerald-500/20" : active ? "bg-[var(--bg-hover)]" : "bg-[var(--bg-input)]"
-                        }`}>
-                          {complete ? (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" aria-hidden />
-                          ) : (
-                            <span className="text-xs text-white/30">{i + 1}</span>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className={`text-sm font-medium ${active ? "text-white" : "text-[var(--text-secondary)]"}`}>{step.label}</p>
-                          <p className="text-xs text-[var(--text-tertiary)] truncate">{step.description}</p>
-                        </div>
-                        {active && <ChevronRight className="w-4 h-4 text-white/20 flex-shrink-0" aria-hidden />}
-                      </button>
-                    );
-                  })}
-                  </div>
-                </div>
-                <p className="text-[11px] font-medium text-zinc-500 mb-2 pt-2">{t("quickActions.label")}</p>
-                <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={() => void handleStepChange("identity")} aria-label={t("quickActions.editAria")} className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-                    {t("quickActions.edit")}
-                  </button>
-                  <button type="button" onClick={() => void handleStepChange("test")} aria-label={t("quickActions.testAria")} className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-                    {t("quickActions.test")}
-                  </button>
-                  <button type="button" onClick={() => void handleStepChange("golive")} aria-label={t("quickActions.goLiveAria")} className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-                    {t("quickActions.goLive")}
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    aria-label={t("actions.deleteAria")}
-                    className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                  >
-                    {tCommon("delete")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSave}
-                    disabled={saving}
-                    aria-label={saving ? t("actions.savingAria") : t("actions.saveAndSyncAria")}
-                    className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                  >
-                    {saving ? tForms("saving") : tCommon("save")}
-                  </button>
-                </div>
-              </div>
-              <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-6 relative break-words" style={{ overflowWrap: "anywhere" }} aria-labelledby="agent-step-heading">
-                {saving && <div className="absolute top-3 right-3 text-xs text-white/30">{tForms("saving")}</div>}
-                <h2 id="agent-step-heading" className="text-xs text-zinc-500 mb-4 font-normal">
-                  Currently on: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
-                </h2>
-                <div role="status" aria-live="polite" className="sr-only">
-                  Step {SETUP_STEPS.findIndex((s) => s.id === activeStep) + 1} of {SETUP_STEPS.length}: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
-                </div>
+          <div className="flex-1 min-w-0 flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] lg:overflow-hidden">
+            {selected ? (
+              <AgentDetail
+                agent={selected}
+                activeStep={activeStep}
+                saving={saving}
+                elevenLabsVoices={elevenLabsVoices}
+                workspaceName={initialWorkspaceName}
+                workspaceNumbers={workspaceNumbers}
+                getAgentReadiness={getAgentReadiness}
+                handleStepChange={handleStepChange}
+                handleSave={handleSave}
+                handleDelete={handleDelete}
+                playAudioPreview={playAudioPreview}
+                playingVoiceId={playingVoiceId}
+                fetchWorkspaceNumbers={fetchWorkspaceNumbers}
+                setAgents={setAgents}
+                setToast={setToast}
+                setShowConfetti={setShowConfetti}
+              >
                 {activeStep === "identity" && (
-                  <IdentityStepContent agent={selected} onChange={updateSelected} onNext={async () => { await handleStepChange("voice"); }} />
+                  <IdentityStepContent
+                    agent={selected}
+                    onChange={updateSelected}
+                    onNext={async () => {
+                      await handleStepChange("voice");
+                    }}
+                  />
                 )}
                 {activeStep === "voice" && (
                   <>
-                    <VoiceStepContent agent={selected} workspaceName={initialWorkspaceName} voices={elevenLabsVoices} onChange={updateSelected} onVoicePreview={(voiceId) => void playAudioPreview({ key: voiceId, voiceId, text: selected.greeting.trim() || "Thanks for calling. How can I help you today?", settings: selected.voiceSettings })} previewingVoiceId={playingVoiceId} onBack={() => void handleStepChange("identity")} onNext={async () => { await handleStepChange("knowledge"); }} />
+                    <VoiceStepContent
+                      agent={selected}
+                      workspaceName={initialWorkspaceName}
+                      voices={elevenLabsVoices}
+                      onChange={updateSelected}
+                      onVoicePreview={(voiceId) =>
+                        void playAudioPreview({
+                          key: voiceId,
+                          voiceId,
+                          text:
+                            selected.greeting.trim() ||
+                            "Thanks for calling. How can I help you today?",
+                          settings: selected.voiceSettings,
+                        })
+                      }
+                      previewingVoiceId={playingVoiceId}
+                      onBack={() => void handleStepChange("identity")}
+                      onNext={async () => {
+                        await handleStepChange("knowledge");
+                      }}
+                    />
                     <p className="mt-3 text-xs text-zinc-500">
-                      <Link href={`/app/agents/${selected.id}/voice-test`} className="text-[var(--accent-primary)] hover:underline">
+                      <Link
+                        href={`/app/agents/${selected.id}/voice-test`}
+                        className="text-[var(--accent-primary)] hover:underline"
+                      >
                         Preview all voices & A/B test →
                       </Link>
                     </p>
                   </>
                 )}
                 {activeStep === "knowledge" && (
-                  <KnowledgeStepContent agent={selected} onChange={updateSelected} onBack={() => void handleStepChange("voice")} onNext={async () => { await handleStepChange("behavior"); }} />
+                  <KnowledgeStepContent
+                    agent={selected}
+                    onChange={updateSelected}
+                    onBack={() => void handleStepChange("voice")}
+                    onNext={async () => {
+                      await handleStepChange("behavior");
+                    }}
+                  />
                 )}
                 {activeStep === "behavior" && (
-                  <BehaviorStepContent agent={selected} onChange={updateSelected} onBack={() => void handleStepChange("knowledge")} onNext={async () => { await handleStepChange("test"); }} />
+                  <BehaviorStepContent
+                    agent={selected}
+                    onChange={updateSelected}
+                    onBack={() => void handleStepChange("knowledge")}
+                    onNext={async () => {
+                      await handleStepChange("test");
+                    }}
+                  />
                 )}
                 {activeStep === "test" && (
-                  <TestStepContent agent={selected} workspaceName={initialWorkspaceName} getAgentReadiness={getAgentReadiness} onBack={() => void handleStepChange("behavior")} onNext={async () => { await handleStepChange("golive"); }} />
+                  <TestStepContent
+                    agent={selected}
+                    workspaceName={initialWorkspaceName}
+                    getAgentReadiness={getAgentReadiness}
+                    onBack={() => void handleStepChange("behavior")}
+                    onNext={async () => {
+                      await handleStepChange("golive");
+                    }}
+                  />
                 )}
                 {activeStep === "golive" && (
                   <GoLiveStepContent
@@ -1509,43 +1338,71 @@ export default function AppAgentsPageClient({
                     voices={elevenLabsVoices}
                     workspaceNumbers={workspaceNumbers}
                     onAssignNumber={async (numberId, agentIdOrNull) => {
-                      const res = await fetch(`/api/phone/numbers/${numberId}/assign`, {
-                        method: "PATCH",
-                        credentials: "include",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ assigned_agent_id: agentIdOrNull }),
-                      });
+                      const res = await fetch(
+                        `/api/phone/numbers/${numberId}/assign`,
+                        {
+                          method: "PATCH",
+                          credentials: "include",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            assigned_agent_id: agentIdOrNull,
+                          }),
+                        },
+                      );
                       if (res.ok) fetchWorkspaceNumbers();
                     }}
                     refetchNumbers={fetchWorkspaceNumbers}
                     getReadiness={getAgentReadiness}
                     onBack={() => void handleStepChange("test")}
-                    onActivate={async () => { const result = await persistAgent(selected, { showToast: true }); if (result.vapiId) { setAgents((c) => c.map((a) => (a.id === selected.id ? { ...a, vapiAgentId: result.vapiId ?? null } : a))); setToast("Your AI agent is live! 🎉"); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000); } }}
+                    onActivate={async () => {
+                      const result = await persistAgent(selected, {
+                        showToast: true,
+                      });
+                      if (result.vapiId) {
+                        setAgents((c) =>
+                          c.map((a) =>
+                            a.id === selected.id
+                              ? {
+                                  ...a,
+                                  vapiAgentId: result.vapiId ?? null,
+                                }
+                              : a,
+                          ),
+                        );
+                        setToast("Your AI agent is live! 🎉");
+                        setShowConfetti(true);
+                        setTimeout(() => setShowConfetti(false), 4000);
+                      }
+                    }}
                     activating={saving}
                   />
                 )}
+              </AgentDetail>
+            ) : agents.length === 0 ? (
+              <div className="py-12 text-center">
+                <p className="text-sm font-medium text-white mb-1">
+                  No agents yet
+                </p>
+                <p className="text-xs text-zinc-500 mb-6 max-w-sm mx-auto">
+                  Create your first AI agent to answer calls, capture leads, and
+                  book appointments.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void createAgentFromTemplate("scratch")}
+                  className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  aria-label="Create your first agent"
+                >
+                  + Create Agent
+                </button>
               </div>
-            </div>
-          ) : agents.length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="text-sm font-medium text-white mb-1">No agents yet</p>
-              <p className="text-xs text-zinc-500 mb-6 max-w-sm mx-auto">Create your first AI agent to answer calls, capture leads, and book appointments.</p>
-              <button
-                type="button"
-                onClick={() => void createAgentFromTemplate("scratch")}
-                className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                aria-label="Create your first agent"
-              >
-                + Create Agent
-              </button>
-            </div>
-          ) : (
-            <p className="text-sm text-zinc-500">
-              Select or create an agent to edit how it answers calls.
-            </p>
-          )}
+            ) : (
+              <p className="text-sm text-zinc-500">
+                Select or create an agent to edit how it answers calls.
+              </p>
+            )}
+          </div>
         </div>
-      </div>
       )}
 
       <p className="mt-6">
@@ -1728,85 +1585,6 @@ function TemplateCard(props: {
   );
 }
 
-function VoiceCard(props: {
-  voice: CuratedVoice;
-  selected: boolean;
-  previewing: boolean;
-  onSelect: () => void;
-  onPreview: () => void;
-}) {
-  const { voice, selected, previewing, onSelect, onPreview } = props;
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={onSelect}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(); } }}
-      aria-pressed={selected}
-      aria-label={`${voice.name}, ${voice.description}. ${selected ? "Selected." : "Select this voice."}`}
-      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
-        selected
-          ? "border-2 border-white bg-[var(--bg-hover)] ring-1 ring-white/20"
-          : "border border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--border-medium)]"
-      }`}
-    >
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          onPreview();
-        }}
-        aria-label={`Preview ${voice.name} voice`}
-        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-hover)] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-      >
-        {previewing ? (
-          <Square className="h-3 w-3 fill-current text-[var(--text-secondary)]" />
-        ) : (
-          <Play className="h-3 w-3 fill-current text-[var(--text-secondary)]" />
-        )}
-      </button>
-      <p className="text-sm font-medium text-[var(--text-primary)]">{voice.name}</p>
-      <p className="mt-0.5 text-xs text-white/40">{voice.description}</p>
-      <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{voice.accent}</p>
-      <p className="mt-2 pr-8 text-[10px] leading-tight text-white/20">{voice.bestFor}</p>
-    </div>
-  );
-}
-
-function RangeSetting(props: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  suffix: string;
-  note?: string;
-  onChange: (value: number) => void;
-}) {
-  const { label, value, min, max, step, suffix, note, onChange } = props;
-  return (
-    <div>
-      <label className="flex justify-between text-xs text-zinc-400">
-        <span>{label}</span>
-        <span className="text-zinc-500">
-          {value}
-          {suffix}
-        </span>
-      </label>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="mt-2 w-full accent-white"
-      />
-      {note ? <p className="mt-1 text-[10px] text-zinc-500">{note}</p> : null}
-    </div>
-  );
-}
-
 function ConversationPreview({ agent, workspaceName }: { agent: Agent; workspaceName: string }) {
   const previews = useMemo(() => {
     const items: Array<{ question: string; answer: string }> = [];
@@ -1885,101 +1663,13 @@ function ProfileTab({
         />
       </div>
 
-      <div>
-        <p className="text-[11px] text-zinc-500 mb-2">Voice</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {voices.map((voice) => (
-            <VoiceCard
-              key={voice.id}
-              voice={voice}
-              selected={agent.voice === voice.id}
-              previewing={previewingVoiceId === voice.id}
-              onSelect={() => onChange({ voice: voice.id })}
-              onPreview={() => onVoicePreview(voice.id)}
-            />
-          ))}
-        </div>
-        <details className="mt-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-          <summary className="cursor-pointer text-xs text-zinc-400 hover:text-white">
-            Advanced voice settings
-          </summary>
-          <div className="mt-4 space-y-4">
-            <RangeSetting
-              label="Stability"
-              value={agent.voiceSettings.stability}
-              min={0}
-              max={1}
-              step={0.05}
-              suffix=""
-              note="Lower feels more expressive. Higher feels more consistent."
-              onChange={(value) =>
-                onChange({
-                  voiceSettings: { ...agent.voiceSettings, stability: value },
-                })
-              }
-            />
-            <RangeSetting
-              label="Speed"
-              value={agent.voiceSettings.speed}
-              min={0.8}
-              max={1.3}
-              step={0.05}
-              suffix="x"
-              onChange={(value) =>
-                onChange({
-                  voiceSettings: { ...agent.voiceSettings, speed: value },
-                })
-              }
-            />
-            <RangeSetting
-              label="Response delay"
-              value={agent.voiceSettings.responseDelay}
-              min={0}
-              max={1.5}
-              step={0.1}
-              suffix="s"
-              note="A slight pause can sound more thoughtful. 0.3-0.5 seconds is usually best."
-              onChange={(value) =>
-                onChange({
-                  voiceSettings: { ...agent.voiceSettings, responseDelay: value },
-                })
-              }
-            />
-            <label className="flex items-center gap-2 text-xs text-zinc-400">
-              <input
-                type="checkbox"
-                checked={agent.voiceSettings.backchannel}
-                onChange={(e) =>
-                  onChange({
-                    voiceSettings: {
-                      ...agent.voiceSettings,
-                      backchannel: e.target.checked,
-                    },
-                  })
-                }
-                className="accent-white"
-              />
-              Backchannel sounds while listening
-            </label>
-            <label className="flex items-center gap-2 text-xs text-zinc-400">
-              <input
-                type="checkbox"
-                checked={agent.voiceSettings.denoising}
-                onChange={(e) =>
-                  onChange({
-                    voiceSettings: {
-                      ...agent.voiceSettings,
-                      denoising: e.target.checked,
-                    },
-                  })
-                }
-                className="accent-white"
-              />
-              Background noise reduction
-            </label>
-          </div>
-        </details>
-      </div>
+      <VoiceSelector
+        agent={agent}
+        voices={voices}
+        previewingVoiceId={previewingVoiceId}
+        onChange={onChange}
+        onVoicePreview={onVoicePreview}
+      />
 
       <div className="space-y-1">
         <label className="block text-[11px] text-zinc-500">Opening greeting</label>
@@ -2069,7 +1759,7 @@ function ProfileTab({
   );
 }
 
-const FAQ_CATEGORY_TABS = [
+const _FAQ_CATEGORY_TABS = [
   { id: "all", label: "All" },
   { id: "hours", label: "Hours" },
   { id: "services", label: "Services" },
@@ -2077,7 +1767,7 @@ const FAQ_CATEGORY_TABS = [
   { id: "policies", label: "Policies" },
 ];
 
-function faqMatchesCategory(q: string, category: string): boolean {
+function _faqMatchesCategory(q: string, category: string): boolean {
   if (category === "all") return true;
   const lower = q.toLowerCase();
   if (category === "hours") return lower.includes("hour") || lower.includes("open") || lower.includes("close") || lower.includes("when");
@@ -2087,151 +1777,7 @@ function faqMatchesCategory(q: string, category: string): boolean {
   return true;
 }
 
-function KnowledgeTab({
-  agent,
-  onChange,
-}: {
-  agent: Agent;
-  onChange: (partial: Partial<Agent>) => void;
-}) {
-  const [faqCategory, setFaqCategory] = useState("all");
-  const addFaqRow = () => {
-    const id = `f-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-    onChange({ faq: [...agent.faq, { id, question: "", answer: "" }] });
-  };
-
-  const seedDefaults = () => {
-    const entries = DEFAULT_FAQ_SEED.map((item, index) => ({
-      id: `seed-${Date.now()}-${index}`,
-      question: item.question,
-      answer: item.answer,
-    }));
-    onChange({ faq: agent.faq.length === 0 ? entries : [...agent.faq, ...entries] });
-  };
-
-  const filteredFaq = faqCategory === "all"
-    ? agent.faq
-    : agent.faq.filter((item) => faqMatchesCategory(item.question ?? "", faqCategory));
-
-  return (
-    <div className="space-y-4 text-xs md:text-sm">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-medium text-[var(--text-primary)]">Knowledge base</h3>
-          <p className="text-xs text-white/40">
-            Q&A pairs your agent uses to answer callers clearly and consistently.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={seedDefaults}
-            className="text-xs text-zinc-400 hover:text-zinc-200"
-          >
-            {agent.faq.length === 0 ? "Seed 5 starter entries" : "Add 5 starter entries"}
-          </button>
-          <button
-            type="button"
-            onClick={addFaqRow}
-            className="text-sm text-white hover:text-zinc-300"
-          >
-            + Add entry
-          </button>
-        </div>
-      </div>
-
-      {agent.faq.length > 0 && (
-        <Tabs
-          tabs={FAQ_CATEGORY_TABS}
-          activeTab={faqCategory}
-          onChange={setFaqCategory}
-          className="mb-2"
-        />
-      )}
-
-      {agent.faq.length === 0 ? (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-8 text-center">
-          <BookOpen className="mx-auto h-8 w-8 text-zinc-600" />
-          <p className="mt-3 text-sm text-zinc-300">No knowledge entries yet</p>
-          <p className="mt-1 text-xs text-zinc-500">
-            Add common questions and short answers so callers get clear next steps.
-          </p>
-          <button
-            type="button"
-            onClick={seedDefaults}
-            className="mt-4 rounded-xl border border-[var(--border-medium)] px-3 py-2 text-xs text-zinc-200 hover:border-[var(--border-medium)]"
-          >
-            Seed 5 starter entries
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {filteredFaq.map((item, index) => (
-            <div
-              key={item.id}
-              className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-[11px] text-zinc-500">Entry {index + 1}</p>
-                <button
-                  type="button"
-                  onClick={() =>
-                    onChange({
-                      faq: agent.faq.filter((f) => f.id !== item.id),
-                    })
-                  }
-                  className="text-[11px] text-zinc-500 hover:text-white"
-                >
-                  Remove
-                </button>
-              </div>
-              <label className="text-xs text-zinc-500">When caller asks about...</label>
-              <input
-                type="text"
-                value={item.question}
-                onChange={(e) =>
-                  onChange({
-                    faq: agent.faq.map((f) =>
-                      f.id === item.id ? { ...f, question: e.target.value } : f,
-                    ),
-                  })
-                }
-                className="mt-1 w-full border-b border-[var(--border-default)] bg-transparent py-1 text-sm text-[var(--text-primary)] focus:outline-none"
-                placeholder="What do callers usually ask?"
-              />
-              <label className="mt-3 block text-xs text-zinc-500">Agent responds with...</label>
-              <textarea
-                rows={2}
-                value={item.answer}
-                onChange={(e) =>
-                  onChange({
-                    faq: agent.faq.map((f) =>
-                      f.id === item.id ? { ...f, answer: e.target.value } : f,
-                    ),
-                  })
-                }
-                className="mt-1 w-full border-b border-[var(--border-default)] bg-transparent py-1 text-sm text-[var(--text-primary)] focus:outline-none resize-none"
-                placeholder="How should the agent respond?"
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="space-y-1">
-        <label className="block text-[11px] text-zinc-500">Special instructions</label>
-        <textarea
-          rows={3}
-          value={agent.specialInstructions}
-          onChange={(e) => onChange({ specialInstructions: e.target.value })}
-          aria-label="Special instructions for the agent"
-          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
-          placeholder="Anything the agent should always remember on calls."
-        />
-      </div>
-    </div>
-  );
-}
+// KnowledgeTab now lives in components/AgentKnowledgePanel.
 
 const DEFAULT_OBJECTIONS = [
   { trigger: "Too expensive", response: "We offer flexible pricing. Can I learn more about your budget?" },
@@ -3588,7 +3134,7 @@ function KnowledgeStepContent({
           {seeding ? "Adding…" : "Suggest Q&As"}
         </button>
       </section>
-      <KnowledgeTab agent={agent} onChange={onChange} />
+      <AgentKnowledgePanel agent={agent} updateAgent={onChange} />
       {(agent.faq?.length ?? 0) === 0 && (
         <p className="text-[11px] text-amber-500/90">Add at least one Q&A for better results. You can also continue and add knowledge later.</p>
       )}

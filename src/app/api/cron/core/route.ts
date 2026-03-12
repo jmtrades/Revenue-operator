@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
           cache: "no-store",
         });
         if (res.ok) ran.push(path);
-      } catch (err) {
+      } catch (_err) {
         // Sub-cron failed; continue
       }
     }

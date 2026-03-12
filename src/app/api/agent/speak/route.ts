@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     );
 
     if (!res.ok) {
-      const errText = await res.text();
+      await res.text();
       // ElevenLabs error; return below
       return NextResponse.json(
         { error: "TTS failed", fallback: "browser" },

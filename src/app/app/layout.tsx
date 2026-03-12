@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -7,6 +8,13 @@ import { type AppShellWorkspaceMeta } from "./AppShellClient";
 import HydrationGate from "./HydrationGate";
 
 export const dynamic = "force-dynamic";
+
+/** Dashboard is authenticated; avoid indexing generic shell titles. */
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Recall Touch — activity, calls, leads, and settings.",
+  robots: { index: false, follow: false },
+};
 
 async function getInitialShellData(): Promise<{
   workspaceId: string;

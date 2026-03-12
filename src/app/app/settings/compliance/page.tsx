@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import {
   getDefaultTwoPartyAnnouncement,
   TWO_PARTY_STATES_US,
@@ -10,6 +11,7 @@ import {
 import type { RecordingConsentMode } from "@/lib/compliance/recording-consent";
 
 export default function AppSettingsCompliancePage() {
+  const tSettings = useTranslations("settings");
   const [recording, setRecording] = useState(true);
   const [hipaa, setHipaa] = useState(false);
   const [retention, setRetention] = useState("90");
@@ -35,7 +37,7 @@ export default function AppSettingsCompliancePage() {
           setPauseOnSensitive(data.pauseOnSensitive ?? false);
         }
       } catch {
-        if (!cancelled) toast.error("Failed to load recording consent settings");
+        if (!cancelled) toast.error(tSettings("compliance.loadFailed"));
       } finally {
         if (!cancelled) setConsentLoading(false);
       }
@@ -43,7 +45,7 @@ export default function AppSettingsCompliancePage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [tSettings]);
 
   const handleSaveConsent = async () => {
     setConsentSaving(true);
@@ -60,23 +62,23 @@ export default function AppSettingsCompliancePage() {
       });
       if (!res.ok) {
         const err = (await res.json()) as { error?: string };
-        toast.error(err.error ?? "Failed to save");
+        toast.error(err.error ?? tSettings("compliance.saveFailed"));
         return;
       }
-      toast.success("Recording consent settings saved");
+      toast.success(tSettings("compliance.recordingSaved"));
     } catch {
-      toast.error("Failed to save");
+      toast.error(tSettings("compliance.saveFailed"));
     } finally {
       setConsentSaving(false);
     }
   };
 
   const handleSave = () => {
-    toast.success("Compliance settings saved");
+    toast.success(tSettings("compliance.saved"));
   };
 
   const handleExport = () => {
-    toast.info("Data export requested — you'll receive an email within 24 hours");
+    toast.info(tSettings("compliance.exportRequested"));
   };
 
   return (

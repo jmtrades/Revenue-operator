@@ -1,0 +1,175 @@
+"use client";
+
+import { PhoneCall, Pencil, Trash2 } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import type { Agent, StepId } from "../AgentsPageClient";
+
+interface WorkspacePhoneNumber {
+  id: string;
+  phone_number: string;
+  friendly_name: string | null;
+  number_type: string;
+  status: string;
+  monthly_cost_cents: number;
+  capabilities: { voice?: boolean; sms?: boolean; mms?: boolean };
+  assigned_agent_id: string | null;
+}
+
+interface AgentListProps {
+  agents: Agent[];
+  selectedId: string | null;
+  defaultAgentId: string | null;
+  workspaceNumbers: WorkspacePhoneNumber[];
+  setSelectedId: (id: string) => void;
+  setActiveStep: (step: StepId) => void;
+  setAgents: (updater: (current: Agent[]) => Agent[]) => void;
+  persistAgent: (agentToSave: Agent, options?: { showToast?: boolean; successToast?: string }) => Promise<{ patchOk: boolean; vapiId?: string | null }>;
+  setDeleteConfirmAgent: (agent: Agent | null) => void;
+  getFirstIncompleteStep: (agent: Agent) => StepId;
+}
+
+export function AgentList({
+  agents,
+  selectedId,
+  defaultAgentId,
+  workspaceNumbers,
+  setSelectedId,
+  setActiveStep,
+  setAgents,
+  persistAgent,
+  setDeleteConfirmAgent,
+  getFirstIncompleteStep,
+}: AgentListProps) {
+  return (
+    <div className="w-full lg:w-[320px] xl:w-[360px] lg:shrink-0 lg:border-r lg:border-[var(--border-default)] lg:overflow-y-auto lg:pr-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 content-start">
+        {agents.map((agent) => {
+          const templateLabel = (() => {
+            switch (agent.template) {
+              case "appointment_setter":
+                return "Appointment";
+              case "lead_qualifier":
+                return "Sales";
+              case "follow_up":
+                return "Follow-up";
+              case "support":
+                return "Support";
+              case "after_hours":
+                return "After-Hours";
+              case "emergency":
+                return "Emergency";
+              case "review_request":
+                return "Review";
+              case "scratch":
+                return "Custom";
+              case "receptionist":
+              default:
+                return "Receptionist";
+            }
+          })();
+          const lastActiveLabel =
+            (agent.stats?.totalCalls ?? 0) > 0
+              ? `${agent.stats.totalCalls} calls`
+              : "No calls yet";
+
+          const isSelected = selectedId === agent.id;
+
+          const assigned = workspaceNumbers.find(
+            (n) => n.assigned_agent_id === agent.id,
+          );
+
+          return (
+            <Card
+              key={agent.id}
+              variant="interactive"
+              className={`text-left p-4 ${
+                isSelected
+                  ? "ring-1 ring-[var(--accent-primary)]/50 border-[var(--border-medium)]"
+                  : ""
+              }`}
+              onClick={() => {
+                setSelectedId(agent.id);
+                setActiveStep(getFirstIncompleteStep(agent));
+              }}
+            >
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <p className="font-semibold text-sm text-[var(--text-primary)] truncate flex-1 min-w-0">
+                  {agent.name}
+                </p>
+                <Badge variant={agent.active ? "success" : "neutral"} dot>
+                  {agent.active ? "Active" : "Inactive"}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <Badge variant="neutral">{templateLabel}</Badge>
+                {agent.id === defaultAgentId && (
+                  <span className="text-[10px] text-[var(--text-tertiary)]">
+                    Default
+                  </span>
+                )}
+              </div>
+              {assigned && (
+                <div className="flex items-center gap-1.5 text-[11px] text-[var(--accent-primary)] mb-2">
+                  <PhoneCall className="w-3 h-3 shrink-0" />
+                  <span className="font-mono truncate">
+                    {assigned.phone_number}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
+                <span>{agent.stats?.totalCalls ?? 0} calls</span>
+                <span>·</span>
+                <span>{lastActiveLabel}</span>
+              </div>
+              <div
+                className="flex items-center gap-2 pt-2 border-t border-[var(--border-default)]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  aria-label={agent.active ? "Deactivate" : "Activate"}
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
+                  onClick={async () => {
+                    const next = { ...agent, active: !agent.active };
+                    setAgents((current) =>
+                      current.map((a) => (a.id === agent.id ? next : a)),
+                    );
+                    await persistAgent(next, {
+                      showToast: true,
+                      successToast: agent.active ? "Agent paused" : "Agent active",
+                    });
+                  }}
+                >
+                  <span className="text-[10px] font-medium">
+                    {agent.active ? "Pause" : "On"}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  aria-label="Edit agent"
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
+                  onClick={() => {
+                    setSelectedId(agent.id);
+                    setActiveStep(getFirstIncompleteStep(agent));
+                  }}
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Delete agent"
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-red-400 hover:bg-red-500/10"
+                  onClick={() => setDeleteConfirmAgent(agent)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+

@@ -59,6 +59,9 @@
     "error": {
       "generic": "Something went wrong. Please try again."
     },
+    "password": {
+      "resetSent": "Check your email for a password reset link."
+    },
     "exportFailed": "Export failed. Try again.",
     "importFailed": "Import failed.",
     "searchFailed": "Search failed.",
@@ -249,7 +252,24 @@
       "golive": "Go live",
       "goliveDescription": "Connect to your phone"
     },
+    "setupProgress": {
+      "title": "Setup progress",
+      "forAgent": "For {name}",
+      "next": "Next"
+    },
+    "setup": {
+      "title": "Setup",
+      "stepOf": "Step {current} of {total}",
+      "jumpAria": "Jump to step",
+      "completed": "Completed",
+      "current": "Current step",
+      "currentlyOn": "Currently: {label}"
+    },
     "behavior": {
+      "handoff": {
+        "title": "When to transfer",
+        "subtitle": "Reasons that trigger a handoff to a human."
+      },
       "objectionHandling": {
         "title": "Objection handling",
         "subtitle": "Guide your agent through common objections with calm, human responses."
@@ -257,7 +277,18 @@
       "qualification": {
         "title": "Qualification criteria",
         "subtitle": "Tell your agent what a qualified lead looks like for your business."
+      },
+      "objections": {
+        "placeholder": "Anything the agent should always remember on calls."
       }
+    },
+    "knowledgePanel": {
+      "title": "Knowledge base",
+      "subtitle": "Q&A pairs your agent uses to answer callers.",
+      "questionPlaceholder": "When caller asks about…",
+      "answerPlaceholder": "Agent responds with…",
+      "remove": "Remove",
+      "add": "Add Q&A"
     },
     "deleteAgent": "Delete agent",
     "deleteAgentTitle": "Delete agent",
@@ -298,6 +329,31 @@
       "saveAndSyncAria": "Save agent and sync to voice"
     }
   },
+  "agents.testPanel": {
+    "errors": {
+      "auth": "Please sign in again.",
+      "notConfigured": "AI service is not configured. Contact support.",
+      "generic": "Failed to get a response. Please try again.",
+      "noResponse": "I'm sorry, I couldn't generate a response.",
+      "connection": "Connection error. Please check your network and try again.",
+      "mic": "Microphone access denied or no speech detected. Try again or type your message.",
+      "voiceUnsupported": "Voice is not supported in this browser. Use the text field below."
+    },
+    "defaultGreeting": "Thanks for calling {business}! How can I help you today?",
+    "hint": {
+      "micOrType": "Tap the mic to speak, or type below."
+    }
+  },
+  "agents.voiceTest": {
+    "toast": {
+      "played": "Played {name}",
+      "applied": "Voice applied to agent."
+    },
+    "errors": {
+      "previewFailed": "Preview failed. Check ElevenLabs is configured.",
+      "applyFailed": "Failed to apply voice to agent. Please try again."
+    }
+  },
   "calls": {
     "pageTitle": "Calls — Recall Touch",
     "title": "Calls",
@@ -327,6 +383,12 @@
     },
     "toast": {
       "exportSuccess": "Calls exported. Check your downloads."
+    },
+    "live": {
+      "listenInComingSoon": "Listen in is coming soon.",
+      "whisperComingSoon": "Whisper mode is coming soon.",
+      "bargeInComingSoon": "Barge in is coming soon.",
+      "emergencyTakeover": "Emergency takeover — contact support for urgent escalation."
     }
   },
   "callIntelligence": {
@@ -416,6 +478,16 @@
     },
     "saveLead": "Save lead"
   },
+  "knowledge": {
+    "pageTitle": "Knowledge — Recall Touch",
+    "toast": {
+      "callSummaryDraftAdded": "Call summary added as a draft knowledge entry. Edit and save when you’re ready."
+    },
+    "errors": {
+      "testFailed": "Failed to test knowledge. Please try again.",
+      "noResponse": "No response generated."
+    }
+  },
   "campaigns": {
     "title": "Campaigns",
     "pageTitle": "Campaigns — Recall Touch",
@@ -468,7 +540,33 @@
     "activityLog": "Activity log",
     "deleteAllDataTitle": "Delete all data",
     "deleteAllDataMessage": "Delete all workspace data (calls, leads, agents)? This cannot be undone. Contact support to complete.",
-    "deleteAccountTitle": "Delete account"
+    "deleteAccountTitle": "Delete account",
+    "business.saveFailed": "Failed to save business settings. Please try again.",
+    "business.nameNoMatch": "Workspace name does not match. Type it exactly to confirm.",
+    "business.deleted": "Workspace deleted. Redirecting…",
+    "agent.loadFailed": "Failed to load agent settings. Please try again.",
+    "agent.saveFailed": "Failed to save agent settings. Please try again.",
+    "agent.voiceSyncFailed": "Saved, but the voice agent could not be updated. Try again.",
+    "agent.updated": "Agent updated. Your next calls will use the new settings.",
+    "compliance.loadFailed": "Failed to load recording consent settings.",
+    "compliance.saveFailed": "Failed to save compliance settings. Please try again.",
+    "compliance.recordingSaved": "Recording consent settings saved.",
+    "compliance.saved": "Compliance settings saved.",
+    "compliance.exportRequested": "Data export requested — you'll receive an email within 24 hours.",
+    "leadScoring.loadFailed": "Could not load lead scoring configuration.",
+    "leadScoring.saved": "Lead scoring weights saved. Scores will update on the next call or recalc.",
+    "leadScoring.usingDefaults": "Using default weights. Save to persist.",
+    "integrations.defaultsLoaded": "Defaults loaded.",
+    "integrations.testSuccess": "Test run complete. See output below.",
+    "integrations.saveFailed": "Failed to save mapping. Please try again.",
+    "integrations.saved": "Mapping saved.",
+    "phone.searchFailed": "Search failed. Try different filters and try again.",
+    "phone.provisionFailed": "Provisioning failed. Please try again.",
+    "phone.provisioned": "Number added to your workspace.",
+    "profile.saved": "Profile saved.",
+    "profile.saveFailed": "Could not save profile. Try again.",
+    "notifications.loadFailed": "Could not load notification preferences. Using defaults.",
+    "notifications.saved": "Notification preferences saved."
   },
   "hero": {
     "title": "Your phone calls. Handled.",

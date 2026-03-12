@@ -91,8 +91,8 @@ export default function AppSettingsBusinessPage() {
       setInlineToast(tToast("saved"));
       toast.success(tToast("saved"));
     } catch {
-      setInlineToast("Could not save settings");
-      toast.error("Failed to save. Please try again.");
+      setInlineToast(tToast("error.generic"));
+      toast.error(tSettings("business.saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -102,7 +102,7 @@ export default function AppSettingsBusinessPage() {
   const handleDeleteWorkspace = async () => {
     const expectedName = (workspaceSnapshot?.name ?? name ?? "").trim();
     if (deleteConfirmName.trim() !== expectedName) {
-      toast.error("Workspace name does not match. Type it exactly to confirm.");
+      toast.error(tSettings("business.nameNoMatch"));
       return;
     }
     setDeleting(true);
@@ -117,7 +117,7 @@ export default function AppSettingsBusinessPage() {
         const data = await res.json().catch(() => ({}));
         throw new Error((data as { error?: string }).error ?? "Failed to delete");
       }
-      toast.success("Workspace deleted. Redirecting…");
+      toast.success(tSettings("business.deleted"));
       window.location.href = "/";
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not delete workspace.");

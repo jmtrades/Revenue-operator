@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { formatCurrencyCents } from "@/lib/currency";
 import { toast } from "sonner";
@@ -30,6 +30,8 @@ function formatPhoneDisplay(num: string): string {
 
 export default function PhoneMarketplacePage() {
   const locale = useLocale() || "en-US";
+  const tSettings = useTranslations("settings");
+  const tToast = useTranslations("toast");
   const [country, setCountry] = useState("US");
   const [state, setState] = useState("");
   const [areaCode, setAreaCode] = useState("");
@@ -49,7 +51,7 @@ export default function PhoneMarketplacePage() {
       const res = await fetch(`/api/phone/available?${params.toString()}`, { credentials: "include" });
       const data = (await res.json()) as { numbers?: AvailableNumber[]; message?: string };
       if (!res.ok) {
-        setError(data.message ?? "Search failed.");
+        setError(data.message ?? tSettings("phone.searchFailed"));
         setNumbers([]);
         return;
       }
@@ -58,7 +60,7 @@ export default function PhoneMarketplacePage() {
         setError(data.message);
       }
     } catch {
-      setError("Could not search. Try again.");
+      setError(tToast("error.generic"));
       setNumbers([]);
     } finally {
       setLoading(false);
@@ -85,13 +87,13 @@ export default function PhoneMarketplacePage() {
       });
       const data = (await res.json()) as { error?: string; phone_number?: string };
       if (!res.ok) {
-        toast.error(data.error ?? "Provisioning failed.");
+        toast.error(data.error ?? tSettings("phone.provisionFailed"));
         return;
       }
-      toast.success("Number added to your workspace.");
+      toast.success(tSettings("phone.provisioned"));
       window.location.href = "/app/settings/phone";
     } catch {
-      toast.error("Something went wrong. Try again.");
+      toast.error(tToast("error.generic"));
     } finally {
       setProvisioning(null);
     }

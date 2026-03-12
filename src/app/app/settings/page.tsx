@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   AlertTriangle,
@@ -105,6 +106,8 @@ const SETTINGS_LINKS = [
 type ConfirmType = "data" | "account" | null;
 
 export default function AppSettingsPage() {
+  const tSettings = useTranslations("settings");
+  const tToast = useTranslations("toast");
   const [signingOut, setSigningOut] = useState(false);
   const [confirm, setConfirm] = useState<ConfirmType>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -158,13 +161,12 @@ export default function AppSettingsPage() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(body.error || "Could not save profile");
+        toast.error(body.error ?? tSettings("profile.saveFailed"));
+        return;
       }
-      toast.success("Profile saved");
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Could not save profile. Try again.",
-      );
+      toast.success(tSettings("profile.saved"));
+    } catch {
+      toast.error(tToast("error.generic"));
     } finally {
       setSavingProfile(false);
     }

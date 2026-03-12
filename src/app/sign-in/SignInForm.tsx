@@ -8,7 +8,6 @@ import { toast } from "sonner";
 
 export default function SignInForm() {
   const t = useTranslations("auth");
-  const tCommon = useTranslations("common");
   const sp = useSearchParams();
   const oauthError = sp?.get("error") ?? "";
   const [email, setEmail] = useState("");
@@ -18,6 +17,7 @@ export default function SignInForm() {
   const [busy, setBusy] = useState(false);
   const [googleBusy, setGoogleBusy] = useState(false);
   const [showPw, setShowPw] = useState(false);
+  const tToast = useTranslations("toast");
 
   const oauthErrorMessage =
     oauthError === "google_config"
@@ -98,7 +98,7 @@ export default function SignInForm() {
   async function google() {
     if (googleBusy) return;
     setGoogleBusy(true);
-    toast.info("Google sign-in is coming soon.");
+    toast.info(t("toasts.googleComingSoon"));
     setTimeout(() => setGoogleBusy(false), 600);
   }
 
@@ -229,7 +229,7 @@ export default function SignInForm() {
           <p className="text-center text-[var(--text-tertiary)] text-[13px] mt-4">
             <button
               type="button"
-              onClick={() => toast.success("Check your email.")}
+              onClick={() => toast.success(tToast("password.resetSent"))}
               className="hover:text-[var(--text-secondary)] transition underline-offset-2 hover:underline"
             >
               Forgot password?

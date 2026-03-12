@@ -23,6 +23,21 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // API route handlers often catch without using the error; avoid noise without renaming every catch.
+  {
+    files: ["src/app/api/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          caughtErrors: "none",
+        },
+      ],
+    },
+  },
   {
     files: ["src/app/dashboard/**/*.tsx", "src/components/**/*.tsx", "src/lib/intelligence/**/*.ts"],
     plugins: { "ui-doctrine": uiDoctrine },

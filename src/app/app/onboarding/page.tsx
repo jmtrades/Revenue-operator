@@ -145,7 +145,7 @@ export default function AppOnboardingPage() {
   const [businessHoursDisplay, setBusinessHoursDisplay] = useState("");
 
   // No fake number: user gets a number in Settings → Phone or forwards existing
-  const [phoneDisplay] = useState<string | null>(null);
+  const [_phoneDisplay] = useState<string | null>(null);
   const [_numberOption, _setNumberOption] = useState<"forward" | "new" | "skip">("new");
   const [showConfetti, setShowConfetti] = useState(false);
 

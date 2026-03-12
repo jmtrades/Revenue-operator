@@ -7,7 +7,6 @@ import { assertNotEnforcedOrConvert } from "@/lib/doctrine/enforce";
 import { getDb } from "@/lib/db/queries";
 import { processEvent } from "@/lib/event-engine";
 import { enqueueDecision } from "@/lib/queue";
-import { redact } from "@/lib/redact";
 import { isOptOut, mergeSettings } from "@/lib/autopilot";
 import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
 import { emitOutboundEvent } from "@/lib/outbound-events";

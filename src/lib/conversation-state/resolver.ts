@@ -277,7 +277,7 @@ Classify the state.`;
       confidence,
       reasoning_tags,
     };
-  } catch (error) {
+  } catch (_error) {
     // LLM classification failed; rethrow
     // Safe fallback
     return {

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
 const EVENTS = [
@@ -17,6 +18,8 @@ const EVENTS = [
 type Channel = "push" | "sms" | "email";
 
 export default function AppSettingsNotificationsPage() {
+  const tSettings = useTranslations("settings");
+  const tToast = useTranslations("toast");
   const snapshot = getWorkspaceMeSnapshotSync() as { notification_preferences?: Record<string, Channel[]> } | null;
   const [loading, setLoading] = useState(!snapshot);
   const [saving, setSaving] = useState(false);
@@ -51,12 +54,12 @@ export default function AppSettingsNotificationsPage() {
         });
       } catch {
         // fall back to defaults; surface error via toast
-        toast.error("Could not load notification preferences. Using defaults.");
+        toast.error(tSettings("notifications.loadFailed"));
       } finally {
         setLoading(false);
       }
     })();
-  }, [snapshot]);
+  }, [snapshot, tSettings]);
 
   const toggle = (event: string, channel: Channel) => {
     setPrefs((p) => {
@@ -82,9 +85,9 @@ export default function AppSettingsNotificationsPage() {
         body: JSON.stringify({ notification_preferences: payload }),
       });
       if (!res.ok) throw new Error("Failed to save");
-      toast.success("Notification preferences saved");
+      toast.success(tSettings("notifications.saved"));
     } catch {
-      toast.error("Failed to save preferences");
+      toast.error(tToast("error.generic"));
     } finally {
       setSaving(false);
     }

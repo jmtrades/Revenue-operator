@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Mic } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { speakText } from "@/lib/voice-preview";
 
 function canUseSpeechRecognition(): boolean {
@@ -59,6 +60,7 @@ export function AgentTestPanel({
   const recognitionRef = useRef<{ stop(): void } | null>(null);
   const messagesRef = useRef<Message[]>([]);
   messagesRef.current = messages;
+  const tAgents = useTranslations("agents.testPanel");
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -98,22 +100,32 @@ export function AgentTestPanel({
         });
         if (!res.ok) {
           const err = (await res.json().catch(() => ({}))) as { error?: string };
-          const errorText = err.error?.trim() || (res.status === 401 ? "Please sign in again." : res.status === 503 ? "AI service is not configured. Contact support." : "Failed to get a response. Please try again.");
+          const errorText =
+            err.error?.trim() ||
+            (res.status === 401
+              ? tAgents("errors.auth")
+              : res.status === 503
+                ? tAgents("errors.notConfigured")
+                : tAgents("errors.generic"));
           setMessages([...updatedMessages, { role: "agent", text: errorText }]);
         } else {
           const data = (await res.json().catch(() => ({}))) as { response?: string };
-          const reply = (data.response ?? "I'm sorry, I couldn't generate a response.").trim() || "I'm sorry, I couldn't generate a response.";
+          const fallback = tAgents("errors.noResponse");
+          const reply = (data.response ?? fallback).trim() || fallback;
           setMessages([...updatedMessages, { role: "agent", text: reply }]);
           speakAgentReply(reply);
         }
       } catch {
-        setMessages([...updatedMessages, { role: "agent", text: "Connection error. Please check your network and try again." }]);
+        setMessages([
+          ...updatedMessages,
+          { role: "agent", text: tAgents("errors.connection") },
+        ]);
       } finally {
         setLoading(false);
         inputRef.current?.focus();
       }
     },
-    [agent.id, speakAgentReply]
+    [agent.id, speakAgentReply, tAgents]
   );
 
   function startTest(scenarioPrompt?: string) {
@@ -127,7 +139,7 @@ export function AgentTestPanel({
     setIsSpeaking(false);
     const greeting =
       agent.greeting?.trim() ||
-      `Thanks for calling ${businessName}! How can I help you today?`;
+      tAgents("defaultGreeting", { business: businessName });
     setMessages([{ role: "agent", text: greeting }]);
     speakAgentReply(greeting);
 
@@ -186,7 +198,7 @@ export function AgentTestPanel({
     rec.onerror = () => {
       recognitionRef.current = null;
       setIsListening(false);
-      toast.error("Microphone access denied or no speech detected. Try again or type your message.");
+      toast.error(tAgents("errors.mic"));
     };
     try {
       recognitionRef.current = rec;
@@ -196,7 +208,7 @@ export function AgentTestPanel({
       recognitionRef.current = null;
       setIsListening(false);
     }
-  }, [loading, isSpeaking, submitToApi]);
+  }, [loading, isSpeaking, submitToApi, tAgents]);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
@@ -362,10 +374,14 @@ export function AgentTestPanel({
                 </button>
               )}
             </div>
-            <p className="text-center text-[11px] text-white/40">Tap the mic to speak, or type below.</p>
+            <p className="text-center text-[11px] text-white/40">
+              {tAgents("hint.micOrType")}
+            </p>
           </>
         ) : (
-          <p className="text-[11px] text-amber-500/90 text-center">Voice not supported in this browser. Use the text field below.</p>
+          <p className="text-[11px] text-amber-500/90 text-center">
+            {tAgents("errors.voiceUnsupported")}
+          </p>
         )}
         <div className="flex gap-2">
           <input

@@ -1,33 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import {
-  Users,
-  Search,
-  Filter,
-  X,
-  Phone,
-  MessageSquare,
-  Archive,
-  Plus,
-  Calendar,
-  StickyNote,
-} from "lucide-react";
+import { Users, Search, Filter, X, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { Tabs } from "@/components/ui/Tabs";
-import { Badge } from "@/components/ui/Badge";
 import { Sheet } from "@/components/ui/Sheet";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { DndContext, type DragEndEvent, useDraggable, useDroppable } from "@dnd-kit/core";
-import { Skeleton } from "@/components/ui/Skeleton";
 import { getClientOrNull } from "@/lib/supabase/client";
+import { LeadsList } from "./components/LeadsList";
+import { LeadsKanban } from "./components/LeadsKanban";
+import { LeadDetail } from "./components/LeadDetail";
 
 interface ApiLead {
   id: string;
@@ -43,7 +30,7 @@ interface ApiLead {
   metadata?: { source?: string; service_requested?: string; notes?: string; score?: number } | null;
 }
 
-type LeadView = {
+export type LeadView = {
   id: string;
   name: string;
   phone: string;
@@ -88,23 +75,6 @@ function scoreBucket(score: number): ScoreBucket {
   return "low";
 }
 
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString();
-}
-
-function timeSince(iso: string): string {
-  const d = new Date(iso).getTime();
-  const diffMs = Date.now() - d;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays <= 0) return "Today";
-  if (diffDays === 1) return "1 day ago";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  const weeks = Math.floor(diffDays / 7);
-  if (weeks === 1) return "1 week ago";
-  return `${weeks} weeks ago`;
-}
-
 const SOURCE_TO_LABEL: Record<string, LeadSource> = {
   inbound_call: "Inbound Call",
   outbound: "Outbound Outreach",
@@ -114,67 +84,6 @@ const SOURCE_TO_LABEL: Record<string, LeadSource> = {
   api: "Outbound Outreach",
   other: "Inbound Call",
 };
-
-function BoardCard({ lead, onOpen }: { lead: LeadView; onOpen: () => void }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: lead.id });
-  const sb = scoreBucket(lead.score);
-  const scoreClass = SCORE_COLORS[sb];
-  return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      role="button"
-      tabIndex={0}
-      onClick={(e) => { e.stopPropagation(); onOpen(); }}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(); } }}
-      className={`w-full text-left rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-xs hover:border-[var(--border-medium)] cursor-grab active:cursor-grabbing ${isDragging ? "opacity-50" : ""}`}
-    >
-      <p className="font-medium text-zinc-100 truncate">{lead.name}</p>
-      <p className="text-[11px] text-zinc-400">{lead.phone}</p>
-      <p className="text-[11px] text-zinc-500 truncate">{lead.service}</p>
-      <div className="mt-1 flex items-center justify-between gap-2">
-        <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] ${scoreClass}`}>
-          <span>{lead.score}</span>
-        </span>
-        <span className="text-[11px] text-zinc-500">{timeSince(lead.createdAt)}</span>
-      </div>
-    </div>
-  );
-}
-
-function BoardColumn({
-  status,
-  columnLeads,
-  onMoveLead: _onMoveLead,
-  onOpenLead,
-}: {
-  status: LeadStatus;
-  columnLeads: LeadView[];
-  onMoveLead: (leadId: string, newStatus: LeadStatus) => void;
-  onOpenLead: (lead: LeadView) => void;
-}) {
-  const { isOver, setNodeRef } = useDroppable({ id: status });
-  return (
-    <div
-      ref={setNodeRef}
-      className={`flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 min-h-[220px] transition-colors ${isOver ? "ring-2 ring-[var(--accent-primary)]/50" : ""}`}
-    >
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-semibold text-zinc-200">{status}</p>
-        <span className="text-[11px] text-zinc-500">{columnLeads.length}</span>
-      </div>
-      <div className="space-y-2 overflow-y-auto min-h-0">
-        {columnLeads.map((lead) => (
-          <BoardCard key={lead.id} lead={lead} onOpen={() => onOpenLead(lead)} />
-        ))}
-        {columnLeads.length === 0 && (
-          <p className="text-[11px] text-zinc-600">No leads in this stage yet.</p>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function mapApiLeadToView(l: ApiLead, index: number): LeadView {
   const name = l.name?.trim() || l.company?.trim() || "Lead";
@@ -247,6 +156,7 @@ function persistLeadsSnapshot(workspaceId: string, leads: LeadView[]) {
 export default function LeadsPage() {
   useRouter();
   const t = useTranslations();
+  const tToast = useTranslations("toast");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId =
@@ -314,9 +224,9 @@ export default function LeadsPage() {
         setLeads(mapped);
         persistLeadsSnapshot(workspaceId, mapped);
       })
-      .catch(() => setError("Could not load leads for this workspace."))
+      .catch(() => setError(t("leads.errors.loadFailed")))
       .finally(() => setLoading(false));
-  }, [workspaceId]);
+  }, [workspaceId, t]);
 
   useEffect(() => {
     const client = getClientOrNull();
@@ -504,12 +414,12 @@ export default function LeadsPage() {
   const handleAddLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addLeadForm.name.trim() || !addLeadForm.phone.trim() || addLeadSaving) {
-      if (!addLeadForm.name.trim()) setAddLeadError("Name is required.");
-      else if (!addLeadForm.phone.trim()) setAddLeadError("Phone is required.");
+      if (!addLeadForm.name.trim()) setAddLeadError(t("leads.errors.nameRequired"));
+      else if (!addLeadForm.phone.trim()) setAddLeadError(t("leads.errors.phoneRequired"));
       return;
     }
     if (!workspaceId) {
-      setAddLeadError("Workspace not loaded. Refresh the page and try again.");
+      setAddLeadError(t("leads.errors.workspaceMissing"));
       return;
     }
     setAddLeadError(null);
@@ -535,8 +445,9 @@ export default function LeadsPage() {
         error?: string;
       } | null;
       if (!res.ok) {
-        setAddLeadError(data?.error ?? "Could not add lead.");
-        toast.error(data?.error ?? "Could not add lead.");
+        const msg = data?.error ?? t("leads.errors.addFailed");
+        setAddLeadError(msg);
+        toast.error(msg);
         return;
       }
       refetchLeads();
@@ -551,10 +462,10 @@ export default function LeadsPage() {
         status: "New",
         notes: "",
       });
-      toast.success("Lead added.");
+      toast.success(t("leads.toast.added"));
     } catch {
-      setAddLeadError("Could not add lead.");
-      toast.error("Could not add lead.");
+      setAddLeadError(t("leads.errors.addFailed"));
+      toast.error(tToast("error.generic"));
     } finally {
       setAddLeadSaving(false);
     }
@@ -589,7 +500,7 @@ export default function LeadsPage() {
   const sources: LeadSource[] = ["Inbound Call", "Outbound Outreach", "Website", "Referral"];
 
   return (
-    <>
+    <div>
       <div className="p-6 md:p-8 max-w-6xl mx-auto">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
           <div>
@@ -875,224 +786,30 @@ export default function LeadsPage() {
           </div>
         )}
 
-        {/* Table view */}
+        {/* Table + mobile list */}
         <div className={view === "board" ? "hidden md:block" : ""}>
-          {loading ? (
-            <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <div className="flex items-center justify-between gap-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <Skeleton variant="rectangular" className="h-9 w-40 rounded-xl" />
-                  <Skeleton variant="rectangular" className="h-9 w-32 rounded-xl" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Skeleton variant="rectangular" className="h-9 w-24 rounded-xl" />
-                  <Skeleton variant="rectangular" className="h-9 w-24 rounded-xl" />
-                </div>
-              </div>
-              <div className="mt-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden">
-                <div className="grid grid-cols-[0.4fr,1.2fr,1.2fr,1fr,1fr,1fr,1fr] gap-2 px-4 py-3 border-b border-[var(--border-default)]">
-                  <Skeleton variant="text" className="h-4 w-4" />
-                  <Skeleton variant="text" className="h-4 w-24" />
-                  <Skeleton variant="text" className="h-4 w-24" />
-                  <Skeleton variant="text" className="h-4 w-20" />
-                  <Skeleton variant="text" className="h-4 w-16" />
-                  <Skeleton variant="text" className="h-4 w-20" />
-                  <Skeleton variant="text" className="h-4 w-20" />
-                </div>
-                <div className="divide-y divide-[var(--border-default)]">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="grid grid-cols-[0.4fr,1.2fr,1.2fr,1fr,1fr,1fr,1fr] gap-2 px-4 py-3"
-                    >
-                      <Skeleton variant="text" className="h-4 w-4" />
-                      <Skeleton variant="text" className="h-4 w-32" />
-                      <Skeleton variant="text" className="h-4 w-28" />
-                      <Skeleton variant="text" className="h-4 w-20" />
-                      <Skeleton variant="text" className="h-4 w-16" />
-                      <Skeleton variant="text" className="h-4 w-20" />
-                      <Skeleton variant="text" className="h-4 w-20" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="mt-6 text-sm text-[var(--accent-red)]" role="alert">{error}</div>
-          ) : filteredLeads.length === 0 ? (
-            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-12 text-center">
-              <Users className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-              <p className="text-sm font-medium text-white mb-1">Leads appear when your AI captures them — or add your own</p>
-              <p className="text-xs text-zinc-500 mb-4">Create leads from calls or add leads manually. Connect your CRM via Settings → Integrations to sync with HubSpot, Salesforce, and more.</p>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => { setAddLeadOpen(true); setAddLeadError(null); }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-sm font-semibold px-4 py-2.5 hover:bg-zinc-100"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add lead
-                </button>
-                <Link href="/" className="text-sm font-medium text-zinc-300 hover:text-white underline underline-offset-2">Try our agent →</Link>
-                <Link href="/app/settings/integrations" className="text-sm font-medium text-zinc-300 hover:text-white underline underline-offset-2">Connect CRM →</Link>
-              </div>
-            </div>
-          ) : (
-          <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="border-b border-[var(--border-default)] bg-[var(--bg-card)]">
-                <tr>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
-                    <input
-                      type="checkbox"
-                      className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
-                      checked={
-                        filteredLeads.length > 0 &&
-                        selectedIds.size === filteredLeads.length
-                      }
-                      onChange={(e) => toggleAllSelected(e.target.checked)}
-                    />
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Name</th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Phone</th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Source</th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Score</th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Stage</th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Last contact</th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Agent</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredLeads.map((lead) => {
-                  const checked = selectedIds.has(lead.id);
-                  const sb = scoreBucket(lead.score);
-                  const scoreClass = SCORE_COLORS[sb];
-                  return (
-                    <tr
-                      key={lead.id}
-                      className="border-t border-[var(--border-default)]/70 hover:bg-[var(--bg-input)]/60 cursor-pointer"
-                      onClick={() => openDrawer(lead)}
-                    >
-                      <td
-                        className="py-3 px-4"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
-                          checked={checked}
-                          onChange={() => toggleSelected(lead.id)}
-                        />
-                      </td>
-                      <td className="py-3 px-4 text-sm text-zinc-100">{lead.name}</td>
-                      <td className="py-3 px-4 text-xs text-zinc-400">{lead.phone}</td>
-                      <td className="py-3 px-4 text-xs">
-                        <Badge variant="neutral">{lead.source}</Badge>
-                      </td>
-                      <td className="py-3 px-4 text-xs">
-                        <span
-                          className={`inline-flex h-7 w-7 items-center justify-center rounded-full border text-[11px] font-medium ${scoreClass}`}
-                          title={`Score: ${lead.score}`}
-                        >
-                          {lead.score}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-xs">
-                        <Badge variant={lead.status === "Won" ? "success" : lead.status === "Lost" ? "error" : "neutral"}>
-                          {lead.status}
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4 text-xs text-zinc-400">{timeSince(lead.lastContactAt)}</td>
-                      <td className="py-3 px-4 text-xs text-zinc-300">{lead.assignedAgent}</td>
-                    </tr>
-                  );
-                })}
-                {filteredLeads.length === 0 && (
-                  <tr>
-                    <td colSpan={8} className="py-8 px-4 text-center text-sm text-zinc-500">
-                      No leads match these filters yet.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          )}
+          <LeadsList
+            loading={loading}
+            error={error}
+            filteredLeads={filteredLeads}
+            selectedIds={selectedIds}
+            toggleAllSelected={toggleAllSelected}
+            toggleSelected={toggleSelected}
+            openDrawer={openDrawer}
+          />
+        </div>
 
-          {filteredLeads.length > 0 && (
-          <>
-          {/* Mobile cards */}
-          <div className="md:hidden space-y-3">
-            {filteredLeads.map((lead) => {
-              const sb = scoreBucket(lead.score);
-              const scoreClass = SCORE_COLORS[sb];
-              return (
-                <button
-                  key={lead.id}
-                  type="button"
-                  onClick={() => openDrawer(lead)}
-                  className="w-full text-left rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col gap-1.5"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-medium text-zinc-100 truncate">
-                      {lead.name}
-                    </p>
-                    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] ${scoreClass}`}>
-                      <span>{lead.score}</span>
-                    </span>
-                  </div>
-                  <p className="text-xs text-zinc-400">{lead.phone}</p>
-                  <p className="text-xs text-zinc-500">{lead.service}</p>
-                  <div className="mt-1 flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
-                      {lead.status}
-                    </span>
-                    <span className="text-[11px] text-zinc-500">
-                      {timeSince(lead.createdAt)}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-            {filteredLeads.length === 0 && (
-              <p className="text-sm text-zinc-500 text-center py-4">
-                No leads match these filters yet.
-              </p>
-            )}
-          </div>
-
-        {/* Board view (desktop only) — @dnd-kit */}
+        {/* Board view (desktop only) */}
         {view === "board" && (
           <div className="hidden md:block mt-6">
-            <DndContext
-              onDragEnd={(event: DragEndEvent) => {
-                const { active, over } = event;
-                if (!over || active.id === over.id) return;
-                const leadId = String(active.id);
-                const newStatus = STATUS_ORDER.includes(over.id as LeadStatus) ? (over.id as LeadStatus) : null;
-                if (newStatus) moveLeadStatus(leadId, newStatus);
-              }}
-            >
-              <div className="grid grid-cols-3 xl:grid-cols-6 gap-4">
-                {STATUS_ORDER.map((status) => (
-                  <BoardColumn
-                    key={status}
-                    status={status}
-                    columnLeads={groupedByStatus.get(status) ?? []}
-                    onMoveLead={moveLeadStatus}
-                    onOpenLead={openDrawer}
-                  />
-                ))}
-              </div>
-            </DndContext>
+            <LeadsKanban
+              groupedByStatus={groupedByStatus}
+              onMoveLead={moveLeadStatus}
+              onOpenLead={openDrawer}
+            />
           </div>
         )}
-          </>
-          )}
         </div>
-      </div>
 
       {/* Add lead modal */}
       <Modal
@@ -1300,10 +1017,10 @@ export default function LeadsPage() {
                         };
                       };
                       const parsed = lines.slice(1).map(toObj).filter((r) => r.name && r.phone);
-                      if (parsed.length === 0) {
-                        toast.error("No valid rows (need name and phone).");
-                        return;
-                      }
+                        if (parsed.length === 0) {
+                          toast.error(t("leads.errors.csvNoValidRows"));
+                          return;
+                        }
                       setCsvPreviewRows(parsed);
                     };
                     reader.readAsText(file);
@@ -1323,140 +1040,30 @@ export default function LeadsPage() {
         title={drawerLead ? `${drawerLead.name} · Lead` : "Lead"}
       >
         {drawerLead && (
-          <div className="space-y-5">
-            <div className="flex items-center gap-3">
-              <span
-                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-semibold ${scoreBadgeClass(drawerLead.score)}`}
-                title="Score"
-              >
-                {drawerLead.score}
-              </span>
-              <div>
-                <p className="text-xs text-zinc-500">{drawerLead.service} · {drawerLead.source}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
-                  <Badge variant={drawerLead.status === "Won" ? "success" : drawerLead.status === "Lost" ? "error" : "neutral"}>{drawerLead.status}</Badge>
-                  <span className="text-[11px] text-zinc-500">Agent: {drawerLead.assignedAgent}</span>
-                  <span className="text-[11px] text-zinc-500">Created {formatDate(drawerLead.createdAt)}</span>
-                </div>
-              </div>
-            </div>
-
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Contact</h3>
-              <div className="grid gap-2">
-                <Input label="Name" value={drawerLead.name} readOnly className="bg-[var(--bg-card)]" />
-                <Input label="Phone" value={drawerLead.phone} readOnly className="bg-[var(--bg-card)]" />
-                <Input label="Email" value={drawerLead.email} readOnly className="bg-[var(--bg-card)]" />
-              </div>
-            </section>
-
-            {drawerLead.service && drawerLead.service !== "Service request" && (
-              <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">What they need</h3>
-                <p className="text-sm text-zinc-200">{drawerLead.service}</p>
-              </section>
-            )}
-
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Stage</h3>
-              <select
-                value={drawerLead.status}
-                onChange={(e) => {
-                  const next = e.target.value as LeadStatus;
-                  setLeads((prev) => prev.map((l) => (l.id === drawerLead.id ? { ...l, status: next } : l)));
-                  setDrawerLead({ ...drawerLead, status: next });
-                  persistLeadStatus(drawerLead.id, next);
-                }}
-                className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-[var(--border-medium)]"
-              >
-                {STATUS_ORDER.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </section>
-
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Timeline</h3>
-              <ol className="space-y-2 text-xs">
-                {drawerLead.timeline.map((item) => (
-                  <li key={`${item.at}-${item.label}`} className="flex items-start gap-2">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400" />
-                    <div>
-                      <p className="text-zinc-100">{item.label}</p>
-                      <p className="text-[11px] text-zinc-500">{formatDate(item.at)}</p>
-                    </div>
-                  </li>
-                ))}
-                {drawerCalls.length > 0 && drawerCalls.map((call) => (
-                  <li key={call.id} className="flex items-start gap-2">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-primary)]" />
-                    <div>
-                      <Link href={`/app/calls/${call.id}`} className="text-zinc-100 hover:underline">
-                        Call {call.call_started_at ? formatDate(call.call_started_at) : ""} {call.outcome ? ` · ${call.outcome}` : ""}
-                      </Link>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              {drawerCallsLoading && <p className="text-xs text-zinc-500">Loading calls…</p>}
-            </section>
-
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Notes</h3>
-              <textarea
-                defaultValue={drawerLead.notes}
-                onBlur={(e) => {
-                  const value = e.target.value.trim();
-                  setLeads((prev) => prev.map((l) => (l.id === drawerLead.id ? { ...l, notes: value } : l)));
-                  setDrawerLead({ ...drawerLead, notes: value });
-                }}
-                placeholder="Add notes…"
-                rows={3}
-                className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] resize-none"
-              />
-            </section>
-
-            <div className="flex flex-wrap gap-2 pt-2">
-              {drawerLead.phone ? (
-                <a href={`tel:${drawerLead.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
-                  <Phone className="w-3.5 h-3.5" /> Call
-                </a>
-              ) : null}
-              <Link href={drawerLead.id ? `/app/messages?lead_id=${drawerLead.id}` : `/app/messages`} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
-                <MessageSquare className="w-3.5 h-3.5" /> Text
-              </Link>
-              <Link href="/app/calendar" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
-                <Calendar className="w-3.5 h-3.5" /> Schedule
-              </Link>
-              <Button variant="ghost" size="sm" className="text-xs">
-                <StickyNote className="w-3.5 h-3.5 mr-1.5" /> Add note
-              </Button>
-              {drawerLead.phone ? (
-                <>
-                  <select
-                    value={outboundCallType || "default"}
-                    onChange={(e) => setOutboundCallType(e.target.value === "default" ? "" : e.target.value)}
-                    className="rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2 py-1.5 text-xs text-zinc-200"
-                    aria-label="Call type"
-                  >
-                    <option value="default">Default</option>
-                    <option value="lead_followup">Follow-up</option>
-                    <option value="appointment_reminder">Reminder</option>
-                  </select>
-                  <Button variant="primary" size="sm" onClick={() => void handleHaveAICall()} disabled={outboundCalling} className="text-xs">
-                    <Phone className="w-3.5 h-3.5 mr-1.5" /> {outboundCalling ? "Starting…" : "Have AI call"}
-                  </Button>
-                </>
-              ) : null}
-              <Button variant="secondary" size="sm" onClick={() => { setDrawerLead({ ...drawerLead, status: "Lost" }); persistLeadStatus(drawerLead.id, "Lost"); setLeads((prev) => prev.map((l) => (l.id === drawerLead.id ? { ...l, status: "Lost" as LeadStatus } : l))); }}>
-                <Archive className="w-3.5 h-3.5 mr-1.5" /> Archive
-              </Button>
-            </div>
-          </div>
+          <LeadDetail
+            lead={drawerLead}
+            calls={drawerCalls}
+            callsLoading={drawerCallsLoading}
+            scoreBadgeClass={scoreBadgeClass}
+            onStatusChange={(leadId, status) => moveLeadStatus(leadId, status)}
+            onNotesBlur={(leadId, notes) => {
+              setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, notes } : l)));
+              setDrawerLead((prev) => (prev?.id === leadId ? { ...prev, notes } : prev));
+            }}
+            onArchive={(leadId) => {
+              setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, status: "Lost" as LeadStatus } : l)));
+              if (drawerLead?.id === leadId) setDrawerLead({ ...drawerLead, status: "Lost" });
+              persistLeadStatus(leadId, "Lost");
+            }}
+            outboundCallType={outboundCallType}
+            setOutboundCallType={setOutboundCallType}
+            onHaveAICall={() => void handleHaveAICall()}
+            outboundCalling={outboundCalling}
+          />
         )}
       </Sheet>
 
-    </>
+    </div>
   );
 }
 

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowLeft, Plus, Trash2, Play, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import {
   CRM_FIELDS_BY_PROVIDER,
   RECALL_TOUCH_FIELDS,
@@ -40,6 +41,8 @@ function isCrmProviderId(s: string): s is CrmProviderId {
 }
 
 export default function IntegrationsMappingPage() {
+  const tSettings = useTranslations("settings");
+  const tToast = useTranslations("toast");
   const searchParams = useSearchParams();
   const providerParam = searchParams.get("provider") ?? "";
   const provider = isCrmProviderId(providerParam) ? providerParam : ("hubspot" as CrmProviderId);
@@ -106,16 +109,16 @@ export default function IntegrationsMappingPage() {
   const loadDefaults = () => {
     setConfig({ mappings: getDefaultMappings(provider), customRtFields: [], customCrmFields: [] });
     setTestResult(null);
-    toast.info("Defaults loaded.");
+    toast.info(tSettings("integrations.defaultsLoaded"));
   };
 
   const handleTest = () => {
     const result = testMapping(SAMPLE_LEAD, config);
     setTestResult(result);
     if (result.errors.length > 0) {
-      toast.error(result.errors[0]);
+      toast.error(result.errors[0] ?? tToast("error.generic"));
     } else {
-      toast.success("Test run complete. See output below.");
+      toast.success(tSettings("integrations.testSuccess"));
     }
   };
 
@@ -130,12 +133,12 @@ export default function IntegrationsMappingPage() {
       });
       if (!res.ok) {
         const err = (await res.json()) as { error?: string };
-        toast.error(err.error ?? "Failed to save");
+        toast.error(err.error ?? tSettings("integrations.saveFailed"));
         return;
       }
-      toast.success("Mapping saved.");
+      toast.success(tSettings("integrations.saved"));
     } catch {
-      toast.error("Failed to save");
+      toast.error(tToast("error.generic"));
     } finally {
       setSaving(false);
     }

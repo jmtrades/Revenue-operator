@@ -172,7 +172,7 @@ export default function NewAgentWizardClient({
     } finally {
       setSaving(false);
     }
-  }, [agentId, workspaceId, state]);
+  }, [agentId, workspaceId, state, t]);
 
   const handleNext = useCallback(async () => {
     const err = validateStep(step);
@@ -221,7 +221,7 @@ export default function NewAgentWizardClient({
       return;
     }
     setStep((s) => Math.min(7, s + 1));
-  }, [step, agentId, state.name, workspaceId, validateStep, saveDraft, router]);
+  }, [step, agentId, state.name, workspaceId, validateStep, saveDraft, router, t]);
 
   const handleBack = useCallback(() => {
     setToast(null);

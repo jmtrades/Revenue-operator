@@ -59,6 +59,9 @@
     "error": {
       "generic": "Un problème est survenu. Veuillez réessayer."
     },
+    "password": {
+      "resetSent": "Vérifiez votre e-mail pour réinitialiser votre mot de passe."
+    },
     "exportFailed": "Échec de l'export. Réessayez.",
     "importFailed": "Échec de l'import.",
     "searchFailed": "Échec de la recherche.",
@@ -313,6 +316,12 @@
     },
     "toast": {
       "exportSuccess": "Appels exportés. Vérifiez vos téléchargements."
+    },
+    "live": {
+      "listenInComingSoon": "L’écoute discrète sera bientôt disponible.",
+      "whisperComingSoon": "Le mode chuchotement sera bientôt disponible.",
+      "bargeInComingSoon": "L’intervention directe sera bientôt disponible.",
+      "emergencyTakeover": "Prise de contrôle d’urgence — contactez le support pour une escalade urgente."
     }
   },
   "callIntelligence": {
@@ -454,7 +463,33 @@
     "activityLog": "Journal d'activité",
     "deleteAllDataTitle": "Supprimer toutes les données",
     "deleteAllDataMessage": "Supprimer toutes les données de l'espace (appels, leads, agents) ? Irréversible. Contactez le support.",
-    "deleteAccountTitle": "Supprimer le compte"
+    "deleteAccountTitle": "Supprimer le compte",
+    "business.saveFailed": "Échec de l’enregistrement des informations d’entreprise. Réessayez.",
+    "business.nameNoMatch": "Le nom de l’espace ne correspond pas. Saisissez-le exactement pour confirmer.",
+    "business.deleted": "Espace supprimé. Redirection en cours…",
+    "agent.loadFailed": "Échec du chargement des paramètres de l’agent. Réessayez.",
+    "agent.saveFailed": "Échec de l’enregistrement des paramètres de l’agent. Réessayez.",
+    "agent.voiceSyncFailed": "Enregistré, mais l’agent vocal n’a pas pu être mis à jour. Réessayez.",
+    "agent.updated": "Agent mis à jour. Vos prochains appels utiliseront la nouvelle configuration.",
+    "compliance.loadFailed": "Échec du chargement des paramètres de consentement à l’enregistrement.",
+    "compliance.saveFailed": "Échec de l’enregistrement des paramètres de conformité. Réessayez.",
+    "compliance.recordingSaved": "Paramètres de consentement à l’enregistrement enregistrés.",
+    "compliance.saved": "Paramètres de conformité enregistrés.",
+    "compliance.exportRequested": "Exportation des données demandée — vous recevrez un e-mail sous 24 heures.",
+    "leadScoring.loadFailed": "Échec du chargement de la configuration de score de lead.",
+    "leadScoring.saved": "Pondérations de score de lead enregistrées. Les scores seront mis à jour lors du prochain appel ou recalcul.",
+    "leadScoring.usingDefaults": "Utilisation des pondérations par défaut. Enregistrez pour les conserver.",
+    "integrations.defaultsLoaded": "Valeurs par défaut chargées.",
+    "integrations.testSuccess": "Test terminé. Consultez le résultat ci-dessous.",
+    "integrations.saveFailed": "Échec de l’enregistrement du mappage. Réessayez.",
+    "integrations.saved": "Mappage enregistré.",
+    "phone.searchFailed": "La recherche a échoué. Modifiez les filtres et réessayez.",
+    "phone.provisionFailed": "Échec de l’approvisionnement du numéro. Réessayez.",
+    "phone.provisioned": "Numéro ajouté à votre espace de travail.",
+    "profile.saved": "Profil enregistré.",
+    "profile.saveFailed": "Impossible d’enregistrer le profil. Réessayez.",
+    "notifications.loadFailed": "Échec du chargement des préférences de notification. Utilisation des valeurs par défaut.",
+    "notifications.saved": "Préférences de notification enregistrées."
   },
   "hero": {
     "title": "Une IA qui répond au téléphone de votre entreprise 24h/24 et 7j/7",

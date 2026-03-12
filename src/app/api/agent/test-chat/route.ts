@@ -208,7 +208,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ response });
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : String(e);
+    void (e instanceof Error ? e.message : String(e));
     // Error response below
     return NextResponse.json({ error: "Failed to connect to AI service" }, { status: 500 });
   }

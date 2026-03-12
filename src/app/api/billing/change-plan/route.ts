@@ -107,8 +107,7 @@ export async function POST(req: NextRequest) {
         checkout_url: session.url,
         message: "Redirect to checkout to start your plan.",
       });
-    } catch (e) {
-      const err = e as Error;
+    } catch (_e) {
       // Stripe error; return below
       return NextResponse.json(
         { ok: false, error: "Something went wrong with this service. Please try again." },
@@ -129,8 +128,7 @@ export async function POST(req: NextRequest) {
       items: [{ id: itemId, price: priceResult.price_id }],
       proration_behavior: isUpgrade ? "always_invoice" : "none",
     });
-  } catch (e) {
-    const err = e as Error;
+  } catch (_e) {
     // Stripe update error; return below
     return NextResponse.json(
       { ok: false, error: "Something went wrong with this service. Please try again." },
