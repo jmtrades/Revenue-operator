@@ -44,7 +44,6 @@ Open: ${(process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www
       });
       return res.ok;
     }
-    console.log("[activation-email] Would send to", email, "(RESEND_API_KEY not set)");
     return true;
   } catch (err) {
     console.error("[activation-email]", err);

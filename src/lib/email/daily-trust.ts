@@ -64,7 +64,6 @@ Open: ${process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www.
         });
         results.push({ workspaceId, email, sent: res.ok });
       } else {
-        console.log("[daily-trust] Would send to", email, "subject:", subject);
         results.push({ workspaceId, email, sent: true });
       }
     } catch (err) {
