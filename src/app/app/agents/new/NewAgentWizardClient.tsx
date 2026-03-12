@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -89,6 +90,8 @@ export default function NewAgentWizardClient({
   workspaceName: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("agents.newWizard");
+  const tCommon = useTranslations("common");
   const [step, setStep] = useState(1);
   const [state, setState] = useState<WizardState>(defaultState);
   const [agentId, setAgentId] = useState<string | null>(null);
@@ -107,7 +110,7 @@ export default function NewAgentWizardClient({
 
   const validateStep = useCallback(
     (s: number): string | null => {
-      if (s === 1) return state.name.trim() ? null : "Give your agent a name.";
+      if (s === 1) return state.name.trim() ? null : t("errors.nameRequired");
       if (s === 2) return null;
       if (s === 3) return null;
       if (s === 4) return null;
@@ -115,7 +118,7 @@ export default function NewAgentWizardClient({
       if (s === 6) return null;
       return null;
     },
-    [state.name]
+    [state.name, t]
   );
 
   const saveDraft = useCallback(async () => {
@@ -163,9 +166,9 @@ export default function NewAgentWizardClient({
         }),
       });
       if (!res.ok) throw new Error("Save failed");
-      setToast("Draft saved.");
+      setToast(t("toast.draftSaved"));
     } catch {
-      setToast("Could not save. Try again.");
+      setToast(t("toast.saveError"));
     } finally {
       setSaving(false);
     }
@@ -191,7 +194,7 @@ export default function NewAgentWizardClient({
         const created = (await res.json()) as { id: string };
         setAgentId(created.id);
       } catch {
-        setToast("Could not create agent.");
+        setToast(t("toast.createError"));
         setSaving(false);
         return;
       }
@@ -212,7 +215,7 @@ export default function NewAgentWizardClient({
         router.push("/app/agents");
         return;
       } catch {
-        setToast("Could not activate.");
+        setToast(t("toast.activateError"));
       }
       setSaving(false);
       return;
@@ -231,14 +234,14 @@ export default function NewAgentWizardClient({
     <div className="max-w-2xl mx-auto p-4 md:p-6 pb-24">
       <div className="flex items-center gap-2 text-zinc-400 text-sm mb-6">
         <Link href="/app/agents" className="hover:text-white">
-          Agents
+          {tCommon("agents")}
         </Link>
         <span>/</span>
-        <span className="text-white">New agent</span>
+        <span className="text-white">{t("breadcrumbs.newAgent")}</span>
       </div>
 
-      <h1 className="text-xl font-semibold text-white mb-1">Create your AI agent</h1>
-      <p className="text-zinc-400 text-sm mb-8">Follow the steps to set up your voice agent.</p>
+      <h1 className="text-xl font-semibold text-white mb-1">{t("title")}</h1>
+      <p className="text-zinc-400 text-sm mb-8">{t("subtitle")}</p>
 
       {/* Progress */}
       <div className="flex gap-1 mb-8" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={7}>

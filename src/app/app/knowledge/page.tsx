@@ -67,6 +67,9 @@ function KnowledgeModal({
   onSave: (data: Partial<KnowledgeEntry> & { title: string; type: KnowledgeType; status: KnowledgeStatus }) => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("knowledge");
+  const tCommon = useTranslations("common");
+  const tForms = useTranslations("forms.state");
   const isNew = !entry?.id;
   const [title, setTitle] = useState(entry?.title ?? "");
   const [type, setType] = useState<KnowledgeType>(entry?.type ?? "FAQ");
@@ -125,7 +128,7 @@ function KnowledgeModal({
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
           <h2 className="text-lg font-semibold text-white">
-            {isNew ? "Add entry" : "Edit entry"}
+            {isNew ? t("modal.addEntry") : t("modal.editEntry")}
           </h2>
           <button
             type="button"
@@ -138,24 +141,24 @@ function KnowledgeModal({
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Title</label>
+            <label className="block text-xs font-medium text-zinc-400 mb-1.5">{tCommon("title")}</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Entry title"
+              placeholder={t("modal.titlePlaceholder")}
               className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Type</label>
+            <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.type")}</label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as KnowledgeType)}
               className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white focus:border-[var(--border-medium)] focus:outline-none text-sm"
             >
               {TYPE_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>{t(`types.${o.value}`)}</option>
               ))}
             </select>
           </div>
@@ -163,17 +166,17 @@ function KnowledgeModal({
           {type === "FAQ" && (
             <>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Question</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.question")}</label>
                 <input
                   type="text"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="e.g. What are your hours?"
+                  placeholder={t("modal.questionPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Answer</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.answer")}</label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
@@ -187,7 +190,7 @@ function KnowledgeModal({
 
           {type === "Document" && (
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Upload file</label>
+              <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.uploadFile")}</label>
               <div
                 className="border-2 border-dashed border-[var(--border-medium)] rounded-xl p-8 text-center hover:border-[var(--border-medium)] transition-colors"
                 onDragOver={(e) => e.preventDefault()}
@@ -199,35 +202,35 @@ function KnowledgeModal({
                 {uploadState === "idle" && (
                   <>
                     <Upload className="w-10 h-10 text-zinc-500 mx-auto mb-2" />
-                    <p className="text-sm text-zinc-400 mb-2">Drag and drop or click to upload</p>
+                    <p className="text-sm text-zinc-400 mb-2">{t("modal.uploadHint")}</p>
                     <button
                       type="button"
                       onClick={handleMockUpload}
                       className="text-sm font-medium text-white bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg"
                     >
-                      Choose file
+                      {t("modal.chooseFile")}
                     </button>
                   </>
                 )}
                 {uploadState === "uploading" && (
-                  <p className="text-sm text-zinc-400">Uploading…</p>
+                  <p className="text-sm text-zinc-400">{tForms("uploading")}</p>
                 )}
                 {uploadState === "done" && (
-                  <p className="text-sm text-emerald-400">Indexed: {fileName}</p>
+                  <p className="text-sm text-emerald-400">{t("modal.indexedFile", { fileName })}</p>
                 )}
               </div>
             </div>
           )}
 
-          {type === "Website" && (
+        {type === "Website" && (
             <>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">URL</label>
+              <label className="block text-xs font-medium text-zinc-400 mb-1.5">{tCommon("url")}</label>
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://..."
+                  placeholder="https://…"
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
                 />
               </div>
@@ -239,9 +242,9 @@ function KnowledgeModal({
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  {websiteFetchState === "idle" && "Fetch"}
-                  {websiteFetchState === "fetching" && "Indexing…"}
-                  {websiteFetchState === "done" && `Indexed ${websitePages} pages`}
+                  {websiteFetchState === "idle" && t("modal.fetch")}
+                  {websiteFetchState === "fetching" && t("modal.indexing")}
+                  {websiteFetchState === "done" && t("modal.indexedPages", { count: websitePages })}
                 </button>
               </div>
             </>
@@ -249,19 +252,19 @@ function KnowledgeModal({
 
           {type === "Custom" && (
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Content</label>
+              <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.content")}</label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={8}
-                placeholder="Freeform text…"
+                placeholder={t("modal.contentPlaceholder")}
                 className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm resize-none"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Status</label>
+            <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.status")}</label>
             <div className="flex gap-2">
               {(["Active", "Draft"] as const).map((s) => (
                 <button
@@ -274,7 +277,7 @@ function KnowledgeModal({
                       : "bg-[var(--bg-input)] border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
                   }`}
                 >
-                  {s}
+                  {t(`status.${s.toLowerCase()}`)}
                 </button>
               ))}
             </div>
@@ -286,14 +289,14 @@ function KnowledgeModal({
             onClick={onClose}
             className="px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-300 border border-[var(--border-medium)] hover:bg-[var(--bg-input)]"
           >
-            Cancel
+            {tCommon("cancel")}
           </button>
           <button
             type="button"
             onClick={handleSave}
             className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200"
           >
-            Save
+            {tCommon("save")}
           </button>
         </div>
       </div>
