@@ -14,15 +14,66 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import type {
-  ApiKeyRow,
-  ApiKeyPermission,
-  WebhookRow,
-  WebhookEvent,
-  EventLogRow,
-  EventLogKind,
-  EventLogStatus,
-} from "@/lib/mock/developer";
+
+type ApiKeyPermission = "read" | "read_write" | "admin";
+
+interface ApiKeyRow {
+  id: string;
+  label: string;
+  keyPrefix: string;
+  keySuffix: string;
+  fullKey: string;
+  permission: ApiKeyPermission;
+  createdAt: string;
+  lastUsedAt: string;
+  status: "active" | "revoked";
+}
+
+type WebhookEvent =
+  | "call.started"
+  | "call.completed"
+  | "call.failed"
+  | "lead.created"
+  | "appointment.booked"
+  | "sentiment.flagged"
+  | "campaign.completed"
+  | "agent.error";
+
+interface WebhookDelivery {
+  id: string;
+  eventType: string;
+  statusCode: number;
+  responseTimeMs: number;
+  timestamp: string;
+  payload: string;
+}
+
+interface WebhookRow {
+  id: string;
+  url: string;
+  secret: string;
+  events: WebhookEvent[];
+  status: "active" | "paused";
+  lastDeliveryAt: string;
+  lastDeliveryStatus: number;
+  deliveries: WebhookDelivery[];
+}
+
+type EventLogKind = "api_call" | "webhook_delivery";
+type EventLogStatus = "success" | "failed";
+
+interface EventLogRow {
+  id: string;
+  kind: EventLogKind;
+  timestamp: string;
+  method?: string;
+  endpoint?: string;
+  webhookUrl?: string;
+  eventType?: string;
+  statusCode: number;
+  responseTimeMs: number;
+  status: EventLogStatus;
+}
 
 type TabId = "keys" | "webhooks" | "events";
 

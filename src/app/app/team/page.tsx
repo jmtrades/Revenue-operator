@@ -5,15 +5,45 @@ import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight } from "lucide-rea
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import {
-  ROLE_LABELS,
-  ROLE_LABEL_OVERRIDE,
-  PERMISSIONS_MATRIX,
-  INVITABLE_ROLES,
-  type TeamMember,
-  type TeamRole,
-  type PendingInvite,
-} from "@/lib/mock/team";
+type TeamRole = "owner" | "admin" | "manager" | "agent";
+
+interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  role: TeamRole;
+  lastActive: string;
+  joinedAt: string;
+}
+
+interface PendingInvite {
+  id: string;
+  email: string;
+  role: TeamRole;
+  invitedAt: string;
+}
+
+const ROLE_LABELS: Record<TeamRole, string> = {
+  owner: "Owner",
+  admin: "Admin",
+  manager: "Manager",
+  agent: "Agent",
+};
+
+const ROLE_LABEL_OVERRIDE: Record<string, string> = {
+  operator: "Agent",
+};
+
+const PERMISSIONS_MATRIX: { id: string; label: string; roles: Record<TeamRole, boolean> }[] = [
+  { id: "view_calls", label: "View calls", roles: { owner: true, admin: true, manager: true, agent: true } },
+  { id: "manage_agents", label: "Manage agents", roles: { owner: true, admin: true, manager: true, agent: false } },
+  { id: "view_analytics", label: "View analytics", roles: { owner: true, admin: true, manager: true, agent: false } },
+  { id: "manage_team", label: "Manage team", roles: { owner: true, admin: true, manager: false, agent: false } },
+  { id: "billing", label: "Billing", roles: { owner: true, admin: false, manager: false, agent: false } },
+  { id: "account_settings", label: "Account settings", roles: { owner: true, admin: false, manager: false, agent: false } },
+];
+
+const INVITABLE_ROLES: TeamRole[] = ["admin", "manager", "agent"];
 
 function formatRelative(timestamp: string): string {
   const d = new Date(timestamp).getTime();

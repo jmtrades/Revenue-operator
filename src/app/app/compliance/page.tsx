@@ -2,13 +2,38 @@
 
 import { useMemo, useState, useCallback } from "react";
 import { Shield, ShieldCheck, Download } from "lucide-react";
-import {
-  RETENTION_OPTIONS,
-  type ComplianceStandard,
-  type RecordingPolicies,
-  type ConsentMode,
-  type AuditLogEntry,
-} from "@/lib/mock/compliance";
+type ComplianceStatus = "compliant" | "partial" | "non_compliant";
+
+interface ComplianceStandard {
+  id: string;
+  name: string;
+  status: ComplianceStatus;
+  lastAuditDate: string | null;
+  nextReviewDate: string | null;
+  targetDate?: string | null;
+  progressPercent?: number;
+}
+
+type ConsentMode = "one-party" | "two-party";
+
+interface RecordingPolicies {
+  consentMode: ConsentMode;
+  retentionDays: number;
+  piiRedaction: boolean;
+  autoTranscribe: boolean;
+  consentAnnouncement: string;
+}
+
+const RETENTION_OPTIONS = [30, 60, 90, 180, 365] as const;
+
+interface AuditLogEntry {
+  id: string;
+  timestamp: string;
+  user: string;
+  action: string;
+  resource: string;
+  ipAddress: string;
+}
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, {

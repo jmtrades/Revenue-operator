@@ -16,12 +16,29 @@ import {
   Upload,
   ExternalLink,
 } from "lucide-react";
-import type {
-  KnowledgeEntry,
-  KnowledgeGap,
-  KnowledgeType,
-  KnowledgeStatus,
-} from "@/lib/mock/knowledge";
+type KnowledgeType = "FAQ" | "Document" | "Website" | "Custom";
+type KnowledgeStatus = "Active" | "Draft" | "Processing";
+
+interface KnowledgeEntry {
+  id: string;
+  title: string;
+  type: KnowledgeType;
+  content: string;
+  wordCount: number;
+  lastUpdated: string;
+  status: KnowledgeStatus;
+  usageCount: number;
+  gapFlag: boolean;
+  question?: string;
+  url?: string;
+  fileName?: string;
+}
+
+interface KnowledgeGap {
+  id: string;
+  topic: string;
+  askCount: number;
+}
 
 const TYPE_OPTIONS: { value: KnowledgeType; label: string }[] = [
   { value: "FAQ", label: "FAQ" },
