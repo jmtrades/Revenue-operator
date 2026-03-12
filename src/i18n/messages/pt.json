@@ -59,6 +59,9 @@
     "error": {
       "generic": "Algo deu errado. Tente novamente."
     },
+    "password": {
+      "resetSent": "Verifique seu e-mail para redefinir sua senha."
+    },
     "exportFailed": "Falha na exportação. Tente novamente.",
     "importFailed": "Falha na importação.",
     "searchFailed": "Falha na pesquisa.",
@@ -304,6 +307,12 @@
     },
     "toast": {
       "exportSuccess": "Chamadas exportadas. Verifique seus downloads."
+    },
+    "live": {
+      "listenInComingSoon": "A escuta silenciosa estará disponível em breve.",
+      "whisperComingSoon": "O modo sussurro estará disponível em breve.",
+      "bargeInComingSoon": "A intervenção direta estará disponível em breve.",
+      "emergencyTakeover": "Tomada de controle de emergência — entre em contato com o suporte para uma escalada urgente."
     }
   },
   "callIntelligence": {
@@ -445,7 +454,33 @@
     "activityLog": "Registro de atividade",
     "deleteAllDataTitle": "Excluir todos os dados",
     "deleteAllDataMessage": "Excluir todos os dados do espaço (chamadas, leads, agentes)? Irreversível. Contate o suporte.",
-    "deleteAccountTitle": "Excluir conta"
+    "deleteAccountTitle": "Excluir conta",
+    "business.saveFailed": "Não foi possível salvar as configurações da empresa. Tente novamente.",
+    "business.nameNoMatch": "O nome do workspace não corresponde. Digite exatamente para confirmar.",
+    "business.deleted": "Workspace excluído. Redirecionando…",
+    "agent.loadFailed": "Não foi possível carregar as configurações do agente. Tente novamente.",
+    "agent.saveFailed": "Não foi possível salvar as configurações do agente. Tente novamente.",
+    "agent.voiceSyncFailed": "Salvo, mas não foi possível atualizar o agente de voz. Tente novamente.",
+    "agent.updated": "Agente atualizado. Suas próximas chamadas usarão as novas configurações.",
+    "compliance.loadFailed": "Não foi possível carregar as configurações de consentimento de gravação.",
+    "compliance.saveFailed": "Não foi possível salvar as configurações de conformidade. Tente novamente.",
+    "compliance.recordingSaved": "Configurações de consentimento de gravação salvas.",
+    "compliance.saved": "Configurações de conformidade salvas.",
+    "compliance.exportRequested": "Exportação de dados solicitada — você receberá um e-mail em até 24 horas.",
+    "leadScoring.loadFailed": "Não foi possível carregar a configuração de pontuação de leads.",
+    "leadScoring.saved": "Pesos de pontuação de leads salvos. As pontuações serão atualizadas na próxima chamada ou recálculo.",
+    "leadScoring.usingDefaults": "Usando pesos padrão. Salve para persistir.",
+    "integrations.defaultsLoaded": "Padrões carregados.",
+    "integrations.testSuccess": "Teste concluído. Veja o resultado abaixo.",
+    "integrations.saveFailed": "Não foi possível salvar o mapeamento. Tente novamente.",
+    "integrations.saved": "Mapeamento salvo.",
+    "phone.searchFailed": "A pesquisa falhou. Ajuste os filtros e tente novamente.",
+    "phone.provisionFailed": "Não foi possível provisionar o número. Tente novamente.",
+    "phone.provisioned": "Número adicionado ao seu workspace.",
+    "profile.saved": "Perfil salvo.",
+    "profile.saveFailed": "Não foi possível salvar o perfil. Tente novamente.",
+    "notifications.loadFailed": "Não foi possível carregar as preferências de notificação. Usando padrões.",
+    "notifications.saved": "Preferências de notificação salvas."
   },
   "hero": {
     "title": "IA que atende o telefone da sua empresa 24/7",

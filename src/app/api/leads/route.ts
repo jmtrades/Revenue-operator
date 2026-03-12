@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
             source: metadata.source,
           },
         }),
-      }).catch((err) => {
+      }).catch((_err) => {
         // Webhook delivery failed; non-fatal
       });
     }

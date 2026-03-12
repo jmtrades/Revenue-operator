@@ -120,7 +120,7 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
       } else {
         results.push({ workspaceId, email, sent: true });
       }
-    } catch (err) {
+    } catch (_err) {
       // Send failed; non-fatal
       results.push({ workspaceId, email, sent: false });
     }

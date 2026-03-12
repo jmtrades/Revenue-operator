@@ -153,7 +153,7 @@ export default function CallsPage() {
         setError(message);
       })
       .finally(() => setLoading(false));
-  }, [workspaceId]);
+  }, [workspaceId, t]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

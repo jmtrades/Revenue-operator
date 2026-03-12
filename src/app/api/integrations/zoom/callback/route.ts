@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
   });
 
   if (!res.ok) {
-    const err = await res.text();
+    await res.text();
     // Token error; redirect below
     return NextResponse.redirect(new URL("/dashboard/activation?error=zoom_token_failed", req.url));
   }
@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
 
     const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
     sendActivationConfirmationEmail(workspaceId).catch(() => {});
-  } catch (err) {
+  } catch (_err) {
     // Store error; redirect below
     return NextResponse.redirect(new URL("/dashboard/activation?error=zoom_store_failed", req.url));
   }

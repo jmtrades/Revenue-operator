@@ -1,6 +1,6 @@
 // Convert flat dot-notation i18n message keys to nested objects for all locales.
 // Usage: node scripts/flatten-to-nested.js
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports -- Node script uses require for fs/path */
 const fs = require("fs");
 const path = require("path");
 
@@ -37,7 +37,6 @@ for (const locale of locales) {
   }
 
   fs.writeFileSync(filePath, `${JSON.stringify(nested, null, 2)}\n`, "utf-8");
-  // eslint-disable-next-line no-console
   console.log(`Converted ${locale}.json: ${Object.keys(flat).length} keys`);
 }
 

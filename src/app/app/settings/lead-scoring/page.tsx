@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import type { LeadScoringConfig } from "@/lib/lead-scoring";
 
@@ -19,6 +20,8 @@ const CONFIG_KEYS: { key: keyof LeadScoringConfig; label: string; help?: string 
 ];
 
 export default function AppSettingsLeadScoringPage() {
+  const tSettings = useTranslations("settings");
+  const tToast = useTranslations("toast");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [config, setConfig] = useState<LeadScoringConfig>({});
@@ -43,12 +46,12 @@ export default function AppSettingsLeadScoringPage() {
         setConfig(data.config ?? {});
         if (data.defaults) setDefaults(data.defaults);
       } catch {
-        toast.error("Could not load scoring config");
+        toast.error(tSettings("leadScoring.loadFailed"));
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [tSettings]);
 
   const update = (key: keyof LeadScoringConfig, value: number) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
@@ -69,9 +72,9 @@ export default function AppSettingsLeadScoringPage() {
         body: JSON.stringify({ config }),
       });
       if (!res.ok) throw new Error("Failed to save");
-      toast.success("Lead scoring weights saved. Scores will update on next call or recalc.");
+      toast.success(tSettings("leadScoring.saved"));
     } catch {
-      toast.error("Failed to save");
+      toast.error(tToast("error.generic"));
     } finally {
       setSaving(false);
     }
@@ -79,7 +82,7 @@ export default function AppSettingsLeadScoringPage() {
 
   const handleResetAll = () => {
     setConfig({});
-    toast.success("Using default weights. Save to persist.");
+    toast.success(tSettings("leadScoring.usingDefaults"));
   };
 
   return (

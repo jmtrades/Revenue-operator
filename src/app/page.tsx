@@ -6,9 +6,6 @@ import { Hero } from "@/components/sections/Hero";
 const OutcomeCardsSection = dynamic(
   () => import("@/components/sections/OutcomeCardsSection").then((m) => m.OutcomeCardsSection),
 );
-const TrustStackSection = dynamic(
-  () => import("@/components/sections/TrustStackSection").then((m) => m.TrustStackSection),
-);
 const HomepageLiveDemo = dynamic(
   () => import("@/components/sections/HomepageLiveDemo").then((m) => m.HomepageLiveDemo),
 );

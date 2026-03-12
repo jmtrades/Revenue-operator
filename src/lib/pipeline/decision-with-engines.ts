@@ -9,7 +9,6 @@ import { decideIntervention } from "@/lib/engines/decision";
 import { buildMessageFromIntervention, DEFER_MESSAGE } from "@/lib/engines/execution";
 import { checkConfidenceCeiling, CLARIFICATION_MESSAGE } from "@/lib/confidence-ceiling";
 import { computeRevenueState, buildLossPreventionPayload } from "@/lib/revenue-state";
-import { redact } from "@/lib/redact";
 import { checkPolicy, mergeSettings } from "@/lib/autopilot";
 import { detectSensitiveIntent, getSafeResponse, getEscalationHoldingMessage } from "@/lib/safe-responses";
 import { checkEscalation, logEscalation, getAssignedUserId, isLeadInEscalationHold } from "@/lib/escalation";

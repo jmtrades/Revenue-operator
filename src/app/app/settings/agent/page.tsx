@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -45,6 +46,8 @@ function persistAgentSettingsSnapshot(workspaceId: string, config: AgentConfig) 
 }
 
 export default function AppSettingsAgentPage() {
+  const tSettings = useTranslations("settings");
+  const tToast = useTranslations("toast");
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceSnapshot?.id?.trim() || "default";
   const initialConfig = readAgentSettingsSnapshot(snapshotWorkspaceId);
@@ -80,13 +83,14 @@ export default function AppSettingsAgentPage() {
         persistAgentSettingsSnapshot(snapshotWorkspaceId, nextConfig);
       }
     } catch {
-      setInlineToast("Could not load agent settings.");
-      toast.error("Failed to load agent settings. Please try again.");
+      const message = tSettings("agent.loadFailed");
+      setInlineToast(message);
+      toast.error(message);
       setTimeout(() => setInlineToast(null), 4000);
     } finally {
       setLoading(false);
     }
-  }, [snapshotWorkspaceId]);
+  }, [snapshotWorkspaceId, tSettings]);
 
   useEffect(() => {
     load();
@@ -111,7 +115,9 @@ export default function AppSettingsAgentPage() {
       });
       if (!patchRes.ok) {
         const err = await patchRes.json().catch(() => ({}));
-        const message = (err as { error?: string }).error ?? "Failed to save.";
+        const message =
+          (err as { error?: string }).error ??
+          tSettings("agent.saveFailed");
         setInlineToast(message);
         toast.error(message);
         setSaving(false);
@@ -120,18 +126,18 @@ export default function AppSettingsAgentPage() {
       }
       const agentRes = await fetch("/api/vapi/create-agent", { method: "POST", credentials: "include" });
       if (!agentRes.ok) {
-        const message = "Saved, but voice agent could not be updated. Try again.";
+        const message = tSettings("agent.voiceSyncFailed");
         setInlineToast(message);
         toast.error(message);
       } else {
-        const message = "Agent updated. Your next calls will use the new settings.";
+        const message = tSettings("agent.updated");
         setInlineToast(message);
-        toast.success("Settings saved");
+        toast.success(tToast("saved"));
       }
       setTimeout(() => setInlineToast(null), 4000);
     } catch {
-      setInlineToast("Something went wrong.");
-      toast.error("Failed to save. Please try again.");
+      setInlineToast(tToast("error.generic"));
+      toast.error(tSettings("agent.saveFailed"));
       setTimeout(() => setInlineToast(null), 4000);
     } finally {
       setSaving(false);

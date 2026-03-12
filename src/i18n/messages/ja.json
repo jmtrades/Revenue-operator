@@ -59,6 +59,9 @@
     "error": {
       "generic": "問題が発生しました。もう一度お試しください。"
     },
+    "password": {
+      "resetSent": "パスワード再設定用のメールを確認してください。"
+    },
     "exportFailed": "エクスポートに失敗しました。再試行してください。",
     "importFailed": "インポートに失敗しました。",
     "searchFailed": "検索に失敗しました。",
@@ -304,6 +307,12 @@
     },
     "toast": {
       "exportSuccess": "通話をエクスポートしました。ダウンロードを確認してください。"
+    },
+    "live": {
+      "listenInComingSoon": "サイレントでのモニタリング機能はまもなく利用可能になります。",
+      "whisperComingSoon": "ウィスパーモードはまもなく利用可能になります。",
+      "bargeInComingSoon": "通話への割り込み機能はまもなく利用可能になります。",
+      "emergencyTakeover": "緊急引き継ぎ — 至急の対応が必要な場合はサポートに連絡してください。"
     }
   },
   "callIntelligence": {
@@ -445,7 +454,33 @@
     "activityLog": "アクティビティログ",
     "deleteAllDataTitle": "すべてのデータを削除",
     "deleteAllDataMessage": "ワークスペースの全データ（通話、リード、エージェント）を削除しますか？元に戻せません。サポートにお問い合わせください。",
-    "deleteAccountTitle": "アカウントを削除"
+    "deleteAccountTitle": "アカウントを削除",
+    "business.saveFailed": "ビジネス設定を保存できませんでした。もう一度お試しください。",
+    "business.nameNoMatch": "ワークスペース名が一致しません。確認のため正確に入力してください。",
+    "business.deleted": "ワークスペースを削除しました。リダイレクト中です…",
+    "agent.loadFailed": "エージェント設定を読み込めませんでした。もう一度お試しください。",
+    "agent.saveFailed": "エージェント設定を保存できませんでした。もう一度お試しください。",
+    "agent.voiceSyncFailed": "保存されましたが、音声エージェントを更新できませんでした。再度お試しください。",
+    "agent.updated": "エージェントを更新しました。次回以降の通話で新しい設定が使われます。",
+    "compliance.loadFailed": "録音同意設定を読み込めませんでした。",
+    "compliance.saveFailed": "コンプライアンス設定を保存できませんでした。もう一度お試しください。",
+    "compliance.recordingSaved": "録音同意設定を保存しました。",
+    "compliance.saved": "コンプライアンス設定を保存しました。",
+    "compliance.exportRequested": "データのエクスポートをリクエストしました — 24時間以内にメールが届きます。",
+    "leadScoring.loadFailed": "リードスコアリング設定を読み込めませんでした。",
+    "leadScoring.saved": "リードスコアリングの重みを保存しました。スコアは次回の通話または再計算時に更新されます。",
+    "leadScoring.usingDefaults": "デフォルトの重みを使用しています。保持するには保存してください。",
+    "integrations.defaultsLoaded": "デフォルト値を読み込みました。",
+    "integrations.testSuccess": "テストが完了しました。下の出力を確認してください。",
+    "integrations.saveFailed": "マッピングを保存できませんでした。もう一度お試しください。",
+    "integrations.saved": "マッピングを保存しました。",
+    "phone.searchFailed": "検索に失敗しました。フィルターを調整して再度お試しください。",
+    "phone.provisionFailed": "番号をプロビジョニングできませんでした。もう一度お試しください。",
+    "phone.provisioned": "番号をワークスペースに追加しました。",
+    "profile.saved": "プロフィールを保存しました。",
+    "profile.saveFailed": "プロフィールを保存できませんでした。もう一度お試しください。",
+    "notifications.loadFailed": "通知設定を読み込めませんでした。デフォルト値を使用します。",
+    "notifications.saved": "通知設定を保存しました。"
   },
   "hero": {
     "title": "あなたのビジネス電話に24時間365日対応するAI",

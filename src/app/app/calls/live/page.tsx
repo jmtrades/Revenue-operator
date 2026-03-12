@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ChevronRight, Phone, Clock, Headphones, MessageCircle, PhoneOff, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -59,6 +60,7 @@ function DurationTimer({ startedAt }: { startedAt: string | null }) {
 
 export default function CallsLivePage() {
   const { workspaceId } = useWorkspace();
+  const t = useTranslations();
   const { data, loading } = useActiveCalls(workspaceId ?? null);
 
   if (!workspaceId) {
@@ -138,7 +140,7 @@ export default function CallsLivePage() {
                           type="button"
                           className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
                           title="Listen in (silent)"
-                          onClick={() => toast.info("Listen in — coming soon")}
+                          onClick={() => toast.info(t("calls.live.listenInComingSoon"))}
                         >
                           <Headphones className="w-4 h-4" />
                         </button>
@@ -146,7 +148,7 @@ export default function CallsLivePage() {
                           type="button"
                           className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
                           title="Whisper (to agent only)"
-                          onClick={() => toast.info("Whisper — coming soon")}
+                          onClick={() => toast.info(t("calls.live.whisperComingSoon"))}
                         >
                           <MessageCircle className="w-4 h-4" />
                         </button>
@@ -154,7 +156,7 @@ export default function CallsLivePage() {
                           type="button"
                           className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
                           title="Barge in"
-                          onClick={() => toast.info("Barge in — coming soon")}
+                          onClick={() => toast.info(t("calls.live.bargeInComingSoon"))}
                         >
                           <PhoneOff className="w-4 h-4" />
                         </button>
@@ -179,7 +181,7 @@ export default function CallsLivePage() {
             <button
               type="button"
               className="flex items-center gap-2 border border-red-500/50 text-red-400 rounded-xl px-4 py-2 text-sm font-medium hover:bg-red-500/10"
-              onClick={() => toast.info("Emergency takeover — contact support for urgent escalation")}
+              onClick={() => toast.info(t("calls.live.emergencyTakeover"))}
             >
               <AlertTriangle className="w-4 h-4" />
               Emergency takeover

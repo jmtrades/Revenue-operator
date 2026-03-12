@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Play, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { CURATED_VOICES, type CuratedVoice } from "@/lib/constants/curated-voices";
 import { cn } from "@/lib/cn";
 
@@ -37,6 +38,8 @@ function playVoicePreview(voiceId: string, text: string): Promise<void> {
 export default function AgentVoiceTestPage() {
   const params = useParams();
   useRouter();
+  const t = useTranslations("agents.voiceTest");
+  const tToast = useTranslations("toast");
   const agentId = typeof params?.id === "string" ? params.id : "";
   const [agent, setAgent] = useState<{ id: string; name: string; voice_id: string | null } | null>(null);
   const [loading, setLoading] = useState(!!agentId);
@@ -68,14 +71,14 @@ export default function AgentVoiceTestPage() {
       setPlayingId(voice.id);
       try {
         await playVoicePreview(voice.id, customScript);
-        toast.success(`Played ${voice.name}`);
+        toast.success(t("toast.played", { name: voice.name }));
       } catch {
-        toast.error("Preview failed. Check ElevenLabs is configured.");
+        toast.error(t("errors.previewFailed"));
       } finally {
         setPlayingId(null);
       }
     },
-    [customScript]
+    [customScript, t]
   );
 
   const handleApply = useCallback(async () => {
@@ -89,16 +92,18 @@ export default function AgentVoiceTestPage() {
         body: JSON.stringify({ voice_id: selectedVoiceId }),
       });
       if (res.ok) {
-        toast.success("Voice applied to agent");
+        toast.success(t("toast.applied"));
         setAgent((a) => (a ? { ...a, voice_id: selectedVoiceId } : null));
       } else {
         const d = (await res.json()) as { error?: string };
-        toast.error(d.error ?? "Failed to apply");
+        toast.error(d.error ?? t("errors.applyFailed"));
       }
+    } catch {
+      toast.error(tToast("error.generic"));
     } finally {
       setApplying(false);
     }
-  }, [agentId, selectedVoiceId]);
+  }, [agentId, selectedVoiceId, t, tToast]);
 
   if (!agentId) {
     return (

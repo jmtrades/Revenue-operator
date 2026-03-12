@@ -59,6 +59,9 @@
     "error": {
       "generic": "Algo salió mal. Inténtalo de nuevo."
     },
+    "password": {
+      "resetSent": "Revisa tu correo para restablecer tu contraseña."
+    },
     "exportFailed": "Error al exportar. Inténtalo de nuevo.",
     "importFailed": "Error al importar.",
     "searchFailed": "Error de búsqueda.",
@@ -313,6 +316,12 @@
     },
     "toast": {
       "exportSuccess": "Llamadas exportadas. Revisa tus descargas."
+    },
+    "live": {
+      "listenInComingSoon": "La escucha silenciosa estará disponible pronto.",
+      "whisperComingSoon": "El modo susurro estará disponible pronto.",
+      "bargeInComingSoon": "La intervención directa estará disponible pronto.",
+      "emergencyTakeover": "Toma de control de emergencia — contacta con soporte para una escalada urgente."
     }
   },
   "callIntelligence": {
@@ -454,7 +463,33 @@
     "activityLog": "Registro de actividad",
     "deleteAllDataTitle": "Eliminar todos los datos",
     "deleteAllDataMessage": "¿Eliminar todos los datos del espacio (llamadas, leads, agentes)? No se puede deshacer. Contacta con soporte para completar.",
-    "deleteAccountTitle": "Eliminar cuenta"
+    "deleteAccountTitle": "Eliminar cuenta",
+    "business.saveFailed": "No se pudieron guardar los datos de la empresa. Inténtalo de nuevo.",
+    "business.nameNoMatch": "El nombre del espacio no coincide. Escríbelo exactamente para confirmar.",
+    "business.deleted": "Espacio eliminado. Redirigiendo…",
+    "agent.loadFailed": "No se pudieron cargar los ajustes del agente. Inténtalo de nuevo.",
+    "agent.saveFailed": "No se pudieron guardar los ajustes del agente. Inténtalo de nuevo.",
+    "agent.voiceSyncFailed": "Guardado, pero no se pudo actualizar el agente de voz. Inténtalo de nuevo.",
+    "agent.updated": "Agente actualizado. Tus próximas llamadas usarán la nueva configuración.",
+    "compliance.loadFailed": "No se pudieron cargar los ajustes de consentimiento de grabación.",
+    "compliance.saveFailed": "No se pudieron guardar los ajustes de cumplimiento. Inténtalo de nuevo.",
+    "compliance.recordingSaved": "Ajustes de consentimiento de grabación guardados.",
+    "compliance.saved": "Ajustes de cumplimiento guardados.",
+    "compliance.exportRequested": "Exportación de datos solicitada — recibirás un correo en 24 horas.",
+    "leadScoring.loadFailed": "No se pudo cargar la configuración de puntuación de leads.",
+    "leadScoring.saved": "Pesos de puntuación de leads guardados. Las puntuaciones se actualizarán en la próxima llamada o recálculo.",
+    "leadScoring.usingDefaults": "Usando los pesos predeterminados. Guarda para persistir.",
+    "integrations.defaultsLoaded": "Valores predeterminados cargados.",
+    "integrations.testSuccess": "Prueba completada. Consulta el resultado abajo.",
+    "integrations.saveFailed": "No se pudo guardar el mapeo. Inténtalo de nuevo.",
+    "integrations.saved": "Mapeo guardado.",
+    "phone.searchFailed": "La búsqueda falló. Ajusta los filtros e inténtalo de nuevo.",
+    "phone.provisionFailed": "No se pudo aprovisionar el número. Inténtalo de nuevo.",
+    "phone.provisioned": "Número añadido a tu espacio de trabajo.",
+    "profile.saved": "Perfil guardado.",
+    "profile.saveFailed": "No se pudo guardar el perfil. Inténtalo de nuevo.",
+    "notifications.loadFailed": "No se pudieron cargar las preferencias de notificación. Usando valores predeterminados.",
+    "notifications.saved": "Preferencias de notificación guardadas."
   },
   "hero": {
     "title": "IA que atiende el teléfono de tu negocio 24/7",

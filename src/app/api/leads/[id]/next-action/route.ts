@@ -20,7 +20,7 @@ export async function GET(
       dealId: (deal as { id?: string })?.id,
     });
     return NextResponse.json(result);
-  } catch (e) {
+  } catch (_e) {
     // Error response below
     return NextResponse.json({ error: "Failed to get next action" }, { status: 500 });
   }

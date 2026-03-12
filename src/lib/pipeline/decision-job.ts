@@ -29,7 +29,6 @@ import { checkEscalation, logEscalation, getAssignedUserId, isLeadInEscalationHo
 import type { LeadState } from "@/lib/types";
 import { ALLOWED_ACTIONS_BY_STATE } from "@/lib/types";
 import { resolveRole, ROLE_CONFIDENCE_THRESHOLDS, ROLE_SAFE_FALLBACK, type RoleId } from "@/lib/roles";
-import { redact } from "@/lib/redact";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 
 const SAFE_FALLBACK_MESSAGES: Record<string, string> = {

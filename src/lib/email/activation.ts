@@ -45,7 +45,7 @@ Open: ${(process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www
       return res.ok;
     }
     return true;
-  } catch (err) {
+  } catch (_err) {
     // Send failed; non-fatal
     return false;
   }

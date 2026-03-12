@@ -45,7 +45,7 @@ const CommandPalette = dynamic(
   { ssr: false },
 );
 
-const SIDEBAR_GROUPS: { label: string; items: { href: string; label: string; icon: LucideIcon }[] }[] = [
+const _SIDEBAR_GROUPS: { label: string; items: { href: string; label: string; icon: LucideIcon }[] }[] = [
   {
     label: "Main",
     items: [
@@ -80,14 +80,14 @@ const SIDEBAR_GROUPS: { label: string; items: { href: string; label: string; ico
   },
 ];
 
-const MOBILE_TABS = [
+const _MOBILE_TABS = [
   { href: "/app/activity", label: "Dashboard", icon: LayoutList },
   { href: "/app/calls", label: "Calls", icon: PhoneCall },
   { href: "/app/leads", label: "Leads", icon: Users },
   { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
 ] as const;
 
-const MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
+const _MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/agents", label: "Agents", icon: Bot },
   { href: "/app/appointments", label: "Appointments", icon: Calendar },
   { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },

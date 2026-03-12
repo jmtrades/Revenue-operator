@@ -325,6 +325,7 @@ const ADD_FROM_CALL_KEY = "rt_add_to_knowledge";
 
 export default function KnowledgePage() {
   const t = useTranslations();
+  const tToast = useTranslations("toast");
   useEffect(() => {
     document.title = t("knowledge.pageTitle");
     return () => { document.title = ""; };
@@ -358,11 +359,11 @@ export default function KnowledgePage() {
           fileName: data.callId ? `Call ${data.callId.slice(0, 8)}` : undefined,
         },
       ]);
-      toast.success("Call summary added as draft. Edit and save when ready.");
+      toast.success(t("toast.callSummaryDraftAdded"));
     } catch {
       // ignore
     }
-  }, []);
+  }, [t]);
   const [knowledgeGaps] = useState<KnowledgeGap[]>([]);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<KnowledgeType | "all">("all");
@@ -404,16 +405,16 @@ export default function KnowledgePage() {
         | { response?: string; error?: string }
         | null;
       if (!res.ok || !data) {
-        toast.error(data?.error ?? "Failed to test knowledge. Please try again.");
+        toast.error(data?.error ?? t("errors.testFailed"));
         return;
       }
       if (data.error) {
         toast.error(data.error);
         return;
       }
-      setTestAnswer((data.response ?? "").trim() || "No response generated.");
+      setTestAnswer((data.response ?? "").trim() || t("errors.noResponse"));
     } catch {
-      toast.error("Failed to test knowledge. Please try again.");
+      toast.error(tToast("error.generic"));
     } finally {
       setTestingKnowledge(false);
     }
