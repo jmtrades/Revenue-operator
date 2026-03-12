@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   BellRing,
   BookOpen,
@@ -686,6 +687,9 @@ export default function AppAgentsPageClient({
   initialAgentsRows?: Array<Record<string, unknown>>;
   initialFallbackAgent?: InitialFallbackAgent;
 }) {
+  const t = useTranslations("agents");
+  const tCommon = useTranslations("common");
+  const tForms = useTranslations("forms.state");
   const { workspaceId: contextWorkspaceId } = useWorkspace();
   const workspaceId = contextWorkspaceId || initialWorkspaceId;
   const initialAgents = useMemo(() => {

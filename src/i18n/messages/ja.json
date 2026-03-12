@@ -206,14 +206,18 @@
   "settings.billing.title": "プランと請求",
   "settings.team.title": "チームと権限",
   "settings.compliance.title": "コンプライアンス",
-  "hero.title": "あなたのビジネス電話に24時間365日対応するAI",
-  "hero.subtitle": "二度と電話を取り逃がさない。二度とリードを失わない。Recall Touch がすべての会話を引き受け、予約を取り、働いている間も売上を守ります。",
-  "hero.primaryCta": "無料トライアルを始める",
-  "hero.secondaryCta": "デモを見る",
-  "hero.trustLine": "既存の番号で利用可能 · 契約なし · 14日間無料トライアル",
-  "hero.checkmark.existingNumber": "既存の番号で利用可能",
-  "hero.checkmark.setup": "5分でセットアップ",
-  "hero.checkmark.noCard": "クレジットカード不要",
+  "hero": {
+    "title": "あなたのビジネス電話に24時間365日対応するAI",
+    "subtitle": "二度と電話を取り逃がさない。二度とリードを失わない。Recall Touch がすべての会話を引き受け、予約を取り、働いている間も売上を守ります。",
+    "primaryCta": "無料トライアルを始める",
+    "secondaryCta": "デモを見る",
+    "trustLine": "既存の番号で利用可能 · 契約なし · 14日間無料トライアル",
+    "checkmark": {
+      "existingNumber": "既存の番号で利用可能",
+      "setup": "5分でセットアップ",
+      "noCard": "クレジットカード不要"
+    }
+  },
   "pricing.title": "料金",
   "pricing.subtitle": "売上規模に合わせて成長する、シンプルで透明なプラン。",
   "pricing.toggle.monthly": "月額",
@@ -509,6 +513,9 @@
   "footer.links.docs": "ドキュメント",
   "footer.links.terms": "利用規約",
   "footer.links.privacy": "プライバシー",
+  "accessibility": {
+    "skipToContent": "メインコンテンツへスキップ"
+  },
   "footer.copyright": "All rights reserved.",
   "languageSwitcher.tooltip": "インターフェースの言語を変更",
   "timezone.label": "タイムゾーン",

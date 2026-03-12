@@ -206,14 +206,18 @@
   "settings.billing.title": "Abonnements et facturation",
   "settings.team.title": "Équipe et permissions",
   "settings.compliance.title": "Conformité",
-  "hero.title": "Une IA qui répond au téléphone de votre entreprise 24h/24 et 7j/7",
-  "hero.subtitle": "Ne manquez plus jamais un appel. Ne perdez plus jamais un lead. Recall Touch gère chaque conversation, prend des rendez-vous et protège vos revenus pendant que vous travaillez.",
-  "hero.primaryCta": "Commencer l'essai gratuit",
-  "hero.secondaryCta": "Regarder la démo",
-  "hero.trustLine": "Fonctionne avec votre numéro existant · Sans engagement · Essai gratuit de 14 jours",
-  "hero.checkmark.existingNumber": "Fonctionne avec votre numéro existant",
-  "hero.checkmark.setup": "Configuration en 5 minutes",
-  "hero.checkmark.noCard": "Aucune carte bancaire requise",
+  "hero": {
+    "title": "Une IA qui répond au téléphone de votre entreprise 24h/24 et 7j/7",
+    "subtitle": "Ne manquez plus jamais un appel. Ne perdez plus jamais un lead. Recall Touch gère chaque conversation, prend des rendez-vous et protège vos revenus pendant que vous travaillez.",
+    "primaryCta": "Commencer l'essai gratuit",
+    "secondaryCta": "Regarder la démo",
+    "trustLine": "Fonctionne avec votre numéro existant · Sans engagement · Essai gratuit de 14 jours",
+    "checkmark": {
+      "existingNumber": "Fonctionne avec votre numéro existant",
+      "setup": "Configuration en 5 minutes",
+      "noCard": "Aucune carte bancaire requise"
+    }
+  },
   "pricing.title": "Tarifs",
   "pricing.subtitle": "Des plans simples et transparents qui évoluent avec vos revenus.",
   "pricing.toggle.monthly": "Mensuel",
@@ -521,6 +525,9 @@
   "footer.links.docs": "Docs",
   "footer.links.terms": "Conditions",
   "footer.links.privacy": "Confidentialité",
+  "accessibility": {
+    "skipToContent": "Aller au contenu principal"
+  },
   "footer.copyright": "Tous droits réservés.",
   "languageSwitcher.tooltip": "Changer la langue de l’interface",
   "timezone.label": "Fuseau horaire",
