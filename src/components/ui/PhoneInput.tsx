@@ -36,7 +36,7 @@ export function PhoneInput({
   disabled?: boolean;
 }) {
   const [country, setCountry] = useState<Country>(() => COUNTRIES[0]);
-  const numeric = useMemo(() => {
+  const _numeric = useMemo(() => {
     const digits = value.replace(/\D/g, "");
     if (value.startsWith("+")) return value;
     return country.dial + digits;

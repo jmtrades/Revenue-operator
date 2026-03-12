@@ -1,11 +1,11 @@
 export type WorkspaceProgressStep =
   | "business"
   | "agent"
-  | "services"
   | "phone"
   | "test_call"
-  | "first_call"
+  | "contacts"
   | "calendar"
+  | "campaign"
   | "team";
 
 export type WorkspaceProgressItem = {
@@ -29,33 +29,41 @@ export type WorkspaceReadiness = {
 
 type Input = {
   businessName?: string | null;
+  businessAddress?: string | null;
+  businessPhone?: boolean;
   agentName?: string | null;
-  knowledgeCount: number;
+  agentCount?: number;
+  knowledgeCount?: number;
   phoneConnected: boolean;
   callCount: number;
   calendarConnected: boolean;
   teamCount: number;
+  contactsCount?: number;
+  campaignsCount?: number;
 };
 
 export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
-  const hasBusiness = Boolean(input.businessName?.trim());
-  const hasAgent = Boolean(input.agentName?.trim());
-  const hasServices = input.knowledgeCount > 0;
+  const hasBusiness =
+    Boolean(input.businessName?.trim()) &&
+    Boolean(input.businessAddress?.trim()) &&
+    input.businessPhone === true;
+  const hasAgent = (input.agentCount ?? 0) >= 1 || Boolean(input.agentName?.trim());
   const hasPhone = input.phoneConnected;
   const hasTestCall = input.callCount > 0;
-  const hasFirstCall = input.callCount > 0;
+  const hasContacts = (input.contactsCount ?? 0) >= 10;
   const hasCalendar = input.calendarConnected;
-  const hasTeam = input.teamCount > 0;
+  const hasCampaign = (input.campaignsCount ?? 0) >= 1;
+  const hasTeam = input.teamCount >= 2;
 
   const items: WorkspaceProgressItem[] = [
-    { key: "business", label: "Business info added", href: "/app/onboarding", completed: hasBusiness },
-    { key: "agent", label: "AI agent created", href: "/app/settings/agent", completed: hasAgent },
-    { key: "services", label: "Services configured", href: "/app/settings/agent", completed: hasServices },
-    { key: "phone", label: "Phone number connected", href: "/app/settings/phone", completed: hasPhone },
-    { key: "test_call", label: "First test call", href: "/app/onboarding", completed: hasTestCall },
-    { key: "first_call", label: "First real call", href: "/app/activity", completed: hasFirstCall },
-    { key: "calendar", label: "Calendar connected", href: "/app/settings/integrations", completed: hasCalendar },
-    { key: "team", label: "Team member invited", href: "/app/team", completed: hasTeam },
+    { key: "business", label: "Set up your business profile", href: "/app/settings/business", completed: hasBusiness },
+    { key: "agent", label: "Configure your first AI agent", href: "/app/agents", completed: hasAgent },
+    { key: "phone", label: "Get a phone number", href: "/app/settings/phone", completed: hasPhone },
+    { key: "test_call", label: "Make a test call", href: "/app/onboarding", completed: hasTestCall },
+    { key: "contacts", label: "Import your contacts", href: "/app/contacts", completed: hasContacts },
+    { key: "calendar", label: "Set up your calendar", href: "/app/settings/integrations", completed: hasCalendar },
+    { key: "campaign", label: "Launch your first campaign", href: "/app/campaigns", completed: hasCampaign },
+    { key: "team", label: "Invite your team", href: "/app/team", completed: hasTeam },
   ];
 
   const completed = items.filter((item) => item.completed).length;
@@ -81,17 +89,9 @@ export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
     hasBusiness
       ? {
           id: "business-saved",
-          title: "Business info saved",
+          title: "Business profile set",
           body: `${input.businessName || "Your workspace"} is set up in the app.`,
           href: "/app/settings/business",
-        }
-      : null,
-    hasServices
-      ? {
-          id: "knowledge-seeded",
-          title: "Starter knowledge added",
-          body: `${input.knowledgeCount} answers are ready for your agent.`,
-          href: "/app/agents",
         }
       : null,
     hasPhone
@@ -102,11 +102,11 @@ export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
           href: "/app/settings/phone",
         }
       : null,
-    hasFirstCall
+    hasTestCall
       ? {
           id: "first-call",
-          title: "First call completed",
-          body: "Your AI has handled its first call. Check the call log for details.",
+          title: "Test call completed",
+          body: "Your AI has handled a call. Check the call log for details.",
           href: "/app/calls",
         }
       : null,

@@ -21,7 +21,6 @@ import {
   X,
   Lightbulb,
   Bot,
-  Bell,
   PanelLeftClose,
   PanelLeftOpen,
   Command as CommandIcon,
@@ -30,6 +29,9 @@ import {
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { NotificationCenter } from "@/components/ui/NotificationCenter";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { initErrorReporting } from "@/lib/error-reporting";
 import { getClientOrNull } from "@/lib/supabase/client";
 import {
   OnboardingStepProvider,
@@ -147,6 +149,10 @@ export default function AppShellClient({
       return next;
     });
   };
+
+  useEffect(() => {
+    initErrorReporting();
+  }, []);
 
   useEffect(() => {
     if (initialWorkspaceMeta) {
@@ -492,20 +498,17 @@ export default function AppShellClient({
                     <CommandIcon className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">⌘K</span>
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowNotifications((s) => !s)}
-                    className="relative p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
-                    aria-label="Notifications"
-                    aria-expanded={showNotifications}
-                  >
-                    <Bell className="w-4 h-4" />
-                    {/* notification dot can be enabled when wired to real data */}
-                  </button>
+                  <NotificationCenter
+                    open={showNotifications}
+                    onClose={() => setShowNotifications(false)}
+                    onToggle={() => setShowNotifications((s) => !s)}
+                  />
                 </div>
               )}
               <div className="flex-1 min-h-0">
-                <PageTransition>{children}</PageTransition>
+                <ErrorBoundary>
+                  <PageTransition>{children}</PageTransition>
+                </ErrorBoundary>
               </div>
             </main>
           </div>
@@ -597,33 +600,6 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                     </nav>
                   </div>
                 </div>
-              )}
-              {showNotifications && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setShowNotifications(false)}
-                    aria-hidden
-                  />
-                  <div className="fixed right-4 top-16 z-50 w-80 bg-[#111113] border border-white/[0.06] rounded-2xl shadow-2xl overflow-hidden">
-                    <div className="px-4 py-3 border-b border-white/[0.06]">
-                      <h3 className="text-sm font-medium text-[#EDEDEF]">
-                        Notifications
-                      </h3>
-                    </div>
-                    <div className="max-h-80 overflow-y-auto">
-                      <div className="px-4 py-8 text-center">
-                        <Bell className="w-8 h-8 text-[#5A5A5C] mx-auto mb-2" />
-                        <p className="text-sm text-[#8B8B8D]">
-                          No notifications yet
-                        </p>
-                        <p className="text-xs text-[#5A5A5C] mt-1">
-                          You&apos;ll see call alerts and system updates here
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </>
               )}
               {showShortcuts && (
                 <div

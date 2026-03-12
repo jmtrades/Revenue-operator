@@ -8,10 +8,8 @@ import {
   Search,
   Filter,
   X,
-  ChevronRight,
   Phone,
   MessageSquare,
-  UserPlus,
   Archive,
   Plus,
   Calendar,
@@ -149,7 +147,7 @@ function BoardCard({ lead, onOpen }: { lead: LeadView; onOpen: () => void }) {
 function BoardColumn({
   status,
   columnLeads,
-  onMoveLead,
+  onMoveLead: _onMoveLead,
   onOpenLead,
 }: {
   status: LeadStatus;
@@ -248,7 +246,7 @@ function persistLeadsSnapshot(workspaceId: string, leads: LeadView[]) {
 }
 
 export default function LeadsPage() {
-  const router = useRouter();
+  useRouter();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId =

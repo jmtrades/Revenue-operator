@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast as sonnerToast } from "sonner";
-import { Phone, PhoneForwarded, Plus, FileInput, MoreVertical } from "lucide-react";
+import { Phone, PhoneForwarded, Plus, FileInput } from "lucide-react";
 import {
   fetchWorkspaceMeCached,
   getWorkspaceMeSnapshotSync,

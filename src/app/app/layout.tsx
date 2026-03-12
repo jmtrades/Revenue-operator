@@ -62,19 +62,31 @@ async function getInitialShellData(): Promise<{
 
   workspaceId = initialWorkspace.id;
 
-  const [{ data }, { data: ctxData }, { data: phoneCfg }, { count: callCount }, { data: calendar }, { count: teamCount }] =
-    await Promise.all([
-      db
-        .from("workspaces")
-        .select("id, name, agent_name, knowledge_items, website, address, onboarding_completed_at")
-        .eq("id", workspaceId)
-        .single(),
-      db.from("workspace_business_context").select("business_name").eq("workspace_id", workspaceId).maybeSingle(),
-      db.from("phone_configs").select("id").eq("workspace_id", workspaceId).eq("status", "active").maybeSingle(),
-      db.from("call_sessions").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
-      db.from("google_calendar_tokens").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle(),
-      db.from("team_members").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
-    ]);
+  const [
+    { data },
+    { data: ctxData },
+    { data: phoneCfg },
+    { count: callCount },
+    { data: calendar },
+    { count: teamCount },
+    { count: leadCount },
+    { count: agentCount },
+    { count: campaignCount },
+  ] = await Promise.all([
+    db
+      .from("workspaces")
+      .select("id, name, agent_name, knowledge_items, website, address, onboarding_completed_at, verified_phone")
+      .eq("id", workspaceId)
+      .single(),
+    db.from("workspace_business_context").select("business_name").eq("workspace_id", workspaceId).maybeSingle(),
+    db.from("phone_configs").select("id").eq("workspace_id", workspaceId).eq("status", "active").maybeSingle(),
+    db.from("call_sessions").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
+    db.from("google_calendar_tokens").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle(),
+    db.from("team_members").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
+    db.from("leads").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
+    db.from("agents").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
+    db.from("campaigns").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
+  ]);
 
   const row = (data ?? null) as {
     id: string;
@@ -83,6 +95,7 @@ async function getInitialShellData(): Promise<{
     knowledge_items?: Array<{ q?: string; a?: string }> | null;
     website?: string | null;
     address?: string | null;
+    verified_phone?: string | null;
     onboarding_completed_at?: string | null;
   } | null;
 
@@ -100,14 +113,20 @@ async function getInitialShellData(): Promise<{
   const knowledgeCount = Array.isArray(row.knowledge_items)
     ? row.knowledge_items.filter((item) => (item.q ?? "").trim() && (item.a ?? "").trim()).length
     : 0;
+  const hasVerifiedPhone = Boolean((row.verified_phone ?? "").toString().trim());
   const readiness = buildWorkspaceReadiness({
     businessName: row.name,
+    businessAddress: (row.address ?? "").toString().trim() || null,
+    businessPhone: hasVerifiedPhone || Boolean(phoneCfg),
     agentName: row.agent_name,
+    agentCount: agentCount ?? 0,
     knowledgeCount,
     phoneConnected: Boolean(phoneCfg),
     callCount: callCount ?? 0,
     calendarConnected: Boolean(calendar),
     teamCount: teamCount ?? 0,
+    contactsCount: leadCount ?? 0,
+    campaignsCount: campaignCount ?? 0,
   });
 
   return {

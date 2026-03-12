@@ -41,6 +41,10 @@ export default function AppSettingsBusinessPage() {
       : "other",
   );
   const [inlineToast, setInlineToast] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteConfirmName, setDeleteConfirmName] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchWorkspaceMeCached()
@@ -60,8 +64,9 @@ export default function AppSettingsBusinessPage() {
   }, []);
 
   const handleSave = async () => {
+    setSaving(true);
     try {
-      const [resMe, resTz] = await Promise.all([
+      const [resMe, _resTz] = await Promise.all([
         fetch("/api/workspace/me", {
           method: "PATCH",
           credentials: "include",
@@ -82,8 +87,37 @@ export default function AppSettingsBusinessPage() {
     } catch {
       setInlineToast("Could not save settings");
       toast.error("Failed to save. Please try again.");
+    } finally {
+      setSaving(false);
     }
     setTimeout(() => setInlineToast(null), 3000);
+  };
+
+  const handleDeleteWorkspace = async () => {
+    const expectedName = (workspaceSnapshot?.name ?? name ?? "").trim();
+    if (deleteConfirmName.trim() !== expectedName) {
+      toast.error("Workspace name does not match. Type it exactly to confirm.");
+      return;
+    }
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/workspace/delete", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: deleteConfirmName }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error ?? "Failed to delete");
+      }
+      toast.success("Workspace deleted. Redirecting…");
+      window.location.href = "/";
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not delete workspace.");
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -126,7 +160,34 @@ export default function AppSettingsBusinessPage() {
           </select>
         </div>
       </div>
-      <button type="button" disabled={loading} onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60">Save changes</button>
+      <button type="button" disabled={loading || saving} onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60">
+        {saving ? "Saving…" : "Save changes"}
+      </button>
+
+      <div className="mt-12 pt-8 border-t border-[var(--border-default)]">
+        <h2 className="text-sm font-semibold text-[var(--text-danger)]">Danger Zone</h2>
+        <p className="mt-1 text-xs text-zinc-500">Permanently delete this workspace and all its data. This cannot be undone.</p>
+        <button type="button" onClick={() => setDeleteConfirmOpen(true)} className="mt-3 px-4 py-2 rounded-xl border border-[var(--accent-danger)]/50 text-sm font-medium text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/10 transition-colors">
+          Delete workspace
+        </button>
+      </div>
+
+      {deleteConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" role="dialog" aria-modal="true" aria-labelledby="delete-dialog-title">
+          <div className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-xl">
+            <h3 id="delete-dialog-title" className="text-lg font-semibold text-white">Delete workspace?</h3>
+            <p className="mt-2 text-sm text-zinc-400">This will permanently delete the workspace and all data. Type the workspace name to confirm.</p>
+            <p className="mt-2 text-xs text-zinc-500">Workspace name: <strong className="text-zinc-300">{(workspaceSnapshot?.name ?? name ?? "").trim() || "My Workspace"}</strong></p>
+            <input type="text" value={deleteConfirmName} onChange={(e) => setDeleteConfirmName(e.target.value)} placeholder="Type workspace name" className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm placeholder:text-zinc-500" />
+            <div className="mt-4 flex gap-3 justify-end">
+              <button type="button" onClick={() => { setDeleteConfirmOpen(false); setDeleteConfirmName(""); }} className="px-4 py-2 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:bg-zinc-800">Cancel</button>
+              <button type="button" onClick={handleDeleteWorkspace} disabled={deleting} className="px-4 py-2 rounded-xl bg-[var(--accent-danger)] text-white text-sm font-medium hover:opacity-90 disabled:opacity-60">
+                {deleting ? "Deleting…" : "Delete permanently"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {inlineToast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">

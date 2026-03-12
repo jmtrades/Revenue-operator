@@ -25,7 +25,7 @@ export function Skeleton({
       <div className={cn("space-y-2", className)}>
         {Array.from({ length: lines }).map((_, i) => (
           <div
-            // eslint-disable-next-line react/no-array-index-key
+             
             key={i}
             className={cn(
               baseClasses,

@@ -182,5 +182,18 @@ export async function POST(req: NextRequest) {
     // non-blocking
   }
 
+  // In-app notification center (Task 31)
+  try {
+    const { createWorkspaceNotification } = await import("@/lib/notifications");
+    void createWorkspaceNotification(workspaceId, {
+      type: "new_lead",
+      title: "New lead",
+      body: [createdLead.name, createdLead.phone].filter(Boolean).join(" · ") || "New lead captured",
+      metadata: { lead_id: createdLead.id },
+    }).catch(() => {});
+  } catch {
+    // non-blocking
+  }
+
   return NextResponse.json(lead);
 }

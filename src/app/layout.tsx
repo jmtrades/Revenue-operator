@@ -70,6 +70,17 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
+const BASE_URL = "https://www.recall-touch.com";
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Recall Touch",
+  url: BASE_URL,
+  description: "AI phone system for every business. Answer every call 24/7, follow up with leads in 60 seconds, book appointments.",
+  sameAs: [],
+};
+
 const softwareApplicationJsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -77,7 +88,7 @@ const softwareApplicationJsonLd = {
   applicationCategory: "BusinessApplication",
   description:
     "AI phone system for every business. Answer every call 24/7, follow up with leads in 60 seconds, book appointments. Set up in 5 minutes.",
-  url: "https://www.recall-touch.com",
+  url: BASE_URL,
   offers: {
     "@type": "AggregateOffer",
     lowPrice: "297",
@@ -106,6 +117,10 @@ export default async function RootLayout({
         suppressHydrationWarning
         className={`${inter.variable} ${playfair.variable} ${geistMono.variable} ${jetbrainsMono.variable} bg-black text-white antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}

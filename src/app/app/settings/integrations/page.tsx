@@ -56,7 +56,7 @@ export default function AppSettingsIntegrationsPage() {
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>(DEFAULT_WEBHOOK_CONFIG);
   const [webhookSecret, setWebhookSecret] = useState("");
   const [whatsappEmail, setWhatsappEmail] = useState("");
-  const [whatsappSubmitting, setWhatsappSubmitting] = useState(false);
+  const [_whatsappSubmitting, setWhatsappSubmitting] = useState(false);
   const [crmStatus, setCrmStatus] = useState<CrmStatusResponse | null>(null);
   const searchParams = useSearchParams();
   const calendarParam = searchParams.get("calendar");
@@ -176,7 +176,7 @@ export default function AppSettingsIntegrationsPage() {
     }
   };
 
-  const handleWhatsAppNotify = async () => {
+  const _handleWhatsAppNotify = async () => {
     const email = whatsappEmail.trim();
     if (!email) {
       setToast("Enter your email to join the WhatsApp waitlist.");

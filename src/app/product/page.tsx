@@ -4,6 +4,8 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
+const BASE = "https://www.recall-touch.com";
+
 const PRODUCT_SECTIONS = [
   { id: "answers-every-call", title: "Answers every call", desc: "Your AI picks up on the first ring, 24/7/365. No voicemail. No hold music. Natural conversational voice handles everything from simple questions to complex scheduling. Whether it's 2 AM or your busiest hour, every caller gets the same professional experience.", bullets: ["First ring answer", "24/7/365", "Natural voice", "No voicemail"] },
   { id: "outbound", title: "Makes outbound calls", desc: "New web lead? Your AI calls back within 60 seconds. Appointment tomorrow? Confirmation call the evening before. No-show? Automatic reschedule. Customer hasn't returned in 6 months? Reactivation follow-up. Your AI follows up so your team handles work that requires a human.", bullets: ["60-second callback", "Appointment reminders", "No-show recovery", "Reactivation"] },
@@ -21,12 +23,22 @@ export const metadata = {
     "One platform for every phone interaction — inbound calls, outbound campaigns, SMS, scheduling, lead capture, and analytics.",
 };
 
+const productJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "Recall Touch",
+  description: "AI phone system. Answers every call 24/7, books appointments, qualifies leads, outbound campaigns, SMS, analytics.",
+  url: BASE,
+  brand: { "@type": "Brand", name: "Recall Touch" },
+};
+
 export default function ProductPage() {
   return (
     <div
       className="min-h-screen"
       style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
     >
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <Navbar />
       <main className="pt-28 pb-24">
         <Container>

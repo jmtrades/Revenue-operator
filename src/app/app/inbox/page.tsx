@@ -433,7 +433,7 @@ function ConversationDetail({
 }
 
 export default function InboxPage() {
-  const t = useTranslations();
+  useTranslations();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId =

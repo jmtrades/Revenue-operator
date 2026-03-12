@@ -264,6 +264,12 @@ export default function CallsPage() {
             Every answered call, decision, and follow-up in one place.
           </p>
         </div>
+        <Link
+          href="/app/calls/live"
+          className="inline-flex items-center gap-1.5 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2 text-sm font-medium hover:bg-zinc-800 hover:text-white"
+        >
+          Live
+        </Link>
         <button
           type="button"
           onClick={async () => {
@@ -435,7 +441,7 @@ export default function CallsPage() {
               const sentiment =
                 (c.analysis_outcome as { sentiment?: CallSentiment } | undefined)?.sentiment ??
                 null;
-              const kind: Exclude<CallType, null> = "inbound";
+              const _kind: Exclude<CallType, null> = "inbound";
               const outcomeKey = (c.outcome ?? "lead") as Exclude<CallOutcome, null>;
               const sentimentEmoji = sentiment === "positive" ? "🙂" : sentiment === "negative" ? "😞" : sentiment === "neutral" ? "😐" : null;
               const durationLabel = durSec > 0 ? `${durMin}m ${(durSec % 60).toString().padStart(2, "0")}s` : "—";

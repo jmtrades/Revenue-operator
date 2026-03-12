@@ -1,0 +1,114 @@
+"use client";
+
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import { reportError, categorizeError, type ErrorCategory } from "@/lib/error-reporting";
+
+type Props = {
+  children: ReactNode;
+  fallback?: ReactNode;
+};
+
+type State = {
+  hasError: boolean;
+  error: Error | null;
+  errorCategory: ErrorCategory;
+};
+
+function getMessage(category: ErrorCategory): { title: string; body: string } {
+  switch (category) {
+    case "network":
+      return {
+        title: "Connection problem",
+        body: "We couldn’t reach the server. Check your connection and try again.",
+      };
+    case "auth":
+      return {
+        title: "Session expired",
+        body: "Please sign in again to continue.",
+      };
+    case "data":
+      return {
+        title: "Something went wrong",
+        body: "We couldn’t load this page. Try again or go back.",
+      };
+    default:
+      return {
+        title: "Something went wrong",
+        body: "An unexpected error occurred. You can try again or report the issue.",
+      };
+  }
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+      errorCategory: "unknown",
+    };
+  }
+
+  static getDerivedStateFromError(error: Error): Partial<State> {
+    return {
+      hasError: true,
+      error,
+      errorCategory: categorizeError(error),
+    };
+  }
+
+  componentDidCatch(error: Error, _errorInfo: ErrorInfo): void {
+    reportError({
+      message: error.message,
+      stack: error.stack ?? undefined,
+      category: categorizeError(error),
+    });
+  }
+
+  handleTryAgain = (): void => {
+    this.setState({ hasError: false, error: null });
+  };
+
+  handleReport = (): void => {
+    const { error } = this.state;
+    if (error) {
+      reportError({
+        message: error.message,
+        stack: error.stack ?? undefined,
+        category: this.state.errorCategory,
+      });
+    }
+  };
+
+  render(): ReactNode {
+    if (this.state.hasError && this.state.error) {
+      const { title, body } = getMessage(this.state.errorCategory);
+      if (this.props.fallback) return this.props.fallback;
+
+      return (
+        <div className="min-h-[280px] flex flex-col items-center justify-center p-6 bg-[var(--bg-primary)] text-[var(--text-primary)]">
+          <p className="text-lg font-semibold">{title}</p>
+          <p className="mt-2 text-sm text-[var(--text-secondary)] text-center max-w-sm">{body}</p>
+          <div className="mt-6 flex gap-3">
+            <button
+              type="button"
+              onClick={this.handleTryAgain}
+              className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100"
+            >
+              Try again
+            </button>
+            <button
+              type="button"
+              onClick={this.handleReport}
+              className="px-4 py-2.5 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:text-[var(--text-primary)]"
+            >
+              Report issue
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}

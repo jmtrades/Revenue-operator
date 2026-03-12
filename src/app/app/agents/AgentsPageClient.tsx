@@ -1192,22 +1192,20 @@ export default function AppAgentsPageClient({
             Different agents for daytime, after-hours, emergencies, and follow-up.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => void createAgentFromTemplate("scratch")}
+        <Link
+          href="/app/agents/new"
           className="hidden sm:inline-flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
         >
           + Create Agent
-        </button>
+        </Link>
       </div>
 
-      <button
-        type="button"
-        onClick={() => void createAgentFromTemplate("scratch")}
-        className="sm:hidden mb-4 w-full bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
+      <Link
+        href="/app/agents/new"
+        className="sm:hidden mb-4 w-full inline-flex justify-center items-center bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
       >
         + Create Agent
-      </button>
+      </Link>
 
       {loading ? (
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)] gap-4 lg:gap-6 items-stretch lg:min-h-[480px]">
@@ -1345,7 +1343,7 @@ export default function AppAgentsPageClient({
                       {selected.active ? "Active" : "Inactive"}
                     </span>
                   </div>
-                  <p className="text-[11px] text-zinc-500 flex items-center gap-2">
+                  <p className="text-[11px] text-zinc-500 flex items-center gap-2 flex-wrap">
                     {selected.vapiAgentId?.trim() ? (
                       <span className="text-green-500/80">Live</span>
                     ) : (
@@ -1361,6 +1359,14 @@ export default function AppAgentsPageClient({
                         {getAgentReadiness(selected).percent}% ready
                       </span>
                     )}
+                    <span>·</span>
+                    <Link href={`/app/agents/${selected.id}/analytics`} className="text-[var(--accent-primary)] hover:underline">
+                      Analytics
+                    </Link>
+                    <span>·</span>
+                    <Link href={`/app/agents/${selected.id}/flow-builder`} className="text-[var(--accent-primary)] hover:underline">
+                      Flow
+                    </Link>
                     <span>·</span>
                     <span>{selected.stats.totalCalls} calls</span>
                   </p>
