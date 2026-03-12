@@ -198,6 +198,7 @@
     }
   },
   "analytics": {
+    "pageTitle": "Analytik — Recall Touch",
     "title": "Analytik",
     "periodSummary": {
       "title": "Zeitraum-Zusammenfassung",
@@ -221,6 +222,7 @@
     "successRate": "Erfolg %"
   },
   "agents": {
+    "pageTitle": "Agenten — Recall Touch",
     "title": "Agenten",
     "new": "Neuer Agent",
     "empty": {
@@ -274,6 +276,7 @@
     }
   },
   "calls": {
+    "pageTitle": "Anrufe — Recall Touch",
     "title": "Anrufe",
     "filters": {
       "all": "Alle Anrufe",
@@ -396,6 +399,7 @@
     "nextRun": "Nächste Ausführung (Datum & Uhrzeit)"
   },
   "settings": {
+    "pageTitle": "Einstellungen — Recall Touch",
     "title": "Einstellungen",
     "nav": {
       "general": "Allgemein",
@@ -753,6 +757,9 @@
     "toast": {
       "added": "Kontakt hinzugefügt"
     }
+  },
+  "appointments": {
+    "pageTitle": "Termine — Recall Touch"
   },
   "keyboardShortcuts": {
     "modal": {

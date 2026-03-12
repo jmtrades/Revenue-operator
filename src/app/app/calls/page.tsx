@@ -15,8 +15,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { apiFetch, ApiError } from "@/lib/api";
-
-const PAGE_TITLE = "Calls — Recall Touch";
+import { useTranslations } from "next-intl";
 
 type CallType = "inbound" | "outbound" | null;
 type CallOutcome = "appointment" | "lead" | "info" | "transfer" | "voicemail" | "missed" | null;
@@ -100,6 +99,7 @@ function persistCallsSnapshot(workspaceId: string, calls: CallRecord[]) {
 }
 
 export default function CallsPage() {
+  const t = useTranslations();
   const router = useRouter();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
@@ -210,9 +210,11 @@ export default function CallsPage() {
   const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
   useEffect(() => {
-    document.title = PAGE_TITLE;
-    return () => { document.title = ""; };
-  }, []);
+    document.title = t("calls.pageTitle");
+    return () => {
+      document.title = "";
+    };
+  }, [t]);
 
   const handleRowClick = (id: string) => {
     const existing = records.find((c) => c.id === id);
