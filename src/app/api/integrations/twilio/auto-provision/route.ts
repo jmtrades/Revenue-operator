@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -22,6 +23,8 @@ export async function POST(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
   const areaCode = body.area_code?.replace(/\D/g, "").slice(0, 3);
 
   const db = getDb();
