@@ -1437,34 +1437,40 @@ export default function AppAgentsPageClient({
                   })}
                   </div>
                 </div>
-                <p className="text-[11px] font-medium text-zinc-500 mb-2 pt-2">Quick actions</p>
+                <p className="text-[11px] font-medium text-zinc-500 mb-2 pt-2">{t("quickActions.label")}</p>
                 <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={() => void handleStepChange("identity")} aria-label="Edit agent" className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Edit</button>
-                  <button type="button" onClick={() => void handleStepChange("test")} aria-label="Test agent" className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Test</button>
-                  <button type="button" onClick={() => void handleStepChange("golive")} aria-label="Go live" className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Go live</button>
+                  <button type="button" onClick={() => void handleStepChange("identity")} aria-label={t("quickActions.editAria")} className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+                    {t("quickActions.edit")}
+                  </button>
+                  <button type="button" onClick={() => void handleStepChange("test")} aria-label={t("quickActions.testAria")} className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+                    {t("quickActions.test")}
+                  </button>
+                  <button type="button" onClick={() => void handleStepChange("golive")} aria-label={t("quickActions.goLiveAria")} className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+                    {t("quickActions.goLive")}
+                  </button>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-2">
                   <button
                     type="button"
                     onClick={handleDelete}
-                    aria-label="Delete this agent"
+                    aria-label={t("actions.deleteAria")}
                     className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
-                    Delete
+                    {tCommon("delete")}
                   </button>
                   <button
                     type="button"
                     onClick={handleSave}
                     disabled={saving}
-                    aria-label={saving ? "Saving agent" : "Save agent and sync to voice"}
+                    aria-label={saving ? t("actions.savingAria") : t("actions.saveAndSyncAria")}
                     className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
-                    {saving ? "Saving…" : "Save"}
+                    {saving ? tForms("saving") : tCommon("save")}
                   </button>
                 </div>
               </div>
               <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-6 relative break-words" style={{ overflowWrap: "anywhere" }} aria-labelledby="agent-step-heading">
-                {saving && <div className="absolute top-3 right-3 text-xs text-white/30">Saving...</div>}
+                {saving && <div className="absolute top-3 right-3 text-xs text-white/30">{tForms("saving")}</div>}
                 <h2 id="agent-step-heading" className="text-xs text-zinc-500 mb-4 font-normal">
                   Currently on: {SETUP_STEPS.find((s) => s.id === activeStep)?.label ?? activeStep}
                 </h2>

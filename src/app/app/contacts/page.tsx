@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 type ContactType = "lead" | "customer" | "vip";
@@ -103,6 +104,8 @@ function typeLabel(type: ContactType) {
 }
 
 export default function AppContactsPage() {
+  const t = useTranslations("contacts");
+  const tCommon = useTranslations("common");
   const [contacts, setContacts] = useState<Contact[]>(() =>
     typeof window === "undefined" ? [] : loadContacts(),
   );
@@ -122,6 +125,13 @@ export default function AppContactsPage() {
   const [formTagInput, setFormTagInput] = useState("");
   const [formTags, setFormTags] = useState<string[]>([]);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    document.title = t("pageTitle");
+    return () => {
+      document.title = "";
+    };
+  }, [t]);
 
   useEffect(() => {
     if (!toast) return;
@@ -188,9 +198,9 @@ export default function AppContactsPage() {
 
   const handleSaveContact = () => {
     const errors: Record<string, string> = {};
-    if (!formFirstName.trim()) errors.firstName = "First name is required";
-    if (!formLastName.trim()) errors.lastName = "Last name is required";
-    if (!formPhone.trim()) errors.phone = "Phone is required";
+    if (!formFirstName.trim()) errors.firstName = t("errors.firstNameRequired");
+    if (!formLastName.trim()) errors.lastName = t("errors.lastNameRequired");
+    if (!formPhone.trim()) errors.phone = t("errors.phoneRequired");
     setFormErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
@@ -218,7 +228,7 @@ export default function AppContactsPage() {
     const next = [newContact, ...contacts];
     setContacts(next);
     saveContacts(next);
-    setToast("Contact added");
+    setToast(t("toast.added"));
     setShowAdd(false);
     resetForm();
   };
@@ -228,11 +238,11 @@ export default function AppContactsPage() {
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-lg md:text-xl font-semibold text-white flex items-center gap-2">
-            Contacts
-            <span className="text-xs font-normal text-zinc-500">· {count} saved</span>
+            {t("title")}
+            <span className="text-xs font-normal text-zinc-500">· {t("savedCount", { count })}</span>
           </h1>
           <p className="text-xs text-zinc-500 mt-1">
-            Every caller your AI speaks to, in one place.
+            {t("subtitle")}
           </p>
         </div>
         <button
@@ -243,7 +253,7 @@ export default function AppContactsPage() {
           }}
           className="hidden sm:inline-flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
         >
-          + Add Contact
+          {t("addContactCta")}
         </button>
       </div>
 
@@ -251,37 +261,37 @@ export default function AppContactsPage() {
         <div className="flex-1 flex items-center gap-2">
           <input
             type="search"
-            placeholder="Search by name, phone, or email…"
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-zinc-500">Sort</span>
+          <span className="text-xs text-zinc-500">{t("sortLabel")}</span>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortId)}
             className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 focus:outline-none"
           >
-            <option value="newest">Newest</option>
-            <option value="score">Score</option>
-            <option value="name">Name</option>
+            <option value="newest">{t("sort.newest")}</option>
+            <option value="score">{t("sort.score")}</option>
+            <option value="name">{t("sort.name")}</option>
           </select>
         </div>
       </div>
 
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1" aria-label="Contact filters">
-        {(["all", "leads", "customers", "vip"] as const).map((t) => (
+        {(["all", "leads", "customers", "vip"] as const).map((tabId) => (
           <button
-            key={t}
+            key={tabId}
             type="button"
-            onClick={() => setTab(t)}
+            onClick={() => setTab(tabId)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize ${
-              tab === t ? "bg-zinc-800 text-white" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-400"
+              tab === tabId ? "bg-zinc-800 text-white" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-400"
             }`}
           >
-            {t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
+            {t(`tabs.${tabId}`)}
           </button>
         ))}
       </div>
@@ -294,14 +304,14 @@ export default function AppContactsPage() {
         }}
         className="sm:hidden mb-3 w-full bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
       >
-        + Add Contact
+        {t("addContactCta")}
       </button>
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] py-12 px-6 text-center">
-          <p className="text-sm text-zinc-400 mb-2">No contacts yet.</p>
+          <p className="text-sm text-zinc-400 mb-2">{t("empty.title")}</p>
           <p className="text-xs text-zinc-500">
-            Your AI adds contacts from every call. Manual contacts appear here too.
+            {t("empty.subtitle")}
           </p>
         </div>
       ) : (
@@ -360,7 +370,7 @@ export default function AppContactsPage() {
               <ContactDetail contact={selected} />
             ) : (
               <div className="rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-input)]/40 p-6 text-sm text-zinc-500">
-                Select a contact to see call history and notes.
+                {t("empty.detail")}
               </div>
             )}
           </aside>
@@ -369,7 +379,7 @@ export default function AppContactsPage() {
 
       <p className="mt-6">
         <Link href="/app/activity" className="text-sm text-zinc-400 hover:text-white transition-colors">
-          ← Activity
+          ← {tCommon("activity")}
         </Link>
       </p>
 
@@ -392,41 +402,41 @@ export default function AppContactsPage() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-sm font-semibold text-white">Add contact</h2>
-                <p className="text-xs text-zinc-500 mt-0.5">Your AI will use this on future calls.</p>
+                <h2 className="text-sm font-semibold text-white">{t("drawer.title")}</h2>
+                <p className="text-xs text-zinc-500 mt-0.5">{t("drawer.subtitle")}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowAdd(false)}
                 className="text-xs text-zinc-400 hover:text-white"
-                aria-label="Close"
+                aria-label={tCommon("close")}
               >
-                Close
+                {tCommon("close")}
               </button>
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 pr-1">
               <div className="flex gap-2">
                 <div className="flex-1">
-                  <label className="block text-[11px] text-zinc-500 mb-1">First name*</label>
+                  <label className="block text-[11px] text-zinc-500 mb-1">{t("form.firstNameLabel")}</label>
                   <input
                     type="text"
                     value={formFirstName}
                     onChange={(e) => setFormFirstName(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                    placeholder="Mike"
+                    placeholder={t("form.firstNamePlaceholder")}
                   />
                   {formErrors.firstName && (
                     <p className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">{formErrors.firstName}</p>
                   )}
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[11px] text-zinc-500 mb-1">Last name*</label>
+                  <label className="block text-[11px] text-zinc-500 mb-1">{t("form.lastNameLabel")}</label>
                   <input
                     type="text"
                     value={formLastName}
                     onChange={(e) => setFormLastName(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                    placeholder="Johnson"
+                    placeholder={t("form.lastNamePlaceholder")}
                   />
                   {formErrors.lastName && (
                     <p className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">{formErrors.lastName}</p>
@@ -434,42 +444,42 @@ export default function AppContactsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Phone*</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.phoneLabel")}</label>
                 <input
                   type="tel"
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder="(503) 555-0199"
+                  placeholder={t("form.phonePlaceholder")}
                 />
                 {formErrors.phone && (
                   <p className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">{formErrors.phone}</p>
                 )}
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Email</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.emailLabel")}</label>
                 <input
                   type="email"
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder="name@email.com"
+                  placeholder={t("form.emailPlaceholder")}
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Type</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.typeLabel")}</label>
                 <select
                   value={formType}
                   onChange={(e) => setFormType(e.target.value as ContactType)}
                   className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-zinc-200 focus:outline-none"
                 >
-                  <option value="lead">Lead</option>
-                  <option value="customer">Customer</option>
-                  <option value="vip">VIP</option>
+                  <option value="lead">{t("form.type.lead")}</option>
+                  <option value="customer">{t("form.type.customer")}</option>
+                  <option value="vip">{t("form.type.vip")}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Tags</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.tagsLabel")}</label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"
@@ -482,14 +492,14 @@ export default function AppContactsPage() {
                       }
                     }}
                     className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                    placeholder="Type and press Enter"
+                    placeholder={t("form.tagsPlaceholder")}
                   />
                   <button
                     type="button"
                     onClick={handleAddTag}
                     className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)]"
                   >
-                    Add
+                    {t("form.addTag")}
                   </button>
                 </div>
                 {formTags.length > 0 && (
@@ -508,13 +518,13 @@ export default function AppContactsPage() {
                 )}
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Notes</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.notesLabel")}</label>
                 <textarea
                   rows={3}
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none resize-none"
-                  placeholder="What matters for this contact…"
+                  placeholder={t("form.notesPlaceholder")}
                 />
               </div>
             </div>
@@ -524,14 +534,14 @@ export default function AppContactsPage() {
                 onClick={() => setShowAdd(false)}
                 className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm text-zinc-300 hover:border-[var(--border-medium)]"
               >
-                Cancel
+                {tCommon("cancel")}
               </button>
               <button
                 type="button"
                 onClick={handleSaveContact}
                 className="px-4 py-2 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100"
               >
-                Save Contact
+                {t("form.saveContact")}
               </button>
             </div>
           </div>
