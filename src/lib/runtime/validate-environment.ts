@@ -72,6 +72,7 @@ export function validateEnvironment(): void {
 
 function logStructured(level: string, event: string, data: Record<string, unknown>): void {
   if (typeof window !== "undefined") return;
+  if (process.env.NODE_ENV === "production") return;
   const line = JSON.stringify({
     ts: new Date().toISOString(),
     level,
