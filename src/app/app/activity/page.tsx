@@ -298,8 +298,8 @@ export default function AppActivityPage() {
     estRevenue: workspaceSnapshot?.stats?.estRevenue ?? 0,
     lastCallAt: workspaceSnapshot?.stats?.lastCallAt ?? null,
   }));
-  const [callVolumeData] = useState<{ day: string; calls: number }[]>([]);
-  const [outcomeData] = useState<{ name: string; value: number }[]>([]);
+  const [callVolumeData, setCallVolumeData] = useState<{ day: string; calls: number }[]>([]);
+  const [outcomeData, setOutcomeData] = useState<{ name: string; value: number }[]>([]);
   const [recentActivity, setRecentActivity] = useState<ActivityCard[]>(() => readActivitySnapshot());
 
   useEffect(() => {
@@ -351,6 +351,48 @@ export default function AppActivityPage() {
         setCards(mapped);
         setRecentActivity(mapped);
         persistActivitySnapshot(mapped);
+
+        const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+        const volumeMap = new Map<string, number>();
+        dayLabels.forEach((d) => volumeMap.set(d, 0));
+        calls.forEach((c) => {
+          const ts = c.call_started_at ?? c.call_ended_at ?? null;
+          if (!ts) return;
+          const d = new Date(ts);
+          if (Number.isNaN(d.getTime())) return;
+          const label = dayLabels[d.getDay()];
+          volumeMap.set(label, (volumeMap.get(label) ?? 0) + 1);
+        });
+        setCallVolumeData(
+          dayLabels.map((d) => ({
+            day: d,
+            calls: volumeMap.get(d) ?? 0,
+          })),
+        );
+
+        const outcomeCounts: Record<string, number> = {
+          appointment: 0,
+          lead: 0,
+          transfer: 0,
+          other: 0,
+        };
+        calls.forEach((c) => {
+          const o = c.outcome ?? "other";
+          if (o === "appointment" || o === "lead" || o === "transfer") {
+            outcomeCounts[o] += 1;
+          } else {
+            outcomeCounts.other += 1;
+          }
+        });
+        const nextOutcomeData: { name: string; value: number }[] = [];
+        if (outcomeCounts.lead > 0) nextOutcomeData.push({ name: "Leads", value: outcomeCounts.lead });
+        if (outcomeCounts.appointment > 0)
+          nextOutcomeData.push({ name: "Appointments", value: outcomeCounts.appointment });
+        if (outcomeCounts.transfer > 0)
+          nextOutcomeData.push({ name: "Transfers", value: outcomeCounts.transfer });
+        if (outcomeCounts.other > 0)
+          nextOutcomeData.push({ name: "Other", value: outcomeCounts.other });
+        setOutcomeData(nextOutcomeData);
       })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 408) {
@@ -526,10 +568,14 @@ export default function AppActivityPage() {
     "completed" in p ? p.completed : (p as { done?: boolean }).done
   ).length;
 
-  const callCount = cards.length;
-  const leadCount = cards.filter((c) => c.type === "lead").length;
-  const estRevenue = leadCount * 800;
-  const answerRate = callCount > 0 ? 100 : 0;
+  const callCount = workspaceStats.calls || cards.length;
+  const leadCount = workspaceStats.leads || cards.filter((c) => c.type === "lead").length;
+  const estRevenue = workspaceStats.estRevenue || leadCount * 800;
+  const answeredCalls = cards.filter(
+    (c) => c.type === "lead" || c.type === "appointment" || c.type === "follow-up" || c.type === "urgent",
+  ).length;
+  const answerRate =
+    callCount > 0 ? Math.round((answeredCalls / callCount) * 100) : 0;
 
   const phoneConnected =
     progressItemsResolved.some((p) =>
@@ -654,26 +700,26 @@ export default function AppActivityPage() {
 
       <KPIRow>
         <StatCard
-          label="Calls"
+          label={t("dashboard.stats.calls")}
           value={callCount}
           prefix=""
           suffix=""
           trend={0}
         />
         <StatCard
-          label="Answer rate"
+          label={t("dashboard.stats.answerRate")}
           value={answerRate}
           suffix="%"
           trend={0}
         />
         <StatCard
-          label="Leads"
+          label={t("dashboard.stats.leads")}
           value={leadCount}
           suffix=""
           trend={0}
         />
         <StatCard
-          label="Est. revenue"
+          label={t("dashboard.stats.estimatedRevenue")}
           value={estRevenue}
           prefix="$"
           trend={0}
@@ -1043,13 +1089,14 @@ export default function AppActivityPage() {
       )}
 
       {/* Charts section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
-        <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
-          <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
-            Call Volume (7 days)
-          </h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={callVolumeData.length > 0 ? callVolumeData : PLACEHOLDER_AREA}>
+      {hasAnyCalls && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
+          <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
+            <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
+              Call Volume (7 days)
+            </h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={callVolumeData.length > 0 ? callVolumeData : PLACEHOLDER_AREA}>
               <defs>
                 <linearGradient id="dashboardCallGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#4F8CFF" stopOpacity={0.3} />
@@ -1071,63 +1118,51 @@ export default function AppActivityPage() {
                   fontSize: 13,
                 }}
               />
-              <Area
-                type="monotone"
-                dataKey="calls"
-                stroke="#4F8CFF"
-                fill="url(#dashboardCallGrad)"
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-          {callVolumeData.length === 0 && (
-            <div className="absolute inset-0 flex items-center justifycenter rounded-2xl bg-[#111113]/60">
-              <p className="text-[#5A5A5C] text-sm">
-                Charts appear after your first call
-              </p>
-            </div>
-          )}
-        </div>
+                <Area
+                  type="monotone"
+                  dataKey="calls"
+                  stroke="#4F8CFF"
+                  fill="url(#dashboardCallGrad)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
 
-        <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
-          <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
-            Call Outcomes
-          </h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={80}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {(outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE).map(
-                  (_slice, i) => (
-                     
-                    <Cell
-                      key={i}
-                      fill={
-                        outcomeData.length > 0
-                          ? REAL_PIE_COLORS[i % REAL_PIE_COLORS.length]
-                          : PIE_COLORS[0]
-                      }
-                    />
-                  ),
-                )}
-              </Pie>
-              {outcomeData.length > 0 && <Tooltip />}
-            </PieChart>
-          </ResponsiveContainer>
-          {outcomeData.length === 0 && (
-            <div className="absolute inset-0 flex items-center justifycenter rounded-2xl bg-[#111113]/60">
-              <p className="text-[#5A5A5C] text-sm">No outcome data yet</p>
-            </div>
-          )}
+          <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
+            <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
+              Call Outcomes
+            </h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {(outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE).map(
+                    (_slice, i) => (
+                      <Cell
+                        key={i}
+                        fill={
+                          outcomeData.length > 0
+                            ? REAL_PIE_COLORS[i % REAL_PIE_COLORS.length]
+                            : PIE_COLORS[0]
+                        }
+                      />
+                    ),
+                  )}
+                </Pie>
+                {outcomeData.length > 0 && <Tooltip />}
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
+      )}
 
       {selectedCard && (
         <div className="fixed inset-0 z-40">
