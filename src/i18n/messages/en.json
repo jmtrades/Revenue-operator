@@ -525,6 +525,32 @@
   "calls": {
     "pageTitle": "Calls — Recall Touch",
     "title": "Calls",
+    "heading": "Call log",
+    "description": "Every answered call, decision, and follow-up in one place.",
+    "liveLabel": "Live",
+    "exportCsv": "Export CSV",
+    "searchPlaceholder": "Search by caller or phone…",
+    "filterOutcome": "Filter by outcome",
+    "filterSentiment": "Filter by sentiment",
+    "all": "All",
+    "outcomes": {
+      "booked": "Booked",
+      "lead": "Lead",
+      "info": "Info",
+      "transferred": "Transferred",
+      "missed": "Missed",
+      "voicemail": "Voicemail"
+    },
+    "sentiments": {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
+    },
+    "sort": {
+      "newest": "Newest first",
+      "longest": "Longest calls",
+      "bestSentiment": "Best sentiment"
+    },
     "filters": {
       "all": "All calls",
       "missed": "Missed",
@@ -542,8 +568,32 @@
     },
     "empty": {
       "title": "No calls yet",
+      "description": "Connect your phone number to get started. Calls will appear here with transcripts and summaries.",
+      "connectNumber": "Connect number",
+      "testAgent": "Test your agent",
       "body": "Once your agents start handling calls, you'll see them all here."
     },
+    "table": {
+      "dateTime": "Date / time",
+      "caller": "Caller",
+      "phone": "Phone",
+      "duration": "Duration",
+      "outcome": "Outcome",
+      "sentiment": "Sentiment",
+      "agent": "Agent",
+      "actions": "Actions"
+    },
+    "defaultCaller": "Caller",
+    "playRecording": "Play recording",
+    "viewTranscript": "View transcript",
+    "noMatchFilters": "No calls match these filters yet.",
+    "showing": "Showing",
+    "of": "of",
+    "callsLabel": "calls",
+    "page": "Page",
+    "agentLabel": "Agent:",
+    "assigned": "Assigned",
+    "details": "Call details",
     "errors": {
       "timeout": "Request timed out. Try again.",
       "loadFailed": "Could not load calls for this workspace.",
