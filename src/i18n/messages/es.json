@@ -50,7 +50,11 @@
     "all": "Todos",
     "failed": "Error",
     "closeDetails": "Cerrar detalles",
-    "loadingApp": "Cargando aplicación"
+    "loadingApp": "Cargando aplicación",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
   },
   "toast": {
     "saved": "Ajustes guardados",
@@ -252,6 +256,15 @@
       "testDescription": "¿Funciona bien?",
       "golive": "Poner en producción",
       "goliveDescription": "Conectar a tu teléfono"
+    },
+    "status": {
+      "live": "Live",
+      "ready": "Ready",
+      "calls": "calls"
+    },
+    "links": {
+      "analytics": "Analytics",
+      "flow": "Flow builder"
     },
     "behavior": {
       "objectionHandling": {
