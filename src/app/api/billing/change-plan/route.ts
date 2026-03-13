@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getPriceId } from "@/lib/stripe-prices";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
@@ -34,6 +35,9 @@ export async function POST(req: NextRequest) {
   const planId = body.plan_id ?? body.planId;
   const { workspace_id } = body;
   if (!workspace_id) return NextResponse.json({ ok: false, error: "workspace_id required" }, { status: 400 });
+  const authErr = await requireWorkspaceAccess(req, workspace_id);
+  if (authErr) return authErr;
+
   if (!planId || typeof planId !== "string") return NextResponse.json({ ok: false, error: "plan_id or planId required" }, { status: 400 });
 
   const tier = PLAN_TO_TIER[planId.toLowerCase()];
