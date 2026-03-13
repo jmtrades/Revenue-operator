@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { createAssistant, updateAssistant } from "@/lib/vapi";
 import { compileSystemPrompt } from "@/lib/business-brain";
@@ -34,6 +35,8 @@ export async function POST(req: NextRequest) {
   if (!session?.userId || !session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   if (!hasVapiServerKey()) {
     return NextResponse.json({ error: "Voice not configured" }, { status: 503 });
