@@ -716,7 +716,8 @@
       "submitting": "Envoi…",
       "loading": "Chargement…",
       "creating": "Création…",
-      "importing": "Importation…"
+      "importing": "Importation…",
+      "uploading": "Téléversement…"
     }
   },
   "search": {

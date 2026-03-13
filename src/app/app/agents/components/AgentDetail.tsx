@@ -101,7 +101,7 @@ export function AgentDetail(props: AgentDetailProps) {
   } = props;
   const t = useTranslations("agents");
   const tCommon = useTranslations("common");
-  const tForms = useTranslations("forms");
+  const tForms = useTranslations("forms.state");
 
   const readiness = getAgentReadiness(agent);
 
