@@ -37,6 +37,7 @@
     "previous": "Anterior",
     "submit": "Enviar",
     "loading": "Carregando",
+    "loadingEllipsis": "Carregando…",
     "error": "Erro",
     "success": "Sucesso",
     "retry": "Tentar novamente",
@@ -597,6 +598,7 @@
     "csvUploadHint": "Envie CSV com colunas nome, telefone, email",
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
+    "scoreLabel": "Pontuação",
     "board": {
       "columns": {
         "new": "Novos",
@@ -735,6 +737,8 @@
     "business.saveFailed": "Não foi possível salvar as configurações da empresa. Tente novamente.",
     "business.nameNoMatch": "O nome do workspace não corresponde. Digite exatamente para confirmar.",
     "business.deleted": "Workspace excluído. Redirecionando…",
+    "agent.loading": "Carregando configurações do agente…",
+    "agent.testTitle": "Testar seu agente",
     "agent.loadFailed": "Não foi possível carregar as configurações do agente. Tente novamente.",
     "agent.saveFailed": "Não foi possível salvar as configurações do agente. Tente novamente.",
     "agent.voiceSyncFailed": "Salvo, mas não foi possível atualizar o agente de voz. Tente novamente.",
@@ -914,7 +918,9 @@
     },
     "retry": "Tentar novamente",
     "goHome": "Voltar para início",
-    "support": "Falar com suporte"
+    "goToDashboard": "Ir para o painel",
+    "support": "Falar com suporte",
+    "pageLoadBody": "Esta página não pôde ser carregada. Tente novamente ou volte ao painel."
   },
   "forms": {
     "validation": {

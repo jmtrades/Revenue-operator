@@ -37,6 +37,7 @@
     "previous": "Précédent",
     "submit": "Envoyer",
     "loading": "Chargement",
+    "loadingEllipsis": "Chargement…",
     "error": "Erreur",
     "success": "Succès",
     "retry": "Réessayer",
@@ -249,8 +250,13 @@
       "agentLaunched": "Agent en ligne"
     },
     "dayLabels": {
-      "mon": "Lun", "tue": "Mar", "wed": "Mer", "thu": "Jeu",
-      "fri": "Ven", "sat": "Sam", "sun": "Dim"
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
     },
     "noData": "Aucune donnée",
     "greetingMorning": "Bonjour",
@@ -433,9 +439,24 @@
     "filterOutcome": "Filtrer par résultat",
     "filterSentiment": "Filtrer par sentiment",
     "all": "Tous",
-    "outcomes": { "booked": "Réservé", "lead": "Lead", "info": "Info", "transferred": "Transféré", "missed": "Manqué", "voicemail": "Messagerie" },
-    "sentiments": { "positive": "Positif", "neutral": "Neutre", "negative": "Négatif" },
-    "sort": { "newest": "Plus récents", "longest": "Appels les plus longs", "bestSentiment": "Meilleur sentiment" },
+    "outcomes": {
+      "booked": "Réservé",
+      "lead": "Lead",
+      "info": "Info",
+      "transferred": "Transféré",
+      "missed": "Manqué",
+      "voicemail": "Messagerie"
+    },
+    "sentiments": {
+      "positive": "Positif",
+      "neutral": "Neutre",
+      "negative": "Négatif"
+    },
+    "sort": {
+      "newest": "Plus récents",
+      "longest": "Appels les plus longs",
+      "bestSentiment": "Meilleur sentiment"
+    },
     "filters": {
       "all": "Tous les appels",
       "missed": "Manqués",
@@ -466,7 +487,16 @@
       "testAgent": "Tester votre agent",
       "body": "Lorsque vos agents commenceront à traiter des appels, ils apparaîtront ici."
     },
-    "table": { "dateTime": "Date / heure", "caller": "Appelant", "phone": "Téléphone", "duration": "Durée", "outcome": "Résultat", "sentiment": "Sentiment", "agent": "Agent", "actions": "Actions" },
+    "table": {
+      "dateTime": "Date / heure",
+      "caller": "Appelant",
+      "phone": "Téléphone",
+      "duration": "Durée",
+      "outcome": "Résultat",
+      "sentiment": "Sentiment",
+      "agent": "Agent",
+      "actions": "Actions"
+    },
     "defaultCaller": "Appelant",
     "playRecording": "Lire l'enregistrement",
     "viewTranscript": "Voir la transcription",
@@ -584,14 +614,48 @@
     "inlinePhonePlaceholder": "Téléphone",
     "inlineEmailPlaceholder": "Email (optionnel)",
     "inlineAdd": "+ Ajouter",
-    "scoreFilter": { "all": "Tous les scores", "high": "Élevé (70+)", "medium": "Moyen (40–69)", "low": "Faible (0–39)" },
-    "sortOptions": { "newest": "Plus récents", "highestScore": "Score le plus élevé", "recentContact": "Contact le plus récent" },
+    "scoreFilter": {
+      "all": "Tous les scores",
+      "high": "Élevé (70+)",
+      "medium": "Moyen (40–69)",
+      "low": "Faible (0–39)"
+    },
+    "sortOptions": {
+      "newest": "Plus récents",
+      "highestScore": "Score le plus élevé",
+      "recentContact": "Contact le plus récent"
+    },
     "selectedCount": "{count} sélectionnés",
     "clear": "Effacer",
     "changeStatus": "Changer le statut :",
     "assign": "Assigner :",
-    "modal": { "title": "Ajouter un lead", "nameLabel": "Nom *", "namePlaceholder": "Nom complet", "phoneLabel": "Téléphone *", "phonePlaceholder": "+1 (555) 000-0000", "emailLabel": "Email", "emailPlaceholder": "email@exemple.com", "companyLabel": "Entreprise", "companyPlaceholder": "Nom de l'entreprise", "needLabel": "De quoi ont-ils besoin ?", "needPlaceholder": "ex. nettoyage mensuel, consultation", "sourceLabel": "Source", "statusLabel": "Statut", "notesLabel": "Notes", "notesPlaceholder": "Notes optionnelles", "cancel": "Annuler", "saving": "Ajout…", "save": "Enregistrer le lead" },
-    "sources": { "inboundCall": "Appel entrant", "outbound": "Prospection", "website": "Site web", "referral": "Parrainage", "other": "Autre" },
+    "modal": {
+      "title": "Ajouter un lead",
+      "nameLabel": "Nom *",
+      "namePlaceholder": "Nom complet",
+      "phoneLabel": "Téléphone *",
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "emailLabel": "Email",
+      "emailPlaceholder": "email@exemple.com",
+      "companyLabel": "Entreprise",
+      "companyPlaceholder": "Nom de l'entreprise",
+      "needLabel": "De quoi ont-ils besoin ?",
+      "needPlaceholder": "ex. nettoyage mensuel, consultation",
+      "sourceLabel": "Source",
+      "statusLabel": "Statut",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Notes optionnelles",
+      "cancel": "Annuler",
+      "saving": "Ajout…",
+      "save": "Enregistrer le lead"
+    },
+    "sources": {
+      "inboundCall": "Appel entrant",
+      "outbound": "Prospection",
+      "website": "Site web",
+      "referral": "Parrainage",
+      "other": "Autre"
+    },
     "csvPreview": "Nous avons trouvé {count} leads",
     "csvPreviewLabel": "Aperçu (5 premiers) :",
     "csvCancel": "Annuler",
@@ -602,6 +666,7 @@
     "csvUploadHint": "Téléchargez un CSV avec colonnes nom, tél., email",
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
+    "scoreLabel": "Score",
     "board": {
       "columns": {
         "new": "Nouveaux",
@@ -740,6 +805,8 @@
     "business.saveFailed": "Échec de l’enregistrement des informations d’entreprise. Réessayez.",
     "business.nameNoMatch": "Le nom de l’espace ne correspond pas. Saisissez-le exactement pour confirmer.",
     "business.deleted": "Espace supprimé. Redirection en cours…",
+    "agent.loading": "Chargement des paramètres de l'agent…",
+    "agent.testTitle": "Tester votre agent",
     "agent.loadFailed": "Échec du chargement des paramètres de l’agent. Réessayez.",
     "agent.saveFailed": "Échec de l’enregistrement des paramètres de l’agent. Réessayez.",
     "agent.voiceSyncFailed": "Enregistré, mais l’agent vocal n’a pas pu être mis à jour. Réessayez.",
@@ -919,7 +986,9 @@
     },
     "retry": "Réessayer",
     "goHome": "Retour à l’accueil",
-    "support": "Contacter le support"
+    "goToDashboard": "Aller au tableau de bord",
+    "support": "Contacter le support",
+    "pageLoadBody": "Cette page n'a pas pu être chargée. Réessayez ou retournez au tableau de bord."
   },
   "forms": {
     "validation": {
@@ -1030,7 +1099,15 @@
     "timeLabel": "Heure",
     "durationLabel": "Durée (min)",
     "availableTimes": "Créneaux disponibles (Google)",
-    "days": { "mon": "Lun", "tue": "Mar", "wed": "Mer", "thu": "Jeu", "fri": "Ven", "sat": "Sam", "sun": "Dim" },
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    },
     "outlookComingSoon": "La synchronisation bidirectionnelle avec Outlook Calendar arrive bientôt. Vous serez averti dès qu’elle sera prête.",
     "empty": {
       "title": "Aucun rendez-vous pour le moment",
@@ -1263,7 +1340,13 @@
     "description": "Tous les rendez-vous réservés depuis les appels, campagnes et boîte de réception.",
     "viewList": "Liste",
     "viewCalendar": "Calendrier",
-    "table": { "dateTime": "Date / Heure", "contact": "Contact", "type": "Type", "status": "Statut", "source": "Source" },
+    "table": {
+      "dateTime": "Date / Heure",
+      "contact": "Contact",
+      "type": "Type",
+      "status": "Statut",
+      "source": "Source"
+    },
     "viewDetails": "Voir les détails",
     "noAppointments": "Aucun rendez-vous",
     "settings": "Paramètres",
@@ -1273,7 +1356,15 @@
     "statusLabel": "Statut",
     "sourceLabel": "Source",
     "close": "Fermer",
-    "days": { "mon": "Lun", "tue": "Mar", "wed": "Mer", "thu": "Jeu", "fri": "Ven", "sat": "Sam", "sun": "Dim" },
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    },
     "empty": {
       "title": "Aucun rendez-vous pour le moment",
       "body": "Lorsque votre IA commencera à réserver dans votre calendrier, tous les rendez-vous apparaîtront ici.",

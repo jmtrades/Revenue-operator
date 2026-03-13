@@ -37,6 +37,7 @@
     "previous": "Zurück",
     "submit": "Senden",
     "loading": "Laden",
+    "loadingEllipsis": "Laden…",
     "error": "Fehler",
     "success": "Erfolg",
     "retry": "Erneut versuchen",
@@ -597,6 +598,7 @@
     "csvUploadHint": "CSV mit Spalten Name, Telefon, E-Mail hochladen",
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
+    "scoreLabel": "Punktzahl",
     "board": {
       "columns": {
         "new": "Neu",
@@ -735,6 +737,8 @@
     "business.saveFailed": "Unternehmenseinstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
     "business.nameNoMatch": "Der Arbeitsbereichsname stimmt nicht überein. Gib ihn zur Bestätigung exakt ein.",
     "business.deleted": "Arbeitsbereich gelöscht. Weiterleitung…",
+    "agent.loading": "Agenten-Einstellungen werden geladen…",
+    "agent.testTitle": "Agent testen",
     "agent.loadFailed": "Agenten-Einstellungen konnten nicht geladen werden. Bitte erneut versuchen.",
     "agent.saveFailed": "Agenten-Einstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
     "agent.voiceSyncFailed": "Gespeichert, aber der Sprachagent konnte nicht aktualisiert werden. Bitte erneut versuchen.",
@@ -914,7 +918,9 @@
     },
     "retry": "Erneut versuchen",
     "goHome": "Zur Startseite",
-    "support": "Support kontaktieren"
+    "goToDashboard": "Zum Dashboard",
+    "support": "Support kontaktieren",
+    "pageLoadBody": "Diese Seite konnte nicht geladen werden. Erneut versuchen oder zum Dashboard zurückkehren."
   },
   "forms": {
     "validation": {

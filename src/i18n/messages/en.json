@@ -37,6 +37,7 @@
     "previous": "Previous",
     "submit": "Submit",
     "loading": "Loading",
+    "loadingEllipsis": "Loading…",
     "error": "Error",
     "success": "Success",
     "retry": "Retry",
@@ -777,6 +778,7 @@
     "csvUploadHint": "Upload CSV with name, phone, email columns",
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
+    "scoreLabel": "Score",
     "board": {
       "columns": {
         "new": "New",
@@ -998,6 +1000,8 @@
     "business.saveFailed": "Failed to save business settings. Please try again.",
     "business.nameNoMatch": "Workspace name does not match. Type it exactly to confirm.",
     "business.deleted": "Workspace deleted. Redirecting…",
+    "agent.loading": "Loading agent settings…",
+    "agent.testTitle": "Test your agent",
     "agent.loadFailed": "Failed to load agent settings. Please try again.",
     "agent.saveFailed": "Failed to save agent settings. Please try again.",
     "agent.voiceSyncFailed": "Saved, but the voice agent could not be updated. Try again.",
@@ -1152,7 +1156,9 @@
     },
     "retry": "Try again",
     "goHome": "Go back home",
-    "support": "Contact support"
+    "goToDashboard": "Go to dashboard",
+    "support": "Contact support",
+    "pageLoadBody": "This page could not be loaded. Try again or go back to the dashboard."
   },
   "forms": {
     "validation": {
