@@ -324,8 +324,10 @@ function KnowledgeModal({
 const ADD_FROM_CALL_KEY = "rt_add_to_knowledge";
 
 export default function KnowledgePage() {
-  const t = useTranslations();
+  const t = useTranslations("knowledge");
   const tToast = useTranslations("toast");
+  const tCommon = useTranslations("common");
+  const tForms = useTranslations("forms.state");
   useEffect(() => {
     document.title = t("knowledge.pageTitle");
     return () => { document.title = ""; };
@@ -520,15 +522,9 @@ export default function KnowledgePage() {
         {/* Top bar */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">Knowledge Base</h1>
+            <h1 className="text-xl md:text-2xl font-semibold text-white">{t("heading")}</h1>
             <p className="text-sm text-zinc-500 mt-0.5">
-              {entries.length} entries ·{" "}
-              {entries.length} {entries.length === 1 ? "entry" : "entries"} ·{" "}
-              {entries.length >= 10
-                ? "Good coverage"
-                : entries.length >= 5
-                  ? "Basic coverage"
-                  : "Add more entries for better coverage"}
+              {entries.length} {entries.length === 1 ? tCommon("item") : tCommon("items")}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
@@ -538,7 +534,7 @@ export default function KnowledgePage() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search entries…"
+                placeholder={t("searchPlaceholder")}
                 className="w-full pl-9 pr-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
               />
             </div>
@@ -547,7 +543,7 @@ export default function KnowledgePage() {
               onChange={(e) => setTypeFilter(e.target.value as KnowledgeType | "all")}
               className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-zinc-300 text-sm focus:border-[var(--border-medium)] focus:outline-none"
             >
-              <option value="all">All types</option>
+              <option value="all">{t("allTypes")}</option>
               {TYPE_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
@@ -557,7 +553,7 @@ export default function KnowledgePage() {
               onChange={(e) => setStatusFilter(e.target.value as KnowledgeStatus | "all")}
               className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-zinc-300 text-sm focus:border-[var(--border-medium)] focus:outline-none"
             >
-              <option value="all">All statuses</option>
+              <option value="all">{t("allStatuses")}</option>
               {STATUS_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
@@ -569,7 +565,7 @@ export default function KnowledgePage() {
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
               >
                 <Plus className="w-4 h-4" />
-                Add Entry
+                {t("addEntry")}
               </button>
               <button
                 type="button"
@@ -580,11 +576,11 @@ export default function KnowledgePage() {
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-sm text-zinc-200 hover:bg-[var(--bg-card)]"
               >
                 <Globe className="w-4 h-4" />
-                Import from URL
+                {t("importUrl")}
               </button>
               <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-sm text-zinc-200 hover:bg-[var(--bg-card)] cursor-pointer">
                 <Upload className="w-4 h-4" />
-                Bulk upload (CSV)
+                {t("bulkUpload")}
                 <input
                   type="file"
                   accept=".csv"
@@ -827,23 +823,23 @@ export default function KnowledgePage() {
             <div className="rounded-xl bg-amber-500/5 border border-amber-500/20 p-4">
               <h3 className="text-sm font-semibold text-amber-200 flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-4 h-4" />
-                Knowledge Gaps
+                {t("gapsHeading")}
               </h3>
               <p className="text-xs text-zinc-400 mb-3">
-                Callers asked about these topics but your content is limited or missing.
+                {t("gapsDescription")}
               </p>
               <ul className="space-y-2">
                 {knowledgeGaps.map((gap) => (
                   <li key={gap.id} className="flex items-center justify-between gap-2">
                     <span className="text-sm text-zinc-300">
-                      {gap.topic} <span className="text-zinc-500">(asked {gap.askCount} times)</span>
+                      {gap.topic} <span className="text-zinc-500">({gap.askCount}×)</span>
                     </span>
                     <button
                       type="button"
                       onClick={() => openAddModal(gap.topic)}
                       className="shrink-0 text-xs font-medium text-amber-300 hover:text-amber-200"
                     >
-                      Create entry →
+                      {t("addEntry")} →
                     </button>
                   </li>
                 ))}
@@ -852,8 +848,8 @@ export default function KnowledgePage() {
 
             {/* Most Referenced */}
             <div className="rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] p-4">
-              <h3 className="text-sm font-semibold text-white mb-3">Most Referenced</h3>
-              <p className="text-xs text-zinc-500 mb-3">Top 5 entries used by your agent in calls.</p>
+              <h3 className="text-sm font-semibold text-white mb-3">{t("mostReferenced")}</h3>
+              <p className="text-xs text-zinc-500 mb-3">{t("mostReferencedDescription")}</p>
               <div className="space-y-3">
                 {mostReferenced.map((entry) => (
                   <div key={entry.id}>
@@ -876,10 +872,10 @@ export default function KnowledgePage() {
 
         <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 mt-8">
           <h3 className="text-sm font-medium text-[#EDEDEF] mb-3">
-            Test your knowledge base
+            {t("testHeading")}
           </h3>
           <p className="text-xs text-[#8B8B8D] mb-4">
-            Ask a question to see how your AI agent would respond using your knowledge entries.
+            {t("testDescription")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
@@ -895,7 +891,7 @@ export default function KnowledgePage() {
                   void handleTestKnowledge();
                 }
               }}
-              placeholder="e.g. What are your business hours?"
+              placeholder={t("testPlaceholder")}
               className="flex-1 bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[#EDEDEF] placeholder:text-[#5A5A5C] focus:outline-none focus:ring-2 focus:ring-[#4F8CFF]/50"
             />
             <button
@@ -904,7 +900,7 @@ export default function KnowledgePage() {
               disabled={!testQuestion.trim() || testingKnowledge}
               className="bg-[#4F8CFF] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#4F8CFF]/90 disabled:opacity-40 transition-all duration-200"
             >
-              {testingKnowledge ? "Testing..." : "Test"}
+              {testingKnowledge ? tForms("loading") : t("testButton")}
             </button>
           </div>
           {testAnswer && (

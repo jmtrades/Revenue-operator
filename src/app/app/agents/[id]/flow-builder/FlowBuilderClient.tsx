@@ -145,7 +145,7 @@ export default function FlowBuilderClient({
       })
       .catch(() => setToast(t("toast.loadFailed")))
       .finally(() => setLoading(false));
-  }, [agentId, setNodes, setEdges]);
+  }, [agentId, setNodes, setEdges, t]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -168,7 +168,7 @@ export default function FlowBuilderClient({
       })
       .catch(() => setToast(t("toast.saveFailed")))
       .finally(() => setSaving(false));
-  }, [agentId, nodes, edges]);
+  }, [agentId, nodes, edges, t]);
 
   const addNode = useCallback(
     (type: string, label: string) => {

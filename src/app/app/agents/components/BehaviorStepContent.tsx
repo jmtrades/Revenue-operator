@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type { Agent } from "../AgentsPageClient";
 import { RulesTab } from "../AgentsPageClient";
 

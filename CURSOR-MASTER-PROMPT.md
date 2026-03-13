@@ -1,364 +1,386 @@
-You are an implementation engineer. This is a COMPREHENSIVE fix pass — 8 bugs ranked by severity. Do every single one. Do not plan. Do not narrate. Do not stop partway. Open files, edit, save, move on. If you finish one bug, immediately start the next. Do NOT ask questions.
+You are an implementation engineer. This is a COMPREHENSIVE fix pass — 7 bugs ranked by severity. Do every single one. Do not plan. Do not narrate. Do not stop partway. Open files, edit, save, move on. If you finish one bug, immediately start the next. Do NOT ask questions.
 
 ---
 
-## BUG 1: Dashboard stat cards show RAW i18n keys to users (CRITICAL — USER-VISIBLE)
+## BUG 1: DUPLICATE `"knowledge"` KEY IN en.json — SILENT DATA LOSS (CRITICAL)
 
-**What users see on /app/activity right now:**
-The four stat cards literally display `DASHBOARD.STATS.CALLS`, `DASHBOARD.STATS.ANSWERRATE`, `DASHBOARD.STATS.LEADS`, `DASHBOARD.STATS.ESTIMATEDREVENUE` as their labels. These are raw i18n key fallbacks. Console floods with 20+ `MISSING_MESSAGE` errors per page load.
+**What happens:** `src/i18n/messages/en.json` has TWO top-level `"knowledge"` objects. JSON does NOT allow duplicate keys — the second one (line 925) silently overrides the first (line 541). This means these keys are COMPLETELY LOST at runtime:
+- `knowledge.toast.callSummaryDraftAdded`
+- `knowledge.errors.testFailed`
+- `knowledge.errors.noResponse`
 
-**Root cause:** `src/app/app/activity/page.tsx` uses `t("dashboard.stats.calls")` etc., but the key path `dashboard.stats` does NOT exist in en.json. The actual keys live under `dashboard.kpis`.
+Additionally, the FIRST knowledge block (line 541) has TWO `"toast"` sub-keys (lines 543 and 550), so even within that block the `callSummaryDraftAdded` key was being overridden.
 
-**File: `src/app/app/activity/page.tsx`**
-
-The page uses `const t = useTranslations();` (root namespace) at line 225.
-
-### Fix — change these 4 lines:
-
-Line 703 — change:
-```ts
-label={t("dashboard.stats.calls")}
-```
-to:
-```ts
-label={t("dashboard.kpis.callsHandled")}
-```
-
-Line 710 — change:
-```ts
-label={t("dashboard.stats.answerRate")}
-```
-to:
-```ts
-label={t("dashboard.kpis.answerRate")}
-```
-
-Line 716 — change:
-```ts
-label={t("dashboard.stats.leads")}
-```
-to:
-```ts
-label={t("dashboard.kpis.leadsCreated")}
-```
-
-Line 722 — change:
-```ts
-label={t("dashboard.stats.estimatedRevenue")}
-```
-to:
-```ts
-label={t("dashboard.kpis.revenueProtected")}
-```
-
-**Verification:** The en.json `dashboard.kpis` object contains exactly these keys:
-- `"callsHandled": "Calls handled"`
-- `"answerRate": "Answer rate"`
-- `"leadsCreated": "Leads created"`
-- `"appointmentsBooked": "Appointments booked"`
-- `"revenueProtected": "Revenue protected"`
-
-After this fix, the stat cards will display "Calls handled", "Answer rate", "Leads created", "Revenue protected" — real English labels, zero console errors.
-
----
-
-## BUG 2: Leads page missing 8 translation keys — errors and toast (HIGH)
-
-**What happens:** When a user tries to add a lead with missing name/phone, or when CSV import fails, the error messages show raw i18n keys instead of actual error text. The `leads.errors` and `leads.toast.added` keys do not exist in en.json.
-
-**Root cause:** `src/app/app/leads/page.tsx` references keys that were never added to en.json.
-
-**File: `src/app/app/leads/page.tsx` — references these missing keys:**
-- Line 227: `t("leads.errors.loadFailed")`
-- Line 417: `t("leads.errors.nameRequired")`
-- Line 418: `t("leads.errors.phoneRequired")`
-- Line 422: `t("leads.errors.workspaceMissing")`
-- Line 448: `t("leads.errors.addFailed")`
-- Line 467: `t("leads.errors.addFailed")`
-- Line 465: `t("leads.toast.added")`
-- Line 1023: `t("leads.errors.csvNoValidRows")`
-
-### Fix 2A: Add to en.json
-
-In `src/i18n/messages/en.json`, find the `"leads"` object. Add these two new sub-objects inside it (after the existing `"toast"` object):
-
-Add `"added"` to the existing `leads.toast` object:
-```json
-"toast": {
-  "callStarted": "Call started. Check Calls for status.",
-  "callFailed": "Could not start call.",
-  "exportFailed": "Export failed. Try again.",
-  "exportSuccess": "Leads exported. Check your downloads.",
-  "importFailed": "Import failed.",
-  "importSuccess": "{count} leads imported.",
-  "added": "Lead added successfully."
-}
-```
-
-Add the entirely new `leads.errors` object:
-```json
-"errors": {
-  "loadFailed": "Failed to load leads.",
-  "nameRequired": "Name is required.",
-  "phoneRequired": "Phone number is required.",
-  "workspaceMissing": "No workspace selected.",
-  "addFailed": "Failed to add lead.",
-  "csvNoValidRows": "No valid rows found in CSV."
-}
-```
-
-### Fix 2B: Add to ALL 5 non-English locale files
-
-Add `leads.toast.added` and the entire `leads.errors` block to each locale file:
-
-**`src/i18n/messages/es.json`:**
-```json
-"added": "Lead agregado exitosamente."
-```
-```json
-"errors": {
-  "loadFailed": "Error al cargar leads.",
-  "nameRequired": "El nombre es obligatorio.",
-  "phoneRequired": "El teléfono es obligatorio.",
-  "workspaceMissing": "No hay espacio de trabajo seleccionado.",
-  "addFailed": "Error al agregar lead.",
-  "csvNoValidRows": "No se encontraron filas válidas en el CSV."
-}
-```
-
-**`src/i18n/messages/fr.json`:**
-```json
-"added": "Lead ajouté avec succès."
-```
-```json
-"errors": {
-  "loadFailed": "Échec du chargement des leads.",
-  "nameRequired": "Le nom est requis.",
-  "phoneRequired": "Le numéro de téléphone est requis.",
-  "workspaceMissing": "Aucun espace de travail sélectionné.",
-  "addFailed": "Échec de l'ajout du lead.",
-  "csvNoValidRows": "Aucune ligne valide trouvée dans le CSV."
-}
-```
-
-**`src/i18n/messages/de.json`:**
-```json
-"added": "Lead erfolgreich hinzugefügt."
-```
-```json
-"errors": {
-  "loadFailed": "Leads konnten nicht geladen werden.",
-  "nameRequired": "Name ist erforderlich.",
-  "phoneRequired": "Telefonnummer ist erforderlich.",
-  "workspaceMissing": "Kein Arbeitsbereich ausgewählt.",
-  "addFailed": "Lead konnte nicht hinzugefügt werden.",
-  "csvNoValidRows": "Keine gültigen Zeilen in der CSV gefunden."
-}
-```
-
-**`src/i18n/messages/pt.json`:**
-```json
-"added": "Lead adicionado com sucesso."
-```
-```json
-"errors": {
-  "loadFailed": "Falha ao carregar leads.",
-  "nameRequired": "O nome é obrigatório.",
-  "phoneRequired": "O telefone é obrigatório.",
-  "workspaceMissing": "Nenhum espaço de trabalho selecionado.",
-  "addFailed": "Falha ao adicionar lead.",
-  "csvNoValidRows": "Nenhuma linha válida encontrada no CSV."
-}
-```
-
-**`src/i18n/messages/ja.json`:**
-```json
-"added": "リードが正常に追加されました。"
-```
-```json
-"errors": {
-  "loadFailed": "リードの読み込みに失敗しました。",
-  "nameRequired": "名前は必須です。",
-  "phoneRequired": "電話番号は必須です。",
-  "workspaceMissing": "ワークスペースが選択されていません。",
-  "addFailed": "リードの追加に失敗しました。",
-  "csvNoValidRows": "CSVに有効な行が見つかりません。"
-}
-```
-
----
-
-## BUG 3: Docs page title shows "Docs — Recall Touch — Recall Touch" (MEDIUM — USER-VISIBLE)
-
-**What users see:** The browser tab for /docs shows the site name twice: "Docs — Recall Touch — Recall Touch".
-
-**Root cause:** `src/app/docs/page.tsx` sets `title: "Docs — Recall Touch"` but the root layout at `src/app/layout.tsx` has a title template `"%s — Recall Touch"`. Next.js applies the template to the page title, producing `"Docs — Recall Touch — Recall Touch"`.
-
-**File: `src/app/docs/page.tsx` — line 5**
+**File: `src/i18n/messages/en.json`**
 
 ### Fix:
 
-Change:
-```ts
-title: "Docs — Recall Touch",
-```
-to:
-```ts
-title: "Docs",
-```
+**MERGE** both knowledge objects into ONE. Delete the first block (lines 541–560) entirely. Add the missing keys into the second block (line 925) so the final merged object looks like this:
 
-The root layout template will automatically append " — Recall Touch", producing the correct "Docs — Recall Touch".
-
-**IMPORTANT:** Check ALL other page.tsx files in public routes for the same pattern. Any page that sets `title: "Something — Recall Touch"` will get double-suffixed. The correct pattern is `title: "Something"` and let the template handle the suffix. Verify these files:
-- `src/app/docs/page.tsx`
-- `src/app/product/page.tsx`
-- `src/app/pricing/page.tsx`
-- `src/app/demo/page.tsx`
-- `src/app/contact/page.tsx`
-- `src/app/blog/page.tsx`
-- `src/app/terms/page.tsx`
-- `src/app/privacy/page.tsx`
-- `src/app/activate/page.tsx`
-- `src/app/sign-in/page.tsx`
-- `src/app/industries/dental/page.tsx`
-
-For each one: if the title already includes " — Recall Touch", remove that suffix and let the template handle it. If the title is just a plain name like "Pricing", leave it alone.
-
----
-
-## BUG 4: Missing eslint-disable for console.error in ElevenLabs webhook (MEDIUM)
-
-**File: `src/app/api/webhooks/elevenlabs/route.ts` — line 67**
-
-### Fix:
-
-Add the eslint-disable comment above line 67:
-```ts
-// eslint-disable-next-line no-console
-console.error("ElevenLabs webhook error:", error);
-```
-
----
-
-## BUG 5: Phone provision route swallows Twilio errors silently (MEDIUM)
-
-**File: `src/app/api/phone/provision/route.ts` — lines 84-87**
-
-Current code:
-```ts
-} catch (e) {
-  // Twilio purchase failed; error response below
-  return NextResponse.json({ error: "Provisioning failed. Try again later." }, { status: 500 });
-}
-```
-
-### Fix:
-
-Log the actual error for debugging (server-side only — never expose to client):
-```ts
-} catch (e) {
-  // eslint-disable-next-line no-console
-  console.error("Twilio provisioning failed:", e);
-  return NextResponse.json({ error: "Provisioning failed. Try again later." }, { status: 500 });
-}
-```
-
----
-
-## BUG 6: Footer "About" link text points to /contact (LOW — CONFUSING UX)
-
-**File: `src/components/sections/Footer.tsx` — line 51**
-
-The link text says "About" but the href is "/contact". This confuses users who expect an About page.
-
-### Fix — choose ONE:
-
-**Option A (recommended):** Change the link text to match the destination:
-```tsx
-<Link href="/contact" className="block hover:opacity-80 transition-opacity">Contact</Link>
-```
-Then remove the duplicate "Contact" link if one exists above it in the footer.
-
-**Option B:** Create an actual `/about` page. If the business wants an About page, create `src/app/about/page.tsx` with company info and update the href to "/about".
-
----
-
-## BUG 7: Onboarding page has 50+ hardcoded English strings (MEDIUM — i18n)
-
-**File: `src/app/onboarding/page.tsx`**
-
-This is the ONLY app page with hardcoded English strings instead of i18n translations. Every other page correctly uses `useTranslations()`. The onboarding page has 50+ hardcoded strings like button labels, step titles, instructions, error messages, and placeholder text.
-
-### Fix:
-
-1. Add an `"onboarding"` section to `src/i18n/messages/en.json` with all needed keys:
 ```json
-"onboarding": {
-  "pageTitle": "Get started — Recall Touch",
-  "steps": {
-    "identity": {
-      "title": "Your business",
-      "nameLabel": "Business name",
-      "namePlaceholder": "e.g. Acme Dental",
-      "industryLabel": "Industry",
-      "phoneLabel": "Your phone number"
-    },
-    "agent": {
-      "title": "Configure your agent",
-      "templateLabel": "Start from a template",
-      "toneLabel": "Tone",
-      "directionLabel": "Call direction"
-    },
-    "knowledge": {
-      "title": "Business knowledge",
-      "description": "Upload documents or paste text your agent should know",
-      "uploadLabel": "Upload files",
-      "pasteLabel": "Or paste text"
-    },
-    "phone": {
-      "title": "Connect a phone number",
-      "description": "Forward your existing number or get a new one",
-      "forwardLabel": "Forward existing number",
-      "newLabel": "Get a new number"
-    },
-    "test": {
-      "title": "Test your agent",
-      "description": "Make a test call to hear your agent in action",
-      "callButton": "Make test call",
-      "skipButton": "Skip for now"
-    }
+"knowledge": {
+  "pageTitle": "Knowledge — Recall Touch",
+  "addEntry": "Add entry",
+  "editEntry": "Edit entry",
+  "heading": "Knowledge Base",
+  "searchPlaceholder": "Search entries…",
+  "allTypes": "All types",
+  "allStatuses": "All statuses",
+  "importUrl": "Import from URL",
+  "bulkUpload": "Bulk upload (CSV)",
+  "gapsHeading": "Knowledge Gaps",
+  "mostReferenced": "Most Referenced",
+  "testHeading": "Test your knowledge base",
+  "testDescription": "Ask a question to see how your AI agent would respond using your knowledge entries.",
+  "testPlaceholder": "e.g. What are your business hours?",
+  "testButton": "Test",
+  "noEntries": "No entries found",
+  "noEntriesHint": "Try adjusting your filters.",
+  "addFirst": "Add your first entry",
+  "gapsDescription": "Callers asked about these topics but your content is limited or missing.",
+  "mostReferencedDescription": "Top 5 entries used by your agent in calls.",
+  "toast": {
+    "callSummaryDraftAdded": "Call summary added as a draft knowledge entry. Edit and save when you're ready.",
+    "minTranscript": "Paste at least 100 characters of transcript.",
+    "analysisFailed": "Analysis failed.",
+    "analysisSuccess": "Analyzed. {count} insights extracted.",
+    "dismissFailed": "Failed to dismiss.",
+    "applied": "Applied to agent.",
+    "applyFailed": "Apply failed.",
+    "noteSaved": "Note saved.",
+    "noteSaveFailed": "Could not save note."
   },
-  "buttons": {
-    "next": "Continue",
-    "back": "Back",
-    "finish": "Finish setup",
-    "skip": "Skip"
+  "errors": {
+    "testFailed": "Failed to test knowledge. Please try again.",
+    "noResponse": "No response generated."
+  },
+  "modal": {
+    "addEntry": "Add entry",
+    "editEntry": "Edit entry",
+    "titlePlaceholder": "Entry title",
+    "type": "Type",
+    "question": "Question",
+    "questionPlaceholder": "e.g. What are your hours?",
+    "answer": "Answer",
+    "uploadFile": "Upload file",
+    "uploadHint": "Drag and drop or click to upload",
+    "chooseFile": "Choose file",
+    "indexedFile": "Indexed: {fileName}",
+    "fetch": "Fetch",
+    "indexing": "Indexing…",
+    "indexedPages": "Indexed {count} pages",
+    "content": "Content",
+    "contentPlaceholder": "Freeform text…",
+    "status": "Status"
+  },
+  "types": {
+    "FAQ": "FAQ",
+    "Document": "Document",
+    "Website": "Website URL",
+    "Custom": "Custom"
+  },
+  "status": {
+    "active": "Active",
+    "draft": "Draft"
   }
 }
 ```
 
-2. Replace every hardcoded string in the onboarding page with the corresponding `t("onboarding....")` call.
-3. Add translated versions to all 5 non-English locale files.
-
-**NOTE:** This is a large task. If time-constrained, at minimum extract the user-facing strings (button labels, titles, descriptions) and leave internal error messages for a follow-up.
+**IMPORTANT:** Also check ALL 5 non-English locale files (es.json, fr.json, de.json, pt.json, ja.json) for the same duplicate `"knowledge"` key problem. Merge them the same way. If the non-English files don't have the keys at all, add translated stubs.
 
 ---
 
-## BUG 8: Billing webhook silent catch blocks (LOW — DEBUGGING)
+## BUG 2: Knowledge page — 10+ hardcoded English strings (HIGH — i18n)
 
-**File: `src/app/api/billing/webhook/route.ts`**
+**File: `src/app/app/knowledge/page.tsx`**
 
-Lines 320, 362, 453, 495 have `.catch(() => {})` — completely silent catch blocks that swallow errors during fire-and-forget operations.
+The Knowledge page has 10+ hardcoded English strings visible to users. The i18n keys exist (or were just added in Bug 1 fix) but the page doesn't use them.
+
+### Fix — replace each hardcoded string:
+
+| Line | Current hardcoded string | Replace with |
+|------|--------------------------|-------------|
+| 523 | `"Knowledge Base"` | `{t("knowledge.heading")}` |
+| 541 | `placeholder="Search entries…"` | `placeholder={t("knowledge.searchPlaceholder")}` |
+| 550 | `<option value="all">All types</option>` | `<option value="all">{t("knowledge.allTypes")}</option>` |
+| 560 | `<option value="all">All statuses</option>` | `<option value="all">{t("knowledge.allStatuses")}</option>` |
+| 572 | `"Add Entry"` | `{t("knowledge.addEntry")}` |
+| 583 | `"Import from URL"` | `{t("knowledge.importUrl")}` |
+| 587 | `"Bulk upload (CSV)"` | `{t("knowledge.bulkUpload")}` |
+| ~830 | `"Knowledge Gaps"` | `{t("knowledge.gapsHeading")}` |
+| ~855 | `"Most Referenced"` | `{t("knowledge.mostReferenced")}` |
+| ~879 | `"Test your knowledge base"` | `{t("knowledge.testHeading")}` |
+
+Also replace any hardcoded strings for "No entries found", "Try adjusting your filters", "Add your first entry", the test description text, test placeholder, and test button label.
+
+The page already has `const t = useTranslations();` at line 327, so just use `t("knowledge.xxx")`.
+
+---
+
+## BUG 3: Footer has duplicate "Contact" links (MEDIUM — UX)
+
+**What users see:** Under the "Company" column in the footer, there are two links both labeled "Contact" — one goes to `mailto:team@recall-touch.com`, the other goes to `/contact`.
+
+**File: `src/components/sections/Footer.tsx` — lines 45-53**
+
+Current code:
+```tsx
+<a href="mailto:team@recall-touch.com" className="block hover:opacity-80 transition-opacity">
+  Contact
+</a>
+<Link href="/blog" className="block hover:opacity-80 transition-opacity">
+  Blog
+</Link>
+<Link href="/contact" className="block hover:opacity-80 transition-opacity">
+  Contact
+</Link>
+```
 
 ### Fix:
 
-Replace each `.catch(() => {})` with:
-```ts
-.catch((err) => {
-  // eslint-disable-next-line no-console
-  console.error("Billing webhook background task failed:", err);
-})
+Change the first link's text from "Contact" to "Email us" to differentiate them:
+```tsx
+<a href="mailto:team@recall-touch.com" className="block hover:opacity-80 transition-opacity">
+  Email us
+</a>
+<Link href="/blog" className="block hover:opacity-80 transition-opacity">
+  Blog
+</Link>
+<Link href="/contact" className="block hover:opacity-80 transition-opacity">
+  Contact
+</Link>
 ```
+
+---
+
+## BUG 4: Missing i18n keys in non-English locale files (MEDIUM — i18n)
+
+The following keys exist in en.json but are MISSING from es.json, fr.json, de.json, pt.json, ja.json:
+
+1. `agents.testPanel` namespace — if it exists in en.json, ensure all locales have it
+2. `agents.voiceTest` namespace — if it exists in en.json, ensure all locales have it
+3. `flowBuilder` namespace — check `flowBuilder.toast` keys (loadFailed, saved, saveFailed)
+4. The new `knowledge` keys added in Bug 1 (heading, searchPlaceholder, allTypes, allStatuses, importUrl, bulkUpload, gapsHeading, mostReferenced, testHeading, testDescription, testPlaceholder, testButton, noEntries, noEntriesHint, addFirst, gapsDescription, mostReferencedDescription)
+
+### Fix:
+
+For each missing key in each locale file, add translated versions. Use proper translations — not English. Here are the translations for the knowledge page keys:
+
+**es.json:**
+```json
+"heading": "Base de conocimiento",
+"searchPlaceholder": "Buscar entradas…",
+"allTypes": "Todos los tipos",
+"allStatuses": "Todos los estados",
+"importUrl": "Importar desde URL",
+"bulkUpload": "Carga masiva (CSV)",
+"gapsHeading": "Brechas de conocimiento",
+"mostReferenced": "Más referenciados",
+"testHeading": "Prueba tu base de conocimiento",
+"testDescription": "Haz una pregunta para ver cómo respondería tu agente usando tus entradas.",
+"testPlaceholder": "ej. ¿Cuál es su horario?",
+"testButton": "Probar",
+"noEntries": "No se encontraron entradas",
+"noEntriesHint": "Intenta ajustar tus filtros.",
+"addFirst": "Agrega tu primera entrada",
+"gapsDescription": "Los llamantes preguntaron sobre estos temas pero tu contenido es limitado o falta.",
+"mostReferencedDescription": "Las 5 entradas más usadas por tu agente en llamadas."
+```
+
+**fr.json:**
+```json
+"heading": "Base de connaissances",
+"searchPlaceholder": "Rechercher des entrées…",
+"allTypes": "Tous les types",
+"allStatuses": "Tous les statuts",
+"importUrl": "Importer depuis URL",
+"bulkUpload": "Import en masse (CSV)",
+"gapsHeading": "Lacunes de connaissances",
+"mostReferenced": "Les plus référencés",
+"testHeading": "Testez votre base de connaissances",
+"testDescription": "Posez une question pour voir comment votre agent répondrait.",
+"testPlaceholder": "ex. Quelles sont vos heures d'ouverture ?",
+"testButton": "Tester",
+"noEntries": "Aucune entrée trouvée",
+"noEntriesHint": "Essayez d'ajuster vos filtres.",
+"addFirst": "Ajoutez votre première entrée",
+"gapsDescription": "Les appelants ont posé des questions sur ces sujets mais votre contenu est limité.",
+"mostReferencedDescription": "Les 5 entrées les plus utilisées par votre agent lors des appels."
+```
+
+**de.json:**
+```json
+"heading": "Wissensdatenbank",
+"searchPlaceholder": "Einträge suchen…",
+"allTypes": "Alle Typen",
+"allStatuses": "Alle Status",
+"importUrl": "Von URL importieren",
+"bulkUpload": "Massenupload (CSV)",
+"gapsHeading": "Wissenslücken",
+"mostReferenced": "Am häufigsten referenziert",
+"testHeading": "Testen Sie Ihre Wissensdatenbank",
+"testDescription": "Stellen Sie eine Frage, um zu sehen, wie Ihr Agent antworten würde.",
+"testPlaceholder": "z.B. Was sind Ihre Öffnungszeiten?",
+"testButton": "Testen",
+"noEntries": "Keine Einträge gefunden",
+"noEntriesHint": "Versuchen Sie, Ihre Filter anzupassen.",
+"addFirst": "Erstellen Sie Ihren ersten Eintrag",
+"gapsDescription": "Anrufer fragten nach diesen Themen, aber Ihr Inhalt ist begrenzt.",
+"mostReferencedDescription": "Die 5 am häufigsten verwendeten Einträge Ihres Agenten."
+```
+
+**pt.json:**
+```json
+"heading": "Base de conhecimento",
+"searchPlaceholder": "Pesquisar entradas…",
+"allTypes": "Todos os tipos",
+"allStatuses": "Todos os status",
+"importUrl": "Importar de URL",
+"bulkUpload": "Upload em massa (CSV)",
+"gapsHeading": "Lacunas de conhecimento",
+"mostReferenced": "Mais referenciados",
+"testHeading": "Teste sua base de conhecimento",
+"testDescription": "Faça uma pergunta para ver como seu agente responderia.",
+"testPlaceholder": "ex. Qual é o horário de funcionamento?",
+"testButton": "Testar",
+"noEntries": "Nenhuma entrada encontrada",
+"noEntriesHint": "Tente ajustar seus filtros.",
+"addFirst": "Adicione sua primeira entrada",
+"gapsDescription": "Os chamadores perguntaram sobre estes tópicos, mas seu conteúdo é limitado.",
+"mostReferencedDescription": "As 5 entradas mais usadas pelo seu agente em chamadas."
+```
+
+**ja.json:**
+```json
+"heading": "ナレッジベース",
+"searchPlaceholder": "エントリーを検索…",
+"allTypes": "すべてのタイプ",
+"allStatuses": "すべてのステータス",
+"importUrl": "URLからインポート",
+"bulkUpload": "一括アップロード (CSV)",
+"gapsHeading": "ナレッジギャップ",
+"mostReferenced": "最も参照されている",
+"testHeading": "ナレッジベースをテスト",
+"testDescription": "質問をして、AIエージェントがどのように回答するか確認してください。",
+"testPlaceholder": "例：営業時間は？",
+"testButton": "テスト",
+"noEntries": "エントリーが見つかりません",
+"noEntriesHint": "フィルターを調整してみてください。",
+"addFirst": "最初のエントリーを追加",
+"gapsDescription": "発信者がこれらのトピックについて質問しましたが、コンテンツが不足しています。",
+"mostReferencedDescription": "エージェントが通話で最も使用した上位5件のエントリー。"
+```
+
+---
+
+## BUG 5: Unused imports in AgentsPageClient.tsx (MEDIUM — CODE QUALITY)
+
+**File: `src/app/app/agents/AgentsPageClient.tsx`**
+
+These imports are never used and should be removed to reduce bundle size and pass linting:
+
+- Line 10: `CheckCircle2` (from lucide-react)
+- Line 13: `Headphones` (from lucide-react)
+- Line 17: `PhoneOutgoing` (from lucide-react)
+- Line 18: `Settings` (from lucide-react)
+- Line 20: `UserCheck` (from lucide-react)
+- Line 23: `AgentTestPanel` import
+- Line 25: `AccordionItem` import
+- Line 30: `AgentKnowledgePanel` import
+
+### Fix:
+
+Remove each unused import. For the lucide-react imports, remove only the unused names from the import statement — keep the ones that ARE used.
+
+Also check these files for unused imports/variables:
+- `src/app/app/agents/components/BehaviorStepContent.tsx` line 3: unused `useState`
+- `src/app/api/agents/[id]/test-call/route.ts` line 69: unused `firstMessage`
+- `src/app/api/webhooks/twilio/voice/route.ts` line 150: unused `firstMessage`
+- `src/lib/agents/sync-vapi-agent.ts` line 84: unused `clamp`, line 115: unused `voiceSettings`
+- `src/lib/outbound/execute-lead-call.ts` line 155: unused `outboundFirstMessage`
+- `src/components/WorkspaceVoiceButton.tsx` lines 19-20: unused parameters `endLabel`, `showUnavailable`
+
+---
+
+## BUG 6: Non-English locale files missing flowBuilder toast keys (LOW — i18n)
+
+**Root cause:** `src/app/app/agents/[id]/flow-builder/FlowBuilderClient.tsx` uses `useTranslations("flowBuilder")` and references `t("toast.loadFailed")`, `t("toast.saved")`, `t("toast.saveFailed")`.
+
+Check if `flowBuilder.toast` exists in en.json. If so, ensure ALL 5 non-English locale files have the same keys with proper translations:
+
+**es.json:**
+```json
+"flowBuilder": {
+  "toast": {
+    "loadFailed": "Error al cargar el flujo.",
+    "saved": "Flujo guardado.",
+    "saveFailed": "Error al guardar el flujo."
+  }
+}
+```
+
+**fr.json:**
+```json
+"flowBuilder": {
+  "toast": {
+    "loadFailed": "Échec du chargement du flux.",
+    "saved": "Flux enregistré.",
+    "saveFailed": "Échec de l'enregistrement du flux."
+  }
+}
+```
+
+**de.json:**
+```json
+"flowBuilder": {
+  "toast": {
+    "loadFailed": "Fehler beim Laden des Flows.",
+    "saved": "Flow gespeichert.",
+    "saveFailed": "Fehler beim Speichern des Flows."
+  }
+}
+```
+
+**pt.json:**
+```json
+"flowBuilder": {
+  "toast": {
+    "loadFailed": "Falha ao carregar o fluxo.",
+    "saved": "Fluxo salvo.",
+    "saveFailed": "Falha ao salvar o fluxo."
+  }
+}
+```
+
+**ja.json:**
+```json
+"flowBuilder": {
+  "toast": {
+    "loadFailed": "フローの読み込みに失敗しました。",
+    "saved": "フローが保存されました。",
+    "saveFailed": "フローの保存に失敗しました。"
+  }
+}
+```
+
+---
+
+## BUG 7: React hook dependency warnings (LOW — CODE QUALITY)
+
+These will cause React Compiler warnings and may cause stale closure bugs:
+
+1. **`src/app/app/agents/[id]/flow-builder/FlowBuilderClient.tsx` line 148:**
+   - `useEffect` missing `t` in dependency array
+   - Also line 155: `useCallback` missing `t` in dependency array
+   - Fix: Add `t` to the dependency arrays
+
+2. **`src/app/app/messages/page.tsx` line 208:**
+   - `useCallback` missing `t` in dependency array
+   - Fix: Add `t` to the dependency array
+
+3. **`src/app/app/agents/AgentsPageClient.tsx` line 733:**
+   - `useEffect` missing `tAgents` in dependency array
+   - Fix: Add `tAgents` to the dependency array
 
 ---
 
@@ -366,27 +388,33 @@ Replace each `.catch(() => {})` with:
 
 After ALL fixes, run these checks in order:
 
-### Check 1: No more raw i18n keys in dashboard
+### Check 1: No duplicate JSON keys
 ```bash
-grep -n 'dashboard\.stats\.' src/app/app/activity/page.tsx
+node -e "
+const fs = require('fs');
+const text = fs.readFileSync('src/i18n/messages/en.json', 'utf8');
+const matches = text.match(/\"knowledge\"/g);
+console.log('knowledge key count:', matches ? matches.length : 0);
+// Should appear exactly as many times as there are nested usages, but only ONCE at root level
+"
 ```
-Expected: ZERO results.
+Manually verify: open en.json and search for `"knowledge":` — it should appear at root level exactly ONCE (plus any nested usages in other objects like `onboarding.knowledge`, `nav.knowledge`, `agents.steps.knowledge`).
 
-### Check 2: Leads error keys exist
+### Check 2: Knowledge page uses i18n
 ```bash
-node -e "const j=require('./src/i18n/messages/en.json'); console.log(JSON.stringify(j.leads.errors, null, 2)); console.log(j.leads.toast.added);"
+grep -n 'Knowledge Base\|Search entries\|All types\|All statuses\|Add Entry\|Import from URL\|Bulk upload\|Knowledge Gaps\|Most Referenced\|Test your knowledge' src/app/app/knowledge/page.tsx
 ```
-Expected: All 6 error keys + "added" toast key printed.
+Expected: ZERO results (all hardcoded strings replaced with t() calls).
 
-### Check 3: No double-suffixed page titles
+### Check 3: No duplicate footer links
 ```bash
-grep -rn '".*— Recall Touch"' src/app/*/page.tsx src/app/*/*/page.tsx --include="*.tsx" | grep -v node_modules
+grep -c 'Contact' src/components/sections/Footer.tsx
 ```
-Review output: NO page title should contain " — Recall Touch" — the template handles it.
+Expected: 2 (one "Email us" replaced the old "Contact", one actual "Contact" remains). Verify by reading the file.
 
-### Check 4: TypeScript compiles
+### Check 4: No unused imports in AgentsPageClient
 ```bash
-npx tsc --noEmit
+npx tsc --noEmit 2>&1 | head -20
 ```
 Expected: ZERO errors.
 
@@ -398,7 +426,7 @@ Expected: Build completes with no errors.
 
 ### Check 6: Commit and push
 ```bash
-git add -A && git commit -m "fix: dashboard stats i18n keys, leads errors, docs title, lint cleanup, onboarding i18n" && git push origin main
+git add -A && git commit -m "fix: merge duplicate knowledge i18n keys, i18n knowledge page, footer dedup, unused imports, hook deps" && git push origin main
 git log --oneline -3
 ```
 
@@ -406,4 +434,4 @@ Paste ONLY the git log output.
 
 ---
 
-START. Bug 1 first — open `src/app/app/activity/page.tsx` line 703. GO.
+START. Bug 1 first — open `src/i18n/messages/en.json`, find both `"knowledge"` blocks, merge them. GO.

@@ -205,7 +205,7 @@ export default function AppMessagesPage() {
     } finally {
       setSending(false);
     }
-  }, [active, input, fetchMessages]);
+  }, [active, input, fetchMessages, t]);
 
   useEffect(() => {
     if (!toast) return;

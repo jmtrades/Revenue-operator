@@ -682,6 +682,31 @@
       "complete": "Onboarding concluído. Redirecionando para o painel."
     }
   },
+  "agents.testPanel": {
+    "errors": {
+      "auth": "Faça login novamente.",
+      "notConfigured": "O serviço de IA não está configurado. Fale com o suporte.",
+      "generic": "Não foi possível obter uma resposta. Tente novamente.",
+      "noResponse": "Não foi possível gerar uma resposta.",
+      "connection": "Erro de conexão. Verifique sua rede e tente novamente.",
+      "mic": "Acesso ao microfone negado ou nenhuma fala detectada. Tente novamente ou digite sua mensagem.",
+      "voiceUnsupported": "Voz não é suportada neste navegador. Use o campo de texto."
+    },
+    "defaultGreeting": "Obrigado por ligar para {business}! Como posso ajudar hoje?",
+    "hint": {
+      "micOrType": "Toque no microfone para falar ou digite abaixo."
+    }
+  },
+  "agents.voiceTest": {
+    "toast": {
+      "played": "{name} reproduzido",
+      "applied": "Voz aplicada ao agente."
+    },
+    "errors": {
+      "previewFailed": "Falha ao reproduzir a prévia. Verifique a configuração do ElevenLabs.",
+      "applyFailed": "Falha ao aplicar a voz ao agente. Tente novamente."
+    }
+  },
   "errors": {
     "generic": {
       "title": "Algo deu errado",
@@ -815,7 +840,68 @@
   "knowledge": {
     "pageTitle": "Conhecimento — Recall Touch",
     "addEntry": "Adicionar entrada",
-    "editEntry": "Editar entrada"
+    "editEntry": "Editar entrada",
+    "heading": "Base de conhecimento",
+    "searchPlaceholder": "Pesquisar entradas…",
+    "allTypes": "Todos os tipos",
+    "allStatuses": "Todos os status",
+    "importUrl": "Importar de URL",
+    "bulkUpload": "Upload em massa (CSV)",
+    "gapsHeading": "Lacunas de conhecimento",
+    "mostReferenced": "Mais referenciados",
+    "testHeading": "Teste sua base de conhecimento",
+    "testDescription": "Faça uma pergunta para ver como seu agente responderia.",
+    "testPlaceholder": "ex. Qual é o horário de funcionamento?",
+    "testButton": "Testar",
+    "noEntries": "Nenhuma entrada encontrada",
+    "noEntriesHint": "Tente ajustar seus filtros.",
+    "addFirst": "Adicione sua primeira entrada",
+    "gapsDescription": "Os chamadores perguntaram sobre estes tópicos, mas seu conteúdo é limitado.",
+    "mostReferencedDescription": "As 5 entradas mais usadas pelo seu agente em chamadas.",
+    "toast": {
+      "callSummaryDraftAdded": "Resumo da chamada adicionado como rascunho de entrada de conhecimento. Edite e salve quando estiver pronto.",
+      "minTranscript": "Cole pelo menos 100 caracteres de transcrição.",
+      "analysisFailed": "Falha na análise.",
+      "analysisSuccess": "Análise concluída. {count} insights extraídos.",
+      "dismissFailed": "Falha ao descartar.",
+      "applied": "Aplicado ao agente.",
+      "applyFailed": "Falha ao aplicar.",
+      "noteSaved": "Nota salva.",
+      "noteSaveFailed": "Não foi possível salvar a nota."
+    },
+    "errors": {
+      "testFailed": "Falha ao testar o conhecimento. Tente novamente.",
+      "noResponse": "Nenhuma resposta gerada."
+    },
+    "modal": {
+      "addEntry": "Adicionar entrada",
+      "editEntry": "Editar entrada",
+      "titlePlaceholder": "Título da entrada",
+      "type": "Tipo",
+      "question": "Pergunta",
+      "questionPlaceholder": "ex. Qual é o horário de funcionamento?",
+      "answer": "Resposta",
+      "uploadFile": "Enviar arquivo",
+      "uploadHint": "Arraste e solte ou clique para enviar",
+      "chooseFile": "Escolher arquivo",
+      "indexedFile": "Indexado: {fileName}",
+      "fetch": "Buscar",
+      "indexing": "Indexando…",
+      "indexedPages": "{count} páginas indexadas",
+      "content": "Conteúdo",
+      "contentPlaceholder": "Texto livre…",
+      "status": "Status"
+    },
+    "types": {
+      "FAQ": "FAQ",
+      "Document": "Documento",
+      "Website": "URL do site",
+      "Custom": "Personalizado"
+    },
+    "status": {
+      "active": "Ativo",
+      "draft": "Rascunho"
+    }
   },
   "filter": {
     "byOutcome": "Filtrar por resultado",
@@ -1251,6 +1337,13 @@
     "toast": {
       "connected": "Slack conectado com sucesso.",
       "disconnected": "Slack desconectado."
+    }
+  },
+  "flowBuilder": {
+    "toast": {
+      "loadFailed": "Falha ao carregar o fluxo.",
+      "saved": "Fluxo salvo.",
+      "saveFailed": "Falha ao salvar o fluxo."
     }
   },
   "api": {

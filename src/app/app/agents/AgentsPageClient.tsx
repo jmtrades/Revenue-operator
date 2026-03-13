@@ -7,27 +7,19 @@ import { useTranslations } from "next-intl";
 import {
   BellRing,
   Calendar,
-  CheckCircle2,
   ChevronDown,
   ClipboardList,
-  Headphones,
   Moon,
   PhoneCall,
   PhoneForwarded,
-  PhoneOutgoing,
-  Settings,
   Star,
-  UserCheck,
   type LucideIcon,
 } from "lucide-react";
-import { AgentTestPanel } from "@/app/app/agents/AgentTestPanel";
 import { Confetti } from "@/components/Confetti";
-import { AccordionItem } from "@/components/ui/Accordion";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AgentList } from "./components/AgentList";
 import { AgentDetail } from "./components/AgentDetail";
 import { VoiceSelector } from "./components/VoiceSelector";
-import { AgentKnowledgePanel } from "./components/AgentKnowledgePanel";
 import { IdentityStepContent } from "./components/IdentityStepContent";
 import { BehaviorStepContent } from "./components/BehaviorStepContent";
 import { GoLiveStepContent } from "./components/GoLiveStepContent";
@@ -730,7 +722,7 @@ export default function AppAgentsPageClient({
     return () => {
       window.removeEventListener("agents:test-link-copied", handler as EventListener);
     };
-  }, []);
+  }, [tAgents]);
   const defaultAgentId = useMemo(() => {
     if (agents.length === 0) return null;
     const primary = agents.find(
