@@ -10,28 +10,17 @@ export function Hero() {
   const tHero = useTranslations("hero");
 
   return (
-    <section
-      className="min-h-screen flex items-center pt-28 pb-16 md:pt-32 md:pb-20 relative overflow-hidden bg-[var(--bg-base)]"
-    >
-      <div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 900px 450px at 0% 0%, rgba(59,130,246,0.15), transparent 60%), radial-gradient(ellipse 700px 400px at 100% 10%, rgba(16,185,129,0.1), transparent 60%)",
-          opacity: 0.9,
-        }}
-      />
+    <section className="min-h-screen flex items-center pt-28 pb-16 md:pt-32 md:pb-20 relative overflow-hidden bg-[var(--bg-base)] hero-atmosphere">
       <Container className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <SectionLabel>{tHero("trustLine")}</SectionLabel>
             <h1
-              className="font-bold max-w-xl mt-4 mb-4"
+              className="font-bold max-w-xl mt-4 mb-4 hero-headline"
               style={{
                 fontSize: "clamp(2.4rem, 4vw, 3.5rem)",
                 letterSpacing: "-0.03em",
                 lineHeight: 1.05,
-                color: "#F8FAFC",
               }}
             >
               {tHero("title")}

@@ -36,6 +36,7 @@
     "@xyflow/react": "^12.10.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "elevenlabs": "^1.59.0",
     "framer-motion": "^12.35.2",
     "ioredis": "^5.9.2",
     "lucide-react": "^0.575.0",

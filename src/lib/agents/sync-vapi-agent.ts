@@ -1,9 +1,9 @@
 import { getDb } from "@/lib/db/queries";
-import { createAssistant, updateAssistant } from "@/lib/vapi";
 import { buildAgentFunctions } from "@/lib/agent-functions";
-import { buildVapiSystemPrompt } from "@/lib/agents/build-vapi-system-prompt";
+import { buildAgentSystemPrompt } from "@/lib/agents/build-agent-system-prompt";
 import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { hasVapiServerKey } from "@/lib/vapi/env";
+import { getVoiceProvider } from "@/lib/voice";
 
 type DbLike = ReturnType<typeof getDb>;
 
@@ -87,7 +87,7 @@ function clamp(value: number, min: number, max: number) {
 
 export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assistantId: string }> {
   if (!hasVapiServerKey()) {
-    throw new Error("Vapi is not configured");
+    throw new Error("Voice provider is not configured");
   }
 
   const { data: agentData, error: agentError } = await db
@@ -190,7 +190,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
 
   const assistantPayload = {
     name: `${businessName} - ${agent.name?.trim() || "Receptionist"}`,
-    systemPrompt: buildVapiSystemPrompt({
+    systemPrompt: buildAgentSystemPrompt({
       businessName,
       industry: null,
       agentName: agent.name?.trim() || "Receptionist",
@@ -229,77 +229,31 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
     endCallMessage: "Thanks for calling. Have a great day!",
     voiceId,
     language: workspace.preferred_language ?? "en",
-    workspaceId: workspace.id,
-    toolCalls: buildAgentFunctions({ id: workspace.id, capabilities: caps }).map((tool) => ({
+    tools: buildAgentFunctions({ id: workspace.id, capabilities: caps }).map((tool) => ({
+      type: "function" as const,
       name: tool.name,
       description: tool.description,
       parameters: tool.parameters,
     })),
-    voiceSettings: {
-      stability:
-        typeof voiceSettings.stability === "number"
-          ? clamp(voiceSettings.stability, 0, 1)
-          : 0.55,
-      speed:
-        typeof voiceSettings.speed === "number"
-          ? clamp(voiceSettings.speed, 0.8, 1.3)
-          : 1,
-      responseDelay:
-        typeof voiceSettings.responseDelay === "number"
-          ? clamp(voiceSettings.responseDelay, 0, 1.5)
-          : 0.4,
-      backchannel:
-        typeof voiceSettings.backchannel === "boolean"
-          ? voiceSettings.backchannel
-          : true,
-      denoising:
-        typeof voiceSettings.denoising === "boolean"
-          ? voiceSettings.denoising
-          : true,
-      similarityBoost:
-        typeof voiceSettings.similarityBoost === "number"
-          ? clamp(voiceSettings.similarityBoost, 0, 1)
-          : 0.8,
-      style:
-        typeof voiceSettings.style === "number"
-          ? clamp(voiceSettings.style, 0, 1)
-          : 0.35,
-      useSpeakerBoost:
-        typeof voiceSettings.useSpeakerBoost === "boolean"
-          ? voiceSettings.useSpeakerBoost
-          : true,
-    },
     maxDurationSeconds:
       typeof knowledgeBase.maxCallDuration === "number" && knowledgeBase.maxCallDuration > 0
         ? knowledgeBase.maxCallDuration * 60
         : 600,
   };
 
-  let assistantId = agent.vapi_agent_id?.trim() || null;
-  if (assistantId) {
-    await updateAssistant(assistantId, assistantPayload);
-  } else {
-    const created = await createAssistant(assistantPayload);
-    assistantId = created.id;
-  }
+  const voice = getVoiceProvider();
 
-  await db
-    .from("agents")
-    .update({
-      vapi_agent_id: assistantId,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", agent.id);
-
-  if (agent.is_active !== false) {
-    await db
-      .from("workspaces")
-      .update({
-        vapi_assistant_id: assistantId,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", workspace.id);
-  }
+  const { assistantId } = await voice.createAssistant({
+    name: assistantPayload.name,
+    systemPrompt: assistantPayload.systemPrompt,
+    voiceId: assistantPayload.voiceId,
+    voiceProvider: "elevenlabs",
+    language: assistantPayload.language,
+    tools: assistantPayload.tools,
+    maxDuration: assistantPayload.maxDurationSeconds,
+    backgroundDenoising: true,
+    metadata: { workspace_id: workspace.id },
+  });
 
   return { assistantId };
 }

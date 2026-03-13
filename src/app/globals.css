@@ -252,13 +252,15 @@ h3.headline {
   font-size: var(--font-body);
   font-weight: 500;
   text-align: center;
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border: 1px solid var(--btn-primary-border);
-  transition: border-color 180ms ease, transform 100ms ease, box-shadow 100ms ease;
+  background: linear-gradient(135deg, #ffffff 0%, #e5e7eb 50%, #ffffff 100%);
+  color: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(79, 140, 255, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transition: border-color 180ms ease, transform 100ms ease, box-shadow 150ms ease, background 150ms ease;
 }
 .btn-primary:hover {
-  border-color: var(--btn-primary-hover-border);
+  background: linear-gradient(135deg, #ffffff 0%, #f4f4f5 50%, #ffffff 100%);
+  box-shadow: 0 0 28px rgba(79, 140, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 .btn-primary:active {
   transform: scale(0.98);
@@ -314,6 +316,16 @@ h3.headline {
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out;
 }
+
+.section-animate {
+  opacity: 0;
+  animation: slideUp 0.6s ease-out forwards;
+}
+.section-animate:nth-child(1) { animation-delay: 0ms; }
+.section-animate:nth-child(2) { animation-delay: 80ms; }
+.section-animate:nth-child(3) { animation-delay: 160ms; }
+.section-animate:nth-child(4) { animation-delay: 240ms; }
+.section-animate:nth-child(5) { animation-delay: 320ms; }
 
 @keyframes waveform-bar {
   0%, 100% { height: 6px; }
@@ -449,6 +461,37 @@ h3.headline {
 }
 .card-feature:hover::after {
   opacity: 0.5;
+}
+
+.hero-atmosphere {
+  position: relative;
+  overflow: hidden;
+}
+.hero-atmosphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% -10%, rgba(79, 140, 255, 0.12), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 20%, rgba(0, 212, 170, 0.06), transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(79, 140, 255, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-headline {
+  background: linear-gradient(135deg, #ffffff 0%, #b8d4ff 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .status-pill-governed, .pill-governed {
   display: inline-flex;

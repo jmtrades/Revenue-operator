@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
-import { buildVapiSystemPrompt } from "@/lib/agents/build-vapi-system-prompt";
+import { buildAgentSystemPrompt } from "@/lib/agents/build-agent-system-prompt";
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
 
   let systemPrompt: string;
   try {
-    systemPrompt = buildVapiSystemPrompt({
+    systemPrompt = buildAgentSystemPrompt({
       businessName,
       industry: null,
       agentName: agent.name?.trim() || "Receptionist",

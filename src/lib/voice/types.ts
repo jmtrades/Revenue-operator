@@ -1,5 +1,5 @@
 export interface VoiceProviderConfig {
-  provider: "vapi" | "retell" | "bland" | "custom";
+  provider: "vapi" | "retell" | "bland" | "elevenlabs" | "custom";
   apiKey: string;
   phoneNumberId?: string;
   publicKey?: string;

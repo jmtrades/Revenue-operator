@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
-import { createAssistant, createCallForTwilio } from "@/lib/vapi";
+import { getVoiceProvider } from "@/lib/voice";
 import { hasVapiServerKey } from "@/lib/vapi/env";
 import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
 
@@ -67,13 +67,9 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  if (
-    hasVapiServerKey() &&
-    process.env.VAPI_PHONE_NUMBER_ID &&
-    workspaceId &&
-    callSessionId &&
-    from
-  ) {
+  const voice = getVoiceProvider();
+
+  if (workspaceId && callSessionId && from) {
     try {
       const [ctxRes, agentRes, wsRes] = await Promise.all([
         db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
@@ -132,30 +128,20 @@ export async function POST(req: NextRequest) {
           : null;
       const firstMessage = buildFirstMessageWithConsent(firstMessageBase, recordingConsentSettings);
 
-      let assistantId: string | null = agent?.vapi_agent_id ?? workspace?.vapi_assistant_id ?? null;
-      if (!assistantId) {
-        const { id } = await createAssistant({
-          name: `${agent_name} – ${workspaceId.slice(0, 8)}`,
-          systemPrompt,
-          firstMessage,
-        });
-        assistantId = id;
-        if (agent) {
-          await db.from("agents").update({ vapi_agent_id: assistantId, updated_at: new Date().toISOString() }).eq("id", agent.id);
-        } else if (workspace) {
-          await db.from("workspaces").update({ vapi_assistant_id: assistantId, updated_at: new Date().toISOString() }).eq("id", workspaceId);
-        }
-      }
-
-      const { twiml } = await createCallForTwilio({
-        assistantId,
-        customerNumber: from,
-        metadata: {
-          workspace_id: workspaceId,
-          call_session_id: callSessionId,
-          twilio_call_sid: callSid,
-        },
+      const { assistantId } = await voice.createAssistant({
+        name: `${agent_name} – ${workspaceId.slice(0, 8)}`,
+        systemPrompt,
+        voiceId: workspace?.agent_name || agent?.name || "default",
+        voiceProvider: "elevenlabs",
+        language: workspace?.preferred_language ?? "en",
+        tools: [],
+        maxDuration: 600,
+        silenceTimeout: 30,
+        backgroundDenoising: true,
+        metadata: { workspace_id: workspaceId, greeting },
       });
+
+      const twiml = await voice.createInboundCall(callSid, assistantId);
       return new NextResponse(twiml, { headers: { "Content-Type": "text/xml" } });
     } catch {
       // fallback to Say+Record
