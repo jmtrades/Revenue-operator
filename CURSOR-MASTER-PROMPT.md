@@ -1,560 +1,378 @@
-You are an implementation engineer finishing business-critical infrastructure. There are 14 gaps that affect revenue, user experience, and system integrity. Fix all of them. Do not plan. Do not narrate. Open files, edit, save, move on.
+You are an implementation engineer executing the FINAL launch perfection pass for Recall Touch. The live site has been evaluated. Every issue below is confirmed from live screenshots and codebase audit. Fix ALL of them. Do not plan. Do not narrate. Do not ask questions. Open files, edit, save, move on. Every item must be completed before you commit.
 
 ---
 
-## ITEM 1: Fix number release to cancel Twilio billing
+## SECTION A — LAUNCH BLOCKERS (i18n keys still showing on live site)
 
-File: `src/app/api/phone/numbers/[id]/release/route.ts`
+The Vercel deployment is STALE. The latest commits (d55ee9f, 4a621ae, 87423fa) have not deployed. The live site still shows raw i18n keys. First, force a deployment:
 
-When a number is released, the code updates the DB status to "released" but does NOT release the number from Twilio. This means Twilio keeps billing us.
+```bash
+git commit --allow-empty -m "chore: force Vercel redeploy" && git push origin main
+```
 
-After the DB update, add a Twilio API call to release the number:
+Then verify the following i18n fixes are actually in the code (they should be from prior commits — if ANY are missing, re-apply them):
+
+### A1: Verify agents step labels use correct prefix
+
+File: `src/app/app/agents/AgentsPageClient.tsx` (~line 163)
+File: `src/app/app/agents/components/AgentDetail.tsx` (~line 50)
+
+Both SETUP_STEPS arrays must use `"steps.identity"` NOT `"agents.steps.identity"`. The `useTranslations("agents")` namespace already prepends "agents.", so keys must be relative. Verify this is correct. If either file still has `"agents.steps.identity"`, fix it.
+
+### A2: Verify 7 missing i18n keys exist in en.json
+
+File: `src/i18n/messages/en.json`
+
+Verify these exist inside the `"agents"` object:
+```json
+"status": { "live": "Live", "ready": "Ready", "calls": "calls" },
+"links": { "analytics": "Analytics", "flow": "Flow builder" }
+```
+
+And inside the `"common"` object:
+```json
+"status": { "active": "Active", "inactive": "Inactive" }
+```
+
+If any are missing, add them. Also verify they exist in es.json, fr.json, de.json, pt.json, ja.json.
+
+---
+
+## SECTION B — MIGRATE 65+ HARDCODED ENGLISH TOAST STRINGS TO i18n
+
+The following files contain hardcoded English strings passed to `setToast()`. Every single one must be converted to use `useTranslations()`. Add the corresponding keys to `src/i18n/messages/en.json` (and placeholder copies to all 5 other locale files).
+
+### B1: `src/app/app/agents/AgentsPageClient.tsx`
+
+Replace every hardcoded setToast string:
+- `"Test link copied!"` → `t("toast.testLinkCopied")`
+- `"Select a voice first to hear a preview."` → `t("toast.selectVoiceFirst")`
+- `"Could not play preview"` → `t("toast.previewFailed")`
+- `"Could not save agent"` → `t("toast.saveFailed")`
+- `"Changes couldn't be saved. Try again."` → `t("toast.saveRetry")`
+- `"Agent deleted"` → `t("toast.deleted")`
+- `"Could not delete agent"` → `t("toast.deleteFailed")`
+- `"Agent created and synced"` → `t("toast.created")`
+- `"Could not create agent"` → `t("toast.createFailed")`
+- `"Your AI agent is live! 🎉"` → `t("toast.agentLive")`
+
+Add to en.json under `"agents"`:
+```json
+"toast": {
+  "testLinkCopied": "Test link copied!",
+  "selectVoiceFirst": "Select a voice first to hear a preview.",
+  "previewFailed": "Could not play preview",
+  "saveFailed": "Could not save agent",
+  "saveRetry": "Changes couldn't be saved. Try again.",
+  "deleted": "Agent deleted",
+  "deleteFailed": "Could not delete agent",
+  "created": "Agent created and synced",
+  "createFailed": "Could not create agent",
+  "agentLive": "Your AI agent is live!"
+}
+```
+
+### B2: `src/app/app/campaigns/page.tsx`
+
+- `"Campaign updated."` / `"Campaign created."` → `t("toast.updated")` / `t("toast.created")`
+- `"Could not update campaign."` → `t("toast.updateFailed")`
+- `"Campaign paused."` → `t("toast.paused")`
+- `"Could not launch campaign."` → `t("toast.launchFailed")`
+
+Add `useTranslations("campaigns")` if not present. Add to en.json under `"campaigns"`:
+```json
+"toast": {
+  "updated": "Campaign updated.",
+  "created": "Campaign created.",
+  "updateFailed": "Could not update campaign.",
+  "paused": "Campaign paused.",
+  "launchFailed": "Could not launch campaign."
+}
+```
+
+### B3: `src/app/app/call-intelligence/page.tsx`
+
+- `"Paste at least 100 characters of transcript."` → `t("toast.minTranscript")`
+- `"Analysis failed."` → `t("toast.analysisFailed")`
+- `"Something went wrong."` → `tCommon("error.generic")` (reuse common)
+- `"Failed to dismiss."` → `t("toast.dismissFailed")`
+- `"Applied to agent."` → `t("toast.applied")`
+- `"Apply failed."` → `t("toast.applyFailed")`
+- `"Note saved."` → `t("toast.noteSaved")`
+- `"Could not save note."` → `t("toast.noteSaveFailed")`
+
+Add `useTranslations("callIntelligence")` if not present. Add keys under `"callIntelligence"` in en.json.
+
+### B4: `src/app/app/agents/[id]/flow-builder/FlowBuilderClient.tsx`
+
+- `"Could not load flow"` → `t("toast.loadFailed")`
+- `"Flow saved."` → `t("toast.saved")`
+- `"Could not save."` → `t("toast.saveFailed")`
+
+Add keys under `"flowBuilder"` in en.json.
+
+### B5: `src/app/app/messages/page.tsx`
+
+- `"Add this contact in Leads first to send messages."` → `t("toast.addContactFirst")`
+- `"Message sent."` → `t("toast.sent")`
+
+Add keys under `"messages"` in en.json.
+
+### B6: `src/app/app/settings/billing/page.tsx`
+
+- `"Plan updated. Your new features are available now."` → `t("toast.planUpdated")`
+- `"Could not pause coverage."` → `t("toast.pauseFailed")`
+- `"Coverage paused."` → `t("toast.paused")`
+- `"Could not open payment settings."` → `t("toast.paymentSettingsFailed")`
+- `"Could not open billing portal."` → `t("toast.billingPortalFailed")`
+
+Add keys under `"billing"` in en.json.
+
+### B7: `src/app/app/settings/phone/page.tsx`
+
+- `"Number connected. You can now receive calls and texts."` → `t("toast.numberConnected")`
+- `"Settings saved."` → `t("toast.saved")`
+- `"Something went wrong."` → `tCommon("error.generic")`
+- `"Create an agent first in the Agents section, then try again."` → `t("toast.createAgentFirst")`
+- `"Calling you now — answer your phone to hear your agent."` → `t("toast.testCallStarted")`
+- `"Code sent. Check your phone."` → `t("toast.codeSent")`
+- `"Phone verified ✓"` → `t("toast.phoneVerified")`
+- `"We'll notify you when numbers are available."` → `t("toast.waitlistJoined")`
+- `"Use 'Get a new AI number' to get a dedicated line."` → `t("toast.getAiNumber")`
+
+Add keys under `"phone"` in en.json.
+
+### B8: `src/app/app/settings/integrations/page.tsx`
+
+- `"OAuth for this CRM will be available soon."` → `t("toast.oauthComingSoon")`
+- `"Invalid integration."` → `t("toast.invalidIntegration")`
+- `"Webhook destination saved."` → `t("toast.webhookSaved")`
+- `"Could not save webhook settings."` → `t("toast.webhookSaveFailed")`
+- `"Could not send webhook test."` → `t("toast.webhookTestFailed")`
+- `"Enter your email to join the WhatsApp waitlist."` → `t("toast.whatsappEmailRequired")`
+- `"You're on the list."` → `t("toast.whatsappWaitlisted")`
+
+Add keys under `"integrations"` in en.json.
+
+### B9: `src/app/app/settings/call-rules/page.tsx`
+
+- `"Call rules saved"` → `t("toast.saved")`
+
+Add key under `"callRules"` in en.json.
+
+### B10: Copy ALL new keys to all locale files
+
+After adding all toast keys to en.json, copy the same keys (with English values as placeholders) to:
+- `src/i18n/messages/es.json`
+- `src/i18n/messages/fr.json`
+- `src/i18n/messages/de.json`
+- `src/i18n/messages/pt.json`
+- `src/i18n/messages/ja.json`
+
+---
+
+## SECTION C — REPLACE CLIENT-SIDE VAPI SDK WITH ELEVENLABS
+
+The backend uses ElevenLabs Conversational AI via the voice provider abstraction. But the client-side voice test buttons still import `@vapi-ai/web` directly. Fix both.
+
+### C1: `src/components/WorkspaceVoiceButton.tsx`
+
+This component dynamically imports `@vapi-ai/web` and uses `Vapi.start()` for browser-based test calls.
+
+Replace the Vapi SDK with the ElevenLabs Conversational AI client-side approach. ElevenLabs offers a WebSocket-based client for browser voice:
 
 ```ts
-// After updating status to "released" in DB
-const providerSid = number.provider_sid;
-if (providerSid && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-  const sid = process.env.TWILIO_ACCOUNT_SID;
-  const token = process.env.TWILIO_AUTH_TOKEN;
-  try {
-    await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${sid}/IncomingPhoneNumbers/${providerSid}.json`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
-        },
-      }
-    );
-  } catch (e) {
-    console.error("Failed to release Twilio number:", e);
-    // Don't fail the user request — DB is already updated
-  }
+// Replace Vapi import with ElevenLabs conversation
+// Instead of: const { default: Vapi } = await import("@vapi-ai/web");
+// Use the ElevenLabs WebSocket API:
+
+async function startConversation(agentId: string) {
+  const ws = new WebSocket(`wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}`);
+  // Handle audio stream via WebSocket
+  // Or use the REST API to trigger an outbound test call to the user's phone instead
 }
+```
+
+**Simpler approach**: Instead of browser-based voice (which requires complex WebSocket audio handling), convert the "Test" button to trigger a phone call to the user's verified phone number via the existing `/api/agents/[id]/test-call` endpoint. This is:
+- More reliable
+- Already works with ElevenLabs via getVoiceProvider()
+- Gives the user the REAL phone experience
+
+Update the component to:
+1. Prompt user for their phone number (or use workspace.verified_phone)
+2. POST to `/api/agents/${agentId}/test-call` with `{ phoneNumber }`
+3. Show "Calling your phone..." status
+4. Remove the `@vapi-ai/web` import entirely
+
+### C2: `src/components/demo/DemoVoiceButton.tsx`
+
+Same issue. This is the public demo button on the homepage. Options:
+
+**Option A (recommended)**: Remove the live voice demo entirely and replace with a "Try it — enter your number" flow that triggers a real outbound call via `/api/vapi/demo-config` → test call endpoint. This gives prospects the REAL experience.
+
+**Option B**: Keep a static conversation animation/mockup (already exists in the hero section) and remove the demo voice button that depends on Vapi.
+
+Implement Option A: Replace the DemoVoiceButton with a phone number input + "Call me" button that hits an API endpoint to trigger a demo outbound call.
+
+### C3: Remove @vapi-ai/web dependency
+
+After C1 and C2 are done:
+```bash
+npm uninstall @vapi-ai/web
+```
+
+Verify no imports of `@vapi-ai/web` remain:
+```bash
+grep -r "@vapi-ai/web" src/
 ```
 
 ---
 
-## ITEM 2: Expand international number support to 20+ countries
+## SECTION D — DEPLOYMENT VERIFICATION
 
-File: `src/app/api/phone/available/route.ts`
+### D1: Trigger Vercel redeployment
 
-The current code hardcodes `country === "US"` (line 35). Replace the entire Twilio query section to support any country Twilio offers:
+The latest 3 commits have not deployed. Push an empty commit to force it:
+
+```bash
+git commit --allow-empty -m "chore: force Vercel redeploy for latest fixes" && git push origin main
+```
+
+### D2: Verify env vars are documented
+
+Update `.env.example` with all required production env vars:
+
+```env
+# Voice Provider (elevenlabs or vapi)
+VOICE_PROVIDER=elevenlabs
+
+# ElevenLabs
+ELEVENLABS_API_KEY=
+ELEVENLABS_PHONE_NUMBER_ID=
+
+# Twilio (telephony)
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_VERIFY_SERVICE_SID=
+NEXT_PUBLIC_APP_URL=
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Stripe
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+```
+
+---
+
+## SECTION E — PRODUCT POLISH (from live site evaluation)
+
+### E1: AgentsPageClient still 2,503 lines — extract remaining components
+
+File: `src/app/app/agents/AgentsPageClient.tsx`
+
+Find and extract:
+- Phone/schedule configuration section → `src/app/app/agents/components/PhoneScheduleStep.tsx`
+- Test panel/chat section → `src/app/app/agents/components/TestStepContent.tsx`
+- Agent stats cards → `src/app/app/agents/components/AgentStatsCard.tsx`
+- FAQ editor inline section → `src/app/app/agents/components/FaqEditor.tsx`
+
+Rules: "use client" line 1, props for state/callbacks, run `npx tsc --noEmit` after each extraction. Target: under 1,200 lines.
+
+### E2: Homepage "Dashboard →" button should say "Start free →" for logged-out users
+
+File: `src/components/Navbar.tsx` or equivalent
+
+The navbar CTA button shows "Dashboard →" even to first-time visitors who are not logged in. This should show "Start free →" linking to `/sign-in` for anonymous users, and "Dashboard →" linking to `/app/activity` for logged-in users. Check if there's a session check in the navbar and update accordingly.
+
+### E3: Settings pages — browser tab titles
+
+Several settings pages show "Recall Touch — AI Phone Calls, Handled" as the browser tab title (visible in tab titles from the live site). These should have specific page titles like "Phone Settings — Recall Touch", "Billing — Recall Touch", etc.
+
+Check these files and add `document.title = t("...")` if missing:
+- `src/app/app/settings/phone/page.tsx`
+- `src/app/app/settings/billing/page.tsx`
+- `src/app/app/settings/integrations/page.tsx`
+- `src/app/app/settings/call-rules/page.tsx`
+- `src/app/app/settings/agent/page.tsx`
+- `src/app/app/developer/page.tsx`
+- `src/app/app/messages/page.tsx`
+- `src/app/app/call-intelligence/page.tsx`
+- `src/app/app/onboarding/page.tsx`
+
+Add corresponding `pageTitle` keys to en.json for each.
+
+### E4: Homepage — footer "Join waitlist" form
+
+The footer has a "Join waitlist" email form. The product is LIVE now, not in waitlist mode. Change this to "Get product updates" or "Subscribe to updates" with matching submit button text.
+
+File: Likely in `src/components/Footer.tsx` or `src/components/sections/Footer.tsx`. Find the "Join waitlist" text and "Join waitlist" button text and replace.
+
+### E5: Homepage hero — "Start free →" CTA should link to sign-up
+
+The primary CTA "Start free →" should link to `/sign-in` (the sign-up/sign-in page). Verify this link is correct and not dead.
+
+### E6: Marketplace phone page — expand country list
+
+File: `src/app/app/settings/phone/marketplace/page.tsx`
+
+The country dropdown only shows US and CA. Expand to match the 29 countries supported by the backend (from the SUPPORTED_COUNTRIES array in available/route.ts):
 
 ```ts
-// Replace the US-only check with dynamic country support
-const countryCode = (country || "US").toUpperCase();
-const SUPPORTED_COUNTRIES = [
-  "US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "SE",
-  "NO", "DK", "FI", "IE", "AT", "CH", "BE", "PT", "JP", "BR",
-  "MX", "IN", "SG", "HK", "NZ", "ZA", "IL", "PL", "CZ"
+const COUNTRIES = [
+  { code: "US", name: "United States" },
+  { code: "CA", name: "Canada" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "AU", name: "Australia" },
+  { code: "DE", name: "Germany" },
+  { code: "FR", name: "France" },
+  { code: "ES", name: "Spain" },
+  { code: "IT", name: "Italy" },
+  { code: "NL", name: "Netherlands" },
+  { code: "SE", name: "Sweden" },
+  { code: "NO", name: "Norway" },
+  { code: "DK", name: "Denmark" },
+  { code: "FI", name: "Finland" },
+  { code: "IE", name: "Ireland" },
+  { code: "AT", name: "Austria" },
+  { code: "CH", name: "Switzerland" },
+  { code: "BE", name: "Belgium" },
+  { code: "PT", name: "Portugal" },
+  { code: "JP", name: "Japan" },
+  { code: "BR", name: "Brazil" },
+  { code: "MX", name: "Mexico" },
+  { code: "IN", name: "India" },
+  { code: "SG", name: "Singapore" },
+  { code: "HK", name: "Hong Kong" },
+  { code: "NZ", name: "New Zealand" },
+  { code: "ZA", name: "South Africa" },
+  { code: "IL", name: "Israel" },
+  { code: "PL", name: "Poland" },
+  { code: "CZ", name: "Czech Republic" },
 ];
-
-if (!SUPPORTED_COUNTRIES.includes(countryCode)) {
-  return NextResponse.json({ error: "Country not supported" }, { status: 400 });
-}
-
-if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-  const numberType = type === "toll_free" ? "TollFree" : "Local";
-  const url = new URL(
-    `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/AvailablePhoneNumbers/${countryCode}/${numberType}.json`
-  );
-  // Area code only for US/CA
-  if (areaCode && (countryCode === "US" || countryCode === "CA")) {
-    url.searchParams.set("AreaCode", areaCode);
-  }
-  if (state && countryCode === "US") {
-    url.searchParams.set("InRegion", state);
-  }
-  // ... rest of fetch logic stays the same
-}
-```
-
-Also update `src/app/api/phone/provision/route.ts`:
-- Remove the hardcoded `country_code: "US"` on the DB insert
-- Instead use: `country_code: body.country || "US"` (accept country from request body)
-- Update the phone normalization to not assume +1 prefix for non-US numbers
-
-Also update the marketplace UI at `src/app/app/settings/phone/marketplace/page.tsx`:
-- Expand the country dropdown from [US, CA] to all 29 supported countries
-- Add country names: `{ code: "GB", name: "United Kingdom" }`, `{ code: "AU", name: "Australia" }`, etc.
-
----
-
-## ITEM 3: Implement number porting backend
-
-File: Create `src/app/api/phone/port-request/route.ts`
-
-```ts
-import { NextRequest, NextResponse } from "next/server";
-import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-export async function POST(req: NextRequest) {
-  const { workspaceId } = await requireWorkspaceAccess(req);
-  const body = await req.json();
-
-  const { phone_number, current_carrier, account_number, account_pin, loa_url, contact_name, contact_email } = body;
-
-  if (!phone_number || !current_carrier) {
-    return NextResponse.json({ error: "Phone number and carrier required" }, { status: 400 });
-  }
-
-  const { data, error } = await supabase
-    .from("port_requests")
-    .insert({
-      workspace_id: workspaceId,
-      phone_number,
-      current_carrier,
-      account_number: account_number || null,
-      account_pin: account_pin || null,
-      loa_url: loa_url || null,
-      contact_name: contact_name || null,
-      contact_email: contact_email || null,
-      status: "pending",
-    })
-    .select()
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  // TODO: Send notification email to ops team
-  return NextResponse.json(data);
-}
-```
-
-Create migration `supabase/migrations/port_requests_table.sql`:
-
-```sql
-CREATE TABLE IF NOT EXISTS revenue_operator.port_requests (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES revenue_operator.workspaces(id),
-  phone_number text NOT NULL,
-  current_carrier text NOT NULL,
-  account_number text,
-  account_pin text,
-  loa_url text,
-  contact_name text,
-  contact_email text,
-  status text DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'completed', 'rejected')),
-  notes text,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE revenue_operator.port_requests ENABLE ROW LEVEL SECURITY;
-CREATE POLICY port_requests_workspace ON revenue_operator.port_requests
-  FOR ALL USING (workspace_id IN (
-    SELECT workspace_id FROM revenue_operator.workspace_roles WHERE user_id = auth.uid()
-  ));
-```
-
-Update the port page UI at `src/app/app/settings/phone/port/page.tsx` to actually POST to `/api/phone/port-request` on form submit.
-
----
-
-## ITEM 4: Implement per-minute usage tracking
-
-File: `src/app/api/usage/route.ts`
-
-The current endpoint counts number of calls, not minutes. Replace the calls count query with actual minute tracking:
-
-```ts
-// Replace the simple count with duration sum
-const { data: callData } = await supabase
-  .from("call_sessions")
-  .select("duration_seconds")
-  .eq("workspace_id", workspaceId)
-  .gte("started_at", periodStart.toISOString());
-
-const totalMinutes = Math.ceil(
-  (callData || []).reduce((sum, c) => sum + (c.duration_seconds || 0), 0) / 60
-);
-```
-
-Update the response to include minutes:
-```ts
-return NextResponse.json({
-  calls: callCount,
-  minutes_used: totalMinutes,
-  minutes_limit: planLimits.minutes,
-  minutes_pct: Math.round((totalMinutes / planLimits.minutes) * 100),
-  messages: messageCount,
-  messages_limit: planLimits.messages,
-  messages_pct: Math.round((messageCount / planLimits.messages) * 100),
-});
-```
-
-Update `PLAN_LIMITS` to use minutes instead of call counts:
-```ts
-const PLAN_LIMITS: Record<string, { minutes: number; messages: number }> = {
-  solo: { minutes: 400, messages: 500 },
-  growth: { minutes: 1500, messages: 2000 },
-  team: { minutes: 5000, messages: 10000 },
-  enterprise: { minutes: 50000, messages: 100000 },
-};
 ```
 
 ---
 
-## ITEM 5: Implement Stripe metered overage billing
-
-File: Create `src/lib/billing/overage.ts`
-
-```ts
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-12-18.acacia" });
-
-const OVERAGE_RATES: Record<string, number> = {
-  solo: 25,       // $0.25/min in cents
-  growth: 18,     // $0.18/min
-  team: 12,       // $0.12/min
-  enterprise: 10, // $0.10/min
-};
-
-export async function reportUsageOverage(
-  workspaceId: string,
-  subscriptionId: string,
-  tier: string,
-  minutesUsed: number,
-  minutesIncluded: number,
-) {
-  const overageMinutes = Math.max(0, minutesUsed - minutesIncluded);
-  if (overageMinutes <= 0) return;
-
-  const ratePerMin = OVERAGE_RATES[tier] || 25;
-  const overageAmountCents = overageMinutes * ratePerMin;
-
-  // Create a one-time invoice item for overage
-  await stripe.invoiceItems.create({
-    customer: (await stripe.subscriptions.retrieve(subscriptionId)).customer as string,
-    amount: overageAmountCents,
-    currency: "usd",
-    description: `Voice overage: ${overageMinutes} minutes × $${(ratePerMin / 100).toFixed(2)}/min`,
-    metadata: { workspace_id: workspaceId, overage_minutes: String(overageMinutes) },
-  });
-}
-```
-
-File: Create `src/app/api/cron/usage-overage/route.ts`
-
-```ts
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { reportUsageOverage } from "@/lib/billing/overage";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-export async function POST() {
-  // Run daily — checks all active workspaces for overage
-  const { data: workspaces } = await supabase
-    .from("workspaces")
-    .select("id, billing_status, billing_tier, stripe_subscription_id")
-    .eq("billing_status", "active");
-
-  for (const ws of workspaces || []) {
-    if (!ws.stripe_subscription_id) continue;
-
-    // Get current period minutes
-    const periodStart = new Date();
-    periodStart.setDate(1);
-    periodStart.setHours(0, 0, 0, 0);
-
-    const { data: calls } = await supabase
-      .from("call_sessions")
-      .select("duration_seconds")
-      .eq("workspace_id", ws.id)
-      .gte("started_at", periodStart.toISOString());
-
-    const totalMinutes = Math.ceil(
-      (calls || []).reduce((sum, c) => sum + (c.duration_seconds || 0), 0) / 60
-    );
-
-    const PLAN_MINUTES: Record<string, number> = {
-      solo: 400, growth: 1500, team: 5000, enterprise: 50000,
-    };
-    const included = PLAN_MINUTES[ws.billing_tier] || 400;
-
-    if (totalMinutes > included) {
-      await reportUsageOverage(ws.id, ws.stripe_subscription_id, ws.billing_tier, totalMinutes, included);
-    }
-  }
-
-  return NextResponse.json({ ok: true });
-}
-```
-
----
-
-## ITEM 6: Create Twilio status webhook handler
-
-File: Create `src/app/api/webhooks/twilio/status/route.ts`
-
-```ts
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-export async function POST(req: NextRequest) {
-  const formData = await req.formData();
-  const callSid = formData.get("CallSid") as string;
-  const callStatus = formData.get("CallStatus") as string;
-  const callDuration = formData.get("CallDuration") as string;
-
-  if (!callSid) {
-    return NextResponse.json({ error: "Missing CallSid" }, { status: 400 });
-  }
-
-  // Update call session with final status
-  await supabase
-    .from("call_sessions")
-    .update({
-      status: callStatus === "completed" ? "completed" : callStatus,
-      duration_seconds: callDuration ? parseInt(callDuration, 10) : undefined,
-      ended_at: new Date().toISOString(),
-    })
-    .eq("external_meeting_id", callSid);
-
-  return new Response("OK", { status: 200 });
-}
-```
-
----
-
-## ITEM 7: Update DB provider defaults from "vapi" to "twilio"
-
-File: `supabase/migrations/phone_numbers_table.sql`
-
-The `phone_numbers.provider` column defaults to `'vapi'`. This is wrong now that ElevenLabs is the default voice provider. Twilio is still the telephony provider.
-
-Create a new migration `supabase/migrations/update_provider_defaults.sql`:
-
-```sql
--- Update provider default for new phone numbers
-ALTER TABLE revenue_operator.phone_numbers ALTER COLUMN provider SET DEFAULT 'twilio';
-
--- Update existing vapi provider entries to twilio (they're all Twilio-purchased numbers)
-UPDATE revenue_operator.phone_numbers SET provider = 'twilio' WHERE provider = 'vapi';
-```
-
-Also update `src/app/api/phone/provision/route.ts` — change `provider: "vapi"` to `provider: "twilio"` in the insert.
-
----
-
-## ITEM 8: Update Twilio inbound voice webhook for ElevenLabs
-
-File: `src/app/api/webhooks/twilio/voice/route.ts`
-
-This route still tries to route calls through Vapi. Update it to use the voice provider abstraction:
-
-Find any import of `createCallForTwilio` from `@/lib/vapi/client` and replace with:
-```ts
-import { getVoiceProvider } from "@/lib/voice";
-```
-
-Replace the Vapi call logic with:
-```ts
-const voice = getVoiceProvider();
-const assistantId = workspace.vapi_assistant_id; // rename this column later
-const twiml = await voice.createInboundCall(CallSid, assistantId);
-return new Response(twiml, {
-  headers: { "Content-Type": "application/xml" },
-});
-```
-
----
-
-## ITEM 9: Auto-cleanup numbers when workspace paused/deleted
-
-File: `src/app/api/billing/webhook/route.ts`
-
-In the `customer.subscription.deleted` event handler, add number release logic:
-
-```ts
-// After setting billing_status to paused/trial
-// Release all workspace phone numbers from Twilio to stop charges
-const { data: numbers } = await supabase
-  .from("phone_numbers")
-  .select("id, provider_sid")
-  .eq("workspace_id", workspaceId)
-  .eq("status", "active");
-
-if (numbers && numbers.length > 0 && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-  const sid = process.env.TWILIO_ACCOUNT_SID;
-  const token = process.env.TWILIO_AUTH_TOKEN;
-  for (const num of numbers) {
-    if (num.provider_sid) {
-      try {
-        await fetch(
-          `https://api.twilio.com/2010-04-01/Accounts/${sid}/IncomingPhoneNumbers/${num.provider_sid}.json`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
-            },
-          }
-        );
-      } catch (e) {
-        console.error("Failed to release number:", num.provider_sid, e);
-      }
-    }
-  }
-  // Mark all as released in DB
-  await supabase
-    .from("phone_numbers")
-    .update({ status: "released" })
-    .eq("workspace_id", workspaceId)
-    .eq("status", "active");
-}
-```
-
----
-
-## ITEM 10: Enable multi-step campaign execution (SMS + email, not just voice)
-
-File: `src/app/api/campaigns/[id]/launch/route.ts`
-
-Currently this only calls `executeLeadOutboundCall()`. Add support for SMS and email steps in campaign sequences:
-
-After the existing voice call logic, add:
-
-```ts
-import { sendOutbound } from "@/lib/delivery/provider";
-
-// If campaign has sequence steps beyond voice
-if (campaign.sequence_steps && campaign.sequence_steps.length > 0) {
-  for (const step of campaign.sequence_steps) {
-    if (step.channel === "sms" && step.message) {
-      await sendOutbound({
-        workspaceId,
-        leadId: lead.id,
-        channel: "sms",
-        content: step.message,
-        to: { phone: lead.phone },
-      });
-    }
-    if (step.channel === "email" && step.message) {
-      await sendOutbound({
-        workspaceId,
-        leadId: lead.id,
-        channel: "email",
-        content: step.message,
-        to: { email: lead.email },
-        emailSubject: step.subject || campaign.name,
-      });
-    }
-  }
-}
-```
-
-If `sendOutbound` doesn't exist with that exact signature, adapt to use whatever the existing delivery provider exports. Check `src/lib/delivery/provider.ts` for the exact function signature.
-
----
-
-## ITEM 11: Consolidate phone_numbers and phone_configs tables
-
-File: `src/app/api/integrations/twilio/auto-provision/route.ts`
-
-This route still writes to `phone_configs` (legacy table). Update it to write to `phone_numbers` instead:
-
-Replace `phone_configs` inserts with `phone_numbers` inserts matching the schema:
-```ts
-await supabase.from("phone_numbers").insert({
-  workspace_id: workspaceId,
-  phone_number: purchasedNumber,
-  friendly_name: friendlyName,
-  country_code: "US",
-  number_type: numberType,
-  provider: "twilio",
-  provider_sid: providerSid,
-  status: "active",
-  monthly_cost_cents: numberType === "toll_free" ? 200 : 150,
-  capabilities: { voice: true, sms: true, mms: false },
-});
-```
-
-Keep backward compatibility by also writing to `phone_configs` if it's used elsewhere, but the primary record should be in `phone_numbers`.
-
----
-
-## ITEM 12: Add Twilio voice webhook signature verification
-
-File: `src/app/api/webhooks/twilio/voice/route.ts`
-
-The SMS inbound webhook verifies Twilio signatures but the voice webhook does NOT. Add signature verification:
-
-```ts
-import crypto from "crypto";
-
-function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
-  const token = process.env.TWILIO_AUTH_TOKEN;
-  if (!token) return false; // Skip verification if no auth token
-
-  const sorted = Object.keys(params).sort().reduce((acc, key) => acc + key + params[key], "");
-  const data = url + sorted;
-  const expected = crypto.createHmac("sha1", token).update(Buffer.from(data, "utf-8")).digest("base64");
-  return expected === signature;
-}
-```
-
-Add at the top of the POST handler:
-```ts
-const sig = req.headers.get("x-twilio-signature");
-if (sig && process.env.TWILIO_AUTH_TOKEN) {
-  const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/voice`;
-  const params = Object.fromEntries(formData.entries()) as Record<string, string>;
-  if (!verifyTwilioSignature(url, params, sig)) {
-    return new Response("Invalid signature", { status: 403 });
-  }
-}
-```
-
----
-
-## ITEM 13: Fix billing page to show minutes instead of calls
-
-File: `src/app/app/settings/billing/page.tsx`
-
-The billing page likely shows "calls used" but the plan limits are in minutes. Update the usage display to show minutes:
-
-Find where usage data is displayed (calls_pct, calls, calls_limit) and update labels:
-- "Calls used" → "Minutes used"
-- Show `usage.minutes_used` instead of `usage.calls`
-- Show `usage.minutes_limit` instead of `usage.calls_limit`
-- Show `usage.minutes_pct` for the progress bar
-
----
-
-## ITEM 14: Typecheck, build, commit, push
+## SECTION F — FINAL BUILD AND DEPLOY
 
 ```bash
 npx tsc --noEmit && npm run build && npm test
 ```
 
-Fix any failures. Then:
+Fix ALL failures. Then:
 
 ```bash
-git add -A && git commit -m "feat: 14 business-critical fixes — billing, intl numbers, security, campaigns, usage tracking" && git push origin main
-git log --oneline -3
+git add -A && git commit -m "feat: final launch perfection — i18n complete, Vapi SDK removed, product polish" && git push origin main
+git log --oneline -5
 ```
 
 Paste ONLY the git log output.
 
 ---
 
-START. Item 1. Open `src/app/api/phone/numbers/[id]/release/route.ts`. Add the Twilio DELETE call. GO.
+START. Section A1. Open AgentsPageClient.tsx line 163. Verify step labels. Then Section B1 — start migrating toast strings. DO NOT STOP UNTIL ALL SECTIONS ARE COMPLETE. GO.

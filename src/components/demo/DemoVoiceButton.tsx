@@ -1,169 +1,69 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-
-interface DemoConfig {
-  publicKey: string | null;
-  assistantId: string | null;
-}
-
-const CONNECTION_TIMEOUT_MS = 15000;
-
-function getErrorMessage(e: unknown): string {
-  if (e && typeof e === "object" && "message" in e) {
-    const m = (e as { message?: unknown }).message;
-    if (typeof m === "string" && m.trim()) return m.trim();
-  }
-  if (e && typeof e === "object" && "error" in e) {
-    const m = (e as { error?: unknown }).error;
-    if (typeof m === "string" && m.trim()) return m.trim();
-  }
-  return "Couldn't connect. Try again.";
-}
+import { useState } from "react";
 
 export function DemoVoiceButton() {
-  const [config, setConfig] = useState<DemoConfig | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [active, setActive] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [vapi, setVapi] = useState<{ start: (id: string) => Promise<unknown>; stop: () => void } | null>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/vapi/demo-config", { credentials: "include" })
-      .then((r) => r.json())
-      .then((data: DemoConfig) => setConfig(data))
-      .catch(() => setConfig({ publicKey: null, assistantId: null }));
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  const clearConnectionTimeout = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-  }, []);
-
-  const startCall = useCallback(async () => {
-    if (!config?.publicKey || !config?.assistantId) {
-      setError("Voice not configured");
+  const handleCall = async () => {
+    const value = phone.trim();
+    if (!value) {
+      setError("Enter a phone number to receive a demo call.");
       return;
     }
-    setError(null);
     setLoading(true);
-    clearConnectionTimeout();
-
-    const finishWithError = (msg: string) => {
-      clearConnectionTimeout();
-      setError(msg);
-      setLoading(false);
-      setActive(false);
-      setVapi(null);
-    };
-
+    setStatus(null);
+    setError(null);
     try {
-      const { default: Vapi } = await import("@vapi-ai/web");
-      const client = new Vapi(config.publicKey);
-      setVapi(client);
-
-      client.on("error", (e: unknown) => {
-        finishWithError(getErrorMessage(e));
+      const res = await fetch("/api/demo/call", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone_number: value }),
       });
-
-      client.on("call-start", () => {
-        clearConnectionTimeout();
-        setActive(true);
-        setError(null);
-      });
-      client.on("call-end", () => {
-        setActive(false);
-        setVapi(null);
-      });
-
-      timeoutRef.current = setTimeout(() => {
-        timeoutRef.current = null;
-        finishWithError("Connection timed out. Check your microphone and try again.");
-      }, CONNECTION_TIMEOUT_MS);
-
-      await client.start(config.assistantId);
-    } catch (err) {
-      finishWithError(
-        err instanceof Error
-          ? (err.message?.trim() || "Could not start voice call.")
-          : typeof err === "string"
-            ? err
-            : "Could not start voice call. Please try again."
-      );
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string; error?: string };
+      if (res.ok && data.ok) {
+        setStatus(data.message ?? "Calling you now. Answer to talk with the AI agent.");
+      } else {
+        setError(data.error ?? "Could not start demo call. Please try again.");
+      }
+    } catch {
+      setError("Could not start demo call. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [config, clearConnectionTimeout]);
-
-  const endCall = useCallback(() => {
-    if (vapi) {
-      vapi.stop();
-      setActive(false);
-      setVapi(null);
-    }
-  }, [vapi]);
-
-  const configured = Boolean(config?.publicKey && config?.assistantId);
+  };
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      {!configured && config !== null ? (
-        <p className="text-xs text-zinc-500 text-center">Voice not available yet. Try the text chat above.</p>
-      ) : null}
-      {active ? (
+    <div className="flex flex-col items-center gap-2 w-full max-w-sm">
+      <div className="w-full flex flex-col sm:flex-row gap-2">
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="+1 (555) 123-4567"
+          className="flex-1 px-3 py-2.5 rounded-xl bg-black/40 border border-white/10 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/40"
+        />
         <button
           type="button"
-          onClick={endCall}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500/90 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-500"
-          aria-label="End voice call"
-        >
-          End call
-        </button>
-      ) : configured ? (
-        <button
-          type="button"
-          onClick={startCall}
+          onClick={handleCall}
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:bg-zinc-100 disabled:opacity-60"
-          aria-label="Start voice call with AI"
+          className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-60"
         >
-          {loading ? "Connecting…" : "Talk with voice"}
+          {loading ? "Calling…" : "Call me"}
         </button>
-      ) : (
-        <button
-          type="button"
-          disabled
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-400 cursor-not-allowed"
-          aria-label="Voice not configured"
-        >
-          Talk with voice
-        </button>
+      </div>
+      {status && (
+        <p className="text-xs text-emerald-300 text-center" role="status">
+          {status}
+        </p>
       )}
       {error && (
-        <div className="flex flex-col items-center gap-2 w-full">
-          <p className="text-xs text-red-400 text-center" role="alert">
-            {error}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setError(null);
-              startCall();
-            }}
-            className="text-xs font-medium text-zinc-400 hover:text-white transition-colors"
-          >
-            Try again
-          </button>
-        </div>
+        <p className="text-xs text-red-400 text-center" role="alert">
+          {error}
+        </p>
       )}
     </div>
   );

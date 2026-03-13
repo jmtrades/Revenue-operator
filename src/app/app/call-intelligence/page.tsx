@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { ChevronDown, Flag, Music2 } from "lucide-react";
 import {
   LineChart,
@@ -93,6 +94,8 @@ export default function CallIntelligencePage() {
   const [qualityFilter, setQualityFilter] = useState<QualityBucket>("all");
   const [qualityTrendDays, setQualityTrendDays] = useState<7 | 30 | 90>(30);
   const [callNotes, setCallNotes] = useState<Record<string, string>>({});
+  const t = useTranslations("callIntelligence");
+  const tCommon = useTranslations("common");
 
   const fetchData = useCallback(async () => {
     try {
@@ -143,7 +146,7 @@ export default function CallIntelligencePage() {
   const handleAnalyze = async () => {
     const transcript = pasteText.trim();
     if (transcript.length < 100) {
-      setToast("Paste at least 100 characters of transcript.");
+      setToast(t("toast.minTranscript"));
       setTimeout(() => setToast(null), 3000);
       return;
     }
@@ -165,13 +168,13 @@ export default function CallIntelligencePage() {
         setPasteText("");
         setTitle("");
         setCallType("");
-        setToast(`Analyzed. ${data.insights_count ?? 0} insights extracted.`);
+        setToast(t("toast.analysisSuccess", { count: data.insights_count ?? 0 }));
         fetchData();
       } else {
-        setToast(data.error ?? "Analysis failed.");
+        setToast(data.error ?? t("toast.analysisFailed"));
       }
     } catch {
-      setToast("Something went wrong.");
+      setToast(tCommon("error.generic"));
     } finally {
       setAnalyzing(false);
       setTimeout(() => setToast(null), 4000);
@@ -188,7 +191,7 @@ export default function CallIntelligencePage() {
       });
       if (res.ok) fetchData();
     } catch {
-      setToast("Failed to dismiss.");
+      setToast(t("toast.dismissFailed"));
       setTimeout(() => setToast(null), 3000);
     }
   };
@@ -204,13 +207,13 @@ export default function CallIntelligencePage() {
       const data = (await res.json().catch(() => ({}))) as { error?: string; ok?: boolean };
       if (res.ok && data.ok) {
         setApplyModal(null);
-        setToast("Applied to agent.");
+        setToast(t("toast.applied"));
         fetchData();
       } else {
-        setToast(data.error ?? "Apply failed.");
+        setToast(data.error ?? t("toast.applyFailed"));
       }
     } catch {
-      setToast("Something went wrong.");
+      setToast(tCommon("error.generic"));
     }
     setTimeout(() => setToast(null), 3000);
   };
