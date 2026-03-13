@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { createAcknowledgementToken } from "@/lib/shared-transaction-assurance";
 
 export async function POST(request: NextRequest) {
@@ -25,6 +26,8 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
+  const authErr = await requireWorkspaceAccess(request, workspace_id);
+  if (authErr) return authErr;
 
   if (approval_mode === "review_required" || approval_mode === "autopilot") {
     const dbForSettings = getDb();

@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function POST(req: NextRequest) {
   let body: { workspace_id?: string; services?: string; hours?: string; emergencies_after_hours?: string; appointment_handling?: string; faq_extra?: string };
@@ -11,6 +12,8 @@ export async function POST(req: NextRequest) {
   }
   const { workspace_id, services, hours, emergencies_after_hours, appointment_handling, faq_extra } = body;
   if (!workspace_id) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const authErr = await requireWorkspaceAccess(req, workspace_id);
+  if (authErr) return authErr;
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id, name").eq("id", workspace_id).maybeSingle();
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });

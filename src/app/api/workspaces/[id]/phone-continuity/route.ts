@@ -6,12 +6,15 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const authErr = await requireWorkspaceAccess(req, id);
+  if (authErr) return authErr;
   const db = getDb();
   const { data, error } = await db
     .from("phone_configs")
@@ -45,6 +48,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const authErrPut = await requireWorkspaceAccess(req, id);
+  if (authErrPut) return authErrPut;
   let body: { mode?: string; forwarding_number?: string };
   try {
     body = await req.json();
