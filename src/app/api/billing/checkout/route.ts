@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import { getPriceId } from "@/lib/stripe-prices";
@@ -69,6 +70,11 @@ export async function POST(req: NextRequest) {
     
     if (!workspaceId && !email) {
       return NextResponse.json({ ok: false, reason: "workspace_id_or_email_required" }, { status: 200 });
+    }
+
+    if (workspaceId) {
+      const authErr = await requireWorkspaceAccess(req, workspaceId);
+      if (authErr) return authErr;
     }
 
     const db = getDb();
