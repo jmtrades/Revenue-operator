@@ -72,7 +72,8 @@
       "title": "Anmelden",
       "subtitle": "Willkommen zurück bei Recall Touch",
       "button": "Anmelden",
-      "pageTitle": "Anmelden — Recall Touch"
+      "pageTitle": "Anmelden — Recall Touch",
+      "googleComingSoon": "Demnächst verfügbar…"
     },
     "email": {
       "label": "E-Mail-Adresse"
@@ -728,6 +729,13 @@
       "noShow": "Nicht erschienen"
     }
   },
+  "messages": {
+    "empty": {
+      "title": "Noch keine Unterhaltungen",
+      "body": "Sobald deine KI beginnt, Kontakte per Nachricht zu erreichen, werden alle Unterhaltungen hier angezeigt.",
+      "action": "Letzte Aktivitäten ansehen"
+    }
+  },
   "team": {
     "removeMemberTitle": "Mitglied entfernen?"
   },
@@ -832,7 +840,12 @@
     }
   },
   "appointments": {
-    "pageTitle": "Termine — Recall Touch"
+    "pageTitle": "Termine — Recall Touch",
+    "empty": {
+      "title": "Noch keine Termine",
+      "body": "Sobald deine KI in deinem Kalender bucht, werden alle Termine hier angezeigt.",
+      "action": "Agent-Einstellungen öffnen"
+    }
   },
   "keyboardShortcuts": {
     "modal": {
@@ -1097,7 +1110,8 @@
       "records": "Synchronisierte Datensätze",
       "errors": "Synchronisierungsfehler",
       "viewLog": "Synchronisierungsprotokoll anzeigen"
-    }
+    },
+    "comingSoon": "Demnächst verfügbar"
   },
   "email": {
     "templates": {

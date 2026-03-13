@@ -72,7 +72,8 @@
       "title": "Sign in",
       "subtitle": "Welcome back to Recall Touch",
       "button": "Sign in",
-      "pageTitle": "Sign in — Recall Touch"
+      "pageTitle": "Sign in — Recall Touch",
+      "googleComingSoon": "Coming soon…"
     },
     "email": {
       "label": "Email address"
@@ -814,6 +815,24 @@
       "noShow": "No-show"
     }
   },
+  "messages": {
+    "empty": {
+      "title": "No conversations yet",
+      "body": "When your AI starts texting and messaging contacts, every conversation will appear here.",
+      "action": "Review recent activity"
+    }
+  },
+  "developer": {
+    "webhooks": {
+      "title": "Webhooks",
+      "subtitle": "Send events to your HTTP endpoints with signed payloads for calls, leads, appointments, and more.",
+      "empty": {
+        "title": "No webhook endpoints yet",
+        "body": "Create a webhook endpoint to stream call, lead, and appointment events into your own systems in real time.",
+        "action": "Open developer home"
+      }
+    }
+  },
   "team": {
     "removeMemberTitle": "Remove member?"
   },
@@ -950,7 +969,12 @@
     }
   },
   "appointments": {
-    "pageTitle": "Appointments — Recall Touch"
+    "pageTitle": "Appointments — Recall Touch",
+    "empty": {
+      "title": "No appointments yet",
+      "body": "As your AI books on your calendar, every appointment will show up here.",
+      "action": "Open agent settings"
+    }
   },
   "keyboardShortcuts": {
     "modal": {
@@ -1212,7 +1236,8 @@
       "records": "Records synced",
       "errors": "Sync errors",
       "viewLog": "View sync log"
-    }
+    },
+    "comingSoon": "Coming soon"
   },
   "email": {
     "templates": {

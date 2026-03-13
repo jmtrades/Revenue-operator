@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
@@ -48,6 +49,7 @@ const DEFAULT_WEBHOOK_CONFIG: WebhookConfig = {
 };
 
 export default function AppSettingsIntegrationsPage() {
+  const t = useTranslations("integrations");
   const [toast, setToast] = useState<string | null>(null);
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState<boolean | null>(null);
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
@@ -232,7 +234,7 @@ export default function AppSettingsIntegrationsPage() {
                 <p className="text-sm font-medium text-[var(--text-primary)]">WhatsApp</p>
               </div>
               <p className="text-sm text-[#8B8B8D]">
-                WhatsApp integration coming soon. You&apos;ll be notified when it&apos;s available.
+                {t("comingSoon")}
               </p>
             </div>
           </div>
@@ -284,7 +286,7 @@ export default function AppSettingsIntegrationsPage() {
                     </div>
                     {crm.comingSoon ? (
                       <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
-                        Coming soon
+                        {t("comingSoon")}
                       </span>
                     ) : connected ? (
                       <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-green-500/30 text-green-400 shrink-0">
@@ -310,7 +312,7 @@ export default function AppSettingsIntegrationsPage() {
                         disabled
                         className="inline-block px-3 py-2 rounded-xl text-xs font-semibold border border-[var(--border-default)] text-zinc-500 cursor-not-allowed"
                       >
-                        Coming soon
+                        {t("comingSoon")}
                       </button>
                     ) : connected ? (
                       <Link

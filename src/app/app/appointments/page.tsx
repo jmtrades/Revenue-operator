@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { useTranslations } from "next-intl";
 
@@ -153,22 +154,15 @@ export default function AppointmentsPage() {
         </div>
 
         {isEmpty ? (
-          <div
-            className="rounded-2xl border border-[var(--border-default)] p-12 text-center"
-            style={{ background: "#111827" }}
-          >
-            <Calendar className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-            <p className="text-sm font-medium text-white mb-1">Appointments show up when callers book through your AI</p>
-            <p className="text-xs text-zinc-500 mb-4">
-              Enable appointment booking in your agent settings to let callers schedule directly.
-            </p>
-            <Link
-              href="/app/agents"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-white underline underline-offset-2 hover:no-underline"
-            >
-              Agent settings →
-            </Link>
-          </div>
+          <EmptyState
+            icon={Calendar}
+            title={t("appointments.empty.title")}
+            description={t("appointments.empty.body")}
+            primaryAction={{
+              label: t("appointments.empty.action"),
+              href: "/app/agents",
+            }}
+          />
         ) : view === "list" ? (
           <div
             className="rounded-2xl border overflow-hidden"
