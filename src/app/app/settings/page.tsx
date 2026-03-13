@@ -309,7 +309,7 @@ export default function AppSettingsPage() {
           message="Delete all workspace data (calls, leads, agents)? This cannot be undone. Contact support to complete."
           confirmLabel="Delete all data"
           variant="danger"
-          onConfirm={() => toast.info("Contact support to permanently delete your data.")}
+          onConfirm={() => toast.info(tSettings("deleteDataInfo"))}
           onClose={() => setConfirm(null)}
         />
       )}
@@ -320,7 +320,7 @@ export default function AppSettingsPage() {
           message="Permanently delete your account and all associated data? This cannot be undone. Contact support to complete."
           confirmLabel="Delete account"
           variant="danger"
-          onConfirm={() => toast.info("Contact support to permanently delete your account.")}
+          onConfirm={() => toast.info(tSettings("deleteAccountInfo"))}
           onClose={() => setConfirm(null)}
         />
       )}

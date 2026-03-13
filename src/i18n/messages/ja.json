@@ -400,12 +400,39 @@
       "title": "まだリードがいません",
       "body": "AI が顧客と会話を重ねる中で、自動的にリードが作成されます。"
     },
-    "saveLead": "リードを保存"
+    "saveLead": "リードを保存",
+    "toast": {
+      "callStarted": "通話を開始しました。「通話」ページでステータスを確認できます。",
+      "callFailed": "通話を開始できませんでした。",
+      "exportFailed": "エクスポートに失敗しました。もう一度お試しください。",
+      "exportSuccess": "リードをエクスポートしました。ダウンロードを確認してください。",
+      "importFailed": "インポートに失敗しました。",
+      "importSuccess": "{count} 件のリードをインポートしました。"
+    }
   },
   "campaigns": {
     "title": "キャンペーン",
     "pageTitle": "キャンペーン — Recall Touch",
     "create": "キャンペーンを作成",
+    "form": {
+      "typeLabel": "種類",
+      "sourceLabel": "ソース"
+    },
+    "type": {
+      "leadFollowup": "リードの評価・フォローアップ",
+      "appointmentReminder": "予約取得・リマインダー",
+      "reactivation": "再アクティベーション",
+      "coldOutreach": "お知らせ・新規開拓コール",
+      "reviewRequest": "口コミ依頼",
+      "custom": "カスタム"
+    },
+    "source": {
+      "any": "すべてのソース",
+      "inboundCall": "着信通話",
+      "outbound": "発信キャンペーン",
+      "website": "Webサイト",
+      "referral": "紹介"
+    },
     "empty": {
       "title": "まだキャンペーンがありません",
       "body": "キャンペーンを使って不在着信を取り戻し、休眠リードを再活性化し、カレンダーを埋めましょう。"
@@ -480,7 +507,9 @@
     "profile.saved": "プロフィールを保存しました。",
     "profile.saveFailed": "プロフィールを保存できませんでした。もう一度お試しください。",
     "notifications.loadFailed": "通知設定を読み込めませんでした。デフォルト値を使用します。",
-    "notifications.saved": "通知設定を保存しました。"
+    "notifications.saved": "通知設定を保存しました。",
+    "deleteDataInfo": "データを完全に削除するには、サポートまでお問い合わせください。",
+    "deleteAccountInfo": "アカウントを完全に削除するには、サポートまでお問い合わせください。"
   },
   "hero": {
     "title": "あなたのビジネス電話に24時間365日対応するAI",
@@ -687,6 +716,7 @@
   "calendar": {
     "removeAppointmentTitle": "予定を削除しますか？",
     "pageTitle": "カレンダー — Recall Touch",
+    "outlookComingSoon": "Outlook カレンダーとの双方向同期は近日提供予定です。利用可能になり次第お知らせします。",
     "empty": {
       "title": "まだ予約はありません",
       "body": "AI が予約を作成すると、このカレンダーに表示されます。"

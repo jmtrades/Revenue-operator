@@ -409,12 +409,39 @@
       "title": "Aucun lead pour le moment",
       "body": "Votre IA commencera à créer des leads automatiquement au fur et à mesure qu'elle parlera à vos clients."
     },
-    "saveLead": "Enregistrer le lead"
+    "saveLead": "Enregistrer le lead",
+    "toast": {
+      "callStarted": "Appel lancé. Consultez l’état dans Appels.",
+      "callFailed": "Impossible de lancer l’appel.",
+      "exportFailed": "Échec de l’export. Réessayez.",
+      "exportSuccess": "Leads exportés. Vérifiez vos téléchargements.",
+      "importFailed": "Échec de l’import.",
+      "importSuccess": "{count} leads importés."
+    }
   },
   "campaigns": {
     "title": "Campagnes",
     "pageTitle": "Campagnes — Recall Touch",
     "create": "Créer une campagne",
+    "form": {
+      "typeLabel": "Type",
+      "sourceLabel": "Source"
+    },
+    "type": {
+      "leadFollowup": "Qualification / suivi des leads",
+      "appointmentReminder": "Prise / rappel de rendez-vous",
+      "reactivation": "Réactivation",
+      "coldOutreach": "Annonce / prospection à froid",
+      "reviewRequest": "Demande d’avis",
+      "custom": "Personnalisé"
+    },
+    "source": {
+      "any": "Toute source",
+      "inboundCall": "Appel entrant",
+      "outbound": "Campagne sortante",
+      "website": "Site web",
+      "referral": "Recommandation"
+    },
     "empty": {
       "title": "Aucune campagne pour le moment",
       "body": "Utilisez les campagnes pour relancer les appels manqués, réactiver les anciens leads et remplir votre calendrier."
@@ -489,7 +516,9 @@
     "profile.saved": "Profil enregistré.",
     "profile.saveFailed": "Impossible d’enregistrer le profil. Réessayez.",
     "notifications.loadFailed": "Échec du chargement des préférences de notification. Utilisation des valeurs par défaut.",
-    "notifications.saved": "Préférences de notification enregistrées."
+    "notifications.saved": "Préférences de notification enregistrées.",
+    "deleteDataInfo": "Contactez le support pour supprimer définitivement vos données.",
+    "deleteAccountInfo": "Contactez le support pour supprimer définitivement votre compte."
   },
   "hero": {
     "title": "Une IA qui répond au téléphone de votre entreprise 24h/24 et 7j/7",
@@ -696,6 +725,7 @@
   "calendar": {
     "removeAppointmentTitle": "Supprimer le rendez-vous ?",
     "pageTitle": "Calendrier — Recall Touch",
+    "outlookComingSoon": "La synchronisation bidirectionnelle avec Outlook Calendar arrive bientôt. Vous serez averti dès qu’elle sera prête.",
     "empty": {
       "title": "Aucun rendez-vous pour le moment",
       "body": "À mesure que votre IA prendra des rendez-vous, ils apparaîtront dans ce calendrier."

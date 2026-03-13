@@ -476,7 +476,15 @@
       "title": "No leads yet",
       "body": "Your AI will start creating leads automatically as it talks to your customers."
     },
-    "saveLead": "Save lead"
+    "saveLead": "Save lead",
+    "toast": {
+      "callStarted": "Call started. Check Calls for status.",
+      "callFailed": "Could not start call.",
+      "exportFailed": "Export failed. Try again.",
+      "exportSuccess": "Leads exported. Check your downloads.",
+      "importFailed": "Import failed.",
+      "importSuccess": "{count} leads imported."
+    }
   },
   "knowledge": {
     "pageTitle": "Knowledge — Recall Touch",
@@ -492,6 +500,25 @@
     "title": "Campaigns",
     "pageTitle": "Campaigns — Recall Touch",
     "create": "Create campaign",
+    "form": {
+      "typeLabel": "Type",
+      "sourceLabel": "Source"
+    },
+    "type": {
+      "leadFollowup": "Lead qualification / follow-up",
+      "appointmentReminder": "Appointment setting / reminder",
+      "reactivation": "Reactivation",
+      "coldOutreach": "Announcement / cold outreach",
+      "reviewRequest": "Review request",
+      "custom": "Custom"
+    },
+    "source": {
+      "any": "Any source",
+      "inboundCall": "Inbound Call",
+      "outbound": "Outbound Outreach",
+      "website": "Website",
+      "referral": "Referral"
+    },
     "empty": {
       "title": "No campaigns yet",
       "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar."
@@ -566,7 +593,9 @@
     "profile.saved": "Profile saved.",
     "profile.saveFailed": "Could not save profile. Try again.",
     "notifications.loadFailed": "Could not load notification preferences. Using defaults.",
-    "notifications.saved": "Notification preferences saved."
+    "notifications.saved": "Notification preferences saved.",
+    "deleteDataInfo": "Contact support to permanently delete your data.",
+    "deleteAccountInfo": "Contact support to permanently delete your account."
   },
   "hero": {
     "title": "Your phone calls. Handled.",
@@ -773,6 +802,7 @@
   "calendar": {
     "removeAppointmentTitle": "Remove appointment?",
     "pageTitle": "Calendar — Recall Touch",
+    "outlookComingSoon": "Two-way sync with Outlook Calendar is coming soon. You’ll be notified when it’s ready.",
     "empty": {
       "title": "No appointments yet",
       "body": "As your AI books appointments, they’ll appear on this calendar."

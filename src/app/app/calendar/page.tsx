@@ -329,7 +329,7 @@ export default function AppCalendarPage() {
           <div>
             <p className="text-sm font-medium text-white">Microsoft Outlook</p>
             <p className="text-xs text-zinc-500">
-              Two-way sync with Outlook Calendar (coming soon).
+              {t("calendar.outlookComingSoon")}
             </p>
           </div>
           {outlookConnected ? (
