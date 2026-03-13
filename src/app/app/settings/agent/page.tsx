@@ -48,6 +48,9 @@ function persistAgentSettingsSnapshot(workspaceId: string, config: AgentConfig) 
 export default function AppSettingsAgentPage() {
   const tSettings = useTranslations("settings");
   const tToast = useTranslations("toast");
+  useEffect(() => {
+    document.title = tSettings("agentPageTitle");
+  }, [tSettings]);
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceSnapshot?.id?.trim() || "default";
   const initialConfig = readAgentSettingsSnapshot(snapshotWorkspaceId);

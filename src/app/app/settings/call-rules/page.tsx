@@ -1,16 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function AppSettingsCallRulesPage() {
+  const tRules = useTranslations("callRules");
   const [afterHours, setAfterHours] = useState("messages");
   const [emergencyKeywords, setEmergencyKeywords] = useState("emergency, urgent, pipe burst, flooding");
   const [transferPhone, setTransferPhone] = useState("");
   const [toast, setToast] = useState<string | null>(null);
 
+  useEffect(() => {
+    document.title = tRules("pageTitle");
+  }, [tRules]);
+
   const handleSave = () => {
-    setToast("Call rules saved");
+    setToast(tRules("toast.saved"));
     setTimeout(() => setToast(null), 3000);
   };
 

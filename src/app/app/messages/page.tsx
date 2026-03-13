@@ -49,6 +49,10 @@ export default function AppMessagesPage() {
   const toParam = searchParams.get("to")?.trim() ?? "";
   const leadIdParam = searchParams.get("lead_id")?.trim() ?? "";
 
+  useEffect(() => {
+    document.title = t("pageTitle");
+  }, [t]);
+
   const [threads, setThreads] = useState<Thread[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [input, setInput] = useState("");
@@ -176,7 +180,7 @@ export default function AppMessagesPage() {
     const text = input.trim();
     if (!text || !active) return;
     if (!active.lead_id) {
-      setToast("Add this contact in Leads first to send messages.");
+      setToast(t("toast.addContactFirst"));
       return;
     }
     setSending(true);
@@ -193,7 +197,7 @@ export default function AppMessagesPage() {
         setToast((err as { error?: string }).error || "Failed to send");
         return;
       }
-      setToast("Message sent.");
+      setToast(t("toast.sent"));
       await fetchMessages(active.id, active.lead_id);
       setThreads((prev) =>
         prev.map((t) => (t.id === active.id ? { ...t, preview: text.slice(0, 60), time: "Now" } : t))

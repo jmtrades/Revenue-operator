@@ -83,7 +83,7 @@ export function SocialProof() {
                 style={{ background: "var(--bg-primary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               />
               <button type="submit" className="text-sm font-semibold bg-white text-black rounded-xl px-4 py-2 shrink-0 hover:bg-zinc-100 transition-colors">
-                Join waitlist
+                Get updates
               </button>
             </form>
           )}

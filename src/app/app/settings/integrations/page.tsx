@@ -89,17 +89,21 @@ export default function AppSettingsIntegrationsPage() {
   }, []);
 
   useEffect(() => {
+    document.title = t("pageTitle");
+  }, [t]);
+
+  useEffect(() => {
     if (crmParam === "oauth_coming_soon") {
-      setToast("OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.");
-      const t = setTimeout(() => setToast(null), 5000);
-      return () => clearTimeout(t);
+      setToast(t("toast.oauthComingSoon"));
+      const id = setTimeout(() => setToast(null), 5000);
+      return () => clearTimeout(id);
     }
     if (crmParam === "invalid") {
-      setToast("Invalid integration.");
-      const t = setTimeout(() => setToast(null), 3000);
-      return () => clearTimeout(t);
+      setToast(t("toast.invalidIntegration"));
+      const id = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(id);
     }
-  }, [crmParam]);
+  }, [crmParam, t]);
 
   useEffect(() => {
     fetch("/api/integrations/google-calendar/status", { credentials: "include" })
@@ -147,10 +151,10 @@ export default function AppSettingsIntegrationsPage() {
         body: JSON.stringify({ ...webhookConfig, secret: webhookSecret.trim() || undefined }),
       });
       if (!res.ok) throw new Error("save_failed");
-      setToast("Webhook destination saved.");
+      setToast(t("toast.webhookSaved"));
       setWebhookSecret("");
     } catch {
-      setToast("Could not save webhook settings.");
+      setToast(t("toast.webhookSaveFailed"));
     } finally {
       setSavingWebhook(false);
       setTimeout(() => setToast(null), 4000);
@@ -167,12 +171,12 @@ export default function AppSettingsIntegrationsPage() {
       });
       const data = (await res.json().catch(() => null)) as { ok?: boolean; status?: number; response?: string; error?: string } | null;
       if (!res.ok) {
-        setToast(data?.error ?? "Could not send webhook test.");
+        setToast(data?.error ?? t("toast.webhookTestFailed"));
         return;
       }
       setToast(data?.ok ? `Webhook test delivered (${data?.status ?? 200}).` : `Webhook responded with ${data?.status ?? "an error"}.`);
     } catch {
-      setToast("Could not send webhook test.");
+      setToast(t("toast.webhookTestFailed"));
     } finally {
       setTestingWebhook(false);
       setTimeout(() => setToast(null), 4000);
@@ -182,7 +186,7 @@ export default function AppSettingsIntegrationsPage() {
   const _handleWhatsAppNotify = async () => {
     const email = whatsappEmail.trim();
     if (!email) {
-      setToast("Enter your email to join the WhatsApp waitlist.");
+      setToast(t("toast.whatsappEmailRequired"));
       setTimeout(() => setToast(null), 3000);
       return;
     }
@@ -195,13 +199,13 @@ export default function AppSettingsIntegrationsPage() {
         body: JSON.stringify({ email }),
       });
       if (res.ok) {
-        setToast("You're on the list. We'll notify you when WhatsApp is available.");
+        setToast(t("toast.whatsappWaitlisted"));
         setWhatsappEmail("");
       } else {
-        setToast("Something went wrong. Try again.");
+        setToast(t("toast.error"));
       }
     } catch {
-      setToast("Something went wrong. Try again.");
+      setToast(t("toast.error"));
     } finally {
       setWhatsappSubmitting(false);
       setTimeout(() => setToast(null), 4000);

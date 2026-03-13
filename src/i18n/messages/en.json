@@ -99,6 +99,16 @@
     "signingIn": "Signing in…",
     "savePassword": "Save password"
   },
+  "billing": {
+    "pageTitle": "Billing — Recall Touch",
+    "toast": {
+      "planUpdated": "Plan updated. Your new features are available now.",
+      "pauseFailed": "Could not pause coverage.",
+      "paused": "Coverage paused.",
+      "paymentFailed": "Could not open payment settings.",
+      "portalFailed": "Could not open billing portal."
+    }
+  },
   "dashboard": {
     "greeting": {
       "morning": "Good morning",
@@ -418,6 +428,7 @@
     }
   },
   "callIntelligence": {
+    "pageTitle": "Call Intelligence — Recall Touch",
     "title": "Call intelligence",
     "tabs": {
       "analyzed": "Analyzed calls",
@@ -431,6 +442,12 @@
         "review": "Needs review (40-59)",
         "flagged": "Flagged (0-39)"
       }
+    }
+  },
+  "callRules": {
+    "pageTitle": "Call Rules — Recall Touch",
+    "toast": {
+      "saved": "Call rules saved"
     }
   },
   "inbox": {
@@ -574,6 +591,7 @@
   },
   "settings": {
     "pageTitle": "Settings — Recall Touch",
+    "agentPageTitle": "Agent Settings — Recall Touch",
     "title": "Settings",
     "nav": {
       "general": "General",
@@ -859,6 +877,11 @@
     }
   },
   "messages": {
+    "pageTitle": "Messages — Recall Touch",
+    "toast": {
+      "addContactFirst": "Add this contact in Leads first to send messages.",
+      "sent": "Message sent."
+    },
     "empty": {
       "title": "No conversations yet",
       "body": "When your AI starts texting and messaging contacts, every conversation will appear here.",
@@ -866,6 +889,7 @@
     }
   },
   "developer": {
+    "pageTitle": "Developer — Recall Touch",
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Send events to your HTTP endpoints with signed payloads for calls, leads, appointments, and more.",
@@ -1169,6 +1193,19 @@
     }
   },
   "phone": {
+    "pageTitle": "Phone Settings — Recall Touch",
+    "toast": {
+      "numberConnected": "Number connected. You can now receive calls and texts.",
+      "saved": "Settings saved.",
+      "error": "Something went wrong.",
+      "createAgentFirst": "Create an agent first in the Agents section, then try again.",
+      "testCallStarted": "Calling you now — answer your phone to hear your agent.",
+      "errorRetry": "Something went wrong. Try again.",
+      "codeSent": "Code sent. Check your phone.",
+      "getAiNumber": "Use 'Get a new AI number' to get a dedicated line.",
+      "phoneVerified": "Phone verified ✓",
+      "waitlistJoined": "We'll notify you when numbers are available."
+    },
     "marketplace": {
       "title": "Phone number marketplace",
       "subtitle": "Search, compare, and provision numbers in the countries where you do business.",
@@ -1237,6 +1274,17 @@
     }
   },
   "integrations": {
+    "pageTitle": "Integrations — Recall Touch",
+    "toast": {
+      "oauthComingSoon": "OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.",
+      "invalidIntegration": "Invalid integration.",
+      "webhookSaved": "Webhook destination saved.",
+      "webhookSaveFailed": "Could not save webhook settings.",
+      "webhookTestFailed": "Could not send webhook test.",
+      "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
+      "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
+      "error": "Something went wrong. Try again."
+    },
     "hub": {
       "title": "Integrations",
       "subtitle": "Connect Recall Touch with your CRM, calendar, messaging tools, and more."
