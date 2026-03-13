@@ -43,7 +43,7 @@ export function Footer() {
               Company
             </p>
             <a href="mailto:team@recall-touch.com" className="block hover:opacity-80 transition-opacity">
-              Contact
+              Email us
             </a>
             <Link href="/blog" className="block hover:opacity-80 transition-opacity">
               Blog

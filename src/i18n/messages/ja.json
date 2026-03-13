@@ -682,6 +682,31 @@
       "complete": "オンボーディングが完了しました。ダッシュボードへ移動します。"
     }
   },
+  "agents.testPanel": {
+    "errors": {
+      "auth": "もう一度サインインしてください。",
+      "notConfigured": "AI サービスが構成されていません。サポートにお問い合わせください。",
+      "generic": "応答を取得できませんでした。もう一度お試しください。",
+      "noResponse": "応答を生成できませんでした。",
+      "connection": "接続エラーです。ネットワークを確認して再度お試しください。",
+      "mic": "マイクへのアクセスが拒否されたか、音声が検出されませんでした。もう一度お試しになるか、メッセージを入力してください。",
+      "voiceUnsupported": "このブラウザでは音声がサポートされていません。テキストフィールドを使用してください。"
+    },
+    "defaultGreeting": "{business} へのお電話ありがとうございます。本日はいかがなさいましたか？",
+    "hint": {
+      "micOrType": "マイクをタップして話すか、下の欄に入力してください。"
+    }
+  },
+  "agents.voiceTest": {
+    "toast": {
+      "played": "{name} を再生しました",
+      "applied": "ボイスをエージェントに適用しました。"
+    },
+    "errors": {
+      "previewFailed": "プレビューに失敗しました。ElevenLabs の設定を確認してください。",
+      "applyFailed": "ボイスをエージェントに適用できませんでした。もう一度お試しください。"
+    }
+  },
   "errors": {
     "generic": {
       "title": "問題が発生しました",
@@ -815,7 +840,68 @@
   "knowledge": {
     "pageTitle": "ナレッジ — Recall Touch",
     "addEntry": "エントリを追加",
-    "editEntry": "エントリを編集"
+    "editEntry": "エントリを編集",
+    "heading": "ナレッジベース",
+    "searchPlaceholder": "エントリーを検索…",
+    "allTypes": "すべてのタイプ",
+    "allStatuses": "すべてのステータス",
+    "importUrl": "URLからインポート",
+    "bulkUpload": "一括アップロード (CSV)",
+    "gapsHeading": "ナレッジギャップ",
+    "mostReferenced": "最も参照されている",
+    "testHeading": "ナレッジベースをテスト",
+    "testDescription": "質問をして、AIエージェントがどのように回答するか確認してください。",
+    "testPlaceholder": "例：営業時間は？",
+    "testButton": "テスト",
+    "noEntries": "エントリーが見つかりません",
+    "noEntriesHint": "フィルターを調整してみてください。",
+    "addFirst": "最初のエントリーを追加",
+    "gapsDescription": "発信者がこれらのトピックについて質問しましたが、コンテンツが不足しています。",
+    "mostReferencedDescription": "エージェントが通話で最も使用した上位5件のエントリー。",
+    "toast": {
+      "callSummaryDraftAdded": "通話の要約をナレッジの下書きエントリとして追加しました。準備ができたら編集して保存してください。",
+      "minTranscript": "少なくとも100文字のトランスクリプトを貼り付けてください。",
+      "analysisFailed": "分析に失敗しました。",
+      "analysisSuccess": "分析が完了しました。{count}件のインサイトが抽出されました。",
+      "dismissFailed": "却下に失敗しました。",
+      "applied": "エージェントに適用しました。",
+      "applyFailed": "適用に失敗しました。",
+      "noteSaved": "メモを保存しました。",
+      "noteSaveFailed": "メモを保存できませんでした。"
+    },
+    "errors": {
+      "testFailed": "ナレッジのテストに失敗しました。もう一度お試しください。",
+      "noResponse": "応答が生成されませんでした。"
+    },
+    "modal": {
+      "addEntry": "エントリを追加",
+      "editEntry": "エントリを編集",
+      "titlePlaceholder": "エントリのタイトル",
+      "type": "タイプ",
+      "question": "質問",
+      "questionPlaceholder": "例：営業時間は？",
+      "answer": "回答",
+      "uploadFile": "ファイルをアップロード",
+      "uploadHint": "ドラッグ＆ドロップまたはクリックしてアップロード",
+      "chooseFile": "ファイルを選択",
+      "indexedFile": "インデックス済み: {fileName}",
+      "fetch": "取得",
+      "indexing": "インデックス中…",
+      "indexedPages": "{count}ページをインデックスしました",
+      "content": "コンテンツ",
+      "contentPlaceholder": "フリーテキスト…",
+      "status": "ステータス"
+    },
+    "types": {
+      "FAQ": "FAQ",
+      "Document": "ドキュメント",
+      "Website": "WebサイトURL",
+      "Custom": "カスタム"
+    },
+    "status": {
+      "active": "有効",
+      "draft": "下書き"
+    }
   },
   "filter": {
     "byOutcome": "結果でフィルター",
@@ -1251,6 +1337,13 @@
     "toast": {
       "connected": "Slack と正常に接続されました。",
       "disconnected": "Slack との接続を解除しました。"
+    }
+  },
+  "flowBuilder": {
+    "toast": {
+      "loadFailed": "フローの読み込みに失敗しました。",
+      "saved": "フローが保存されました。",
+      "saveFailed": "フローの保存に失敗しました。"
     }
   },
   "api": {

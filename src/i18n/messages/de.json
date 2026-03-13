@@ -682,6 +682,31 @@
       "complete": "Onboarding abgeschlossen. Du wirst zum Dashboard weitergeleitet."
     }
   },
+  "agents.testPanel": {
+    "errors": {
+      "auth": "Bitte melde dich erneut an.",
+      "notConfigured": "Der KI-Dienst ist nicht konfiguriert. Wende dich an den Support.",
+      "generic": "Es konnte keine Antwort abgerufen werden. Bitte versuche es erneut.",
+      "noResponse": "Es konnte keine Antwort generiert werden.",
+      "connection": "Verbindungsfehler. Überprüfe dein Netzwerk und versuche es erneut.",
+      "mic": "Mikrofonzugriff verweigert oder keine Sprache erkannt. Versuche es erneut oder tippe deine Nachricht.",
+      "voiceUnsupported": "Sprachwiedergabe wird in diesem Browser nicht unterstützt. Nutze das Textfeld."
+    },
+    "defaultGreeting": "Danke, dass du bei {business} anrufst! Wie kann ich dir heute helfen?",
+    "hint": {
+      "micOrType": "Tippe auf das Mikrofon, um zu sprechen, oder tippe unten."
+    }
+  },
+  "agents.voiceTest": {
+    "toast": {
+      "played": "{name} wurde abgespielt",
+      "applied": "Stimme auf Agenten angewendet."
+    },
+    "errors": {
+      "previewFailed": "Vorschau fehlgeschlagen. Prüfe die ElevenLabs-Konfiguration.",
+      "applyFailed": "Stimme konnte nicht auf den Agenten angewendet werden. Bitte versuche es erneut."
+    }
+  },
   "errors": {
     "generic": {
       "title": "Etwas ist schiefgelaufen",
@@ -815,7 +840,68 @@
   "knowledge": {
     "pageTitle": "Wissen — Recall Touch",
     "addEntry": "Eintrag hinzufügen",
-    "editEntry": "Eintrag bearbeiten"
+    "editEntry": "Eintrag bearbeiten",
+    "heading": "Wissensdatenbank",
+    "searchPlaceholder": "Einträge suchen…",
+    "allTypes": "Alle Typen",
+    "allStatuses": "Alle Status",
+    "importUrl": "Von URL importieren",
+    "bulkUpload": "Massenupload (CSV)",
+    "gapsHeading": "Wissenslücken",
+    "mostReferenced": "Am häufigsten referenziert",
+    "testHeading": "Testen Sie Ihre Wissensdatenbank",
+    "testDescription": "Stellen Sie eine Frage, um zu sehen, wie Ihr Agent antworten würde.",
+    "testPlaceholder": "z.B. Was sind Ihre Öffnungszeiten?",
+    "testButton": "Testen",
+    "noEntries": "Keine Einträge gefunden",
+    "noEntriesHint": "Versuchen Sie, Ihre Filter anzupassen.",
+    "addFirst": "Erstellen Sie Ihren ersten Eintrag",
+    "gapsDescription": "Anrufer fragten nach diesen Themen, aber Ihr Inhalt ist begrenzt.",
+    "mostReferencedDescription": "Die 5 am häufigsten verwendeten Einträge Ihres Agenten.",
+    "toast": {
+      "callSummaryDraftAdded": "Anrufzusammenfassung als Entwurf eines Wissenseintrags hinzugefügt. Bearbeiten und speichern, wenn Sie bereit sind.",
+      "minTranscript": "Fügen Sie mindestens 100 Zeichen Transkript ein.",
+      "analysisFailed": "Analyse fehlgeschlagen.",
+      "analysisSuccess": "Analyse abgeschlossen. {count} Erkenntnisse extrahiert.",
+      "dismissFailed": "Verwerfen fehlgeschlagen.",
+      "applied": "Auf Agent angewendet.",
+      "applyFailed": "Anwenden fehlgeschlagen.",
+      "noteSaved": "Notiz gespeichert.",
+      "noteSaveFailed": "Notiz konnte nicht gespeichert werden."
+    },
+    "errors": {
+      "testFailed": "Wissensbasis konnte nicht getestet werden. Bitte erneut versuchen.",
+      "noResponse": "Es wurde keine Antwort generiert."
+    },
+    "modal": {
+      "addEntry": "Eintrag hinzufügen",
+      "editEntry": "Eintrag bearbeiten",
+      "titlePlaceholder": "Titel des Eintrags",
+      "type": "Typ",
+      "question": "Frage",
+      "questionPlaceholder": "z.B. Was sind Ihre Öffnungszeiten?",
+      "answer": "Antwort",
+      "uploadFile": "Datei hochladen",
+      "uploadHint": "Ziehen Sie eine Datei hierher oder klicken Sie zum Hochladen",
+      "chooseFile": "Datei auswählen",
+      "indexedFile": "Indexiert: {fileName}",
+      "fetch": "Abrufen",
+      "indexing": "Wird indexiert…",
+      "indexedPages": "{count} Seiten indexiert",
+      "content": "Inhalt",
+      "contentPlaceholder": "Freitext…",
+      "status": "Status"
+    },
+    "types": {
+      "FAQ": "FAQ",
+      "Document": "Dokument",
+      "Website": "Website-URL",
+      "Custom": "Benutzerdefiniert"
+    },
+    "status": {
+      "active": "Aktiv",
+      "draft": "Entwurf"
+    }
   },
   "filter": {
     "byOutcome": "Nach Ergebnis filtern",
@@ -1251,6 +1337,13 @@
     "toast": {
       "connected": "Slack erfolgreich verbunden.",
       "disconnected": "Slack wurde getrennt."
+    }
+  },
+  "flowBuilder": {
+    "toast": {
+      "loadFailed": "Fehler beim Laden des Flows.",
+      "saved": "Flow gespeichert.",
+      "saveFailed": "Fehler beim Speichern des Flows."
     }
   },
   "api": {

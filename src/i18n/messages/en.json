@@ -540,14 +540,27 @@
   },
   "knowledge": {
     "pageTitle": "Knowledge — Recall Touch",
+    "addEntry": "Add entry",
+    "editEntry": "Edit entry",
+    "heading": "Knowledge Base",
+    "searchPlaceholder": "Search entries…",
+    "allTypes": "All types",
+    "allStatuses": "All statuses",
+    "importUrl": "Import from URL",
+    "bulkUpload": "Bulk upload (CSV)",
+    "gapsHeading": "Knowledge Gaps",
+    "mostReferenced": "Most Referenced",
+    "testHeading": "Test your knowledge base",
+    "testDescription": "Ask a question to see how your AI agent would respond using your knowledge entries.",
+    "testPlaceholder": "e.g. What are your business hours?",
+    "testButton": "Test",
+    "noEntries": "No entries found",
+    "noEntriesHint": "Try adjusting your filters.",
+    "addFirst": "Add your first entry",
+    "gapsDescription": "Callers asked about these topics but your content is limited or missing.",
+    "mostReferencedDescription": "Top 5 entries used by your agent in calls.",
     "toast": {
-      "callSummaryDraftAdded": "Call summary added as a draft knowledge entry. Edit and save when you’re ready."
-    },
-    "errors": {
-      "testFailed": "Failed to test knowledge. Please try again.",
-      "noResponse": "No response generated."
-    },
-    "toast": {
+      "callSummaryDraftAdded": "Call summary added as a draft knowledge entry. Edit and save when you're ready.",
       "minTranscript": "Paste at least 100 characters of transcript.",
       "analysisFailed": "Analysis failed.",
       "analysisSuccess": "Analyzed. {count} insights extracted.",
@@ -556,6 +569,39 @@
       "applyFailed": "Apply failed.",
       "noteSaved": "Note saved.",
       "noteSaveFailed": "Could not save note."
+    },
+    "errors": {
+      "testFailed": "Failed to test knowledge. Please try again.",
+      "noResponse": "No response generated."
+    },
+    "modal": {
+      "addEntry": "Add entry",
+      "editEntry": "Edit entry",
+      "titlePlaceholder": "Entry title",
+      "type": "Type",
+      "question": "Question",
+      "questionPlaceholder": "e.g. What are your hours?",
+      "answer": "Answer",
+      "uploadFile": "Upload file",
+      "uploadHint": "Drag and drop or click to upload",
+      "chooseFile": "Choose file",
+      "indexedFile": "Indexed: {fileName}",
+      "fetch": "Fetch",
+      "indexing": "Indexing…",
+      "indexedPages": "Indexed {count} pages",
+      "content": "Content",
+      "contentPlaceholder": "Freeform text…",
+      "status": "Status"
+    },
+    "types": {
+      "FAQ": "FAQ",
+      "Document": "Document",
+      "Website": "Website URL",
+      "Custom": "Custom"
+    },
+    "status": {
+      "active": "Active",
+      "draft": "Draft"
     }
   },
   "campaigns": {
@@ -921,40 +967,6 @@
   },
   "team": {
     "removeMemberTitle": "Remove member?"
-  },
-  "knowledge": {
-    "pageTitle": "Knowledge — Recall Touch",
-    "addEntry": "Add entry",
-    "editEntry": "Edit entry",
-    "modal": {
-      "addEntry": "Add entry",
-      "editEntry": "Edit entry",
-      "titlePlaceholder": "Entry title",
-      "type": "Type",
-      "question": "Question",
-      "questionPlaceholder": "e.g. What are your hours?",
-      "answer": "Answer",
-      "uploadFile": "Upload file",
-      "uploadHint": "Drag and drop or click to upload",
-      "chooseFile": "Choose file",
-      "indexedFile": "Indexed: {fileName}",
-      "fetch": "Fetch",
-      "indexing": "Indexing…",
-      "indexedPages": "Indexed {count} pages",
-      "content": "Content",
-      "contentPlaceholder": "Freeform text…",
-      "status": "Status"
-    },
-    "types": {
-      "FAQ": "FAQ",
-      "Document": "Document",
-      "Website": "Website URL",
-      "Custom": "Custom"
-    },
-    "status": {
-      "active": "Active",
-      "draft": "Draft"
-    }
   },
   "filter": {
     "byOutcome": "Filter by outcome",
