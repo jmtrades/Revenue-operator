@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(
   req: NextRequest,
@@ -15,6 +16,8 @@ export async function GET(
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const { id } = await params;
   const db = getDb();
