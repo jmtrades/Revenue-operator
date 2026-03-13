@@ -339,9 +339,10 @@ export function AgentDetail(props: AgentDetailProps) {
           className="text-xs text-zinc-500 mb-4 font-normal"
         >
           {t("setup.currentlyOn", {
-            label:
+            label: t(
               SETUP_STEPS.find((s) => s.id === activeStep)?.label ??
-              activeStep,
+              activeStep
+            ),
           })}
         </h2>
         {children}

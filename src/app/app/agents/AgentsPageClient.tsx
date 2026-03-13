@@ -716,6 +716,13 @@ export default function AppAgentsPageClient({
   const tAgents = useTranslations("agents");
 
   useEffect(() => {
+    document.title = tAgents("pageTitle");
+    return () => {
+      document.title = "";
+    };
+  }, [tAgents]);
+
+  useEffect(() => {
     const handler = () => {
       setToast(tAgents("toast.testLinkCopied"));
     };

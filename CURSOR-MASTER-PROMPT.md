@@ -1,198 +1,166 @@
-You are an implementation engineer. This is the LAST pass. Three categories of fixes remain. Do every single one. Do not plan. Do not narrate. Do not stop partway. Open files, edit, save, move on.
+You are an implementation engineer. This is a TARGETED fix pass. Three bugs remain that are visible to users right now on the live site. Do every single one. Do not plan. Do not narrate. Do not stop partway. Open files, edit, save, move on.
 
 ---
 
-## ITEM 1: Migrate 27 remaining hardcoded toast strings to i18n
+## BUG 1: Campaigns page — double-nested i18n keys (CRITICAL — visible on live site)
 
-These 6 files still have hardcoded English strings in setToast() calls. Convert every one to use useTranslations(). If the file doesn't already call useTranslations, add it. Add all new keys to en.json AND all 5 other locale files (es, fr, de, pt, ja) with English values as placeholders.
+**File: `src/app/app/campaigns/page.tsx`**
 
-### 1A: `src/app/app/settings/billing/page.tsx`
+The page uses `useTranslations("campaigns")` at line 90 which sets the namespace to "campaigns". But then it references keys WITH the "campaigns." prefix, creating double-nesting:
 
-Add `const tBilling = useTranslations("billing");` (or use existing).
+- `t("campaigns.pageTitle")` resolves to `campaigns.campaigns.pageTitle` → KEY NOT FOUND → shows raw key as browser tab title
+- `t("campaigns.type.leadFollowup")` resolves to `campaigns.campaigns.type.leadFollowup` → KEY NOT FOUND
+- Same for all source labelKeys
 
-| Line | Current | Replace with |
-|------|---------|-------------|
-| 43 | `"Plan updated. Your new features are available now."` | `tBilling("toast.planUpdated")` |
-| ~100 | `data?.error ?? "Could not pause coverage."` | `data?.error ?? tBilling("toast.pauseFailed")` |
-| ~104 | `data?.message ?? "Coverage paused."` | `data?.message ?? tBilling("toast.paused")` |
-| 107 | `"Could not pause coverage."` | `tBilling("toast.pauseFailed")` |
-| 178 | `"Could not open payment settings."` | `tBilling("toast.paymentFailed")` |
-| 200 | `"Could not open billing portal."` | `tBilling("toast.portalFailed")` |
+### Fix 1A: Document title (line 118)
 
-Add to en.json under `"billing"`:
-```json
-"toast": {
-  "planUpdated": "Plan updated. Your new features are available now.",
-  "pauseFailed": "Could not pause coverage.",
-  "paused": "Coverage paused.",
-  "paymentFailed": "Could not open payment settings.",
-  "portalFailed": "Could not open billing portal."
-}
+Change:
+```ts
+document.title = t("campaigns.pageTitle");
+```
+To:
+```ts
+document.title = t("pageTitle");
 ```
 
-### 1B: `src/app/app/settings/phone/page.tsx`
+### Fix 1B: TYPE_OPTIONS labelKeys (lines 39-44)
 
-Add `const tPhone = useTranslations("phone");` (or use existing).
-
-| Line | Current | Replace with |
-|------|---------|-------------|
-| 225 | `"Number connected. You can now receive calls and texts."` | `tPhone("toast.numberConnected")` |
-| 260 | `"Settings saved."` | `tPhone("toast.saved")` |
-| 269 | `"Something went wrong."` | `tPhone("toast.error")` |
-| 284 | `"Create an agent first in the Agents section, then try again."` | `tPhone("toast.createAgentFirst")` |
-| 306 | `"Calling you now — answer your phone to hear your agent."` | `tPhone("toast.testCallStarted")` |
-| 309 | `"Something went wrong. Try again."` | `tPhone("toast.errorRetry")` |
-| 616 | `"Code sent. Check your phone."` | `tPhone("toast.codeSent")` |
-| 621 | `"Use 'Get a new AI number' to get a dedicated line."` | `tPhone("toast.getAiNumber")` |
-| 666 | `"Phone verified ✓"` | `tPhone("toast.phoneVerified")` |
-| 733 | `"We'll notify you when numbers are available."` | `tPhone("toast.waitlistJoined")` |
-| 796 | `"Code sent. Check your phone."` | `tPhone("toast.codeSent")` |
-| 800 | `"Use 'Get a new AI number' to get a dedicated line."` | `tPhone("toast.getAiNumber")` |
-| 857 | `"Phone verified ✓"` | `tPhone("toast.phoneVerified")` |
-
-Add to en.json under `"phone"`:
-```json
-"toast": {
-  "numberConnected": "Number connected. You can now receive calls and texts.",
-  "saved": "Settings saved.",
-  "error": "Something went wrong.",
-  "createAgentFirst": "Create an agent first in the Agents section, then try again.",
-  "testCallStarted": "Calling you now — answer your phone to hear your agent.",
-  "errorRetry": "Something went wrong. Try again.",
-  "codeSent": "Code sent. Check your phone.",
-  "getAiNumber": "Use 'Get a new AI number' to get a dedicated line.",
-  "phoneVerified": "Phone verified",
-  "waitlistJoined": "We'll notify you when numbers are available."
-}
+Change:
+```ts
+const TYPE_OPTIONS = [
+  { id: "lead_followup", labelKey: "campaigns.type.leadFollowup" },
+  { id: "appointment_reminder", labelKey: "campaigns.type.appointmentReminder" },
+  { id: "reactivation", labelKey: "campaigns.type.reactivation" },
+  { id: "cold_outreach", labelKey: "campaigns.type.coldOutreach" },
+  { id: "review_request", labelKey: "campaigns.type.reviewRequest" },
+  { id: "custom", labelKey: "campaigns.type.custom" },
+];
+```
+To:
+```ts
+const TYPE_OPTIONS = [
+  { id: "lead_followup", labelKey: "type.leadFollowup" },
+  { id: "appointment_reminder", labelKey: "type.appointmentReminder" },
+  { id: "reactivation", labelKey: "type.reactivation" },
+  { id: "cold_outreach", labelKey: "type.coldOutreach" },
+  { id: "review_request", labelKey: "type.reviewRequest" },
+  { id: "custom", labelKey: "type.custom" },
+];
 ```
 
-### 1C: `src/app/app/settings/integrations/page.tsx`
+### Fix 1C: SOURCE_OPTIONS labelKeys (lines 57-62)
 
-Add `const tInteg = useTranslations("integrations");` (or use existing).
-
-| Line | Current | Replace with |
-|------|---------|-------------|
-| 93 | `"OAuth for this CRM will be available soon..."` | `tInteg("toast.oauthComingSoon")` |
-| 98 | `"Invalid integration."` | `tInteg("toast.invalidIntegration")` |
-| 150 | `"Webhook destination saved."` | `tInteg("toast.webhookSaved")` |
-| 153 | `"Could not save webhook settings."` | `tInteg("toast.webhookSaveFailed")` |
-| ~170 | `"Could not send webhook test."` | `tInteg("toast.webhookTestFailed")` |
-| 175 | `"Could not send webhook test."` | `tInteg("toast.webhookTestFailed")` |
-| 185 | `"Enter your email to join the WhatsApp waitlist."` | `tInteg("toast.whatsappEmailRequired")` |
-| 198 | `"You're on the list..."` | `tInteg("toast.whatsappWaitlisted")` |
-| 201 | `"Something went wrong. Try again."` | `tInteg("toast.error")` |
-| 204 | `"Something went wrong. Try again."` | `tInteg("toast.error")` |
-
-Add to en.json under `"integrations"`:
-```json
-"toast": {
-  "oauthComingSoon": "OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.",
-  "invalidIntegration": "Invalid integration.",
-  "webhookSaved": "Webhook destination saved.",
-  "webhookSaveFailed": "Could not save webhook settings.",
-  "webhookTestFailed": "Could not send webhook test.",
-  "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
-  "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
-  "error": "Something went wrong. Try again."
-}
+Change:
+```ts
+const SOURCE_OPTIONS = [
+  { id: "", labelKey: "campaigns.source.any" },
+  { id: "inbound_call", labelKey: "campaigns.source.inboundCall" },
+  { id: "outbound", labelKey: "campaigns.source.outbound" },
+  { id: "website", labelKey: "campaigns.source.website" },
+  { id: "referral", labelKey: "campaigns.source.referral" },
+];
+```
+To:
+```ts
+const SOURCE_OPTIONS = [
+  { id: "", labelKey: "source.any" },
+  { id: "inbound_call", labelKey: "source.inboundCall" },
+  { id: "outbound", labelKey: "source.outbound" },
+  { id: "website", labelKey: "source.website" },
+  { id: "referral", labelKey: "source.referral" },
+];
 ```
 
-### 1D: `src/app/app/settings/call-rules/page.tsx`
+### Fix 1D: Search the ENTIRE file for any other t("campaigns.XYZ") calls
 
-Add `const tRules = useTranslations("callRules");` (or use existing).
-
-| Line | Current | Replace with |
-|------|---------|-------------|
-| 13 | `"Call rules saved"` | `tRules("toast.saved")` |
-
-Add to en.json:
-```json
-"callRules": {
-  "toast": {
-    "saved": "Call rules saved"
-  }
-}
-```
-
-### 1E: `src/app/app/messages/page.tsx`
-
-Add `const tMessages = useTranslations("messages");` (or use existing).
-
-| Line | Current | Replace with |
-|------|---------|-------------|
-| 179 | `"Add this contact in Leads first to send messages."` | `tMessages("toast.addContactFirst")` |
-| 196 | `"Message sent."` | `tMessages("toast.sent")` |
-
-Add to en.json under `"messages"`:
-```json
-"toast": {
-  "addContactFirst": "Add this contact in Leads first to send messages.",
-  "sent": "Message sent."
-}
-```
-
-### 1F: Copy ALL new toast keys to locale files
-
-After adding all keys to en.json, copy the exact same keys (with English values as placeholders) to:
-- `src/i18n/messages/es.json`
-- `src/i18n/messages/fr.json`
-- `src/i18n/messages/de.json`
-- `src/i18n/messages/pt.json`
-- `src/i18n/messages/ja.json`
+Search for `t("campaigns.` in the file and remove the `campaigns.` prefix from ALL of them, since the namespace already handles it. This includes toast keys, form labels, empty state messages — EVERYTHING. The namespace `"campaigns"` is already set via `useTranslations("campaigns")`.
 
 ---
 
-## ITEM 2: Add document.title to 8 settings/tool pages
+## BUG 2: Agents page — "Currently: steps.knowledge" showing raw i18n key
 
-These pages show the generic "Recall Touch — AI Phone Calls, Handled" browser tab title. Each needs a specific title via `document.title = t("...")` inside a useEffect.
+**File: `src/app/app/agents/components/AgentDetail.tsx` (lines ~341-345)**
 
-For each file below, add this pattern inside the component (after existing useTranslations calls):
+The code passes the raw i18n key string as the label value instead of translating it first:
+
+```tsx
+{t("setup.currentlyOn", {
+  label:
+    SETUP_STEPS.find((s) => s.id === activeStep)?.label ??
+    activeStep,
+})}
+```
+
+`SETUP_STEPS[n].label` is a key like `"steps.knowledge"`, NOT the translated text. So the output is "Currently: steps.knowledge" instead of "Currently: Knowledge".
+
+### Fix:
+
+Change to:
+```tsx
+{t("setup.currentlyOn", {
+  label: t(
+    SETUP_STEPS.find((s) => s.id === activeStep)?.label ??
+    activeStep
+  ),
+})}
+```
+
+This translates the label key first, then passes the translated text to the interpolation.
+
+---
+
+## BUG 3: Agents page — missing document.title
+
+**File: `src/app/app/agents/AgentsPageClient.tsx`**
+
+The agents page never sets `document.title`, so the browser tab shows a generic title. This is the most-visited page in the entire app.
+
+### Fix 3A: Add document.title to AgentsPageClient.tsx
+
+Find the component's existing useEffect hooks (near the top of the component body). Add:
 
 ```ts
-useEffect(() => { document.title = t("pageTitle"); }, [t]);
+useEffect(() => {
+  document.title = t("pageTitle");
+  return () => { document.title = ""; };
+}, [t]);
 ```
 
-And add the corresponding `"pageTitle"` key to en.json under the page's namespace.
+The component already has `const t = useTranslations("agents");` so this will resolve to `agents.pageTitle`.
 
-### Pages to update:
+### Fix 3B: Add the key to en.json
 
-| File | Namespace | Title to add to en.json |
-|------|-----------|------------------------|
-| `src/app/app/settings/phone/page.tsx` | `"phone"` | `"pageTitle": "Phone Settings — Recall Touch"` |
-| `src/app/app/settings/billing/page.tsx` | `"billing"` | `"pageTitle": "Billing — Recall Touch"` |
-| `src/app/app/settings/integrations/page.tsx` | `"integrations"` | `"pageTitle": "Integrations — Recall Touch"` |
-| `src/app/app/settings/call-rules/page.tsx` | `"callRules"` | `"pageTitle": "Call Rules — Recall Touch"` |
-| `src/app/app/settings/agent/page.tsx` | `"settings"` | `"pageTitle": "Agent Settings — Recall Touch"` |
-| `src/app/app/developer/page.tsx` | `"developer"` | `"pageTitle": "Developer — Recall Touch"` |
-| `src/app/app/messages/page.tsx` | `"messages"` | `"pageTitle": "Messages — Recall Touch"` |
-| `src/app/app/call-intelligence/page.tsx` | `"callIntelligence"` | `"pageTitle": "Call Intelligence — Recall Touch"` |
+Add `"pageTitle": "Agents — Recall Touch"` inside the `"agents"` object in `src/i18n/messages/en.json`.
 
-If any page doesn't have `useTranslations` yet, add it with the appropriate namespace. If the namespace doesn't exist in en.json, create it with at least the `"pageTitle"` key.
+### Fix 3C: Add to all locale files
 
-Add all pageTitle keys to all 6 locale files.
+Add the same key to es.json, fr.json, de.json, pt.json, ja.json under their `"agents"` objects with the English value as placeholder.
 
 ---
 
-## ITEM 3: Change "Join waitlist" to "Get product updates"
+## VERIFICATION: Audit all other pages for the same double-nesting bug
 
-File: `src/components/sections/SocialProof.tsx` (~line 86)
+Before committing, quickly scan ALL files that use `useTranslations("NAMESPACE")` and then call `t("NAMESPACE.something")`. The pattern `useTranslations("X")` + `t("X.key")` is ALWAYS wrong — it should be `t("key")`.
 
-The product is LIVE, not in waitlist mode. Find the "Join waitlist" button text and change it to "Get updates". Also find the heading text near it — if it says anything about a waitlist, change it to "Stay updated" or "Get product updates".
+Run this check:
+```bash
+grep -rn 'useTranslations(' src/app/app/ | grep -v node_modules
+```
 
-Also find the email input placeholder if it says anything about waitlist and update it.
+For each page where namespace is NOT empty string, verify that no t() calls repeat the namespace prefix.
 
 ---
 
-## ITEM 4: Typecheck, build, commit, push
+## FINAL: Build and push
 
 ```bash
-npx tsc --noEmit && npm run build && npm test
+npx tsc --noEmit && npm run build
 ```
 
 Fix ALL failures. Then:
 
 ```bash
-git add -A && git commit -m "feat: complete i18n migration, page titles, product copy polish" && git push origin main
+git add -A && git commit -m "fix: campaigns double-nested i18n keys, agents page title, step label translation" && git push origin main
 git log --oneline -3
 ```
 
@@ -200,4 +168,4 @@ Paste ONLY the git log output.
 
 ---
 
-START. Item 1A. Open src/app/app/settings/billing/page.tsx. Migrate all toast strings. DO NOT STOP UNTIL ALL 4 ITEMS ARE COMPLETE. GO.
+START. Bug 1A. Open src/app/app/campaigns/page.tsx line 118. Fix document.title. Then continue through ALL items. DO NOT STOP UNTIL COMPLETE. GO.

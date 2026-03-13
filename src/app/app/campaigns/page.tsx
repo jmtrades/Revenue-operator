@@ -36,12 +36,12 @@ type CampaignRow = {
 };
 
 const TYPE_OPTIONS = [
-  { id: "lead_followup", labelKey: "campaigns.type.leadFollowup" },
-  { id: "appointment_reminder", labelKey: "campaigns.type.appointmentReminder" },
-  { id: "reactivation", labelKey: "campaigns.type.reactivation" },
-  { id: "cold_outreach", labelKey: "campaigns.type.coldOutreach" },
-  { id: "review_request", labelKey: "campaigns.type.reviewRequest" },
-  { id: "custom", labelKey: "campaigns.type.custom" },
+  { id: "lead_followup", labelKey: "type.leadFollowup" },
+  { id: "appointment_reminder", labelKey: "type.appointmentReminder" },
+  { id: "reactivation", labelKey: "type.reactivation" },
+  { id: "cold_outreach", labelKey: "type.coldOutreach" },
+  { id: "review_request", labelKey: "type.reviewRequest" },
+  { id: "custom", labelKey: "type.custom" },
 ];
 
 const LEAD_STATUS_OPTIONS = [
@@ -54,11 +54,11 @@ const LEAD_STATUS_OPTIONS = [
 ];
 
 const SOURCE_OPTIONS = [
-  { id: "", labelKey: "campaigns.source.any" },
-  { id: "inbound_call", labelKey: "campaigns.source.inboundCall" },
-  { id: "outbound", labelKey: "campaigns.source.outbound" },
-  { id: "website", labelKey: "campaigns.source.website" },
-  { id: "referral", labelKey: "campaigns.source.referral" },
+  { id: "", labelKey: "source.any" },
+  { id: "inbound_call", labelKey: "source.inboundCall" },
+  { id: "outbound", labelKey: "source.outbound" },
+  { id: "website", labelKey: "source.website" },
+  { id: "referral", labelKey: "source.referral" },
 ];
 
 const CAMPAIGNS_SNAPSHOT_PREFIX = "rt_campaigns_snapshot:";
@@ -115,7 +115,7 @@ export default function CampaignsPage() {
   });
 
   useEffect(() => {
-    document.title = t("campaigns.pageTitle");
+    document.title = t("pageTitle");
     return () => {
       document.title = "";
     };
@@ -558,7 +558,7 @@ export default function CampaignsPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  {t("campaigns.form.typeLabel")}
+                  {t("form.typeLabel")}
                 </label>
                 <select
                   value={form.type}
@@ -611,7 +611,7 @@ export default function CampaignsPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  {t("campaigns.form.sourceLabel")}
+                  {t("form.sourceLabel")}
                 </label>
                 <select
                   value={form.audienceSource}
