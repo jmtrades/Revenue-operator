@@ -1,12 +1,13 @@
 /**
  * POST /api/onboard/governance — set jurisdiction, approval mode, and initialize execution governance.
- * Deterministic, idempotent. No auth for onboarding. Returns { ok: true } or { ok: false, reason }.
+ * Deterministic, idempotent. When session is enabled, requires workspace access. Returns { ok: true } or { ok: false, reason }.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 const JURISDICTIONS = ["UK", "US-CA", "US-NY", "US-TX", "US-FL", "EU-GDPR"] as const;
 const APPROVAL_MODES = ["autopilot", "preview_required", "approval_required", "locked_script", "jurisdiction_locked"] as const;
@@ -24,6 +25,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!workspaceId) {
     return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const jurisdiction =
     body.jurisdiction && JURISDICTIONS.includes(body.jurisdiction as (typeof JURISDICTIONS)[number])

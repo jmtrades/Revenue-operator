@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 function log(_event: string, _data: Record<string, unknown>): void {
   if (process.env.NODE_ENV === "development") {
@@ -28,6 +29,8 @@ export async function POST(req: NextRequest) {
     if (!workspaceId) {
       return NextResponse.json({ ok: false, reason: "workspace_id_required" }, { status: 200 });
     }
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
 
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
