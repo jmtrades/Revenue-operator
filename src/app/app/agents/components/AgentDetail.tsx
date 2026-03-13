@@ -49,33 +49,33 @@ type StepDef = {
 const SETUP_STEPS: StepDef[] = [
   {
     id: "identity",
-    label: "agents.steps.identity",
-    description: "agents.steps.identityDescription",
+    label: "steps.identity",
+    description: "steps.identityDescription",
   },
   {
     id: "voice",
-    label: "agents.steps.voice",
-    description: "agents.steps.voiceDescription",
+    label: "steps.voice",
+    description: "steps.voiceDescription",
   },
   {
     id: "knowledge",
-    label: "agents.steps.knowledge",
-    description: "agents.steps.knowledgeDescription",
+    label: "steps.knowledge",
+    description: "steps.knowledgeDescription",
   },
   {
     id: "behavior",
-    label: "agents.steps.behavior",
-    description: "agents.steps.behaviorDescription",
+    label: "steps.behavior",
+    description: "steps.behaviorDescription",
   },
   {
     id: "test",
-    label: "agents.steps.test",
-    description: "agents.steps.testDescription",
+    label: "steps.test",
+    description: "steps.testDescription",
   },
   {
     id: "golive",
-    label: "agents.steps.golive",
-    description: "agents.steps.goliveDescription",
+    label: "steps.golive",
+    description: "steps.goliveDescription",
   },
 ];
 

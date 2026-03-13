@@ -50,7 +50,11 @@
     "all": "All",
     "failed": "Failed",
     "closeDetails": "Close details",
-    "loadingApp": "Loading app"
+    "loadingApp": "Loading app",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
   },
   "toast": {
     "saved": "Settings saved",
@@ -252,6 +256,15 @@
       "testDescription": "Does it work?",
       "golive": "Go live",
       "goliveDescription": "Connect to your phone"
+    },
+    "status": {
+      "live": "Live",
+      "ready": "Ready",
+      "calls": "calls"
+    },
+    "links": {
+      "analytics": "Analytics",
+      "flow": "Flow builder"
     },
     "setupProgress": {
       "title": "Setup progress",

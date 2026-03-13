@@ -50,7 +50,11 @@
     "all": "Alle",
     "failed": "Fehlgeschlagen",
     "closeDetails": "Details schließen",
-    "loadingApp": "App wird geladen"
+    "loadingApp": "App wird geladen",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
   },
   "toast": {
     "saved": "Einstellungen gespeichert",
@@ -242,7 +246,25 @@
       "knowledge": "Wissen",
       "phone": "Telefon",
       "test": "Test",
-      "launch": "Start"
+      "launch": "Start",
+      "identity": "Mission",
+      "identityDescription": "Was macht dieser Agent?",
+      "voice": "Stimme",
+      "voiceDescription": "Wie klingt er?",
+      "knowledgeDescription": "Was weiß er?",
+      "behaviorDescription": "Wie verhält er sich?",
+      "testDescription": "Funktioniert er gut?",
+      "golive": "Live schalten",
+      "goliveDescription": "Mit deinem Telefon verbinden"
+    },
+    "status": {
+      "live": "Live",
+      "ready": "Ready",
+      "calls": "calls"
+    },
+    "links": {
+      "analytics": "Analytics",
+      "flow": "Flow builder"
     },
     "behavior": {
       "objectionHandling": {

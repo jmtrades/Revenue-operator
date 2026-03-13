@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { compileSystemPrompt } from "@/lib/business-brain";
-import { createAssistant, createOutboundCall } from "@/lib/vapi";
+import { getVoiceProvider } from "@/lib/voice";
 import { hasVapiServerKey } from "@/lib/vapi/env";
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
@@ -68,13 +68,22 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   });
   const firstMessage = (a.greeting && String(a.greeting).trim()) || `Hello, this is ${agent_name}. How can I help you today?`;
 
+  const voice = getVoiceProvider();
+
   let assistantId = a.vapi_agent_id ?? null;
   if (!assistantId) {
     try {
-      const { id: aid } = await createAssistant({
+      const { assistantId: aid } = await voice.createAssistant({
         name: `${agent_name} – ${workspaceId.slice(0, 8)}`,
         systemPrompt,
-        firstMessage,
+        voiceId: "",
+        voiceProvider: "elevenlabs",
+        language: "en",
+        tools: [],
+        maxDuration: undefined,
+        silenceTimeout: undefined,
+        backgroundDenoising: true,
+        metadata: { workspace_id: workspaceId },
       });
       assistantId = aid;
       await db.from("agents").update({ vapi_agent_id: assistantId, updated_at: new Date().toISOString() }).eq("id", a.id);
@@ -113,9 +122,9 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const e164 = /^\+?\d{10,15}$/.test(phone) ? phone : phone.replace(/\D/g, "").length === 10 ? `+1${phone.replace(/\D/g, "")}` : phone.replace(/\D/g, "");
   try {
-    await createOutboundCall({
+    await voice.createOutboundCall({
       assistantId,
-      customerNumber: e164 || phone,
+      phoneNumber: e164 || phone,
       metadata: { workspace_id: workspaceId, call_session_id: callSessionId, lead_id: leadId },
     });
   } catch (e) {

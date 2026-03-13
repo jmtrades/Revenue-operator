@@ -1,120 +1,203 @@
-You are an implementation engineer finishing the last 1% before go-live. Open files, edit them, save them. Do not plan. Do not narrate. Do not ask questions. Complete every item below, then commit and push.
-
-This codebase is 99% launch-ready. TypeScript passes. Build passes. 280 tests pass. All API routes have auth. All public pages have SEO metadata. All toast strings use i18n. Mock data is eliminated. The agent wizard is split into 7 child components. The activation wizard is split into 5 step components. Leads page is split into 3 components.
-
-What remains is a short list of final polish items. Do all of them.
+You are an implementation engineer. There are TWO priorities: fix a launch-blocking i18n bug, then create a voice provider abstraction layer so the system can swap off Vapi to a cheaper provider. Do not plan. Do not narrate. Open files, edit, save, move on.
 
 ---
 
-## ITEM 1: Reduce AgentsPageClient.tsx from 2,735 lines to under 1,500
+## ITEM 1 — CRITICAL: Fix i18n key path bug in agent step labels
 
-File: `src/app/app/agents/AgentsPageClient.tsx` (2,735 lines)
+There are TWO files with the same bug. Both store step labels with a redundant `"agents."` prefix. Since `useTranslations("agents")` already scopes to the `agents` namespace, calling `t("agents.steps.identity")` resolves to the non-existent path `agents.agents.steps.identity`.
 
-Child components already exist in `src/app/app/agents/components/`:
-- AgentList.tsx
-- AgentDetail.tsx
-- AgentKnowledgePanel.tsx
-- VoiceSelector.tsx
-- BehaviorStepContent.tsx
-- GoLiveStepContent.tsx
-- IdentityStepContent.tsx
+**File A: `src/app/app/agents/AgentsPageClient.tsx` (lines ~163-169)**
 
-The file is still 2,735 lines because large sections of inline JSX and logic remain. Identify the largest remaining inline sections and extract them:
-
-**A)** Find the phone/schedule step content (phone number assignment, active hours, timezone, voicemail behavior). Extract into `src/app/app/agents/components/PhoneScheduleStepContent.tsx`.
-
-**B)** Find the test step content (agent test panel integration, test results display). Extract into `src/app/app/agents/components/TestStepContent.tsx`.
-
-**C)** Find any remaining large inline sections (FAQ editing, transfer rules, agent stats/metrics display). Extract each into its own component if it's more than 100 lines.
-
-After all extractions:
-- `AgentsPageClient.tsx` must be under 1,500 lines.
-- Every extracted component must have `"use client"` on line 1.
-- Every extracted component must accept props for state and callbacks — do NOT duplicate state.
-- Run `npx tsc --noEmit` and fix any errors.
-
----
-
-## ITEM 2: Ensure "Coming soon" labels use i18n
-
-Three "Coming soon" strings remain as hardcoded English:
-
-**File: `src/app/app/settings/integrations/page.tsx` (2 instances around lines 287, 313):**
-Replace both hardcoded `Coming soon` text with `{t("integrations.comingSoon")}` using the page's existing `useTranslations` hook.
-
-**File: `src/app/sign-in/SignInForm.tsx` (line 226):**
-Replace `"Coming soon…"` with `{t("auth.signIn.googleComingSoon")}`.
-
-Add the keys to all 6 locale files (`src/i18n/messages/en.json`, `es.json`, `fr.json`, `de.json`, `pt.json`, `ja.json`):
-- English: `"comingSoon": "Coming soon"` (under integrations) and `"googleComingSoon": "Coming soon…"` (under auth.signIn)
-- Translate properly for each locale. Not English copy-paste.
-
----
-
-## ITEM 3: Add `"use client"` verification sweep
-
-Search for any component in `src/app/app/` and `src/components/` that calls `useState`, `useEffect`, `useCallback`, `useMemo`, `useTranslations`, `useRouter`, `useSearchParams`, or `usePathname` but does NOT have `"use client"` as its first line.
-
-```bash
-grep -rL '"use client"' src/app/app/ src/components/ --include="*.tsx" | xargs grep -l 'useState\|useEffect\|useCallback\|useMemo\|useTranslations\|useRouter\|useSearchParams\|usePathname' 2>/dev/null
+Change the SETUP_STEPS array from:
+```ts
+{ id: "identity", label: "agents.steps.identity", description: "agents.steps.identityDescription" },
+{ id: "voice", label: "agents.steps.voice", description: "agents.steps.voiceDescription" },
+{ id: "knowledge", label: "agents.steps.knowledge", description: "agents.steps.knowledgeDescription" },
+{ id: "behavior", label: "agents.steps.behavior", description: "agents.steps.behaviorDescription" },
+{ id: "test", label: "agents.steps.test", description: "agents.steps.testDescription" },
+{ id: "golive", label: "agents.steps.golive", description: "agents.steps.goliveDescription" },
+```
+To:
+```ts
+{ id: "identity", label: "steps.identity", description: "steps.identityDescription" },
+{ id: "voice", label: "steps.voice", description: "steps.voiceDescription" },
+{ id: "knowledge", label: "steps.knowledge", description: "steps.knowledgeDescription" },
+{ id: "behavior", label: "steps.behavior", description: "steps.behaviorDescription" },
+{ id: "test", label: "steps.test", description: "steps.testDescription" },
+{ id: "golive", label: "steps.golive", description: "steps.goliveDescription" },
 ```
 
-For every file this returns, add `"use client";` as line 1.
+**File B: `src/app/app/agents/components/AgentDetail.tsx` (lines ~50-79)**
+
+Apply the exact same fix — remove the `"agents."` prefix from every label and description string in the SETUP_STEPS array.
 
 ---
 
-## ITEM 4: Verify all empty states render properly
+## ITEM 2 — CRITICAL: Add 7 missing i18n keys to en.json
 
-Open each of these files and verify that when data is empty (no items), a meaningful empty state is shown — not a blank screen, not a spinner that never resolves, not just "No data":
+**File: `src/i18n/messages/en.json`**
 
-- `src/app/app/inbox/page.tsx` — should show explanation + action if no threads
-- `src/app/app/appointments/page.tsx` — should show explanation + action if no appointments
-- `src/app/app/knowledge/page.tsx` — should show explanation + action if no entries
-- `src/app/app/call-intelligence/page.tsx` — should show explanation if no call data
-- `src/app/app/contacts/page.tsx` — should show explanation if no contacts
-- `src/app/app/calendar/page.tsx` — should show explanation if no events
-- `src/app/app/messages/page.tsx` — should show explanation if no messages
-- `src/app/app/developer/webhooks/page.tsx` — should show explanation if no webhooks
+**A) Add to the `"agents"` object** (after the existing `"steps"` block, around line 255):
 
-For any page that shows a blank screen or raw "No X" text without using the `EmptyState` component from `src/components/ui/EmptyState.tsx`:
-1. Import `EmptyState`.
-2. Render it with an i18n title, i18n description, and an action button linking to the relevant setup page.
-3. Add the i18n keys to all 6 locale files.
-
----
-
-## ITEM 5: Verify Framer Motion easing compliance
-
-```bash
-grep -rn "ease:" src/ --include="*.tsx" --include="*.ts" | grep -v "easeOut\|easeInOut\|easeIn\|ease:" | grep "\["
+```json
+"status": {
+  "live": "Live",
+  "ready": "Ready",
+  "calls": "calls"
+},
+"links": {
+  "analytics": "Analytics",
+  "flow": "Flow builder"
+},
 ```
 
-If any results show cubic-bezier arrays like `ease: [0.4, 0, 0.2, 1]`, replace with `ease: 'easeOut'`.
+**B) Add to the `"common"` object** (after `"loadingApp"`, around line 53):
 
-Also run:
-```bash
-grep -rn "cubic-bezier" src/ --include="*.tsx" --include="*.ts"
+```json
+"status": {
+  "active": "Active",
+  "inactive": "Inactive"
+},
 ```
 
-Replace any matches with named easing strings.
+**C) Copy the same 7 keys into ALL other locale files:**
+- `src/i18n/messages/es.json`
+- `src/i18n/messages/fr.json`
+- `src/i18n/messages/de.json`
+- `src/i18n/messages/pt.json`
+- `src/i18n/messages/ja.json`
+
+Use the English values as placeholders. The structure must match exactly.
 
 ---
 
-## ITEM 6: Final build verification and commit
+## ITEM 3: Create voice provider abstraction layer
+
+The current codebase is tightly coupled to Vapi (44 files). Create an abstraction layer so we can swap providers without rewriting the entire app.
+
+**A) Create `src/lib/voice/types.ts`:**
+```ts
+export interface VoiceProviderConfig {
+  provider: "vapi" | "retell" | "bland" | "custom";
+  apiKey: string;
+  phoneNumberId?: string;
+  publicKey?: string;
+}
+
+export interface CreateAssistantParams {
+  name: string;
+  systemPrompt: string;
+  voiceId: string;
+  voiceProvider: "elevenlabs" | "deepgram" | "playht";
+  voiceModel?: string;
+  language?: string;
+  sttModel?: string;
+  sttProvider?: string;
+  tools?: AssistantTool[];
+  maxDuration?: number;
+  silenceTimeout?: number;
+  backgroundDenoising?: boolean;
+  metadata?: Record<string, string>;
+}
+
+export interface AssistantTool {
+  type: "function";
+  name: string;
+  description: string;
+  parameters: Record<string, unknown>;
+}
+
+export interface CreateCallParams {
+  assistantId: string;
+  phoneNumber: string;
+  fromNumber?: string;
+  metadata?: Record<string, string>;
+  voicemailBehavior?: "leave_message" | "hangup" | "sms";
+  voicemailMessage?: string;
+}
+
+export interface CallResult {
+  callId: string;
+  status: "queued" | "ringing" | "in-progress" | "completed" | "failed";
+  provider: string;
+}
+
+export interface WebhookEvent {
+  type: "call-started" | "tool-call" | "end-of-call" | "transcript";
+  callId: string;
+  metadata?: Record<string, string>;
+  transcript?: string;
+  summary?: string;
+  recordingUrl?: string;
+  duration?: number;
+  toolName?: string;
+  toolArgs?: Record<string, unknown>;
+}
+
+export interface VoiceProvider {
+  createAssistant(params: CreateAssistantParams): Promise<{ assistantId: string }>;
+  updateAssistant(assistantId: string, params: Partial<CreateAssistantParams>): Promise<void>;
+  deleteAssistant(assistantId: string): Promise<void>;
+  createOutboundCall(params: CreateCallParams): Promise<CallResult>;
+  createInboundCall(twilioCallSid: string, assistantId: string): Promise<string>; // returns TwiML
+  parseWebhookEvent(body: unknown): WebhookEvent;
+}
+```
+
+**B) Create `src/lib/voice/providers/vapi.ts`:**
+Implement the `VoiceProvider` interface wrapping the existing code from `src/lib/vapi/client.ts`. Move ALL Vapi-specific logic (API URL, headers, request format) here. Import from `src/lib/vapi/client.ts` where possible — DO NOT rewrite working code, just wrap it.
+
+**C) Create `src/lib/voice/index.ts`:**
+```ts
+import { VoiceProvider, VoiceProviderConfig } from "./types";
+import { VapiProvider } from "./providers/vapi";
+
+export function getVoiceProvider(config?: VoiceProviderConfig): VoiceProvider {
+  const provider = config?.provider ?? process.env.VOICE_PROVIDER ?? "vapi";
+  switch (provider) {
+    case "vapi":
+      return new VapiProvider();
+    // Future: case "retell": return new RetellProvider();
+    // Future: case "bland": return new BlandProvider();
+    default:
+      return new VapiProvider();
+  }
+}
+
+export * from "./types";
+```
+
+**D) Update ONE API route as proof of concept:**
+In `src/app/api/agents/[id]/test-call/route.ts`, replace direct Vapi imports with:
+```ts
+import { getVoiceProvider } from "@/lib/voice";
+const voice = getVoiceProvider();
+```
+
+Then use `voice.createOutboundCall()` instead of the direct Vapi call. Keep the existing behavior identical.
+
+**E) Add env var:**
+Add `VOICE_PROVIDER=vapi` to `.env.example` (or `.env.local.example`). Document that this can be changed to swap providers.
+
+DO NOT refactor all 44 files. Just create the abstraction layer + update the one test-call route. The rest will be migrated incrementally.
+
+---
+
+## ITEM 4: Typecheck, build, commit, push
 
 ```bash
 npx tsc --noEmit && npm run build && npm test
 ```
 
-Fix ANY failures. Then:
+Fix any failures. Then:
 
 ```bash
-git add -A && git commit -m "feat: final go-live polish — agent component split, i18n coming-soon, use-client sweep, empty states, easing audit" && git push origin main
-git log --oneline -5
+git add -A && git commit -m "fix: i18n agent keys + voice provider abstraction layer" && git push origin main
+git log --oneline -3
 ```
 
-Paste ONLY the git log output. No words. No summaries.
+Paste ONLY the git log output.
 
 ---
 
-START. Item 1. Open `src/app/app/agents/AgentsPageClient.tsx`. Find the largest remaining inline sections. Extract them. GO.
+START. Item 1. Open AgentsPageClient.tsx line 163. Fix the step labels. GO.

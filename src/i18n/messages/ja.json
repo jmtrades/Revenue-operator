@@ -50,7 +50,11 @@
     "all": "すべて",
     "failed": "失敗",
     "closeDetails": "詳細を閉じる",
-    "loadingApp": "アプリを読み込み中"
+    "loadingApp": "アプリを読み込み中",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
   },
   "toast": {
     "saved": "設定を保存しました",
@@ -242,7 +246,25 @@
       "knowledge": "ナレッジ",
       "phone": "電話",
       "test": "テスト",
-      "launch": "ローンチ"
+      "launch": "ローンチ",
+      "identity": "ミッション",
+      "identityDescription": "このエージェントは何をしますか？",
+      "voice": "ボイス",
+      "voiceDescription": "どんな声ですか？",
+      "knowledgeDescription": "何を知っていますか？",
+      "behaviorDescription": "どのように振る舞いますか？",
+      "testDescription": "正しく動作していますか？",
+      "golive": "本番稼働",
+      "goliveDescription": "電話に接続する"
+    },
+    "status": {
+      "live": "Live",
+      "ready": "Ready",
+      "calls": "calls"
+    },
+    "links": {
+      "analytics": "Analytics",
+      "flow": "Flow builder"
     },
     "behavior": {
       "objectionHandling": {
