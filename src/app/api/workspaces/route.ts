@@ -24,20 +24,40 @@ export async function GET(req: NextRequest) {
     if (error) return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
     return NextResponse.json({ workspaces: data ?? [] });
   }
+  // Session disabled (dev): never list all workspaces in production — would leak tenant ids/names.
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const { data, error } = await db.from("workspaces").select("id, name, created_at").order("created_at", { ascending: false });
   if (error) return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
   return NextResponse.json({ workspaces: data ?? [] });
 }
 
 export async function POST(request: NextRequest) {
-  let body: { name: string; owner_id: string };
+  // Without session auth, POST would allow creating workspaces for any owner_id — block in production.
+  if (process.env.NODE_ENV === "production" && !isSessionEnabled()) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let body: { name: string; owner_id?: string };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, owner_id } = body;
+  const name = body.name;
+  let owner_id = body.owner_id;
+
+  if (isSessionEnabled()) {
+    const session = await getSession(request);
+    if (!session?.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    // Force owner to session user — do not trust body.owner_id.
+    owner_id = session.userId;
+  }
+
   if (!name || !owner_id) {
     return NextResponse.json(
       { error: "name and owner_id required" },
