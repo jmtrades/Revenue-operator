@@ -638,6 +638,21 @@
     "title": "Kampagnen",
     "pageTitle": "Kampagnen — Recall Touch",
     "create": "Kampagne erstellen",
+    "loading": "Kampagnen werden geladen…",
+    "statTotal": "Kampagnen gesamt",
+    "statActive": "Aktive Kampagnen",
+    "statContacted": "Kontaktiert",
+    "statConverted": "Konvertiert",
+    "estRoi": "Gesch. ROI",
+    "metricContacts": "Kontakte",
+    "metricContacted": "Kontaktiert",
+    "metricReached": "Erreicht",
+    "metricConverted": "Konvertiert",
+    "edit": "Bearbeiten",
+    "pause": "Pause",
+    "launchCampaign": "Kampagne starten",
+    "remaining": "Verbleibend",
+    "failed": "Fehlgeschlagen",
     "form": {
       "typeLabel": "Typ",
       "sourceLabel": "Quelle"
@@ -659,7 +674,8 @@
     },
     "empty": {
       "title": "Noch keine Kampagnen",
-      "body": "Nutze Kampagnen, um verpasste Anrufe zurückzugewinnen, alte Leads zu reaktivieren und deinen Kalender zu füllen."
+      "body": "Nutze Kampagnen, um verpasste Anrufe zurückzugewinnen, alte Leads zu reaktivieren und deinen Kalender zu füllen.",
+      "description": "Erstelle deine erste Kampagne, um Leads nachzuverfolgen, Terminerinnerungen zu senden oder Kontakte zu reaktivieren."
     },
     "new": "Neue Kampagne",
     "removeStep": "Schritt entfernen",

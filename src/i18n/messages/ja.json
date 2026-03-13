@@ -638,6 +638,21 @@
     "title": "キャンペーン",
     "pageTitle": "キャンペーン — Recall Touch",
     "create": "キャンペーンを作成",
+    "loading": "キャンペーンを読み込み中…",
+    "statTotal": "キャンペーン合計",
+    "statActive": "アクティブなキャンペーン",
+    "statContacted": "接触済み",
+    "statConverted": "コンバート",
+    "estRoi": "推定ROI",
+    "metricContacts": "コンタクト",
+    "metricContacted": "接触済み",
+    "metricReached": "リーチ",
+    "metricConverted": "コンバート",
+    "edit": "編集",
+    "pause": "一時停止",
+    "launchCampaign": "キャンペーンを開始",
+    "remaining": "残り",
+    "failed": "失敗",
     "form": {
       "typeLabel": "種類",
       "sourceLabel": "ソース"
@@ -659,7 +674,8 @@
     },
     "empty": {
       "title": "まだキャンペーンがありません",
-      "body": "キャンペーンを使って不在着信を取り戻し、休眠リードを再活性化し、カレンダーを埋めましょう。"
+      "body": "キャンペーンを使って不在着信を取り戻し、休眠リードを再活性化し、カレンダーを埋めましょう。",
+      "description": "最初のキャンペーンを作成してリードのフォローアップ、予約リマインダーの送信、または連絡先の再活性化を行いましょう。"
     },
     "new": "新規キャンペーン",
     "removeStep": "ステップを削除",
