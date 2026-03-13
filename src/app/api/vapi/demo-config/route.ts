@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { hasVapiServerKey } from "@/lib/vapi/env";
 import { syncVapiAgent } from "@/lib/agents/sync-vapi-agent";
@@ -18,6 +19,8 @@ export async function GET(req: NextRequest) {
   if (!assistantId && publicKey) {
     const session = await getSession(req).catch(() => null);
     if (session?.workspaceId) {
+      const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+      if (authErr) return authErr;
       try {
         const db = getDb();
         const { data } = await db

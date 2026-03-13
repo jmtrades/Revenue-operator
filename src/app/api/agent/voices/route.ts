@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { CURATED_VOICES } from "@/lib/constants/curated-voices";
 
@@ -20,9 +21,11 @@ const PLAN_LIMITS: Record<string, number> = {
 export async function GET(req: NextRequest) {
   let plan = "starter";
 
-  try {
-    const session = await getSession(req);
-    if (session?.workspaceId) {
+  const session = await getSession(req);
+  if (session?.workspaceId) {
+    const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+    if (authErr) return authErr;
+    try {
       const db = getDb();
       const { data } = await db
         .from("workspaces")
@@ -33,9 +36,9 @@ export async function GET(req: NextRequest) {
       if (tier && PLAN_LIMITS[tier]) {
         plan = tier;
       }
+    } catch {
+      plan = "starter";
     }
-  } catch {
-    plan = "starter";
   }
 
   const limit = PLAN_LIMITS[plan] ?? PLAN_LIMITS.starter;

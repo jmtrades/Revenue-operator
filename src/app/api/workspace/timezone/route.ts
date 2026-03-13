@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
 
@@ -21,6 +22,9 @@ export async function GET(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ timezone: "America/New_York" });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
+
   const db = getDb();
   const { data, error } = await db
     .from("workspaces")
@@ -43,6 +47,9 @@ export async function PATCH(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ error: "No workspace" }, { status: 400 });
   }
+  const authErrPatch = await requireWorkspaceAccess(req, workspaceId);
+  if (authErrPatch) return authErrPatch;
+
   let body: unknown;
   try {
     body = await req.json();

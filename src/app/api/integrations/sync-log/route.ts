@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getSyncHistory } from "@/lib/integrations/sync-engine";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,9 @@ export async function GET(req: NextRequest) {
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
+
   const { searchParams } = new URL(req.url);
   const limit = Math.min(parseInt(searchParams.get("limit") ?? "50", 10) || 50, 100);
   const offset = parseInt(searchParams.get("offset") ?? "0", 10) || 0;

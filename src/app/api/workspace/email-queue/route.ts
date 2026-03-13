@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,8 @@ const MAX_LIMIT = 200;
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const limitParam = req.nextUrl.searchParams.get("limit");
   const limit = Math.min(MAX_LIMIT, Math.max(1, parseInt(limitParam ?? "", 10) || DEFAULT_LIMIT));

@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getTemplate } from "@/lib/integrations/email";
 
@@ -17,6 +18,8 @@ export async function GET(
 ) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const { slug } = await params;
   const template = await getTemplate(session.workspaceId, slug);
@@ -30,6 +33,8 @@ export async function PATCH(
 ) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErrPatch = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErrPatch) return authErrPatch;
 
   const { slug } = await params;
   let body: { name?: string; subject?: string; body_html?: string };
@@ -64,6 +69,8 @@ export async function DELETE(
 ) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErrDel = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErrDel) return authErrDel;
 
   const { slug } = await params;
   const db = getDb();

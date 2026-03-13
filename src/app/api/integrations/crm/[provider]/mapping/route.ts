@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
 import {
@@ -52,6 +53,9 @@ export async function GET(
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
+
   const { provider } = await ctx.params;
   if (!provider || !isCrmProviderId(provider)) {
     return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
@@ -90,6 +94,9 @@ export async function PUT(
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErrPut = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErrPut) return authErrPut;
+
   const { provider } = await ctx.params;
   if (!provider || !isCrmProviderId(provider)) {
     return NextResponse.json({ error: "Invalid provider" }, { status: 400 });

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import {
   getGoogleCalendarClientId,
@@ -62,6 +63,9 @@ export async function PATCH(
 ) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
+
   const { eventId } = await ctx.params;
   if (!eventId) return NextResponse.json({ error: "eventId required" }, { status: 400 });
 
@@ -106,6 +110,9 @@ export async function DELETE(
 ) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErrDel = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErrDel) return authErrDel;
+
   const { eventId } = await ctx.params;
   if (!eventId) return NextResponse.json({ error: "eventId required" }, { status: 400 });
 

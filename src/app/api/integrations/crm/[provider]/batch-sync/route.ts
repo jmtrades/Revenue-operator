@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { enqueueBatchOutbound } from "@/lib/integrations/sync-engine";
 import type { CrmProviderId } from "@/lib/integrations/field-mapper";
@@ -33,6 +34,9 @@ export async function POST(
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
+
   const { provider } = await ctx.params;
   if (!isAllowed(provider)) {
     return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
