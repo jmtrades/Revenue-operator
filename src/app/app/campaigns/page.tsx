@@ -784,9 +784,9 @@ export default function CampaignsPage() {
         {pauseConfirm && (
           <ConfirmDialog
             open
-            title="Pause this campaign?"
-            message={`Pause "${pauseConfirm.name}"? You can resume it later from this page.`}
-            confirmLabel="Pause"
+            title={t("pauseConfirmTitle")}
+            message={t("pauseConfirmMessage", { name: pauseConfirm.name })}
+            confirmLabel={t("pause")}
             onConfirm={() => {
               void toggleCampaign(pauseConfirm);
               setPauseConfirm(null);

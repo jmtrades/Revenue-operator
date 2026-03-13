@@ -656,6 +656,8 @@
     "edit": "Modifier",
     "pause": "Pause",
     "launchCampaign": "Lancer la campagne",
+    "pauseConfirmTitle": "Mettre cette campagne en pause ?",
+    "pauseConfirmMessage": "Mettre « {name} » en pause ? Vous pourrez la reprendre plus tard depuis cette page.",
     "remaining": "Restants",
     "failed": "Échecs",
     "form": {
@@ -1054,7 +1056,13 @@
     }
   },
   "team": {
-    "removeMemberTitle": "Supprimer le membre ?"
+    "heading": "Équipe",
+    "loading": "Chargement…",
+    "membersCount": "{count, plural, one {# membre} other {# membres}}",
+    "inviteMember": "Inviter un membre",
+    "removeMemberTitle": "Supprimer le membre ?",
+    "removeMemberMessage": "{name} n'aura plus accès à cet espace. Cette action est irréversible.",
+    "removeConfirmLabel": "Supprimer"
   },
   "knowledge": {
     "pageTitle": "Base de connaissances — Recall Touch",

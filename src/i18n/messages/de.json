@@ -651,6 +651,8 @@
     "edit": "Bearbeiten",
     "pause": "Pause",
     "launchCampaign": "Kampagne starten",
+    "pauseConfirmTitle": "Diese Kampagne pausieren?",
+    "pauseConfirmMessage": "«{name}» pausieren? Sie können sie später auf dieser Seite fortsetzen.",
     "remaining": "Verbleibend",
     "failed": "Fehlgeschlagen",
     "form": {
@@ -1049,7 +1051,13 @@
     }
   },
   "team": {
-    "removeMemberTitle": "Mitglied entfernen?"
+    "heading": "Team",
+    "loading": "Laden…",
+    "membersCount": "{count, plural, one {# Mitglied} other {# Mitglieder}}",
+    "inviteMember": "Mitglied einladen",
+    "removeMemberTitle": "Mitglied entfernen?",
+    "removeMemberMessage": "{name} verliert den Zugang zu diesem Arbeitsbereich. Das kann nicht rückgängig gemacht werden.",
+    "removeConfirmLabel": "Entfernen"
   },
   "knowledge": {
     "pageTitle": "Wissen — Recall Touch",

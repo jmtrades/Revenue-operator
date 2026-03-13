@@ -694,6 +694,8 @@
     "edit": "Editar",
     "pause": "Pausar",
     "launchCampaign": "Lanzar campaña",
+    "pauseConfirmTitle": "¿Pausar esta campaña?",
+    "pauseConfirmMessage": "¿Pausar «{name}»? Puedes reanudarla más tarde desde esta página.",
     "remaining": "Restantes",
     "failed": "Fallidos",
     "form": {
@@ -1092,7 +1094,13 @@
     }
   },
   "team": {
-    "removeMemberTitle": "¿Eliminar miembro?"
+    "heading": "Equipo",
+    "loading": "Cargando…",
+    "membersCount": "{count, plural, one {# miembro} other {# miembros}}",
+    "inviteMember": "Invitar miembro",
+    "removeMemberTitle": "¿Eliminar miembro?",
+    "removeMemberMessage": "{name} perderá el acceso a este espacio. No se puede deshacer.",
+    "removeConfirmLabel": "Eliminar"
   },
   "knowledge": {
     "pageTitle": "Conocimiento — Recall Touch",
