@@ -1122,7 +1122,16 @@
     "activity": "Filtrar actividad"
   },
   "developer": {
-    "pageTitle": "Developer — Recall Touch"
+    "pageTitle": "Developer — Recall Touch",
+    "webhooks": {
+      "title": "Webhooks",
+      "subtitle": "Envía eventos a tus endpoints HTTP con payloads firmados para llamadas, leads, citas y más.",
+      "empty": {
+        "title": "Aún no hay endpoints de webhook",
+        "body": "Crea un endpoint de webhook para recibir eventos de llamadas, leads y citas en tus sistemas en tiempo real.",
+        "action": "Abrir developer home"
+      }
+    }
   },
   "empty": {
     "generic": {
@@ -1211,7 +1220,10 @@
       "phoneRequired": "El teléfono es obligatorio"
     },
     "toast": {
-      "added": "Contacto añadido"
+      "added": "Contacto añadido",
+      "saveError": "No se pudo guardar el contacto. Inténtalo de nuevo.",
+      "deleteError": "No se pudo eliminar el contacto. Inténtalo de nuevo.",
+      "updateError": "No se pudo actualizar el contacto. Inténtalo de nuevo."
     }
   },
   "appointments": {

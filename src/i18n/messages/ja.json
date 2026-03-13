@@ -1078,7 +1078,16 @@
     "activity": "アクティビティをフィルター"
   },
   "developer": {
-    "pageTitle": "Developer — Recall Touch"
+    "pageTitle": "Developer — Recall Touch",
+    "webhooks": {
+      "title": "Webhooks",
+      "subtitle": "通話、リード、予約などの署名付きペイロードで HTTP エンドポイントにイベントを送信します。",
+      "empty": {
+        "title": "まだ Webhook エンドポイントがありません",
+        "body": "Webhook エンドポイントを作成して、通話・リード・予約イベントをリアルタイムで自社システムに送信できます。",
+        "action": "開発者ホームを開く"
+      }
+    }
   },
   "empty": {
     "generic": {
@@ -1167,7 +1176,10 @@
       "phoneRequired": "電話番号は必須です"
     },
     "toast": {
-      "added": "連絡先を追加しました"
+      "added": "連絡先を追加しました",
+      "saveError": "連絡先を保存できませんでした。もう一度お試しください。",
+      "deleteError": "連絡先を削除できませんでした。もう一度お試しください。",
+      "updateError": "連絡先を更新できませんでした。もう一度お試しください。"
     }
   },
   "appointments": {
