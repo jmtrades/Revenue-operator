@@ -19,7 +19,11 @@
     "compliance": "Compliance",
     "billing": "Abrechnung",
     "signOut": "Abmelden",
-    "notifications": "Benachrichtigungen"
+    "notifications": "Benachrichtigungen",
+    "sectionMain": "Haupt",
+    "sectionCommunication": "Kommunikation",
+    "sectionIntelligence": "Intelligence",
+    "sectionWorkspace": "Arbeitsbereich"
   },
   "common": {
     "save": "Speichern",
@@ -317,6 +321,7 @@
       "appointmentsBooked": "Termine gebucht",
       "estRevenue": "Gesch. Umsatz"
     },
+    "leadFunnel": "Lead-Trichter",
     "successRate": "Erfolg %"
   },
   "agents": {
