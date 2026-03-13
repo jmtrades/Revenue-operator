@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 const ANALYSIS_PROMPT = `Analyze this call transcript and extract behavioral patterns. Focus on what the agent/caller does WELL — tone, opening, discovery, objection handling, qualification, closing, empathy, persistence, pacing, recovery.
 
@@ -28,6 +29,8 @@ export async function POST(req: NextRequest) {
   if (!session?.userId || !session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   let body: { transcript?: string; title?: string; call_type?: string };
   try {
