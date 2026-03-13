@@ -438,6 +438,14 @@
       "voicemail": "Mailbox"
     },
     "detail": {
+      "pageTitle": "Anruf — Recall Touch",
+      "backToCalls": "Zurück zu Anrufen",
+      "breadcrumbDetail": "Anrufdetails",
+      "notFound": "Dieser Anruf konnte nicht gefunden werden.",
+      "playAria": "Abspielen",
+      "pauseAria": "Pause",
+      "seekAria": "Suchen",
+      "speakerAgent": "KI-Agent",
       "summaryTitle": "Anrufzusammenfassung",
       "sentiment": "Stimmung",
       "outcome": "Ergebnis",

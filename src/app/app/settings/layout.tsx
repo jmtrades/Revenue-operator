@@ -3,25 +3,29 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 
-const TABS: { label: string; href: string }[] = [
-  { label: "General", href: "/app/settings/business" },
-  { label: "Phone", href: "/app/settings/phone" },
-  { label: "Integrations", href: "/app/settings/integrations" },
-  { label: "Notifications", href: "/app/settings/notifications" },
-  { label: "Billing", href: "/app/settings/billing" },
-  { label: "Team", href: "/app/settings/team" },
+const TAB_KEYS = [
+  { key: "general" as const, href: "/app/settings/business" },
+  { key: "phone", href: "/app/settings/phone" },
+  { key: "integrations", href: "/app/settings/integrations" },
+  { key: "notifications", href: "/app/settings/notifications" },
+  { key: "billing", href: "/app/settings/billing" },
+  { key: "team", href: "/app/settings/team" },
 ];
 
 export default function SettingsLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const tNav = useTranslations("settings.nav");
+  const tSettings = useTranslations("settings");
 
   return (
     <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6">
       <div className="border-b border-white/[0.06] mb-6">
-        <nav className="flex gap-1 px-1 -mb-px overflow-x-auto" aria-label="Settings">
-          {TABS.map((tab) => {
+        <nav className="flex gap-1 px-1 -mb-px overflow-x-auto" aria-label={tSettings("title")}>
+          {TAB_KEYS.map((tab) => {
+            const label = tNav(tab.key);
             const active =
               pathname === tab.href || pathname.startsWith(`${tab.href}/`);
             return (
@@ -35,7 +39,7 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
                     : "border-transparent text-[#8B8B8D] hover:text-[#EDEDEF] hover:border-white/[0.12]",
                 )}
               >
-                {tab.label}
+                {label}
               </Link>
             );
           })}

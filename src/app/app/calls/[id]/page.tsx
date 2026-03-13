@@ -16,6 +16,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { cn } from "@/lib/cn";
 
@@ -28,6 +29,7 @@ function formatPlaybackTime(seconds: number): string {
 }
 
 function CallRecordingPlayer({ src }: { src: string }) {
+  const t = useTranslations("calls.detail");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -104,7 +106,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
             value={currentTime}
             onChange={seek}
             className="w-full h-2 rounded-full appearance-none bg-[var(--border-default)] accent-white cursor-pointer"
-            aria-label="Seek"
+            aria-label={t("seekAria")}
           />
           <div className="flex justify-between text-[11px] text-zinc-500">
             <span>{formatPlaybackTime(currentTime)}</span>
@@ -224,6 +226,7 @@ function persistCallDetailSnapshot(
 }
 
 export default function AppCallDetailPage() {
+  const t = useTranslations();
   const params = useParams();
   const { workspaceId } = useWorkspace();
   const id = typeof params.id === "string" ? params.id : "";
@@ -251,28 +254,28 @@ export default function AppCallDetailPage() {
           persistCallDetailSnapshot(workspaceId, id, nextCall);
         }
       })
-      .catch(() => setError("Could not load this call."))
+      .catch(() => setError(t("calls.detail.notFound")))
       .finally(() => setLoading(false));
-  }, [id, workspaceId]);
+  }, [id, workspaceId, t]);
 
   useEffect(() => {
-    if (call) document.title = "Call — Recall Touch";
+    if (call) document.title = t("calls.detail.pageTitle");
     return () => { document.title = ""; };
-  }, [call]);
+  }, [call, t]);
 
   const name =
     call?.matched_lead?.name ||
     call?.matched_lead?.email ||
     call?.matched_lead?.company ||
-    "Caller";
+    t("calls.defaultCaller");
   const summaryText = call?.summary || call?.analysis?.summary || null;
   const followupPlan = call?.analysis?.followup_plan || call?.analysis?.next_best_action || null;
   const sentiment = call?.analysis?.sentiment || null;
   const utterances = call?.utterances ?? null;
 
   const formatSpeaker = (speaker: string): string => {
-    if (speaker === "agent") return "AI agent";
-    if (speaker === "caller") return "Caller";
+    if (speaker === "agent") return t("calls.detail.speakerAgent");
+    if (speaker === "caller") return t("calls.defaultCaller");
     return speaker;
   };
 
@@ -281,7 +284,7 @@ export default function AppCallDetailPage() {
       <div className="p-6 md:p-8 max-w-4xl mx-auto">
         <div className="flex items-center gap-2 mb-4">
           <ArrowLeft className="w-4 h-4 text-zinc-500" />
-          <span className="text-sm text-zinc-400">Back to calls</span>
+          <span className="text-sm text-zinc-400">{t("calls.detail.backToCalls")}</span>
         </div>
         <div className="h-32 rounded-lg animate-pulse bg-[var(--bg-card)]" />
       </div>
@@ -297,11 +300,11 @@ export default function AppCallDetailPage() {
           className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back
+          {t("common.back")}
         </button>
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
           <p className="text-sm text-zinc-400">
-            {error ?? "This call could not be found."}
+            {error ?? t("calls.detail.notFound")}
           </p>
         </div>
       </div>
@@ -312,8 +315,8 @@ export default function AppCallDetailPage() {
     <div className="p-6 md:p-8 max-w-4xl mx-auto">
       <Breadcrumbs
         items={[
-          { label: "Calls", href: "/app/calls" },
-          { label: "Call detail" },
+          { label: t("nav.calls"), href: "/app/calls" },
+          { label: t("calls.detail.breadcrumbDetail") },
         ]}
       />
 

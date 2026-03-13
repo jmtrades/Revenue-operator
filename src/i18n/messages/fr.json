@@ -443,6 +443,14 @@
       "voicemail": "Messagerie vocale"
     },
     "detail": {
+      "pageTitle": "Appel — Recall Touch",
+      "backToCalls": "Retour aux appels",
+      "breadcrumbDetail": "Détail de l'appel",
+      "notFound": "Cet appel est introuvable.",
+      "playAria": "Lecture",
+      "pauseAria": "Pause",
+      "seekAria": "Rechercher",
+      "speakerAgent": "Agent IA",
       "summaryTitle": "Résumé de l'appel",
       "sentiment": "Sentiment",
       "outcome": "Résultat",
