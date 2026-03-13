@@ -592,14 +592,14 @@ export default function CallsPage() {
           );
         })}
         {pageItems.length === 0 && (
-          <p className="text-sm text-zinc-500 text-center py-4">No calls match these filters yet.</p>
+          <p className="text-sm text-zinc-500 text-center py-4">{t("calls.noMatchFilters")}</p>
         )}
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-3 text-xs text-zinc-500">
         <span>
-          Showing {pageItems.length === 0 ? 0 : start + 1}–
-          {Math.min(start + PAGE_SIZE, filtered.length)} of {filtered.length} calls
+          {t("calls.showing")} {pageItems.length === 0 ? 0 : start + 1}–
+          {Math.min(start + PAGE_SIZE, filtered.length)} {t("calls.of")} {filtered.length} {t("calls.callsLabel")}
         </span>
         <div className="flex items-center gap-1">
           <button
@@ -611,7 +611,7 @@ export default function CallsPage() {
             <ChevronLeft className="w-3 h-3" />
           </button>
           <span className="mx-1">
-            Page {pageSafe} / {totalPages}
+            {t("calls.page")} {pageSafe} / {totalPages}
           </span>
           <button
             type="button"

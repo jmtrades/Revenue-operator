@@ -580,29 +580,29 @@ export default function AppAnalyticsPage() {
       {/* KPI row — 5 stats with trends */}
       <KPIRow className="mb-6 lg:grid-cols-5">
         <StatCard
-          label="Total calls"
+          label={t("analytics.kpi.totalCalls")}
           value={totalCalls}
           trend={hasData ? 12 : undefined}
         />
         <StatCard
-          label="Avg handle time"
+          label={t("analytics.kpi.avgHandleTime")}
           value={Math.round(avgHandleTime)}
           suffix="s"
           trend={hasData ? 0 : undefined}
         />
         <StatCard
-          label="Lead conversion"
+          label={t("analytics.kpi.leadConversion")}
           value={leadConversionPct}
           suffix="%"
           trend={hasData ? 8 : undefined}
         />
         <StatCard
-          label="Appointments booked"
+          label={t("analytics.kpi.appointmentsBooked")}
           value={appointments}
           trend={hasData ? 5 : undefined}
         />
         <StatCard
-          label="Est. revenue"
+          label={t("analytics.kpi.estRevenue")}
           value={estRevenueImpact}
           prefix="$"
           trend={hasData ? 19 : undefined}

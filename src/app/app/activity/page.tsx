@@ -121,19 +121,19 @@ const getProgressLabels = (t: (k: string) => string): Record<string, string> => 
   agent: t("dashboard.progress.configureAgent"),
   phone: t("dashboard.progress.connectPhone"),
   test_call: t("dashboard.progress.testCall"),
-  contacts: "Import your contacts",
-  calendar: "Set up your calendar",
-  campaign: "Launch your first campaign",
-  team: "Invite your team",
-  services: "Services configured",
-  first_call: "Capture first lead",
-  use_cases: "Use cases selected",
-  voice: "Voice selected",
-  greeting: "Opening greeting set",
+  contacts: t("dashboard.progress.importContacts"),
+  calendar: t("dashboard.progress.setupCalendar"),
+  campaign: t("dashboard.progress.launchCampaign"),
+  team: t("dashboard.progress.inviteTeam"),
+  services: t("dashboard.progress.servicesConfigured"),
+  first_call: t("dashboard.progress.captureFirstLead"),
+  use_cases: t("dashboard.progress.useCasesSelected"),
+  voice: t("dashboard.progress.voiceSelected"),
+  greeting: t("dashboard.progress.openingGreetingSet"),
   knowledge: t("dashboard.progress.addKnowledge"),
-  behavior: "Behavior configured",
-  tested: "Agent tested",
-  launched: "Agent launched",
+  behavior: t("dashboard.progress.behaviorConfigured"),
+  tested: t("dashboard.progress.agentTested"),
+  launched: t("dashboard.progress.agentLaunched"),
 });
 
 function ActivityDateLabel() {
@@ -761,7 +761,7 @@ export default function AppActivityPage() {
               </p>
               {totalSteps > 0 && (
                 <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">
-                  {completedSteps} of {totalSteps} steps complete
+                  {t("dashboard.stepsComplete", { done: completedSteps, total: totalSteps })}
                 </p>
               )}
             </div>

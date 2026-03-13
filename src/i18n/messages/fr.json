@@ -6,7 +6,7 @@
     "dashboard": "Tableau de bord",
     "agents": "Agents",
     "calls": "Appels",
-    "leads": "Leads",
+    "leads": "Prospects",
     "campaigns": "Campagnes",
     "inbox": "Boîte de réception",
     "analytics": "Analyses",
@@ -223,13 +223,26 @@
       "appointments": "Rendez-vous",
       "urgent": "Urgent"
     },
+    "stepsComplete": "{done} sur {total} étapes terminées",
     "progress": {
       "setupBusinessProfile": "Configurez le profil de votre entreprise",
       "configureAgent": "Configurez votre premier agent IA",
       "connectPhone": "Connectez un numéro",
       "testCall": "Passez un appel test",
       "enableForwarding": "Activez le renvoi d'appels",
-      "addKnowledge": "Ajoutez des entrées à la base de connaissances"
+      "addKnowledge": "Ajoutez des entrées à la base de connaissances",
+      "importContacts": "Importez vos contacts",
+      "setupCalendar": "Configurez votre calendrier",
+      "launchCampaign": "Lancez votre première campagne",
+      "inviteTeam": "Invitez votre équipe",
+      "servicesConfigured": "Services configurés",
+      "captureFirstLead": "Premier lead capté",
+      "useCasesSelected": "Cas d'usage sélectionnés",
+      "voiceSelected": "Voix sélectionnée",
+      "openingGreetingSet": "Message d'accueil défini",
+      "behaviorConfigured": "Comportement configuré",
+      "agentTested": "Agent testé",
+      "agentLaunched": "Agent en ligne"
     },
     "dayLabels": {
       "mon": "Lun", "tue": "Mar", "wed": "Mer", "thu": "Jeu",
@@ -294,11 +307,15 @@
       }
     },
     "kpi": {
-      "totalCalls": "Nombre total d'appels",
+      "totalCalls": "Total d'appels",
       "answerRate": "Taux de réponse",
       "conversionRate": "Taux de conversion",
       "appointments": "Rendez-vous",
-      "estimatedRevenue": "Impact estimé sur les revenus"
+      "estimatedRevenue": "Impact estimé sur les revenus",
+      "avgHandleTime": "Durée moyenne",
+      "leadConversion": "Conversion leads",
+      "appointmentsBooked": "Rendez-vous pris",
+      "estRevenue": "Revenus est."
     },
     "successRate": "% de succès"
   },
