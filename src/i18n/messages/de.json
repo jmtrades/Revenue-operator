@@ -54,7 +54,9 @@
     "status": {
       "active": "Active",
       "inactive": "Inactive"
-    }
+    },
+    "item": "Element",
+    "items": "Elemente"
   },
   "toast": {
     "saved": "Einstellungen gespeichert",
@@ -856,6 +858,19 @@
     "noEntries": "Keine Einträge gefunden",
     "noEntriesHint": "Versuchen Sie, Ihre Filter anzupassen.",
     "addFirst": "Erstellen Sie Ihren ersten Eintrag",
+    "importHeading": "Verwandeln Sie Ihre Website in anrufbereites Wissen",
+    "importDescription": "Fügen Sie eine öffentliche FAQ-, Service- oder Preisseite ein. Wir schlagen Frage-Antwort-Paare vor, die Sie hinzufügen können.",
+    "importButton": "Importieren",
+    "importButtonLoading": "Importiere...",
+    "importErrorNotPublic": "Diese URL konnte nicht importiert werden. Prüfen Sie, ob sie öffentlich ist, und versuchen Sie es erneut.",
+    "importErrorGeneric": "Beim Importieren dieser URL ist ein Fehler aufgetreten. Versuchen Sie es in einem Moment erneut.",
+    "importSuggestionHint": "Klicken Sie auf einen Vorschlag, um ihn zu Ihrem Wissen hinzuzufügen.",
+    "answerPlaceholder": "Antworttext...",
+    "urlPlaceholder": "https://...",
+    "wordCount": "{count} Wörter",
+    "usageCount": "{count} Mal in Anrufen verwendet",
+    "gapFlag": "Anrufer benötigen mehr Informationen hierzu",
+    "testAnswerLabel": "KI würde antworten:",
     "gapsDescription": "Anrufer fragten nach diesen Themen, aber Ihr Inhalt ist begrenzt.",
     "mostReferencedDescription": "Die 5 am häufigsten verwendeten Einträge Ihres Agenten.",
     "toast": {

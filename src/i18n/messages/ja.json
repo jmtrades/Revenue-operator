@@ -54,7 +54,9 @@
     "status": {
       "active": "Active",
       "inactive": "Inactive"
-    }
+    },
+    "item": "件",
+    "items": "件"
   },
   "toast": {
     "saved": "設定を保存しました",
@@ -856,6 +858,19 @@
     "noEntries": "エントリーが見つかりません",
     "noEntriesHint": "フィルターを調整してみてください。",
     "addFirst": "最初のエントリーを追加",
+    "importHeading": "ウェブサイトを通話対応のナレッジに変換",
+    "importDescription": "公開されたFAQ、サービス、または料金ページを貼り付けてください。追加できるQ&Aペアを提案します。",
+    "importButton": "インポート",
+    "importButtonLoading": "インポート中...",
+    "importErrorNotPublic": "このURLをインポートできませんでした。公開されているか確認して再試行してください。",
+    "importErrorGeneric": "このURLのインポート中にエラーが発生しました。しばらくしてから再試行してください。",
+    "importSuggestionHint": "提案をクリックしてナレッジに追加します。",
+    "answerPlaceholder": "回答テキスト...",
+    "urlPlaceholder": "https://...",
+    "wordCount": "{count} 語",
+    "usageCount": "通話で {count} 回使用",
+    "gapFlag": "発信者はこれについてより多くの情報を必要としています",
+    "testAnswerLabel": "AIの応答:",
     "gapsDescription": "発信者がこれらのトピックについて質問しましたが、コンテンツが不足しています。",
     "mostReferencedDescription": "エージェントが通話で最も使用した上位5件のエントリー。",
     "toast": {
