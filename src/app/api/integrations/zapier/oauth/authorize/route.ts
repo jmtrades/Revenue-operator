@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { randomBytes } from "crypto";
 
@@ -16,6 +17,8 @@ export async function GET(req: NextRequest) {
     const loginUrl = `/sign-in?redirect=${encodeURIComponent(req.nextUrl.pathname + "?" + req.nextUrl.searchParams.toString())}`;
     return NextResponse.redirect(loginUrl);
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const redirectUri = req.nextUrl.searchParams.get("redirect_uri");
   const state = req.nextUrl.searchParams.get("state");

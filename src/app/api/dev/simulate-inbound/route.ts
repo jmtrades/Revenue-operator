@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { isDoctrineEnforced } from "@/lib/doctrine/enforce";
 import { ingestInboundAsSignal } from "@/lib/signals/ingest-inbound";
 import { processWebhookJob } from "@/lib/pipeline/process-webhook";
@@ -29,6 +30,8 @@ export async function POST(req: NextRequest) {
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const workspaceId = session.workspaceId;
   const db = getDb();

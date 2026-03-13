@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { sendAgentLiveEmail } from "@/lib/email/agent-live";
 import { buildStarterKnowledge, mergeKnowledgeItems } from "@/lib/workspace/starter-knowledge";
@@ -70,6 +71,9 @@ export async function POST(req: NextRequest) {
       }
       workspaceId = (created as { id: string }).id;
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+    } else {
+      const authErr = await requireWorkspaceAccess(req, workspaceId);
+      if (authErr) return authErr;
     }
 
     const starterKnowledge = buildStarterKnowledge({

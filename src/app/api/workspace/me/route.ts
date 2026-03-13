@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { buildWorkspaceReadiness } from "@/lib/workspace/readiness";
 
@@ -40,6 +41,8 @@ export async function GET(req: NextRequest) {
       progress: null,
     });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   try {
     const db = getDb();
@@ -211,6 +214,8 @@ export async function PATCH(req: NextRequest) {
   if (!session?.userId || !session.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErrPatch = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErrPatch) return authErrPatch;
 
   const STARTER_KNOWLEDGE: Array<{ q: string; a: string }> = [
     { q: "What are your hours?", a: "We are open Monday through Friday, 9 AM to 5 PM." },
