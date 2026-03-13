@@ -7,6 +7,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { createSharedTransaction } from "@/lib/shared-transaction-assurance";
 import { recordOrientationStatement } from "@/lib/orientation/records";
@@ -23,6 +24,8 @@ export async function POST(request: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   }
+  const authErr = await requireWorkspaceAccess(request, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: existing } = await db

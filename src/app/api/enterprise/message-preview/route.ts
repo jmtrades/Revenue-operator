@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { resolveDomainContext } from "@/lib/domain-packs/resolve";
 import { compileGovernedMessage } from "@/lib/speech-governance";
 
@@ -17,6 +18,8 @@ export async function GET(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   try {
     const { domain_type, jurisdiction } = await resolveDomainContext(workspaceId);
