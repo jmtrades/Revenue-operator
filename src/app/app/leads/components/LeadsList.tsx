@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Users } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -52,6 +53,7 @@ export function LeadsList({
   toggleSelected,
   openDrawer,
 }: LeadsListProps) {
+  const t = useTranslations("leads");
   if (loading) {
     return (
       <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
@@ -112,22 +114,21 @@ export function LeadsList({
           aria-hidden
         />
         <p className="text-sm font-medium text-white mb-1">
-          Leads appear when your AI captures them — or add your own
+          {t("empty.subtitle")}
         </p>
         <p className="text-xs text-zinc-500 mb-4">
-          Create leads from calls or add leads manually. Connect your CRM via
-          Settings → Integrations to sync with HubSpot, Salesforce, and more.
+          {t("empty.hint")}
         </p>
         <EmptyState
           icon={Users}
-          title="No leads yet"
-          description="Create a lead manually or connect your CRM. New leads from calls will appear here automatically."
+          title={t("empty.title")}
+          description={t("empty.description")}
           primaryAction={{
-            label: "Add lead",
+            label: t("addLead"),
             href: "/app/leads?add=1",
           }}
           secondaryAction={{
-            label: "Connect CRM",
+            label: t("empty.connectCrm"),
             href: "/app/settings/integrations",
           }}
         />

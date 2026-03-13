@@ -789,7 +789,11 @@
     },
     "empty": {
       "title": "No leads yet",
-      "body": "Your AI will start creating leads automatically as it talks to your customers."
+      "body": "Your AI will start creating leads automatically as it talks to your customers.",
+      "subtitle": "Leads appear when your AI captures them — or add your own",
+      "hint": "Create leads from calls or add leads manually. Connect your CRM via Settings → Integrations to sync with HubSpot, Salesforce, and more.",
+      "description": "Create a lead manually or connect your CRM. New leads from calls will appear here automatically.",
+      "connectCrm": "Connect CRM"
     },
     "saveLead": "Save lead",
     "toast": {
