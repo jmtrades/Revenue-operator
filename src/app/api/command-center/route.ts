@@ -21,6 +21,7 @@ import {
   responsibilityPhaseFromState,
   getDailyOperationalCycles,
 } from "@/lib/operational/presence";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 // Performance guard: cache slow responses
 const CACHE_TTL_MS = 30_000; // 30 seconds
@@ -29,6 +30,8 @@ const cache = new Map<string, { data: unknown; expires: number }>();
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   // Check cache first
   const cached = cache.get(workspaceId);

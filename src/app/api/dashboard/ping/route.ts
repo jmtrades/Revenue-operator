@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
@@ -15,17 +16,10 @@ export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ ok: true }); // no workspace: no-op
 
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
+
   const db = getDb();
-  const { data: ws } = await db
-    .from("workspaces")
-    .select("id, owner_id")
-    .eq("id", workspaceId)
-    .single();
-
-  if (!ws || (ws as { owner_id: string }).owner_id !== session.userId) {
-    return NextResponse.json({ ok: true }); // not found or not owner: no-op
-  }
-
   await db
     .from("workspaces")
     .update({ last_dashboard_open_at: new Date().toISOString() })
