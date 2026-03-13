@@ -12,6 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
@@ -59,6 +60,7 @@ function formatTime(iso: string): string {
 
 export default function DeveloperWebhooksPage() {
   const tCommon = useTranslations("common");
+  const tDev = useTranslations("developer.webhooks");
   const { workspaceId } = useWorkspace();
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -172,9 +174,9 @@ export default function DeveloperWebhooksPage() {
         <span>/</span>
         <span className="text-white">Webhooks</span>
       </div>
-      <h1 className="text-xl font-semibold text-white mb-1">Webhooks</h1>
+      <h1 className="text-xl font-semibold text-white mb-1">{tDev("title")}</h1>
       <p className="text-sm text-zinc-400 mb-6">
-        Send events to your endpoint. Configure URL, events, and a secret for signature verification.
+        {tDev("subtitle")}
       </p>
 
       <div className="flex justify-end mb-4">
@@ -192,9 +194,13 @@ export default function DeveloperWebhooksPage() {
           Loading…
         </div>
       ) : endpoints.length === 0 ? (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-zinc-500">
-          <Webhook className="w-10 h-10 mx-auto mb-3 opacity-50" />
-          <p>No webhook endpoints yet. Add one to receive call, lead, and appointment events.</p>
+        <div className="max-w-lg">
+          <EmptyState
+            icon={Webhook}
+            title={tDev("empty.title")}
+            description={tDev("empty.body")}
+            primaryAction={{ label: tDev("empty.action"), href: "/app/developer" }}
+          />
         </div>
       ) : (
         <div className="space-y-3">

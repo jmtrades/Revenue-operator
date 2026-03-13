@@ -72,7 +72,8 @@
       "title": "Iniciar sesión",
       "subtitle": "Bienvenido de nuevo a Recall Touch",
       "button": "Iniciar sesión",
-      "pageTitle": "Iniciar sesión — Recall Touch"
+      "pageTitle": "Iniciar sesión — Recall Touch",
+      "googleComingSoon": "Próximamente…"
     },
     "email": {
       "label": "Correo electrónico"
@@ -737,6 +738,13 @@
       "noShow": "No se presentó"
     }
   },
+  "messages": {
+    "empty": {
+      "title": "Aún no hay conversaciones",
+      "body": "Cuando tu IA empiece a enviar mensajes a tus contactos, todas las conversaciones aparecerán aquí.",
+      "action": "Revisar actividad reciente"
+    }
+  },
   "team": {
     "removeMemberTitle": "¿Eliminar miembro?"
   },
@@ -841,7 +849,12 @@
     }
   },
   "appointments": {
-    "pageTitle": "Citas — Recall Touch"
+    "pageTitle": "Citas — Recall Touch",
+    "empty": {
+      "title": "Aún no hay citas",
+      "body": "Cuando tu IA empiece a reservar en tu calendario, todas las citas aparecerán aquí.",
+      "action": "Abrir configuración del agente"
+    }
   },
   "keyboardShortcuts": {
     "modal": {
@@ -1103,7 +1116,8 @@
       "records": "Registros sincronizados",
       "errors": "Errores de sincronización",
       "viewLog": "Ver registro de sincronización"
-    }
+    },
+    "comingSoon": "Próximamente"
   },
   "email": {
     "templates": {

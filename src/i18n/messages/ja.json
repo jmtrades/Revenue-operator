@@ -72,7 +72,8 @@
       "title": "ログイン",
       "subtitle": "Recall Touch へお帰りなさい",
       "button": "ログイン",
-      "pageTitle": "サインイン — Recall Touch"
+      "pageTitle": "サインイン — Recall Touch",
+      "googleComingSoon": "近日公開予定…"
     },
     "email": {
       "label": "メールアドレス"
@@ -728,6 +729,13 @@
       "noShow": "無断キャンセル"
     }
   },
+  "messages": {
+    "empty": {
+      "title": "まだ会話はありません",
+      "body": "AI が連絡先にメッセージを送信し始めると、すべての会話がここに表示されます。",
+      "action": "最近のアクティビティを確認"
+    }
+  },
   "team": {
     "removeMemberTitle": "メンバーを削除しますか？"
   },
@@ -832,7 +840,12 @@
     }
   },
   "appointments": {
-    "pageTitle": "予約 — Recall Touch"
+    "pageTitle": "予約 — Recall Touch",
+    "empty": {
+      "title": "まだ予約はありません",
+      "body": "AI がカレンダーに予約を入れ始めると、すべての予約がここに表示されます。",
+      "action": "エージェント設定を開く"
+    }
   },
   "keyboardShortcuts": {
     "modal": {
@@ -1097,7 +1110,8 @@
       "records": "同期済みレコード数",
       "errors": "同期エラー",
       "viewLog": "同期ログを表示"
-    }
+    },
+    "comingSoon": "近日公開予定"
   },
   "email": {
     "templates": {

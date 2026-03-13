@@ -223,7 +223,7 @@ export default function SignInForm() {
                 fill="#EA4335"
               />
             </svg>
-            {googleBusy ? "Coming soon…" : "Continue with Google"}
+            {googleBusy ? t("signIn.googleComingSoon") : "Continue with Google"}
           </button>
 
           <p className="text-center text-[var(--text-tertiary)] text-[13px] mt-4">

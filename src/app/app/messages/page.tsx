@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Bot } from "lucide-react";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { useTranslations } from "next-intl";
 
 type ApiThread = {
   lead_id: string;
@@ -42,6 +44,7 @@ function formatMsgTime(iso: string): string {
 }
 
 export default function AppMessagesPage() {
+  const t = useTranslations("messages");
   const searchParams = useSearchParams();
   const toParam = searchParams.get("to")?.trim() ?? "";
   const leadIdParam = searchParams.get("lead_id")?.trim() ?? "";
@@ -218,8 +221,17 @@ export default function AppMessagesPage() {
           {loadingThreads ? (
             <div className="p-4 text-center text-xs text-zinc-500">Loading…</div>
           ) : threads.length === 0 ? (
-            <div className="p-4 text-center text-xs text-zinc-500">
-              No conversations yet. Messages from your call activity will appear here.
+            <div className="p-4">
+              <EmptyState
+                icon={Bot}
+                title={t("empty.title")}
+                description={t("empty.body")}
+                primaryAction={{
+                  label: t("empty.action"),
+                  href: "/app/activity",
+                }}
+                className="px-4 py-6"
+              />
             </div>
           ) : (
             threads.map((t) => (

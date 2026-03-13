@@ -72,7 +72,8 @@
       "title": "Entrar",
       "subtitle": "Bem-vindo de volta ao Recall Touch",
       "button": "Entrar",
-      "pageTitle": "Entrar — Recall Touch"
+      "pageTitle": "Entrar — Recall Touch",
+      "googleComingSoon": "Em breve…"
     },
     "email": {
       "label": "E-mail"
@@ -728,6 +729,13 @@
       "noShow": "Não compareceu"
     }
   },
+  "messages": {
+    "empty": {
+      "title": "Ainda não há conversas",
+      "body": "Quando sua IA começar a enviar mensagens para seus contatos, todas as conversas aparecerão aqui.",
+      "action": "Ver atividade recente"
+    }
+  },
   "team": {
     "removeMemberTitle": "Remover membro?"
   },
@@ -832,7 +840,12 @@
     }
   },
   "appointments": {
-    "pageTitle": "Agendamentos — Recall Touch"
+    "pageTitle": "Agendamentos — Recall Touch",
+    "empty": {
+      "title": "Ainda não há agendamentos",
+      "body": "Quando sua IA começar a marcar horários no calendário, todos os agendamentos aparecerão aqui.",
+      "action": "Abrir configurações do agente"
+    }
   },
   "keyboardShortcuts": {
     "modal": {
@@ -1097,7 +1110,8 @@
       "records": "Registros sincronizados",
       "errors": "Erros de sincronização",
       "viewLog": "Ver log de sincronização"
-    }
+    },
+    "comingSoon": "Em breve"
   },
   "email": {
     "templates": {

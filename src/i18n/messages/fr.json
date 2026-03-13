@@ -72,7 +72,8 @@
       "title": "Se connecter",
       "subtitle": "Bienvenue à nouveau sur Recall Touch",
       "button": "Se connecter",
-      "pageTitle": "Connexion — Recall Touch"
+      "pageTitle": "Connexion — Recall Touch",
+      "googleComingSoon": "Bientôt disponible…"
     },
     "email": {
       "label": "Adresse e-mail"
@@ -737,6 +738,13 @@
       "noShow": "Absent"
     }
   },
+  "messages": {
+    "empty": {
+      "title": "Aucune conversation pour le moment",
+      "body": "Lorsque votre IA commencera à envoyer des messages à vos contacts, toutes les conversations apparaîtront ici.",
+      "action": "Consulter l’activité récente"
+    }
+  },
   "team": {
     "removeMemberTitle": "Supprimer le membre ?"
   },
@@ -841,7 +849,12 @@
     }
   },
   "appointments": {
-    "pageTitle": "Rendez-vous — Recall Touch"
+    "pageTitle": "Rendez-vous — Recall Touch",
+    "empty": {
+      "title": "Aucun rendez-vous pour le moment",
+      "body": "Lorsque votre IA commencera à réserver dans votre calendrier, tous les rendez-vous apparaîtront ici.",
+      "action": "Ouvrir les paramètres de l’agent"
+    }
   },
   "keyboardShortcuts": {
     "modal": {
@@ -1106,7 +1119,8 @@
       "records": "Enregistrements synchronisés",
       "errors": "Erreurs de synchronisation",
       "viewLog": "Voir le journal de synchronisation"
-    }
+    },
+    "comingSoon": "Bientôt disponible"
   },
   "email": {
     "templates": {

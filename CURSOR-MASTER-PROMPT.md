@@ -1,181 +1,120 @@
-You are an implementation engineer. Not a planner. Not an analyst. Open files, edit them, save them, move to the next. Complete every item below in one session. Do not stop between items. Do not ask questions. Do not narrate.
+You are an implementation engineer finishing the last 1% before go-live. Open files, edit them, save them. Do not plan. Do not narrate. Do not ask questions. Complete every item below, then commit and push.
 
-When ALL items are done, run:
-```bash
-npx tsc --noEmit && npm run build && npm test
-git add -A && git commit -m "feat: go-live final polish — last 8 toasts, agent split, campaign i18n, coming-soon cleanup" && git push origin main
-git log --oneline -5
-```
-Paste ONLY the git log output.
+This codebase is 99% launch-ready. TypeScript passes. Build passes. 280 tests pass. All API routes have auth. All public pages have SEO metadata. All toast strings use i18n. Mock data is eliminated. The agent wizard is split into 7 child components. The activation wizard is split into 5 step components. Leads page is split into 3 components.
+
+What remains is a short list of final polish items. Do all of them.
 
 ---
 
-## ITEM 1: Migrate the last 8 hardcoded toast strings to i18n
+## ITEM 1: Reduce AgentsPageClient.tsx from 2,735 lines to under 1,500
 
-These are the ONLY remaining hardcoded toast strings in the entire codebase. Fix all 8.
+File: `src/app/app/agents/AgentsPageClient.tsx` (2,735 lines)
 
-**File: `src/app/app/leads/page.tsx` (6 strings):**
-Find and replace each hardcoded toast with a `t()` call. The component already imports `useTranslations`.
+Child components already exist in `src/app/app/agents/components/`:
+- AgentList.tsx
+- AgentDetail.tsx
+- AgentKnowledgePanel.tsx
+- VoiceSelector.tsx
+- BehaviorStepContent.tsx
+- GoLiveStepContent.tsx
+- IdentityStepContent.tsx
 
-- `toast.success("Call started. Check Calls for status.")` → `toast.success(t("leads.toast.callStarted"))`
-- `toast.error("Could not start call.")` → `toast.error(t("leads.toast.callFailed"))`
-- `toast.error("Export failed. Try again.")` → `toast.error(t("leads.toast.exportFailed"))`
-- `toast.success("Leads exported. Check your downloads.")` → `toast.success(t("leads.toast.exportSuccess"))`
-- `toast.error("Export failed. Try again.")` (second instance) → `toast.error(t("leads.toast.exportFailed"))` (same key)
-- `toast.error("Import failed.")` → `toast.error(t("leads.toast.importFailed"))`
+The file is still 2,735 lines because large sections of inline JSX and logic remain. Identify the largest remaining inline sections and extract them:
 
-**File: `src/app/app/settings/page.tsx` (2 strings):**
-- `toast.info("Contact support to permanently delete your data.")` → `toast.info(t("settings.deleteDataInfo"))`
-- `toast.info("Contact support to permanently delete your account.")` → `toast.info(t("settings.deleteAccountInfo"))`
+**A)** Find the phone/schedule step content (phone number assignment, active hours, timezone, voicemail behavior). Extract into `src/app/app/agents/components/PhoneScheduleStepContent.tsx`.
 
-If `useTranslations` is not already imported in settings/page.tsx, add it:
-```typescript
-import { useTranslations } from "next-intl";
-```
-And inside the component: `const t = useTranslations();`
+**B)** Find the test step content (agent test panel integration, test results display). Extract into `src/app/app/agents/components/TestStepContent.tsx`.
 
-**Add keys to all 6 locale files** (`src/i18n/messages/en.json`, `es.json`, `fr.json`, `de.json`, `pt.json`, `ja.json`):
+**C)** Find any remaining large inline sections (FAQ editing, transfer rules, agent stats/metrics display). Extract each into its own component if it's more than 100 lines.
 
-English keys to add (nest under existing objects):
-```json
-{
-  "leads": {
-    "toast": {
-      "callStarted": "Call started. Check Calls for status.",
-      "callFailed": "Could not start call.",
-      "exportFailed": "Export failed. Try again.",
-      "exportSuccess": "Leads exported. Check your downloads.",
-      "importFailed": "Import failed."
-    }
-  },
-  "settings": {
-    "deleteDataInfo": "Contact support to permanently delete your data.",
-    "deleteAccountInfo": "Contact support to permanently delete your account."
-  }
-}
-```
-
-For es/fr/de/pt/ja, translate each value properly. Not English copy-paste.
-
----
-
-## ITEM 2: Split AgentsPageClient.tsx (3,884 lines → under 1,500)
-
-`src/app/app/agents/AgentsPageClient.tsx` is 3,884 lines. Child components already exist: `AgentList.tsx`, `AgentDetail.tsx`, `AgentKnowledgePanel.tsx`, `VoiceSelector.tsx`.
-
-The file is still too large because the step content (Identity, Voice, Knowledge, Behavior, Test, Go Live) is inline. Extract:
-
-**A) `src/app/app/agents/components/BehaviorStepContent.tsx`**
-Extract the behavior/guardrails configuration section — qualification questions, objection handling, BANT framework, transfer rules, escalation chain, never-say list. This is the largest inline section. Pass agent state and update callbacks as props.
-
-**B) `src/app/app/agents/components/IdentityStepContent.tsx`**
-Extract the identity/personality configuration — name, greeting, conversation style, language, speaking speed.
-
-**C) `src/app/app/agents/components/GoLiveStepContent.tsx`**
-Extract the go-live readiness checklist and activation button.
-
-After extraction:
+After all extractions:
 - `AgentsPageClient.tsx` must be under 1,500 lines.
-- All extracted components must be `"use client"` components.
-- All existing functionality must be preserved — same props, same callbacks, same behavior.
-- Run `npx tsc --noEmit` and fix any type errors.
+- Every extracted component must have `"use client"` on line 1.
+- Every extracted component must accept props for state and callbacks — do NOT duplicate state.
+- Run `npx tsc --noEmit` and fix any errors.
 
 ---
 
-## ITEM 3: Move campaign type labels to i18n
+## ITEM 2: Ensure "Coming soon" labels use i18n
 
-In `src/app/app/campaigns/page.tsx`, the `TYPE_OPTIONS` array has hardcoded English labels:
-```typescript
-const TYPE_OPTIONS = [
-  { id: "lead_followup", label: "Lead qualification / follow-up" },
-  { id: "appointment_reminder", label: "Appointment setting / reminder" },
-  { id: "reactivation", label: "Reactivation" },
-  { id: "cold_outreach", label: "Announcement / cold outreach" },
-  { id: "review_request", label: "Review request" },
-  { id: "custom", label: "Custom" },
-];
-```
+Three "Coming soon" strings remain as hardcoded English:
 
-Replace with i18n:
-```typescript
-const TYPE_OPTIONS = [
-  { id: "lead_followup", labelKey: "campaigns.type.leadFollowup" },
-  { id: "appointment_reminder", labelKey: "campaigns.type.appointmentReminder" },
-  { id: "reactivation", labelKey: "campaigns.type.reactivation" },
-  { id: "cold_outreach", labelKey: "campaigns.type.coldOutreach" },
-  { id: "review_request", labelKey: "campaigns.type.reviewRequest" },
-  { id: "custom", labelKey: "campaigns.type.custom" },
-];
-```
+**File: `src/app/app/settings/integrations/page.tsx` (2 instances around lines 287, 313):**
+Replace both hardcoded `Coming soon` text with `{t("integrations.comingSoon")}` using the page's existing `useTranslations` hook.
 
-Then wherever these labels are rendered, use `t(option.labelKey)` instead of `option.label`.
+**File: `src/app/sign-in/SignInForm.tsx` (line 226):**
+Replace `"Coming soon…"` with `{t("auth.signIn.googleComingSoon")}`.
 
-Add the keys to all 6 locale files with real translations:
-```json
-{
-  "campaigns": {
-    "type": {
-      "leadFollowup": "Lead qualification / follow-up",
-      "appointmentReminder": "Appointment setting / reminder",
-      "reactivation": "Reactivation",
-      "coldOutreach": "Announcement / cold outreach",
-      "reviewRequest": "Review request",
-      "custom": "Custom"
-    }
-  }
-}
-```
-
-Also check if `SOURCE_OPTIONS` or any other constant arrays in campaigns have hardcoded labels. If so, do the same.
+Add the keys to all 6 locale files (`src/i18n/messages/en.json`, `es.json`, `fr.json`, `de.json`, `pt.json`, `ja.json`):
+- English: `"comingSoon": "Coming soon"` (under integrations) and `"googleComingSoon": "Coming soon…"` (under auth.signIn)
+- Translate properly for each locale. Not English copy-paste.
 
 ---
 
-## ITEM 4: Clean up "Coming Soon" features
+## ITEM 3: Add `"use client"` verification sweep
 
-Three features are marked "Coming Soon." For each, ensure the UI is clean and professional:
+Search for any component in `src/app/app/` and `src/components/` that calls `useState`, `useEffect`, `useCallback`, `useMemo`, `useTranslations`, `useRouter`, `useSearchParams`, or `usePathname` but does NOT have `"use client"` as its first line.
 
-**A) Google Sign-In** (`src/app/sign-in/SignInForm.tsx`):
-- The Google button should be visually present but clearly disabled.
-- Toast on click should use an i18n key, not a hardcoded string.
-- If the toast is already i18n, verify the key exists in all 6 locales.
-
-**B) WhatsApp Integration** (`src/app/app/settings/integrations/page.tsx`):
-- Verify the "Coming soon" badge renders cleanly with reduced opacity.
-- Ensure the button is disabled with `cursor-not-allowed`.
-
-**C) Outlook Calendar Sync** (`src/app/app/calendar/page.tsx`):
-- Verify the "coming soon" text uses an i18n key.
-- If hardcoded, move to i18n key `calendar.outlookComingSoon` and add to all 6 locales.
-
----
-
-## ITEM 5: Final global search for any remaining hardcoded English
-
-Run this search across the entire `src/app/` directory:
 ```bash
-grep -rn 'toast\.\(error\|success\|info\|warning\)("' src/app/ --include="*.tsx" | grep -v "t("
+grep -rL '"use client"' src/app/app/ src/components/ --include="*.tsx" | xargs grep -l 'useState\|useEffect\|useCallback\|useMemo\|useTranslations\|useRouter\|useSearchParams\|usePathname' 2>/dev/null
 ```
 
-If ANY results come back, fix them by converting to `t()` calls with proper i18n keys in all 6 locales.
+For every file this returns, add `"use client";` as line 1.
 
-Then run:
+---
+
+## ITEM 4: Verify all empty states render properly
+
+Open each of these files and verify that when data is empty (no items), a meaningful empty state is shown — not a blank screen, not a spinner that never resolves, not just "No data":
+
+- `src/app/app/inbox/page.tsx` — should show explanation + action if no threads
+- `src/app/app/appointments/page.tsx` — should show explanation + action if no appointments
+- `src/app/app/knowledge/page.tsx` — should show explanation + action if no entries
+- `src/app/app/call-intelligence/page.tsx` — should show explanation if no call data
+- `src/app/app/contacts/page.tsx` — should show explanation if no contacts
+- `src/app/app/calendar/page.tsx` — should show explanation if no events
+- `src/app/app/messages/page.tsx` — should show explanation if no messages
+- `src/app/app/developer/webhooks/page.tsx` — should show explanation if no webhooks
+
+For any page that shows a blank screen or raw "No X" text without using the `EmptyState` component from `src/components/ui/EmptyState.tsx`:
+1. Import `EmptyState`.
+2. Render it with an i18n title, i18n description, and an action button linking to the relevant setup page.
+3. Add the i18n keys to all 6 locale files.
+
+---
+
+## ITEM 5: Verify Framer Motion easing compliance
+
+```bash
+grep -rn "ease:" src/ --include="*.tsx" --include="*.ts" | grep -v "easeOut\|easeInOut\|easeIn\|ease:" | grep "\["
+```
+
+If any results show cubic-bezier arrays like `ease: [0.4, 0, 0.2, 1]`, replace with `ease: 'easeOut'`.
+
+Also run:
+```bash
+grep -rn "cubic-bezier" src/ --include="*.tsx" --include="*.ts"
+```
+
+Replace any matches with named easing strings.
+
+---
+
+## ITEM 6: Final build verification and commit
+
 ```bash
 npx tsc --noEmit && npm run build && npm test
 ```
 
-Fix any failures.
-
----
-
-## ITEM 6: Commit and push
+Fix ANY failures. Then:
 
 ```bash
-git add -A && git commit -m "feat: go-live final polish — last 8 toasts, agent split, campaign i18n, coming-soon cleanup" && git push origin main
+git add -A && git commit -m "feat: final go-live polish — agent component split, i18n coming-soon, use-client sweep, empty states, easing audit" && git push origin main
 git log --oneline -5
 ```
 
-Paste ONLY the git log output.
+Paste ONLY the git log output. No words. No summaries.
 
 ---
 
-START. Item 1. Open `src/app/app/leads/page.tsx`. GO.
+START. Item 1. Open `src/app/app/agents/AgentsPageClient.tsx`. Find the largest remaining inline sections. Extract them. GO.
