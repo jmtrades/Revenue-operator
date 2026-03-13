@@ -87,7 +87,7 @@ function persistCampaignsSnapshot(workspaceId: string, campaigns: CampaignRow[])
 }
 
 export default function CampaignsPage() {
-  const t = useTranslations();
+  const t = useTranslations("campaigns");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
@@ -224,14 +224,12 @@ export default function CampaignsPage() {
         audienceNotContactedDays: "",
         sequence: [{ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" }],
       });
-      setToast(editingId ? "Campaign updated." : "Campaign created.");
+      setToast(editingId ? t("toast.updated") : t("toast.created"));
     } catch (error) {
       setToast(
-        error instanceof Error
-          ? error.message
-          : editingId
-            ? "Could not update campaign."
-            : "Could not create campaign.",
+        editingId
+          ? t("toast.updateFailed")
+          : t("toast.updateFailed")
       );
     } finally {
       setSaving(false);
@@ -247,13 +245,13 @@ export default function CampaignsPage() {
         body: JSON.stringify({ status: "paused" }),
       });
       if (!res.ok) {
-        setToast("Could not update campaign.");
+        setToast(t("toast.updateFailed"));
         return;
       }
       setCampaigns((prev) =>
         prev.map((item) => (item.id === campaign.id ? { ...item, status: "paused" } : item)),
       );
-      setToast("Campaign paused.");
+      setToast(t("toast.paused"));
       return;
     }
 
@@ -262,7 +260,7 @@ export default function CampaignsPage() {
       credentials: "include",
     });
     if (!res.ok) {
-      setToast("Could not launch campaign.");
+      setToast(t("toast.launchFailed"));
       return;
     }
     const data = (await res.json().catch(() => null)) as { enqueued?: number } | null;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { ChevronRight, Save, Plus } from "lucide-react";
 import {
@@ -131,6 +132,7 @@ export default function FlowBuilderClient({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const t = useTranslations("flowBuilder");
 
   useEffect(() => {
     fetch(`/api/agents/${agentId}`, { credentials: "include" })
@@ -141,7 +143,7 @@ export default function FlowBuilderClient({
         setNodes(n);
         setEdges(e);
       })
-      .catch(() => setToast("Could not load flow"))
+      .catch(() => setToast(t("toast.loadFailed")))
       .finally(() => setLoading(false));
   }, [agentId, setNodes, setEdges]);
 
@@ -161,10 +163,10 @@ export default function FlowBuilderClient({
       body: JSON.stringify({ conversation_flow: flow }),
     })
       .then((r) => {
-        if (r.ok) setToast("Flow saved.");
-        else setToast("Could not save.");
+        if (r.ok) setToast(t("toast.saved"));
+        else setToast(t("toast.saveFailed"));
       })
-      .catch(() => setToast("Could not save."))
+      .catch(() => setToast(t("toast.saveFailed")))
       .finally(() => setSaving(false));
   }, [agentId, nodes, edges]);
 

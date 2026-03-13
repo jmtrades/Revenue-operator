@@ -713,9 +713,11 @@ export default function AppAgentsPageClient({
   const templateModalCloseRef = useRef<HTMLButtonElement | null>(null);
   const templateModalContentRef = useRef<HTMLDivElement | null>(null);
   const [deleteConfirmAgent, setDeleteConfirmAgent] = useState<Agent | null>(null);
+  const tAgents = useTranslations("agents");
+
   useEffect(() => {
     const handler = () => {
-      setToast("Test link copied!");
+      setToast(tAgents("toast.testLinkCopied"));
     };
     window.addEventListener("agents:test-link-copied", handler as EventListener);
     return () => {
@@ -940,7 +942,7 @@ export default function AppAgentsPageClient({
 
     const voiceId = (input.voiceId ?? "").trim();
     if (!voiceId) {
-      setToast("Select a voice first to hear a preview.");
+      setToast(tAgents("toast.selectVoiceFirst"));
       return;
     }
 
@@ -986,14 +988,14 @@ export default function AppAgentsPageClient({
         setPlayingVoiceId(null);
         setPlayingAgentId(null);
         audioRef.current = null;
-        setToast("Could not play preview");
+        setToast(tAgents("toast.previewFailed"));
       };
       await audio.play();
     } catch {
       setHearPlaying(false);
       setPlayingVoiceId(null);
       setPlayingAgentId(null);
-      setToast("Could not play preview");
+      setToast(tAgents("toast.previewFailed"));
     }
   };
 
@@ -1010,7 +1012,7 @@ export default function AppAgentsPageClient({
         body: JSON.stringify(toAgentPatchPayload(agentToSave)),
       });
       if (!res.ok) {
-        if (options?.showToast !== false) setToast("Could not save agent");
+        if (options?.showToast !== false) setToast(tAgents("toast.saveFailed"));
         return { patchOk: false };
       }
 
@@ -1047,7 +1049,7 @@ export default function AppAgentsPageClient({
       }
       return { patchOk: true, vapiId: null };
     } catch {
-      if (options?.showToast !== false) setToast("Could not save agent");
+      if (options?.showToast !== false) setToast(tAgents("toast.saveFailed"));
       return { patchOk: false };
     } finally {
       setSaving(false);
@@ -1065,7 +1067,7 @@ export default function AppAgentsPageClient({
     if (result.patchOk) {
       setActiveStep(newStepId);
     } else {
-      setToast("Changes couldn't be saved. Try again.");
+      setToast(tAgents("toast.saveRetry"));
     }
   };
 
@@ -1084,9 +1086,9 @@ export default function AppAgentsPageClient({
       const next = agents.filter((a) => a.id !== agent.id);
       setAgents(next);
       setSelectedId(next[0]?.id ?? null);
-      setToast("Agent deleted");
+      setToast(tAgents("toast.deleted"));
     } catch {
-      setToast("Could not delete agent");
+      setToast(tAgents("toast.deleteFailed"));
     } finally {
       setDeleteConfirmAgent(null);
     }
@@ -1139,9 +1141,9 @@ export default function AppAgentsPageClient({
       setSelectedId(persisted.id);
       setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId }));
       setShowTemplateModal(false);
-      setToast("Agent created and synced");
+      setToast(tAgents("toast.created"));
     } catch {
-      setToast("Could not create agent");
+      setToast(tAgents("toast.createFailed"));
     }
   };
 
@@ -1180,9 +1182,9 @@ export default function AppAgentsPageClient({
       setSelectedId(persisted.id);
       setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId }));
       setShowTemplateModal(false);
-      setToast("Agent created and synced");
+      setToast(tAgents("toast.created"));
     } catch {
-      setToast("Could not create agent");
+      setToast(tAgents("toast.createFailed"));
     }
   };
 
@@ -1374,7 +1376,7 @@ export default function AppAgentsPageClient({
                               : a,
                           ),
                         );
-                        setToast("Your AI agent is live! 🎉");
+                        setToast(tAgents("toast.agentLive"));
                         setShowConfetti(true);
                         setTimeout(() => setShowConfetti(false), 4000);
                       }

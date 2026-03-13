@@ -304,6 +304,18 @@
       "remove": "Remove",
       "add": "Add Q&A"
     },
+    "toast": {
+      "testLinkCopied": "Test link copied!",
+      "selectVoiceFirst": "Select a voice first to hear a preview.",
+      "previewFailed": "Could not play preview",
+      "saveFailed": "Could not save agent",
+      "saveRetry": "Changes couldn't be saved. Try again.",
+      "deleted": "Agent deleted",
+      "deleteFailed": "Could not delete agent",
+      "created": "Agent created and synced",
+      "createFailed": "Could not create agent",
+      "agentLive": "Your AI agent is live!"
+    },
     "deleteAgent": "Delete agent",
     "deleteAgentTitle": "Delete agent",
     "saveDraft": "Save draft",
@@ -508,6 +520,16 @@
     "errors": {
       "testFailed": "Failed to test knowledge. Please try again.",
       "noResponse": "No response generated."
+    },
+    "toast": {
+      "minTranscript": "Paste at least 100 characters of transcript.",
+      "analysisFailed": "Analysis failed.",
+      "analysisSuccess": "Analyzed. {count} insights extracted.",
+      "dismissFailed": "Failed to dismiss.",
+      "applied": "Applied to agent.",
+      "applyFailed": "Apply failed.",
+      "noteSaved": "Note saved.",
+      "noteSaveFailed": "Could not save note."
     }
   },
   "campaigns": {
@@ -541,6 +563,14 @@
     "removeStep": "Remove step",
     "runAt": "Run at (date & time)",
     "nextRun": "Next run (date & time)"
+    ,
+    "toast": {
+      "updated": "Campaign updated.",
+      "created": "Campaign created.",
+      "updateFailed": "Could not update campaign.",
+      "paused": "Campaign paused.",
+      "launchFailed": "Could not launch campaign."
+    }
   },
   "settings": {
     "pageTitle": "Settings — Recall Touch",
@@ -844,6 +874,13 @@
         "body": "Create a webhook endpoint to stream call, lead, and appointment events into your own systems in real time.",
         "action": "Open developer home"
       }
+    }
+  },
+  "flowBuilder": {
+    "toast": {
+      "loadFailed": "Could not load flow",
+      "saved": "Flow saved.",
+      "saveFailed": "Could not save."
     }
   },
   "team": {
