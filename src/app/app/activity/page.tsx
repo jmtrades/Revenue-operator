@@ -63,12 +63,12 @@ const TYPE_COLORS: Record<ActivityType, string> = {
 
 type FilterId = "all" | "needs_action" | "leads" | "appointments" | "urgent";
 
-const FILTERS: { id: FilterId; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "needs_action", label: "Needs action" },
-  { id: "leads", label: "Leads" },
-  { id: "appointments", label: "Appointments" },
-  { id: "urgent", label: "Urgent" },
+const getFilters = (t: (k: string) => string) => [
+  { id: "all" as const, label: t("dashboard.filters.all") },
+  { id: "needs_action" as const, label: t("dashboard.filters.needsAction") },
+  { id: "leads" as const, label: t("dashboard.filters.leads") },
+  { id: "appointments" as const, label: t("dashboard.filters.appointments") },
+  { id: "urgent" as const, label: t("dashboard.filters.urgent") },
 ];
 
 interface CallRecord {
@@ -116,11 +116,11 @@ function formatDuration(start?: string | null, end?: string | null): string {
   return `${m}:${rem.toString().padStart(2, "0")}`;
 }
 
-const PROGRESS_LABELS: Record<string, string> = {
-  business: "Set up your business profile",
-  agent: "Configure your first AI agent",
-  phone: "Get a phone number",
-  test_call: "Make a test call",
+const getProgressLabels = (t: (k: string) => string): Record<string, string> => ({
+  business: t("dashboard.progress.setupBusinessProfile"),
+  agent: t("dashboard.progress.configureAgent"),
+  phone: t("dashboard.progress.connectPhone"),
+  test_call: t("dashboard.progress.testCall"),
   contacts: "Import your contacts",
   calendar: "Set up your calendar",
   campaign: "Launch your first campaign",
@@ -130,11 +130,11 @@ const PROGRESS_LABELS: Record<string, string> = {
   use_cases: "Use cases selected",
   voice: "Voice selected",
   greeting: "Opening greeting set",
-  knowledge: "3+ knowledge entries",
+  knowledge: t("dashboard.progress.addKnowledge"),
   behavior: "Behavior configured",
   tested: "Agent tested",
   launched: "Agent launched",
-};
+});
 
 function ActivityDateLabel() {
   const [dateLabel, setDateLabel] = useState("");
@@ -175,16 +175,14 @@ function persistActivitySnapshot(cards: ActivityCard[]) {
   }
 }
 
-const PLACEHOLDER_AREA: { day: string; calls: number }[] = Array.from(
-  { length: 7 },
-  (_, i) => ({
-    day: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i],
+const getPlaceholderArea = (t: (k: string) => string) =>
+  Array.from({ length: 7 }, (_, i) => ({
+    day: t(["dashboard.dayLabels.sun", "dashboard.dayLabels.mon", "dashboard.dayLabels.tue", "dashboard.dayLabels.wed", "dashboard.dayLabels.thu", "dashboard.dayLabels.fri", "dashboard.dayLabels.sat"][i]!),
     calls: 0,
-  }),
-);
+  }));
 
-const PLACEHOLDER_PIE: { name: string; value: number }[] = [
-  { name: "No data", value: 1 },
+const getPlaceholderPie = (t: (k: string) => string) => [
+  { name: t("dashboard.noData"), value: 1 },
 ];
 
 const PIE_COLORS = ["#2A2A2D"];
@@ -247,6 +245,10 @@ export default function AppActivityPage() {
     ],
     [t],
   );
+  const filters = useMemo(() => getFilters(t), [t]);
+  const progressLabels = useMemo(() => getProgressLabels(t), [t]);
+  const placeholderArea = useMemo(() => getPlaceholderArea(t), [t]);
+  const placeholderPie = useMemo(() => getPlaceholderPie(t), [t]);
   const [filter, setFilter] = useState<FilterId>("all");
   const [_playingId, _setPlayingId] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<ActivityCard | null>(null);
@@ -270,15 +272,15 @@ export default function AppActivityPage() {
   useEffect(() => {
     const welcome = searchParams.get("welcome");
     if (welcome && typeof welcome === "string") {
-      const message = `Welcome to ${decodeURIComponent(welcome)}!`;
+      const message = t("dashboard.welcomeMessage", { name: decodeURIComponent(welcome) });
       const url = new URL(window.location.href);
       url.searchParams.delete("welcome");
       window.history.replaceState({}, "", url.pathname + url.search);
       queueMicrotask(() => setWelcomeToast(message));
-      const t = setTimeout(() => setWelcomeToast(null), 4000);
-      return () => clearTimeout(t);
+      const id = setTimeout(() => setWelcomeToast(null), 4000);
+      return () => clearTimeout(id);
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
   const [nextStepHref, setNextStepHref] = useState(
     () => (workspaceSnapshot as { progress?: { nextStep?: { href?: string } } } | null)?.progress?.nextStep?.href || "/app/settings/phone",
   );
@@ -322,10 +324,10 @@ export default function AppActivityPage() {
           const summary =
             c.summary ??
             (c.outcome === "appointment"
-              ? "Appointment locked in from this call."
+              ? t("dashboard.summaryBooked")
               : c.outcome === "lead"
-                ? "Lead captured and waiting for follow-up."
-                : "Call handled by your system.");
+                ? t("dashboard.summaryLead")
+                : t("dashboard.summaryHandled"));
           const type: ActivityType =
             c.outcome === "appointment"
               ? "appointment"
@@ -385,13 +387,13 @@ export default function AppActivityPage() {
           }
         });
         const nextOutcomeData: { name: string; value: number }[] = [];
-        if (outcomeCounts.lead > 0) nextOutcomeData.push({ name: "Leads", value: outcomeCounts.lead });
+        if (outcomeCounts.lead > 0) nextOutcomeData.push({ name: t("dashboard.outcomesLeads"), value: outcomeCounts.lead });
         if (outcomeCounts.appointment > 0)
-          nextOutcomeData.push({ name: "Appointments", value: outcomeCounts.appointment });
+          nextOutcomeData.push({ name: t("dashboard.outcomesAppointments"), value: outcomeCounts.appointment });
         if (outcomeCounts.transfer > 0)
-          nextOutcomeData.push({ name: "Transfers", value: outcomeCounts.transfer });
+          nextOutcomeData.push({ name: t("dashboard.outcomesTransfers"), value: outcomeCounts.transfer });
         if (outcomeCounts.other > 0)
-          nextOutcomeData.push({ name: "Other", value: outcomeCounts.other });
+          nextOutcomeData.push({ name: t("dashboard.outcomesOther"), value: outcomeCounts.other });
         setOutcomeData(nextOutcomeData);
       })
       .catch((err) => {
@@ -437,10 +439,10 @@ export default function AppActivityPage() {
             duration,
             summary:
               row.outcome === "appointment"
-                ? "Appointment locked in from this call."
+                ? t("dashboard.summaryBooked")
                 : row.outcome === "lead"
-                  ? "Lead captured and waiting for follow-up."
-                  : "Call handled by your system.",
+                  ? t("dashboard.summaryLead")
+                  : t("dashboard.summaryHandled"),
             score: type === "lead" ? 75 : null,
           };
           setRecentActivity((prev) => {
@@ -528,7 +530,7 @@ export default function AppActivityPage() {
     readiness?.items ??
     fallbackProgressItems.map((p) => ({
       ...p,
-      label: PROGRESS_LABELS[p.key] ?? p.key,
+      label: progressLabels[p.key] ?? p.key,
       href: "/app/settings/phone",
       weight: 0,
     }));
@@ -539,7 +541,7 @@ export default function AppActivityPage() {
     ? serverProgressItems.map((p) => ({
         key: p.key,
         completed: p.completed ?? false,
-        label: p.label ?? PROGRESS_LABELS[p.key] ?? p.key,
+        label: p.label ?? progressLabels[p.key] ?? p.key,
         href: p.href ?? "/app/settings/phone",
       }))
     : progressItems;
@@ -640,10 +642,10 @@ export default function AppActivityPage() {
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  }, []);
+    if (hour < 12) return t("dashboard.greetingMorning");
+    if (hour < 18) return t("dashboard.greetingAfternoon");
+    return t("dashboard.greetingEvening");
+  }, [t]);
 
   const needsAttention = useMemo(() => {
     const items: { id: string; label: string; tone: "red" | "amber" | "green" }[] = [];
@@ -651,19 +653,19 @@ export default function AppActivityPage() {
       if (c.type === "urgent") {
         items.push({
           id: `urgent-${c.id}`,
-          label: `${c.name} — needs follow-up after transfer`,
+          label: t("dashboard.needsFollowUp", { name: c.name }),
           tone: "red",
         });
       } else if (c.type === "lead") {
         items.push({
           id: `lead-${c.id}`,
-          label: `${c.name} — new lead to review`,
+          label: t("dashboard.newLeadReview", { name: c.name }),
           tone: "amber",
         });
       }
     }
     return items;
-  }, [cards]);
+  }, [cards, t]);
 
   return (
     <div className="max-w-[960px] mx-auto p-4 md:p-6 space-y-6">
@@ -679,7 +681,7 @@ export default function AppActivityPage() {
             {greeting}.
           </h1>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Here&apos;s what happened today.
+            {t("dashboard.todaySummary")}
           </p>
         </div>
         <div className="hidden sm:flex flex-col items-end gap-1">
@@ -690,10 +692,10 @@ export default function AppActivityPage() {
       {showFirstWelcome && !hasAnyCalls && (
         <div className="mt-3 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
           <p className="text-sm font-semibold text-[var(--text-primary)]">
-            Welcome to your Recall Touch dashboard
+            {t("dashboard.heroHeading")}
           </p>
           <p className="mt-1 text-xs text-[var(--text-secondary)]">
-            Your AI phone system is almost ready. Connect a number and make your first test call to see calls start appearing here automatically.
+            {t("dashboard.heroDescription")}
           </p>
         </div>
       )}
@@ -727,22 +729,22 @@ export default function AppActivityPage() {
       </KPIRow>
 
       <UpgradeBanner
-        title="Ready for more volume?"
-        description="Upgrade your plan to increase included minutes and unlock higher outbound capacity as calls ramp up."
-        ctaLabel="View plans"
+        title={t("dashboard.readyForVolume")}
+        description={t("dashboard.readyForVolumeDesc")}
+        ctaLabel={t("dashboard.viewPlans")}
         href="/app/settings/billing"
       />
 
       {showInactivityBanner && (
         <div className="mb-4 p-4 rounded-xl border border-[var(--accent-amber)]/30 bg-[var(--accent-amber)]/10">
           <p className="text-sm text-[var(--text-primary)]">
-            No calls in the last 3+ days. Is your number forwarded?
+            {t("dashboard.noCallsWarning")}
           </p>
           <Link
             href="/app/settings/phone"
             className="inline-block mt-2 text-xs font-medium text-[var(--accent-amber)] hover:opacity-90 underline"
           >
-            Check setup →
+            {t("dashboard.checkSetup")} →
           </Link>
         </div>
       )}
@@ -752,10 +754,10 @@ export default function AppActivityPage() {
           <div className="flex items-start justify-between gap-3 mb-3">
             <div>
               <p className="text-sm font-semibold text-[var(--text-primary)]">
-                Setup checklist
+                {t("dashboard.setupChecklist")}
               </p>
               <p className="text-xs text-[var(--text-secondary)] mt-1">
-                You&apos;re {progressPct}% of the way to a fully running AI phone line.
+                {t("dashboard.setupProgress", { pct: progressPct })}
               </p>
               {totalSteps > 0 && (
                 <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">
@@ -768,7 +770,7 @@ export default function AppActivityPage() {
               onClick={() => setChecklistDismissed(true)}
               className="text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             >
-              I know what I&apos;m doing
+              {t("dashboard.skipSetup")}
             </button>
           </div>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-input)]">
@@ -780,7 +782,7 @@ export default function AppActivityPage() {
           <div className="mt-4 space-y-2 text-sm">
             {progressItemsResolved.map((item) => {
               const done = "completed" in item ? item.completed : (item as { done?: boolean }).done;
-              const label = (item as { label?: string }).label ?? PROGRESS_LABELS[item.key] ?? item.key;
+              const label = (item as { label?: string }).label ?? progressLabels[item.key] ?? item.key;
               const href = (item as { href?: string }).href ?? "/app/settings/phone";
               return (
                 <div key={item.key} className="flex items-center justify-between gap-3">
@@ -805,7 +807,7 @@ export default function AppActivityPage() {
                       href={href}
                       className="text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2"
                     >
-                      Open
+                      {t("dashboard.openStep")}
                     </Link>
                   )}
                 </div>
@@ -816,7 +818,7 @@ export default function AppActivityPage() {
             href={continueSetupHref}
             className="mt-4 inline-flex items-center justify-center rounded-xl bg-white px-4 py-2.5 text-xs font-semibold text-black hover:bg-zinc-100 transition-colors"
           >
-            Continue setup →
+            {t("dashboard.continueSetup")} →
           </Link>
         </div>
       )}
@@ -845,7 +847,7 @@ export default function AppActivityPage() {
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label={t("filter.activity")}>
-        {FILTERS.map((f) => (
+        {filters.map((f) => (
           <button
             key={f.id}
             type="button"
@@ -964,14 +966,14 @@ export default function AppActivityPage() {
 
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-[var(--text-primary)]">Want to see your AI in action?</p>
-              <p className="text-xs text-[var(--text-tertiary)] mt-1">Use the Test tab on Agents to place a real voice call with your configured agent.</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{t("dashboard.testCallCta")}</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">{t("dashboard.testCallDesc")}</p>
             </div>
             <Link
               href="/app/agents?tab=test"
               className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white text-gray-900 text-xs font-semibold hover:bg-gray-100 transition-colors"
             >
-              Try a test call →
+              {t("dashboard.tryTestCall")} →
             </Link>
           </div>
         </div>
@@ -981,13 +983,13 @@ export default function AppActivityPage() {
             <div className="mb-3 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold text-[var(--text-primary)]">
-                  Activity Timeline
+                  {t("dashboard.activityTimeline")}
                 </p>
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-[#00D4AA] opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00D4AA]" />
                 </span>
-                <span className="text-xs text-[#5A5A5C]">Live</span>
+                <span className="text-xs text-[#5A5A5C]">{t("dashboard.live")}</span>
               </div>
             </div>
             <Timeline
@@ -1093,10 +1095,10 @@ export default function AppActivityPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
           <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
             <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
-              Call Volume (7 days)
+              {t("dashboard.callVolume7d")}
             </h3>
             <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={callVolumeData.length > 0 ? callVolumeData : PLACEHOLDER_AREA}>
+              <AreaChart data={callVolumeData.length > 0 ? callVolumeData : placeholderArea}>
               <defs>
                 <linearGradient id="dashboardCallGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#4F8CFF" stopOpacity={0.3} />
@@ -1131,12 +1133,12 @@ export default function AppActivityPage() {
 
           <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
             <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
-              Call Outcomes
+              {t("dashboard.callOutcomes")}
             </h3>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
-                  data={outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE}
+                  data={outcomeData.length > 0 ? outcomeData : placeholderPie}
                   cx="50%"
                   cy="50%"
                   innerRadius={50}
@@ -1144,7 +1146,7 @@ export default function AppActivityPage() {
                   paddingAngle={2}
                   dataKey="value"
                 >
-                  {(outcomeData.length > 0 ? outcomeData : PLACEHOLDER_PIE).map(
+                  {(outcomeData.length > 0 ? outcomeData : placeholderPie).map(
                     (_slice, i) => (
                       <Cell
                         key={i}

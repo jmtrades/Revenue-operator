@@ -9,8 +9,9 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+  try {
+    const { id } = await params;
+    if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
   const authSession = await getSession(req);
   const workspaceId = req.nextUrl.searchParams.get("workspace_id") || authSession?.workspaceId;
@@ -57,4 +58,8 @@ export async function GET(
   };
 
   return NextResponse.json({ call });
+  } catch (error) {
+    console.error("[API] calls/[id] error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

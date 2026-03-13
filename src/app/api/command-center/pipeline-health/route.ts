@@ -10,12 +10,13 @@ import { predictDealOutcome } from "@/lib/intelligence/deal-prediction";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(req: NextRequest) {
-  const workspaceId = req.nextUrl.searchParams.get("workspace_id");
-  if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
-  const authErr = await requireWorkspaceAccess(req, workspaceId);
-  if (authErr) return authErr;
+  try {
+    const workspaceId = req.nextUrl.searchParams.get("workspace_id");
+    if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
 
-  const db = getDb();
+    const db = getDb();
   const now = new Date();
   const tomorrowStart = new Date(now);
   tomorrowStart.setDate(tomorrowStart.getDate() + 1);
@@ -89,4 +90,8 @@ export async function GET(req: NextRequest) {
     empty_slot_risk,
     late_cancellation_risk,
   });
+  } catch (error) {
+    console.error("[API] command-center/pipeline-health error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

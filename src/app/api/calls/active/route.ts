@@ -9,12 +9,13 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const workspaceId = req.nextUrl.searchParams.get("workspace_id");
-  if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
-  const err = await requireWorkspaceAccess(req, workspaceId);
-  if (err) return err;
+  try {
+    const workspaceId = req.nextUrl.searchParams.get("workspace_id");
+    if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+    const err = await requireWorkspaceAccess(req, workspaceId);
+    if (err) return err;
 
-  const db = getDb();
+    const db = getDb();
   const { data: sessions } = await db
     .from("call_sessions")
     .select(`
@@ -76,4 +77,8 @@ export async function GET(req: NextRequest) {
     in_progress: active.length,
     waiting: 0,
   });
+  } catch (error) {
+    console.error("[API] calls/active error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

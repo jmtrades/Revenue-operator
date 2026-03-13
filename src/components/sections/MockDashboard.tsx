@@ -34,7 +34,7 @@ export function MockDashboard() {
         boxShadow: "var(--shadow-glow-lg)",
       }}
       role="img"
-      aria-label="Recall Touch product view showing active call records"
+      aria-label="Preview of the Recall Touch dashboard interface"
       aria-hidden="true"
     >
       {/* Browser chrome */}

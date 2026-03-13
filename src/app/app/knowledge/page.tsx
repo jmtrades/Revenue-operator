@@ -151,7 +151,7 @@ function KnowledgeModal({
             type="button"
             onClick={onClose}
             className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[var(--bg-input)]"
-            aria-label="Close"
+            aria-label={t("closeModal")}
           >
             <X className="w-5 h-5" />
           </button>
@@ -660,7 +660,7 @@ export default function KnowledgePage() {
                 type="url"
                 value={importUrl}
                 onChange={(e) => setImportUrl(e.target.value)}
-                placeholder="https://yourbusiness.com/faq"
+                placeholder={t("importUrlPlaceholder")}
                 className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
               />
               <button
@@ -809,7 +809,7 @@ export default function KnowledgePage() {
                       <span className="text-xs text-amber-200">{t("gapFlag")}</span>
                     </div>
                   )}
-                  <p className="text-[11px] text-zinc-500 mt-2">Updated {formatDate(entry.lastUpdated)}</p>
+                  <p className="text-[11px] text-zinc-500 mt-2">{t("updatedAt", { date: formatDate(entry.lastUpdated) })}</p>
                 </button>
               );
             })}

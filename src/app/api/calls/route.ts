@@ -10,16 +10,17 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(req: NextRequest) {
-  const session = await getSession(req);
-  const workspaceId = req.nextUrl.searchParams.get("workspace_id") || session?.workspaceId;
-  if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
-  const authErr = await requireWorkspaceAccess(req, workspaceId);
-  if (authErr) return authErr;
+  try {
+    const session = await getSession(req);
+    const workspaceId = req.nextUrl.searchParams.get("workspace_id") || session?.workspaceId;
+    if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
 
-  const db = getDb();
+    const db = getDb();
 
-  let sessionsList: unknown[] = [];
-  const { data: byWorkspace } = await db
+    let sessionsList: unknown[] = [];
+    const { data: byWorkspace } = await db
     .from("call_sessions")
     .select(`
       id, lead_id, current_node, outcome, started_at, ended_at,
@@ -91,4 +92,8 @@ export async function GET(req: NextRequest) {
   });
 
   return NextResponse.json({ calls });
+  } catch (error) {
+    console.error("[API] calls route error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

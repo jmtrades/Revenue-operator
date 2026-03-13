@@ -11,8 +11,9 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id: callId } = await params;
-  const db = getDb();
+  try {
+    const { id: callId } = await params;
+    const db = getDb();
 
   const { data: session } = await db
     .from("call_sessions")
@@ -71,4 +72,8 @@ export async function GET(
     missed_signals: missedSignals,
     recommended_next_step: recommendedNextStep,
   });
+  } catch (error) {
+    console.error("[API] calls/[id]/coaching error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
