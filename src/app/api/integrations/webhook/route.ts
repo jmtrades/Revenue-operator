@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,8 @@ export async function POST(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   let body: { url?: string | null };
   try {
