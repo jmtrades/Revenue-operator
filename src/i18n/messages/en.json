@@ -526,7 +526,16 @@
       "exportFailed": "Export failed. Try again.",
       "exportSuccess": "Leads exported. Check your downloads.",
       "importFailed": "Import failed.",
-      "importSuccess": "{count} leads imported."
+      "importSuccess": "{count} leads imported.",
+      "added": "Lead added successfully."
+    },
+    "errors": {
+      "loadFailed": "Failed to load leads.",
+      "nameRequired": "Name is required.",
+      "phoneRequired": "Phone number is required.",
+      "workspaceMissing": "No workspace selected.",
+      "addFailed": "Failed to add lead.",
+      "csvNoValidRows": "No valid rows found in CSV."
     }
   },
   "knowledge": {
@@ -719,6 +728,7 @@
     "tooltip": "Change interface language"
   },
   "onboarding": {
+    "pageTitle": "Get started — Recall Touch",
     "title": "Onboarding",
     "step": {
       "business": "Business",
@@ -754,6 +764,7 @@
     },
     "cta": {
       "next": "Save and continue",
+      "back": "Back",
       "skip": "Skip for now",
       "finish": "Finish setup"
     },

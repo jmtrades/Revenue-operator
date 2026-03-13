@@ -456,7 +456,16 @@
       "exportFailed": "Échec de l’export. Réessayez.",
       "exportSuccess": "Leads exportés. Vérifiez vos téléchargements.",
       "importFailed": "Échec de l’import.",
-      "importSuccess": "{count} leads importés."
+      "importSuccess": "{count} leads importés.",
+      "added": "Lead ajouté avec succès."
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des leads.",
+      "nameRequired": "Le nom est requis.",
+      "phoneRequired": "Le numéro de téléphone est requis.",
+      "workspaceMissing": "Aucun espace de travail sélectionné.",
+      "addFailed": "Échec de l'ajout du lead.",
+      "csvNoValidRows": "Aucune ligne valide trouvée dans le CSV."
     }
   },
   "campaigns": {
@@ -628,6 +637,7 @@
     "tooltip": "Changer la langue de l’interface"
   },
   "onboarding": {
+    "pageTitle": "Get started — Recall Touch",
     "title": "Onboarding",
     "step": {
       "business": "Entreprise",
@@ -664,7 +674,8 @@
     "cta": {
       "next": "Enregistrer et continuer",
       "skip": "Ignorer pour l’instant",
-      "finish": "Terminer la configuration"
+      "finish": "Terminer la configuration",
+      "back": "Retour"
     },
     "toast": {
       "saved": "Progression de l’onboarding enregistrée",

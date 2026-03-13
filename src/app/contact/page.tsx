@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "Get in touch with Recall Touch. Sales, enterprise, and technical support. Response within 4 hours.",
   alternates: { canonical: `${BASE}/contact` },
   openGraph: {
-    title: "Contact — Recall Touch",
+    title: "Contact",
     description: "Get in touch with Recall Touch. Sales, enterprise, and technical support.",
     url: `${BASE}/contact`,
     siteName: "Recall Touch",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Contact — Recall Touch",
+    title: "Contact",
     description: "Get in touch with Recall Touch.",
   },
 };

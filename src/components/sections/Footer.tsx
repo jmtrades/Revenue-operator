@@ -49,7 +49,7 @@ export function Footer() {
               Blog
             </Link>
             <Link href="/contact" className="block hover:opacity-80 transition-opacity">
-              About
+              Contact
             </Link>
           </div>
           <div className="space-y-2 text-sm">
