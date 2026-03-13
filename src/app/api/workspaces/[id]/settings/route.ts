@@ -6,12 +6,15 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const authErr = await requireWorkspaceAccess(req, id);
+  if (authErr) return authErr;
   const db = getDb();
   const { data, error } = await db
     .from("settings")
@@ -41,6 +44,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const authErrPatch = await requireWorkspaceAccess(req, id);
+  if (authErrPatch) return authErrPatch;
   let body: Record<string, unknown>;
   try {
     body = await req.json();
