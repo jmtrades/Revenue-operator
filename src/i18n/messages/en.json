@@ -575,6 +575,14 @@
       "voicemail": "Voicemail"
     },
     "detail": {
+      "pageTitle": "Call — Recall Touch",
+      "backToCalls": "Back to calls",
+      "breadcrumbDetail": "Call detail",
+      "notFound": "This call could not be found.",
+      "playAria": "Play",
+      "pauseAria": "Pause",
+      "seekAria": "Seek",
+      "speakerAgent": "AI agent",
       "summaryTitle": "Call summary",
       "sentiment": "Sentiment",
       "outcome": "Outcome",

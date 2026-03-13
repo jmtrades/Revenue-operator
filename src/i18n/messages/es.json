@@ -472,6 +472,14 @@
       "voicemail": "Buzón de voz"
     },
     "detail": {
+      "pageTitle": "Llamada — Recall Touch",
+      "backToCalls": "Volver a llamadas",
+      "breadcrumbDetail": "Detalle de llamada",
+      "notFound": "No se pudo encontrar esta llamada.",
+      "playAria": "Reproducir",
+      "pauseAria": "Pausar",
+      "seekAria": "Buscar",
+      "speakerAgent": "Agente IA",
       "summaryTitle": "Resumen de la llamada",
       "sentiment": "Sentimiento",
       "outcome": "Resultado",

@@ -438,6 +438,14 @@
       "voicemail": "留守番電話"
     },
     "detail": {
+      "pageTitle": "通話 — Recall Touch",
+      "backToCalls": "通話一覧に戻る",
+      "breadcrumbDetail": "通話の詳細",
+      "notFound": "この通話が見つかりませんでした。",
+      "playAria": "再生",
+      "pauseAria": "一時停止",
+      "seekAria": "シーク",
+      "speakerAgent": "AIエージェント",
       "summaryTitle": "通話サマリー",
       "sentiment": "感情",
       "outcome": "結果",

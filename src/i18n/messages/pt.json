@@ -438,6 +438,14 @@
       "voicemail": "Correio de voz"
     },
     "detail": {
+      "pageTitle": "Chamada — Recall Touch",
+      "backToCalls": "Voltar às chamadas",
+      "breadcrumbDetail": "Detalhe da chamada",
+      "notFound": "Esta chamada não foi encontrada.",
+      "playAria": "Reproduzir",
+      "pauseAria": "Pausar",
+      "seekAria": "Procurar",
+      "speakerAgent": "Agente de IA",
       "summaryTitle": "Resumo da chamada",
       "sentiment": "Sentimento",
       "outcome": "Resultado",
