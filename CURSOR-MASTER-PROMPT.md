@@ -1,422 +1,222 @@
-You are an implementation engineer. This is a COMPREHENSIVE fix pass — 7 bugs ranked by severity. Do every single one. Do not plan. Do not narrate. Do not stop partway. Open files, edit, save, move on. If you finish one bug, immediately start the next. Do NOT ask questions.
+You are an implementation engineer. This is a TARGETED fix pass — 5 regressions introduced in commit 9173c52 on the Knowledge page. The previous fix correctly merged the duplicate JSON key and added i18n keys/translations, but the page.tsx itself still has bugs. Do every single one. Do not plan. Do not narrate. Do not stop partway. Open files, edit, save, move on. Do NOT ask questions.
 
 ---
 
-## BUG 1: DUPLICATE `"knowledge"` KEY IN en.json — SILENT DATA LOSS (CRITICAL)
+## BUG 1: Knowledge page document.title — DOUBLE NAMESPACE (HIGH — user-visible)
 
-**What happens:** `src/i18n/messages/en.json` has TWO top-level `"knowledge"` objects. JSON does NOT allow duplicate keys — the second one (line 925) silently overrides the first (line 541). This means these keys are COMPLETELY LOST at runtime:
-- `knowledge.toast.callSummaryDraftAdded`
-- `knowledge.errors.testFailed`
-- `knowledge.errors.noResponse`
+**What users see:** Browser tab title shows the raw i18n key `knowledge.knowledge.pageTitle` instead of "Knowledge — Recall Touch".
 
-Additionally, the FIRST knowledge block (line 541) has TWO `"toast"` sub-keys (lines 543 and 550), so even within that block the `callSummaryDraftAdded` key was being overridden.
+**Console error:** `MISSING_MESSAGE: knowledge.knowledge.pageTitle (en)`
 
-**File: `src/i18n/messages/en.json`**
+**Root cause:** Line 332 of the knowledge page uses `t("knowledge.pageTitle")`, but `t` is scoped to the `knowledge` namespace via `useTranslations("knowledge")` on line 327. So `t("knowledge.pageTitle")` resolves to `knowledge.knowledge.pageTitle` — a double namespace.
 
-### Fix:
+**File: `src/app/app/knowledge/page.tsx` — line 332**
 
-**MERGE** both knowledge objects into ONE. Delete the first block (lines 541–560) entirely. Add the missing keys into the second block (line 925) so the final merged object looks like this:
-
-```json
-"knowledge": {
-  "pageTitle": "Knowledge — Recall Touch",
-  "addEntry": "Add entry",
-  "editEntry": "Edit entry",
-  "heading": "Knowledge Base",
-  "searchPlaceholder": "Search entries…",
-  "allTypes": "All types",
-  "allStatuses": "All statuses",
-  "importUrl": "Import from URL",
-  "bulkUpload": "Bulk upload (CSV)",
-  "gapsHeading": "Knowledge Gaps",
-  "mostReferenced": "Most Referenced",
-  "testHeading": "Test your knowledge base",
-  "testDescription": "Ask a question to see how your AI agent would respond using your knowledge entries.",
-  "testPlaceholder": "e.g. What are your business hours?",
-  "testButton": "Test",
-  "noEntries": "No entries found",
-  "noEntriesHint": "Try adjusting your filters.",
-  "addFirst": "Add your first entry",
-  "gapsDescription": "Callers asked about these topics but your content is limited or missing.",
-  "mostReferencedDescription": "Top 5 entries used by your agent in calls.",
-  "toast": {
-    "callSummaryDraftAdded": "Call summary added as a draft knowledge entry. Edit and save when you're ready.",
-    "minTranscript": "Paste at least 100 characters of transcript.",
-    "analysisFailed": "Analysis failed.",
-    "analysisSuccess": "Analyzed. {count} insights extracted.",
-    "dismissFailed": "Failed to dismiss.",
-    "applied": "Applied to agent.",
-    "applyFailed": "Apply failed.",
-    "noteSaved": "Note saved.",
-    "noteSaveFailed": "Could not save note."
-  },
-  "errors": {
-    "testFailed": "Failed to test knowledge. Please try again.",
-    "noResponse": "No response generated."
-  },
-  "modal": {
-    "addEntry": "Add entry",
-    "editEntry": "Edit entry",
-    "titlePlaceholder": "Entry title",
-    "type": "Type",
-    "question": "Question",
-    "questionPlaceholder": "e.g. What are your hours?",
-    "answer": "Answer",
-    "uploadFile": "Upload file",
-    "uploadHint": "Drag and drop or click to upload",
-    "chooseFile": "Choose file",
-    "indexedFile": "Indexed: {fileName}",
-    "fetch": "Fetch",
-    "indexing": "Indexing…",
-    "indexedPages": "Indexed {count} pages",
-    "content": "Content",
-    "contentPlaceholder": "Freeform text…",
-    "status": "Status"
-  },
-  "types": {
-    "FAQ": "FAQ",
-    "Document": "Document",
-    "Website": "Website URL",
-    "Custom": "Custom"
-  },
-  "status": {
-    "active": "Active",
-    "draft": "Draft"
-  }
-}
+Current code:
+```typescript
+document.title = t("knowledge.pageTitle");
 ```
 
-**IMPORTANT:** Also check ALL 5 non-English locale files (es.json, fr.json, de.json, pt.json, ja.json) for the same duplicate `"knowledge"` key problem. Merge them the same way. If the non-English files don't have the keys at all, add translated stubs.
+### Fix:
+```typescript
+document.title = t("pageTitle");
+```
+
+That's it. Remove the `knowledge.` prefix since the `t` function already has the `knowledge` namespace.
 
 ---
 
-## BUG 2: Knowledge page — 10+ hardcoded English strings (HIGH — i18n)
+## BUG 2: Missing `common.item` and `common.items` keys (HIGH — user-visible)
+
+**What users see:** The entry count displays `"0 common.items"` — a raw i18n key shown to the user.
+
+**Console error:** `MISSING_MESSAGE: common.items (en)` (and `(es)`, etc.)
+
+**Root cause:** Line 527 uses `tCommon("item")` and `tCommon("items")` but these keys do NOT exist in the `common` namespace of any locale file.
+
+**File: `src/app/app/knowledge/page.tsx` — line 527**
+
+Current code:
+```typescript
+{entries.length} {entries.length === 1 ? tCommon("item") : tCommon("items")}
+```
+
+### Fix — add missing keys to ALL locale files:
+
+**`src/i18n/messages/en.json`** — inside the `"common"` object, add:
+```json
+"item": "item",
+"items": "items"
+```
+
+**`src/i18n/messages/es.json`** — inside `"common"`:
+```json
+"item": "elemento",
+"items": "elementos"
+```
+
+**`src/i18n/messages/fr.json`** — inside `"common"`:
+```json
+"item": "élément",
+"items": "éléments"
+```
+
+**`src/i18n/messages/de.json`** — inside `"common"`:
+```json
+"item": "Element",
+"items": "Elemente"
+```
+
+**`src/i18n/messages/pt.json`** — inside `"common"`:
+```json
+"item": "item",
+"items": "itens"
+```
+
+**`src/i18n/messages/ja.json`** — inside `"common"`:
+```json
+"item": "件",
+"items": "件"
+```
+
+---
+
+## BUG 3: Knowledge type dropdown options — hardcoded labels (MEDIUM — i18n)
+
+**What users see in Spanish:** The type filter dropdown shows "FAQ", "Document", "Website URL", "Custom" in English even when the UI is in Spanish. The "All types" label IS translated (because it uses `t("allTypes")`), but the individual option labels are hardcoded.
+
+**Root cause:** Lines 541-550 use `o.label` from the `TYPE_OPTIONS` constant (which has hardcoded English strings like `{ value: "FAQ", label: "FAQ" }`). Meanwhile, the same type dropdown in the modal (line 178) correctly uses `t(`types.${o.value}`)`.
 
 **File: `src/app/app/knowledge/page.tsx`**
 
-The Knowledge page has 10+ hardcoded English strings visible to users. The i18n keys exist (or were just added in Bug 1 fix) but the page doesn't use them.
+Find the main filter TYPE dropdown (around lines 541-550). It currently looks like:
+```tsx
+{TYPE_OPTIONS.map((o) => (
+  <option key={o.value} value={o.value}>{o.label}</option>
+))}
+```
 
-### Fix — replace each hardcoded string:
+### Fix:
+```tsx
+{TYPE_OPTIONS.map((o) => (
+  <option key={o.value} value={o.value}>{t(`types.${o.value}`)}</option>
+))}
+```
 
-| Line | Current hardcoded string | Replace with |
-|------|--------------------------|-------------|
-| 523 | `"Knowledge Base"` | `{t("knowledge.heading")}` |
-| 541 | `placeholder="Search entries…"` | `placeholder={t("knowledge.searchPlaceholder")}` |
-| 550 | `<option value="all">All types</option>` | `<option value="all">{t("knowledge.allTypes")}</option>` |
-| 560 | `<option value="all">All statuses</option>` | `<option value="all">{t("knowledge.allStatuses")}</option>` |
-| 572 | `"Add Entry"` | `{t("knowledge.addEntry")}` |
-| 583 | `"Import from URL"` | `{t("knowledge.importUrl")}` |
-| 587 | `"Bulk upload (CSV)"` | `{t("knowledge.bulkUpload")}` |
-| ~830 | `"Knowledge Gaps"` | `{t("knowledge.gapsHeading")}` |
-| ~855 | `"Most Referenced"` | `{t("knowledge.mostReferenced")}` |
-| ~879 | `"Test your knowledge base"` | `{t("knowledge.testHeading")}` |
-
-Also replace any hardcoded strings for "No entries found", "Try adjusting your filters", "Add your first entry", the test description text, test placeholder, and test button label.
-
-The page already has `const t = useTranslations();` at line 327, so just use `t("knowledge.xxx")`.
+This matches the pattern already used in the modal at line 178.
 
 ---
 
-## BUG 3: Footer has duplicate "Contact" links (MEDIUM — UX)
+## BUG 4: Knowledge status dropdown options — hardcoded labels (MEDIUM — i18n)
 
-**What users see:** Under the "Company" column in the footer, there are two links both labeled "Contact" — one goes to `mailto:team@recall-touch.com`, the other goes to `/contact`.
+**Same issue as Bug 3** but for the status filter dropdown (around lines 551-560).
 
-**File: `src/components/sections/Footer.tsx` — lines 45-53**
+Current code uses `o.label` from `STATUS_OPTIONS` constant (hardcoded English: "Active", "Draft", "Processing").
+
+### Fix:
+```tsx
+{STATUS_OPTIONS.map((o) => (
+  <option key={o.value} value={o.value}>{t(`status.${o.value.toLowerCase()}`)}</option>
+))}
+```
+
+**ALSO** add the missing `"processing"` key to `knowledge.status` in ALL locale files:
+
+**en.json** — inside `knowledge.status`:
+```json
+"processing": "Processing"
+```
+
+**es.json** — inside `knowledge.status`:
+```json
+"processing": "Procesando"
+```
+
+**fr.json** — inside `knowledge.status`:
+```json
+"processing": "En cours"
+```
+
+**de.json** — inside `knowledge.status`:
+```json
+"processing": "Wird verarbeitet"
+```
+
+**pt.json** — inside `knowledge.status`:
+```json
+"processing": "Processando"
+```
+
+**ja.json** — inside `knowledge.status`:
+```json
+"processing": "処理中"
+```
+
+---
+
+## BUG 5: Knowledge empty state — hardcoded strings (MEDIUM — i18n)
+
+**What users see in Spanish:** When there are no knowledge entries, the empty state shows English text "No entries found", "Try adjusting your filters.", "Add your first entry" — even though the rest of the page is in Spanish.
+
+**Root cause:** Lines 765-772 have hardcoded strings instead of using the i18n keys that already exist in all locale files (`noEntries`, `noEntriesHint`, `addFirst`).
+
+**File: `src/app/app/knowledge/page.tsx` — around lines 765-772**
 
 Current code:
 ```tsx
-<a href="mailto:team@recall-touch.com" className="block hover:opacity-80 transition-opacity">
-  Contact
-</a>
-<Link href="/blog" className="block hover:opacity-80 transition-opacity">
-  Blog
-</Link>
-<Link href="/contact" className="block hover:opacity-80 transition-opacity">
-  Contact
-</Link>
+<p className="text-sm font-medium text-white mb-1">No entries found</p>
+<p className="text-xs text-zinc-500 mb-4">Try adjusting your filters.</p>
+<button
+  type="button"
+  onClick={() => openAddModal()}
+  className="text-sm font-medium text-white hover:underline"
+>
+  Add your first entry
+</button>
 ```
 
 ### Fix:
-
-Change the first link's text from "Contact" to "Email us" to differentiate them:
 ```tsx
-<a href="mailto:team@recall-touch.com" className="block hover:opacity-80 transition-opacity">
-  Email us
-</a>
-<Link href="/blog" className="block hover:opacity-80 transition-opacity">
-  Blog
-</Link>
-<Link href="/contact" className="block hover:opacity-80 transition-opacity">
-  Contact
-</Link>
+<p className="text-sm font-medium text-white mb-1">{t("noEntries")}</p>
+<p className="text-xs text-zinc-500 mb-4">{t("noEntriesHint")}</p>
+<button
+  type="button"
+  onClick={() => openAddModal()}
+  className="text-sm font-medium text-white hover:underline"
+>
+  {t("addFirst")}
+</button>
 ```
-
----
-
-## BUG 4: Missing i18n keys in non-English locale files (MEDIUM — i18n)
-
-The following keys exist in en.json but are MISSING from es.json, fr.json, de.json, pt.json, ja.json:
-
-1. `agents.testPanel` namespace — if it exists in en.json, ensure all locales have it
-2. `agents.voiceTest` namespace — if it exists in en.json, ensure all locales have it
-3. `flowBuilder` namespace — check `flowBuilder.toast` keys (loadFailed, saved, saveFailed)
-4. The new `knowledge` keys added in Bug 1 (heading, searchPlaceholder, allTypes, allStatuses, importUrl, bulkUpload, gapsHeading, mostReferenced, testHeading, testDescription, testPlaceholder, testButton, noEntries, noEntriesHint, addFirst, gapsDescription, mostReferencedDescription)
-
-### Fix:
-
-For each missing key in each locale file, add translated versions. Use proper translations — not English. Here are the translations for the knowledge page keys:
-
-**es.json:**
-```json
-"heading": "Base de conocimiento",
-"searchPlaceholder": "Buscar entradas…",
-"allTypes": "Todos los tipos",
-"allStatuses": "Todos los estados",
-"importUrl": "Importar desde URL",
-"bulkUpload": "Carga masiva (CSV)",
-"gapsHeading": "Brechas de conocimiento",
-"mostReferenced": "Más referenciados",
-"testHeading": "Prueba tu base de conocimiento",
-"testDescription": "Haz una pregunta para ver cómo respondería tu agente usando tus entradas.",
-"testPlaceholder": "ej. ¿Cuál es su horario?",
-"testButton": "Probar",
-"noEntries": "No se encontraron entradas",
-"noEntriesHint": "Intenta ajustar tus filtros.",
-"addFirst": "Agrega tu primera entrada",
-"gapsDescription": "Los llamantes preguntaron sobre estos temas pero tu contenido es limitado o falta.",
-"mostReferencedDescription": "Las 5 entradas más usadas por tu agente en llamadas."
-```
-
-**fr.json:**
-```json
-"heading": "Base de connaissances",
-"searchPlaceholder": "Rechercher des entrées…",
-"allTypes": "Tous les types",
-"allStatuses": "Tous les statuts",
-"importUrl": "Importer depuis URL",
-"bulkUpload": "Import en masse (CSV)",
-"gapsHeading": "Lacunes de connaissances",
-"mostReferenced": "Les plus référencés",
-"testHeading": "Testez votre base de connaissances",
-"testDescription": "Posez une question pour voir comment votre agent répondrait.",
-"testPlaceholder": "ex. Quelles sont vos heures d'ouverture ?",
-"testButton": "Tester",
-"noEntries": "Aucune entrée trouvée",
-"noEntriesHint": "Essayez d'ajuster vos filtres.",
-"addFirst": "Ajoutez votre première entrée",
-"gapsDescription": "Les appelants ont posé des questions sur ces sujets mais votre contenu est limité.",
-"mostReferencedDescription": "Les 5 entrées les plus utilisées par votre agent lors des appels."
-```
-
-**de.json:**
-```json
-"heading": "Wissensdatenbank",
-"searchPlaceholder": "Einträge suchen…",
-"allTypes": "Alle Typen",
-"allStatuses": "Alle Status",
-"importUrl": "Von URL importieren",
-"bulkUpload": "Massenupload (CSV)",
-"gapsHeading": "Wissenslücken",
-"mostReferenced": "Am häufigsten referenziert",
-"testHeading": "Testen Sie Ihre Wissensdatenbank",
-"testDescription": "Stellen Sie eine Frage, um zu sehen, wie Ihr Agent antworten würde.",
-"testPlaceholder": "z.B. Was sind Ihre Öffnungszeiten?",
-"testButton": "Testen",
-"noEntries": "Keine Einträge gefunden",
-"noEntriesHint": "Versuchen Sie, Ihre Filter anzupassen.",
-"addFirst": "Erstellen Sie Ihren ersten Eintrag",
-"gapsDescription": "Anrufer fragten nach diesen Themen, aber Ihr Inhalt ist begrenzt.",
-"mostReferencedDescription": "Die 5 am häufigsten verwendeten Einträge Ihres Agenten."
-```
-
-**pt.json:**
-```json
-"heading": "Base de conhecimento",
-"searchPlaceholder": "Pesquisar entradas…",
-"allTypes": "Todos os tipos",
-"allStatuses": "Todos os status",
-"importUrl": "Importar de URL",
-"bulkUpload": "Upload em massa (CSV)",
-"gapsHeading": "Lacunas de conhecimento",
-"mostReferenced": "Mais referenciados",
-"testHeading": "Teste sua base de conhecimento",
-"testDescription": "Faça uma pergunta para ver como seu agente responderia.",
-"testPlaceholder": "ex. Qual é o horário de funcionamento?",
-"testButton": "Testar",
-"noEntries": "Nenhuma entrada encontrada",
-"noEntriesHint": "Tente ajustar seus filtros.",
-"addFirst": "Adicione sua primeira entrada",
-"gapsDescription": "Os chamadores perguntaram sobre estes tópicos, mas seu conteúdo é limitado.",
-"mostReferencedDescription": "As 5 entradas mais usadas pelo seu agente em chamadas."
-```
-
-**ja.json:**
-```json
-"heading": "ナレッジベース",
-"searchPlaceholder": "エントリーを検索…",
-"allTypes": "すべてのタイプ",
-"allStatuses": "すべてのステータス",
-"importUrl": "URLからインポート",
-"bulkUpload": "一括アップロード (CSV)",
-"gapsHeading": "ナレッジギャップ",
-"mostReferenced": "最も参照されている",
-"testHeading": "ナレッジベースをテスト",
-"testDescription": "質問をして、AIエージェントがどのように回答するか確認してください。",
-"testPlaceholder": "例：営業時間は？",
-"testButton": "テスト",
-"noEntries": "エントリーが見つかりません",
-"noEntriesHint": "フィルターを調整してみてください。",
-"addFirst": "最初のエントリーを追加",
-"gapsDescription": "発信者がこれらのトピックについて質問しましたが、コンテンツが不足しています。",
-"mostReferencedDescription": "エージェントが通話で最も使用した上位5件のエントリー。"
-```
-
----
-
-## BUG 5: Unused imports in AgentsPageClient.tsx (MEDIUM — CODE QUALITY)
-
-**File: `src/app/app/agents/AgentsPageClient.tsx`**
-
-These imports are never used and should be removed to reduce bundle size and pass linting:
-
-- Line 10: `CheckCircle2` (from lucide-react)
-- Line 13: `Headphones` (from lucide-react)
-- Line 17: `PhoneOutgoing` (from lucide-react)
-- Line 18: `Settings` (from lucide-react)
-- Line 20: `UserCheck` (from lucide-react)
-- Line 23: `AgentTestPanel` import
-- Line 25: `AccordionItem` import
-- Line 30: `AgentKnowledgePanel` import
-
-### Fix:
-
-Remove each unused import. For the lucide-react imports, remove only the unused names from the import statement — keep the ones that ARE used.
-
-Also check these files for unused imports/variables:
-- `src/app/app/agents/components/BehaviorStepContent.tsx` line 3: unused `useState`
-- `src/app/api/agents/[id]/test-call/route.ts` line 69: unused `firstMessage`
-- `src/app/api/webhooks/twilio/voice/route.ts` line 150: unused `firstMessage`
-- `src/lib/agents/sync-vapi-agent.ts` line 84: unused `clamp`, line 115: unused `voiceSettings`
-- `src/lib/outbound/execute-lead-call.ts` line 155: unused `outboundFirstMessage`
-- `src/components/WorkspaceVoiceButton.tsx` lines 19-20: unused parameters `endLabel`, `showUnavailable`
-
----
-
-## BUG 6: Non-English locale files missing flowBuilder toast keys (LOW — i18n)
-
-**Root cause:** `src/app/app/agents/[id]/flow-builder/FlowBuilderClient.tsx` uses `useTranslations("flowBuilder")` and references `t("toast.loadFailed")`, `t("toast.saved")`, `t("toast.saveFailed")`.
-
-Check if `flowBuilder.toast` exists in en.json. If so, ensure ALL 5 non-English locale files have the same keys with proper translations:
-
-**es.json:**
-```json
-"flowBuilder": {
-  "toast": {
-    "loadFailed": "Error al cargar el flujo.",
-    "saved": "Flujo guardado.",
-    "saveFailed": "Error al guardar el flujo."
-  }
-}
-```
-
-**fr.json:**
-```json
-"flowBuilder": {
-  "toast": {
-    "loadFailed": "Échec du chargement du flux.",
-    "saved": "Flux enregistré.",
-    "saveFailed": "Échec de l'enregistrement du flux."
-  }
-}
-```
-
-**de.json:**
-```json
-"flowBuilder": {
-  "toast": {
-    "loadFailed": "Fehler beim Laden des Flows.",
-    "saved": "Flow gespeichert.",
-    "saveFailed": "Fehler beim Speichern des Flows."
-  }
-}
-```
-
-**pt.json:**
-```json
-"flowBuilder": {
-  "toast": {
-    "loadFailed": "Falha ao carregar o fluxo.",
-    "saved": "Fluxo salvo.",
-    "saveFailed": "Falha ao salvar o fluxo."
-  }
-}
-```
-
-**ja.json:**
-```json
-"flowBuilder": {
-  "toast": {
-    "loadFailed": "フローの読み込みに失敗しました。",
-    "saved": "フローが保存されました。",
-    "saveFailed": "フローの保存に失敗しました。"
-  }
-}
-```
-
----
-
-## BUG 7: React hook dependency warnings (LOW — CODE QUALITY)
-
-These will cause React Compiler warnings and may cause stale closure bugs:
-
-1. **`src/app/app/agents/[id]/flow-builder/FlowBuilderClient.tsx` line 148:**
-   - `useEffect` missing `t` in dependency array
-   - Also line 155: `useCallback` missing `t` in dependency array
-   - Fix: Add `t` to the dependency arrays
-
-2. **`src/app/app/messages/page.tsx` line 208:**
-   - `useCallback` missing `t` in dependency array
-   - Fix: Add `t` to the dependency array
-
-3. **`src/app/app/agents/AgentsPageClient.tsx` line 733:**
-   - `useEffect` missing `tAgents` in dependency array
-   - Fix: Add `tAgents` to the dependency array
 
 ---
 
 ## VERIFICATION
 
-After ALL fixes, run these checks in order:
+After ALL 5 fixes, run these checks:
 
-### Check 1: No duplicate JSON keys
+### Check 1: No double-namespace on pageTitle
 ```bash
-node -e "
-const fs = require('fs');
-const text = fs.readFileSync('src/i18n/messages/en.json', 'utf8');
-const matches = text.match(/\"knowledge\"/g);
-console.log('knowledge key count:', matches ? matches.length : 0);
-// Should appear exactly as many times as there are nested usages, but only ONCE at root level
-"
+grep -n 'knowledge\.pageTitle' src/app/app/knowledge/page.tsx
 ```
-Manually verify: open en.json and search for `"knowledge":` — it should appear at root level exactly ONCE (plus any nested usages in other objects like `onboarding.knowledge`, `nav.knowledge`, `agents.steps.knowledge`).
+Expected: Should show `t("pageTitle")` — NOT `t("knowledge.pageTitle")`.
 
-### Check 2: Knowledge page uses i18n
+### Check 2: common.items key exists
 ```bash
-grep -n 'Knowledge Base\|Search entries\|All types\|All statuses\|Add Entry\|Import from URL\|Bulk upload\|Knowledge Gaps\|Most Referenced\|Test your knowledge' src/app/app/knowledge/page.tsx
+grep -n '"items"' src/i18n/messages/en.json | head -5
 ```
-Expected: ZERO results (all hardcoded strings replaced with t() calls).
+Expected: Should show the `"items": "items"` key inside common.
 
-### Check 3: No duplicate footer links
+### Check 3: No hardcoded dropdown labels
 ```bash
-grep -c 'Contact' src/components/sections/Footer.tsx
+grep -n 'o\.label' src/app/app/knowledge/page.tsx
 ```
-Expected: 2 (one "Email us" replaced the old "Contact", one actual "Contact" remains). Verify by reading the file.
+Expected: ZERO results in the main filter dropdowns (only acceptable if used elsewhere).
 
-### Check 4: No unused imports in AgentsPageClient
+### Check 4: No hardcoded empty state
 ```bash
-npx tsc --noEmit 2>&1 | head -20
+grep -n 'No entries found\|Try adjusting\|Add your first entry' src/app/app/knowledge/page.tsx
 ```
-Expected: ZERO errors.
+Expected: ZERO results.
 
 ### Check 5: Build succeeds
 ```bash
@@ -426,7 +226,7 @@ Expected: Build completes with no errors.
 
 ### Check 6: Commit and push
 ```bash
-git add -A && git commit -m "fix: merge duplicate knowledge i18n keys, i18n knowledge page, footer dedup, unused imports, hook deps" && git push origin main
+git add -A && git commit -m "fix: knowledge page double-namespace title, missing common.items key, hardcoded dropdown/empty-state strings" && git push origin main
 git log --oneline -3
 ```
 
@@ -434,4 +234,4 @@ Paste ONLY the git log output.
 
 ---
 
-START. Bug 1 first — open `src/i18n/messages/en.json`, find both `"knowledge"` blocks, merge them. GO.
+START. Bug 1 first — open `src/app/app/knowledge/page.tsx`, line 332, remove the `knowledge.` prefix from the pageTitle key. GO.

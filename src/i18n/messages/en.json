@@ -54,7 +54,9 @@
     "status": {
       "active": "Active",
       "inactive": "Inactive"
-    }
+    },
+    "item": "item",
+    "items": "items"
   },
   "toast": {
     "saved": "Settings saved",

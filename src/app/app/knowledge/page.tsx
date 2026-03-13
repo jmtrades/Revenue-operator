@@ -329,7 +329,7 @@ export default function KnowledgePage() {
   const tCommon = useTranslations("common");
   const tForms = useTranslations("forms.state");
   useEffect(() => {
-    document.title = t("knowledge.pageTitle");
+    document.title = t("pageTitle");
     return () => { document.title = ""; };
   }, [t]);
 
@@ -545,7 +545,7 @@ export default function KnowledgePage() {
             >
               <option value="all">{t("allTypes")}</option>
               {TYPE_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>{t(`types.${o.value}`)}</option>
               ))}
             </select>
             <select
@@ -555,7 +555,7 @@ export default function KnowledgePage() {
             >
               <option value="all">{t("allStatuses")}</option>
               {STATUS_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>{t(`status.${o.value.toLowerCase()}`)}</option>
               ))}
             </select>
             <div className="flex gap-2">
@@ -762,14 +762,14 @@ export default function KnowledgePage() {
             {filtered.length === 0 ? (
               <div className="col-span-full py-12 text-center rounded-xl bg-[var(--bg-card)]/30 border border-[var(--border-default)]">
                 <BookOpen className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-                <p className="text-sm font-medium text-white mb-1">No entries found</p>
-                <p className="text-xs text-zinc-500 mb-4">Try adjusting your filters.</p>
+                <p className="text-sm font-medium text-white mb-1">{t("noEntries")}</p>
+                <p className="text-xs text-zinc-500 mb-4">{t("noEntriesHint")}</p>
                 <button
                   type="button"
                   onClick={() => openAddModal()}
                   className="text-sm font-medium text-white hover:underline"
                 >
-                  Add your first entry
+                  {t("addFirst")}
                 </button>
               </div>
             ) : filtered.map((entry) => {
