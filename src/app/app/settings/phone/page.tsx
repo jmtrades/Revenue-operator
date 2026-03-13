@@ -240,7 +240,7 @@ export default function AppSettingsPhonePage() {
       setConnectError(message);
       setConnectErrorCode("PROVISION_ERROR");
       setToast(message);
-      sonnerToast.error("Failed to connect number. Please try again.");
+      sonnerToast.error(tPhone("toast.connectFailed"));
     } finally {
       setConnecting(false);
       setTimeout(() => setToast(null), 4000);
@@ -263,16 +263,16 @@ export default function AppSettingsPhonePage() {
       if (res.ok) {
         invalidateWorkspaceMeCache();
         setToast(tPhone("toast.saved"));
-        sonnerToast.success("Settings saved");
+        sonnerToast.success(tPhone("toast.saved"));
       } else {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
         const message = err.error ?? "Could not save.";
         setToast(message);
-        sonnerToast.error("Failed to save. Please try again.");
+        sonnerToast.error(tPhone("toast.saveFailed"));
       }
     } catch {
       setToast(tPhone("toast.error"));
-      sonnerToast.error("Failed to save. Please try again.");
+      sonnerToast.error(tPhone("toast.saveFailed"));
     } finally {
       setSaving(false);
       setTimeout(() => setToast(null), 3000);
@@ -287,7 +287,7 @@ export default function AppSettingsPhonePage() {
     }
     if (!primaryAgentId) {
       setToast(tPhone("toast.createAgentFirst"));
-      sonnerToast.error("Create an agent first in the Agents section, then try again.");
+      sonnerToast.error(tPhone("toast.createAgentFirst"));
       setTimeout(() => setToast(null), 4000);
       return;
     }
@@ -312,7 +312,7 @@ export default function AppSettingsPhonePage() {
       }
     } catch {
       setToast(tPhone("toast.errorRetry"));
-      sonnerToast.error("Failed to start test call. Please try again.");
+      sonnerToast.error(tPhone("toast.testCallFailed"));
       setTestCallError(tPhone("toast.errorRetry"));
     } finally {
       setTestingCall(false);
@@ -414,9 +414,9 @@ export default function AppSettingsPhonePage() {
                           const data = (await res.json()) as { error?: string };
                           if (res.ok) {
                             fetchWorkspaceNumbers();
-                            sonnerToast.success("Number released");
+                            sonnerToast.success(tPhone("toast.numberReleased"));
                           } else {
-                            sonnerToast.error(data.error ?? "Could not release");
+                            sonnerToast.error(data.error ?? tPhone("toast.releaseFailed"));
                           }
                         } finally {
                           setReleasingId(null);
