@@ -609,7 +609,11 @@
     },
     "empty": {
       "title": "Noch keine Leads",
-      "body": "Deine KI wird automatisch Leads erstellen, während sie mit deinen Kunden spricht."
+      "body": "Deine KI wird automatisch Leads erstellen, während sie mit deinen Kunden spricht.",
+      "subtitle": "Leads erscheinen, wenn deine KI sie erfasst — oder füge eigene hinzu",
+      "hint": "Leads aus Anrufen erstellen oder manuell hinzufügen. Verbinde dein CRM unter Einstellungen → Integrationen für HubSpot, Salesforce und mehr.",
+      "description": "Lead manuell anlegen oder CRM verbinden. Neue Leads aus Anrufen erscheinen hier automatisch.",
+      "connectCrm": "CRM verbinden"
     },
     "saveLead": "Lead speichern",
     "toast": {

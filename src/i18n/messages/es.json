@@ -652,7 +652,11 @@
     },
     "empty": {
       "title": "Aún no hay leads",
-      "body": "Tu IA empezará a crear leads automáticamente a medida que hable con tus clientes."
+      "body": "Tu IA empezará a crear leads automáticamente a medida que hable con tus clientes.",
+      "subtitle": "Los leads aparecen cuando tu IA los captura — o añade los tuyos",
+      "hint": "Crea leads desde llamadas o añádelos manualmente. Conecta tu CRM en Ajustes → Integraciones para sincronizar con HubSpot, Salesforce y más.",
+      "description": "Crea un lead manualmente o conecta tu CRM. Los nuevos leads de llamadas aparecerán aquí automáticamente.",
+      "connectCrm": "Conectar CRM"
     },
     "saveLead": "Guardar lead",
     "toast": {
