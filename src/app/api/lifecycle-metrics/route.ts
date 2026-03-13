@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { aggregateProofForWorkspace } from "@/lib/proof/aggregate";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,8 @@ export async function GET(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const sinceParam = req.nextUrl.searchParams.get("since");
   const since = sinceParam ? new Date(sinceParam) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
