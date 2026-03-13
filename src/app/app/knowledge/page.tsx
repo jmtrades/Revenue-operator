@@ -40,17 +40,17 @@ interface KnowledgeGap {
   askCount: number;
 }
 
-const TYPE_OPTIONS: { value: KnowledgeType; label: string }[] = [
-  { value: "FAQ", label: "FAQ" },
-  { value: "Document", label: "Document" },
-  { value: "Website", label: "Website URL" },
-  { value: "Custom", label: "Custom" },
+const TYPE_OPTIONS: { value: KnowledgeType }[] = [
+  { value: "FAQ" },
+  { value: "Document" },
+  { value: "Website" },
+  { value: "Custom" },
 ];
 
-const STATUS_OPTIONS: { value: KnowledgeStatus; label: string }[] = [
-  { value: "Active", label: "Active" },
-  { value: "Draft", label: "Draft" },
-  { value: "Processing", label: "Processing" },
+const STATUS_OPTIONS: { value: KnowledgeStatus }[] = [
+  { value: "Active" },
+  { value: "Draft" },
+  { value: "Processing" },
 ];
 
 function typeIcon(type: KnowledgeType) {
@@ -198,7 +198,7 @@ function KnowledgeModal({
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   rows={4}
-                  placeholder="Answer text…"
+                  placeholder={t("answerPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm resize-none"
                 />
               </div>
@@ -247,7 +247,7 @@ function KnowledgeModal({
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://…"
+                  placeholder={t("urlPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
                 />
               </div>
@@ -648,11 +648,10 @@ export default function KnowledgePage() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <p className="text-sm font-medium text-white">
-                  Turn your website into call-ready knowledge
+                  {t("importHeading")}
                 </p>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  Paste a public FAQ, services, or pricing page. We&apos;ll
-                  suggest Q&A pairs you can add.
+                  {t("importDescription")}
                 </p>
               </div>
             </div>
@@ -686,8 +685,7 @@ export default function KnowledgePage() {
                       | null;
                     if (!res.ok || !data?.entries) {
                       setImportError(
-                        data?.error ??
-                          "Could not import this URL. Check that it is public and try again.",
+                        data?.error ?? t("importErrorNotPublic"),
                       );
                       return;
                     }
@@ -702,7 +700,7 @@ export default function KnowledgePage() {
                 }}
                 className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold disabled:opacity-60 hover:bg-zinc-200"
               >
-                {importing ? "Importing…" : "Import"}
+                {importing ? t("importButtonLoading") : t("importButton")}
               </button>
             </div>
             {importError && (
@@ -713,7 +711,7 @@ export default function KnowledgePage() {
             {importedEntries.length > 0 && (
               <div className="mt-3 space-y-2">
                 <p className="text-xs text-zinc-500">
-                  Click a suggestion to add it to your knowledge.
+                  {t("importSuggestionHint")}
                 </p>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {importedEntries.map((entry, idx) => (
@@ -800,15 +798,15 @@ export default function KnowledgePage() {
                     >
                       {entry.status}
                     </span>
-                    <span className="text-[10px] text-zinc-500">{entry.wordCount} words</span>
+                    <span className="text-[10px] text-zinc-500">{t("wordCount", { count: entry.wordCount })}</span>
                     <span className="text-[10px] text-zinc-500">
-                      Used {entry.usageCount} times in calls
+                      {t("usageCount", { count: entry.usageCount })}
                     </span>
                   </div>
                   {entry.gapFlag && (
                     <div className="flex items-center gap-2 mt-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
                       <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-                      <span className="text-xs text-amber-200">Callers need more info on this</span>
+                      <span className="text-xs text-amber-200">{t("gapFlag")}</span>
                     </div>
                   )}
                   <p className="text-[11px] text-zinc-500 mt-2">Updated {formatDate(entry.lastUpdated)}</p>
@@ -905,7 +903,7 @@ export default function KnowledgePage() {
           </div>
           {testAnswer && (
             <div className="mt-4 bg-[#0A0A0B] border border-white/[0.06] rounded-xl p-4">
-              <p className="text-xs text-[#8B8B8D] mb-1">AI would respond:</p>
+              <p className="text-xs text-[#8B8B8D] mb-1">{t("testAnswerLabel")}</p>
               <p className="text-sm text-[#EDEDEF] leading-relaxed">{testAnswer}</p>
             </div>
           )}

@@ -54,7 +54,9 @@
     "status": {
       "active": "Active",
       "inactive": "Inactive"
-    }
+    },
+    "item": "element",
+    "items": "elements"
   },
   "toast": {
     "saved": "Paramètres enregistrés",
@@ -856,6 +858,19 @@
     "noEntries": "Aucune entrée trouvée",
     "noEntriesHint": "Essayez d'ajuster vos filtres.",
     "addFirst": "Ajoutez votre première entrée",
+    "importHeading": "Transformez votre site web en connaissances prêtes pour les appels",
+    "importDescription": "Collez une page publique de FAQ, services ou tarifs. Nous suggérerons des paires Q&R que vous pourrez ajouter.",
+    "importButton": "Importer",
+    "importButtonLoading": "Importation...",
+    "importErrorNotPublic": "Impossible d'importer cette URL. Vérifiez qu'elle est publique et réessayez.",
+    "importErrorGeneric": "Une erreur s'est produite lors de l'importation de cette URL. Réessayez dans un moment.",
+    "importSuggestionHint": "Cliquez sur une suggestion pour l'ajouter à vos connaissances.",
+    "answerPlaceholder": "Texte de réponse...",
+    "urlPlaceholder": "https://...",
+    "wordCount": "{count} mots",
+    "usageCount": "Utilisé {count} fois dans les appels",
+    "gapFlag": "Les appelants ont besoin de plus d'informations à ce sujet",
+    "testAnswerLabel": "L'IA répondrait :",
     "gapsDescription": "Les appelants ont posé des questions sur ces sujets mais votre contenu est limité.",
     "mostReferencedDescription": "Les 5 entrées les plus utilisées par votre agent lors des appels.",
     "toast": {
