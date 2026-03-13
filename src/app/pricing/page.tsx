@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "Simple pricing for AI phone communication. From $297/month. Answer calls, send texts, book appointments, and follow up automatically.",
   alternates: { canonical: `${BASE}/pricing` },
   openGraph: {
-    title: "Pricing — Recall Touch",
+    title: "Pricing",
     description: "Simple pricing for AI phone communication. From $297/month. Answer calls, send texts, book appointments, and follow up automatically.",
     url: `${BASE}/pricing`,
     siteName: "Recall Touch",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pricing — Recall Touch",
+    title: "Pricing",
     description: "Simple pricing for AI phone communication. From $297/month.",
   },
 };

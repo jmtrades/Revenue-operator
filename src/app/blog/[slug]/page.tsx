@@ -73,10 +73,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = BLOG_POSTS[slug];
-  if (!post) return { title: "Blog — Recall Touch" };
+  if (!post) return { title: "Blog" };
   const description = post.body.slice(0, 160).replace(/\s+/g, " ").trim() + "...";
   return {
-    title: `${post.title} — Recall Touch`,
+    title: post.title,
     description,
     openGraph: { title: post.title, description },
   };

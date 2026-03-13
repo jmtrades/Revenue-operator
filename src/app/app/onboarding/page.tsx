@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   CalendarRange,
   CheckCircle2,
@@ -21,12 +22,12 @@ import { buildStarterKnowledge, mergeKnowledgeItems, type KnowledgeItem } from "
 import { invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 const STEPS = 5;
-const STEP_LABELS: { id: number; title: string; subtitle: string }[] = [
-  { id: 1, title: "Business", subtitle: "Who you are" },
-  { id: 2, title: "AI Agent", subtitle: "How it sounds" },
-  { id: 3, title: "Knowledge", subtitle: "What it knows" },
-  { id: 4, title: "Phone", subtitle: "How calls reach it" },
-  { id: 5, title: "Test", subtitle: "Make sure it works" },
+const STEP_KEYS: { id: number; titleKey: string; subtitleKey: string }[] = [
+  { id: 1, titleKey: "step.business", subtitleKey: "business.description" },
+  { id: 2, titleKey: "step.agent", subtitleKey: "agent.description" },
+  { id: 3, titleKey: "step.knowledge", subtitleKey: "knowledge.description" },
+  { id: 4, titleKey: "step.phone", subtitleKey: "phone.description" },
+  { id: 5, titleKey: "step.test", subtitleKey: "test.description" },
 ];
 const ONBOARDING_VOICES = CURATED_VOICES.slice(0, 6).map((v) => ({
   id: v.id,
@@ -96,10 +97,16 @@ const ONBOARDING_TEMPLATES = [
 ] as const;
 
 export default function AppOnboardingPage() {
+  const t = useTranslations("onboarding");
   const router = useRouter();
   const onboardingCtx = useOnboardingStep();
   const step = onboardingCtx?.step ?? 1;
   const setStep = onboardingCtx?.setStep ?? (() => {});
+
+  useEffect(() => {
+    document.title = t("pageTitle");
+    return () => { document.title = ""; };
+  }, [t]);
 
   const [businessName, setBusinessName] = useState("");
   const [website, setWebsite] = useState("");
@@ -255,7 +262,7 @@ export default function AppOnboardingPage() {
           <p className="text-sm text-zinc-500 mt-1">Onboarding</p>
         </div>
         <nav aria-label="Onboarding steps" className="space-y-4">
-          {STEP_LABELS.map((s) => {
+          {STEP_KEYS.map((s) => {
             const active = step === s.id;
             return (
               <div key={s.id} className="flex items-start gap-3">
@@ -271,9 +278,9 @@ export default function AppOnboardingPage() {
                       active ? "text-white" : "text-zinc-400"
                     }`}
                   >
-                    {s.id}. {s.title}
+                    {s.id}. {t(s.titleKey)}
                   </p>
-                  <p className="text-[11px] text-zinc-500">{s.subtitle}</p>
+                  <p className="text-[11px] text-zinc-500">{t(s.subtitleKey)}</p>
                 </div>
               </div>
             );
@@ -302,7 +309,7 @@ export default function AppOnboardingPage() {
               onClick={skipOnboarding}
               className="text-[11px] text-zinc-400 hover:text-white border border-zinc-800 rounded-xl px-3 py-1 transition-colors"
             >
-              Skip for now
+              {t("cta.skip")}
             </button>
           </div>
           <div className="mb-6 hidden md:block">
@@ -326,7 +333,7 @@ export default function AppOnboardingPage() {
                 onClick={skipOnboarding}
                 className="text-xs text-zinc-400 hover:text-white border border-zinc-800 rounded-xl px-3 py-1 transition-colors"
               >
-                Skip for now →
+                {t("cta.skip")} →
               </button>
             </div>
           </div>
@@ -417,7 +424,7 @@ export default function AppOnboardingPage() {
               onClick={() => setStep(2)}
               className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
             >
-              Continue →
+              {t("cta.next")} →
             </button>
           </div>
         )}
@@ -488,14 +495,14 @@ export default function AppOnboardingPage() {
                 onClick={() => setStep(1)}
                 className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]"
               >
-                ← Back
+                ← {t("cta.back")}
               </button>
               <button
                 type="button"
                 onClick={() => setStep(3)}
                 className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
               >
-                Continue →
+                {t("cta.next")} →
               </button>
             </div>
           </div>
@@ -639,8 +646,8 @@ export default function AppOnboardingPage() {
             </div>
             <p className="text-xs text-zinc-500">You can always add more later in your agent settings.</p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← Back</button>
-              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">Continue →</button>
+              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
+              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
             </div>
           </div>
         )}
@@ -677,8 +684,8 @@ export default function AppOnboardingPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← Back</button>
-              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">Continue →</button>
+              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
+              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
             </div>
           </div>
         )}
@@ -726,7 +733,7 @@ export default function AppOnboardingPage() {
               onClick={handleGoToDashboard}
               className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
             >
-              Go to my dashboard →
+              {t("cta.finish")} →
             </button>
           </div>
         )}

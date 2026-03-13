@@ -317,7 +317,10 @@ async function handleStripeWebhookEvent(
           amount: invCreated.amount_due ?? 0,
           currency: (invCreated.currency ?? "usd").toLowerCase(),
           dueAt,
-        }).catch(() => {});
+        }).catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error("Billing webhook background task failed:", err);
+        });
         const customerEmail =
           typeof (invCreated as Stripe.Invoice).customer_email === "string"
             ? (invCreated as Stripe.Invoice).customer_email
@@ -359,7 +362,10 @@ async function handleStripeWebhookEvent(
               link,
               `payment-ack:${workspaceId}:${invCreated.id}`
             );
-          }).catch(() => {});
+          }).catch((err) => {
+            // eslint-disable-next-line no-console
+            console.error("Billing webhook background task failed:", err);
+          });
         }
       }
       break;
@@ -450,7 +456,10 @@ async function handleStripeWebhookEvent(
           amount: invoice.amount_due ?? 0,
           currency: (invoice.currency ?? "usd").toLowerCase(),
           dueAt,
-        }).catch(() => {});
+        }).catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error("Billing webhook background task failed:", err);
+        });
         const customerEmail =
           typeof (invoice as Stripe.Invoice).customer_email === "string"
             ? (invoice as Stripe.Invoice).customer_email
@@ -492,7 +501,10 @@ async function handleStripeWebhookEvent(
               link,
               `payment-ack:${workspaceId}:${invoice.id}`
             );
-          }).catch(() => {});
+          }).catch((err) => {
+            // eslint-disable-next-line no-console
+            console.error("Billing webhook background task failed:", err);
+          });
         }
       }
       break;

@@ -456,7 +456,16 @@
       "exportFailed": "エクスポートに失敗しました。もう一度お試しください。",
       "exportSuccess": "リードをエクスポートしました。ダウンロードを確認してください。",
       "importFailed": "インポートに失敗しました。",
-      "importSuccess": "{count} 件のリードをインポートしました。"
+      "importSuccess": "{count} 件のリードをインポートしました。",
+      "added": "リードが正常に追加されました。"
+    },
+    "errors": {
+      "loadFailed": "リードの読み込みに失敗しました。",
+      "nameRequired": "名前は必須です。",
+      "phoneRequired": "電話番号は必須です。",
+      "workspaceMissing": "ワークスペースが選択されていません。",
+      "addFailed": "リードの追加に失敗しました。",
+      "csvNoValidRows": "CSVに有効な行が見つかりません。"
     }
   },
   "campaigns": {
@@ -628,6 +637,7 @@
     "tooltip": "インターフェースの言語を変更"
   },
   "onboarding": {
+    "pageTitle": "Get started — Recall Touch",
     "title": "オンボーディング",
     "step": {
       "business": "ビジネス",
@@ -663,6 +673,7 @@
     },
     "cta": {
       "next": "保存して次へ",
+      "back": "戻る",
       "skip": "後で行う",
       "finish": "設定を完了する"
     },
