@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_LINES = 8;
@@ -16,6 +17,8 @@ export async function GET(request: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   }
+  const authErr = await requireWorkspaceAccess(request, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const since = new Date(Date.now() - SEVEN_DAYS_MS).toISOString().slice(0, 10);
