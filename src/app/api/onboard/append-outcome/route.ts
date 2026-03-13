@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { createSharedTransaction } from "@/lib/shared-transaction-assurance";
 import { recordOrientationStatement } from "@/lib/orientation/records";
 import { detectAndAttachReference } from "@/lib/thread-reference-memory";
@@ -25,6 +26,8 @@ export async function POST(request: NextRequest) {
   if (!workspace_id || !external_ref) {
     return NextResponse.json({ error: "workspace_id and external_ref required" }, { status: 400 });
   }
+  const authErr = await requireWorkspaceAccess(request, workspace_id);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: existingTx } = await db

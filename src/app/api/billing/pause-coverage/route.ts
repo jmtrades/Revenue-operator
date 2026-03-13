@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function POST(req: NextRequest) {
   let body: { workspace_id: string };
@@ -19,6 +20,8 @@ export async function POST(req: NextRequest) {
 
   const workspaceId = body.workspace_id?.trim();
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: ws } = await db
