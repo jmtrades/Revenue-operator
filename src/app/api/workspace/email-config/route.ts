@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getWorkspaceEmailConfig } from "@/lib/integrations/email";
 import { encrypt } from "@/lib/encryption";
@@ -14,6 +15,8 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const config = await getWorkspaceEmailConfig(session.workspaceId);
   if (!config) return NextResponse.json({ config: null });
@@ -30,6 +33,8 @@ export async function GET(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErrPatch = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErrPatch) return authErrPatch;
 
   let body: { provider?: string; from_email?: string; from_name?: string | null; api_key?: string };
   try {

@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { buildVapiSystemPrompt } from "@/lib/agents/build-vapi-system-prompt";
 
@@ -10,6 +11,8 @@ export async function POST(req: NextRequest) {
   if (!session?.workspaceId || !session?.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json(
