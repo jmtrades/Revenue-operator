@@ -638,6 +638,21 @@
     "title": "Campanhas",
     "pageTitle": "Campanhas — Recall Touch",
     "create": "Criar campanha",
+    "loading": "Carregando campanhas…",
+    "statTotal": "Total de campanhas",
+    "statActive": "Campanhas ativas",
+    "statContacted": "Contatados",
+    "statConverted": "Convertidos",
+    "estRoi": "ROI est.",
+    "metricContacts": "Contatos",
+    "metricContacted": "Contatados",
+    "metricReached": "Alcançados",
+    "metricConverted": "Convertidos",
+    "edit": "Editar",
+    "pause": "Pausar",
+    "launchCampaign": "Iniciar campanha",
+    "remaining": "Restantes",
+    "failed": "Falhas",
     "form": {
       "typeLabel": "Tipo",
       "sourceLabel": "Origem"
@@ -659,7 +674,8 @@
     },
     "empty": {
       "title": "Ainda não há campanhas",
-      "body": "Use campanhas para recuperar chamadas perdidas, reativar leads antigos e encher sua agenda."
+      "body": "Use campanhas para recuperar chamadas perdidas, reativar leads antigos e encher sua agenda.",
+      "description": "Crie sua primeira campanha para dar follow-up em leads, enviar lembretes de agendamento ou reativar contatos."
     },
     "new": "Nova campanha",
     "removeStep": "Remover etapa",

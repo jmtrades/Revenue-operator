@@ -322,12 +322,12 @@ export default function CampaignsPage() {
         </div>
 
         <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4">
-          <StatCard label="Total campaigns" value={campaigns.length} color="blue" />
-          <StatCard label="Active campaigns" value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
-          <StatCard label="Contacted" value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
-          <StatCard label="Converted" value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
+          <StatCard label={t("statTotal")} value={campaigns.length} color="blue" />
+          <StatCard label={t("statActive")} value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
+          <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
+          <StatCard label={t("statConverted")} value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
-            <p className="text-[10px] text-zinc-500 uppercase tracking-wide">Est. ROI</p>
+            <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{t("estRoi")}</p>
             <p className="mt-1 text-sm font-semibold text-white">
               Cost ~${(campaigns.reduce((s, c) => s + c.called * 0.05 + c.answered * 0.02, 0)).toFixed(0)} · Revenue ~${(campaigns.reduce((s, c) => s + c.appointments_booked * 250, 0)).toFixed(0)}
             </p>
@@ -338,14 +338,14 @@ export default function CampaignsPage() {
           <div className="grid gap-4 md:grid-cols-2">
             {loading ? (
               <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-sm text-zinc-500">
-                Loading campaigns…
+                {t("loading")}
               </div>
             ) : filtered.length === 0 ? (
               <EmptyState
                 icon={Megaphone}
-                title="No campaigns yet"
-                description="Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts."
-                primaryAction={{ label: "Create campaign", href: "#create-campaign" }}
+                title={t("empty.title")}
+                description={t("empty.description")}
+                primaryAction={{ label: t("create"), href: "#create-campaign" }}
               />
             ) : (
               filtered.map((campaign) => (
@@ -389,7 +389,7 @@ export default function CampaignsPage() {
                       onClick={() => loadCampaignIntoForm(campaign)}
                       className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
                     >
-                      Edit
+                      {t("edit")}
                     </button>
                     <button
                       type="button"
@@ -400,20 +400,20 @@ export default function CampaignsPage() {
                       }
                       className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-zinc-100 hover:border-[var(--border-medium)]"
                     >
-                      {campaign.status === "active" ? "Pause" : "Launch campaign"}
+                      {campaign.status === "active" ? t("pause") : t("launchCampaign")}
                     </button>
                   </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <Metric label="Contacts" value={campaign.total_contacts} />
-                    <Metric label="Contacted" value={campaign.called} />
-                    <Metric label="Reached" value={campaign.answered} />
-                    <Metric label="Converted" value={campaign.appointments_booked} />
+                    <Metric label={t("metricContacts")} value={campaign.total_contacts} />
+                    <Metric label={t("metricContacted")} value={campaign.called} />
+                    <Metric label={t("metricReached")} value={campaign.answered} />
+                    <Metric label={t("metricConverted")} value={campaign.appointments_booked} />
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-zinc-500">
-                    <span>Remaining: {Math.max(0, campaign.total_contacts - campaign.called)}</span>
+                    <span>{t("remaining")}: {Math.max(0, campaign.total_contacts - campaign.called)}</span>
                     <span>·</span>
-                    <span>Failed: {Math.max(0, campaign.called - campaign.answered)}</span>
+                    <span>{t("failed")}: {Math.max(0, campaign.called - campaign.answered)}</span>
                   </div>
                   {campaign.total_contacts > 0 && (
                     <div className="mt-3">

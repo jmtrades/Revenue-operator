@@ -901,6 +901,21 @@
     "title": "Campaigns",
     "pageTitle": "Campaigns — Recall Touch",
     "create": "Create campaign",
+    "loading": "Loading campaigns…",
+    "statTotal": "Total campaigns",
+    "statActive": "Active campaigns",
+    "statContacted": "Contacted",
+    "statConverted": "Converted",
+    "estRoi": "Est. ROI",
+    "metricContacts": "Contacts",
+    "metricContacted": "Contacted",
+    "metricReached": "Reached",
+    "metricConverted": "Converted",
+    "edit": "Edit",
+    "pause": "Pause",
+    "launchCampaign": "Launch campaign",
+    "remaining": "Remaining",
+    "failed": "Failed",
     "form": {
       "typeLabel": "Type",
       "sourceLabel": "Source"
@@ -922,13 +937,13 @@
     },
     "empty": {
       "title": "No campaigns yet",
-      "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar."
+      "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar.",
+      "description": "Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts."
     },
     "new": "New campaign",
     "removeStep": "Remove step",
     "runAt": "Run at (date & time)",
-    "nextRun": "Next run (date & time)"
-    ,
+    "nextRun": "Next run (date & time)",
     "toast": {
       "updated": "Campaign updated.",
       "created": "Campaign created.",
