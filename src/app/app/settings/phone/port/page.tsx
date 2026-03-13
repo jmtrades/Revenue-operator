@@ -10,10 +10,29 @@ export default function PhonePortPage() {
   const [number, setNumber] = useState("");
   const [carrier, setCarrier] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [accountNumber, setAccountNumber] = useState("");
+  const [accountPin, setAccountPin] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await fetch("/api/phone/port-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          phone_number: number,
+          current_carrier: carrier,
+          account_number: accountNumber || null,
+          account_pin: accountPin || null,
+        }),
+      });
+      setSubmitted(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -96,6 +115,8 @@ export default function PhonePortPage() {
                   <label className="block text-xs text-zinc-500 mb-1">Account number</label>
                   <input
                     type="text"
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
                     placeholder="From your carrier bill"
                   />
@@ -104,6 +125,8 @@ export default function PhonePortPage() {
                   <label className="block text-xs text-zinc-500 mb-1">PIN / Passcode</label>
                   <input
                     type="password"
+                    value={accountPin}
+                    onChange={(e) => setAccountPin(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
                     placeholder="If required by carrier"
                   />
@@ -124,8 +147,12 @@ export default function PhonePortPage() {
                 Next
               </button>
             ) : (
-              <button type="submit" className="px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100">
-                Submit port request
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 disabled:opacity-60"
+              >
+                {loading ? "Submitting…" : "Submit port request"}
               </button>
             )}
           </div>

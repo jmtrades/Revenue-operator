@@ -32,16 +32,34 @@ export async function GET(req: NextRequest) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
 
-  if (accountSid && authToken && country === "US") {
+  const countryCode = (country || "US").toUpperCase();
+  const SUPPORTED_COUNTRIES = [
+    "US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "SE",
+    "NO", "DK", "FI", "IE", "AT", "CH", "BE", "PT", "JP", "BR",
+    "MX", "IN", "SG", "HK", "NZ", "ZA", "IL", "PL", "CZ"
+  ];
+
+  if (!SUPPORTED_COUNTRIES.includes(countryCode)) {
+    return NextResponse.json({ error: "Country not supported" }, { status: 400 });
+  }
+
+  if (accountSid && authToken) {
     try {
       const authHeader = "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64");
       const subPath = type === "toll_free" ? "TollFree" : "Local";
-      const params = new URLSearchParams({ Limit: "20", SmsEnabled: "true" });
-      if (areaCode.length === 3) params.set("AreaCode", areaCode);
-      if (state && subPath === "Local") params.set("InRegion", state);
+      const url = new URL(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/${countryCode}/${subPath}.json`
+      );
+      url.searchParams.set("Limit", "20");
+      url.searchParams.set("SmsEnabled", "true");
+      if (areaCode && (countryCode === "US" || countryCode === "CA")) {
+        url.searchParams.set("AreaCode", areaCode);
+      }
+      if (state && countryCode === "US" && subPath === "Local") {
+        url.searchParams.set("InRegion", state);
+      }
 
-      const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/${subPath}.json?${params.toString()}`;
-      const res = await fetch(url, { headers: { Authorization: authHeader } });
+      const res = await fetch(url.toString(), { headers: { Authorization: authHeader } });
       if (!res.ok) {
         await res.text().catch(() => "");
         return NextResponse.json({
@@ -59,8 +77,8 @@ export async function GET(req: NextRequest) {
         capabilities: { voice: true, sms: true, mms: false },
       }));
       return NextResponse.json({ numbers: list });
-    } catch (e) {
-      // Twilio search failed; fallback response already returned
+    } catch {
+      // fall through to placeholder response
     }
   }
 

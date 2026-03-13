@@ -1,279 +1,93 @@
-You are an implementation engineer. TWO major tasks: (1) Replace Vapi with ElevenLabs Conversational AI as the voice provider, and (2) upgrade frontend aesthetics to eliminate generic "AI slop" design. Do not plan. Do not narrate. Open files, edit, save, move on.
+You are an implementation engineer finishing business-critical infrastructure. There are 14 gaps that affect revenue, user experience, and system integrity. Fix all of them. Do not plan. Do not narrate. Open files, edit, save, move on.
 
 ---
 
-## ITEM 1: Implement ElevenLabs Conversational AI provider
+## ITEM 1: Fix number release to cancel Twilio billing
 
-The abstraction layer already exists at `src/lib/voice/`. Now implement the ElevenLabs Conversational AI provider and make it the default.
+File: `src/app/api/phone/numbers/[id]/release/route.ts`
 
-### A) Install the ElevenLabs SDK
+When a number is released, the code updates the DB status to "released" but does NOT release the number from Twilio. This means Twilio keeps billing us.
 
-```bash
-npm install elevenlabs
-```
-
-### B) Create `src/lib/voice/providers/elevenlabs-conversational.ts`
-
-Implement the `VoiceProvider` interface from `src/lib/voice/types.ts` using ElevenLabs Conversational AI API.
+After the DB update, add a Twilio API call to release the number:
 
 ```ts
-"use client";
-// Note: server-side operations will use the REST API, not the client SDK
-
-import type {
-  VoiceProvider,
-  CreateAssistantParams,
-  CreateCallParams,
-  CallResult,
-  WebhookEvent,
-} from "../types";
-
-const ELEVENLABS_API_BASE = "https://api.elevenlabs.io/v1";
-
-function getElevenLabsApiKey(): string {
-  const key = process.env.ELEVENLABS_API_KEY;
-  if (!key) throw new Error("ELEVENLABS_API_KEY is not set");
-  return key;
-}
-
-export class ElevenLabsConversationalProvider implements VoiceProvider {
-  private headers() {
-    return {
-      "xi-api-key": getElevenLabsApiKey(),
-      "Content-Type": "application/json",
-    };
-  }
-
-  async createAssistant(params: CreateAssistantParams): Promise<{ assistantId: string }> {
-    // Create a Conversational AI agent
-    // Docs: https://elevenlabs.io/docs/conversational-ai/api-reference
-    const body = {
-      name: params.name,
-      conversation_config: {
-        agent: {
-          prompt: {
-            prompt: params.systemPrompt,
-            llm: "claude-sonnet-4-20250514",
-            temperature: 0.45,
-            max_tokens: 350,
-          },
-          first_message: params.metadata?.greeting || "Hello, how can I help you today?",
-          language: params.language || "en",
+// After updating status to "released" in DB
+const providerSid = number.provider_sid;
+if (providerSid && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  try {
+    await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${sid}/IncomingPhoneNumbers/${providerSid}.json`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
         },
-        tts: {
-          voice_id: params.voiceId,
-          model_id: "eleven_turbo_v2_5",
-          stability: 0.55,
-          similarity_boost: 0.8,
-          style: 0.35,
-          speed: 1.0,
-          optimize_streaming_latency: 3,
-        },
-        stt: {
-          provider: "deepgram",
-          model: "nova-2",
-        },
-        turn: {
-          silence_timeout_ms: 30000,
-          max_duration_seconds: params.maxDuration || 600,
-        },
-      },
-      platform_settings: {
-        auth: {
-          enable_auth: false,
-        },
-      },
-    };
-
-    // Add tool definitions if provided
-    if (params.tools && params.tools.length > 0) {
-      (body.conversation_config.agent as Record<string, unknown>).tools = params.tools.map((tool) => ({
-        type: "webhook",
-        name: tool.name,
-        description: tool.description,
-        parameters: tool.parameters,
-      }));
-    }
-
-    const res = await fetch(`${ELEVENLABS_API_BASE}/convai/agents/create`, {
-      method: "POST",
-      headers: this.headers(),
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(`ElevenLabs createAssistant failed: ${res.status} ${err}`);
-    }
-
-    const data = await res.json();
-    return { assistantId: data.agent_id };
-  }
-
-  async updateAssistant(assistantId: string, params: Partial<CreateAssistantParams>): Promise<void> {
-    const body: Record<string, unknown> = {};
-    if (params.name) body.name = params.name;
-    if (params.systemPrompt || params.voiceId || params.language) {
-      body.conversation_config = {};
-      if (params.systemPrompt) {
-        (body.conversation_config as Record<string, unknown>).agent = {
-          prompt: { prompt: params.systemPrompt },
-        };
       }
-      if (params.voiceId) {
-        (body.conversation_config as Record<string, unknown>).tts = {
-          voice_id: params.voiceId,
-        };
-      }
-    }
-
-    const res = await fetch(`${ELEVENLABS_API_BASE}/convai/agents/${assistantId}`, {
-      method: "PATCH",
-      headers: this.headers(),
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(`ElevenLabs updateAssistant failed: ${res.status} ${err}`);
-    }
-  }
-
-  async deleteAssistant(assistantId: string): Promise<void> {
-    const res = await fetch(`${ELEVENLABS_API_BASE}/convai/agents/${assistantId}`, {
-      method: "DELETE",
-      headers: this.headers(),
-    });
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(`ElevenLabs deleteAssistant failed: ${res.status} ${err}`);
-    }
-  }
-
-  async createOutboundCall(params: CreateCallParams): Promise<CallResult> {
-    // Use ElevenLabs phone call API
-    const body = {
-      agent_id: params.assistantId,
-      agent_phone_number_id: process.env.ELEVENLABS_PHONE_NUMBER_ID,
-      to_number: params.phoneNumber,
-      metadata: params.metadata,
-    };
-
-    const res = await fetch(`${ELEVENLABS_API_BASE}/convai/twilio/outbound-call`, {
-      method: "POST",
-      headers: this.headers(),
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(`ElevenLabs outbound call failed: ${res.status} ${err}`);
-    }
-
-    const data = await res.json();
-    return {
-      callId: data.call_id || data.conversation_id,
-      status: "queued",
-      provider: "elevenlabs",
-    };
-  }
-
-  async createInboundCall(twilioCallSid: string, assistantId: string): Promise<string> {
-    // For inbound: ElevenLabs Twilio integration handles this via
-    // the phone number webhook configuration pointing to ElevenLabs
-    // Return TwiML that connects to ElevenLabs
-    return `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Connect>
-    <Stream url="wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${assistantId}">
-      <Parameter name="call_sid" value="${twilioCallSid}" />
-    </Stream>
-  </Connect>
-</Response>`;
-  }
-
-  parseWebhookEvent(body: unknown): WebhookEvent {
-    const data = body as Record<string, unknown>;
-    const eventType = data.type as string;
-
-    // Map ElevenLabs webhook events to our standard format
-    switch (eventType) {
-      case "conversation.started":
-        return {
-          type: "call-started",
-          callId: (data.conversation_id as string) || "",
-          metadata: data.metadata as Record<string, string>,
-        };
-      case "conversation.tool_call":
-        return {
-          type: "tool-call",
-          callId: (data.conversation_id as string) || "",
-          toolName: (data.tool_call as Record<string, unknown>)?.name as string,
-          toolArgs: (data.tool_call as Record<string, unknown>)?.parameters as Record<string, unknown>,
-          metadata: data.metadata as Record<string, string>,
-        };
-      case "conversation.ended":
-        return {
-          type: "end-of-call",
-          callId: (data.conversation_id as string) || "",
-          transcript: data.transcript as string,
-          summary: data.summary as string,
-          recordingUrl: data.recording_url as string,
-          duration: data.duration_seconds as number,
-          metadata: data.metadata as Record<string, string>,
-        };
-      default:
-        return {
-          type: "call-started",
-          callId: (data.conversation_id as string) || "",
-          metadata: data.metadata as Record<string, string>,
-        };
-    }
+    );
+  } catch (e) {
+    console.error("Failed to release Twilio number:", e);
+    // Don't fail the user request — DB is already updated
   }
 }
 ```
 
-### C) Update `src/lib/voice/index.ts`
+---
 
-Add the ElevenLabs provider and make it the default:
+## ITEM 2: Expand international number support to 20+ countries
+
+File: `src/app/api/phone/available/route.ts`
+
+The current code hardcodes `country === "US"` (line 35). Replace the entire Twilio query section to support any country Twilio offers:
 
 ```ts
-import { VoiceProvider, VoiceProviderConfig } from "./types";
-import { VapiProvider } from "./providers/vapi";
-import { ElevenLabsConversationalProvider } from "./providers/elevenlabs-conversational";
+// Replace the US-only check with dynamic country support
+const countryCode = (country || "US").toUpperCase();
+const SUPPORTED_COUNTRIES = [
+  "US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "SE",
+  "NO", "DK", "FI", "IE", "AT", "CH", "BE", "PT", "JP", "BR",
+  "MX", "IN", "SG", "HK", "NZ", "ZA", "IL", "PL", "CZ"
+];
 
-export function getVoiceProvider(config?: VoiceProviderConfig): VoiceProvider {
-  const provider = config?.provider ?? process.env.VOICE_PROVIDER ?? "elevenlabs";
-  switch (provider) {
-    case "elevenlabs":
-      return new ElevenLabsConversationalProvider();
-    case "vapi":
-      return new VapiProvider();
-    default:
-      return new ElevenLabsConversationalProvider();
+if (!SUPPORTED_COUNTRIES.includes(countryCode)) {
+  return NextResponse.json({ error: "Country not supported" }, { status: 400 });
+}
+
+if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+  const numberType = type === "toll_free" ? "TollFree" : "Local";
+  const url = new URL(
+    `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/AvailablePhoneNumbers/${countryCode}/${numberType}.json`
+  );
+  // Area code only for US/CA
+  if (areaCode && (countryCode === "US" || countryCode === "CA")) {
+    url.searchParams.set("AreaCode", areaCode);
   }
-}
-
-export * from "./types";
-```
-
-### D) Update `src/lib/voice/types.ts`
-
-Add `"elevenlabs"` to the provider union:
-```ts
-export interface VoiceProviderConfig {
-  provider: "vapi" | "retell" | "bland" | "elevenlabs" | "custom";
-  // ... rest stays the same
+  if (state && countryCode === "US") {
+    url.searchParams.set("InRegion", state);
+  }
+  // ... rest of fetch logic stays the same
 }
 ```
 
-### E) Create webhook route `src/app/api/webhooks/elevenlabs/route.ts`
+Also update `src/app/api/phone/provision/route.ts`:
+- Remove the hardcoded `country_code: "US"` on the DB insert
+- Instead use: `country_code: body.country || "US"` (accept country from request body)
+- Update the phone normalization to not assume +1 prefix for non-US numbers
 
-This handles ElevenLabs conversation events. Model it after the existing Vapi webhook at `src/app/api/webhooks/vapi/route.ts`:
+Also update the marketplace UI at `src/app/app/settings/phone/marketplace/page.tsx`:
+- Expand the country dropdown from [US, CA] to all 29 supported countries
+- Add country names: `{ code: "GB", name: "United Kingdom" }`, `{ code: "AU", name: "Australia" }`, etc.
+
+---
+
+## ITEM 3: Implement number porting backend
+
+File: Create `src/app/api/phone/port-request/route.ts`
 
 ```ts
 import { NextRequest, NextResponse } from "next/server";
-import { getVoiceProvider } from "@/lib/voice";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -282,256 +96,451 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const voice = getVoiceProvider();
-    const event = voice.parseWebhookEvent(body);
+  const { workspaceId } = await requireWorkspaceAccess(req);
+  const body = await req.json();
 
-    const workspaceId = event.metadata?.workspace_id;
+  const { phone_number, current_carrier, account_number, account_pin, loa_url, contact_name, contact_email } = body;
 
-    switch (event.type) {
-      case "call-started": {
-        await supabase.from("call_sessions").insert({
-          workspace_id: workspaceId,
-          external_meeting_id: event.callId,
-          provider: "elevenlabs",
-          status: "in_progress",
-          started_at: new Date().toISOString(),
-        });
-        break;
-      }
+  if (!phone_number || !current_carrier) {
+    return NextResponse.json({ error: "Phone number and carrier required" }, { status: 400 });
+  }
 
-      case "tool-call": {
-        // Handle tool calls same as Vapi webhook
-        if (event.toolName === "capture_lead") {
-          await supabase.from("leads").insert({
-            workspace_id: workspaceId,
-            name: (event.toolArgs?.name as string) || "Unknown",
-            phone: (event.toolArgs?.phone as string) || "",
-            email: (event.toolArgs?.email as string) || "",
-            source: "ai_call",
-          });
-        }
-        if (event.toolName === "book_appointment") {
-          await supabase.from("appointments").insert({
-            workspace_id: workspaceId,
-            date: event.toolArgs?.date as string,
-            time: event.toolArgs?.time as string,
-            service: event.toolArgs?.service as string,
-            notes: event.toolArgs?.notes as string,
-            phone: event.toolArgs?.phone as string,
-          });
-        }
-        break;
-      }
+  const { data, error } = await supabase
+    .from("port_requests")
+    .insert({
+      workspace_id: workspaceId,
+      phone_number,
+      current_carrier,
+      account_number: account_number || null,
+      account_pin: account_pin || null,
+      loa_url: loa_url || null,
+      contact_name: contact_name || null,
+      contact_email: contact_email || null,
+      status: "pending",
+    })
+    .select()
+    .single();
 
-      case "end-of-call": {
-        await supabase
-          .from("call_sessions")
-          .update({
-            status: "completed",
-            transcript: event.transcript,
-            summary: event.summary,
-            recording_url: event.recordingUrl,
-            duration_seconds: event.duration,
-            ended_at: new Date().toISOString(),
-          })
-          .eq("external_meeting_id", event.callId);
-        break;
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // TODO: Send notification email to ops team
+  return NextResponse.json(data);
+}
+```
+
+Create migration `supabase/migrations/port_requests_table.sql`:
+
+```sql
+CREATE TABLE IF NOT EXISTS revenue_operator.port_requests (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  workspace_id uuid NOT NULL REFERENCES revenue_operator.workspaces(id),
+  phone_number text NOT NULL,
+  current_carrier text NOT NULL,
+  account_number text,
+  account_pin text,
+  loa_url text,
+  contact_name text,
+  contact_email text,
+  status text DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'completed', 'rejected')),
+  notes text,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE revenue_operator.port_requests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY port_requests_workspace ON revenue_operator.port_requests
+  FOR ALL USING (workspace_id IN (
+    SELECT workspace_id FROM revenue_operator.workspace_roles WHERE user_id = auth.uid()
+  ));
+```
+
+Update the port page UI at `src/app/app/settings/phone/port/page.tsx` to actually POST to `/api/phone/port-request` on form submit.
+
+---
+
+## ITEM 4: Implement per-minute usage tracking
+
+File: `src/app/api/usage/route.ts`
+
+The current endpoint counts number of calls, not minutes. Replace the calls count query with actual minute tracking:
+
+```ts
+// Replace the simple count with duration sum
+const { data: callData } = await supabase
+  .from("call_sessions")
+  .select("duration_seconds")
+  .eq("workspace_id", workspaceId)
+  .gte("started_at", periodStart.toISOString());
+
+const totalMinutes = Math.ceil(
+  (callData || []).reduce((sum, c) => sum + (c.duration_seconds || 0), 0) / 60
+);
+```
+
+Update the response to include minutes:
+```ts
+return NextResponse.json({
+  calls: callCount,
+  minutes_used: totalMinutes,
+  minutes_limit: planLimits.minutes,
+  minutes_pct: Math.round((totalMinutes / planLimits.minutes) * 100),
+  messages: messageCount,
+  messages_limit: planLimits.messages,
+  messages_pct: Math.round((messageCount / planLimits.messages) * 100),
+});
+```
+
+Update `PLAN_LIMITS` to use minutes instead of call counts:
+```ts
+const PLAN_LIMITS: Record<string, { minutes: number; messages: number }> = {
+  solo: { minutes: 400, messages: 500 },
+  growth: { minutes: 1500, messages: 2000 },
+  team: { minutes: 5000, messages: 10000 },
+  enterprise: { minutes: 50000, messages: 100000 },
+};
+```
+
+---
+
+## ITEM 5: Implement Stripe metered overage billing
+
+File: Create `src/lib/billing/overage.ts`
+
+```ts
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-12-18.acacia" });
+
+const OVERAGE_RATES: Record<string, number> = {
+  solo: 25,       // $0.25/min in cents
+  growth: 18,     // $0.18/min
+  team: 12,       // $0.12/min
+  enterprise: 10, // $0.10/min
+};
+
+export async function reportUsageOverage(
+  workspaceId: string,
+  subscriptionId: string,
+  tier: string,
+  minutesUsed: number,
+  minutesIncluded: number,
+) {
+  const overageMinutes = Math.max(0, minutesUsed - minutesIncluded);
+  if (overageMinutes <= 0) return;
+
+  const ratePerMin = OVERAGE_RATES[tier] || 25;
+  const overageAmountCents = overageMinutes * ratePerMin;
+
+  // Create a one-time invoice item for overage
+  await stripe.invoiceItems.create({
+    customer: (await stripe.subscriptions.retrieve(subscriptionId)).customer as string,
+    amount: overageAmountCents,
+    currency: "usd",
+    description: `Voice overage: ${overageMinutes} minutes × $${(ratePerMin / 100).toFixed(2)}/min`,
+    metadata: { workspace_id: workspaceId, overage_minutes: String(overageMinutes) },
+  });
+}
+```
+
+File: Create `src/app/api/cron/usage-overage/route.ts`
+
+```ts
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { reportUsageOverage } from "@/lib/billing/overage";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+export async function POST() {
+  // Run daily — checks all active workspaces for overage
+  const { data: workspaces } = await supabase
+    .from("workspaces")
+    .select("id, billing_status, billing_tier, stripe_subscription_id")
+    .eq("billing_status", "active");
+
+  for (const ws of workspaces || []) {
+    if (!ws.stripe_subscription_id) continue;
+
+    // Get current period minutes
+    const periodStart = new Date();
+    periodStart.setDate(1);
+    periodStart.setHours(0, 0, 0, 0);
+
+    const { data: calls } = await supabase
+      .from("call_sessions")
+      .select("duration_seconds")
+      .eq("workspace_id", ws.id)
+      .gte("started_at", periodStart.toISOString());
+
+    const totalMinutes = Math.ceil(
+      (calls || []).reduce((sum, c) => sum + (c.duration_seconds || 0), 0) / 60
+    );
+
+    const PLAN_MINUTES: Record<string, number> = {
+      solo: 400, growth: 1500, team: 5000, enterprise: 50000,
+    };
+    const included = PLAN_MINUTES[ws.billing_tier] || 400;
+
+    if (totalMinutes > included) {
+      await reportUsageOverage(ws.id, ws.stripe_subscription_id, ws.billing_tier, totalMinutes, included);
+    }
+  }
+
+  return NextResponse.json({ ok: true });
+}
+```
+
+---
+
+## ITEM 6: Create Twilio status webhook handler
+
+File: Create `src/app/api/webhooks/twilio/status/route.ts`
+
+```ts
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+export async function POST(req: NextRequest) {
+  const formData = await req.formData();
+  const callSid = formData.get("CallSid") as string;
+  const callStatus = formData.get("CallStatus") as string;
+  const callDuration = formData.get("CallDuration") as string;
+
+  if (!callSid) {
+    return NextResponse.json({ error: "Missing CallSid" }, { status: 400 });
+  }
+
+  // Update call session with final status
+  await supabase
+    .from("call_sessions")
+    .update({
+      status: callStatus === "completed" ? "completed" : callStatus,
+      duration_seconds: callDuration ? parseInt(callDuration, 10) : undefined,
+      ended_at: new Date().toISOString(),
+    })
+    .eq("external_meeting_id", callSid);
+
+  return new Response("OK", { status: 200 });
+}
+```
+
+---
+
+## ITEM 7: Update DB provider defaults from "vapi" to "twilio"
+
+File: `supabase/migrations/phone_numbers_table.sql`
+
+The `phone_numbers.provider` column defaults to `'vapi'`. This is wrong now that ElevenLabs is the default voice provider. Twilio is still the telephony provider.
+
+Create a new migration `supabase/migrations/update_provider_defaults.sql`:
+
+```sql
+-- Update provider default for new phone numbers
+ALTER TABLE revenue_operator.phone_numbers ALTER COLUMN provider SET DEFAULT 'twilio';
+
+-- Update existing vapi provider entries to twilio (they're all Twilio-purchased numbers)
+UPDATE revenue_operator.phone_numbers SET provider = 'twilio' WHERE provider = 'vapi';
+```
+
+Also update `src/app/api/phone/provision/route.ts` — change `provider: "vapi"` to `provider: "twilio"` in the insert.
+
+---
+
+## ITEM 8: Update Twilio inbound voice webhook for ElevenLabs
+
+File: `src/app/api/webhooks/twilio/voice/route.ts`
+
+This route still tries to route calls through Vapi. Update it to use the voice provider abstraction:
+
+Find any import of `createCallForTwilio` from `@/lib/vapi/client` and replace with:
+```ts
+import { getVoiceProvider } from "@/lib/voice";
+```
+
+Replace the Vapi call logic with:
+```ts
+const voice = getVoiceProvider();
+const assistantId = workspace.vapi_assistant_id; // rename this column later
+const twiml = await voice.createInboundCall(CallSid, assistantId);
+return new Response(twiml, {
+  headers: { "Content-Type": "application/xml" },
+});
+```
+
+---
+
+## ITEM 9: Auto-cleanup numbers when workspace paused/deleted
+
+File: `src/app/api/billing/webhook/route.ts`
+
+In the `customer.subscription.deleted` event handler, add number release logic:
+
+```ts
+// After setting billing_status to paused/trial
+// Release all workspace phone numbers from Twilio to stop charges
+const { data: numbers } = await supabase
+  .from("phone_numbers")
+  .select("id, provider_sid")
+  .eq("workspace_id", workspaceId)
+  .eq("status", "active");
+
+if (numbers && numbers.length > 0 && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  for (const num of numbers) {
+    if (num.provider_sid) {
+      try {
+        await fetch(
+          `https://api.twilio.com/2010-04-01/Accounts/${sid}/IncomingPhoneNumbers/${num.provider_sid}.json`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
+            },
+          }
+        );
+      } catch (e) {
+        console.error("Failed to release number:", num.provider_sid, e);
       }
     }
+  }
+  // Mark all as released in DB
+  await supabase
+    .from("phone_numbers")
+    .update({ status: "released" })
+    .eq("workspace_id", workspaceId)
+    .eq("status", "active");
+}
+```
 
-    return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error("ElevenLabs webhook error:", error);
-    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
+---
+
+## ITEM 10: Enable multi-step campaign execution (SMS + email, not just voice)
+
+File: `src/app/api/campaigns/[id]/launch/route.ts`
+
+Currently this only calls `executeLeadOutboundCall()`. Add support for SMS and email steps in campaign sequences:
+
+After the existing voice call logic, add:
+
+```ts
+import { sendOutbound } from "@/lib/delivery/provider";
+
+// If campaign has sequence steps beyond voice
+if (campaign.sequence_steps && campaign.sequence_steps.length > 0) {
+  for (const step of campaign.sequence_steps) {
+    if (step.channel === "sms" && step.message) {
+      await sendOutbound({
+        workspaceId,
+        leadId: lead.id,
+        channel: "sms",
+        content: step.message,
+        to: { phone: lead.phone },
+      });
+    }
+    if (step.channel === "email" && step.message) {
+      await sendOutbound({
+        workspaceId,
+        leadId: lead.id,
+        channel: "email",
+        content: step.message,
+        to: { email: lead.email },
+        emailSubject: step.subject || campaign.name,
+      });
+    }
   }
 }
 ```
 
-### F) Update `.env.example`
-
-Add these env vars:
-```
-# Voice Provider (elevenlabs or vapi)
-VOICE_PROVIDER=elevenlabs
-
-# ElevenLabs Conversational AI
-ELEVENLABS_API_KEY=
-ELEVENLABS_PHONE_NUMBER_ID=
-
-# Legacy Vapi (keep for fallback)
-# VAPI_API_KEY=
-# VAPI_PHONE_NUMBER_ID=
-# NEXT_PUBLIC_VAPI_PUBLIC_KEY=
-```
-
-### G) Update the Twilio inbound webhook
-
-In `src/app/api/webhooks/twilio/voice/route.ts`, update the fallback logic to use the voice provider abstraction instead of directly calling Vapi:
-
-Find any direct `import` from `@/lib/vapi/client` and replace with:
-```ts
-import { getVoiceProvider } from "@/lib/voice";
-```
-
-Then replace any `createCallForTwilio()` call with:
-```ts
-const voice = getVoiceProvider();
-const twiml = await voice.createInboundCall(twilioCallSid, assistantId);
-```
-
-### H) Update outbound call execution
-
-In `src/lib/outbound/execute-lead-call.ts`, replace Vapi imports with:
-```ts
-import { getVoiceProvider } from "@/lib/voice";
-```
-
-Replace `createOutboundCall()` with:
-```ts
-const voice = getVoiceProvider();
-const result = await voice.createOutboundCall({
-  assistantId,
-  phoneNumber: lead.phone,
-  metadata: { workspace_id: workspaceId, call_session_id: sessionId },
-});
-```
-
-### I) Update agent sync
-
-In `src/lib/agents/sync-vapi-agent.ts`, replace Vapi imports with voice provider abstraction. The function should use `getVoiceProvider()` instead of directly calling Vapi API. Keep the same system prompt building logic — just change the transport.
-
-DO NOT touch `src/lib/agents/build-vapi-system-prompt.ts` — the system prompt logic is provider-agnostic. Just rename the file to `build-agent-system-prompt.ts` and update all imports.
+If `sendOutbound` doesn't exist with that exact signature, adapt to use whatever the existing delivery provider exports. Check `src/lib/delivery/provider.ts` for the exact function signature.
 
 ---
 
-## ITEM 2: Frontend aesthetics overhaul
+## ITEM 11: Consolidate phone_numbers and phone_configs tables
 
-The current design is solid but uses Inter (generic body font), has minimal background atmosphere, and lacks distinctive motion. Apply these targeted upgrades to elevate from "clean SaaS" to "premium, distinctive product."
+File: `src/app/api/integrations/twilio/auto-provision/route.ts`
 
-### A) Replace Inter with a distinctive body font
+This route still writes to `phone_configs` (legacy table). Update it to write to `phone_numbers` instead:
 
-In `src/app/[locale]/layout.tsx` (or wherever Google Fonts are imported):
-
-Replace Inter import with **Satoshi** (from Google Fonts or self-hosted). If Satoshi is not on Google Fonts, use **DM Sans** as the alternative.
-
+Replace `phone_configs` inserts with `phone_numbers` inserts matching the schema:
 ```ts
-import { DM_Sans, Playfair_Display, JetBrains_Mono } from "next/font/google";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-body-sans",
+await supabase.from("phone_numbers").insert({
+  workspace_id: workspaceId,
+  phone_number: purchasedNumber,
+  friendly_name: friendlyName,
+  country_code: "US",
+  number_type: numberType,
+  provider: "twilio",
+  provider_sid: providerSid,
+  status: "active",
+  monthly_cost_cents: numberType === "toll_free" ? 200 : 150,
+  capabilities: { voice: true, sms: true, mms: false },
 });
 ```
 
-Update `globals.css` to reference the new font variable. Keep Playfair Display for headlines — it's distinctive.
+Keep backward compatibility by also writing to `phone_configs` if it's used elsewhere, but the primary record should be in `phone_numbers`.
 
-### B) Add atmospheric depth to hero background
+---
 
-In the hero section component (likely `src/components/home/Hero.tsx` or similar), add layered visual depth:
+## ITEM 12: Add Twilio voice webhook signature verification
 
-After the existing radial gradient, add a subtle geometric noise texture and floating ambient particles using CSS only:
+File: `src/app/api/webhooks/twilio/voice/route.ts`
 
-```css
-.hero-atmosphere {
-  position: relative;
-  overflow: hidden;
-}
+The SMS inbound webhook verifies Twilio signatures but the voice webhook does NOT. Add signature verification:
 
-.hero-atmosphere::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 60% 40% at 20% -10%, rgba(79, 140, 255, 0.12), transparent 70%),
-    radial-gradient(ellipse 40% 30% at 80% 20%, rgba(0, 212, 170, 0.06), transparent 60%),
-    radial-gradient(circle at 50% 50%, rgba(79, 140, 255, 0.02) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
-}
+```ts
+import crypto from "crypto";
 
-.hero-atmosphere::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
+function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  if (!token) return false; // Skip verification if no auth token
+
+  const sorted = Object.keys(params).sort().reduce((acc, key) => acc + key + params[key], "");
+  const data = url + sorted;
+  const expected = crypto.createHmac("sha1", token).update(Buffer.from(data, "utf-8")).digest("base64");
+  return expected === signature;
 }
 ```
 
-### C) Upgrade card hover effects
-
-Add a subtle glow-on-hover to feature cards in `globals.css`:
-
-```css
-.card-feature {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.card-feature:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 8px 32px rgba(79, 140, 255, 0.08),
-    0 0 0 1px rgba(79, 140, 255, 0.12);
-}
-```
-
-### D) Orchestrate page load animation
-
-In the homepage, add staggered reveal on load. In `src/app/[locale]/page.tsx` or the homepage wrapper:
-
-Add progressive `animation-delay` to each section so they cascade in:
-
-```css
-.section-animate {
-  opacity: 0;
-  animation: slideUp 0.6s ease forwards;
-}
-.section-animate:nth-child(1) { animation-delay: 0ms; }
-.section-animate:nth-child(2) { animation-delay: 80ms; }
-.section-animate:nth-child(3) { animation-delay: 160ms; }
-.section-animate:nth-child(4) { animation-delay: 240ms; }
-.section-animate:nth-child(5) { animation-delay: 320ms; }
-```
-
-Apply `.section-animate` class to each homepage section wrapper.
-
-### E) Upgrade CTA buttons
-
-Replace flat blue buttons with subtle gradient + glow:
-
-```css
-.btn-primary {
-  background: linear-gradient(135deg, #4F8CFF 0%, #3B6FE0 100%);
-  box-shadow: 0 0 20px rgba(79, 140, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-  box-shadow: 0 0 30px rgba(79, 140, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
-}
-```
-
-### F) Add text gradient to hero headline
-
-Make the main hero headline use a subtle gradient for premium feel:
-
-```css
-.hero-headline {
-  background: linear-gradient(135deg, #FFFFFF 0%, #B8D4FF 50%, #FFFFFF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+Add at the top of the POST handler:
+```ts
+const sig = req.headers.get("x-twilio-signature");
+if (sig && process.env.TWILIO_AUTH_TOKEN) {
+  const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/voice`;
+  const params = Object.fromEntries(formData.entries()) as Record<string, string>;
+  if (!verifyTwilioSignature(url, params, sig)) {
+    return new Response("Invalid signature", { status: 403 });
+  }
 }
 ```
 
 ---
 
-## ITEM 3: Typecheck, build, commit, push
+## ITEM 13: Fix billing page to show minutes instead of calls
+
+File: `src/app/app/settings/billing/page.tsx`
+
+The billing page likely shows "calls used" but the plan limits are in minutes. Update the usage display to show minutes:
+
+Find where usage data is displayed (calls_pct, calls, calls_limit) and update labels:
+- "Calls used" → "Minutes used"
+- Show `usage.minutes_used` instead of `usage.calls`
+- Show `usage.minutes_limit` instead of `usage.calls_limit`
+- Show `usage.minutes_pct` for the progress bar
+
+---
+
+## ITEM 14: Typecheck, build, commit, push
 
 ```bash
 npx tsc --noEmit && npm run build && npm test
@@ -540,7 +549,7 @@ npx tsc --noEmit && npm run build && npm test
 Fix any failures. Then:
 
 ```bash
-git add -A && git commit -m "feat: ElevenLabs Conversational AI provider + frontend aesthetics upgrade" && git push origin main
+git add -A && git commit -m "feat: 14 business-critical fixes — billing, intl numbers, security, campaigns, usage tracking" && git push origin main
 git log --oneline -3
 ```
 
@@ -548,4 +557,4 @@ Paste ONLY the git log output.
 
 ---
 
-START. Item 1A. Run `npm install elevenlabs`. Then create the ElevenLabs provider file. GO.
+START. Item 1. Open `src/app/api/phone/numbers/[id]/release/route.ts`. Add the Twilio DELETE call. GO.

@@ -266,6 +266,40 @@ async function handleStripeWebhookEvent(
             updated_at: new Date().toISOString(),
           })
           .eq("id", workspaceId);
+
+        const { data: numbers } = await db
+          .from("phone_numbers")
+          .select("id, provider_sid")
+          .eq("workspace_id", workspaceId)
+          .eq("status", "active");
+
+        if (numbers && numbers.length > 0 && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+          const sid = process.env.TWILIO_ACCOUNT_SID;
+          const token = process.env.TWILIO_AUTH_TOKEN;
+          for (const num of numbers as Array<{ id: string; provider_sid: string | null }>) {
+            if (num.provider_sid) {
+              try {
+                await fetch(
+                  `https://api.twilio.com/2010-04-01/Accounts/${sid}/IncomingPhoneNumbers/${num.provider_sid}.json`,
+                  {
+                    method: "DELETE",
+                    headers: {
+                      Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
+                    },
+                  }
+                );
+              } catch (e) {
+                // eslint-disable-next-line no-console
+                console.error("Failed to release number:", num.provider_sid, e);
+              }
+            }
+          }
+          await db
+            .from("phone_numbers")
+            .update({ status: "released" })
+            .eq("workspace_id", workspaceId)
+            .eq("status", "active");
+        }
       }
       break;
     }

@@ -34,16 +34,17 @@ export async function POST(req: NextRequest) {
   }
 
   // Check if already provisioned
-  const { data: existing } = await db
-    .from("phone_configs")
-    .select("id, proxy_number, status, twilio_phone_sid")
+  const { data: existingNumber } = await db
+    .from("phone_numbers")
+    .select("phone_number, status")
     .eq("workspace_id", workspaceId)
-    .single();
+    .eq("status", "active")
+    .maybeSingle();
 
-  if (existing && existing.status === "active" && existing.proxy_number) {
+  if (existingNumber && (existingNumber as { phone_number: string; status: string }).status === "active") {
     return NextResponse.json({
       success: true,
-      phone_number: existing.proxy_number,
+      phone_number: (existingNumber as { phone_number: string }).phone_number,
       status: "active",
       message: "Text handling already active",
     });
@@ -182,7 +183,20 @@ export async function POST(req: NextRequest) {
     }, { status: 404 });
   }
 
-  // Store in phone_configs
+  await db.from("phone_numbers").insert({
+    workspace_id: workspaceId,
+    phone_number: phoneNumber,
+    friendly_name: phoneNumber,
+    country_code: "US",
+    number_type: "local",
+    provider: "twilio",
+    provider_sid: phoneSid,
+    status: "active",
+    monthly_cost_cents: 150,
+    capabilities: { voice: true, sms: true, mms: false },
+    updated_at: new Date().toISOString(),
+  });
+
   await db.from("phone_configs").upsert(
     {
       workspace_id: workspaceId,

@@ -8,12 +8,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
-const DEFAULT_LIMITS = { calls: 200, messages: 500 };
-const PLAN_LIMITS: Record<string, { calls: number; messages: number }> = {
-  solo: { calls: 200, messages: 500 },
-  growth: { calls: 1000, messages: 2000 },
-  team: { calls: 5000, messages: 10000 },
-  enterprise: { calls: 50000, messages: 100000 },
+const DEFAULT_LIMITS = { minutes: 400, messages: 500 };
+const PLAN_LIMITS: Record<string, { minutes: number; messages: number }> = {
+  solo: { minutes: 400, messages: 500 },
+  growth: { minutes: 1500, messages: 2000 },
+  team: { minutes: 5000, messages: 10000 },
+  enterprise: { minutes: 50000, messages: 100000 },
 };
 
 export async function GET(req: NextRequest) {
@@ -25,9 +25,16 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   let calls = 0;
   let messages = 0;
+  let totalMinutes = 0;
   try {
-    const { count: c } = await db.from("call_sessions").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
+    const { data: callData, count: c } = await db
+      .from("call_sessions")
+      .select("id, duration_seconds, started_at", { count: "exact" })
+      .eq("workspace_id", workspaceId);
     calls = c ?? 0;
+    totalMinutes = Math.ceil(
+      (callData || []).reduce((sum, cRow) => sum + ((cRow as { duration_seconds?: number }).duration_seconds || 0), 0) / 60
+    );
   } catch {
     // ignore
   }
@@ -56,15 +63,16 @@ export async function GET(req: NextRequest) {
     // ignore
   }
   const limits = PLAN_LIMITS[tier] ?? DEFAULT_LIMITS;
-  const calls_pct = limits.calls > 0 ? Math.round((calls / limits.calls) * 100) : 0;
+  const minutes_pct = limits.minutes > 0 ? Math.round((totalMinutes / limits.minutes) * 100) : 0;
   const messages_pct = limits.messages > 0 ? Math.round((messages / limits.messages) * 100) : 0;
 
   return NextResponse.json({
     calls,
+    minutes_used: totalMinutes,
+    minutes_limit: limits.minutes,
+    minutes_pct: Math.min(100, minutes_pct),
     messages,
-    calls_limit: limits.calls,
     messages_limit: limits.messages,
-    calls_pct: Math.min(100, calls_pct),
     messages_pct: Math.min(100, messages_pct),
   });
 }

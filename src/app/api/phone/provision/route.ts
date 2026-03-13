@@ -16,6 +16,7 @@ const BODY = z.object({
   phone_number: z.string().min(10).max(20),
   friendly_name: z.string().max(100).optional(),
   number_type: z.enum(["local", "toll_free", "mobile"]).optional(),
+  country: z.string().min(2).max(2).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -37,9 +38,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { phone_number, friendly_name, number_type } = parsed.data;
+  const { phone_number, friendly_name, number_type, country } = parsed.data;
   const normalized = phone_number.replace(/\D/g, "");
-  const e164 = normalized.startsWith("1") && normalized.length === 11 ? `+${normalized}` : `+1${normalized}`;
+  const e164 =
+    normalized.startsWith("+") || phone_number.trim().startsWith("+")
+      ? phone_number.trim()
+      : normalized.length === 10 && (!country || country === "US")
+        ? `+1${normalized}`
+        : `+${normalized}`;
 
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -98,10 +104,10 @@ export async function POST(req: NextRequest) {
       workspace_id: session.workspaceId,
       phone_number: e164,
       friendly_name: friendly_name ?? e164,
-      country_code: "US",
+      country_code: country || "US",
       number_type: number_type ?? "local",
       capabilities: { voice: true, sms: true, mms: false },
-      provider: accountSid ? "twilio" : "vapi",
+      provider: "twilio",
       provider_sid: providerSid,
       status: "active",
       monthly_cost_cents: monthlyCost,
