@@ -900,7 +900,8 @@
     },
     "status": {
       "active": "Actif",
-      "draft": "Brouillon"
+      "draft": "Brouillon",
+      "processing": "En cours"
     }
   },
   "filter": {

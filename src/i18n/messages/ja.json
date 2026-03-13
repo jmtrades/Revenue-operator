@@ -900,7 +900,8 @@
     },
     "status": {
       "active": "有効",
-      "draft": "下書き"
+      "draft": "下書き",
+      "processing": "処理中"
     }
   },
   "filter": {
