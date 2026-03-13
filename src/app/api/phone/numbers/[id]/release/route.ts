@@ -26,7 +26,7 @@ export async function POST(
 
   const { data: row } = await db
     .from("phone_numbers")
-    .select("id, workspace_id, assigned_agent_id, status")
+    .select("id, workspace_id, assigned_agent_id, status, provider_sid")
     .eq("id", numberId)
     .eq("workspace_id", session.workspaceId)
     .maybeSingle();
@@ -35,7 +35,8 @@ export async function POST(
     return NextResponse.json({ error: "Number not found" }, { status: 404 });
   }
 
-  const assignedAgentId = (row as { assigned_agent_id: string | null }).assigned_agent_id;
+  const number = row as { assigned_agent_id: string | null; provider_sid: string | null };
+  const assignedAgentId = number.assigned_agent_id;
   if (assignedAgentId) {
     const { data: agent } = await db
       .from("agents")
@@ -64,6 +65,26 @@ export async function POST(
 
   if (error) {
     return NextResponse.json({ error: "Update failed" }, { status: 500 });
+  }
+
+  const providerSid = number.provider_sid;
+  if (providerSid && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+    const sid = process.env.TWILIO_ACCOUNT_SID;
+    const token = process.env.TWILIO_AUTH_TOKEN;
+    try {
+      await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${sid}/IncomingPhoneNumbers/${providerSid}.json`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
+          },
+        }
+      );
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to release Twilio number:", e);
+    }
   }
 
   return NextResponse.json({ ok: true });

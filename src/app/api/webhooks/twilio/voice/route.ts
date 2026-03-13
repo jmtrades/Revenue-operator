@@ -9,16 +9,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoiceProvider } from "@/lib/voice";
-import { hasVapiServerKey } from "@/lib/vapi/env";
 import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
+import crypto from "crypto";
 
 const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
+
+function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  if (!token) return false;
+
+  const sorted = Object.keys(params)
+    .sort()
+    .reduce((acc, key) => acc + key + params[key], "");
+  const data = url + sorted;
+  const expected = crypto.createHmac("sha1", token).update(Buffer.from(data, "utf-8")).digest("base64");
+  return expected === signature;
+}
 
 export async function POST(req: NextRequest) {
   let form: Record<string, string>;
   try {
     const text = await req.text();
-    form = Object.fromEntries(new URLSearchParams(text)) as Record<string, string>;
+    const entries = Object.fromEntries(new URLSearchParams(text)) as Record<string, string>;
+    form = entries;
+
+    const sig = req.headers.get("x-twilio-signature");
+    if (sig && process.env.TWILIO_AUTH_TOKEN) {
+      const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/voice`;
+      if (!verifyTwilioSignature(url, entries, sig)) {
+        return new NextResponse("Invalid signature", { status: 403 });
+      }
+    }
   } catch {
     return new NextResponse("Bad Request", { status: 400 });
   }

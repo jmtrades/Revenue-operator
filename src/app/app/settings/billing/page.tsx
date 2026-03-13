@@ -11,7 +11,7 @@ import { PlanChangeModal, type PlanId } from "@/components/PlanChangeModal";
 type CancelStep = 0 | 1 | 2 | 3 | 4;
 type PauseStep = 0 | 1;
 
-const defaultUsage = { minutesUsed: 0, minutesLimit: 400, calls: 0, leads: 0, estRevenue: 0 };
+const defaultUsage = { minutes_used: 0, minutes_limit: 400, calls: 0, leads: 0, estRevenue: 0 };
 
 export default function AppSettingsBillingPage() {
   const tNav = useTranslations("nav");
@@ -47,7 +47,7 @@ export default function AppSettingsBillingPage() {
     fetchWorkspaceMeCached()
       .then((data: { id?: string | null; stats?: typeof defaultUsage } | null) => {
         setWorkspaceId(data?.id ?? null);
-        if (data?.stats) setUsage(data.stats);
+        if (data?.stats) setUsage(data.stats as typeof defaultUsage);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -137,7 +137,9 @@ export default function AppSettingsBillingPage() {
       )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
         <p className="text-sm font-medium text-white">Starter — $297/mo</p>
-        <p className="text-xs text-zinc-500 mt-1">{usage.minutesUsed} / {usage.minutesLimit} min used</p>
+        <p className="text-xs text-zinc-500 mt-1">
+          {usage.minutes_used} / {usage.minutes_limit} minutes used
+        </p>
         <p className="text-xs text-zinc-500 mt-1">
           Status: {billingStatus}{renewalAt ? ` · renews ${new Date(renewalAt).toLocaleDateString()}` : ""}
         </p>

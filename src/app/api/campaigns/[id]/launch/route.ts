@@ -40,6 +40,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     status: string;
     type: string;
     target_filter: TargetFilter | null;
+    sequence_steps?: Array<{ channel: "sms" | "email"; message?: string; subject?: string | null }>;
   };
 
   // Only launch from draft/paused into active
@@ -94,6 +95,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     if (result.ok) {
       enqueued += 1;
     }
+
+    // Multi-step sequences (SMS/email) are executed by the outbound pipeline, not directly in this route.
   }
 
   await db

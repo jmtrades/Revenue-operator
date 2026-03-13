@@ -83,6 +83,7 @@ export default function PhoneMarketplacePage() {
           phone_number: num.phone_number,
           friendly_name: formatPhoneDisplay(num.phone_number),
           number_type: num.type,
+          country,
         }),
       });
       const data = (await res.json()) as { error?: string; phone_number?: string };
@@ -133,6 +134,33 @@ export default function PhoneMarketplacePage() {
             >
               <option value="US">United States</option>
               <option value="CA">Canada</option>
+              <option value="GB">United Kingdom</option>
+              <option value="AU">Australia</option>
+              <option value="DE">Germany</option>
+              <option value="FR">France</option>
+              <option value="ES">Spain</option>
+              <option value="IT">Italy</option>
+              <option value="NL">Netherlands</option>
+              <option value="SE">Sweden</option>
+              <option value="NO">Norway</option>
+              <option value="DK">Denmark</option>
+              <option value="FI">Finland</option>
+              <option value="IE">Ireland</option>
+              <option value="AT">Austria</option>
+              <option value="CH">Switzerland</option>
+              <option value="BE">Belgium</option>
+              <option value="PT">Portugal</option>
+              <option value="JP">Japan</option>
+              <option value="BR">Brazil</option>
+              <option value="MX">Mexico</option>
+              <option value="IN">India</option>
+              <option value="SG">Singapore</option>
+              <option value="HK">Hong Kong</option>
+              <option value="NZ">New Zealand</option>
+              <option value="ZA">South Africa</option>
+              <option value="IL">Israel</option>
+              <option value="PL">Poland</option>
+              <option value="CZ">Czech Republic</option>
             </select>
           </div>
           <div>
