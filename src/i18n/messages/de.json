@@ -400,12 +400,39 @@
       "title": "Noch keine Leads",
       "body": "Deine KI wird automatisch Leads erstellen, während sie mit deinen Kunden spricht."
     },
-    "saveLead": "Lead speichern"
+    "saveLead": "Lead speichern",
+    "toast": {
+      "callStarted": "Anruf gestartet. Status unter „Anrufe“ prüfen.",
+      "callFailed": "Anruf konnte nicht gestartet werden.",
+      "exportFailed": "Export fehlgeschlagen. Bitte erneut versuchen.",
+      "exportSuccess": "Leads exportiert. Prüfe deine Downloads.",
+      "importFailed": "Import fehlgeschlagen.",
+      "importSuccess": "{count} Leads importiert."
+    }
   },
   "campaigns": {
     "title": "Kampagnen",
     "pageTitle": "Kampagnen — Recall Touch",
     "create": "Kampagne erstellen",
+    "form": {
+      "typeLabel": "Typ",
+      "sourceLabel": "Quelle"
+    },
+    "type": {
+      "leadFollowup": "Lead-Qualifizierung / Nachverfolgung",
+      "appointmentReminder": "Terminvereinbarung / -erinnerung",
+      "reactivation": "Reaktivierung",
+      "coldOutreach": "Ankündigung / Kaltakquise",
+      "reviewRequest": "Bewertungsanfrage",
+      "custom": "Benutzerdefiniert"
+    },
+    "source": {
+      "any": "Beliebige Quelle",
+      "inboundCall": "Eingehender Anruf",
+      "outbound": "Ausgehende Kampagne",
+      "website": "Website",
+      "referral": "Empfehlung"
+    },
     "empty": {
       "title": "Noch keine Kampagnen",
       "body": "Nutze Kampagnen, um verpasste Anrufe zurückzugewinnen, alte Leads zu reaktivieren und deinen Kalender zu füllen."
@@ -480,7 +507,9 @@
     "profile.saved": "Profil gespeichert.",
     "profile.saveFailed": "Profil konnte nicht gespeichert werden. Bitte erneut versuchen.",
     "notifications.loadFailed": "Benachrichtigungseinstellungen konnten nicht geladen werden. Standardwerte werden verwendet.",
-    "notifications.saved": "Benachrichtigungseinstellungen gespeichert."
+    "notifications.saved": "Benachrichtigungseinstellungen gespeichert.",
+    "deleteDataInfo": "Wende dich an den Support, um deine Daten dauerhaft löschen zu lassen.",
+    "deleteAccountInfo": "Wende dich an den Support, um dein Konto dauerhaft löschen zu lassen."
   },
   "hero": {
     "title": "KI, die das Telefon deines Unternehmens rund um die Uhr beantwortet",
@@ -687,6 +716,7 @@
   "calendar": {
     "removeAppointmentTitle": "Termin entfernen?",
     "pageTitle": "Kalender — Recall Touch",
+    "outlookComingSoon": "Die bidirektionale Synchronisierung mit Outlook-Kalender ist in Kürze verfügbar. Wir benachrichtigen dich, sobald sie bereit ist.",
     "empty": {
       "title": "Noch keine Termine",
       "body": "Wenn deine KI Termine bucht, erscheinen sie in diesem Kalender."

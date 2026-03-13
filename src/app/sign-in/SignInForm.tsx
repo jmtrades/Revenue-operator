@@ -202,8 +202,8 @@ export default function SignInForm() {
           <button
             type="button"
             onClick={google}
-            disabled={googleBusy}
-            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl hover:bg-[var(--bg-hover)] active:opacity-90 transition-all duration-150 flex items-center justify-center gap-2.5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
+            disabled
+            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl flex items-center justify-center gap-2.5 opacity-60 cursor-not-allowed"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path

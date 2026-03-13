@@ -485,13 +485,13 @@ export default function LeadsPage() {
       });
       const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
       if (res.ok && data?.ok) {
-        toast.success("Call started. Check Calls for status.");
+        toast.success(t("leads.toast.callStarted"));
         closeDrawer();
       } else {
-        toast.error(data?.error ?? "Could not start call.");
+        toast.error(data?.error ?? t("leads.toast.callFailed"));
       }
     } catch {
-      toast.error("Could not start call.");
+      toast.error(t("leads.toast.callFailed"));
     } finally {
       setOutboundCalling(false);
     }
@@ -536,7 +536,7 @@ export default function LeadsPage() {
                     { credentials: "include" },
                   );
                   if (!res.ok) {
-                    toast.error("Export failed. Try again.");
+                    toast.error(t("leads.toast.exportFailed"));
                     return;
                   }
                   const blob = await res.blob();
@@ -550,9 +550,9 @@ export default function LeadsPage() {
                   a.click();
                   a.remove();
                   URL.revokeObjectURL(url);
-                  toast.success("Leads exported. Check your downloads.");
+                  toast.success(t("leads.toast.exportSuccess"));
                 } catch {
-                  toast.error("Export failed. Try again.");
+                  toast.error(t("leads.toast.exportFailed"));
                 }
               }}
               className="hidden md:inline-flex items-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-300 hover:bg-[var(--bg-input)]"
@@ -967,12 +967,14 @@ export default function LeadsPage() {
                           refetchLeads();
                           setCsvPreviewRows([]);
                           setAddLeadOpen(false);
-                          toast.success(`${data.imported} leads imported.`);
+                          toast.success(
+                            t("leads.toast.importSuccess", { count: data.imported }),
+                          );
                         } else {
-                          toast.error(data?.error ?? "Import failed.");
+                          toast.error(data?.error ?? t("leads.toast.importFailed"));
                         }
                       } catch {
-                        toast.error("Import failed.");
+                        toast.error(t("leads.toast.importFailed"));
                       } finally {
                         setCsvImporting(false);
                       }

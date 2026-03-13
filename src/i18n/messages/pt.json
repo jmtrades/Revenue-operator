@@ -400,12 +400,39 @@
       "title": "Ainda não há leads",
       "body": "Sua IA começará a criar leads automaticamente à medida que fala com seus clientes."
     },
-    "saveLead": "Salvar lead"
+    "saveLead": "Salvar lead",
+    "toast": {
+      "callStarted": "Chamada iniciada. Confira o status em Chamadas.",
+      "callFailed": "Não foi possível iniciar a chamada.",
+      "exportFailed": "Falha ao exportar. Tente novamente.",
+      "exportSuccess": "Leads exportados. Confira seus downloads.",
+      "importFailed": "Falha ao importar.",
+      "importSuccess": "{count} leads importados."
+    }
   },
   "campaigns": {
     "title": "Campanhas",
     "pageTitle": "Campanhas — Recall Touch",
     "create": "Criar campanha",
+    "form": {
+      "typeLabel": "Tipo",
+      "sourceLabel": "Origem"
+    },
+    "type": {
+      "leadFollowup": "Qualificação / acompanhamento de leads",
+      "appointmentReminder": "Agendamento / lembrete de compromissos",
+      "reactivation": "Reativação",
+      "coldOutreach": "Anúncio / prospecção fria",
+      "reviewRequest": "Pedido de avaliação",
+      "custom": "Personalizado"
+    },
+    "source": {
+      "any": "Qualquer origem",
+      "inboundCall": "Chamada recebida",
+      "outbound": "Ação de saída",
+      "website": "Site",
+      "referral": "Indicação"
+    },
     "empty": {
       "title": "Ainda não há campanhas",
       "body": "Use campanhas para recuperar chamadas perdidas, reativar leads antigos e encher sua agenda."
@@ -480,7 +507,9 @@
     "profile.saved": "Perfil salvo.",
     "profile.saveFailed": "Não foi possível salvar o perfil. Tente novamente.",
     "notifications.loadFailed": "Não foi possível carregar as preferências de notificação. Usando padrões.",
-    "notifications.saved": "Preferências de notificação salvas."
+    "notifications.saved": "Preferências de notificação salvas.",
+    "deleteDataInfo": "Entre em contato com o suporte para excluir seus dados de forma permanente.",
+    "deleteAccountInfo": "Entre em contato com o suporte para excluir sua conta de forma permanente."
   },
   "hero": {
     "title": "IA que atende o telefone da sua empresa 24/7",
@@ -687,6 +716,7 @@
   "calendar": {
     "removeAppointmentTitle": "Remover compromisso?",
     "pageTitle": "Calendário — Recall Touch",
+    "outlookComingSoon": "A sincronização bidirecional com o Outlook Calendar estará disponível em breve. Você será avisado quando estiver pronta.",
     "empty": {
       "title": "Ainda não há agendamentos",
       "body": "À medida que sua IA marcar agendamentos, eles aparecerão neste calendário."

@@ -36,12 +36,12 @@ type CampaignRow = {
 };
 
 const TYPE_OPTIONS = [
-  { id: "lead_followup", label: "Lead qualification / follow-up" },
-  { id: "appointment_reminder", label: "Appointment setting / reminder" },
-  { id: "reactivation", label: "Reactivation" },
-  { id: "cold_outreach", label: "Announcement / cold outreach" },
-  { id: "review_request", label: "Review request" },
-  { id: "custom", label: "Custom" },
+  { id: "lead_followup", labelKey: "campaigns.type.leadFollowup" },
+  { id: "appointment_reminder", labelKey: "campaigns.type.appointmentReminder" },
+  { id: "reactivation", labelKey: "campaigns.type.reactivation" },
+  { id: "cold_outreach", labelKey: "campaigns.type.coldOutreach" },
+  { id: "review_request", labelKey: "campaigns.type.reviewRequest" },
+  { id: "custom", labelKey: "campaigns.type.custom" },
 ];
 
 const LEAD_STATUS_OPTIONS = [
@@ -54,11 +54,11 @@ const LEAD_STATUS_OPTIONS = [
 ];
 
 const SOURCE_OPTIONS = [
-  { id: "", label: "Any source" },
-  { id: "inbound_call", label: "Inbound Call" },
-  { id: "outbound", label: "Outbound Outreach" },
-  { id: "website", label: "Website" },
-  { id: "referral", label: "Referral" },
+  { id: "", labelKey: "campaigns.source.any" },
+  { id: "inbound_call", labelKey: "campaigns.source.inboundCall" },
+  { id: "outbound", labelKey: "campaigns.source.outbound" },
+  { id: "website", labelKey: "campaigns.source.website" },
+  { id: "referral", labelKey: "campaigns.source.referral" },
 ];
 
 const CAMPAIGNS_SNAPSHOT_PREFIX = "rt_campaigns_snapshot:";
@@ -365,7 +365,7 @@ export default function CampaignsPage() {
                           }
                           if (tf?.audience_source) {
                             const src = SOURCE_OPTIONS.find((o) => o.id === tf.audience_source);
-                            if (src) parts.push(src.label);
+                            if (src) parts.push(t(src.labelKey));
                           }
                           if (typeof tf?.audience_min_score === "number") {
                             parts.push(`Score ≥ ${tf.audience_min_score}`);
@@ -559,7 +559,9 @@ export default function CampaignsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Type</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  {t("campaigns.form.typeLabel")}
+                </label>
                 <select
                   value={form.type}
                   onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}
@@ -567,7 +569,7 @@ export default function CampaignsPage() {
                 >
                   {TYPE_OPTIONS.map((option) => (
                     <option key={option.id} value={option.id}>
-                      {option.label}
+                      {t(option.labelKey)}
                     </option>
                   ))}
                 </select>
@@ -610,7 +612,9 @@ export default function CampaignsPage() {
                 <p className="text-[11px] text-zinc-500 mt-1">Leave empty for all statuses</p>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Source</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  {t("campaigns.form.sourceLabel")}
+                </label>
                 <select
                   value={form.audienceSource}
                   onChange={(e) => setForm((prev) => ({ ...prev, audienceSource: e.target.value }))}
@@ -618,7 +622,7 @@ export default function CampaignsPage() {
                 >
                   {SOURCE_OPTIONS.map((opt) => (
                     <option key={opt.id || "any"} value={opt.id}>
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </option>
                   ))}
                 </select>
