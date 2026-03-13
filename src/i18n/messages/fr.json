@@ -374,6 +374,18 @@
     "createFirst": "Créez votre premier agent",
     "saveAndUpdate": "Enregistrer et mettre à jour l'agent",
     "editSubtitle": "Modifier l'agent.",
+    "toast": {
+      "testLinkCopied": "Lien de test copié !",
+      "selectVoiceFirst": "Sélectionnez une voix pour écouter l'aperçu.",
+      "previewFailed": "Impossible de lire l'aperçu",
+      "saveFailed": "Impossible d'enregistrer l'agent",
+      "saveRetry": "Les modifications n'ont pas pu être enregistrées. Réessayez.",
+      "deleted": "Agent supprimé",
+      "deleteFailed": "Impossible de supprimer l'agent",
+      "created": "Agent créé et synchronisé",
+      "createFailed": "Impossible de créer l'agent",
+      "agentLive": "Votre agent IA est en ligne !"
+    },
     "newWizard": {
       "title": "Créez votre agent IA",
       "subtitle": "Suivez les étapes pour configurer votre agent vocal.",
