@@ -6,7 +6,7 @@
     "dashboard": "Dashboard",
     "agents": "Agenten",
     "calls": "Anrufe",
-    "leads": "Leads",
+    "leads": "Interessenten",
     "campaigns": "Kampagnen",
     "inbox": "Postfach",
     "analytics": "Analytik",
@@ -223,13 +223,26 @@
       "appointments": "Termine",
       "urgent": "Dringend"
     },
+    "stepsComplete": "{done} von {total} Schritten abgeschlossen",
     "progress": {
       "setupBusinessProfile": "Richten Sie Ihr Unternehmensprofil ein",
       "configureAgent": "Konfigurieren Sie Ihren ersten KI-Agenten",
       "connectPhone": "Rufen Sie eine Nummer an",
       "testCall": "Testanruf durchführen",
       "enableForwarding": "Anrufweiterleitung aktivieren",
-      "addKnowledge": "Wissensdatenbank-Einträge hinzufügen"
+      "addKnowledge": "Wissensdatenbank-Einträge hinzufügen",
+      "importContacts": "Kontakte importieren",
+      "setupCalendar": "Kalender einrichten",
+      "launchCampaign": "Erste Kampagne starten",
+      "inviteTeam": "Team einladen",
+      "servicesConfigured": "Dienste konfiguriert",
+      "captureFirstLead": "Ersten Lead erfassen",
+      "useCasesSelected": "Anwendungsfälle ausgewählt",
+      "voiceSelected": "Stimme ausgewählt",
+      "openingGreetingSet": "Begrüßung festgelegt",
+      "behaviorConfigured": "Verhalten konfiguriert",
+      "agentTested": "Agent getestet",
+      "agentLaunched": "Agent live"
     },
     "dayLabels": {
       "mon": "Mo", "tue": "Di", "wed": "Mi", "thu": "Do",
@@ -294,11 +307,15 @@
       }
     },
     "kpi": {
-      "totalCalls": "Gesamtanzahl Anrufe",
+      "totalCalls": "Anrufe gesamt",
       "answerRate": "Antwortquote",
       "conversionRate": "Konversionsrate",
       "appointments": "Termine",
-      "estimatedRevenue": "Geschätzter Umsatzimpact"
+      "estimatedRevenue": "Geschätzter Umsatzimpact",
+      "avgHandleTime": "Durchschn. Dauer",
+      "leadConversion": "Lead-Konvertierung",
+      "appointmentsBooked": "Termine gebucht",
+      "estRevenue": "Gesch. Umsatz"
     },
     "successRate": "Erfolg %"
   },

@@ -223,13 +223,26 @@
       "appointments": "Appointments",
       "urgent": "Urgent"
     },
+    "stepsComplete": "{done} of {total} steps complete",
     "progress": {
       "setupBusinessProfile": "Set up your business profile",
       "configureAgent": "Configure your first AI agent",
       "connectPhone": "Connect a phone number",
       "testCall": "Make a test call",
       "enableForwarding": "Enable call forwarding",
-      "addKnowledge": "Add knowledge-base entries"
+      "addKnowledge": "Add knowledge-base entries",
+      "importContacts": "Import your contacts",
+      "setupCalendar": "Set up your calendar",
+      "launchCampaign": "Launch your first campaign",
+      "inviteTeam": "Invite your team",
+      "servicesConfigured": "Services configured",
+      "captureFirstLead": "Capture first lead",
+      "useCasesSelected": "Use cases selected",
+      "voiceSelected": "Voice selected",
+      "openingGreetingSet": "Opening greeting set",
+      "behaviorConfigured": "Behavior configured",
+      "agentTested": "Agent tested",
+      "agentLaunched": "Agent launched"
     },
     "dayLabels": {
       "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu",

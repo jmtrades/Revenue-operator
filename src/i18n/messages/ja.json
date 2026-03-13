@@ -223,13 +223,26 @@
       "appointments": "予約",
       "urgent": "緊急"
     },
+    "stepsComplete": "{done} / {total} ステップ完了",
     "progress": {
       "setupBusinessProfile": "ビジネスプロフィールを設定",
       "configureAgent": "最初のAIエージェントを設定",
       "connectPhone": "電話番号を接続",
       "testCall": "テスト通話をする",
       "enableForwarding": "転送を有効にする",
-      "addKnowledge": "ナレッジベースにエントリを追加"
+      "addKnowledge": "ナレッジベースにエントリを追加",
+      "importContacts": "連絡先をインポート",
+      "setupCalendar": "カレンダーを設定",
+      "launchCampaign": "最初のキャンペーンを開始",
+      "inviteTeam": "チームを招待",
+      "servicesConfigured": "サービス設定済み",
+      "captureFirstLead": "最初のリードを獲得",
+      "useCasesSelected": "ユースケースを選択済み",
+      "voiceSelected": "音声を選択済み",
+      "openingGreetingSet": "オープニング挨拶を設定",
+      "behaviorConfigured": "動作を設定済み",
+      "agentTested": "エージェントをテスト済み",
+      "agentLaunched": "エージェント公開済み"
     },
     "dayLabels": {
       "mon": "月", "tue": "火", "wed": "水", "thu": "木",
@@ -298,7 +311,11 @@
       "answerRate": "応答率",
       "conversionRate": "コンバージョン率",
       "appointments": "予約件数",
-      "estimatedRevenue": "推定売上インパクト"
+      "estimatedRevenue": "推定売上インパクト",
+      "avgHandleTime": "平均対応時間",
+      "leadConversion": "リード転換率",
+      "appointmentsBooked": "予約済み",
+      "estRevenue": "推定収益"
     },
     "successRate": "成功率 %"
   },

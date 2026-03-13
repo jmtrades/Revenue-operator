@@ -223,13 +223,26 @@
       "appointments": "Agendamentos",
       "urgent": "Urgente"
     },
+    "stepsComplete": "{done} de {total} etapas concluídas",
     "progress": {
       "setupBusinessProfile": "Configure o perfil do seu negócio",
       "configureAgent": "Configure seu primeiro agente de IA",
       "connectPhone": "Conecte um número de telefone",
       "testCall": "Faça uma ligação de teste",
       "enableForwarding": "Ative o desvio de chamadas",
-      "addKnowledge": "Adicione entradas à base de conhecimento"
+      "addKnowledge": "Adicione entradas à base de conhecimento",
+      "importContacts": "Importe seus contatos",
+      "setupCalendar": "Configure seu calendário",
+      "launchCampaign": "Lance sua primeira campanha",
+      "inviteTeam": "Convide sua equipe",
+      "servicesConfigured": "Serviços configurados",
+      "captureFirstLead": "Capture o primeiro lead",
+      "useCasesSelected": "Casos de uso selecionados",
+      "voiceSelected": "Voz selecionada",
+      "openingGreetingSet": "Saudação de abertura definida",
+      "behaviorConfigured": "Comportamento configurado",
+      "agentTested": "Agente testado",
+      "agentLaunched": "Agente no ar"
     },
     "dayLabels": {
       "mon": "Seg", "tue": "Ter", "wed": "Qua", "thu": "Qui",
@@ -298,7 +311,11 @@
       "answerRate": "Taxa de resposta",
       "conversionRate": "Taxa de conversão",
       "appointments": "Agendamentos",
-      "estimatedRevenue": "Impacto estimado na receita"
+      "estimatedRevenue": "Impacto estimado na receita",
+      "avgHandleTime": "Tempo médio",
+      "leadConversion": "Conversão de leads",
+      "appointmentsBooked": "Consultas agendadas",
+      "estRevenue": "Receita est."
     },
     "successRate": "% de sucesso"
   },

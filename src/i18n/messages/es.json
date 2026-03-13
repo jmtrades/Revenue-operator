@@ -6,7 +6,7 @@
     "dashboard": "Panel",
     "agents": "Agentes",
     "calls": "Llamadas",
-    "leads": "Leads",
+    "leads": "Prospectos",
     "campaigns": "Campañas",
     "inbox": "Bandeja",
     "analytics": "Analítica",
@@ -223,13 +223,26 @@
       "appointments": "Citas",
       "urgent": "Urgente"
     },
+    "stepsComplete": "{done} de {total} pasos completados",
     "progress": {
       "setupBusinessProfile": "Configura el perfil de tu negocio",
       "configureAgent": "Configura tu primer agente de IA",
       "connectPhone": "Conecta un número de teléfono",
       "testCall": "Haz una llamada de prueba",
       "enableForwarding": "Activa el desvío de llamadas",
-      "addKnowledge": "Añade entradas a la base de conocimiento"
+      "addKnowledge": "Añade entradas a la base de conocimiento",
+      "importContacts": "Importa tus contactos",
+      "setupCalendar": "Configura tu calendario",
+      "launchCampaign": "Lanza tu primera campaña",
+      "inviteTeam": "Invita a tu equipo",
+      "servicesConfigured": "Servicios configurados",
+      "captureFirstLead": "Captura el primer lead",
+      "useCasesSelected": "Casos de uso seleccionados",
+      "voiceSelected": "Voz seleccionada",
+      "openingGreetingSet": "Saludo de apertura configurado",
+      "behaviorConfigured": "Comportamiento configurado",
+      "agentTested": "Agente probado",
+      "agentLaunched": "Agente en vivo"
     },
     "dayLabels": {
       "mon": "Lun", "tue": "Mar", "wed": "Mié", "thu": "Jue",
@@ -294,11 +307,15 @@
       }
     },
     "kpi": {
-      "totalCalls": "Llamadas totales",
+      "totalCalls": "Total de llamadas",
       "answerRate": "Tasa de respuesta",
       "conversionRate": "Tasa de conversión",
       "appointments": "Citas",
-      "estimatedRevenue": "Impacto estimado en ingresos"
+      "estimatedRevenue": "Impacto estimado en ingresos",
+      "avgHandleTime": "Tiempo promedio",
+      "leadConversion": "Conversión de leads",
+      "appointmentsBooked": "Citas reservadas",
+      "estRevenue": "Ingresos est."
     },
     "successRate": "% éxito",
     "description": "Descubre cómo las conversaciones se convierten en citas y ingresos reales.",
