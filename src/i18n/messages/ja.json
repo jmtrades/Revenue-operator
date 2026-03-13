@@ -374,6 +374,18 @@
     "createFirst": "最初のエージェントを作成",
     "saveAndUpdate": "保存してエージェントを更新",
     "editSubtitle": "エージェントを編集。",
+    "toast": {
+      "testLinkCopied": "テストリンクをコピーしました！",
+      "selectVoiceFirst": "プレビューを聞くには音声を選択してください。",
+      "previewFailed": "プレビューを再生できませんでした",
+      "saveFailed": "エージェントを保存できませんでした",
+      "saveRetry": "変更を保存できませんでした。もう一度お試しください。",
+      "deleted": "エージェントを削除しました",
+      "deleteFailed": "エージェントを削除できませんでした",
+      "created": "エージェントを作成して同期しました",
+      "createFailed": "エージェントを作成できませんでした",
+      "agentLive": "AIエージェントが公開されました！"
+    },
     "newWizard": {
       "title": "AIエージェントを作成",
       "subtitle": "手順に沿って音声エージェントを設定します。",

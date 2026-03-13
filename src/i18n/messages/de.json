@@ -374,6 +374,18 @@
     "createFirst": "Erstellen Sie Ihren ersten Agenten",
     "saveAndUpdate": "Speichern und Agent aktualisieren",
     "editSubtitle": "Agent bearbeiten.",
+    "toast": {
+      "testLinkCopied": "Test-Link kopiert!",
+      "selectVoiceFirst": "Wähle zuerst eine Stimme für die Vorschau.",
+      "previewFailed": "Vorschau konnte nicht abgespielt werden",
+      "saveFailed": "Agent konnte nicht gespeichert werden",
+      "saveRetry": "Änderungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
+      "deleted": "Agent gelöscht",
+      "deleteFailed": "Agent konnte nicht gelöscht werden",
+      "created": "Agent erstellt und synchronisiert",
+      "createFailed": "Agent konnte nicht erstellt werden",
+      "agentLive": "Dein KI-Agent ist live!"
+    },
     "newWizard": {
       "title": "Erstelle deinen KI-Agenten",
       "subtitle": "Folge den Schritten, um deinen Voice-Agenten einzurichten.",
