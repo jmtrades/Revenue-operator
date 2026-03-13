@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
 import type { RecordingConsentMode } from "@/lib/compliance/recording-consent";
@@ -30,6 +31,8 @@ export async function GET(req: NextRequest) {
       pauseOnSensitive: false,
     });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
   const db = getDb();
   const { data, error } = await db
     .from("workspaces")
