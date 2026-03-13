@@ -914,6 +914,8 @@
     "edit": "Edit",
     "pause": "Pause",
     "launchCampaign": "Launch campaign",
+    "pauseConfirmTitle": "Pause this campaign?",
+    "pauseConfirmMessage": "Pause \"{name}\"? You can resume it later from this page.",
     "remaining": "Remaining",
     "failed": "Failed",
     "form": {
@@ -1309,7 +1311,13 @@
     }
   },
   "team": {
-    "removeMemberTitle": "Remove member?"
+    "heading": "Team",
+    "loading": "Loading…",
+    "membersCount": "{count, plural, one {# member} other {# members}}",
+    "inviteMember": "Invite Member",
+    "removeMemberTitle": "Remove member?",
+    "removeMemberMessage": "{name} will lose access to this workspace. This can't be undone.",
+    "removeConfirmLabel": "Remove"
   },
   "filter": {
     "byOutcome": "Filter by outcome",

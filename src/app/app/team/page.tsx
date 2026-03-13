@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -87,6 +88,7 @@ function avatarStyle(id: string): { backgroundColor: string; color: string } {
 }
 
 export default function TeamPage() {
+  const t = useTranslations("team");
   const { workspaceId } = useWorkspace();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([]);
@@ -266,8 +268,8 @@ export default function TeamPage() {
       <div className="p-4 md:p-6 lg:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">Team</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">{loading ? "Loading…" : `${members.length} member${members.length === 1 ? "" : "s"}`}</p>
+            <h1 className="text-xl md:text-2xl font-semibold text-white">{t("heading")}</h1>
+            <p className="text-sm text-zinc-500 mt-0.5">{loading ? t("loading") : t("membersCount", { count: members.length })}</p>
           </div>
           <button
             type="button"
@@ -275,7 +277,7 @@ export default function TeamPage() {
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
           >
             <Plus className="w-4 h-4" />
-            Invite Member
+            {t("inviteMember")}
           </button>
         </div>
 
@@ -515,9 +517,9 @@ export default function TeamPage() {
       {removeConfirmMember && (
         <ConfirmDialog
           open
-          title="Remove member?"
-          message={`${removeConfirmMember.name} will lose access to this workspace. This can't be undone.`}
-          confirmLabel="Remove"
+          title={t("removeMemberTitle")}
+          message={t("removeMemberMessage", { name: removeConfirmMember.name })}
+          confirmLabel={t("removeConfirmLabel")}
           variant="danger"
           onConfirm={() => handleRemoveMember(removeConfirmMember.id)}
           onClose={() => setRemoveConfirmMember(null)}
