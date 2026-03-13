@@ -7,9 +7,10 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { getSession } from "@/lib/auth/request-session";
+import { requireStaffSession } from "@/lib/ops/auth";
 
-// Internal ops auth check
+// Internal ops auth: Bearer OPS_TOKEN (cron/scripts) or staff session only.
+// Do not allow regular app session — this route returns all workspaces' activation data.
 function isOpsAuthorized(req: NextRequest): boolean {
   const authHeader = req.headers.get("authorization");
   const opsToken = process.env.OPS_TOKEN;
@@ -18,12 +19,11 @@ function isOpsAuthorized(req: NextRequest): boolean {
 }
 
 export async function GET(req: NextRequest) {
-  // Check ops auth OR session
-  const session = await getSession(req);
-  const isOps = isOpsAuthorized(req);
-  
-  if (!isOps && !session?.workspaceId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (isOpsAuthorized(req)) {
+    // proceed
+  } else {
+    const staff = await requireStaffSession().catch((r) => r as Response);
+    if (staff instanceof Response) return staff;
   }
 
   const db = getDb();
