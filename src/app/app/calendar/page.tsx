@@ -116,7 +116,7 @@ export default function AppCalendarPage() {
       .catch(() => setAvailabilitySlots([]));
   }, [workspaceId, formDate, googleConnected]);
 
-  const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const weekDayKeys = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
   const hours = Array.from({ length: 12 }, (_, i) => 8 + i);
 
   const handleSaveNew = () => {
@@ -192,12 +192,12 @@ export default function AppCalendarPage() {
     <div className="relative max-w-5xl mx-auto p-4 md:p-6">
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg md:text-xl font-semibold text-white">Calendar</h1>
+          <h1 className="text-lg md:text-xl font-semibold text-white">{t("calendar.heading")}</h1>
           <button
             type="button"
             className="px-2 py-1 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
           >
-            Today
+            {t("calendar.today")}
           </button>
         </div>
         <div className="flex items-center gap-3">
@@ -209,7 +209,7 @@ export default function AppCalendarPage() {
                 view === "week" ? "bg-white text-black" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-400"
               }`}
             >
-              Week
+              {t("calendar.viewWeek")}
             </button>
             <button
               type="button"
@@ -218,7 +218,7 @@ export default function AppCalendarPage() {
                 view === "month" ? "bg-white text-black" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-400"
               }`}
             >
-              Month
+              {t("calendar.viewMonth")}
             </button>
           </div>
           <button
@@ -226,7 +226,7 @@ export default function AppCalendarPage() {
             onClick={() => setShowNew(true)}
             className="hidden sm:inline-flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
           >
-            + New Appointment
+            {t("calendar.newAppointment")}
           </button>
         </div>
       </div>
@@ -236,28 +236,28 @@ export default function AppCalendarPage() {
         onClick={() => setShowNew(true)}
         className="sm:hidden mb-3 w-full bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
       >
-        + New Appointment
+        {t("calendar.newAppointment")}
       </button>
 
       <div className="mb-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
         <div className="px-4 py-2 border-b border-[var(--border-default)] flex items-center justify-between">
-          <p className="text-xs text-zinc-400">8 AM – 8 PM · This {view === "week" ? "week" : "month"}</p>
+          <p className="text-xs text-zinc-400">{view === "week" ? t("calendar.timeRangeWeek") : t("calendar.timeRangeMonth")}</p>
           <p className="text-[11px] text-zinc-500">
-            {loading ? "Loading…" : `${appointments.length} appointments`}
+            {loading ? "…" : t("calendar.appointmentCount", { count: appointments.length })}
           </p>
         </div>
         {loading ? (
-          <div className="p-8 text-center text-zinc-500 text-sm">Loading calendar…</div>
+          <div className="p-8 text-center text-zinc-500 text-sm">{t("calendar.loadingCalendar")}</div>
         ) : view === "week" ? (
           <div className="overflow-x-auto">
             <div className="min-w-[720px] grid grid-cols-[48px_repeat(7,minmax(0,1fr))] text-[10px]">
               <div className="border-r border-[var(--border-default)] bg-black/40" />
-              {weekDays.map((d) => (
+              {weekDayKeys.map((key) => (
                 <div
-                  key={d}
+                  key={key}
                   className="border-r border-[var(--border-default)] px-2 py-1 text-center text-zinc-400 bg-black/40"
                 >
-                  {d}
+                  {t(`calendar.days.${key}`)}
                 </div>
               ))}
               {hours.map((h) => (
@@ -268,7 +268,7 @@ export default function AppCalendarPage() {
                   >
                     {h === 12 ? "12 PM" : h < 12 ? `${h} AM` : `${h - 12} PM`}
                   </div>
-                  {weekDays.map((d) => (
+                  {weekDayKeys.map((d) => (
                     <div
                       key={`${h}-${d}`}
                       className="border-t border-r border-[var(--border-default)] relative min-h-[40px]"
@@ -301,7 +301,7 @@ export default function AppCalendarPage() {
           </div>
         ) : (
           <div className="p-4 text-xs text-zinc-400">
-            Month view is simplified here. Week view shows detailed blocks.
+            {t("calendar.monthViewHint")}
           </div>
         )}
       </div>
@@ -309,38 +309,38 @@ export default function AppCalendarPage() {
       <div className="mb-4 grid gap-3 sm:grid-cols-2">
         <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
           <div>
-            <p className="text-sm font-medium text-white">Google Calendar</p>
+            <p className="text-sm font-medium text-white">{t("calendar.googleCalendar")}</p>
             <p className="text-xs text-zinc-500">
-              {googleConnected ? "Synced. Availability and bookings sync two-way." : "Sync availability and keep your AI and personal calendar aligned."}
+              {googleConnected ? t("calendar.googleSynced") : t("calendar.googleNotSynced")}
             </p>
           </div>
           {googleConnected ? (
-            <span className="text-xs text-zinc-400">Connected</span>
+            <span className="text-xs text-zinc-400">{t("calendar.connected")}</span>
           ) : (
             <a
               href="/api/integrations/google-calendar/auth"
               className="self-start sm:self-auto px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
             >
-              Connect
+              {t("calendar.connect")}
             </a>
           )}
         </div>
         <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
           <div>
-            <p className="text-sm font-medium text-white">Microsoft Outlook</p>
+            <p className="text-sm font-medium text-white">{t("calendar.outlookCalendar")}</p>
             <p className="text-xs text-zinc-500">
               {t("calendar.outlookComingSoon")}
             </p>
           </div>
           {outlookConnected ? (
-            <span className="text-xs text-zinc-400">Connected</span>
+            <span className="text-xs text-zinc-400">{t("calendar.connected")}</span>
           ) : (
             <button
               type="button"
               disabled
               className="self-start sm:self-auto px-4 py-2 rounded-xl border border-[var(--border-medium)] text-zinc-500 text-xs font-medium cursor-not-allowed"
             >
-              Connect
+              {t("calendar.connect")}
             </button>
           )}
         </div>
@@ -348,7 +348,7 @@ export default function AppCalendarPage() {
 
       <p>
         <Link href="/app/activity" className="text-sm text-zinc-400 hover:text-white transition-colors">
-          ← Activity
+          ← {t("calendar.backToActivity")}
         </Link>
       </p>
 
@@ -369,7 +369,7 @@ export default function AppCalendarPage() {
               </p>
               <p className="text-xs text-zinc-500">
                 {selected.date} · {selected.time} · {selected.durationMinutes} min
-                {selected.external_calendar_id ? " · Synced to calendar" : ""}
+                {selected.external_calendar_id ? ` · ${t("calendar.syncedToCalendar")}` : ""}
               </p>
             </div>
             <div className="flex items-center gap-2 pt-2 border-t border-[var(--border-default)]">
@@ -378,7 +378,7 @@ export default function AppCalendarPage() {
                 onClick={() => setDeleteConfirm(selected)}
                 className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
-                Remove
+                {t("calendar.removeAppointment").replace("?", "").trim()}
               </button>
             </div>
           </div>
@@ -388,9 +388,9 @@ export default function AppCalendarPage() {
       {deleteConfirm && (
         <ConfirmDialog
           open
-          title="Remove appointment?"
-          message={`Remove "${deleteConfirm.contact} — ${deleteConfirm.service}"? This cannot be undone.`}
-          confirmLabel="Remove"
+          title={t("calendar.removeAppointment")}
+          message={t("calendar.removeConfirm", { contact: deleteConfirm.contact, service: deleteConfirm.service })}
+          confirmLabel={t("calendar.removeAppointment").replace("?", "").trim()}
           variant="danger"
           onConfirm={confirmDeleteAppointment}
           onClose={() => setDeleteConfirm(null)}
@@ -408,41 +408,41 @@ export default function AppCalendarPage() {
             className="max-w-sm w-full rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-sm font-semibold text-white mb-1">New appointment</h2>
+            <h2 className="text-sm font-semibold text-white mb-1">{t("calendar.newAppointmentHeading")}</h2>
             <div className="space-y-2 text-xs">
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Contact</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("calendar.contactLabel")}</label>
                 <input
                   type="text"
                   value={formContact}
                   onChange={(e) => setFormContact(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder="Sarah Chen"
+                  placeholder={t("calendar.contactPlaceholder")}
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Phone</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("calendar.phoneLabel")}</label>
                 <input
                   type="text"
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder="+1 555 000 0000"
+                  placeholder={t("calendar.phonePlaceholder")}
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Service</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("calendar.serviceLabel")}</label>
                 <input
                   type="text"
                   value={formService}
                   onChange={(e) => setFormService(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder="Cleaning, estimate, consultation…"
+                  placeholder={t("calendar.servicePlaceholder")}
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[11px] text-zinc-500 mb-1">Date</label>
+                  <label className="block text-[11px] text-zinc-500 mb-1">{t("calendar.dateLabel")}</label>
                   <input
                     type="date"
                     value={formDate}
@@ -451,7 +451,7 @@ export default function AppCalendarPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] text-zinc-500 mb-1">Time</label>
+                  <label className="block text-[11px] text-zinc-500 mb-1">{t("calendar.timeLabel")}</label>
                   <input
                     type="time"
                     value={formTime}
@@ -461,7 +461,7 @@ export default function AppCalendarPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Duration (min)</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("calendar.durationLabel")}</label>
                 <input
                   type="number"
                   min={15}
@@ -475,7 +475,7 @@ export default function AppCalendarPage() {
               </div>
             </div>
             {availabilitySlots.length > 0 && (
-              <p className="text-[11px] text-zinc-500">Available times (Google): {availabilitySlots.slice(0, 8).join(", ")}{availabilitySlots.length > 8 ? "…" : ""}</p>
+              <p className="text-[11px] text-zinc-500">{t("calendar.availableTimes")}: {availabilitySlots.slice(0, 8).join(", ")}{availabilitySlots.length > 8 ? "…" : ""}</p>
             )}
             <div className="flex items-center justify-between gap-3 pt-3 border-t border-[var(--border-default)]">
               <button

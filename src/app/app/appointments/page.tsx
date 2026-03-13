@@ -126,9 +126,9 @@ export default function AppointmentsPage() {
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">Appointments</h1>
+            <h1 className="text-xl md:text-2xl font-semibold text-white">{t("appointments.heading")}</h1>
             <p className="text-sm text-zinc-400 mt-1">
-              All booked appointments from calls, campaigns, and inbox.
+              {t("appointments.description")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ export default function AppointmentsPage() {
                 view === "list" ? "bg-[var(--bg-card)] text-white" : "text-zinc-400 hover:text-white"
               }`}
             >
-              List
+              {t("appointments.viewList")}
             </button>
             <button
               type="button"
@@ -148,7 +148,7 @@ export default function AppointmentsPage() {
                 view === "calendar" ? "bg-[var(--bg-card)] text-white" : "text-zinc-400 hover:text-white"
               }`}
             >
-              Calendar
+              {t("appointments.viewCalendar")}
             </button>
           </div>
         </div>
@@ -165,18 +165,17 @@ export default function AppointmentsPage() {
           />
         ) : view === "list" ? (
           <div
-            className="rounded-2xl border overflow-hidden"
-            style={{ borderColor: "#1f2937", background: "#111827" }}
+            className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden"
           >
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b" style={{ borderColor: "#1f2937" }}>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Date / Time</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Contact</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Type</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Status</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Source</th>
+                  <tr className="border-b border-[var(--border-default)]">
+                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.dateTime")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.contact")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.type")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.status")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.source")}</th>
                     <th className="py-3 px-4 w-8" aria-hidden />
                   </tr>
                 </thead>
@@ -184,8 +183,7 @@ export default function AppointmentsPage() {
                   {appointments.map((apt) => (
                     <tr
                       key={apt.id}
-                      className="border-b hover:bg-[var(--bg-hover)] transition-colors"
-                      style={{ borderColor: "#1f2937" }}
+                      className="border-b border-[var(--border-default)] hover:bg-[var(--bg-hover)] transition-colors"
                     >
                       <td className="py-3 px-4 text-white">
                         {formatDate(apt.date)} · {apt.time}
@@ -205,7 +203,7 @@ export default function AppointmentsPage() {
                           type="button"
                           onClick={() => setSelected(apt)}
                           className="p-1 rounded text-zinc-500 hover:text-white"
-                          aria-label="View details"
+                          aria-label={t("appointments.viewDetails")}
                         >
                           <ChevronRight className="w-4 h-4" />
                         </button>
@@ -256,12 +254,12 @@ export default function AppointmentsPage() {
                 </button>
               </div>
               <div className="grid grid-cols-7 gap-1 mb-2">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+                {(["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const).map((key) => (
                   <div
-                    key={d}
+                    key={key}
                     className="text-center text-xs text-[#5A5A5C] py-1"
                   >
-                    {d}
+                    {t(`appointments.days.${key}`)}
                   </div>
                 ))}
               </div>
@@ -318,7 +316,7 @@ export default function AppointmentsPage() {
                     })}
                   </h4>
                   {getAppointmentsForDay(selectedDay).length === 0 ? (
-                    <p className="text-sm text-[#5A5A5C]">No appointments</p>
+                    <p className="text-sm text-[#5A5A5C]">{t("appointments.noAppointments")}</p>
                   ) : (
                     <div className="space-y-2">
                       {getAppointmentsForDay(selectedDay).map((appt) => (
@@ -348,11 +346,11 @@ export default function AppointmentsPage() {
         {!isEmpty && (
           <div className="mt-6 flex items-center gap-2 text-sm text-zinc-500">
             <Link href="/app/settings" className="hover:text-white transition-colors">
-              Settings
+              {t("appointments.settings")}
             </Link>
             <span aria-hidden>·</span>
             <Link href="/app/calendar" className="hover:text-white transition-colors">
-              Calendar view
+              {t("appointments.calendarView")}
             </Link>
           </div>
         )}
@@ -367,8 +365,7 @@ export default function AppointmentsPage() {
           onClick={() => setSelected(null)}
         >
           <div
-            className="max-w-sm w-full rounded-2xl border p-5 shadow-xl"
-            style={{ borderColor: "#1f2937", background: "#111827" }}
+            className="max-w-sm w-full rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 id="appointment-detail-title" className="text-sm font-semibold text-white mb-3">
@@ -376,15 +373,15 @@ export default function AppointmentsPage() {
             </h2>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500">Date & time</dt>
+                <dt className="text-zinc-500">{t("appointments.dateTimeLabel")}</dt>
                 <dd className="text-white">{formatDate(selected.date)} · {selected.time}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500">Type</dt>
+                <dt className="text-zinc-500">{t("appointments.typeLabel")}</dt>
                 <dd className="text-zinc-300">{selected.type}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500">Status</dt>
+                <dt className="text-zinc-500">{t("appointments.statusLabel")}</dt>
                 <dd>
                   <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border ${statusColor(selected.status)}`}>
                     {selected.status}
@@ -392,18 +389,17 @@ export default function AppointmentsPage() {
                 </dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500">Source</dt>
+                <dt className="text-zinc-500">{t("appointments.sourceLabel")}</dt>
                 <dd className="text-zinc-400 text-xs">{selected.source}</dd>
               </div>
             </dl>
-            <div className="mt-4 pt-4 border-t flex justify-end" style={{ borderColor: "#1f2937" }}>
+            <div className="mt-4 pt-4 border-t border-[var(--border-default)] flex justify-end">
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="px-4 py-2 rounded-xl border text-sm font-medium text-zinc-300 hover:bg-[var(--bg-hover)]"
-                style={{ borderColor: "#374151" }}
+                className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-zinc-300 hover:bg-[var(--bg-hover)]"
               >
-                Close
+                {t("appointments.close")}
               </button>
             </div>
           </div>
