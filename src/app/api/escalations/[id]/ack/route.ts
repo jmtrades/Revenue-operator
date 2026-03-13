@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { recordHandoffAcknowledgement } from "@/lib/delivery-assurance/handoff-ack";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function POST(
   request: NextRequest,
@@ -23,12 +24,18 @@ export async function POST(
     .maybeSingle();
   if (!row) return NextResponse.json({ error: "Escalation not found" }, { status: 404 });
 
+  const workspaceIdFromRow = (row as { workspace_id?: string }).workspace_id;
+  if (workspaceIdFromRow) {
+    const authErr = await requireWorkspaceAccess(request, workspaceIdFromRow);
+    if (authErr) return authErr;
+  }
+
   const body = await request.json().catch(() => ({}));
   const acknowledgedBy = typeof body.acknowledged_by === "string" ? body.acknowledged_by : undefined;
 
   await recordHandoffAcknowledgement(escalationId, acknowledgedBy);
 
-  const workspaceId = (row as { workspace_id?: string }).workspace_id;
+  const workspaceId = workspaceIdFromRow;
   if (workspaceId) {
     const { data: silenceRows } = await db
       .from("operational_silence_windows")
