@@ -498,6 +498,13 @@ export default function LeadsPage() {
   };
 
   const sources: LeadSource[] = ["Inbound Call", "Outbound Outreach", "Website", "Referral"];
+  const sourceLabel = (s: LeadSource): string => {
+    if (s === "Inbound Call") return t("leads.sources.inboundCall");
+    if (s === "Website") return t("leads.sources.website");
+    if (s === "Referral") return t("leads.sources.referral");
+    if (s === "Outbound Outreach") return t("leads.sources.outbound");
+    return t("leads.sources.other");
+  };
 
   return (
     <div>
@@ -506,10 +513,10 @@ export default function LeadsPage() {
           <div>
             <h1 className="text-xl md:text-2xl font-semibold text-white flex items-center gap-2">
               <Users className="w-5 h-5 text-zinc-400" />
-              Leads
+              {t("leads.heading")}
             </h1>
             <p className="text-sm text-zinc-500 mt-1">
-              Every captured opportunity, from first call through decision.
+              {t("leads.description")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -519,10 +526,10 @@ export default function LeadsPage() {
               className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-4 py-2 hover:bg-zinc-100"
             >
               <Plus className="w-4 h-4" />
-              Add lead
+              {t("leads.addLead")}
             </button>
             <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1 text-xs text-zinc-300">
-              Total: <span className="ml-1 font-semibold text-white">{totalCount}</span>
+              {t("leads.total")} <span className="ml-1 font-semibold text-white">{totalCount}</span>
             </span>
             <button
               type="button"
@@ -557,11 +564,11 @@ export default function LeadsPage() {
               }}
               className="hidden md:inline-flex items-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-300 hover:bg-[var(--bg-input)]"
             >
-              Export CSV
+              {t("leads.exportCsv")}
             </button>
             <div className="hidden md:block">
               <Tabs
-                tabs={[{ id: "table", label: "Table" }, { id: "board", label: "Board" }]}
+                tabs={[{ id: "table", label: t("leads.viewTable") }, { id: "board", label: t("leads.viewBoard") }]}
                 activeTab={view}
                 onChange={(id) => setView(id as ViewMode)}
               />
@@ -576,14 +583,14 @@ export default function LeadsPage() {
               icon={Search}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name, phone, or email…"
+              placeholder={t("leads.searchPlaceholder")}
               className="rounded-xl"
             />
           </div>
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="inline-flex items-center gap-1 text-zinc-500">
               <Filter className="w-3 h-3" />
-              Filters
+              {t("leads.filters")}
             </span>
             <div className="flex flex-wrap gap-1">
               {STATUS_ORDER.map((status) => {
@@ -599,7 +606,7 @@ export default function LeadsPage() {
                         : "border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
                     }`}
                   >
-                    {status}
+                    {t(`leads.board.columns.${status === "Appointment Set" ? "appointment" : status.toLowerCase()}`)}
                   </button>
                 );
               })}
@@ -618,7 +625,7 @@ export default function LeadsPage() {
               const email = addLeadForm.email.trim();
               if (!name || !phone) {
                 setAddLeadError(
-                  !name ? "Name is required." : "Phone is required.",
+                  !name ? t("leads.errors.nameRequired") : t("leads.errors.phoneRequired"),
                 );
                 return;
               }
@@ -642,7 +649,7 @@ export default function LeadsPage() {
                   error?: string;
                 } | null;
                 if (!res.ok) {
-                  setAddLeadError(data?.error ?? "Could not add lead.");
+                  setAddLeadError(data?.error ?? t("leads.errors.addFailed"));
                   return;
                 }
                 refetchLeads();
@@ -653,7 +660,7 @@ export default function LeadsPage() {
                   email: "",
                 }));
               } catch {
-                setAddLeadError("Could not add lead.");
+                setAddLeadError(t("leads.errors.addFailed"));
               } finally {
                 setAddLeadSaving(false);
               }
@@ -665,7 +672,7 @@ export default function LeadsPage() {
               onChange={(e) =>
                 setAddLeadForm((prev) => ({ ...prev, name: e.target.value }))
               }
-              placeholder="Name"
+              placeholder={t("leads.inlineNamePlaceholder")}
               className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
             />
             <input
@@ -674,7 +681,7 @@ export default function LeadsPage() {
               onChange={(e) =>
                 setAddLeadForm((prev) => ({ ...prev, phone: e.target.value }))
               }
-              placeholder="Phone"
+              placeholder={t("leads.inlinePhonePlaceholder")}
               className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
             />
             <input
@@ -683,7 +690,7 @@ export default function LeadsPage() {
               onChange={(e) =>
                 setAddLeadForm((prev) => ({ ...prev, email: e.target.value }))
               }
-              placeholder="Email (optional)"
+              placeholder={t("leads.inlineEmailPlaceholder")}
               className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
             />
             <button
@@ -695,7 +702,7 @@ export default function LeadsPage() {
               }
               className="px-4 py-2 text-xs font-semibold rounded-xl bg-white text-black hover:bg-zinc-100 disabled:opacity-50"
             >
-              + Add
+              {t("leads.inlineAdd")}
             </button>
           </form>
           {addLeadError && (
@@ -719,7 +726,7 @@ export default function LeadsPage() {
                     : "border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
                 }`}
               >
-                {source}
+                {sourceLabel(source)}
               </button>
             );
           })}
@@ -729,19 +736,19 @@ export default function LeadsPage() {
               onChange={(e) => setScoreFilter(e.target.value as ScoreBucket)}
               className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
             >
-              <option value="all">All scores</option>
-              <option value="high">High (70+)</option>
-              <option value="medium">Medium (40–69)</option>
-              <option value="low">Low (0–39)</option>
+              <option value="all">{t("leads.scoreFilter.all")}</option>
+              <option value="high">{t("leads.scoreFilter.high")}</option>
+              <option value="medium">{t("leads.scoreFilter.medium")}</option>
+              <option value="low">{t("leads.scoreFilter.low")}</option>
             </select>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
               className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
             >
-              <option value="newest">Newest</option>
-              <option value="score">Highest score</option>
-              <option value="recent-contact">Most recent contact</option>
+              <option value="newest">{t("leads.sortOptions.newest")}</option>
+              <option value="score">{t("leads.sortOptions.highestScore")}</option>
+              <option value="recent-contact">{t("leads.sortOptions.recentContact")}</option>
             </select>
           </div>
         </div>
@@ -749,7 +756,7 @@ export default function LeadsPage() {
         {selectedIds.size > 0 && (
           <div className="mb-3 flex flex-wrap items-center gap-2 text-xs rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2">
             <span className="text-zinc-400">
-              {selectedIds.size} selected
+              {t("leads.selectedCount", { count: selectedIds.size })}
             </span>
             <button
               type="button"
@@ -757,10 +764,10 @@ export default function LeadsPage() {
               className="inline-flex items-center gap-1 text-zinc-400 hover:text-zinc-200"
             >
               <X className="w-3 h-3" />
-              Clear
+              {t("leads.clear")}
             </button>
             <span className="h-4 w-px bg-[var(--bg-card)]" />
-            <span className="text-zinc-500">Change status:</span>
+            <span className="text-zinc-500">{t("leads.changeStatus")}</span>
             {STATUS_ORDER.map((status) => (
               <button
                 key={status}
@@ -768,11 +775,11 @@ export default function LeadsPage() {
                 onClick={() => bulkChangeStatus(status)}
                 className="px-2 py-1 rounded-full border border-[var(--border-default)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
-                {status}
+                {t(`leads.board.columns.${status === "Appointment Set" ? "appointment" : status.toLowerCase()}`)}
               </button>
             ))}
             <span className="h-4 w-px bg-[var(--bg-card)]" />
-            <span className="text-zinc-500">Assign:</span>
+            <span className="text-zinc-500">{t("leads.assign")}</span>
             {["Sarah", "Alex", "Emma"].map((agent) => (
               <button
                 key={agent}
@@ -815,7 +822,7 @@ export default function LeadsPage() {
       <Modal
         open={addLeadOpen}
         onClose={() => { setAddLeadOpen(false); setAddLeadError(null); setCsvPreviewRows([]); }}
-        title="Add lead"
+        title={t("leads.modal.title")}
         size="md"
       >
         <form onSubmit={handleAddLeadSubmit} className="space-y-4">
@@ -823,59 +830,59 @@ export default function LeadsPage() {
                 <p className="text-sm text-[var(--accent-red)]" role="alert">{addLeadError}</p>
               )}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Name *</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.nameLabel")}</label>
                 <input
                   type="text"
                   required
                   value={addLeadForm.name}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="Full name"
+                  placeholder={t("leads.modal.namePlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Phone *</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.phoneLabel")}</label>
                 <input
                   type="tel"
                   required
                   value={addLeadForm.phone}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, phone: e.target.value }))}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder={t("leads.modal.phonePlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Email</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.emailLabel")}</label>
                 <input
                   type="email"
                   value={addLeadForm.email}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, email: e.target.value }))}
-                  placeholder="email@example.com"
+                  placeholder={t("leads.modal.emailPlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Company</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.companyLabel")}</label>
                 <input
                   type="text"
                   value={addLeadForm.company}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, company: e.target.value }))}
-                  placeholder="Company name"
+                  placeholder={t("leads.modal.companyPlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">What do they need?</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.needLabel")}</label>
                 <input
                   type="text"
                   value={addLeadForm.service_requested}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, service_requested: e.target.value }))}
-                  placeholder="e.g. monthly cleaning, consultation"
+                  placeholder={t("leads.modal.needPlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Source</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.sourceLabel")}</label>
                 <div className="flex flex-wrap gap-3 mt-1">
                   {(["website", "referral", "inbound_call", "other"] as const).map((src) => (
                     <label key={src} className="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
@@ -886,29 +893,29 @@ export default function LeadsPage() {
                         onChange={() => setAddLeadForm((prev) => ({ ...prev, source: src }))}
                         className="rounded-full border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
                       />
-                      {src === "inbound_call" ? "Inbound Call" : src === "website" ? "Website" : src === "referral" ? "Referral" : "Other"}
+                      {src === "inbound_call" ? t("leads.sources.inboundCall") : src === "website" ? t("leads.sources.website") : src === "referral" ? t("leads.sources.referral") : t("leads.sources.other")}
                     </label>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Status</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.statusLabel")}</label>
                 <select
                   value={addLeadForm.status}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, status: e.target.value as LeadStatus }))}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 >
                   {STATUS_ORDER.map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                    <option key={s} value={s}>{t(`leads.board.columns.${s === "Appointment Set" ? "appointment" : s.toLowerCase()}`)}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Notes</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.notesLabel")}</label>
                 <textarea
                   value={addLeadForm.notes}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Optional notes"
+                  placeholder={t("leads.modal.notesPlaceholder")}
                   rows={2}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none resize-none"
                 />
@@ -919,21 +926,21 @@ export default function LeadsPage() {
                   onClick={() => { setAddLeadOpen(false); setAddLeadError(null); setCsvPreviewRows([]); }}
                   className="flex-1 py-2.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-sm font-medium hover:border-[var(--border-medium)]"
                 >
-                  Cancel
+                  {t("leads.modal.cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={addLeadSaving || !addLeadForm.name.trim() || !addLeadForm.phone.trim()}
                   className="flex-1 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-50"
                 >
-                  {addLeadSaving ? "Adding…" : "Save lead"}
+                  {addLeadSaving ? t("leads.modal.saving") : t("leads.modal.save")}
                 </button>
               </div>
             </form>
             {csvPreviewRows.length > 0 ? (
               <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
-                <p className="text-sm font-medium text-white mb-1">We found {csvPreviewRows.length} leads</p>
-                <p className="text-[11px] text-zinc-500 mb-2">Preview (first 5):</p>
+                <p className="text-sm font-medium text-white mb-1">{t("leads.csvPreview", { count: csvPreviewRows.length })}</p>
+                <p className="text-[11px] text-zinc-500 mb-2">{t("leads.csvPreviewLabel")}</p>
                 <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-2 max-h-32 overflow-y-auto text-xs text-zinc-300">
                   {csvPreviewRows.slice(0, 5).map((r, i) => (
                     <div key={i} className="py-1 border-b border-[var(--border-default)] last:border-0">
@@ -948,7 +955,7 @@ export default function LeadsPage() {
                     onClick={() => setCsvPreviewRows([])}
                     className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs"
                   >
-                    Cancel
+                    {t("leads.csvCancel")}
                   </button>
                   <button
                     type="button"
@@ -981,16 +988,16 @@ export default function LeadsPage() {
                     }}
                     className="flex-1 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50"
                   >
-                    {csvImporting ? "Importing…" : `Import all ${csvPreviewRows.length} leads`}
+                    {csvImporting ? t("leads.csvImporting") : t("leads.csvImportAll", { count: csvPreviewRows.length })}
                   </button>
                 </div>
               </div>
             ) : (
             <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
-              <p className="text-xs text-zinc-500 mb-2">— or —</p>
+              <p className="text-xs text-zinc-500 mb-2">{t("leads.csvOr")}</p>
               <label className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white cursor-pointer">
                 <span className="text-base">📎</span>
-                Import from CSV
+                {t("leads.importFromCsv")}
                 <input
                   type="file"
                   accept=".csv"
@@ -1030,7 +1037,7 @@ export default function LeadsPage() {
                   }}
                 />
               </label>
-              <p className="text-[11px] text-zinc-500 mt-1">Upload CSV with name, phone, email columns</p>
+              <p className="text-[11px] text-zinc-500 mt-1">{t("leads.csvUploadHint")}</p>
             </div>
             )}
       </Modal>
@@ -1039,7 +1046,7 @@ export default function LeadsPage() {
       <Sheet
         open={!!drawerLead}
         onClose={closeDrawer}
-        title={drawerLead ? `${drawerLead.name} · Lead` : "Lead"}
+        title={drawerLead ? t("leads.drawerTitle", { name: drawerLead.name }) : t("leads.drawerTitleFallback")}
       >
         {drawerLead && (
           <LeadDetail
