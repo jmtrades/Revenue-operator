@@ -6,6 +6,8 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { generateCloserPacket } from "@/lib/intelligence/closer-packet";
 import { getLeadMemory } from "@/lib/lead-memory";
@@ -21,6 +23,12 @@ export async function GET(
     const db = getDb();
     const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).single();
     const workspaceId = (lead as { workspace_id?: string } | null)?.workspace_id;
+    if (!workspaceId) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+    const session = await getSession(req);
+    if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
+
     const packet = await generateCloserPacket(leadId, dealId ?? undefined);
     const mem = workspaceId ? await getLeadMemory(workspaceId, leadId) : null;
     const objections = mem?.objections_history_json?.map((o) => o.tag) ?? [];

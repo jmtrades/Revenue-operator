@@ -5,13 +5,15 @@
 
 export const dynamic = "force-dynamic";
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getLeadMemory } from "@/lib/lead-memory";
 import { getWarmthScores } from "@/lib/momentum/warmth";
 
 export async function GET(
-  _req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: leadId } = await params;
@@ -26,6 +28,11 @@ export async function GET(
   if (error || !lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const wid = (lead as { workspace_id: string }).workspace_id;
+
+  const session = await getSession(req);
+  if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(req, wid);
+  if (authErr) return authErr;
 
   const { data: ws } = await db.from("workspaces").select("status, pause_reason").eq("id", wid).single();
   const isPaused = (ws as { status?: string; pause_reason?: string })?.pause_reason != null;

@@ -1,16 +1,25 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 
 export async function GET(
-  _req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
   const db = getDb();
   const { data: lead, error } = await db.from("leads").select("*").eq("id", id).single();
   if (error || !lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const workspaceId = (lead as { workspace_id?: string }).workspace_id;
+  if (workspaceId) {
+    const session = await getSession(req);
+    if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
+  }
   const { data: deals } = await db.from("deals").select("id, value_cents, status").eq("lead_id", id);
   let responsibility_state: string | undefined;
   try {
@@ -47,7 +56,15 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const db = getDb();
-  const { data: existing } = await db.from("leads").select("metadata").eq("id", id).single();
+  const { data: existing } = await db.from("leads").select("metadata, workspace_id").eq("id", id).single();
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const workspaceId = (existing as { workspace_id?: string }).workspace_id;
+  if (workspaceId) {
+    const session = await getSession(req);
+    if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
+  }
   const meta = (existing as { metadata?: Record<string, unknown> })?.metadata ?? {};
   const nextMeta =
     body.paused_for_followup !== undefined
@@ -67,17 +84,17 @@ export async function PATCH(
     .select()
     .single();
   if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
-  const workspaceId = (updated as { workspace_id?: string })?.workspace_id;
-  if (workspaceId) {
+  const leadWorkspaceId = (updated as { workspace_id?: string })?.workspace_id;
+  if (leadWorkspaceId) {
     const { recordProviderInteraction } = await import("@/lib/detachment");
-    recordProviderInteraction(workspaceId, `lead:${id}`).catch(() => {});
+    recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch(() => {});
     // Enqueue outbound CRM sync for connected providers (Task 19)
     try {
       const { getConnectedCrmProviders, enqueueSync } = await import("@/lib/integrations/sync-engine");
-      const providers = await getConnectedCrmProviders(workspaceId);
+      const providers = await getConnectedCrmProviders(leadWorkspaceId);
       for (const provider of providers) {
         await enqueueSync({
-          workspaceId,
+          workspaceId: leadWorkspaceId,
           provider,
           direction: "outbound",
           entityType: "lead",

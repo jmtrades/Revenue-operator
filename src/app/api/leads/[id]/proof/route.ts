@@ -6,15 +6,27 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getCommitmentScore } from "@/lib/commitment";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: leadId } = await params;
   const db = getDb();
+
+  const { data: lead } = await db.from("leads").select("workspace_id, state").eq("id", leadId).single();
+  if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+  const workspaceId = (lead as { workspace_id?: string })?.workspace_id;
+  if (workspaceId) {
+    const session = await getSession(req);
+    if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
+  }
 
   const { data: actions } = await db
     .from("action_logs")
@@ -44,9 +56,6 @@ export async function GET(
     .limit(30);
 
   const policyReasoning = actions?.flatMap((a: { payload?: { policy_reason?: string } }) => (a.payload?.policy_reason ? [a.payload.policy_reason] : [])) ?? [];
-
-  const { data: lead } = await db.from("leads").select("workspace_id, state").eq("id", leadId).single();
-  const workspaceId = (lead as { workspace_id?: string })?.workspace_id;
 
   let call_analysis: Array<{ call_session_id: string; analysis_json?: Record<string, unknown>; confidence?: number; created_at?: string; consent?: unknown; analysis_source?: string | null }> = [];
   let call_inference: Array<{ call_session_id: string; show_status?: string | null; show_confidence?: number | null; show_reason?: string | null; wrapup_used?: boolean; transcript_available?: boolean }> = [];

@@ -5,10 +5,12 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: leadId } = await params;
@@ -17,6 +19,11 @@ export async function GET(
   const { data: lead } = await db.from("leads").select("workspace_id, state").eq("id", leadId).single();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   const workspaceId = (lead as { workspace_id: string }).workspace_id;
+
+  const session = await getSession(req);
+  if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const { data: actions } = await db
     .from("action_logs")
