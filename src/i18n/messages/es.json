@@ -716,7 +716,8 @@
       "submitting": "Enviando…",
       "loading": "Cargando…",
       "creating": "Creando…",
-      "importing": "Importando…"
+      "importing": "Importando…",
+      "uploading": "Subiendo…"
     }
   },
   "search": {

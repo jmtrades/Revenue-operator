@@ -807,7 +807,8 @@
       "submitting": "Submitting…",
       "loading": "Loading…",
       "creating": "Creating…",
-      "importing": "Importing…"
+      "importing": "Importing…",
+      "uploading": "Uploading…"
     }
   },
   "search": {
