@@ -183,7 +183,7 @@ export default function AppSettingsAgentPage() {
   if (loading) {
     return (
       <div className="max-w-[600px] mx-auto p-4 md:p-6">
-        <p className="text-sm text-zinc-500">Loading agent settings…</p>
+        <p className="text-sm text-zinc-500">{tSettings("agent.loading")}</p>
         <p className="mt-4">
           <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link>
         </p>
@@ -311,7 +311,7 @@ export default function AppSettingsAgentPage() {
 
       <div className="mt-6">
         <WorkspaceVoiceButton
-          title="Test your agent"
+          title={tSettings("agent.testTitle")}
           description="Run a live browser call with your current assistant, then review the transcript before saving more changes."
           startLabel="Start live test"
           endLabel="End live test"

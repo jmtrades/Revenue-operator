@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Phone, MessageSquare, Calendar, StickyNote, Archive } from "lucide-react";
 import type { LeadView } from "../page";
 import { Badge } from "@/components/ui/Badge";
@@ -50,12 +51,13 @@ export function LeadDetail({
   onHaveAICall,
   outboundCalling,
 }: LeadDetailProps) {
+  const t = useTranslations("leads");
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
         <span
           className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-semibold ${scoreBadgeClass(lead.score)}`}
-          title="Score"
+          title={t("scoreLabel")}
         >
           {lead.score}
         </span>

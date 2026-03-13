@@ -37,6 +37,7 @@
     "previous": "Anterior",
     "submit": "Enviar",
     "loading": "Cargando",
+    "loadingEllipsis": "Cargando…",
     "error": "Error",
     "success": "Éxito",
     "retry": "Reintentar",
@@ -640,6 +641,7 @@
     "csvUploadHint": "Sube un CSV con columnas nombre, teléfono, email",
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
+    "scoreLabel": "Puntuación",
     "board": {
       "columns": {
         "new": "Nuevos",
@@ -778,6 +780,8 @@
     "business.saveFailed": "No se pudieron guardar los datos de la empresa. Inténtalo de nuevo.",
     "business.nameNoMatch": "El nombre del espacio no coincide. Escríbelo exactamente para confirmar.",
     "business.deleted": "Espacio eliminado. Redirigiendo…",
+    "agent.loading": "Cargando ajustes del agente…",
+    "agent.testTitle": "Probar tu agente",
     "agent.loadFailed": "No se pudieron cargar los ajustes del agente. Inténtalo de nuevo.",
     "agent.saveFailed": "No se pudieron guardar los ajustes del agente. Inténtalo de nuevo.",
     "agent.voiceSyncFailed": "Guardado, pero no se pudo actualizar el agente de voz. Inténtalo de nuevo.",
@@ -957,7 +961,9 @@
     },
     "retry": "Intentar de nuevo",
     "goHome": "Volver al inicio",
-    "support": "Contactar soporte"
+    "goToDashboard": "Ir al panel",
+    "support": "Contactar soporte",
+    "pageLoadBody": "No se pudo cargar esta página. Inténtalo de nuevo o vuelve al panel."
   },
   "forms": {
     "validation": {
