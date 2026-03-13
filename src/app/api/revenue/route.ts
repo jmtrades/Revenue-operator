@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -18,6 +19,8 @@ export async function GET(request: NextRequest) {
       { status: 400 }
     );
   }
+  const authErr = await requireWorkspaceAccess(request, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
 

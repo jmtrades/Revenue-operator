@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 const PLAN_NAMES: Record<string, string> = {
   solo: "Solo",
@@ -22,6 +23,8 @@ export async function GET(req: NextRequest) {
     if (!workspaceId) {
       return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
     }
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
 
     const db = getDb();
     const { data: row } = await db
