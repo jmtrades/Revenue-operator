@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { ensureCallSessionFromCalendarEvent } from "@/lib/calls/calendar-fallback";
 import { enqueue } from "@/lib/queue";
@@ -32,6 +33,9 @@ export async function POST(
   if (!body.external_event_id || !body.start_at || !body.end_at) {
     return NextResponse.json({ error: "external_event_id, start_at, end_at required" }, { status: 400 });
   }
+
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).single();

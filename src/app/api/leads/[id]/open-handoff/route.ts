@@ -6,10 +6,12 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: leadId } = await params;
@@ -30,6 +32,12 @@ export async function GET(
   if (!esc) return NextResponse.json({ escalation_id: null });
   const escalationId = (esc as { id: string }).id;
   const workspaceId = (esc as { workspace_id?: string }).workspace_id;
+  if (workspaceId) {
+    const session = await getSession(req);
+    if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
+  }
 
   const { data: ack } = await db
     .from("handoff_acknowledgements")

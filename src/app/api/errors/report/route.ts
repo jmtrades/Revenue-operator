@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 
 export const dynamic = "force-dynamic";
@@ -20,11 +21,17 @@ export async function POST(req: NextRequest) {
   if (!message) return NextResponse.json({ error: "message required" }, { status: 400 });
 
   const session = await getSession(req);
+  const workspaceId = session?.workspaceId ?? null;
+  if (workspaceId) {
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
+  }
+
   const db = getDb();
 
   try {
     await db.from("error_reports").insert({
-      workspace_id: session?.workspaceId ?? null,
+      workspace_id: workspaceId,
       user_id: session?.userId ?? null,
       error_message: message,
       stack_trace: (body.stack ?? null)?.toString().trim().slice(0, 10000) ?? null,

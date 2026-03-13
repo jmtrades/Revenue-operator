@@ -5,11 +5,13 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { createWrapupTokenForCall } from "@/lib/calls/wrapup-token";
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: callSessionId } = await params;
@@ -22,6 +24,11 @@ export async function POST(
     .single();
   if (!session) return NextResponse.json({ error: "Call session not found" }, { status: 404 });
   const workspaceId = (session as { workspace_id: string }).workspace_id;
+
+  const authSession = await getSession(req);
+  if (!authSession?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const { url } = await createWrapupTokenForCall(workspaceId, callSessionId);
 
