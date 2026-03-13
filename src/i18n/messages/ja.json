@@ -99,6 +99,16 @@
     "signingIn": "サインイン中…",
     "savePassword": "パスワードを保存"
   },
+  "billing": {
+    "pageTitle": "Billing — Recall Touch",
+    "toast": {
+      "planUpdated": "Plan updated. Your new features are available now.",
+      "pauseFailed": "Could not pause coverage.",
+      "paused": "Coverage paused.",
+      "paymentFailed": "Could not open payment settings.",
+      "portalFailed": "Could not open billing portal."
+    }
+  },
   "dashboard": {
     "greeting": {
       "morning": "おはようございます",
@@ -348,6 +358,7 @@
     }
   },
   "callIntelligence": {
+    "pageTitle": "Call Intelligence — Recall Touch",
     "title": "通話インテリジェンス",
     "tabs": {
       "analyzed": "分析済み通話",
@@ -361,6 +372,12 @@
         "review": "要確認 (40–59)",
         "flagged": "要注意 (0–39)"
       }
+    }
+  },
+  "callRules": {
+    "pageTitle": "Call Rules — Recall Touch",
+    "toast": {
+      "saved": "Call rules saved"
     }
   },
   "inbox": {
@@ -483,6 +500,7 @@
   },
   "settings": {
     "pageTitle": "設定 — Recall Touch",
+    "agentPageTitle": "Agent Settings — Recall Touch",
     "title": "設定",
     "nav": {
       "general": "一般",
@@ -768,6 +786,11 @@
     }
   },
   "messages": {
+    "pageTitle": "Messages — Recall Touch",
+    "toast": {
+      "addContactFirst": "Add this contact in Leads first to send messages.",
+      "sent": "Message sent."
+    },
     "empty": {
       "title": "まだ会話はありません",
       "body": "AI が連絡先にメッセージを送信し始めると、すべての会話がここに表示されます。",
@@ -786,6 +809,9 @@
     "byOutcome": "結果でフィルター",
     "bySentiment": "センチメントでフィルター",
     "activity": "アクティビティをフィルター"
+  },
+  "developer": {
+    "pageTitle": "Developer — Recall Touch"
   },
   "empty": {
     "generic": {
@@ -1031,6 +1057,19 @@
     }
   },
   "phone": {
+    "pageTitle": "Phone Settings — Recall Touch",
+    "toast": {
+      "numberConnected": "Number connected. You can now receive calls and texts.",
+      "saved": "Settings saved.",
+      "error": "Something went wrong.",
+      "createAgentFirst": "Create an agent first in the Agents section, then try again.",
+      "testCallStarted": "Calling you now — answer your phone to hear your agent.",
+      "errorRetry": "Something went wrong. Try again.",
+      "codeSent": "Code sent. Check your phone.",
+      "getAiNumber": "Use 'Get a new AI number' to get a dedicated line.",
+      "phoneVerified": "Phone verified ✓",
+      "waitlistJoined": "We'll notify you when numbers are available."
+    },
     "marketplace": {
       "title": "電話番号マーケットプレイス",
       "subtitle": "ビジネスを展開している国で、番号を検索・比較・取得できます。",
@@ -1099,6 +1138,17 @@
     }
   },
   "integrations": {
+    "pageTitle": "Integrations — Recall Touch",
+    "toast": {
+      "oauthComingSoon": "OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.",
+      "invalidIntegration": "Invalid integration.",
+      "webhookSaved": "Webhook destination saved.",
+      "webhookSaveFailed": "Could not save webhook settings.",
+      "webhookTestFailed": "Could not send webhook test.",
+      "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
+      "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
+      "error": "Something went wrong. Try again."
+    },
     "hub": {
       "title": "インテグレーション",
       "subtitle": "Recall Touch を CRM、カレンダー、メッセージングツールなどと連携します。"

@@ -15,6 +15,7 @@ const defaultUsage = { minutes_used: 0, minutes_limit: 400, calls: 0, leads: 0, 
 
 export default function AppSettingsBillingPage() {
   const tNav = useTranslations("nav");
+  const tBilling = useTranslations("billing");
   const [cancelStep, setCancelStep] = useState<CancelStep>(0);
   const [usage, setUsage] = useState(() => {
     if (typeof window === "undefined") return defaultUsage;
@@ -40,8 +41,12 @@ export default function AppSettingsBillingPage() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (searchParams.get("plan_changed") === "1") setToast("Plan updated. Your new features are available now.");
-  }, [searchParams]);
+    document.title = tBilling("pageTitle");
+  }, [tBilling]);
+
+  useEffect(() => {
+    if (searchParams.get("plan_changed") === "1") setToast(tBilling("toast.planUpdated"));
+  }, [searchParams, tBilling]);
 
   useEffect(() => {
     fetchWorkspaceMeCached()
@@ -97,14 +102,14 @@ export default function AppSettingsBillingPage() {
       });
       const data = (await res.json().catch(() => null)) as { message?: string; error?: string } | null;
       if (!res.ok) {
-        setToast(data?.error ?? "Could not pause coverage.");
+        setToast(data?.error ?? tBilling("toast.pauseFailed"));
         return;
       }
       setBillingStatus("paused");
-      setToast(data?.message ?? "Coverage paused.");
+      setToast(data?.message ?? tBilling("toast.paused"));
       setCancelStep(0);
     } catch {
-      setToast("Could not pause coverage.");
+      setToast(tBilling("toast.pauseFailed"));
     } finally {
       setPausing(false);
     }
@@ -158,7 +163,7 @@ export default function AppSettingsBillingPage() {
         currentPlanId={currentPlanId}
         isOpen={planChangeOpen}
         onClose={() => setPlanChangeOpen(false)}
-        onSuccess={(name) => setToast(`Plan changed to ${name}. Your new features are available now.`)}
+        onSuccess={() => setToast(tBilling("toast.planUpdated"))}
         workspaceId={workspaceId}
       />
         <p className="text-xs text-zinc-500 mb-4">
@@ -175,7 +180,7 @@ export default function AppSettingsBillingPage() {
               });
               const data = (await res.json().catch(() => null)) as { url?: string } | null;
               if (data?.url) window.location.href = data.url;
-              else setToast("Could not open payment settings.");
+              else setToast(tBilling("toast.paymentFailed"));
             }}
             className="text-zinc-400 hover:text-white ml-2"
           >
@@ -197,7 +202,7 @@ export default function AppSettingsBillingPage() {
             });
             const data = (await res.json().catch(() => null)) as { url?: string } | null;
             if (data?.url) window.location.href = data.url;
-            else setToast("Could not open billing portal.");
+            else setToast(tBilling("toast.portalFailed"));
           }}
           className="text-sm text-zinc-300 hover:text-white underline underline-offset-2"
         >

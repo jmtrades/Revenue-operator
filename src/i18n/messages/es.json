@@ -99,6 +99,16 @@
     "signingIn": "Iniciando sesión…",
     "savePassword": "Guardar contraseña"
   },
+  "billing": {
+    "pageTitle": "Billing — Recall Touch",
+    "toast": {
+      "planUpdated": "Plan updated. Your new features are available now.",
+      "pauseFailed": "Could not pause coverage.",
+      "paused": "Coverage paused.",
+      "paymentFailed": "Could not open payment settings.",
+      "portalFailed": "Could not open billing portal."
+    }
+  },
   "dashboard": {
     "greeting": {
       "morning": "Buenos días",
@@ -348,6 +358,7 @@
     }
   },
   "callIntelligence": {
+    "pageTitle": "Call Intelligence — Recall Touch",
     "title": "Inteligencia de llamadas",
     "tabs": {
       "analyzed": "Llamadas analizadas",
@@ -361,6 +372,12 @@
         "review": "Revisar (40-59)",
         "flagged": "Marcadas (0-39)"
       }
+    }
+  },
+  "callRules": {
+    "pageTitle": "Call Rules — Recall Touch",
+    "toast": {
+      "saved": "Call rules saved"
     }
   },
   "inbox": {
@@ -483,6 +500,7 @@
   },
   "settings": {
     "pageTitle": "Ajustes — Recall Touch",
+    "agentPageTitle": "Agent Settings — Recall Touch",
     "title": "Ajustes",
     "nav": {
       "general": "General",
@@ -768,6 +786,11 @@
     }
   },
   "messages": {
+    "pageTitle": "Messages — Recall Touch",
+    "toast": {
+      "addContactFirst": "Add this contact in Leads first to send messages.",
+      "sent": "Message sent."
+    },
     "empty": {
       "title": "Aún no hay conversaciones",
       "body": "Cuando tu IA empiece a enviar mensajes a tus contactos, todas las conversaciones aparecerán aquí.",
@@ -786,6 +809,9 @@
     "byOutcome": "Filtrar por resultado",
     "bySentiment": "Filtrar por sentimiento",
     "activity": "Filtrar actividad"
+  },
+  "developer": {
+    "pageTitle": "Developer — Recall Touch"
   },
   "empty": {
     "generic": {
@@ -1028,6 +1054,19 @@
     }
   },
   "phone": {
+    "pageTitle": "Phone Settings — Recall Touch",
+    "toast": {
+      "numberConnected": "Number connected. You can now receive calls and texts.",
+      "saved": "Settings saved.",
+      "error": "Something went wrong.",
+      "createAgentFirst": "Create an agent first in the Agents section, then try again.",
+      "testCallStarted": "Calling you now — answer your phone to hear your agent.",
+      "errorRetry": "Something went wrong. Try again.",
+      "codeSent": "Code sent. Check your phone.",
+      "getAiNumber": "Use 'Get a new AI number' to get a dedicated line.",
+      "phoneVerified": "Phone verified ✓",
+      "waitlistJoined": "We'll notify you when numbers are available."
+    },
     "marketplace": {
       "title": "Marketplace de números de teléfono",
       "subtitle": "Busca, compara y provisiona números en los países donde operas.",
@@ -1096,6 +1135,17 @@
     }
   },
   "integrations": {
+    "pageTitle": "Integrations — Recall Touch",
+    "toast": {
+      "oauthComingSoon": "OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.",
+      "invalidIntegration": "Invalid integration.",
+      "webhookSaved": "Webhook destination saved.",
+      "webhookSaveFailed": "Could not save webhook settings.",
+      "webhookTestFailed": "Could not send webhook test.",
+      "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
+      "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
+      "error": "Something went wrong. Try again."
+    },
     "hub": {
       "title": "Integraciones",
       "subtitle": "Conecta Recall Touch con tu CRM, calendario, herramientas de mensajería y más."

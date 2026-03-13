@@ -97,6 +97,10 @@ export default function CallIntelligencePage() {
   const t = useTranslations("callIntelligence");
   const tCommon = useTranslations("common");
 
+  useEffect(() => {
+    document.title = t("pageTitle");
+  }, [t]);
+
   const fetchData = useCallback(async () => {
     try {
       const res = await fetch("/api/call-intelligence", { credentials: "include" });

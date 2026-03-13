@@ -88,6 +88,7 @@ function persistPhoneSettingsSnapshot(
 export default function AppSettingsPhonePage() {
   const locale = useLocale() || "en-US";
   const t = useTranslations("common");
+  const tPhone = useTranslations("phone");
   const tForms = useTranslations("forms.state");
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceSnapshot?.id?.trim() || "default";
@@ -127,6 +128,10 @@ export default function AppSettingsPhonePage() {
   const [numbersLoading, setNumbersLoading] = useState(true);
   const [totalMonthlyCents, setTotalMonthlyCents] = useState(0);
   const [releasingId, setReleasingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = tPhone("pageTitle");
+  }, [tPhone]);
 
   const fetchWorkspaceNumbers = useCallback(async () => {
     try {
@@ -222,7 +227,7 @@ export default function AppSettingsPhonePage() {
         setConnectErrorCode(null);
         await fetchPhone();
         invalidateWorkspaceMeCache();
-        setToast(data.message ?? "Number connected. You can now receive calls and texts.");
+        setToast(data.message ?? tPhone("toast.numberConnected"));
         setTimeout(() => numberHeadingRef.current?.focus({ preventScroll: true }), 100);
       } else {
         const message = data.error ?? data.message ?? "Could not connect a number. Try again.";
@@ -231,7 +236,7 @@ export default function AppSettingsPhonePage() {
         setToast(message);
       }
     } catch {
-      const message = "Something went wrong. Try again.";
+      const message = tPhone("toast.errorRetry");
       setConnectError(message);
       setConnectErrorCode("PROVISION_ERROR");
       setToast(message);
@@ -257,7 +262,7 @@ export default function AppSettingsPhonePage() {
       });
       if (res.ok) {
         invalidateWorkspaceMeCache();
-        setToast("Settings saved.");
+        setToast(tPhone("toast.saved"));
         sonnerToast.success("Settings saved");
       } else {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
@@ -266,7 +271,7 @@ export default function AppSettingsPhonePage() {
         sonnerToast.error("Failed to save. Please try again.");
       }
     } catch {
-      setToast("Something went wrong.");
+      setToast(tPhone("toast.error"));
       sonnerToast.error("Failed to save. Please try again.");
     } finally {
       setSaving(false);
@@ -281,7 +286,7 @@ export default function AppSettingsPhonePage() {
       return;
     }
     if (!primaryAgentId) {
-      setToast("Create an agent first in the Agents section, then try again.");
+      setToast(tPhone("toast.createAgentFirst"));
       sonnerToast.error("Create an agent first in the Agents section, then try again.");
       setTimeout(() => setToast(null), 4000);
       return;
@@ -303,12 +308,12 @@ export default function AppSettingsPhonePage() {
         setTestCallError(msg);
       } else {
         setTestCallError(null);
-        setToast(data.message ?? "Calling you now — answer your phone to hear your agent.");
+        setToast(data.message ?? tPhone("toast.testCallStarted"));
       }
     } catch {
-      setToast("Something went wrong. Try again.");
+      setToast(tPhone("toast.errorRetry"));
       sonnerToast.error("Failed to start test call. Please try again.");
-      setTestCallError("Something went wrong. Try again.");
+      setTestCallError(tPhone("toast.errorRetry"));
     } finally {
       setTestingCall(false);
       setTimeout(() => setToast(null), 5000);
@@ -613,12 +618,12 @@ export default function AppSettingsPhonePage() {
                         });
                         const d = (await r.json().catch(() => ({}))) as { sent?: boolean; error?: string; action?: string };
                         if (r.ok && d.sent) {
-                          setToast("Code sent. Check your phone.");
+                          setToast(tPhone("toast.codeSent"));
                         } else {
                           const msg = d.error ?? "Failed to send code.";
                           setVerifyError(msg);
                           if (d.action === "redirect") {
-                            setToast("Use 'Get a new AI number' to get a dedicated line.");
+                            setToast(tPhone("toast.getAiNumber"));
                           }
                         }
                       } catch {
@@ -663,7 +668,7 @@ export default function AppSettingsPhonePage() {
                       if (r.ok && (d as { verified?: boolean }).verified) {
                         setVerifiedNumber(num);
                         setVerifyCode("");
-                        setToast("Phone verified ✓");
+                        setToast(tPhone("toast.phoneVerified"));
                       } else {
                         setVerifyError((d as { error?: string }).error ?? "Code didn’t match. Try again or resend.");
                       }
@@ -730,7 +735,7 @@ export default function AppSettingsPhonePage() {
                         placeholder="your@email.com"
                         className="flex-1 bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40"
                       />
-                      <button type="button" onClick={() => { setToast("We'll notify you when numbers are available."); setTimeout(() => setToast(null), 4000); }} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm shrink-0">Notify me</button>
+                      <button type="button" onClick={() => { setToast(tPhone("toast.waitlistJoined")); setTimeout(() => setToast(null), 4000); }} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm shrink-0">Notify me</button>
                     </div>
                   )}
                   {connectErrorCode === "NO_INVENTORY" && (
@@ -793,11 +798,11 @@ export default function AppSettingsPhonePage() {
                         });
                         const d = (await r.json().catch(() => ({}))) as { sent?: boolean; error?: string; action?: string };
                         if (r.ok && d.sent) {
-                          setToast("Code sent. Check your phone.");
+                          setToast(tPhone("toast.codeSent"));
                           setVerifyCodeSent(true);
                         } else {
                           setVerifyError(d.error ?? "Failed to send code.");
-                          if (d.action === "redirect") setToast("Use 'Get a new AI number' to get a dedicated line.");
+                          if (d.action === "redirect") setToast(tPhone("toast.getAiNumber"));
                         }
                       } catch {
                         setVerifyError("Failed to send code. Check your connection and try again.");
@@ -854,7 +859,7 @@ export default function AppSettingsPhonePage() {
                         if (r.ok && (d as { verified?: boolean }).verified) {
                           setVerifiedNumber(num);
                           setVerifyCode("");
-                          setToast("Phone verified ✓");
+                          setToast(tPhone("toast.phoneVerified"));
                         } else {
                           setVerifyError((d as { error?: string }).error ?? "Code didn't match.");
                         }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   Key,
   Webhook,
@@ -634,6 +634,7 @@ const TABS: { id: TabId; label: string; icon: typeof Key }[] = [
 ];
 
 export default function DeveloperPage() {
+  const t = useTranslations("developer");
   const [tab, setTab] = useState<TabId>("keys");
   const [keys, setKeys] = useState<ApiKeyRow[]>([]);
   const [webhooks, setWebhooks] = useState<WebhookRow[]>([]);
@@ -641,6 +642,10 @@ export default function DeveloperPage() {
   const [toast, setToast] = useState("");
   const [eventKindFilter, setEventKindFilter] = useState<EventLogKind | "all">("all");
   const [eventStatusFilter, setEventStatusFilter] = useState<EventLogStatus | "all">("all");
+
+  useEffect(() => {
+    document.title = t("pageTitle");
+  }, [t]);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
