@@ -19,7 +19,11 @@
     "compliance": "コンプライアンス",
     "billing": "請求",
     "signOut": "ログアウト",
-    "notifications": "通知"
+    "notifications": "通知",
+    "sectionMain": "メイン",
+    "sectionCommunication": "コミュニケーション",
+    "sectionIntelligence": "インテリジェンス",
+    "sectionWorkspace": "ワークスペース"
   },
   "common": {
     "save": "保存",
@@ -317,6 +321,7 @@
       "appointmentsBooked": "予約済み",
       "estRevenue": "推定収益"
     },
+    "leadFunnel": "リードファネル",
     "successRate": "成功率 %"
   },
   "agents": {

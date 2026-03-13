@@ -19,7 +19,11 @@
     "compliance": "Conformité",
     "billing": "Facturation",
     "signOut": "Se déconnecter",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "sectionMain": "Principal",
+    "sectionCommunication": "Communication",
+    "sectionIntelligence": "Intelligence",
+    "sectionWorkspace": "Espace de travail"
   },
   "common": {
     "save": "Enregistrer",
@@ -317,6 +321,7 @@
       "appointmentsBooked": "Rendez-vous pris",
       "estRevenue": "Revenus est."
     },
+    "leadFunnel": "Entonnoir de leads",
     "successRate": "% de succès"
   },
   "agents": {

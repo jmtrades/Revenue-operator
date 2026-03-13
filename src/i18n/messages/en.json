@@ -19,7 +19,11 @@
     "compliance": "Compliance",
     "billing": "Billing",
     "signOut": "Sign out",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "sectionMain": "Main",
+    "sectionCommunication": "Communication",
+    "sectionIntelligence": "Intelligence",
+    "sectionWorkspace": "Workspace"
   },
   "common": {
     "save": "Save",

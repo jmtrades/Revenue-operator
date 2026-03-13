@@ -613,7 +613,7 @@ export default function AppAnalyticsPage() {
 
       {/* Lead funnel */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6">
-        <p className="text-sm font-medium text-white mb-4">Lead funnel</p>
+        <p className="text-sm font-medium text-white mb-4">{t("analytics.leadFunnel")}</p>
         <div className="flex flex-col sm:flex-row items-stretch gap-2">
           {funnelData.map((item, i) => (
             <div key={item.stage} className="flex-1 min-w-0 flex flex-col items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 px-3 py-3">

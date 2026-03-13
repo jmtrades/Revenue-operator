@@ -19,7 +19,11 @@
     "compliance": "Cumplimiento",
     "billing": "Facturación",
     "signOut": "Cerrar sesión",
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "sectionMain": "Principal",
+    "sectionCommunication": "Comunicación",
+    "sectionIntelligence": "Inteligencia",
+    "sectionWorkspace": "Espacio de trabajo"
   },
   "common": {
     "save": "Guardar",

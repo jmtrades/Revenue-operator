@@ -122,7 +122,7 @@ export default function AppShellClient({
   const sidebarGroups = useMemo(
     () => [
       {
-        label: "Main",
+        label: t("nav.sectionMain"),
         items: [
           { href: "/app/activity", label: t("nav.dashboard"), icon: LayoutList },
           { href: "/app/agents", label: t("nav.agents"), icon: Bot },
@@ -132,14 +132,14 @@ export default function AppShellClient({
         ],
       },
       {
-        label: "Communication",
+        label: t("nav.sectionCommunication"),
         items: [
           { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
           { href: "/app/appointments", label: t("nav.appointments"), icon: Calendar },
         ],
       },
       {
-        label: "Intelligence",
+        label: t("nav.sectionIntelligence"),
         items: [
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
           { href: "/app/call-intelligence", label: t("nav.callIntelligence"), icon: Lightbulb },
@@ -147,7 +147,7 @@ export default function AppShellClient({
         ],
       },
       {
-        label: "Workspace",
+        label: t("nav.sectionWorkspace"),
         items: [
           { href: "/app/team", label: t("nav.team"), icon: Users },
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },

@@ -19,7 +19,11 @@
     "compliance": "Conformidade",
     "billing": "Cobrança",
     "signOut": "Sair",
-    "notifications": "Notificações"
+    "notifications": "Notificações",
+    "sectionMain": "Principal",
+    "sectionCommunication": "Comunicação",
+    "sectionIntelligence": "Inteligência",
+    "sectionWorkspace": "Espaço de trabalho"
   },
   "common": {
     "save": "Salvar",
@@ -317,6 +321,7 @@
       "appointmentsBooked": "Consultas agendadas",
       "estRevenue": "Receita est."
     },
+    "leadFunnel": "Funil de leads",
     "successRate": "% de sucesso"
   },
   "agents": {
