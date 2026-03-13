@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(
   req: NextRequest,
@@ -14,6 +15,8 @@ export async function GET(
   const authSession = await getSession(req);
   const workspaceId = req.nextUrl.searchParams.get("workspace_id") || authSession?.workspaceId;
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: callRow, error: sessionErr } = await db

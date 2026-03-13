@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { ensureWorkspaceInstallationState } from "@/lib/installation";
 import { getWorkspaceReadiness } from "@/lib/runtime/workspace-readiness";
 import { ensureInstallationState } from "@/lib/adoption-acceleration/installation-state";
@@ -23,6 +24,8 @@ export async function POST(request: NextRequest) {
   if (!workspaceId || typeof workspaceId !== "string") {
     return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   }
+  const authErr = await requireWorkspaceAccess(request, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).maybeSingle();
