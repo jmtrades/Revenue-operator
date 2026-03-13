@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { computeDealStateVector } from "@/lib/engines/perception";
 import { computeRevenueState } from "@/lib/revenue-state";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(
   req: NextRequest,
@@ -16,6 +17,8 @@ export async function GET(
   const { lead_id: leadId } = await params;
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const vector = await computeDealStateVector(workspaceId, leadId);
   if (!vector) return NextResponse.json({ error: "Lead not found" }, { status: 404 });

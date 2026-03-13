@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getActiveLeadPlan } from "@/lib/plans/lead-plan";
 import { canInterveneNow } from "@/lib/stability/cooldowns";
 import type { LeadState } from "@/lib/types";
@@ -18,6 +19,8 @@ export async function GET(
   const { id: leadId } = await params;
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: lead } = await db
