@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getBusinessMemoryWithProvenance } from "@/lib/business-memory";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 const MEMORY_TYPES = ["common_objections", "avg_buying_cycle_days", "conversion_triggers", "loss_patterns"] as const;
 
@@ -28,6 +29,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const authErrPut = await requireWorkspaceAccess(req, id);
+  if (authErrPut) return authErrPut;
   let body: { memory_type?: string; content?: unknown; provenance?: Record<string, unknown> } = {};
   try {
     body = await req.json();
