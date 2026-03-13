@@ -5,11 +5,12 @@
 
 import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
-import { createAssistant, createOutboundCall } from "@/lib/vapi";
 import { hasVapiServerKey } from "@/lib/vapi/env";
 import { getVoicemailConfigForBehavior } from "@/lib/vapi/voicemail-detection";
 import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
 import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
+import { getVoiceProvider } from "@/lib/voice";
+import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 
 export async function executeLeadOutboundCall(
   workspaceId: string,
@@ -32,7 +33,7 @@ export async function executeLeadOutboundCall(
     return { ok: false, error: "Lead has no valid phone number" };
   }
 
-  if (!hasVapiServerKey() || !process.env.VAPI_PHONE_NUMBER_ID) {
+  if (!hasVapiServerKey()) {
     return { ok: false, error: "Outbound calling not configured" };
   }
 
@@ -159,17 +160,27 @@ YOUR GOAL:
   const voicemailMessage = typeof agent.knowledge_base?.voicemailMessage === "string" ? agent.knowledge_base.voicemailMessage : "";
   const { voicemailDetection, voicemailMessage: vmMessage } = getVoicemailConfigForBehavior(voicemailBehavior, voicemailMessage);
 
+  const voice = getVoiceProvider();
+
   let assistantId: string;
   try {
-    const { id } = await createAssistant({
+    const { assistantId: createdId } = await voice.createAssistant({
       name: `${agent_name} – outbound ${leadId.slice(0, 8)}`,
       systemPrompt,
-      firstMessage: outboundFirstMessage,
-      workspaceId,
-      ...(voicemailDetection && { voicemailDetection }),
-      ...(vmMessage && { voicemailMessage: vmMessage }),
+      voiceId: DEFAULT_VOICE_ID,
+      voiceProvider: "elevenlabs",
+      language: "en",
+      tools: [],
+      maxDuration: 600,
+      silenceTimeout: 30,
+      backgroundDenoising: true,
+      metadata: {
+        workspace_id: workspaceId,
+        voicemailDetection: voicemailDetection ? JSON.stringify(voicemailDetection) : "",
+        voicemailMessage: vmMessage ?? "",
+      },
     });
-    assistantId = id;
+    assistantId = createdId;
   } catch {
     return { ok: false, error: "Failed to create voice assistant for outbound call" };
   }
@@ -179,7 +190,7 @@ YOUR GOAL:
     .insert({
       workspace_id: workspaceId,
       lead_id: leadId,
-      provider: "vapi",
+      provider: "elevenlabs",
       call_started_at: new Date().toISOString(),
       external_meeting_id: `outbound-${Date.now()}-${leadId.slice(0, 8)}`,
     })
@@ -194,9 +205,9 @@ YOUR GOAL:
   const e164 = /^\+?\d{10,15}$/.test(customerNumber) ? customerNumber : customerNumber.replace(/\D/g, "").length === 10 ? `+1${customerNumber.replace(/\D/g, "")}` : customerNumber.replace(/\D/g, "");
 
   try {
-    await createOutboundCall({
+    await voice.createOutboundCall({
       assistantId,
-      customerNumber: e164 || customerNumber,
+      phoneNumber: e164 || customerNumber,
       metadata: {
         workspace_id: workspaceId,
         call_session_id: callSessionId,
