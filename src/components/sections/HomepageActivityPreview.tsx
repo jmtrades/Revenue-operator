@@ -40,7 +40,7 @@ export function HomepageActivityPreview() {
         boxShadow: "var(--shadow-glow-lg)",
       }}
       role="img"
-      aria-label="Recall Touch activity preview: calls and leads"
+      aria-label="Preview of the Recall Touch activity dashboard"
     >
       <div
         className="flex items-center gap-3 px-4 py-2.5 border-b"

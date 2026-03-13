@@ -6,8 +6,9 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const authSession = await getSession(req);
-  const workspaceId =
+  try {
+    const authSession = await getSession(req);
+    const workspaceId =
     req.nextUrl.searchParams.get("workspace_id") || authSession?.workspaceId;
   if (!workspaceId) {
     return new Response("workspace_id required", { status: 400 });
@@ -96,5 +97,9 @@ export async function GET(req: NextRequest) {
       "Cache-Control": "no-store",
     },
   });
+  } catch (error) {
+    console.error("[API] calls/export error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500, headers: { "Content-Type": "application/json" } });
+  }
 }
 

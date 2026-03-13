@@ -254,8 +254,8 @@ export default function AppAnalyticsPage() {
       .catch((err) => {
         const message =
           err instanceof ApiError && err.status === 408
-            ? "Analytics request timed out. Try again."
-            : "Could not load analytics for this workspace.";
+            ? t("analytics.errors.timeout")
+            : t("analytics.errors.loadFailed");
         setError(message);
       })
       .finally(() => setLoading(false));
@@ -357,14 +357,14 @@ export default function AppAnalyticsPage() {
       }
     }
     return [
-      { name: "Booked", value: base.appointment, color: "#22c55e" },
-      { name: "Lead", value: base.lead, color: "#3b82f6" },
-      { name: "Info", value: base.info, color: "#64748b" },
-      { name: "Transferred", value: base.transfer, color: "#a855f7" },
-      { name: "Missed", value: base.missed, color: "#ef4444" },
-      { name: "Voicemail", value: base.voicemail, color: "#6b7280" },
+      { name: t("analytics.outcomes.booked"), value: base.appointment, color: "#22c55e" },
+      { name: t("analytics.outcomes.lead"), value: base.lead, color: "#3b82f6" },
+      { name: t("analytics.outcomes.info"), value: base.info, color: "#64748b" },
+      { name: t("analytics.outcomes.transferred"), value: base.transfer, color: "#a855f7" },
+      { name: t("analytics.outcomes.missed"), value: base.missed, color: "#ef4444" },
+      { name: t("analytics.outcomes.voicemail"), value: base.voicemail, color: "#6b7280" },
     ];
-  }, [filteredCalls]);
+  }, [filteredCalls, t]);
 
   const { positivePct, neutralPct, negativePct } = useMemo(() => {
     const counts = { positive: 0, neutral: 0, negative: 0 };
@@ -411,21 +411,21 @@ export default function AppAnalyticsPage() {
     const appointmentCount = filteredLeads.filter((l) => l.state === "appointment_set").length;
     const wonCount = filteredLeads.filter((l) => l.state === "won").length;
     return [
-      { stage: "Calls", count: totalCallsCount, pct: 100 },
-      { stage: "Leads", count: leadsCount, pct: totalCallsCount ? (leadsCount / totalCallsCount) * 100 : 0 },
-      { stage: "Qualified", count: qualifiedCount, pct: leadsCount ? (qualifiedCount / leadsCount) * 100 : 0 },
-      { stage: "Appointments", count: appointmentCount, pct: qualifiedCount ? (appointmentCount / qualifiedCount) * 100 : 0 },
-      { stage: "Won", count: wonCount, pct: appointmentCount ? (wonCount / appointmentCount) * 100 : 0 },
+      { stage: t("analytics.funnelStages.calls"), count: totalCallsCount, pct: 100 },
+      { stage: t("analytics.funnelStages.leads"), count: leadsCount, pct: totalCallsCount ? (leadsCount / totalCallsCount) * 100 : 0 },
+      { stage: t("analytics.funnelStages.qualified"), count: qualifiedCount, pct: leadsCount ? (qualifiedCount / leadsCount) * 100 : 0 },
+      { stage: t("analytics.funnelStages.appointments"), count: appointmentCount, pct: qualifiedCount ? (appointmentCount / qualifiedCount) * 100 : 0 },
+      { stage: t("analytics.funnelStages.won"), count: wonCount, pct: appointmentCount ? (wonCount / appointmentCount) * 100 : 0 },
     ];
-  }, [totalCalls, filteredLeads]);
+  }, [totalCalls, filteredLeads, t]);
 
   const summaryLabel = useMemo(() => {
-    if (range === "today") return "Today";
-    if (range === "7d") return "Last 7 days";
-    if (range === "30d") return "Last 30 days";
-    if (range === "90d") return "Last 90 days";
-    return "Custom range";
-  }, [range]);
+    if (range === "today") return t("analytics.rangeLabels.today");
+    if (range === "7d") return t("analytics.rangeLabels.last7");
+    if (range === "30d") return t("analytics.rangeLabels.last30");
+    if (range === "90d") return t("analytics.rangeLabels.last90");
+    return t("analytics.rangeLabels.customRange");
+  }, [range, t]);
 
   const handleExportCsv = () => {
     if (!hasData) return;
@@ -474,20 +474,20 @@ export default function AppAnalyticsPage() {
         <div>
           <h1 className="text-xl md:text-2xl font-semibold text-white flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-zinc-400" />
-            Analytics
+            {t("analytics.heading")}
           </h1>
           <p className="text-sm text-zinc-500 mt-1">
-            See how conversations turn into kept appointments and real revenue.
+            {t("analytics.description")}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-0.5 text-xs">
             {([
-              { key: "today" as const, label: "Today" },
-              { key: "7d" as const, label: "7D" },
-              { key: "30d" as const, label: "30D" },
-              { key: "90d" as const, label: "90D" },
-              { key: "custom" as const, label: "Custom" },
+              { key: "today" as const, label: t("analytics.ranges.today") },
+              { key: "7d" as const, label: t("analytics.ranges.sevenDay") },
+              { key: "30d" as const, label: t("analytics.ranges.thirtyDay") },
+              { key: "90d" as const, label: t("analytics.ranges.ninetyDay") },
+              { key: "custom" as const, label: t("analytics.ranges.custom") },
             ]).map((opt) => (
               <button
                 key={opt.key}
