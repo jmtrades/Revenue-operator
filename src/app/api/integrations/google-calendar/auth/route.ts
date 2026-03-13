@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getGoogleCalendarClientId } from "@/lib/integrations/google-calendar-env";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,8 @@ export async function GET(req: NextRequest) {
   if (!session?.userId || !session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const clientId = getGoogleCalendarClientId();
   const redirectUri = process.env.GOOGLE_CALENDAR_REDIRECT_URI?.trim() ?? `${process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin}/api/integrations/google-calendar/callback`;

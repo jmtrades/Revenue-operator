@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,8 @@ const SLACK_SCOPES = "chat:write,channels:read,groups:read";
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const clientId = process.env.SLACK_CLIENT_ID?.trim();
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
