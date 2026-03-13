@@ -406,6 +406,32 @@
   "calls": {
     "pageTitle": "Llamadas — Recall Touch",
     "title": "Llamadas",
+    "heading": "Registro de llamadas",
+    "description": "Cada llamada respondida, decisión y seguimiento en un solo lugar.",
+    "liveLabel": "En vivo",
+    "exportCsv": "Exportar CSV",
+    "searchPlaceholder": "Buscar por llamante o teléfono…",
+    "filterOutcome": "Filtrar por resultado",
+    "filterSentiment": "Filtrar por sentimiento",
+    "all": "Todos",
+    "outcomes": {
+      "booked": "Reservado",
+      "lead": "Lead",
+      "info": "Info",
+      "transferred": "Transferido",
+      "missed": "Perdida",
+      "voicemail": "Buzón"
+    },
+    "sentiments": {
+      "positive": "Positivo",
+      "neutral": "Neutral",
+      "negative": "Negativo"
+    },
+    "sort": {
+      "newest": "Más recientes",
+      "longest": "Llamadas más largas",
+      "bestSentiment": "Mejor sentimiento"
+    },
     "filters": {
       "all": "Todas las llamadas",
       "missed": "Perdidas",
@@ -423,8 +449,32 @@
     },
     "empty": {
       "title": "Aún no hay llamadas",
+      "description": "Conecta tu número para empezar. Las llamadas aparecerán aquí con transcripciones y resúmenes.",
+      "connectNumber": "Conectar número",
+      "testAgent": "Probar tu agente",
       "body": "Cuando tus agentes empiecen a atender llamadas, las verás aquí."
     },
+    "table": {
+      "dateTime": "Fecha / hora",
+      "caller": "Llamante",
+      "phone": "Teléfono",
+      "duration": "Duración",
+      "outcome": "Resultado",
+      "sentiment": "Sentimiento",
+      "agent": "Agente",
+      "actions": "Acciones"
+    },
+    "defaultCaller": "Llamante",
+    "playRecording": "Reproducir grabación",
+    "viewTranscript": "Ver transcripción",
+    "noMatchFilters": "Ninguna llamada coincide con estos filtros.",
+    "showing": "Mostrando",
+    "of": "de",
+    "callsLabel": "llamadas",
+    "page": "Página",
+    "agentLabel": "Agente:",
+    "assigned": "Asignado",
+    "details": "Detalles de la llamada",
     "errors": {
       "timeout": "La solicitud se agotó. Inténtalo de nuevo.",
       "loadFailed": "No se pudieron cargar las llamadas para este espacio de trabajo.",

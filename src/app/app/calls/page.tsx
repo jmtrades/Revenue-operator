@@ -39,25 +39,25 @@ interface CallRecord {
 const PAGE_SIZE = 10;
 const CALLS_SNAPSHOT_PREFIX = "rt_calls_snapshot:";
 
-const OUTCOME_LABELS: Record<Exclude<CallOutcome, null>, string> = {
-  appointment: "Booked",
-  lead: "Lead",
-  info: "Info",
-  transfer: "Transferred",
-  voicemail: "Voicemail",
-  missed: "Missed",
-};
+const getOutcomeLabels = (t: (k: string) => string): Record<Exclude<CallOutcome, null>, string> => ({
+  appointment: t("calls.outcomes.booked"),
+  lead: t("calls.outcomes.lead"),
+  info: t("calls.outcomes.info"),
+  transfer: t("calls.outcomes.transferred"),
+  voicemail: t("calls.outcomes.voicemail"),
+  missed: t("calls.outcomes.missed"),
+});
 
 const TYPE_LABELS: Record<Exclude<CallType, null>, string> = {
   inbound: "Inbound",
   outbound: "Outbound",
 };
 
-const SENTIMENT_LABELS: Record<Exclude<CallSentiment, null>, string> = {
-  positive: "Positive",
-  neutral: "Neutral",
-  negative: "Negative",
-};
+const getSentimentLabels = (t: (k: string) => string): Record<Exclude<CallSentiment, null>, string> => ({
+  positive: t("calls.sentiments.positive"),
+  neutral: t("calls.sentiments.neutral"),
+  negative: t("calls.sentiments.negative"),
+});
 
 const AudioPlayer = dynamic(
   () => import("@/components/ui/AudioPlayer").then((mod) => mod.AudioPlayer),
@@ -117,6 +117,8 @@ export default function CallsPage() {
   const [selectedCall, setSelectedCall] = useState<CallRecord | null>(null);
   const [drawerLoading, setDrawerLoading] = useState(false);
   const [callNotes, setCallNotes] = useState<Record<string, string>>({});
+  const outcomeLabels = useMemo(() => getOutcomeLabels(t), [t]);
+  const sentimentLabels = useMemo(() => getSentimentLabels(t), [t]);
 
   useEffect(() => {
     if (!selectedCall?.id) return;
@@ -260,17 +262,17 @@ export default function CallsPage() {
         <div>
           <h1 className="text-xl md:text-2xl font-semibold text-white flex items-center gap-2">
             <PhoneCall className="w-5 h-5 text-zinc-400" />
-            Call log
+            {t("calls.heading")}
           </h1>
           <p className="text-sm text-zinc-500 mt-1">
-            Every answered call, decision, and follow-up in one place.
+            {t("calls.description")}
           </p>
         </div>
         <Link
           href="/app/calls/live"
           className="inline-flex items-center gap-1.5 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2 text-sm font-medium hover:bg-zinc-800 hover:text-white"
         >
-          Live
+          {t("calls.liveLabel")}
         </Link>
         <button
           type="button"
@@ -303,7 +305,7 @@ export default function CallsPage() {
           }}
           className="text-xs md:text-sm rounded-xl border border-[var(--border-default)] px-4 py-2 text-zinc-200 hover:bg-[var(--bg-input)]"
         >
-          Export CSV
+          {t("calls.exportCsv")}
         </button>
       </div>
 
@@ -317,7 +319,7 @@ export default function CallsPage() {
               setPage(1);
             }}
             icon={Search}
-            placeholder="Search by caller or phone…"
+            placeholder={t("calls.searchPlaceholder")}
             className="bg-[var(--bg-input)] border-[var(--border-default)]"
           />
         </div>
@@ -329,15 +331,15 @@ export default function CallsPage() {
               setPage(1);
             }}
             className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
-            aria-label="Filter by outcome"
+            aria-label={t("calls.filterOutcome")}
           >
-            <option value="all">All</option>
-            <option value="appointment">Booked</option>
-            <option value="lead">Lead</option>
-            <option value="info">Info</option>
-            <option value="transfer">Transferred</option>
-            <option value="missed">Missed</option>
-            <option value="voicemail">Voicemail</option>
+            <option value="all">{t("calls.all")}</option>
+            <option value="appointment">{t("calls.outcomes.booked")}</option>
+            <option value="lead">{t("calls.outcomes.lead")}</option>
+            <option value="info">{t("calls.outcomes.info")}</option>
+            <option value="transfer">{t("calls.outcomes.transferred")}</option>
+            <option value="missed">{t("calls.outcomes.missed")}</option>
+            <option value="voicemail">{t("calls.outcomes.voicemail")}</option>
           </select>
           <select
             value={sentimentFilter}
@@ -346,21 +348,21 @@ export default function CallsPage() {
               setPage(1);
             }}
             className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
-            aria-label="Filter by sentiment"
+            aria-label={t("calls.filterSentiment")}
           >
-            <option value="all">All</option>
-            <option value="positive">Positive</option>
-            <option value="neutral">Neutral</option>
-            <option value="negative">Negative</option>
+            <option value="all">{t("calls.all")}</option>
+            <option value="positive">{t("calls.sentiments.positive")}</option>
+            <option value="neutral">{t("calls.sentiments.neutral")}</option>
+            <option value="negative">{t("calls.sentiments.negative")}</option>
           </select>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
             className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
           >
-            <option value="newest">Newest first</option>
-            <option value="duration">Longest calls</option>
-            <option value="sentiment">Best sentiment</option>
+            <option value="newest">{t("calls.sort.newest")}</option>
+            <option value="duration">{t("calls.sort.longest")}</option>
+            <option value="sentiment">{t("calls.sort.bestSentiment")}</option>
           </select>
         </div>
       </div>
@@ -408,10 +410,10 @@ export default function CallsPage() {
         <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <EmptyState
             icon={PhoneCall}
-            title="No calls yet"
-            description="Connect your phone number to get started. Calls will appear here with transcripts and summaries."
-            primaryAction={{ label: "Connect number →", href: "/app/settings/phone" }}
-            secondaryAction={{ label: "Test your agent →", href: "/app/agents" }}
+            title={t("calls.empty.title")}
+            description={t("calls.empty.description")}
+            primaryAction={{ label: `${t("calls.empty.connectNumber")} →`, href: "/app/settings/phone" }}
+            secondaryAction={{ label: `${t("calls.empty.testAgent")} →`, href: "/app/agents" }}
           />
         </div>
       ) : (
@@ -419,14 +421,14 @@ export default function CallsPage() {
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
             <tr>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Date / time</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Caller</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Phone</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Duration</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Outcome</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Sentiment</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">Agent</th>
-              <th className="py-3 px-4 text-right text-xs font-medium text-zinc-500 w-20" aria-label="Actions" />
+              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.dateTime")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.caller")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.phone")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.duration")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.outcome")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.sentiment")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.agent")}</th>
+              <th className="py-3 px-4 text-right text-xs font-medium text-zinc-500 w-20" aria-label={t("calls.table.actions")} />
             </tr>
           </thead>
           <tbody>
@@ -439,7 +441,7 @@ export default function CallsPage() {
                 c.matched_lead?.name ??
                 c.matched_lead?.company ??
                 c.matched_lead?.email ??
-                "Caller";
+                t("calls.defaultCaller");
               const sentiment =
                 (c.analysis_outcome as { sentiment?: CallSentiment } | undefined)?.sentiment ??
                 null;
@@ -470,22 +472,22 @@ export default function CallsPage() {
                   </td>
                   <td className="py-3 px-4 text-xs">
                     <Badge variant={outcomeKey === "appointment" ? "appointment" : outcomeKey === "lead" ? "lead" : "neutral"}>
-                      {OUTCOME_LABELS[outcomeKey] ?? c.outcome ?? "—"}
+                      {outcomeLabels[outcomeKey] ?? c.outcome ?? "—"}
                     </Badge>
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-200">
                     {sentimentEmoji && <span aria-hidden>{sentimentEmoji}</span>}
-                    {!sentimentEmoji && sentiment && <span>{SENTIMENT_LABELS[sentiment]}</span>}
+                    {!sentimentEmoji && sentiment && <span>{sentimentLabels[sentiment]}</span>}
                     {!sentiment && !sentimentEmoji && <span className="text-zinc-500">—</span>}
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-300">
-                    {c.matched_lead?.name ? "Agent" : "—"}
+                    {c.matched_lead?.name ? t("calls.table.agent") : "—"}
                   </td>
                   <td className="py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                       <button
                         type="button"
-                        aria-label="Play recording"
+                        aria-label={t("calls.playRecording")}
                         className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10"
                         onClick={() => handleRowClick(c.id)}
                       >
@@ -493,7 +495,7 @@ export default function CallsPage() {
                       </button>
                       <button
                         type="button"
-                        aria-label="View transcript"
+                        aria-label={t("calls.viewTranscript")}
                         className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10"
                         onClick={() => handleRowClick(c.id)}
                       >
@@ -506,8 +508,8 @@ export default function CallsPage() {
             })}
             {pageItems.length === 0 && (
               <tr>
-                <td colSpan={9} className="py-8 px-4 text-center text-sm text-zinc-500">
-                  No calls match these filters yet.
+                <td             colSpan={9} className="py-8 px-4 text-center text-sm text-zinc-500">
+                  {t("calls.noMatchFilters")}
                 </td>
               </tr>
             )}
@@ -526,7 +528,7 @@ export default function CallsPage() {
             c.matched_lead?.name ??
             c.matched_lead?.company ??
             c.matched_lead?.email ??
-            "Caller";
+            t("calls.defaultCaller");
           const sentiment =
             (c.analysis_outcome as { sentiment?: CallSentiment } | undefined)?.sentiment ??
             null;
@@ -546,7 +548,7 @@ export default function CallsPage() {
                       <span
                         className={`h-1.5 w-1.5 rounded-full ${sentimentDotColor(sentiment)}`}
                       />
-                      {SENTIMENT_LABELS[sentiment]}
+                      {sentimentLabels[sentiment]}
                     </>
                   ) : (
                     <span className="text-zinc-500">—</span>
@@ -570,7 +572,7 @@ export default function CallsPage() {
                     {TYPE_LABELS[kind]}
                   </span>
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5">
-                    {OUTCOME_LABELS[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
+                    {outcomeLabels[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
                   </span>
                 </div>
                 <span className="text-xs text-zinc-300">
@@ -625,7 +627,7 @@ export default function CallsPage() {
       <Sheet
         open={!!selectedCall}
         onClose={() => setSelectedCall(null)}
-        title={selectedCall ? "Call details" : undefined}
+        title={selectedCall ? t("calls.details") : undefined}
       >
         {selectedCall && (
           <div className="space-y-5">
@@ -655,19 +657,19 @@ export default function CallsPage() {
                   })()}
                 </Badge>
                 <Badge variant={(selectedCall.outcome ?? "lead") === "appointment" ? "appointment" : (selectedCall.outcome ?? "lead") === "lead" ? "lead" : "neutral"}>
-                  {OUTCOME_LABELS[(selectedCall.outcome ?? "lead") as Exclude<CallOutcome, null>] ?? selectedCall.outcome}
+                  {outcomeLabels[(selectedCall.outcome ?? "lead") as Exclude<CallOutcome, null>] ?? selectedCall.outcome}
                 </Badge>
                 {(() => {
                   const s = (selectedCall.analysis_outcome as { sentiment?: CallSentiment })?.sentiment ?? null;
                   return s ? (
                     <Badge variant={s === "positive" ? "success" : s === "negative" ? "error" : "neutral"}>
-                      {s === "positive" ? "🙂 Positive" : s === "negative" ? "😞 Negative" : "😐 Neutral"}
+                      {s === "positive" ? `🙂 ${sentimentLabels.positive}` : s === "negative" ? `😞 ${sentimentLabels.negative}` : `😐 ${sentimentLabels.neutral}`}
                     </Badge>
                   ) : null;
                 })()}
               </div>
               <p className="text-[11px] text-[var(--text-tertiary)] mt-1">
-                Agent: {selectedCall.matched_lead?.name ? "Assigned" : "—"}
+                {t("calls.agentLabel")} {selectedCall.matched_lead?.name ? t("calls.assigned") : "—"}
               </p>
               {(selectedCall.lead_id || selectedCall.matched_lead_id) && (
                 <div className="mt-2">
