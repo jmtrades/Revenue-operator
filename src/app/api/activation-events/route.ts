@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -28,6 +29,9 @@ export async function POST(req: NextRequest) {
   }
 
   const workspaceId = body.workspace_id || session.workspaceId;
+  const authErrPost = await requireWorkspaceAccess(req, workspaceId);
+  if (authErrPost) return authErrPost;
+
   const db = getDb();
 
   // Check if this step already logged for this workspace (idempotent)
@@ -66,6 +70,8 @@ export async function GET(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   let query = db
