@@ -900,7 +900,8 @@
     },
     "status": {
       "active": "Aktiv",
-      "draft": "Entwurf"
+      "draft": "Entwurf",
+      "processing": "Wird verarbeitet"
     }
   },
   "filter": {
