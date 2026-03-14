@@ -727,16 +727,42 @@
       "body": "Use campanhas para recuperar chamadas perdidas, reativar leads antigos e encher sua agenda.",
       "description": "Crie sua primeira campanha para dar follow-up em leads, enviar lembretes de agendamento ou reativar contatos."
     },
+    "heading": "Campanhas",
+    "description": "Alcance seus leads com chamadas e mensagens de saída automatizadas.",
+    "defaults": {
+      "audience": "Leads aguardando follow-up",
+      "template": "Só passando para ver como ficou nossa última conversa. Responda aqui se quiser continuar.",
+      "followupAudience": "Leads aguardando follow-up",
+      "followupTemplate": "Só passando para ver como ficou nossa última conversa. Responda aqui se quiser continuar.",
+      "reactivationAudience": "Leads frios ou inativos",
+      "reactivationTemplate": "Faz um tempo que não falamos. Tem um minuto para vermos se podemos ajudar?",
+      "reminderAudience": "Leads com consultas próximas",
+      "reminderTemplate": "Lembrete: você tem uma consulta em breve. Responda para confirmar ou remarcar.",
+      "qualifyAudience": "Novos leads para qualificar",
+      "qualifyTemplate": "Oi, estamos dando follow-up no seu interesse. Algumas perguntas rápidas quando puder."
+    },
+    "errors": { "updateFailed": "Não foi possível atualizar a campanha.", "createFailed": "Não foi possível criar a campanha." },
+    "outcomeAudience": "Público por resultado",
+    "leadStatuses": { "new": "Novo", "contacted": "Contactado", "qualified": "Qualificado", "appointmentSet": "Consulta agendada", "won": "Ganho", "lost": "Perdido" },
+    "namePlaceholder": "Recuperação de chamada perdida",
+    "filterAny": "Qualquer",
+    "scheduleLabel": { "once": "Executar em (data e hora)", "recurring": "Próxima execução (data e hora)" },
+    "saving": "Salvando…",
+    "creating": "Criando…",
+    "saveChanges": "Salvar alterações",
+    "createCampaign": "Criar campanha",
+    "statusFilter": { "all": "Todos os status", "draft": "Rascunho", "active": "Ativa", "paused": "Pausada", "completed": "Concluída" },
     "new": "Nova campanha",
     "removeStep": "Remover etapa",
     "runAt": "Executar em (data e hora)",
     "nextRun": "Próxima execução (data e hora)",
     "toast": {
-      "updated": "Campaign updated.",
-      "created": "Campaign created.",
-      "updateFailed": "Could not update campaign.",
-      "paused": "Campaign paused.",
-      "launchFailed": "Could not launch campaign."
+      "updated": "Campanha atualizada.",
+      "created": "Campanha criada.",
+      "updateFailed": "Não foi possível atualizar a campanha.",
+      "createFailed": "Não foi possível criar a campanha.",
+      "paused": "Campanha pausada.",
+      "launchFailed": "Não foi possível iniciar a campanha."
     }
   },
   "settings": {

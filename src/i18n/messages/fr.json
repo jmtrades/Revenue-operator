@@ -795,16 +795,42 @@
       "body": "Utilisez les campagnes pour relancer les appels manqués, réactiver les anciens leads et remplir votre calendrier.",
       "description": "Créez votre première campagne pour relancer les leads, envoyer des rappels de rendez-vous ou réactiver d'anciens contacts."
     },
+    "heading": "Campagnes",
+    "description": "Atteignez vos leads avec des appels et messages sortants automatisés.",
+    "defaults": {
+      "audience": "Leads en attente de suivi",
+      "template": "Juste un suivi après notre dernière conversation. Répondez ici pour continuer.",
+      "followupAudience": "Leads en attente de suivi",
+      "followupTemplate": "Juste un suivi après notre dernière conversation. Répondez ici pour continuer.",
+      "reactivationAudience": "Leads froids ou inactifs",
+      "reactivationTemplate": "Cela fait un moment. Vous avez un instant pour voir si on peut vous aider ?",
+      "reminderAudience": "Leads avec rendez-vous à venir",
+      "reminderTemplate": "Rappel : vous avez un rendez-vous. Répondez pour confirmer ou reporter.",
+      "qualifyAudience": "Nouveaux leads à qualifier",
+      "qualifyTemplate": "Bonjour, nous faisons suite à votre intérêt. Quelques questions quand vous aurez un moment."
+    },
+    "errors": { "updateFailed": "Impossible de mettre à jour la campagne.", "createFailed": "Impossible de créer la campagne." },
+    "outcomeAudience": "Audience par résultat",
+    "leadStatuses": { "new": "Nouveau", "contacted": "Contacté", "qualified": "Qualifié", "appointmentSet": "Rendez-vous programmé", "won": "Gagné", "lost": "Perdu" },
+    "namePlaceholder": "Récupération d'appel manqué",
+    "filterAny": "Tous",
+    "scheduleLabel": { "once": "Exécuter à (date et heure)", "recurring": "Prochaine exécution (date et heure)" },
+    "saving": "Enregistrement…",
+    "creating": "Création…",
+    "saveChanges": "Enregistrer les modifications",
+    "createCampaign": "Créer la campagne",
+    "statusFilter": { "all": "Tous les statuts", "draft": "Brouillon", "active": "Active", "paused": "En pause", "completed": "Terminée" },
     "new": "Nouvelle campagne",
     "removeStep": "Supprimer l'étape",
     "runAt": "Exécuter à (date et heure)",
     "nextRun": "Prochaine exécution (date et heure)",
     "toast": {
-      "updated": "Campaign updated.",
-      "created": "Campaign created.",
-      "updateFailed": "Could not update campaign.",
-      "paused": "Campaign paused.",
-      "launchFailed": "Could not launch campaign."
+      "updated": "Campagne mise à jour.",
+      "created": "Campagne créée.",
+      "updateFailed": "Impossible de mettre à jour la campagne.",
+      "createFailed": "Impossible de créer la campagne.",
+      "paused": "Campagne en pause.",
+      "launchFailed": "Impossible de lancer la campagne."
     }
   },
   "settings": {
