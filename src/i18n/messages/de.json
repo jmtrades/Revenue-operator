@@ -23,7 +23,15 @@
     "sectionMain": "Haupt",
     "sectionCommunication": "Kommunikation",
     "sectionIntelligence": "Intelligence",
-    "sectionWorkspace": "Arbeitsbereich"
+    "sectionWorkspace": "Arbeitsbereich",
+    "shortcutCommandPalette": "Befehlspalette öffnen",
+    "shortcutDashboard": "Zum Dashboard",
+    "shortcutAgents": "Zu Agenten",
+    "shortcutCalls": "Zu Anrufen",
+    "shortcutLeads": "Zu Interessenten",
+    "shortcutCampaigns": "Zu Kampagnen",
+    "shortcutInbox": "Zum Posteingang",
+    "shortcutHelp": "Hilfe anzeigen"
   },
   "common": {
     "save": "Speichern",

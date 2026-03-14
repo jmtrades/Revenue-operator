@@ -23,7 +23,15 @@
     "sectionMain": "メイン",
     "sectionCommunication": "コミュニケーション",
     "sectionIntelligence": "インテリジェンス",
-    "sectionWorkspace": "ワークスペース"
+    "sectionWorkspace": "ワークスペース",
+    "shortcutCommandPalette": "コマンドパレットを開く",
+    "shortcutDashboard": "ダッシュボードへ",
+    "shortcutAgents": "エージェントへ",
+    "shortcutCalls": "通話へ",
+    "shortcutLeads": "リードへ",
+    "shortcutCampaigns": "キャンペーンへ",
+    "shortcutInbox": "受信トレイへ",
+    "shortcutHelp": "ヘルプを表示"
   },
   "common": {
     "save": "保存",

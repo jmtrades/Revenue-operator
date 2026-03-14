@@ -45,59 +45,6 @@ const CommandPalette = dynamic(
   { ssr: false },
 );
 
-const _SIDEBAR_GROUPS: { label: string; items: { href: string; label: string; icon: LucideIcon }[] }[] = [
-  {
-    label: "Main",
-    items: [
-      { href: "/app/activity", label: "Dashboard", icon: LayoutList },
-      { href: "/app/agents", label: "Agents", icon: Bot },
-      { href: "/app/calls", label: "Calls", icon: PhoneCall },
-      { href: "/app/leads", label: "Leads", icon: Users },
-      { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
-    ],
-  },
-  {
-    label: "Communication",
-    items: [
-      { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
-      { href: "/app/appointments", label: "Appointments", icon: Calendar },
-    ],
-  },
-  {
-    label: "Intelligence",
-    items: [
-      { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
-      { href: "/app/call-intelligence", label: "Call Intelligence", icon: Lightbulb },
-      { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
-    ],
-  },
-  {
-    label: "Workspace",
-    items: [
-      { href: "/app/team", label: "Team", icon: Users },
-      { href: "/app/settings", label: "Settings", icon: Settings },
-    ],
-  },
-];
-
-const _MOBILE_TABS = [
-  { href: "/app/activity", label: "Dashboard", icon: LayoutList },
-  { href: "/app/calls", label: "Calls", icon: PhoneCall },
-  { href: "/app/leads", label: "Leads", icon: Users },
-  { href: "/app/inbox", label: "Inbox", icon: MessageSquare },
-] as const;
-
-const _MOBILE_MORE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/agents", label: "Agents", icon: Bot },
-  { href: "/app/appointments", label: "Appointments", icon: Calendar },
-  { href: "/app/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/app/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/app/knowledge", label: "Knowledge", icon: BookOpen },
-  { href: "/app/call-intelligence", label: "Call Intelligence", icon: Lightbulb },
-  { href: "/app/team", label: "Team", icon: Users },
-  { href: "/app/settings", label: "Settings", icon: Settings },
-];
-
 export type AppShellWorkspaceMeta = {
   banner?: { show?: boolean; text?: string | null; href?: string; cta?: string };
   onboardingCompletedAt?: string | null;
@@ -554,7 +501,7 @@ export default function AppShellClient({
                     type="button"
                     onClick={() => setCommandPaletteOpen(true)}
                     className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] border border-[var(--border-default)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
-                    aria-label="Open command palette"
+                    aria-label={t("nav.shortcutCommandPalette")}
                   >
                     <CommandIcon className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">⌘K</span>
@@ -686,21 +633,21 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                     </div>
                     <div className="space-y-3">
                       {[
-                        { keys: ["⌘", "K"], label: "Open command palette" },
-                        { keys: ["⌘", "1"], label: "Go to Dashboard" },
-                        { keys: ["⌘", "2"], label: "Go to Agents" },
-                        { keys: ["⌘", "3"], label: "Go to Calls" },
-                        { keys: ["⌘", "4"], label: "Go to Leads" },
-                        { keys: ["⌘", "5"], label: "Go to Campaigns" },
-                        { keys: ["⌘", "6"], label: "Go to Inbox" },
-                        { keys: ["?"], label: "Show this help" },
+                        { id: "palette", keys: ["⌘", "K"], labelKey: "nav.shortcutCommandPalette" as const },
+                        { id: "dashboard", keys: ["⌘", "1"], labelKey: "nav.shortcutDashboard" as const },
+                        { id: "agents", keys: ["⌘", "2"], labelKey: "nav.shortcutAgents" as const },
+                        { id: "calls", keys: ["⌘", "3"], labelKey: "nav.shortcutCalls" as const },
+                        { id: "leads", keys: ["⌘", "4"], labelKey: "nav.shortcutLeads" as const },
+                        { id: "campaigns", keys: ["⌘", "5"], labelKey: "nav.shortcutCampaigns" as const },
+                        { id: "inbox", keys: ["⌘", "6"], labelKey: "nav.shortcutInbox" as const },
+                        { id: "help", keys: ["?"], labelKey: "nav.shortcutHelp" as const },
                       ].map((shortcut) => (
                         <div
-                          key={shortcut.label}
+                          key={shortcut.id}
                           className="flex items-center justify-between py-1.5"
                         >
                           <span className="text-sm text-[#8B8B8D]">
-                            {shortcut.label}
+                            {t(shortcut.labelKey)}
                           </span>
                           <div className="flex items-center gap-1">
                             {shortcut.keys.map((key) => (
