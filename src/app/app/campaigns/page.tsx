@@ -51,7 +51,16 @@ const LEAD_STATUS_OPTIONS = [
   "Appointment Set",
   "Won",
   "Lost",
-];
+] as const;
+
+const LEAD_STATUS_KEY: Record<(typeof LEAD_STATUS_OPTIONS)[number], string> = {
+  "New": "new",
+  "Contacted": "contacted",
+  "Qualified": "qualified",
+  "Appointment Set": "appointmentSet",
+  "Won": "won",
+  "Lost": "lost",
+};
 
 const SOURCE_OPTIONS = [
   { id: "", labelKey: "source.any" },
@@ -100,11 +109,23 @@ export default function CampaignsPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | CampaignRow["status"]>("all");
   const [pauseConfirm, setPauseConfirm] = useState<CampaignRow | null>(null);
   const [campaignType, setCampaignType] = useState<string>("followup");
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    name: string;
+    type: string;
+    audience: string;
+    template: string;
+    schedule: string;
+    scheduleType: "manual" | "once" | "recurring" | "trigger";
+    audienceStatuses: string[];
+    audienceSource: string;
+    audienceMinScore: number | "";
+    audienceNotContactedDays: number | "";
+    sequence: Array<{ type: TouchpointType; wait_days?: number }>;
+  }>({
     name: "",
     type: "lead_followup",
-    audience: "Leads waiting on follow-up",
-    template: "Just checking in after your last conversation. Reply here if you want to continue.",
+    audience: "",
+    template: "",
     schedule: "",
     scheduleType: "manual" as "manual" | "once" | "recurring" | "trigger",
     audienceStatuses: [] as string[],
@@ -201,8 +222,8 @@ export default function CampaignsPage() {
           created && "error" in created && typeof created.error === "string"
             ? created.error
             : editingId
-              ? "Could not update campaign"
-              : "Could not create campaign";
+              ? t("errors.updateFailed")
+              : t("errors.createFailed");
         throw new Error(errorMessage);
       }
       setCampaigns((prev) =>
@@ -214,8 +235,8 @@ export default function CampaignsPage() {
       setForm({
         name: "",
         type: "lead_followup",
-        audience: "Leads waiting on follow-up",
-        template: "Just checking in after your last conversation. Reply here if you want to continue.",
+        audience: t("defaults.audience"),
+        template: t("defaults.template"),
         schedule: "",
         scheduleType: "manual",
         audienceStatuses: [],
@@ -229,7 +250,7 @@ export default function CampaignsPage() {
       setToast(
         editingId
           ? t("toast.updateFailed")
-          : t("toast.updateFailed")
+          : t("toast.createFailed")
       );
     } finally {
       setSaving(false);
@@ -303,9 +324,9 @@ export default function CampaignsPage() {
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">Campaigns</h1>
+            <h1 className="text-xl md:text-2xl font-semibold text-white">{t("heading")}</h1>
             <p className="text-sm text-zinc-500 mt-1">
-              Reach your leads with automated outbound calls and messages.
+              {t("description")}
             </p>
           </div>
           <select
@@ -313,11 +334,11 @@ export default function CampaignsPage() {
             onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
             className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm"
           >
-            <option value="all">All statuses</option>
-            <option value="draft">Draft</option>
-            <option value="active">Active</option>
-            <option value="paused">Paused</option>
-            <option value="completed">Completed</option>
+            <option value="all">{t("statusFilter.all")}</option>
+            <option value="draft">{t("statusFilter.draft")}</option>
+            <option value="active">{t("statusFilter.active")}</option>
+            <option value="paused">{t("statusFilter.paused")}</option>
+            <option value="completed">{t("statusFilter.completed")}</option>
           </select>
         </div>
 
@@ -354,12 +375,12 @@ export default function CampaignsPage() {
                     <div>
                       <p className="text-sm font-semibold text-white">{campaign.name}</p>
                       <p className="mt-2 text-xs text-zinc-500">
-                        {campaign.target_filter?.audience ?? "Outcome-based audience"}
+                        {campaign.target_filter?.audience ?? t("outcomeAudience")}
                         {(() => {
                           const tf = campaign.target_filter;
                           const parts: string[] = [];
                           if (Array.isArray(tf?.audience_statuses) && tf.audience_statuses.length > 0) {
-                            parts.push(tf.audience_statuses.join(", "));
+                            parts.push(tf.audience_statuses.map((s) => t(`leadStatuses.${LEAD_STATUS_KEY[s as (typeof LEAD_STATUS_OPTIONS)[number]] ?? s}`)).join(", "));
                           }
                           if (tf?.audience_source) {
                             const src = SOURCE_OPTIONS.find((o) => o.id === tf.audience_source);
@@ -490,8 +511,8 @@ export default function CampaignsPage() {
                     setForm({
                       name: "",
                       type: "lead_followup",
-                      audience: "Leads waiting on follow-up",
-                      template: "Just checking in after your last conversation. Reply here if you want to continue.",
+                      audience: t("defaults.audience"),
+                      template: t("defaults.template"),
                       schedule: "",
                       scheduleType: "manual",
                       audienceStatuses: [],
@@ -529,8 +550,8 @@ export default function CampaignsPage() {
                             ...prev,
                             type: typeId,
                             name: prev.name.trim() ? prev.name : typeOption.label,
-                            audience: typeOption.id === "followup" ? "Leads waiting on follow-up" : typeOption.id === "reactivation" ? "Cold or stale leads" : typeOption.id === "reminder" ? "Leads with upcoming appointments" : "New leads to qualify",
-                            template: typeOption.id === "followup" ? "Just checking in after your last conversation. Reply here if you want to continue." : typeOption.id === "reactivation" ? "We haven't heard from you in a while. Got a quick moment to see if we can help?" : typeOption.id === "reminder" ? "Reminder: you have an appointment coming up. Reply to confirm or reschedule." : "Hi, we're following up on your interest. A few quick questions when you have a moment.",
+                            audience: typeOption.id === "followup" ? t("defaults.followupAudience") : typeOption.id === "reactivation" ? t("defaults.reactivationAudience") : typeOption.id === "reminder" ? t("defaults.reminderAudience") : t("defaults.qualifyAudience"),
+                            template: typeOption.id === "followup" ? t("defaults.followupTemplate") : typeOption.id === "reactivation" ? t("defaults.reactivationTemplate") : typeOption.id === "reminder" ? t("defaults.reminderTemplate") : t("defaults.qualifyTemplate"),
                           }));
                         }}
                         className={`p-3 rounded-lg border text-left text-xs transition-colors ${
@@ -552,7 +573,7 @@ export default function CampaignsPage() {
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="Missed-call recovery"
+                  placeholder={t("namePlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                 />
               </div>
@@ -602,7 +623,7 @@ export default function CampaignsPage() {
                           }}
                           className="rounded border-[var(--border-default)] bg-[var(--bg-input)] text-white"
                         />
-                        {status}
+                        {t(`leadStatuses.${LEAD_STATUS_KEY[status as (typeof LEAD_STATUS_OPTIONS)[number]] ?? status}`)}
                       </label>
                     );
                   })}
@@ -637,7 +658,7 @@ export default function CampaignsPage() {
                       const v = e.target.value;
                       setForm((prev) => ({ ...prev, audienceMinScore: v === "" ? "" : Number(v) }));
                     }}
-                    placeholder="Any"
+                    placeholder={t("filterAny")}
                     className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                   />
                 </div>
@@ -651,7 +672,7 @@ export default function CampaignsPage() {
                       const v = e.target.value;
                       setForm((prev) => ({ ...prev, audienceNotContactedDays: v === "" ? "" : Number(v) }));
                     }}
-                    placeholder="Any"
+                    placeholder={t("filterAny")}
                     className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                   />
                 </div>
@@ -681,7 +702,7 @@ export default function CampaignsPage() {
               {(form.scheduleType === "once" || form.scheduleType === "recurring") && (
                 <div>
                   <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    {form.scheduleType === "once" ? "Run at (date & time)" : "Next run (date & time)"}
+                    {form.scheduleType === "once" ? t("scheduleLabel.once") : t("scheduleLabel.recurring")}
                   </label>
                   <input
                     type="datetime-local"
@@ -771,11 +792,11 @@ export default function CampaignsPage() {
               >
                 {saving
                   ? editingId
-                    ? "Saving…"
-                    : "Creating…"
+                    ? t("saving")
+                    : t("creating")
                   : editingId
-                    ? "Save changes"
-                    : "Create campaign"}
+                    ? t("saveChanges")
+                    : t("createCampaign")}
               </button>
             </div>
           </div>

@@ -770,16 +770,42 @@
       "body": "Usa campañas para recuperar llamadas perdidas, reactivar leads antiguos y llenar tu calendario.",
       "description": "Crea tu primera campaña para dar seguimiento a leads, enviar recordatorios de citas o reactivar contactos."
     },
+    "heading": "Campañas",
+    "description": "Llega a tus leads con llamadas y mensajes salientes automatizados.",
+    "defaults": {
+      "audience": "Leads en espera de seguimiento",
+      "template": "Solo comprobando después de tu última conversación. Responde aquí si quieres continuar.",
+      "followupAudience": "Leads en espera de seguimiento",
+      "followupTemplate": "Solo comprobando después de tu última conversación. Responde aquí si quieres continuar.",
+      "reactivationAudience": "Leads fríos o inactivos",
+      "reactivationTemplate": "Hace tiempo que no sabíamos de ti. ¿Tienes un momento para ver si podemos ayudarte?",
+      "reminderAudience": "Leads con citas próximas",
+      "reminderTemplate": "Recordatorio: tienes una cita próxima. Responde para confirmar o reprogramar.",
+      "qualifyAudience": "Nuevos leads para calificar",
+      "qualifyTemplate": "Hola, damos seguimiento a tu interés. Unas preguntas rápidas cuando puedas."
+    },
+    "errors": { "updateFailed": "No se pudo actualizar la campaña.", "createFailed": "No se pudo crear la campaña." },
+    "outcomeAudience": "Audiencia por resultado",
+    "leadStatuses": { "new": "Nuevo", "contacted": "Contactado", "qualified": "Calificado", "appointmentSet": "Cita programada", "won": "Ganado", "lost": "Perdido" },
+    "namePlaceholder": "Recuperación de llamada perdida",
+    "filterAny": "Cualquiera",
+    "scheduleLabel": { "once": "Ejecutar en (fecha y hora)", "recurring": "Próxima ejecución (fecha y hora)" },
+    "saving": "Guardando…",
+    "creating": "Creando…",
+    "saveChanges": "Guardar cambios",
+    "createCampaign": "Crear campaña",
+    "statusFilter": { "all": "Todos los estados", "draft": "Borrador", "active": "Activa", "paused": "Pausada", "completed": "Completada" },
     "new": "Nueva campaña",
     "removeStep": "Eliminar paso",
     "runAt": "Ejecutar en (fecha y hora)",
     "nextRun": "Próxima ejecución (fecha y hora)",
     "toast": {
-      "updated": "Campaign updated.",
-      "created": "Campaign created.",
-      "updateFailed": "Could not update campaign.",
-      "paused": "Campaign paused.",
-      "launchFailed": "Could not launch campaign."
+      "updated": "Campaña actualizada.",
+      "created": "Campaña creada.",
+      "updateFailed": "No se pudo actualizar la campaña.",
+      "createFailed": "No se pudo crear la campaña.",
+      "paused": "Campaña pausada.",
+      "launchFailed": "No se pudo lanzar la campaña."
     }
   },
   "settings": {

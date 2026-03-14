@@ -727,16 +727,42 @@
       "body": "Nutze Kampagnen, um verpasste Anrufe zurückzugewinnen, alte Leads zu reaktivieren und deinen Kalender zu füllen.",
       "description": "Erstelle deine erste Kampagne, um Leads nachzuverfolgen, Terminerinnerungen zu senden oder Kontakte zu reaktivieren."
     },
+    "heading": "Kampagnen",
+    "description": "Erreiche deine Leads mit automatisierten ausgehenden Anrufen und Nachrichten.",
+    "defaults": {
+      "audience": "Leads mit Nachfassen",
+      "template": "Kurze Nachfrage nach unserem letzten Gespräch. Antworte hier, um fortzufahren.",
+      "followupAudience": "Leads mit Nachfassen",
+      "followupTemplate": "Kurze Nachfrage nach unserem letzten Gespräch. Antworte hier, um fortzufahren.",
+      "reactivationAudience": "Kalte oder inaktive Leads",
+      "reactivationTemplate": "Wir haben lange nichts von dir gehört. Hast du kurz Zeit, ob wir helfen können?",
+      "reminderAudience": "Leads mit anstehenden Terminen",
+      "reminderTemplate": "Erinnerung: Du hast einen anstehenden Termin. Antworte zur Bestätigung oder Umbuchung.",
+      "qualifyAudience": "Neue Leads zur Qualifizierung",
+      "qualifyTemplate": "Hallo, wir folgen deinem Interesse nach. Ein paar kurze Fragen, wenn du Zeit hast."
+    },
+    "errors": { "updateFailed": "Kampagne konnte nicht aktualisiert werden.", "createFailed": "Kampagne konnte nicht erstellt werden." },
+    "outcomeAudience": "Zielgruppe nach Ergebnis",
+    "leadStatuses": { "new": "Neu", "contacted": "Kontaktiert", "qualified": "Qualifiziert", "appointmentSet": "Termin vereinbart", "won": "Gewonnen", "lost": "Verloren" },
+    "namePlaceholder": "Verpasster-Anruf-Aufhol",
+    "filterAny": "Alle",
+    "scheduleLabel": { "once": "Ausführen am (Datum & Uhrzeit)", "recurring": "Nächste Ausführung (Datum & Uhrzeit)" },
+    "saving": "Speichern…",
+    "creating": "Erstellen…",
+    "saveChanges": "Änderungen speichern",
+    "createCampaign": "Kampagne erstellen",
+    "statusFilter": { "all": "Alle Status", "draft": "Entwurf", "active": "Aktiv", "paused": "Pausiert", "completed": "Abgeschlossen" },
     "new": "Neue Kampagne",
     "removeStep": "Schritt entfernen",
     "runAt": "Ausführen am (Datum & Uhrzeit)",
     "nextRun": "Nächste Ausführung (Datum & Uhrzeit)",
     "toast": {
-      "updated": "Campaign updated.",
-      "created": "Campaign created.",
-      "updateFailed": "Could not update campaign.",
-      "paused": "Campaign paused.",
-      "launchFailed": "Could not launch campaign."
+      "updated": "Kampagne aktualisiert.",
+      "created": "Kampagne erstellt.",
+      "updateFailed": "Kampagne konnte nicht aktualisiert werden.",
+      "createFailed": "Kampagne konnte nicht erstellt werden.",
+      "paused": "Kampagne pausiert.",
+      "launchFailed": "Kampagne konnte nicht gestartet werden."
     }
   },
   "settings": {

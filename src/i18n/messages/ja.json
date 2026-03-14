@@ -727,16 +727,42 @@
       "body": "キャンペーンを使って不在着信を取り戻し、休眠リードを再活性化し、カレンダーを埋めましょう。",
       "description": "最初のキャンペーンを作成してリードのフォローアップ、予約リマインダーの送信、または連絡先の再活性化を行いましょう。"
     },
+    "heading": "キャンペーン",
+    "description": "自動化された発信通話とメッセージでリードにリーチします。",
+    "defaults": {
+      "audience": "フォローアップ待ちのリード",
+      "template": "先日の会話のフォローです。続けたい場合はここから返信してください。",
+      "followupAudience": "フォローアップ待ちのリード",
+      "followupTemplate": "先日の会話のフォローです。続けたい場合はここから返信してください。",
+      "reactivationAudience": "休眠または冷えたリード",
+      "reactivationTemplate": "ご無沙汰しています。お手すきのときにご連絡いただければ幸いです。",
+      "reminderAudience": "予約が近いリード",
+      "reminderTemplate": "リマインダー：予約が近づいています。確認・変更の場合は返信してください。",
+      "qualifyAudience": "新規リードの認定",
+      "qualifyTemplate": "ご興味ありがとうございます。お手すきのときにいくつか質問させてください。"
+    },
+    "errors": { "updateFailed": "キャンペーンを更新できませんでした。", "createFailed": "キャンペーンを作成できませんでした。" },
+    "outcomeAudience": "結果ベースのオーディエンス",
+    "leadStatuses": { "new": "新規", "contacted": "連絡済み", "qualified": "認定", "appointmentSet": "予約済み", "won": "受注", "lost": "失注" },
+    "namePlaceholder": "不在着信リカバリー",
+    "filterAny": "すべて",
+    "scheduleLabel": { "once": "実行日時", "recurring": "次回実行（日時）" },
+    "saving": "保存中…",
+    "creating": "作成中…",
+    "saveChanges": "変更を保存",
+    "createCampaign": "キャンペーンを作成",
+    "statusFilter": { "all": "すべてのステータス", "draft": "下書き", "active": "アクティブ", "paused": "一時停止", "completed": "完了" },
     "new": "新規キャンペーン",
     "removeStep": "ステップを削除",
     "runAt": "実行日時",
     "nextRun": "次回実行（日時）",
     "toast": {
-      "updated": "Campaign updated.",
-      "created": "Campaign created.",
-      "updateFailed": "Could not update campaign.",
-      "paused": "Campaign paused.",
-      "launchFailed": "Could not launch campaign."
+      "updated": "キャンペーンを更新しました。",
+      "created": "キャンペーンを作成しました。",
+      "updateFailed": "キャンペーンを更新できませんでした。",
+      "createFailed": "キャンペーンを作成できませんでした。",
+      "paused": "キャンペーンを一時停止しました。",
+      "launchFailed": "キャンペーンを開始できませんでした。"
     }
   },
   "settings": {

@@ -994,6 +994,50 @@
       "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar.",
       "description": "Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts."
     },
+    "heading": "Campaigns",
+    "description": "Reach your leads with automated outbound calls and messages.",
+    "defaults": {
+      "audience": "Leads waiting on follow-up",
+      "template": "Just checking in after your last conversation. Reply here if you want to continue.",
+      "followupAudience": "Leads waiting on follow-up",
+      "followupTemplate": "Just checking in after your last conversation. Reply here if you want to continue.",
+      "reactivationAudience": "Cold or stale leads",
+      "reactivationTemplate": "We haven't heard from you in a while. Got a quick moment to see if we can help?",
+      "reminderAudience": "Leads with upcoming appointments",
+      "reminderTemplate": "Reminder: you have an appointment coming up. Reply to confirm or reschedule.",
+      "qualifyAudience": "New leads to qualify",
+      "qualifyTemplate": "Hi, we're following up on your interest. A few quick questions when you have a moment."
+    },
+    "errors": {
+      "updateFailed": "Could not update campaign.",
+      "createFailed": "Could not create campaign."
+    },
+    "outcomeAudience": "Outcome-based audience",
+    "leadStatuses": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "appointmentSet": "Appointment Set",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "namePlaceholder": "Missed-call recovery",
+    "filterAny": "Any",
+    "scheduleLabel": {
+      "once": "Run at (date & time)",
+      "recurring": "Next run (date & time)"
+    },
+    "saving": "Saving…",
+    "creating": "Creating…",
+    "saveChanges": "Save changes",
+    "createCampaign": "Create campaign",
+    "statusFilter": {
+      "all": "All statuses",
+      "draft": "Draft",
+      "active": "Active",
+      "paused": "Paused",
+      "completed": "Completed"
+    },
     "new": "New campaign",
     "removeStep": "Remove step",
     "runAt": "Run at (date & time)",
@@ -1002,6 +1046,7 @@
       "updated": "Campaign updated.",
       "created": "Campaign created.",
       "updateFailed": "Could not update campaign.",
+      "createFailed": "Could not create campaign.",
       "paused": "Campaign paused.",
       "launchFailed": "Could not launch campaign."
     }
