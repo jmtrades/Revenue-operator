@@ -1,6 +1,9 @@
 {
   "app": {
-    "title": "Recall Touch — AI電話対応"
+    "title": "Recall Touch — AI電話対応",
+    "dashboardTitle": "ダッシュボード",
+    "dashboardDescription": "Recall Touch — アクティビティ、通話、リード、設定。",
+    "defaultWorkspaceName": "マイワークスペース"
   },
   "siteNav": {
     "product": "製品",
@@ -50,7 +53,11 @@
     "shortcutLeads": "リードへ",
     "shortcutCampaigns": "キャンペーンへ",
     "shortcutInbox": "受信トレイへ",
-    "shortcutHelp": "ヘルプを表示"
+    "shortcutHelp": "ヘルプを表示",
+    "setupCta": "セットアップ →",
+    "collapse": "折りたたむ",
+    "more": "その他",
+    "shortcutsHeading": "キーボードショートカット"
   },
   "common": {
     "save": "保存",
@@ -401,6 +408,20 @@
       "ready": "Ready",
       "calls": "calls"
     },
+    "noCallsYet": "まだ通話なし",
+    "callsCount": "{count} 通話",
+    "analytics": {
+      "noCallData": "まだ通話データがありません",
+      "noTrendData": "まだトレンドデータがありません",
+      "noOutcomes": "まだ結果がありません",
+      "noSummaryData": "まだサマリーデータがありません",
+      "loadFailed": "分析を読み込めませんでした。",
+      "successRateOverTime": "期間別成功率（週単位）",
+      "outcomeBreakdown": "結果の内訳",
+      "commonTopics": "よくあるトピック（サマリーから）",
+      "otherAgents": "このワークスペースの他のエージェント",
+      "breadcrumbAgents": "エージェント"
+    },
     "links": {
       "analytics": "Analytics",
       "flow": "Flow builder"
@@ -495,6 +516,7 @@
       "outcome": "結果",
       "duration": "通話時間",
       "transcript": "書き起こし",
+      "noTranscript": "この通話の文字起こしはありません。",
       "addToCallIntelligence": "通話インテリジェンスに追加",
       "leadInfo": "リード情報"
     },
@@ -668,6 +690,13 @@
     "title": "リード",
     "pageTitle": "リード — Recall Touch",
     "heading": "リード",
+    "noLeadsInStage": "このステージにはまだリードがありません。",
+    "detailNotesHeading": "メモ",
+    "detailNotesPlaceholder": "メモを追加…",
+    "loadingCalls": "通話を読み込み中…",
+    "actionCall": "電話",
+    "actionText": "メッセージ",
+    "actionSchedule": "スケジュール",
     "description": "最初の通話から決定まで、キャプチャした機会をすべて表示。",
     "addLead": "リードを追加",
     "total": "合計:",
@@ -774,7 +803,23 @@
     "failed": "失敗",
     "form": {
       "typeLabel": "種類",
-      "sourceLabel": "ソース"
+      "sourceLabel": "ソース",
+      "leaveEmptyForAllStatuses": "空欄で全ステータス",
+      "titleCreate": "キャンペーンを作成",
+      "titleEdit": "キャンペーンを編集",
+      "subtitle": "フォローアップ、リマインダー、回復、再活性化など、実際の結果に結びつけましょう。",
+      "cancelEdit": "キャンセル",
+      "campaignTypeLabel": "キャンペーン種別",
+      "campaignNameLabel": "キャンペーン名",
+      "audienceLabel": "オーディエンス名",
+      "audiencePlaceholder": "例：フォローアップ待ちのリード",
+      "leadStatusOptionalLabel": "リードのステータス（任意）",
+      "quickTypes": {
+        "followup": { "label": "リードフォローアップ", "desc": "関心を示したリードに電話" },
+        "reactivation": { "label": "再活性化", "desc": "冷えたリードを再エンゲージ" },
+        "reminder": { "label": "予約リマインダー", "desc": "近日の予約を確認" },
+        "qualification": { "label": "スクリーニング", "desc": "新規リードを電話で判定" }
+      }
     },
     "type": {
       "leadFollowup": "リードの評価・フォローアップ",
@@ -831,7 +876,9 @@
       "updateFailed": "キャンペーンを更新できませんでした。",
       "createFailed": "キャンペーンを作成できませんでした。",
       "paused": "キャンペーンを一時停止しました。",
-      "launchFailed": "キャンペーンを開始できませんでした。"
+      "launchFailed": "キャンペーンを開始できませんでした。",
+      "launched": "キャンペーンを開始しました。",
+      "launchedWithCount": "キャンペーンを開始しました。{count}件のコンタクトがキューに追加されました。"
     }
   },
   "settings": {
@@ -865,6 +912,15 @@
       "title": "コンプライアンス"
     },
     "errorReports": "エラーレポート",
+    "errorsPage": {
+      "breadcrumbSettings": "設定",
+      "breadcrumbErrorReports": "エラーレポート",
+      "heading": "エラーレポート",
+      "description": "このワークスペースの最近のクライアントエラー。繰り返し発生する問題の特定にご利用ください。",
+      "loading": "読み込み中…",
+      "empty": "エラーレポートはまだありません。",
+      "backToSettings": "← 設定"
+    },
     "saveMapping": "マッピングを保存",
     "saveProfile": "プロフィールを保存",
     "savePreferences": "設定を保存",
@@ -878,6 +934,28 @@
     "business.saveFailed": "ビジネス設定を保存できませんでした。もう一度お試しください。",
     "business.nameNoMatch": "ワークスペース名が一致しません。確認のため正確に入力してください。",
     "business.deleted": "ワークスペースを削除しました。リダイレクト中です…",
+    "businessPage": {
+      "heading": "ビジネス",
+      "description": "ビジネス情報はAIが正確に電話に対応するのに役立ちます。",
+      "nameLabel": "会社名",
+      "namePlaceholder": "例：アクメ配管",
+      "addressLabel": "住所",
+      "addressPlaceholder": "東京都渋谷区…",
+      "websiteLabel": "ウェブサイト",
+      "websitePlaceholder": "https://yourbusiness.com",
+      "timezoneLabel": "タイムゾーン",
+      "timezoneHelp": "スケジュールと表示に使用。時刻にホバーでUTCを表示。",
+      "industryLabel": "業種",
+      "dangerTitle": "危険ゾーン",
+      "dangerBody": "このワークスペースとすべてのデータを完全に削除します。元に戻せません。",
+      "deleteWorkspace": "ワークスペースを削除",
+      "deleteWorkspaceTitle": "ワークスペースを削除しますか？",
+      "deleteWorkspaceBody": "ワークスペースとすべてのデータが完全に削除されます。確認のためワークスペース名を入力してください。",
+      "workspaceNameLabel": "ワークスペース名：",
+      "workspaceNameFallback": "マイワークスペース",
+      "confirmPlaceholder": "ワークスペース名を入力",
+      "backToSettings": "← 設定"
+    },
     "agent.loading": "エージェント設定を読み込み中…",
     "agent.testTitle": "エージェントをテスト",
     "agent.loadFailed": "エージェント設定を読み込めませんでした。もう一度お試しください。",
@@ -1010,7 +1088,146 @@
       "existingNumber": "既存の番号で利用可能",
       "setup": "5分でセットアップ",
       "noCard": "クレジットカード不要"
+    },
+    "simulator": {
+      "callInProgress": "通話中 — ",
+      "skipToResult": "結果へ →",
+      "aiAgent": "AIエージェント",
+      "caller": "発信者",
+      "tabInbound": "インバウンドリード",
+      "tabAppointment": "予約",
+      "tabFollowUp": "フォローアップ",
+      "resultsHeading": "通話完了 — 結果",
+      "detailLabel": "詳細",
+      "leadScore": "リードスコア",
+      "highQualityLead": "高品質リード",
+      "qualifiedLead": "認定リード",
+      "followUp": "フォローアップ",
+      "thatCallTook": "その通話は{seconds}秒でした。AIが24時間365日対応します。",
+      "readyHeading": "準備はいいですか？",
+      "readySubtext": "無料で開始 — 5分セットアップ。カード不要 · 14日間トライアル",
+      "ctaStartFree": "無料で開始 — 5分 →"
+    },
+    "trust": {
+      "sectionLabel": "信頼とコンプライアンス",
+      "description": "エンタープライズグレードのセキュリティと信頼性。無料で開始 — クレジットカード不要。",
+      "badgeSoc2": "SOC 2",
+      "badgeGdpr": "GDPR",
+      "badgeEncryption": "256ビット暗号化",
+      "badgeUptime": "99.9% 稼働率",
+      "ctaStartFree": "無料で開始 →",
+      "optionalUpdates": "オプション：製品アップデートを受け取る",
+      "notifyMe": "通知する",
+      "onList": "リストに追加されました！🎉",
+      "getUpdates": "アップデートを受け取る",
+      "emailPlaceholder": "you@company.com",
+      "emailAriaLabel": "製品アップデート用メール"
     }
+  },
+  "demoPage": {
+    "title": "Recall Touchを体験",
+    "subtitle": "実際の通話を処理するAIエージェントと話せます。今すぐ。",
+    "tapMic": "下のマイクをタップして話してください",
+    "orTryScenario": "またはシナリオを試す：",
+    "scenario1": "予約を入れる",
+    "scenario2": "料金を聞く",
+    "scenario3": "営業時間外の通話",
+    "scenario4": "折り返しを依頼",
+    "scenario5": "見積もりを取得",
+    "liveTranscript": "ライブ文字起こし",
+    "greeting": "こんにちは！Recall Touchエージェントです。予約、料金、折り返しなどお手伝いします。何が必要ですか？",
+    "voiceStyle": "音声スタイル",
+    "voiceStyleHelp": "チャット上部でプロフェッショナル・フレンドリー・簡潔から選べます。",
+    "whatJustHappened": "今起きたこと",
+    "whatJustHappenedDesc": "エージェントが会話を記録し、次のことができます：",
+    "bullet1": "名前・依頼内容・次のステップを抽出",
+    "bullet2": "必要に応じて折り返しや予約をキュー",
+    "bullet3": "要約とフォローアップを送信",
+    "setThisUp": "これを設定 →",
+    "voiceWidgetHint": "音声：角の丸いウィジェットをクリックして話してください。",
+    "getThisForYourNumber": "自分の番号で使う →",
+    "watchSampleCall": "サンプル通話を見る",
+    "watchSampleCallDesc": "このセクションの読み込み時に自動再生され、結果を表示します。",
+    "startFreeSetup": "無料で開始 → 5分でセットアップ",
+    "metaTitle": "AIを試す",
+    "metaDescription": "AIと話す。今すぐ。実際の通話を処理する同じAIです。"
+  },
+  "contactPage": {
+    "metaTitle": "お問い合わせ",
+    "metaDescription": "Recall Touchへのお問い合わせ。営業・エンタープライズ・テクニカルサポート。4時間以内に返信。",
+    "heading": "お問い合わせ",
+    "subheading": "チームでRecall Touchを検討中でも、テクニカルサポートが必要でも、お手伝いします。",
+    "responseTime": "4時間以内に返信",
+    "salesEnterprise": "営業・エンタープライズ",
+    "salesEnterpriseDesc": "チームプラン、コンプライアンス、ボリューム価格についてご相談ください。",
+    "bookACall": "通話を予約 →",
+    "support": "サポート",
+    "supportDesc": "アカウント・技術・請求についてサポートが必要ですか？",
+    "emailSupport": "メールサポート →",
+    "sendMessage": "メッセージを送る",
+    "scheduleCall": "通話を予約 →",
+    "startFree": "無料で開始 →",
+    "backToHome": "ホームに戻る"
+  },
+  "productPage": {
+    "metaTitle": "製品",
+    "metaDescription": "すべての電話対応を一つのプラットフォームで — 着信、発信キャンペーン、SMS、スケジュール、リード獲得、分析。",
+    "sectionLabel": "製品",
+    "heading": "一つのプラットフォーム。あらゆる電話対応。",
+    "subheading": "すべての通話・メッセージ・フォローアップを一元管理。予約、リード選別。ダッシュボードで把握。",
+    "coreCapabilities": "主な機能",
+    "useCases": "ユースケース",
+    "answersEveryCallTitle": "すべての通話に応答",
+    "answersEveryCallDesc": "AIが1コール目で応答、24時間365日。ボイスメールなし。自然な音声であらゆる問い合わせに対応。",
+    "outboundTitle": "発信通話",
+    "outboundDesc": "新規Webリード？60秒以内にAIが折り返し。予約リマインダー、確認、リアクティベーションを自動化。",
+    "agentsTitle": "エージェントスタジオ",
+    "agentsDesc": "コード不要でAIエージェントを構築。テンプレート、音声、性格、ナレッジベース。本番前に実通話でテスト。",
+    "leadsTitle": "リード獲得・スコアリング",
+    "leadsDesc": "通話ごとに名前・電話・ニーズ・緊急度を自動抽出。スコア0-100。即時アラート。",
+    "appointmentsTitle": "予約",
+    "appointmentsDesc": "GoogleカレンダーやOutlookとリアルタイム連携。空き枠、予約、SMS確認。リマインダーと無断キャンセル時の再調整。",
+    "messagingTitle": "スマートメッセージ",
+    "messagingDesc": "双方向SMS、自動確認、フォローアップシーケンス。会話は1つの受信箱で。",
+    "insightsTitle": "分析・ROI",
+    "insightsDesc": "通話数、応答率、コンバージョン、保護された収益。利用量とプラン。月次ROIを明確に。",
+    "complianceTitle": "コンプライアンス",
+    "complianceDesc": "全通話を記録・文字起こし。HIPAAモード。保持30-365日。監査・エクスポート。",
+    "forBusinesses": "ビジネス向け",
+    "forBusinessesDesc": "個人事業主から成長チームまで。すべての通話に応答、予約・リード獲得 — 受付不要。",
+    "getStarted": "始める →",
+    "forTeams": "チーム向け",
+    "forTeamsDesc": "複数拠点、代理店、分散チーム。1プラットフォーム、1標準。一貫した応答と可視性。",
+    "forDevelopers": "開発者向け",
+    "forDevelopersDesc": "API、Webhook、連携。Recall Touchをスタックに組み込み、会話をすべて記録。",
+    "documentation": "ドキュメント →",
+    "complianceHeading": "コンプライアンスとガバナンス",
+    "complianceBody": "全通話を記録・文字起こし。記録管理、監査証跡、チェーン・オブ・カストディ。HIPAAモード。保持30-365日。",
+    "complianceBullets": "記録・文字起こし · HIPAAオプション · 保持30-365日 · 監査",
+    "ctaSubtext": "Recall Touchは月$297から、5分でセットアップ。",
+    "ctaHeading": "すべての通話・メッセージ・フォローアップを自動で処理する準備はできましたか？",
+    "ctaBody": "60秒以内に開始。クレジットカード不要。",
+    "ctaButton": "無料で開始 → 5分",
+    "or": "または：",
+    "orBookDemo": "デモを予約",
+    "viewDocs": "ドキュメントを見る"
+  },
+  "footer": {
+    "tagline": "AI電話システムがビジネスの通話に24時間365日対応し、選別・予約まで行います。",
+    "product": "製品",
+    "features": "機能",
+    "pricing": "料金",
+    "demo": "デモ",
+    "docs": "ドキュメント",
+    "company": "会社",
+    "emailUs": "お問い合わせ",
+    "blog": "ブログ",
+    "contact": "連絡",
+    "legalSecurity": "法務・セキュリティ",
+    "privacyPolicy": "プライバシーポリシー",
+    "termsOfService": "利用規約",
+    "securityBadges": "SOC 2 • GDPR • 256ビット暗号化",
+    "copyright": "© {year} Recall Touch. All rights reserved."
   },
   "pricing": {
     "title": "料金",
@@ -1282,6 +1499,25 @@
   },
   "messages": {
     "pageTitle": "Messages — Recall Touch",
+    "noMessagesYet": "まだメッセージがありません",
+    "now": "たった今",
+    "addContactInLeadsToMessage": "リードで連絡先を追加してからメッセージを送信",
+    "newContact": "新しい連絡先",
+    "yesterday": "昨日",
+    "failedToSend": "送信に失敗しました",
+    "inputPlaceholder": "メッセージを入力…",
+    "inputPlaceholderNoContact": "送信するにはリードで連絡先を追加",
+    "sending": "送信中…",
+    "send": "送信",
+    "selectConversation": "会話を選択",
+    "emptyBodyDashboard": "AIが発信者に自動でテキストを送信します。通話後またはメッセージ送信後にスレッドがここに表示されます。",
+    "activityLink": "アクティビティ →",
+    "contactFallback": "連絡先",
+    "retry": "再試行",
+    "viewRecord": "レコードを見る",
+    "selectConversationOrSend": "会話を選択するか、レコードから送信してください。",
+    "compose": "作成",
+    "templates": "テンプレート",
     "toast": {
       "addContactFirst": "Add this contact in Leads first to send messages.",
       "sent": "Message sent."
@@ -1466,7 +1702,8 @@
     "empty": {
       "title": "まだ連絡先がありません。",
       "subtitle": "AIは通話ごとに自動で連絡先を追加します。手動で追加した連絡先もここに表示されます。",
-      "detail": "連絡先を選択すると、通話履歴とメモを表示します。"
+      "detail": "連絡先を選択すると、通話履歴とメモを表示します。",
+      "noCallsForContact": "この連絡先にはまだ通話記録がありません。"
     },
     "drawer": {
       "title": "連絡先を追加",
@@ -1627,13 +1864,36 @@
     },
     "copyright": "All rights reserved."
   },
+  "continuity": {
+    "calmLine": "決定は予定どおり進んでいます。"
+  },
+  "demoVoice": {
+    "enterPhone": "デモ通話を受けるには電話番号を入力してください。",
+    "callingNow": "かけています。AIエージェントと話すにはお電話に出てください。",
+    "couldNotStart": "デモ通話を開始できませんでした。もう一度お試しください。",
+    "calling": "通話中…",
+    "callMe": "電話して",
+    "placeholder": "+1 (555) 123-4567"
+  },
   "accessibility": {
     "skipToContent": "メインコンテンツへスキップ",
     "mainContent": "メインコンテンツ",
     "openNavigation": "ナビゲーションを開く",
     "closeNavigation": "ナビゲーションを閉じる",
     "openCommandPalette": "コマンドパレットを開く",
-    "liveRegionUpdates": "スクリーンリーダー向けの更新はここで読み上げられます。"
+    "liveRegionUpdates": "スクリーンリーダー向けの更新はここで読み上げられます。",
+    "workspaceStatus": "ワークスペースの状態",
+    "appNav": "アプリのナビゲーション",
+    "expandSidebar": "サイドバーを展開",
+    "collapseSidebar": "サイドバーを折りたたむ",
+    "openMenu": "メニューを開く",
+    "mobileNav": "モバイルナビゲーション",
+    "moreMenu": "その他メニュー",
+    "closeMoreMenu": "その他メニューを閉じる",
+    "morePages": "その他のページ",
+    "onboardingSteps": "オンボーディングのステップ",
+    "quickSearch": "クイック検索",
+    "closeShortcutsHelp": "ショートカットのヘルプを閉じる"
   },
   "timezone": {
     "label": "タイムゾーン",

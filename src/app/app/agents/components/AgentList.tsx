@@ -53,8 +53,8 @@ export function AgentList({
           const templateLabel = t(`template.${templateKey}`);
           const lastActiveLabel =
             (agent.stats?.totalCalls ?? 0) > 0
-              ? `${agent.stats.totalCalls} calls`
-              : "No calls yet";
+              ? t("callsCount", { count: agent.stats.totalCalls })
+              : t("noCallsYet");
 
           const isSelected = selectedId === agent.id;
 

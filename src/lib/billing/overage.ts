@@ -16,7 +16,10 @@ export async function reportUsageOverage(
 ) {
   if (!process.env.STRIPE_SECRET_KEY) return;
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-12-18.acacia" as any });
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion:
+      "2024-12-18.acacia" as unknown as Stripe.StripeConfig["apiVersion"],
+  });
   const overageMinutes = Math.max(0, minutesUsed - minutesIncluded);
   if (overageMinutes <= 0) return;
 

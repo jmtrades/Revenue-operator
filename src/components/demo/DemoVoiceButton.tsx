@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function DemoVoiceButton() {
+  const t = useTranslations("demoVoice");
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -11,7 +13,7 @@ export function DemoVoiceButton() {
   const handleCall = async () => {
     const value = phone.trim();
     if (!value) {
-      setError("Enter a phone number to receive a demo call.");
+      setError(t("enterPhone"));
       return;
     }
     setLoading(true);
@@ -25,12 +27,12 @@ export function DemoVoiceButton() {
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string; error?: string };
       if (res.ok && data.ok) {
-        setStatus(data.message ?? "Calling you now. Answer to talk with the AI agent.");
+        setStatus(data.message ?? t("callingNow"));
       } else {
-        setError(data.error ?? "Could not start demo call. Please try again.");
+        setError(data.error ?? t("couldNotStart"));
       }
     } catch {
-      setError("Could not start demo call. Please try again.");
+      setError(t("couldNotStart"));
     } finally {
       setLoading(false);
     }
@@ -43,7 +45,7 @@ export function DemoVoiceButton() {
           type="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="+1 (555) 123-4567"
+          placeholder={t("placeholder")}
           className="flex-1 px-3 py-2.5 rounded-xl bg-black/40 border border-white/10 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/40"
         />
         <button
@@ -52,7 +54,7 @@ export function DemoVoiceButton() {
           disabled={loading}
           className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-60"
         >
-          {loading ? "Calling…" : "Call me"}
+          {loading ? t("calling") : t("callMe")}
         </button>
       </div>
       {status && (

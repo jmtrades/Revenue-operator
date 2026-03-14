@@ -125,7 +125,7 @@ export function LeadDetail({
             </li>
           ))}
         </ol>
-        {callsLoading && <p className="text-xs text-zinc-500">Loading calls…</p>}
+        {callsLoading && <p className="text-xs text-zinc-500">{t("loadingCalls")}</p>}
       </section>
 
       <section>
@@ -142,14 +142,14 @@ export function LeadDetail({
       <div className="flex flex-wrap gap-2 pt-2">
         {lead.phone ? (
           <a href={`tel:${lead.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
-            <Phone className="w-3.5 h-3.5" /> Call
+            <Phone className="w-3.5 h-3.5" /> {t("actionCall")}
           </a>
         ) : null}
         <Link href={lead.id ? `/app/messages?lead_id=${lead.id}` : "/app/messages"} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
           <MessageSquare className="w-3.5 h-3.5" /> Text
         </Link>
         <Link href="/app/calendar" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
-          <Calendar className="w-3.5 h-3.5" /> Schedule
+          <Calendar className="w-3.5 h-3.5" /> {t("actionSchedule")}
         </Link>
         <Button variant="ghost" size="sm" className="text-xs">
           <StickyNote className="w-3.5 h-3.5 mr-1.5" /> Add note

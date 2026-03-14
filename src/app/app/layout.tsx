@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import { getDb } from "@/lib/db/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionFromCookie } from "@/lib/auth/session";
@@ -10,13 +11,16 @@ import HydrationGate from "./HydrationGate";
 export const dynamic = "force-dynamic";
 
 /** Dashboard is authenticated; avoid indexing generic shell titles. */
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Recall Touch — activity, calls, leads, and settings.",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app");
+  return {
+    title: t("dashboardTitle"),
+    description: t("dashboardDescription"),
+    robots: { index: false, follow: false },
+  };
+}
 
-async function getInitialShellData(): Promise<{
+async function getInitialShellData(defaultWorkspaceName: string): Promise<{
   workspaceId: string;
   workspaceName: string;
   workspaceMeta: AppShellWorkspaceMeta;
@@ -110,13 +114,13 @@ async function getInitialShellData(): Promise<{
   if (!row) {
     return {
       workspaceId,
-      workspaceName: initialWorkspace.name?.trim() || "My Workspace",
+      workspaceName: initialWorkspace.name?.trim() || defaultWorkspaceName,
       workspaceMeta: null,
     };
   }
 
   const businessName = (ctxData as { business_name?: string | null } | null)?.business_name?.trim();
-  const displayName = businessName || row.name?.trim() || "My Workspace";
+  const displayName = businessName || row.name?.trim() || defaultWorkspaceName;
 
   const knowledgeCount = Array.isArray(row.knowledge_items)
     ? row.knowledge_items.filter((item) => (item.q ?? "").trim() && (item.a ?? "").trim()).length
@@ -172,9 +176,10 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const t = await getTranslations("app");
   let initial = FALLBACK_SHELL;
   try {
-    initial = await getInitialShellData();
+    initial = await getInitialShellData(t("defaultWorkspaceName"));
   } catch {
     // Auth/DB failure: render shell with empty workspace so client can redirect or retry
   }

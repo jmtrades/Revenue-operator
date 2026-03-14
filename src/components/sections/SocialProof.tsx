@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { Shield, Lock, Server, Zap } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -9,14 +10,11 @@ import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { ROUTES } from "@/lib/constants";
 
-const badges = [
-  { icon: Shield, label: "SOC 2" },
-  { icon: Lock, label: "GDPR" },
-  { icon: Server, label: "256-bit encryption" },
-  { icon: Zap, label: "99.9% uptime" },
-];
+const BADGE_KEYS = ["badgeSoc2", "badgeGdpr", "badgeEncryption", "badgeUptime"] as const;
+const BADGE_ICONS = [Shield, Lock, Server, Zap];
 
 export function SocialProof() {
+  const t = useTranslations("hero.trust");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -42,32 +40,35 @@ export function SocialProof() {
     <section id="waitlist" className="marketing-section pt-8 pb-16 md:pt-10 md:pb-20" style={{ background: "var(--bg-surface)" }}>
       <Container>
         <AnimateOnScroll className="text-center">
-          <SectionLabel>Trust & compliance</SectionLabel>
+          <SectionLabel>{t("sectionLabel")}</SectionLabel>
           <p className="text-base mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Enterprise-grade security and reliability. Start free — no credit card required.
+            {t("description")}
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-8">
-            {badges.map((b) => (
-              <div key={b.label} className="flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
-                <b.icon className="w-4 h-4" style={{ color: "var(--accent-secondary)" }} />
-                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{b.label}</span>
-              </div>
-            ))}
+            {BADGE_KEYS.map((key, i) => {
+              const Icon = BADGE_ICONS[i];
+              return (
+                <div key={key} className="flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
+                  <Icon className="w-4 h-4" style={{ color: "var(--accent-secondary)" }} />
+                  <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{t(key)}</span>
+                </div>
+              );
+            })}
           </div>
           <Link
             href={ROUTES.START}
             className="inline-flex items-center justify-center bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-200 transition-colors"
           >
-            Start free →
+            {t("ctaStartFree")}
           </Link>
           <p className="text-sm mt-6" style={{ color: "var(--text-tertiary)" }}>
-            Optional: get product updates.{" "}
+            {t("optionalUpdates")}{" "}
             {!submitted ? (
               <button type="button" onClick={() => document.getElementById("newsletter-email")?.focus()} className="underline" style={{ color: "var(--accent-primary)" }}>
-                Notify me
+                {t("notifyMe")}
               </button>
             ) : (
-              <span className="inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" /> You&apos;re on the list! 🎉</span>
+              <span className="inline-flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" /> {t("onList")}</span>
             )}
           </p>
           {!submitted && (
@@ -77,13 +78,13 @@ export function SocialProof() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                aria-label="Email for product updates"
+                placeholder={t("emailPlaceholder")}
+                aria-label={t("emailAriaLabel")}
                 className="flex-1 px-3 py-2 rounded-lg text-sm border"
                 style={{ background: "var(--bg-primary)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               />
               <button type="submit" className="text-sm font-semibold bg-white text-black rounded-xl px-4 py-2 shrink-0 hover:bg-zinc-100 transition-colors">
-                Get updates
+                {t("getUpdates")}
               </button>
             </form>
           )}

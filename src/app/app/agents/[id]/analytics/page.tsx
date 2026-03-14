@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   AreaChart,
   Area,
@@ -53,6 +54,7 @@ export default function AgentAnalyticsPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const t = useTranslations("agents");
   const [agentId, setAgentId] = useState<string | null>(null);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -87,7 +89,7 @@ export default function AgentAnalyticsPage({
     return (
       <div className="max-w-4xl mx-auto p-4 md:p-6">
         <div className="flex items-center gap-2 text-zinc-400 text-sm mb-6">
-          <Link href="/app/agents" className="hover:text-white">Agents</Link>
+          <Link href="/app/agents" className="hover:text-white">{t("analytics.breadcrumbAgents")}</Link>
           <ChevronRight className="w-4 h-4" />
           <Skeleton className="h-4 w-32" />
         </div>
@@ -123,7 +125,7 @@ export default function AgentAnalyticsPage({
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 pb-12">
       <div className="flex items-center gap-2 text-zinc-400 text-sm mb-2">
-        <Link href="/app/agents" className="hover:text-white">Agents</Link>
+        <Link href="/app/agents" className="hover:text-white">{t("analytics.breadcrumbAgents")}</Link>
         <ChevronRight className="w-4 h-4" />
         <Link href={`/app/agents?selected=${agentId}`} className="hover:text-white">{agentName}</Link>
         <ChevronRight className="w-4 h-4" />
@@ -195,18 +197,18 @@ export default function AgentAnalyticsPage({
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No call data yet</div>
+            <div className="flex items-center justify-center h-full text-zinc-500 text-sm">{t("analytics.noCallData")}</div>
           )}
         </div>
       </div>
 
       {/* Success rate trend */}
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5 mb-6">
-        <p className="text-sm font-medium text-white mb-4">Success rate over time (by week)</p>
+        <p className="text-sm font-medium text-white mb-4">{t("analytics.successRateOverTime")}</p>
         <div className="h-48">
           {successRateTrend.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={successRateTrend.map((t) => ({ ...t, weekLabel: new Date(t.week).toLocaleDateString(undefined, { month: "short", day: "numeric" }) }))}>
+              <BarChart data={successRateTrend.map((w) => ({ ...w, weekLabel: new Date(w.week).toLocaleDateString(undefined, { month: "short", day: "numeric" }) }))}>
                 <XAxis dataKey="weekLabel" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} width={32} />
                 <Tooltip contentStyle={{ backgroundColor: "#18181b", borderRadius: 8, border: "1px solid #3f3f46", fontSize: 12 }} />
@@ -214,14 +216,14 @@ export default function AgentAnalyticsPage({
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No trend data yet</div>
+            <div className="flex items-center justify-center h-full text-zinc-500 text-sm">{t("analytics.noTrendData")}</div>
           )}
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6 mb-6">
         <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5">
-          <p className="text-sm font-medium text-white mb-3">Outcome breakdown</p>
+          <p className="text-sm font-medium text-white mb-3">{t("analytics.outcomeBreakdown")}</p>
           <ul className="space-y-2">
             {topOutcomes.length > 0 ? (
               topOutcomes.map((o) => (
@@ -231,12 +233,12 @@ export default function AgentAnalyticsPage({
                 </li>
               ))
             ) : (
-              <li className="text-zinc-500 text-sm">No outcomes yet</li>
+              <li className="text-zinc-500 text-sm">{t("analytics.noOutcomes")}</li>
             )}
           </ul>
         </div>
         <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5">
-          <p className="text-sm font-medium text-white mb-3">Common topics (from summaries)</p>
+          <p className="text-sm font-medium text-white mb-3">{t("analytics.commonTopics")}</p>
           <ul className="space-y-2">
             {commonIntents.length > 0 ? (
               commonIntents.map((i) => (
@@ -246,7 +248,7 @@ export default function AgentAnalyticsPage({
                 </li>
               ))
             ) : (
-              <li className="text-zinc-500 text-sm">No summary data yet</li>
+              <li className="text-zinc-500 text-sm">{t("analytics.noSummaryData")}</li>
             )}
           </ul>
         </div>
@@ -256,7 +258,7 @@ export default function AgentAnalyticsPage({
         <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5 mb-6">
           <p className="text-sm font-medium text-white mb-3 flex items-center gap-2">
             <Users className="w-4 h-4" />
-            Other agents in this workspace
+            {t("analytics.otherAgents")}
           </p>
           <ul className="space-y-2">
             {comparison.map((a) => (

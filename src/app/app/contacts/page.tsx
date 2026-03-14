@@ -639,7 +639,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
             ))}
           </ul>
         ) : (
-          <p className="text-xs text-zinc-500">No calls logged yet for this contact.</p>
+          <p className="text-xs text-zinc-500">{t("empty.noCallsForContact")}</p>
         )}
       </div>
     </div>

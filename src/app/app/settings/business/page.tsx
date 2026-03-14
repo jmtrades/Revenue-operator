@@ -129,23 +129,23 @@ export default function AppSettingsBusinessPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tSettings("business") }]} />
-      <h1 className="text-lg font-semibold text-white mb-2">Business</h1>
-      <p className="text-sm text-zinc-500 mb-6">Your business details help your AI answer calls accurately.</p>
+      <h1 className="text-lg font-semibold text-white mb-2">{tSettings("businessPage.heading")}</h1>
+      <p className="text-sm text-zinc-500 mb-6">{tSettings("businessPage.description")}</p>
       <div className="space-y-4 mb-6">
         <div>
-          <label htmlFor="biz-name" className="block text-xs font-medium text-zinc-400 mb-1">Business name</label>
-          <input id="biz-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Acme Plumbing" className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
+          <label htmlFor="biz-name" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("businessPage.nameLabel")}</label>
+          <input id="biz-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={tSettings("businessPage.namePlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
-          <label htmlFor="biz-address" className="block text-xs font-medium text-zinc-400 mb-1">Address</label>
-          <input id="biz-address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St, Portland, OR" className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
+          <label htmlFor="biz-address" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("businessPage.addressLabel")}</label>
+          <input id="biz-address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder={tSettings("businessPage.addressPlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
-          <label htmlFor="biz-website" className="block text-xs font-medium text-zinc-400 mb-1">Website</label>
-          <input id="biz-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://yourbusiness.com" className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
+          <label htmlFor="biz-website" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("businessPage.websiteLabel")}</label>
+          <input id="biz-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder={tSettings("businessPage.websitePlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
-          <label htmlFor="biz-tz" className="block text-xs font-medium text-zinc-400 mb-1">Timezone</label>
+          <label htmlFor="biz-tz" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("businessPage.timezoneLabel")}</label>
           <select id="biz-tz" value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none">
             {TIMEZONES_BY_REGION.map(({ region, zones }) => (
               <optgroup key={region} label={region}>
@@ -155,10 +155,10 @@ export default function AppSettingsBusinessPage() {
               </optgroup>
             ))}
           </select>
-          <p className="mt-1 text-[11px] text-zinc-500">Used for scheduling and display. Hover on times for UTC.</p>
+          <p className="mt-1 text-[11px] text-zinc-500">{tSettings("businessPage.timezoneHelp")}</p>
         </div>
         <div>
-          <label htmlFor="biz-industry" className="block text-xs font-medium text-zinc-400 mb-1">Industry</label>
+          <label htmlFor="biz-industry" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("businessPage.industryLabel")}</label>
           <select id="biz-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none">
             {INDUSTRY_OPTIONS.map((opt) => (
               <option key={opt.id} value={opt.id}>{opt.label}</option>
@@ -171,22 +171,22 @@ export default function AppSettingsBusinessPage() {
       </button>
 
       <div className="mt-12 pt-8 border-t border-[var(--border-default)]">
-        <h2 className="text-sm font-semibold text-[var(--text-danger)]">Danger Zone</h2>
-        <p className="mt-1 text-xs text-zinc-500">Permanently delete this workspace and all its data. This cannot be undone.</p>
+        <h2 className="text-sm font-semibold text-[var(--text-danger)]">{tSettings("businessPage.dangerTitle")}</h2>
+        <p className="mt-1 text-xs text-zinc-500">{tSettings("businessPage.dangerBody")}</p>
         <button type="button" onClick={() => setDeleteConfirmOpen(true)} className="mt-3 px-4 py-2 rounded-xl border border-[var(--accent-danger)]/50 text-sm font-medium text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/10 transition-colors">
-          Delete workspace
+          {tSettings("businessPage.deleteWorkspace")}
         </button>
       </div>
 
       {deleteConfirmOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" role="dialog" aria-modal="true" aria-labelledby="delete-dialog-title">
           <div className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-xl">
-            <h3 id="delete-dialog-title" className="text-lg font-semibold text-white">Delete workspace?</h3>
-            <p className="mt-2 text-sm text-zinc-400">This will permanently delete the workspace and all data. Type the workspace name to confirm.</p>
-            <p className="mt-2 text-xs text-zinc-500">Workspace name: <strong className="text-zinc-300">{(workspaceSnapshot?.name ?? name ?? "").trim() || "My Workspace"}</strong></p>
-            <input type="text" value={deleteConfirmName} onChange={(e) => setDeleteConfirmName(e.target.value)} placeholder="Type workspace name" className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm placeholder:text-zinc-500" />
+            <h3 id="delete-dialog-title" className="text-lg font-semibold text-white">{tSettings("businessPage.deleteWorkspaceTitle")}</h3>
+            <p className="mt-2 text-sm text-zinc-400">{tSettings("businessPage.deleteWorkspaceBody")}</p>
+            <p className="mt-2 text-xs text-zinc-500">{tSettings("businessPage.workspaceNameLabel")} <strong className="text-zinc-300">{(workspaceSnapshot?.name ?? name ?? "").trim() || tSettings("businessPage.workspaceNameFallback")}</strong></p>
+            <input type="text" value={deleteConfirmName} onChange={(e) => setDeleteConfirmName(e.target.value)} placeholder={tSettings("businessPage.confirmPlaceholder")} className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm placeholder:text-zinc-500" />
             <div className="mt-4 flex gap-3 justify-end">
-              <button type="button" onClick={() => { setDeleteConfirmOpen(false); setDeleteConfirmName(""); }} className="px-4 py-2 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:bg-zinc-800">Cancel</button>
+              <button type="button" onClick={() => { setDeleteConfirmOpen(false); setDeleteConfirmName(""); }} className="px-4 py-2 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:bg-zinc-800">{t("cancel")}</button>
               <button type="button" onClick={handleDeleteWorkspace} disabled={deleting} className="px-4 py-2 rounded-xl bg-[var(--accent-danger)] text-white text-sm font-medium hover:opacity-90 disabled:opacity-60">
                 {deleting ? tForms("deleting") : t("deletePermanently")}
               </button>
@@ -201,7 +201,7 @@ export default function AppSettingsBusinessPage() {
         </div>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("businessPage.backToSettings")}</Link></p>
     </div>
   );
 }

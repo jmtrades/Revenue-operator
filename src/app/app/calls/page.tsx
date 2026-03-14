@@ -711,7 +711,7 @@ export default function CallsPage() {
                   </p>
                 </div>
               ) : (
-                <p className="text-xs text-[var(--text-tertiary)]">No transcript for this call.</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{t("calls.detail.noTranscript")}</p>
               )}
             </div>
 

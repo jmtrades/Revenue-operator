@@ -3,8 +3,11 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { withErrorHandling } from "@/lib/apiHandler";
 
-export async function GET(req: NextRequest) {
+const GENERIC_ERROR = "An unexpected error occurred";
+
+async function getContacts(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   const err = await requireWorkspaceAccess(req, workspaceId);
@@ -15,11 +18,14 @@ export async function GET(req: NextRequest) {
     .select("id, workspace_id, name, phone, email, company, state, last_activity_at, created_at")
     .eq("workspace_id", workspaceId)
     .order("last_activity_at", { ascending: false, nullsFirst: false });
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[API Error] contacts GET:", error.message);
+    return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
+  }
   return NextResponse.json({ contacts: data ?? [] });
 }
 
-export async function POST(req: NextRequest) {
+async function postContact(req: NextRequest) {
   let body: { workspace_id: string; name: string; phone?: string; email?: string; company?: string };
   try {
     body = await req.json();
@@ -36,6 +42,12 @@ export async function POST(req: NextRequest) {
     .insert({ workspace_id, name, phone: phone ?? null, email: email ?? null, company: company ?? null, state: "NEW" })
     .select()
     .single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[API Error] contacts POST:", error.message);
+    return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
+  }
   return NextResponse.json(contact);
 }
+
+export const GET = withErrorHandling(getContacts);
+export const POST = withErrorHandling(postContact);

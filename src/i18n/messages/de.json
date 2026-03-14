@@ -1,6 +1,9 @@
 {
   "app": {
-    "title": "Recall Touch — KI-Telefonanrufe"
+    "title": "Recall Touch — KI-Telefonanrufe",
+    "dashboardTitle": "Dashboard",
+    "dashboardDescription": "Recall Touch — Aktivität, Anrufe, Leads und Einstellungen.",
+    "defaultWorkspaceName": "Mein Arbeitsbereich"
   },
   "siteNav": {
     "product": "Produkt",
@@ -50,7 +53,11 @@
     "shortcutLeads": "Zu Interessenten",
     "shortcutCampaigns": "Zu Kampagnen",
     "shortcutInbox": "Zum Posteingang",
-    "shortcutHelp": "Hilfe anzeigen"
+    "shortcutHelp": "Hilfe anzeigen",
+    "setupCta": "Einrichten →",
+    "collapse": "Einklappen",
+    "more": "Mehr",
+    "shortcutsHeading": "Tastenkürzel"
   },
   "common": {
     "save": "Speichern",
@@ -401,6 +408,20 @@
       "ready": "Ready",
       "calls": "calls"
     },
+    "noCallsYet": "Noch keine Anrufe",
+    "callsCount": "{count} Anrufe",
+    "analytics": {
+      "noCallData": "Noch keine Anrufdaten",
+      "noTrendData": "Noch keine Trenddaten",
+      "noOutcomes": "Noch keine Ergebnisse",
+      "noSummaryData": "Noch keine Zusammenfassungsdaten",
+      "loadFailed": "Analysen konnten nicht geladen werden.",
+      "successRateOverTime": "Erfolgsrate im Verlauf (pro Woche)",
+      "outcomeBreakdown": "Ergebnisübersicht",
+      "commonTopics": "Häufige Themen (aus Zusammenfassungen)",
+      "otherAgents": "Weitere Agenten in diesem Workspace",
+      "breadcrumbAgents": "Agenten"
+    },
     "links": {
       "analytics": "Analytics",
       "flow": "Flow builder"
@@ -495,6 +516,7 @@
       "outcome": "Ergebnis",
       "duration": "Dauer",
       "transcript": "Transkript",
+      "noTranscript": "Kein Transkript für diesen Anruf.",
       "addToCallIntelligence": "Zur Anrufintelligenz hinzufügen",
       "leadInfo": "Lead-Informationen"
     },
@@ -668,6 +690,13 @@
     "title": "Leads",
     "pageTitle": "Leads — Recall Touch",
     "heading": "Leads",
+    "noLeadsInStage": "Noch keine Leads in dieser Phase.",
+    "detailNotesHeading": "Notizen",
+    "detailNotesPlaceholder": "Notizen hinzufügen…",
+    "loadingCalls": "Anrufe werden geladen…",
+    "actionCall": "Anrufen",
+    "actionText": "Nachricht",
+    "actionSchedule": "Termin",
     "description": "Jede erfasste Gelegenheit, vom ersten Anruf bis zur Entscheidung.",
     "addLead": "Lead hinzufügen",
     "total": "Gesamt:",
@@ -774,7 +803,23 @@
     "failed": "Fehlgeschlagen",
     "form": {
       "typeLabel": "Typ",
-      "sourceLabel": "Quelle"
+      "sourceLabel": "Quelle",
+      "leaveEmptyForAllStatuses": "Leer lassen für alle Status",
+      "titleCreate": "Kampagne erstellen",
+      "titleEdit": "Kampagne bearbeiten",
+      "subtitle": "An echte Ergebnisse koppeln: Follow-up, Erinnerungen, Rückgewinnung oder Reaktivierung.",
+      "cancelEdit": "Abbrechen",
+      "campaignTypeLabel": "Kampagnentyp",
+      "campaignNameLabel": "Kampagnenname",
+      "audienceLabel": "Zielgruppen-Label",
+      "audiencePlaceholder": "z. B. Leads mit Follow-up",
+      "leadStatusOptionalLabel": "Lead-Status (optional)",
+      "quickTypes": {
+        "followup": { "label": "Lead-Follow-up", "desc": "Interessierte Leads anrufen" },
+        "reactivation": { "label": "Reaktivierung", "desc": "Kalte Leads reaktivieren" },
+        "reminder": { "label": "Terminerinnerung", "desc": "Kommende Termine bestätigen" },
+        "qualification": { "label": "Qualifizierung", "desc": "Neue Leads telefonisch qualifizieren" }
+      }
     },
     "type": {
       "leadFollowup": "Lead-Qualifizierung / Nachverfolgung",
@@ -831,7 +876,9 @@
       "updateFailed": "Kampagne konnte nicht aktualisiert werden.",
       "createFailed": "Kampagne konnte nicht erstellt werden.",
       "paused": "Kampagne pausiert.",
-      "launchFailed": "Kampagne konnte nicht gestartet werden."
+      "launchFailed": "Kampagne konnte nicht gestartet werden.",
+      "launched": "Kampagne gestartet.",
+      "launchedWithCount": "Kampagne gestartet. {count} Kontakte in der Warteschlange."
     }
   },
   "settings": {
@@ -865,6 +912,15 @@
       "title": "Compliance"
     },
     "errorReports": "Fehlerberichte",
+    "errorsPage": {
+      "breadcrumbSettings": "Einstellungen",
+      "breadcrumbErrorReports": "Fehlerberichte",
+      "heading": "Fehlerberichte",
+      "description": "Aktuelle Clientfehler in diesem Workspace. Nutzen Sie dies, um wiederkehrende Probleme zu finden.",
+      "loading": "Laden…",
+      "empty": "Noch keine Fehlerberichte.",
+      "backToSettings": "← Einstellungen"
+    },
     "saveMapping": "Zuordnung speichern",
     "saveProfile": "Profil speichern",
     "savePreferences": "Einstellungen speichern",
@@ -878,6 +934,28 @@
     "business.saveFailed": "Unternehmenseinstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
     "business.nameNoMatch": "Der Arbeitsbereichsname stimmt nicht überein. Gib ihn zur Bestätigung exakt ein.",
     "business.deleted": "Arbeitsbereich gelöscht. Weiterleitung…",
+    "businessPage": {
+      "heading": "Unternehmen",
+      "description": "Ihre Unternehmensdaten helfen Ihrer KI, Anrufe präzise zu beantworten.",
+      "nameLabel": "Firmenname",
+      "namePlaceholder": "z. B. Acme Klempnerei",
+      "addressLabel": "Adresse",
+      "addressPlaceholder": "Hauptstraße 123, Berlin",
+      "websiteLabel": "Webseite",
+      "websitePlaceholder": "https://ihrunternehmen.de",
+      "timezoneLabel": "Zeitzone",
+      "timezoneHelp": "Für Planung und Anzeige. Fahren Sie mit der Maus über Zeiten für UTC.",
+      "industryLabel": "Branche",
+      "dangerTitle": "Gefahrenzone",
+      "dangerBody": "Diesen Arbeitsbereich und alle Daten dauerhaft löschen. Das kann nicht rückgängig gemacht werden.",
+      "deleteWorkspace": "Arbeitsbereich löschen",
+      "deleteWorkspaceTitle": "Arbeitsbereich löschen?",
+      "deleteWorkspaceBody": "Der Arbeitsbereich und alle Daten werden dauerhaft gelöscht. Geben Sie den Namen des Arbeitsbereichs zur Bestätigung ein.",
+      "workspaceNameLabel": "Name des Arbeitsbereichs:",
+      "workspaceNameFallback": "Mein Arbeitsbereich",
+      "confirmPlaceholder": "Namen des Arbeitsbereichs eingeben",
+      "backToSettings": "← Einstellungen"
+    },
     "agent.loading": "Agenten-Einstellungen werden geladen…",
     "agent.testTitle": "Agent testen",
     "agent.loadFailed": "Agenten-Einstellungen konnten nicht geladen werden. Bitte erneut versuchen.",
@@ -1010,7 +1088,146 @@
       "existingNumber": "Funktioniert mit deiner bestehenden Nummer",
       "setup": "5-Minuten-Einrichtung",
       "noCard": "Keine Kreditkarte erforderlich"
+    },
+    "simulator": {
+      "callInProgress": "Anruf läuft — ",
+      "skipToResult": "Zum Ergebnis →",
+      "aiAgent": "KI-Agent",
+      "caller": "Anrufer",
+      "tabInbound": "Eingehender Lead",
+      "tabAppointment": "Termin",
+      "tabFollowUp": "Nachfassen",
+      "resultsHeading": "Anruf beendet — Ergebnisse",
+      "detailLabel": "Detail",
+      "leadScore": "Lead-Score",
+      "highQualityLead": "Hochwertiger Lead",
+      "qualifiedLead": "Qualifizierter Lead",
+      "followUp": "Nachfassen",
+      "thatCallTook": "Der Anruf dauerte {seconds} Sekunden. Deine KI erledigt das 24/7.",
+      "readyHeading": "Bereit?",
+      "readySubtext": "Kostenlos starten — 5 Min. Einrichtung. Keine Karte · 14 Tage Test.",
+      "ctaStartFree": "Kostenlos starten — 5 Min. →"
+    },
+    "trust": {
+      "sectionLabel": "Vertrauen & Compliance",
+      "description": "Sicherheit und Zuverlässigkeit auf Unternehmensniveau. Kostenlos starten — keine Kreditkarte nötig.",
+      "badgeSoc2": "SOC 2",
+      "badgeGdpr": "DSGVO",
+      "badgeEncryption": "256-Bit-Verschlüsselung",
+      "badgeUptime": "99,9 % Verfügbarkeit",
+      "ctaStartFree": "Kostenlos starten →",
+      "optionalUpdates": "Optional: Produkt-Updates erhalten.",
+      "notifyMe": "Benachrichtigen",
+      "onList": "Du bist auf der Liste! 🎉",
+      "getUpdates": "Updates erhalten",
+      "emailPlaceholder": "du@firma.com",
+      "emailAriaLabel": "E-Mail für Produkt-Updates"
     }
+  },
+  "demoPage": {
+    "title": "Recall Touch erleben",
+    "subtitle": "Sprechen Sie mit einem KI-Agenten, der echte Anrufe bearbeitet. Jetzt.",
+    "tapMic": "Mikro unten antippen zum Sprechen",
+    "orTryScenario": "Oder Szenario ausprobieren:",
+    "scenario1": "Termin vereinbaren",
+    "scenario2": "Preise erfragen",
+    "scenario3": "Außerhalb der Geschäftszeiten",
+    "scenario4": "Rückruf anfordern",
+    "scenario5": "Angebot anfordern",
+    "liveTranscript": "Live-Transkript",
+    "greeting": "Hallo! Ich bin der Recall-Touch-Agent. Ich helfe bei Terminen, Preisen, Rückrufen oder anderem. Wobei kann ich helfen?",
+    "voiceStyle": "Sprachstil",
+    "voiceStyleHelp": "Wählen Sie oben im Chat Professionell, Freundlich oder Knapp.",
+    "whatJustHappened": "Was gerade passiert ist",
+    "whatJustHappenedDesc": "Der Agent hat das Gespräch erfasst und würde:",
+    "bullet1": "Name, Anfragetyp und nächsten Schritt erfassen",
+    "bullet2": "Rückruf oder Termin bei Bedarf einplanen",
+    "bullet3": "Zusammenfassung und Follow-up senden",
+    "setThisUp": "Einrichten →",
+    "voiceWidgetHint": "Sprache: Klicken Sie auf das runde Widget zum Sprechen.",
+    "getThisForYourNumber": "Für Ihre Nummer erhalten →",
+    "watchSampleCall": "Beispielanruf ansehen",
+    "watchSampleCallDesc": "Startet automatisch beim Laden dieses Abschnitts und zeigt das Ergebnis.",
+    "startFreeSetup": "Kostenlos starten → 5 Min. Einrichtung",
+    "metaTitle": "KI ausprobieren",
+    "metaDescription": "Sprechen Sie mit Ihrer KI. Jetzt. Dieselbe KI, die echte Anrufe bearbeitet."
+  },
+  "contactPage": {
+    "metaTitle": "Kontakt",
+    "metaDescription": "Kontakt zu Recall Touch. Vertrieb, Enterprise und technischer Support. Antwort innerhalb von 4 Stunden.",
+    "heading": "Kontakt aufnehmen",
+    "subheading": "Ob Sie Recall Touch für Ihr Team prüfen oder technischen Support brauchen – wir sind da.",
+    "responseTime": "Antwort innerhalb von 4 Stunden",
+    "salesEnterprise": "Vertrieb & Enterprise",
+    "salesEnterpriseDesc": "Sprechen Sie mit dem Team über Team-Pläne, Compliance und Volumenpreise.",
+    "bookACall": "Anruf buchen →",
+    "support": "Support",
+    "supportDesc": "Hilfe zu Konto, technischen Problemen oder Abrechnung?",
+    "emailSupport": "E-Mail-Support →",
+    "sendMessage": "Nachricht senden",
+    "scheduleCall": "Anruf planen →",
+    "startFree": "Kostenlos starten →",
+    "backToHome": "Zurück zur Startseite"
+  },
+  "productPage": {
+    "metaTitle": "Produkt",
+    "metaDescription": "Eine Plattform für jede Telefoninteraktion — eingehende Anrufe, Outbound-Kampagnen, SMS, Terminplanung, Lead-Erfassung und Analysen.",
+    "sectionLabel": "Produkt",
+    "heading": "Eine Plattform. Jede Telefoninteraktion.",
+    "subheading": "Jeden Anruf, jede Nachricht und jedes Follow-up verwalten. Termine buchen. Leads qualifizieren. Alles in einem Dashboard.",
+    "coreCapabilities": "Kernfunktionen",
+    "useCases": "Anwendungsfälle",
+    "answersEveryCallTitle": "Beantwortet jeden Anruf",
+    "answersEveryCallDesc": "Ihre KI nimmt beim ersten Klingeln ab, 24/7/365. Keine Mailbox. Natürliche Sprache für alle Anfragen.",
+    "outboundTitle": "Führt Outbound-Anrufe durch",
+    "outboundDesc": "Neuer Web-Lead? Ihre KI ruft innerhalb von 60 Sekunden zurück. Automatische Erinnerungen, Bestätigungen und Reaktivierung.",
+    "agentsTitle": "Agent-Studio",
+    "agentsDesc": "KI-Agent ohne Code erstellen. Vorlagen, Stimme, Persönlichkeit, Wissensbasis. Mit echtem Anruf testen vor dem Go-Live.",
+    "leadsTitle": "Lead-Erfassung & Scoring",
+    "leadsDesc": "Jeder Anruf extrahiert Name, Telefon, Bedarf, Dringlichkeit. Score 0-100. Sofortige Benachrichtigungen.",
+    "appointmentsTitle": "Terminbuchung",
+    "appointmentsDesc": "Google Calendar oder Outlook in Echtzeit. Verfügbare Slots, Buchung, Bestätigung per SMS. Erinnerungen und No-Show-Nachbuchung.",
+    "messagingTitle": "Intelligente Nachrichten",
+    "messagingDesc": "Zweiseitige SMS, Auto-Bestätigungen, Follow-up-Sequenzen. Ein Posteingang für alle Gespräche.",
+    "insightsTitle": "Analysen & ROI",
+    "insightsDesc": "Anrufvolumen, Antwortrate, Konversion, geschützte Umsätze. Nutzung vs. Tarif. Klarer monatlicher ROI.",
+    "complianceTitle": "Compliance",
+    "complianceDesc": "Jeder Anruf aufgezeichnet und transkribiert. HIPAA-Modus. Aufbewahrung 30-365 Tage. Audit und Export.",
+    "forBusinesses": "Für Unternehmen",
+    "forBusinessesDesc": "Vom Einzelunternehmer bis zum wachsenden Team. Jeden Anruf beantworten, Termine buchen und Leads erfassen — ohne Empfang.",
+    "getStarted": "Starten →",
+    "forTeams": "Für Teams",
+    "forTeamsDesc": "Standortübergreifend, Agenturen und verteilte Teams. Eine Plattform, ein Standard. Einheitliche Antworten und volle Transparenz.",
+    "forDevelopers": "Für Entwickler",
+    "forDevelopersDesc": "API, Webhooks und Integrationen. Recall Touch in Ihren Stack integrieren und jede Konversation dokumentieren.",
+    "documentation": "Dokumentation →",
+    "complianceHeading": "Compliance & Governance",
+    "complianceBody": "Jeder Anruf wird aufgezeichnet und transkribiert. Nachvollziehbare Aufzeichnungen, Audit Trail und Aufbewahrungskette. HIPAA-Modus. Aufbewahrung 30-365 Tage.",
+    "complianceBullets": "Aufzeichnung & Transkription · HIPAA-Option · Aufbewahrung 30-365 Tage · Audit",
+    "ctaSubtext": "Recall Touch ab 297 €/Monat, Einrichtung in 5 Minuten.",
+    "ctaHeading": "Bereit, jeden Anruf, jede Nachricht und jedes Follow-up automatisch zu verwalten?",
+    "ctaBody": "Starten Sie in unter 60 Sekunden. Keine Kreditkarte nötig.",
+    "ctaButton": "Kostenlos starten → 5 Minuten",
+    "or": "Oder:",
+    "orBookDemo": "Demo buchen",
+    "viewDocs": "Dokumentation ansehen"
+  },
+  "footer": {
+    "tagline": "KI-Telefonsystem, das Anrufe für dein Unternehmen 24/7 annimmt, qualifiziert und bucht.",
+    "product": "Produkt",
+    "features": "Funktionen",
+    "pricing": "Preise",
+    "demo": "Demo",
+    "docs": "Dokumentation",
+    "company": "Unternehmen",
+    "emailUs": "Kontakt",
+    "blog": "Blog",
+    "contact": "Kontakt",
+    "legalSecurity": "Rechtliches & Sicherheit",
+    "privacyPolicy": "Datenschutz",
+    "termsOfService": "Nutzungsbedingungen",
+    "securityBadges": "SOC 2 • DSGVO • 256-Bit-Verschlüsselung",
+    "copyright": "© {year} Recall Touch. Alle Rechte vorbehalten."
   },
   "pricing": {
     "title": "Preise",
@@ -1282,6 +1499,25 @@
   },
   "messages": {
     "pageTitle": "Messages — Recall Touch",
+    "noMessagesYet": "Noch keine Nachrichten",
+    "now": "Jetzt",
+    "addContactInLeadsToMessage": "Kontakt in Leads anlegen, um zu schreiben",
+    "newContact": "Neuer Kontakt",
+    "yesterday": "Gestern",
+    "failedToSend": "Senden fehlgeschlagen",
+    "inputPlaceholder": "Nachricht eingeben…",
+    "inputPlaceholderNoContact": "Kontakt in Leads anlegen, um zu senden",
+    "sending": "Wird gesendet…",
+    "send": "Senden",
+    "selectConversation": "Unterhaltung auswählen",
+    "emptyBodyDashboard": "Deine KI schreibt Anrufer automatisch an. Threads erscheinen hier nach Anrufen oder wenn du eine Nachricht sendest.",
+    "activityLink": "Aktivität →",
+    "contactFallback": "Kontakt",
+    "retry": "Erneut versuchen",
+    "viewRecord": "Eintrag ansehen",
+    "selectConversationOrSend": "Unterhaltung auswählen oder aus Eintrag senden.",
+    "compose": "Verfassen",
+    "templates": "Vorlagen",
     "toast": {
       "addContactFirst": "Add this contact in Leads first to send messages.",
       "sent": "Message sent."
@@ -1466,7 +1702,8 @@
     "empty": {
       "title": "Noch keine Kontakte.",
       "subtitle": "Dein KI-Assistent legt Kontakte aus jedem Anruf an. Manuelle Kontakte erscheinen ebenfalls hier.",
-      "detail": "Wähle einen Kontakt aus, um Anrufhistorie und Notizen zu sehen."
+      "detail": "Wähle einen Kontakt aus, um Anrufhistorie und Notizen zu sehen.",
+      "noCallsForContact": "Für diesen Kontakt sind noch keine Anrufe erfasst."
     },
     "drawer": {
       "title": "Kontakt hinzufügen",
@@ -1627,13 +1864,36 @@
     },
     "copyright": "Alle Rechte vorbehalten."
   },
+  "continuity": {
+    "calmLine": "Entscheidungen bleiben auf Kurs."
+  },
+  "demoVoice": {
+    "enterPhone": "Gib eine Telefonnummer ein, um einen Demo-Anruf zu erhalten.",
+    "callingNow": "Wir rufen dich gleich an. Nimm ab, um mit dem KI-Agenten zu sprechen.",
+    "couldNotStart": "Demo-Anruf konnte nicht gestartet werden. Bitte erneut versuchen.",
+    "calling": "Anruf…",
+    "callMe": "Ruf mich an",
+    "placeholder": "+1 (555) 123-4567"
+  },
   "accessibility": {
     "skipToContent": "Zum Hauptinhalt springen",
     "mainContent": "Hauptinhalt",
     "openNavigation": "Navigation öffnen",
     "closeNavigation": "Navigation schließen",
     "openCommandPalette": "Befehlspalette öffnen",
-    "liveRegionUpdates": "Updates werden hier für Screenreader angekündigt."
+    "liveRegionUpdates": "Updates werden hier für Screenreader angekündigt.",
+    "workspaceStatus": "Workspace-Status",
+    "appNav": "App-Navigation",
+    "expandSidebar": "Seitenleiste erweitern",
+    "collapseSidebar": "Seitenleiste einklappen",
+    "openMenu": "Menü öffnen",
+    "mobileNav": "Mobile Navigation",
+    "moreMenu": "Mehr-Menü",
+    "closeMoreMenu": "Mehr-Menü schließen",
+    "morePages": "Weitere Seiten",
+    "onboardingSteps": "Onboarding-Schritte",
+    "quickSearch": "Schnellsuche",
+    "closeShortcutsHelp": "Kürzel-Hilfe schließen"
   },
   "timezone": {
     "label": "Zeitzone",

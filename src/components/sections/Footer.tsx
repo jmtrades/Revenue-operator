@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
 export function Footer() {
+  const t = useTranslations("footer");
   const year = new Date().getFullYear();
   return (
     <footer
@@ -18,58 +20,58 @@ export function Footer() {
               Recall Touch
             </span>
             <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              AI phone system that answers, qualifies, and books calls for your business 24/7.
+              {t("tagline")}
             </p>
           </div>
           <div className="space-y-2 text-sm">
             <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
-              Product
+              {t("product")}
             </p>
             <Link href={ROUTES.PRODUCT} className="block hover:opacity-80 transition-opacity">
-              Features
+              {t("features")}
             </Link>
             <Link href={ROUTES.PRICING} className="block hover:opacity-80 transition-opacity">
-              Pricing
+              {t("pricing")}
             </Link>
             <Link href="/demo" className="block hover:opacity-80 transition-opacity">
-              Demo
+              {t("demo")}
             </Link>
             <Link href={ROUTES.DOCS} className="block hover:opacity-80 transition-opacity">
-              Docs
+              {t("docs")}
             </Link>
           </div>
           <div className="space-y-2 text-sm">
             <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
-              Company
+              {t("company")}
             </p>
             <a href="mailto:team@recall-touch.com" className="block hover:opacity-80 transition-opacity">
-              Email us
+              {t("emailUs")}
             </a>
             <Link href="/blog" className="block hover:opacity-80 transition-opacity">
-              Blog
+              {t("blog")}
             </Link>
             <Link href="/contact" className="block hover:opacity-80 transition-opacity">
-              Contact
+              {t("contact")}
             </Link>
           </div>
           <div className="space-y-2 text-sm">
             <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
-              Legal & security
+              {t("legalSecurity")}
             </p>
             <Link href="/privacy" className="block hover:opacity-80 transition-opacity">
-              Privacy Policy
+              {t("privacyPolicy")}
             </Link>
             <Link href="/terms" className="block hover:opacity-80 transition-opacity">
-              Terms of Service
+              {t("termsOfService")}
             </Link>
             <p className="text-xs mt-2" style={{ color: "var(--text-tertiary)" }}>
-              SOC 2 • GDPR • 256-bit encryption
+              {t("securityBadges")}
             </p>
           </div>
         </div>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-            © {year} Recall Touch. All rights reserved.
+            {t("copyright", { year })}
           </p>
         </div>
       </Container>

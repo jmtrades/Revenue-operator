@@ -7,11 +7,12 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { withErrorHandling } from "@/lib/apiHandler";
 import { sendWeeklyTrustEmails } from "@/lib/email/weekly-trust";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 
-export async function GET(request: NextRequest) {
+async function getHandler(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
   if (authErr) return authErr;
 
@@ -24,3 +25,5 @@ export async function GET(request: NextRequest) {
     results,
   });
 }
+
+export const GET = withErrorHandling(getHandler);

@@ -339,14 +339,14 @@ export default function AppShellClient({
             <div
               className="shrink-0 border-b border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-2 text-center text-[13px] text-[var(--text-secondary)]"
               role="status"
-              aria-label="Workspace status"
+              aria-label={t("accessibility.workspaceStatus")}
             >
               <span>{workspaceMeta.banner.text}</span>
               <Link
                 href={workspaceMeta.banner.href || "/app/settings/phone"}
                 className="font-medium text-white underline underline-offset-2 hover:no-underline"
               >
-                {workspaceMeta.banner.cta || "Set up →"}
+                {workspaceMeta.banner.cta || t("nav.setupCta")}
               </Link>
             </div>
           )}
@@ -370,7 +370,7 @@ export default function AppShellClient({
                   sidebarCollapsed ? "md:w-16" : "md:w-[220px]",
                   "w-[220px] md:transition-[width]"
                 )}
-                aria-label="App navigation"
+                aria-label={t("accessibility.appNav")}
               >
                 <div className={cn(
                   "border-b border-[var(--border-default)] flex items-center gap-2 shrink-0 transition-all duration-200",
@@ -418,7 +418,7 @@ export default function AppShellClient({
                                 "flex items-center border-l-2 py-2.5 rounded-r-xl text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
                                 sidebarCollapsed ? "md:justify-center md:px-0 md:pl-0 md:pr-0 px-3" : "gap-2.5 px-3",
                                 active
-                                  ? "border-l-[#4F8CFF] bg-[#4F8CFF]/10 text-[#4F8CFF]"
+                                  ? "border-l-[var(--accent-primary)] bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
                                   : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03]"
                               )}
                               aria-current={active ? "page" : undefined}
@@ -465,14 +465,14 @@ export default function AppShellClient({
                       "hidden md:flex w-full items-center justify-center gap-2 py-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
                       sidebarCollapsed && "md:justify-center"
                     )}
-                    aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                    aria-label={sidebarCollapsed ? t("accessibility.expandSidebar") : t("accessibility.collapseSidebar")}
                   >
                     {sidebarCollapsed ? (
                       <PanelLeftOpen className="w-4 h-4" />
                     ) : (
                       <>
                         <PanelLeftClose className="w-4 h-4" />
-                        <span className="text-xs">Collapse</span>
+                        <span className="text-xs">{t("nav.collapse")}</span>
                       </>
                     )}
                   </button>
@@ -482,7 +482,7 @@ export default function AppShellClient({
                 type="button"
                 onClick={() => setMobileSidebarOpen(true)}
                 className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
-                aria-label="Open menu"
+                aria-label={t("accessibility.openMenu")}
                 aria-expanded={mobileSidebarOpen}
               >
                 <Menu className="w-5 h-5" />
@@ -524,7 +524,7 @@ export default function AppShellClient({
             <>
               <nav
                 className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-[var(--bg-surface)] border-t border-[var(--border-default)] safe-area-pb"
-                aria-label="Mobile navigation"
+                aria-label={t("accessibility.mobileNav")}
               >
                 {mobileTabs.map(({ href, label, icon: Icon }) => (
                   <Link
@@ -539,8 +539,8 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                       <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
                       {href === "/app/calls" && activeCalls > 0 && (
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                          <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-[#00D4AA] opacity-75" />
-                          <span className="relative inline-flex h-3 w-3 rounded-full bg-[#00D4AA]" />
+                          <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-[var(--accent-secondary)] opacity-75" />
+                          <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--accent-secondary)]" />
                         </span>
                       )}
                     </div>
@@ -556,24 +556,24 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                   className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
                     isMoreActive ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                   }`}
-                  aria-label="More menu"
+                  aria-label={t("accessibility.moreMenu")}
                   aria-expanded={mobileMoreOpen}
                 >
                   <Menu className="w-5 h-5 shrink-0 mx-auto" strokeWidth={1.5} aria-hidden />
-                  <span className="text-[10px] font-medium">More</span>
+                  <span className="text-[10px] font-medium">{t("nav.more")}</span>
                 </button>
               </nav>
-              <div className="hidden md:block border-t border-[var(--border-default)] px-4 py-2 text-[10px] text-[#5A5A5C]">
-                <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D]">
+              <div className="hidden md:block border-t border-[var(--border-default)] px-4 py-2 text-[10px] text-[var(--text-tertiary)]">
+                <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-muted)]">
                   ⌘
                 </kbd>
-                <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D] ml-0.5">
+                <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-muted)] ml-0.5">
                   K
                 </kbd>
-                <span className="ml-1.5">Quick search</span>
+                <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
               </div>
               {mobileMoreOpen && (
-                <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="More menu">
+                <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t("accessibility.moreMenu")}>
                   <div
                     className="absolute inset-0 bg-black/60"
                     onClick={() => setMobileMoreOpen(false)}
@@ -586,12 +586,12 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                         type="button"
                         onClick={() => setMobileMoreOpen(false)}
 className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
-                                        aria-label="Close more menu"
+                                        aria-label={t("accessibility.closeMoreMenu")}
                       >
                         <X className="h-4 w-4" />
                       </button>
                     </div>
-                    <nav className="p-2" aria-label="More pages">
+                    <nav className="p-2" aria-label={t("accessibility.morePages")}>
                       {mobileMoreLinks.map(({ href, label, icon: Icon }) => (
                         <Link
                           key={href}
@@ -615,18 +615,18 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                   onClick={() => setShowShortcuts(false)}
                 >
                   <div
-                    className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 w-full max-w-md shadow-2xl"
+                    className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-6 w-full max-w-md shadow-2xl"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center justify-between mb-5">
-                      <h2 className="text-lg font-semibold text-[#EDEDEF]">
-                        Keyboard Shortcuts
+                      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                        {t("nav.shortcutsHeading")}
                       </h2>
                       <button
                         type="button"
                         onClick={() => setShowShortcuts(false)}
-                        className="text-[#5A5A5C] hover:text-[#8B8B8D]"
-                        aria-label="Close shortcuts help"
+                        className="text-[var(--text-tertiary)] hover:text-[var(--text-muted)]"
+                        aria-label={t("accessibility.closeShortcutsHelp")}
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -646,14 +646,14 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                           key={shortcut.id}
                           className="flex items-center justify-between py-1.5"
                         >
-                          <span className="text-sm text-[#8B8B8D]">
+                          <span className="text-sm text-[var(--text-muted)]">
                             {t(shortcut.labelKey)}
                           </span>
                           <div className="flex items-center gap-1">
                             {shortcut.keys.map((key) => (
                               <kbd
                                 key={key}
-                                className="bg-white/[0.04] border border-white/[0.06] px-2 py-1 rounded-lg text-xs text-[#EDEDEF] font-mono min-w-[28px] text-center"
+                                className="bg-white/[0.04] border border-white/[0.06] px-2 py-1 rounded-lg text-xs text-[var(--text-primary)] font-mono min-w-[28px] text-center"
                               >
                                 {key}
                               </kbd>
@@ -662,13 +662,13 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                         </div>
                       ))}
                     </div>
-                    <p className="text-xs text-[#5A5A5C] mt-5 pt-4 border-t border-white/[0.06]">
+                    <p className="text-xs text-[var(--text-tertiary)] mt-5 pt-4 border-t border-white/[0.06]">
                       Press{" "}
-                      <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D]">
+                      <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-muted)]">
                         Esc
                       </kbd>{" "}
                       or{" "}
-                      <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D]">
+                      <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-muted)]">
                         ?
                       </kbd>{" "}
                       to close
@@ -689,6 +689,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
 }
 
 function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: string }) {
+  const t = useTranslations();
   const ctx = useOnboardingStep();
   const step = ctx?.step ?? 1;
   const setStep = ctx?.setStep;
@@ -701,7 +702,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
         </div>
         <WorkspaceName initialName={initialWorkspaceName} className="text-[10px] text-[var(--text-secondary)] text-center block" />
       </Link>
-      <nav className="flex-1" aria-label="Onboarding steps">
+      <nav className="flex-1" aria-label={t("accessibility.onboardingSteps")}>
         <div className="flex flex-col gap-0">
           {ONBOARDING_STEP_LABELS.map((label, i) => {
             const stepNum = i + 1;

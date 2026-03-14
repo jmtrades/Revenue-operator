@@ -94,7 +94,7 @@ function BoardColumn({
           <BoardCard key={lead.id} lead={lead} onOpen={() => onOpenLead(lead)} t={t} />
         ))}
         {columnLeads.length === 0 && (
-          <p className="text-[11px] text-zinc-600">No leads in this stage yet.</p>
+          <p className="text-[11px] text-zinc-600">{t("noLeadsInStage")}</p>
         )}
       </div>
     </div>
