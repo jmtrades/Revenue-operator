@@ -108,7 +108,7 @@ export default function AppSettingsAgentPage() {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          businessName: config.businessName || "My Workspace",
+          businessName: config.businessName || tSettings("agent.defaultWorkspaceName"),
           greeting: config.greeting,
           agentName: config.agentName,
           preferredLanguage: config.preferredLanguage,
@@ -171,7 +171,7 @@ export default function AppSettingsAgentPage() {
   };
 
   const playGreeting = () => {
-    const text = config.greeting.trim() || `Thanks for calling ${config.businessName || "your business"}. How can I help?`;
+    const text = config.greeting.trim() || `Thanks for calling ${config.businessName || tSettings("agent.defaultBusiness")}. How can I help?`;
     setPreviewing(true);
     previewVoiceViaApi(text, {
       voiceId: config.elevenlabsVoiceId || undefined,
@@ -193,47 +193,47 @@ export default function AppSettingsAgentPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-lg font-semibold text-white mb-2">Agent</h1>
-      <p className="text-sm text-zinc-500 mb-6">Control your voice agent: greeting, voice, language, and knowledge.</p>
+      <h1 className="text-lg font-semibold text-white mb-2">{tSettings("agent.heading")}</h1>
+      <p className="text-sm text-zinc-500 mb-6">{tSettings("agent.description")}</p>
 
       <div className="space-y-4 mb-6">
         <div>
-          <label htmlFor="agent-business" className="block text-xs font-medium text-zinc-400 mb-1">Business name</label>
+          <label htmlFor="agent-business" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.businessNameLabel")}</label>
           <input
             id="agent-business"
             type="text"
             value={config.businessName}
             onChange={(e) => setConfig((c) => ({ ...c, businessName: e.target.value }))}
-            placeholder="Your business"
+            placeholder={tSettings("agent.businessNamePlaceholder")}
             className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div>
-          <label htmlFor="agent-name" className="block text-xs font-medium text-zinc-400 mb-1">Agent name</label>
+          <label htmlFor="agent-name" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.agentNameLabel")}</label>
           <input
             id="agent-name"
             type="text"
             value={config.agentName}
             onChange={(e) => setConfig((c) => ({ ...c, agentName: e.target.value }))}
-            placeholder="Receptionist"
+            placeholder={tSettings("agent.agentNamePlaceholder")}
             className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div>
-          <label htmlFor="agent-greeting" className="block text-xs font-medium text-zinc-400 mb-1">Opening greeting</label>
-          <p className="text-[11px] text-zinc-500 mb-1">This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge.</p>
+          <label htmlFor="agent-greeting" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.openingGreetingLabel")}</label>
+          <p className="text-[11px] text-zinc-500 mb-1">{tSettings("agent.openingGreetingHelp")}</p>
           <textarea
             id="agent-greeting"
             rows={2}
             value={config.greeting}
             onChange={(e) => setConfig((c) => ({ ...c, greeting: e.target.value }))}
-            placeholder={`Thanks for calling ${config.businessName || "your business"}. How can I help you today?`}
+            placeholder={tSettings("agent.greetingPlaceholderDefault", { business: config.businessName || tSettings("agent.defaultBusiness") })}
             className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
           />
-          <button type="button" onClick={playGreeting} className="mt-1 text-xs text-zinc-400 hover:text-white transition-colors">Preview voice →</button>
+          <button type="button" onClick={playGreeting} className="mt-1 text-xs text-zinc-400 hover:text-white transition-colors">{tSettings("agent.previewVoice")}</button>
         </div>
         <div>
-          <label htmlFor="agent-voice" className="block text-xs font-medium text-zinc-400 mb-1">Voice</label>
+          <label htmlFor="agent-voice" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.voiceLabel")}</label>
           <select
             id="agent-voice"
             value={config.elevenlabsVoiceId}
@@ -269,8 +269,8 @@ export default function AppSettingsAgentPage() {
         </div>
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-xs font-medium text-zinc-400">Knowledge (Q&A the agent can use)</label>
-            <button type="button" onClick={addKnowledge} className="text-xs text-zinc-400 hover:text-white transition-colors">+ Add</button>
+            <label className="block text-xs font-medium text-zinc-400">{tSettings("agent.knowledgeLabel")}</label>
+            <button type="button" onClick={addKnowledge} className="text-xs text-zinc-400 hover:text-white transition-colors">{tSettings("agent.knowledgeAdd")}</button>
           </div>
           <div className="space-y-2">
             {config.knowledgeItems.map((item, idx) => (
@@ -279,17 +279,17 @@ export default function AppSettingsAgentPage() {
                   type="text"
                   value={item.q ?? ""}
                   onChange={(e) => updateKnowledge(idx, "q", e.target.value)}
-                  placeholder="Question"
+                  placeholder={tSettings("agent.questionPlaceholder")}
                   className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
                 <input
                   type="text"
                   value={item.a ?? ""}
                   onChange={(e) => updateKnowledge(idx, "a", e.target.value)}
-                  placeholder="Answer"
+                  placeholder={tSettings("agent.answerPlaceholder")}
                   className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
-                <button type="button" onClick={() => removeKnowledge(idx)} className="shrink-0 text-zinc-500 hover:text-red-400 text-sm px-1" aria-label="Remove">×</button>
+                <button type="button" onClick={() => removeKnowledge(idx)} className="shrink-0 text-zinc-500 hover:text-red-400 text-sm px-1" aria-label={tSettings("agent.removeAria")}>×</button>
               </div>
             ))}
           </div>
@@ -297,7 +297,7 @@ export default function AppSettingsAgentPage() {
       </div>
 
       {previewing && (
-        <p className="mb-4 text-xs text-zinc-500">Playing voice preview…</p>
+        <p className="mb-4 text-xs text-zinc-500">{tSettings("agent.playingVoicePreview")}</p>
       )}
 
       <button
@@ -306,15 +306,15 @@ export default function AppSettingsAgentPage() {
         disabled={saving}
         className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors"
       >
-        {saving ? "Saving…" : "Save and update agent"}
+        {saving ? tSettings("agent.saving") : tSettings("agent.saveAndUpdateAgent")}
       </button>
 
       <div className="mt-6">
         <WorkspaceVoiceButton
           title={tSettings("agent.testTitle")}
-          description="Run a live browser call with your current assistant, then review the transcript before saving more changes."
-          startLabel="Start live test"
-          endLabel="End live test"
+          description={tSettings("agent.testDescription")}
+          startLabel={tSettings("agent.startLiveTest")}
+          endLabel={tSettings("agent.endLiveTest")}
           showUnavailable={true}
         />
       </div>
@@ -326,7 +326,7 @@ export default function AppSettingsAgentPage() {
       )}
 
       <p className="mt-6">
-        <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link>
+        <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("agent.backToSettings")}</Link>
       </p>
     </div>
   );

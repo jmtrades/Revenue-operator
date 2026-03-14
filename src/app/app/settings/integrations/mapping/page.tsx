@@ -19,22 +19,14 @@ import {
   type TransformationType,
 } from "@/lib/integrations/field-mapper";
 
-const PROVIDER_NAMES: Record<string, string> = {
-  salesforce: "Salesforce",
-  hubspot: "HubSpot",
-  zoho_crm: "Zoho CRM",
-  pipedrive: "Pipedrive",
-  gohighlevel: "GoHighLevel",
-  google_contacts: "Google Contacts",
-  microsoft_365: "Microsoft 365",
-};
-
-const TRANSFORMATION_LABELS: Record<TransformationType, string> = {
-  none: "None",
-  format_phone: "Format phone (E.164)",
-  map_status: "Map status",
-  concatenate: "Concatenate fields",
-};
+function getTransformationLabels(t: (k: string) => string): Record<TransformationType, string> {
+  return {
+    none: t("integrations.transformations.none"),
+    format_phone: t("integrations.transformations.format_phone"),
+    map_status: t("integrations.transformations.map_status"),
+    concatenate: t("integrations.transformations.concatenate"),
+  };
+}
 
 function isCrmProviderId(s: string): s is CrmProviderId {
   return Object.keys(CRM_FIELDS_BY_PROVIDER).includes(s);
@@ -46,7 +38,8 @@ export default function IntegrationsMappingPage() {
   const searchParams = useSearchParams();
   const providerParam = searchParams.get("provider") ?? "";
   const provider = isCrmProviderId(providerParam) ? providerParam : ("hubspot" as CrmProviderId);
-  const name = (PROVIDER_NAMES[provider] ?? provider) || "CRM";
+  const name = tSettings(`integrations.providers.${provider}`) || tSettings("integrations.crmFallback");
+  const transformationLabels = getTransformationLabels(tSettings);
 
   const [config, setConfig] = useState<FieldMappingConfig>({ mappings: [], customRtFields: [], customCrmFields: [] });
   const [loading, setLoading] = useState(true);
@@ -148,16 +141,16 @@ export default function IntegrationsMappingPage() {
     <div className="max-w-[800px] mx-auto p-4 md:p-6">
       <Breadcrumbs
         items={[
-          { label: "Settings", href: "/app/settings" },
-          { label: "Integrations", href: "/app/settings/integrations" },
-          { label: `${name} mapping` },
+          { label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" },
+          { label: tSettings("integrations.breadcrumbIntegrations"), href: "/app/settings/integrations" },
+          { label: tSettings("integrations.mappingBreadcrumb", { name }) },
         ]}
       />
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mt-2 mb-1">
-        Field mapping — {name}
+        {tSettings("integrations.mappingTitle", { name })}
       </h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">
-        Map Recall Touch contact/lead fields to {name} fields. Use transformations for phone format or status values.
+        {tSettings("integrations.mappingDescription", { name })}
       </p>
 
       {loading ? (
@@ -206,7 +199,7 @@ export default function IntegrationsMappingPage() {
                     onChange={(e) => updateMapping(index, { transformation: e.target.value as TransformationType })}
                     className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                   >
-                    {(Object.entries(TRANSFORMATION_LABELS) as Array<[TransformationType, string]>).map(([val, label]) => (
+                    {(Object.entries(transformationLabels) as Array<[TransformationType, string]>).map(([val, label]) => (
                       <option key={val} value={val}>{label}</option>
                     ))}
                   </select>
@@ -229,14 +222,14 @@ export default function IntegrationsMappingPage() {
                 onClick={addMapping}
                 className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
               >
-                <Plus className="w-4 h-4" /> Add mapping
+                <Plus className="w-4 h-4" /> {tSettings("integrations.addMapping")}
               </button>
               <button
                 type="button"
                 onClick={loadDefaults}
                 className="inline-flex items-center gap-2 ml-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
               >
-                <RotateCcw className="w-4 h-4" /> Load defaults
+                <RotateCcw className="w-4 h-4" /> {tSettings("integrations.loadDefaults")}
               </button>
             </div>
           </div>
@@ -247,7 +240,7 @@ export default function IntegrationsMappingPage() {
               onClick={handleTest}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
             >
-              <Play className="w-4 h-4" /> Test with sample data
+              <Play className="w-4 h-4" /> {tSettings("integrations.testWithSampleData")}
             </button>
             <button
               type="button"
@@ -255,13 +248,13 @@ export default function IntegrationsMappingPage() {
               disabled={saving}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-50 transition-colors"
             >
-              {saving ? "Saving…" : "Save mapping"}
+              {saving ? tSettings("integrations.saving") : tSettings("integrations.saveMapping")}
             </button>
           </div>
 
           {testResult && (
             <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-2">Test output (sample: {SAMPLE_LEAD.name})</h3>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-2">{tSettings("integrations.testOutput", { name: SAMPLE_LEAD.name ?? "Sample" })}</h3>
               {testResult.errors.length > 0 && (
                 <ul className="text-sm text-amber-400 mb-2">
                   {testResult.errors.map((e, i) => (
@@ -282,7 +275,7 @@ export default function IntegrationsMappingPage() {
           href="/app/settings/integrations"
           className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Integrations
+          <ArrowLeft className="w-4 h-4" /> {tSettings("integrations.backToIntegrations")}
         </Link>
       </p>
     </div>

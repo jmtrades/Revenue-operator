@@ -3,11 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { NAV_LINKS, SOLUTIONS_LINKS, ROUTES } from "@/lib/constants";
 import { Container } from "@/components/ui/Container";
 
 export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?: boolean }) {
+  const t = useTranslations("siteNav");
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -118,7 +120,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
               borderBottomColor: pathname === ROUTES.PRODUCT ? "var(--accent-primary)" : "transparent",
             }}
           >
-            Product
+            {t("product")}
           </Link>
           <div className="relative group">
             <button
@@ -131,7 +133,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
               aria-haspopup="true"
               aria-expanded="false"
             >
-              Solutions
+              {t("solutions")}
               <ChevronDown className="w-4 h-4 opacity-70" />
             </button>
             <div
@@ -147,12 +149,12 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
               >
                 {SOLUTIONS_LINKS.map((s) => (
                   <Link
-                    key={s.href + s.label}
+                    key={s.href + s.labelKey}
                     href={s.href}
                     className="block px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
                     style={{ color: "var(--text-primary)" }}
                   >
-                    {s.label}
+                    {t(s.labelKey)}
                   </Link>
                 ))}
               </div>
@@ -170,7 +172,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
                   borderBottomColor: isActive ? "var(--accent-primary)" : "transparent",
                 }}
               >
-                {l.label}
+                {t(l.labelKey)}
               </Link>
             );
           })}
@@ -178,7 +180,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
         <div className="hidden lg:flex items-center gap-3">
           {!authenticated ? (
             <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost px-4 py-2 text-sm rounded-lg no-underline">
-              Sign in
+              {t("signIn")}
             </Link>
           ) : null}
           <Link href={desktopPrimaryHref} className="btn-marketing-primary px-4 py-2 text-sm rounded-xl no-underline">
@@ -212,19 +214,19 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
             style={{ color: "var(--text-primary)" }}
             onClick={() => setMobileOpen(false)}
           >
-            Product
+            {t("product")}
           </Link>
           <div className="flex flex-col items-center gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>Solutions</p>
+            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>{t("solutions")}</p>
             {SOLUTIONS_LINKS.map((s) => (
               <Link
-                key={s.href + s.label}
+                key={s.href + s.labelKey}
                 href={s.href}
                 className="text-lg font-medium transition-colors"
                 style={{ color: "var(--text-primary)" }}
                 onClick={() => setMobileOpen(false)}
               >
-                {s.label}
+                {t(s.labelKey)}
               </Link>
             ))}
           </div>
@@ -236,13 +238,13 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
               style={{ color: "var(--text-primary)" }}
               onClick={() => setMobileOpen(false)}
             >
-              {l.label}
+              {t(l.labelKey)}
             </Link>
           ))}
           <div className="flex flex-col w-full max-w-xs gap-3 mt-4">
             {!authenticated ? (
               <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost w-full text-center py-3 rounded-lg no-underline text-base" onClick={() => setMobileOpen(false)}>
-                Sign in
+                {t("signIn")}
               </Link>
             ) : null}
             <Link href={desktopPrimaryHref} className="btn-marketing-primary w-full text-center py-3 rounded-xl no-underline text-base" onClick={() => setMobileOpen(false)}>

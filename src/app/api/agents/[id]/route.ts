@@ -2,16 +2,31 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const session = await getSession(req);
+  if (!session?.userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const workspaceId = session.workspaceId;
+  if (!workspaceId) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const { id } = await ctx.params;
   const db = getDb();
-  const { data: agent, error } = await db.from("agents").select("*").eq("id", id).maybeSingle();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const { data: agent, error } = await db
+    .from("agents")
+    .select("*")
+    .eq("id", id)
+    .eq("workspace_id", workspaceId)
+    .maybeSingle();
+  if (error) {
+    console.error("[DB Error] agents GET", error.message);
+    return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
+  }
   if (!agent) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const err = await requireWorkspaceAccess(req, (agent as { workspace_id: string }).workspace_id);
-  if (err) return err;
   return NextResponse.json(agent);
 }
 
@@ -50,7 +65,10 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     }
   }
   const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).select().single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[DB Error] agents PATCH", error.message);
+    return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
+  }
   return NextResponse.json(agent);
 }
 
@@ -62,6 +80,9 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
   const err = await requireWorkspaceAccess(req, (existing as { workspace_id: string }).workspace_id);
   if (err) return err;
   const { error } = await db.from("agents").delete().eq("id", id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[DB Error] agents DELETE", error.message);
+    return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
+  }
   return NextResponse.json({ ok: true });
 }

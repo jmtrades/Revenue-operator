@@ -7,13 +7,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 
-const EVENTS = [
-  { key: "call_received", label: "Call received", desc: "Every time your AI answers a call" },
-  { key: "lead_captured", label: "Lead captured", desc: "When a caller is identified as a new lead" },
-  { key: "appointment_booked", label: "Appointment booked", desc: "When your AI books an appointment" },
-  { key: "urgent_call", label: "Urgent call", desc: "Emergency or high-priority calls" },
-  { key: "voicemail", label: "Voicemail left", desc: "When a caller leaves a voicemail" },
-];
+const NOTIFICATION_EVENT_KEYS = ["call_received", "lead_captured", "appointment_booked", "urgent_call", "voicemail"] as const;
 
 type Channel = "push" | "sms" | "email";
 
@@ -26,9 +20,9 @@ export default function AppSettingsNotificationsPage() {
   const [prefs, setPrefs] = useState<Record<string, Set<Channel>>>(() => {
     const raw = snapshot?.notification_preferences ?? {};
     const fromSnapshot: Record<string, Set<Channel>> = {};
-    EVENTS.forEach((e) => {
-      const channels = raw[e.key] ?? (e.key === "urgent_call" ? ["push", "sms"] : ["push"]);
-      fromSnapshot[e.key] = new Set(channels as Channel[]);
+    NOTIFICATION_EVENT_KEYS.forEach((key) => {
+      const channels = raw[key] ?? (key === "urgent_call" ? ["push", "sms"] : ["push"]);
+      fromSnapshot[key] = new Set(channels as Channel[]);
     });
     return fromSnapshot;
   });
@@ -46,9 +40,9 @@ export default function AppSettingsNotificationsPage() {
         const raw = data?.notification_preferences ?? {};
         setPrefs(() => {
           const next: Record<string, Set<Channel>> = {};
-          EVENTS.forEach((e) => {
-            const channels = raw[e.key] ?? (e.key === "urgent_call" ? ["push", "sms"] : ["push"]);
-            next[e.key] = new Set(channels as Channel[]);
+          NOTIFICATION_EVENT_KEYS.forEach((key) => {
+            const channels = raw[key] ?? (key === "urgent_call" ? ["push", "sms"] : ["push"]);
+            next[key] = new Set(channels as Channel[]);
           });
           return next;
         });
@@ -75,8 +69,8 @@ export default function AppSettingsNotificationsPage() {
     setSaving(true);
     try {
       const payload: Record<string, Channel[]> = {};
-      EVENTS.forEach((e) => {
-        payload[e.key] = Array.from(prefs[e.key] ?? []);
+      NOTIFICATION_EVENT_KEYS.forEach((key) => {
+        payload[key] = Array.from(prefs[key] ?? []);
       });
       const res = await fetch("/api/workspace/me", {
         method: "PATCH",
@@ -95,35 +89,35 @@ export default function AppSettingsNotificationsPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Notifications" }]} />
-      <h1 className="text-lg font-semibold text-white mb-2">Notifications</h1>
-      <p className="text-sm text-zinc-500 mb-6">Choose how and when you want to be notified.</p>
+      <Breadcrumbs items={[{ label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" }, { label: tSettings("nav.notifications") }]} />
+      <h1 className="text-lg font-semibold text-white mb-2">{tSettings("notifications.heading")}</h1>
+      <p className="text-sm text-zinc-500 mb-6">{tSettings("notifications.description")}</p>
 
       {loading ? (
-        <p className="text-sm text-zinc-500 mb-6">Loading notification preferences…</p>
+        <p className="text-sm text-zinc-500 mb-6">{tSettings("notifications.loadingPrefs")}</p>
       ) : (
         <>
           <div className="space-y-3 mb-6">
-            {EVENTS.map((event) => (
+            {NOTIFICATION_EVENT_KEYS.map((key) => (
               <div
-                key={event.key}
+                key={key}
                 className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-white">{event.label}</p>
-                    <p className="text-[11px] text-zinc-500 mt-0.5">{event.desc}</p>
+                    <p className="text-sm font-medium text-white">{tSettings(`notifications.events.${key}`)}</p>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">{tSettings(`notifications.events.${key}Desc`)}</p>
                   </div>
                   <div className="flex gap-3 shrink-0">
                     {(["push", "sms", "email"] as Channel[]).map((ch) => (
                       <label key={ch} className="flex items-center gap-1.5 cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={prefs[event.key]?.has(ch) ?? false}
-                          onChange={() => toggle(event.key, ch)}
+                          checked={prefs[key]?.has(ch) ?? false}
+                          onChange={() => toggle(key, ch)}
                           className="rounded accent-white"
                         />
-                        <span className="text-[11px] text-zinc-400 capitalize">{ch}</span>
+                        <span className="text-[11px] text-zinc-400">{tSettings(`notifications.channels.${ch}`)}</span>
                       </label>
                     ))}
                   </div>
@@ -138,12 +132,12 @@ export default function AppSettingsNotificationsPage() {
             disabled={saving}
             className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60"
           >
-            {saving ? "Saving…" : "Save preferences"}
+            {saving ? tSettings("notifications.saving") : tSettings("notifications.savePreferences")}
           </button>
         </>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("notifications.backToSettings")}</Link></p>
     </div>
   );
 }

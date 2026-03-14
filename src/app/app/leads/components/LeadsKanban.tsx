@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useDraggable, useDroppable, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import type { LeadView } from "../page";
 
@@ -27,19 +28,19 @@ function scoreBucket(score: number): string {
   return "low";
 }
 
-function timeSince(iso: string): string {
+function timeSince(iso: string, t: (k: string, p?: { count?: number }) => string): string {
   const d = new Date(iso).getTime();
   const diffMs = Date.now() - d;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays <= 0) return "Today";
-  if (diffDays === 1) return "1 day ago";
-  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays <= 0) return t("timeToday");
+  if (diffDays === 1) return t("timeOneDayAgo");
+  if (diffDays < 7) return t("timeDaysAgo", { count: diffDays });
   const weeks = Math.floor(diffDays / 7);
-  if (weeks === 1) return "1 week ago";
-  return `${weeks} weeks ago`;
+  if (weeks === 1) return t("timeOneWeekAgo");
+  return t("timeWeeksAgo", { count: weeks });
 }
 
-function BoardCard({ lead, onOpen }: { lead: LeadView; onOpen: () => void }) {
+function BoardCard({ lead, onOpen, t }: { lead: LeadView; onOpen: () => void; t: (k: string, p?: { count?: number }) => string }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: lead.id });
   const sb = scoreBucket(lead.score);
   const scoreClass = SCORE_COLORS[sb];
@@ -61,7 +62,7 @@ function BoardCard({ lead, onOpen }: { lead: LeadView; onOpen: () => void }) {
         <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] ${scoreClass}`}>
           <span>{lead.score}</span>
         </span>
-        <span className="text-[11px] text-zinc-500">{timeSince(lead.createdAt)}</span>
+        <span className="text-[11px] text-zinc-500">{timeSince(lead.createdAt, t)}</span>
       </div>
     </div>
   );
@@ -71,10 +72,12 @@ function BoardColumn({
   status,
   columnLeads,
   onOpenLead,
+  t,
 }: {
   status: LeadStatus;
   columnLeads: LeadView[];
   onOpenLead: (lead: LeadView) => void;
+  t: (k: string, p?: { count?: number }) => string;
 }) {
   const { isOver, setNodeRef } = useDroppable({ id: status });
   return (
@@ -88,7 +91,7 @@ function BoardColumn({
       </div>
       <div className="space-y-2 overflow-y-auto min-h-0">
         {columnLeads.map((lead) => (
-          <BoardCard key={lead.id} lead={lead} onOpen={() => onOpenLead(lead)} />
+          <BoardCard key={lead.id} lead={lead} onOpen={() => onOpenLead(lead)} t={t} />
         ))}
         {columnLeads.length === 0 && (
           <p className="text-[11px] text-zinc-600">No leads in this stage yet.</p>
@@ -105,6 +108,7 @@ export type LeadsKanbanProps = {
 };
 
 export function LeadsKanban({ groupedByStatus, onMoveLead, onOpenLead }: LeadsKanbanProps) {
+  const t = useTranslations("leads");
   return (
     <div className="hidden md:block mt-6">
       <DndContext
@@ -125,6 +129,7 @@ export function LeadsKanban({ groupedByStatus, onMoveLead, onOpenLead }: LeadsKa
               status={status}
               columnLeads={groupedByStatus.get(status) ?? []}
               onOpenLead={onOpenLead}
+              t={t}
             />
           ))}
         </div>

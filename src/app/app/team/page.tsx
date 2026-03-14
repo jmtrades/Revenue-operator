@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
@@ -24,39 +24,39 @@ interface PendingInvite {
   invitedAt: string;
 }
 
-const ROLE_LABELS: Record<TeamRole, string> = {
-  owner: "Owner",
-  admin: "Admin",
-  manager: "Manager",
-  agent: "Agent",
-};
+function getRoleLabels(t: (k: string) => string): Record<TeamRole, string> {
+  return {
+    owner: t("roles.owner"),
+    admin: t("roles.admin"),
+    manager: t("roles.manager"),
+    agent: t("roles.agent"),
+  };
+}
 
-const ROLE_LABEL_OVERRIDE: Record<string, string> = {
-  operator: "Agent",
-};
-
-const PERMISSIONS_MATRIX: { id: string; label: string; roles: Record<TeamRole, boolean> }[] = [
-  { id: "view_calls", label: "View calls", roles: { owner: true, admin: true, manager: true, agent: true } },
-  { id: "manage_agents", label: "Manage agents", roles: { owner: true, admin: true, manager: true, agent: false } },
-  { id: "view_analytics", label: "View analytics", roles: { owner: true, admin: true, manager: true, agent: false } },
-  { id: "manage_team", label: "Manage team", roles: { owner: true, admin: true, manager: false, agent: false } },
-  { id: "billing", label: "Billing", roles: { owner: true, admin: false, manager: false, agent: false } },
-  { id: "account_settings", label: "Account settings", roles: { owner: true, admin: false, manager: false, agent: false } },
-];
+function getPermissionsMatrix(t: (k: string) => string): { id: string; label: string; roles: Record<TeamRole, boolean> }[] {
+  return [
+    { id: "view_calls", label: t("permissions.viewCalls"), roles: { owner: true, admin: true, manager: true, agent: true } },
+    { id: "manage_agents", label: t("permissions.manageAgents"), roles: { owner: true, admin: true, manager: true, agent: false } },
+    { id: "view_analytics", label: t("permissions.viewAnalytics"), roles: { owner: true, admin: true, manager: true, agent: false } },
+    { id: "manage_team", label: t("permissions.manageTeam"), roles: { owner: true, admin: true, manager: false, agent: false } },
+    { id: "billing", label: t("permissions.billing"), roles: { owner: true, admin: false, manager: false, agent: false } },
+    { id: "account_settings", label: t("permissions.accountSettings"), roles: { owner: true, admin: false, manager: false, agent: false } },
+  ];
+}
 
 const INVITABLE_ROLES: TeamRole[] = ["admin", "manager", "agent"];
 
-function formatRelative(timestamp: string): string {
+function formatRelative(timestamp: string, t: (k: string, p?: Record<string, number>) => string): string {
   const d = new Date(timestamp).getTime();
   const diff = Date.now() - d;
   const min = Math.floor(diff / 60000);
   const hour = Math.floor(diff / 3600000);
   const day = Math.floor(diff / 86400000);
-  if (min < 1) return "Just now";
-  if (min < 60) return `${min} min ago`;
-  if (hour < 24) return `${hour} hours ago`;
-  if (day === 1) return "1 day ago";
-  return `${day} days ago`;
+  if (min < 1) return t("time.justNow");
+  if (min < 60) return t("time.minAgo", { count: min });
+  if (hour < 24) return t("time.hoursAgo", { count: hour });
+  if (day === 1) return t("time.dayAgo");
+  return t("time.daysAgo", { count: day });
 }
 
 function formatDate(iso: string): string {
@@ -66,8 +66,8 @@ function formatDate(iso: string): string {
   });
 }
 
-function initials(name: string): string {
-  if (name === "You") return "Y";
+function initials(name: string, avatarFallback: string): string {
+  if (name === "You") return avatarFallback;
   const parts = name.trim().split(/\s+/);
   if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   return (name[0] ?? "?").toUpperCase();
@@ -90,6 +90,8 @@ function avatarStyle(id: string): { backgroundColor: string; color: string } {
 export default function TeamPage() {
   const t = useTranslations("team");
   const { workspaceId } = useWorkspace();
+  const roleLabels = useMemo(() => getRoleLabels(t), [t]);
+  const permissionsMatrix = useMemo(() => getPermissionsMatrix(t), [t]);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([]);
   const [loading, setLoading] = useState(true);
@@ -190,18 +192,18 @@ export default function TeamPage() {
       .then((r) => r.json())
       .then((data: { ok?: boolean; error?: string }) => {
         if (data.ok) {
-          showToast(`Invite sent to ${inviteEmail.trim()}`);
+          showToast(t("toast.inviteSent", { email: inviteEmail.trim() }));
           setInviteModalOpen(false);
           setInviteEmail("");
           setInviteRole("agent");
           fetchTeam();
         } else {
-          setInviteError(data.error ?? "Failed to send invite. Try again.");
+          setInviteError(data.error ?? t("errors.inviteFailed"));
         }
       })
-      .catch(() => setInviteError("Failed to send invite. Try again."))
+      .catch(() => setInviteError(t("errors.inviteFailed")))
       .finally(() => setInviteSending(false));
-  }, [inviteEmail, inviteRole, workspaceId, inviteSending, showToast, fetchTeam]);
+  }, [inviteEmail, inviteRole, workspaceId, inviteSending, showToast, fetchTeam, t]);
 
   const handleChangeRole = useCallback((memberId: string, newRole: TeamRole) => {
     setMembers((prev) =>
@@ -217,7 +219,7 @@ export default function TeamPage() {
     setMenuMemberId(null);
   }, []);
 
-  const invitableRoleOptions = INVITABLE_ROLES.map((r) => ({ value: r, label: ROLE_LABELS[r] }));
+  const invitableRoleOptions = useMemo(() => INVITABLE_ROLES.map((r) => ({ value: r, label: roleLabels[r] })), [roleLabels]);
 
   const handleResendInvite = useCallback((inviteId: string) => {
     if (!workspaceId || resendingId) return;
@@ -231,15 +233,15 @@ export default function TeamPage() {
       .then((r) => r.json())
       .then((data: { ok?: boolean; error?: string }) => {
         if (data.ok) {
-          showToast("Invite resent.");
+          showToast(t("toast.inviteResent"));
           fetchTeam();
         } else {
-          showToast(data.error ?? "Failed to resend.", true);
+          showToast(data.error ?? t("toast.inviteResendFailed"), true);
         }
       })
-      .catch(() => showToast("Failed to resend.", true))
+      .catch(() => showToast(t("toast.inviteResendFailed"), true))
       .finally(() => setResendingId(null));
-  }, [workspaceId, resendingId, showToast, fetchTeam]);
+  }, [workspaceId, resendingId, showToast, fetchTeam, t]);
 
   const handleRevokeInvite = useCallback((inviteId: string) => {
     if (!workspaceId || revokingId) return;
@@ -253,15 +255,15 @@ export default function TeamPage() {
       .then((r) => r.json())
       .then((data: { ok?: boolean; error?: string }) => {
         if (data.ok) {
-          showToast("Invite revoked.");
+          showToast(t("toast.inviteRevoked"));
           fetchTeam();
         } else {
-          showToast(data.error ?? "Failed to revoke.", true);
+          showToast(data.error ?? t("toast.inviteRevokeFailed"), true);
         }
       })
-      .catch(() => showToast("Failed to revoke.", true))
+      .catch(() => showToast(t("toast.inviteRevokeFailed"), true))
       .finally(() => setRevokingId(null));
-  }, [workspaceId, revokingId, showToast, fetchTeam]);
+  }, [workspaceId, revokingId, showToast, fetchTeam, t]);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -296,12 +298,12 @@ export default function TeamPage() {
                       className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
                       style={avatarStyle(member.id)}
                     >
-                      {initials(member.name)}
+                      {initials(member.name, t("avatarFallback"))}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
                         <span className="font-medium text-white truncate">{member.name}</span>
-                        {isOwner && <Crown className="w-4 h-4 text-amber-400 shrink-0" aria-label="Owner" />}
+                        {isOwner && <Crown className="w-4 h-4 text-amber-400 shrink-0" aria-label={t("roles.owner")} />}
                       </div>
                       <p className="text-xs text-zinc-500 truncate">{member.email}</p>
                     </div>
@@ -358,9 +360,9 @@ export default function TeamPage() {
                             : "bg-zinc-700 text-zinc-400"
                     }`}
                   >
-                    {ROLE_LABEL_OVERRIDE[member.role] ?? ROLE_LABELS[member.role]}
+                    {roleLabels[member.role]}
                   </span>
-                  <span className="text-[10px] text-zinc-500">Last active {formatRelative(member.lastActive)}</span>
+                  <span className="text-[10px] text-zinc-500">Last active {formatRelative(member.lastActive, t)}</span>
                 </div>
                 <p className="text-[10px] text-zinc-600 mt-1">Joined {formatDate(member.joinedAt)}</p>
               </div>
@@ -378,17 +380,17 @@ export default function TeamPage() {
                   <li key={inv.id} className="flex flex-wrap items-center justify-between gap-2 py-2 border-b border-[var(--border-default)]/80 last:border-0">
                     <div>
                       <span className="text-sm text-zinc-300">{inv.email}</span>
-                      <span className="ml-2 text-xs text-zinc-500">— {ROLE_LABELS[inv.role]}</span>
+                      <span className="ml-2 text-xs text-zinc-500">— {roleLabels[inv.role]}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-zinc-600">Invited {formatRelative(inv.invitedAt)}</span>
+                      <span className="text-[10px] text-zinc-600">Invited {formatRelative(inv.invitedAt, t)}</span>
                       <button
                         type="button"
                         onClick={() => handleResendInvite(inv.id)}
                         disabled={resendingId === inv.id}
                         className="text-xs font-medium text-zinc-400 hover:text-white disabled:opacity-50"
                       >
-                        {resendingId === inv.id ? "Sending…" : "Resend"}
+                        {resendingId === inv.id ? t("sending") : t("resend")}
                       </button>
                       <button
                         type="button"
@@ -396,7 +398,7 @@ export default function TeamPage() {
                         disabled={revokingId === inv.id}
                         className="text-xs font-medium text-[var(--accent-red)] hover:text-red-300 disabled:opacity-50"
                       >
-                        {revokingId === inv.id ? "Revoking…" : "Revoke"}
+                        {revokingId === inv.id ? t("revoking") : t("revoke")}
                       </button>
                     </div>
                   </li>
@@ -429,7 +431,7 @@ export default function TeamPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {PERMISSIONS_MATRIX.map((row) => (
+                  {permissionsMatrix.map((row) => (
                     <tr key={row.id} className="border-b border-[var(--border-default)]/80">
                       <td className="py-2.5 pr-4 text-zinc-300">{row.label}</td>
                       <td className="py-2.5 px-2 text-center">{row.roles.owner ? "✓" : "—"}</td>
@@ -482,7 +484,7 @@ export default function TeamPage() {
                 Cancel
               </button>
               <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim() || inviteSending} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
-                {inviteSending ? "Sending…" : "Send Invite"}
+                {inviteSending ? t("sending") : t("sendInvite")}
               </button>
             </div>
           </div>
@@ -503,7 +505,7 @@ export default function TeamPage() {
                   onClick={() => handleChangeRole(roleModalMember.id, r)}
                   className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-[var(--bg-card)] hover:text-zinc-200"}`}
                 >
-                  {ROLE_LABELS[r]}
+                  {roleLabels[r]}
                 </button>
               ))}
             </div>

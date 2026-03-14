@@ -2,6 +2,25 @@
   "app": {
     "title": "Recall Touch — Llamadas telefónicas con IA"
   },
+  "siteNav": {
+    "product": "Producto",
+    "solutions": "Soluciones",
+    "pricing": "Precios",
+    "demo": "Demo",
+    "docs": "Documentación",
+    "dashboard": "Panel",
+    "dashboardCta": "Panel →",
+    "signIn": "Iniciar sesión",
+    "startFree": "Comenzar gratis",
+    "startFreeCta": "Comenzar gratis →",
+    "toggleMenu": "Abrir/cerrar menú",
+    "industryPlumbing": "Fontanería y HVAC",
+    "industryDental": "Dental",
+    "industryLegal": "Legal",
+    "industryRealEstate": "Inmobiliaria",
+    "industryHealthcare": "Salud",
+    "allUseCases": "Todos los casos de uso →"
+  },
   "nav": {
     "dashboard": "Panel",
     "agents": "Agentes",
@@ -401,6 +420,22 @@
       "ready": "Ready",
       "calls": "calls"
     },
+    "purpose": {
+      "inbound": "Entrante",
+      "outbound": "Saliente",
+      "both": "Ambos"
+    },
+    "template": {
+      "appointment_setter": "Cita",
+      "lead_qualifier": "Ventas",
+      "follow_up": "Seguimiento",
+      "support": "Soporte",
+      "after_hours": "Fuera de horario",
+      "emergency": "Emergencia",
+      "review_request": "Revisión",
+      "scratch": "Personalizado",
+      "receptionist": "Recepcionista"
+    },
     "links": {
       "analytics": "Analytics",
       "flow": "Flow builder"
@@ -570,6 +605,14 @@
       "analyzed": "Llamadas analizadas",
       "manual": "Análisis manual"
     },
+    "types": {
+      "sales": "Ventas",
+      "support": "Soporte",
+      "booking": "Reservas",
+      "qualification": "Calificación",
+      "followUp": "Seguimiento"
+    },
+    "other": "Otro",
     "quality": {
       "filter": {
         "all": "Toda calidad",
@@ -577,14 +620,51 @@
         "good": "Buena (60-79)",
         "review": "Revisar (40-59)",
         "flagged": "Marcadas (0-39)"
-      }
-    }
+      },
+      "excellent": "Excelente",
+      "good": "Buena",
+      "review": "Revisar",
+      "flagged": "Marcada"
+    },
+    "issues": {
+      "negativeTone": "Tono negativo",
+      "missedVoicemail": "Perdida / buzón de voz",
+      "shortCall": "Llamada muy corta (<10 s)"
+    },
+    "unassigned": "Sin asignar",
+    "unknown": "Desconocido",
+    "untitledCall": "Llamada sin título",
+    "notePlaceholder": "Añade una nota para tu equipo…",
+    "titlePlaceholder": "Título de la llamada (opcional)",
+    "transcriptPlaceholder": "Pega la transcripción aquí (al menos 100 caracteres)...",
+    "analyzing": "Analizando…",
+    "analyzeTranscript": "Analizar transcripción"
   },
   "callRules": {
     "pageTitle": "Call Rules — Recall Touch",
-    "toast": {
-      "saved": "Call rules saved"
-    }
+    "heading": "Reglas de llamadas",
+    "description": "Configura cómo tu IA gestiona las llamadas en horario laboral y fuera de él.",
+    "businessHours": "Horario laboral",
+    "days": { "mon": "Lun", "tue": "Mar", "wed": "Mié", "thu": "Jue", "fri": "Vie", "sat": "Sáb", "sun": "Dom" },
+    "timeRange": "9:00 – 17:00",
+    "closed": "Cerrado",
+    "afterHoursBehavior": "Comportamiento fuera de horario",
+    "afterHours": {
+      "takeMessages": "Tomar mensajes",
+      "takeMessagesDesc": "La IA toma un mensaje y te envía un resumen por email",
+      "emergencyOnly": "Solo emergencias",
+      "emergencyOnlyDesc": "La IA filtra emergencias y solo reenvía esas",
+      "forwardToCell": "Reenviar al móvil",
+      "forwardToCellDesc": "Todas las llamadas fuera de horario suenan en tu móvil"
+    },
+    "emergencyKeywords": "Palabras clave de emergencia",
+    "emergencyKeywordsHelp": "Separadas por comas. Las llamadas con estas palabras se marcan como urgentes.",
+    "transferNumber": "Número de transferencia",
+    "transferNumberHelp": "Cuando pidan una persona real, tu IA transfiere a este número.",
+    "transferNumberPlaceholder": "(503) 555-0101",
+    "saveChanges": "Guardar cambios",
+    "backToSettings": "← Ajustes",
+    "toast": { "saved": "Reglas de llamadas guardadas" }
   },
   "inbox": {
     "title": "Bandeja de entrada",
@@ -623,6 +703,11 @@
       "duration": "Duración: {duration}",
       "viewCall": "Ver llamada →"
     },
+    "status": {
+      "open": "Abierta",
+      "resolved": "Resuelta",
+      "pending": "Pendiente"
+    },
     "detail": {
       "empty": "Selecciona una conversación para ver los detalles.",
       "actions": {
@@ -640,6 +725,11 @@
   },
   "leads": {
     "title": "Leads",
+    "timeToday": "Hoy",
+    "timeDaysAgo": "hace {count} días",
+    "timeWeeksAgo": "hace {count} semanas",
+    "timeOneDayAgo": "hace 1 día",
+    "timeOneWeekAgo": "hace 1 semana",
     "pageTitle": "Leads — Recall Touch",
     "heading": "Leads",
     "description": "Cada oportunidad capturada, desde la primera llamada hasta la decisión.",
@@ -858,6 +948,32 @@
     "agent.saveFailed": "No se pudieron guardar los ajustes del agente. Inténtalo de nuevo.",
     "agent.voiceSyncFailed": "Guardado, pero no se pudo actualizar el agente de voz. Inténtalo de nuevo.",
     "agent.updated": "Agente actualizado. Tus próximas llamadas usarán la nueva configuración.",
+    "agent.heading": "Agente",
+    "agent.description": "Controla tu agente de voz: saludo, voz, idioma y conocimiento.",
+    "agent.businessNameLabel": "Nombre de la empresa",
+    "agent.businessNamePlaceholder": "Tu empresa",
+    "agent.agentNameLabel": "Nombre del agente",
+    "agent.agentNamePlaceholder": "Recepcionista",
+    "agent.openingGreetingLabel": "Saludo de apertura",
+    "agent.openingGreetingHelp": "Así es como tu IA contesta el teléfono. Después mantiene una conversación natural según tu conocimiento.",
+    "agent.greetingPlaceholderDefault": "Gracias por llamar a {business}. ¿En qué puedo ayudarte hoy?",
+    "agent.previewVoice": "Vista previa de voz →",
+    "agent.voiceLabel": "Voz",
+    "agent.languageLabel": "Idioma",
+    "agent.knowledgeLabel": "Conocimiento (preguntas y respuestas que puede usar el agente)",
+    "agent.knowledgeAdd": "+ Añadir",
+    "agent.questionPlaceholder": "Pregunta",
+    "agent.answerPlaceholder": "Respuesta",
+    "agent.playingVoicePreview": "Reproduciendo vista previa de voz…",
+    "agent.saveAndUpdateAgent": "Guardar y actualizar agente",
+    "agent.saving": "Guardando…",
+    "agent.backToSettings": "← Ajustes",
+    "agent.testDescription": "Haz una llamada en vivo con tu asistente actual y revisa la transcripción antes de guardar más cambios.",
+    "agent.startLiveTest": "Iniciar prueba en vivo",
+    "agent.endLiveTest": "Finalizar prueba en vivo",
+    "agent.removeAria": "Eliminar",
+    "agent.defaultBusiness": "tu empresa",
+    "agent.defaultWorkspaceName": "Mi espacio",
     "compliance.loadFailed": "No se pudieron cargar los ajustes de consentimiento de grabación.",
     "compliance.saveFailed": "No se pudieron guardar los ajustes de cumplimiento. Inténtalo de nuevo.",
     "compliance.recordingSaved": "Ajustes de consentimiento de grabación guardados.",
@@ -870,6 +986,74 @@
     "integrations.testSuccess": "Prueba completada. Consulta el resultado abajo.",
     "integrations.saveFailed": "No se pudo guardar el mapeo. Inténtalo de nuevo.",
     "integrations.saved": "Mapeo guardado.",
+    "integrations.breadcrumbSettings": "Ajustes",
+    "integrations.breadcrumbIntegrations": "Integraciones",
+    "integrations.mappingTitle": "Mapeo de campos — {name}",
+    "integrations.mappingBreadcrumb": "Mapeo de {name}",
+    "integrations.mappingDescription": "Mapea los campos de contacto/lead de Recall Touch a los campos de {name}. Usa transformaciones para formato de teléfono o valores de estado.",
+    "integrations.recallTouch": "Recall Touch",
+    "integrations.crmField": "Campo CRM ({name})",
+    "integrations.transform": "Transformar",
+    "integrations.addMapping": "Añadir mapeo",
+    "integrations.loadDefaults": "Cargar predeterminados",
+    "integrations.testWithSampleData": "Probar con datos de ejemplo",
+    "integrations.saveMapping": "Guardar mapeo",
+    "integrations.saving": "Guardando…",
+    "integrations.testOutput": "Resultado de prueba (ejemplo: {name})",
+    "integrations.backToIntegrations": "Volver a Integraciones",
+    "integrations.providers": {
+      "salesforce": "Salesforce",
+      "hubspot": "HubSpot",
+      "zoho_crm": "Zoho CRM",
+      "pipedrive": "Pipedrive",
+      "gohighlevel": "GoHighLevel",
+      "google_contacts": "Google Contacts",
+      "microsoft_365": "Microsoft 365"
+    },
+    "integrations.transformations": {
+      "none": "Ninguna",
+      "format_phone": "Formatear teléfono (E.164)",
+      "map_status": "Mapear estado",
+      "concatenate": "Concatenar campos"
+    },
+    "integrations.crmFallback": "CRM",
+    "syncLog.breadcrumb": "Registro de sincronización",
+    "syncLog.heading": "Registro de sincronización",
+    "syncLog.description": "Registro de eventos de sincronización CRM: salida (Recall Touch → CRM) y entrada (CRM → Recall Touch).",
+    "syncLog.allProviders": "Todos los proveedores",
+    "syncLog.allDirections": "Todas las direcciones",
+    "syncLog.outbound": "Salida",
+    "syncLog.inbound": "Entrada",
+    "syncLog.refresh": "Actualizar",
+    "syncLog.loading": "Cargando…",
+    "syncLog.empty": "Aún no hay eventos de sincronización. Aparecerán aquí cuando conectes un CRM y envíes o recibas actualizaciones.",
+    "syncLog.loadMore": "Cargar más ({count} restantes)",
+    "notifications.heading": "Notificaciones",
+    "notifications.description": "Elige cómo y cuándo quieres recibir notificaciones.",
+    "notifications.loadingPrefs": "Cargando preferencias de notificación…",
+    "notifications.saving": "Guardando…",
+    "notifications.savePreferences": "Guardar preferencias",
+    "notifications.backToSettings": "← Ajustes",
+    "notifications.events.call_received": "Llamada recibida",
+    "notifications.events.call_receivedDesc": "Cada vez que tu IA contesta una llamada",
+    "notifications.events.lead_captured": "Lead capturado",
+    "notifications.events.lead_capturedDesc": "Cuando un llamante se identifica como nuevo lead",
+    "notifications.events.appointment_booked": "Cita reservada",
+    "notifications.events.appointment_bookedDesc": "Cuando tu IA reserva una cita",
+    "notifications.events.urgent_call": "Llamada urgente",
+    "notifications.events.urgent_callDesc": "Llamadas de emergencia o alta prioridad",
+    "notifications.events.voicemail": "Buzón de voz",
+    "notifications.events.voicemailDesc": "Cuando un llamante deja un mensaje de voz",
+    "notifications.channels.push": "Push",
+    "notifications.channels.sms": "SMS",
+    "notifications.channels.email": "Email",
+    "activity.heading": "Registro de actividad",
+    "activity.description": "Cambios recientes en ajustes y espacio de trabajo.",
+    "activity.loading": "Cargando…",
+    "activity.empty": "Aún no hay actividad. Los cambios en el perfil y los ajustes aparecerán aquí.",
+    "activity.backToSettings": "← Ajustes",
+    "activity.actions.settings_update": "Ajustes actualizados",
+    "activity.actions.settings_business_update": "Ajustes de empresa actualizados",
     "phone.searchFailed": "La búsqueda falló. Ajusta los filtros e inténtalo de nuevo.",
     "phone.provisionFailed": "No se pudo aprovisionar el número. Inténtalo de nuevo.",
     "phone.provisioned": "Número añadido a tu espacio de trabajo.",
@@ -1179,7 +1363,18 @@
     "inviteMember": "Invitar miembro",
     "removeMemberTitle": "¿Eliminar miembro?",
     "removeMemberMessage": "{name} perderá el acceso a este espacio. No se puede deshacer.",
-    "removeConfirmLabel": "Eliminar"
+    "removeConfirmLabel": "Eliminar",
+    "roles": { "owner": "Propietario", "admin": "Administrador", "manager": "Gestor", "agent": "Agente" },
+    "permissions": { "viewCalls": "Ver llamadas", "manageAgents": "Gestionar agentes", "viewAnalytics": "Ver analíticas", "manageTeam": "Gestionar equipo", "billing": "Facturación", "accountSettings": "Ajustes de cuenta" },
+    "time": { "justNow": "Ahora mismo", "minAgo": "Hace {count} min", "hoursAgo": "Hace {count} h", "dayAgo": "Hace 1 día", "daysAgo": "Hace {count} días" },
+    "avatarFallback": "T",
+    "errors": { "inviteFailed": "No se pudo enviar la invitación. Inténtalo de nuevo." },
+    "sending": "Enviando…",
+    "resend": "Reenviar",
+    "revoking": "Revocando…",
+    "revoke": "Revocar",
+    "sendInvite": "Enviar invitación",
+    "toast": { "inviteSent": "Invitación enviada a {email}", "inviteResent": "Invitación reenviada.", "inviteResendFailed": "Error al reenviar.", "inviteRevoked": "Invitación revocada.", "inviteRevokeFailed": "Error al revocar." }
   },
   "knowledge": {
     "pageTitle": "Conocimiento — Recall Touch",
@@ -1298,20 +1493,56 @@
   },
   "commandPalette": {
     "title": "Búsqueda rápida",
-    "placeholder": "Buscar páginas, acciones y ajustes…",
+    "placeholder": "Buscar páginas y acciones…",
     "section": {
       "navigation": "Navegar",
       "actions": "Acciones",
+      "settings": "Ajustes",
+      "Pages": "Páginas",
+      "Actions": "Acciones"
+    },
+    "page": {
+      "dashboard": "Panel",
+      "agents": "Agentes",
+      "calls": "Llamadas",
+      "leads": "Leads",
+      "campaigns": "Campañas",
+      "inbox": "Bandeja",
+      "appointments": "Citas",
+      "analytics": "Analíticas",
+      "callIntelligence": "Inteligencia de llamadas",
+      "knowledge": "Conocimiento",
+      "team": "Equipo",
       "settings": "Ajustes"
     },
     "action": {
-      "newLead": "Crear nuevo lead",
-      "newAgent": "Crear nuevo agente",
-      "newCampaign": "Crear nueva campaña",
+      "newLead": "Crear lead",
+      "newAgent": "Crear agente",
+      "newCampaign": "Crear campaña",
+      "testAgent": "Probar agente",
       "importContacts": "Importar contactos"
     },
     "empty": "Sin coincidencias. Prueba otra búsqueda.",
-    "shortcuts": "Atajos de teclado"
+    "noMatches": "Sin coincidencias.",
+    "shortcuts": "Atajos de teclado",
+    "showShortcuts": "Mostrar atajos",
+    "close": "Cerrar"
+  },
+  "proofDrawer": {
+    "title": "Cómo progresó",
+    "closeAria": "Cerrar",
+    "loading": "En curso.",
+    "empty": "Aún no hay prueba disponible.",
+    "progressHeading": "Progreso",
+    "nextPlannedTouch": "Próximo contacto planificado",
+    "conversationInProgress": "Conversación en curso. Eres el responsable cuando haya un traspaso.",
+    "outcome": {
+      "followThrough": "Seguimiento continuado",
+      "planningToAttend": "Tienen previsto asistir",
+      "customerReturned": "Cliente recuperado",
+      "theyreSet": "Quedaron confirmados",
+      "decisionProgressed": "Decisión avanzada"
+    }
   },
   "contacts": {
     "pageTitle": "Contactos",
@@ -1373,7 +1604,15 @@
       "saveError": "No se pudo guardar el contacto. Inténtalo de nuevo.",
       "deleteError": "No se pudo eliminar el contacto. Inténtalo de nuevo.",
       "updateError": "No se pudo actualizar el contacto. Inténtalo de nuevo."
-    }
+    },
+    "lastContactUnknown": "Último contacto: desconocido",
+    "lastContactToday": "Último contacto: hoy",
+    "lastContactYesterday": "Último contacto: ayer",
+    "lastContactDaysAgo": "Último contacto: hace {count} días",
+    "filtersAria": "Filtros de contactos",
+    "addedManually": "Añadido manualmente desde el panel.",
+    "inbound": "Entrante",
+    "outbound": "Saliente"
   },
   "appointments": {
     "pageTitle": "Citas — Recall Touch",
@@ -1432,7 +1671,9 @@
       "empty": {
         "title": "Aún no hay notificaciones",
         "body": "Mostraremos aquí nuevos leads, resúmenes de llamadas y actualizaciones importantes."
-      }
+      },
+      "loading": "Cargando…",
+      "emptyBodyAlt": "Verás aquí alertas de llamadas y actualizaciones del sistema."
     },
     "type": {
       "lead": "Nuevo lead",
@@ -1440,7 +1681,21 @@
       "appointmentBooked": "Cita reservada",
       "qualityAlert": "Alerta de calidad",
       "billing": "Facturación",
-      "system": "Actualización del sistema"
+      "system": "Actualización del sistema",
+      "new_lead": "Nuevo lead",
+      "call_completed": "Llamada completada",
+      "appointment_booked": "Cita reservada",
+      "campaign_milestone": "Campaña",
+      "quality_alert": "Alerta de calidad",
+      "billing_event": "Facturación",
+      "system_update": "Sistema"
+    },
+    "time": {
+      "justNow": "Ahora mismo",
+      "minAgo": "hace {count} min",
+      "hourAgo": "hace {count} h",
+      "yesterday": "Ayer",
+      "daysAgo": "hace {count} d"
     },
     "action": {
       "markRead": "Marcar como leída",
@@ -1554,8 +1809,32 @@
   },
   "phone": {
     "pageTitle": "Phone Settings — Recall Touch",
+    "heading": "Números de teléfono",
+    "description": "Gestiona los números de tu espacio y conecta tu IA.",
+    "getNumber": "Obtener número",
+    "portNumber": "Portar número",
+    "loadingNumbers": "Cargando números…",
+    "noNumbersYet": "Aún no hay números",
+    "noNumbersYetDesc": "Obtén un número nuevo o porta uno existente para empezar a recibir llamadas con tu IA.",
+    "numbersCount": "{count, plural, one {# número} other {# números}}",
+    "moTotal": "/mes total",
+    "voice": "Voz",
+    "sms": "SMS",
+    "marketplaceBreadcrumb": "Obtener número",
+    "marketplaceBack": "Atrás",
+    "marketplaceGetNewNumber": "Obtener un número nuevo",
+    "marketplaceGetNewNumberDesc": "Busca números disponibles y añade uno a tu espacio. Puedes asignarlo a un agente desde Ajustes de teléfono.",
+    "marketplaceCountry": "País",
+    "marketplaceStateRegion": "Estado / Región",
+    "marketplaceAreaCode": "Código de área",
+    "marketplaceType": "Tipo",
+    "marketplaceSearch": "Buscar",
+    "marketplaceSearching": "Buscando números…",
+    "marketplaceNoNumbersFound": "No se encontraron números. Prueba otro código de área o tipo.",
+    "marketplaceAdding": "Añadiendo…",
+    "marketplaceGetThisNumber": "Obtener este número",
     "toast": {
-      "numberConnected": "Number connected. You can now receive calls and texts.",
+      "numberConnected": "Número conectado. Ya puedes recibir llamadas y mensajes.",
       "saved": "Settings saved.",
       "error": "Something went wrong.",
       "createAgentFirst": "Create an agent first in the Agents section, then try again.",

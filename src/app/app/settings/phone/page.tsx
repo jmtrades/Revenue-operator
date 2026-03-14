@@ -88,6 +88,7 @@ function persistPhoneSettingsSnapshot(
 export default function AppSettingsPhonePage() {
   const locale = useLocale() || "en-US";
   const t = useTranslations("common");
+  const tSettings = useTranslations("settings");
   const tPhone = useTranslations("phone");
   const tForms = useTranslations("forms.state");
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
@@ -334,19 +335,19 @@ export default function AppSettingsPhonePage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Phone & numbers" }]} />
-      <h1 className="text-xl font-semibold text-white mb-1">Phone numbers</h1>
-      <p className="text-sm text-white/60 mb-6">Manage your workspace numbers and connect your AI.</p>
+      <Breadcrumbs items={[{ label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" }, { label: tSettings("phone") }]} />
+      <h1 className="text-xl font-semibold text-white mb-1">{tPhone("heading")}</h1>
+      <p className="text-sm text-white/60 mb-6">{tPhone("description")}</p>
 
       {/* Management dashboard: list + Get New / Port */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-4">
             <span className="text-sm text-zinc-400">
-              {numbersLoading ? "…" : `${workspaceNumbers.length} number${workspaceNumbers.length !== 1 ? "s" : ""}`}
+              {numbersLoading ? "…" : tPhone("numbersCount", { count: workspaceNumbers.length })}
             </span>
             {!numbersLoading && totalMonthlyCents > 0 && (
-              <span className="text-sm text-zinc-400">{formatCurrencyCents(totalMonthlyCents, "USD", locale)}/mo total</span>
+              <span className="text-sm text-zinc-400">{formatCurrencyCents(totalMonthlyCents, "USD", locale)}{tPhone("moTotal")}</span>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -355,30 +356,30 @@ export default function AppSettingsPhonePage() {
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              Get new number
+              {tPhone("getNumber")}
             </Link>
             <Link
               href="/app/settings/phone/port"
               className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-default)] text-zinc-300 font-medium text-sm hover:bg-[var(--bg-hover)] transition-colors"
             >
               <FileInput className="w-4 h-4" />
-              Port existing number
+              {tPhone("portNumber")}
             </Link>
           </div>
         </div>
         {numbersLoading ? (
-          <div className="py-6 text-center text-zinc-500 text-sm">Loading numbers…</div>
+          <div className="py-6 text-center text-zinc-500 text-sm">{tPhone("loadingNumbers")}</div>
         ) : workspaceNumbers.length === 0 ? (
           <div className="py-8 text-center rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
             <Phone className="w-10 h-10 text-zinc-500 mx-auto mb-2" />
-            <p className="text-sm font-medium text-white mb-1">No numbers yet</p>
-            <p className="text-xs text-zinc-500 mb-4">Get a new number or port your existing one to start receiving calls with your AI.</p>
+            <p className="text-sm font-medium text-white mb-1">{tPhone("noNumbersYet")}</p>
+            <p className="text-xs text-zinc-500 mb-4">{tPhone("noNumbersYetDesc")}</p>
             <Link
               href="/app/settings/phone/marketplace"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              Get a number
+              {tPhone("getNumber")}
             </Link>
           </div>
         ) : (
@@ -394,8 +395,8 @@ export default function AppSettingsPhonePage() {
                     <p className="font-medium text-white font-mono text-sm">{formatPhoneNumber(n.phone_number)}</p>
                     <p className="text-xs text-zinc-500 capitalize">{n.number_type.replace("_", " ")} · {formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</p>
                   </div>
-                  {n.capabilities?.voice && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">Voice</span>}
-                  {n.capabilities?.sms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">SMS</span>}
+                  {n.capabilities?.voice && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">{tPhone("voice")}</span>}
+                  {n.capabilities?.sms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">{tPhone("sms")}</span>}
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] px-2 py-0.5 rounded capitalize ${n.status === "active" ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-zinc-400"}`}>
@@ -694,7 +695,7 @@ export default function AppSettingsPhonePage() {
         <>
           {/* No number — two-option flow */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-[#161B22] border border-white/[0.08] rounded-2xl p-6">
+            <div className="bg-[var(--bg-elevated)] border border-white/[0.08] rounded-2xl p-6">
               <div className="w-10 h-10 rounded-xl bg-zinc-800/70 flex items-center justify-center mb-4">
                 <Phone className="w-5 h-5 text-blue-400" />
               </div>
@@ -711,7 +712,7 @@ export default function AppSettingsPhonePage() {
                   value={areaCode}
                   onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
                   placeholder="e.g. 503"
-                  className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
+                  className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
                 />
               </div>
               <button
@@ -733,7 +734,7 @@ export default function AppSettingsPhonePage() {
                         value={notifyEmail}
                         onChange={(e) => setNotifyEmail(e.target.value)}
                         placeholder="your@email.com"
-                        className="flex-1 bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40"
+                        className="flex-1 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40"
                       />
                       <button type="button" onClick={() => { setToast(tPhone("toast.waitlistJoined")); setTimeout(() => setToast(null), 4000); }} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm shrink-0">Notify me</button>
                     </div>
@@ -749,7 +750,7 @@ export default function AppSettingsPhonePage() {
                           value={areaCode}
                           onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
                           placeholder="e.g. 212"
-                          className="w-24 bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white"
+                          className="w-24 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white"
                         />
                         <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm">Try again</button>
                       </div>
@@ -761,7 +762,7 @@ export default function AppSettingsPhonePage() {
                 </div>
               ) : null}
             </div>
-            <div className="bg-[#161B22] border border-white/[0.08] rounded-2xl p-6">
+            <div className="bg-[var(--bg-elevated)] border border-white/[0.08] rounded-2xl p-6">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
                 <PhoneForwarded className="w-5 h-5 text-emerald-400" />
               </div>
@@ -776,7 +777,7 @@ export default function AppSettingsPhonePage() {
                   value={verifyPhone}
                   onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
+                  className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
                 />
               </div>
               <button
@@ -840,7 +841,7 @@ export default function AppSettingsPhonePage() {
                     value={verifyCode}
                     onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="000000"
-                    className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30"
+                    className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30"
                   />
                   <button
                     type="button"

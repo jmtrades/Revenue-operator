@@ -3,6 +3,7 @@
 import type { ComponentType, KeyboardEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Search,
   LayoutList,
@@ -34,53 +35,41 @@ type CommandItem = {
   section: "Pages" | "Actions";
 };
 
-const STATIC_ITEMS: CommandItem[] = [
-  { id: "page-dashboard", label: "Dashboard", icon: LayoutList, href: "/app/activity", section: "Pages" },
-  { id: "page-agents", label: "Agents", icon: Bot, href: "/app/agents", section: "Pages" },
-  { id: "page-calls", label: "Calls", icon: PhoneCall, href: "/app/calls", section: "Pages" },
-  { id: "page-leads", label: "Leads", icon: Users, href: "/app/leads", section: "Pages" },
-  { id: "page-campaigns", label: "Campaigns", icon: Mail, href: "/app/campaigns", section: "Pages" },
-  { id: "page-inbox", label: "Inbox", icon: Mail, href: "/app/inbox", section: "Pages" },
-  { id: "page-appointments", label: "Appointments", icon: CalendarDays, href: "/app/appointments", section: "Pages" },
-  { id: "page-analytics", label: "Analytics", icon: BarChart3, href: "/app/analytics", section: "Pages" },
-  { id: "page-call-intelligence", label: "Call Intelligence", icon: Brain, href: "/app/call-intelligence", section: "Pages" },
-  { id: "page-knowledge", label: "Knowledge", icon: BookOpen, href: "/app/knowledge", section: "Pages" },
-  { id: "page-team", label: "Team", icon: Users, href: "/app/team", section: "Pages" },
-  { id: "page-settings", label: "Settings", icon: Settings, href: "/app/settings", section: "Pages" },
-  {
-    id: "action-new-lead",
-    label: "Create lead",
-    icon: Users,
-    href: "/app/leads?new=1",
-    section: "Actions",
-  },
-  {
-    id: "action-new-agent",
-    label: "Create agent",
-    icon: Bot,
-    href: "/app/agents/new",
-    section: "Actions",
-  },
-  {
-    id: "action-new-campaign",
-    label: "Create campaign",
-    icon: Mail,
-    href: "/app/campaigns?new=1",
-    section: "Actions",
-  },
-  {
-    id: "action-test-agent",
-    label: "Test agent",
-    icon: Bot,
-    href: "/app/agents?test=1",
-    section: "Actions",
-  },
+const STATIC_ITEM_KEYS: Array<{ id: string; labelKey: string; icon: ComponentType<{ className?: string }>; href?: string; section: "Pages" | "Actions" }> = [
+  { id: "page-dashboard", labelKey: "page.dashboard", icon: LayoutList, href: "/app/activity", section: "Pages" },
+  { id: "page-agents", labelKey: "page.agents", icon: Bot, href: "/app/agents", section: "Pages" },
+  { id: "page-calls", labelKey: "page.calls", icon: PhoneCall, href: "/app/calls", section: "Pages" },
+  { id: "page-leads", labelKey: "page.leads", icon: Users, href: "/app/leads", section: "Pages" },
+  { id: "page-campaigns", labelKey: "page.campaigns", icon: Mail, href: "/app/campaigns", section: "Pages" },
+  { id: "page-inbox", labelKey: "page.inbox", icon: Mail, href: "/app/inbox", section: "Pages" },
+  { id: "page-appointments", labelKey: "page.appointments", icon: CalendarDays, href: "/app/appointments", section: "Pages" },
+  { id: "page-analytics", labelKey: "page.analytics", icon: BarChart3, href: "/app/analytics", section: "Pages" },
+  { id: "page-call-intelligence", labelKey: "page.callIntelligence", icon: Brain, href: "/app/call-intelligence", section: "Pages" },
+  { id: "page-knowledge", labelKey: "page.knowledge", icon: BookOpen, href: "/app/knowledge", section: "Pages" },
+  { id: "page-team", labelKey: "page.team", icon: Users, href: "/app/team", section: "Pages" },
+  { id: "page-settings", labelKey: "page.settings", icon: Settings, href: "/app/settings", section: "Pages" },
+  { id: "action-new-lead", labelKey: "action.newLead", icon: Users, href: "/app/leads?new=1", section: "Actions" },
+  { id: "action-new-agent", labelKey: "action.newAgent", icon: Bot, href: "/app/agents/new", section: "Actions" },
+  { id: "action-new-campaign", labelKey: "action.newCampaign", icon: Mail, href: "/app/campaigns?new=1", section: "Actions" },
+  { id: "action-test-agent", labelKey: "action.testAgent", icon: Bot, href: "/app/agents?test=1", section: "Actions" },
 ];
 
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const router = useRouter();
+  const t = useTranslations("commandPalette");
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const staticItems = useMemo<CommandItem[]>(() =>
+    STATIC_ITEM_KEYS.map(({ id, labelKey, icon, href, section }) => ({
+      id,
+      label: t(labelKey),
+      icon,
+      href,
+      section,
+    })),
+    [t]
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -107,11 +96,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
   const items = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return STATIC_ITEMS;
-    return STATIC_ITEMS.filter((item) =>
+    if (!q) return staticItems;
+    return staticItems.filter((item) =>
       item.label.toLowerCase().includes(q),
     );
-  }, [query]);
+  }, [query, staticItems]);
 
   const grouped = useMemo(() => {
     const bySection: Record<string, CommandItem[]> = {};
@@ -161,7 +150,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             onKeyDown={handleKeyDown}
             role="dialog"
             aria-modal="true"
-            aria-label="Quick search"
+            aria-label={t("title")}
           >
             <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-[var(--border-default)]">
               <div className="flex items-center gap-2 flex-1">
@@ -170,7 +159,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                   autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search pages and actions…"
+                  placeholder={t("placeholder")}
                   className="h-8 flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none"
                   role="combobox"
                   aria-expanded={items.length > 0}
@@ -198,7 +187,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
               {Object.entries(grouped).map(([section, sectionItems]) => (
                 <div key={section}>
                   <p className="px-4 pt-2 pb-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
-                    {section}
+                    {t(`section.${section}`)}
                   </p>
                   {sectionItems.map((item) => {
                     const index = flatItems.findIndex((x) => x.id === item.id);
@@ -226,7 +215,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
               ))}
               {flatItems.length === 0 && (
                 <p className="px-4 py-3 text-xs text-[var(--text-tertiary)]">
-                  No matches.
+                  {t("noMatches")}
                 </p>
               )}
             </div>
@@ -235,20 +224,20 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                 <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
                   ⌘K
                 </span>
-                <span>Quick search</span>
+                <span>{t("title")}</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1">
                   <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
                     ⌘/
                   </span>
-                  <span>Show shortcuts</span>
+                  <span>{t("showShortcuts")}</span>
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
                     Esc
                   </span>
-                  <span>Close</span>
+                  <span>{t("close")}</span>
                 </span>
               </div>
             </div>

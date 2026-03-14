@@ -4,6 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowLeft, RefreshCw, Inbox, Send } from "lucide-react";
+import { useTranslations } from "next-intl";
+
+const SYNC_LOG_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365"] as const;
 
 type SyncLogEntry = {
   id: string;
@@ -18,17 +21,8 @@ type SyncLogEntry = {
   created_at: string;
 };
 
-const PROVIDER_NAMES: Record<string, string> = {
-  salesforce: "Salesforce",
-  hubspot: "HubSpot",
-  zoho_crm: "Zoho CRM",
-  pipedrive: "Pipedrive",
-  gohighlevel: "GoHighLevel",
-  google_contacts: "Google Contacts",
-  microsoft_365: "Microsoft 365",
-};
-
 export default function IntegrationsSyncLogPage() {
+  const tSettings = useTranslations("settings");
   const [entries, setEntries] = useState<SyncLogEntry[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -74,16 +68,16 @@ export default function IntegrationsSyncLogPage() {
     <div className="max-w-[800px] mx-auto p-4 md:p-6">
       <Breadcrumbs
         items={[
-          { label: "Settings", href: "/app/settings" },
-          { label: "Integrations", href: "/app/settings/integrations" },
-          { label: "Sync log" },
+          { label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" },
+          { label: tSettings("integrations.breadcrumbIntegrations"), href: "/app/settings/integrations" },
+          { label: tSettings("syncLog.breadcrumb") },
         ]}
       />
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mt-2 mb-1">
-        Sync log
+        {tSettings("syncLog.heading")}
       </h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">
-        Audit trail of CRM sync events: outbound (Recall Touch → CRM) and inbound (CRM → Recall Touch).
+        {tSettings("syncLog.description")}
       </p>
 
       <div className="flex flex-wrap gap-3 mb-4">
@@ -92,9 +86,9 @@ export default function IntegrationsSyncLogPage() {
           onChange={(e) => setProvider(e.target.value)}
           className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
         >
-          <option value="">All providers</option>
-          {Object.entries(PROVIDER_NAMES).map(([k, v]) => (
-            <option key={k} value={k}>{v}</option>
+          <option value="">{tSettings("syncLog.allProviders")}</option>
+          {SYNC_LOG_PROVIDERS.map((k) => (
+            <option key={k} value={k}>{tSettings(`integrations.providers.${k}`)}</option>
           ))}
         </select>
         <select
@@ -102,26 +96,26 @@ export default function IntegrationsSyncLogPage() {
           onChange={(e) => setDirection(e.target.value)}
           className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
         >
-          <option value="">All directions</option>
-          <option value="outbound">Outbound</option>
-          <option value="inbound">Inbound</option>
+          <option value="">{tSettings("syncLog.allDirections")}</option>
+          <option value="outbound">{tSettings("syncLog.outbound")}</option>
+          <option value="inbound">{tSettings("syncLog.inbound")}</option>
         </select>
         <button
           type="button"
           onClick={() => fetchLog(0)}
           className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500"
         >
-          <RefreshCw className="w-4 h-4" /> Refresh
+          <RefreshCw className="w-4 h-4" /> {tSettings("syncLog.refresh")}
         </button>
       </div>
 
       {loading && entries.length === 0 ? (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-zinc-500">
-          Loading…
+          {tSettings("syncLog.loading")}
         </div>
       ) : entries.length === 0 ? (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-zinc-500">
-          No sync events yet. Sync activity will appear here when you connect a CRM and push or receive updates.
+          {tSettings("syncLog.empty")}
         </div>
       ) : (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
@@ -135,12 +129,12 @@ export default function IntegrationsSyncLogPage() {
                     <Send className="w-4 h-4 text-zinc-500" aria-hidden />
                   )}
                   <span className="text-[11px] font-medium text-zinc-500 uppercase">
-                    {e.direction}
+                    {e.direction === "inbound" ? tSettings("syncLog.inbound") : tSettings("syncLog.outbound")}
                   </span>
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-[var(--text-primary)]">
-                    {PROVIDER_NAMES[e.provider] ?? e.provider} · {e.action}
+                    {SYNC_LOG_PROVIDERS.includes(e.provider as typeof SYNC_LOG_PROVIDERS[number]) ? tSettings(`integrations.providers.${e.provider}`) : e.provider} · {e.action}
                     {e.summary ? ` — ${e.summary}` : ""}
                   </p>
                   <p className="text-[11px] text-zinc-500 mt-0.5">
@@ -158,7 +152,7 @@ export default function IntegrationsSyncLogPage() {
                 onClick={loadMore}
                 className="text-sm font-medium text-[var(--accent-primary)] hover:underline"
               >
-                Load more ({total - entries.length} remaining)
+                {tSettings("syncLog.loadMore", { count: total - entries.length })}
               </button>
             </div>
           )}
@@ -170,7 +164,7 @@ export default function IntegrationsSyncLogPage() {
           href="/app/settings/integrations"
           className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Integrations
+          <ArrowLeft className="w-4 h-4" /> {tSettings("integrations.backToIntegrations")}
         </Link>
       </p>
     </div>

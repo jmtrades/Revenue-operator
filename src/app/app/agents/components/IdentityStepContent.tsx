@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Calendar,
   Headphones,
@@ -154,6 +155,7 @@ function generateId(prefix: string) {
 }
 
 export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepContentProps) {
+  const t = useTranslations("agents");
   const [websiteUrl, setWebsiteUrl] = useState(agent.websiteUrl ?? "");
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
@@ -419,10 +421,10 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
                     onClick={() => onChange({ purpose: value })}
                   >
                     {value === "inbound"
-                      ? "Inbound"
+                      ? t("purpose.inbound")
                       : value === "outbound"
-                        ? "Outbound"
-                        : "Both"}
+                        ? t("purpose.outbound")
+                        : t("purpose.both")}
                   </button>
                 );
               })}

@@ -41,22 +41,29 @@ type CallInsight = {
 
 type Agent = { id: string; name: string };
 
-const CALL_TYPE_LABELS: Record<string, string> = {
-  sales: "Sales",
-  support: "Support",
-  booking: "Booking",
-  qualification: "Qualification",
-  "follow-up": "Follow-up",
-};
+function getCallTypeLabels(t: (k: string) => string): Record<string, string> {
+  return {
+    sales: t("types.sales"),
+    support: t("types.support"),
+    booking: t("types.booking"),
+    qualification: t("types.qualification"),
+    "follow-up": t("types.followUp"),
+  };
+}
 
 type QualityBucket = "all" | "excellent" | "good" | "review" | "flagged";
+
+function getScoreLabel(bucket: QualityBucket, t: (k: string) => string): string {
+  if (bucket === "all") return "";
+  return t(`quality.${bucket}`);
+}
 
 function calculateQualityScore(call: {
   sentiment?: string;
   outcome?: string;
   duration?: number;
   actionItems?: string[];
-}): { score: number; label: string; color: string; bucket: QualityBucket } {
+}): { score: number; color: string; bucket: QualityBucket } {
   let score = 50;
 
   if (call.sentiment === "positive") score += 20;
@@ -72,10 +79,10 @@ function calculateQualityScore(call: {
 
   score = Math.max(0, Math.min(100, score));
 
-  if (score >= 80) return { score, label: "Excellent", color: "#00D4AA", bucket: "excellent" };
-  if (score >= 60) return { score, label: "Good", color: "#4F8CFF", bucket: "good" };
-  if (score >= 40) return { score, label: "Needs Review", color: "#FFB224", bucket: "review" };
-  return { score, label: "Flagged", color: "#FF4D4D", bucket: "flagged" };
+  if (score >= 80) return { score, color: "var(--accent-secondary)", bucket: "excellent" };
+  if (score >= 60) return { score, color: "var(--accent-primary)", bucket: "good" };
+  if (score >= 40) return { score, color: "var(--accent-warning)", bucket: "review" };
+  return { score, color: "var(--accent-danger)", bucket: "flagged" };
 }
 
 export default function CallIntelligencePage() {
@@ -96,6 +103,7 @@ export default function CallIntelligencePage() {
   const [callNotes, setCallNotes] = useState<Record<string, string>>({});
   const t = useTranslations("callIntelligence");
   const tCommon = useTranslations("common");
+  const callTypeLabels = useMemo(() => getCallTypeLabels(t), [t]);
 
   useEffect(() => {
     document.title = t("pageTitle");
@@ -300,11 +308,11 @@ export default function CallIntelligencePage() {
         if (call.duration_seconds != null && call.duration_seconds < 10) shortDuration += 1;
       }
     });
-    if (negativeTone > 0) issues.push({ label: "Negative tone", count: negativeTone });
-    if (missedOutcome > 0) issues.push({ label: "Missed / voicemail outcome", count: missedOutcome });
-    if (shortDuration > 0) issues.push({ label: "Very short call (<10s)", count: shortDuration });
+    if (negativeTone > 0) issues.push({ label: t("issues.negativeTone"), count: negativeTone });
+    if (missedOutcome > 0) issues.push({ label: t("issues.missedVoicemail"), count: missedOutcome });
+    if (shortDuration > 0) issues.push({ label: t("issues.shortCall"), count: shortDuration });
     return issues;
-  }, [qualityPerCall, callInsights]);
+  }, [qualityPerCall, callInsights, t]);
 
   const agentLeaderboard = useMemo(() => {
     const byAgent: Record<string, { sum: number; count: number }> = {};
@@ -317,13 +325,13 @@ export default function CallIntelligencePage() {
     return Object.entries(byAgent)
       .map(([agentId, { sum, count }]) => ({
         agentId: agentId === "_unknown_" ? null : agentId,
-        agentName: agentId === "_unknown_" ? "Unassigned" : (agents.find((a) => a.id === agentId)?.name ?? "Unknown"),
+        agentName: agentId === "_unknown_" ? t("unassigned") : (agents.find((a) => a.id === agentId)?.name ?? t("unknown")),
         avgScore: count > 0 ? Math.round(sum / count) : 0,
         calls: count,
       }))
       .sort((a, b) => b.avgScore - a.avgScore)
       .slice(0, 10);
-  }, [qualityPerCall, agents]);
+  }, [qualityPerCall, agents, t]);
 
   const confidenceValues = callInsights
     .map((i) => (typeof i.confidence === "number" ? i.confidence : null))
@@ -537,7 +545,7 @@ export default function CallIntelligencePage() {
                     minute: "2-digit",
                   });
                   const badgeLabel =
-                    (call.call_type && CALL_TYPE_LABELS[call.call_type]) || "Other";
+                    (call.call_type && callTypeLabels[call.call_type]) || t("other");
                   const isExpanded = expandedCallId === call.id;
 
                   const insightsByCatForCall = insightsForCall.reduce<
@@ -564,7 +572,7 @@ export default function CallIntelligencePage() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             <p className="text-sm font-medium text-[#EDEDEF] truncate">
-                              {call.title || "Untitled call"}
+                              {call.title || t("untitledCall")}
                             </p>
                             <span className="inline-flex items-center rounded-full border border-white/[0.08] px-2 py-0.5 text-[11px] text-[#8B8B8D]">
                               {badgeLabel}
@@ -580,7 +588,7 @@ export default function CallIntelligencePage() {
                                 className="w-1.5 h-1.5 rounded-full"
                                 style={{ backgroundColor: quality.color }}
                               />
-                              {quality.score} · {quality.label}
+                              {quality.score} · {getScoreLabel(quality.bucket, t)}
                             </span>
                           </div>
                           <p className="text-xs text-[#5A5A5C] mt-0.5">
@@ -631,7 +639,7 @@ export default function CallIntelligencePage() {
                             <textarea
                               value={callNotes[call.id] ?? ""}
                               onChange={(e) => setCallNotes((prev) => ({ ...prev, [call.id]: e.target.value }))}
-                              placeholder="Add a note for your team…"
+                              placeholder={t("notePlaceholder")}
                               rows={2}
                               className="w-full px-3 py-2 rounded-lg bg-[#0A0A0B] border border-white/[0.06] text-sm text-[#EDEDEF] placeholder:text-zinc-500 focus:border-[#4F8CFF] focus:outline-none resize-y"
                             />
@@ -861,7 +869,7 @@ export default function CallIntelligencePage() {
           </div>
           <input
             type="text"
-            placeholder="Call title (optional)"
+            placeholder={t("titlePlaceholder")}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[#EDEDEF] placeholder:text-[#5A5A5C] focus:border-[#4F8CFF] focus:outline-none"
@@ -872,14 +880,14 @@ export default function CallIntelligencePage() {
             className="w-full bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[#EDEDEF] focus:border-[#4F8CFF] focus:outline-none"
           >
             <option value="">Call type (optional)</option>
-            {Object.entries(CALL_TYPE_LABELS).map(([k, v]) => (
+            {Object.entries(callTypeLabels).map(([k, v]) => (
               <option key={k} value={k}>
-                {v}
+                {v as string}
               </option>
             ))}
           </select>
           <textarea
-            placeholder="Paste transcript here (at least 100 characters)..."
+            placeholder={t("transcriptPlaceholder")}
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}
             rows={8}
@@ -894,7 +902,7 @@ export default function CallIntelligencePage() {
               "bg-white text-black hover:bg-zinc-100 disabled:opacity-40 disabled:pointer-events-none",
             )}
           >
-            {analyzing ? "Analyzing…" : "Analyze transcript"}
+            {analyzing ? t("analyzing") : t("analyzeTranscript")}
           </button>
         </div>
       )}
