@@ -196,17 +196,17 @@ export default function AppSettingsPage() {
           </div>
           <div>
             <label className="text-xs text-white/40 mb-1 block">
-              Display name
+              {tSettings("displayNameLabel")}
             </label>
             <input
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Your name"
+              placeholder={tSettings("displayNamePlaceholder")}
               className="w-full max-w-sm bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white focus:border-zinc-500 focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-white/40 mb-1 block">Timezone</label>
+            <label className="text-xs text-white/40 mb-1 block">{tSettings("timezoneLabel")}</label>
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
@@ -228,7 +228,7 @@ export default function AppSettingsPage() {
             disabled={savingProfile}
             className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors disabled:opacity-60"
           >
-            {savingProfile ? "Saving…" : "Save profile"}
+            {savingProfile ? tSettings("savingProfile") : tSettings("saveProfile")}
           </button>
         </div>
       </div>

@@ -118,7 +118,13 @@
       "subtitle": "Welcome back to Recall Touch",
       "button": "Sign in",
       "pageTitle": "Sign in — Recall Touch",
-      "googleComingSoon": "Coming soon…"
+      "googleComingSoon": "Coming soon…",
+      "emailPlaceholder": "you@company.com",
+      "passwordPlaceholder": "Enter password",
+      "showPassword": "Show",
+      "hidePassword": "Hide",
+      "showPasswordAria": "Show password",
+      "hidePasswordAria": "Hide password"
     },
     "email": {
       "label": "Email address"
@@ -546,7 +552,11 @@
       },
       "objections": {
         "placeholder": "Anything the agent should always remember on calls."
-      }
+      },
+      "customRuleLabel": "Add custom rule",
+      "customRulePlaceholder": "Add custom rule… (press Enter)",
+      "transferPhoneLabel": "Transfer to this number when escalating",
+      "transferPhonePlaceholder": "+1 (555) 000-0000"
     },
     "knowledgePanel": {
       "title": "Knowledge base",
@@ -554,7 +564,8 @@
       "questionPlaceholder": "When caller asks about…",
       "answerPlaceholder": "Agent responds with…",
       "remove": "Remove",
-      "add": "Add Q&A"
+      "add": "Add Q&A",
+      "importUrlPlaceholder": "https://your-website.com"
     },
     "toast": {
       "testLinkCopied": "Test link copied!",
@@ -590,7 +601,16 @@
         "saveError": "Could not save. Try again.",
         "createError": "Could not create agent.",
         "activateError": "Could not activate."
-      }
+      },
+      "namePlaceholder": "e.g. Receptionist",
+      "greetingPlaceholder": "What the agent says when the call starts",
+      "businessHoursPlaceholder": "e.g. Mon–Fri 9am–5pm",
+      "questionPlaceholder": "Question",
+      "answerPlaceholder": "Answer",
+      "neverSayPlaceholder": "e.g. Give specific pricing over the phone",
+      "objectionPlaceholder": "How to respond when someone says they're not interested",
+      "activeHoursPlaceholder": "e.g. 9:00-17:00",
+      "timezonePlaceholder": "America/New_York"
     },
     "quickActions": {
       "label": "Quick actions",
@@ -623,6 +643,7 @@
     }
   },
   "agents.voiceTest": {
+    "scriptPlaceholder": "Enter text to hear in the selected voice…",
     "toast": {
       "played": "Played {name}",
       "applied": "Voice applied to agent."
@@ -680,8 +701,24 @@
       "sentiment": "Sentiment",
       "outcome": "Outcome",
       "duration": "Duration",
+      "viewLead": "View lead details →",
+      "recording": "Recording",
       "transcript": "Transcript",
+      "transcriptDesc": "Transcript (AI-processed, caller and agent turns)",
       "noTranscript": "No transcript for this call.",
+      "actionsTaken": "Actions taken",
+      "actions": {
+        "appointmentBooked": "Appointment booked",
+        "leadCaptured": "Lead captured",
+        "callTransferred": "Call transferred",
+        "voicemailLeft": "Voicemail left",
+        "callHandled": "Call handled"
+      },
+      "notes": "Notes",
+      "callBack": "Call back",
+      "sendSms": "Send SMS",
+      "addToLeads": "Add to leads",
+      "flag": "Flag",
       "addToCallIntelligence": "Add to Call Intelligence",
       "leadInfo": "Lead info"
     },
@@ -740,10 +777,66 @@
   },
   "callIntelligence": {
     "pageTitle": "Call Intelligence — Recall Touch",
+    "heading": "Call Intelligence",
+    "pageSubtitle": "Analyze real conversations to make your AI agent smarter.",
     "title": "Call intelligence",
     "tabs": {
-      "analyzed": "Analyzed calls",
-      "manual": "Manual analysis"
+      "analyzed": "Analyzed Calls",
+      "manual": "Manual Analysis"
+    },
+    "stats": {
+      "callsAnalyzed": "Calls analyzed",
+      "insightsExtracted": "Insights extracted",
+      "appliedToAgent": "Applied to agent",
+      "avgQuality": "Avg quality"
+    },
+    "chart": {
+      "qualityTrends": "Quality trends",
+      "noData": "No data in this range. Analyze more calls.",
+      "avgQuality": "Avg quality"
+    },
+    "commonIssues": {
+      "title": "Common issues",
+      "empty": "No recurring issues in this period.",
+      "calls": "calls"
+    },
+    "leaderboard": {
+      "title": "Agent leaderboard (avg quality)",
+      "empty": "No calls by agent yet."
+    },
+    "filters": {
+      "flagged": "Flagged (<60)",
+      "quality": {
+        "all": "All quality",
+        "excellent": "Excellent (80+)",
+        "good": "Good (60-79)",
+        "review": "Needs Review (40-59)",
+        "flagged": "Flagged (0-39)"
+      }
+    },
+    "empty": {
+      "analyzed": "No analyzed calls yet. Paste a transcript or connect live calls to get started."
+    },
+    "recording": "Recording",
+    "notes": {
+      "label": "Internal note",
+      "saved": "Note saved.",
+      "saveFailed": "Could not save note.",
+      "save": "Save note"
+    },
+    "insights": {
+      "title": "Recent insights",
+      "empty": "No insights yet. Analyze calls to generate improvement suggestions."
+    },
+    "questions": {
+      "title": "Common questions",
+      "desc": "Frequently asked questions from analyzed transcripts. Add these to your knowledge base to improve answers.",
+      "empty": "Questions from callers will appear here after analysis."
+    },
+    "analyze": {
+      "title": "Analyze a new call",
+      "subtitle": "Paste a transcript to extract quality scores, insights, and improvement suggestions.",
+      "cta": "Analyze more calls to unlock deeper patterns."
     },
     "types": {
       "sales": "Sales",
@@ -1252,6 +1345,10 @@
     },
     "saveMapping": "Save mapping",
     "saveProfile": "Save profile",
+    "savingProfile": "Saving…",
+    "displayNameLabel": "Display name",
+    "displayNamePlaceholder": "Your name",
+    "timezoneLabel": "Timezone",
     "savePreferences": "Save preferences",
     "saveWeights": "Save weights",
     "saveWebhook": "Save webhook",

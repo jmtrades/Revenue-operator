@@ -144,7 +144,7 @@ export default function AgentVoiceTestPage() {
         <textarea
           value={customScript}
           onChange={(e) => setCustomScript(e.target.value)}
-          placeholder="Enter text to hear in the selected voice…"
+          placeholder={t("scriptPlaceholder")}
           rows={3}
           className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--accent-primary)] focus:outline-none resize-y mb-3"
         />

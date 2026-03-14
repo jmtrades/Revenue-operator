@@ -118,7 +118,13 @@
       "subtitle": "Recall Touch へお帰りなさい",
       "button": "ログイン",
       "pageTitle": "サインイン — Recall Touch",
-      "googleComingSoon": "近日公開予定…"
+      "googleComingSoon": "近日公開予定…",
+      "emailPlaceholder": "you@company.com",
+      "passwordPlaceholder": "パスワードを入力",
+      "showPassword": "表示",
+      "hidePassword": "非表示",
+      "showPasswordAria": "パスワードを表示",
+      "hidePasswordAria": "パスワードを隠す"
     },
     "email": {
       "label": "メールアドレス"
@@ -434,7 +440,11 @@
       "qualification": {
         "title": "資格判定の基準",
         "subtitle": "ビジネスにとって「有望なリード」がどのようなものかをエージェントに伝えます。"
-      }
+      },
+      "customRuleLabel": "カスタムルールを追加",
+      "customRulePlaceholder": "カスタムルールを追加… (Enterを押す)",
+      "transferPhoneLabel": "エスカレーション時にこの番号に転送",
+      "transferPhonePlaceholder": "+1 (555) 000-0000"
     },
     "deleteAgent": "エージェントを削除",
     "deleteAgentTitle": "エージェントを削除",
@@ -479,7 +489,16 @@
         "created": "Agent created and synced",
         "createFailed": "Could not create agent",
         "agentLive": "Your AI agent is live!"
-      }
+      },
+      "namePlaceholder": "例：受付",
+      "greetingPlaceholder": "通話開始時にエージェントが言う内容",
+      "businessHoursPlaceholder": "例：月–金 9:00–17:00",
+      "questionPlaceholder": "質問",
+      "answerPlaceholder": "回答",
+      "neverSayPlaceholder": "例：電話で具体的な価格を伝える",
+      "objectionPlaceholder": "興味がないと言われたときの対応",
+      "activeHoursPlaceholder": "例：9:00-17:00",
+      "timezonePlaceholder": "America/New_York"
     }
   },
   "calls": {
@@ -516,7 +535,23 @@
       "outcome": "結果",
       "duration": "通話時間",
       "transcript": "書き起こし",
+      "viewLead": "リードの詳細を見る →",
+      "recording": "録音",
+      "transcriptDesc": "書き起こし（AI処理、発信者とエージェントのやり取り）",
       "noTranscript": "この通話の文字起こしはありません。",
+      "actionsTaken": "実行したアクション",
+      "actions": {
+        "appointmentBooked": "予約完了",
+        "leadCaptured": "リード獲得",
+        "callTransferred": "通話転送",
+        "voicemailLeft": "ボイスメール残す",
+        "callHandled": "通話対応済み"
+      },
+      "notes": "メモ",
+      "callBack": "折り返し電話",
+      "sendSms": "SMS送信",
+      "addToLeads": "リードに追加",
+      "flag": "フラグ",
       "addToCallIntelligence": "通話インテリジェンスに追加",
       "leadInfo": "リード情報"
     },
@@ -563,10 +598,66 @@
   },
   "callIntelligence": {
     "pageTitle": "Call Intelligence — Recall Touch",
+    "heading": "通話インテリジェンス",
+    "pageSubtitle": "実際の会話を分析してAIエージェントをより賢くします。",
     "title": "通話インテリジェンス",
     "tabs": {
       "analyzed": "分析済み通話",
       "manual": "手動分析"
+    },
+    "stats": {
+      "callsAnalyzed": "分析した通話",
+      "insightsExtracted": "抽出したインサイト",
+      "appliedToAgent": "エージェントに適用",
+      "avgQuality": "平均品質"
+    },
+    "chart": {
+      "qualityTrends": "品質トレンド",
+      "noData": "この範囲にデータがありません。さらに通話を分析してください。",
+      "avgQuality": "平均品質"
+    },
+    "commonIssues": {
+      "title": "よくある問題",
+      "empty": "この期間に繰り返し発生した問題はありません。",
+      "calls": "通話"
+    },
+    "leaderboard": {
+      "title": "エージェントリーダーボード（平均品質）",
+      "empty": "まだエージェント別の通話はありません。"
+    },
+    "filters": {
+      "flagged": "フラグ付き (<60)",
+      "quality": {
+        "all": "すべての品質",
+        "excellent": "優秀 (80+)",
+        "good": "良好 (60-79)",
+        "review": "要確認 (40-59)",
+        "flagged": "フラグ (0-39)"
+      }
+    },
+    "empty": {
+      "analyzed": "まだ分析済み通話がありません。文字起こしを貼るか、ライブ通話を接続して開始してください。"
+    },
+    "recording": "録音",
+    "notes": {
+      "label": "内部メモ",
+      "saved": "メモを保存しました。",
+      "saveFailed": "メモを保存できませんでした。",
+      "save": "メモを保存"
+    },
+    "insights": {
+      "title": "最近のインサイト",
+      "empty": "まだインサイトがありません。通話を分析して改善提案を生成してください。"
+    },
+    "questions": {
+      "title": "よくある質問",
+      "desc": "分析した文字起こしのよくある質問。ナレッジベースに追加して回答を改善できます。",
+      "empty": "発信者からの質問は分析後にここに表示されます。"
+    },
+    "analyze": {
+      "title": "新しい通話を分析",
+      "subtitle": "文字起こしを貼って品質スコア、インサイト、改善提案を抽出します。",
+      "cta": "より多くの通話を分析してパターンを把握してください。"
     },
     "types": {
       "sales": "営業",
@@ -923,6 +1014,10 @@
     },
     "saveMapping": "マッピングを保存",
     "saveProfile": "プロフィールを保存",
+    "savingProfile": "保存中…",
+    "displayNameLabel": "表示名",
+    "displayNamePlaceholder": "あなたの名前",
+    "timezoneLabel": "タイムゾーン",
     "savePreferences": "設定を保存",
     "saveWeights": "重みを保存",
     "saveWebhook": "Webhookを保存",
@@ -1338,6 +1433,7 @@
     }
   },
   "agents.voiceTest": {
+    "scriptPlaceholder": "選択した声で聞くテキストを入力…",
     "toast": {
       "played": "{name} を再生しました",
       "applied": "ボイスをエージェントに適用しました。"

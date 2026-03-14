@@ -684,7 +684,7 @@ export default function CallsPage() {
                     }
                     className="inline-flex items-center gap-1 text-[11px] text-[var(--accent-primary)] hover:underline"
                   >
-                    View lead details →
+                    {t("calls.detail.viewLead")}
                   </Link>
                 </div>
               )}
@@ -698,13 +698,13 @@ export default function CallsPage() {
             )}
 
             <div>
-              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Transcript</p>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">{t("calls.detail.transcript")}</p>
               {drawerLoading ? (
                 <p className="text-xs text-[var(--text-tertiary)]">Loading…</p>
               ) : selectedCall.transcript_text ? (
                 <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 max-h-48 overflow-y-auto">
                   <p className="text-[11px] text-[var(--text-tertiary)] mb-1">
-                    Transcript (AI-processed, caller and agent turns)
+                    {t("calls.detail.transcriptDesc")}
                   </p>
                   <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed">
                     {selectedCall.transcript_text}
@@ -746,20 +746,20 @@ export default function CallsPage() {
             </div>
 
             <div>
-              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Actions taken</p>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">{t("calls.detail.actionsTaken")}</p>
               <ul className="list-disc list-inside text-xs text-[var(--text-secondary)] space-y-0.5">
-                {selectedCall.outcome === "appointment" && <li>Appointment booked</li>}
-                {selectedCall.outcome === "lead" && <li>Lead captured</li>}
-                {selectedCall.outcome === "transfer" && <li>Call transferred</li>}
-                {selectedCall.outcome === "voicemail" && <li>Voicemail left</li>}
+                {selectedCall.outcome === "appointment" && <li>{t("calls.detail.actions.appointmentBooked")}</li>}
+                {selectedCall.outcome === "lead" && <li>{t("calls.detail.actions.leadCaptured")}</li>}
+                {selectedCall.outcome === "transfer" && <li>{t("calls.detail.actions.callTransferred")}</li>}
+                {selectedCall.outcome === "voicemail" && <li>{t("calls.detail.actions.voicemailLeft")}</li>}
                 {!["appointment", "lead", "transfer", "voicemail"].includes(selectedCall.outcome ?? "") && (
-                  <li>Call handled</li>
+                  <li>{t("calls.detail.actions.callHandled")}</li>
                 )}
               </ul>
             </div>
 
             <div>
-              <label htmlFor="call-notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">Notes</label>
+              <label htmlFor="call-notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">{t("calls.detail.notes")}</label>
               <textarea
                 id="call-notes"
                 value={callNotes[selectedCall.id] ?? ""}
@@ -786,7 +786,7 @@ export default function CallsPage() {
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border-hover)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] bg-transparent hover:bg-[var(--bg-hover)]"
               >
                 <PhoneCall className="h-3.5 w-3.5" />
-                Call back
+                {t("calls.detail.callBack")}
               </a>
               <Button variant="secondary" size="sm">
                 <MessageSquare className="h-3.5 w-3.5" />
@@ -797,11 +797,11 @@ export default function CallsPage() {
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border-hover)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] bg-transparent hover:bg-[var(--bg-hover)]"
               >
                 <UserPlus className="h-3.5 w-3.5" />
-                Add to leads
+                {t("calls.detail.addToLeads")}
               </Link>
               <Button variant="ghost" size="sm">
                 <Flag className="h-3.5 w-3.5" />
-                Flag
+                {t("calls.detail.flag")}
               </Button>
             </div>
           </div>

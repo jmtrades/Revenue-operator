@@ -310,7 +310,7 @@ export default function NewAgentWizardClient({
               value={state.name}
               onChange={(e) => setState((p) => ({ ...p, name: e.target.value }))}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
-              placeholder="e.g. Receptionist"
+              placeholder={t("namePlaceholder")}
             />
           </>
         )}
@@ -374,7 +374,7 @@ export default function NewAgentWizardClient({
               value={state.businessHours}
               onChange={(e) => setState((p) => ({ ...p, businessHours: e.target.value }))}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
-              placeholder="e.g. Mon–Fri 9am–5pm"
+              placeholder={t("businessHoursPlaceholder")}
             />
             <label className="block text-sm text-zinc-400 mb-1">FAQs (question / answer)</label>
             {state.faq.map((f, i) => (
@@ -388,7 +388,7 @@ export default function NewAgentWizardClient({
                       faq: p.faq.map((q, j) => (j === i ? { ...q, question: e.target.value } : q)),
                     }))
                   }
-                  placeholder="Question"
+                  placeholder={t("questionPlaceholder")}
                   className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm"
                 />
                 <input
@@ -400,7 +400,7 @@ export default function NewAgentWizardClient({
                       faq: p.faq.map((q, j) => (j === i ? { ...q, answer: e.target.value } : q)),
                     }))
                   }
-                  placeholder="Answer"
+                  placeholder={t("answerPlaceholder")}
                   className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm"
                 />
               </div>
@@ -425,7 +425,7 @@ export default function NewAgentWizardClient({
               onChange={(e) => setState((p) => ({ ...p, neverSay: e.target.value.split("\n").filter(Boolean) }))}
               rows={3}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
-              placeholder="e.g. Give specific pricing over the phone"
+              placeholder={t("neverSayPlaceholder")}
             />
             <label className="block text-sm text-zinc-400 mb-1">Objection handling (optional)</label>
             <textarea
@@ -433,7 +433,7 @@ export default function NewAgentWizardClient({
               onChange={(e) => setState((p) => ({ ...p, objectionHandling: e.target.value }))}
               rows={2}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white"
-              placeholder="How to respond when someone says they're not interested"
+              placeholder={t("objectionPlaceholder")}
             />
             <label className="flex items-center gap-2 mt-4 text-sm text-zinc-400">
               <input
@@ -457,7 +457,7 @@ export default function NewAgentWizardClient({
               value={state.activeHours}
               onChange={(e) => setState((p) => ({ ...p, activeHours: e.target.value }))}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
-              placeholder="e.g. 9:00-17:00"
+              placeholder={t("activeHoursPlaceholder")}
             />
             <label className="block text-sm text-zinc-400 mb-1">Timezone</label>
             <input
@@ -465,7 +465,7 @@ export default function NewAgentWizardClient({
               value={state.timezone}
               onChange={(e) => setState((p) => ({ ...p, timezone: e.target.value }))}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
-              placeholder="America/New_York"
+              placeholder={t("timezonePlaceholder")}
             />
             <label className="block text-sm text-zinc-400 mb-1">When outside hours</label>
             <select

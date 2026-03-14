@@ -230,7 +230,7 @@ export default function MessagesPage() {
               <div className="p-4 border-t flex-shrink-0 flex gap-2" style={{ borderColor: "var(--border)" }}>
                 <input
                   type="text"
-                  placeholder="Type a message…"
+                  placeholder={t("inputPlaceholder")}
                   className="flex-1 px-3 py-2 rounded-lg border text-sm"
                   style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text-primary)" }}
                   value={reply}
