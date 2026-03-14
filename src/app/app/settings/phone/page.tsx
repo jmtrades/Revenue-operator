@@ -406,7 +406,7 @@ export default function AppSettingsPhonePage() {
                     <button
                       type="button"
                       disabled={!!n.assigned_agent_id || releasingId === n.id}
-                      title={n.assigned_agent_id ? "Unassign from agent in Agents first" : "Release number"}
+                      title={n.assigned_agent_id ? tPhone("releaseTitleUnassign") : tPhone("releaseTitleRelease")}
                       onClick={async () => {
                         if (n.assigned_agent_id) return;
                         setReleasingId(n.id);
@@ -425,7 +425,7 @@ export default function AppSettingsPhonePage() {
                       }}
                       className="text-[10px] px-2 py-1 rounded-lg border border-[var(--border-default)] text-zinc-400 hover:text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {releasingId === n.id ? "…" : "Release"}
+                      {releasingId === n.id ? "…" : tPhone("releaseLabel")}
                     </button>
                   )}
                 </div>
@@ -450,13 +450,13 @@ export default function AppSettingsPhonePage() {
               <button
                 type="button"
                 onClick={handleCopyNumber}
-                aria-label={copySuccess ? "Copied to clipboard" : "Copy number"}
+                aria-label={copySuccess ? tPhone("copiedAria") : tPhone("copyNumber")}
                 className="px-4 py-2 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 transition-colors"
               >
-                {copySuccess ? "Copied" : "Copy number"}
+                {copySuccess ? tPhone("copied") : tPhone("copyNumber")}
               </button>
             </div>
-            <p className="text-sm text-zinc-400 mt-2">Your AI number is ready! Calls to this number will be answered by your AI agent.</p>
+            <p className="text-sm text-zinc-400 mt-2">{tPhone("aiNumberReady")}</p>
           </div>
 
           {/* Forward your current number — simple steps */}
@@ -636,7 +636,7 @@ export default function AppSettingsPhonePage() {
                     disabled={verifySending || digitsOnly(verifyPhone).length < 10 || digitsOnly(verifyPhone).length > 15}
                     className="px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:bg-[var(--bg-card)] disabled:opacity-50"
                   >
-                    {verifySending ? "Sending…" : "Send code"}
+                    {verifySending ? tPhone("sending") : tPhone("sendCode")}
                   </button>
                 </div>
                 <input
@@ -711,7 +711,7 @@ export default function AppSettingsPhonePage() {
                   maxLength={3}
                   value={areaCode}
                   onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
-                  placeholder="e.g. 503"
+                  placeholder={tPhone("areaCodePlaceholder")}
                   className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
                 />
               </div>
@@ -733,7 +733,7 @@ export default function AppSettingsPhonePage() {
                         type="email"
                         value={notifyEmail}
                         onChange={(e) => setNotifyEmail(e.target.value)}
-                        placeholder="your@email.com"
+                        placeholder={tPhone("emailPlaceholder")}
                         className="flex-1 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40"
                       />
                       <button type="button" onClick={() => { setToast(tPhone("toast.waitlistJoined")); setTimeout(() => setToast(null), 4000); }} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm shrink-0">Notify me</button>
@@ -749,7 +749,7 @@ export default function AppSettingsPhonePage() {
                           maxLength={3}
                           value={areaCode}
                           onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
-                          placeholder="e.g. 212"
+                          placeholder={tPhone("areaCodePlaceholderAlt")}
                           className="w-24 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white"
                         />
                         <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm">Try again</button>
@@ -873,7 +873,7 @@ export default function AppSettingsPhonePage() {
                     disabled={verifyChecking || verifyCode.length < 4}
                     className="w-full py-2 rounded-lg text-sm font-medium bg-white text-black hover:bg-gray-100 disabled:opacity-50"
                   >
-                    {verifyChecking ? "Verifying…" : "Confirm code"}
+                    {verifyChecking ? tPhone("verifying") : tPhone("verifyLabel")}
                   </button>
                 </div>
               )}

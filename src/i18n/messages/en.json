@@ -488,7 +488,23 @@
     "status": {
       "live": "Live",
       "ready": "Ready",
-      "calls": "calls"
+      "calls": "calls",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "defaultBadge": "Default",
+    "callsSuffix": "calls",
+    "toast": {
+      "paused": "Agent paused",
+      "active": "Agent active"
+    },
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "pause": "Pause",
+      "on": "On",
+      "editAgent": "Edit agent",
+      "deleteAgent": "Delete agent"
     },
     "noCallsYet": "No calls yet",
     "callsCount": "{count} calls",
@@ -556,7 +572,15 @@
       "customRuleLabel": "Add custom rule",
       "customRulePlaceholder": "Add custom rule… (press Enter)",
       "transferPhoneLabel": "Transfer to this number when escalating",
-      "transferPhonePlaceholder": "+1 (555) 000-0000"
+      "transferPhonePlaceholder": "+1 (555) 000-0000",
+      "objectionPriceLabel": "Price objection",
+      "objectionPricePlaceholder": "I understand budget is important. Our clients typically see ROI within the first month...",
+      "objectionTimingLabel": "\"Not the right time\"",
+      "objectionTimingPlaceholder": "I completely understand. Would it help if I followed up in a week or two?",
+      "objectionCompetitorLabel": "Comparing competitors",
+      "objectionCompetitorPlaceholder": "That's a smart approach. What specifically are you comparing? I can highlight where we differ.",
+      "objectionNotInterestedLabel": "\"Not interested\"",
+      "objectionNotInterestedPlaceholder": "No problem at all. Can I ask what would need to change for this to be useful?"
     },
     "knowledgePanel": {
       "title": "Knowledge base",
@@ -610,7 +634,13 @@
       "neverSayPlaceholder": "e.g. Give specific pricing over the phone",
       "objectionPlaceholder": "How to respond when someone says they're not interested",
       "activeHoursPlaceholder": "e.g. 9:00-17:00",
-      "timezonePlaceholder": "America/New_York"
+      "timezonePlaceholder": "America/New_York",
+      "purposeAnswerCalls": "Answer calls",
+      "purposeMakeCalls": "Make calls",
+      "purposeBoth": "Both",
+      "saveDraft": "Save draft",
+      "next": "Next",
+      "launch": "Launch"
     },
     "quickActions": {
       "label": "Quick actions",
@@ -640,7 +670,29 @@
     "defaultGreeting": "Thanks for calling {business}! How can I help you today?",
     "hint": {
       "micOrType": "Tap the mic to speak, or type below."
-    }
+    },
+    "startConversation": "Start conversation",
+    "orTryScenario": "Or try a scenario:",
+    "scenarios": {
+      "normalCall": { "label": "Normal call", "prompt": "Hi, I need some information about your services." },
+      "bookingRequest": { "label": "Booking request", "prompt": "I want to book an appointment for next Thursday." },
+      "pricingQuestion": { "label": "Pricing question", "prompt": "How much do your services cost?" },
+      "angryCaller": { "label": "Angry caller", "prompt": "I've been waiting for a callback for three days and nobody has contacted me. This is unacceptable." },
+      "wrongNumber": { "label": "Wrong number", "prompt": "Is this the pizza place on Main Street?" }
+    },
+    "youAsCaller": "You (as caller)",
+    "aiAgent": "AI Agent",
+    "thinking": "Thinking…",
+    "speaking": "Speaking…",
+    "stopListening": "Stop listening",
+    "listeningClickToStop": "Listening… click to stop",
+    "tapToSpeak": "Tap to speak",
+    "inputPlaceholder": "Or type your reply…",
+    "inputAria": "Type your message",
+    "send": "Send",
+    "reset": "Reset",
+    "testingLabel": "Testing: {name}",
+    "conversationAria": "Conversation"
   },
   "agents.voiceTest": {
     "scriptPlaceholder": "Enter text to hear in the selected voice…",
@@ -769,10 +821,26 @@
       "exportSuccess": "Calls exported. Check your downloads."
     },
     "live": {
+      "selectWorkspace": "Select a workspace to view live calls.",
+      "breadcrumbCalls": "Calls",
+      "breadcrumbLive": "Live",
+      "pageTitle": "Live call monitoring",
+      "pageSubtitle": "Active calls across your workspace. Updates every 5 seconds.",
+      "inProgress": "In progress",
+      "waiting": "Waiting",
+      "noActiveCalls": "No active calls right now.",
+      "noActiveCallsHint": "New calls will appear here when they start.",
+      "unknownCaller": "Unknown caller",
+      "listenIn": "Listen in (silent)",
+      "whisper": "Whisper (to agent only)",
+      "bargeIn": "Barge in",
+      "liveTranscript": "Live transcript",
+      "noTranscript": "— No transcript yet —",
+      "sentiment": "Sentiment: —",
+      "emergencyTakeover": "Emergency takeover",
       "listenInComingSoon": "Listen in is coming soon.",
       "whisperComingSoon": "Whisper mode is coming soon.",
-      "bargeInComingSoon": "Barge in is coming soon.",
-      "emergencyTakeover": "Emergency takeover — contact support for urgent escalation."
+      "bargeInComingSoon": "Barge in is coming soon."
     }
   },
   "callIntelligence": {
@@ -1072,6 +1140,40 @@
         "lost": "Lost"
       }
     },
+    "detail": {
+      "agent": "Agent",
+      "created": "Created",
+      "contact": "Contact",
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "whatTheyNeed": "What they need",
+      "stage": "Stage",
+      "timeline": "Timeline",
+      "callPrefix": "Call",
+      "notes": "Notes",
+      "notesPlaceholder": "Add notes…",
+      "textButton": "Text",
+      "addNote": "Add note",
+      "callTypeLabel": "Call type",
+      "callTypes": {
+        "default": "Default",
+        "followUp": "Follow-up",
+        "reminder": "Reminder"
+      },
+      "startingCall": "Starting…",
+      "haveAiCall": "Have AI call",
+      "archive": "Archive"
+    },
+    "table": {
+      "name": "Name",
+      "phone": "Phone",
+      "source": "Source",
+      "score": "Score",
+      "stage": "Stage",
+      "lastContact": "Last contact",
+      "agent": "Agent"
+    },
     "empty": {
       "title": "No leads yet",
       "body": "Your AI will start creating leads automatically as it talks to your customers.",
@@ -1331,10 +1433,37 @@
       "title": "Team & permissions"
     },
     "compliance": {
-      "title": "Compliance"
+      "title": "Compliance",
+      "subtitle": "Recording, privacy, and data retention settings.",
+      "recordingConsent": "Recording consent",
+      "consentDescription": "Choose consent model for your jurisdiction. Two-party requires playing an announcement at call start.",
+      "consentMode": "Consent mode",
+      "oneParty": "One-party (e.g. most US states)",
+      "twoParty": "Two-party (play announcement at call start)",
+      "doNotRecord": "Do not record",
+      "twoPartyStatesHint": "Some states require two-party consent.",
+      "announcementLabel": "Consent announcement (played at call start)",
+      "pauseSensitive": "Pause recording during sensitive info",
+      "pauseSensitiveHelp": "Best-effort; agent may pause when payment or PII is discussed",
+      "savingConsent": "Saving…",
+      "saveConsent": "Save recording consent",
+      "callRecording": "Call recording",
+      "callRecordingHelp": "All AI calls are recorded for quality and compliance",
+      "hipaaMode": "HIPAA mode",
+      "hipaaModeHelp": "Encrypt PHI, BAA required (+$99/mo on Scale plan)",
+      "dataRetention": "Data retention",
+      "retention30": "30 days",
+      "retention90": "90 days",
+      "retention180": "180 days",
+      "retention365": "1 year",
+      "retentionHelp": "Recordings and transcripts older than this are deleted automatically.",
+      "saveChanges": "Save changes",
+      "exportData": "Export all data",
+      "exportRequested": "Export requested. We'll email you when it's ready."
     },
     "errorReports": "Error reports",
     "errorsPage": {
+      "title": "Error reports",
       "breadcrumbSettings": "Settings",
       "breadcrumbErrorReports": "Error reports",
       "heading": "Error reports",
@@ -1352,7 +1481,33 @@
     "savePreferences": "Save preferences",
     "saveWeights": "Save weights",
     "saveWebhook": "Save webhook",
-    "leadScoring": "Lead scoring",
+    "leadScoring": {
+      "title": "Lead scoring",
+      "description": "Weights used to compute lead score (0–100) from calls and interactions. Scores recalculate after each call. Omit a key to use the default.",
+      "loading": "Loading…",
+      "resetToDefault": "Reset to default ({value})",
+      "saving": "Saving…",
+      "saveWeights": "Save weights",
+      "useAllDefaults": "Use all defaults",
+      "viewLeadsHint": "View leads to see scores. Scores update automatically after each call.",
+      "viewLeadsLink": "View leads",
+      "viewLeadsHintSuffix": " to see scores. Scores update automatically after each call.",
+      "loadFailed": "Failed to load lead scoring config.",
+      "saved": "Weights saved.",
+      "usingDefaults": "Using default weights.",
+      "weights": {
+        "baseScore": "Base score (0–100)",
+        "baseScoreHelp": "Starting score before any events",
+        "callCount": "Per call",
+        "durationOver2Min": "Call over 2 min",
+        "positiveSentiment": "Positive sentiment",
+        "pricingQuestion": "Asked about pricing",
+        "booked": "Booked appointment",
+        "returnCaller": "Return caller",
+        "negativeSentiment": "Negative sentiment",
+        "justBrowsing": "Just browsing / low intent"
+      }
+    },
     "activityLog": "Activity log",
     "deleteAllDataTitle": "Delete all data",
     "deleteAllDataMessage": "Delete all workspace data (calls, leads, agents)? This cannot be undone. Contact support to complete.",
@@ -2009,6 +2164,22 @@
   },
   "developer": {
     "pageTitle": "Developer — Recall Touch",
+    "justNow": "Just now",
+    "minAgo": "{count} min ago",
+    "hrAgo": "{count} hr ago",
+    "daysAgo": "{count} days ago",
+    "permissionAdmin": "Admin",
+    "permissionReadWrite": "Read/Write",
+    "permissionReadOnly": "Read only",
+    "permissionReadPlusWrite": "Read + Write",
+    "labelPlaceholder": "e.g. Production",
+    "urlPlaceholder": "https://...",
+    "copy": "Copy",
+    "revoke": "Revoke",
+    "active": "Active",
+    "createApiKey": "Create API Key",
+    "create": "Create",
+    "revokeKey": "Revoke key",
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Send events to your HTTP endpoints with signed payloads for calls, leads, appointments, and more.",
@@ -2460,6 +2631,20 @@
     "marketplaceNoNumbersFound": "No numbers found. Try a different area code or type.",
     "marketplaceAdding": "Adding…",
     "marketplaceGetThisNumber": "Get this number",
+    "releaseTitleUnassign": "Unassign from agent in Agents first",
+    "releaseTitleRelease": "Release number",
+    "releaseLabel": "Release",
+    "copyNumber": "Copy number",
+    "copied": "Copied",
+    "copiedAria": "Copied to clipboard",
+    "aiNumberReady": "Your AI number is ready! Calls to this number will be answered by your AI agent.",
+    "sendCode": "Send code",
+    "sending": "Sending…",
+    "verifyLabel": "Verify",
+    "verifying": "Verifying…",
+    "areaCodePlaceholder": "e.g. 503",
+    "areaCodePlaceholderAlt": "e.g. 212",
+    "emailPlaceholder": "your@email.com",
     "toast": {
       "numberConnected": "Number connected. You can now receive calls and texts.",
       "saved": "Settings saved.",

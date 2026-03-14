@@ -156,25 +156,25 @@ export function LeadsList({
                 />
               </th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
-                Name
+                {tLeads("table.name")}
               </th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
-                Phone
+                {tLeads("table.phone")}
               </th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
-                Source
+                {tLeads("table.source")}
               </th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
-                Score
+                {tLeads("table.score")}
               </th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
-                Stage
+                {tLeads("table.stage")}
               </th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
-                Last contact
+                {tLeads("table.lastContact")}
               </th>
               <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
-                Agent
+                {tLeads("table.agent")}
               </th>
             </tr>
           </thead>

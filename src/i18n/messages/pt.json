@@ -412,7 +412,20 @@
     "status": {
       "live": "Live",
       "ready": "Ready",
-      "calls": "calls"
+      "calls": "calls",
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "defaultBadge": "Padrão",
+    "callsSuffix": "chamadas",
+    "toast": { "paused": "Agente pausado", "active": "Agente ativo" },
+    "actions": {
+      "activate": "Ativar",
+      "deactivate": "Desativar",
+      "pause": "Pausar",
+      "on": "Ligar",
+      "editAgent": "Editar agente",
+      "deleteAgent": "Excluir agente"
     },
     "noCallsYet": "Ainda sem chamadas",
     "callsCount": "{count} chamadas",
@@ -444,7 +457,15 @@
       "customRuleLabel": "Adicionar regra personalizada",
       "customRulePlaceholder": "Adicionar regra… (pressione Enter)",
       "transferPhoneLabel": "Transferir para este número ao escalar",
-      "transferPhonePlaceholder": "+1 (555) 000-0000"
+      "transferPhonePlaceholder": "+1 (555) 000-0000",
+      "objectionPriceLabel": "Objeção de preço",
+      "objectionPricePlaceholder": "Entendo que o orçamento é importante. Os nossos clientes costumam ver ROI no primeiro mês...",
+      "objectionTimingLabel": "\"Não é a altura certa\"",
+      "objectionTimingPlaceholder": "Compreendo. Ajudaria se entrasse em contacto daqui a uma ou duas semanas?",
+      "objectionCompetitorLabel": "Comparar concorrentes",
+      "objectionCompetitorPlaceholder": "É uma abordagem inteligente. O que está a comparar especificamente? Posso destacar as nossas diferenças.",
+      "objectionNotInterestedLabel": "\"Não interessado\"",
+      "objectionNotInterestedPlaceholder": "Sem problema. O que teria de mudar para isto ser útil?"
     },
     "deleteAgent": "Excluir agente",
     "deleteAgentTitle": "Excluir agente",
@@ -498,7 +519,13 @@
       "neverSayPlaceholder": "ex. Dar preços específicos por telefone",
       "objectionPlaceholder": "Como responder quando alguém não está interessado",
       "activeHoursPlaceholder": "ex. 9:00-17:00",
-      "timezonePlaceholder": "America/New_York"
+      "timezonePlaceholder": "America/New_York",
+      "purposeAnswerCalls": "Atender chamadas",
+      "purposeMakeCalls": "Fazer chamadas",
+      "purposeBoth": "Ambos",
+      "saveDraft": "Guardar rascunho",
+      "next": "Seguinte",
+      "launch": "Lançar"
     }
   },
   "calls": {
@@ -590,10 +617,26 @@
       "exportSuccess": "Chamadas exportadas. Verifique seus downloads."
     },
     "live": {
+      "selectWorkspace": "Selecione um espaço para ver chamadas ao vivo.",
+      "breadcrumbCalls": "Chamadas",
+      "breadcrumbLive": "Ao vivo",
+      "pageTitle": "Monitoramento de chamadas ao vivo",
+      "pageSubtitle": "Chamadas ativas no seu espaço. Atualiza a cada 5 segundos.",
+      "inProgress": "Em andamento",
+      "waiting": "Em espera",
+      "noActiveCalls": "Nenhuma chamada ativa no momento.",
+      "noActiveCallsHint": "Novas chamadas aparecerão aqui quando começarem.",
+      "unknownCaller": "Chamador desconhecido",
+      "listenIn": "Ouvir (silencioso)",
+      "whisper": "Sussurrar (só agente)",
+      "bargeIn": "Intervir",
+      "liveTranscript": "Transcrição ao vivo",
+      "noTranscript": "— Ainda sem transcrição —",
+      "sentiment": "Sentimento: —",
+      "emergencyTakeover": "Tomada de emergência",
       "listenInComingSoon": "A escuta silenciosa estará disponível em breve.",
       "whisperComingSoon": "O modo sussurro estará disponível em breve.",
-      "bargeInComingSoon": "A intervenção direta estará disponível em breve.",
-      "emergencyTakeover": "Tomada de controle de emergência — entre em contato com o suporte para uma escalada urgente."
+      "bargeInComingSoon": "A intervenção direta estará disponível em breve."
     }
   },
   "callIntelligence": {
@@ -844,6 +887,36 @@
         "lost": "Perdeu"
       }
     },
+    "detail": {
+      "agent": "Agente",
+      "created": "Criado",
+      "contact": "Contato",
+      "name": "Nome",
+      "phone": "Telefone",
+      "email": "E-mail",
+      "whatTheyNeed": "O que precisam",
+      "stage": "Estágio",
+      "timeline": "Linha do tempo",
+      "callPrefix": "Chamada",
+      "notes": "Notas",
+      "notesPlaceholder": "Adicionar notas…",
+      "textButton": "Mensagem",
+      "addNote": "Adicionar nota",
+      "callTypeLabel": "Tipo de chamada",
+      "callTypes": { "default": "Padrão", "followUp": "Follow-up", "reminder": "Lembrete" },
+      "startingCall": "Iniciando…",
+      "haveAiCall": "IA ligar",
+      "archive": "Arquivar"
+    },
+    "table": {
+      "name": "Nome",
+      "phone": "Telefone",
+      "source": "Origem",
+      "score": "Pontuação",
+      "stage": "Estágio",
+      "lastContact": "Último contato",
+      "agent": "Agente"
+    },
     "empty": {
       "title": "Ainda não há leads",
       "body": "Sua IA começará a criar leads automaticamente à medida que fala com seus clientes.",
@@ -1000,10 +1073,37 @@
       "title": "Equipe e permissões"
     },
     "compliance": {
-      "title": "Conformidade"
+      "title": "Conformidade",
+      "subtitle": "Configurações de gravação, privacidade e retenção de dados.",
+      "recordingConsent": "Consentimento de gravação",
+      "consentDescription": "Escolha o modelo de consentimento para sua jurisdição. Bipartido exige anúncio no início da chamada.",
+      "consentMode": "Modo de consentimento",
+      "oneParty": "Uma parte (ex.: maioria dos EUA)",
+      "twoParty": "Duas partes (anúncio no início da chamada)",
+      "doNotRecord": "Não gravar",
+      "twoPartyStatesHint": "Alguns estados exigem consentimento de duas partes.",
+      "announcementLabel": "Anúncio de consentimento (reproduzido no início da chamada)",
+      "pauseSensitive": "Pausar gravação em informações sensíveis",
+      "pauseSensitiveHelp": "Melhor esforço; agente pode pausar em pagamento ou PII",
+      "savingConsent": "Salvando…",
+      "saveConsent": "Salvar consentimento de gravação",
+      "callRecording": "Gravação de chamadas",
+      "callRecordingHelp": "Todas as chamadas de IA são gravadas para qualidade e conformidade",
+      "hipaaMode": "Modo HIPAA",
+      "hipaaModeHelp": "Criptografar PHI, BAA necessário (+US$ 99/mês no plano Scale)",
+      "dataRetention": "Retenção de dados",
+      "retention30": "30 dias",
+      "retention90": "90 dias",
+      "retention180": "180 dias",
+      "retention365": "1 ano",
+      "retentionHelp": "Gravações e transcrições mais antigas são excluídas automaticamente.",
+      "saveChanges": "Salvar alterações",
+      "exportData": "Exportar todos os dados",
+      "exportRequested": "Exportação solicitada. Enviaremos um e-mail quando estiver pronto."
     },
     "errorReports": "Relatórios de erro",
     "errorsPage": {
+      "title": "Relatórios de erro",
       "breadcrumbSettings": "Configurações",
       "breadcrumbErrorReports": "Relatórios de erro",
       "heading": "Relatórios de erro",
@@ -1021,7 +1121,33 @@
     "savePreferences": "Salvar preferências",
     "saveWeights": "Salvar pesos",
     "saveWebhook": "Salvar webhook",
-    "leadScoring": "Pontuação de leads",
+    "leadScoring": {
+      "title": "Pontuação de leads",
+      "description": "Pesos para calcular o score do lead (0–100) a partir de chamadas e interações. Os scores recalculam após cada chamada.",
+      "loading": "Carregando…",
+      "resetToDefault": "Restaurar padrão ({value})",
+      "saving": "Salvando…",
+      "saveWeights": "Salvar pesos",
+      "useAllDefaults": "Usar todos os padrões",
+      "viewLeadsHint": "Ver leads para ver scores. Atualizam automaticamente após cada chamada.",
+      "viewLeadsLink": "Ver leads",
+      "viewLeadsHintSuffix": " para ver scores. Atualizam automaticamente após cada chamada.",
+      "loadFailed": "Falha ao carregar configuração.",
+      "saved": "Pesos salvos.",
+      "usingDefaults": "Usando pesos padrão.",
+      "weights": {
+        "baseScore": "Score base (0–100)",
+        "baseScoreHelp": "Score inicial antes de eventos",
+        "callCount": "Por chamada",
+        "durationOver2Min": "Chamada acima de 2 min",
+        "positiveSentiment": "Sentimento positivo",
+        "pricingQuestion": "Perguntou sobre preços",
+        "booked": "Agendamento marcado",
+        "returnCaller": "Retorno",
+        "negativeSentiment": "Sentimento negativo",
+        "justBrowsing": "Só navegando / baixa intenção"
+      }
+    },
     "activityLog": "Registro de atividade",
     "deleteAllDataTitle": "Excluir todos os dados",
     "deleteAllDataMessage": "Excluir todos os dados do espaço (chamadas, leads, agentes)? Irreversível. Contate o suporte.",
@@ -1430,7 +1556,29 @@
     "defaultGreeting": "Obrigado por ligar para {business}! Como posso ajudar hoje?",
     "hint": {
       "micOrType": "Toque no microfone para falar ou digite abaixo."
-    }
+    },
+    "startConversation": "Iniciar conversa",
+    "orTryScenario": "Ou experimente um cenário:",
+    "scenarios": {
+      "normalCall": { "label": "Chamada normal", "prompt": "Olá, preciso de informações sobre os seus serviços." },
+      "bookingRequest": { "label": "Pedir agendamento", "prompt": "Quero marcar uma consulta para a próxima quinta-feira." },
+      "pricingQuestion": { "label": "Preços", "prompt": "Quanto custam os seus serviços?" },
+      "angryCaller": { "label": "Cliente irritado", "prompt": "Estou à espera de um retorno há três dias e ninguém me contactou. Isto é inaceitável." },
+      "wrongNumber": { "label": "Número errado", "prompt": "É a pizzaria da Rua Principal?" }
+    },
+    "youAsCaller": "Você (como chamador)",
+    "aiAgent": "Agente IA",
+    "thinking": "A pensar…",
+    "speaking": "A falar…",
+    "stopListening": "Parar de ouvir",
+    "listeningClickToStop": "A ouvir… clique para parar",
+    "tapToSpeak": "Toque para falar",
+    "inputPlaceholder": "Ou escreva a sua resposta…",
+    "inputAria": "Escreva a sua mensagem",
+    "send": "Enviar",
+    "reset": "Repor",
+    "testingLabel": "Teste: {name}",
+    "conversationAria": "Conversa"
   },
   "agents.voiceTest": {
     "scriptPlaceholder": "Digite o texto para ouvir na voz selecionada…",
@@ -1735,6 +1883,22 @@
   },
   "developer": {
     "pageTitle": "Developer — Recall Touch",
+    "justNow": "Agora mesmo",
+    "minAgo": "há {count} min",
+    "hrAgo": "há {count} h",
+    "daysAgo": "há {count} dias",
+    "permissionAdmin": "Admin",
+    "permissionReadWrite": "Leitura/escrita",
+    "permissionReadOnly": "Só leitura",
+    "permissionReadPlusWrite": "Leitura + escrita",
+    "labelPlaceholder": "ex. Produção",
+    "urlPlaceholder": "https://...",
+    "copy": "Copiar",
+    "revoke": "Revogar",
+    "active": "Ativo",
+    "createApiKey": "Criar chave API",
+    "create": "Criar",
+    "revokeKey": "Revogar chave",
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Envie eventos para seus endpoints HTTP com payloads assinados para chamadas, leads, agendamentos e mais.",
@@ -2073,6 +2237,20 @@
     "marketplaceNoNumbersFound": "Nenhum número encontrado. Tente outro código de área ou tipo.",
     "marketplaceAdding": "A adicionar…",
     "marketplaceGetThisNumber": "Obter este número",
+    "releaseTitleUnassign": "Desatribuir no Agentes primeiro",
+    "releaseTitleRelease": "Liberar número",
+    "releaseLabel": "Liberar",
+    "copyNumber": "Copiar número",
+    "copied": "Copiado",
+    "copiedAria": "Copiado para a área de transferência",
+    "aiNumberReady": "O seu número de IA está pronto! As chamadas para este número serão atendidas pelo seu agente de IA.",
+    "sendCode": "Enviar código",
+    "sending": "A enviar…",
+    "verifyLabel": "Verificar",
+    "verifying": "A verificar…",
+    "areaCodePlaceholder": "ex. 503",
+    "areaCodePlaceholderAlt": "ex. 212",
+    "emailPlaceholder": "seu@email.com",
     "toast": {
       "numberConnected": "Número ligado. Já pode receber chamadas e mensagens.",
       "saved": "Definições guardadas.",

@@ -77,16 +77,19 @@ interface EventLogRow {
 
 type TabId = "keys" | "webhooks" | "events";
 
-function formatRelative(timestamp: string): string {
+function formatRelative(
+  timestamp: string,
+  t: (key: string, values?: Record<string, number>) => string
+): string {
   const d = new Date(timestamp).getTime();
   const diff = Date.now() - d;
   const min = Math.floor(diff / 60000);
   const hour = Math.floor(diff / 3600000);
   const day = Math.floor(diff / 86400000);
-  if (min < 1) return "Just now";
-  if (min < 60) return `${min} min ago`;
-  if (hour < 24) return `${hour} hr ago`;
-  if (day < 7) return `${day} days ago`;
+  if (min < 1) return t("justNow");
+  if (min < 60) return t("minAgo", { count: min });
+  if (hour < 24) return t("hrAgo", { count: hour });
+  if (day < 7) return t("daysAgo", { count: day });
   return new Date(timestamp).toLocaleDateString();
 }
 
@@ -122,6 +125,8 @@ function ApiKeysTab({
   onCreate: (label: string, permission: ApiKeyPermission) => void;
   onCopyKey: (fullKey: string) => void;
 }) {
+  const t = useTranslations("developer");
+  const tCommon = useTranslations("common");
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [revokeId, setRevokeId] = useState<string | null>(null);
   const [createModal, setCreateModal] = useState(false);
@@ -148,7 +153,7 @@ function ApiKeysTab({
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
         >
           <Plus className="w-4 h-4" />
-          Create API Key
+          {t("createApiKey")}
         </button>
       </div>
 
@@ -179,18 +184,18 @@ function ApiKeysTab({
                     }}
                     className="ml-2 inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-[var(--bg-card)]"
                   >
-                    <Copy className="w-3 h-3" /> Copy
+                    <Copy className="w-3 h-3" /> {t("copy")}
                   </button>
                 </td>
                 <td className="py-3 px-4">
                   <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-zinc-700 text-zinc-300">
-                    {key.permission === "admin" ? "Admin" : key.permission === "read_write" ? "Read/Write" : "Read only"}
+                    {key.permission === "admin" ? t("permissionAdmin") : key.permission === "read_write" ? t("permissionReadWrite") : t("permissionReadOnly")}
                   </span>
                 </td>
                 <td className="py-3 px-4 text-zinc-500">{formatDate(key.createdAt)}</td>
-                <td className="py-3 px-4 text-zinc-500">{formatRelative(key.lastUsedAt)}</td>
+                <td className="py-3 px-4 text-zinc-500">{formatRelative(key.lastUsedAt, t)}</td>
                 <td className="py-3 px-4">
-                  <span className="text-emerald-400 text-xs">Active</span>
+                  <span className="text-emerald-400 text-xs">{t("active")}</span>
                 </td>
                 <td className="py-3 px-2 relative">
                   <button
@@ -212,7 +217,7 @@ function ApiKeysTab({
                           }}
                           className="block w-full text-left px-3 py-2 text-sm text-[var(--accent-red)] hover:bg-[var(--bg-hover)]"
                         >
-                          Revoke
+                          {t("revoke")}
                         </button>
                       </div>
                     </>
@@ -233,7 +238,7 @@ function ApiKeysTab({
           >
             <div className="flex items-start justify-between">
               <span className="font-medium text-white">{key.label}</span>
-              <span className="text-emerald-400 text-xs">Active</span>
+              <span className="text-emerald-400 text-xs">{t("active")}</span>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-mono text-xs text-zinc-500">{maskKey(key.keyPrefix, key.keySuffix)}</span>
@@ -242,22 +247,22 @@ function ApiKeysTab({
                 onClick={() => copyToClipboard(key.fullKey, () => onCopyKey(key.fullKey))}
                 className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-zinc-400 hover:text-white hover:bg-[var(--bg-card)]"
               >
-                <Copy className="w-3 h-3" /> Copy
+                <Copy className="w-3 h-3" /> {t("copy")}
               </button>
             </div>
             <div className="flex items-center gap-2 text-xs text-zinc-500">
               <span className="px-2 py-0.5 rounded bg-[var(--bg-card)] text-zinc-400">
-                {key.permission === "admin" ? "Admin" : key.permission === "read_write" ? "Read/Write" : "Read only"}
+                {key.permission === "admin" ? t("permissionAdmin") : key.permission === "read_write" ? t("permissionReadWrite") : t("permissionReadOnly")}
               </span>
               <span>Created {formatDate(key.createdAt)}</span>
-              <span>Used {formatRelative(key.lastUsedAt)}</span>
+              <span>Used {formatRelative(key.lastUsedAt, t)}</span>
             </div>
             <button
               type="button"
               onClick={() => setRevokeId(key.id)}
               className="text-xs text-[var(--accent-red)] hover:underline"
             >
-              Revoke key
+              {t("revokeKey")}
             </button>
           </div>
         ))}
@@ -267,7 +272,7 @@ function ApiKeysTab({
       {createModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setCreateModal(false)}>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-white mb-4">Create API Key</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">{t("createApiKey")}</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1.5">Label</label>
@@ -275,7 +280,7 @@ function ApiKeysTab({
                   type="text"
                   value={createLabel}
                   onChange={(e) => setCreateLabel(e.target.value)}
-                  placeholder="e.g. Production"
+                  placeholder={t("labelPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
               </div>
@@ -292,7 +297,7 @@ function ApiKeysTab({
                         className="rounded-full border-[var(--border-medium)] text-white focus:ring-[var(--border-medium)]"
                       />
                       <span className="text-sm text-zinc-300">
-                        {p === "read" ? "Read only" : p === "read_write" ? "Read + Write" : "Admin"}
+                        {p === "read" ? t("permissionReadOnly") : p === "read_write" ? t("permissionReadPlusWrite") : t("permissionAdmin")}
                       </span>
                     </label>
                   ))}
@@ -301,10 +306,10 @@ function ApiKeysTab({
             </div>
             <div className="flex justify-end gap-2 mt-6">
               <button type="button" onClick={() => setCreateModal(false)} className="px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-[var(--border-medium)]">
-                Cancel
+                {tCommon("cancel")}
               </button>
               <button type="button" onClick={handleCreateSubmit} disabled={!createLabel.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
-                Create
+                {t("create")}
               </button>
             </div>
           </div>
@@ -376,6 +381,7 @@ function WebhooksTab({
   onAdd: (url: string, events: WebhookEvent[]) => void;
   availableEvents: WebhookEvent[];
 }) {
+  const t = useTranslations("developer");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [addModal, setAddModal] = useState(false);
   const [payloadModal, setPayloadModal] = useState<string | null>(null);
@@ -436,8 +442,8 @@ function WebhooksTab({
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 <span className={`text-xs font-medium ${wh.lastDeliveryStatus === 200 ? "text-emerald-400" : "text-red-400"}`}>{wh.lastDeliveryStatus}</span>
-                <span className="text-xs text-zinc-500">{formatRelative(wh.lastDeliveryAt)}</span>
-                <span className="text-xs text-emerald-400">Active</span>
+                <span className="text-xs text-zinc-500">{formatRelative(wh.lastDeliveryAt, t)}</span>
+                <span className="text-xs text-emerald-400">{t("active")}</span>
               </div>
             </button>
             {expandedId === wh.id && (
@@ -448,7 +454,7 @@ function WebhooksTab({
                     <div key={d.id} className="flex items-center justify-between gap-2 py-2 border-b border-[var(--border-default)]/80 last:border-0">
                       <div>
                         <span className="text-xs text-zinc-400">{d.eventType}</span>
-                        <span className="text-[10px] text-zinc-600 ml-2">{formatRelative(d.timestamp)}</span>
+                        <span className="text-[10px] text-zinc-600 ml-2">{formatRelative(d.timestamp, t)}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`text-xs font-mono ${d.statusCode === 200 ? "text-emerald-400" : "text-red-400"}`}>{d.statusCode}</span>
@@ -481,7 +487,7 @@ function WebhooksTab({
                   type="url"
                   value={newUrl}
                   onChange={(e) => setNewUrl(e.target.value)}
-                  placeholder="https://..."
+                  placeholder={t("urlPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white font-mono text-sm placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
                 />
               </div>
@@ -537,6 +543,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
   onKindFilter: (v: EventLogKind | "all") => void;
   onStatusFilter: (v: EventLogStatus | "all") => void;
 }) {
+  const t = useTranslations("developer");
   const tCommon = useTranslations("common");
 
   const filtered = events.filter((e) => {
@@ -594,7 +601,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
           <tbody>
             {filtered.map((row) => (
               <tr key={row.id} className="border-b border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]">
-                <td className="py-3 px-4 text-zinc-500 text-xs">{formatRelative(row.timestamp)}</td>
+                <td className="py-3 px-4 text-zinc-500 text-xs">{formatRelative(row.timestamp, t)}</td>
                 <td className="py-3 px-4 text-zinc-300">{row.kind === "api_call" ? "API Call" : "Webhook Delivery"}</td>
                 <td className="py-3 px-4 font-mono text-xs text-zinc-400">
                   {row.kind === "api_call" ? `${row.method} ${row.endpoint}` : row.webhookUrl}
@@ -613,7 +620,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
         {filtered.map((row) => (
           <div key={row.id} className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-zinc-500">{formatRelative(row.timestamp)}</span>
+              <span className="text-xs text-zinc-500">{formatRelative(row.timestamp, t)}</span>
               <span className={`font-mono text-xs ${row.statusCode >= 200 && row.statusCode < 300 ? "text-emerald-400" : "text-red-400"}`}>{row.statusCode}</span>
             </div>
             <p className="text-sm text-zinc-300">{row.kind === "api_call" ? "API Call" : "Webhook"}</p>

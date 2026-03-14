@@ -239,40 +239,20 @@ export function BehaviorStepContent({
 
         <div className="space-y-3">
           {[
-            {
-              id: "price" as const,
-              label: "Price objection",
-              placeholder:
-                "I understand budget is important. Our clients typically see ROI within the first month...",
-            },
-            {
-              id: "timing" as const,
-              label: "\"Not the right time\"",
-              placeholder:
-                "I completely understand. Would it help if I followed up in a week or two?",
-            },
-            {
-              id: "competitor" as const,
-              label: "Comparing competitors",
-              placeholder:
-                "That's a smart approach. What specifically are you comparing? I can highlight where we differ.",
-            },
-            {
-              id: "notInterested" as const,
-              label: "\"Not interested\"",
-              placeholder:
-                "No problem at all. Can I ask what would need to change for this to be useful?",
-            },
+            { id: "price" as const, labelKey: "objectionPriceLabel" as const, placeholderKey: "objectionPricePlaceholder" as const },
+            { id: "timing" as const, labelKey: "objectionTimingLabel" as const, placeholderKey: "objectionTimingPlaceholder" as const },
+            { id: "competitor" as const, labelKey: "objectionCompetitorLabel" as const, placeholderKey: "objectionCompetitorPlaceholder" as const },
+            { id: "notInterested" as const, labelKey: "objectionNotInterestedLabel" as const, placeholderKey: "objectionNotInterestedPlaceholder" as const },
           ].map((obj) => (
             <div key={obj.id}>
               <label className="text-xs text-white/50 mb-1 block">
-                {obj.label}
+                {t(`behavior.${obj.labelKey}`)}
               </label>
               <textarea
                 value={(objections as Record<string, string | undefined>)[obj.id] ?? ""}
                 onChange={(e) => setObjection(obj.id, e.target.value)}
                 rows={2}
-                placeholder={obj.placeholder}
+                placeholder={t(`behavior.${obj.placeholderKey}`)}
                 className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:border-zinc-500 focus:outline-none resize-none"
               />
             </div>

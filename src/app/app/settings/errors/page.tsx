@@ -33,12 +33,12 @@ export default function AppSettingsErrorsPage() {
 
   return (
     <div className="max-w-[700px] mx-auto p-4 md:p-6">
-      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Error reports" }]} />
-      <h1 className="text-lg font-semibold text-white mb-2">Error reports</h1>
-      <p className="text-sm text-zinc-500 mb-6">Recent client errors from this workspace. Use this to spot recurring issues.</p>
+      <Breadcrumbs items={[{ label: t("title"), href: "/app/settings" }, { label: t("errorsPage.title") }]} />
+      <h1 className="text-lg font-semibold text-white mb-2">{t("errorsPage.title")}</h1>
+      <p className="text-sm text-zinc-500 mb-6">{t("errorsPage.description")}</p>
 
       {loading ? (
-        <p className="text-sm text-zinc-500">Loading…</p>
+        <p className="text-sm text-zinc-500">{t("errorsPage.loading")}</p>
       ) : (
         <>
           {Object.keys(grouped).length > 0 && (
@@ -55,7 +55,7 @@ export default function AppSettingsErrorsPage() {
             </div>
           )}
           {entries.length === 0 ? (
-            <p className="text-sm text-zinc-500">No error reports yet.</p>
+            <p className="text-sm text-zinc-500">{t("errorsPage.empty")}</p>
           ) : (
             <ul className="space-y-3">
               {entries.map((e) => (

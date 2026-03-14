@@ -269,9 +269,9 @@ export default function NewAgentWizardClient({
             <div className="grid grid-cols-3 gap-3 mb-6">
               {(
                 [
-                  { value: "inbound" as const, label: "Answer calls", icon: PhoneIncoming },
-                  { value: "outbound" as const, label: "Make calls", icon: PhoneOutgoing },
-                  { value: "both" as const, label: "Both", icon: Phone },
+                  { value: "inbound" as const, label: t("purposeAnswerCalls"), icon: PhoneIncoming },
+                  { value: "outbound" as const, label: t("purposeMakeCalls"), icon: PhoneOutgoing },
+                  { value: "both" as const, label: t("purposeBoth"), icon: Phone },
                 ] as const
               ).map(({ value, label, icon: Icon }) => (
                 <button
@@ -535,7 +535,7 @@ export default function NewAgentWizardClient({
             disabled={saving}
             className="border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-zinc-800 disabled:opacity-50"
           >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save draft"}
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t("saveDraft")}
           </button>
           <button
             type="button"
@@ -543,7 +543,7 @@ export default function NewAgentWizardClient({
             disabled={saving}
             className="flex items-center gap-1 bg-white text-black font-semibold rounded-xl px-6 py-2.5 text-sm hover:bg-zinc-100 disabled:opacity-50"
           >
-            {step === 7 ? "Launch" : "Next"}
+            {step === 7 ? t("launch") : t("next")}
             {step < 7 && <ChevronRight className="w-4 h-4" />}
           </button>
         </div>
