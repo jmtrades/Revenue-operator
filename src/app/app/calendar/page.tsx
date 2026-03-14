@@ -29,13 +29,13 @@ function apiToAppointment(a: {
   status: string;
   contactName?: string;
   external_calendar_id?: string;
-}): Appointment {
+}, t: (key: string) => string): Appointment {
   const start = new Date(a.start_time);
   const end = a.end_time ? new Date(a.end_time) : new Date(start.getTime() + 60 * 60 * 1000);
   const durationMinutes = Math.round((end.getTime() - start.getTime()) / 60000);
   return {
     id: a.id,
-    contact: a.contactName ?? "Contact",
+    contact: a.contactName ?? t("calendar.defaultContact"),
     service: a.title,
     date: start.toISOString().slice(0, 10),
     time: start.toTimeString().slice(0, 5),
@@ -80,11 +80,11 @@ export default function AppCalendarPage() {
       .then((r) => (r.ok ? r.json() : { appointments: [] }))
       .then((data: { appointments?: Array<{ id: string; title: string; start_time: string; end_time?: string | null; status: string; contactName?: string; external_calendar_id?: string }> }) => {
         const list = (data.appointments ?? []).filter((a) => a.status !== "cancelled");
-        setAppointments(list.map(apiToAppointment));
+        setAppointments(list.map((a) => apiToAppointment(a, t)));
       })
       .catch(() => setAppointments([]))
       .finally(() => setLoading(false));
-  }, [workspaceId]);
+  }, [workspaceId, t]);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -139,9 +139,9 @@ export default function AppCalendarPage() {
       .then((r) => (r.ok ? r.json() : null))
       .then((created) => {
         if (created) {
-          setAppointments((prev) => [...prev, apiToAppointment(created)]);
+          setAppointments((prev) => [...prev, apiToAppointment(created, t)]);
           setShowNew(false);
-          setSelected(apiToAppointment(created));
+          setSelected(apiToAppointment(created, t));
         }
       })
       .finally(() => setSaving(false));
@@ -161,7 +161,7 @@ export default function AppCalendarPage() {
       .then((r) => (r.ok ? r.json() : null))
       .then((updated) => {
         if (updated) {
-          const apt = apiToAppointment(updated);
+          const apt = apiToAppointment(updated, t);
           setSelected(apt);
           setAppointments((prev) => prev.map((a) => (a.id === selected.id ? apt : a)));
         }

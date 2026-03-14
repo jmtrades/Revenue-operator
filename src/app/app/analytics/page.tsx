@@ -384,7 +384,15 @@ export default function AppAnalyticsPage() {
   }, [filteredCalls]);
 
   const heatmap = useMemo(() => {
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+    const days = [
+      t("analytics.days.mon"),
+      t("analytics.days.tue"),
+      t("analytics.days.wed"),
+      t("analytics.days.thu"),
+      t("analytics.days.fri"),
+      t("analytics.days.sat"),
+      t("analytics.days.sun"),
+    ] as const;
     const base = days.map((day) => ({
       day,
       hours: Array.from({ length: 24 }).map((_, h) => ({
@@ -402,7 +410,7 @@ export default function AppAnalyticsPage() {
       row.hours[hour].value += 1;
     }
     return base;
-  }, [filteredCalls]);
+  }, [filteredCalls, t]);
 
   const funnelData = useMemo(() => {
     const totalCallsCount = totalCalls;
@@ -641,8 +649,13 @@ export default function AppAnalyticsPage() {
             </p>
             <p className="text-sm text-zinc-300 mt-1">
               {hasData
-                ? `Handled ${totalCalls} calls, created ${callsWithLead} leads, booked ${appointments} appointments, and protected an estimated $${estRevenueImpact.toLocaleString()} in revenue.`
-                : "Once calls start coming in, you’ll see a summary of how many became leads, appointments, and revenue."}
+                ? t("analytics.glanceSummary", {
+                    totalCalls: totalCalls.toString(),
+                    leads: callsWithLead.toString(),
+                    appointments: appointments.toString(),
+                    revenue: estRevenueImpact.toLocaleString(),
+                  })
+                : t("analytics.emptyStateSummary")}
             </p>
           </div>
         </div>
@@ -693,7 +706,7 @@ export default function AppAnalyticsPage() {
                             key={cell.hour}
                             className="h-5 rounded-[3px]"
                             style={{ backgroundColor: bg }}
-                            title={`${row.day} ${formatHour(cell.hour)}: ${cell.value} calls`}
+                            title={`${row.day} ${formatHour(cell.hour, t)}: ${cell.value} calls`}
                           />
                         );
                       })}
@@ -803,8 +816,8 @@ function formatDuration(seconds: number): string {
   return `${m}m ${s.toString().padStart(2, "0")}s`;
 }
 
-function formatHour(hour: number): string {
-  const suffix = hour < 12 ? "AM" : "PM";
+function formatHour(hour: number, t: (k: string) => string): string {
+  const suffix = hour < 12 ? t("analytics.am") : t("analytics.pm");
   const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
   return `${h12} ${suffix}`;
 }

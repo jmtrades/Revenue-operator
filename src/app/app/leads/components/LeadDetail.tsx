@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Phone, MessageSquare, Calendar, StickyNote, Archive } from "lucide-react";
 import type { LeadView } from "../page";
+import { getStatusDisplay, getSourceDisplay } from "../page";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -51,6 +52,7 @@ export function LeadDetail({
   onHaveAICall,
   outboundCalling,
 }: LeadDetailProps) {
+  const tRoot = useTranslations();
   const t = useTranslations("leads");
   return (
     <div className="space-y-5">
@@ -62,9 +64,9 @@ export function LeadDetail({
           {lead.score}
         </span>
         <div>
-          <p className="text-xs text-zinc-500">{lead.service} · {lead.source}</p>
+          <p className="text-xs text-zinc-500">{lead.service} · {getSourceDisplay(lead.source, tRoot)}</p>
           <div className="mt-1 flex flex-wrap items-center gap-2">
-            <Badge variant={lead.status === "Won" ? "success" : lead.status === "Lost" ? "error" : "neutral"}>{lead.status}</Badge>
+            <Badge variant={lead.status === "Won" ? "success" : lead.status === "Lost" ? "error" : "neutral"}>{getStatusDisplay(lead.status, tRoot)}</Badge>
             <span className="text-[11px] text-zinc-500">Agent: {lead.assignedAgent}</span>
             <span className="text-[11px] text-zinc-500">Created {formatDate(lead.createdAt)}</span>
           </div>
@@ -80,7 +82,7 @@ export function LeadDetail({
         </div>
       </section>
 
-      {lead.service && lead.service !== "Service request" && (
+      {lead.service && lead.service !== t("defaultService") && (
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">What they need</h3>
           <p className="text-sm text-zinc-200">{lead.service}</p>
@@ -95,7 +97,7 @@ export function LeadDetail({
           className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-[var(--border-medium)]"
         >
           {STATUS_ORDER.map((s) => (
-            <option key={s} value={s}>{s}</option>
+            <option key={s} value={s}>{getStatusDisplay(s, tRoot)}</option>
           ))}
         </select>
       </section>
