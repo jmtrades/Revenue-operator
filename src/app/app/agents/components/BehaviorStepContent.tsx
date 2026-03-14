@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Agent } from "../AgentsPageClient";
 import { RulesTab } from "../AgentsPageClient";
 
@@ -16,6 +17,7 @@ export function BehaviorStepContent({
   onBack,
   onNext,
 }: BehaviorStepContentProps) {
+  const t = useTranslations("agents");
   const NEVER_DO_PRESETS = [
     "Never discuss pricing or give quotes",
     "Never schedule outside business hours",
@@ -112,12 +114,12 @@ export function BehaviorStepContent({
             htmlFor="custom-never-do"
             className="block text-[11px] text-[var(--text-tertiary)] mb-1"
           >
-            Add custom rule
+            {t("behavior.customRuleLabel")}
           </label>
           <input
             id="custom-never-do"
             type="text"
-            placeholder="Add custom rule… (press Enter)"
+            placeholder={t("behavior.customRulePlaceholder")}
             className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-xs text-white placeholder:text-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -288,12 +290,12 @@ export function BehaviorStepContent({
         <div className="space-y-3">
           <div>
             <label className="text-xs text-white/50 mb-1 block">
-              Transfer to this number when escalating
+              {t("behavior.transferPhoneLabel")}
             </label>
             <input
               value={agent.transferPhone || ""}
               onChange={(e) => onChange({ transferPhone: e.target.value })}
-              placeholder="+1 (555) 000-0000"
+              placeholder={t("behavior.transferPhonePlaceholder")}
               className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:border-zinc-500 focus:outline-none"
             />
           </div>

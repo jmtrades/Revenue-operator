@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Mic } from "lucide-react";
 
 type AgentId = "sarah" | "alex" | "emma";
@@ -72,6 +73,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
     onUserMessage,
   } = props;
 
+  const t = useTranslations("messages");
   const [agent, setAgent] = useState<AgentId>(initialAgent);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -272,7 +274,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
               }
             }}
             className="flex-1 w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 outline-none"
-            placeholder="Type your message..."
+            placeholder={t("inputPlaceholder")}
             aria-label="Message input"
           />
           <button

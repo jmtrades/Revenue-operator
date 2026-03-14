@@ -118,7 +118,13 @@
       "subtitle": "Willkommen zurück bei Recall Touch",
       "button": "Anmelden",
       "pageTitle": "Anmelden — Recall Touch",
-      "googleComingSoon": "Demnächst verfügbar…"
+      "googleComingSoon": "Demnächst verfügbar…",
+      "emailPlaceholder": "sie@unternehmen.com",
+      "passwordPlaceholder": "Passwort eingeben",
+      "showPassword": "Anzeigen",
+      "hidePassword": "Ausblenden",
+      "showPasswordAria": "Passwort anzeigen",
+      "hidePasswordAria": "Passwort ausblenden"
     },
     "email": {
       "label": "E-Mail-Adresse"
@@ -434,7 +440,11 @@
       "qualification": {
         "title": "Qualifikationskriterien",
         "subtitle": "Beschreibe deinem Agenten, wie ein qualifizierter Lead für dein Unternehmen aussieht."
-      }
+      },
+      "customRuleLabel": "Eigene Regel hinzufügen",
+      "customRulePlaceholder": "Eigene Regel hinzufügen… (Enter drücken)",
+      "transferPhoneLabel": "Bei Eskalation an diese Nummer weiterleiten",
+      "transferPhonePlaceholder": "+1 (555) 000-0000"
     },
     "deleteAgent": "Agent löschen",
     "deleteAgentTitle": "Agent löschen",
@@ -479,7 +489,16 @@
         "created": "Agent created and synced",
         "createFailed": "Could not create agent",
         "agentLive": "Your AI agent is live!"
-      }
+      },
+      "namePlaceholder": "z. B. Rezeption",
+      "greetingPlaceholder": "Was der Agent zu Beginn des Anrufs sagt",
+      "businessHoursPlaceholder": "z. B. Mo–Fr 9–17 Uhr",
+      "questionPlaceholder": "Frage",
+      "answerPlaceholder": "Antwort",
+      "neverSayPlaceholder": "z. B. Konkrete Preise am Telefon nennen",
+      "objectionPlaceholder": "So reagieren, wenn jemand nicht interessiert ist",
+      "activeHoursPlaceholder": "z. B. 9:00-17:00",
+      "timezonePlaceholder": "America/New_York"
     }
   },
   "calls": {
@@ -516,7 +535,23 @@
       "outcome": "Ergebnis",
       "duration": "Dauer",
       "transcript": "Transkript",
+      "viewLead": "Lead-Details anzeigen →",
+      "recording": "Aufnahme",
+      "transcriptDesc": "Transkript (KI-verarbeitet, Anrufer- und Agentenbeiträge)",
       "noTranscript": "Kein Transkript für diesen Anruf.",
+      "actionsTaken": "Durchgeführte Aktionen",
+      "actions": {
+        "appointmentBooked": "Termin gebucht",
+        "leadCaptured": "Lead erfasst",
+        "callTransferred": "Anruf weitergeleitet",
+        "voicemailLeft": "Mailboxnachricht hinterlassen",
+        "callHandled": "Anruf bearbeitet"
+      },
+      "notes": "Notizen",
+      "callBack": "Rückruf",
+      "sendSms": "SMS senden",
+      "addToLeads": "Zu Leads hinzufügen",
+      "flag": "Markieren",
       "addToCallIntelligence": "Zur Anrufintelligenz hinzufügen",
       "leadInfo": "Lead-Informationen"
     },
@@ -563,10 +598,66 @@
   },
   "callIntelligence": {
     "pageTitle": "Call Intelligence — Recall Touch",
+    "heading": "Anrufintelligenz",
+    "pageSubtitle": "Analysieren Sie echte Gespräche, um Ihren KI-Agenten zu verbessern.",
     "title": "Anrufintelligenz",
     "tabs": {
       "analyzed": "Analysierte Anrufe",
       "manual": "Manuelle Analyse"
+    },
+    "stats": {
+      "callsAnalyzed": "Anrufe analysiert",
+      "insightsExtracted": "Insights extrahiert",
+      "appliedToAgent": "Auf Agent angewendet",
+      "avgQuality": "Ø Qualität"
+    },
+    "chart": {
+      "qualityTrends": "Qualitätstrends",
+      "noData": "Keine Daten in diesem Zeitraum. Analysieren Sie mehr Anrufe.",
+      "avgQuality": "Ø Qualität"
+    },
+    "commonIssues": {
+      "title": "Häufige Probleme",
+      "empty": "Keine wiederkehrenden Probleme in diesem Zeitraum.",
+      "calls": "Anrufe"
+    },
+    "leaderboard": {
+      "title": "Agenten-Ranking (Ø Qualität)",
+      "empty": "Noch keine Anrufe pro Agent."
+    },
+    "filters": {
+      "flagged": "Markiert (<60)",
+      "quality": {
+        "all": "Alle Qualität",
+        "excellent": "Ausgezeichnet (80+)",
+        "good": "Gut (60-79)",
+        "review": "Überprüfen (40-59)",
+        "flagged": "Markiert (0-39)"
+      }
+    },
+    "empty": {
+      "analyzed": "Noch keine analysierten Anrufe. Fügen Sie eine Transkription ein oder verbinden Sie Live-Anrufe."
+    },
+    "recording": "Aufnahme",
+    "notes": {
+      "label": "Interne Notiz",
+      "saved": "Notiz gespeichert.",
+      "saveFailed": "Notiz konnte nicht gespeichert werden.",
+      "save": "Notiz speichern"
+    },
+    "insights": {
+      "title": "Aktuelle Insights",
+      "empty": "Noch keine Insights. Analysieren Sie Anrufe für Verbesserungsvorschläge."
+    },
+    "questions": {
+      "title": "Häufige Fragen",
+      "desc": "Häufige Fragen aus Transkripten. Fügen Sie diese Ihrer Wissensdatenbank hinzu.",
+      "empty": "Fragen von Anrufern erscheinen hier nach der Analyse."
+    },
+    "analyze": {
+      "title": "Neuen Anruf analysieren",
+      "subtitle": "Transkript einfügen für Qualitätsbewertung, Insights und Verbesserungsvorschläge.",
+      "cta": "Analysieren Sie mehr Anrufe für tiefere Muster."
     },
     "types": {
       "sales": "Vertrieb",
@@ -923,6 +1014,10 @@
     },
     "saveMapping": "Zuordnung speichern",
     "saveProfile": "Profil speichern",
+    "savingProfile": "Wird gespeichert…",
+    "displayNameLabel": "Anzeigename",
+    "displayNamePlaceholder": "Ihr Name",
+    "timezoneLabel": "Zeitzone",
     "savePreferences": "Einstellungen speichern",
     "saveWeights": "Gewichtungen speichern",
     "saveWebhook": "Webhook speichern",
@@ -1338,6 +1433,7 @@
     }
   },
   "agents.voiceTest": {
+    "scriptPlaceholder": "Text eingeben, um ihn in der gewählten Stimme zu hören…",
     "toast": {
       "played": "{name} wurde abgespielt",
       "applied": "Stimme auf Agenten angewendet."

@@ -132,7 +132,7 @@ export default function SignInForm() {
                   setNoAccount(false);
                   setErr("");
                 }}
-                placeholder="you@company.com"
+                placeholder={t("signIn.emailPlaceholder")}
                 autoComplete="email"
                 aria-label="Email address"
                 className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-[var(--border-focus)] transition-all"
@@ -157,10 +157,10 @@ export default function SignInForm() {
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  aria-label={showPw ? "Hide password" : "Show password"}
+                  aria-label={showPw ? t("signIn.hidePasswordAria") : t("signIn.showPasswordAria")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] text-[13px] font-medium transition"
                 >
-                  {showPw ? "Hide" : "Show"}
+                  {showPw ? t("signIn.hidePassword") : t("signIn.showPassword")}
                 </button>
               </div>
             </div>

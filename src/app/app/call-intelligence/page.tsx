@@ -349,25 +349,25 @@ export default function CallIntelligencePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 p-6">
       <div>
-        <h1 className="text-xl font-semibold text-white">Call Intelligence</h1>
+        <h1 className="text-xl font-semibold text-white">{t("heading")}</h1>
         <p className="text-sm text-zinc-400 mt-1">
-          Analyze real conversations to make your AI agent smarter.
+          {t("pageSubtitle")}
         </p>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 bg-[#0A0A0B] border border-white/[0.06] rounded-xl p-1 mb-2">
+      <div className="flex gap-1 bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl p-1 mb-2">
         <button
           type="button"
           onClick={() => setActiveTab("analyzed")}
           className={cn(
             "px-4 py-2 rounded-lg text-sm font-medium transition-all",
             activeTab === "analyzed"
-              ? "bg-[#1A1A1D] text-[#EDEDEF]"
-              : "text-[#5A5A5C] hover:text-[#8B8B8D]",
+              ? "bg-[var(--bg-card)] text-[var(--text-primary)]"
+              : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]",
           )}
         >
-          Analyzed Calls
+          {t("tabs.analyzed")}
         </button>
         <button
           type="button"
@@ -375,11 +375,11 @@ export default function CallIntelligencePage() {
           className={cn(
             "px-4 py-2 rounded-lg text-sm font-medium transition-all",
             activeTab === "manual"
-              ? "bg-[#1A1A1D] text-[#EDEDEF]"
-              : "text-[#5A5A5C] hover:text-[#8B8B8D]",
+              ? "bg-[var(--bg-card)] text-[var(--text-primary)]"
+              : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]",
           )}
         >
-          Manual Analysis
+          {t("tabs.manual")}
         </button>
       </div>
 
@@ -389,28 +389,28 @@ export default function CallIntelligencePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
               <p className="text-2xl font-bold text-white">{analyzedCount}</p>
-              <p className="text-xs text-zinc-500 mt-1">Calls analyzed</p>
+              <p className="text-xs text-zinc-500 mt-1">{t("stats.callsAnalyzed")}</p>
             </div>
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
               <p className="text-2xl font-bold text-white">{insightCount}</p>
-              <p className="text-xs text-zinc-500 mt-1">Insights extracted</p>
+              <p className="text-xs text-zinc-500 mt-1">{t("stats.insightsExtracted")}</p>
             </div>
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
               <p className="text-2xl font-bold text-white">{appliedCount}</p>
-              <p className="text-xs text-zinc-500 mt-1">Applied to agent</p>
+              <p className="text-xs text-zinc-500 mt-1">{t("stats.appliedToAgent")}</p>
             </div>
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
               <p className="text-2xl font-bold text-white">
                 {avgScore != null ? `${avgScore}/10` : "—"}
               </p>
-              <p className="text-xs text-zinc-500 mt-1">Avg quality</p>
+              <p className="text-xs text-zinc-500 mt-1">{t("stats.avgQuality")}</p>
             </div>
           </div>
 
           {/* Quality Trends */}
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
             <div className="flex items-center justify-between gap-3 mb-4">
-              <h2 className="text-base font-medium text-white">Quality trends</h2>
+              <h2 className="text-base font-medium text-white">{t("chart.qualityTrends")}</h2>
               <div className="flex gap-1">
                 {([7, 30, 90] as const).map((d) => (
                   <button
@@ -430,20 +430,20 @@ export default function CallIntelligencePage() {
               </div>
             </div>
             {qualityTrendData.length === 0 ? (
-              <p className="text-sm text-zinc-500 py-6 text-center">No data in this range. Analyze more calls.</p>
+              <p className="text-sm text-zinc-500 py-6 text-center">{t("chart.noData")}</p>
             ) : (
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={qualityTrendData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#8B8B8D" }} stroke="#5A5A5C" />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "#8B8B8D" }} stroke="#5A5A5C" />
+                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--text-secondary)" }} stroke="var(--text-tertiary)" />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "var(--text-secondary)" }} stroke="var(--text-tertiary)" />
                     <Tooltip
-                      contentStyle={{ background: "#1A1A1D", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12 }}
-                      labelStyle={{ color: "#EDEDEF" }}
-                      formatter={(value) => [value != null ? String(value) : "—", "Avg score"]}
+                      contentStyle={{ background: "var(--bg-card)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12 }}
+                      labelStyle={{ color: "var(--text-primary)" }}
+                      formatter={(value) => [value != null ? String(value) : "—", t("chart.avgQuality")]}
                     />
-                    <Line type="monotone" dataKey="avgScore" stroke="#4F8CFF" strokeWidth={2} dot={{ fill: "#4F8CFF", r: 3 }} name="Avg quality" />
+                    <Line type="monotone" dataKey="avgScore" stroke="var(--accent-primary)" strokeWidth={2} dot={{ fill: "var(--accent-primary)", r: 3 }} name={t("chart.avgQuality")} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -453,15 +453,15 @@ export default function CallIntelligencePage() {
           {/* Common Issues + Agent Leaderboard row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
-              <h2 className="text-base font-medium text-white mb-3">Common issues</h2>
+              <h2 className="text-base font-medium text-white mb-3">{t("commonIssues.title")}</h2>
               {commonIssues.length === 0 ? (
-                <p className="text-sm text-zinc-500">No recurring issues in this period.</p>
+                <p className="text-sm text-zinc-500">{t("commonIssues.empty")}</p>
               ) : (
                 <ul className="space-y-2">
                   {commonIssues.map((issue) => (
                     <li key={issue.label} className="flex items-center justify-between text-sm">
                       <span className="text-zinc-300">{issue.label}</span>
-                      <span className="text-amber-400 font-medium">{issue.count} calls</span>
+                      <span className="text-amber-400 font-medium">{issue.count} {t("commonIssues.calls")}</span>
                     </li>
                   ))}
                 </ul>
@@ -478,7 +478,7 @@ export default function CallIntelligencePage() {
                       <span className="text-zinc-300">
                         {idx + 1}. {row.agentName}
                       </span>
-                      <span className="text-white font-medium">{row.avgScore} · {row.calls} calls</span>
+                      <span className="text-white font-medium">{row.avgScore} · {row.calls} {t("commonIssues.calls")}</span>
                     </li>
                   ))}
                 </ol>
@@ -487,10 +487,10 @@ export default function CallIntelligencePage() {
           </div>
 
           {/* Analyzed calls list */}
-          <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6">
+          <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-6">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-              <h2 className="text-base font-medium text-[#EDEDEF]">
-                Analyzed calls
+              <h2 className="text-base font-medium text-[var(--text-primary)]">
+                {t("tabs.analyzed")}
               </h2>
               <div className="flex items-center gap-2">
                 <button
@@ -504,18 +504,18 @@ export default function CallIntelligencePage() {
                   )}
                 >
                   <Flag className="w-3.5 h-3.5" />
-                  Flagged (&lt;60)
+                  {t("filters.flagged")}
                 </button>
                 <select
                   value={qualityFilter}
                   onChange={(e) => setQualityFilter(e.target.value as QualityBucket)}
-                  className="bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-[#EDEDEF] outline-none"
+                  className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-[var(--text-primary)] outline-none"
                 >
-                  <option value="all">All quality</option>
-                  <option value="excellent">Excellent (80+)</option>
-                  <option value="good">Good (60-79)</option>
-                  <option value="review">Needs Review (40-59)</option>
-                  <option value="flagged">Flagged (0-39)</option>
+                  <option value="all">{t("filters.quality.all")}</option>
+                  <option value="excellent">{t("filters.quality.excellent")}</option>
+                  <option value="good">{t("filters.quality.good")}</option>
+                  <option value="review">{t("filters.quality.review")}</option>
+                  <option value="flagged">{t("filters.quality.flagged")}</option>
                 </select>
               </div>
             </div>
@@ -525,9 +525,8 @@ export default function CallIntelligencePage() {
                 <div className="h-4 w-32 rounded-xl bg-white/[0.04] animate-pulse" />
               </div>
             ) : callExamples.length === 0 ? (
-              <p className="text-sm text-[#8B8B8D]">
-                No analyzed calls yet. Calls are automatically analyzed after they end, or
-                switch to Manual Analysis to paste a transcript.
+              <p className="text-sm text-[var(--text-secondary)]">
+                {t("empty.analyzed")}
               </p>
             ) : (
               <div className="space-y-3">
@@ -560,7 +559,7 @@ export default function CallIntelligencePage() {
                   return (
                     <div
                       key={call.id}
-                      className="bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-3"
+                      className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-3"
                     >
                       <button
                         type="button"
@@ -571,10 +570,10 @@ export default function CallIntelligencePage() {
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-[#EDEDEF] truncate">
+                            <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                               {call.title || t("untitledCall")}
                             </p>
-                            <span className="inline-flex items-center rounded-full border border-white/[0.08] px-2 py-0.5 text-[11px] text-[#8B8B8D]">
+                            <span className="inline-flex items-center rounded-full border border-white/[0.08] px-2 py-0.5 text-[11px] text-[var(--text-secondary)]">
                               {badgeLabel}
                             </span>
                             <span
@@ -591,19 +590,19 @@ export default function CallIntelligencePage() {
                               {quality.score} · {getScoreLabel(quality.bucket, t)}
                             </span>
                           </div>
-                          <p className="text-xs text-[#5A5A5C] mt-0.5">
+                          <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
                             {callDate} · {insightsForCall.length} insight
                             {insightsForCall.length === 1 ? "" : "s"}
                           </p>
                           {primaryInsight && (
-                            <p className="text-xs text-[#8B8B8D] mt-1 line-clamp-1">
+                            <p className="text-xs text-[var(--text-secondary)] mt-1 line-clamp-1">
                               {primaryInsight.insight}
                             </p>
                           )}
                         </div>
                         <ChevronDown
                           className={cn(
-                            "w-4 h-4 text-[#5A5A5C] mt-1 transition-transform",
+                            "w-4 h-4 text-[var(--text-tertiary)] mt-1 transition-transform",
                             isExpanded && "rotate-180",
                           )}
                         />
@@ -612,10 +611,10 @@ export default function CallIntelligencePage() {
                       {isExpanded && (
                         <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-3">
                           {call.audio_url && (
-                            <div className="rounded-xl bg-[#0A0A0B]/80 p-3">
+                            <div className="rounded-xl bg-[var(--bg-surface)]/80 p-3">
                               <p className="text-[11px] font-medium text-zinc-500 mb-2 flex items-center gap-1.5">
                                 <Music2 className="w-3.5 h-3.5" />
-                                Recording
+                                {t("recording")}
                               </p>
                               <audio
                                 src={call.audio_url}
@@ -635,13 +634,13 @@ export default function CallIntelligencePage() {
                             </div>
                           )}
                           <div>
-                            <p className="text-[11px] font-medium text-zinc-500 mb-1.5">Internal note</p>
+                            <p className="text-[11px] font-medium text-zinc-500 mb-1.5">{t("notes.label")}</p>
                             <textarea
                               value={callNotes[call.id] ?? ""}
                               onChange={(e) => setCallNotes((prev) => ({ ...prev, [call.id]: e.target.value }))}
                               placeholder={t("notePlaceholder")}
                               rows={2}
-                              className="w-full px-3 py-2 rounded-lg bg-[#0A0A0B] border border-white/[0.06] text-sm text-[#EDEDEF] placeholder:text-zinc-500 focus:border-[#4F8CFF] focus:outline-none resize-y"
+                              className="w-full px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-white/[0.06] text-sm text-[var(--text-primary)] placeholder:text-zinc-500 focus:border-[var(--accent-primary)] focus:outline-none resize-y"
                             />
                             <button
                               type="button"
@@ -651,15 +650,15 @@ export default function CallIntelligencePage() {
                                   const key = `rt_call_note_${call.id}`;
                                   if (note) localStorage.setItem(key, note);
                                   else localStorage.removeItem(key);
-                                  setToast("Note saved.");
+                                  setToast(t("notes.saved"));
                                 } catch {
-                                  setToast("Could not save note.");
+                                  setToast(t("notes.saveFailed"));
                                 }
                                 setTimeout(() => setToast(null), 2000);
                               }}
                               className="mt-1 text-xs font-medium text-[var(--accent-primary)] hover:underline"
                             >
-                              Save note
+                              {t("notes.save")}
                             </button>
                           </div>
                           {insightsForCall.length > 0 && (
@@ -668,7 +667,7 @@ export default function CallIntelligencePage() {
                             .filter((cat) => insightsByCatForCall[cat]?.length)
                             .map((cat) => (
                               <div key={cat}>
-                                <p className="text-[11px] font-medium uppercase tracking-wide text-[#5A5A5C] mb-1.5">
+                                <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-tertiary)] mb-1.5">
                                   {cat.replace(/_/g, " ")}
                                 </p>
                                 <div className="space-y-2">
@@ -678,11 +677,11 @@ export default function CallIntelligencePage() {
                                       className="flex items-start justify-between gap-3"
                                     >
                                       <div className="min-w-0 flex-1">
-                                        <p className="text-sm text-[#EDEDEF]">
+                                        <p className="text-sm text-[var(--text-primary)]">
                                           {i.insight}
                                         </p>
                                         {i.example_from_transcript && (
-                                          <p className="text-xs text-[#8B8B8D] mt-0.5 line-clamp-1">
+                                          <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-1">
                                             &quot;{i.example_from_transcript}&quot;
                                           </p>
                                         )}
@@ -702,14 +701,14 @@ export default function CallIntelligencePage() {
                                                   insight: i.insight,
                                                 })
                                               }
-                                              className="text-xs font-medium text-[#EDEDEF] hover:underline"
+                                              className="text-xs font-medium text-[var(--text-primary)] hover:underline"
                                             >
                                               Apply
                                             </button>
                                             <button
                                               type="button"
                                               onClick={() => handleDismiss(i.id)}
-                                              className="text-xs text-[#8B8B8D] hover:text-[#EDEDEF]"
+                                              className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
                                               Dismiss
                                             </button>
@@ -735,7 +734,7 @@ export default function CallIntelligencePage() {
           {/* Recent insights summary */}
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
             <h2 className="text-base font-medium text-white mb-4">
-              Recent insights
+              {t("insights.title")}
             </h2>
             {loading && callInsights.length === 0 ? (
               <div className="py-8 flex flex-col items-center justify-center text-center">
@@ -744,8 +743,7 @@ export default function CallIntelligencePage() {
               </div>
             ) : Object.keys(insightsByCategory).length === 0 ? (
               <p className="text-sm text-zinc-400 py-6">
-                No insights yet. Analyze a call in Manual Analysis to extract
-                insights, then apply them to your agent.
+                {t("insights.empty")}
               </p>
             ) : (
               <div className="space-y-4">
@@ -814,11 +812,10 @@ export default function CallIntelligencePage() {
           {/* Common Questions */}
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
             <h2 className="text-base font-medium text-white mb-4">
-              Common questions
+              {t("questions.title")}
             </h2>
             <p className="text-sm text-zinc-400 mb-3">
-              Frequently asked questions from analyzed transcripts. Add these to
-              your knowledge base to improve answers.
+              {t("questions.desc")}
             </p>
             {callInsights.filter(
               (i) =>
@@ -849,7 +846,7 @@ export default function CallIntelligencePage() {
               </ul>
             ) : (
               <p className="text-sm text-zinc-500">
-                Analyze more calls to see common questions from transcripts.
+                {t("questions.empty")}
               </p>
             )}
           </div>
@@ -857,14 +854,13 @@ export default function CallIntelligencePage() {
       )}
 
       {activeTab === "manual" && (
-        <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 space-y-4">
+        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-6 space-y-4">
           <div>
-            <h2 className="text-base font-medium text-[#EDEDEF]">
-              Analyze a new call
+            <h2 className="text-base font-medium text-[var(--text-primary)]">
+              {t("analyze.title")}
             </h2>
-            <p className="text-sm text-[#8B8B8D] mt-1">
-              Paste a transcript from a real call. We&apos;ll extract what makes
-              it effective and turn it into improvements for your agent.
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
+              {t("analyze.subtitle")}
             </p>
           </div>
           <input
@@ -872,12 +868,12 @@ export default function CallIntelligencePage() {
             placeholder={t("titlePlaceholder")}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[#EDEDEF] placeholder:text-[#5A5A5C] focus:border-[#4F8CFF] focus:outline-none"
+            className="w-full bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent-primary)] focus:outline-none"
           />
           <select
             value={callType}
             onChange={(e) => setCallType(e.target.value)}
-            className="w-full bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[#EDEDEF] focus:border-[#4F8CFF] focus:outline-none"
+            className="w-full bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none"
           >
             <option value="">Call type (optional)</option>
             {Object.entries(callTypeLabels).map(([k, v]) => (
@@ -891,7 +887,7 @@ export default function CallIntelligencePage() {
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}
             rows={8}
-            className="w-full bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[#EDEDEF] placeholder:text-[#5A5A5C] focus:border-[#4F8CFF] focus:outline-none resize-none"
+            className="w-full bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent-primary)] focus:outline-none resize-none"
           />
           <button
             type="button"

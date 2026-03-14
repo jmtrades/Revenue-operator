@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { Agent } from "../AgentsPageClient";
 import { AgentKnowledgePanel } from "./AgentKnowledgePanel";
 
@@ -17,6 +18,7 @@ export function KnowledgeStepContent({
   onBack,
   onNext,
 }: KnowledgeStepContentProps) {
+  const t = useTranslations("agents");
   const [seeding, setSeeding] = useState(false);
   const [importUrl, setImportUrl] = useState("");
   const [importing, setImporting] = useState(false);
@@ -106,7 +108,7 @@ export function KnowledgeStepContent({
               setImportUrl(e.target.value);
               setImportError(null);
             }}
-            placeholder="https://your-website.com"
+            placeholder={t("knowledgePanel.importUrlPlaceholder")}
             className="flex-1 min-w-[200px] rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
           />
           <button
