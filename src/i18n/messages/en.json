@@ -23,7 +23,15 @@
     "sectionMain": "Main",
     "sectionCommunication": "Communication",
     "sectionIntelligence": "Intelligence",
-    "sectionWorkspace": "Workspace"
+    "sectionWorkspace": "Workspace",
+    "shortcutCommandPalette": "Open command palette",
+    "shortcutDashboard": "Go to Dashboard",
+    "shortcutAgents": "Go to Agents",
+    "shortcutCalls": "Go to Calls",
+    "shortcutLeads": "Go to Leads",
+    "shortcutCampaigns": "Go to Campaigns",
+    "shortcutInbox": "Go to Inbox",
+    "shortcutHelp": "Show this help"
   },
   "common": {
     "save": "Save",
