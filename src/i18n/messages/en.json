@@ -261,6 +261,19 @@
       "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu",
       "fri": "Fri", "sat": "Sat", "sun": "Sun"
     },
+    "days": {
+      "sun": "Sun", "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu", "fri": "Fri", "sat": "Sat"
+    },
+    "activityType": {
+      "lead": "Lead",
+      "appointment": "Appointment",
+      "urgent": "Urgent",
+      "follow-up": "Follow-up"
+    },
+    "needsAttention": "Needs attention",
+    "recentSystemEvents": "Recent system events",
+    "setupEventsPlaceholder": "Your setup events will appear here.",
+    "viewLink": "View →",
     "noData": "No data",
     "greetingMorning": "Good morning",
     "greetingAfternoon": "Good afternoon",
@@ -361,6 +374,9 @@
     "atAGlance": "{label} at a glance",
     "glanceSummary": "Handled {totalCalls} calls, created {leads} leads, booked {appointments} appointments, and protected an estimated ${revenue} in revenue.",
     "glanceEmpty": "Once calls start coming in, you'll see a summary of how many became leads, appointments, and revenue.",
+    "emptyStateSummary": "Once calls start coming in, you'll see a summary of how many became leads, appointments, and revenue.",
+    "am": "AM",
+    "pm": "PM",
     "leadConversionPct": "Lead conversion {pct}%",
     "positiveSentimentPct": "Positive sentiment {pct}%",
     "peakHours": "Peak hours",
@@ -617,7 +633,17 @@
       "agent": "Agent",
       "actions": "Actions"
     },
+    "types": {
+      "inbound": "Inbound",
+      "outbound": "Outbound"
+    },
     "defaultCaller": "Caller",
+    "aiSummary": "AI Summary",
+    "noSummary": "No summary available.",
+    "callIntelligenceLabel": "Call intelligence",
+    "callIntelligenceDesc": "Send this call to Call Intelligence to compare patterns, coaching insights, and recurring objections over time.",
+    "addToIntelligence": "Add to Call Intelligence",
+    "addNotesPlaceholder": "Add notes…",
     "playRecording": "Play recording",
     "viewTranscript": "View transcript",
     "noMatchFilters": "No calls match these filters yet.",
@@ -787,6 +813,21 @@
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
     "scoreLabel": "Score",
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "appointmentSet": "Appointment Set",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "defaultName": "Lead",
+    "defaultService": "Service request",
+    "defaultDescription": "Lead captured from a recent conversation and kept in your pipeline.",
+    "timeline": {
+      "created": "Created from recent activity",
+      "addedToPipeline": "Lead added to active pipeline"
+    },
     "board": {
       "columns": {
         "new": "New",
@@ -826,6 +867,7 @@
   },
   "knowledge": {
     "pageTitle": "Knowledge — Recall Touch",
+    "defaultTitle": "Untitled",
     "addEntry": "Add entry",
     "editEntry": "Edit entry",
     "heading": "Knowledge Base",
@@ -1244,6 +1286,7 @@
     }
   },
   "calendar": {
+    "defaultContact": "Contact",
     "removeAppointmentTitle": "Remove appointment?",
     "pageTitle": "Calendar — Recall Touch",
     "heading": "Calendar",
@@ -1435,6 +1478,18 @@
     "pageTitle": "Appointments — Recall Touch",
     "heading": "Appointments",
     "description": "All booked appointments from calls, campaigns, and inbox.",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "statusLabels": {
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "defaultSource": "Inbound call",
+    "sourceOutbound": "Outbound",
+    "sourceInbox": "Inbox",
+    "sourceManual": "Manual",
     "viewList": "List",
     "viewCalendar": "Calendar",
     "table": {

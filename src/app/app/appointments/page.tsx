@@ -20,16 +20,36 @@ interface Appointment {
   source: AppointmentSource;
 }
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, t: (key: string) => string): string {
   const d = new Date(dateStr + "T12:00:00");
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   d.setHours(0, 0, 0, 0);
-  if (d.getTime() === today.getTime()) return "Today";
-  if (d.getTime() === tomorrow.getTime()) return "Tomorrow";
-  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  if (d.getTime() === today.getTime()) return t("appointments.today");
+  if (d.getTime() === tomorrow.getTime()) return t("appointments.tomorrow");
+  return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+}
+
+function getAppointmentStatusDisplay(status: AppointmentStatus, t: (k: string) => string): string {
+  const map: Record<AppointmentStatus, string> = {
+    "Confirmed": t("appointments.statusLabels.confirmed"),
+    "Pending": t("appointments.statusLabels.pending"),
+    "Cancelled": t("appointments.statusLabels.cancelled"),
+    "Completed": t("appointments.statusLabels.completed"),
+  };
+  return map[status] ?? status;
+}
+
+function getAppointmentSourceDisplay(source: AppointmentSource, t: (k: string) => string): string {
+  const map: Record<AppointmentSource, string> = {
+    "Inbound call": t("appointments.defaultSource"),
+    "Outbound": t("appointments.sourceOutbound"),
+    "Inbox": t("appointments.sourceInbox"),
+    "Manual": t("appointments.sourceManual"),
+  };
+  return map[source] ?? source;
 }
 
 function statusColor(status: AppointmentStatus): string {
@@ -186,7 +206,7 @@ export default function AppointmentsPage() {
                       className="border-b border-[var(--border-default)] hover:bg-[var(--bg-hover)] transition-colors"
                     >
                       <td className="py-3 px-4 text-white">
-                        {formatDate(apt.date)} · {apt.time}
+                        {formatDate(apt.date, t)} · {apt.time}
                       </td>
                       <td className="py-3 px-4 text-zinc-300">{apt.contactName}</td>
                       <td className="py-3 px-4 text-zinc-400">{apt.type}</td>
@@ -194,10 +214,10 @@ export default function AppointmentsPage() {
                         <span
                           className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border ${statusColor(apt.status)}`}
                         >
-                          {apt.status}
+                          {getAppointmentStatusDisplay(apt.status, t)}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-zinc-500 text-xs">{apt.source}</td>
+                      <td className="py-3 px-4 text-zinc-500 text-xs">{getAppointmentSourceDisplay(apt.source, t)}</td>
                       <td className="py-3 px-4">
                         <button
                           type="button"
@@ -233,7 +253,7 @@ export default function AppointmentsPage() {
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <h3 className="text-sm font-medium text-[#EDEDEF]">
-                  {currentMonth.toLocaleDateString("en-US", {
+                  {currentMonth.toLocaleDateString(undefined, {
                     month: "long",
                     year: "numeric",
                   })}
@@ -309,7 +329,7 @@ export default function AppointmentsPage() {
               {selectedDay && (
                 <div className="mt-4 pt-4 border-t border-white/[0.06]">
                   <h4 className="text-sm font-medium text-[#EDEDEF] mb-3">
-                    {selectedDay.toLocaleDateString("en-US", {
+                    {selectedDay.toLocaleDateString(undefined, {
                       weekday: "long",
                       month: "long",
                       day: "numeric",
@@ -328,7 +348,7 @@ export default function AppointmentsPage() {
                             {appt.type || appt.contactName}
                           </p>
                           <p className="text-xs text-[#5A5A5C] mt-0.5">
-                            {formatDate(appt.date)} · {appt.time}
+                            {formatDate(appt.date, t)} · {appt.time}
                           </p>
                           <p className="text-xs text-[#8B8B8D] mt-0.5">
                             {appt.contactName}
@@ -374,7 +394,7 @@ export default function AppointmentsPage() {
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between gap-4">
                 <dt className="text-zinc-500">{t("appointments.dateTimeLabel")}</dt>
-                <dd className="text-white">{formatDate(selected.date)} · {selected.time}</dd>
+                <dd className="text-white">{formatDate(selected.date, t)} · {selected.time}</dd>
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-zinc-500">{t("appointments.typeLabel")}</dt>
@@ -384,13 +404,13 @@ export default function AppointmentsPage() {
                 <dt className="text-zinc-500">{t("appointments.statusLabel")}</dt>
                 <dd>
                   <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border ${statusColor(selected.status)}`}>
-                    {selected.status}
+                    {getAppointmentStatusDisplay(selected.status, t)}
                   </span>
                 </dd>
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-zinc-500">{t("appointments.sourceLabel")}</dt>
-                <dd className="text-zinc-400 text-xs">{selected.source}</dd>
+                <dd className="text-zinc-400 text-xs">{getAppointmentSourceDisplay(selected.source, t)}</dd>
               </div>
             </dl>
             <div className="mt-4 pt-4 border-t border-[var(--border-default)] flex justify-end">

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import type { LeadView } from "../page";
+import { getStatusDisplay, getSourceDisplay } from "../page";
 
 type ScoreBucket = "all" | "high" | "medium" | "low";
 
@@ -53,7 +54,8 @@ export function LeadsList({
   toggleSelected,
   openDrawer,
 }: LeadsListProps) {
-  const t = useTranslations("leads");
+  const t = useTranslations();
+  const tLeads = useTranslations("leads");
   if (loading) {
     return (
       <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
@@ -114,21 +116,21 @@ export function LeadsList({
           aria-hidden
         />
         <p className="text-sm font-medium text-white mb-1">
-          {t("empty.subtitle")}
+          {tLeads("empty.subtitle")}
         </p>
         <p className="text-xs text-zinc-500 mb-4">
-          {t("empty.hint")}
+          {tLeads("empty.hint")}
         </p>
         <EmptyState
           icon={Users}
-          title={t("empty.title")}
-          description={t("empty.description")}
+          title={tLeads("empty.title")}
+          description={tLeads("empty.description")}
           primaryAction={{
-            label: t("addLead"),
+            label: tLeads("addLead"),
             href: "/app/leads?add=1",
           }}
           secondaryAction={{
-            label: t("empty.connectCrm"),
+            label: tLeads("empty.connectCrm"),
             href: "/app/settings/integrations",
           }}
         />
@@ -207,7 +209,7 @@ export function LeadsList({
                     {lead.phone}
                   </td>
                   <td className="py-3 px-4 text-xs">
-                    <Badge variant="neutral">{lead.source}</Badge>
+                    <Badge variant="neutral">{getSourceDisplay(lead.source, t)}</Badge>
                   </td>
                   <td className="py-3 px-4 text-xs">
                     <span
@@ -227,7 +229,7 @@ export function LeadsList({
                             : "neutral"
                       }
                     >
-                      {lead.status}
+                      {getStatusDisplay(lead.status, t)}
                     </Badge>
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-400">
@@ -270,7 +272,7 @@ export function LeadsList({
                 <p className="text-xs text-zinc-500">{lead.service}</p>
                 <div className="mt-1 flex items-center justify-between gap-2">
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
-                    {lead.status}
+                    {getStatusDisplay(lead.status, t)}
                   </span>
                   <span className="text-[11px] text-zinc-500">
                     {timeSince(lead.createdAt)}

@@ -266,6 +266,19 @@
       "sat": "Sam",
       "sun": "Dim"
     },
+    "days": {
+      "sun": "Dim", "mon": "Lun", "tue": "Mar", "wed": "Mer", "thu": "Jeu", "fri": "Ven", "sat": "Sam"
+    },
+    "activityType": {
+      "lead": "Prospect",
+      "appointment": "Rendez-vous",
+      "urgent": "Urgent",
+      "follow-up": "Suivi"
+    },
+    "needsAttention": "À surveiller",
+    "recentSystemEvents": "Événements système récents",
+    "setupEventsPlaceholder": "Vos événements de configuration apparaîtront ici.",
+    "viewLink": "Voir →",
     "noData": "Aucune donnée",
     "greetingMorning": "Bonjour",
     "greetingAfternoon": "Bon après-midi",
@@ -336,7 +349,10 @@
       "estRevenue": "Revenus est."
     },
     "leadFunnel": "Entonnoir de leads",
-    "successRate": "% de succès"
+    "successRate": "% de succès",
+    "emptyStateSummary": "Une fois les appels commencés, vous verrez un résumé du nombre de leads, rendez-vous et revenus.",
+    "am": "AM",
+    "pm": "PM"
   },
   "agents": {
     "pageTitle": "Agents — Recall Touch",
@@ -505,7 +521,14 @@
       "agent": "Agent",
       "actions": "Actions"
     },
+    "types": { "inbound": "Entrant", "outbound": "Sortant" },
     "defaultCaller": "Appelant",
+    "aiSummary": "Résumé IA",
+    "noSummary": "Aucun résumé disponible.",
+    "callIntelligenceLabel": "Intelligence d'appel",
+    "callIntelligenceDesc": "Envoyez cet appel à l'Intelligence d'appel pour comparer les tendances, les conseils et les objections récurrentes.",
+    "addToIntelligence": "Ajouter à l'Intelligence d'appel",
+    "addNotesPlaceholder": "Ajouter des notes…",
     "playRecording": "Lire l'enregistrement",
     "viewTranscript": "Voir la transcription",
     "noMatchFilters": "Aucun appel ne correspond à ces filtres.",
@@ -675,6 +698,21 @@
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
     "scoreLabel": "Score",
+    "status": {
+      "new": "Nouveau",
+      "contacted": "Contacté",
+      "qualified": "Qualifié",
+      "appointmentSet": "Rendez-vous programmé",
+      "won": "Gagné",
+      "lost": "Perdu"
+    },
+    "defaultName": "Prospect",
+    "defaultService": "Demande de service",
+    "defaultDescription": "Prospect capté lors d'une conversation récente et conservé dans votre pipeline.",
+    "timeline": {
+      "created": "Créé à partir de l'activité récente",
+      "addedToPipeline": "Prospect ajouté au pipeline actif"
+    },
     "board": {
       "columns": {
         "new": "Nouveaux",
@@ -1074,6 +1112,7 @@
     }
   },
   "calendar": {
+    "defaultContact": "Contact",
     "removeAppointmentTitle": "Supprimer le rendez-vous ?",
     "pageTitle": "Calendrier — Recall Touch",
     "heading": "Calendrier",
@@ -1151,6 +1190,7 @@
   },
   "knowledge": {
     "pageTitle": "Base de connaissances — Recall Touch",
+    "defaultTitle": "Sans titre",
     "addEntry": "Ajouter une entrée",
     "editEntry": "Modifier l'entrée",
     "heading": "Base de connaissances",
@@ -1346,6 +1386,18 @@
     "pageTitle": "Rendez-vous — Recall Touch",
     "heading": "Rendez-vous",
     "description": "Tous les rendez-vous réservés depuis les appels, campagnes et boîte de réception.",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "statusLabels": {
+      "confirmed": "Confirmé",
+      "pending": "En attente",
+      "cancelled": "Annulé",
+      "completed": "Terminé"
+    },
+    "defaultSource": "Appel entrant",
+    "sourceOutbound": "Sortant",
+    "sourceInbox": "Boîte de réception",
+    "sourceManual": "Manuel",
     "viewList": "Liste",
     "viewCalendar": "Calendrier",
     "table": {

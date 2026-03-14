@@ -261,6 +261,19 @@
       "mon": "Seg", "tue": "Ter", "wed": "Qua", "thu": "Qui",
       "fri": "Sex", "sat": "Sáb", "sun": "Dom"
     },
+    "days": {
+      "sun": "Dom", "mon": "Seg", "tue": "Ter", "wed": "Qua", "thu": "Qui", "fri": "Sex", "sat": "Sáb"
+    },
+    "activityType": {
+      "lead": "Lead",
+      "appointment": "Consulta",
+      "urgent": "Urgente",
+      "follow-up": "Acompanhamento"
+    },
+    "needsAttention": "Requer atenção",
+    "recentSystemEvents": "Eventos recentes do sistema",
+    "setupEventsPlaceholder": "Seus eventos de configuração aparecerão aqui.",
+    "viewLink": "Ver →",
     "noData": "Sem dados",
     "greetingMorning": "Bom dia",
     "greetingAfternoon": "Boa tarde",
@@ -331,7 +344,10 @@
       "estRevenue": "Receita est."
     },
     "leadFunnel": "Funil de leads",
-    "successRate": "% de sucesso"
+    "successRate": "% de sucesso",
+    "emptyStateSummary": "Quando as chamadas começarem a chegar, você verá um resumo de quantas viraram leads, consultas e receita.",
+    "am": "AM",
+    "pm": "PM"
   },
   "agents": {
     "pageTitle": "Agentes — Recall Touch",
@@ -471,7 +487,14 @@
       "body": "Quando seus agentes começarem a atender chamadas, você as verá aqui."
     },
     "table": { "dateTime": "Data / hora", "caller": "Chamador", "phone": "Telefone", "duration": "Duração", "outcome": "Resultado", "sentiment": "Sentimento", "agent": "Agente", "actions": "Ações" },
+    "types": { "inbound": "Entrada", "outbound": "Saída" },
     "defaultCaller": "Chamador",
+    "aiSummary": "Resumo IA",
+    "noSummary": "Nenhum resumo disponível.",
+    "callIntelligenceLabel": "Inteligência de chamadas",
+    "callIntelligenceDesc": "Envie esta chamada para Inteligência de chamadas para comparar padrões, insights de coaching e objeções recorrentes.",
+    "addToIntelligence": "Adicionar à Inteligência de chamadas",
+    "addNotesPlaceholder": "Adicionar notas…",
     "playRecording": "Reproduzir gravação",
     "viewTranscript": "Ver transcrição",
     "noMatchFilters": "Nenhuma chamada corresponde a esses filtros.",
@@ -607,6 +630,21 @@
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
     "scoreLabel": "Pontuação",
+    "status": {
+      "new": "Novo",
+      "contacted": "Contactado",
+      "qualified": "Qualificado",
+      "appointmentSet": "Consulta agendada",
+      "won": "Ganho",
+      "lost": "Perdido"
+    },
+    "defaultName": "Lead",
+    "defaultService": "Pedido de serviço",
+    "defaultDescription": "Lead capturado de uma conversa recente e mantido no seu pipeline.",
+    "timeline": {
+      "created": "Criado a partir de atividade recente",
+      "addedToPipeline": "Lead adicionado ao pipeline ativo"
+    },
     "board": {
       "columns": {
         "new": "Novos",
@@ -1006,6 +1044,7 @@
     }
   },
   "calendar": {
+    "defaultContact": "Contacto",
     "removeAppointmentTitle": "Remover compromisso?",
     "pageTitle": "Calendário — Recall Touch",
     "heading": "Calendário",
@@ -1075,6 +1114,7 @@
   },
   "knowledge": {
     "pageTitle": "Conhecimento — Recall Touch",
+    "defaultTitle": "Sem título",
     "addEntry": "Adicionar entrada",
     "editEntry": "Editar entrada",
     "heading": "Base de conhecimento",
@@ -1270,6 +1310,18 @@
     "pageTitle": "Agendamentos — Recall Touch",
     "heading": "Agendamentos",
     "description": "Todos os agendamentos feitos a partir de chamadas, campanhas e caixa de entrada.",
+    "today": "Hoje",
+    "tomorrow": "Amanhã",
+    "statusLabels": {
+      "confirmed": "Confirmado",
+      "pending": "Pendente",
+      "cancelled": "Cancelado",
+      "completed": "Concluído"
+    },
+    "defaultSource": "Chamada recebida",
+    "sourceOutbound": "Saída",
+    "sourceInbox": "Caixa de entrada",
+    "sourceManual": "Manual",
     "viewList": "Lista",
     "viewCalendar": "Calendário",
     "table": { "dateTime": "Data / Hora", "contact": "Contato", "type": "Tipo", "status": "Status", "source": "Origem" },

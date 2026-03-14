@@ -261,6 +261,19 @@
       "mon": "Mo", "tue": "Di", "wed": "Mi", "thu": "Do",
       "fri": "Fr", "sat": "Sa", "sun": "So"
     },
+    "days": {
+      "sun": "So", "mon": "Mo", "tue": "Di", "wed": "Mi", "thu": "Do", "fri": "Fr", "sat": "Sa"
+    },
+    "activityType": {
+      "lead": "Interessent",
+      "appointment": "Termin",
+      "urgent": "Dringend",
+      "follow-up": "Nachfassen"
+    },
+    "needsAttention": "Benötigt Aufmerksamkeit",
+    "recentSystemEvents": "Aktuelle Systemereignisse",
+    "setupEventsPlaceholder": "Deine Einrichtungsereignisse erscheinen hier.",
+    "viewLink": "Anzeigen →",
     "noData": "Keine Daten",
     "greetingMorning": "Guten Morgen",
     "greetingAfternoon": "Guten Tag",
@@ -331,7 +344,10 @@
       "estRevenue": "Gesch. Umsatz"
     },
     "leadFunnel": "Lead-Trichter",
-    "successRate": "Erfolg %"
+    "successRate": "Erfolg %",
+    "emptyStateSummary": "Sobald Anrufe eingehen, sehen Sie eine Zusammenfassung, wie viele zu Leads, Terminen und Umsatz wurden.",
+    "am": "AM",
+    "pm": "PM"
   },
   "agents": {
     "pageTitle": "Agenten — Recall Touch",
@@ -471,7 +487,14 @@
       "body": "Sobald deine Agenten Anrufe bearbeiten, erscheinen sie hier."
     },
     "table": { "dateTime": "Datum / Uhrzeit", "caller": "Anrufer", "phone": "Telefon", "duration": "Dauer", "outcome": "Ergebnis", "sentiment": "Stimmung", "agent": "Agent", "actions": "Aktionen" },
+    "types": { "inbound": "Eingehend", "outbound": "Ausgehend" },
     "defaultCaller": "Anrufer",
+    "aiSummary": "KI-Zusammenfassung",
+    "noSummary": "Keine Zusammenfassung verfügbar.",
+    "callIntelligenceLabel": "Anruf-Intelligence",
+    "callIntelligenceDesc": "Diesen Anruf an Anruf-Intelligence senden, um Muster, Coaching-Erkenntnisse und wiederkehrende Einwände zu vergleichen.",
+    "addToIntelligence": "Zu Anruf-Intelligence hinzufügen",
+    "addNotesPlaceholder": "Notizen hinzufügen…",
     "playRecording": "Aufnahme abspielen",
     "viewTranscript": "Transkript anzeigen",
     "noMatchFilters": "Keine Anrufe entsprechen diesen Filtern.",
@@ -607,6 +630,21 @@
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
     "scoreLabel": "Punktzahl",
+    "status": {
+      "new": "Neu",
+      "contacted": "Kontaktiert",
+      "qualified": "Qualifiziert",
+      "appointmentSet": "Termin vereinbart",
+      "won": "Gewonnen",
+      "lost": "Verloren"
+    },
+    "defaultName": "Interessent",
+    "defaultService": "Serviceanfrage",
+    "defaultDescription": "Aus einer kürzlichen Konversation erfasster Interessent und in Ihrer Pipeline gespeichert.",
+    "timeline": {
+      "created": "Aus letzter Aktivität erstellt",
+      "addedToPipeline": "Interessent zur aktiven Pipeline hinzugefügt"
+    },
     "board": {
       "columns": {
         "new": "Neu",
@@ -1006,6 +1044,7 @@
     }
   },
   "calendar": {
+    "defaultContact": "Kontakt",
     "removeAppointmentTitle": "Termin entfernen?",
     "pageTitle": "Kalender — Recall Touch",
     "heading": "Kalender",
@@ -1075,6 +1114,7 @@
   },
   "knowledge": {
     "pageTitle": "Wissen — Recall Touch",
+    "defaultTitle": "Ohne Titel",
     "addEntry": "Eintrag hinzufügen",
     "editEntry": "Eintrag bearbeiten",
     "heading": "Wissensdatenbank",
@@ -1270,6 +1310,18 @@
     "pageTitle": "Termine — Recall Touch",
     "heading": "Termine",
     "description": "Alle gebuchten Termine aus Anrufen, Kampagnen und Postfach.",
+    "today": "Heute",
+    "tomorrow": "Morgen",
+    "statusLabels": {
+      "confirmed": "Bestätigt",
+      "pending": "Ausstehend",
+      "cancelled": "Storniert",
+      "completed": "Abgeschlossen"
+    },
+    "defaultSource": "Eingehender Anruf",
+    "sourceOutbound": "Ausgehend",
+    "sourceInbox": "Posteingang",
+    "sourceManual": "Manuell",
     "viewList": "Liste",
     "viewCalendar": "Kalender",
     "table": { "dateTime": "Datum / Uhrzeit", "contact": "Kontakt", "type": "Typ", "status": "Status", "source": "Quelle" },

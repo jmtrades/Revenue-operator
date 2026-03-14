@@ -354,7 +354,15 @@ export default function AppActivityPage() {
         setRecentActivity(mapped);
         persistActivitySnapshot(mapped);
 
-        const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+        const dayLabels = [
+          t("dashboard.days.sun"),
+          t("dashboard.days.mon"),
+          t("dashboard.days.tue"),
+          t("dashboard.days.wed"),
+          t("dashboard.days.thu"),
+          t("dashboard.days.fri"),
+          t("dashboard.days.sat"),
+        ];
         const volumeMap = new Map<string, number>();
         dayLabels.forEach((d) => volumeMap.set(d, 0));
         calls.forEach((c) => {
@@ -404,7 +412,7 @@ export default function AppActivityPage() {
         }
       })
       .finally(() => setLoading(false));
-  }, [workspaceId, refreshKey]);
+  }, [workspaceId, refreshKey, t]);
 
   useEffect(() => {
     const client = getClientOrNull?.() ?? null;
@@ -1004,13 +1012,7 @@ export default function AppActivityPage() {
                 iconColor: TYPE_COLORS[card.type],
                 badge: (
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-[var(--text-secondary)]">
-                    {card.type === "lead"
-                      ? "Lead"
-                      : card.type === "appointment"
-                        ? "Appointment"
-                        : card.type === "urgent"
-                          ? "Urgent"
-                          : "Follow-up"}
+                    {t(`dashboard.activityType.${card.type}`)}
                   </span>
                 ),
               }))}
@@ -1021,14 +1023,14 @@ export default function AppActivityPage() {
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
               <div className="flex items-center justify-between gap-2 mb-2">
                 <p className="text-sm font-semibold text-[var(--text-primary)]">
-                  Needs attention
+                  {t("dashboard.needsAttention")}
                 </p>
               </div>
               {needsAttention.length === 0 ? (
                 <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                   <p className="text-xs text-[var(--text-secondary)]">
-                    All caught up.
+                    {t("dashboard.allCaughtUp")}
                   </p>
                 </div>
               ) : (
@@ -1056,11 +1058,11 @@ export default function AppActivityPage() {
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
               <p className="text-sm font-semibold text-[var(--text-primary)]">
-                Recent system events
+                {t("dashboard.recentSystemEvents")}
               </p>
               {systemEvents.length === 0 ? (
                 <p className="text-xs text-[var(--text-tertiary)] mt-2">
-                  Your setup events will appear here.
+                  {t("dashboard.setupEventsPlaceholder")}
                 </p>
               ) : (
                 <ul className="mt-3 space-y-3">
@@ -1079,7 +1081,7 @@ export default function AppActivityPage() {
                         href={event.href}
                         className="inline-block mt-2 text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2"
                       >
-                        View →
+                        {t("dashboard.viewLink")}
                       </Link>
                     </li>
                   ))}

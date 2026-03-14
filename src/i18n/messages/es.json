@@ -261,6 +261,19 @@
       "mon": "Lun", "tue": "Mar", "wed": "Mié", "thu": "Jue",
       "fri": "Vie", "sat": "Sáb", "sun": "Dom"
     },
+    "days": {
+      "sun": "Dom", "mon": "Lun", "tue": "Mar", "wed": "Mié", "thu": "Jue", "fri": "Vie", "sat": "Sáb"
+    },
+    "activityType": {
+      "lead": "Prospecto",
+      "appointment": "Cita",
+      "urgent": "Urgente",
+      "follow-up": "Seguimiento"
+    },
+    "needsAttention": "Necesita atención",
+    "recentSystemEvents": "Eventos recientes del sistema",
+    "setupEventsPlaceholder": "Tus eventos de configuración aparecerán aquí.",
+    "viewLink": "Ver →",
     "noData": "Sin datos",
     "greetingMorning": "Buenos días",
     "greetingAfternoon": "Buenas tardes",
@@ -343,6 +356,9 @@
     "atAGlance": "{label} de un vistazo",
     "glanceSummary": "{totalCalls} llamadas, {leads} leads, {appointments} citas y ~${revenue} de ingresos protegidos.",
     "glanceEmpty": "Cuando lleguen las llamadas verás un resumen de leads, citas e ingresos.",
+    "emptyStateSummary": "Cuando empiecen a llegar las llamadas verás un resumen de cuántas se convirtieron en leads, citas e ingresos.",
+    "am": "AM",
+    "pm": "PM",
     "leadConversionPct": "Conversión a lead {pct}%",
     "positiveSentimentPct": "Sentimiento positivo {pct}%",
     "peakHours": "Horas pico",
@@ -514,7 +530,14 @@
       "agent": "Agente",
       "actions": "Acciones"
     },
+    "types": { "inbound": "Entrante", "outbound": "Saliente" },
     "defaultCaller": "Llamante",
+    "aiSummary": "Resumen IA",
+    "noSummary": "No hay resumen disponible.",
+    "callIntelligenceLabel": "Inteligencia de llamadas",
+    "callIntelligenceDesc": "Envía esta llamada a Inteligencia de llamadas para comparar patrones, ideas de coaching y objeciones recurrentes.",
+    "addToIntelligence": "Añadir a Inteligencia de llamadas",
+    "addNotesPlaceholder": "Añadir notas…",
     "playRecording": "Reproducir grabación",
     "viewTranscript": "Ver transcripción",
     "noMatchFilters": "Ninguna llamada coincide con estos filtros.",
@@ -650,6 +673,21 @@
     "drawerTitle": "{name} · Lead",
     "drawerTitleFallback": "Lead",
     "scoreLabel": "Puntuación",
+    "status": {
+      "new": "Nuevo",
+      "contacted": "Contactado",
+      "qualified": "Calificado",
+      "appointmentSet": "Cita programada",
+      "won": "Ganado",
+      "lost": "Perdido"
+    },
+    "defaultName": "Prospecto",
+    "defaultService": "Solicitud de servicio",
+    "defaultDescription": "Prospecto capturado de una conversación reciente y guardado en tu flujo.",
+    "timeline": {
+      "created": "Creado desde actividad reciente",
+      "addedToPipeline": "Prospecto agregado al flujo activo"
+    },
     "board": {
       "columns": {
         "new": "Nuevos",
@@ -1049,6 +1087,7 @@
     }
   },
   "calendar": {
+    "defaultContact": "Contacto",
     "removeAppointmentTitle": "¿Eliminar cita?",
     "pageTitle": "Calendario — Recall Touch",
     "heading": "Calendario",
@@ -1118,6 +1157,7 @@
   },
   "knowledge": {
     "pageTitle": "Conocimiento — Recall Touch",
+    "defaultTitle": "Sin título",
     "addEntry": "Añadir entrada",
     "editEntry": "Editar entrada",
     "heading": "Base de conocimiento",
@@ -1313,6 +1353,18 @@
     "pageTitle": "Citas — Recall Touch",
     "heading": "Citas",
     "description": "Todas las citas reservadas desde llamadas, campañas e inbox.",
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "statusLabels": {
+      "confirmed": "Confirmada",
+      "pending": "Pendiente",
+      "cancelled": "Cancelada",
+      "completed": "Completada"
+    },
+    "defaultSource": "Llamada entrante",
+    "sourceOutbound": "Saliente",
+    "sourceInbox": "Bandeja",
+    "sourceManual": "Manual",
     "viewList": "Lista",
     "viewCalendar": "Calendario",
     "table": { "dateTime": "Fecha / Hora", "contact": "Contacto", "type": "Tipo", "status": "Estado", "source": "Origen" },

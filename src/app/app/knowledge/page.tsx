@@ -103,7 +103,7 @@ function KnowledgeModal({
     const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
     onSave({
       id: entry?.id,
-      title: title.trim() || "Untitled",
+      title: title.trim() || t("defaultTitle"),
       type,
       status,
       content: content.trim(),

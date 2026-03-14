@@ -48,10 +48,10 @@ const getOutcomeLabels = (t: (k: string) => string): Record<Exclude<CallOutcome,
   missed: t("calls.outcomes.missed"),
 });
 
-const TYPE_LABELS: Record<Exclude<CallType, null>, string> = {
-  inbound: "Inbound",
-  outbound: "Outbound",
-};
+const getTypeLabels = (t: (k: string) => string): Record<Exclude<CallType, null>, string> => ({
+  inbound: t("calls.types.inbound"),
+  outbound: t("calls.types.outbound"),
+});
 
 const getSentimentLabels = (t: (k: string) => string): Record<Exclude<CallSentiment, null>, string> => ({
   positive: t("calls.sentiments.positive"),
@@ -119,6 +119,7 @@ export default function CallsPage() {
   const [callNotes, setCallNotes] = useState<Record<string, string>>({});
   const outcomeLabels = useMemo(() => getOutcomeLabels(t), [t]);
   const sentimentLabels = useMemo(() => getSentimentLabels(t), [t]);
+  const typeLabels = useMemo(() => getTypeLabels(t), [t]);
 
   useEffect(() => {
     if (!selectedCall?.id) return;
@@ -569,7 +570,7 @@ export default function CallsPage() {
               <div className="mt-2 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-[11px] text-zinc-300">
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5">
-                    {TYPE_LABELS[kind]}
+                    {typeLabels[kind]}
                   </span>
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5">
                     {outcomeLabels[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
@@ -586,7 +587,7 @@ export default function CallsPage() {
                 </span>
               </div>
               <p className="mt-1 text-[11px] text-zinc-500">
-                Agent: {c.matched_lead?.name ? "Assigned" : "—"}
+                {t("calls.agentLabel")} {c.matched_lead?.name ? t("calls.assigned") : "—"}
               </p>
             </button>
           );
@@ -636,7 +637,7 @@ export default function CallsPage() {
                 {selectedCall.matched_lead?.name ??
                   selectedCall.matched_lead?.company ??
                   selectedCall.matched_lead?.email ??
-                  "Caller"}
+                  t("calls.defaultCaller")}
               </h3>
               <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
                 {(selectedCall.matched_lead as { phone?: string | null })?.phone ?? selectedCall.matched_lead?.email ?? "—"}
@@ -715,18 +716,18 @@ export default function CallsPage() {
             </div>
 
             <div>
-              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">AI Summary</p>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">{t("calls.aiSummary")}</p>
               <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                {selectedCall.summary ?? "No summary available."}
+                {selectedCall.summary ?? t("calls.noSummary")}
               </p>
             </div>
 
             <div>
               <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">
-                Call intelligence
+                {t("calls.callIntelligenceLabel")}
               </p>
               <p className="text-[11px] text-[var(--text-tertiary)] mb-2">
-                Send this call to Call Intelligence to compare patterns, coaching insights, and recurring objections over time.
+                {t("calls.callIntelligenceDesc")}
               </p>
               <Button
                 type="button"
@@ -740,7 +741,7 @@ export default function CallsPage() {
                 className="inline-flex items-center gap-1.5"
               >
                 <Brain className="h-3.5 w-3.5" />
-                Add to Call Intelligence
+                {t("calls.addToIntelligence")}
               </Button>
             </div>
 
@@ -773,7 +774,7 @@ export default function CallsPage() {
                     // ignore
                   }
                 }}
-                placeholder="Add notes…"
+                placeholder={t("calls.addNotesPlaceholder")}
                 rows={3}
                 className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-primary)] resize-none"
               />

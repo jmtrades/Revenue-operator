@@ -85,8 +85,30 @@ const SOURCE_TO_LABEL: Record<string, LeadSource> = {
   other: "Inbound Call",
 };
 
-function mapApiLeadToView(l: ApiLead, index: number): LeadView {
-  const name = l.name?.trim() || l.company?.trim() || "Lead";
+export function getStatusDisplay(status: LeadStatus, t: (key: string) => string): string {
+  const map: Record<LeadStatus, string> = {
+    "New": t("leads.status.new"),
+    "Contacted": t("leads.status.contacted"),
+    "Qualified": t("leads.status.qualified"),
+    "Appointment Set": t("leads.status.appointmentSet"),
+    "Won": t("leads.status.won"),
+    "Lost": t("leads.status.lost"),
+  };
+  return map[status] ?? status;
+}
+
+export function getSourceDisplay(source: LeadSource, t: (key: string) => string): string {
+  const map: Record<LeadSource, string> = {
+    "Inbound Call": t("leads.sources.inboundCall"),
+    "Outbound Outreach": t("leads.sources.outbound"),
+    "Website": t("leads.sources.website"),
+    "Referral": t("leads.sources.referral"),
+  };
+  return map[source] ?? source;
+}
+
+function mapApiLeadToView(l: ApiLead, index: number, t: (key: string) => string): LeadView {
+  const name = l.name?.trim() || l.company?.trim() || t("leads.defaultName");
   const status: LeadStatus =
     (l.state === "new" && "New") ||
     (l.state === "contacted" && "Contacted") ||
@@ -98,15 +120,15 @@ function mapApiLeadToView(l: ApiLead, index: number): LeadView {
   const meta = l.metadata;
   const source: LeadSource = meta?.source ? (SOURCE_TO_LABEL[meta.source] ?? "Inbound Call") : "Inbound Call";
   const score = typeof meta?.score === "number" ? meta.score : 60 + (index * 7) % 40;
-  const service = meta?.service_requested?.trim() || l.company || "Service request";
+  const service = meta?.service_requested?.trim() || l.company || t("leads.defaultService");
   const createdAt = l.last_activity_at;
   const lastContactAt = l.last_activity_at;
   const notes =
     meta?.notes?.trim() ||
-    (l.company && l.value_cents ? `${l.company} with potential value ~$${Math.round((l.value_cents ?? 0) / 100).toLocaleString()}.` : "Lead captured from a recent conversation and kept in your pipeline.");
+    (l.company && l.value_cents ? `${l.company} with potential value ~$${Math.round((l.value_cents ?? 0) / 100).toLocaleString()}.` : t("leads.defaultDescription"));
   const timeline = [
-    { at: createdAt, label: "Created from recent activity" },
-    { at: createdAt, label: "Lead added to active pipeline" },
+    { at: createdAt, label: t("leads.timeline.created") },
+    { at: createdAt, label: t("leads.timeline.addedToPipeline") },
   ];
   return {
     id: l.id,
@@ -219,7 +241,7 @@ export default function LeadsPage() {
       })
       .then((data: { leads?: ApiLead[] }) => {
         const apiLeads = data.leads ?? [];
-        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i));
+        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i, t));
         setError(null);
         setLeads(mapped);
         persistLeadsSnapshot(workspaceId, mapped);
@@ -240,14 +262,14 @@ export default function LeadsPage() {
           const p = payload;
           if (p.eventType === "INSERT" && p.new) {
             setLeads((prev) => {
-              const mapped = mapApiLeadToView(p.new as ApiLead, prev.length);
+              const mapped = mapApiLeadToView(p.new as ApiLead, prev.length, t);
               return [mapped, ...prev];
             });
             const name = p.new.name || p.new.email || "Unknown lead";
             toast.info(`New lead: ${name}`);
           } else if (p.eventType === "UPDATE" && p.new) {
             setLeads((prev) => {
-              const updated = mapApiLeadToView(p.new as ApiLead, 0);
+              const updated = mapApiLeadToView(p.new as ApiLead, 0, t);
               return prev.map((l) => (l.id === updated.id ? { ...l, ...updated } : l));
             });
           } else if (p.eventType === "DELETE" && p.old) {
@@ -260,7 +282,7 @@ export default function LeadsPage() {
     return () => {
       client.removeChannel(channel);
     };
-  }, []);
+  }, [t]);
 
   const totalCount = leads.length;
 
@@ -395,7 +417,7 @@ export default function LeadsPage() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data: { leads?: ApiLead[] }) => {
         const apiLeads = data?.leads ?? [];
-        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i));
+        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i, t));
         setLeads(mapped);
         persistLeadsSnapshot(workspaceId, mapped);
       })
