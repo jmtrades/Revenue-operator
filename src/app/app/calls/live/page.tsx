@@ -66,7 +66,7 @@ export default function CallsLivePage() {
   if (!workspaceId) {
     return (
       <div className="max-w-4xl mx-auto p-4 md:p-6">
-        <p className="text-zinc-400">Select a workspace to view live calls.</p>
+        <p className="text-zinc-400">{t("calls.live.selectWorkspace")}</p>
       </div>
     );
   }
@@ -74,12 +74,12 @@ export default function CallsLivePage() {
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 pb-12">
       <div className="flex items-center gap-2 text-zinc-400 text-sm mb-2">
-        <Link href="/app/calls" className="hover:text-white">Calls</Link>
+        <Link href="/app/calls" className="hover:text-white">{t("calls.live.breadcrumbCalls")}</Link>
         <ChevronRight className="w-4 h-4" />
-        <span className="text-white">Live</span>
+        <span className="text-white">{t("calls.live.breadcrumbLive")}</span>
       </div>
-      <h1 className="text-xl font-semibold text-white mb-1">Live call monitoring</h1>
-      <p className="text-zinc-400 text-sm mb-6">Active calls across your workspace. Updates every 5 seconds.</p>
+      <h1 className="text-xl font-semibold text-white mb-1">{t("calls.live.pageTitle")}</h1>
+      <p className="text-zinc-400 text-sm mb-6">{t("calls.live.pageSubtitle")}</p>
 
       {loading ? (
         <div className="space-y-4">
@@ -92,14 +92,14 @@ export default function CallsLivePage() {
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
               <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
                 <Phone className="w-4 h-4" />
-                In progress
+                {t("calls.live.inProgress")}
               </div>
               <p className="text-2xl font-semibold text-white">{data?.in_progress ?? 0}</p>
             </div>
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
               <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
                 <Clock className="w-4 h-4" />
-                Waiting
+                {t("calls.live.waiting")}
               </div>
               <p className="text-2xl font-semibold text-white">{data?.waiting ?? 0}</p>
             </div>
@@ -108,8 +108,8 @@ export default function CallsLivePage() {
           {!data?.active?.length ? (
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 text-center">
               <Phone className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-400">No active calls right now.</p>
-              <p className="text-zinc-500 text-sm mt-1">New calls will appear here when they start.</p>
+              <p className="text-zinc-400">{t("calls.live.noActiveCalls")}</p>
+              <p className="text-zinc-500 text-sm mt-1">{t("calls.live.noActiveCallsHint")}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -125,7 +125,7 @@ export default function CallsLivePage() {
                       </div>
                       <div>
                         <p className="font-medium text-white">
-                          {call.caller_name || call.caller_number || "Unknown caller"}
+                          {call.caller_name || call.caller_number || t("calls.live.unknownCaller")}
                         </p>
                         <p className="text-xs text-zinc-500">{call.agent_name}</p>
                       </div>
@@ -139,7 +139,7 @@ export default function CallsLivePage() {
                         <button
                           type="button"
                           className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-                          title="Listen in (silent)"
+                          title={t("calls.live.listenIn")}
                           onClick={() => toast.info(t("calls.live.listenInComingSoon"))}
                         >
                           <Headphones className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function CallsLivePage() {
                         <button
                           type="button"
                           className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-                          title="Whisper (to agent only)"
+                          title={t("calls.live.whisper")}
                           onClick={() => toast.info(t("calls.live.whisperComingSoon"))}
                         >
                           <MessageCircle className="w-4 h-4" />
@@ -155,7 +155,7 @@ export default function CallsLivePage() {
                         <button
                           type="button"
                           className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-                          title="Barge in"
+                          title={t("calls.live.bargeIn")}
                           onClick={() => toast.info(t("calls.live.bargeInComingSoon"))}
                         >
                           <PhoneOff className="w-4 h-4" />
@@ -164,13 +164,13 @@ export default function CallsLivePage() {
                     </div>
                   </div>
                   <div className="rounded-xl bg-zinc-950 border border-zinc-800 p-3 max-h-32 overflow-y-auto">
-                    <p className="text-xs text-zinc-500 mb-1">Live transcript</p>
+                    <p className="text-xs text-zinc-500 mb-1">{t("calls.live.liveTranscript")}</p>
                     <p className="text-sm text-zinc-300 whitespace-pre-wrap">
-                      {call.transcript_text?.trim() || call.summary?.trim() || "— No transcript yet —"}
+                      {call.transcript_text?.trim() || call.summary?.trim() || t("calls.live.noTranscript")}
                     </p>
                   </div>
                   <div className="mt-2 flex items-center gap-2 text-xs text-zinc-500">
-                    <span className="inline-flex items-center gap-1">Sentiment: —</span>
+                    <span className="inline-flex items-center gap-1">{t("calls.live.sentiment")}</span>
                   </div>
                 </div>
               ))}
@@ -184,7 +184,7 @@ export default function CallsLivePage() {
               onClick={() => toast.info(t("calls.live.emergencyTakeover"))}
             >
               <AlertTriangle className="w-4 h-4" />
-              Emergency takeover
+              {t("calls.live.emergencyTakeover")}
             </button>
           </div>
         </>

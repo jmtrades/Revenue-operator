@@ -7,20 +7,23 @@ import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import type { LeadScoringConfig } from "@/lib/lead-scoring";
 
-const CONFIG_KEYS: { key: keyof LeadScoringConfig; label: string; help?: string }[] = [
-  { key: "baseScore", label: "Base score (0–100)", help: "Starting score before any events" },
-  { key: "callCount", label: "Per call" },
-  { key: "durationOver2Min", label: "Call over 2 min" },
-  { key: "positiveSentiment", label: "Positive sentiment" },
-  { key: "pricingQuestion", label: "Asked about pricing" },
-  { key: "booked", label: "Booked appointment" },
-  { key: "returnCaller", label: "Return caller" },
-  { key: "negativeSentiment", label: "Negative sentiment" },
-  { key: "justBrowsing", label: "Just browsing / low intent" },
-];
+function getConfigKeys(t: (k: string) => string): { key: keyof LeadScoringConfig; label: string; help?: string }[] {
+  return [
+    { key: "baseScore", label: t("leadScoring.weights.baseScore"), help: t("leadScoring.weights.baseScoreHelp") },
+    { key: "callCount", label: t("leadScoring.weights.callCount") },
+    { key: "durationOver2Min", label: t("leadScoring.weights.durationOver2Min") },
+    { key: "positiveSentiment", label: t("leadScoring.weights.positiveSentiment") },
+    { key: "pricingQuestion", label: t("leadScoring.weights.pricingQuestion") },
+    { key: "booked", label: t("leadScoring.weights.booked") },
+    { key: "returnCaller", label: t("leadScoring.weights.returnCaller") },
+    { key: "negativeSentiment", label: t("leadScoring.weights.negativeSentiment") },
+    { key: "justBrowsing", label: t("leadScoring.weights.justBrowsing") },
+  ];
+}
 
 export default function AppSettingsLeadScoringPage() {
   const tSettings = useTranslations("settings");
+  const configKeys = getConfigKeys(tSettings);
   const tToast = useTranslations("toast");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -87,17 +90,17 @@ export default function AppSettingsLeadScoringPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Lead scoring" }]} />
-      <h1 className="text-lg font-semibold text-white mb-2">Lead scoring</h1>
+      <Breadcrumbs items={[{ label: tSettings("title"), href: "/app/settings" }, { label: tSettings("leadScoring.title") }]} />
+      <h1 className="text-lg font-semibold text-white mb-2">{tSettings("leadScoring.title")}</h1>
       <p className="text-sm text-zinc-500 mb-6">
-        Weights used to compute lead score (0–100) from calls and interactions. Scores recalculate after each call. Omit a key to use the default.
+        {tSettings("leadScoring.description")}
       </p>
 
       {loading ? (
-        <p className="text-sm text-zinc-500">Loading…</p>
+        <p className="text-sm text-zinc-500">{tSettings("leadScoring.loading")}</p>
       ) : (
         <div className="space-y-4">
-          {CONFIG_KEYS.map(({ key, label, help }) => {
+          {configKeys.map(({ key, label, help }) => {
             const value = config[key] ?? defaults[key];
             const isNumber = typeof value === "number";
             return (
@@ -120,7 +123,7 @@ export default function AppSettingsLeadScoringPage() {
                   onClick={() => resetToDefault(key)}
                   className="text-xs text-zinc-500 hover:text-white"
                 >
-                  Reset to default ({defaults[key]})
+                  {tSettings("leadScoring.resetToDefault", { value: String(defaults[key]) })}
                 </button>
               </div>
             );
@@ -139,14 +142,15 @@ export default function AppSettingsLeadScoringPage() {
               onClick={handleResetAll}
               className="px-4 py-3 rounded-xl border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800/50"
             >
-              Use all defaults
+              {tSettings("leadScoring.useAllDefaults")}
             </button>
           </div>
         </div>
       )}
 
       <p className="mt-6 text-xs text-zinc-500">
-        <Link href="/app/leads" className="underline hover:text-zinc-300">View leads</Link> to see scores. Scores update automatically after each call.
+        <Link href="/app/leads" className="underline hover:text-zinc-300">{tSettings("leadScoring.viewLeadsLink")}</Link>
+        {tSettings("leadScoring.viewLeadsHintSuffix")}
       </p>
     </div>
   );

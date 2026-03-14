@@ -417,7 +417,23 @@
     "status": {
       "live": "Live",
       "ready": "Ready",
-      "calls": "calls"
+      "calls": "calls",
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "defaultBadge": "Par défaut",
+    "callsSuffix": "appels",
+    "toast": {
+      "paused": "Agent en pause",
+      "active": "Agent actif"
+    },
+    "actions": {
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "pause": "Pause",
+      "on": "Activé",
+      "editAgent": "Modifier l'agent",
+      "deleteAgent": "Supprimer l'agent"
     },
     "noCallsYet": "Pas encore d'appels",
     "callsCount": "{count} appels",
@@ -449,7 +465,15 @@
       "customRuleLabel": "Ajouter une règle personnalisée",
       "customRulePlaceholder": "Ajouter une règle… (appuyez sur Entrée)",
       "transferPhoneLabel": "Transférer vers ce numéro lors de l'escalade",
-      "transferPhonePlaceholder": "+1 (555) 000-0000"
+      "transferPhonePlaceholder": "+1 (555) 000-0000",
+      "objectionPriceLabel": "Objection prix",
+      "objectionPricePlaceholder": "Je comprends que le budget compte. Nos clients voient généralement un ROI dès le premier mois...",
+      "objectionTimingLabel": "\"Pas le bon moment\"",
+      "objectionTimingPlaceholder": "Je comprends. Cela vous aiderait si je vous recontacte dans une ou deux semaines ?",
+      "objectionCompetitorLabel": "Comparer les concurrents",
+      "objectionCompetitorPlaceholder": "C'est une approche intelligente. Que comparez-vous précisément ? Je peux souligner nos différences.",
+      "objectionNotInterestedLabel": "\"Pas intéressé\"",
+      "objectionNotInterestedPlaceholder": "Aucun problème. Qu'est-ce qui devrait changer pour que ce soit utile ?"
     },
     "deleteAgent": "Supprimer l'agent",
     "deleteAgentTitle": "Supprimer l'agent",
@@ -503,7 +527,13 @@
       "neverSayPlaceholder": "ex. Donner des tarifs précis au téléphone",
       "objectionPlaceholder": "Comment répondre quand quelqu'un n'est pas intéressé",
       "activeHoursPlaceholder": "ex. 9:00-17:00",
-      "timezonePlaceholder": "America/New_York"
+      "timezonePlaceholder": "America/New_York",
+      "purposeAnswerCalls": "Répondre aux appels",
+      "purposeMakeCalls": "Passer des appels",
+      "purposeBoth": "Les deux",
+      "saveDraft": "Enregistrer le brouillon",
+      "next": "Suivant",
+      "launch": "Lancer"
     },
     "actions": {
       "deleteAria": "Supprimer cet agent",
@@ -624,10 +654,26 @@
       "exportSuccess": "Appels exportés. Vérifiez vos téléchargements."
     },
     "live": {
+      "selectWorkspace": "Sélectionnez un espace pour voir les appels en direct.",
+      "breadcrumbCalls": "Appels",
+      "breadcrumbLive": "En direct",
+      "pageTitle": "Suivi des appels en direct",
+      "pageSubtitle": "Appels actifs dans votre espace. Mise à jour toutes les 5 secondes.",
+      "inProgress": "En cours",
+      "waiting": "En attente",
+      "noActiveCalls": "Aucun appel actif pour le moment.",
+      "noActiveCallsHint": "Les nouveaux appels apparaîtront ici lorsqu'ils commenceront.",
+      "unknownCaller": "Appelant inconnu",
+      "listenIn": "Écouter (silencieux)",
+      "whisper": "Chuchoter (agent uniquement)",
+      "bargeIn": "Intervenir",
+      "liveTranscript": "Transcription en direct",
+      "noTranscript": "— Pas encore de transcription —",
+      "sentiment": "Sentiment : —",
+      "emergencyTakeover": "Prise de contrôle d'urgence",
       "listenInComingSoon": "L’écoute discrète sera bientôt disponible.",
       "whisperComingSoon": "Le mode chuchotement sera bientôt disponible.",
-      "bargeInComingSoon": "L’intervention directe sera bientôt disponible.",
-      "emergencyTakeover": "Prise de contrôle d’urgence — contactez le support pour une escalade urgente."
+      "bargeInComingSoon": "L'intervention directe sera bientôt disponible."
     }
   },
   "callIntelligence": {
@@ -912,6 +958,36 @@
         "lost": "Perdus"
       }
     },
+    "detail": {
+      "agent": "Agent",
+      "created": "Créé",
+      "contact": "Contact",
+      "name": "Nom",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "whatTheyNeed": "Ce dont ils ont besoin",
+      "stage": "Étape",
+      "timeline": "Chronologie",
+      "callPrefix": "Appel",
+      "notes": "Notes",
+      "notesPlaceholder": "Ajouter des notes…",
+      "textButton": "Message",
+      "addNote": "Ajouter une note",
+      "callTypeLabel": "Type d'appel",
+      "callTypes": { "default": "Par défaut", "followUp": "Suivi", "reminder": "Rappel" },
+      "startingCall": "Démarrage…",
+      "haveAiCall": "Faire appeler par l'IA",
+      "archive": "Archiver"
+    },
+    "table": {
+      "name": "Nom",
+      "phone": "Téléphone",
+      "source": "Source",
+      "score": "Score",
+      "stage": "Étape",
+      "lastContact": "Dernier contact",
+      "agent": "Agent"
+    },
     "empty": {
       "title": "Aucun lead pour le moment",
       "body": "Votre IA commencera à créer des leads automatiquement au fur et à mesure qu'elle parlera à vos clients.",
@@ -1068,10 +1144,37 @@
       "title": "Équipe et permissions"
     },
     "compliance": {
-      "title": "Conformité"
+      "title": "Conformité",
+      "subtitle": "Paramètres d'enregistrement, confidentialité et rétention des données.",
+      "recordingConsent": "Consentement d'enregistrement",
+      "consentDescription": "Choisissez le modèle de consentement pour votre juridiction. Bipartite nécessite une annonce en début d'appel.",
+      "consentMode": "Mode de consentement",
+      "oneParty": "Une partie (ex. la plupart des États US)",
+      "twoParty": "Bipartite (annonce en début d'appel)",
+      "doNotRecord": "Ne pas enregistrer",
+      "twoPartyStatesHint": "Certains États exigent le consentement bipartite.",
+      "announcementLabel": "Annonce de consentement (jouée en début d'appel)",
+      "pauseSensitive": "Pause d'enregistrement pour infos sensibles",
+      "pauseSensitiveHelp": "Meilleur effort ; l'agent peut mettre en pause pour paiement ou données personnelles",
+      "savingConsent": "Enregistrement…",
+      "saveConsent": "Enregistrer le consentement",
+      "callRecording": "Enregistrement des appels",
+      "callRecordingHelp": "Tous les appels IA sont enregistrés pour qualité et conformité",
+      "hipaaMode": "Mode HIPAA",
+      "hipaaModeHelp": "Chiffrement PHI, BAA requis (+99 $/mois sur le plan Scale)",
+      "dataRetention": "Rétention des données",
+      "retention30": "30 jours",
+      "retention90": "90 jours",
+      "retention180": "180 jours",
+      "retention365": "1 an",
+      "retentionHelp": "Les enregistrements et transcriptions plus anciens sont supprimés automatiquement.",
+      "saveChanges": "Enregistrer les modifications",
+      "exportData": "Exporter toutes les données",
+      "exportRequested": "Export demandé. Nous vous enverrons un e-mail quand ce sera prêt."
     },
     "errorReports": "Rapports d'erreur",
     "errorsPage": {
+      "title": "Rapports d'erreur",
       "breadcrumbSettings": "Paramètres",
       "breadcrumbErrorReports": "Rapports d'erreur",
       "heading": "Rapports d'erreur",
@@ -1089,7 +1192,33 @@
     "savePreferences": "Enregistrer les préférences",
     "saveWeights": "Enregistrer les pondérations",
     "saveWebhook": "Enregistrer le webhook",
-    "leadScoring": "Score des leads",
+    "leadScoring": {
+      "title": "Score des leads",
+      "description": "Pondérations pour calculer le score (0–100) à partir des appels et interactions. Les scores se recalculent après chaque appel.",
+      "loading": "Chargement…",
+      "resetToDefault": "Réinitialiser par défaut ({value})",
+      "saving": "Enregistrement…",
+      "saveWeights": "Enregistrer les pondérations",
+      "useAllDefaults": "Tout réinitialiser par défaut",
+      "viewLeadsHint": "Voir les leads pour les scores. Mise à jour automatique après chaque appel.",
+      "viewLeadsLink": "Voir les leads",
+      "viewLeadsHintSuffix": " pour voir les scores. Mise à jour automatique après chaque appel.",
+      "loadFailed": "Échec du chargement de la config.",
+      "saved": "Pondérations enregistrées.",
+      "usingDefaults": "Pondérations par défaut utilisées.",
+      "weights": {
+        "baseScore": "Score de base (0–100)",
+        "baseScoreHelp": "Score initial avant tout événement",
+        "callCount": "Par appel",
+        "durationOver2Min": "Appel de plus de 2 min",
+        "positiveSentiment": "Sentiment positif",
+        "pricingQuestion": "A demandé les tarifs",
+        "booked": "Rendez-vous pris",
+        "returnCaller": "Rappelant récurrent",
+        "negativeSentiment": "Sentiment négatif",
+        "justBrowsing": "Simple navigation / faible intention"
+      }
+    },
     "activityLog": "Journal d'activité",
     "deleteAllDataTitle": "Supprimer toutes les données",
     "deleteAllDataMessage": "Supprimer toutes les données de l'espace (appels, leads, agents) ? Irréversible. Contactez le support.",
@@ -1562,7 +1691,29 @@
     "defaultGreeting": "Merci d’appeler {business} ! Comment puis-je vous aider aujourd’hui ?",
     "hint": {
       "micOrType": "Touchez le micro pour parler, ou tapez ci-dessous."
-    }
+    },
+    "startConversation": "Démarrer la conversation",
+    "orTryScenario": "Ou essayez un scénario :",
+    "scenarios": {
+      "normalCall": { "label": "Appel normal", "prompt": "Bonjour, j'ai besoin d'informations sur vos services." },
+      "bookingRequest": { "label": "Demande de rendez-vous", "prompt": "Je voudrais prendre rendez-vous pour jeudi prochain." },
+      "pricingQuestion": { "label": "Question tarifaire", "prompt": "Combien coûtent vos services ?" },
+      "angryCaller": { "label": "Appelant mécontent", "prompt": "J'attends un rappel depuis trois jours et personne ne m'a contacté. C'est inacceptable." },
+      "wrongNumber": { "label": "Mauvais numéro", "prompt": "C'est bien la pizzeria de la rue Principale ?" }
+    },
+    "youAsCaller": "Vous (en tant qu'appelant)",
+    "aiAgent": "Agent IA",
+    "thinking": "Réflexion…",
+    "speaking": "Parole…",
+    "stopListening": "Arrêter d'écouter",
+    "listeningClickToStop": "Écoute… cliquer pour arrêter",
+    "tapToSpeak": "Appuyez pour parler",
+    "inputPlaceholder": "Ou tapez votre réponse…",
+    "inputAria": "Tapez votre message",
+    "send": "Envoyer",
+    "reset": "Réinitialiser",
+    "testingLabel": "Test : {name}",
+    "conversationAria": "Conversation"
   },
   "agents.voiceTest": {
     "scriptPlaceholder": "Saisissez le texte pour l'écouter avec la voix sélectionnée…",
@@ -1875,6 +2026,22 @@
   },
   "developer": {
     "pageTitle": "Developer — Recall Touch",
+    "justNow": "À l'instant",
+    "minAgo": "il y a {count} min",
+    "hrAgo": "il y a {count} h",
+    "daysAgo": "il y a {count} jours",
+    "permissionAdmin": "Admin",
+    "permissionReadWrite": "Lecture/écriture",
+    "permissionReadOnly": "Lecture seule",
+    "permissionReadPlusWrite": "Lecture + écriture",
+    "labelPlaceholder": "ex. Production",
+    "urlPlaceholder": "https://...",
+    "copy": "Copier",
+    "revoke": "Révoquer",
+    "active": "Actif",
+    "createApiKey": "Créer une clé API",
+    "create": "Créer",
+    "revokeKey": "Révoquer la clé",
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Envoyez des événements vers vos endpoints HTTP avec des payloads signés pour les appels, leads, rendez-vous et plus.",
@@ -2227,6 +2394,20 @@
     "marketplaceNoNumbersFound": "Aucun numéro. Essayez un autre indicatif ou type.",
     "marketplaceAdding": "Ajout…",
     "marketplaceGetThisNumber": "Obtenir ce numéro",
+    "releaseTitleUnassign": "Désassigner d'abord dans Agents",
+    "releaseTitleRelease": "Libérer le numéro",
+    "releaseLabel": "Libérer",
+    "copyNumber": "Copier le numéro",
+    "copied": "Copié",
+    "copiedAria": "Copié dans le presse-papiers",
+    "aiNumberReady": "Votre numéro IA est prêt ! Les appels vers ce numéro seront pris en charge par votre agent IA.",
+    "sendCode": "Envoyer le code",
+    "sending": "Envoi…",
+    "verifyLabel": "Vérifier",
+    "verifying": "Vérification…",
+    "areaCodePlaceholder": "ex. 503",
+    "areaCodePlaceholderAlt": "ex. 212",
+    "emailPlaceholder": "votre@email.com",
     "toast": {
       "numberConnected": "Numéro connecté. Vous pouvez recevoir appels et SMS.",
       "saved": "Paramètres enregistrés.",

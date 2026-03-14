@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Mic } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { speakText } from "@/lib/voice-preview";
+
+const SCENARIO_KEYS = ["normalCall", "bookingRequest", "pricingQuestion", "angryCaller", "wrongNumber"] as const;
 
 function canUseSpeechRecognition(): boolean {
   if (typeof window === "undefined") return false;
@@ -27,14 +29,6 @@ export interface AgentTestPanelWorkspace {
   business_name?: string | null;
   name?: string | null;
 }
-
-const SCENARIOS = [
-  { label: "Normal call", prompt: "Hi, I need some information about your services." },
-  { label: "Booking request", prompt: "I want to book an appointment for next Thursday." },
-  { label: "Pricing question", prompt: "How much do your services cost?" },
-  { label: "Angry caller", prompt: "I've been waiting for a callback for three days and nobody has contacted me. This is unacceptable." },
-  { label: "Wrong number", prompt: "Is this the pizza place on Main Street?" },
-];
 
 export function AgentTestPanel({
   agent,
@@ -61,6 +55,14 @@ export function AgentTestPanel({
   const messagesRef = useRef<Message[]>([]);
   messagesRef.current = messages;
   const tAgents = useTranslations("agents.testPanel");
+  const scenarios = useMemo(
+    () =>
+      SCENARIO_KEYS.map((key) => ({
+        label: tAgents(`scenarios.${key}.label`),
+        prompt: tAgents(`scenarios.${key}.prompt`),
+      })),
+    [tAgents]
+  );
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -267,13 +269,13 @@ export function AgentTestPanel({
           onClick={() => startTest(defaultScenarioPrompt)}
           className="w-full py-3 bg-white text-gray-900 font-semibold rounded-xl hover:bg-zinc-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
         >
-          Start conversation
+          {tAgents("startConversation")}
         </button>
 
         <div>
-          <p className="text-xs text-white/40 mb-3">Or try a scenario:</p>
+          <p className="text-xs text-white/40 mb-3">{tAgents("orTryScenario")}</p>
           <div className="grid grid-cols-1 gap-2">
-            {SCENARIOS.map((s) => (
+            {scenarios.map((s) => (
               <button
                 key={s.label}
                 type="button"
@@ -293,7 +295,7 @@ export function AgentTestPanel({
   return (
     <div className="flex flex-col h-[500px]">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-white/70">Testing: {agent.name}</h2>
+        <h2 className="text-sm font-medium text-white/70">{tAgents("testingLabel", { name: agent.name })}</h2>
         <button
           type="button"
           onClick={() => {
@@ -310,11 +312,11 @@ export function AgentTestPanel({
           }}
           className="text-xs text-white/40 hover:text-white/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
         >
-          Reset
+          {tAgents("reset")}
         </button>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-3 mb-4 pr-1 min-h-0" role="log" aria-live="polite" aria-label="Conversation">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-3 mb-4 pr-1 min-h-0" role="log" aria-live="polite" aria-label={tAgents("conversationAria")}>
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -329,7 +331,7 @@ export function AgentTestPanel({
                 msg.role === "caller" ? "text-white/35" : "text-zinc-400"
               }`}
             >
-              {msg.role === "caller" ? "You (as caller)" : "AI Agent"}
+              {msg.role === "caller" ? tAgents("youAsCaller") : tAgents("aiAgent")}
             </p>
             <p className="text-sm text-white/90">{msg.text}</p>
           </div>
@@ -357,10 +359,10 @@ export function AgentTestPanel({
                   type="button"
                   onClick={stopListening}
                   className="flex items-center gap-2 px-5 py-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
-                  aria-label="Stop listening"
+                  aria-label={tAgents("stopListening")}
                 >
                   <span className="w-3 h-3 rounded-full bg-red-400 animate-pulse" />
-                  Listening… click to stop
+                  {tAgents("listeningClickToStop")}
                 </button>
               ) : (
                 <button
@@ -394,9 +396,9 @@ export function AgentTestPanel({
                 sendMessage();
               }
             }}
-            placeholder="Or type your reply…"
+            placeholder={tAgents("inputPlaceholder")}
             disabled={loading || isListening}
-            aria-label="Type your message"
+            aria-label={tAgents("inputAria")}
             className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-zinc-600 focus:outline-none disabled:opacity-50"
           />
           <button
@@ -405,7 +407,7 @@ export function AgentTestPanel({
             disabled={loading || isListening || !input.trim()}
             className="px-4 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-zinc-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
           >
-            Send
+            {tAgents("send")}
           </button>
         </div>
       </div>

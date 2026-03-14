@@ -67,30 +67,30 @@ export function LeadDetail({
           <p className="text-xs text-zinc-500">{lead.service} · {getSourceDisplay(lead.source, tRoot)}</p>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <Badge variant={lead.status === "Won" ? "success" : lead.status === "Lost" ? "error" : "neutral"}>{getStatusDisplay(lead.status, tRoot)}</Badge>
-            <span className="text-[11px] text-zinc-500">Agent: {lead.assignedAgent}</span>
-            <span className="text-[11px] text-zinc-500">Created {formatDate(lead.createdAt)}</span>
+            <span className="text-[11px] text-zinc-500">{t("detail.agent")}: {lead.assignedAgent}</span>
+            <span className="text-[11px] text-zinc-500">{t("detail.created")} {formatDate(lead.createdAt)}</span>
           </div>
         </div>
       </div>
 
       <section>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Contact</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.contact")}</h3>
         <div className="grid gap-2">
-          <Input label="Name" value={lead.name} readOnly className="bg-[var(--bg-card)]" />
-          <Input label="Phone" value={lead.phone} readOnly className="bg-[var(--bg-card)]" />
-          <Input label="Email" value={lead.email} readOnly className="bg-[var(--bg-card)]" />
+          <Input label={t("detail.name")} value={lead.name} readOnly className="bg-[var(--bg-card)]" />
+          <Input label={t("detail.phone")} value={lead.phone} readOnly className="bg-[var(--bg-card)]" />
+          <Input label={t("detail.email")} value={lead.email} readOnly className="bg-[var(--bg-card)]" />
         </div>
       </section>
 
       {lead.service && lead.service !== t("defaultService") && (
         <section>
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">What they need</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.whatTheyNeed")}</h3>
           <p className="text-sm text-zinc-200">{lead.service}</p>
         </section>
       )}
 
       <section>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Stage</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.stage")}</h3>
         <select
           value={lead.status}
           onChange={(e) => onStatusChange(lead.id, e.target.value as LeadStatus)}
@@ -103,7 +103,7 @@ export function LeadDetail({
       </section>
 
       <section>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Timeline</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.timeline")}</h3>
         <ol className="space-y-2 text-xs">
           {lead.timeline.map((item) => (
             <li key={`${item.at}-${item.label}`} className="flex items-start gap-2">
@@ -119,7 +119,7 @@ export function LeadDetail({
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-primary)]" />
               <div>
                 <Link href={`/app/calls/${call.id}`} className="text-zinc-100 hover:underline">
-                  Call {call.call_started_at ? formatDate(call.call_started_at) : ""} {call.outcome ? ` · ${call.outcome}` : ""}
+                  {t("detail.callPrefix")} {call.call_started_at ? formatDate(call.call_started_at) : ""} {call.outcome ? ` · ${call.outcome}` : ""}
                 </Link>
               </div>
             </li>
@@ -129,11 +129,11 @@ export function LeadDetail({
       </section>
 
       <section>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">Notes</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.notes")}</h3>
         <textarea
           defaultValue={lead.notes}
           onBlur={(e) => onNotesBlur(lead.id, e.target.value.trim())}
-          placeholder="Add notes…"
+          placeholder={t("detail.notesPlaceholder")}
           rows={3}
           className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] resize-none"
         />
@@ -146,13 +146,13 @@ export function LeadDetail({
           </a>
         ) : null}
         <Link href={lead.id ? `/app/messages?lead_id=${lead.id}` : "/app/messages"} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
-          <MessageSquare className="w-3.5 h-3.5" /> Text
+          <MessageSquare className="w-3.5 h-3.5" /> {t("detail.textButton")}
         </Link>
         <Link href="/app/calendar" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
           <Calendar className="w-3.5 h-3.5" /> {t("actionSchedule")}
         </Link>
         <Button variant="ghost" size="sm" className="text-xs">
-          <StickyNote className="w-3.5 h-3.5 mr-1.5" /> Add note
+          <StickyNote className="w-3.5 h-3.5 mr-1.5" /> {t("detail.addNote")}
         </Button>
         {lead.phone ? (
           <>
@@ -160,19 +160,19 @@ export function LeadDetail({
               value={outboundCallType || "default"}
               onChange={(e) => setOutboundCallType(e.target.value === "default" ? "" : e.target.value)}
               className="rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2 py-1.5 text-xs text-zinc-200"
-              aria-label="Call type"
+              aria-label={t("detail.callTypeLabel")}
             >
-              <option value="default">Default</option>
-              <option value="lead_followup">Follow-up</option>
-              <option value="appointment_reminder">Reminder</option>
+              <option value="default">{t("detail.callTypes.default")}</option>
+              <option value="lead_followup">{t("detail.callTypes.followUp")}</option>
+              <option value="appointment_reminder">{t("detail.callTypes.reminder")}</option>
             </select>
             <Button variant="primary" size="sm" onClick={() => void onHaveAICall()} disabled={outboundCalling} className="text-xs">
-              <Phone className="w-3.5 h-3.5 mr-1.5" /> {outboundCalling ? "Starting…" : "Have AI call"}
+              <Phone className="w-3.5 h-3.5 mr-1.5" /> {outboundCalling ? t("detail.startingCall") : t("detail.haveAiCall")}
             </Button>
           </>
         ) : null}
         <Button variant="secondary" size="sm" onClick={() => onArchive(lead.id)}>
-          <Archive className="w-3.5 h-3.5 mr-1.5" /> Archive
+          <Archive className="w-3.5 h-3.5 mr-1.5" /> {t("detail.archive")}
         </Button>
       </div>
     </div>

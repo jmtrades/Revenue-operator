@@ -81,14 +81,14 @@ export function AgentList({
                   {agent.name}
                 </p>
                 <Badge variant={agent.active ? "success" : "neutral"} dot>
-                  {agent.active ? "Active" : "Inactive"}
+                  {agent.active ? t("status.active") : t("status.inactive")}
                 </Badge>
               </div>
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <Badge variant="neutral">{templateLabel}</Badge>
                 {agent.id === defaultAgentId && (
                   <span className="text-[10px] text-[var(--text-tertiary)]">
-                    Default
+                    {t("defaultBadge")}
                   </span>
                 )}
               </div>
@@ -101,7 +101,7 @@ export function AgentList({
                 </div>
               )}
               <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
-                <span>{agent.stats?.totalCalls ?? 0} calls</span>
+                <span>{agent.stats?.totalCalls ?? 0} {t("callsSuffix")}</span>
                 <span>·</span>
                 <span>{lastActiveLabel}</span>
               </div>
@@ -111,7 +111,7 @@ export function AgentList({
               >
                 <button
                   type="button"
-                  aria-label={agent.active ? "Deactivate" : "Activate"}
+                  aria-label={agent.active ? t("actions.deactivate") : t("actions.activate")}
                   className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
                   onClick={async () => {
                     const next = { ...agent, active: !agent.active };
@@ -120,12 +120,12 @@ export function AgentList({
                     );
                     await persistAgent(next, {
                       showToast: true,
-                      successToast: agent.active ? "Agent paused" : "Agent active",
+                      successToast: agent.active ? t("toast.paused") : t("toast.active"),
                     });
                   }}
                 >
                   <span className="text-[10px] font-medium">
-                    {agent.active ? "Pause" : "On"}
+                    {agent.active ? t("actions.pause") : t("actions.on")}
                   </span>
                 </button>
                 <button
@@ -141,7 +141,7 @@ export function AgentList({
                 </button>
                 <button
                   type="button"
-                  aria-label="Delete agent"
+                  aria-label={t("actions.deleteAgent")}
                   className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-red-400 hover:bg-red-500/10"
                   onClick={() => setDeleteConfirmAgent(agent)}
                 >

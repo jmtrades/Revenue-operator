@@ -83,33 +83,32 @@ export default function AppSettingsCompliancePage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-lg font-semibold text-white mb-2">Compliance</h1>
-      <p className="text-sm text-zinc-500 mb-6">Recording, privacy, and data retention settings.</p>
+      <h1 className="text-lg font-semibold text-white mb-2">{tSettings("compliance.title")}</h1>
+      <p className="text-sm text-zinc-500 mb-6">{tSettings("compliance.subtitle")}</p>
 
       <div className="space-y-4 mb-6">
-        {/* Recording consent */}
         <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
-          <p className="text-sm font-medium text-white mb-1">Recording consent</p>
+          <p className="text-sm font-medium text-white mb-1">{tSettings("compliance.recordingConsent")}</p>
           <p className="text-[11px] text-zinc-500 mb-3">
-            Choose consent model for your jurisdiction. Two-party requires playing an announcement at call start.
+            {tSettings("compliance.consentDescription")}
           </p>
           {consentLoading ? (
             <div className="h-20 rounded-xl bg-white/5 animate-pulse" />
           ) : (
             <>
               <div className="space-y-2 mb-3">
-                <label className="block text-[11px] text-zinc-400">Consent mode</label>
+                <label className="block text-[11px] text-zinc-400">{tSettings("compliance.consentMode")}</label>
                 <select
                   value={recordingConsentMode}
                   onChange={(e) => setRecordingConsentMode(e.target.value as RecordingConsentMode)}
                   className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 >
-                  <option value="one_party">One-party (e.g. most US states)</option>
-                  <option value="two_party">Two-party (play announcement at call start)</option>
-                  <option value="none">Do not record</option>
+                  <option value="one_party">{tSettings("compliance.oneParty")}</option>
+                  <option value="two_party">{tSettings("compliance.twoParty")}</option>
+                  <option value="none">{tSettings("compliance.doNotRecord")}</option>
                 </select>
                 <p className="text-[11px] text-zinc-500">
-                  Some states ({TWO_PARTY_STATES_US.slice(0, 5).join(", ")}…) require two-party consent.
+                  {tSettings("compliance.twoPartyStatesHint")}
                 </p>
               </div>
               {recordingConsentMode === "two_party" && (
@@ -126,8 +125,8 @@ export default function AppSettingsCompliancePage() {
               )}
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[11px] text-zinc-400">Pause recording during sensitive info</p>
-                  <p className="text-[10px] text-zinc-500">Best-effort; agent may pause when payment or PII is discussed</p>
+                  <p className="text-[11px] text-zinc-400">{tSettings("compliance.pauseSensitive")}</p>
+                  <p className="text-[10px] text-zinc-500">{tSettings("compliance.pauseSensitiveHelp")}</p>
                 </div>
                 <button
                   type="button"
@@ -145,7 +144,7 @@ export default function AppSettingsCompliancePage() {
                 disabled={consentSaving}
                 className="mt-3 px-4 py-2 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-50"
               >
-                {consentSaving ? "Saving…" : "Save recording consent"}
+                {consentSaving ? tSettings("compliance.savingConsent") : tSettings("compliance.saveConsent")}
               </button>
             </>
           )}
@@ -154,8 +153,8 @@ export default function AppSettingsCompliancePage() {
         <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <label className="flex items-center justify-between cursor-pointer">
             <div>
-              <p className="text-sm font-medium text-white">Call recording</p>
-              <p className="text-[11px] text-zinc-500 mt-0.5">All AI calls are recorded for quality and compliance</p>
+              <p className="text-sm font-medium text-white">{tSettings("compliance.callRecording")}</p>
+              <p className="text-[11px] text-zinc-500 mt-0.5">{tSettings("compliance.callRecordingHelp")}</p>
             </div>
             <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${recording ? "bg-white" : "bg-zinc-700"}`} onClick={() => setRecording(!recording)}>
               <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${recording ? "translate-x-6 bg-black" : "translate-x-1 bg-zinc-400"}`} />
@@ -176,20 +175,20 @@ export default function AppSettingsCompliancePage() {
         </div>
 
         <div>
-          <label htmlFor="retention" className="block text-xs font-medium text-zinc-400 mb-1">Data retention</label>
+          <label htmlFor="retention" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("compliance.dataRetention")}</label>
           <select id="retention" value={retention} onChange={(e) => setRetention(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none">
-            <option value="30">30 days</option>
-            <option value="90">90 days</option>
-            <option value="180">180 days</option>
-            <option value="365">1 year</option>
+            <option value="30">{tSettings("compliance.retention30")}</option>
+            <option value="90">{tSettings("compliance.retention90")}</option>
+            <option value="180">{tSettings("compliance.retention180")}</option>
+            <option value="365">{tSettings("compliance.retention365")}</option>
           </select>
-          <p className="mt-1 text-[11px] text-zinc-500">Recordings and transcripts older than this are deleted automatically.</p>
+          <p className="mt-1 text-[11px] text-zinc-500">{tSettings("compliance.retentionHelp")}</p>
         </div>
       </div>
 
       <div className="flex gap-3">
-        <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors">Save changes</button>
-        <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-colors">Export all data</button>
+        <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors">{tSettings("compliance.saveChanges")}</button>
+        <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-colors">{tSettings("compliance.exportData")}</button>
       </div>
 
       <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>

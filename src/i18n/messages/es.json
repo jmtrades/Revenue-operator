@@ -431,7 +431,23 @@
     "status": {
       "live": "Live",
       "ready": "Ready",
-      "calls": "calls"
+      "calls": "calls",
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "defaultBadge": "Predeterminado",
+    "callsSuffix": "llamadas",
+    "toast": {
+      "paused": "Agente pausado",
+      "active": "Agente activo"
+    },
+    "actions": {
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "pause": "Pausar",
+      "on": "Activar",
+      "editAgent": "Editar agente",
+      "deleteAgent": "Eliminar agente"
     },
     "purpose": {
       "inbound": "Entrante",
@@ -479,7 +495,15 @@
       "customRuleLabel": "Añadir regla personalizada",
       "customRulePlaceholder": "Añadir regla… (pulsa Enter)",
       "transferPhoneLabel": "Transferir a este número al escalar",
-      "transferPhonePlaceholder": "+1 (555) 000-0000"
+      "transferPhonePlaceholder": "+1 (555) 000-0000",
+      "objectionPriceLabel": "Objeción de precio",
+      "objectionPricePlaceholder": "Entiendo que el presupuesto es importante. Nuestros clientes suelen ver ROI en el primer mes...",
+      "objectionTimingLabel": "\"No es el momento adecuado\"",
+      "objectionTimingPlaceholder": "Lo entiendo. ¿Te ayudaría si te contacto en una o dos semanas?",
+      "objectionCompetitorLabel": "Comparar con la competencia",
+      "objectionCompetitorPlaceholder": "Es una buena idea. ¿Qué estás comparando exactamente? Puedo destacar en qué nos diferenciamos.",
+      "objectionNotInterestedLabel": "\"No me interesa\"",
+      "objectionNotInterestedPlaceholder": "Sin problema. ¿Qué tendría que cambiar para que te resultara útil?"
     },
     "deleteAgent": "Eliminar agente",
     "deleteAgentTitle": "Eliminar agente",
@@ -533,7 +557,13 @@
       "neverSayPlaceholder": "ej. Dar precios concretos por teléfono",
       "objectionPlaceholder": "Cómo responder cuando alguien no está interesado",
       "activeHoursPlaceholder": "ej. 9:00-17:00",
-      "timezonePlaceholder": "America/New_York"
+      "timezonePlaceholder": "America/New_York",
+      "purposeAnswerCalls": "Responder llamadas",
+      "purposeMakeCalls": "Hacer llamadas",
+      "purposeBoth": "Ambos",
+      "saveDraft": "Guardar borrador",
+      "next": "Siguiente",
+      "launch": "Lanzar"
     }
   },
   "calls": {
@@ -649,10 +679,26 @@
       "exportSuccess": "Llamadas exportadas. Revisa tus descargas."
     },
     "live": {
+      "selectWorkspace": "Selecciona un espacio de trabajo para ver llamadas en vivo.",
+      "breadcrumbCalls": "Llamadas",
+      "breadcrumbLive": "En vivo",
+      "pageTitle": "Monitoreo de llamadas en vivo",
+      "pageSubtitle": "Llamadas activas en tu espacio de trabajo. Se actualiza cada 5 segundos.",
+      "inProgress": "En curso",
+      "waiting": "En espera",
+      "noActiveCalls": "No hay llamadas activas ahora.",
+      "noActiveCallsHint": "Las nuevas llamadas aparecerán aquí cuando comiencen.",
+      "unknownCaller": "Llamante desconocido",
+      "listenIn": "Escuchar (silencioso)",
+      "whisper": "Susurrar (solo al agente)",
+      "bargeIn": "Intervenir",
+      "liveTranscript": "Transcripción en vivo",
+      "noTranscript": "— Sin transcripción aún —",
+      "sentiment": "Sentimiento: —",
+      "emergencyTakeover": "Toma de emergencia",
       "listenInComingSoon": "La escucha silenciosa estará disponible pronto.",
       "whisperComingSoon": "El modo susurro estará disponible pronto.",
-      "bargeInComingSoon": "La intervención directa estará disponible pronto.",
-      "emergencyTakeover": "Toma de control de emergencia — contacta con soporte para una escalada urgente."
+      "bargeInComingSoon": "La intervención directa estará disponible pronto."
     }
   },
   "callIntelligence": {
@@ -908,6 +954,40 @@
         "lost": "Perdidos"
       }
     },
+    "detail": {
+      "agent": "Agente",
+      "created": "Creado",
+      "contact": "Contacto",
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "email": "Correo",
+      "whatTheyNeed": "Lo que necesitan",
+      "stage": "Etapa",
+      "timeline": "Cronología",
+      "callPrefix": "Llamada",
+      "notes": "Notas",
+      "notesPlaceholder": "Agregar notas…",
+      "textButton": "Mensaje",
+      "addNote": "Agregar nota",
+      "callTypeLabel": "Tipo de llamada",
+      "callTypes": {
+        "default": "Predeterminado",
+        "followUp": "Seguimiento",
+        "reminder": "Recordatorio"
+      },
+      "startingCall": "Iniciando…",
+      "haveAiCall": "Llamada con IA",
+      "archive": "Archivar"
+    },
+    "table": {
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "source": "Fuente",
+      "score": "Puntuación",
+      "stage": "Etapa",
+      "lastContact": "Último contacto",
+      "agent": "Agente"
+    },
     "empty": {
       "title": "Aún no hay leads",
       "body": "Tu IA empezará a crear leads automáticamente a medida que hable con tus clientes.",
@@ -1064,10 +1144,37 @@
       "title": "Equipo y permisos"
     },
     "compliance": {
-      "title": "Cumplimiento"
+      "title": "Cumplimiento",
+      "subtitle": "Configuraciones de grabación, privacidad y retención de datos.",
+      "recordingConsent": "Consentimiento de grabación",
+      "consentDescription": "Elige el modelo de consentimiento para tu jurisdicción. Dos partes requiere reproducir un anuncio al inicio de la llamada.",
+      "consentMode": "Modo de consentimiento",
+      "oneParty": "Una parte (ej. la mayoría de estados de EE.UU.)",
+      "twoParty": "Dos partes (reproduce anuncio al inicio de la llamada)",
+      "doNotRecord": "No grabar",
+      "twoPartyStatesHint": "Algunos estados requieren consentimiento de dos partes.",
+      "announcementLabel": "Anuncio de consentimiento (se reproduce al inicio de la llamada)",
+      "pauseSensitive": "Pausar grabación durante información sensible",
+      "pauseSensitiveHelp": "Mejor esfuerzo; el agente puede pausar cuando se discuta información de pago o datos personales",
+      "savingConsent": "Guardando…",
+      "saveConsent": "Guardar consentimiento de grabación",
+      "callRecording": "Grabación de llamadas",
+      "callRecordingHelp": "Todas las llamadas con IA se graban para calidad y cumplimiento",
+      "hipaaMode": "Modo HIPAA",
+      "hipaaModeHelp": "Cifrar PHI, se requiere BAA (+$99/mes en plan Scale)",
+      "dataRetention": "Retención de datos",
+      "retention30": "30 días",
+      "retention90": "90 días",
+      "retention180": "180 días",
+      "retention365": "1 año",
+      "retentionHelp": "Las grabaciones y transcripciones anteriores a esto se eliminan automáticamente.",
+      "saveChanges": "Guardar cambios",
+      "exportData": "Exportar todos los datos",
+      "exportRequested": "Exportación solicitada. Te avisaremos por correo cuando esté lista."
     },
     "errorReports": "Informes de errores",
     "errorsPage": {
+      "title": "Informes de errores",
       "breadcrumbSettings": "Ajustes",
       "breadcrumbErrorReports": "Informes de errores",
       "heading": "Informes de errores",
@@ -1085,7 +1192,33 @@
     "savePreferences": "Guardar preferencias",
     "saveWeights": "Guardar pesos",
     "saveWebhook": "Guardar webhook",
-    "leadScoring": "Puntuación de leads",
+    "leadScoring": {
+      "title": "Puntuación de prospectos",
+      "description": "Pesos utilizados para calcular la puntuación del prospecto (0–100) a partir de llamadas e interacciones. Las puntuaciones se recalculan después de cada llamada.",
+      "loading": "Cargando…",
+      "resetToDefault": "Restablecer a predeterminado ({value})",
+      "saving": "Guardando…",
+      "saveWeights": "Guardar pesos",
+      "useAllDefaults": "Usar todos los predeterminados",
+      "viewLeadsHint": "Ver prospectos para ver puntuaciones. Se actualizan automáticamente después de cada llamada.",
+      "viewLeadsLink": "Ver prospectos",
+      "viewLeadsHintSuffix": " para ver puntuaciones. Se actualizan automáticamente después de cada llamada.",
+      "loadFailed": "Error al cargar la configuración de puntuación.",
+      "saved": "Pesos guardados.",
+      "usingDefaults": "Usando pesos predeterminados.",
+      "weights": {
+        "baseScore": "Puntuación base (0–100)",
+        "baseScoreHelp": "Puntuación inicial antes de cualquier evento",
+        "callCount": "Por llamada",
+        "durationOver2Min": "Llamada de más de 2 min",
+        "positiveSentiment": "Sentimiento positivo",
+        "pricingQuestion": "Preguntó por precios",
+        "booked": "Cita reservada",
+        "returnCaller": "Llamante recurrente",
+        "negativeSentiment": "Sentimiento negativo",
+        "justBrowsing": "Solo mirando / baja intención"
+      }
+    },
     "activityLog": "Registro de actividad",
     "deleteAllDataTitle": "Eliminar todos los datos",
     "deleteAllDataMessage": "¿Eliminar todos los datos del espacio (llamadas, leads, agentes)? No se puede deshacer. Contacta con soporte para completar.",
@@ -1558,7 +1691,29 @@
     "defaultGreeting": "Gracias por llamar a {business}. ¿En qué puedo ayudarte hoy?",
     "hint": {
       "micOrType": "Pulsa el micrófono para hablar o escribe abajo."
-    }
+    },
+    "startConversation": "Iniciar conversación",
+    "orTryScenario": "O prueba un escenario:",
+    "scenarios": {
+      "normalCall": { "label": "Llamada normal", "prompt": "Hola, necesito información sobre sus servicios." },
+      "bookingRequest": { "label": "Pedir cita", "prompt": "Quiero reservar una cita para el próximo jueves." },
+      "pricingQuestion": { "label": "Precios", "prompt": "¿Cuánto cuestan sus servicios?" },
+      "angryCaller": { "label": "Cliente enfadado", "prompt": "Llevo tres días esperando una llamada y nadie me ha contactado. Es inaceptable." },
+      "wrongNumber": { "label": "Número equivocado", "prompt": "¿Es la pizzería de la calle Principal?" }
+    },
+    "youAsCaller": "Tú (como llamante)",
+    "aiAgent": "Agente IA",
+    "thinking": "Pensando…",
+    "speaking": "Hablando…",
+    "stopListening": "Dejar de escuchar",
+    "listeningClickToStop": "Escuchando… clic para parar",
+    "tapToSpeak": "Toca para hablar",
+    "inputPlaceholder": "O escribe tu respuesta…",
+    "inputAria": "Escribe tu mensaje",
+    "send": "Enviar",
+    "reset": "Reiniciar",
+    "testingLabel": "Prueba: {name}",
+    "conversationAria": "Conversación"
   },
   "agents.voiceTest": {
     "scriptPlaceholder": "Escribe el texto para escucharlo con la voz seleccionada…",
@@ -1863,6 +2018,22 @@
   },
   "developer": {
     "pageTitle": "Developer — Recall Touch",
+    "justNow": "Ahora mismo",
+    "minAgo": "hace {count} min",
+    "hrAgo": "hace {count} h",
+    "daysAgo": "hace {count} días",
+    "permissionAdmin": "Admin",
+    "permissionReadWrite": "Lectura/escritura",
+    "permissionReadOnly": "Solo lectura",
+    "permissionReadPlusWrite": "Lectura + escritura",
+    "labelPlaceholder": "ej. Producción",
+    "urlPlaceholder": "https://...",
+    "copy": "Copiar",
+    "revoke": "Revocar",
+    "active": "Activo",
+    "createApiKey": "Crear API Key",
+    "create": "Crear",
+    "revokeKey": "Revocar clave",
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Envía eventos a tus endpoints HTTP con payloads firmados para llamadas, leads, citas y más.",
@@ -2242,6 +2413,20 @@
     "marketplaceNoNumbersFound": "No se encontraron números. Prueba otro código de área o tipo.",
     "marketplaceAdding": "Añadiendo…",
     "marketplaceGetThisNumber": "Obtener este número",
+    "releaseTitleUnassign": "Desasignar del agente en Agentes primero",
+    "releaseTitleRelease": "Liberar número",
+    "releaseLabel": "Liberar",
+    "copyNumber": "Copiar número",
+    "copied": "Copiado",
+    "copiedAria": "Copiado al portapapeles",
+    "aiNumberReady": "¡Tu número de IA está listo! Las llamadas a este número serán atendidas por tu agente de IA.",
+    "sendCode": "Enviar código",
+    "sending": "Enviando…",
+    "verifyLabel": "Verificar",
+    "verifying": "Verificando…",
+    "areaCodePlaceholder": "ej. 503",
+    "areaCodePlaceholderAlt": "ej. 212",
+    "emailPlaceholder": "tu@email.com",
     "toast": {
       "numberConnected": "Número conectado. Ya puedes recibir llamadas y mensajes.",
       "saved": "Settings saved.",
