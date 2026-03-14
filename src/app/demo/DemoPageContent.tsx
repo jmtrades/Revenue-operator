@@ -2,23 +2,16 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Mic } from "lucide-react";
 import { LiveAgentChat } from "@/components/LiveAgentChat";
 import { DemoVoiceButton } from "@/components/demo/DemoVoiceButton";
 import { ROUTES } from "@/lib/constants";
 
-const DEMO_GREETING =
-  "Hi! I'm the Recall Touch agent. I can help with scheduling, pricing, callbacks, or anything else. What do you need?";
-
-const SCENARIOS = [
-  "Schedule an appointment",
-  "Ask about pricing",
-  "After-hours call",
-  "Request a callback",
-  "Get a quote",
-];
+const SCENARIO_KEYS = ["scenario1", "scenario2", "scenario3", "scenario4", "scenario5"] as const;
 
 export function DemoPageContent() {
+  const t = useTranslations("demoPage");
   const chatRef = useRef<{ send: (text: string) => void } | null>(null);
   const [messageCount, setMessageCount] = useState(0);
 
@@ -26,10 +19,10 @@ export function DemoPageContent() {
     <>
       <div className="max-w-4xl mx-auto px-4 text-center mb-8">
         <h1 className="font-bold text-3xl md:text-4xl mb-2" style={{ letterSpacing: "-0.02em" }}>
-          Experience Recall Touch
+          {t("title")}
         </h1>
         <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-          Talk to an AI agent that handles real calls. Right now.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -39,67 +32,70 @@ export function DemoPageContent() {
             <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-xl" aria-hidden>
               <Mic className="h-5 w-5 text-zinc-300" />
             </div>
-            <p className="text-[10px] text-zinc-500 text-center">Tap mic below to talk</p>
+            <p className="text-[10px] text-zinc-500 text-center">{t("tapMic")}</p>
           </div>
           <DemoVoiceButton />
-          <p className="text-xs text-zinc-500 text-center">Or try a scenario:</p>
+          <p className="text-xs text-zinc-500 text-center">{t("orTryScenario")}</p>
           <div className="flex flex-wrap justify-center gap-2 w-full">
-            {SCENARIOS.map((label) => (
-              <button
-                key={label}
-                type="button"
-                onClick={() => chatRef.current?.send(label)}
-                aria-label={`Try scenario: ${label}`}
-                className="rounded-full border border-[var(--border-medium)] bg-zinc-800/80 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-600 hover:text-white transition-colors"
-              >
-                {label}
-              </button>
-            ))}
+            {SCENARIO_KEYS.map((key) => {
+              const label = t(key);
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => chatRef.current?.send(label)}
+                  aria-label={`Try scenario: ${label}`}
+                  className="rounded-full border border-[var(--border-medium)] bg-zinc-800/80 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-600 hover:text-white transition-colors"
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden flex flex-col">
           <div className="px-4 py-2 border-b border-[var(--border-default)] flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-500">Live transcript</span>
+            <span className="text-xs font-medium text-zinc-500">{t("liveTranscript")}</span>
           </div>
           <LiveAgentChat
             ref={chatRef}
             variant="demo"
             initialAgent="sarah"
             showMic
-            greeting={DEMO_GREETING}
+            greeting={t("greeting")}
             onUserMessage={() => setMessageCount((c) => c + 1)}
           />
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 mt-8">
-        <p className="text-xs font-semibold uppercase text-zinc-500 mb-2">Voice style</p>
-        <p className="text-sm text-zinc-400 mb-4">Choose Professional, Friendly, or Concise in the chat header above.</p>
+        <p className="text-xs font-semibold uppercase text-zinc-500 mb-2">{t("voiceStyle")}</p>
+        <p className="text-sm text-zinc-400 mb-4">{t("voiceStyleHelp")}</p>
       </div>
 
       {messageCount >= 3 && (
         <div className="max-w-5xl mx-auto px-4 mt-8 rounded-2xl border border-[var(--border-medium)] bg-[var(--bg-card)]/80 p-6">
-          <h3 className="font-semibold text-white mb-3">What just happened</h3>
-          <p className="text-sm text-zinc-400 mb-2">The agent captured the conversation and would:</p>
+          <h3 className="font-semibold text-white mb-3">{t("whatJustHappened")}</h3>
+          <p className="text-sm text-zinc-400 mb-2">{t("whatJustHappenedDesc")}</p>
           <ul className="text-sm text-zinc-300 space-y-1 list-disc list-inside mb-4">
-            <li>Extract name, request type, and next step</li>
-            <li>Queue a callback or appointment if needed</li>
-            <li>Send you a summary and follow-up</li>
+            <li>{t("bullet1")}</li>
+            <li>{t("bullet2")}</li>
+            <li>{t("bullet3")}</li>
           </ul>
           <Link
             href={ROUTES.START}
             className="inline-flex items-center justify-center rounded-xl bg-white text-black font-semibold px-5 py-2.5 text-sm hover:bg-zinc-100"
           >
-            Set this up →
+            {t("setThisUp")}
           </Link>
         </div>
       )}
 
       <div className="max-w-5xl mx-auto px-4 mt-8 text-center">
-        <p className="text-sm text-zinc-500 mb-2">Voice: click the round widget in the corner to talk.</p>
-        <Link href={ROUTES.START} className="text-sm font-medium text-zinc-300 hover:text-white transition-colors" aria-label="Get this for your number">
-          Get this for your number →
+        <p className="text-sm text-zinc-500 mb-2">{t("voiceWidgetHint")}</p>
+        <Link href={ROUTES.START} className="text-sm font-medium text-zinc-300 hover:text-white transition-colors" aria-label={t("getThisForYourNumber")}>
+          {t("getThisForYourNumber")}
         </Link>
       </div>
     </>

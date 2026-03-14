@@ -259,7 +259,7 @@ export default function AppAnalyticsPage() {
         setError(message);
       })
       .finally(() => setLoading(false));
-  }, [workspaceId]);
+  }, [workspaceId, t]);
 
   const { start: rangeStart, end: rangeEnd } = useMemo(
     () => getRangeBounds(range, dateFrom, dateTo),
@@ -645,7 +645,7 @@ export default function AppAnalyticsPage() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              {summaryLabel} at a glance
+              {t("analytics.atAGlance", { label: summaryLabel })}
             </p>
             <p className="text-sm text-zinc-300 mt-1">
               {hasData
@@ -661,8 +661,8 @@ export default function AppAnalyticsPage() {
         </div>
         {hasData && (
           <div className="flex flex-wrap gap-3 text-[11px] text-zinc-400">
-            <span>Lead conversion {leadConversionPct}%</span>
-            <span>Positive sentiment {positivePct}%</span>
+            <span>{t("analytics.leadConversionPct", { pct: leadConversionPct })}</span>
+            <span>{t("analytics.positiveSentimentPct", { pct: positivePct })}</span>
           </div>
         )}
       </div>
@@ -757,22 +757,22 @@ export default function AppAnalyticsPage() {
                 <>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
                     <TrendingUp className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <p className="text-sm text-zinc-300">Busiest hour this week stays stable around mid-morning.</p>
+                    <p className="text-sm text-zinc-300">{t("analytics.insightBusyHour")}</p>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
                     <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
                     <div>
-                      <p className="text-sm text-zinc-300">Questions about availability often appear outside standard hours.</p>
-                      <Link href="/app/agents" className="text-xs text-[var(--accent-primary)] mt-1 inline-block">Add to knowledge base →</Link>
+                      <p className="text-sm text-zinc-300">{t("analytics.insightAvailability")}</p>
+                      <Link href="/app/agents" className="text-xs text-[var(--accent-primary)] mt-1 inline-block">{t("analytics.addToKnowledge")} →</Link>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
                     <BadgeCheck className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <p className="text-sm text-zinc-300">Calls that reach a live answer are much more likely to become appointments.</p>
+                    <p className="text-sm text-zinc-300">{t("analytics.insightLiveAnswer")}</p>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
                     <Lightbulb className="h-4 w-4 shrink-0 text-zinc-400 mt-0.5" />
-                    <p className="text-sm text-zinc-300">Make sure pricing and availability are easy to confirm in the first 30 seconds.</p>
+                    <p className="text-sm text-zinc-300">{t("analytics.insightPricing")}</p>
                   </div>
                 </>
               )}
@@ -782,7 +782,7 @@ export default function AppAnalyticsPage() {
 
       {/* Row 4: sentiment overview */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-        <p className="text-sm font-medium text-white mb-3">Sentiment overview</p>
+        <p className="text-sm font-medium text-white mb-3">{t("analytics.sentimentOverview")}</p>
         <div className="h-4 w-full rounded-full bg-[var(--border-default)] overflow-hidden flex">
           <div
             className="h-full bg-emerald-500"
@@ -798,9 +798,9 @@ export default function AppAnalyticsPage() {
           />
         </div>
         <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-zinc-400">
-          <span>Positive {positivePct}%</span>
-          <span>Neutral {neutralPct}%</span>
-          <span>Negative {negativePct}%</span>
+          <span>{t("analytics.sentimentPositive", { pct: positivePct })}</span>
+          <span>{t("analytics.sentimentNeutral", { pct: neutralPct })}</span>
+          <span>{t("analytics.sentimentNegative", { pct: negativePct })}</span>
         </div>
       </div>
     </div>

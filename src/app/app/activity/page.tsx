@@ -465,7 +465,7 @@ export default function AppActivityPage() {
     return () => {
       client.removeChannel(channel);
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchWorkspaceMeCached()

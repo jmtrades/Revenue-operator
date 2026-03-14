@@ -12,6 +12,7 @@ import {
   createCallForTwilio,
   createOutboundCall as vapiCreateOutboundCall,
 } from "@/lib/vapi";
+import type { CreateAssistantInput } from "@/lib/vapi";
 
 export class VapiProvider implements VoiceProvider {
   async createAssistant(params: CreateAssistantParams): Promise<{ assistantId: string }> {
@@ -22,7 +23,7 @@ export class VapiProvider implements VoiceProvider {
         parameters: tool.parameters,
       })) ?? [];
 
-    const { id } = await vapiCreateAssistant({
+    const input: CreateAssistantInput = {
       name: params.name,
       systemPrompt: params.systemPrompt,
       firstMessage: `Hello, this is ${params.name}. How can I help you today?`,
@@ -35,7 +36,8 @@ export class VapiProvider implements VoiceProvider {
       voiceSettings: {
         denoising: params.backgroundDenoising,
       },
-    } as any);
+    };
+    const { id } = await vapiCreateAssistant(input);
 
     return { assistantId: id };
   }
@@ -61,7 +63,7 @@ export class VapiProvider implements VoiceProvider {
         voiceSettings: {
           denoising: params.backgroundDenoising,
         },
-      } as any
+      }
     );
   }
 

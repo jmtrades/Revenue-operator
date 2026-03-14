@@ -81,14 +81,14 @@ export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
       </div>
       <div className="flex-1 overflow-y-auto p-5 space-y-6">
         {loading ? (
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>In progress.</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("loading")}</p>
         ) : !data ? (
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No proof available yet.</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("empty")}</p>
         ) : (
           <>
             {outcomes.length > 0 && (
               <section>
-                <h3 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Progress</h3>
+                <h3 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>{t("progressHeading")}</h3>
                 <div className="space-y-2">
                   {outcomes.slice(-5).map((o, i) => (
                     <div
@@ -113,7 +113,7 @@ export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
                 )}
                 {data.stability?.cooldown?.cooldown_until && !data.stability?.plan && (
                   <p className="text-sm" style={{ color: "var(--text-primary)" }}>
-                    Next touch at {new Date(data.stability.cooldown.cooldown_until).toLocaleString()}
+                    {t("nextTouchAt")} {new Date(data.stability.cooldown.cooldown_until).toLocaleString()}
                   </p>
                 )}
               </section>

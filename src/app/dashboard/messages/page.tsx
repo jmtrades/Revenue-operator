@@ -3,6 +3,7 @@
 import { useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
@@ -25,6 +26,7 @@ interface Msg {
 }
 
 export default function MessagesPage() {
+  const t = useTranslations("messages");
   const { workspaceId } = useWorkspace();
   const searchParams = useSearchParams();
   const q = searchParams.toString() ? `?${searchParams.toString()}` : "";
@@ -170,9 +172,9 @@ export default function MessagesPage() {
             </div>
           ) : conversations.length === 0 ? (
             <div className="p-4 text-center">
-              <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No messages yet</p>
-              <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Your AI will text callers automatically. Threads appear here after calls or when you send a message.</p>
-              <Link href="/dashboard/activity" className="inline-block mt-3 text-xs font-medium" style={{ color: "var(--accent-primary)" }}>Activity →</Link>
+              <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>{t("noMessagesYet")}</p>
+              <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{t("emptyBodyDashboard")}</p>
+              <Link href="/dashboard/activity" className="inline-block mt-3 text-xs font-medium" style={{ color: "var(--accent-primary)" }}>{t("activityLink")}</Link>
             </div>
           ) : (
             <ul>
@@ -201,10 +203,10 @@ export default function MessagesPage() {
             <>
               <div className="p-4 border-b flex-shrink-0" style={{ borderColor: "var(--border)" }}>
                 <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-                  {selectedConv?.lead_name || selectedConv?.lead_email || selectedConv?.company || "Contact"}
+                  {selectedConv?.lead_name || selectedConv?.lead_email || selectedConv?.company || t("contactFallback")}
                 </p>
                 <Link href={`/dashboard/record/lead/${selectedLeadId}${q ? `?${q.replace("lead=", "workspace_id=")}` : ""}`} className="text-xs" style={{ color: "var(--accent)" }}>
-                  View record
+                  {t("viewRecord")}
                 </Link>
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -242,21 +244,21 @@ export default function MessagesPage() {
                   onClick={sendMessage}
                   disabled={!reply.trim() || sending}
                 >
-                  {sending ? "Sending…" : "Send"}
+                  {sending ? t("sending") : t("send")}
                 </button>
               </div>
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center p-8 text-center text-sm" style={{ color: "var(--text-muted)" }}>
-              Select a conversation or send from Record.
+              {t("selectConversationOrSend")}
             </div>
           )}
         </div>
       </div>
       <p className="mt-4 text-sm">
-        <Link href={`/dashboard/messages/compose${q}`} style={{ color: "var(--meaning-blue)" }}>Compose</Link>
+        <Link href={`/dashboard/messages/compose${q}`} style={{ color: "var(--meaning-blue)" }}>{t("compose")}</Link>
         {" · "}
-        <Link href={`/dashboard/templates${q}`} style={{ color: "var(--text-muted)" }}>Templates</Link>
+        <Link href={`/dashboard/templates${q}`} style={{ color: "var(--text-muted)" }}>{t("templates")}</Link>
       </p>
     </div>
   );

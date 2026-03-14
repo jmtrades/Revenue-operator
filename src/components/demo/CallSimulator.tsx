@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Phone, User, Bot } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
@@ -9,93 +10,75 @@ import { ROUTES } from "@/lib/constants";
 type DemoLine = { role: "ai" | "caller"; text: string };
 type DemoScript = { title: string; lines: DemoLine[]; result: string; resultDetails: string[]; score?: number };
 
-const DEMO_SCRIPTS: DemoScript[] = [
-  {
-    title: "Inbound Lead (Plumber)",
-    lines: [
-      { role: "ai", text: "Thanks for calling! How can I help you today?" },
-      { role: "caller", text: "Yeah hi, I've got a leak under my kitchen sink." },
-      { role: "ai", text: "I can help with that. Can I get your name?" },
-      { role: "caller", text: "Mike Johnson." },
-      { role: "ai", text: "Thanks Mike. Best number to reach you?" },
-      { role: "caller", text: "503-555-0199." },
-      { role: "ai", text: "And your address?" },
-      { role: "caller", text: "742 Elm Street, Portland." },
-      { role: "ai", text: "Is this an active leak or a slow drip?" },
-      { role: "caller", text: "Slow drip, but it's getting worse." },
-      { role: "ai", text: "Got it. I have tomorrow at 10 AM or Thursday at 2 PM available." },
-      { role: "caller", text: "Tomorrow at 10 works." },
-      { role: "ai", text: "Perfect! You're booked for tomorrow at 10 AM at 742 Elm St. I'll send a text confirmation right now." },
-      { role: "caller", text: "Great, thanks." },
-      { role: "ai", text: "See you tomorrow morning, Mike!" },
-    ],
-    result: "Lead captured and appointment booked.",
-    resultDetails: [
-      "Contact: Mike Johnson",
-      "Phone: (503) 555-0199",
-      "Address: 742 Elm St, Portland",
-      "Issue: Kitchen sink leak — slow drip",
-      "Appointment: Tomorrow 10:00 AM",
-      "Text sent: Confirmation ✓",
-      "Owner notified: Instantly ✓",
-    ],
-    score: 92,
-  },
-  {
-    title: "Appointment Booking (Dental)",
-    lines: [
-      { role: "ai", text: "Good morning, Maple Street Dental! This is Alex. How can I help?" },
-      { role: "caller", text: "Hi, I'd like to schedule a cleaning." },
-      { role: "ai", text: "Of course! Are you an existing patient?" },
-      { role: "caller", text: "Yes, Sarah Chen." },
-      { role: "ai", text: "Welcome back, Sarah! Do you prefer mornings or afternoons?" },
-      { role: "caller", text: "Mornings are better." },
-      { role: "ai", text: "I have Tuesday at 9 AM or Wednesday at 10:30 with Dr. Martinez." },
-      { role: "caller", text: "Tuesday at 9 please." },
-      { role: "ai", text: "Booked! Tuesday at 9 AM with Dr. Martinez. You'll get a reminder on Monday." },
-      { role: "caller", text: "Thank you!" },
-      { role: "ai", text: "See you Tuesday, Sarah! Have a great day." },
-    ],
-    result: "Appointment scheduled.",
-    resultDetails: [
-      "Patient: Sarah Chen (existing)",
-      "Service: Cleaning",
-      "Provider: Dr. Martinez",
-      "Appointment: Tuesday 9:00 AM",
-      "Calendar synced: ✓",
-      "Reminder: Monday ✓",
-    ],
-    score: 88,
-  },
-  {
-    title: "Outbound Follow-up (Roofing)",
-    lines: [
-      { role: "ai", text: "Hi, is this James? This is Emma from Summit Roofing." },
-      { role: "caller", text: "Uh, yeah?" },
-      { role: "ai", text: "You submitted a request on our website about 2 minutes ago regarding roof damage. I wanted to follow up right away." },
-      { role: "caller", text: "Oh right, yeah. We had storm damage last week." },
-      { role: "ai", text: "I'm sorry to hear that. Can you describe what you're seeing?" },
-      { role: "caller", text: "There are missing shingles on the south side of the house." },
-      { role: "ai", text: "That definitely needs attention. We can send an estimator out tomorrow at 3 PM — would that work?" },
-      { role: "caller", text: "Yeah, that works." },
-      { role: "ai", text: "Great. Have you started an insurance claim yet?" },
-      { role: "caller", text: "No, not yet." },
-      { role: "ai", text: "No worries — our estimator can help document everything for your insurance claim while they're there." },
-      { role: "caller", text: "Oh that's helpful, thanks." },
-      { role: "ai", text: "Sending you a confirmation text now. See you tomorrow at 3, James!" },
-    ],
-    result: "Speed-to-lead follow-up completed.",
-    resultDetails: [
-      "Response time: 2 minutes",
-      "Contact: James Wilson",
-      "Issue: Storm damage — missing shingles, south side",
-      "Appointment: Tomorrow 3:00 PM",
-      "Insurance: Documentation flagged ✓",
-      "Text sent: Confirmation ✓",
-    ],
-    score: 95,
-  },
-];
+function buildScripts(t: (key: string) => string): DemoScript[] {
+  const line = (script: number, index: number) => t(`simulator.script${script}Line${index}`);
+  const detail = (script: number, index: number) => t(`simulator.script${script}Detail${index}`);
+  return [
+    {
+      title: t("simulator.script0Title"),
+      lines: [
+        { role: "ai", text: line(0, 0) },
+        { role: "caller", text: line(0, 1) },
+        { role: "ai", text: line(0, 2) },
+        { role: "caller", text: line(0, 3) },
+        { role: "ai", text: line(0, 4) },
+        { role: "caller", text: line(0, 5) },
+        { role: "ai", text: line(0, 6) },
+        { role: "caller", text: line(0, 7) },
+        { role: "ai", text: line(0, 8) },
+        { role: "caller", text: line(0, 9) },
+        { role: "ai", text: line(0, 10) },
+        { role: "caller", text: line(0, 11) },
+        { role: "ai", text: line(0, 12) },
+        { role: "caller", text: line(0, 13) },
+        { role: "ai", text: line(0, 14) },
+      ],
+      result: t("simulator.script0Result"),
+      resultDetails: [detail(0, 0), detail(0, 1), detail(0, 2), detail(0, 3), detail(0, 4), detail(0, 5), detail(0, 6)],
+      score: 92,
+    },
+    {
+      title: t("simulator.script1Title"),
+      lines: [
+        { role: "ai", text: line(1, 0) },
+        { role: "caller", text: line(1, 1) },
+        { role: "ai", text: line(1, 2) },
+        { role: "caller", text: line(1, 3) },
+        { role: "ai", text: line(1, 4) },
+        { role: "caller", text: line(1, 5) },
+        { role: "ai", text: line(1, 6) },
+        { role: "caller", text: line(1, 7) },
+        { role: "ai", text: line(1, 8) },
+        { role: "caller", text: line(1, 9) },
+        { role: "ai", text: line(1, 10) },
+      ],
+      result: t("simulator.script1Result"),
+      resultDetails: [detail(1, 0), detail(1, 1), detail(1, 2), detail(1, 3), detail(1, 4), detail(1, 5)],
+      score: 88,
+    },
+    {
+      title: t("simulator.script2Title"),
+      lines: [
+        { role: "ai", text: line(2, 0) },
+        { role: "caller", text: line(2, 1) },
+        { role: "ai", text: line(2, 2) },
+        { role: "caller", text: line(2, 3) },
+        { role: "ai", text: line(2, 4) },
+        { role: "caller", text: line(2, 5) },
+        { role: "ai", text: line(2, 6) },
+        { role: "caller", text: line(2, 7) },
+        { role: "ai", text: line(2, 8) },
+        { role: "caller", text: line(2, 9) },
+        { role: "ai", text: line(2, 10) },
+        { role: "caller", text: line(2, 11) },
+        { role: "ai", text: line(2, 12) },
+      ],
+      result: t("simulator.script2Result"),
+      resultDetails: [detail(2, 0), detail(2, 1), detail(2, 2), detail(2, 3), detail(2, 4), detail(2, 5)],
+      score: 95,
+    },
+  ];
+}
 
 const TYPING_DELAY_MS = 1200;
 const TYPING_INDICATOR_MS = 800;
@@ -122,6 +105,7 @@ function DemoTranscript({
   onSkip: () => void;
   forceShowResult: boolean;
 }) {
+  const t = useTranslations("hero");
   const [visibleLines, setVisibleLines] = useState<{ index: number; text: string }[]>([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
@@ -240,7 +224,7 @@ function DemoTranscript({
           style={{ color: "var(--text-tertiary)" }}
         >
           <Phone className="w-4 h-4" />
-          <span>Call in progress — {formatTimer(elapsed)}</span>
+          <span>{t("simulator.callInProgress")}{formatTimer(elapsed)}</span>
         </div>
         {!showResult && (
           <button
@@ -249,7 +233,7 @@ function DemoTranscript({
             className="text-sm font-medium shrink-0"
             style={{ color: "var(--accent-primary)" }}
           >
-            Skip to result →
+            {t("simulator.skipToResult")}
           </button>
         )}
       </div>
@@ -297,7 +281,7 @@ function DemoTranscript({
                   className="text-xs font-medium block mb-0.5"
                   style={{ color: "var(--text-tertiary)" }}
                 >
-                  {isAi ? "AI Agent" : "Caller"}
+                  {isAi ? t("simulator.aiAgent") : t("simulator.caller")}
                 </span>
                 <p
                   className="text-sm"
@@ -322,7 +306,7 @@ function DemoTranscript({
 
       {showResult && (
         <div className="mt-4 p-6 rounded-2xl bg-zinc-800/80 border border-zinc-700 animate-slide-up">
-          <h3 className="text-lg font-semibold text-white mb-3">Call Complete — Results</h3>
+          <h3 className="text-lg font-semibold text-white mb-3">{t("simulator.resultsHeading")}</h3>
           <div className="h-px bg-zinc-700 mb-4" />
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm mb-4">
             {script.resultDetails.map((d, i) => {
@@ -331,7 +315,7 @@ function DemoTranscript({
               const value = idx >= 0 ? d.slice(idx + 2) : d;
               return (
                 <div key={i}>
-                  <span className="text-xs text-zinc-500 block">{label || "Detail"}</span>
+                  <span className="text-xs text-zinc-500 block">{label || t("simulator.detailLabel")}</span>
                   <span className="text-sm text-white font-medium">{value}</span>
                 </div>
               );
@@ -340,7 +324,7 @@ function DemoTranscript({
           {script.score != null && (
             <>
               <div className="h-px bg-zinc-700 mb-3" />
-              <p className="text-xs text-zinc-500 mb-1">Lead Score</p>
+              <p className="text-xs text-zinc-500 mb-1">{t("simulator.leadScore")}</p>
               <p className="text-green-400 font-bold text-lg">{script.score}</p>
               <div className="h-2 rounded-full bg-zinc-800 overflow-hidden mt-1">
                 <div
@@ -349,7 +333,7 @@ function DemoTranscript({
                 />
               </div>
               <p className="text-xs text-zinc-500 mt-1">
-                {script.score >= 80 ? "High-quality lead" : script.score >= 60 ? "Qualified lead" : "Follow up"}
+                {script.score >= 80 ? t("simulator.highQualityLead") : script.score >= 60 ? t("simulator.qualifiedLead") : t("simulator.followUp")}
               </p>
             </>
           )}
@@ -360,6 +344,8 @@ function DemoTranscript({
 }
 
 export function CallSimulator() {
+  const t = useTranslations("hero");
+  const scripts = useMemo(() => buildScripts(t), [t]);
   const [tab, setTab] = useState<"inbound" | "appointment" | "outbound">("inbound");
   const [key, setKey] = useState(0);
   const [_completed, setCompleted] = useState(false);
@@ -368,10 +354,10 @@ export function CallSimulator() {
 
   const script =
     tab === "inbound"
-      ? DEMO_SCRIPTS[0]
+      ? scripts[0]
       : tab === "appointment"
-        ? DEMO_SCRIPTS[1]
-        : DEMO_SCRIPTS[2];
+        ? scripts[1]
+        : scripts[2];
 
   const handleComplete = useCallback((elapsedSeconds: number) => {
     setCompleted(true);
@@ -389,19 +375,19 @@ export function CallSimulator() {
   return (
     <Container className="max-w-2xl">
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
-        {(["inbound", "appointment", "outbound"] as const).map((t) => (
+        {(["inbound", "appointment", "outbound"] as const).map((tabKey) => (
           <button
-            key={t}
+            key={tabKey}
             type="button"
-            onClick={() => handleTabChange(t)}
+            onClick={() => handleTabChange(tabKey)}
             className="flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium border transition-colors"
             style={{
-              background: tab === t ? "var(--accent-primary-subtle)" : "var(--bg-surface)",
-              borderColor: tab === t ? "var(--accent-primary)" : "var(--border-default)",
-              color: tab === t ? "var(--accent-primary)" : "var(--text-secondary)",
+              background: tab === tabKey ? "var(--accent-primary-subtle)" : "var(--bg-surface)",
+              borderColor: tab === tabKey ? "var(--accent-primary)" : "var(--border-default)",
+              color: tab === tabKey ? "var(--accent-primary)" : "var(--text-secondary)",
             }}
           >
-            {t === "inbound" ? "Inbound Lead" : t === "appointment" ? "Appointment" : "Follow-up"}
+            {tabKey === "inbound" ? t("simulator.tabInbound") : tabKey === "appointment" ? t("simulator.tabAppointment") : t("simulator.tabFollowUp")}
           </button>
         ))}
       </div>
@@ -419,7 +405,7 @@ export function CallSimulator() {
       {completedSeconds != null ? (
         <div className="mt-5 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] px-5 py-4 text-center">
           <p className="text-sm text-zinc-400">
-            That call took <span className="font-medium text-white">{completedSeconds} seconds</span>. Your AI handles this 24/7.
+            {t("simulator.thatCallTook", { seconds: completedSeconds })}
           </p>
         </div>
       ) : null}
@@ -429,16 +415,16 @@ export function CallSimulator() {
         style={{ borderColor: "var(--border-default)" }}
       >
         <h2 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>
-          Ready?
+          {t("simulator.readyHeading")}
         </h2>
         <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
-          Start free — 5 minute setup. No credit card · 14-day trial
+          {t("simulator.readySubtext")}
         </p>
         <Link
           href={ROUTES.START}
           className="btn-marketing-primary no-underline inline-block"
         >
-          Start free — 5 minute setup →
+          {t("simulator.ctaStartFree")}
         </Link>
       </section>
     </Container>

@@ -27,19 +27,19 @@ type Thread = {
   messages: Array<{ id: string; from: "ai" | "user"; text: string; time: string }>;
 };
 
-function formatToLabel(phoneOrName: string): string {
-  const t = phoneOrName.trim();
-  if (/^\+?[\d\s\-()]{10,}$/.test(t)) return t;
-  return t || "New contact";
+function formatToLabel(phoneOrName: string, newContactLabel: string): string {
+  const s = phoneOrName.trim();
+  if (/^\+?[\d\s\-()]{10,}$/.test(s)) return s;
+  return s || newContactLabel;
 }
 
-function formatMsgTime(iso: string): string {
+function formatMsgTime(iso: string, yesterdayLabel: string): string {
   const d = new Date(iso);
   const now = new Date();
   if (now.toDateString() === d.toDateString()) {
     return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   }
-  if (now.getTime() - d.getTime() < 86400 * 1000) return "Yesterday";
+  if (now.getTime() - d.getTime() < 86400 * 1000) return yesterdayLabel;
   return d.toLocaleDateString([], { month: "short", day: "numeric" });
 }
 
@@ -117,7 +117,7 @@ export default function AppMessagesPage() {
           setThreads((prev) => {
             if (prev.some((t) => t.id === leadId)) return prev;
             return [
-              { id: leadId, lead_id: leadId, name: data.name || formatToLabel(toParam), preview: "No messages yet", time: "Now", unread: false, messages: [] },
+              { id: leadId, lead_id: leadId, name: data.name || formatToLabel(toParam, t("newContact")), preview: t("noMessagesYet"), time: t("now"), unread: false, messages: [] },
               ...prev,
             ];
           });
@@ -126,7 +126,7 @@ export default function AppMessagesPage() {
           const id = `phone-${encodeURIComponent(toParam)}`;
           setThreads((prev) => {
             if (prev.some((t) => t.id === id)) return prev;
-            return [{ id, lead_id: null, name: formatToLabel(toParam), preview: "Add contact in Leads to message", time: "Now", unread: false, messages: [] }, ...prev];
+            return [{ id, lead_id: null, name: formatToLabel(toParam, t("newContact")), preview: t("addContactInLeadsToMessage"), time: t("now"), unread: false, messages: [] }, ...prev];
           });
           setSelected(id);
         }
@@ -134,13 +134,13 @@ export default function AppMessagesPage() {
         const id = `phone-${encodeURIComponent(toParam)}`;
         setThreads((prev) => {
           if (prev.some((t) => t.id === id)) return prev;
-          return [{ id, lead_id: null, name: formatToLabel(toParam), preview: "Add contact in Leads to message", time: "Now", unread: false, messages: [] }, ...prev];
+          return [{ id, lead_id: null, name: formatToLabel(toParam, t("newContact")), preview: t("addContactInLeadsToMessage"), time: t("now"), unread: false, messages: [] }, ...prev];
         });
         setSelected(id);
       }
     };
     resolveByPhone();
-  }, [toParam, loadingThreads, threads]);
+  }, [toParam, loadingThreads, threads, t]);
 
   useEffect(() => {
     if (leadIdParam && threads.some((t) => t.id === leadIdParam) && !selected) setSelected(leadIdParam);
@@ -160,7 +160,7 @@ export default function AppMessagesPage() {
         id: m.id,
         from: m.role === "user" ? ("user" as const) : ("ai" as const),
         text: m.content,
-        time: formatMsgTime(m.created_at),
+        time: formatMsgTime(m.created_at, t("yesterday")),
       }));
       setThreads((prev) =>
         prev.map((t) =>
@@ -170,7 +170,7 @@ export default function AppMessagesPage() {
     } finally {
       setLoadingMessages(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (active?.lead_id && active.messages.length === 0) fetchMessages(active.id, active.lead_id);
@@ -194,13 +194,13 @@ export default function AppMessagesPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        setToast((err as { error?: string }).error || "Failed to send");
+        setToast((err as { error?: string }).error || t("failedToSend"));
         return;
       }
       setToast(t("toast.sent"));
       await fetchMessages(active.id, active.lead_id);
       setThreads((prev) =>
-        prev.map((t) => (t.id === active.id ? { ...t, preview: text.slice(0, 60), time: "Now" } : t))
+        prev.map((th) => (th.id === active.id ? { ...th, preview: text.slice(0, 60), time: t("now") } : th))
       );
     } finally {
       setSending(false);
@@ -320,7 +320,7 @@ export default function AppMessagesPage() {
                       void handleSend();
                     }
                   }}
-                  placeholder={active.lead_id ? "Type a message…" : "Add contact in Leads to send"}
+                  placeholder={active.lead_id ? t("inputPlaceholder") : t("inputPlaceholderNoContact")}
                   disabled={!active.lead_id}
                   className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none disabled:opacity-60"
                 />
@@ -336,7 +336,7 @@ export default function AppMessagesPage() {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center text-sm text-zinc-500">
-              Select a conversation
+              {t("selectConversation")}
             </div>
           )}
         </div>

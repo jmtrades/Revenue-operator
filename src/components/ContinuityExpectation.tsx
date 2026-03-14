@@ -1,18 +1,18 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 /**
  * Continuity expectation: one calm line. No rotation, no timers.
  * UI changes only on navigation.
  */
-
-const CALM_LINE = "Decisions remain on track.";
-
 export function ContinuityExpectation({ visible }: { visible: boolean }) {
+  const t = useTranslations("continuity");
   if (!visible) return null;
 
   return (
     <p className="text-xs text-center mt-2" style={{ color: "var(--text-muted)" }}>
-      {CALM_LINE}
+      {t("calmLine")}
     </p>
   );
 }

@@ -246,7 +246,7 @@ export default function CampaignsPage() {
         sequence: [{ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" }],
       });
       setToast(editingId ? t("toast.updated") : t("toast.created"));
-    } catch (error) {
+    } catch (_error) {
       setToast(
         editingId
           ? t("toast.updateFailed")
@@ -290,8 +290,8 @@ export default function CampaignsPage() {
     );
     setToast(
       data?.enqueued != null
-        ? `Campaign launched. ${data.enqueued} contacts queued.`
-        : "Campaign launched.",
+        ? t("toast.launchedWithCount", { count: String(data.enqueued) })
+        : t("toast.launched"),
     );
   };
 
@@ -496,10 +496,10 @@ export default function CampaignsPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-white">
-                  {editingId ? "Edit campaign" : "Create campaign"}
+                  {editingId ? t("form.titleEdit") : t("form.titleCreate")}
                 </p>
                 <p className="text-xs text-zinc-500 mt-1">
-                  Keep it tied to real outcomes: follow-up, reminders, recovery, or reactivation.
+                  {t("form.subtitle")}
                 </p>
               </div>
               {editingId ? (
@@ -524,19 +524,19 @@ export default function CampaignsPage() {
                   }}
                   className="text-xs text-zinc-400 hover:text-white"
                 >
-                  Cancel
+                  {t("form.cancelEdit")}
                 </button>
               ) : null}
             </div>
             <div className="mt-4 space-y-4">
               <div className="mb-4">
-                <label className="text-xs text-white/40 mb-2 block">Campaign type</label>
+                <label className="text-xs text-white/40 mb-2 block">{t("form.campaignTypeLabel")}</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { id: "followup", label: "Lead follow-up", desc: "Call leads who showed interest" },
-                    { id: "reactivation", label: "Reactivation", desc: "Re-engage cold leads" },
-                    { id: "reminder", label: "Appointment reminder", desc: "Confirm upcoming appointments" },
-                    { id: "qualification", label: "Qualification", desc: "Qualify new leads by phone" },
+                    { id: "followup", labelKey: "form.quickTypes.followup.label", descKey: "form.quickTypes.followup.desc" },
+                    { id: "reactivation", labelKey: "form.quickTypes.reactivation.label", descKey: "form.quickTypes.reactivation.desc" },
+                    { id: "reminder", labelKey: "form.quickTypes.reminder.label", descKey: "form.quickTypes.reminder.desc" },
+                    { id: "qualification", labelKey: "form.quickTypes.qualification.label", descKey: "form.quickTypes.qualification.desc" },
                   ].map((typeOption) => {
                     const typeId = typeOption.id === "followup" ? "lead_followup" : typeOption.id === "reminder" ? "appointment_reminder" : typeOption.id === "qualification" ? "lead_followup" : typeOption.id;
                     const selected = campaignType === typeOption.id;
@@ -549,7 +549,7 @@ export default function CampaignsPage() {
                           setForm((prev) => ({
                             ...prev,
                             type: typeId,
-                            name: prev.name.trim() ? prev.name : typeOption.label,
+                            name: prev.name.trim() ? prev.name : t(typeOption.labelKey),
                             audience: typeOption.id === "followup" ? t("defaults.followupAudience") : typeOption.id === "reactivation" ? t("defaults.reactivationAudience") : typeOption.id === "reminder" ? t("defaults.reminderAudience") : t("defaults.qualifyAudience"),
                             template: typeOption.id === "followup" ? t("defaults.followupTemplate") : typeOption.id === "reactivation" ? t("defaults.reactivationTemplate") : typeOption.id === "reminder" ? t("defaults.reminderTemplate") : t("defaults.qualifyTemplate"),
                           }));
@@ -558,8 +558,8 @@ export default function CampaignsPage() {
                           selected ? "border-zinc-500/50 bg-zinc-800/50" : "border-white/[0.08] hover:bg-white/[0.04]"
                         }`}
                       >
-                        <p className="font-medium text-white">{typeOption.label}</p>
-                        <p className="text-white/40 mt-0.5">{typeOption.desc}</p>
+                        <p className="font-medium text-white">{t(typeOption.labelKey)}</p>
+                        <p className="text-white/40 mt-0.5">{t(typeOption.descKey)}</p>
                       </button>
                     );
                   })}
@@ -567,7 +567,7 @@ export default function CampaignsPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Campaign name
+                  {t("form.campaignNameLabel")}
                 </label>
                 <input
                   type="text"
@@ -594,17 +594,17 @@ export default function CampaignsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Audience label</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("form.audienceLabel")}</label>
                 <input
                   type="text"
                   value={form.audience}
                   onChange={(e) => setForm((prev) => ({ ...prev, audience: e.target.value }))}
-                  placeholder="e.g. Leads waiting on follow-up"
+                  placeholder={t("form.audiencePlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Lead status (optional)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("form.leadStatusOptionalLabel")}</label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {LEAD_STATUS_OPTIONS.map((status) => {
                     const checked = form.audienceStatuses.includes(status);
@@ -628,7 +628,7 @@ export default function CampaignsPage() {
                     );
                   })}
                 </div>
-                <p className="text-[11px] text-zinc-500 mt-1">Leave empty for all statuses</p>
+                <p className="text-[11px] text-zinc-500 mt-1">{t("form.leaveEmptyForAllStatuses")}</p>
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">
@@ -764,9 +764,9 @@ export default function CampaignsPage() {
                           }))
                         }
                         className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:text-white text-xs"
-                        aria-label="Remove step"
+                        aria-label={t("removeStep")}
                       >
-                        Remove
+                        {t("removeStep")}
                       </button>
                     </div>
                   ))}

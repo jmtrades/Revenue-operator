@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { AlertTriangle } from "lucide-react";
 
@@ -14,6 +15,7 @@ type ErrorEntry = {
 };
 
 export default function AppSettingsErrorsPage() {
+  const t = useTranslations("settings");
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState<ErrorEntry[]>([]);
   const [grouped, setGrouped] = useState<Record<string, number>>({});
@@ -83,7 +85,7 @@ export default function AppSettingsErrorsPage() {
       )}
 
       <p className="mt-6">
-        <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link>
+        <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{t("errorsPage.backToSettings")}</Link>
       </p>
     </div>
   );
