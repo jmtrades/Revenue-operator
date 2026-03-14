@@ -32,6 +32,7 @@ export default function PhoneMarketplacePage() {
   const locale = useLocale() || "en-US";
   const tSettings = useTranslations("settings");
   const tToast = useTranslations("toast");
+  const tPhone = useTranslations("phone");
   const [country, setCountry] = useState("US");
   const [state, setState] = useState("");
   const [areaCode, setAreaCode] = useState("");
@@ -104,9 +105,9 @@ export default function PhoneMarketplacePage() {
     <div className="max-w-4xl mx-auto p-6">
       <Breadcrumbs
         items={[
-          { label: "Settings", href: "/app/settings" },
-          { label: "Phone & numbers", href: "/app/settings/phone" },
-          { label: "Get a number" },
+          { label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" },
+          { label: tSettings("phone"), href: "/app/settings/phone" },
+          { label: tPhone("marketplaceBreadcrumb") },
         ]}
       />
       <div className="flex items-center gap-4 mb-6">
@@ -115,18 +116,18 @@ export default function PhoneMarketplacePage() {
           className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back
+          {tPhone("marketplaceBack")}
         </Link>
       </div>
-      <h1 className="text-xl font-semibold text-white mb-1">Get a new number</h1>
+      <h1 className="text-xl font-semibold text-white mb-1">{tPhone("marketplaceGetNewNumber")}</h1>
       <p className="text-sm text-zinc-400 mb-6">
-        Search available numbers and add one to your workspace. You can assign it to an agent from Phone settings.
+        {tPhone("marketplaceGetNewNumberDesc")}
       </p>
 
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">Country</label>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">{tPhone("marketplaceCountry")}</label>
             <select
               value={country}
               onChange={(e) => setCountry(e.target.value)}
@@ -175,7 +176,7 @@ export default function PhoneMarketplacePage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">Area code</label>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">{tPhone("marketplaceAreaCode")}</label>
             <input
               type="text"
               value={areaCode}
@@ -186,14 +187,14 @@ export default function PhoneMarketplacePage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">Type</label>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">{tPhone("marketplaceType")}</label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as "local" | "toll_free")}
               className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
             >
-              <option value="local">Local</option>
-              <option value="toll_free">Toll-free</option>
+              <option value="local">{tPhone("marketplace.results.type.local")}</option>
+              <option value="toll_free">{tPhone("marketplace.results.type.tollFree")}</option>
             </select>
           </div>
         </div>
@@ -204,7 +205,7 @@ export default function PhoneMarketplacePage() {
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 transition-colors disabled:opacity-60"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-          Search
+          {tPhone("marketplaceSearch")}
         </button>
       </div>
 
@@ -217,11 +218,11 @@ export default function PhoneMarketplacePage() {
       <div className="grid gap-3">
         {loading && numbers.length === 0 ? (
           <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] text-center text-zinc-500 text-sm">
-            Searching for numbers…
+            {tPhone("marketplaceSearching")}
           </div>
         ) : numbers.length === 0 ? (
           <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] text-center text-zinc-500 text-sm">
-            No numbers found. Try a different area code or type.
+            {tPhone("marketplaceNoNumbersFound")}
           </div>
         ) : (
           numbers.map((n) => (
@@ -240,8 +241,8 @@ export default function PhoneMarketplacePage() {
               </div>
               <div className="flex items-center gap-4 text-sm text-zinc-400">
                 <span>{formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</span>
-                {n.capabilities.voice && <span>Voice</span>}
-                {n.capabilities.sms && <span>SMS</span>}
+                {n.capabilities.voice && <span>{tPhone("voice")}</span>}
+                {n.capabilities.sms && <span>{tPhone("sms")}</span>}
               </div>
               <button
                 type="button"
@@ -252,10 +253,10 @@ export default function PhoneMarketplacePage() {
                 {provisioning === n.phone_number ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Adding…
+                    {tPhone("marketplaceAdding")}
                   </>
                 ) : (
-                  "Get this number"
+                  tPhone("marketplaceGetThisNumber")
                 )}
               </button>
             </div>

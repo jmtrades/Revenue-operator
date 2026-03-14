@@ -64,15 +64,15 @@ function getInitials(first: string, last: string) {
   return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
 }
 
-function formatLastContact(iso: string) {
+function formatLastContact(iso: string, t: (k: string, p?: { count?: number }) => string) {
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "Last contact: unknown";
+  if (Number.isNaN(d.getTime())) return t("lastContactUnknown");
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays <= 0) return "Last contact: today";
-  if (diffDays === 1) return "Last contact: yesterday";
-  return `Last contact: ${diffDays} days ago`;
+  if (diffDays <= 0) return t("lastContactToday");
+  if (diffDays === 1) return t("lastContactYesterday");
+  return t("lastContactDaysAgo", { count: diffDays });
 }
 
 function avatarColorFromName(name: string) {
@@ -95,12 +95,6 @@ function typeBadgeStyles(type: ContactType) {
   if (type === "lead") return "bg-zinc-800/60 text-blue-400";
   if (type === "customer") return "bg-zinc-800/60 text-green-400";
   return "bg-zinc-800/60 text-amber-400";
-}
-
-function typeLabel(type: ContactType) {
-  if (type === "lead") return "Lead";
-  if (type === "customer") return "Customer";
-  return "VIP";
 }
 
 export default function AppContactsPage() {
@@ -220,7 +214,7 @@ export default function AppContactsPage() {
           date: nowIso,
           type: "inbound",
           duration: "0:00",
-          summary: "Added manually from dashboard.",
+          summary: t("addedManually"),
         },
       ],
     };
@@ -281,7 +275,7 @@ export default function AppContactsPage() {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-1" aria-label="Contact filters">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1" aria-label={t("filtersAria")}>
         {(["all", "leads", "customers", "vip"] as const).map((tabId) => (
           <button
             key={tabId}
@@ -343,7 +337,7 @@ export default function AppContactsPage() {
                             c.type
                           )}`}
                         >
-                          {typeLabel(c.type)}
+                          {t(`form.type.${c.type}`)}
                         </span>
                       </div>
                       <p className="text-xs text-zinc-400 truncate">
@@ -351,7 +345,7 @@ export default function AppContactsPage() {
                         {c.email ? ` · ${c.email}` : ""}
                       </p>
                       <p className="text-[11px] text-zinc-500 mt-1">
-                        {formatLastContact(c.lastContact)}
+                        {formatLastContact(c.lastContact, t)}
                       </p>
                     </div>
                     {typeof c.score === "number" && (
@@ -568,13 +562,14 @@ export default function AppContactsPage() {
 }
 
 function ContactDetail({ contact }: { contact: Contact }) {
+  const t = useTranslations("contacts");
   const fullName = `${contact.firstName} ${contact.lastName}`;
   return (
     <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/60 p-5 text-sm text-zinc-200">
       <div className="flex items-start justify-between gap-3 mb-4">
         <div>
           <h2 className="text-sm font-semibold text-white">{fullName}</h2>
-          <p className="text-xs text-zinc-500 mt-0.5">{typeLabel(contact.type)}</p>
+          <p className="text-xs text-zinc-500 mt-0.5">{t(`form.type.${contact.type}`)}</p>
         </div>
         {typeof contact.score === "number" && (
           <div className="w-10 h-10 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-zinc-200">
@@ -583,7 +578,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
         )}
       </div>
       <div className="space-y-2 mb-4">
-        <p className="text-xs text-zinc-400">{formatLastContact(contact.lastContact)}</p>
+        <p className="text-xs text-zinc-400">{formatLastContact(contact.lastContact, t)}</p>
         <div className="flex flex-wrap gap-2 text-xs">
           <a
             href={`tel:${encodeURIComponent(contact.phone)}`}
@@ -636,7 +631,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
                       hour: "numeric",
                       minute: "2-digit",
                     })}{" "}
-                    · {h.type === "inbound" ? "Inbound" : "Outbound"} · {h.duration}
+                    · {h.type === "inbound" ? t("inbound") : t("outbound")} · {h.duration}
                   </p>
                   <p className="text-xs text-zinc-200">{h.summary}</p>
                 </div>

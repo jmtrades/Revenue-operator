@@ -12,19 +12,19 @@ export const ROUTES = {
 } as const;
 
 export const NAV_LINKS = [
-  { href: ROUTES.PRODUCT, label: "Product" },
-  { href: ROUTES.PRICING, label: "Pricing" },
-  { href: ROUTES.DEMO, label: "Demo" },
-  { href: ROUTES.DOCS, label: "Docs" },
+  { href: ROUTES.PRODUCT, labelKey: "product" },
+  { href: ROUTES.PRICING, labelKey: "pricing" },
+  { href: ROUTES.DEMO, labelKey: "demo" },
+  { href: ROUTES.DOCS, labelKey: "docs" },
 ] as const;
 
 export const SOLUTIONS_LINKS = [
-  { label: "Plumbing & HVAC", href: "/industries/plumbing-hvac" },
-  { label: "Dental", href: "/industries/dental" },
-  { label: "Legal", href: "/industries/legal" },
-  { label: "Real Estate", href: "/industries/real-estate" },
-  { label: "Healthcare", href: "/industries/healthcare" },
-  { label: "All use cases →", href: "/activate" },
+  { labelKey: "industryPlumbing", href: "/industries/plumbing-hvac" },
+  { labelKey: "industryDental", href: "/industries/dental" },
+  { labelKey: "industryLegal", href: "/industries/legal" },
+  { labelKey: "industryRealEstate", href: "/industries/real-estate" },
+  { labelKey: "industryHealthcare", href: "/industries/healthcare" },
+  { labelKey: "allUseCases", href: "/activate" },
 ] as const;
 
 export const FOOTER_SOLUTIONS = [

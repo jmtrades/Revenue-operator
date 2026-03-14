@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 
 export interface ConfirmDialogProps {
   open: boolean;
   title: string;
   message: string;
   confirmLabel?: string;
+  cancelLabel?: string;
   variant?: "danger" | "default";
   onConfirm: () => void;
   onClose: () => void;
@@ -16,12 +18,16 @@ export function ConfirmDialog({
   open,
   title,
   message,
-  confirmLabel = "Confirm",
+  confirmLabel,
+  cancelLabel,
   variant = "default",
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
+  const t = useTranslations("common");
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const confirmText = confirmLabel ?? t("confirm");
+  const cancelText = cancelLabel ?? t("cancel");
 
   useEffect(() => {
     if (!open) return;
@@ -61,7 +67,7 @@ export function ConfirmDialog({
             onClick={onClose}
             className="rounded-xl border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
           >
-            Cancel
+            {cancelText}
           </button>
           <button
             type="button"
@@ -75,7 +81,7 @@ export function ConfirmDialog({
                 : "rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
             }
           >
-            {confirmLabel}
+            {confirmText}
           </button>
         </div>
       </div>

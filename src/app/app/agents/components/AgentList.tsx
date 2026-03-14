@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { PhoneCall, Pencil, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -41,33 +42,15 @@ export function AgentList({
   setDeleteConfirmAgent,
   getFirstIncompleteStep,
 }: AgentListProps) {
+  const t = useTranslations("agents");
   return (
     <div className="w-full lg:w-[320px] xl:w-[360px] lg:shrink-0 lg:border-r lg:border-[var(--border-default)] lg:overflow-y-auto lg:pr-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 content-start">
         {agents.map((agent) => {
-          const templateLabel = (() => {
-            switch (agent.template) {
-              case "appointment_setter":
-                return "Appointment";
-              case "lead_qualifier":
-                return "Sales";
-              case "follow_up":
-                return "Follow-up";
-              case "support":
-                return "Support";
-              case "after_hours":
-                return "After-Hours";
-              case "emergency":
-                return "Emergency";
-              case "review_request":
-                return "Review";
-              case "scratch":
-                return "Custom";
-              case "receptionist":
-              default:
-                return "Receptionist";
-            }
-          })();
+          const templateKey = agent.template && ["appointment_setter", "lead_qualifier", "follow_up", "support", "after_hours", "emergency", "review_request", "scratch", "receptionist"].includes(agent.template)
+            ? agent.template
+            : "receptionist";
+          const templateLabel = t(`template.${templateKey}`);
           const lastActiveLabel =
             (agent.stats?.totalCalls ?? 0) > 0
               ? `${agent.stats.totalCalls} calls`

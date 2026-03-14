@@ -102,6 +102,12 @@ function channelLabel(
   return t("inbox.channel.email");
 }
 
+function getInboxStatusDisplay(status: InboxStatus, t: (key: string) => string): string {
+  if (status === "Open") return t("inbox.status.open");
+  if (status === "Resolved") return t("inbox.status.resolved");
+  return t("inbox.status.pending");
+}
+
 function ConversationList({
   threads,
   selectedId,
@@ -340,7 +346,7 @@ function ConversationDetail({
                   : "bg-[var(--bg-card)] text-zinc-300"
             }`}
           >
-            {thread.status}
+            {getInboxStatusDisplay(thread.status, t)}
           </span>
         </div>
         <button

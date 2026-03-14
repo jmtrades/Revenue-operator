@@ -23,16 +23,16 @@ function scoreBucket(score: number): ScoreBucket {
   return "low";
 }
 
-function timeSince(iso: string): string {
+function timeSince(iso: string, t: (k: string, p?: { count?: number }) => string): string {
   const d = new Date(iso).getTime();
   const diffMs = Date.now() - d;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays <= 0) return "Today";
-  if (diffDays === 1) return "1 day ago";
-  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays <= 0) return t("timeToday");
+  if (diffDays === 1) return t("timeOneDayAgo");
+  if (diffDays < 7) return t("timeDaysAgo", { count: diffDays });
   const weeks = Math.floor(diffDays / 7);
-  if (weeks === 1) return "1 week ago";
-  return `${weeks} weeks ago`;
+  if (weeks === 1) return t("timeOneWeekAgo");
+  return t("timeWeeksAgo", { count: weeks });
 }
 
 interface LeadsListProps {
@@ -233,7 +233,7 @@ export function LeadsList({
                     </Badge>
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-400">
-                    {timeSince(lead.lastContactAt)}
+                    {timeSince(lead.lastContactAt, tLeads)}
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-300">
                     {lead.assignedAgent}
@@ -275,7 +275,7 @@ export function LeadsList({
                     {getStatusDisplay(lead.status, t)}
                   </span>
                   <span className="text-[11px] text-zinc-500">
-                    {timeSince(lead.createdAt)}
+                    {timeSince(lead.createdAt, tLeads)}
                   </span>
                 </div>
               </button>

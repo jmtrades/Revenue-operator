@@ -2,6 +2,25 @@
   "app": {
     "title": "Recall Touch — AI Phone Calls, Handled"
   },
+  "siteNav": {
+    "product": "Product",
+    "solutions": "Solutions",
+    "pricing": "Pricing",
+    "demo": "Demo",
+    "docs": "Docs",
+    "dashboard": "Dashboard",
+    "dashboardCta": "Dashboard →",
+    "signIn": "Sign in",
+    "startFree": "Start free",
+    "startFreeCta": "Start free →",
+    "toggleMenu": "Toggle menu",
+    "industryPlumbing": "Plumbing & HVAC",
+    "industryDental": "Dental",
+    "industryLegal": "Legal",
+    "industryRealEstate": "Real Estate",
+    "industryHealthcare": "Healthcare",
+    "allUseCases": "All use cases →"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "agents": "Agents",
@@ -174,10 +193,7 @@
       "title": "Welcome to Recall Touch",
       "body": "We’ll keep this space warm until your first calls start coming in."
     },
-    "needsAttention": {
-      "title": "Needs attention",
-      "empty": "You're all caught up. We'll surface anything that needs your attention here."
-    },
+    "needsAttention": "Needs attention",
     "activity": {
       "title": "Recent activity",
       "empty": "No activity yet. Once calls, leads, and campaigns start flowing, you'll see them here."
@@ -258,11 +274,22 @@
       "agentLaunched": "Agent launched"
     },
     "dayLabels": {
-      "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu",
-      "fri": "Fri", "sat": "Sat", "sun": "Sun"
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
     },
     "days": {
-      "sun": "Sun", "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu", "fri": "Fri", "sat": "Sat"
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
     },
     "activityType": {
       "lead": "Lead",
@@ -270,7 +297,6 @@
       "urgent": "Urgent",
       "follow-up": "Follow-up"
     },
-    "needsAttention": "Needs attention",
     "recentSystemEvents": "Recent system events",
     "setupEventsPlaceholder": "Your setup events will appear here.",
     "viewLink": "View →",
@@ -400,8 +426,13 @@
       "voicemail": "Voicemail"
     },
     "days": {
-      "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu",
-      "fri": "Fri", "sat": "Sat", "sun": "Sun"
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
     },
     "errors": {
       "timeout": "Analytics request timed out. Try again.",
@@ -445,6 +476,22 @@
       "live": "Live",
       "ready": "Ready",
       "calls": "calls"
+    },
+    "purpose": {
+      "inbound": "Inbound",
+      "outbound": "Outbound",
+      "both": "Both"
+    },
+    "template": {
+      "appointment_setter": "Appointment",
+      "lead_qualifier": "Sales",
+      "follow_up": "Follow-up",
+      "support": "Support",
+      "after_hours": "After-Hours",
+      "emergency": "Emergency",
+      "review_request": "Review",
+      "scratch": "Custom",
+      "receptionist": "Receptionist"
     },
     "links": {
       "analytics": "Analytics",
@@ -676,6 +723,14 @@
       "analyzed": "Analyzed calls",
       "manual": "Manual analysis"
     },
+    "types": {
+      "sales": "Sales",
+      "support": "Support",
+      "booking": "Booking",
+      "qualification": "Qualification",
+      "followUp": "Follow-up"
+    },
+    "other": "Other",
     "quality": {
       "filter": {
         "all": "All quality",
@@ -683,11 +738,58 @@
         "good": "Good (60-79)",
         "review": "Needs review (40-59)",
         "flagged": "Flagged (0-39)"
-      }
-    }
+      },
+      "excellent": "Excellent",
+      "good": "Good",
+      "review": "Needs Review",
+      "flagged": "Flagged"
+    },
+    "issues": {
+      "negativeTone": "Negative tone",
+      "missedVoicemail": "Missed / voicemail outcome",
+      "shortCall": "Very short call (<10s)"
+    },
+    "unassigned": "Unassigned",
+    "unknown": "Unknown",
+    "untitledCall": "Untitled call",
+    "notePlaceholder": "Add a note for your team…",
+    "titlePlaceholder": "Call title (optional)",
+    "transcriptPlaceholder": "Paste transcript here (at least 100 characters)...",
+    "analyzing": "Analyzing…",
+    "analyzeTranscript": "Analyze transcript"
   },
   "callRules": {
     "pageTitle": "Call Rules — Recall Touch",
+    "heading": "Call rules",
+    "description": "Configure how your AI handles calls during and after business hours.",
+    "businessHours": "Business hours",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "timeRange": "9:00 AM – 5:00 PM",
+    "closed": "Closed",
+    "afterHoursBehavior": "After hours behavior",
+    "afterHours": {
+      "takeMessages": "Take messages",
+      "takeMessagesDesc": "AI takes a message and emails you a summary",
+      "emergencyOnly": "Emergency only",
+      "emergencyOnlyDesc": "AI screens for emergencies and forwards those only",
+      "forwardToCell": "Forward to cell",
+      "forwardToCellDesc": "All after-hours calls ring your cell phone"
+    },
+    "emergencyKeywords": "Emergency keywords",
+    "emergencyKeywordsHelp": "Comma-separated. Calls with these words are flagged as urgent.",
+    "transferNumber": "Transfer number",
+    "transferNumberHelp": "When callers ask for a real person, your AI transfers to this number.",
+    "transferNumberPlaceholder": "(503) 555-0101",
+    "saveChanges": "Save changes",
+    "backToSettings": "← Settings",
     "toast": {
       "saved": "Call rules saved"
     }
@@ -729,6 +831,11 @@
       "duration": "Duration: {duration}",
       "viewCall": "View call →"
     },
+    "status": {
+      "open": "Open",
+      "resolved": "Resolved",
+      "pending": "Pending"
+    },
     "detail": {
       "empty": "Select a conversation to view details.",
       "actions": {
@@ -746,6 +853,11 @@
   },
   "leads": {
     "title": "Leads",
+    "timeToday": "Today",
+    "timeDaysAgo": "{count} days ago",
+    "timeWeeksAgo": "{count} weeks ago",
+    "timeOneDayAgo": "1 day ago",
+    "timeOneWeekAgo": "1 week ago",
     "pageTitle": "Leads — Recall Touch",
     "heading": "Leads",
     "description": "Every captured opportunity, from first call through decision.",
@@ -1101,6 +1213,32 @@
     "agent.saveFailed": "Failed to save agent settings. Please try again.",
     "agent.voiceSyncFailed": "Saved, but the voice agent could not be updated. Try again.",
     "agent.updated": "Agent updated. Your next calls will use the new settings.",
+    "agent.heading": "Agent",
+    "agent.description": "Control your voice agent: greeting, voice, language, and knowledge.",
+    "agent.businessNameLabel": "Business name",
+    "agent.businessNamePlaceholder": "Your business",
+    "agent.agentNameLabel": "Agent name",
+    "agent.agentNamePlaceholder": "Receptionist",
+    "agent.openingGreetingLabel": "Opening greeting",
+    "agent.openingGreetingHelp": "This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge.",
+    "agent.greetingPlaceholderDefault": "Thanks for calling {business}. How can I help you today?",
+    "agent.previewVoice": "Preview voice →",
+    "agent.voiceLabel": "Voice",
+    "agent.languageLabel": "Language",
+    "agent.knowledgeLabel": "Knowledge (Q&A the agent can use)",
+    "agent.knowledgeAdd": "+ Add",
+    "agent.questionPlaceholder": "Question",
+    "agent.answerPlaceholder": "Answer",
+    "agent.playingVoicePreview": "Playing voice preview…",
+    "agent.saveAndUpdateAgent": "Save and update agent",
+    "agent.saving": "Saving…",
+    "agent.backToSettings": "← Settings",
+    "agent.testDescription": "Run a live browser call with your current assistant, then review the transcript before saving more changes.",
+    "agent.startLiveTest": "Start live test",
+    "agent.endLiveTest": "End live test",
+    "agent.removeAria": "Remove",
+    "agent.defaultBusiness": "your business",
+    "agent.defaultWorkspaceName": "My Workspace",
     "compliance.loadFailed": "Failed to load recording consent settings.",
     "compliance.saveFailed": "Failed to save compliance settings. Please try again.",
     "compliance.recordingSaved": "Recording consent settings saved.",
@@ -1113,6 +1251,80 @@
     "integrations.testSuccess": "Test run complete. See output below.",
     "integrations.saveFailed": "Failed to save mapping. Please try again.",
     "integrations.saved": "Mapping saved.",
+    "integrations.breadcrumbSettings": "Settings",
+    "integrations.breadcrumbIntegrations": "Integrations",
+    "integrations.mappingTitle": "Field mapping — {name}",
+    "integrations.mappingBreadcrumb": "{name} mapping",
+    "integrations.mappingDescription": "Map Recall Touch contact/lead fields to {name} fields. Use transformations for phone format or status values.",
+    "integrations.recallTouch": "Recall Touch",
+    "integrations.crmField": "CRM field ({name})",
+    "integrations.transform": "Transform",
+    "integrations.addMapping": "Add mapping",
+    "integrations.loadDefaults": "Load defaults",
+    "integrations.testWithSampleData": "Test with sample data",
+    "integrations.saveMapping": "Save mapping",
+    "integrations.saving": "Saving…",
+    "integrations.testOutput": "Test output (sample: {name})",
+    "integrations.backToIntegrations": "Back to Integrations",
+    "integrations.providers": {
+      "salesforce": "Salesforce",
+      "hubspot": "HubSpot",
+      "zoho_crm": "Zoho CRM",
+      "pipedrive": "Pipedrive",
+      "gohighlevel": "GoHighLevel",
+      "google_contacts": "Google Contacts",
+      "microsoft_365": "Microsoft 365"
+    },
+    "integrations.transformations": {
+      "none": "None",
+      "format_phone": "Format phone (E.164)",
+      "map_status": "Map status",
+      "concatenate": "Concatenate fields"
+    },
+    "integrations.crmFallback": "CRM",
+    "syncLog.breadcrumb": "Sync log",
+    "syncLog.heading": "Sync log",
+    "syncLog.description": "Audit trail of CRM sync events: outbound (Recall Touch → CRM) and inbound (CRM → Recall Touch).",
+    "syncLog.allProviders": "All providers",
+    "syncLog.allDirections": "All directions",
+    "syncLog.outbound": "Outbound",
+    "syncLog.inbound": "Inbound",
+    "syncLog.refresh": "Refresh",
+    "syncLog.loading": "Loading…",
+    "syncLog.empty": "No sync events yet. Sync activity will appear here when you connect a CRM and push or receive updates.",
+    "syncLog.loadMore": "Load more ({count} remaining)",
+    "notifications.heading": "Notifications",
+    "notifications.description": "Choose how and when you want to be notified.",
+    "notifications.loadingPrefs": "Loading notification preferences…",
+    "notifications.saving": "Saving…",
+    "notifications.savePreferences": "Save preferences",
+    "notifications.backToSettings": "← Settings",
+    "notifications.events": {
+      "call_received": "Call received",
+      "call_receivedDesc": "Every time your AI answers a call",
+      "lead_captured": "Lead captured",
+      "lead_capturedDesc": "When a caller is identified as a new lead",
+      "appointment_booked": "Appointment booked",
+      "appointment_bookedDesc": "When your AI books an appointment",
+      "urgent_call": "Urgent call",
+      "urgent_callDesc": "Emergency or high-priority calls",
+      "voicemail": "Voicemail left",
+      "voicemailDesc": "When a caller leaves a voicemail"
+    },
+    "notifications.channels": {
+      "push": "Push",
+      "sms": "SMS",
+      "email": "Email"
+    },
+    "activity.heading": "Activity log",
+    "activity.description": "Recent settings and workspace changes.",
+    "activity.loading": "Loading…",
+    "activity.empty": "No activity yet. Changes to business profile and settings will appear here.",
+    "activity.backToSettings": "← Settings",
+    "activity.actions": {
+      "settings_update": "Settings updated",
+      "settings_business_update": "Business settings updated"
+    },
     "phone.searchFailed": "Search failed. Try different filters and try again.",
     "phone.provisionFailed": "Provisioning failed. Please try again.",
     "phone.provisioned": "Number added to your workspace.",
@@ -1366,8 +1578,13 @@
     "durationLabel": "Duration (min)",
     "availableTimes": "Available times (Google)",
     "days": {
-      "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu",
-      "fri": "Fri", "sat": "Sat", "sun": "Sun"
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
     },
     "outlookComingSoon": "Two-way sync with Outlook Calendar is coming soon. You’ll be notified when it’s ready.",
     "empty": {
@@ -1419,7 +1636,44 @@
     "inviteMember": "Invite Member",
     "removeMemberTitle": "Remove member?",
     "removeMemberMessage": "{name} will lose access to this workspace. This can't be undone.",
-    "removeConfirmLabel": "Remove"
+    "removeConfirmLabel": "Remove",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "manager": "Manager",
+      "agent": "Agent"
+    },
+    "permissions": {
+      "viewCalls": "View calls",
+      "manageAgents": "Manage agents",
+      "viewAnalytics": "View analytics",
+      "manageTeam": "Manage team",
+      "billing": "Billing",
+      "accountSettings": "Account settings"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minAgo": "{count} min ago",
+      "hoursAgo": "{count} hours ago",
+      "dayAgo": "1 day ago",
+      "daysAgo": "{count} days ago"
+    },
+    "avatarFallback": "Y",
+    "errors": {
+      "inviteFailed": "Failed to send invite. Try again."
+    },
+    "sending": "Sending…",
+    "resend": "Resend",
+    "revoking": "Revoking…",
+    "revoke": "Revoke",
+    "sendInvite": "Send Invite",
+    "toast": {
+      "inviteSent": "Invite sent to {email}",
+      "inviteResent": "Invite resent.",
+      "inviteResendFailed": "Failed to resend.",
+      "inviteRevoked": "Invite revoked.",
+      "inviteRevokeFailed": "Failed to revoke."
+    }
   },
   "filter": {
     "byOutcome": "Filter by outcome",
@@ -1442,20 +1696,40 @@
   },
   "commandPalette": {
     "title": "Quick search",
-    "placeholder": "Search pages, actions, and settings…",
+    "placeholder": "Search pages and actions…",
     "section": {
       "navigation": "Navigate",
       "actions": "Actions",
+      "settings": "Settings",
+      "Pages": "Pages",
+      "Actions": "Actions"
+    },
+    "page": {
+      "dashboard": "Dashboard",
+      "agents": "Agents",
+      "calls": "Calls",
+      "leads": "Leads",
+      "campaigns": "Campaigns",
+      "inbox": "Inbox",
+      "appointments": "Appointments",
+      "analytics": "Analytics",
+      "callIntelligence": "Call Intelligence",
+      "knowledge": "Knowledge",
+      "team": "Team",
       "settings": "Settings"
     },
     "action": {
-      "newLead": "Create new lead",
-      "newAgent": "Create new agent",
-      "newCampaign": "Create new campaign",
+      "newLead": "Create lead",
+      "newAgent": "Create agent",
+      "newCampaign": "Create campaign",
+      "testAgent": "Test agent",
       "importContacts": "Import contacts"
     },
     "empty": "No matches. Try a different search.",
-    "shortcuts": "Keyboard shortcuts"
+    "noMatches": "No matches.",
+    "shortcuts": "Keyboard shortcuts",
+    "showShortcuts": "Show shortcuts",
+    "close": "Close"
   },
   "contacts": {
     "pageTitle": "Contacts",
@@ -1517,7 +1791,15 @@
       "saveError": "Could not save contact. Try again.",
       "deleteError": "Could not delete contact. Try again.",
       "updateError": "Could not update contact. Try again."
-    }
+    },
+    "lastContactUnknown": "Last contact: unknown",
+    "lastContactToday": "Last contact: today",
+    "lastContactYesterday": "Last contact: yesterday",
+    "lastContactDaysAgo": "Last contact: {count} days ago",
+    "filtersAria": "Contact filters",
+    "addedManually": "Added manually from dashboard.",
+    "inbound": "Inbound",
+    "outbound": "Outbound"
   },
   "appointments": {
     "pageTitle": "Appointments — Recall Touch",
@@ -1554,13 +1836,34 @@
     "sourceLabel": "Source",
     "close": "Close",
     "days": {
-      "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu",
-      "fri": "Fri", "sat": "Sat", "sun": "Sun"
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
     },
     "empty": {
       "title": "No appointments yet",
       "body": "As your AI books on your calendar, every appointment will show up here.",
       "action": "Open agent settings"
+    }
+  },
+  "proofDrawer": {
+    "title": "How it progressed",
+    "closeAria": "Close",
+    "loading": "In progress.",
+    "empty": "No proof available yet.",
+    "progressHeading": "Progress",
+    "nextPlannedTouch": "Next planned touch",
+    "conversationInProgress": "Conversation in progress. You are the decision owner when a handoff occurs.",
+    "outcome": {
+      "followThrough": "Follow-through continued",
+      "planningToAttend": "They're planning to attend",
+      "customerReturned": "Customer returned",
+      "theyreSet": "They're set",
+      "decisionProgressed": "Decision progressed"
     }
   },
   "keyboardShortcuts": {
@@ -1585,7 +1888,9 @@
       "empty": {
         "title": "No notifications yet",
         "body": "We’ll surface new leads, call summaries, and important updates here."
-      }
+      },
+      "loading": "Loading…",
+      "emptyBodyAlt": "You'll see call alerts and system updates here"
     },
     "type": {
       "lead": "New lead",
@@ -1593,7 +1898,21 @@
       "appointmentBooked": "Appointment booked",
       "qualityAlert": "Quality alert",
       "billing": "Billing",
-      "system": "System update"
+      "system": "System update",
+      "new_lead": "New lead",
+      "call_completed": "Call completed",
+      "appointment_booked": "Appointment booked",
+      "campaign_milestone": "Campaign",
+      "quality_alert": "Quality alert",
+      "billing_event": "Billing",
+      "system_update": "System"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minAgo": "{count}m ago",
+      "hourAgo": "{count}h ago",
+      "yesterday": "Yesterday",
+      "daysAgo": "{count}d ago"
     },
     "action": {
       "markRead": "Mark as read",
@@ -1707,6 +2026,30 @@
   },
   "phone": {
     "pageTitle": "Phone Settings — Recall Touch",
+    "heading": "Phone numbers",
+    "description": "Manage your workspace numbers and connect your AI.",
+    "getNumber": "Get a number",
+    "portNumber": "Port a number",
+    "loadingNumbers": "Loading numbers…",
+    "noNumbersYet": "No numbers yet",
+    "noNumbersYetDesc": "Get a new number or port your existing one to start receiving calls with your AI.",
+    "numbersCount": "{count, plural, one {# number} other {# numbers}}",
+    "moTotal": "/mo total",
+    "voice": "Voice",
+    "sms": "SMS",
+    "marketplaceBreadcrumb": "Get a number",
+    "marketplaceBack": "Back",
+    "marketplaceGetNewNumber": "Get a new number",
+    "marketplaceGetNewNumberDesc": "Search available numbers and add one to your workspace. You can assign it to an agent from Phone settings.",
+    "marketplaceCountry": "Country",
+    "marketplaceStateRegion": "State / Region",
+    "marketplaceAreaCode": "Area code",
+    "marketplaceType": "Type",
+    "marketplaceSearch": "Search",
+    "marketplaceSearching": "Searching for numbers…",
+    "marketplaceNoNumbersFound": "No numbers found. Try a different area code or type.",
+    "marketplaceAdding": "Adding…",
+    "marketplaceGetThisNumber": "Get this number",
     "toast": {
       "numberConnected": "Number connected. You can now receive calls and texts.",
       "saved": "Settings saved.",
