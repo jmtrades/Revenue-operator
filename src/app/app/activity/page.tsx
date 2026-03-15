@@ -1095,7 +1095,7 @@ export default function AppActivityPage() {
       {/* Charts section */}
       {hasAnyCalls && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
-          <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
+          <div className="bg-[var(--bg-surface)] border border-white/10 rounded-2xl p-6 relative">
             <h3 className="text-sm font-medium text-zinc-100 mb-4">
               {t("dashboard.callVolume7d")}
             </h3>
@@ -1133,7 +1133,7 @@ export default function AppActivityPage() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
+          <div className="bg-[var(--bg-surface)] border border-white/10 rounded-2xl p-6 relative">
             <h3 className="text-sm font-medium text-zinc-100 mb-4">
               {t("dashboard.callOutcomes")}
             </h3>

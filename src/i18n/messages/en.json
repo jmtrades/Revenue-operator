@@ -1811,6 +1811,17 @@
       "support": "Support",
       "scratch": "Custom Agent"
     },
+    "greetings": {
+      "receptionist": "Hi, thanks for calling. I'm your AI receptionist — I'll get the right details and make sure nothing is missed.",
+      "after_hours": "Hi, this is your AI receptionist for Recall Touch, handling your calls after hours. How can I help today?",
+      "emergency": "This is your emergency line. I'll move quickly, keep you calm, and make sure the right person is alerted.",
+      "lead_qualifier": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step.",
+      "follow_up": "Hi, this is your AI following up so nothing falls through the cracks. Can I check in on your last visit?",
+      "review_request": "Hi, this is your AI assistant with a quick favor about your recent visit. It will only take a moment.",
+      "appointment_setter": "Hi, I'm calling to help schedule a time that works for you. What does your week look like?",
+      "support": "Hi, thanks for calling. I'm here to help with questions and get you to the right person if needed.",
+      "scratch": "Thanks for calling. How can I help you today?"
+    },
     "escalationTriggers": {
       "askHuman": "Caller explicitly asks for a human",
       "angry": "Caller is angry or frustrated",
@@ -3225,6 +3236,21 @@
     },
     "cta": "Start free",
     "contactSales": "Talk to sales",
+    "allPlansInclude": "All plans include: encrypted records · compliance framework · audit trail · 14-day free trial",
+    "roiCalculator": "ROI calculator",
+    "featureComparison": "Feature comparison",
+    "feature": "Feature",
+    "annualNote": "Two months applied without interruption on annual commitment.",
+    "roi": {
+      "intro": "Model what happens when you stop letting calls slip through to voicemail.",
+      "missedCallsPerWeek": "Missed calls per week",
+      "avgValuePerCall": "Average value per call ($)",
+      "monthlyRecovered": "Monthly revenue recovered",
+      "annualBaseline": "Annual receptionist baseline",
+      "annualProtected": "Annual revenue Recall Touch protects",
+      "receptionistCost": "receptionist cost.",
+      "recommendedPlan": "Recommended plan:"
+    },
     "faq": {
       "title": "Pricing questions",
       "trial": "Do you offer a free trial?",
@@ -3281,6 +3307,14 @@
       "description": "Your AI is configured, connected, and ready to answer calls for your business."
     },
     "stepsAria": "Onboarding steps",
+    "templates": {
+      "receptionist": { "name": "Receptionist", "description": "Answers calls, takes messages, and routes callers cleanly.", "agentName": "Sarah", "greeting": "Thanks for calling. I can help with questions, messages, and getting you to the right next step." },
+      "appointment_scheduler": { "name": "Appointment Scheduler", "description": "Books, confirms, and reminds without back-and-forth.", "agentName": "Emma", "greeting": "Thanks for calling. I can help you find a time, confirm the details, and book it now." },
+      "lead_qualifier": { "name": "Lead Qualifier", "description": "Captures key details and routes the hottest opportunities first.", "agentName": "Alex", "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step." },
+      "after_hours": { "name": "After-Hours Agent", "description": "Handles closed-office calls gracefully and flags urgency.", "agentName": "Sarah", "greeting": "You've reached us after hours. I can take your details now and make sure the right follow-up happens next." },
+      "follow_up": { "name": "Follow-Up Agent", "description": "Re-engages callers and leads so nothing gets dropped.", "agentName": "Alex", "greeting": "Hi, I'm following up so nothing slips through. I can confirm your status and help with the next step." },
+      "custom": { "name": "Custom", "description": "Start from scratch and shape the tone yourself.", "agentName": "Sarah", "greeting": "Thanks for calling. How can I help you today?" }
+    },
     "welcomeHeading": "Welcome to Recall Touch!",
     "welcomeSubtitle": "Let's get your AI phone system running in 2 minutes.",
     "businessNameLabel": "Business name",

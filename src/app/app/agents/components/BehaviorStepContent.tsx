@@ -239,7 +239,7 @@ export function BehaviorStepContent({
                 onChange={(e) => setObjection(obj.id, e.target.value)}
                 rows={2}
                 placeholder={t(`behavior.${obj.placeholderKey}`)}
-                className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:border-zinc-500 focus:outline-none resize-none"
+                className="w-full bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:border-zinc-500 focus:outline-none resize-none"
               />
             </div>
           ))}
