@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 
@@ -19,27 +20,27 @@ interface OperatorCapsule {
   presence_lines?: string[];
 }
 
-function stateToLine(pos: CapsulePosition): string[] {
-  const lines: string[] = [];
+function stateToLineKeys(pos: CapsulePosition): string[] {
+  const keys: string[] = [];
   if (pos.institutional_state && pos.institutional_state !== "none") {
-    lines.push("Institutional state is present.");
+    keys.push("institutionalStatePresent");
   }
   if (pos.operation_currently_anchored) {
-    lines.push("Ongoing work depends on the process remaining active.");
+    keys.push("ongoingWorkDepends");
   }
   if (pos.assumed_operation) {
-    lines.push("Operation is assumed by the organization.");
+    keys.push("operationAssumed");
   }
   if (pos.normalized_operation) {
-    lines.push("Behaviour has become routine and expected.");
+    keys.push("behaviourRoutine");
   }
   if (pos.provider_detached) {
-    lines.push("The provider is no longer required for operation.");
+    keys.push("providerNoLongerRequired");
   }
   if (pos.protection_active) {
-    lines.push("Protection is active.");
+    keys.push("protectionActive");
   }
-  return lines;
+  return keys;
 }
 
 interface CoreStatus {
@@ -50,18 +51,19 @@ interface CoreStatus {
   guarantees_bundle_configured?: boolean;
 }
 
-function coreStatusToLines(c: CoreStatus | null): string[] {
+function coreStatusToKeys(c: CoreStatus | null): string[] {
   if (!c) return [];
-  const lines: string[] = [];
-  if (c.inbound_processing_active) lines.push("Inbound was active.");
-  if (c.queue_processing_active) lines.push("Queue was active.");
-  if (c.assurance_attempted_recently) lines.push("Assurance was attempted recently.");
-  if (c.proof_capsule_recently_available) lines.push("Proof capsule was recently available.");
-  if (c.guarantees_bundle_configured) lines.push("Guarantees bundle was configured.");
-  return lines;
+  const keys: string[] = [];
+  if (c.inbound_processing_active) keys.push("inboundWasActive");
+  if (c.queue_processing_active) keys.push("queueWasActive");
+  if (c.assurance_attempted_recently) keys.push("assuranceAttemptedRecently");
+  if (c.proof_capsule_recently_available) keys.push("proofCapsuleRecentlyAvailable");
+  if (c.guarantees_bundle_configured) keys.push("guaranteesBundleConfigured");
+  return keys;
 }
 
 export default function PresencePage() {
+  const t = useTranslations("dashboard.presencePage");
   const { workspaceId } = useWorkspace();
   const [capsule, setCapsule] = useState<OperatorCapsule | null>(null);
   const [silenceLines, setSilenceLines] = useState<string[]>([]);
@@ -91,7 +93,7 @@ export default function PresencePage() {
   if (!workspaceId) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Presence appears when operation is in place.</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("selectWorkspace")}</p>
       </Shell>
     );
   }
@@ -99,29 +101,29 @@ export default function PresencePage() {
   if (loading) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("oneMoment")}</p>
       </Shell>
     );
   }
 
   const pos = capsule?.position;
-  const stabilityLines = pos ? stateToLine(pos) : [];
+  const stabilityLineKeys = pos ? stateToLineKeys(pos) : [];
   const proofLines = (capsule?.proof ?? []).slice(0, 8);
   const presenceLines = capsule?.presence_lines ?? [];
-  const coreLines = coreStatusToLines(coreStatus);
+  const coreLineKeys = coreStatusToKeys(coreStatus);
 
   return (
     <Shell>
       <div className="max-w-2xl space-y-16">
-        {coreLines.length > 0 && (
+        {coreLineKeys.length > 0 && (
           <section>
             <h2 className="text-sm font-medium mb-6" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-              Core status
+              {t("coreStatus")}
             </h2>
             <div className="space-y-4">
-              {coreLines.map((line, i) => (
+              {coreLineKeys.map((key: string, i: number) => (
                 <p key={i} className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-                  {line}
+                  {t(key)}
                 </p>
               ))}
             </div>
@@ -130,17 +132,17 @@ export default function PresencePage() {
 
         <section>
           <h2 className="text-sm font-medium mb-6" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-            Stability
+            {t("stability")}
           </h2>
           <div className="space-y-4">
-            {stabilityLines.length === 0 ? (
+            {stabilityLineKeys.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                No stability markers recorded.
+                {t("noStabilityMarkers")}
               </p>
             ) : (
-              stabilityLines.map((line, i) => (
+              stabilityLineKeys.map((key: string, i: number) => (
                 <p key={i} className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-                  {line}
+                  {t(key)}
                 </p>
               ))
             )}
@@ -149,12 +151,12 @@ export default function PresencePage() {
 
         <section>
           <h2 className="text-sm font-medium mb-6" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-            Presence
+            {t("presence")}
           </h2>
           <div className="space-y-4">
             {presenceLines.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Operation did not depend on the record.
+                {t("operationDidNotDepend")}
               </p>
             ) : (
               presenceLines.map((line, i) => (
@@ -168,12 +170,12 @@ export default function PresencePage() {
 
         <section>
           <h2 className="text-sm font-medium mb-6" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-            Reliance
+            {t("reliance")}
           </h2>
           <div className="space-y-4">
             {proofLines.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                No reliance statements yet.
+                {t("noRelianceStatements")}
               </p>
             ) : (
               proofLines.map((line, i) => (
@@ -188,7 +190,7 @@ export default function PresencePage() {
         {silenceLines.length > 0 && (
           <section>
             <h2 className="text-sm font-medium mb-6" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-              Silence
+              {t("silence")}
             </h2>
             <div className="space-y-4">
               {silenceLines.map((line, i) => (
@@ -202,7 +204,7 @@ export default function PresencePage() {
 
         <p className="text-sm" style={{ color: "var(--text-muted)" }}>
           <Link href="/dashboard/preferences" style={{ color: "var(--meaning-blue)" }}>
-            Preferences
+            {t("preferences")}
           </Link>
         </p>
       </div>

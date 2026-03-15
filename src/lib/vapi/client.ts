@@ -4,6 +4,7 @@
  */
 
 import { getVapiServerKey } from "./env";
+import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
 
 const VAPI_BASE = "https://api.vapi.ai";
 
@@ -66,6 +67,7 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
   const voiceId = (input.voiceId ?? "").trim() || DEFAULT_VOICE_ID;
   const lang = (input.language ?? "en").trim() || "en";
   const voiceSettings = input.voiceSettings ?? {};
+  const v = { ...HUMAN_VOICE_DEFAULTS, ...voiceSettings };
 
   const body: Record<string, unknown> = {
     name: input.name,
@@ -82,11 +84,11 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
       provider: "11labs",
       voiceId,
       model: "eleven_turbo_v2_5",
-      stability: voiceSettings.stability ?? 0.55,
-      speed: voiceSettings.speed ?? 1,
-      similarityBoost: voiceSettings.similarityBoost ?? 0.8,
-      style: voiceSettings.style ?? 0.35,
-      useSpeakerBoost: voiceSettings.useSpeakerBoost ?? true,
+      stability: v.stability,
+      speed: v.speed,
+      similarityBoost: v.similarityBoost,
+      style: v.style,
+      useSpeakerBoost: v.useSpeakerBoost,
       optimizeStreamingLatency: 4,
     },
     transcriber: {
@@ -98,9 +100,9 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
     silenceTimeoutSeconds: 30,
     maxDurationSeconds: input.maxDurationSeconds && input.maxDurationSeconds > 0 ? input.maxDurationSeconds : 600,
     backgroundSound: "off",
-    backchannelingEnabled: voiceSettings.backchannel ?? true,
-    backgroundDenoisingEnabled: voiceSettings.denoising ?? true,
-    responseDelaySeconds: voiceSettings.responseDelay ?? 0.4,
+    backchannelingEnabled: v.backchannel,
+    backgroundDenoisingEnabled: v.denoising,
+    responseDelaySeconds: v.responseDelay,
     numWordsToInterruptAssistant: 2,
     modelOutputInMessagesEnabled: true,
   };
@@ -153,6 +155,7 @@ export async function updateAssistant(
   const voiceId = (input.voiceId ?? "").trim() || DEFAULT_VOICE_ID;
   const lang = (input.language ?? "en").trim() || "en";
   const voiceSettings = input.voiceSettings ?? {};
+  const v = { ...HUMAN_VOICE_DEFAULTS, ...voiceSettings };
 
   const body: Record<string, unknown> = {
     name: input.name,
@@ -169,11 +172,11 @@ export async function updateAssistant(
       provider: "11labs",
       voiceId,
       model: "eleven_turbo_v2_5",
-      stability: voiceSettings.stability ?? 0.55,
-      speed: voiceSettings.speed ?? 1,
-      similarityBoost: voiceSettings.similarityBoost ?? 0.8,
-      style: voiceSettings.style ?? 0.35,
-      useSpeakerBoost: voiceSettings.useSpeakerBoost ?? true,
+      stability: v.stability,
+      speed: v.speed,
+      similarityBoost: v.similarityBoost,
+      style: v.style,
+      useSpeakerBoost: v.useSpeakerBoost,
       optimizeStreamingLatency: 4,
     },
     transcriber: {
@@ -185,9 +188,9 @@ export async function updateAssistant(
     silenceTimeoutSeconds: 30,
     maxDurationSeconds: input.maxDurationSeconds && input.maxDurationSeconds > 0 ? input.maxDurationSeconds : 600,
     backgroundSound: "off",
-    backchannelingEnabled: voiceSettings.backchannel ?? true,
-    backgroundDenoisingEnabled: voiceSettings.denoising ?? true,
-    responseDelaySeconds: voiceSettings.responseDelay ?? 0.4,
+    backchannelingEnabled: v.backchannel,
+    backgroundDenoisingEnabled: v.denoising,
+    responseDelaySeconds: v.responseDelay,
     numWordsToInterruptAssistant: 2,
     modelOutputInMessagesEnabled: true,
   };

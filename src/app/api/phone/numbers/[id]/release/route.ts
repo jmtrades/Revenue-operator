@@ -82,7 +82,6 @@ export async function POST(
         }
       );
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error("Failed to release Twilio number:", e);
     }
   }

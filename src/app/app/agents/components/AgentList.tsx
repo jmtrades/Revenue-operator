@@ -130,7 +130,7 @@ export function AgentList({
                 </button>
                 <button
                   type="button"
-                  aria-label="Edit agent"
+                  aria-label={t("actions.editAgent")}
                   className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
                   onClick={() => {
                     setSelectedId(agent.id);

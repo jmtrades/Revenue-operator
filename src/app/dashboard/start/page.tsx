@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 import { ExecutionContinuityLine } from "@/components/ExecutionContinuityLine";
@@ -18,13 +19,9 @@ interface StatusCard {
   review_level: string;
 }
 
-const GUIDANCE_ITEMS = [
-  { period: "Day 1–2", line: "Record primary source." },
-  { period: "Day 3–4", line: "Execute first governed wave." },
-  { period: "Day 5–7", line: "Monitor commitments and confirmations." },
-];
-
 export default function DashboardStartPage() {
+  const ts = useTranslations("dashboard.startPage");
+  const _tLoad = useTranslations("dashboard");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { workspaceId } = useWorkspace();
@@ -114,6 +111,15 @@ export default function DashboardStartPage() {
     }
   }, [workspaceId]);
 
+  const guidanceItems = useMemo(
+    () => [
+      { period: ts("guidanceDay12Period"), line: ts("guidanceDay12Line") },
+      { period: ts("guidanceDay34Period"), line: ts("guidanceDay34Line") },
+      { period: ts("guidanceDay57Period"), line: ts("guidanceDay57Line") },
+    ],
+    [ts]
+  );
+
   if (activationRecorded) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8 gap-6" style={{ background: "var(--background)" }}>
@@ -121,10 +127,10 @@ export default function DashboardStartPage() {
           className="text-lg transition-opacity duration-[200ms]"
           style={{ color: "var(--text-primary)", opacity: activationFading ? 0 : 1 }}
         >
-          Execution is now under institutional governance.
+          {ts("activationGovernance")}
         </p>
-        <Link href="/dashboard/start" className="btn-primary">Return to Start</Link>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Share your record.</p>
+        <Link href="/dashboard/start" className="btn-primary">{ts("returnToStart")}</Link>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{ts("shareRecord")}</p>
         <button
           type="button"
           onClick={() => {
@@ -133,7 +139,7 @@ export default function DashboardStartPage() {
           }}
           className="btn-secondary"
         >
-          Copy record
+          {ts("copyRecord")}
         </button>
       </div>
     );
@@ -161,16 +167,16 @@ export default function DashboardStartPage() {
     <Shell size="institutional">
       <FirstWinBanner
         show={showFirstWin}
-        message="First activity recorded under governance."
+        message={ts("firstWinMessage")}
         onDone={handleFirstWinDone}
       />
       {hasNoSource ? (
         <section className="mb-4 border-b pb-2" style={{ borderColor: "var(--border)" }}>
           <p className="text-xs font-medium uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
-            Execution pending source.
+            {ts("executionPendingSource")}
           </p>
           <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-            Record a source to begin governed handling.
+            {ts("recordSourceToBegin")}
           </p>
         </section>
       ) : (
@@ -187,20 +193,20 @@ export default function DashboardStartPage() {
       {hasNoSource && (
         <div className="mt-6 mb-4">
           <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
-            No source has been recorded.
+            {ts("noSourceRecorded")}
           </p>
           <p className="text-sm mb-3" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-            Execution begins after a source is connected.
+            {ts("executionAfterSource")}
           </p>
           <Link href="/dashboard/import" className="btn-primary">
-            Record external source
+            {ts("recordExternalSource")}
           </Link>
           <div className="mt-6 rounded-[16px] border p-6 max-w-[720px]" style={{ borderColor: "var(--card-border)", background: "linear-gradient(180deg, #121214 0%, #101012 100%)" }}>
-            <p className="text-[13px] font-medium uppercase mb-3" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>EXECUTION BEHAVIOR</p>
-            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>If a call is received, it is evaluated.</p>
-            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>If a message is sent, it is structured.</p>
-            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>If a commitment is made, it is recorded.</p>
-            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>If risk is detected, escalation is enforced.</p>
+            <p className="text-[13px] font-medium uppercase mb-3" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>{ts("executionBehavior")}</p>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{ts("execIfCall")}</p>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{ts("execIfMessage")}</p>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{ts("execIfCommitment")}</p>
+            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{ts("execIfRisk")}</p>
           </div>
         </div>
       )}
@@ -214,7 +220,7 @@ export default function DashboardStartPage() {
                 onClick={() => { if (canonicalRecordUrl) navigator.clipboard.writeText(canonicalRecordUrl).catch(() => {}); }}
                 className="btn-primary w-full max-w-[320px] block mx-auto"
               >
-                {nextAction?.label ?? "Copy record"}
+                {nextAction?.label ?? ts("copyRecordFallback")}
               </button>
             </section>
           ) : (
@@ -227,11 +233,11 @@ export default function DashboardStartPage() {
             />
           )}
           <div className="mt-6 rounded-[16px] border p-6 max-w-[720px]" style={{ borderColor: "var(--card-border)", background: "linear-gradient(180deg, #121214 0%, #101012 100%)" }}>
-            <p className="text-[13px] font-medium uppercase mb-3" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>EXECUTION BEHAVIOR</p>
-            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>If a call is received, it is evaluated.</p>
-            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>If a message is sent, it is structured.</p>
-            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>If a commitment is made, it is recorded.</p>
-            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>If risk is detected, escalation is enforced.</p>
+            <p className="text-[13px] font-medium uppercase mb-3" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>{ts("executionBehavior")}</p>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{ts("execIfCall")}</p>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{ts("execIfMessage")}</p>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{ts("execIfCommitment")}</p>
+            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{ts("execIfRisk")}</p>
           </div>
         </div>
       )}
@@ -241,25 +247,25 @@ export default function DashboardStartPage() {
         style={{ background: "linear-gradient(180deg, #121214 0%, #101012 100%)", borderColor: "var(--card-border)" }}
       >
         <p className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
-          Operational state
+          {ts("operationalState")}
         </p>
         <dl className="grid gap-3 sm:grid-cols-2">
           <div>
-            <dt className="text-sm" style={{ color: "var(--text-muted)" }}>Handling status</dt>
-            <dd className="font-medium" style={{ color: "var(--text-primary)" }}>{status?.call_handling === "Active" ? "Active" : (status?.call_handling ?? "—")}</dd>
+            <dt className="text-sm" style={{ color: "var(--text-muted)" }}>{ts("handlingStatus")}</dt>
+            <dd className="font-medium" style={{ color: "var(--text-primary)" }}>{status?.call_handling === "Active" ? ts("statusActive") : (status?.call_handling ?? "—")}</dd>
           </div>
           <div>
-            <dt className="text-sm" style={{ color: "var(--text-muted)" }}>Declared jurisdiction</dt>
-            <dd className="font-medium" style={{ color: "var(--text-primary)" }}>Declared</dd>
+            <dt className="text-sm" style={{ color: "var(--text-muted)" }}>{ts("declaredJurisdiction")}</dt>
+            <dd className="font-medium" style={{ color: "var(--text-primary)" }}>{ts("statusDeclared")}</dd>
           </div>
           <div>
-            <dt className="text-sm" style={{ color: "var(--text-muted)" }}>Review structure</dt>
-            <dd className="font-medium" style={{ color: "var(--text-primary)" }}>Applied</dd>
+            <dt className="text-sm" style={{ color: "var(--text-muted)" }}>{ts("reviewStructure")}</dt>
+            <dd className="font-medium" style={{ color: "var(--text-primary)" }}>{ts("statusApplied")}</dd>
           </div>
         </dl>
         <div className="mt-4 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm mt-4" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-            All conversations are evaluated before leaving record.
+            {ts("conversationsEvaluated")}
           </p>
         </div>
       </div>
@@ -269,15 +275,15 @@ export default function DashboardStartPage() {
         style={{ background: "linear-gradient(180deg, #121214 0%, #101012 100%)", borderColor: "var(--card-border)" }}
       >
         <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-          Execution does not leave record without structural validation.
+          {ts("executionValidation")}
         </p>
       </div>
 
-      <GuidanceStrip items={GUIDANCE_ITEMS} className="mt-8" />
+      <GuidanceStrip items={guidanceItems} className="mt-8" />
 
       {nextAction?.execution_stale && (
         <p className="mt-4 text-sm" style={{ color: "var(--text-muted)" }}>
-          Handling not observed recently.
+          {ts("handlingStale")}
         </p>
       )}
     </Shell>

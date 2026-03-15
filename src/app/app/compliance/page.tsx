@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Shield, ShieldCheck, Download } from "lucide-react";
 type ComplianceStatus = "compliant" | "partial" | "non_compliant";
 
@@ -52,14 +53,17 @@ function formatDateTime(iso: string): string {
   });
 }
 
-const CONSENT_OPTIONS: { value: ConsentMode; label: string }[] = [
-  { value: "one-party", label: "One-party consent" },
-  { value: "two-party", label: "Two-party consent" },
-];
-
 const PAGE_SIZE = 10;
 
 export default function CompliancePage() {
+  const t = useTranslations("compliance");
+  const consentOptions: { value: ConsentMode; label: string }[] = useMemo(
+    () => [
+      { value: "one-party", label: t("consentOneParty") },
+      { value: "two-party", label: t("consentTwoParty") },
+    ],
+    [t],
+  );
   const [standards] = useState<ComplianceStandard[]>([]);
   const [policies, setPolicies] = useState<RecordingPolicies>({
     consentMode: "two-party",
@@ -82,12 +86,12 @@ export default function CompliancePage() {
 
   const handleSavePolicies = useCallback(() => {
     setPolicies((prev) => ({ ...prev }));
-    showToast("Changes saved");
-  }, [showToast]);
+    showToast(t("toast.changesSaved"));
+  }, [showToast, t]);
 
   const handleExportReport = useCallback(() => {
-    showToast("Report generated");
-  }, [showToast]);
+    showToast(t("toast.reportGenerated"));
+  }, [showToast, t]);
 
   const auditEntries = useMemo(() => [] as AuditLogEntry[], []);
   const uniqueUsers = useMemo(() => Array.from(new Set(auditEntries.map((e) => e.user))).sort(), [auditEntries]);
@@ -112,11 +116,11 @@ export default function CompliancePage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="p-4 md:p-6 lg:p-8 space-y-8">
-        <h1 className="text-xl md:text-2xl font-semibold text-white">Compliance</h1>
+        <h1 className="text-xl md:text-2xl font-semibold text-white">{t("title")}</h1>
 
         {/* Section 1: Compliance Status */}
         <section>
-          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">Compliance status</h2>
+          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">{t("statusSectionTitle")}</h2>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {standards.map((std) => (
               <div
@@ -151,13 +155,13 @@ export default function CompliancePage() {
                   </span>
                 </div>
                 {std.lastAuditDate && (
-                  <p className="text-xs text-zinc-500">Last audit: {formatDate(std.lastAuditDate)}</p>
+                  <p className="text-xs text-zinc-500">{t("lastAudit")}: {formatDate(std.lastAuditDate)}</p>
                 )}
                 {std.nextReviewDate && (
-                  <p className="text-xs text-zinc-500">Next review: {formatDate(std.nextReviewDate)}</p>
+                  <p className="text-xs text-zinc-500">{t("nextReview")}: {formatDate(std.nextReviewDate)}</p>
                 )}
                 {std.status === "partial" && std.targetDate && (
-                  <p className="text-xs text-amber-300/90 mt-1">Target: {formatDate(std.targetDate)}</p>
+                  <p className="text-xs text-amber-300/90 mt-1">{t("target")}: {formatDate(std.targetDate)}</p>
                 )}
                 {std.status === "partial" && std.progressPercent != null && (
                   <div className="mt-3">
@@ -167,7 +171,7 @@ export default function CompliancePage() {
                         style={{ width: `${std.progressPercent}%` }}
                       />
                     </div>
-                    <p className="text-[10px] text-zinc-500 mt-1">{std.progressPercent}% complete</p>
+                    <p className="text-[10px] text-zinc-500 mt-1">{t("percentComplete", { percent: String(std.progressPercent) })}</p>
                   </div>
                 )}
               </div>
@@ -177,23 +181,23 @@ export default function CompliancePage() {
 
         {/* Section 2: Recording & Data Policies */}
         <section>
-          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">Recording & data policies</h2>
+          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">{t("recordingPoliciesTitle")}</h2>
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-6 max-w-2xl">
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Consent mode</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("consentModeLabel")}</label>
                 <select
                   value={policies.consentMode}
                   onChange={(e) => setPolicies((p) => ({ ...p, consentMode: e.target.value as ConsentMode }))}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white text-sm focus:outline-none focus:border-[var(--border-medium)]"
                 >
-                  {CONSENT_OPTIONS.map((o) => (
+                  {consentOptions.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Retention period</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("retentionPeriodLabel")}</label>
                 <select
                   value={policies.retentionDays}
                   onChange={(e) => setPolicies((p) => ({ ...p, retentionDays: Number(e.target.value) }))}
@@ -205,7 +209,7 @@ export default function CompliancePage() {
                 </select>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-300">PII redaction</span>
+                <span className="text-sm text-zinc-300">{t("piiRedaction")}</span>
                 <button
                   type="button"
                   role="switch"
@@ -219,7 +223,7 @@ export default function CompliancePage() {
                 </button>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-300">Auto-transcription</span>
+                <span className="text-sm text-zinc-300">{t("autoTranscription")}</span>
                 <button
                   type="button"
                   role="switch"
@@ -233,7 +237,7 @@ export default function CompliancePage() {
                 </button>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Consent announcement</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("consentAnnouncementLabel")}</label>
                 <textarea
                   value={policies.consentAnnouncement}
                   onChange={(e) => setPolicies((p) => ({ ...p, consentAnnouncement: e.target.value }))}
@@ -247,7 +251,7 @@ export default function CompliancePage() {
               onClick={handleSavePolicies}
               className="mt-4 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
             >
-              Save changes
+              {t("saveChanges")}
             </button>
           </div>
         </section>
@@ -255,7 +259,7 @@ export default function CompliancePage() {
         {/* Section 3: Audit Trail */}
         <section>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Audit trail</h2>
+            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">{t("auditTrailTitle")}</h2>
             <button
               type="button"
               onClick={handleExportReport}
@@ -278,7 +282,7 @@ export default function CompliancePage() {
               onChange={(e) => { setAuditUserFilter(e.target.value); setAuditPage(0); }}
               className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm focus:outline-none focus:border-[var(--border-medium)]"
             >
-              <option value="all">All users</option>
+              <option value="all">{t("audit.allUsers")}</option>
               {uniqueUsers.map((u) => (
                 <option key={u} value={u}>{u}</option>
               ))}
@@ -288,7 +292,7 @@ export default function CompliancePage() {
               onChange={(e) => { setAuditActionFilter(e.target.value); setAuditPage(0); }}
               className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm focus:outline-none focus:border-[var(--border-medium)]"
             >
-              <option value="all">All actions</option>
+              <option value="all">{t("audit.allActions")}</option>
               {uniqueActions.map((a) => (
                 <option key={a} value={a}>{a}</option>
               ))}
@@ -335,7 +339,11 @@ export default function CompliancePage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-3">
               <p className="text-xs text-zinc-500">
-                Showing {auditPage * PAGE_SIZE + 1}–{Math.min((auditPage + 1) * PAGE_SIZE, filteredAudit.length)} of {filteredAudit.length}
+                {t("audit.showing", {
+                  from: String(auditPage * PAGE_SIZE + 1),
+                  to: String(Math.min((auditPage + 1) * PAGE_SIZE, filteredAudit.length)),
+                  total: String(filteredAudit.length),
+                })}
               </p>
               <div className="flex gap-2">
                 <button
@@ -344,7 +352,7 @@ export default function CompliancePage() {
                   disabled={auditPage === 0}
                   className="px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white disabled:opacity-40 border border-[var(--border-medium)]"
                 >
-                  Previous
+                  {t("audit.previous")}
                 </button>
                 <button
                   type="button"
@@ -352,7 +360,7 @@ export default function CompliancePage() {
                   disabled={auditPage >= totalPages - 1}
                   className="px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white disabled:opacity-40 border border-[var(--border-medium)]"
                 >
-                  Next
+                  {t("audit.next")}
                 </button>
               </div>
             </div>

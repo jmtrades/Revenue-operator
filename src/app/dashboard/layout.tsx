@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   LayoutList,
   Users,
@@ -69,30 +70,31 @@ function isAllowedPath(pathname: string): boolean {
   if (pathname.startsWith("/dashboard/agents/")) return true;
   return false;
 }
-const NAV: { href: string; label: string; icon?: LucideIcon }[] = [
-  { href: "/dashboard/activity", label: "Activity", icon: LayoutList },
-  { href: "/dashboard/contacts", label: "Contacts", icon: Users },
-  { href: "/dashboard/agents", label: "Agents", icon: Bot },
-  { href: "/dashboard/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
-  { href: "/dashboard/calendar", label: "Calendar", icon: Calendar },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
-  { href: "/dashboard/start", label: "Start", icon: Play },
-  { href: "/dashboard/record", label: "Record", icon: FileText },
-  { href: "/dashboard/calls", label: "Calls", icon: PhoneCall },
-  { href: "/dashboard/presence", label: "Presence", icon: UserCheck },
-  { href: "/dashboard/approvals", label: "Approvals", icon: FileCheck },
-  { href: "/dashboard/follow-ups", label: "Follow-ups", icon: ListTodo },
-  { href: "/dashboard/escalations", label: "Escalations", icon: ArrowUpRight },
-  { href: "/dashboard/policies", label: "Policies", icon: FileStack },
-  { href: "/dashboard/templates", label: "Templates", icon: FileText },
-  { href: "/dashboard/team", label: "Team", icon: Users },
-  { href: "/dashboard/integrations", label: "Integrations", icon: Plug },
-  { href: "/dashboard/compliance", label: "Compliance", icon: Shield },
-  { href: "/dashboard/import", label: "Import", icon: Download },
-  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
+const NAV_KEYS = [
+  "activity", "contacts", "agents", "campaigns", "messages", "calendar", "analytics", "settings",
+  "start", "record", "calls", "presence", "approvals", "followUps", "escalations", "policies",
+  "templates", "team", "integrations", "compliance", "import", "billing",
+] as const;
+const NAV_HREFS = [
+  "/dashboard/activity", "/dashboard/contacts", "/dashboard/agents", "/dashboard/campaigns",
+  "/dashboard/messages", "/dashboard/calendar", "/dashboard/analytics", "/dashboard/settings",
+  "/dashboard/start", "/dashboard/record", "/dashboard/calls", "/dashboard/presence",
+  "/dashboard/approvals", "/dashboard/follow-ups", "/dashboard/escalations", "/dashboard/policies",
+  "/dashboard/templates", "/dashboard/team", "/dashboard/integrations", "/dashboard/compliance",
+  "/dashboard/import", "/dashboard/billing",
 ];
+const NAV_ICONS: (LucideIcon | undefined)[] = [
+  LayoutList, Users, Bot, Megaphone, MessageSquare, Calendar, BarChart3, Settings,
+  Play, FileText, PhoneCall, UserCheck, FileCheck, ListTodo, ArrowUpRight, FileStack,
+  FileText, Users, Plug, Shield, Download, CreditCard,
+];
+function buildNav(t: (key: string) => string) {
+  return NAV_HREFS.map((href, i) => ({
+    href,
+    label: t(`layout.navLabels.${NAV_KEYS[i]}`),
+    icon: NAV_ICONS[i],
+  }));
+}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -119,14 +121,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 }
 
 function DashboardShellFallback() {
-  return <LoadingScreen message="One moment…" />;
+  const t = useTranslations("dashboard");
+  return <LoadingScreen message={t("loadingMessage")} />;
 }
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("dashboard");
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { workspaceId, workspaces, loading, error, setWorkspaceId, retry } = useWorkspace();
+  const navItems = useMemo(() => buildNav(t), [t]);
   const urlWid = searchParams.get("workspace_id");
   const redirecting = useRef(false);
 
@@ -179,7 +184,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [mounted, pathname, loading, workspaces.length, router]);
 
   if (loading) {
-    return <LoadingScreen message="One moment…" onRetry={retry} />;
+    return <LoadingScreen message={t("loadingMessage")} onRetry={retry} />;
   }
 
   if (error && workspaces.length === 0) {
@@ -211,7 +216,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         </div>
         <WorkspaceSelect />
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          {NAV.map((n) => (
+          {navItems.map((n) => (
             <NavLink key={n.href} href={n.href} label={n.label} icon={n.icon} />
           ))}
         </nav>
@@ -220,7 +225,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         <TopBar />
         <div className="shrink-0 px-4 md:px-6 py-2 border-b hidden md:block" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            Handling active. Commitments secured. Compliance enforced. Confirmation recorded.
+            {t("layout.handlingBanner")}
           </p>
         </div>
         <div className="flex-1 overflow-auto">{children}</div>
@@ -230,20 +235,13 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-const MOBILE_TABS = [
-  { href: "/dashboard/activity", label: "Activity" },
-  { href: "/dashboard/contacts", label: "Contacts" },
-  { href: "/dashboard/campaigns", label: "Campaigns" },
-  { href: "/dashboard/agents", label: "Agents" },
-] as const;
-const MORE_LINKS = [
-  { href: "/dashboard/messages", label: "Messages" },
-  { href: "/dashboard/calendar", label: "Calendar" },
-  { href: "/dashboard/analytics", label: "Analytics" },
-  { href: "/dashboard/settings", label: "Settings" },
-];
+const MOBILE_TAB_KEYS = ["activity", "contacts", "campaigns", "agents"] as const;
+const MOBILE_TAB_HREFS = ["/dashboard/activity", "/dashboard/contacts", "/dashboard/campaigns", "/dashboard/agents"];
+const MORE_LINK_KEYS = ["messages", "calendar", "analytics", "settings"] as const;
+const MORE_LINK_HREFS = ["/dashboard/messages", "/dashboard/calendar", "/dashboard/analytics", "/dashboard/settings"];
 
 function MobileBottomNav() {
+  const t = useTranslations("dashboard");
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -253,14 +251,23 @@ function MobileBottomNav() {
   const isActive = (href: string) =>
     pathname === href || (href !== "/dashboard/activity" && pathname.startsWith(href));
 
+  const mobileTabs = useMemo(
+    () => MOBILE_TAB_HREFS.map((href, i) => ({ href, label: t(`layout.navLabels.${MOBILE_TAB_KEYS[i]}`) })),
+    [t]
+  );
+  const moreLinks = useMemo(
+    () => MORE_LINK_HREFS.map((href, i) => ({ href, label: t(`layout.navLabels.${MORE_LINK_KEYS[i]}`) })),
+    [t]
+  );
+
   return (
     <>
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around py-2 safe-area-pb"
         style={{ borderColor: "var(--border)", borderTopWidth: "1px", background: "var(--background)" }}
-        aria-label="Mobile navigation"
+        aria-label={t("layout.mobileNavAria")}
       >
-        {MOBILE_TABS.map(({ href, label }) => (
+        {mobileTabs.map(({ href, label }) => (
           <Link
             key={href}
             href={href + q}
@@ -279,7 +286,7 @@ function MobileBottomNav() {
             aria-expanded={moreOpen}
             aria-haspopup="true"
           >
-            <span className="text-[10px] uppercase tracking-wider">More</span>
+            <span className="text-[10px] uppercase tracking-wider">{t("layout.moreLabel")}</span>
           </button>
           {moreOpen && (
             <>
@@ -293,7 +300,7 @@ function MobileBottomNav() {
                 className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 z-50 min-w-[160px] rounded-lg border py-2 shadow-lg"
                 style={{ background: "var(--background)", borderColor: "var(--border)" }}
               >
-                {MORE_LINKS.map(({ href, label }) => (
+                {moreLinks.map(({ href, label }) => (
                   <Link
                     key={href}
                     href={href + q}
@@ -314,6 +321,7 @@ function MobileBottomNav() {
 }
 
 function TopBar() {
+  const t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
   const [ambient, setAmbient] = useState<{ line: string; institutional_state: string } | null>(null);
 
@@ -341,7 +349,7 @@ function TopBar() {
         {ambient?.line ?? "—"}
       </p>
       <div className="flex-1 flex justify-end items-center gap-3 min-w-0">
-        <span className="text-xs" style={{ color: "var(--text-tertiary)" }} aria-label="Notifications">Notifications</span>
+        <span className="text-xs" style={{ color: "var(--text-tertiary)" }} aria-label={t("layout.notificationsAria")}>{t("layout.notificationsAria")}</span>
         <span
           className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
           style={{
@@ -359,6 +367,7 @@ function TopBar() {
 
 
 function WorkspaceSelect() {
+  const t = useTranslations("dashboard");
   const router = useRouter();
   const pathname = usePathname();
   const { workspaceId, workspaces, loading, error, setWorkspaceId, retry: _retry } = useWorkspace();
@@ -374,9 +383,9 @@ function WorkspaceSelect() {
   if (loading) {
     return (
       <div className="p-3">
-        <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>Context</p>
+        <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>{t("layout.contextLabel")}</p>
         <div className="px-3 py-2 rounded-lg text-sm" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-muted)" }}>
-          Reconnecting…
+          {t("layout.reconnecting")}
         </div>
       </div>
     );
@@ -385,9 +394,9 @@ function WorkspaceSelect() {
   if (error) {
     return (
       <div className="p-3">
-        <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>Context</p>
+        <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>{t("layout.contextLabel")}</p>
         <div className="p-3 rounded-lg text-sm" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-          <p style={{ color: "var(--text-secondary)" }}>Normal conditions are not present.</p>
+          <p style={{ color: "var(--text-secondary)" }}>{t("layout.normalConditionsNotPresent")}</p>
         </div>
       </div>
     );
@@ -396,12 +405,12 @@ function WorkspaceSelect() {
   if (workspaces.length === 0) {
     return (
       <div className="p-3">
-        <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>Context</p>
+        <p className="text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>{t("layout.contextLabel")}</p>
         <Link
           href="/activate"
           className="block w-full px-3 py-2 rounded-lg text-sm font-medium text-center btn-primary"
         >
-          Set up call handling
+          {t("layout.setUpCallHandling")}
         </Link>
       </div>
     );
@@ -409,7 +418,7 @@ function WorkspaceSelect() {
 
   return (
     <div className="p-3">
-      <label className="block text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>Switch context</label>
+      <label className="block text-xs font-medium mb-2" style={{ color: "var(--text-muted)" }}>{t("layout.switchContext")}</label>
       <select
         value={effectiveId}
         onChange={(e) => handleChange(e.target.value)}

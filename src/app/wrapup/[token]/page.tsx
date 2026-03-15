@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 export default function WrapupPage() {
+  const t = useTranslations("wrapup");
   const tForms = useTranslations("forms.state");
   const tCommon = useTranslations("common");
   const params = useParams();
@@ -51,11 +52,11 @@ export default function WrapupPage() {
     return (
       <div className="min-h-screen bg-stone-950 text-stone-200 flex items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-xl font-semibold text-stone-100 mb-2">Call Wrap-Up</h1>
+          <h1 className="text-xl font-semibold text-stone-100 mb-2">{t("title")}</h1>
           <p className="text-stone-400">
-            {status === "invalid" && "This link is invalid."}
-            {status === "used" && "This wrap-up has already been submitted."}
-            {status === "expired" && "This link has expired."}
+            {status === "invalid" && t("invalid")}
+            {status === "used" && t("used")}
+            {status === "expired" && t("expired")}
           </p>
         </div>
       </div>
@@ -65,8 +66,8 @@ export default function WrapupPage() {
     return (
       <div className="min-h-screen bg-stone-950 text-stone-200 flex items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-xl font-semibold text-stone-100 mb-2">Thanks</h1>
-          <p className="text-stone-400">Your wrap-up was submitted.</p>
+          <h1 className="text-xl font-semibold text-stone-100 mb-2">{t("thanks")}</h1>
+          <p className="text-stone-400">{t("thanksBody")}</p>
         </div>
       </div>
     );
@@ -75,8 +76,8 @@ export default function WrapupPage() {
   return (
     <div className="min-h-screen bg-stone-950 text-stone-200 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <h1 className="text-xl font-semibold text-stone-100 mb-2">Call Wrap-Up</h1>
-        <p className="text-sm text-stone-400 mb-6">How did the call go?</p>
+        <h1 className="text-xl font-semibold text-stone-100 mb-2">{t("title")}</h1>
+        <p className="text-sm text-stone-400 mb-6">{t("formSubtitle")}</p>
         <div className="space-y-3 mb-6">
           {(["interested", "thinking", "not_fit"] as const).map((o) => (
             <button
@@ -89,19 +90,19 @@ export default function WrapupPage() {
                   : "border-stone-700 bg-stone-900/80 text-stone-300 hover:border-stone-600"
               }`}
             >
-              {o === "interested" && <span className="inline-flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-emerald-400" /> Interested / next step</span>}
-              {o === "thinking" && <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4 text-amber-400" /> Thinking / follow up</span>}
-              {o === "not_fit" && <span className="inline-flex items-center gap-2"><CircleSlash className="h-4 w-4 text-rose-400" /> Not a fit</span>}
+              {o === "interested" && <span className="inline-flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-emerald-400" /> {t("interestedLabel")}</span>}
+              {o === "thinking" && <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4 text-amber-400" /> {t("thinkingLabel")}</span>}
+              {o === "not_fit" && <span className="inline-flex items-center gap-2"><CircleSlash className="h-4 w-4 text-rose-400" /> {t("notFitLabel")}</span>}
             </button>
           ))}
         </div>
         <div className="mb-6">
-          <label className="block text-sm text-stone-400 mb-1">Key objection (optional)</label>
+          <label className="block text-sm text-stone-400 mb-1">{t("objectionLabel")}</label>
           <input
             type="text"
             value={objectionText}
             onChange={(e) => setObjectionText(e.target.value)}
-            placeholder="e.g. budget, timing..."
+            placeholder={t("objectionPlaceholder")}
             className="w-full px-3 py-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 placeholder-stone-500"
           />
         </div>

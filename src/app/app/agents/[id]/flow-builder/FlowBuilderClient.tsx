@@ -46,9 +46,9 @@ function BaseFlowNode({
   const isSource = nodeType === "start" || nodeType === "end_call";
   const colors: Record<string, string> = {
     start: "bg-green-500/20 border-green-500/50",
-    greeting: "bg-blue-500/20 border-blue-500/50",
+    greeting: "bg-zinc-600/20 border-zinc-500/50",
     question: "bg-amber-500/20 border-amber-500/50",
-    branch: "bg-purple-500/20 border-purple-500/50",
+    branch: "bg-zinc-500/20 border-zinc-400/50",
     transfer: "bg-orange-500/20 border-orange-500/50",
     book_appointment: "bg-emerald-500/20 border-emerald-500/50",
     end_call: "bg-red-500/20 border-red-500/50",

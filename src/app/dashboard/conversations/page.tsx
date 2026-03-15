@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
@@ -30,6 +31,8 @@ interface CommandCenter {
 }
 
 export default function ConversationsPage() {
+  const t = useTranslations("dashboard");
+  const tc = useTranslations("dashboard.conversationsPage");
   const { workspaceId } = useWorkspace();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [commandCenter, setCommandCenter] = useState<CommandCenter | null>(null);
@@ -70,20 +73,20 @@ export default function ConversationsPage() {
 
   function stateLine(lead: { handling_status?: string; scheduled_intent?: string; column: string }): string {
     const h = lead.handling_status ?? lead.scheduled_intent;
-    if (lead.column === "continuing") return "In progress.";
+    if (lead.column === "continuing") return tc("stateInProgress");
     if (h) {
       const s = String(h).toLowerCase();
-      if (s.includes("confirm")) return "Confirmation in progress.";
-      if (s.includes("recover") || s.includes("re-engag")) return "Recovery in progress.";
-      if (s.includes("follow") || s.includes("outreach")) return "Follow-through in progress.";
+      if (s.includes("confirm")) return tc("stateConfirmation");
+      if (s.includes("recover") || s.includes("re-engag")) return tc("stateRecovery");
+      if (s.includes("follow") || s.includes("outreach")) return tc("stateFollowThrough");
     }
-    return "In progress.";
+    return tc("stateInProgress");
   }
 
   if (!workspaceId) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Follow-through by lead appears when operation is in place.</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{tc("selectWorkspace")}</p>
       </Shell>
     );
   }
@@ -91,7 +94,7 @@ export default function ConversationsPage() {
   if (loading) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("loadingMessage")}</p>
       </Shell>
     );
   }
@@ -101,15 +104,15 @@ export default function ConversationsPage() {
       <div className="max-w-2xl">
         <p className="text-sm mb-8" style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>
           <Link href="/dashboard/activity" style={{ color: "var(--meaning-blue)" }}>
-            Activity
+            {tc("activityLink")}
           </Link>
         </p>
         {error && (
-          <p className="mb-6 text-sm" style={{ color: "var(--text-secondary)" }}>Normal conditions are not present.</p>
+          <p className="mb-6 text-sm" style={{ color: "var(--text-secondary)" }}>{tc("normalConditionsNotPresent")}</p>
         )}
         {allLeads.length === 0 ? (
           <p className="text-sm py-8" style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>
-            No follow-through in progress. Entries appear as work continues.
+            {tc("emptyMessage")}
           </p>
         ) : (
           <ul className="space-y-0">

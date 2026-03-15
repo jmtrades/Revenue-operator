@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader } from "@/components/ui";
 import { Phone, MessageSquare, Check, FileText } from "lucide-react";
 
 const TABS = ["Overview", "Transcript"] as const;
+type TabId = (typeof TABS)[number];
 
 interface CallDetail {
   id: string;
@@ -39,15 +41,22 @@ function formatDuration(start: string | null | undefined, end: string | null | u
 }
 
 export default function CallRecordDetailPage() {
+  const t = useTranslations("dashboard");
+  const tc = useTranslations("dashboard.callDetail");
   const params = useParams();
   const searchParams = useSearchParams();
   const { workspaceId } = useWorkspace();
   const id = typeof params.id === "string" ? params.id : "";
   const q = searchParams.toString() ? `?${searchParams.toString()}` : "";
-  const [tab, setTab] = useState<(typeof TABS)[number]>("Overview");
+  const [tab, setTab] = useState<TabId>("Overview");
   const [call, setCall] = useState<CallDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const tabLabels = useMemo(
+    () => ({ Overview: tc("tabOverview"), Transcript: tc("tabTranscript") } as Record<TabId, string>),
+    [tc]
+  );
 
   useEffect(() => {
     if (!id || !workspaceId) {
@@ -62,16 +71,16 @@ export default function CallRecordDetailPage() {
         return r.json();
       })
       .then((data) => setCall((data as { call?: CallDetail }).call ?? null))
-      .catch(() => setError("Could not load this call."))
+      .catch(() => setError(tc("loadError")))
       .finally(() => setLoading(false));
-  }, [id, workspaceId]);
+  }, [id, workspaceId, tc]);
 
-  const name = call?.matched_lead?.name || call?.matched_lead?.email || call?.matched_lead?.company || "Caller";
+  const name = call?.matched_lead?.name || call?.matched_lead?.email || call?.matched_lead?.company || tc("callerFallback");
 
   if (loading) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Record" subtitle="One moment…" />
+        <PageHeader title={tc("loadingTitle")} subtitle={t("loadingMessage")} />
         <div className="h-32 rounded-lg animate-pulse" style={{ background: "var(--bg-elevated)" }} />
       </div>
     );
@@ -80,8 +89,8 @@ export default function CallRecordDetailPage() {
   if (error || !call) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Record" subtitle={error ?? "Not found"} />
-        <Link href={`/dashboard/calls${q}`} className="text-sm" style={{ color: "var(--accent-primary)" }}>← Back to calls</Link>
+        <PageHeader title={t("pages.record.title")} subtitle={error ?? t("empty.recordNotFound")} />
+        <Link href={`/dashboard/calls${q}`} className="text-sm" style={{ color: "var(--accent-primary)" }}>{t("backToCalls")}</Link>
       </div>
     );
   }
@@ -90,25 +99,25 @@ export default function CallRecordDetailPage() {
     <div className="p-8 max-w-4xl">
       <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
         <PageHeader
-          title={`${name} — ${call.analysis_outcome ?? call.outcome ?? "Call"}`}
+          title={`${name} — ${call.analysis_outcome ?? call.outcome ?? tc("callFallback")}`}
           subtitle={`${formatTime(call.call_started_at)} · ${formatDuration(call.call_started_at, call.call_ended_at)}`}
         />
-        <Link href={`/dashboard/activity${q}`} className="text-sm" style={{ color: "var(--text-muted)" }}>← Back to activity</Link>
+        <Link href={`/dashboard/activity${q}`} className="text-sm" style={{ color: "var(--text-muted)" }}>{t("backToActivity")}</Link>
       </div>
 
       <div className="flex gap-2 border-b mb-6" style={{ borderColor: "var(--border-default)" }}>
-        {TABS.map((t) => (
+        {TABS.map((tabId) => (
           <button
-            key={t}
+            key={tabId}
             type="button"
-            onClick={() => setTab(t)}
+            onClick={() => setTab(tabId)}
             className="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
             style={{
-              borderColor: tab === t ? "var(--accent-primary)" : "transparent",
-              color: tab === t ? "var(--accent-primary)" : "var(--text-muted)",
+              borderColor: tab === tabId ? "var(--accent-primary)" : "transparent",
+              color: tab === tabId ? "var(--accent-primary)" : "var(--text-muted)",
             }}
           >
-            {t}
+            {tabLabels[tabId]}
           </button>
         ))}
       </div>
@@ -118,13 +127,13 @@ export default function CallRecordDetailPage() {
           <>
             {call.summary && (
               <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>AI Summary</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>{tc("aiSummary")}</h3>
                 <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>{call.summary}</p>
               </section>
             )}
             {call.recording_url && (
               <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>Recording</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>{tc("recording")}</h3>
                 <a
                   href={call.recording_url}
                   target="_blank"
@@ -132,20 +141,20 @@ export default function CallRecordDetailPage() {
                   className="inline-flex items-center gap-2 text-sm font-medium"
                   style={{ color: "var(--accent-primary)" }}
                 >
-                  <FileText className="w-4 h-4" /> Play recording
+                  <FileText className="w-4 h-4" /> {tc("playRecording")}
                 </a>
               </section>
             )}
             {call.matched_lead && (
               <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>Contact</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>{tc("contact")}</h3>
                 <p className="text-sm" style={{ color: "var(--text-primary)" }}>{call.matched_lead.name || "—"}</p>
                 {call.matched_lead.email && <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{call.matched_lead.email}</p>}
                 {call.matched_lead.company && <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{call.matched_lead.company}</p>}
               </section>
             )}
             <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>Quick actions</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>{tc("quickActions")}</h3>
               <div className="flex flex-wrap gap-2">
                 {call.matched_lead_id && (
                   <Link
@@ -153,7 +162,7 @@ export default function CallRecordDetailPage() {
                     className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium"
                     style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                   >
-                    <Phone className="w-4 h-4" /> Call back
+                    <Phone className="w-4 h-4" /> {tc("callBack")}
                   </Link>
                 )}
                 <Link
@@ -161,14 +170,14 @@ export default function CallRecordDetailPage() {
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border"
                   style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
                 >
-                  <MessageSquare className="w-4 h-4" /> Text
+                  <MessageSquare className="w-4 h-4" /> {tc("text")}
                 </Link>
                 <button
                   type="button"
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border"
                   style={{ borderColor: "var(--border-default)", color: "var(--text-tertiary)" }}
                 >
-                  <Check className="w-4 h-4" /> Mark done
+                  <Check className="w-4 h-4" /> {tc("markDone")}
                 </button>
               </div>
             </section>
@@ -176,13 +185,13 @@ export default function CallRecordDetailPage() {
         )}
         {tab === "Transcript" && (
           <section>
-            <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>Transcript</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>{tc("transcript")}</h3>
             {call.transcript_text ? (
               <pre className="text-sm whitespace-pre-wrap font-sans p-4 rounded-lg" style={{ background: "var(--bg-elevated)", color: "var(--text-secondary)", lineHeight: 1.6 }}>
                 {call.transcript_text}
               </pre>
             ) : (
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>No transcript available for this call.</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>{tc("noTranscript")}</p>
             )}
           </section>
         )}

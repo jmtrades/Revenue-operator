@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
               pauseOnSensitive: workspace.recording_pause_on_sensitive ?? false,
             }
           : null;
-      const firstMessage = buildFirstMessageWithConsent(firstMessageBase, recordingConsentSettings);
+      const _firstMessage = buildFirstMessageWithConsent(firstMessageBase, recordingConsentSettings);
 
       const { assistantId } = await voice.createAssistant({
         name: `${agent_name} – ${workspaceId.slice(0, 8)}`,

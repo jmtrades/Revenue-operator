@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
   }
 
   const settings = body.settings ?? {};
+  const { HUMAN_VOICE_DEFAULTS } = await import("@/lib/voice/human-voice-defaults");
+  const defaults = { ...HUMAN_VOICE_DEFAULTS, ...settings };
 
   const response = await fetch(
     `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream`,
@@ -59,22 +61,10 @@ export async function POST(req: NextRequest) {
         text: text.slice(0, 5000),
         model_id: "eleven_turbo_v2_5",
         voice_settings: {
-          stability:
-            typeof settings.stability === "number"
-              ? clamp(settings.stability, 0, 1)
-              : 0.55,
-          similarity_boost:
-            typeof settings.similarityBoost === "number"
-              ? clamp(settings.similarityBoost, 0, 1)
-              : 0.8,
-          style:
-            typeof settings.style === "number"
-              ? clamp(settings.style, 0, 1)
-              : 0.35,
-          use_speaker_boost:
-            typeof settings.useSpeakerBoost === "boolean"
-              ? settings.useSpeakerBoost
-              : true,
+          stability: clamp(defaults.stability, 0, 1),
+          similarity_boost: clamp(defaults.similarityBoost, 0, 1),
+          style: clamp(defaults.style, 0, 1),
+          use_speaker_boost: defaults.useSpeakerBoost,
         },
       }),
     },

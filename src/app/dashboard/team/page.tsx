@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { ListSkeleton } from "@/components/ui/ListSkeleton";
@@ -15,6 +16,7 @@ interface Member {
 }
 
 export default function TeamPage() {
+  const t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
   const [team, setTeam] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,20 +36,20 @@ export default function TeamPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Team" subtitle="Team members." />
-        <EmptyState icon="watch" title="Select a context." />
+        <PageHeader title={t("pages.team.title")} subtitle={t("pages.team.subtitleShort")} />
+        <EmptyState icon="watch" title={t("empty.selectContext")} />
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-4xl">
-      <PageHeader title="Team" subtitle="Manage team members and roles." />
+      <PageHeader title={t("pages.team.title")} subtitle={t("pages.team.subtitle")} />
       {loading ? (
         <ListSkeleton rows={4} />
       ) : team.length === 0 ? (
         <div className="rounded-lg border p-8 text-center" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No team members yet. Add members in settings.</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("empty.noTeamYet")}</p>
         </div>
       ) : (
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>

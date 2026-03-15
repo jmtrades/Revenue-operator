@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
@@ -20,6 +21,7 @@ interface Campaign {
 }
 
 export default function CampaignsPage() {
+  const t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export default function CampaignsPage() {
         else setCampaigns([]);
         if (res.error) setError(res.error);
       })
-      .catch(() => setError("Could not load campaigns."))
+      .catch(() => setError("LOAD_ERROR"))
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -55,32 +57,32 @@ export default function CampaignsPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Campaigns" subtitle="Outbound calling campaigns." />
-        <EmptyState icon="watch" title="Select a context." subtitle="Campaigns appear here." />
+        <PageHeader title={t("pages.campaigns.title")} subtitle={t("pages.campaigns.subtitleShort")} />
+        <EmptyState icon="watch" title={t("empty.selectContext")} subtitle={t("empty.campaignsAppearHere")} />
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-4xl">
-      <PageHeader title="Campaigns" subtitle="Outbound call campaigns." />
+      <PageHeader title={t("pages.campaigns.title")} subtitle={t("pages.campaigns.subtitle")} />
       <p className="mb-4">
         <Link href={`/dashboard/campaigns/new?workspace_id=${encodeURIComponent(workspaceId)}`} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>
-          + New campaign
+          {t("campaignsPage.newCampaignLink")}
         </Link>
       </p>
       {loading ? (
         <ListSkeleton rows={4} header />
       ) : error ? (
         <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error}</p>
-          <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>Retry</button>
+          <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error === "LOAD_ERROR" ? t("campaignsPage.loadError") : error}</p>
+          <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>{t("campaignsPage.retry")}</button>
         </div>
       ) : campaigns.length === 0 ? (
         <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No campaigns yet</p>
-          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Run follow-ups, reminders, and reactivation calls. Your AI reaches out so you don&apos;t have to.</p>
-          <Link href={`/dashboard/campaigns/new?workspace_id=${encodeURIComponent(workspaceId)}`} className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Launch your first campaign →</Link>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>{t("campaignsPage.noCampaignsYet")}</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>{t("campaignsPage.noCampaignsHint")}</p>
+          <Link href={`/dashboard/campaigns/new?workspace_id=${encodeURIComponent(workspaceId)}`} className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{t("campaignsPage.launchFirstCampaign")}</Link>
         </div>
       ) : (
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>

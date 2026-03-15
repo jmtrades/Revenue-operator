@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 import { PageHeader } from "@/components/ui";
@@ -22,14 +23,16 @@ interface UsageState {
   messages_pct: number;
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  trial: "Trial",
-  active: "Active",
-  past_due: "Past due",
-  paused: "Paused",
+const STATUS_KEYS: Record<string, "statusTrial" | "statusActive" | "statusPastDue" | "statusPaused"> = {
+  trial: "statusTrial",
+  active: "statusActive",
+  past_due: "statusPastDue",
+  paused: "statusPaused",
 };
 
 export default function DashboardBillingPage() {
+  const t = useTranslations("dashboard");
+  const tb = useTranslations("dashboard.billingPage");
   const { workspaceId } = useWorkspace();
   const [billing, setBilling] = useState<BillingState | null>(null);
   const [usage, setUsage] = useState<UsageState | null>(null);
@@ -78,7 +81,7 @@ export default function DashboardBillingPage() {
   if (loading || !workspaceId) {
     return (
       <div className="p-6 max-w-lg space-y-4">
-        <PageHeader title="Billing" subtitle="Plan and usage." />
+        <PageHeader title={t("pages.billing.title")} subtitle={t("pages.billing.subtitleShort")} />
         <div className="rounded-xl border p-4 space-y-3 animate-pulse" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
           <div className="h-4 w-32 rounded" style={{ background: "var(--border-default)" }} />
           <div className="h-3 w-full rounded" style={{ background: "var(--border-default)" }} />
@@ -91,8 +94,8 @@ export default function DashboardBillingPage() {
   if (!billing) {
     return (
       <div className="p-6 max-w-lg">
-        <PageHeader title="Billing" subtitle="Plan and usage." />
-        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Billing information unavailable.</p>
+        <PageHeader title={t("pages.billing.title")} subtitle={t("pages.billing.subtitleShort")} />
+        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{tb("billingUnavailable")}</p>
       </div>
     );
   }
@@ -111,30 +114,30 @@ export default function DashboardBillingPage() {
   return (
     <div className="p-6 max-w-lg space-y-6">
       <DashboardExecutionStateBanner />
-      <PageHeader title="Billing" subtitle="Current plan, usage, and payment." />
+      <PageHeader title={t("pages.billing.title")} subtitle={t("pages.billing.subtitle")} />
 
       {usageAlert && (
         <div className="rounded-lg p-3 text-sm font-medium" style={{ background: "var(--accent-danger-subtle, rgba(239,68,68,0.1))", color: "var(--accent-danger, #ef4444)" }}>
-          Usage at or over plan limit. Upgrade or wait for the next period.
+          {tb("usageAlert")}
         </div>
       )}
       {usageWarn && !usageAlert && (
         <div className="rounded-lg p-3 text-sm" style={{ background: "var(--accent-warning-subtle, rgba(245,158,11,0.1))", color: "var(--text-secondary)" }}>
-          Usage above 80% of plan limit. Consider upgrading soon.
+          {tb("usageWarn")}
         </div>
       )}
 
       {usage && (
         <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>Usage this period</p>
+          <p className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>{tb("usageThisPeriod")}</p>
           <div>
-            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Calls: {usage.calls} / {usage.calls_limit}</p>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>{tb("callsLabel", { used: usage.calls, limit: usage.calls_limit })}</p>
             <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border-default)" }}>
               <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, usage.calls_pct)}%`, background: "var(--accent-primary)" }} />
             </div>
           </div>
           <div>
-            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Messages: {usage.messages} / {usage.messages_limit}</p>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>{tb("messagesLabel", { used: usage.messages, limit: usage.messages_limit })}</p>
             <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border-default)" }}>
               <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, usage.messages_pct)}%`, background: "var(--accent-primary)" }} />
             </div>
@@ -143,11 +146,11 @@ export default function DashboardBillingPage() {
       )}
 
       <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-        <p className="text-sm"><span style={{ color: "var(--text-tertiary)" }}>Plan:</span> <span style={{ color: "var(--text-primary)" }}>{billing.plan_name}</span></p>
-        <p className="text-sm"><span style={{ color: "var(--text-tertiary)" }}>Interval:</span> <span style={{ color: "var(--text-primary)" }}>{billing.interval === "year" ? "Annual" : "Monthly"}</span></p>
-        <p className="text-sm"><span style={{ color: "var(--text-tertiary)" }}>Status:</span> <span style={{ color: "var(--text-primary)" }}>{STATUS_LABEL[billing.status] ?? billing.status}</span></p>
+        <p className="text-sm"><span style={{ color: "var(--text-tertiary)" }}>{tb("plan")}:</span> <span style={{ color: "var(--text-primary)" }}>{billing.plan_name}</span></p>
+        <p className="text-sm"><span style={{ color: "var(--text-tertiary)" }}>{tb("interval")}:</span> <span style={{ color: "var(--text-primary)" }}>{billing.interval === "year" ? tb("intervalAnnual") : tb("intervalMonthly")}</span></p>
+        <p className="text-sm"><span style={{ color: "var(--text-tertiary)" }}>{tb("status")}:</span> <span style={{ color: "var(--text-primary)" }}>{STATUS_KEYS[billing.status] ? tb(STATUS_KEYS[billing.status]) : billing.status}</span></p>
         {renewalDate && (
-          <p className="text-sm"><span style={{ color: "var(--text-tertiary)" }}>Renewal:</span> <span style={{ color: "var(--text-primary)" }}>{renewalDate}</span></p>
+          <p className="text-sm"><span style={{ color: "var(--text-tertiary)" }}>{tb("renewal")}:</span> <span style={{ color: "var(--text-primary)" }}>{renewalDate}</span></p>
         )}
       </div>
 
@@ -159,17 +162,17 @@ export default function DashboardBillingPage() {
           className="py-2.5 px-4 text-sm font-medium rounded-lg disabled:opacity-60 transition-opacity"
           style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
         >
-          {managing ? "Opening…" : "Manage billing"}
+          {managing ? tb("opening") : tb("manageBilling")}
         </button>
       )}
 
       <div className="rounded-lg border p-4 text-sm" style={{ borderColor: "var(--border-default)", background: "var(--bg-elevated)" }}>
-        <p className="font-medium mb-2" style={{ color: "var(--text-primary)" }}>Thinking of canceling?</p>
+        <p className="font-medium mb-2" style={{ color: "var(--text-primary)" }}>{tb("cancelTitle")}</p>
         <p className="mb-3" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
-          In the last 30 days your AI answered calls, captured leads, and booked appointments. Consider pausing for a month or downgrading instead of canceling — your data stays safe.
+          {tb("cancelBody")}
         </p>
         <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-          Use &quot;Manage billing&quot; to change plan or cancel. Questions? <a href="mailto:hello@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>hello@recall-touch.com</a>
+          {tb("cancelHint")} <a href="mailto:hello@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>hello@recall-touch.com</a>
         </p>
       </div>
     </div>

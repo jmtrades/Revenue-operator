@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
@@ -11,15 +12,7 @@ import { ActivityFeedSkeleton } from "@/components/ui/ActivityFeedSkeleton";
 type FilterId = "all" | "needs_action" | "leads" | "appointments" | "urgent" | "outbound" | "spam";
 type CardType = "lead" | "appointment" | "emergency" | "outbound" | "action" | "info" | "spam";
 
-const FILTERS: { id: FilterId; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "needs_action", label: "Needs action" },
-  { id: "leads", label: "Leads" },
-  { id: "appointments", label: "Appointments" },
-  { id: "urgent", label: "Urgent" },
-  { id: "outbound", label: "Outbound" },
-  { id: "spam", label: "Spam" },
-];
+const FILTER_IDS: FilterId[] = ["all", "needs_action", "leads", "appointments", "urgent", "outbound", "spam"];
 
 const CARD_ACCENT: Record<CardType, string> = {
   lead: "var(--card-lead)",
@@ -54,23 +47,10 @@ function deriveCardType(call: CallRow): CardType {
   return "info";
 }
 
-function formatTime(iso: string | null | undefined): string {
-  if (!iso) return "—";
+function formatTime(iso: string | null | undefined, dash: string): string {
+  if (!iso) return dash;
   const d = new Date(iso);
   return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-}
-
-function cardLabel(type: CardType): string {
-  const map: Record<CardType, string> = {
-    lead: "NEW LEAD",
-    appointment: "APPOINTMENT BOOKED",
-    emergency: "URGENT",
-    outbound: "FOLLOW-UP CALL",
-    action: "NEEDS ACTION",
-    info: "HANDLED",
-    spam: "SPAM",
-  };
-  return map[type];
 }
 
 interface Handoff {
@@ -88,6 +68,7 @@ interface SummaryMetrics {
 }
 
 export default function ActivityPage() {
+  const ta = useTranslations("dashboard.activity");
   const { workspaceId } = useWorkspace();
   const [filter, setFilter] = useState<FilterId>("needs_action");
   const [calls, setCalls] = useState<CallRow[]>([]);
@@ -97,6 +78,9 @@ export default function ActivityPage() {
   const [loading, setLoading] = useState(true);
   const [callInProgress, setCallInProgress] = useState<string | null>(null);
   const [callError, setCallError] = useState<string | null>(null);
+
+  const dash = "—";
+  const cardLabel = (type: CardType) => ta(`cardLabels.${type}` as "cardLabels.lead");
 
   const refetch = useCallback((silent?: boolean) => {
     if (!workspaceId) return;
@@ -131,13 +115,15 @@ export default function ActivityPage() {
     return () => window.removeEventListener("focus", onFocus);
   }, [workspaceId, refetch]);
 
-  const feedCards = calls.map((call) => {
+  const feedCards = useMemo(() => calls.map((call) => {
     const type = deriveCardType(call);
-    const name = call.matched_lead?.name || call.matched_lead?.email || call.matched_lead?.company || "Caller";
-    const meta = call.summary?.slice(0, 60) || call.transcript_text?.slice(0, 60) || "Call";
-    const detail = call.call_started_at ? formatTime(call.call_started_at) + " · " + (call.call_ended_at ? "Completed" : "In progress") : "";
+    const name = call.matched_lead?.name || call.matched_lead?.email || call.matched_lead?.company || ta("callerFallback");
+    const meta = call.summary?.slice(0, 60) || call.transcript_text?.slice(0, 60) || ta("callFallback");
+    const detail = call.call_started_at
+      ? formatTime(call.call_started_at, dash) + " · " + (call.call_ended_at ? ta("completed") : ta("inProgress"))
+      : "";
     return { ...call, cardType: type, name, meta, detail };
-  });
+  }), [calls, ta, dash]);
 
   const filtered = filter === "all"
     ? feedCards
@@ -158,7 +144,7 @@ export default function ActivityPage() {
   if (!workspaceId) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Select a workspace to see activity.</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{ta("selectWorkspace")}</p>
       </Shell>
     );
   }
@@ -176,10 +162,10 @@ export default function ActivityPage() {
         body: JSON.stringify({ lead_id: leadId }),
       });
       const data = await r.json();
-      if (!r.ok) throw new Error(data.error ?? "Call failed");
+      if (!r.ok) throw new Error(data.error ?? ta("callFailed"));
       refetch(true);
     } catch (e) {
-      setCallError(e instanceof Error ? e.message : "Call failed");
+      setCallError(e instanceof Error ? e.message : ta("callFailed"));
     } finally {
       setCallInProgress(null);
     }
@@ -189,46 +175,46 @@ export default function ActivityPage() {
     <Shell size="md" className="max-w-[600px]">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Activity</h1>
-          <span className="rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }} aria-live="polite">Live</span>
+          <h1 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{ta("title")}</h1>
+          <span className="rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }} aria-live="polite">{ta("liveBadge")}</span>
         </div>
         <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-          {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+          {new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
         </span>
       </div>
 
       <div className="grid grid-cols-4 gap-2 mb-6 overflow-x-auto scrollbar-hide">
         <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.calls_last_7_days ?? "—"}</p>
-          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>calls (7d)</p>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.calls_last_7_days ?? dash}</p>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{ta("statCalls7d")}</p>
         </div>
         <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
           <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>100%</p>
-          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>answered</p>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{ta("statAnswered")}</p>
         </div>
         <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
           <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{leadsCount}</p>
-          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>new leads</p>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{ta("statNewLeads")}</p>
         </div>
         <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.appointments_upcoming ?? "—"}</p>
-          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>appts</p>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.appointments_upcoming ?? dash}</p>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{ta("statAppts")}</p>
         </div>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mb-6">
-        {FILTERS.map((f) => (
+        {FILTER_IDS.map((id) => (
           <button
-            key={f.id}
+            key={id}
             type="button"
-            onClick={() => setFilter(f.id)}
+            onClick={() => setFilter(id)}
             className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors"
             style={{
-              background: filter === f.id ? "var(--accent-primary-subtle)" : "var(--bg-elevated)",
-              color: filter === f.id ? "var(--accent-primary)" : "var(--text-secondary)",
+              background: filter === id ? "var(--accent-primary-subtle)" : "var(--bg-elevated)",
+              color: filter === id ? "var(--accent-primary)" : "var(--text-secondary)",
             }}
           >
-            {f.label}
+            {ta(`filters.${id}` as const)}
           </button>
         ))}
       </div>
@@ -237,11 +223,11 @@ export default function ActivityPage() {
         <ActivityFeedSkeleton />
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No calls yet</p>
-          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Set up call forwarding so your number reaches Recall Touch. New calls will appear here.</p>
-          <Link href="/docs#call-forwarding" className="inline-block mt-2 text-sm font-medium" style={{ color: "var(--accent-primary)" }}>Set up call forwarding →</Link>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>{ta("noCallsYet")}</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>{ta("noCallsHint")}</p>
+          <Link href="/docs#call-forwarding" className="inline-block mt-2 text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{ta("setUpForwarding")}</Link>
           <span className="mx-2" style={{ color: "var(--text-tertiary)" }}>·</span>
-          <Link href="/dashboard/record" className="inline-block mt-2 text-sm" style={{ color: "var(--text-secondary)" }}>Record a call</Link>
+          <Link href="/dashboard/record" className="inline-block mt-2 text-sm" style={{ color: "var(--text-secondary)" }}>{ta("recordACall")}</Link>
         </div>
       ) : (
         <ul className="space-y-3">
@@ -259,7 +245,7 @@ export default function ActivityPage() {
                     <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: accent }}>
                       {cardLabel(card.cardType)}
                     </span>
-                    <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{formatTime(card.call_started_at)}</span>
+                    <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{formatTime(card.call_started_at, dash)}</span>
                   </div>
                   <p className="text-sm font-medium mt-1 truncate" style={{ color: "var(--text-primary)" }}>{card.name}</p>
                   <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-secondary)" }}>{card.meta}</p>
@@ -292,21 +278,21 @@ export default function ActivityPage() {
                             style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                           >
                             <Phone className="w-3.5 h-3.5" />
-                            {callInProgress === card.lead_id ? "Calling…" : "Call back"}
+                            {callInProgress === card.lead_id ? ta("calling") : ta("callBack")}
                           </button>
                           <Link
                             href={`/dashboard/messages?lead=${card.lead_id}`}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
                             style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
                           >
-                            <MessageSquare className="w-3.5 h-3.5" /> Message
+                            <MessageSquare className="w-3.5 h-3.5" /> {ta("message")}
                           </Link>
                           <Link
                             href={`/dashboard/record/lead/${card.lead_id}`}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
                             style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
                           >
-                            View
+                            {ta("view")}
                           </Link>
                         </>
                       )}
@@ -315,14 +301,14 @@ export default function ActivityPage() {
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
                         style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
                       >
-                        View details
+                        {ta("viewDetails")}
                       </Link>
                       <button
                         type="button"
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
                         style={{ borderColor: "var(--border-default)", color: "var(--text-tertiary)" }}
                       >
-                        <Check className="w-3.5 h-3.5" /> Mark done
+                        <Check className="w-3.5 h-3.5" /> {ta("markDone")}
                       </button>
                     </div>
                   </div>
@@ -335,7 +321,7 @@ export default function ActivityPage() {
 
       {handoffs.length > 0 && (
         <section className="mt-12">
-          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>Requires attention</h2>
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>{ta("requiresAttention")}</h2>
           <ul className="space-y-3">
             {handoffs.map((h) => (
               <li key={h.id} className="text-sm">

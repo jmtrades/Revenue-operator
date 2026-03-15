@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Shell } from "@/components/Shell";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
@@ -30,6 +31,7 @@ interface CallRow {
 }
 
 export default function RecordLeadPage() {
+  const t = useTranslations("dashboard");
   const params = useParams();
   const searchParams = useSearchParams();
   const id = params.id as string;
@@ -133,15 +135,15 @@ export default function RecordLeadPage() {
   if (loading) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("loadingMessage")}</p>
       </Shell>
     );
   }
   if (!lead) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>No record.</p>
-        <Link href="/dashboard/record" className="text-sm mt-4 inline-block" style={{ color: "var(--meaning-blue)" }}>Record</Link>
+        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("recordLead.noRecord")}</p>
+        <Link href="/dashboard/record" className="text-sm mt-4 inline-block" style={{ color: "var(--meaning-blue)" }}>{t("recordLead.recordBreadcrumb")}</Link>
       </Shell>
     );
   }
@@ -153,7 +155,7 @@ export default function RecordLeadPage() {
   return (
     <Shell>
       <div className="border-b pb-6 mb-8" style={{ borderColor: "var(--border)" }}>
-        <Link href={recordHref} className="text-sm" style={{ color: "var(--text-muted)" }}>Record</Link>
+        <Link href={recordHref} className="text-sm" style={{ color: "var(--text-muted)" }}>{t("recordLead.recordBreadcrumb")}</Link>
         <span className="mx-2" style={{ color: "var(--text-muted)" }}>/</span>
         <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{displayName}</span>
       </div>
@@ -164,12 +166,12 @@ export default function RecordLeadPage() {
       </section>
 
       {recorded && (
-        <p className="text-sm mb-6 pb-4 border-b" style={{ color: "var(--text-muted)", borderColor: "var(--border)" }}>Entry stored.</p>
+        <p className="text-sm mb-6 pb-4 border-b" style={{ color: "var(--text-muted)", borderColor: "var(--border)" }}>{t("recordLead.entryStored")}</p>
       )}
 
       {calls.length > 0 && (
         <section className="mb-10">
-          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>Calls</h2>
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>{t("recordLead.callsHeading")}</h2>
           <ul className="space-y-2">
             {calls.map((call) => (
               <li key={call.id} className="text-sm py-2 border-b" style={{ borderColor: "var(--border)" }}>
@@ -183,9 +185,9 @@ export default function RecordLeadPage() {
       )}
 
       <section className="mb-10">
-        <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>Record</h2>
+        <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>{t("recordLead.recordHeading")}</h2>
         {messages.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>No entries.</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>{t("recordLead.noEntries")}</p>
         ) : (
           <div className="space-y-0">
             {messages.map((m, i) => (
@@ -198,7 +200,7 @@ export default function RecordLeadPage() {
                   {new Date(m.created_at).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
                 </span>
                 <span className="text-sm shrink-0 w-20" style={{ color: "var(--text-secondary)" }}>
-                  {m.role === "user" ? "Inbound" : m.role === "assistant" ? "Outbound" : "Message"}
+                  {m.role === "user" ? t("recordLead.roleInbound") : m.role === "assistant" ? t("recordLead.roleOutbound") : t("recordLead.roleMessage")}
                 </span>
                 <p className="text-sm flex-1 min-w-0" style={{ color: "var(--text-primary)" }}>{m.content || "—"}</p>
               </div>
@@ -209,29 +211,29 @@ export default function RecordLeadPage() {
 
       <section className="pt-6 border-t" style={{ borderColor: "var(--border)" }}>
         <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-          Authority actions
+          {t("recordLead.authorityActions")}
         </h2>
         {openEscalationId && (
           <div className="space-y-2 mb-4">
-            <p className="text-sm" style={{ color: "var(--text-muted)" }}>Outside authority.</p>
-            {beyondScope && <p className="text-sm" style={{ color: "var(--text-muted)" }}>Beyond scope.</p>}
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("recordLead.outsideAuthority")}</p>
+            {beyondScope && <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("recordLead.beyondScope")}</p>}
             <button
               type="button"
               onClick={recordOutcome}
               className="text-sm font-medium py-2 px-0 border-b border-transparent focus-ring"
               style={{ color: "var(--text-primary)", borderColor: "var(--meaning-blue)" }}
             >
-              Enter outcome
+              {t("recordLead.enterOutcome")}
             </button>
           </div>
         )}
         <div className="space-y-2">
-          <label className="block text-sm" style={{ color: "var(--text-secondary)" }}>Record authority note</label>
+          <label className="block text-sm" style={{ color: "var(--text-secondary)" }}>{t("recordLead.authorityNoteLabel")}</label>
           <input
             type="text"
             value={authorityNote}
             onChange={(e) => setAuthorityNote(e.target.value)}
-            placeholder="One sentence, past tense."
+            placeholder={t("recordLead.authorityNotePlaceholder")}
             maxLength={80}
             className="w-full max-w-md text-sm py-2 px-0 border-b bg-transparent focus-ring"
             style={{ borderColor: "var(--border)", color: "var(--text-primary)" }}
@@ -243,14 +245,14 @@ export default function RecordLeadPage() {
             className="text-sm font-medium py-2 px-0 border-b border-transparent focus-ring disabled:opacity-50"
             style={{ color: "var(--text-primary)", borderColor: "var(--meaning-blue)" }}
           >
-            Record note
+            {t("recordLead.recordNote")}
           </button>
         </div>
       </section>
 
       {publicRecordPath && (
         <footer className="mt-12 pt-6 border-t text-sm" style={{ borderColor: "var(--border)", color: "var(--text-muted)" }}>
-          Record: {publicRecordPath}
+          {t("recordLead.publicRecordLabel")} {publicRecordPath}
         </footer>
       )}
 
@@ -263,7 +265,7 @@ export default function RecordLeadPage() {
         >
           <div className="max-w-md w-full p-6 rounded-lg shadow-lg" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
             <p className="text-sm font-medium mb-4" style={{ color: "var(--text-primary)" }}>
-              This outcome will not appear in the record.
+              {t("recordLead.outcomeNotInRecord")}
             </p>
             {absenceModal.lines.length > 0 && (
               <ul className="space-y-1 mb-4 text-sm" style={{ color: "var(--text-secondary)" }}>
@@ -279,7 +281,7 @@ export default function RecordLeadPage() {
                 className="text-sm font-medium py-2 px-3 rounded border focus-ring"
                 style={{ borderColor: "var(--border)", color: "var(--text-primary)" }}
               >
-                Record outcome
+                {t("recordLead.recordOutcome")}
               </button>
               <button
                 type="button"
@@ -287,7 +289,7 @@ export default function RecordLeadPage() {
                 className="text-sm font-medium py-2 px-3 rounded border focus-ring"
                 style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
               >
-                Continue without record
+                {t("recordLead.continueWithoutRecord")}
               </button>
             </div>
           </div>

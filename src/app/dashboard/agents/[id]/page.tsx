@@ -22,6 +22,7 @@ interface Agent {
 const PERSONALITIES = ["friendly", "professional", "casual", "empathetic"];
 
 export default function AgentDetailPage() {
+  const t = useTranslations("dashboard");
   const tCommon = useTranslations("common");
   const tForms = useTranslations("forms.state");
   const params = useParams();
@@ -84,8 +85,8 @@ export default function AgentDetailPage() {
         body: JSON.stringify({ phone_number: testPhone.trim() || undefined }),
       });
       const data = await r.json();
-      if (r.ok && data?.ok) alert(data.message ?? "Test call requested.");
-      else if (!r.ok) alert(data?.error ?? "Test call failed.");
+      if (r.ok && data?.ok) alert(data.message ?? t("agentDetail.testCallRequested"));
+      else if (!r.ok) alert(data?.error ?? t("agentDetail.testCallFailed"));
     } finally {
       setTestCalling(false);
     }
@@ -94,8 +95,8 @@ export default function AgentDetailPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Agent" subtitle="Edit agent." />
-        <EmptyState icon="watch" title="Select a context." />
+        <PageHeader title={t("pages.agent.title")} subtitle={t("pages.agent.subtitle")} />
+        <EmptyState icon="watch" title={t("empty.selectContext")} />
       </div>
     );
   }
@@ -103,8 +104,8 @@ export default function AgentDetailPage() {
   if (loading || !agent) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Agent" subtitle="Edit agent." />
-        <LoadingState message={loading ? "One moment…" : "Agent not found."} className="min-h-[200px]" />
+        <PageHeader title={t("pages.agent.title")} subtitle={t("pages.agent.subtitle")} />
+        <LoadingState message={loading ? t("loadingMessage") : t("agentDetail.agentNotFound")} className="min-h-[200px]" />
       </div>
     );
   }
@@ -112,12 +113,12 @@ export default function AgentDetailPage() {
   return (
     <div className="p-8 max-w-2xl">
       <div className="flex items-center justify-between gap-4 mb-6">
-        <PageHeader title={agent.name} subtitle={`${agent.purpose} · ${isActive ? "Active" : "Paused"}`} />
-        <Link href="/dashboard/agents" className="text-sm" style={{ color: "var(--text-muted)" }}>Back to agents</Link>
+        <PageHeader title={agent.name} subtitle={`${agent.purpose} · ${isActive ? t("agentDetail.activeLabel") : t("agentDetail.paused")}`} />
+        <Link href="/dashboard/agents" className="text-sm" style={{ color: "var(--text-muted)" }}>{t("agentDetail.backToAgents")}</Link>
       </div>
       <div className="rounded-lg border p-6 space-y-4" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
         <div>
-          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>Greeting</label>
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>{t("agentDetail.greetingLabel")}</label>
           <textarea
             value={greeting}
             onChange={(e) => setGreeting(e.target.value)}
@@ -127,18 +128,18 @@ export default function AgentDetailPage() {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>Voice ID</label>
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>{t("agentDetail.voiceIdLabel")}</label>
           <input
             type="text"
             value={voiceId}
             onChange={(e) => setVoiceId(e.target.value)}
-            placeholder="Default"
+            placeholder={t("agentDetail.voicePlaceholder")}
             className="w-full px-3 py-2 rounded-lg border text-sm"
             style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text-primary)" }}
           />
         </div>
         <div>
-          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>Personality</label>
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>{t("agentDetail.personalityLabel")}</label>
           <select
             value={personality}
             onChange={(e) => setPersonality(e.target.value)}
@@ -152,21 +153,21 @@ export default function AgentDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <input type="checkbox" id="active" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
-          <label htmlFor="active" className="text-sm" style={{ color: "var(--text-primary)" }}>Active</label>
+          <label htmlFor="active" className="text-sm" style={{ color: "var(--text-primary)" }}>{t("agentDetail.activeLabel")}</label>
         </div>
         {agent.stats && typeof (agent.stats as { totalCalls?: number }).totalCalls === "number" && (
           <div>
-            <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>Stats</label>
-            <p className="text-sm" style={{ color: "var(--text-primary)" }}>{(agent.stats as { totalCalls: number }).totalCalls} calls</p>
+            <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>{t("agentDetail.statsLabel")}</label>
+            <p className="text-sm" style={{ color: "var(--text-primary)" }}>{(agent.stats as { totalCalls: number }).totalCalls} {t("agentDetail.callsSuffix")}</p>
           </div>
         )}
         <div>
-          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>Test call (optional)</label>
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-muted)" }}>{t("agentDetail.testCallOptionalLabel")}</label>
           <input
             type="tel"
             value={testPhone}
             onChange={(e) => setTestPhone(e.target.value)}
-            placeholder="+1 555 123 4567"
+            placeholder={t("agentDetail.testPhonePlaceholder")}
             className="w-full px-3 py-2 rounded-lg border text-sm mb-2"
             style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text-primary)" }}
           />
@@ -181,7 +182,7 @@ export default function AgentDetailPage() {
           >
             {saving ? tForms("saving") : tCommon("save")}
           </button>
-          <button type="button" onClick={testCall} disabled={testCalling} className="px-4 py-2 rounded-lg text-sm font-medium border disabled:opacity-50" style={{ borderColor: "var(--border)", color: "var(--text-primary)" }} aria-label="Request test call">{testCalling ? "Calling…" : "Test call"}</button>
+          <button type="button" onClick={testCall} disabled={testCalling} className="px-4 py-2 rounded-lg text-sm font-medium border disabled:opacity-50" style={{ borderColor: "var(--border)", color: "var(--text-primary)" }} aria-label={t("agentDetail.testCall")}>{testCalling ? t("agentDetail.calling") : t("agentDetail.testCall")}</button>
           <Link
             href="/dashboard/agents"
             className="inline-block px-4 py-2 text-sm"

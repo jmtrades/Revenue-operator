@@ -81,7 +81,7 @@ type WorkspaceRow = {
   working_hours?: Record<string, { open?: string; close?: string }> | string | null;
 };
 
-function clamp(value: number, min: number, max: number) {
+function _clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
@@ -112,7 +112,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
   const workspace = workspaceData as WorkspaceRow;
   const knowledgeBase = agent.knowledge_base ?? {};
   const rules = agent.rules ?? {};
-  const voiceSettings = knowledgeBase.voiceSettings ?? {};
+  const _voiceSettings = knowledgeBase.voiceSettings ?? {};
   const businessName =
     workspace.name?.trim() ||
     // prefer explicit business_name column if present on the row

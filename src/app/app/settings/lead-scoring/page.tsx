@@ -135,7 +135,7 @@ export default function AppSettingsLeadScoringPage() {
               disabled={saving}
               className="px-4 py-3 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-60"
             >
-              {saving ? "Saving…" : "Save weights"}
+              {saving ? tSettings("leadScoring.saving") : tSettings("leadScoring.saveWeights")}
             </button>
             <button
               type="button"

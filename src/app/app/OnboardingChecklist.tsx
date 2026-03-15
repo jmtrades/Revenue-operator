@@ -1,20 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Check, Circle } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 
-const ITEMS: { key: string; label: string; href: string }[] = [
-  { key: "business", label: "Business info added", href: "/app/onboarding" },
-  { key: "agent", label: "AI agent created", href: "/app/agents" },
-  { key: "services", label: "Services configured", href: "/app/onboarding" },
-  { key: "phone", label: "Phone number connected", href: "/app/settings/phone" },
-  { key: "test_call", label: "First test call", href: "/app/onboarding" },
-  { key: "first_call", label: "First real call", href: "/app/activity" },
-  { key: "calendar", label: "Calendar connected", href: "/app/settings/integrations" },
-  { key: "team", label: "Team member invited", href: "/app/settings/team" },
-];
+const ITEM_KEYS = [
+  { key: "business", href: "/app/onboarding" },
+  { key: "agent", href: "/app/agents" },
+  { key: "services", href: "/app/onboarding" },
+  { key: "phone", href: "/app/settings/phone" },
+  { key: "test_call", href: "/app/onboarding" },
+  { key: "first_call", href: "/app/activity" },
+  { key: "calendar", href: "/app/settings/integrations" },
+  { key: "team", href: "/app/settings/team" },
+] as const;
 
 function getProgress(): { completed: number; done: Set<string> } {
   if (typeof window === "undefined") return { completed: 0, done: new Set() };
@@ -32,6 +33,8 @@ export function OnboardingChecklist({
 }: {
   initialItems?: Array<{ key: string; completed: boolean }>;
 }) {
+  const t = useTranslations("app.onboardingChecklist");
+  const items = useMemo(() => ITEM_KEYS.map(({ key, href }) => ({ key, label: t(`item.${key}`), href })), [t]);
   const [progress, setProgress] = useState(() => {
     if (Array.isArray(initialItems) && initialItems.length > 0) {
       const done = new Set(initialItems.filter((item) => item.completed).map((item) => item.key));
@@ -59,13 +62,13 @@ export function OnboardingChecklist({
     };
   }, []);
 
-  const total = ITEMS.length;
+  const total = items.length;
   const pct = total ? Math.round((progress.completed / total) * 100) : 0;
 
   return (
     <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3">
       <p className="text-[10px] font-medium text-zinc-400 mb-1.5">
-        {progress.completed}/{total} complete
+        {t("complete", { completed: progress.completed, total })}
       </p>
       <div className="h-1 rounded-full bg-[var(--border-default)] overflow-hidden mb-2">
         <div
@@ -74,7 +77,7 @@ export function OnboardingChecklist({
         />
       </div>
       <ul className="space-y-1">
-        {ITEMS.slice(0, 4).map((item) => (
+        {items.slice(0, 4).map((item) => (
           <li key={item.key} className="flex items-center gap-2 text-[10px]">
             {progress.done.has(item.key) ? (
               <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10">
@@ -92,7 +95,7 @@ export function OnboardingChecklist({
         ))}
       </ul>
       {progress.completed < total && (
-        <p className="text-[9px] text-zinc-500 mt-1">Finish setup for the best experience</p>
+        <p className="text-[9px] text-zinc-500 mt-1">{t("finishCta")}</p>
       )}
     </div>
   );

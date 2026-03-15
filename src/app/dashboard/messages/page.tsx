@@ -27,6 +27,7 @@ interface Msg {
 
 export default function MessagesPage() {
   const t = useTranslations("messages");
+  const tDashboard = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
   const searchParams = useSearchParams();
   const q = searchParams.toString() ? `?${searchParams.toString()}` : "";
@@ -58,7 +59,7 @@ export default function MessagesPage() {
         else setConversations([]);
         if (res.error) setListError(res.error);
       })
-      .catch(() => setListError("Could not load conversations."))
+      .catch(() => setListError("LOAD_ERROR"))
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -103,7 +104,7 @@ export default function MessagesPage() {
         credentials: "include",
       });
       const data = await r.json();
-      if (!r.ok) throw new Error(data.error ?? "Send failed");
+      if (!r.ok) throw new Error((data as { error?: string }).error ?? "SEND_FAILED");
       const sentContent = reply.trim();
       setReply("");
       setMessages((prev) => [
@@ -111,7 +112,7 @@ export default function MessagesPage() {
         { id: "sent", role: "assistant", content: sentContent, created_at: new Date().toISOString() },
       ]);
     } catch (e) {
-      setSendError(e instanceof Error ? e.message : "Send failed.");
+      setSendError(e instanceof Error ? e.message : "SEND_FAILED");
     } finally {
       setSending(false);
     }
@@ -120,15 +121,15 @@ export default function MessagesPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Messages" subtitle="Outbox and inbox." />
-        <EmptyState icon="watch" title="Select a context." subtitle="Messages appear here." />
+        <PageHeader title={tDashboard("pages.messages.title")} subtitle={tDashboard("pages.messages.subtitleShort")} />
+        <EmptyState icon="watch" title={tDashboard("empty.selectContext")} subtitle={tDashboard("empty.messagesAppearHere")} />
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-4xl">
-      <PageHeader title="Messages" subtitle="Two-way SMS with contacts." />
+      <PageHeader title={tDashboard("pages.messages.title")} subtitle={tDashboard("pages.messages.subtitle")} />
       <div className="flex gap-2 mb-6 border-b" style={{ borderColor: "var(--border)" }}>
         <button
           type="button"
@@ -167,7 +168,7 @@ export default function MessagesPage() {
             </div>
           ) : listError ? (
             <div className="p-4 text-center">
-              <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{listError}</p>
+              <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{listError === "LOAD_ERROR" ? tDashboard("messagesPageErrors.loadError") : listError}</p>
               <button type="button" onClick={loadConversations} className="text-xs font-medium px-3 py-1.5 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>Retry</button>
             </div>
           ) : conversations.length === 0 ? (
@@ -190,7 +191,7 @@ export default function MessagesPage() {
                     }}
                     onClick={() => setSelectedLeadId(c.lead_id)}
                   >
-                    <p className="text-sm font-medium truncate">{c.lead_name || c.lead_email || c.company || "Contact"}</p>
+                    <p className="text-sm font-medium truncate">{c.lead_name || c.lead_email || c.company || t("contactFallback")}</p>
                     <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{c.state}</p>
                   </button>
                 </li>
@@ -225,7 +226,7 @@ export default function MessagesPage() {
                 ))}
               </div>
               {sendError && (
-                <p className="px-4 py-2 text-xs" style={{ color: "var(--accent-danger)" }}>{sendError}</p>
+                <p className="px-4 py-2 text-xs" style={{ color: "var(--accent-danger)" }}>{sendError === "SEND_FAILED" ? tDashboard("messagesPageErrors.sendFailed") : sendError}</p>
               )}
               <div className="p-4 border-t flex-shrink-0 flex gap-2" style={{ borderColor: "var(--border)" }}>
                 <input

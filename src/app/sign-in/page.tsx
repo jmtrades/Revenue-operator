@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { Suspense } from "react";
+import { useTranslations } from "next-intl";
 import SignInForm from "./SignInForm";
 
 export default function SignInPage() {
+  const t = useTranslations("auth.signIn");
   return (
     <Suspense fallback={<div className="min-h-screen bg-[var(--bg-base)]" />}>
       <div>
         <Link href="/" className="sr-only">
-          Back to home
+          {t("backToHome")}
         </Link>
         <SignInForm />
       </div>

@@ -4,10 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import {
-  getDefaultTwoPartyAnnouncement,
-  TWO_PARTY_STATES_US,
-} from "@/lib/compliance/recording-consent";
+import { getDefaultTwoPartyAnnouncement } from "@/lib/compliance/recording-consent";
 import type { RecordingConsentMode } from "@/lib/compliance/recording-consent";
 
 export default function AppSettingsCompliancePage() {

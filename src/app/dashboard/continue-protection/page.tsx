@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, Card, CardHeader, CardBody, EmptyState, LoadingState } from "@/components/ui";
 
@@ -13,6 +14,8 @@ interface ContinuationContext {
 }
 
 export default function ContinueProtectionPage() {
+  const t = useTranslations("dashboard");
+  const tc = useTranslations("dashboard.continueProtectionPage");
   const { workspaceId } = useWorkspace();
   const [context, setContext] = useState<ContinuationContext | null>(null);
   const [billingStatus, setBillingStatus] = useState<{ renewal_at?: string | null } | null>(null);
@@ -38,7 +41,7 @@ export default function ContinueProtectionPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-xl mx-auto">
-        <EmptyState title="Follow-through in progress appears here." subtitle="In place." icon="watch" />
+        <EmptyState title={t("followThroughEmptyTitle")} subtitle={t("followThroughEmptySubtitle")} icon="watch" />
       </div>
     );
   }
@@ -46,7 +49,7 @@ export default function ContinueProtectionPage() {
   if (loading) {
     return (
       <div className="p-8 max-w-xl mx-auto">
-        <LoadingState message="One moment…" submessage="" />
+        <LoadingState message={t("loadingMessage")} submessage="" />
       </div>
     );
   }
@@ -60,26 +63,26 @@ export default function ContinueProtectionPage() {
 
   return (
     <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
-      <PageHeader title="Handling continues." subtitle="Coverage remains in place. Follow-through continues here. Calls remain manual." />
+      <PageHeader title={t("empty.handlingContinuesTitle")} subtitle={t("empty.handlingContinuesSubtitle")} />
       <p className="text-sm mb-2" style={{ color: "var(--text-primary)" }}>
-        Coverage remains in place on confirm.
+        {tc("coverageRemainsOnConfirm")}
       </p>
       <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
         {billingStatus?.renewal_at
-          ? `Handling coverage ends on ${new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" })}. Pause anytime before then.`
-          : "Pause anytime before the date shown in Preferences."}
+          ? tc("coverageEndsOn", { date: new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" }) })
+          : tc("pauseAnytimePreference")}
       </p>
 
       <div className="space-y-4 mb-8">
         <Card>
-          <CardHeader>Follow-through in progress</CardHeader>
+          <CardHeader>{tc("followThroughInProgress")}</CardHeader>
           <CardBody>
             {activeCount > 0 ? (
               <p className="text-sm" style={{ color: "var(--text-primary)" }}>
-                {activeCount} follow-through{activeCount !== 1 ? "s" : ""} in progress
+                {tc("countFollowThroughInProgress", { count: activeCount })}
               </p>
             ) : (
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Remains prepared for new follow-through.</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>{tc("remainsPrepared")}</p>
             )}
             {ctx && ctx.active_conversations.length > 0 && (
               <ul className="mt-2 space-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
@@ -87,7 +90,7 @@ export default function ContinueProtectionPage() {
                   <li key={c.id}>{c.name}{c.company ? ` · ${c.company}` : ""}</li>
                 ))}
                 {ctx.active_conversations.length > 5 && (
-                  <li>+{ctx.active_conversations.length - 5} more</li>
+                  <li>{tc("more", { count: ctx.active_conversations.length - 5 })}</li>
                 )}
               </ul>
             )}
@@ -95,30 +98,30 @@ export default function ContinueProtectionPage() {
         </Card>
 
         <Card>
-          <CardHeader>Scheduled follow-ups</CardHeader>
+          <CardHeader>{tc("scheduledFollowUps")}</CardHeader>
           <CardBody>
             {followUpsCount > 0 ? (
               <p className="text-sm" style={{ color: "var(--text-primary)" }}>
-                {followUpsCount} follow-up{followUpsCount !== 1 ? "s" : ""} queued
+                {tc("countFollowUpsQueued", { count: followUpsCount })}
                 {ctx?.scheduled_follow_ups?.next_at && (
-                  <span style={{ color: "var(--text-muted)" }}> · Next in ~{Math.max(1, Math.ceil((new Date(ctx.scheduled_follow_ups.next_at).getTime() - Date.now()) / 60000))} min</span>
+                  <span style={{ color: "var(--text-muted)" }}> · {tc("nextInMin", { min: Math.max(1, Math.ceil((new Date(ctx.scheduled_follow_ups.next_at).getTime() - Date.now()) / 60000)) })}</span>
                 )}
               </p>
             ) : (
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Maintaining engagement intervals. Follow-ups will appear as planned.</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>{tc("maintainingEngagement")}</p>
             )}
           </CardBody>
         </Card>
 
         <Card>
-          <CardHeader>Pending confirmations</CardHeader>
+          <CardHeader>{tc("pendingConfirmations")}</CardHeader>
           <CardBody>
             {confirmationsCount > 0 ? (
               <p className="text-sm" style={{ color: "var(--text-primary)" }}>
-                {confirmationsCount} attendance confirmation{confirmationsCount !== 1 ? "s" : ""} pending
+                {tc("confirmationsPending", { count: confirmationsCount })}
               </p>
             ) : (
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Attendance confirmation continues.</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>{tc("attendanceConfirmationContinues")}</p>
             )}
             {ctx && ctx.pending_confirmations.length > 0 && (
               <ul className="mt-2 space-y-1 text-xs" style={{ color: "var(--text-muted)" }}>
@@ -133,18 +136,16 @@ export default function ContinueProtectionPage() {
 
       <div className="p-4 rounded-xl mb-6" style={{ background: "rgba(243, 156, 18, 0.1)", borderColor: "var(--meaning-amber)", borderWidth: "1px" }}>
         <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-          {hasWork
-            ? "If handling stops: handling is no longer present for new enquiries. Attendance confirmation will require manual follow-through. Ongoing decisions may stall."
-            : "Handling is no longer present for new enquiries. Attendance confirmation will require manual follow-through. Ongoing decisions may stall."}
+          {hasWork ? tc("ifHandlingStops") : tc("handlingNoLongerPresent")}
         </p>
         <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
-          No manual follow-through required in place. You handle: calls.
+          {tc("noManualFollowThrough")}
         </p>
       </div>
 
       {billingStatus?.renewal_at && (
         <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
-          Handling coverage ends on {new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" })}. Pause anytime before then.
+          {tc("coverageEndsOn", { date: new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" }) })}
         </p>
       )}
 
@@ -174,19 +175,19 @@ export default function ContinueProtectionPage() {
           className="px-6 py-3 rounded-lg font-medium"
           style={{ background: "var(--meaning-green)", color: "#0E1116" }}
         >
-          {checkoutLoading ? "One moment…" : "Coverage remains in place"}
+          {checkoutLoading ? tc("oneMoment") : tc("coverageRemainsInPlace")}
         </button>
         <Link
           href="/dashboard"
           className="px-6 py-3 rounded-lg font-medium text-center"
           style={{ borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-secondary)" }}
         >
-          Not now
+          {tc("notNow")}
         </Link>
       </div>
 
       <p className="mt-4 text-xs" style={{ color: "var(--text-muted)" }}>
-        Coverage remains in place. Pause anytime. Resume as needed.
+        {tc("coverageRemainsHint")}
       </p>
     </div>
   );

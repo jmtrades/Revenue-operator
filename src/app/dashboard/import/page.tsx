@@ -1,23 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 import { AuthorityHeader } from "@/components/institutional";
 
-const PURPOSE_OPTIONS: { value: string; label: string }[] = [
-  { value: "qualify", label: "Qualify" },
-  { value: "confirm", label: "Confirm" },
-  { value: "collect", label: "Collect" },
-  { value: "reactivate", label: "Reactivate" },
-  { value: "route", label: "Route" },
-  { value: "recover", label: "Recover" },
-];
+const PURPOSE_VALUES = ["qualify", "confirm", "collect", "reactivate", "route", "recover"] as const;
 
 export default function ImportPage() {
+  const t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
+  const purposeOptions = useMemo(
+    () => PURPOSE_VALUES.map((value) => ({ value, label: t(`importPage.purpose.${value}`) })),
+    [t]
+  );
   const [_file, setFile] = useState<File | null>(null);
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<string[][]>([]);
@@ -104,7 +103,7 @@ export default function ImportPage() {
   if (!workspaceId) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Select a workspace.</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("importPage.selectWorkspace")}</p>
       </Shell>
     );
   }
@@ -117,27 +116,27 @@ export default function ImportPage() {
       {!success ? (
         <div className="space-y-8">
           <AuthorityHeader
-            label="Import"
-            title="Upload external source."
+            label={t("layout.navLabels.import")}
+            title={t("importPage.title")}
           />
           <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-            Each row becomes a governed conversation.
+            {t("importPage.hint")}
           </p>
           <div>
-            <label className="block text-[13px] uppercase tracking-wide mb-2" style={{ color: "var(--text-muted)" }}>Purpose</label>
+            <label className="block text-[13px] uppercase tracking-wide mb-2" style={{ color: "var(--text-muted)" }}>{t("importPage.purposeLabel")}</label>
             <select
               value={listPurpose}
               onChange={(e) => setListPurpose(e.target.value)}
               className="w-full px-4 py-3 rounded-[12px] border focus-ring"
               style={{ background: "var(--surface-card)", borderColor: "var(--border)", color: "var(--text-primary)" }}
             >
-              {PURPOSE_OPTIONS.map((o) => (
+              {purposeOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-[13px] uppercase tracking-wide mb-2" style={{ color: "var(--text-muted)" }}>CSV file</label>
+            <label className="block text-[13px] uppercase tracking-wide mb-2" style={{ color: "var(--text-muted)" }}>{t("importPage.csvFileLabel")}</label>
             <input
               type="file"
               accept=".csv"
@@ -149,7 +148,7 @@ export default function ImportPage() {
           {headers.length > 0 && (
             <>
               <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                Rows detected: {rows.length}.
+                {t("importPage.rowsDetected", { count: rows.length })}
               </p>
               <button
                 type="button"
@@ -157,7 +156,7 @@ export default function ImportPage() {
                 disabled={importing}
                 className="btn-primary"
               >
-                {importing ? "Importing…" : "Confirm"}
+                {importing ? t("importPage.importing") : t("importPage.confirm")}
               </button>
             </>
           )}
@@ -165,16 +164,16 @@ export default function ImportPage() {
       ) : (
         <div className="space-y-8">
           <p className="text-lg" style={{ color: "var(--text-primary)" }}>
-            Ingestion recorded.
+            {t("importPage.ingestionRecorded")}
           </p>
           <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-            Execution will follow declared purpose.
+            {t("importPage.executionFollowPurpose")}
           </p>
           <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-            Conversations will be handled under governance.
+            {t("importPage.conversationsGovernance")}
           </p>
           <Link href="/dashboard/start" className="btn-primary">
-            Return to start
+            {t("importPage.returnToStart")}
           </Link>
         </div>
       )}

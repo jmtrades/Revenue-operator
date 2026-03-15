@@ -249,9 +249,9 @@ export default function DeveloperWebhooksPage() {
 
               {expandedId === ep.id && (
                 <div className="border-t border-[var(--border-default)] p-4 bg-black/20">
-                  <p className="text-xs font-medium text-zinc-400 mb-3">Delivery log</p>
+                  <p className="text-xs font-medium text-zinc-400 mb-3">{tDev("deliveryLog")}</p>
                   {(!deliveriesByEndpoint[ep.id] || deliveriesByEndpoint[ep.id].length === 0) ? (
-                    <p className="text-xs text-zinc-500">No deliveries yet. Use Test to send a sample.</p>
+                    <p className="text-xs text-zinc-500">{tDev("noDeliveriesYet")}</p>
                   ) : (
                     <ul className="space-y-2">
                       {(deliveriesByEndpoint[ep.id] ?? []).map((d) => (
@@ -274,7 +274,7 @@ export default function DeveloperWebhooksPage() {
                                 disabled={!!retryingId}
                                 className="inline-flex items-center gap-1 text-[var(--accent-primary)] hover:underline"
                               >
-                                <RefreshCw className="w-3 h-3" /> {retryingId === d.id ? "Retrying…" : "Retry"}
+                                <RefreshCw className="w-3 h-3" /> {retryingId === d.id ? tDev("retrying") : tDev("retry")}
                               </button>
                             )}
                           </div>
@@ -283,7 +283,7 @@ export default function DeveloperWebhooksPage() {
                             onClick={() => setPayloadExpand(payloadExpand === d.id ? null : d.id)}
                             className="mt-2 text-xs text-zinc-500 hover:text-white"
                           >
-                            {payloadExpand === d.id ? "Hide payload" : "Show payload"}
+                            {payloadExpand === d.id ? tDev("hidePayload") : tDev("showPayload")}
                           </button>
                           {payloadExpand === d.id && (
                             <pre className="mt-2 p-2 rounded-lg bg-black/40 text-[10px] text-zinc-400 overflow-x-auto max-h-40 overflow-y-auto">
@@ -310,31 +310,31 @@ export default function DeveloperWebhooksPage() {
             className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-white mb-4">Add webhook endpoint</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">{tDev("addEndpointTitle")}</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">URL</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{tDev("urlLabel")}</label>
                 <input
                   type="url"
                   value={formUrl}
                   onChange={(e) => setFormUrl(e.target.value)}
-                  placeholder="https://your-server.com/webhooks/recall"
+                  placeholder={tDev("urlPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Secret (optional)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{tDev("secretOptionalLabel")}</label>
                 <input
                   type="password"
                   value={formSecret}
                   onChange={(e) => setFormSecret(e.target.value)}
-                  placeholder="whsec_..."
+                  placeholder={tDev("secretPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
-                <p className="text-[11px] text-zinc-500 mt-1">Used for X-Webhook-Signature: sha256=...</p>
+                <p className="text-[11px] text-zinc-500 mt-1">{tDev("signatureHint")}</p>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-2">Events</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-2">{tDev("eventsLabel")}</label>
                 <div className="flex flex-wrap gap-2">
                   {EVENT_TYPES.map((e) => (
                     <label key={e} className="flex items-center gap-1.5 cursor-pointer">
@@ -356,7 +356,7 @@ export default function DeveloperWebhooksPage() {
                 onClick={() => setAddModal(false)}
                 className="px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-[var(--border-medium)]"
               >
-                Cancel
+                {tCommon("cancel")}
               </button>
               <button
                 type="button"
@@ -364,7 +364,7 @@ export default function DeveloperWebhooksPage() {
                 disabled={!formUrl.trim() || saving}
                 className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50"
               >
-                {saving ? "Adding…" : "Add"}
+                {saving ? tDev("adding") : tDev("addButton")}
               </button>
             </div>
           </div>
@@ -374,8 +374,8 @@ export default function DeveloperWebhooksPage() {
       {deleteConfirm && (
         <ConfirmDialog
           open
-          title="Delete webhook endpoint?"
-          message={`Remove ${deleteConfirm.url}? Delivery history will be deleted.`}
+          title={tDev("deleteTitle")}
+          message={tDev("deleteMessage", { url: deleteConfirm.url })}
           confirmLabel={tCommon("delete")}
           variant="danger"
           onConfirm={() => handleDelete(deleteConfirm)}

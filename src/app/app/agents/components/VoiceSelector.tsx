@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Agent } from "../AgentsPageClient";
 import type { CuratedVoice } from "@/lib/constants/curated-voices";
 import { Play, Square } from "lucide-react";
@@ -128,9 +129,10 @@ export function VoiceSelector({
   onChange,
   onVoicePreview,
 }: Props) {
+  const t = useTranslations("agents");
   return (
     <div>
-      <p className="text-[11px] text-zinc-500 mb-2">Voice</p>
+      <p className="text-[11px] text-zinc-500 mb-2">{t("voiceSelector.voiceLabel")}</p>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {voices.map((voice) => (
           <VoiceCard
@@ -145,17 +147,17 @@ export function VoiceSelector({
       </div>
       <details className="mt-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
         <summary className="cursor-pointer text-xs text-zinc-400 hover:text-white">
-          Advanced voice settings
+          {t("voiceSelector.advancedVoiceSettings")}
         </summary>
         <div className="mt-4 space-y-4">
           <RangeSetting
-            label="Stability"
+            label={t("voiceSelector.stability")}
             value={agent.voiceSettings.stability}
             min={0}
             max={1}
             step={0.05}
             suffix=""
-            note="Lower feels more expressive. Higher feels more consistent."
+            note={t("voiceSelector.stabilityNote")}
             onChange={(value) =>
               onChange({
                 voiceSettings: { ...agent.voiceSettings, stability: value },
@@ -163,7 +165,7 @@ export function VoiceSelector({
             }
           />
           <RangeSetting
-            label="Speed"
+            label={t("voiceSelector.speed")}
             value={agent.voiceSettings.speed}
             min={0.8}
             max={1.3}
@@ -176,13 +178,13 @@ export function VoiceSelector({
             }
           />
           <RangeSetting
-            label="Response delay"
+            label={t("voiceSelector.responseDelay")}
             value={agent.voiceSettings.responseDelay}
             min={0}
             max={1.5}
             step={0.1}
             suffix="s"
-            note="A slight pause can sound more thoughtful. 0.3-0.5 seconds is usually best."
+            note={t("voiceSelector.responseDelayNote")}
             onChange={(value) =>
               onChange({
                 voiceSettings: {
@@ -206,7 +208,7 @@ export function VoiceSelector({
               }
               className="accent-white"
             />
-            Backchannel sounds while listening
+            {t("voiceSelector.backchannelLabel")}
           </label>
           <label className="flex items-center gap-2 text-xs text-zinc-400">
             <input
@@ -222,7 +224,7 @@ export function VoiceSelector({
               }
               className="accent-white"
             />
-            Background noise reduction
+            {t("voiceSelector.denoisingLabel")}
           </label>
         </div>
       </details>

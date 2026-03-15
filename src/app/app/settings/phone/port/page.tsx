@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowLeft, Upload } from "lucide-react";
 
 export default function PhonePortPage() {
+  const t = useTranslations("phone");
   const [step, setStep] = useState(1);
   const [number, setNumber] = useState("");
   const [carrier, setCarrier] = useState("");
@@ -39,9 +41,9 @@ export default function PhonePortPage() {
     <div className="max-w-2xl mx-auto p-6">
       <Breadcrumbs
         items={[
-          { label: "Settings", href: "/app/settings" },
-          { label: "Phone & numbers", href: "/app/settings/phone" },
-          { label: "Port number" },
+          { label: t("portPage.breadcrumbSettings"), href: "/app/settings" },
+          { label: t("portPage.breadcrumbPhone"), href: "/app/settings/phone" },
+          { label: t("portPage.breadcrumbPort") },
         ]}
       />
       <Link
@@ -49,46 +51,46 @@ export default function PhonePortPage() {
         className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white mb-6 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Phone
+        {t("portPage.backToPhone")}
       </Link>
-      <h1 className="text-xl font-semibold text-white mb-1">Port your existing number</h1>
+      <h1 className="text-xl font-semibold text-white mb-1">{t("portPage.title")}</h1>
       <p className="text-sm text-zinc-400 mb-8">
-        Bring your current business number to Recall Touch. We’ll guide you through the steps and notify you when the port is complete.
+        {t("portPage.subtitle")}
       </p>
 
       {submitted ? (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-center">
-          <p className="text-white font-medium mb-1">Request received</p>
+          <p className="text-white font-medium mb-1">{t("portPage.requestReceived")}</p>
           <p className="text-sm text-zinc-400 mb-4">
-            Our team will review your port request and email you with next steps and an estimated timeline.
+            {t("portPage.requestReceivedBody")}
           </p>
           <Link href="/app/settings/phone" className="text-sm font-medium text-[var(--accent-primary)] hover:underline">
-            Back to Phone settings
+            {t("portPage.backToPhoneSettings")}
           </Link>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
           {step >= 1 && (
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <p className="text-sm font-medium text-white mb-2">Step 1 — Number and carrier</p>
+              <p className="text-sm font-medium text-white mb-2">{t("portPage.step1Title")}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">Phone number to port</label>
+                  <label className="block text-xs text-zinc-500 mb-1">{t("porting.numberLabel")}</label>
                   <input
                     type="tel"
                     value={number}
                     onChange={(e) => setNumber(e.target.value)}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder={t("portPage.numberPlaceholder")}
                     className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--accent-primary)] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">Current carrier</label>
+                  <label className="block text-xs text-zinc-500 mb-1">{t("porting.carrierLabel")}</label>
                   <input
                     type="text"
                     value={carrier}
                     onChange={(e) => setCarrier(e.target.value)}
-                    placeholder="e.g. AT&T, Verizon"
+                    placeholder={t("portPage.carrierPlaceholder")}
                     className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--accent-primary)] focus:outline-none"
                   />
                 </div>
@@ -97,38 +99,38 @@ export default function PhonePortPage() {
           )}
           {step >= 2 && (
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <p className="text-sm font-medium text-white mb-2">Step 2 — Letter of Authorization (LOA)</p>
-              <p className="text-xs text-zinc-500 mb-4">Upload a signed LOA from your current carrier. Required for porting.</p>
+              <p className="text-sm font-medium text-white mb-2">{t("portPage.step2Title")}</p>
+              <p className="text-xs text-zinc-500 mb-4">{t("portPage.step2Body")}</p>
               <div className="border border-dashed border-[var(--border-default)] rounded-xl p-8 text-center">
                 <Upload className="w-8 h-8 text-zinc-500 mx-auto mb-2" />
-                <p className="text-sm text-zinc-400">Drag and drop or click to upload</p>
-                <p className="text-xs text-zinc-500 mt-1">PDF, JPG, or PNG</p>
+                <p className="text-sm text-zinc-400">{t("portPage.uploadHint")}</p>
+                <p className="text-xs text-zinc-500 mt-1">{t("portPage.uploadFormats")}</p>
               </div>
             </div>
           )}
           {step >= 3 && (
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <p className="text-sm font-medium text-white mb-2">Step 3 — Account details</p>
-              <p className="text-xs text-zinc-500 mb-4">Account number and PIN from your current carrier (if applicable).</p>
+              <p className="text-sm font-medium text-white mb-2">{t("portPage.step3Title")}</p>
+              <p className="text-xs text-zinc-500 mb-4">{t("portPage.step3Body")}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">Account number</label>
+                  <label className="block text-xs text-zinc-500 mb-1">{t("porting.accountNumber")}</label>
                   <input
                     type="text"
                     value={accountNumber}
                     onChange={(e) => setAccountNumber(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
-                    placeholder="From your carrier bill"
+                    placeholder={t("portPage.accountPlaceholder")}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">PIN / Passcode</label>
+                  <label className="block text-xs text-zinc-500 mb-1">{t("portPage.pinLabel")}</label>
                   <input
                     type="password"
                     value={accountPin}
                     onChange={(e) => setAccountPin(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
-                    placeholder="If required by carrier"
+                    placeholder={t("portPage.pinPlaceholder")}
                   />
                 </div>
               </div>
@@ -137,14 +139,14 @@ export default function PhonePortPage() {
           <div className="flex items-center justify-between">
             {step > 1 ? (
               <button type="button" onClick={() => setStep((s) => s - 1)} className="text-sm text-zinc-400 hover:text-white">
-                Back
+                {t("portPage.back")}
               </button>
             ) : (
               <span />
             )}
             {step < 3 ? (
               <button type="button" onClick={() => setStep((s) => s + 1)} className="px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100">
-                Next
+                {t("portPage.next")}
               </button>
             ) : (
               <button
@@ -152,7 +154,7 @@ export default function PhonePortPage() {
                 disabled={loading}
                 className="px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 disabled:opacity-60"
               >
-                {loading ? "Submitting…" : "Submit port request"}
+                {loading ? t("portPage.submitting") : t("portPage.submitLabel")}
               </button>
             )}
           </div>

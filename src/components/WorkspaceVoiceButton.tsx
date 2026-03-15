@@ -16,8 +16,8 @@ export function WorkspaceVoiceButton({
   title = "Test your phone line",
   description = "Trigger a real test call to your verified phone number and hear your AI agent live.",
   startLabel = "Call my phone",
-  endLabel = "End voice test",
-  showUnavailable = false,
+  endLabel: _endLabel = "End voice test",
+  showUnavailable: _showUnavailable = false,
 }: WorkspaceVoiceButtonProps) {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string | null>(null);

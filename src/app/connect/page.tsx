@@ -2,11 +2,13 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { WorkspaceGate } from "@/components/WorkspaceGate";
 import Link from "next/link";
 
 function ConnectPageContent() {
+  const t = useTranslations("connect");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { workspaceId: contextWid, workspaces, loadWorkspaces } = useWorkspace();
@@ -324,7 +326,7 @@ function ConnectPageContent() {
               className="w-full py-3 px-4 rounded-lg font-medium transition-opacity disabled:opacity-50"
               style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
             >
-              {testing ? "Testing…" : "Test it now"}
+              {testing ? t("testing") : t("testNow")}
             </button>
           )}
         </div>
