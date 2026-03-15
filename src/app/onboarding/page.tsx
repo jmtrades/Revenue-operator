@@ -5,30 +5,15 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-const INDUSTRIES = [
-  { id: "home_services", label: "Home Services" },
-  { id: "healthcare", label: "Healthcare" },
-  { id: "legal", label: "Legal" },
-  { id: "real_estate", label: "Real Estate" },
-  { id: "retail", label: "Retail / Service" },
-  { id: "b2b", label: "B2B / Sales" },
-  { id: "other", label: "Other" },
-];
-
+const INDUSTRY_IDS = ["home_services", "healthcare", "legal", "real_estate", "retail", "b2b", "other"] as const;
 const AGENT_NAMES = ["Sarah", "Alex", "James", "Emma", "Jordan", "Morgan"];
-
-const CAPABILITIES = [
-  { id: "answer_questions", label: "Answer questions about your services" },
-  { id: "book_appointments", label: "Book appointments" },
-  { id: "capture_leads", label: "Capture leads and send you alerts" },
-  { id: "handle_emergencies", label: "Handle emergencies (alert you immediately)" },
-  { id: "send_texts", label: "Send confirmation texts to callers" },
-  { id: "block_spam", label: "Block spam calls" },
-];
+const CAPABILITY_IDS = ["answer_questions", "book_appointments", "capture_leads", "handle_emergencies", "send_texts", "block_spam"] as const;
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
   const _router = useRouter();
+  const industryOptions = INDUSTRY_IDS.map((id) => ({ id, label: t(`industries.${id}`) }));
+  const capabilityOptions = CAPABILITY_IDS.map((id) => ({ id, label: t(`capabilities.${id}`) }));
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +45,7 @@ export default function OnboardingPage() {
 
   const submitStep1 = async () => {
     if (!yourName.trim() || !businessName.trim()) {
-      setError("Your name and business name are required.");
+      setError(t("errorNameRequired"));
       return;
     }
     setLoading(true);
@@ -77,7 +62,7 @@ export default function OnboardingPage() {
       sessionStorage.setItem("onboarding_workspace_id", data.workspace_id);
       setStep(2);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : t("errorSomethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -104,7 +89,7 @@ export default function OnboardingPage() {
       }
       setStep(3);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : t("errorSomethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -134,7 +119,7 @@ export default function OnboardingPage() {
       }
       setStep(4);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : t("errorSomethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -156,7 +141,7 @@ export default function OnboardingPage() {
       sessionStorage.setItem("onboarding_phone_number", data.phone_number);
       setStep(5);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : t("errorSomethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -176,27 +161,27 @@ export default function OnboardingPage() {
       <div className="flex-1 flex flex-col justify-center">
         {step === 1 && (
           <div className={cardClass} style={{ borderColor: "var(--border-default)" }}>
-            <h1 className="text-xl font-semibold mb-2">Let&apos;s set up your AI phone team.</h1>
+            <h1 className="text-xl font-semibold mb-2">{t("step1Heading")}</h1>
             <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-              This takes about 5 minutes.
+              {t("step1Subtitle")}
             </p>
             <div className="space-y-4">
               <div>
-                <label htmlFor="your_name" className={labelClass} style={{ color: "var(--text-muted)" }}>Your name</label>
-                <input id="your_name" type="text" value={yourName} onChange={(e) => setYourName(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder="Jane" disabled={loading} />
+                <label htmlFor="your_name" className={labelClass} style={{ color: "var(--text-muted)" }}>{t("yourNameLabel")}</label>
+                <input id="your_name" type="text" value={yourName} onChange={(e) => setYourName(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={t("yourNamePlaceholder")} disabled={loading} />
               </div>
               <div>
-                <label htmlFor="business_name" className={labelClass} style={{ color: "var(--text-muted)" }}>Business name</label>
-                <input id="business_name" type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder="Acme Plumbing" disabled={loading} />
+                <label htmlFor="business_name" className={labelClass} style={{ color: "var(--text-muted)" }}>{t("businessNameLabel")}</label>
+                <input id="business_name" type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={t("businessNamePlaceholderShort")} disabled={loading} />
               </div>
               <div>
-                <label htmlFor="phone" className={labelClass} style={{ color: "var(--text-muted)" }}>Your phone number</label>
-                <input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder="(555) 123-4567" disabled={loading} />
+                <label htmlFor="phone" className={labelClass} style={{ color: "var(--text-muted)" }}>{t("phoneLabel")}</label>
+                <input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={t("phonePlaceholderShort")} disabled={loading} />
               </div>
               <div>
-                <span className={labelClass} style={{ color: "var(--text-muted)" }}>What type of business?</span>
+                <span className={labelClass} style={{ color: "var(--text-muted)" }}>{t("businessTypeLabel")}</span>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {INDUSTRIES.map((ind) => (
+                  {industryOptions.map((ind: { id: string; label: string }) => (
                     <button
                       key={ind.id}
                       type="button"
@@ -215,18 +200,18 @@ export default function OnboardingPage() {
             </div>
             {error && <p className="text-sm mt-4" style={{ color: "var(--meaning-red)" }}>{error}</p>}
             <button type="button" onClick={submitStep1} disabled={loading} className="mt-6 w-full py-3 rounded-lg font-medium" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
-              {loading ? "Creating…" : "Continue →"}
+              {loading ? t("creating") : t("continue") + " →"}
             </button>
           </div>
         )}
 
         {step === 2 && (
           <div className={cardClass} style={{ borderColor: "var(--border-default)" }}>
-            <h1 className="text-xl font-semibold mb-2">Meet your AI receptionist.</h1>
-            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>Choose a name and what they can do.</p>
+            <h1 className="text-xl font-semibold mb-2">{t("step2Heading")}</h1>
+            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{t("step2Subtitle")}</p>
             <div className="space-y-4">
               <div>
-                <label className={labelClass} style={{ color: "var(--text-muted)" }}>Agent name</label>
+                <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("agentNameLabel")}</label>
                 <select value={agentName} onChange={(e) => setAgentName(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }}>
                   {AGENT_NAMES.map((n) => (
                     <option key={n} value={n}>{n}</option>
@@ -234,13 +219,13 @@ export default function OnboardingPage() {
                 </select>
               </div>
               <div>
-                <label className={labelClass} style={{ color: "var(--text-muted)" }}>Greeting (optional)</label>
-                <textarea value={greeting} onChange={(e) => setGreeting(e.target.value)} rows={2} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={`Thanks for calling ${businessName || "us"}! This is ${agentName}. How can I help?`} disabled={loading} />
+                <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("greetingLabelOptional")}</label>
+                <textarea value={greeting} onChange={(e) => setGreeting(e.target.value)} rows={2} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={t("greetingPlaceholderDynamic", { business: businessName || "us", agent: agentName })} disabled={loading} />
               </div>
               <div>
-                <span className={labelClass} style={{ color: "var(--text-muted)" }}>Your agent can</span>
+                <span className={labelClass} style={{ color: "var(--text-muted)" }}>{t("yourAgentCan")}</span>
                 <ul className="mt-2 space-y-2">
-                  {CAPABILITIES.map((cap) => (
+                  {capabilityOptions.map((cap) => (
                     <li key={cap.id}>
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" checked={capabilities.includes(cap.id)} onChange={() => toggleCapability(cap.id)} />
@@ -260,40 +245,40 @@ export default function OnboardingPage() {
 
         {step === 3 && (
           <div className={cardClass} style={{ borderColor: "var(--border-default)" }}>
-            <h1 className="text-xl font-semibold mb-2">Quick — tell your AI about your business.</h1>
-            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>What services, hours, and common questions?</p>
+            <h1 className="text-xl font-semibold mb-2">{t("step3Heading")}</h1>
+            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{t("step3Subtitle")}</p>
             <div className="space-y-4">
               <div>
-                <label className={labelClass} style={{ color: "var(--text-muted)" }}>What services do you offer?</label>
-                <textarea value={services} onChange={(e) => setServices(e.target.value)} rows={3} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder="e.g. Drain cleaning, water heater repair, leak detection…" disabled={loading} />
-                <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Or paste your website URL and we&apos;ll figure it out.</p>
+                <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("servicesLabel")}</label>
+                <textarea value={services} onChange={(e) => setServices(e.target.value)} rows={3} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={t("servicesPlaceholder")} disabled={loading} />
+                <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>{t("websiteHintShort")}</p>
                 <input type="url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} className={inputClass + " mt-1"} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder="https://..." disabled={loading} />
               </div>
               <div>
-                <label className={labelClass} style={{ color: "var(--text-muted)" }}>What are your hours?</label>
+                <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("hoursLabelShort")}</label>
                 <select value={hours} onChange={(e) => setHours(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }}>
-                  <option value="weekdays_only">Mon–Fri 9am–5pm</option>
-                  <option value="weekdays_sat">Mon–Fri 9am–5pm, Sat 9am–2pm</option>
-                  <option value="seven_days">Seven days a week</option>
+                  <option value="weekdays_only">{t("hoursWeekdays")}</option>
+                  <option value="weekdays_sat">{t("hoursWeekdaysSat")}</option>
+                  <option value="seven_days">{t("hoursSevenDays")}</option>
                 </select>
               </div>
               <div>
-                <label className={labelClass} style={{ color: "var(--text-muted)" }}>Do you handle emergencies after hours?</label>
+                <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("emergenciesLabel")}</label>
                 <select value={emergencies} onChange={(e) => setEmergencies(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }}>
-                  <option value="yes">Yes — call me immediately</option>
-                  <option value="no">No</option>
+                  <option value="yes">{t("emergenciesYes")}</option>
+                  <option value="no">{t("emergenciesNo")}</option>
                 </select>
               </div>
               <div>
-                <label className={labelClass} style={{ color: "var(--text-muted)" }}>How should we handle appointments?</label>
+                <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("appointmentLabel")}</label>
                 <select value={appointmentHandling} onChange={(e) => setAppointmentHandling(e.target.value)} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }}>
-                  <option value="book_direct">Book directly into my calendar</option>
-                  <option value="capture">Capture details and I&apos;ll confirm later</option>
+                  <option value="book_direct">{t("appointmentDirect")}</option>
+                  <option value="capture">{t("appointmentCapture")}</option>
                 </select>
               </div>
               <div>
-                <label className={labelClass} style={{ color: "var(--text-muted)" }}>Anything callers always ask about? (optional)</label>
-                <textarea value={faqExtra} onChange={(e) => setFaqExtra(e.target.value)} rows={2} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder="e.g. We serve the greater Portland area. Service call starts at $89." disabled={loading} />
+                <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("faqExtraLabel")}</label>
+                <textarea value={faqExtra} onChange={(e) => setFaqExtra(e.target.value)} rows={2} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={t("faqExtraPlaceholder")} disabled={loading} />
               </div>
             </div>
             {error && <p className="text-sm mt-4" style={{ color: "var(--meaning-red)" }}>{error}</p>}
@@ -305,12 +290,12 @@ export default function OnboardingPage() {
 
         {step === 4 && (
           <div className={cardClass} style={{ borderColor: "var(--border-default)" }}>
-            <h1 className="text-xl font-semibold mb-2">Your AI phone number is ready.</h1>
-            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>We&apos;re provisioning a number. How to use it:</p>
+            <h1 className="text-xl font-semibold mb-2">{t("step4Heading")}</h1>
+            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{t("step4Subtitle")}</p>
             <ul className="space-y-2 text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-              <li><strong>Option 1:</strong> Forward your existing number to this one.</li>
-              <li><strong>Option 2:</strong> Use this as your new business number on website and ads.</li>
-              <li><strong>Option 3:</strong> Set up later — just test it first.</li>
+              <li><strong>{t("option1")}</strong></li>
+              <li><strong>{t("option2")}</strong></li>
+              <li><strong>{t("option3")}</strong></li>
             </ul>
             {error && <p className="text-sm mb-4" style={{ color: "var(--meaning-red)" }}>{error}</p>}
             <button type="button" onClick={submitStep4} disabled={loading} className="w-full py-3 rounded-lg font-medium" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
@@ -321,23 +306,23 @@ export default function OnboardingPage() {
 
         {step === 5 && (
           <div className={cardClass} style={{ borderColor: "var(--border-default)" }}>
-            <h1 className="text-xl font-semibold mb-2">Your AI is live. Let&apos;s test it!</h1>
-            <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>Call this number from your phone right now:</p>
+            <h1 className="text-xl font-semibold mb-2">{t("step5Heading")}</h1>
+            <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>{t("step5Subtitle")}</p>
             <p className="text-2xl font-mono mb-6" style={{ color: "var(--accent-primary)" }}>{phoneNumber || "—"}</p>
-            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>Try asking: &quot;What services do you offer?&quot; or &quot;I need to schedule an appointment.&quot;</p>
+            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{t("tryAsking")}</p>
             <div className="flex flex-col gap-3">
               <Link href={workspaceId ? `/connect?workspace_id=${encodeURIComponent(workspaceId)}` : "/connect"} className="w-full py-3 rounded-lg font-medium text-center" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
-                I just called — take me to my dashboard →
+                {t("takeMeToDashboard")}
               </Link>
               <Link href={workspaceId ? `/dashboard?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard"} className="w-full py-3 rounded-lg font-medium text-center border" style={{ borderColor: "var(--border-default)" }}>
-                I&apos;ll test later — take me to my dashboard →
+                {t("testLater")}
               </Link>
             </div>
           </div>
         )}
       </div>
       <p className="text-center text-xs py-4" style={{ color: "var(--text-tertiary)" }}>
-        <Link href="/" className="underline">Back to home</Link>
+        <Link href="/" className="underline">{t("backToHome")}</Link>
       </p>
     </main>
   );

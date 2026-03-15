@@ -15,6 +15,19 @@ const STATUS_ORDER: LeadStatus[] = [
   "Lost",
 ];
 
+const STATUS_KEY: Record<LeadStatus, string> = {
+  "New": "status.new",
+  "Contacted": "status.contacted",
+  "Qualified": "status.qualified",
+  "Appointment Set": "status.appointmentSet",
+  "Won": "status.won",
+  "Lost": "status.lost",
+};
+
+function getStatusLabel(status: LeadStatus, t: (k: string) => string): string {
+  return t(STATUS_KEY[status]) || status;
+}
+
 const SCORE_COLORS: Record<string, string> = {
   high: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
   medium: "bg-amber-500/15 text-amber-200 border-amber-500/40",
@@ -86,7 +99,7 @@ function BoardColumn({
       className={`flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 min-h-[220px] transition-colors ${isOver ? "ring-2 ring-[var(--accent-primary)]/50" : ""}`}
     >
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-semibold text-zinc-200">{status}</p>
+        <p className="text-xs font-semibold text-zinc-200">{getStatusLabel(status, t)}</p>
         <span className="text-[11px] text-zinc-500">{columnLeads.length}</span>
       </div>
       <div className="space-y-2 overflow-y-auto min-h-0">

@@ -96,7 +96,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
     borderBottom: scrolled ? "1px solid var(--border-default)" : "none",
   };
   const desktopPrimaryHref = authenticated ? "/app/activity" : ROUTES.START;
-  const desktopPrimaryLabel = authenticated ? "Dashboard →" : "Start free →";
+  const desktopPrimaryLabel = authenticated ? t("dashboardCta") : t("startFreeCta");
 
   return (
     <header

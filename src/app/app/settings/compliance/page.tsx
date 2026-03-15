@@ -162,8 +162,8 @@ export default function AppSettingsCompliancePage() {
         <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <label className="flex items-center justify-between cursor-pointer">
             <div>
-              <p className="text-sm font-medium text-white">HIPAA mode</p>
-              <p className="text-[11px] text-zinc-500 mt-0.5">Encrypt PHI, BAA required (+$99/mo on Scale plan)</p>
+              <p className="text-sm font-medium text-white">{tSettings("compliance.hipaaMode")}</p>
+              <p className="text-[11px] text-zinc-500 mt-0.5">{tSettings("compliance.hipaaModeHelp")}</p>
             </div>
             <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${hipaa ? "bg-white" : "bg-zinc-700"}`} onClick={() => setHipaa(!hipaa)}>
               <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${hipaa ? "translate-x-6 bg-black" : "translate-x-1 bg-zinc-400"}`} />

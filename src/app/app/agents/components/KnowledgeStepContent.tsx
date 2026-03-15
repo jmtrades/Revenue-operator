@@ -69,7 +69,7 @@ export function KnowledgeStepContent({
         services?: string[];
       };
       if (!res.ok || data.error) {
-        setImportError(data.error ?? "Could not load that URL. Try again.");
+        setImportError(data.error ?? t("knowledge.importError"));
         return;
       }
       const newFaq = (data.faq ?? []).map((item, i) => ({
@@ -85,7 +85,7 @@ export function KnowledgeStepContent({
         onChange({ businessContext: data.businessName });
       }
     } catch {
-      setImportError("Something went wrong.");
+      setImportError(t("knowledge.importErrorGeneric"));
     } finally {
       setImporting(false);
     }
@@ -117,7 +117,7 @@ export function KnowledgeStepContent({
             disabled={!importUrl.trim() || importing}
             className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-white/[0.06] disabled:opacity-50"
           >
-            {importing ? "Importing…" : "Import from website"}
+            {importing ? t("knowledge.importing") : t("knowledge.importFromWebsite")}
           </button>
         </div>
         {importError && <p className="text-xs text-red-400">{importError}</p>}
@@ -131,7 +131,7 @@ export function KnowledgeStepContent({
           aria-busy={seeding}
           className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-white/[0.06] disabled:opacity-50"
         >
-          {seeding ? "Adding…" : "Suggest Q&As"}
+          {seeding ? t("knowledge.adding") : t("knowledge.suggestQAs")}
         </button>
       </section>
       <AgentKnowledgePanel agent={agent} updateAgent={onChange} />
