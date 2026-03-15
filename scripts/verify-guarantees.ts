@@ -8,6 +8,12 @@ import { spawn } from "child_process";
 import { fileURLToPath } from "url";
 import path from "path";
 
+// Skip on Vercel so we never run the heavy test suite there (vercel.json uses buildCommand: "next build" to bypass this; this is fallback if someone runs npm run build on Vercel).
+if (process.env.VERCEL === "1") {
+  console.log("Skipping guarantee verification on Vercel.");
+  process.exit(0);
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
@@ -160,11 +166,6 @@ async function runVitest(): Promise<boolean> {
 }
 
 async function main(): Promise<void> {
-  // Skip full guarantee suite on Vercel to keep build fast and reliable; run in CI locally.
-  if (process.env.VERCEL === "1") {
-    console.log("Skipping guarantee verification on Vercel (run locally or in CI).");
-    return;
-  }
   console.log("Verifying guarantee contracts...");
   const ok = await runVitest();
   if (!ok) {
