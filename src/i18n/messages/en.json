@@ -3336,6 +3336,213 @@
       "card3Stat2Desc": "Turnover in phone-heavy roles",
       "card3Stat3Desc": "Average tools businesses juggle for calls, texts, scheduling, and follow-up",
       "closing": "What if every call, text, and follow-up was handled automatically — and you could see exactly what happened?"
+    },
+    "howItWorks": {
+      "label": "How it works",
+      "title": "Three steps. Then it runs.",
+      "steps": {
+        "connect": {
+          "title": "Connect",
+          "desc": "Forward your number or get a new one. Any carrier. Any phone."
+        },
+        "configure": {
+          "title": "Configure",
+          "desc": "Tell your AI what to do: answer calls, handle texts, book appointments, follow up, qualify leads, or all of it. Use a template or start from scratch."
+        },
+        "done": {
+          "title": "Done",
+          "desc": "Every call answered. Every lead captured. Every follow-up sent."
+        }
+      }
+    },
+    "liveDemo": {
+      "heading": "Hear the difference in 30 seconds",
+      "subheading": "See how your AI handles real situations — missed calls, booking, follow-up, after-hours, and screening.",
+      "cardLabels": { "caller": "Caller", "agent": "Your AI", "result": "Result" },
+      "sampleNote": "Sample conversation — your AI handles this 24/7 for any type of business.",
+      "cta": { "text": "Ready to make this your phone line?", "ariaLabel": "Open interactive call demo", "button": "Start free →" },
+      "useCases": {
+        "missedCall": { "label": "Missed call recovery", "caller": "Hi, I called earlier and nobody answered. I need to schedule a visit.", "agent": "Thanks for calling back. I'll get you on the calendar — what day works best?", "result": "Callback captured · Appointment offered" },
+        "appointment": { "label": "Appointment booking", "caller": "I'd like to book an appointment for next week.", "agent": "Sure. We have Tuesday afternoon or Wednesday morning. Which do you prefer?", "result": "Slot confirmed · Reminder scheduled" },
+        "followUp": { "label": "Lead follow-up", "caller": "I filled out the form on your site. Wanted to know more about pricing.", "agent": "I've got your details. Our team will reach out within an hour. What's the best number?", "result": "Lead qualified · Follow-up queued" },
+        "afterHours": { "label": "After-hours handling", "caller": "It's 8pm — are you open? I have an urgent question.", "agent": "We're closed now, but I can take your name and number and have someone call you first thing tomorrow.", "result": "Message taken · Next-day callback" },
+        "screening": { "label": "Call screening", "caller": "I need to speak with the person in charge of billing.", "agent": "I can help with billing. Can you tell me your account name or number so I get you to the right person?", "result": "Intent captured · Routed to right team" }
+      }
+    },
+    "outcomes": {
+      "heading": "What you get from day one",
+      "subheading": "Outcomes, not infrastructure. Your AI handles the rest.",
+      "cards": {
+        "missedCalls": { "title": "Missed calls recovered", "desc": "Your AI answers 24/7 so every caller gets a real conversation, not voicemail." },
+        "leads": { "title": "Leads captured automatically", "desc": "Name, phone, and what they need — captured and routed in seconds." },
+        "appointments": { "title": "Appointments booked on the spot", "desc": "Integrated with your calendar. No back-and-forth, no no-shows." }
+      },
+      "pricing": {
+        "heading": "Simple pricing that matches your revenue",
+        "subheading": "No per-seat licenses. You pay for reliability of answered calls, not how many people log in.",
+        "trialNote": "All plans start with a 14-day free trial. No credit card required."
+      },
+      "pricingTiers": {
+        "starter": { "name": "Starter", "tagline": "For solo operators and small teams getting started.", "f1": "400 inbound min included", "f2": "1 AI phone number", "f3": "Basic call summaries & lead capture", "f4": "Standard support" },
+        "growth": { "name": "Growth", "tagline": "For growing teams that need full coverage.", "f1": "1,500 inbound min included", "f2": "3 AI phone numbers", "f3": "Advanced call intelligence & routing", "f4": "Priority support" },
+        "scale": { "name": "Scale", "tagline": "For multi-location and higher volume teams.", "f1": "5,000 inbound min included", "f2": "10 phone numbers", "f3": "Dedicated success partner", "f4": "Custom reporting & integrations" },
+        "badgePopular": "Most popular"
+      },
+      "cta": { "button": "Start free trial →" }
+    },
+    "features": {
+      "label": "What it does",
+      "heading": "Everything your phone communication needs. Nothing it used to cost.",
+      "capabilities": {
+        "answersCalls": { "title": "Answers every call", "desc": "24/7, instantly, in a natural human voice." },
+        "unifiedInbox": { "title": "Unified inbox", "desc": "Calls, texts, and emails in one place. See every conversation with every contact. Reply from one screen." },
+        "outbound": { "title": "Makes outbound calls", "desc": "Follows up, reminds, re-engages." },
+        "campaigns": { "title": "Outbound campaigns", "desc": "Reach hundreds of leads with automated call and text sequences. Follow up until they respond, book, or opt out." },
+        "books": { "title": "Books appointments", "desc": "Checks your calendar, books, confirms." },
+        "captures": { "title": "Captures every lead", "desc": "Qualifies, scores, texts you instantly." },
+        "routing": { "title": "Smart routing", "desc": "Detects urgency, screens callers, routes to the right person or takes a message." },
+        "texting": { "title": "Two-way texting", "desc": "Send and receive texts from your business number. Confirmations, follow-ups, conversations — all automated or manual." },
+        "learns": { "title": "Learns your world", "desc": "Answers questions about your services, hours, policies, pricing — whatever you teach it." },
+        "roi": { "title": "Shows your ROI", "desc": "See how many leads were captured, appointments booked, and revenue recovered." },
+        "neverGivesUp": { "title": "Never gives up", "desc": "Follows up until the lead responds, books, or opts out." }
+      }
+    },
+    "useCaseSection": {
+      "heading": "One platform. Every call type.",
+      "cases": {
+        "inbound": { "title": "Inbound", "desc": "Answer every call. Route, book, qualify, and follow up — automatically." },
+        "outbound": { "title": "Outbound", "desc": "Follow up with leads, confirm appointments, reactivate prospects — at scale." },
+        "intelligence": { "title": "Intelligence", "desc": "Analyze every conversation. Find what works. Make your team better." }
+      },
+      "cta": { "button": "Start free →" }
+    },
+    "whoUses": {
+      "label": "Who uses Recall Touch",
+      "heading": "Built for how you communicate",
+      "personas": {
+        "solo": { "name": "Solo operators", "desc": "I can't answer the phone while I'm working. Recall Touch answers, books, and follows up so I never miss a lead." },
+        "growing": { "name": "Growing teams", "desc": "We're losing leads because we can't keep up. Every call gets answered and every lead gets captured and followed up." },
+        "agencies": { "name": "Agencies & multi-location", "desc": "I manage multiple locations and need consistency. One platform, one standard, everywhere." },
+        "afterHours": { "name": "After-hours & overflow", "desc": "We need coverage when the office is closed. Calls get answered, messages taken, and we follow up first thing." },
+        "outbound": { "name": "Outbound campaigns", "desc": "We need to follow up with hundreds of leads. Recall Touch reaches out, qualifies, and books — at scale." },
+        "anyone": { "name": "Anyone with a phone", "desc": "I want my calls handled intelligently. Answer, book, follow up, screen — without hiring a front desk." }
+      },
+      "additionalNote": "Don't see your use case? Recall Touch works for any phone-based workflow.",
+      "cta": { "link": "Get started →" }
+    },
+    "metrics": {
+      "label": "What if?",
+      "heading": "The numbers that matter",
+      "items": {
+        "revenueLost": "Average revenue lost per year to missed calls",
+        "answerRate": "Answer rate with Recall Touch (up from ~60% national average)",
+        "speedToLead": "Average time for Recall Touch to follow up on a new lead via call or text",
+        "inbox": "All calls, texts, and follow-ups in one place (vs 4+ tools for most teams)",
+        "setupTime": "Setup time (vs 6 weeks for enterprise solutions)"
+      }
+    },
+    "testimonials": {
+      "preamble": "Built for businesses that depend on every call",
+      "label": "What customers say",
+      "testimonials": {
+        "amanda": { "quote": "We replaced three tools — phone answering, text follow-up, and scheduling — with one platform.", "author": "Amanda K.", "role": "Consulting firm" },
+        "ryan": { "quote": "Our sales team follows up 10x faster now. The AI handles the initial outreach and books qualified meetings.", "author": "Ryan D.", "role": "SaaS startup" },
+        "mike": { "quote": "Recall Touch paid for itself in the first week. We captured 14 leads we would have missed.", "author": "Mike R.", "role": "Plumbing company owner" },
+        "sarah": { "quote": "Our no-show rate dropped 40% since the AI started sending reminders.", "author": "Dr. Sarah L.", "role": "Dental practice" },
+        "james": { "quote": "I was skeptical about AI answering my phones. After one day I was convinced.", "author": "James T.", "role": "Roofing contractor" }
+      },
+      "badge": "Trusted by businesses that never miss a call"
+    },
+    "pricingPreview": {
+      "label": "Pricing",
+      "heading": "Plans that pay for themselves.",
+      "toggle": { "monthly": "Monthly", "annual": "Annual", "savings": "Save 17%" },
+      "badge": "Popular",
+      "tierRoi": { "starter": "Less than one missed call", "growth": "One recovered lead pays for the month", "scale": "Full AI communication team for a fraction of one hire", "enterprise": "Custom ROI and dedicated support" },
+      "footerNote": "All plans include: encrypted records · compliance framework · audit trail · 14-day free trial",
+      "cta": { "link": "View full plan comparison →" }
+    },
+    "difference": {
+      "heading": "What makes us different",
+      "subheading": "No voicemail. No missed opportunities. Real conversations, every time.",
+      "rows": {
+        "manual": { "label": "Manual answering / voicemail", "i1": "Missed calls = lost leads", "i2": "Voicemail rarely returned", "i3": "After hours = no answer" },
+        "generic": { "label": "Generic voicemail or IVR", "i1": "Callers hang up or leave a message", "i2": "No qualification, no booking", "i3": "You still do the callback work" },
+        "recallTouch": { "label": "Recall Touch", "i1": "Every call answered 24/7", "i2": "Leads captured and qualified in real time", "i3": "Appointments booked while they're on the line" }
+      }
+    },
+    "enterpriseComparison": { "text": "Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch starts at $297/month and takes 5 minutes." },
+    "finalCta": {
+      "heading": "Your AI phone team starts in 5 minutes",
+      "subheading": "No credit card. Set up in 5 minutes. Answer every call.",
+      "buttons": { "start": "Start free →", "demo": "Book a demo →" },
+      "note": "Works for calls, texts, scheduling, follow-ups, and campaigns. One platform.",
+      "links": { "docs": "View documentation" }
+    },
+    "scrollCta": { "message": "Your next customer could be calling. Ready?", "button": "Start free →", "dismiss": "Dismiss" },
+    "trust": { "text": "Trusted by operators who can't afford to miss decisive calls." },
+    "industries": {
+      "label": "Industries",
+      "heading": "See how it works across industries",
+      "subheading": "Recall Touch adapts to any business that takes phone calls. Here are a few examples.",
+      "industries": {
+        "plumbing": { "name": "Plumbing & HVAC", "desc": "Answer every service call. Emergency dispatch, scheduling, and quote capture." },
+        "healthcare": { "name": "Healthcare", "desc": "Schedule patients. Handle intake. HIPAA-compliant. Prescription refill routing." },
+        "legal": { "name": "Legal", "desc": "Professional intake. 24/7 availability. Every call documented." },
+        "realEstate": { "name": "Real Estate", "desc": "Qualify buyers instantly. Schedule showings. Never lose a listing lead." },
+        "dental": { "name": "Dental", "desc": "Book patients. Insurance verification. Recall reminders." },
+        "custom": { "name": "Your industry", "desc": "Don't see your business? Recall Touch works for any company that answers a phone." }
+      }
+    },
+    "bentoVisuals": {
+      "timelineLabels": { "call": "Call", "followUp": "Follow-up", "confirm": "Confirm", "close": "Close" },
+      "complianceRecord": { "governedRecord": "Governed record", "jurisdiction": "Jurisdiction", "verified": "Verified", "reviewDepth": "Review depth", "standard": "Standard", "duration": "Duration", "status": "Status", "compliant": "Compliant", "chain": "Chain", "chainValue": "3 verified events" },
+      "audit": { "line1": "Recorded under declared jurisdiction", "line2": "Forwarded without modification", "line3": "Audit trail complete" },
+      "escalation": { "agent": "Agent", "manager": "Manager", "director": "Director" },
+      "channels": { "voice": "Voice", "message": "Message", "payment": "Payment" },
+      "channelNote": "Single governance layer"
+    },
+    "activityPreview": {
+      "ariaLabel": "Preview of the Recall Touch activity dashboard",
+      "title": "Recall Touch — Activity",
+      "heading": "Recent calls",
+      "typeLead": "Lead",
+      "typeAppointment": "Appointment",
+      "typeFollowUp": "Follow-up"
+    },
+    "activityFeed": {
+      "dateLabel": "Today",
+      "chips": { "all": "All", "needsAction": "Needs action", "leads": "Leads" },
+      "feedCards": {
+        "lead": { "label": "NEW LEAD", "time": "10:32 AM", "name": "Sarah Mitchell", "meta": "Kitchen remodel quote", "detail": "Budget: $15–20K · Lead score: 85" },
+        "appointment": { "label": "APPOINTMENT BOOKED", "time": "9:47 AM", "name": "James Cooper", "meta": "AC maintenance — Tue Mar 3, 2:00 PM", "detail": "Confirmation text sent ✓" },
+        "emergency": { "label": "URGENT", "time": "9:15 AM", "name": "Maria Santos", "meta": "Water heater leaking", "detail": "You were alerted via text + call" },
+        "outbound": { "label": "FOLLOW-UP CALL", "time": "8:30 AM", "name": "AI called David Kim", "meta": "Appointment reminder", "detail": "Confirmed for tomorrow ✓" },
+        "info": { "label": "HANDLED", "time": "7:45 AM", "name": "Mike Johnson", "meta": "Asked about business hours", "detail": "AI answered: Mon–Fri 8am–6pm" }
+      }
+    },
+    "mockDashboard": {
+      "ariaLabel": "Preview of the Recall Touch dashboard interface",
+      "title": "Recall Touch — Active records",
+      "heading": "Active Records",
+      "searchPlaceholder": "Search calls…",
+      "headerName": "Name",
+      "headerTime": "Time",
+      "headerDuration": "Duration",
+      "headerStatus": "Status",
+      "headerJurisdiction": "Jurisdiction",
+      "statusGoverned": "Governed",
+      "statusPending": "Pending"
+    },
+    "useCasesAlt": {
+      "label": "Built for",
+      "heading": "From solo operators to regulated enterprises.",
+      "cases": {
+        "inbound": { "title": "Inbound operations", "desc": "Teams handling inbound enquiries where every response must be consistent, documented, and legally defensible." },
+        "outbound": { "title": "Outbound sales", "desc": "Revenue teams making outbound calls where pricing commitments, verbal agreements, and follow-ups need a compliance trail." },
+        "regulated": { "title": "Regulated industries", "desc": "Organizations in financial services, insurance, healthcare, or legal where call documentation isn't optional — it's a regulatory requirement." }
+      },
+      "cta": { "link": "Learn more →" }
     }
   },
   "footer": {

@@ -1,37 +1,35 @@
 "use client";
 
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { PhoneIncoming, PhoneOutgoing, Brain } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const USE_CASES = [
-  {
-    title: "Inbound",
-    desc: "Answer every call. Route, book, qualify, and follow up — automatically.",
-    icon: PhoneIncoming,
-  },
-  {
-    title: "Outbound",
-    desc: "Follow up with leads, confirm appointments, reactivate prospects — at scale.",
-    icon: PhoneOutgoing,
-  },
-  {
-    title: "Intelligence",
-    desc: "Analyze every conversation. Find what works. Make your team better.",
-    icon: Brain,
-  },
-] as const;
+const CASE_IDS = ["inbound", "outbound", "intelligence"] as const;
+const ICONS = [PhoneIncoming, PhoneOutgoing, Brain];
 
 export function UseCaseSection() {
+  const t = useTranslations("homepage.useCaseSection");
+  const cases = useMemo(
+    () =>
+      CASE_IDS.map((id, i) => ({
+        title: t(`cases.${id}.title`),
+        desc: t(`cases.${id}.desc`),
+        icon: ICONS[i],
+      })),
+    [t]
+  );
+
   return (
     <section className="py-16 px-6" style={{ background: "var(--bg-primary)" }}>
       <Container>
         <h2 className="text-2xl font-bold text-center mb-10" style={{ color: "var(--text-primary)" }}>
-          One platform. Every call type.
+          {t("heading")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {USE_CASES.map((uc) => (
+          {cases.map((uc) => (
             <div
               key={uc.title}
               className="rounded-xl p-6 border"
@@ -50,7 +48,7 @@ export function UseCaseSection() {
             href={ROUTES.START}
             className="inline-flex items-center justify-center bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors"
           >
-            Start free →
+            {t("cta.button")}
           </Link>
         </p>
       </Container>

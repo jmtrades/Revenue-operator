@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 const CARDS = [
   { id: "1", type: "lead" as const, name: "Alex Rivera", time: "9:14 AM", summary: "Scheduling consultation", outcome: "✅ Booked 2 PM" },
@@ -14,14 +15,17 @@ const CARD_STYLES: Record<string, { border: string; badge: string }> = {
   "follow-up": { border: "border-l-zinc-500", badge: "bg-zinc-800/60 text-purple-400 border-zinc-700" },
 };
 
-const TYPE_LABELS: Record<string, string> = {
-  lead: "Lead",
-  appointment: "Appointment",
-  "follow-up": "Follow-up",
-};
-
 export function HomepageActivityPreview() {
+  const t = useTranslations("homepage.activityPreview");
   const [visible, setVisible] = useState<number[]>([]);
+  const typeLabels = useMemo(
+    () => ({
+      lead: t("typeLead"),
+      appointment: t("typeAppointment"),
+      "follow-up": t("typeFollowUp"),
+    }),
+    [t]
+  );
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
@@ -40,7 +44,7 @@ export function HomepageActivityPreview() {
         boxShadow: "var(--shadow-glow-lg)",
       }}
       role="img"
-      aria-label="Preview of the Recall Touch activity dashboard"
+      aria-label={t("ariaLabel")}
     >
       <div
         className="flex items-center gap-3 px-4 py-2.5 border-b"
@@ -52,13 +56,13 @@ export function HomepageActivityPreview() {
           <span className="w-2.5 h-2.5 rounded-full bg-green-500/90" />
         </div>
         <span className="text-xs flex-1 text-center" style={{ color: "var(--text-tertiary)" }}>
-          Recall Touch — Activity
+          {t("title")}
         </span>
         <div className="w-12" />
       </div>
       <div className="p-4 sm:p-6" style={{ background: "var(--bg-primary)" }}>
         <h3 className="text-base font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
-          Recent calls
+          {t("heading")}
         </h3>
         <ul className="space-y-3">
           {CARDS.map((card, i) => {
@@ -78,7 +82,7 @@ export function HomepageActivityPreview() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[10px] text-zinc-500">{card.time}</span>
                       <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${style.badge}`}>
-                        {TYPE_LABELS[card.type]}
+                        {typeLabels[card.type]}
                       </span>
                     </div>
                     <p className="text-sm font-semibold text-white mt-1 truncate">{card.name}</p>

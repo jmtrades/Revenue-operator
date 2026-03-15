@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { ArrowDownToLine, ArrowUpFromLine, Building2 } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -7,38 +9,33 @@ import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
 import { motion } from "framer-motion";
 
-const cases = [
-  {
-    icon: ArrowDownToLine,
-    title: "Inbound operations",
-    desc: "Teams handling inbound enquiries where every response must be consistent, documented, and legally defensible.",
-    href: "/product#inbound",
-  },
-  {
-    icon: ArrowUpFromLine,
-    title: "Outbound sales",
-    desc: "Revenue teams making outbound calls where pricing commitments, verbal agreements, and follow-ups need a compliance trail.",
-    href: "/product#outbound",
-  },
-  {
-    icon: Building2,
-    title: "Regulated industries",
-    desc: "Organizations in financial services, insurance, healthcare, or legal where call documentation isn't optional — it's a regulatory requirement.",
-    href: "/product#regulated",
-  },
-];
+const CASE_IDS = ["inbound", "outbound", "regulated"] as const;
+const ICONS = [ArrowDownToLine, ArrowUpFromLine, Building2];
+const HREFS = ["/product#inbound", "/product#outbound", "/product#regulated"] as const;
 
 export function UseCases() {
+  const t = useTranslations("homepage.useCasesAlt");
+  const cases = useMemo(
+    () =>
+      CASE_IDS.map((id, i) => ({
+        icon: ICONS[i],
+        title: t(`cases.${id}.title`),
+        desc: t(`cases.${id}.desc`),
+        href: HREFS[i],
+      })),
+    [t]
+  );
+
   return (
     <section id="built-for" className="marketing-section" style={{ background: "var(--bg-surface)" }}>
       <Container>
         <AnimateOnScroll className="text-center mb-16">
-          <SectionLabel>Built for</SectionLabel>
+          <SectionLabel>{t("label")}</SectionLabel>
           <h2
             className="font-semibold max-w-2xl mx-auto"
             style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}
           >
-            From solo operators to regulated enterprises.
+            {t("heading")}
           </h2>
         </AnimateOnScroll>
         <StaggerChildren className="grid md:grid-cols-3 gap-6">
@@ -57,7 +54,7 @@ export function UseCases() {
                 {c.desc}
               </p>
               <Link href={c.href} className="text-sm font-medium mt-auto inline-block" style={{ color: "var(--accent-primary)" }}>
-                Learn more →
+                {t("cta.link")}
               </Link>
             </motion.div>
           ))}

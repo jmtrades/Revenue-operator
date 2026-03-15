@@ -1,80 +1,62 @@
+"use client";
+
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { Phone, UserPlus, CalendarCheck } from "lucide-react";
 
-const CARDS = [
-  {
-    icon: Phone,
-    title: "Missed calls recovered",
-    description:
-      "Your AI answers 24/7 so every caller gets a real conversation, not voicemail.",
-  },
-  {
-    icon: UserPlus,
-    title: "Leads captured automatically",
-    description:
-      "Name, phone, and what they need — captured and routed in seconds.",
-  },
-  {
-    icon: CalendarCheck,
-    title: "Appointments booked on the spot",
-    description:
-      "Integrated with your calendar. No back-and-forth, no no-shows.",
-  },
-] as const;
-
-const PRICING_TIERS = [
-  {
-    name: "Starter",
-    price: "$297",
-    tagline: "For solo operators and small teams getting started.",
-    features: [
-      "400 inbound min included",
-      "1 AI phone number",
-      "Basic call summaries & lead capture",
-      "Standard support",
-    ],
-    badge: null as "Most popular" | null,
-  },
-  {
-    name: "Growth",
-    price: "$497",
-    tagline: "For growing teams that need full coverage.",
-    features: [
-      "1,500 inbound min included",
-      "3 AI phone numbers",
-      "Advanced call intelligence & routing",
-      "Priority support",
-    ],
-    badge: "Most popular" as const,
-  },
-  {
-    name: "Scale",
-    price: "$2,400",
-    tagline: "For multi-location and higher volume teams.",
-    features: [
-      "5,000 inbound min included",
-      "10 phone numbers",
-      "Dedicated success partner",
-      "Custom reporting & integrations",
-    ],
-    badge: null as "Most popular" | null,
-  },
-] as const;
-
 export function OutcomeCardsSection() {
+  const t = useTranslations("homepage.outcomes");
+
+  const cards = useMemo(
+    () => [
+      { icon: Phone, title: t("cards.missedCalls.title"), description: t("cards.missedCalls.desc") },
+      { icon: UserPlus, title: t("cards.leads.title"), description: t("cards.leads.desc") },
+      { icon: CalendarCheck, title: t("cards.appointments.title"), description: t("cards.appointments.desc") },
+    ],
+    [t]
+  );
+
+  const pricingTiers = useMemo(
+    () => [
+      {
+        name: t("pricingTiers.starter.name"),
+        price: "$297",
+        tagline: t("pricingTiers.starter.tagline"),
+        features: [t("pricingTiers.starter.f1"), t("pricingTiers.starter.f2"), t("pricingTiers.starter.f3"), t("pricingTiers.starter.f4")],
+        badge: null as string | null,
+      },
+      {
+        name: t("pricingTiers.growth.name"),
+        price: "$497",
+        tagline: t("pricingTiers.growth.tagline"),
+        features: [t("pricingTiers.growth.f1"), t("pricingTiers.growth.f2"), t("pricingTiers.growth.f3"), t("pricingTiers.growth.f4")],
+        badge: t("pricingTiers.badgePopular"),
+      },
+      {
+        name: t("pricingTiers.scale.name"),
+        price: "$2,400",
+        tagline: t("pricingTiers.scale.tagline"),
+        features: [t("pricingTiers.scale.f1"), t("pricingTiers.scale.f2"), t("pricingTiers.scale.f3"), t("pricingTiers.scale.f4")],
+        badge: null as string | null,
+      },
+    ],
+    [t]
+  );
+
   return (
     <section className="py-16 md:py-20 border-t border-white/[0.06] bg-[var(--bg-base)]">
       <Container>
         <div className="max-w-3xl mb-10">
           <h2 className="text-xl md:text-2xl font-semibold text-white">
-            What you get from day one
+            {t("heading")}
           </h2>
           <p className="mt-2 text-sm text-white/50">
-            Outcomes, not infrastructure. Your AI handles the rest.
+            {t("subheading")}
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {CARDS.map(({ icon: Icon, title, description }) => (
+          {cards.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
               className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6"
@@ -96,20 +78,19 @@ export function OutcomeCardsSection() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
             <div>
               <h2 className="text-xl md:text-2xl font-semibold text-white">
-                Simple pricing that matches your revenue
+                {t("pricing.heading")}
               </h2>
               <p className="mt-2 text-sm text-white/50 max-w-xl">
-                No per-seat licenses. You pay for reliability of answered calls,
-                not how many people log in.
+                {t("pricing.subheading")}
               </p>
             </div>
             <p className="text-xs text-white/40">
-              All plans start with a 14-day free trial. No credit card required.
+              {t("pricing.trialNote")}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {PRICING_TIERS.map((tier) => (
+            {pricingTiers.map((tier) => (
               <div
                 key={tier.name}
                 className={`rounded-2xl border bg-[var(--bg-card)] p-6 flex flex-col ${
@@ -150,7 +131,7 @@ export function OutcomeCardsSection() {
                   type="button"
                   className="mt-auto inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 transition-colors"
                 >
-                  Start free trial →
+                  {t("cta.button")}
                 </button>
               </div>
             ))}

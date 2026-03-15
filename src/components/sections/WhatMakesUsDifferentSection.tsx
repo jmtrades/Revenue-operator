@@ -1,28 +1,36 @@
+"use client";
+
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { X, Voicemail, CheckCircle2 } from "lucide-react";
 
-const ROWS = [
-  {
-    icon: X,
-    label: "Manual answering / voicemail",
-    items: ["Missed calls = lost leads", "Voicemail rarely returned", "After hours = no answer"],
-    color: "text-red-400",
-  },
-  {
-    icon: Voicemail,
-    label: "Generic voicemail or IVR",
-    items: ["Callers hang up or leave a message", "No qualification, no booking", "You still do the callback work"],
-    color: "text-amber-400",
-  },
-  {
-    icon: CheckCircle2,
-    label: "Recall Touch",
-    items: ["Every call answered 24/7", "Leads captured and qualified in real time", "Appointments booked while they're on the line"],
-    color: "text-emerald-400",
-  },
-] as const;
-
 export function WhatMakesUsDifferentSection() {
+  const t = useTranslations("homepage.difference");
+  const rows = useMemo(
+    () => [
+      {
+        icon: X,
+        label: t("rows.manual.label"),
+        items: [t("rows.manual.i1"), t("rows.manual.i2"), t("rows.manual.i3")],
+        color: "text-red-400",
+      },
+      {
+        icon: Voicemail,
+        label: t("rows.generic.label"),
+        items: [t("rows.generic.i1"), t("rows.generic.i2"), t("rows.generic.i3")],
+        color: "text-amber-400",
+      },
+      {
+        icon: CheckCircle2,
+        label: t("rows.recallTouch.label"),
+        items: [t("rows.recallTouch.i1"), t("rows.recallTouch.i2"), t("rows.recallTouch.i3")],
+        color: "text-emerald-400",
+      },
+    ],
+    [t]
+  );
+
   return (
     <section
       className="py-16 md:py-20 border-t border-white/[0.06]"
@@ -31,14 +39,14 @@ export function WhatMakesUsDifferentSection() {
       <Container>
         <div className="max-w-3xl mb-10">
           <h2 className="text-xl md:text-2xl font-semibold text-white">
-            What makes us different
+            {t("heading")}
           </h2>
           <p className="mt-2 text-sm text-zinc-400">
-            No voicemail. No missed opportunities. Real conversations, every time.
+            {t("subheading")}
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {ROWS.map(({ icon: Icon, label, items, color }) => (
+          {rows.map(({ icon: Icon, label, items, color }) => (
             <div
               key={label}
               className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6"
