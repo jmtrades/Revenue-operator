@@ -18,6 +18,7 @@ export function BehaviorStepContent({
   onNext,
 }: BehaviorStepContentProps) {
   const t = useTranslations("agents");
+  const tCommon = useTranslations("common");
   const NEVER_DO_PRESETS = [
     "Never discuss pricing or give quotes",
     "Never schedule outside business hours",
@@ -316,8 +317,8 @@ export function BehaviorStepContent({
         </div>
       </section>
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Knowledge" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
-        <button type="button" onClick={onNext} aria-label="Continue to Test" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Continue</button>
+        <button type="button" onClick={onBack} aria-label={t("nav.backToKnowledge")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("back")}</button>
+        <button type="button" onClick={onNext} aria-label={t("nav.continueToTest")} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("continue")}</button>
       </div>
     </div>
   );

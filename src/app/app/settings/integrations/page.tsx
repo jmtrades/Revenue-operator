@@ -214,28 +214,28 @@ export default function AppSettingsIntegrationsPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Integrations" }]} />
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Integrations</h1>
-      <p className="text-sm text-[var(--text-secondary)] mb-6">Connect your tools: channels, CRM, calendar, and automation.</p>
+      <Breadcrumbs items={[{ label: t("hub.breadcrumbSettings"), href: "/app/settings" }, { label: t("hub.title") }]} />
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{t("hub.title")}</h1>
+      <p className="text-sm text-[var(--text-secondary)] mb-6">{t("hub.subtitle")}</p>
 
       <div className="space-y-6">
         <section>
-          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Channels</h2>
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.channelsHeading")}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
               <div className="flex items-center gap-3 mb-2">
                 <Phone className="w-5 h-5 text-zinc-400" aria-hidden />
-                <p className="text-sm font-medium text-[var(--text-primary)]">Phone</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.phoneLabel")}</p>
               </div>
-              <p className="text-xs text-[var(--text-secondary)] mb-3">AI phone number for calls</p>
+              <p className="text-xs text-[var(--text-secondary)] mb-3">{t("hub.phoneDesc")}</p>
               <Link href="/app/settings/phone" className="text-sm text-zinc-300 hover:text-white hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">
-                Manage →
+                {t("hub.manageLink")}
               </Link>
             </div>
             <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 opacity-70">
               <div className="flex items-center gap-3 mb-2">
                 <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
-                <p className="text-sm font-medium text-[var(--text-primary)]">WhatsApp</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.whatsappLabel")}</p>
               </div>
               <p className="text-sm text-[#8B8B8D]">
                 {t("comingSoon")}
@@ -246,30 +246,30 @@ export default function AppSettingsIntegrationsPage() {
 
         {/* CRM Integration Hub */}
         <section>
-          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">CRM & contacts</h2>
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.crmHeading")}</h2>
           <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
               <RefreshCw className="w-4 h-4 text-zinc-500" aria-hidden />
               <span>
-                Last sync: {crmStatus?.global.lastSyncAt
+                {t("hub.lastSyncLabel")} {crmStatus?.global.lastSyncAt
                   ? new Date(crmStatus.global.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
                   : "—"}
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-              <span>Records synced: {crmStatus?.global.recordsSynced ?? 0}</span>
+              <span>{t("hub.recordsSyncedLabel")} {crmStatus?.global.recordsSynced ?? 0}</span>
             </div>
             {(crmStatus?.global.errors ?? 0) > 0 && (
               <div className="flex items-center gap-2 text-sm text-amber-400">
                 <AlertCircle className="w-4 h-4" aria-hidden />
-                <span>{crmStatus?.global.errors ?? 0} sync error{(crmStatus?.global.errors ?? 0) !== 1 ? "s" : ""}</span>
+                <span>{crmStatus?.global.errors ?? 0} {(crmStatus?.global.errors ?? 0) !== 1 ? t("hub.syncErrors") : t("hub.syncError")}</span>
               </div>
             )}
             <Link
               href="/app/settings/integrations/sync-log"
               className="text-xs font-medium text-[var(--accent-primary)] hover:underline ml-auto"
             >
-              View sync log →
+              {t("hub.viewSyncLog")}
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
@@ -294,19 +294,19 @@ export default function AppSettingsIntegrationsPage() {
                       </span>
                     ) : connected ? (
                       <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-green-500/30 text-green-400 shrink-0">
-                        Connected
+                        {t("status.connected")}
                       </span>
                     ) : (
                       <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-white/[0.08] text-zinc-500 shrink-0">
-                        Not connected
+                        {t("status.disconnected")}
                       </span>
                     )}
                   </div>
-                  <h4 className="text-sm font-medium text-[#EDEDEF]">{crm.name}</h4>
-                  <p className="text-xs text-[#5A5A5C] mt-1 flex-1">{crm.description}</p>
+                  <h4 className="text-sm font-medium text-[#EDEDEF]">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.title`)}</h4>
+                  <p className="text-xs text-[#5A5A5C] mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>
                   {connected && status?.lastSyncAt && (
                     <p className="text-[11px] text-zinc-500 mt-2">
-                      Last sync: {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+                      {t("hub.lastSyncLabel")} {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
                     </p>
                   )}
                   <div className="mt-4">
@@ -323,14 +323,14 @@ export default function AppSettingsIntegrationsPage() {
                         href={`/app/settings/integrations/mapping?provider=${crm.id}`}
                         className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
                       >
-                        Configure
+                        {t("button.configure")}
                       </Link>
                     ) : (
                       <a
                         href={`/api/integrations/crm/${crm.id}/connect`}
                         className="inline-block px-3 py-2 rounded-xl text-xs font-semibold bg-white text-black hover:bg-zinc-100 transition-colors"
                       >
-                        Connect
+                        {t("button.connect")}
                       </a>
                     )}
                   </div>
@@ -339,34 +339,34 @@ export default function AppSettingsIntegrationsPage() {
             })}
           </div>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 mb-4">
-            <p className="text-sm font-medium text-[var(--text-primary)]">Send leads to any CRM</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.webhookHeading")}</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
-              Use the webhook below to send lead and appointment events to HubSpot, Salesforce, Zapier, or any tool that accepts webhooks.
+              {t("hub.webhookDesc")}
             </p>
           </div>
         </section>
 
         <section>
-          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Calendar</h2>
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.calendarHeading")}</h2>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-sm font-medium text-white">Google Calendar</p>
-              <p className="text-xs text-zinc-500 mt-1">Let your AI check availability and book confirmed appointments.</p>
+              <p className="text-sm font-medium text-white">{t("hub.googleCalendarLabel")}</p>
+              <p className="text-xs text-zinc-500 mt-1">{t("hub.calendarDesc")}</p>
             </div>
             {googleCalendarConnected ? (
               <span className="px-3 py-1.5 rounded-xl text-xs font-medium border border-green-500/30 text-green-400">
-                Connected
+                {t("status.connected")}
               </span>
             ) : (
               <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
-                Connect
+                {t("button.connect")}
               </Link>
             )}
           </div>
           {googleCalendarConnected && availabilityPreview.length > 0 && (
             <div className="mt-4">
-              <p className="text-[11px] font-medium text-zinc-400 mb-2">Today&apos;s first open slots</p>
+              <p className="text-[11px] font-medium text-zinc-400 mb-2">{t("hub.todaysSlots")}</p>
               <div className="flex flex-wrap gap-2">
                 {availabilityPreview.map((slot) => (
                   <span key={slot} className="rounded-full border border-[var(--border-medium)] px-3 py-1 text-[11px] text-zinc-300">
@@ -380,30 +380,30 @@ export default function AppSettingsIntegrationsPage() {
         </section>
 
         <section id="webhook-config">
-          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Automation & webhooks</h2>
+          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">{t("hub.automationHeading")}</h2>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-4">
-          <p className="text-sm font-medium text-white">Slack / Zapier webhook destination</p>
+          <p className="text-sm font-medium text-white">{t("hub.webhookDestinationTitle")}</p>
           <p className="text-xs text-zinc-500 mt-1">
-            Paste a Slack incoming webhook or Zapier catch hook URL. We&apos;ll send operator-safe events only.
+            {t("hub.webhookDestinationDesc")}
           </p>
           <input
             type="url"
             value={webhookConfig.endpoint_url}
             onChange={(e) => setWebhookConfig((prev) => ({ ...prev, endpoint_url: e.target.value, enabled: true }))}
-            placeholder="https://hooks.slack.com/... or https://hooks.zapier.com/..."
+            placeholder={t("hub.webhookUrlPlaceholder")}
             className="mt-4 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
           <div className="mt-3">
-            <label className="block text-[11px] font-medium text-zinc-400 mb-1">Signing secret (optional)</label>
+            <label className="block text-[11px] font-medium text-zinc-400 mb-1">{t("hub.signingSecretLabel")}</label>
             <input
               type="text"
               value={webhookSecret}
               onChange={(e) => setWebhookSecret(e.target.value)}
-              placeholder={webhookConfig.has_secret ? "Secret saved. Enter a new value to rotate it." : "Add a secret to sign deliveries"}
+              placeholder={webhookConfig.has_secret ? t("hub.signingSecretPlaceholderSaved") : t("hub.signingSecretPlaceholderNew")}
               className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
             />
             {webhookConfig.has_secret ? (
-              <p className="mt-1 text-[11px] text-zinc-500">A signing secret is already stored for this destination.</p>
+              <p className="mt-1 text-[11px] text-zinc-500">{t("hub.signingSecretStored")}</p>
             ) : null}
           </div>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-300">
@@ -413,7 +413,7 @@ export default function AppSettingsIntegrationsPage() {
                 checked={webhookConfig.event_lead_qualified}
                 onChange={(e) => setWebhookConfig((prev) => ({ ...prev, event_lead_qualified: e.target.checked }))}
               />
-              Lead captured
+              {t("hub.eventLeadCaptured")}
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -421,7 +421,7 @@ export default function AppSettingsIntegrationsPage() {
                 checked={webhookConfig.event_call_booked}
                 onChange={(e) => setWebhookConfig((prev) => ({ ...prev, event_call_booked: e.target.checked }))}
               />
-              Appointment booked
+              {t("hub.eventAppointmentBooked")}
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -429,7 +429,7 @@ export default function AppSettingsIntegrationsPage() {
                 checked={webhookConfig.event_deal_at_risk}
                 onChange={(e) => setWebhookConfig((prev) => ({ ...prev, event_deal_at_risk: e.target.checked }))}
               />
-              Deal at risk
+              {t("hub.eventDealAtRisk")}
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -437,18 +437,18 @@ export default function AppSettingsIntegrationsPage() {
                 checked={webhookConfig.event_lead_reactivated}
                 onChange={(e) => setWebhookConfig((prev) => ({ ...prev, event_lead_reactivated: e.target.checked }))}
               />
-              Reactivated lead
+              {t("hub.eventReactivatedLead")}
             </label>
           </div>
           <div className="mt-4 rounded-xl border border-[var(--border-default)] bg-black/20 p-3">
-            <p className="text-[11px] font-medium text-zinc-400">Events you can send</p>
+            <p className="text-[11px] font-medium text-zinc-400">{t("hub.eventsYouCanSend")}</p>
             <p className="mt-1 text-[11px] text-zinc-500">
-              Lead captured, appointment booked, deal at risk, deal won, and reactivated lead.
+              {t("hub.eventsList")}
             </p>
           </div>
           <div className="mt-4 flex items-center justify-between gap-3">
             <div>
-              <p className="text-[11px] font-medium text-zinc-400">Retry attempts</p>
+              <p className="text-[11px] font-medium text-zinc-400">{t("hub.retryAttempts")}</p>
               <input
                 type="number"
                 min={1}
@@ -470,7 +470,7 @@ export default function AppSettingsIntegrationsPage() {
                 disabled={testingWebhook || !workspaceId || !webhookConfig.endpoint_url.trim()}
                 className="px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 disabled:opacity-60"
               >
-                {testingWebhook ? "Testing…" : "Send test"}
+                {testingWebhook ? t("hub.testing") : t("hub.sendTest")}
               </button>
               <button
                 type="button"
@@ -478,7 +478,7 @@ export default function AppSettingsIntegrationsPage() {
                 disabled={savingWebhook || !workspaceId}
                 className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
               >
-                {savingWebhook ? "Saving…" : "Save webhook"}
+                {savingWebhook ? t("hub.saving") : t("hub.saveWebhook")}
               </button>
             </div>
           </div>
@@ -492,7 +492,7 @@ export default function AppSettingsIntegrationsPage() {
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{t("hub.backToSettings")}</Link></p>
     </div>
   );
 }

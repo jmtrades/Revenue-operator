@@ -289,7 +289,6 @@ async function handleStripeWebhookEvent(
                   }
                 );
               } catch (e) {
-                // eslint-disable-next-line no-console
                 console.error("Failed to release number:", num.provider_sid, e);
               }
             }
@@ -318,7 +317,6 @@ async function handleStripeWebhookEvent(
           currency: (invCreated.currency ?? "usd").toLowerCase(),
           dueAt,
         }).catch((err) => {
-          // eslint-disable-next-line no-console
           console.error("Billing webhook background task failed:", err);
         });
         const customerEmail =
@@ -363,7 +361,6 @@ async function handleStripeWebhookEvent(
               `payment-ack:${workspaceId}:${invCreated.id}`
             );
           }).catch((err) => {
-            // eslint-disable-next-line no-console
             console.error("Billing webhook background task failed:", err);
           });
         }
@@ -457,7 +454,6 @@ async function handleStripeWebhookEvent(
           currency: (invoice.currency ?? "usd").toLowerCase(),
           dueAt,
         }).catch((err) => {
-          // eslint-disable-next-line no-console
           console.error("Billing webhook background task failed:", err);
         });
         const customerEmail =
@@ -502,7 +498,6 @@ async function handleStripeWebhookEvent(
               `payment-ack:${workspaceId}:${invoice.id}`
             );
           }).catch((err) => {
-            // eslint-disable-next-line no-console
             console.error("Billing webhook background task failed:", err);
           });
         }

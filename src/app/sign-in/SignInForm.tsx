@@ -112,16 +112,16 @@ export default function SignInForm() {
             </div>
           </div>
           <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center tracking-tight">
-            Sign in
+            {t("signIn.title")}
           </h1>
           <p className="text-[var(--text-secondary)] text-[13px] text-center mt-1 mb-7">
-            Welcome back to Recall Touch
+            {t("signIn.subtitle")}
           </p>
 
           <form onSubmit={submit} className="space-y-3.5">
             <div>
               <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">
-                Email address
+                {t("email.label")}
               </label>
               <input
                 type="email"
@@ -168,12 +168,12 @@ export default function SignInForm() {
               <div className="space-y-2">
                 {noAccount ? (
                   <div className="px-3.5 py-2.5 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl text-[13px] text-[var(--text-secondary)]">
-                    No account found.{" "}
+                    {t("signIn.noAccountPrefix")}
                     <Link
                       href="/activate"
                       className="text-[var(--text-primary)] font-medium hover:underline"
                     >
-                      Start free →
+                      {t("signIn.startFreeCta")}
                     </Link>
                   </div>
                 ) : (
@@ -232,18 +232,18 @@ export default function SignInForm() {
               onClick={() => toast.success(tToast("password.resetSent"))}
               className="hover:text-[var(--text-secondary)] transition underline-offset-2 hover:underline"
             >
-              Forgot password?
+              {t("forgotPassword")}
             </button>
           </p>
         </div>
 
         <p className="text-center text-[var(--text-secondary)] text-[13px]">
-          Don&apos;t have an account?{" "}
+          {t("noAccount")}{" "}
           <Link
             href="/activate"
             className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
           >
-            Start free →
+            {t("signIn.startFreeCta")}
           </Link>
         </p>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { CheckCircle2 } from "lucide-react";
 import { AccordionItem } from "@/components/ui/Accordion";
 import type { Agent, AgentReadiness, WorkspacePhoneNumber } from "../AgentsPageClient";
@@ -20,7 +21,7 @@ type GoLiveStepContentProps = {
 
 export function GoLiveStepContent({
   agent,
-  voices,
+  voices: _voices,
   workspaceNumbers,
   onAssignNumber,
   refetchNumbers,
@@ -29,6 +30,7 @@ export function GoLiveStepContent({
   onActivate,
   activating,
 }: GoLiveStepContentProps) {
+  const t = useTranslations("agents");
   const r = getReadiness(agent);
   const canActivate =
     !!(agent.name?.trim() && agent.greeting?.trim()) &&
@@ -85,7 +87,7 @@ export function GoLiveStepContent({
         </div>
       </div>
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-        <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">Readiness checklist</p>
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">{t("goLive.readinessChecklist")}</p>
         <ul className="space-y-2 text-xs text-[var(--text-secondary)]" role="list">
           {r.tasks.map((task) => (
             <li key={task.label} className="flex items-center gap-2">
@@ -104,15 +106,15 @@ export function GoLiveStepContent({
                   disabled={activating}
                   className="ml-auto rounded text-[11px] font-medium text-[var(--text-primary)] underline underline-offset-1 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50"
                 >
-                  {activating ? "Syncing…" : "Retry sync"}
+                  {activating ? t("goLive.syncing") : t("goLive.retrySync")}
                 </button>
               )}
             </li>
           ))}
         </ul>
       </div>
-      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label="Carrier forwarding instructions">
-        <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">Forward your number to your AI</p>
+      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label={t("goLive.carrierAria")}>
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">{t("goLive.forwardNumber")}</p>
         <div className="space-y-0">
           <AccordionItem title="AT&T" defaultOpen={false}>
             <p className="text-xs text-[var(--text-secondary)] pt-1">Dial *72, then your Recall Touch number. Wait for confirmation. To turn off, dial *73.</p>
@@ -128,12 +130,12 @@ export function GoLiveStepContent({
           </AccordionItem>
         </div>
       </section>
-      <section className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-5 space-y-4" aria-label="Preview how your AI will respond">
-        <h3 className="text-sm font-medium text-white/70 mb-4">Preview — how your AI will respond</h3>
+      <section className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-5 space-y-4" aria-label={t("goLive.previewAria")}>
+        <h3 className="text-sm font-medium text-white/70 mb-4">{t("goLive.previewHeading")}</h3>
         <div className="space-y-4">
           <div>
             <p className="text-xs text-white/40 mb-1">
-              Caller wants to book an appointment
+              {t("goLive.callerBookAppt")}
             </p>
             <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
               {(() => {
@@ -146,15 +148,15 @@ export function GoLiveStepContent({
                   );
                 }
                 if (agent.bookingEnabled !== false) {
-                  return "Your agent will greet the caller, confirm what they need, and offer to book a time on your calendar.";
+                  return t("goLive.defaultGreetingBook");
                 }
-                return "Your agent will greet the caller, gather details, and take a clear message for your team to schedule.";
+                return t("goLive.defaultGreetingMessage");
               })()}
             </p>
           </div>
 
           <div>
-            <p className="text-xs text-white/40 mb-1">Caller asks about pricing</p>
+            <p className="text-xs text-white/40 mb-1">{t("goLive.callerPricing")}</p>
             <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
               {(() => {
                 const faq = agent.faq ?? [];
@@ -171,31 +173,31 @@ export function GoLiveStepContent({
                   r.toLowerCase().includes("pricing") || r.toLowerCase().includes("quote"),
                 );
                 if (never) {
-                  return "Your agent will not give exact pricing (per your rules). It will explain that a human will follow up with a quote and capture contact details.";
+                  return t("goLive.pricingNeverSay");
                 }
                 if (agent.pricingEnabled && (agent.priceList ?? "").trim()) {
-                  return "Your agent will share your saved pricing overview and then guide the caller toward booking or a follow-up.";
+                  return t("goLive.pricingEnabled");
                 }
-                return "Your agent will explain that pricing depends on the situation, offer a rough range if appropriate, and collect details so your team can send a precise quote.";
+                return t("goLive.pricingDefault");
               })()}
             </p>
           </div>
 
           <div>
-            <p className="text-xs text-white/40 mb-1">Caller reaches you after hours</p>
+            <p className="text-xs text-white/40 mb-1">{t("goLive.callerAfterHours")}</p>
             <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
               {(() => {
                 switch (agent.afterHoursMode) {
                   case "forward":
-                    return "Your agent will explain that the office is closed and forward urgent calls to your transfer number, or take a message when forwarding isn’t appropriate.";
+                    return t("goLive.afterHoursForward");
                   case "messages":
-                    return "Your agent will let the caller know you’re closed, capture their name, number, and reason for calling, and confirm that someone will follow up.";
+                    return t("goLive.afterHoursMessages");
                   case "emergency":
-                    return "Your agent will quickly check if it’s an emergency and, if so, transfer to your emergency contact. Otherwise it will take a detailed message.";
+                    return t("goLive.afterHoursEmergency");
                   case "closed":
-                    return "Your agent will state that the office is closed right now, share basic hours if known, and invite the caller to leave a message.";
+                    return t("goLive.afterHoursClosed");
                   default:
-                    return "Your agent will check basic details, let the caller know your team is currently unavailable, and take a message for follow-up.";
+                    return t("goLive.afterHoursDefault");
                 }
               })()}
             </p>
@@ -207,7 +209,7 @@ export function GoLiveStepContent({
             return (
               <div>
                 <p className="text-xs text-white/40 mb-1">
-                  Caller says the price feels too high
+                  {t("goLive.callerPriceHigh")}
                 </p>
                 <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
                   {priceObj.slice(0, 160) + (priceObj.length > 160 ? "…" : "")}
@@ -225,49 +227,49 @@ export function GoLiveStepContent({
             return (
               <div>
                 <p className="text-xs text-white/40 mb-1">
-                  Caller asks to speak to someone else
+                  {t("goLive.callerSpeakToSomeone")}
                 </p>
                 <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
                   {hasTransferNumber
-                    ? "Your agent will stay calm, confirm why they’d like a human, and then transfer to your saved number when your escalation rules match."
-                    : "Your agent will stay calm, explain what it can help with, and if needed, take a message with the caller’s details for a human to follow up."}
+                    ? t("goLive.escalationWithTransfer")
+                    : t("goLive.escalationNoTransfer")}
                 </p>
               </div>
             );
           })()}
         </div>
       </section>
-      <p className="text-xs text-white/40">Connect your phone number or activate for test calls and outbound only.</p>
+      <p className="text-xs text-white/40">{t("goLive.connectPhoneHint")}</p>
       <div className="grid gap-3 sm:grid-cols-2" role="list">
         <Link
           href="/app/settings/phone"
-          aria-label="Forward your existing number. Set up call forwarding to your AI."
+          aria-label={t("goLive.forwardExistingAria")}
           className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          <span className="text-sm font-medium text-[var(--text-primary)]">Forward your existing number</span>
-          <span className="mt-1 text-xs text-[var(--text-secondary)]">Keep your current number. Forward calls to your AI.</span>
-          <span className="mt-3 text-xs font-medium text-[var(--text-secondary)]">Set up forwarding</span>
+          <span className="text-sm font-medium text-[var(--text-primary)]">{t("goLive.forwardExistingTitle")}</span>
+          <span className="mt-1 text-xs text-[var(--text-secondary)]">{t("goLive.forwardExistingDesc")}</span>
+          <span className="mt-3 text-xs font-medium text-[var(--text-secondary)]">{t("goLive.forwardExistingCta")}</span>
         </Link>
         <Link
           href="/app/settings/phone"
-          aria-label="Get a new phone number. We'll assign you a local number instantly."
+          aria-label={t("goLive.getNewNumberAria")}
           className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          <span className="text-sm font-medium text-[var(--text-primary)]">Get a new number</span>
-          <span className="mt-1 text-xs text-[var(--text-secondary)]">We&apos;ll assign you a local number instantly.</span>
-          <span className="mt-3 text-xs font-medium text-[var(--text-secondary)]">Get number</span>
+          <span className="text-sm font-medium text-[var(--text-primary)]">{t("goLive.getNewNumberTitle")}</span>
+          <span className="mt-1 text-xs text-[var(--text-secondary)]">{t("goLive.getNewNumberDesc")}</span>
+          <span className="mt-3 text-xs font-medium text-[var(--text-secondary)]">{t("goLive.getNewNumberCta")}</span>
         </Link>
       </div>
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Test" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">Back</button>
+        <button type="button" onClick={onBack} aria-label={t("goLive.backToTestAria")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{t("goLive.backButton")}</button>
         <button
           type="button"
           onClick={() => void onActivate()}
           disabled={!allowActivate || activating}
-          aria-label="Activate agent"
+          aria-label={t("goLive.activateAgentAria")}
           className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          {activating ? "Activating…" : "Activate agent"}
+          {activating ? t("goLive.activating") : t("goLive.activateAgent")}
         </button>
       </div>
     </div>

@@ -66,7 +66,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     appointment_handling,
     faq_extra,
   });
-  const firstMessage = (a.greeting && String(a.greeting).trim()) || `Hello, this is ${agent_name}. How can I help you today?`;
+  const _firstMessage = (a.greeting && String(a.greeting).trim()) || `Hello, this is ${agent_name}. How can I help you today?`;
 
   const voice = getVoiceProvider();
 

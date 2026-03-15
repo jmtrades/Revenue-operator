@@ -1,36 +1,27 @@
 "use client";
 
-import { Suspense, useState, useEffect, useCallback } from "react";
+import { Suspense, useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
 
 const STEPS = 5;
-const INDUSTRIES = [
-  { value: "home_services", label: "Home Services" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "legal", label: "Legal" },
-  { value: "real_estate", label: "Real Estate" },
-  { value: "insurance", label: "Insurance" },
-  { value: "b2b_sales", label: "B2B Sales" },
-  { value: "local_business", label: "Local Business" },
-  { value: "contractors", label: "Contractors" },
-];
+const INDUSTRY_VALUES = ["home_services", "healthcare", "legal", "real_estate", "insurance", "b2b_sales", "local_business", "contractors"] as const;
 const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Mike", "Lisa"];
-const VOICES = [
-  { id: "warm", label: "Warm & friendly" },
-  { id: "professional", label: "Professional" },
-  { id: "casual", label: "Casual" },
-  { id: "calm", label: "Calm" },
-];
+const VOICE_IDS = ["warm", "professional", "casual", "calm"] as const;
 
 function OnboardingWizard() {
+  const t = useTranslations("dashboard.onboardingWizard");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { workspaceId, workspaces, loadWorkspaces } = useWorkspace();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const industries = useMemo(() => INDUSTRY_VALUES.map((value) => ({ value, label: t(`industries.${value}`) })), [t]);
+  const voices = useMemo(() => VOICE_IDS.map((id) => ({ id, label: t(`voices.${id}`) })), [t]);
 
   // Step 1
   const [businessName, setBusinessName] = useState("");
@@ -77,25 +68,25 @@ function OnboardingWizard() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          business_name: businessName || "My Business",
+          business_name: businessName || t("myBusiness"),
           offer_summary: industry ? `${industry.replace(/_/g, " ")} services` : "",
         }),
       });
-      if (!ctxRes.ok) throw new Error("Failed to save");
+      if (!ctxRes.ok) throw new Error("FAILED_SAVE");
       setStep(2);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : "SOMETHING_WRONG");
     } finally {
       setSaving(false);
     }
-  }, [wid, businessName, industry]);
+  }, [wid, businessName, industry, t]);
 
   const saveStep2 = useCallback(async () => {
     if (!wid) return;
     setSaving(true);
     setError(null);
     try {
-      const greetingText = greeting.trim() || `Thanks for calling ${businessName || "the business"}! This is ${agentName}. How can I help you today?`;
+      const greetingText = greeting.trim() || t("greetingPlaceholder", { business: businessName || t("theBusiness"), agent: agentName });
       const res = await fetch("/api/onboarding/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,15 +100,15 @@ function OnboardingWizard() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error((data as { error?: string }).error || "Failed to save agent");
+        throw new Error((data as { error?: string }).error || "FAILED_SAVE_AGENT");
       }
       setStep(3);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : "SOMETHING_WRONG");
     } finally {
       setSaving(false);
     }
-  }, [wid, agentName, voiceId, greeting, capabilities, businessName]);
+  }, [wid, agentName, voiceId, greeting, capabilities, businessName, t]);
 
   const saveStep3 = useCallback(async () => {
     if (!wid) return;
@@ -135,10 +126,10 @@ function OnboardingWizard() {
           faq_extra: faqExtra.trim() || undefined,
         }),
       });
-      if (!res.ok) throw new Error("Failed to save");
+      if (!res.ok) throw new Error("FAILED_SAVE");
       setStep(4);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : "SOMETHING_WRONG");
     } finally {
       setSaving(false);
     }
@@ -174,7 +165,7 @@ function OnboardingWizard() {
       }
       if (data.error) setError(data.error);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : "SOMETHING_WRONG");
     } finally {
       setProvisioning(false);
     }
@@ -199,9 +190,9 @@ function OnboardingWizard() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <div className="max-w-lg text-center">
-          <h1 className="text-2xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Get started</h1>
-          <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>Create an account first. Your phone system will be ready in minutes.</p>
-          <Link href="/activate" className="inline-block py-2.5 px-4 rounded-xl font-semibold text-sm bg-white text-black hover:bg-zinc-100 transition-colors">Start free</Link>
+          <h1 className="text-2xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>{t("getStartedHeading")}</h1>
+          <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{t("getStartedSubtitle")}</p>
+          <Link href="/activate" className="inline-block py-2.5 px-4 rounded-xl font-semibold text-sm bg-white text-black hover:bg-zinc-100 transition-colors">{t("startFree")}</Link>
         </div>
       </div>
     );
@@ -225,7 +216,7 @@ function OnboardingWizard() {
               />
             ))}
           </div>
-          <p className="text-xs text-center" style={{ color: "var(--text-tertiary)" }}>Step {step} of {STEPS}</p>
+          <p className="text-xs text-center" style={{ color: "var(--text-tertiary)" }}>{t("stepOf", { step, total: STEPS })}</p>
         </div>
 
         {error && (
@@ -235,33 +226,33 @@ function OnboardingWizard() {
         {/* Step 1: Your business */}
         {step === 1 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>Tell us about your business</h1>
+            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>{t("tellUsAboutBusiness")}</h1>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Business name</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("businessName")}</label>
               <input
                 type="text"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="Acme Plumbing"
+                placeholder={t("businessNamePlaceholder")}
                 className="w-full px-4 py-3 rounded-lg border"
                 style={{ background: "var(--surface)", borderColor: "var(--card-border)", color: "var(--text-primary)" }}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Website (optional)</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("websiteOptional")}</label>
               <input
                 type="url"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
-                placeholder="acmeplumbing.com"
+                placeholder={t("websitePlaceholder")}
                 className="w-full px-4 py-3 rounded-lg border"
                 style={{ background: "var(--surface)", borderColor: "var(--card-border)", color: "var(--text-primary)" }}
               />
             </div>
             <div>
-              <span className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Industry</span>
+              <span className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>{t("industry")}</span>
               <div className="flex flex-wrap gap-2">
-                {INDUSTRIES.map(({ value, label }) => (
+                {industries.map(({ value, label }) => (
                   <button
                     key={value}
                     type="button"
@@ -279,7 +270,7 @@ function OnboardingWizard() {
               </div>
             </div>
             <button onClick={saveStep1} disabled={saving} className="w-full py-3 rounded-lg font-medium text-sm disabled:opacity-50" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
-              {saving ? "Saving…" : "Continue →"}
+              {saving ? t("saving") : t("continue")}
             </button>
           </div>
         )}
@@ -287,10 +278,10 @@ function OnboardingWizard() {
         {/* Step 2: Meet your AI agent */}
         {step === 2 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>Meet your receptionist</h1>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Your agent will answer calls, capture leads, and book appointments for {businessName || "your business"}.</p>
+            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>{t("meetReceptionist")}</h1>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("agentWillAnswerFor", { name: businessName || t("theBusiness") })}</p>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Agent name</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("agentName")}</label>
               <select
                 value={agentName}
                 onChange={(e) => setAgentName(e.target.value)}
@@ -303,32 +294,32 @@ function OnboardingWizard() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Voice</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("voice")}</label>
               <select
                 value={voiceId}
                 onChange={(e) => setVoiceId(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg border"
                 style={{ background: "var(--surface)", borderColor: "var(--card-border)", color: "var(--text-primary)" }}
               >
-                {VOICES.map((v) => (
+                {voices.map((v) => (
                   <option key={v.id} value={v.id}>{v.label}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Greeting (optional)</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("greetingOptional")}</label>
               <textarea
                 value={greeting}
                 onChange={(e) => setGreeting(e.target.value)}
-                placeholder={`Thanks for calling ${businessName || "the business"}! This is ${agentName}. How can I help you today?`}
+                placeholder={t("greetingPlaceholder", { business: businessName || t("theBusiness"), agent: agentName })}
                 rows={2}
                 className="w-full px-4 py-3 rounded-lg border text-sm"
                 style={{ background: "var(--surface)", borderColor: "var(--card-border)", color: "var(--text-primary)" }}
               />
             </div>
             <div className="flex gap-2 pt-2">
-              <button type="button" onClick={() => setStep(1)} className="py-2.5 px-4 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}>← Back</button>
-              <button onClick={saveStep2} disabled={saving} className="flex-1 py-3 rounded-lg font-medium text-sm disabled:opacity-50" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>{saving ? "Saving…" : "Continue →"}</button>
+              <button type="button" onClick={() => setStep(1)} className="py-2.5 px-4 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}>{t("back")}</button>
+              <button onClick={saveStep2} disabled={saving} className="flex-1 py-3 rounded-lg font-medium text-sm disabled:opacity-50" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>{saving ? t("saving") : t("continue")}</button>
             </div>
           </div>
         )}
@@ -336,61 +327,61 @@ function OnboardingWizard() {
         {/* Step 3: Teach your AI */}
         {step === 3 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>Teach {agentName} about your business</h1>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>The more you share, the smarter your agent gets.</p>
+            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>{t("teachAgentAbout", { name: agentName })}</h1>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("moreYouShare")}</p>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>What services do you offer?</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("whatServicesOffer")}</label>
               <textarea
                 value={services}
                 onChange={(e) => setServices(e.target.value)}
-                placeholder="Drain cleaning, water heater repair, leak detection, pipe repair..."
+                placeholder={t("servicesPlaceholder")}
                 rows={3}
                 className="w-full px-4 py-3 rounded-lg border text-sm"
                 style={{ background: "var(--surface)", borderColor: "var(--card-border)", color: "var(--text-primary)" }}
               />
             </div>
             <div>
-              <span className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Do you handle emergencies after hours?</span>
+              <span className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>{t("handleEmergenciesAfterHours")}</span>
               <div className="space-y-2">
                 {(["call_me", "message", "next_day"] as const).map((opt) => (
                   <label key={opt} className="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="emergencies" checked={emergenciesAfterHours === opt} onChange={() => setEmergenciesAfterHours(opt)} className="rounded-full" />
                     <span className="text-sm" style={{ color: "var(--text-primary)" }}>
-                      {opt === "call_me" && "Yes — call me back soon"}
-                      {opt === "message" && "Yes — take a message and I'll call back"}
-                      {opt === "next_day" && "No — take a message for next business day"}
+                      {opt === "call_me" && t("optCallMe")}
+                      {opt === "message" && t("optMessage")}
+                      {opt === "next_day" && t("optNextDay")}
                     </span>
                   </label>
                 ))}
               </div>
             </div>
             <div>
-              <span className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>How should appointments be handled?</span>
+              <span className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>{t("howAppointmentsHandled")}</span>
               <div className="space-y-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="radio" name="appt" checked={appointmentHandling === "calendar"} onChange={() => setAppointmentHandling("calendar")} className="rounded-full" />
-                  <span className="text-sm" style={{ color: "var(--text-primary)" }}>Book directly into my calendar</span>
+                  <span className="text-sm" style={{ color: "var(--text-primary)" }}>{t("apptCalendar")}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="radio" name="appt" checked={appointmentHandling === "capture"} onChange={() => setAppointmentHandling("capture")} className="rounded-full" />
-                  <span className="text-sm" style={{ color: "var(--text-primary)" }}>Capture details and I&apos;ll confirm later</span>
+                  <span className="text-sm" style={{ color: "var(--text-primary)" }}>{t("apptCapture")}</span>
                 </label>
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Anything callers always ask? (optional)</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("anythingCallersAsk")}</label>
               <textarea
                 value={faqExtra}
                 onChange={(e) => setFaqExtra(e.target.value)}
-                placeholder="Service call starts at $89. Serves the greater Portland area. Free estimates on remodels."
+                placeholder={t("faqPlaceholder")}
                 rows={2}
                 className="w-full px-4 py-3 rounded-lg border text-sm"
                 style={{ background: "var(--surface)", borderColor: "var(--card-border)", color: "var(--text-primary)" }}
               />
             </div>
             <div className="flex gap-2 pt-2">
-              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}>← Back</button>
-              <button onClick={saveStep3} disabled={saving} className="flex-1 py-3 rounded-lg font-medium text-sm disabled:opacity-50" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>{saving ? "Saving…" : "Continue →"}</button>
+              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}>{t("back")}</button>
+              <button onClick={saveStep3} disabled={saving} className="flex-1 py-3 rounded-lg font-medium text-sm disabled:opacity-50" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>{saving ? t("saving") : t("continue")}</button>
             </div>
           </div>
         )}
@@ -398,27 +389,27 @@ function OnboardingWizard() {
         {/* Step 4: Your phone number */}
         {step === 4 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>Your business number</h1>
+            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>{t("yourBusinessNumber")}</h1>
             {!phoneNumber ? (
               <>
-                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>You&apos;ll get a number for your agent to answer. You can forward your existing number or use this as your main business line.</p>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("youllGetNumber")}</p>
                 <button onClick={provisionNumber} disabled={provisioning} className="w-full py-3 rounded-lg font-medium text-sm disabled:opacity-50" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
-                  {provisioning ? "Getting your number…" : "Get my number"}
+                  {provisioning ? t("gettingNumber") : t("getMyNumber")}
                 </button>
               </>
             ) : (
               <>
                 <div className="p-4 rounded-xl text-center" style={{ background: "var(--bg-elevated)" }}>
                   <p className="text-2xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>{phoneNumber}</p>
-                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>This is your Recall Touch number</p>
+                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{t("thisIsRecallTouchNumber")}</p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>Choose how to use it:</p>
+                  <p className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>{t("chooseHowToUse")}</p>
                   {[
-                    { value: "forward" as const, label: "Forward my existing number", sub: "Calls forward when you can't answer." },
-                    { value: "main" as const, label: "Use this as my business number", sub: "Put it on your website, cards, and ads. Every call is answered first." },
-                    { value: "later" as const, label: "I'll set this up later", sub: "" },
-                  ].map(({ value, label, sub }) => (
+                    { value: "forward" as const, labelKey: "forwardExisting" as const, subKey: "forwardSub" as const },
+                    { value: "main" as const, labelKey: "useAsBusinessNumber" as const, subKey: "useAsSub" as const },
+                    { value: "later" as const, labelKey: "setUpLater" as const, subKey: null },
+                  ].map(({ value, labelKey, subKey }) => (
                     <button
                       key={value}
                       type="button"
@@ -430,14 +421,14 @@ function OnboardingWizard() {
                         color: "var(--text-primary)",
                       }}
                     >
-                      <span className="text-sm font-medium block">{label}</span>
-                      {sub && <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>{sub}</span>}
+                      <span className="text-sm font-medium block">{t(labelKey)}</span>
+                      {subKey && <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>{t(subKey)}</span>}
                     </button>
                   ))}
                 </div>
                 <div className="flex gap-2 pt-2">
-                  <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}>← Back</button>
-                  <button onClick={() => setStep(5)} className="flex-1 py-3 rounded-lg font-medium text-sm" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>Continue →</button>
+                  <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}>{t("back")}</button>
+                  <button onClick={() => setStep(5)} className="flex-1 py-3 rounded-lg font-medium text-sm" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>{t("continue")}</button>
                 </div>
               </>
             )}
@@ -447,24 +438,24 @@ function OnboardingWizard() {
         {/* Step 5: Test your AI */}
         {step === 5 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>Your agent is ready. Let&apos;s test it.</h1>
+            <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>{t("agentReadyTest")}</h1>
             {phoneNumber && (
               <div className="p-6 rounded-xl text-center" style={{ background: "var(--bg-elevated)" }}>
-                <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>Call this number from your phone:</p>
+                <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{t("callThisNumber")}</p>
                 <p className="text-2xl font-semibold mb-4" style={{ color: "var(--text-primary)" }}>{phoneNumber}</p>
-                <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Try: &ldquo;I need a plumber for a leaky faucet&rdquo; or &ldquo;What are your hours?&rdquo;</p>
-                <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>When you call, you&apos;ll see it appear in your activity feed.</p>
+                <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>{t("tryPhrase")}</p>
+                <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{t("whenYouCallAppear")}</p>
               </div>
             )}
             {!phoneNumber && (
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>You can add a phone number later in Settings. Your agent is set up and ready.</p>
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("addNumberLaterInSettings")}</p>
             )}
             <div className="flex flex-col gap-2">
               <button onClick={finishOnboarding} className="w-full py-3 rounded-lg font-medium text-sm" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
-                Take me to my dashboard →
+                {t("takeMeToDashboard")}
               </button>
               <button type="button" onClick={finishOnboarding} className="w-full py-2.5 rounded-lg text-sm font-medium" style={{ color: "var(--text-tertiary)" }}>
-                Skip — I&apos;ll test later
+                {t("skipTestLater")}
               </button>
             </div>
           </div>
@@ -474,15 +465,18 @@ function OnboardingWizard() {
   );
 }
 
+function OnboardingPageFallback() {
+  const t = useTranslations("dashboard.onboardingWizard");
+  return (
+    <div className="min-h-[80vh] flex items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
+      <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("oneMoment")}</p>
+    </div>
+  );
+}
+
 export default function OnboardingPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-[80vh] flex items-center justify-center p-8" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
-        </div>
-      }
-    >
+    <Suspense fallback={<OnboardingPageFallback />}>
       <OnboardingWizard />
     </Suspense>
   );

@@ -11,23 +11,27 @@ const START_PAGE = path.join(ROOT, "src", "app", "dashboard", "start", "page.tsx
 const CONTINUITY_LINE = path.join(ROOT, "src", "components", "ExecutionContinuityLine.tsx");
 const MAX_WORDS = 14;
 
-const START_PAGE_COPY = [
-  "Execution is now under institutional governance.",
-  "Handling not observed recently.",
-  "One moment…",
-  "First activity recorded under governance.",
-  "You are operating at institutional standard.",
-  "All handling follows declared governance parameters.",
-];
+const EN_MESSAGES = path.join(ROOT, "src", "i18n", "messages", "en.json");
 
 describe("Start surface copy length", () => {
-  it("every user-facing sentence on start page is at most 14 words", () => {
-    const content = readFileSync(START_PAGE, "utf-8");
-    for (const phrase of START_PAGE_COPY) {
-      expect(content).toContain(phrase);
-      const words = phrase.split(/\s+/).filter(Boolean);
+  it("every user-facing sentence on start page is at most 14 words (en locale)", () => {
+    const raw = readFileSync(EN_MESSAGES, "utf-8");
+    const dash = JSON.parse(raw) as { dashboard?: { startPage?: Record<string, string> } };
+    const startPage = dash.dashboard?.startPage ?? {};
+    const copyKeys = [
+      "activationGovernance",
+      "handlingStale",
+      "firstWinMessage",
+      "operatingInstitutional",
+      "handlingFollowsGovernance",
+    ];
+    for (const key of copyKeys) {
+      const phrase = startPage[key];
+      expect(phrase, key).toBeDefined();
+      const words = phrase!.split(/\s+/).filter(Boolean);
       expect(words.length).toBeLessThanOrEqual(MAX_WORDS);
     }
+    expect(readFileSync(START_PAGE, "utf-8")).toContain("dashboard.startPage");
   });
 
   it("ExecutionContinuityLine has only short clauses", () => {

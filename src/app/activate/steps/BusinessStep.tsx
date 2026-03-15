@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ActivationState } from "./types";
 import { ORG_TYPES, USE_CASE_OPTIONS } from "./types";
 import { INDUSTRY_OPTIONS, getServicesForIndustry } from "@/lib/constants/industries";
@@ -15,49 +16,49 @@ export function BusinessStep({
   goNext: () => void;
   canGoNext: boolean;
 }) {
+  const t = useTranslations("activate.business");
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-lg md:text-xl font-semibold text-slate-50">
-          Let&apos;s build your AI phone agent.
+          {t("heading")}
         </h2>
         <p className="mt-1 text-sm text-slate-400">
-          This takes about 3 minutes. You&apos;ll hear your agent handle
-          a real call at the end.
+          {t("subtitle")}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label htmlFor="business_name" className="block text-xs font-medium text-slate-300">
-            Business name
+            {t("businessNameLabel")}
           </label>
           <input
             id="business_name"
             type="text"
             value={state.businessName}
             onChange={(e) => setState((prev) => ({ ...prev, businessName: e.target.value }))}
-            placeholder="Acme Co"
+            placeholder={t("businessNamePlaceholder")}
             className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           />
         </div>
         <div className="space-y-2">
           <label htmlFor="business_phone" className="block text-xs font-medium text-slate-300">
-            Business phone number
+            {t("businessPhoneLabel")}
           </label>
           <input
             id="business_phone"
             type="tel"
             value={state.businessPhone}
             onChange={(e) => setState((prev) => ({ ...prev, businessPhone: e.target.value }))}
-            placeholder="(555) 123-4567"
+            placeholder={t("businessPhonePlaceholder")}
             className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <p className="text-xs font-medium text-slate-300">What will your AI do?</p>
+        <p className="text-xs font-medium text-slate-300">{t("whatWillAiDoLabel")}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {USE_CASE_OPTIONS.map((opt) => {
             const checked = state.useCases.includes(opt.id);
@@ -89,7 +90,7 @@ export function BusinessStep({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="org_type" className="block text-xs font-medium text-slate-300">Type of organization</label>
+        <label htmlFor="org_type" className="block text-xs font-medium text-slate-300">{t("orgTypeLabel")}</label>
         <select
           id="org_type"
           value={state.orgType ?? ""}
@@ -109,7 +110,7 @@ export function BusinessStep({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="industry_opt" className="block text-xs font-medium text-slate-300">Industry (optional — helps us suggest a template)</label>
+        <label htmlFor="industry_opt" className="block text-xs font-medium text-slate-300">{t("industryLabel")}</label>
         <select
           id="industry_opt"
           value={state.industry ?? ""}
@@ -131,14 +132,14 @@ export function BusinessStep({
       </div>
 
       <div className="flex items-center justify-between gap-3 pt-2">
-        <span className="text-xs text-slate-500">You can change this later in Settings.</span>
+        <span className="text-xs text-slate-500">{t("changeLaterHint")}</span>
         <button
           type="button"
           onClick={goNext}
           disabled={!canGoNext}
           className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs md:text-sm font-semibold text-black hover:bg-slate-100 disabled:opacity-60"
         >
-          Next →
+          {t("next")}
         </button>
       </div>
     </div>

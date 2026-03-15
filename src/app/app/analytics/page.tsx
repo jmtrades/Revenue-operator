@@ -543,7 +543,7 @@ export default function AppAnalyticsPage() {
         <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-[#4F8CFF]" />
-            <h3 className="text-sm font-medium text-[#EDEDEF]">Period Summary</h3>
+            <h3 className="text-sm font-medium text-[#EDEDEF]">{t("analytics.periodSummary.title")}</h3>
             <span className="text-xs text-[#5A5A5C] ml-auto">{summaryLabel}</span>
           </div>
           <p
@@ -574,13 +574,13 @@ export default function AppAnalyticsPage() {
       {!hasData && !loading && !error && (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 mb-6 text-center">
           <BarChart3 className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-          <p className="text-sm font-medium text-white mb-1">Analytics populate as calls come in</p>
-          <p className="text-xs text-zinc-500 mb-4">Your first chart will appear after your first call.</p>
+          <p className="text-sm font-medium text-white mb-1">{t("analytics.emptyHeading")}</p>
+          <p className="text-xs text-zinc-500 mb-4">{t("analytics.emptyDescription")}</p>
           <Link
             href="/app/agents"
             className="text-[#4F8CFF] hover:underline text-sm mt-2 inline-block"
           >
-            Make a test call →
+            {t("analytics.emptyAction")} →
           </Link>
         </div>
       )}

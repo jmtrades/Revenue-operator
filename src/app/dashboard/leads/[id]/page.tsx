@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ProofDrawer } from "@/components/ProofDrawer";
 import { LoadingState, Card } from "@/components/ui";
 import { Shell } from "@/components/Shell";
@@ -42,6 +43,8 @@ interface PreCallBrief {
 export default function LeadViewPage() {
   const params = useParams();
   const _router = useRouter();
+  const tSituation = useTranslations("dashboard.leadDetailSituation");
+  const tLead = useTranslations("dashboard.leadDetailPage");
   const id = params.id as string;
   const [lead, setLead] = useState<Lead | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -130,18 +133,18 @@ export default function LeadViewPage() {
 
   if (loading) return (
     <Shell size="md">
-      <LoadingState message="One moment…" submessage="" />
+      <LoadingState message={tLead("loadingMessage")} submessage="" />
     </Shell>
   );
   if (!lead) return (
     <Shell size="md">
       <Card>
-        <span style={{ color: "var(--text-secondary)" }}>Data remains from last view.</span>
+        <span style={{ color: "var(--text-secondary)" }}>{tLead("dataRemainsFromLastView")}</span>
       </Card>
     </Shell>
   );
 
-  const displayName = lead.name || lead.email || lead.company || "Unknown";
+  const displayName = lead.name || lead.email || lead.company || tLead("unknown");
   const isCompleted = lead.responsibility_state === "COMPLETED";
 
   if (isCompleted) {
@@ -149,20 +152,20 @@ export default function LeadViewPage() {
       <div className="min-h-screen" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
         <Shell size="md">
           <p className="text-sm mb-8" style={{ color: "var(--text-muted)", letterSpacing: "0.01em" }}>
-            <Link href="/dashboard/conversations" className="focus-ring rounded px-0.5" style={{ color: "var(--text-muted)" }}>Follow-through</Link>
+            <Link href="/dashboard/conversations" className="focus-ring rounded px-0.5" style={{ color: "var(--text-muted)" }}>{tLead("followThrough")}</Link>
             <span className="mx-1">/</span>
             <span style={{ color: "var(--text-secondary)" }}>{displayName}</span>
           </p>
           <section className="mb-10">
             <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--text-primary)", lineHeight: 1.4 }}>{displayName}</h1>
             {lead.company && <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{lead.company}</p>}
-            <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>Record integrity is demonstrable.</p>
+            <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>{tLead("recordIntegrityDemonstrable")}</p>
           </section>
-          <p className="text-sm mb-8" style={{ color: "var(--text-muted)" }}>Handled.</p>
+          <p className="text-sm mb-8" style={{ color: "var(--text-muted)" }}>{tLead("handled")}</p>
           <section className="mb-10" style={{ borderTop: "1px solid var(--border)", paddingTop: "var(--space-8)" }}>
-            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Record</h2>
+            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>{tLead("record")}</h2>
             {messages.length === 0 ? (
-              <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>No record.</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{tLead("noRecord")}</p>
             ) : (
               <div className="space-y-4">
                 {messages.map((m, i) => (
@@ -178,17 +181,10 @@ export default function LeadViewPage() {
     );
   }
 
-  const situationSummary: Record<string, string> = {
-    NEW: "Conversation started.",
-    CONTACTED: "Waiting on availability.",
-    ENGAGED: "Conversation in progress.",
-    QUALIFIED: "Still considering scheduling.",
-    BOOKED: "Appointment remains prepared.",
-    SHOWED: "Appointment completed.",
-    LOST: "Conversation paused.",
-    REACTIVATE: "Conversation paused.",
-  };
-  const situationLine = situationSummary[lead.state] ?? "Conversation in progress.";
+  const situationKeys = ["NEW", "CONTACTED", "ENGAGED", "QUALIFIED", "BOOKED", "SHOWED", "LOST", "REACTIVATE"] as const;
+  const situationLine = situationKeys.includes(lead.state as (typeof situationKeys)[number])
+    ? tSituation(lead.state as (typeof situationKeys)[number])
+    : tSituation("fallback");
 
   const recordDecision = () => {
     if (!openEscalationId) return;
@@ -206,10 +202,10 @@ export default function LeadViewPage() {
     <div className="min-h-screen" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
       <Shell size="md">
         {recordedBanner && (
-          <p className="mb-6 text-sm py-2 border-b" style={{ color: "var(--text-muted)", borderColor: "var(--border-subtle)" }}>Entry stored.</p>
+          <p className="mb-6 text-sm py-2 border-b" style={{ color: "var(--text-muted)", borderColor: "var(--border-subtle)" }}>{tLead("entryStored")}</p>
         )}
         <p className="text-sm mb-8" style={{ color: "var(--text-muted)", letterSpacing: "0.01em" }}>
-          <Link href="/dashboard/conversations" className="focus-ring rounded px-0.5" style={{ color: "var(--text-muted)" }}>Follow-through</Link>
+          <Link href="/dashboard/conversations" className="focus-ring rounded px-0.5" style={{ color: "var(--text-muted)" }}>{tLead("followThrough")}</Link>
           <span className="mx-1">/</span>
           <span style={{ color: "var(--text-secondary)" }}>{displayName}</span>
         </p>
@@ -219,20 +215,20 @@ export default function LeadViewPage() {
           <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--text-primary)", lineHeight: 1.4 }}>{displayName}</h1>
           {lead.company && <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{lead.company}</p>}
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{situationLine}</p>
-          <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>Record integrity is demonstrable.</p>
+          <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>{tLead("recordIntegrityDemonstrable")}</p>
         </section>
 
         {workspacePaused && (
           <div className="mb-6 py-3 px-4 rounded-xl" style={{ background: "rgba(243, 156, 18, 0.08)", border: "1px solid var(--border)", borderRadius: "var(--radius-container)" }}>
-            <p className="text-sm" style={{ color: "var(--text-primary)" }}>Normal conditions are not present. Resume in preferences.</p>
+            <p className="text-sm" style={{ color: "var(--text-primary)" }}>{tLead("normalConditionsNotPresentResume")}</p>
           </div>
         )}
 
         {/* Record */}
         <section className="mb-10" style={{ borderTop: "1px solid var(--border)", paddingTop: "var(--space-8)" }}>
-          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Record</h2>
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>{tLead("record")}</h2>
           {messages.length === 0 ? (
-            <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>No record.</p>
+            <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{tLead("noRecord")}</p>
           ) : (
             <div className="space-y-4">
               {messages.map((m, i) => (
@@ -246,21 +242,21 @@ export default function LeadViewPage() {
 
         {/* Outcome */}
         <section style={{ borderTop: "1px solid var(--border)", paddingTop: "var(--space-8)" }}>
-          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Outcome</h2>
+          <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>{tLead("outcome")}</h2>
           {openEscalationId && (
             <>
-              <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>Outside authority.</p>
-              {beyondScope && <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>Beyond scope.</p>}
-              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>An entry exists for record.</p>
-              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>Unrecorded outcomes create exposure.</p>
-              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>Entry restores reliance.</p>
+              <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>{tLead("outsideAuthority")}</p>
+              {beyondScope && <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>{tLead("beyondScope")}</p>}
+              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>{tLead("entryExistsForRecord")}</p>
+              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>{tLead("unrecordedOutcomesCreateExposure")}</p>
+              <p className="text-sm mb-3 -mt-2" style={{ color: "var(--text-muted)" }}>{tLead("entryRestoresReliance")}</p>
             </>
           )}
           <div className="flex flex-wrap gap-3">
             {openEscalationId && (
-              <PrimaryAction onClick={recordDecision}>Enter outcome</PrimaryAction>
+              <PrimaryAction onClick={recordDecision}>{tLead("enterOutcome")}</PrimaryAction>
             )}
-            <SecondaryAction onClick={() => setProofOpen(true)}>How it progressed</SecondaryAction>
+            <SecondaryAction onClick={() => setProofOpen(true)}>{tLead("howItProgressed")}</SecondaryAction>
           </div>
         </section>
       </Shell>

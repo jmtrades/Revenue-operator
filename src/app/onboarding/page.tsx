@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const INDUSTRIES = [
   { id: "home_services", label: "Home Services" },
@@ -26,6 +27,7 @@ const CAPABILITIES = [
 ];
 
 export default function OnboardingPage() {
+  const t = useTranslations("onboarding");
   const _router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -251,7 +253,7 @@ export default function OnboardingPage() {
             </div>
             {error && <p className="text-sm mt-4" style={{ color: "var(--meaning-red)" }}>{error}</p>}
             <button type="button" onClick={submitStep2} disabled={loading} className="mt-6 w-full py-3 rounded-lg font-medium" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
-              {loading ? "Saving…" : "Continue →"}
+              {loading ? t("saving") : t("continue")}
             </button>
           </div>
         )}
@@ -296,7 +298,7 @@ export default function OnboardingPage() {
             </div>
             {error && <p className="text-sm mt-4" style={{ color: "var(--meaning-red)" }}>{error}</p>}
             <button type="button" onClick={submitStep3} disabled={loading} className="mt-6 w-full py-3 rounded-lg font-medium" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
-              {loading ? "Saving…" : "Continue →"}
+              {loading ? t("saving") : t("continue")}
             </button>
           </div>
         )}

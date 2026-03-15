@@ -21,9 +21,9 @@ describe("Start identity line", () => {
 
   it("has operational state card with handling status and review structure", () => {
     const content = readFileSync(START_PAGE, "utf-8");
-    expect(content).toContain("Operational state");
-    expect(content).toContain("Handling status");
-    expect(content).toContain("Review structure");
+    expect(content).toContain('ts("operationalState")');
+    expect(content).toContain('ts("handlingStatus")');
+    expect(content).toContain('ts("reviewStructure")');
   });
 
   it("has no CTA or metrics in continuity block", () => {

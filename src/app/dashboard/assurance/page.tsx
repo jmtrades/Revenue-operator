@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 /**
@@ -7,12 +8,13 @@ import { useWorkspace } from "@/components/WorkspaceContext";
  * No logs, counts, or timelines. Only demonstrable correctness language.
  */
 export default function AssurancePage() {
+  const t = useTranslations("dashboard.assurance");
   const { workspaceId } = useWorkspace();
 
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-2xl">
-        <p style={{ color: "var(--text-muted)" }}>Authority is present.</p>
+        <p style={{ color: "var(--text-muted)" }}>{t("authorityPresent")}</p>
       </div>
     );
   }
@@ -21,50 +23,50 @@ export default function AssurancePage() {
     <div className="p-8 max-w-2xl space-y-16">
       <header>
         <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>
-          Assurance
+          {t("title")}
         </h1>
         <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-          Verification occurs within authority.
+          {t("subtitle")}
         </p>
       </header>
 
       <section className="space-y-4">
         <h2 className="text-sm font-medium uppercase" style={{ color: "var(--text-secondary)" }}>
-          Events are ordered
+          {t("eventsOrdered")}
         </h2>
         <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          Every signal and action is sequenced. The system does not process outcomes out of order; causality is preserved so that what happened can be reconstructed and verified.
+          {t("eventsOrderedBody")}
         </p>
       </section>
 
       <section className="space-y-4">
         <h2 className="text-sm font-medium uppercase" style={{ color: "var(--text-secondary)" }}>
-          Outcomes are verified
+          {t("outcomesVerified")}
         </h2>
         <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          Completion is confirmed, not assumed. Delivery and reconciliation confirm that actions reached their destination and that external reality matches what the system holds. Discrepancies are detected and escalated.
+          {t("outcomesVerifiedBody")}
         </p>
       </section>
 
       <section className="space-y-4">
         <h2 className="text-sm font-medium uppercase" style={{ color: "var(--text-secondary)" }}>
-          Responsibility concludes
+          {t("responsibilityConcludes")}
         </h2>
         <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          Every responsibility has an end state. The system does not leave obligations open indefinitely. Closure is enforced so that a clear handoff or conclusion is available.
+          {t("responsibilityConcludesBody")}
         </p>
       </section>
 
       <section className="space-y-4">
         <h2 className="text-sm font-medium uppercase" style={{ color: "var(--text-secondary)" }}>
-          Invalid states cannot persist
+          {t("invalidStates")}
         </h2>
         <p className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          Integrity checks run so that inconsistent or impossible states are detected. When something is wrong, the system escalates rather than proceeding within authority.           Trust is replaced by demonstrable correctness.
+          {t("invalidStatesBody")}
         </p>
       </section>
       <p className="text-sm mt-8" style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>
-        Reliance is defined by entry state.
+        {t("relianceDefined")}
       </p>
     </div>
   );

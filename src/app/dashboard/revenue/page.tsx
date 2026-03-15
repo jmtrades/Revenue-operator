@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
-const CALM_MESSAGE = "Calendar fill and return timing continue here.";
-const ERROR_MESSAGE = "Normal conditions are not present.";
-
 export default function RevenuePage() {
+  const t = useTranslations("dashboard.revenue");
   const { workspaceId } = useWorkspace();
   const [error, setError] = useState<boolean>(false);
 
@@ -23,7 +22,7 @@ export default function RevenuePage() {
   if (!workspaceId) {
     return (
       <div className="p-8">
-        <p style={{ color: "var(--text-muted)" }}>Follow-through remains in place.</p>
+        <p style={{ color: "var(--text-muted)" }}>{t("followThroughInPlace")}</p>
       </div>
     );
   }
@@ -31,14 +30,14 @@ export default function RevenuePage() {
   if (error) {
     return (
       <div className="p-8">
-        <p style={{ color: "var(--meaning-red)" }}>{ERROR_MESSAGE}</p>
+        <p style={{ color: "var(--meaning-red)" }}>{t("normalConditionsNotPresent")}</p>
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-3xl">
-      <p style={{ color: "var(--text-primary)" }}>{CALM_MESSAGE}</p>
+      <p style={{ color: "var(--text-primary)" }}>{t("calmMessage")}</p>
     </div>
   );
 }

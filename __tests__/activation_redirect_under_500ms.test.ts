@@ -12,7 +12,7 @@ const START_PAGE = path.join(ROOT, "src", "app", "dashboard", "start", "page.tsx
 describe("Activation redirect under 500ms", () => {
   it("shows confirmation when checkout=success", () => {
     const content = readFileSync(START_PAGE, "utf-8");
-    expect(content).toContain("Execution is now under institutional governance.");
+    expect(content).toContain("activationGovernance");
     expect(content).toContain("checkout");
     expect(content).toContain("success");
   });

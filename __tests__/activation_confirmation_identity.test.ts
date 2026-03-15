@@ -10,9 +10,11 @@ const ROOT = path.resolve(__dirname, "..");
 const START_PAGE = path.join(ROOT, "src", "app", "dashboard", "start", "page.tsx");
 
 describe("Activation confirmation identity", () => {
-  it("shows Execution is now under institutional governance", () => {
+  it("shows activation governance copy via i18n", () => {
     const content = readFileSync(START_PAGE, "utf-8");
-    expect(content).toContain("Execution is now under institutional governance.");
+    expect(content).toContain('ts("activationGovernance")');
+    const en = readFileSync(path.join(ROOT, "src", "i18n", "messages", "en.json"), "utf-8");
+    expect(en).toContain("Execution is now under institutional governance.");
   });
 
   it("fade after 3 seconds (opacity only)", () => {

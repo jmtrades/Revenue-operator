@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 
@@ -13,6 +14,8 @@ interface LogEntry {
 type Filter = "all" | "outcomes" | "authority";
 
 export default function RecordPage() {
+  const t = useTranslations("dashboard");
+  const tr = useTranslations("dashboard.recordPage");
   const { workspaceId } = useWorkspace();
   const [entries, setEntries] = useState<LogEntry[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
@@ -34,7 +37,7 @@ export default function RecordPage() {
   if (!workspaceId) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Record appears when operation is in place.</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{tr("selectWorkspace")}</p>
       </Shell>
     );
   }
@@ -42,7 +45,7 @@ export default function RecordPage() {
   if (loading) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("loadingMessage")}</p>
       </Shell>
     );
   }
@@ -64,7 +67,7 @@ export default function RecordPage() {
             className="text-sm focus-ring py-1"
             style={{ color: filter === "all" ? "var(--text-primary)" : "var(--text-muted)", fontWeight: filter === "all" ? 500 : 400 }}
           >
-            All
+            {tr("filterAll")}
           </button>
           <button
             type="button"
@@ -72,7 +75,7 @@ export default function RecordPage() {
             className="text-sm focus-ring py-1"
             style={{ color: filter === "outcomes" ? "var(--text-primary)" : "var(--text-muted)", fontWeight: filter === "outcomes" ? 500 : 400 }}
           >
-            Outcomes
+            {tr("filterOutcomes")}
           </button>
           <button
             type="button"
@@ -80,18 +83,18 @@ export default function RecordPage() {
             className="text-sm focus-ring py-1"
             style={{ color: filter === "authority" ? "var(--text-primary)" : "var(--text-muted)", fontWeight: filter === "authority" ? 500 : 400 }}
           >
-            Authority
+            {tr("filterAuthority")}
           </button>
         </div>
         <div className="space-y-0">
           {filtered.length === 0 ? (
             <div className="py-12">
               <p className="text-sm mb-2" style={{ color: "var(--text-primary)", lineHeight: 1.6 }}>
-                {entries.length === 0 ? "What actually happened." : "No entries in this view."}
+                {entries.length === 0 ? tr("emptyWhatHappened") : tr("emptyNoEntriesInView")}
               </p>
               {entries.length === 0 && (
                 <p className="text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-                  Connect a source to begin handling calls.
+                  {tr("connectSourceHint")}
                 </p>
               )}
             </div>

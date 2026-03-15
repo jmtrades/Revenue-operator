@@ -275,15 +275,15 @@ export default function AppMessagesPage() {
               <div className="px-4 py-3 border-b border-[var(--border-default)] flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white">{active.name}</p>
-                  <p className="text-[11px] text-zinc-500">SMS · Two-way</p>
+                  <p className="text-[11px] text-zinc-500">{t("smsTwoWay")}</p>
                 </div>
                 {!active.lead_id && (
-                  <span className="text-[10px] text-amber-500">Add in Leads to send</span>
+                  <span className="text-[10px] text-amber-500">{t("addInLeadsToSend")}</span>
                 )}
               </div>
               <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
                 {loadingMessages ? (
-                  <div className="text-xs text-zinc-500">Loading messages…</div>
+                  <div className="text-xs text-zinc-500">{t("loadingMessages")}</div>
                 ) : (
                   active.messages.map((m) => (
                     <div
@@ -299,7 +299,7 @@ export default function AppMessagesPage() {
                       >
                         <div className="flex items-center gap-1 mb-1">
                           <span className="flex items-center gap-1 text-[10px] text-zinc-400">
-                            {m.from === "user" ? active.name : <><Bot className="h-3 w-3" /> Agent</>}
+                            {m.from === "user" ? active.name : <><Bot className="h-3 w-3" /> {t("agentLabel")}</>}
                           </span>
                           <span className="text-[10px] text-zinc-500">{m.time}</span>
                         </div>

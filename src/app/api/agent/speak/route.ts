@@ -9,6 +9,11 @@ import { NextRequest, NextResponse } from "next/server";
 const ELEVENLABS_VOICE_RACHEL = "21m00Tcm4TlvDq8ikWAM"; // Rachel — natural female
 const ELEVENLABS_MODEL = "eleven_turbo_v2_5"; // Same as live calls: fast, very human-like, 32 languages
 
+async function getHumanVoiceDefaults() {
+  const { HUMAN_VOICE_DEFAULTS } = await import("@/lib/voice/human-voice-defaults");
+  return HUMAN_VOICE_DEFAULTS;
+}
+
 export async function POST(req: NextRequest) {
   const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
   if (!apiKey) {
@@ -35,6 +40,8 @@ export async function POST(req: NextRequest) {
       ? body.voiceId.trim()
       : process.env.ELEVENLABS_VOICE_ID?.trim() || ELEVENLABS_VOICE_RACHEL;
 
+  const voiceDefaults = await getHumanVoiceDefaults();
+
   try {
     const res = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream`,
@@ -49,10 +56,10 @@ export async function POST(req: NextRequest) {
           text: text.slice(0, 5000),
           model_id: ELEVENLABS_MODEL,
           voice_settings: {
-            stability: 0.55,
-            similarity_boost: 0.8,
-            style: 0.35,
-            use_speaker_boost: true,
+            stability: voiceDefaults.stability,
+            similarity_boost: voiceDefaults.similarityBoost,
+            style: voiceDefaults.style,
+            use_speaker_boost: voiceDefaults.useSpeakerBoost,
           },
         }),
       }

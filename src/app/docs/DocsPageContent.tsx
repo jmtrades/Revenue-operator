@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { BookOpen, Code, Shield, Plug, HelpCircle, MessageCircle } from "lucide-react";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
@@ -47,6 +48,7 @@ const SECTION_KEYWORDS: Record<string, string> = {
 };
 
 export default function DocsPageContent() {
+  const t = useTranslations("docs");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filterSection = useCallback(
@@ -71,7 +73,7 @@ export default function DocsPageContent() {
           <div className="flex flex-col lg:flex-row gap-12">
             <aside className="lg:w-56 shrink-0">
               <div className="sticky top-24 space-y-4">
-                <DocSearch onSearch={setSearchQuery} placeholder="Search docs…" />
+                <DocSearch onSearch={setSearchQuery} placeholder={t("search.placeholder")} />
                 <nav className="space-y-1" aria-label="Documentation">
                   {(searchQuery.trim() ? visibleSections : DOC_SIDEBAR).map(({ id, label }) => (
                     <a

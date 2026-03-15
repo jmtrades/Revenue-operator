@@ -165,12 +165,12 @@ export default function PhoneMarketplacePage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">State / Region</label>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">{tPhone("marketplace.search.region")}</label>
             <input
               type="text"
               value={state}
               onChange={(e) => setState(e.target.value)}
-              placeholder="e.g. CA"
+              placeholder={tPhone("marketplace.statePlaceholder")}
               maxLength={2}
               className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm placeholder:text-zinc-500 focus:border-[var(--accent-primary)] focus:outline-none"
             />
@@ -181,7 +181,7 @@ export default function PhoneMarketplacePage() {
               type="text"
               value={areaCode}
               onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
-              placeholder="e.g. 415"
+              placeholder={tPhone("marketplace.areaCodePlaceholder")}
               maxLength={3}
               className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm placeholder:text-zinc-500 focus:border-[var(--accent-primary)] focus:outline-none"
             />

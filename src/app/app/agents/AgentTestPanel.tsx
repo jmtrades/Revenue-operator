@@ -258,9 +258,9 @@ export function AgentTestPanel({
               />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-white mb-1">Test your agent</h2>
+          <h2 className="text-lg font-semibold text-white mb-1">{tAgents("testYourAgentHeading")}</h2>
           <p className="text-sm text-white/50 max-w-sm mx-auto">
-            Talk back and forth with your AI agent. It will speak to you and listen to your replies. Uses your actual greeting, knowledge, and behavior rules.
+            {tAgents("testYourAgentSubtitle")}
           </p>
         </div>
 
@@ -339,7 +339,7 @@ export function AgentTestPanel({
         {(loading || isSpeaking) && (
           <div className="rounded-xl p-3 bg-zinc-800/80 border border-zinc-700/50 ml-8">
             <p className="text-xs text-zinc-400">
-              {loading ? "Thinking…" : "Speaking…"}
+              {loading ? tAgents("thinking") : tAgents("speaking")}
             </p>
             <div className="flex gap-1 mt-1">
               <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce" style={{ animationDelay: "0ms" }} />
@@ -369,7 +369,7 @@ export function AgentTestPanel({
                   type="button"
                   onClick={startListening}
                   disabled={loading || isSpeaking}
-                  aria-label="Tap to speak"
+                  aria-label={tAgents("tapToSpeak")}
                   className="flex items-center justify-center w-14 h-14 rounded-full bg-white text-gray-900 hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 >
                   <Mic className="w-6 h-6" />

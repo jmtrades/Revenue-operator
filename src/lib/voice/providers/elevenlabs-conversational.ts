@@ -5,6 +5,7 @@ import type {
   CallResult,
   WebhookEvent,
 } from "../types";
+import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
 
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io/v1";
 
@@ -39,10 +40,10 @@ export class ElevenLabsConversationalProvider implements VoiceProvider {
         tts: {
           voice_id: params.voiceId,
           model_id: params.voiceModel || "eleven_turbo_v2_5",
-          stability: 0.55,
-          similarity_boost: 0.8,
-          style: 0.35,
-          speed: 1.0,
+          stability: HUMAN_VOICE_DEFAULTS.stability,
+          similarity_boost: HUMAN_VOICE_DEFAULTS.similarityBoost,
+          style: HUMAN_VOICE_DEFAULTS.style,
+          speed: HUMAN_VOICE_DEFAULTS.speed,
           optimize_streaming_latency: 3,
         },
         stt: {

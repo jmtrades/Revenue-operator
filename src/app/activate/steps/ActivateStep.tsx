@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { Confetti } from "@/components/Confetti";
 
@@ -11,13 +12,21 @@ export function ActivateStep({
   onFinalize: (e?: React.MouseEvent) => void;
   goBack: () => void;
 }) {
+  const t = useTranslations("activate.final");
   const [carrier, setCarrier] = useState<"att" | "verizon" | "tmobile" | "other">("att");
 
   let code: string;
   if (carrier === "att") code = "*21*[your Recall Touch number]#";
   else if (carrier === "verizon") code = "*72[your Recall Touch number]";
   else if (carrier === "tmobile") code = "**21*[your Recall Touch number]#";
-  else code = "Set conditional call forwarding to your Recall Touch number.";
+  else code = t("forwardOtherHint");
+
+  const carrierOptions = [
+    { id: "att" as const, labelKey: "carrierAtt" },
+    { id: "verizon" as const, labelKey: "carrierVerizon" },
+    { id: "tmobile" as const, labelKey: "carrierTmobile" },
+    { id: "other" as const, labelKey: "carrierOther" },
+  ];
 
   return (
     <div className="space-y-6">
@@ -26,90 +35,85 @@ export function ActivateStep({
         <h2 className="text-lg md:text-xl font-semibold text-slate-50">
           <span className="inline-flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-400" />
-            Your AI agent is live!
+            {t("heading")}
           </span>
         </h2>
         <p className="mt-1 text-sm text-slate-400">
-          Your agent is ready to take calls. Complete the steps below to start.
+          {t("subtitle")}
         </p>
       </div>
 
       <ul className="space-y-2 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm text-slate-300">
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Business name set</li>
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Phone number added</li>
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Agent template chosen</li>
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Greeting configured</li>
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Ready to forward calls</li>
+        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistBusiness")}</li>
+        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistPhone")}</li>
+        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistTemplate")}</li>
+        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistGreeting")}</li>
+        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistForward")}</li>
       </ul>
 
       <div className="flex items-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">
         <span className="h-2 w-2 rounded-full bg-emerald-400" />
-        <span>Agent active · Calls will be answered 24/7.</span>
+        <span>{t("activeBadge")}</span>
       </div>
 
       <div className="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <div className="rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4 space-y-3">
-          <p className="text-sm font-medium text-slate-100">Forward your business number</p>
+          <p className="text-sm font-medium text-slate-100">{t("forwardTitle")}</p>
           <p className="text-xs text-slate-400">
-            Point your existing line at your agent. You can change this any time.
+            {t("forwardDesc")}
           </p>
           <div className="space-y-3">
-            <label className="block text-xs font-medium text-slate-300">Carrier</label>
+            <label className="block text-xs font-medium text-slate-300">{t("carrierLabel")}</label>
             <div className="flex flex-wrap gap-2 text-[11px]">
-              {[
-                { id: "att", label: "AT&T" },
-                { id: "verizon", label: "Verizon" },
-                { id: "tmobile", label: "T-Mobile" },
-                { id: "other", label: "Other" },
-              ].map((c) => (
+              {carrierOptions.map((c) => (
                 <button
                   key={c.id}
                   type="button"
-                  onClick={() => setCarrier(c.id as "att" | "verizon" | "tmobile" | "other")}
+                  onClick={() => setCarrier(c.id)}
                   className={`rounded-full border px-3 py-1 ${
                     carrier === c.id
                       ? "border-sky-400 bg-sky-500/10 text-slate-50"
                       : "border-slate-700 bg-slate-900/40 text-slate-300 hover:border-slate-500"
                   }`}
                 >
-                  {c.label}
+                  {t(c.labelKey)}
                 </button>
               ))}
             </div>
             <div className="rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-2 text-[11px] text-slate-300">
-              <p className="font-medium mb-1">Forwarding code</p>
+              <p className="font-medium mb-1">{t("forwardingCodeLabel")}</p>
               <p className="font-mono text-xs">{code}</p>
               <p className="mt-1 text-[10px] text-slate-500">
-                Dial this from your business phone, then press call. We&apos;ll detect the first forwarded call automatically.
+                {t("forwardingHint")}
               </p>
             </div>
           </div>
         </div>
         <div className="rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-4 space-y-3">
-          <p className="text-sm font-medium text-slate-100">Use a Recall Touch number instead</p>
+          <p className="text-sm font-medium text-slate-100">{t("useRecallNumberTitle")}</p>
           <p className="text-xs text-slate-400">
-            Ideal for tracking or departments. We&apos;ll auto-route calls to your agent.
+            {t("useRecallNumberDesc")}
           </p>
           <button
             type="button"
             onClick={() => onFinalize()}
             className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2 text-xs font-medium text-slate-200 hover:border-slate-500"
           >
-            Generate a dedicated number
+            {t("generateNumber")}
           </button>
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-3 pt-3">
         <button type="button" onClick={goBack} className="text-xs md:text-sm text-slate-400 hover:text-slate-100">
-          ← Back
+          {t("back")}
         </button>
         <button
           type="button"
           onClick={(e) => void onFinalize(e)}
           className="inline-flex items-center justify-center rounded-xl bg-emerald-500 px-5 py-2.5 text-xs md:text-sm font-semibold text-white hover:bg-emerald-400"
         >
-          Activate Agent →
+          {t("activateCta")}
         </button>
       </div>
     </div>

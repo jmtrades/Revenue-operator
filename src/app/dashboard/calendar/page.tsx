@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
@@ -19,6 +20,7 @@ interface Appointment {
 }
 
 export default function CalendarPage() {
+  const t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +39,7 @@ export default function CalendarPage() {
         else setAppointments([]);
         if (res.error) setError(res.error);
       })
-      .catch(() => setError("Could not load appointments."))
+      .catch(() => setError("LOAD_ERROR"))
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -54,8 +56,8 @@ export default function CalendarPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-4xl">
-        <PageHeader title="Calendar" subtitle="Appointments." />
-        <EmptyState icon="watch" title="Select a context." subtitle="Appointments appear here." />
+        <PageHeader title={t("pages.calendar.title")} subtitle={t("pages.calendar.subtitleShort")} />
+        <EmptyState icon="watch" title={t("empty.selectContext")} subtitle={t("empty.calendarAppearHere")} />
       </div>
     );
   }
@@ -70,20 +72,20 @@ export default function CalendarPage() {
 
   return (
     <div className="p-8 max-w-4xl">
-      <PageHeader title="Calendar" subtitle="Booked appointments." />
+      <PageHeader title={t("pages.calendar.title")} subtitle={t("pages.calendar.subtitle")} />
       {loading ? (
         <ListSkeleton rows={5} header />
       ) : error ? (
         <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error}</p>
-          <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>Retry</button>
+          <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error === "LOAD_ERROR" ? t("calendarPage.loadError") : error}</p>
+          <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>{t("calendarPage.retry")}</button>
         </div>
       ) : appointments.length === 0 ? (
         <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>No appointments yet</p>
-          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>Your AI will book them automatically when callers schedule. Connect a calendar to sync.</p>
-          <Link href="/dashboard/integrations" className="inline-block text-sm font-medium mr-2" style={{ color: "var(--accent-primary)" }}>Connect calendar →</Link>
-          <Link href="/dashboard/activity" className="inline-block text-sm" style={{ color: "var(--text-secondary)" }}>Activity</Link>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>{t("calendarPage.noAppointmentsYet")}</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>{t("calendarPage.noAppointmentsHint")}</p>
+          <Link href="/dashboard/integrations" className="inline-block text-sm font-medium mr-2" style={{ color: "var(--accent-primary)" }}>{t("calendarPage.connectCalendar")}</Link>
+          <Link href="/dashboard/activity" className="inline-block text-sm" style={{ color: "var(--text-secondary)" }}>{t("calendarPage.activityLink")}</Link>
         </div>
       ) : (
         <div className="space-y-6">

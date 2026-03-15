@@ -152,7 +152,7 @@ YOUR GOAL:
           pauseOnSensitive: consentRow.recording_pause_on_sensitive ?? false,
         }
       : null;
-  const outboundFirstMessage = buildFirstMessageWithConsent(outboundFirstMessageBase, recordingConsentSettings);
+  const _outboundFirstMessage = buildFirstMessageWithConsent(outboundFirstMessageBase, recordingConsentSettings);
 
   const voicemailBehavior = (agent.knowledge_base?.voicemailBehavior === "hangup" || agent.knowledge_base?.voicemailBehavior === "sms")
     ? agent.knowledge_base.voicemailBehavior

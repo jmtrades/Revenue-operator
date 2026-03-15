@@ -36,6 +36,7 @@ import {
   type CuratedVoice,
 } from "@/lib/constants/curated-voices";
 import { getTemplateVoiceId } from "@/lib/data/agent-templates";
+import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
 import { VOICEMAIL_DROP_TEMPLATES } from "@/lib/vapi/voicemail-detection";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -269,12 +270,18 @@ const _DEFAULT_FAQ_SEED = [
   { question: "What is your pricing?", answer: "Pricing depends on your specific needs. I can have our team send you a detailed quote. Can I get your name and email?" },
 ];
 
-const ALWAYS_TRANSFER_OPTIONS = [
+const ALWAYS_TRANSFER_OPTIONS: string[] = [
   "Caller explicitly asks for a human",
   "Caller is angry or frustrated",
   "Question is about billing or payments",
   "Agent cannot answer after 2 attempts",
 ];
+const TRANSFER_OPTION_TO_KEY: Record<string, string> = {
+  "Caller explicitly asks for a human": "askHuman",
+  "Caller is angry or frustrated": "angry",
+  "Question is about billing or payments": "billing",
+  "Agent cannot answer after 2 attempts": "noAnswer",
+};
 
 function templateGreeting(id: AgentTemplateId): string {
   switch (id) {
@@ -363,16 +370,7 @@ function defaultAgent(): Agent {
     whenThinkAboutIt: "offer_follow_up",
     whenPricing: "range_then_pivot",
     whenCompetitor: "acknowledge_differentiate",
-    voiceSettings: {
-      stability: 0.55,
-      speed: 1,
-      responseDelay: 0.4,
-      backchannel: true,
-      denoising: true,
-      similarityBoost: 0.8,
-      style: 0.35,
-      useSpeakerBoost: true,
-    },
+    voiceSettings: { ...HUMAN_VOICE_DEFAULTS },
   };
 }
 
@@ -1033,7 +1031,7 @@ export default function AppAgentsPageClient({
               : agent,
           ),
         );
-        const successMsg = options?.successToast ?? "Agent saved and synced live";
+        const successMsg = options?.successToast ?? tAgents("toastSavedSync");
         if (options?.showToast !== false) setToast(successMsg);
         return { patchOk: true, vapiId: syncData.vapi_agent_id };
       }
@@ -1042,8 +1040,8 @@ export default function AppAgentsPageClient({
         setToast(
           options?.successToast
             ?? (syncRes.status === 503
-              ? "Agent saved; voice sync unavailable (check voice config)"
-              : "Agent saved; voice sync failed"),
+              ? tAgents("toastSavedVoiceFailed")
+              : tAgents("toastSavedVoiceFailed")),
         );
       }
       return { patchOk: true, vapiId: null };
@@ -1097,15 +1095,15 @@ export default function AppAgentsPageClient({
     if (!workspaceId) return;
     const base = defaultAgent();
     const nameByTemplate: Record<AgentTemplateId, string> = {
-      receptionist: "Receptionist",
-      after_hours: "After-Hours",
-      emergency: "Emergency Line",
-      lead_qualifier: "Sales Caller",
-      follow_up: "Follow-Up",
-      review_request: "Review Request",
-      appointment_setter: "Appointment Setter",
-      support: "Support",
-      scratch: "Custom Agent",
+      receptionist: tAgents("templateName.receptionist"),
+      after_hours: tAgents("templateName.after_hours"),
+      emergency: tAgents("templateName.emergency"),
+      lead_qualifier: tAgents("templateName.lead_qualifier"),
+      follow_up: tAgents("templateName.follow_up"),
+      review_request: tAgents("templateName.review_request"),
+      appointment_setter: tAgents("templateName.appointment_setter"),
+      support: tAgents("templateName.support"),
+      scratch: tAgents("templateName.scratch"),
     };
     const agent: Agent = {
       ...base,
@@ -1390,21 +1388,20 @@ export default function AppAgentsPageClient({
                   No agents yet
                 </p>
                 <p className="text-xs text-zinc-500 mb-6 max-w-sm mx-auto">
-                  Create your first AI agent to answer calls, capture leads, and
-                  book appointments.
+                  {tAgents("emptySubtitle")}
                 </p>
                 <button
                   type="button"
                   onClick={() => void createAgentFromTemplate("scratch")}
                   className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                  aria-label="Create your first agent"
+                  aria-label={tAgents("createFirstAria")}
                 >
-                  + Create Agent
+                  {tAgents("createAgentButton")}
                 </button>
               </div>
             ) : (
               <p className="text-sm text-zinc-500">
-                Select or create an agent to edit how it answers calls.
+                {tAgents("selectOrCreate")}
               </p>
             )}
           </div>
@@ -1416,7 +1413,7 @@ export default function AppAgentsPageClient({
           href="/app/activity"
           className="text-sm text-zinc-400 hover:text-white transition-colors"
         >
-          ← Activity
+          {tAgents("backToActivity")}
         </Link>
       </p>
 
@@ -1441,71 +1438,71 @@ export default function AppAgentsPageClient({
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 id="create-agent-dialog-title" className="text-sm font-semibold text-white">Create agent</h2>
+                <h2 id="create-agent-dialog-title" className="text-sm font-semibold text-white">{tAgents("templateModal.title")}</h2>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  Start from a proven pattern instead of configuring from scratch.
+                  {tAgents("templateModal.subtitle")}
                 </p>
               </div>
               <button
                 ref={templateModalCloseRef}
                 type="button"
                 onClick={() => setShowTemplateModal(false)}
-                aria-label="Close create agent dialog"
+                aria-label={tAgents("templateModal.closeAria")}
                 className="text-xs text-zinc-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
               >
-                Close
+                {_tCommon("close")}
               </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm">
               <TemplateCard
-                title="Receptionist"
+                title={tAgents("templateName.receptionist")}
                 icon={PhoneCall}
-                description="Answer calls, route, and handle FAQs."
+                description={tAgents("templateModal.receptionistDesc")}
                 onClick={() => createAgentFromTemplate("receptionist")}
               />
               <TemplateCard
-                title="Sales Caller"
+                title={tAgents("templateName.lead_qualifier")}
                 icon={ClipboardList}
-                description="Call leads, qualify, and pitch."
+                description={tAgents("templateModal.salesCallerDesc")}
                 onClick={() => createAgentFromTemplate("lead_qualifier")}
               />
               <TemplateCard
-                title="Appointment Setter"
+                title={tAgents("templateName.appointment_setter")}
                 icon={Calendar}
-                description="Book meetings, confirm, and remind."
+                description={tAgents("templateModal.appointmentSetterDesc")}
                 onClick={() => createAgentFromTemplate("appointment_setter")}
               />
               <TemplateCard
-                title="Support"
+                title={tAgents("templateName.support")}
                 icon={PhoneForwarded}
-                description="Triage, answer, and escalate."
+                description={tAgents("templateModal.supportDesc")}
                 onClick={() => createAgentFromTemplate("support")}
               />
               <TemplateCard
-                title="Follow-Up"
+                title={tAgents("templateName.follow_up")}
                 icon={BellRing}
-                description="Re-engage cold leads and check in."
+                description={tAgents("templateModal.followUpDesc")}
                 onClick={() => createAgentFromTemplate("follow_up")}
               />
               <TemplateCard
-                title="After-Hours"
+                title={tAgents("templateName.after_hours")}
                 icon={Moon}
-                description="Handle calls when the office is closed."
+                description={tAgents("templateModal.afterHoursDesc")}
                 onClick={() => createAgentFromTemplate("after_hours")}
               />
               <TemplateCard
-                title="Custom"
+                title={tAgents("templateName.scratch")}
                 icon={Star}
-                description="Start from scratch."
+                description={tAgents("templateModal.customDesc")}
                 onClick={() => createAgentFromTemplate("scratch")}
               />
             </div>
             <p className="text-xs text-zinc-500 mt-2">
-              More options: <button type="button" onClick={() => setTemplateCategory("all")} className="underline hover:text-white">After-hours</button>, <button type="button" onClick={() => createAgentFromTemplate("emergency")} className="underline hover:text-white">Emergency</button>, <button type="button" onClick={() => createAgentFromTemplate("review_request")} className="underline hover:text-white">Review Request</button>
+              {tAgents("templateModal.moreOptions")} <button type="button" onClick={() => setTemplateCategory("all")} className="underline hover:text-white">{tAgents("templateName.after_hours")}</button>, <button type="button" onClick={() => createAgentFromTemplate("emergency")} className="underline hover:text-white">{tAgents("templateName.emergency")}</button>, <button type="button" onClick={() => createAgentFromTemplate("review_request")} className="underline hover:text-white">{tAgents("templateName.review_request")}</button>
             </p>
             <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
               <p className="text-xs font-medium text-zinc-400 mb-2">
-                Or pick by communication style (20+ templates)
+                {tAgents("templateModal.orPickByStyle")}
               </p>
               <div className="flex flex-wrap gap-1.5 mb-3">
                 <button
@@ -1517,7 +1514,7 @@ export default function AppAgentsPageClient({
                       : "border-[var(--border-medium)] text-zinc-400 hover:text-white"
                   }`}
                 >
-                  All
+                  {tAgents("templateModal.all")}
                 </button>
                 {AGENT_TEMPLATE_CATEGORIES.map((c) => (
                   <button
@@ -1557,9 +1554,9 @@ export default function AppAgentsPageClient({
       {deleteConfirmAgent && (
         <ConfirmDialog
           open
-          title="Delete agent"
-          message={`Delete "${deleteConfirmAgent.name}"? This cannot be undone.`}
-          confirmLabel="Delete"
+          title={tAgents("deleteAgentTitle")}
+          message={tAgents("deleteConfirmMessage", { name: deleteConfirmAgent.name })}
+          confirmLabel={_tCommon("delete")}
           variant="danger"
           onConfirm={() => void doDeleteAgent(deleteConfirmAgent)}
           onClose={() => setDeleteConfirmAgent(null)}
@@ -1592,6 +1589,7 @@ function TemplateCard(props: {
 }
 
 function ConversationPreview({ agent, workspaceName }: { agent: Agent; workspaceName: string }) {
+  const t = useTranslations("agents");
   const previews = useMemo(() => {
     const items: Array<{ question: string; answer: string }> = [];
     const faq = agent.faq?.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()) ?? [];
@@ -1601,41 +1599,41 @@ function ConversationPreview({ agent, workspaceName }: { agent: Agent; workspace
     const hasTransfer = (agent.alwaysTransfer?.length ?? 0) > 0 || (agent.transferRules?.length ?? 0) > 0;
     if (hasTransfer) {
       items.push({
-        question: "I need to speak to someone",
-        answer: "Of course. Let me transfer you now.",
+        question: t("rulesTab.previewTransferQuestion"),
+        answer: t("rulesTab.previewTransferAnswer"),
       });
     }
     items.push({
-      question: "Something not in your knowledge base",
-      answer: "That's a great question. Let me have someone get back to you on that. Can I get your name and number?",
+      question: t("rulesTab.previewOffTopicQuestion"),
+      answer: t("rulesTab.previewOffTopicAnswer"),
     });
     const businessName = workspaceName.trim() || "this business";
     items.push({
-      question: "Are you a robot?",
-      answer: `I'm the phone assistant for ${businessName}. How can I help you today?`,
+      question: t("rulesTab.previewRobotQuestion"),
+      answer: t("rulesTab.previewRobotAnswer", { business: businessName }),
     });
     return items;
-  }, [agent.faq, agent.alwaysTransfer, agent.transferRules, workspaceName]);
+  }, [agent.faq, agent.alwaysTransfer, agent.transferRules, workspaceName, t]);
 
   return (
     <div className="mt-6">
-      <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">How your AI handles calls</h3>
+      <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("rulesTab.howYourAiHandlesCalls")}</h3>
       <p className="text-xs text-white/30 mb-4">
-        Your agent has a natural conversation after the greeting. Here&apos;s how it responds:
+        {t("rulesTab.conversationPreviewSubtitle")}
       </p>
       <div className="space-y-0 border border-[var(--border-default)] rounded-xl overflow-hidden">
         {previews.map((p, i) => (
           <div key={i} className={`p-3 ${i > 0 ? "border-t border-[var(--border-default)]" : ""}`}>
             <p className="text-xs text-white/40 mb-1.5">&ldquo;{p.question}&rdquo;</p>
             <p className="text-sm text-[var(--text-secondary)]">
-              <span className="text-blue-400/60 text-xs mr-1.5">AI:</span>
+              <span className="text-zinc-400 text-xs mr-1.5">{t("rulesTab.previewAiLabel")}</span>
               {p.answer}
             </p>
           </div>
         ))}
       </div>
       <p className="text-xs text-white/20 mt-3">
-        Generated from your knowledge base and rules. Add more entries to make your AI smarter.
+        {t("rulesTab.generatedFromKnowledge")}
       </p>
     </div>
   );
@@ -1656,16 +1654,25 @@ function ProfileTab({
   onVoicePreview: (voiceId: string) => void;
   previewingVoiceId: string | null;
 }) {
+  const t = useTranslations("agents");
+  const callStyleOptions = useMemo(
+    () => [
+      { id: "thorough" as CallStyle, labelKey: "profile.callStyleThorough", descKey: "profile.callStyleThoroughDesc" },
+      { id: "conversational" as CallStyle, labelKey: "profile.callStyleConversational", descKey: "profile.callStyleConversationalDesc" },
+      { id: "quick" as CallStyle, labelKey: "profile.callStyleQuick", descKey: "profile.callStyleQuickDesc" },
+    ],
+    []
+  );
   return (
     <div className="space-y-4 text-xs md:text-sm">
       <div className="space-y-1">
-        <label className="block text-[11px] text-zinc-500">Agent name</label>
+        <label className="block text-[11px] text-zinc-500">{t("profile.agentNameLabel")}</label>
         <input
           type="text"
           value={agent.name}
           onChange={(e) => onChange({ name: e.target.value })}
           className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          placeholder="Receptionist"
+          placeholder={t("profile.agentNamePlaceholder")}
         />
       </div>
 
@@ -1678,13 +1685,13 @@ function ProfileTab({
       />
 
       <div className="space-y-1">
-        <label className="block text-[11px] text-zinc-500">Opening greeting</label>
-        <p className="text-[11px] text-white/30 mb-2">This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge and rules.</p>
+        <label className="block text-[11px] text-zinc-500">{t("profile.openingGreetingLabel")}</label>
+        <p className="text-[11px] text-white/30 mb-2">{t("profile.openingGreetingHint")}</p>
         <textarea
           rows={3}
           value={agent.greeting}
           onChange={(e) => onChange({ greeting: e.target.value })}
-          placeholder="Thanks for calling. How can I help you today?"
+          placeholder={t("profile.greetingPlaceholder")}
           className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none resize-none"
         />
       </div>
@@ -1693,8 +1700,8 @@ function ProfileTab({
 
       <div className="space-y-2">
         <div className="flex items-center justify-between text-[11px] text-zinc-500">
-          <span>Personality</span>
-          <span>Professional ←→ Friendly</span>
+          <span>{t("profile.personalityLabel")}</span>
+          <span>{t("profile.personalityRange")}</span>
         </div>
         <input
           type="range"
@@ -1707,21 +1714,9 @@ function ProfileTab({
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] text-zinc-500">Call style</p>
+        <p className="text-[11px] text-zinc-500">{t("profile.callStyleLabel")}</p>
         <div className="grid grid-cols-3 gap-2">
-          {[
-            {
-              id: "thorough" as CallStyle,
-              label: "Thorough",
-              desc: "Covers details, slower pace",
-            },
-            {
-              id: "conversational" as CallStyle,
-              label: "Conversational",
-              desc: "Natural, mid-length calls",
-            },
-            { id: "quick" as CallStyle, label: "Quick", desc: "Short, direct, gets to booking" },
-          ].map(({ id, label, desc }) => (
+          {callStyleOptions.map(({ id, labelKey, descKey }) => (
             <button
               key={id}
               type="button"
@@ -1732,8 +1727,8 @@ function ProfileTab({
                   : "border-[var(--border-default)] bg-[var(--bg-input)]/50 text-zinc-300"
               }`}
             >
-              <p className="font-medium mb-0.5">{label}</p>
-              <p className="text-[10px] text-zinc-500">{desc}</p>
+              <p className="font-medium mb-0.5">{t(labelKey)}</p>
+              <p className="text-[10px] text-zinc-500">{t(descKey)}</p>
             </button>
           ))}
         </div>
@@ -1756,10 +1751,10 @@ function ProfileTab({
             />
           </button>
           <span className="text-[11px] text-zinc-300">
-            {agent.active ? "Active on your number" : "Inactive"}
+            {agent.active ? t("profile.activeOnNumber") : t("profile.inactive")}
           </span>
         </div>
-        <p className="text-[11px] text-zinc-500">{agent.stats.totalCalls} calls so far</p>
+        <p className="text-[11px] text-zinc-500">{t("profile.callsSoFar", { count: agent.stats.totalCalls })}</p>
       </div>
     </div>
   );
@@ -1798,6 +1793,8 @@ export function RulesTab({
   agent: Agent;
   onChange: (partial: Partial<Agent>) => void;
 }) {
+  const t = useTranslations("agents");
+  const tCommon = useTranslations("common");
   const [openAdvanced, setOpenAdvanced] = useState({
     qualification: false,
     objection: false,
@@ -1812,40 +1809,47 @@ export function RulesTab({
     });
   };
 
-  const WHEN_HESITATION_OPTIONS = [
-    { id: "wait_patiently", label: "Wait patiently" },
-    { id: "ask_what_thinking", label: "Ask what they're thinking" },
-    { id: "acknowledge_offer_info", label: "Acknowledge their concern and offer more information" },
-    { id: "offer_alternatives", label: "Offer alternatives" },
-    { id: "redirect", label: "Redirect to the main point" },
-  ];
-  const WHEN_THINK_OPTIONS = [
-    { id: "accept_gracefully", label: "Accept gracefully" },
-    { id: "offer_follow_up", label: "Offer to follow up: \"I can call you back tomorrow — what time works?\"" },
-    { id: "create_urgency", label: "Create gentle urgency" },
-    { id: "ask_what_help", label: "Ask what would help them decide" },
-  ];
-  const WHEN_PRICING_OPTIONS = [
-    { id: "give_full", label: "Give full pricing" },
-    { id: "range_then_pivot", label: "Give range if available, then pivot to booking" },
-    { id: "redirect_consultation", label: "Redirect to consultation" },
-    { id: "defer_human", label: "Defer to human" },
-  ];
-  const WHEN_COMPETITOR_OPTIONS = [
-    { id: "acknowledge", label: "Acknowledge only" },
-    { id: "acknowledge_differentiate", label: "Acknowledge and differentiate without criticizing" },
-    { id: "redirect_strengths", label: "Redirect to your strengths" },
-    { id: "defer_human", label: "Defer to human" },
-  ];
+  const whenHesitationOptions = useMemo(
+    () =>
+      (["wait_patiently", "ask_what_thinking", "acknowledge_offer_info", "offer_alternatives", "redirect"] as const).map((id) => ({
+        id,
+        label: t(`rulesTab.hesitation.${id}`),
+      })),
+    [t]
+  );
+  const whenThinkOptions = useMemo(
+    () =>
+      (["accept_gracefully", "offer_follow_up", "create_urgency", "ask_what_help"] as const).map((id) => ({
+        id,
+        label: t(`rulesTab.thinkAboutIt.${id}`),
+      })),
+    [t]
+  );
+  const whenPricingOptions = useMemo(
+    () =>
+      (["give_full", "range_then_pivot", "redirect_consultation", "defer_human"] as const).map((id) => ({
+        id,
+        label: t(`rulesTab.pricing.${id}`),
+      })),
+    [t]
+  );
+  const whenCompetitorOptions = useMemo(
+    () =>
+      (["acknowledge", "acknowledge_differentiate", "redirect_strengths", "defer_human"] as const).map((id) => ({
+        id,
+        label: t(`rulesTab.competitor.${id}`),
+      })),
+    [t]
+  );
 
   return (
     <div className="space-y-4 text-xs md:text-sm">
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-        <h3 className="mb-3 text-sm font-medium text-[var(--text-primary)]">Conversation style</h3>
+        <h3 className="mb-3 text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.conversationStyle")}</h3>
         <div className="space-y-2 mb-4">
           <div className="flex items-center justify-between text-[11px] text-zinc-500">
-            <span>Assertiveness</span>
-            <span>Gentle ←→ Direct</span>
+            <span>{t("rulesTab.assertiveness")}</span>
+            <span>{t("rulesTab.gentleDirect")}</span>
           </div>
           <input
             type="range"
@@ -1858,49 +1862,49 @@ export function RulesTab({
         </div>
         <div className="space-y-3">
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">When the caller hesitates</label>
+            <label className="block text-[11px] text-zinc-500 mb-1">{t("rulesTab.whenCallerHesitates")}</label>
             <select
               value={agent.whenHesitation}
               onChange={(e) => onChange({ whenHesitation: e.target.value })}
               className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--border-medium)]"
             >
-              {WHEN_HESITATION_OPTIONS.map((o) => (
+              {whenHesitationOptions.map((o) => (
                 <option key={o.id} value={o.id}>{o.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">When the caller says &ldquo;let me think about it&rdquo;</label>
+            <label className="block text-[11px] text-zinc-500 mb-1">{t("rulesTab.whenCallerThinkAboutIt")}</label>
             <select
               value={agent.whenThinkAboutIt}
               onChange={(e) => onChange({ whenThinkAboutIt: e.target.value })}
               className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--border-medium)]"
             >
-              {WHEN_THINK_OPTIONS.map((o) => (
+              {whenThinkOptions.map((o) => (
                 <option key={o.id} value={o.id}>{o.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">When the caller asks about pricing</label>
+            <label className="block text-[11px] text-zinc-500 mb-1">{t("rulesTab.whenCallerPricing")}</label>
             <select
               value={agent.whenPricing}
               onChange={(e) => onChange({ whenPricing: e.target.value })}
               className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--border-medium)]"
             >
-              {WHEN_PRICING_OPTIONS.map((o) => (
+              {whenPricingOptions.map((o) => (
                 <option key={o.id} value={o.id}>{o.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">When the caller mentions a competitor</label>
+            <label className="block text-[11px] text-zinc-500 mb-1">{t("rulesTab.whenCallerCompetitor")}</label>
             <select
               value={agent.whenCompetitor}
               onChange={(e) => onChange({ whenCompetitor: e.target.value })}
               className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--border-medium)]"
             >
-              {WHEN_COMPETITOR_OPTIONS.map((o) => (
+              {whenCompetitorOptions.map((o) => (
                 <option key={o.id} value={o.id}>{o.label}</option>
               ))}
             </select>
@@ -1908,7 +1912,7 @@ export function RulesTab({
         </div>
       </div>
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-        <h3 className="mb-2 text-sm font-medium text-[var(--text-primary)]">Transfer to a human when...</h3>
+        <h3 className="mb-2 text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.transferToHumanWhen")}</h3>
         <div className="space-y-2">
           {ALWAYS_TRANSFER_OPTIONS.map((option) => (
             <label key={option} className="flex items-center gap-2 text-sm text-zinc-300">
@@ -1924,25 +1928,25 @@ export function RulesTab({
                   })
                 }
               />
-              {option}
+              {TRANSFER_OPTION_TO_KEY[option] ? t(`escalationTriggers.${TRANSFER_OPTION_TO_KEY[option]}`) : option}
             </label>
           ))}
         </div>
         <div className="mt-3">
-          <label className="text-xs text-zinc-500">Transfer to phone number</label>
+          <label className="text-xs text-zinc-500">{t("transferToPhoneLabel")}</label>
           <input
             type="tel"
             value={agent.transferPhone}
             onChange={(e) => onChange({ transferPhone: e.target.value })}
-            placeholder="+1 (555) 000-0000"
-            aria-label="Transfer to phone number"
+            placeholder={t("behavior.transferPhonePlaceholder")}
+            aria-label={t("transferToPhoneAria")}
             className="mt-1 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           />
         </div>
       </div>
 
       <div className="space-y-1">
-        <label className="block text-[11px] text-zinc-500">Never say</label>
+        <label className="block text-[11px] text-zinc-500">{t("rulesTab.neverSayLabel")}</label>
         <textarea
           rows={3}
           value={agent.neverSay.join("\n")}
@@ -1954,28 +1958,27 @@ export function RulesTab({
                 .filter(Boolean),
             })
           }
-          aria-label="Words or phrases the agent should never say"
+          aria-label={t("neverSayAria")}
           className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black resize-none"
-          placeholder="Competitor names, legal advice, pricing specifics..."
+          placeholder={t("neverSayPlaceholder")}
         />
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="block text-[11px] text-zinc-500">Phrase-based transfer rules</label>
+          <label className="block text-[11px] text-zinc-500">{t("transferRulesLabel")}</label>
           <button
             type="button"
             onClick={addTransferRule}
-            aria-label="Add phrase-based transfer rule"
+            aria-label={t("addTransferRuleAria")}
             className="text-[11px] text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
           >
-            + Add rule
+            {t("addTransferRule")}
           </button>
         </div>
         {agent.transferRules.length === 0 ? (
           <p className="text-[11px] text-zinc-600">
-            Examples: &quot;billing&quot; → your billing specialist, &quot;emergency&quot; →
-            on-call phone.
+            {t("transferRulesExample")}
           </p>
         ) : (
           <div className="space-y-3">
@@ -1985,7 +1988,7 @@ export function RulesTab({
                 className="p-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] space-y-2"
               >
                 <div className="flex items-center justify-between">
-                  <p className="text-[11px] text-zinc-500">When caller says…</p>
+                  <p className="text-[11px] text-zinc-500">{t("whenCallerSays")}</p>
                   <button
                     type="button"
                     onClick={() =>
@@ -1995,7 +1998,7 @@ export function RulesTab({
                     }
                     className="text-[11px] text-zinc-500 hover:text-zinc-200"
                   >
-                    Remove
+                    {tCommon("remove")}
                   </button>
                 </div>
                 <input
@@ -2009,9 +2012,9 @@ export function RulesTab({
                     })
                   }
                   className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder="e.g., emergency, billing, new patient"
+                  placeholder={t("transferRulePhrasePlaceholder")}
                 />
-                <p className="text-[11px] text-zinc-500">→ Call this number</p>
+                <p className="text-[11px] text-zinc-500">{t("callThisNumber")}</p>
                 <input
                   type="tel"
                   value={rule.phone}
@@ -2023,7 +2026,7 @@ export function RulesTab({
                     })
                   }
                   className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder="(503) 555-0199"
+                  placeholder={t("transferRulePhonePlaceholder")}
                 />
               </div>
             ))}
@@ -2033,7 +2036,7 @@ export function RulesTab({
 
       {agent.learnedBehaviors.length > 0 && (
         <div>
-          <label className="mb-2 block text-[11px] text-zinc-500">Learned behaviors (from Call Intelligence)</label>
+          <label className="mb-2 block text-[11px] text-zinc-500">{t("learnedBehaviorsLabel")}</label>
           <div className="space-y-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3">
             {agent.learnedBehaviors.map((line, idx) => (
               <div key={idx} className="flex items-start gap-2 text-sm text-zinc-300">
@@ -2046,9 +2049,9 @@ export function RulesTab({
                     })
                   }
                   className="shrink-0 text-zinc-500 hover:text-white text-xs"
-                  aria-label="Remove"
+                  aria-label={tCommon("remove")}
                 >
-                  Remove
+                  {tCommon("remove")}
                 </button>
               </div>
             ))}
@@ -2057,26 +2060,26 @@ export function RulesTab({
       )}
 
       <div>
-        <label className="mb-2 block text-[11px] text-zinc-500">After-hours behavior</label>
+        <label className="mb-2 block text-[11px] text-zinc-500">{t("afterHoursBehaviorLabel")}</label>
         <select
           value={agent.afterHoursMode}
           onChange={(e) => onChange({ afterHoursMode: e.target.value as Agent["afterHoursMode"] })}
-          aria-label="After-hours behavior"
+          aria-label={t("afterHoursBehaviorAria")}
           className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
         >
-          <option value="messages">Take message and notify</option>
-          <option value="forward">Schedule callback</option>
-          <option value="emergency">Transfer to emergency line</option>
-          <option value="closed">Closed greeting only</option>
+          <option value="messages">{t("afterHoursOptionMessages")}</option>
+          <option value="forward">{t("afterHoursOptionForward")}</option>
+          <option value="emergency">{t("afterHoursOptionEmergency")}</option>
+          <option value="closed">{t("afterHoursOptionClosed")}</option>
         </select>
       </div>
 
       <div className="space-y-1">
-        <label className="block text-[11px] text-zinc-500">Maximum call duration</label>
+        <label className="block text-[11px] text-zinc-500">{t("rulesTab.maxCallDurationLabel")}</label>
         <select
           value={[0, 5, 10, 12, 15, 30].includes(agent.maxCallDuration) ? String(agent.maxCallDuration) : "15"}
           onChange={(e) => onChange({ maxCallDuration: Number(e.target.value) })}
-          aria-label="Maximum call duration in minutes"
+          aria-label={t("rulesTab.maxCallDurationAria")}
           className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
         >
           <option value="0">No limit</option>
@@ -2089,7 +2092,7 @@ export function RulesTab({
       </div>
 
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
-        <h3 className="text-sm font-medium text-[var(--text-primary)]">Appointment booking</h3>
+        <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.appointmentBooking")}</h3>
         <label className="flex items-center gap-2 text-sm text-zinc-300">
           <input
             type="checkbox"
@@ -2097,15 +2100,15 @@ export function RulesTab({
             checked={agent.bookingEnabled}
             onChange={(e) => onChange({ bookingEnabled: e.target.checked })}
           />
-          Agent can book appointments
+          {t("rulesTab.agentCanBook")}
         </label>
         {agent.bookingEnabled && (
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">Default duration</label>
+            <label className="block text-[11px] text-zinc-500 mb-1">{t("rulesTab.defaultDurationLabel")}</label>
             <select
               value={[15, 30, 45, 60].includes(agent.bookingDefaultDurationMinutes) ? String(agent.bookingDefaultDurationMinutes) : "30"}
               onChange={(e) => onChange({ bookingDefaultDurationMinutes: Number(e.target.value) })}
-              aria-label="Default appointment duration"
+              aria-label={t("rulesTab.defaultDurationAria")}
               className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
             >
               <option value="15">15 min</option>
@@ -2113,13 +2116,13 @@ export function RulesTab({
               <option value="45">45 min</option>
               <option value="60">60 min</option>
             </select>
-            <p className="mt-1 text-[11px] text-zinc-500">Available slots: linked to calendar or manual entry.</p>
+            <p className="mt-1 text-[11px] text-zinc-500">{t("rulesTab.availableSlotsHint")}</p>
           </div>
         )}
       </div>
 
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
-        <h3 className="text-sm font-medium text-[var(--text-primary)]">Follow-up behavior</h3>
+        <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.followUpBehavior")}</h3>
         <label className="flex items-center gap-2 text-sm text-zinc-300">
           <input
             type="checkbox"
@@ -2127,7 +2130,7 @@ export function RulesTab({
             checked={agent.followUpSMS}
             onChange={(e) => onChange({ followUpSMS: e.target.checked })}
           />
-          Send follow-up SMS after every call
+          {t("rulesTab.sendFollowUpSMS")}
         </label>
         <label className="flex items-center gap-2 text-sm text-zinc-300">
           <input
@@ -2136,7 +2139,7 @@ export function RulesTab({
             checked={agent.notifyOwnerOnLead}
             onChange={(e) => onChange({ notifyOwnerOnLead: e.target.checked })}
           />
-          Notify owner when lead captured
+          {t("rulesTab.notifyOwnerOnLead")}
         </label>
         <label className="flex items-center gap-2 text-sm text-zinc-300">
           <input
@@ -2145,37 +2148,37 @@ export function RulesTab({
             checked={agent.sendSummaryEmail}
             onChange={(e) => onChange({ sendSummaryEmail: e.target.checked })}
           />
-          Send call summary via email
+          {t("rulesTab.sendSummaryEmail")}
         </label>
       </div>
 
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
-        <h3 className="text-sm font-medium text-[var(--text-primary)]">Conversation style</h3>
+        <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.conversationStyle")}</h3>
         <div>
-          <label className="block text-[11px] text-zinc-500 mb-1">Pace</label>
+          <label className="block text-[11px] text-zinc-500 mb-1">{t("rulesTab.paceLabel")}</label>
           <select
             value={agent.callStyle}
             onChange={(e) => onChange({ callStyle: e.target.value as CallStyle })}
-            aria-label="Conversation pace"
+            aria-label={t("rulesTab.conversationPaceAria")}
             className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
           >
-            <option value="thorough">Thorough</option>
-            <option value="conversational">Conversational</option>
-            <option value="quick">Quick</option>
+            <option value="thorough">{t("rulesTab.thorough")}</option>
+            <option value="conversational">{t("rulesTab.conversational")}</option>
+            <option value="quick">{t("rulesTab.quick")}</option>
           </select>
         </div>
         {(agent.purpose === "outbound" || agent.purpose === "both") && (
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">Persistence (outbound)</label>
+            <label className="block text-[11px] text-zinc-500 mb-1">{t("rulesTab.persistenceOutbound")}</label>
             <select
               value={agent.persistence}
               onChange={(e) => onChange({ persistence: e.target.value as Agent["persistence"] })}
-              aria-label="Outbound persistence"
+              aria-label={t("rulesTab.outboundPersistenceAria")}
               className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
+              <option value="low">{t("rulesTab.low")}</option>
+              <option value="medium">{t("rulesTab.medium")}</option>
+              <option value="high">{t("rulesTab.high")}</option>
             </select>
           </div>
         )}
@@ -2189,12 +2192,12 @@ export function RulesTab({
           className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset"
           aria-expanded={openAdvanced.qualification}
         >
-          Qualification framework
+          {t("rulesTab.qualificationFramework")}
           <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${openAdvanced.qualification ? "rotate-180" : ""}`} />
         </button>
         {openAdvanced.qualification && (
           <div className="border-t border-[var(--border-default)] p-4 space-y-3">
-            <p className="text-[11px] text-zinc-500">What makes someone a qualified lead?</p>
+            <p className="text-[11px] text-zinc-500">{t("rulesTab.whatMakesQualified")}</p>
             {(agent.qualification?.criteria ?? []).map((c) => (
               <label key={c.id} className="flex items-center gap-2 text-sm text-zinc-300">
                 <input

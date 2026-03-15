@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
 import type { ActivationState, ElevenLabsVoice } from "./types";
 
@@ -24,29 +25,30 @@ export function CustomizeStep({
   goNext: () => void;
   canGoNext: boolean;
 }) {
+  const t = useTranslations("activate.customize");
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg md:text-xl font-semibold text-slate-50">Make it yours</h2>
-          <p className="mt-1 text-sm text-slate-400">Tune the basics your callers will hear first.</p>
+          <h2 className="text-lg md:text-xl font-semibold text-slate-50">{t("heading")}</h2>
+          <p className="mt-1 text-sm text-slate-400">{t("subtitle")}</p>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <label htmlFor="agent_name" className="block text-xs font-medium text-slate-300">Agent name</label>
+          <label htmlFor="agent_name" className="block text-xs font-medium text-slate-300">{t("agentNameLabel")}</label>
           <input
             id="agent_name"
             type="text"
             value={state.agentName}
             onChange={(e) => setState((prev) => ({ ...prev, agentName: e.target.value }))}
-            placeholder="Sarah"
+            placeholder={t("agentNamePlaceholder")}
             className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="preferred_language" className="block text-xs font-medium text-slate-300">Preferred language</label>
+          <label htmlFor="preferred_language" className="block text-xs font-medium text-slate-300">{t("preferredLanguageLabel")}</label>
           <select
             id="preferred_language"
             value={state.preferredLanguage}
@@ -57,13 +59,13 @@ export function CustomizeStep({
               <option key={lang.code} value={lang.code}>{lang.name}</option>
             ))}
           </select>
-          <p className="text-[11px] text-slate-500">Agent responds in this language and switches if the caller uses another.</p>
+          <p className="text-[11px] text-slate-500">{t("languageHint")}</p>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <label htmlFor="agent_voice" className="block text-xs font-medium text-slate-300">Voice (ElevenLabs)</label>
+          <label htmlFor="agent_voice" className="block text-xs font-medium text-slate-300">{t("voiceLabel")}</label>
           <select
             id="agent_voice"
             value={state.elevenlabsVoiceId}
@@ -74,10 +76,10 @@ export function CustomizeStep({
               <option key={v.id} value={v.id}>{v.name}</option>
             ))}
           </select>
-          <p className="text-[11px] text-slate-500">Use Preview voice below to hear this voice. Supports all languages.</p>
+          <p className="text-[11px] text-slate-500">{t("voiceHint")}</p>
         </div>
         <div className="space-y-2">
-          <p className="block text-xs font-medium text-slate-300">Key services</p>
+          <p className="block text-xs font-medium text-slate-300">{t("keyServicesLabel")}</p>
           <div className="flex flex-wrap gap-1.5">
             {industryServices.map((svc) => {
               const isOn = effectiveServices.includes(svc);
@@ -105,7 +107,7 @@ export function CustomizeStep({
       </div>
 
       <div className="space-y-3">
-        <p className="text-xs font-medium text-slate-300">Business hours</p>
+        <p className="text-xs font-medium text-slate-300">{t("businessHoursLabel")}</p>
         <div className="grid gap-2">
           {state.hours.map((slot, idx) => (
             <div key={slot.day} className="flex items-center gap-3 text-xs text-slate-300">
@@ -123,7 +125,7 @@ export function CustomizeStep({
                   slot.enabled ? "border-emerald-400 bg-emerald-500/10 text-emerald-200" : "border-slate-700 bg-slate-900/40 text-slate-400"
                 }`}
               >
-                {slot.enabled ? "Open" : "Closed"}
+                {slot.enabled ? t("open") : t("closed")}
               </button>
               <div className="flex items-center gap-1.5">
                 <select
@@ -166,7 +168,7 @@ export function CustomizeStep({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="greeting" className="block text-xs font-medium text-slate-300">Greeting message</label>
+        <label htmlFor="greeting" className="block text-xs font-medium text-slate-300">{t("greetingLabel")}</label>
         <div className="rounded-xl border border-slate-700 bg-slate-900/60">
           <textarea
             id="greeting"
@@ -174,26 +176,26 @@ export function CustomizeStep({
             value={state.greeting}
             onChange={(e) => setState((prev) => ({ ...prev, greeting: e.target.value }))}
             className="w-full resize-none rounded-xl bg-transparent px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none"
-            placeholder={`Hi, thanks for calling ${state.businessName || "your business"}. How can I help you today?`}
+            placeholder={t("greetingPlaceholder", { business: state.businessName || "your business" })}
           />
           <div className="flex items-center justify-between px-3 pb-2 text-[11px] text-slate-500">
-            <span>{state.greeting.length} characters</span>
+            <span>{state.greeting.length} {t("characters")}</span>
             <button type="button" className="text-sky-400 hover:text-sky-300" onClick={onPlayGreeting}>
-              Preview voice
+              {t("previewVoice")}
             </button>
           </div>
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-3 pt-2">
-        <button type="button" onClick={goBack} className="text-xs md:text-sm text-slate-400 hover:text-slate-100">← Back</button>
+        <button type="button" onClick={goBack} className="text-xs md:text-sm text-slate-400 hover:text-slate-100">{t("back")}</button>
         <button
           type="button"
           onClick={goNext}
           disabled={!canGoNext}
           className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs md:text-sm font-semibold text-black hover:bg-slate-100 disabled:opacity-60"
         >
-          Next →
+          {t("next")}
         </button>
       </div>
     </div>

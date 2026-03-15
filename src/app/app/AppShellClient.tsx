@@ -25,8 +25,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Command as CommandIcon,
-  type LucideIcon,
-} from "lucide-react";
+  } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
@@ -396,7 +395,7 @@ export default function AppShellClient({
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-                <nav className="flex-1 p-3 space-y-4 overflow-y-auto" aria-label="App navigation">
+                <nav className="flex-1 p-3 space-y-4 overflow-y-auto" aria-label={t("nav.appNavigation")}>
                   {sidebarGroups.map((group) => (
                     <div key={group.label}>
                       {!sidebarCollapsed && (
@@ -451,7 +450,7 @@ export default function AppShellClient({
                         <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D] ml-0.5">
                           K
                         </kbd>
-                        <span className="ml-1.5">Quick search</span>
+                        <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
                       </div>
                       <div className="pt-2">
                         <LanguageSwitcher className="w-full" />

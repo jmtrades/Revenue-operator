@@ -20,6 +20,8 @@ interface Policy {
 }
 
 export default function PolicyEditPage({ params }: { params: Promise<{ id: string }> }) {
+  const t = useTranslations("dashboard");
+  const tPolicy = useTranslations("dashboard.policyEdit");
   const tCommon = useTranslations("common");
   const tForms = useTranslations("forms.state");
   const [policyId, setPolicyId] = useState<string | null>(null);
@@ -94,7 +96,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
   if (!workspaceId) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Select a workspace.</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{tPolicy("selectWorkspace")}</p>
       </Shell>
     );
   }
@@ -102,7 +104,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
   if (loading || !policy) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("loadingMessage")}</p>
       </Shell>
     );
   }
@@ -111,11 +113,16 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
     <Shell>
       <div className="space-y-6">
         <h1 className="text-lg font-medium" style={{ color: "var(--text-primary)" }}>
-          Policy: {policy.domain_type} · {policy.jurisdiction} · {policy.channel} · {policy.intent_type}
+          {tPolicy("policyTitle", {
+            domain: policy.domain_type,
+            jurisdiction: policy.jurisdiction,
+            channel: policy.channel,
+            intent: policy.intent_type,
+          })}
         </h1>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Template ID</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>{tPolicy("templateIdLabel")}</label>
             <input
               type="text"
               value={form.template_id}
@@ -125,7 +132,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Approval mode</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>{tPolicy("approvalModeLabel")}</label>
             <select
               value={form.approval_mode}
               onChange={(e) => setForm((f) => ({ ...f, approval_mode: e.target.value }))}
@@ -150,7 +157,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Forbidden phrases (one per line)</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>{tPolicy("forbiddenPhrasesLabel")}</label>
             <textarea
               value={form.forbidden_phrases}
               onChange={(e) => setForm((f) => ({ ...f, forbidden_phrases: e.target.value }))}
@@ -160,7 +167,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Required phrases (one per line)</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>{tPolicy("requiredPhrasesLabel")}</label>
             <textarea
               value={form.required_phrases}
               onChange={(e) => setForm((f) => ({ ...f, required_phrases: e.target.value }))}

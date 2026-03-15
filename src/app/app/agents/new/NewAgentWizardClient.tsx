@@ -22,13 +22,13 @@ import { AGENT_TEMPLATES, type AgentTemplate } from "@/lib/data/agent-templates"
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 
 const STEPS = [
-  { id: 1, label: "Purpose", icon: Phone },
-  { id: 2, label: "Personality", icon: Mic },
-  { id: 3, label: "Knowledge", icon: BookOpen },
-  { id: 4, label: "Rules", icon: Shield },
-  { id: 5, label: "Phone & Schedule", icon: Calendar },
-  { id: 6, label: "Test", icon: Play },
-  { id: 7, label: "Launch", icon: Rocket },
+  { id: 1, labelKey: "stepPurpose", icon: Phone },
+  { id: 2, labelKey: "stepPersonality", icon: Mic },
+  { id: 3, labelKey: "stepKnowledge", icon: BookOpen },
+  { id: 4, labelKey: "stepRules", icon: Shield },
+  { id: 5, labelKey: "stepPhoneSchedule", icon: Calendar },
+  { id: 6, labelKey: "stepTest", icon: Play },
+  { id: 7, labelKey: "stepLaunch", icon: Rocket },
 ] as const;
 
 type PurposeChoice = "inbound" | "outbound" | "both";
@@ -249,7 +249,7 @@ export default function NewAgentWizardClient({
           <div
             key={s.id}
             className={`h-1 flex-1 rounded-full ${s.id <= step ? "bg-white" : "bg-zinc-800"}`}
-            title={`Step ${s.id}: ${s.label}`}
+            title={`Step ${s.id}: ${t(s.labelKey)}`}
           />
         ))}
       </div>
@@ -331,7 +331,7 @@ export default function NewAgentWizardClient({
                 </option>
               ))}
             </select>
-            <label className="block text-sm text-zinc-400 mb-1">Speaking speed</label>
+            <label className="block text-sm text-zinc-400 mb-1">{t("speakingSpeedLabel")}</label>
             <input
               type="range"
               min="0.8"
@@ -366,9 +366,9 @@ export default function NewAgentWizardClient({
 
         {step === 3 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">Knowledge</h2>
-            <p className="text-zinc-400 text-sm mb-4">What your agent should know.</p>
-            <label className="block text-sm text-zinc-400 mb-1">Business hours</label>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("knowledgeHeading")}</h2>
+            <p className="text-zinc-400 text-sm mb-4">{t("knowledgeSubtitle")}</p>
+            <label className="block text-sm text-zinc-400 mb-1">{t("businessHoursLabel")}</label>
             <input
               type="text"
               value={state.businessHours}
@@ -376,7 +376,7 @@ export default function NewAgentWizardClient({
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
               placeholder={t("businessHoursPlaceholder")}
             />
-            <label className="block text-sm text-zinc-400 mb-1">FAQs (question / answer)</label>
+            <label className="block text-sm text-zinc-400 mb-1">{t("faqsLabel")}</label>
             {state.faq.map((f, i) => (
               <div key={i} className="flex gap-2 mb-2">
                 <input
@@ -410,16 +410,16 @@ export default function NewAgentWizardClient({
               onClick={() => setState((p) => ({ ...p, faq: [...p.faq, { question: "", answer: "" }] }))}
               className="text-sm text-zinc-400 hover:text-white border border-zinc-700 rounded-xl px-3 py-2"
             >
-              + Add FAQ
+              {t("addFaq")}
             </button>
           </>
         )}
 
         {step === 4 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">Rules</h2>
-            <p className="text-zinc-400 text-sm mb-4">What the agent should never do.</p>
-            <label className="block text-sm text-zinc-400 mb-1">Never say or do (one per line)</label>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("rulesHeading")}</h2>
+            <p className="text-zinc-400 text-sm mb-4">{t("rulesSubtitle")}</p>
+            <label className="block text-sm text-zinc-400 mb-1">{t("neverSayLabel")}</label>
             <textarea
               value={state.neverSay.join("\n")}
               onChange={(e) => setState((p) => ({ ...p, neverSay: e.target.value.split("\n").filter(Boolean) }))}
@@ -427,7 +427,7 @@ export default function NewAgentWizardClient({
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
               placeholder={t("neverSayPlaceholder")}
             />
-            <label className="block text-sm text-zinc-400 mb-1">Objection handling (optional)</label>
+            <label className="block text-sm text-zinc-400 mb-1">{t("objectionLabel")}</label>
             <textarea
               value={state.objectionHandling}
               onChange={(e) => setState((p) => ({ ...p, objectionHandling: e.target.value }))}
@@ -442,16 +442,16 @@ export default function NewAgentWizardClient({
                 onChange={(e) => setState((p) => ({ ...p, bantEnabled: e.target.checked }))}
                 className="rounded border-zinc-600"
               />
-              Use BANT qualification (Budget, Authority, Need, Timeline)
+              {t("bantLabel")}
             </label>
           </>
         )}
 
         {step === 5 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">Phone & schedule</h2>
-            <p className="text-zinc-400 text-sm mb-4">Assign a number and when the agent is active.</p>
-            <label className="block text-sm text-zinc-400 mb-1">Active hours</label>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("phoneScheduleHeading")}</h2>
+            <p className="text-zinc-400 text-sm mb-4">{t("phoneScheduleSubtitle")}</p>
+            <label className="block text-sm text-zinc-400 mb-1">{t("activeHoursLabel")}</label>
             <input
               type="text"
               value={state.activeHours}
@@ -459,7 +459,7 @@ export default function NewAgentWizardClient({
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
               placeholder={t("activeHoursPlaceholder")}
             />
-            <label className="block text-sm text-zinc-400 mb-1">Timezone</label>
+            <label className="block text-sm text-zinc-400 mb-1">{t("timezoneLabel")}</label>
             <input
               type="text"
               value={state.timezone}
@@ -467,18 +467,18 @@ export default function NewAgentWizardClient({
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
               placeholder={t("timezonePlaceholder")}
             />
-            <label className="block text-sm text-zinc-400 mb-1">When outside hours</label>
+            <label className="block text-sm text-zinc-400 mb-1">{t("whenOutsideHoursLabel")}</label>
             <select
               value={state.voicemailBehavior}
               onChange={(e) => setState((p) => ({ ...p, voicemailBehavior: e.target.value as WizardState["voicemailBehavior"] }))}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white"
             >
-              <option value="messages">Take a message</option>
-              <option value="forward">Forward to a number</option>
-              <option value="closed">Play closed message</option>
+              <option value="messages">{t("voicemailTakeMessage")}</option>
+              <option value="forward">{t("voicemailForward")}</option>
+              <option value="closed">{t("voicemailClosed")}</option>
             </select>
             <p className="text-zinc-500 text-sm mt-4">
-              Assign a phone number from <Link href="/app/settings/phone" className="text-white underline">Settings → Phone</Link> after launch.
+              {t("assignNumberHint")} <Link href="/app/settings/phone" className="text-white underline">Settings → Phone</Link> {t("assignNumberHintAfter")}
             </p>
           </>
         )}

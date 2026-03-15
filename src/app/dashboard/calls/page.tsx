@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, LoadingState, EmptyState } from "@/components/ui";
@@ -24,6 +25,7 @@ interface CalendarRiskData {
 }
 
 export default function CalendarPage() {
+  const t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
   const [data, setData] = useState<CalendarRiskData | null>(null);
   const [_riskSurface, setRiskSurface] = useState<{ calendar_at_risk: Array<{ call_id: string; rescue_needed: boolean }> } | null>(null);
@@ -85,20 +87,20 @@ export default function CalendarPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-3xl">
-        <PageHeader title="Calendar" subtitle="Upcoming calls and attendance status." />
-        <EmptyState icon="watch" title="Follow-through in progress appears here." subtitle="In place." />
+        <PageHeader title={t("pages.callsCalendar.title")} subtitle={t("pages.callsCalendar.subtitleShort")} />
+        <EmptyState icon="watch" title={t("followThroughEmptyTitle")} subtitle={t("followThroughEmptySubtitle")} />
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-3xl">
-      <PageHeader title="Calendar" subtitle="Attendance confidence and preparation state." />
+      <PageHeader title={t("pages.callsCalendar.title")} subtitle={t("pages.callsCalendar.subtitle")} />
 
       {loading ? (
-        <LoadingState message="One moment…" submessage="" />
+        <LoadingState message={t("loadingMessage")} submessage="" />
       ) : allCalls.length === 0 ? (
-        <EmptyState icon="pulse" title="Calls appear here." subtitle="Stable for now." />
+        <EmptyState icon="pulse" title={t("empty.callsAppearHere")} subtitle={t("empty.callsStable")} />
       ) : (
         <div className="space-y-4">
           {allCalls.map((c) => {
@@ -122,7 +124,7 @@ export default function CalendarPage() {
                     </p>
                     {confidence === "Low" && (
                       <p className="text-xs mt-2" style={{ color: "var(--meaning-amber)" }}>
-                        Confirmation recommended
+                        {t("callsCalendarPage.confirmationRecommended")}
                       </p>
                     )}
                   </div>
@@ -131,7 +133,7 @@ export default function CalendarPage() {
                     className="text-sm font-medium shrink-0"
                     style={{ color: "var(--meaning-blue)" }}
                   >
-                    Access details
+                    {t("callsCalendarPage.accessDetails")}
                   </Link>
                 </div>
               </div>

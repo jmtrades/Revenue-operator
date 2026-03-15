@@ -162,12 +162,12 @@ function ApiKeysTab({
         <table className="w-full text-left text-sm">
           <thead className="bg-[var(--bg-card)]/80 border-b border-[var(--border-default)]">
             <tr>
-              <th className="py-3 px-4 font-medium text-zinc-400">Label</th>
-              <th className="py-3 px-4 font-medium text-zinc-400">Key</th>
-              <th className="py-3 px-4 font-medium text-zinc-400">Permissions</th>
-              <th className="py-3 px-4 font-medium text-zinc-400">Created</th>
-              <th className="py-3 px-4 font-medium text-zinc-400">Last Used</th>
-              <th className="py-3 px-4 font-medium text-zinc-400">Status</th>
+              <th className="py-3 px-4 font-medium text-zinc-400">{t("tableLabel")}</th>
+              <th className="py-3 px-4 font-medium text-zinc-400">{t("tableKey")}</th>
+              <th className="py-3 px-4 font-medium text-zinc-400">{t("tablePermissions")}</th>
+              <th className="py-3 px-4 font-medium text-zinc-400">{t("tableCreated")}</th>
+              <th className="py-3 px-4 font-medium text-zinc-400">{t("tableLastUsed")}</th>
+              <th className="py-3 px-4 font-medium text-zinc-400">{t("tableStatus")}</th>
               <th className="w-10" />
             </tr>
           </thead>
@@ -344,9 +344,9 @@ function ApiKeysTab({
       {revokeId && (
         <ConfirmDialog
           open
-          title="Revoke API key?"
-          message="This key will stop working immediately. This can't be undone."
-          confirmLabel="Revoke"
+          title={t("revokeConfirmTitle")}
+          message={t("revokeConfirmMessage")}
+          confirmLabel={t("revokeConfirmLabel")}
           variant="danger"
           onConfirm={() => {
             onRevoke(revokeId);
@@ -495,7 +495,7 @@ function WebhooksTab({
                 <label className="block text-xs font-medium text-zinc-400 mb-1.5">Secret (auto-generated)</label>
                 <div className="flex items-center gap-2">
                   <code className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-xs text-zinc-400 font-mono truncate">{newSecret}</code>
-                  <button type="button" onClick={() => copyToClipboard(newSecret, () => {})} className="px-2 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[var(--bg-card)]" title="Copy"><Copy className="w-4 h-4" /></button>
+                  <button type="button" onClick={() => copyToClipboard(newSecret, () => {})} className="px-2 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[var(--bg-card)]" title={t("copy")}><Copy className="w-4 h-4" /></button>
                 </div>
               </div>
               <div>

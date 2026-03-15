@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, LoadingState } from "@/components/ui";
@@ -14,6 +15,8 @@ interface Miss {
 }
 
 export default function ReportsPage() {
+  const t = useTranslations("dashboard");
+  const tr = useTranslations("dashboard.reportsPage");
   const { workspaceId } = useWorkspace();
   const [riskSurface, setRiskSurface] = useState<{ risk_incidents_prevented_this_week?: number } | null>(null);
   const [weekly, setWeekly] = useState<{
@@ -62,44 +65,44 @@ export default function ReportsPage() {
 
   return (
     <div className="p-8 max-w-3xl">
-      <PageHeader title="Protection scope" subtitle="What continues here" />
+      <PageHeader title={t("empty.protectionScopeTitle")} subtitle={t("empty.protectionScopeSubtitle")} />
 
       {loading ? (
-        <LoadingState message="One moment…" submessage="" />
+        <LoadingState message={t("loadingMessage")} submessage="" />
       ) : (
         <div className="space-y-8">
           <section>
-            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>This week</h2>
+            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>{tr("thisWeek")}</h2>
             <div className="space-y-4">
               <ProofStatement
-                statement="Decisions that remained on track"
-                detail={prevented > 0 ? `${prevented} decision${prevented !== 1 ? "s" : ""} remained on track under protection.` : "Decision completion is in scope."}
+                statement={tr("statementDecisionsOnTrack")}
+                detail={prevented > 0 ? tr("detailDecisionsOnTrack", { count: prevented }) : tr("decisionCompletionInScope")}
                 value={prevented}
               />
               <ProofStatement
-                statement="Return timing"
-                detail={recovered > 0 ? `${recovered} return${recovered !== 1 ? "s" : ""} in our responsibility this week.` : "Return timing is in scope when needed."}
+                statement={tr("statementReturnTiming")}
+                detail={recovered > 0 ? tr("detailReturnsInScope", { count: recovered }) : tr("returnTimingInScope")}
                 value={recovered}
               />
               <ProofStatement
-                statement="Attendance stability"
-                detail={secured > 0 ? `${secured} call${secured !== 1 ? "s" : ""} confirmed under protection.` : "Attendance stability is in scope."}
+                statement={tr("statementAttendanceStability")}
+                detail={secured > 0 ? tr("detailCallsConfirmed", { count: secured }) : tr("attendanceStabilityInScope")}
                 value={secured}
               />
               <ProofStatement
-                statement="Revenue in scope"
-                detail={revenue > 0 ? `$${revenue.toLocaleString()} from decisions under handling.` : "—"}
+                statement={tr("statementRevenueInScope")}
+                detail={revenue > 0 ? tr("revenueFromDecisions", { amount: `$${revenue.toLocaleString()}` }) : "—"}
                 value={revenue > 0 ? `$${revenue.toLocaleString()}` : "—"}
               />
             </div>
           </section>
 
           <section>
-            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Assurance</h2>
+            <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>{tr("assurance")}</h2>
             <div className="space-y-4">
               <ProofStatement
-                statement="Exposures contained"
-                detail={riskIncidentsPrevented > 0 ? `${riskIncidentsPrevented} exposure${riskIncidentsPrevented !== 1 ? "s" : ""} did not become losses under protection.` : "No exposures this week."}
+                statement={tr("statementExposuresContained")}
+                detail={riskIncidentsPrevented > 0 ? tr("detailExposuresContained", { count: riskIncidentsPrevented }) : tr("noExposuresThisWeek")}
                 value={riskIncidentsPrevented}
               />
             </div>
@@ -107,7 +110,7 @@ export default function ReportsPage() {
 
           {handledImprints.length > 0 && (
             <section>
-              <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Handled situations</h2>
+              <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>{tr("handledSituations")}</h2>
               <ul className="space-y-1.5 text-sm" style={{ color: "var(--text-secondary)" }}>
                 {handledImprints.map((s, i) => (
                   <li key={i}>{s}</li>
@@ -118,7 +121,7 @@ export default function ReportsPage() {
 
           {misses?.misses && misses.misses.length > 0 && (
             <section>
-              <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>Decisions we kept on track</h2>
+              <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>{tr("decisionsWeKeptOnTrack")}</h2>
               <div className="space-y-3">
                 {misses.misses.slice(0, 5).map((m, i) => (
                   <div
@@ -130,11 +133,11 @@ export default function ReportsPage() {
                       <p className="font-medium" style={{ color: "var(--text-primary)" }}>{m.lead_name ?? "—"}</p>
                       <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>{m.detail}</p>
                       {m.recovery_scheduled && (
-                        <span className="inline-block mt-2 text-xs" style={{ color: "var(--meaning-green)" }}>Follow-through in progress</span>
+                        <span className="inline-block mt-2 text-xs" style={{ color: "var(--meaning-green)" }}>{tr("followThroughInProgress")}</span>
                       )}
                     </div>
                     <Link href={`/dashboard/leads/${m.lead_id}`} className="text-sm shrink-0" style={{ color: "var(--meaning-blue)" }}>
-                      Access context
+                      {tr("accessContext")}
                     </Link>
                   </div>
                 ))}
@@ -147,9 +150,9 @@ export default function ReportsPage() {
               className="p-5 rounded-xl"
               style={{ background: "var(--card)", borderColor: "var(--meaning-amber)", borderWidth: "1px" }}
             >
-              <p className="text-sm font-medium" style={{ color: "var(--meaning-amber)" }}>If protection stops</p>
+              <p className="text-sm font-medium" style={{ color: "var(--meaning-amber)" }}>{tr("ifProtectionStops")}</p>
               <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
-                Response continuity, decision completion, and attendance stability will no longer be protected for in-progress work. Some decisions may stall. Attendance may no longer be stabilized.
+                {tr("ifProtectionStopsBody")}
               </p>
             </section>
           )}

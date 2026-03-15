@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
@@ -24,6 +25,8 @@ function snip(s: string): string {
 }
 
 export default function ApprovalsPage() {
+  const _t = useTranslations("dashboard");
+  const ta = useTranslations("dashboard.approvalsPage");
   const { workspaceId } = useWorkspace();
   const [pending, setPending] = useState<PendingItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,7 +111,7 @@ export default function ApprovalsPage() {
                     disabled={!!acting}
                     className="text-sm py-1 px-2 border border-[#e7e5e4] hover:bg-[#f5f5f4] disabled:opacity-50"
                   >
-                    Approve
+                    {ta("approve")}
                   </button>
                   <button
                     type="button"
@@ -116,11 +119,11 @@ export default function ApprovalsPage() {
                     disabled={!!acting}
                     className="text-sm py-1 px-2 border border-[#e7e5e4] hover:bg-[#f5f5f4] disabled:opacity-50"
                   >
-                    Reject
+                    {ta("reject")}
                   </button>
                   {p.thread_id && (
                     <Link href="/dashboard/record" className="text-sm py-1 px-2 border border-[#e7e5e4] hover:bg-[#f5f5f4]">
-                      Record
+                      {ta("recordLink")}
                     </Link>
                   )}
                 </div>

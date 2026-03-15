@@ -37,13 +37,7 @@ const ONBOARDING_VOICES = CURATED_VOICES.slice(0, 6).map((v) => ({
   preview: "Thanks for calling. How can I help you today?",
 }));
 
-const ONBOARDING_TEST_SCENARIOS = [
-  { id: "normal", title: "Normal call", description: "Standard inquiry", phrase: "Hi, I need some information about your services." },
-  { id: "angry", title: "Angry caller", description: "Tests empathy and transfer", phrase: "I've been waiting for a callback for days. I'm really frustrated." },
-  { id: "booking", title: "Booking request", description: "Tests appointment flow", phrase: "I'd like to schedule an appointment for this week." },
-  { id: "afterhours", title: "After hours", description: "Tests closed behavior", phrase: "Are you open right now? What are your hours?" },
-  { id: "unknown", title: "Unknown question", description: "Tests fallback", phrase: "Do you offer XYZ service? I didn't see it on your website." },
-] as const;
+const ONBOARDING_SCENARIO_IDS = ["normal", "angry", "booking", "afterhours", "unknown"] as const;
 
 const ONBOARDING_TEMPLATES = [
   {
@@ -99,6 +93,13 @@ const ONBOARDING_TEMPLATES = [
 export default function AppOnboardingPage() {
   const t = useTranslations("onboarding");
   const router = useRouter();
+  const onboardingScenarios = (ONBOARDING_SCENARIO_IDS as readonly string[]).map((id) => ({
+    id,
+    title: t(`scenarios.${id}.title`),
+    description: t(`scenarios.${id}.description`),
+    phrase: t(`scenarios.${id}.phrase`),
+  }));
+  const useCaseOptions = USE_CASE_OPTIONS.map(({ id }) => ({ id, label: t(`useCases.${id}`) }));
   const onboardingCtx = useOnboardingStep();
   const step = onboardingCtx?.step ?? 1;
   const setStep = onboardingCtx?.setStep ?? (() => {});
@@ -261,7 +262,7 @@ export default function AppOnboardingPage() {
           </p>
           <p className="text-sm text-zinc-500 mt-1">Onboarding</p>
         </div>
-        <nav aria-label="Onboarding steps" className="space-y-4">
+        <nav aria-label={t("stepsAria")} className="space-y-4">
           {STEP_KEYS.map((s) => {
             const active = step === s.id;
             return (
@@ -343,27 +344,27 @@ export default function AppOnboardingPage() {
         {step === 1 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-white">
-              Welcome to Recall Touch!
+              {t("welcomeHeading")}
             </h1>
             <p className="text-sm text-zinc-400">
-              Let&apos;s get your AI phone system running in 2 minutes.
+              {t("welcomeSubtitle")}
             </p>
             <div>
-              <label htmlFor="onboarding-business-name" className="block text-xs font-medium mb-1.5 text-zinc-400">Business name</label>
+              <label htmlFor="onboarding-business-name" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("businessNameLabel")}</label>
               <input
                 id="onboarding-business-name"
                 type="text"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="Portland Plumbing Co"
+                placeholder={t("businessNamePlaceholder")}
                 className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">What will your AI handle?</label>
-              <p className="text-[11px] text-[var(--text-secondary)] mb-2">Select all that apply. This shapes your default knowledge and agent behavior.</p>
+              <label className="block text-xs font-medium mb-1.5 text-zinc-400">{t("whatAiHandleLabel")}</label>
+              <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("whatAiHandleHint")}</p>
               <div className="flex flex-wrap gap-2">
-                {USE_CASE_OPTIONS.map(({ id, label }) => {
+                {useCaseOptions.map(({ id, label }) => {
                   const selected = useCases.includes(id);
                   return (
                     <button
@@ -381,41 +382,41 @@ export default function AppOnboardingPage() {
               </div>
             </div>
             <div>
-              <label htmlFor="onboarding-website" className="block text-xs font-medium mb-1.5 text-zinc-400">Website</label>
+              <label htmlFor="onboarding-website" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("websiteLabel")}</label>
               <input
                 id="onboarding-website"
                 type="url"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
-                placeholder="https://yoursite.com"
+                placeholder={t("websitePlaceholder")}
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
               <p className="mt-1 text-[11px] text-zinc-500">
-                If you have a site, we&apos;ll use it to pre-fill your hours, services, and FAQs.
+                {t("websiteHint")}
               </p>
             </div>
             <div>
-              <label htmlFor="onboarding-address" className="block text-xs font-medium mb-1.5 text-zinc-400">Address</label>
+              <label htmlFor="onboarding-address" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("addressLabel")}</label>
               <input
                 id="onboarding-address"
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                placeholder="123 Main St, City, State"
+                placeholder={t("addressPlaceholder")}
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
               <p className="mt-1 text-[11px] text-zinc-500">
-                This helps your AI answer &ldquo;Where are you located?&rdquo; and give directions.
+                {t("addressHint")}
               </p>
             </div>
             <div>
-              <label htmlFor="onboarding-phone" className="block text-xs font-medium mb-1.5 text-zinc-400">Phone number (we&apos;ll send a code to verify)</label>
+              <label htmlFor="onboarding-phone" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("phoneLabel")}</label>
               <input
                 id="onboarding-phone"
                 type="tel"
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
-                placeholder="+1 (555) 000-0000"
+                placeholder={t("phonePlaceholder")}
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
             </div>
@@ -432,7 +433,7 @@ export default function AppOnboardingPage() {
         {/* Step 2 — YOUR AI AGENT */}
         {step === 2 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Choose how your AI sounds</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("chooseSoundsHeading")}</h1>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {ONBOARDING_VOICES.map((v) => {
                 const selected = voiceId === v.id;
@@ -451,20 +452,20 @@ export default function AppOnboardingPage() {
                         type="button"
                         onClick={(e) => { e.stopPropagation(); void speakTextViaApi(v.preview, { gender: v.gender, voiceId: v.id }); }}
                         className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-primary)] text-xs"
-                        aria-label={`Preview ${v.name}`}
+                        aria-label={t("previewVoiceAria", { name: v.name })}
                       >
                         ▶
                       </button>
                     </div>
                     <p className="text-xs text-zinc-400 mt-0.5">{v.desc}</p>
-                    {selected && <p className="text-[10px] text-[var(--text-primary)] mt-1">✓ Selected</p>}
+                    {selected && <p className="text-[10px] text-[var(--text-primary)] mt-1">{t("selected")}</p>}
                   </button>
                 );
               })}
             </div>
             <div>
-              <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-zinc-400">Opening greeting</label>
-              <p className="text-[11px] text-[var(--text-secondary)] mb-2">This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge and rules.</p>
+              <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("openingGreetingLabel")}</label>
+              <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("openingGreetingHint")}</p>
               <textarea
                 id="onboarding-greeting"
                 value={greeting}
@@ -486,7 +487,7 @@ export default function AppOnboardingPage() {
                 className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl border border-[var(--border-default)] text-zinc-300 hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
               >
                 {greetingPlaying ? <Waveform isPlaying /> : <span>▶</span>}
-                Hear it
+                {t("hearIt")}
               </button>
             </div>
             <div className="flex gap-2">
@@ -511,34 +512,34 @@ export default function AppOnboardingPage() {
         {/* Step 3 — TEACH YOUR AI */}
         {step === 3 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">What should your AI know?</h1>
-            <p className="text-sm text-zinc-400">Add business details and Q&As so your AI can answer real questions.</p>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("whatShouldKnowHeading")}</h1>
+            <p className="text-sm text-zinc-400">{t("whatShouldKnowSubtitle")}</p>
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
-              <p className="text-xs font-medium text-[var(--text-secondary)]">Business info</p>
+              <p className="text-xs font-medium text-[var(--text-secondary)]">{t("businessInfoLabel")}</p>
               <div>
-                <label htmlFor="onboarding-address" className="block text-[11px] text-zinc-500 mb-1">Address</label>
+                <label htmlFor="onboarding-address" className="block text-[11px] text-zinc-500 mb-1">{t("addressLabel")}</label>
                 <input
                   id="onboarding-address"
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="123 Main St, City, State"
+                  placeholder={t("addressPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
                 />
               </div>
               <div>
-                <label htmlFor="onboarding-hours" className="block text-[11px] text-zinc-500 mb-1">Hours</label>
+                <label htmlFor="onboarding-hours" className="block text-[11px] text-zinc-500 mb-1">{t("hoursLabel")}</label>
                 <input
                   id="onboarding-hours"
                   type="text"
                   value={businessHoursDisplay}
                   onChange={(e) => setBusinessHoursDisplay(e.target.value)}
-                  placeholder="e.g. Monday–Friday 9 AM–5 PM"
+                  placeholder={t("hoursPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Services</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("servicesLabel")}</label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {services.map((s) => (
                     <span
@@ -550,7 +551,7 @@ export default function AppOnboardingPage() {
                         type="button"
                         onClick={() => setServices((prev) => prev.filter((x) => x !== s))}
                         className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                        aria-label={`Remove ${s}`}
+                        aria-label={t("removeAria", { item: s })}
                       >
                         &#215;
                       </button>
@@ -563,7 +564,7 @@ export default function AppOnboardingPage() {
                     value={serviceInput}
                     onChange={(e) => setServiceInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addService(); } }}
-                    placeholder="Add a service"
+                    placeholder={t("addServicePlaceholder")}
                     className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
                   />
                   <button
@@ -571,7 +572,7 @@ export default function AppOnboardingPage() {
                     onClick={addService}
                     className="shrink-0 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-[var(--text-primary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] text-sm"
                   >
-                    Add
+                    {t("add")}
                   </button>
                 </div>
               </div>
@@ -579,7 +580,7 @@ export default function AppOnboardingPage() {
             {!starterAdded && (
               <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <p className="text-sm text-zinc-300">
-                  <span className="text-[var(--text-primary)] font-medium">We&apos;ve prepared starter entries</span> based on what you selected. You can edit them or add your own.
+                  {t("starterEntriesCta")}
                 </p>
                 <button
                   type="button"
@@ -641,10 +642,10 @@ export default function AppOnboardingPage() {
                 onClick={() => setKnowledgeItems((prev) => [...prev, { q: "", a: "" }])}
                 className="w-full py-2.5 rounded-xl border border-dashed border-[var(--border-medium)] text-zinc-400 hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
               >
-                + Add another Q&A
+                {t("addAnotherQa")}
               </button>
             </div>
-            <p className="text-xs text-zinc-500">You can always add more later in your agent settings.</p>
+            <p className="text-xs text-zinc-500">{t("addMoreLater")}</p>
             <div className="flex gap-2">
               <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
               <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
@@ -655,22 +656,22 @@ export default function AppOnboardingPage() {
         {/* Step 4 — TEST YOUR AI */}
         {step === 4 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Talk to your AI</h1>
-            <p className="text-sm text-zinc-400">It&apos;s using your voice, greeting, and knowledge base.</p>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("talkToAiHeading")}</h1>
+            <p className="text-sm text-zinc-400">{t("talkToAiSubtitle")}</p>
             <div className="flex justify-center py-6">
               <WorkspaceVoiceButton
                 title=""
                 description=""
-                startLabel="Tap to start a test call"
-                endLabel="End test"
+                startLabel={t("tapToStartLabel")}
+                endLabel={t("endTestLabel")}
                 showUnavailable={true}
               />
             </div>
             <div>
-              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Scenario simulator</p>
-              <p className="text-[11px] text-zinc-500 mb-3">When you&apos;re on the test call, try saying one of these to see how your AI responds.</p>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">{t("scenarioSimulatorLabel")}</p>
+              <p className="text-[11px] text-zinc-500 mb-3">{t("scenarioSimulatorHint")}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="list">
-                {ONBOARDING_TEST_SCENARIOS.map((s) => (
+                {onboardingScenarios.map((s) => (
                   <div
                     key={s.id}
                     role="listitem"
@@ -693,41 +694,41 @@ export default function AppOnboardingPage() {
         {/* Step 5 — GO LIVE */}
         {step === 5 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">You&apos;re ready.</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("readyHeading")}</h1>
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-              <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">Readiness checklist</p>
+              <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">{t("readinessChecklistLabel")}</p>
               <ul className="space-y-2 text-xs text-[var(--text-secondary)]">
                 <li className="flex items-center gap-2">
                   {greeting.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
-                  <span className={greeting.trim() ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>Greeting configured</span>
+                  <span className={greeting.trim() ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>{t("greetingConfigured")}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   {voiceId?.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
-                  <span className={voiceId?.trim() ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>Voice selected</span>
+                  <span className={voiceId?.trim() ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>{t("voiceSelected")}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   {knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
-                  <span className={knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>At least 3 knowledge entries</span>
+                  <span className={knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>{t("atLeast3Entries")}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />
-                  <span className="text-[var(--text-secondary)]">Phone connection (optional now)</span>
+                  <span className="text-[var(--text-secondary)]">{t("phoneOptional")}</span>
                 </li>
               </ul>
             </div>
-            <p className="text-sm text-zinc-400 mb-3">We&apos;ll help you get a phone number after setup. You can use your existing number or get a new one in Settings → Phone.</p>
+            <p className="text-sm text-zinc-400 mb-3">{t("phoneHelpParagraph")}</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-              <p className="text-sm font-medium text-[var(--text-primary)] mb-1">Forward your existing number</p>
-              <p className="text-xs text-zinc-400 mb-2">Call your carrier and set up forwarding to your Recall Touch number once you have it.</p>
-              <a href="/app/settings/phone" className="text-xs text-[var(--text-primary)] hover:text-[var(--text-primary)] underline">Show me how</a>
+              <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("forwardExistingTitle")}</p>
+              <p className="text-xs text-zinc-400 mb-2">{t("forwardExistingDesc")}</p>
+              <a href="/app/settings/phone" className="text-xs text-[var(--text-primary)] hover:text-[var(--text-primary)] underline">{t("showMeHow")}</a>
             </div>
-            <p className="text-xs text-zinc-500 text-center mt-3">— or —</p>
+            <p className="text-xs text-zinc-500 text-center mt-3">{t("orDivider")}</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-              <p className="text-sm font-medium text-[var(--text-primary)] mb-1">Get a new phone number</p>
-              <p className="text-xs text-zinc-400 mb-2">We&apos;ll assign you a local number in Settings → Phone.</p>
-              <a href="/app/settings/phone" className="inline-block py-2 px-4 rounded-xl bg-[var(--bg-hover)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--bg-active)]">Get my number →</a>
+              <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("getNewNumberTitle")}</p>
+              <p className="text-xs text-zinc-400 mb-2">{t("getNewNumberDesc")}</p>
+              <a href="/app/settings/phone" className="inline-block py-2 px-4 rounded-xl bg-[var(--bg-hover)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--bg-active)]">{t("getMyNumber")}</a>
             </div>
-            <p className="text-xs text-zinc-500 text-center mt-3">— or skip for now and connect a number later in Settings.</p>
+            <p className="text-xs text-zinc-500 text-center mt-3">{t("orSkipHint")}</p>
             <button
               type="button"
               onClick={handleGoToDashboard}

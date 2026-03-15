@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 /**
@@ -7,12 +8,13 @@ import { useWorkspace } from "@/components/WorkspaceContext";
  * Institutional only. No metrics, no claims.
  */
 export default function LedgerPage() {
+  const t = useTranslations("dashboard.ledger");
   const { workspaceId } = useWorkspace();
 
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-2xl">
-        <p style={{ color: "var(--text-muted)" }}>Authority is present.</p>
+        <p style={{ color: "var(--text-muted)" }}>{t("authorityPresent")}</p>
       </div>
     );
   }
@@ -21,48 +23,48 @@ export default function LedgerPage() {
     <div className="p-8 max-w-2xl space-y-16">
       <header>
         <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>
-          Ledger
+          {t("title")}
         </h1>
         <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-          Entries define operational state.
+          {t("subtitle")}
         </p>
       </header>
 
       <section className="space-y-4">
         <h2 className="text-sm font-medium uppercase" style={{ color: "var(--text-secondary)" }}>
-          Entry states
+          {t("entryStates")}
         </h2>
         <ul className="text-sm space-y-2 list-disc pl-5" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          <li>Normal conditions.</li>
-          <li>Outside authority.</li>
-          <li>Beyond scope.</li>
-          <li>Exposure exists.</li>
+          <li>{t("stateNormal")}</li>
+          <li>{t("stateOutsideAuthority")}</li>
+          <li>{t("stateBeyondScope")}</li>
+          <li>{t("stateExposure")}</li>
         </ul>
       </section>
 
       <section className="space-y-4">
         <h2 className="text-sm font-medium uppercase" style={{ color: "var(--text-secondary)" }}>
-          Entry meaning
+          {t("entryMeaning")}
         </h2>
         <ul className="text-sm space-y-2 list-disc pl-5" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          <li>Normal conditions indicates no unresolved entry.</li>
-          <li>Outside authority indicates an unresolved entry.</li>
-          <li>Beyond scope indicates authority is absent for the domain.</li>
-          <li>Exposure exists indicates entry has not been made.</li>
+          <li>{t("meaningNormal")}</li>
+          <li>{t("meaningOutside")}</li>
+          <li>{t("meaningBeyond")}</li>
+          <li>{t("meaningExposure")}</li>
         </ul>
       </section>
 
       <section className="space-y-4">
         <h2 className="text-sm font-medium uppercase" style={{ color: "var(--text-secondary)" }}>
-          Resolution
+          {t("resolution")}
         </h2>
         <ul className="text-sm space-y-2 list-disc pl-5" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          <li>Entry concludes exposure.</li>
-          <li>Entry restores reliance.</li>
+          <li>{t("resolveConcludes")}</li>
+          <li>{t("resolveRestores")}</li>
         </ul>
       </section>
       <p className="text-sm mt-8" style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>
-        Entry is the operational boundary.
+        {t("boundary")}
       </p>
     </div>
   );

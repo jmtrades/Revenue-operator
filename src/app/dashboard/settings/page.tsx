@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, Card, CardHeader, CardBody, EmptyState } from "@/components/ui";
 
 export default function SettingsPage() {
+  const t = useTranslations("dashboard");
   const router = useRouter();
   const { workspaceId } = useWorkspace();
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
@@ -195,38 +197,41 @@ export default function SettingsPage() {
     }).catch(() => {});
   };
 
-  const settingsLinks = [
-    { href: "/dashboard/settings/business", label: "Business" },
-    { href: "/dashboard/settings/phone", label: "Phone" },
-    { href: "/dashboard/settings/call-rules", label: "Call rules" },
-    { href: "/dashboard/settings/team", label: "Team" },
-    { href: "/dashboard/settings/notifications", label: "Notifications" },
-    { href: "/dashboard/settings/integrations", label: "Integrations" },
-    { href: "/dashboard/settings/compliance", label: "Compliance" },
-    { href: "/dashboard/settings/billing", label: "Billing" },
-  ];
+  const settingsLinks = useMemo(
+    () => [
+      { href: "/dashboard/settings/business", label: t("settings.nav.business") },
+      { href: "/dashboard/settings/phone", label: t("settings.nav.phone") },
+      { href: "/dashboard/settings/call-rules", label: t("settings.nav.callRules") },
+      { href: "/dashboard/settings/team", label: t("settings.nav.team") },
+      { href: "/dashboard/settings/notifications", label: t("settings.nav.notifications") },
+      { href: "/dashboard/settings/integrations", label: t("settings.nav.integrations") },
+      { href: "/dashboard/settings/compliance", label: t("settings.nav.compliance") },
+      { href: "/dashboard/settings/billing", label: t("settings.nav.billing") },
+    ],
+    [t]
+  );
   const q = workspaceId ? `?workspace_id=${encodeURIComponent(workspaceId)}` : "";
 
   return (
     <div className="p-8 max-w-xl mx-auto" style={{ color: "var(--text-primary)" }}>
       <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>
-        <Link href={workspaceId ? `/dashboard/presence?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/presence"} style={{ color: "var(--meaning-blue)" }}>Presence</Link>
+        <Link href={workspaceId ? `/dashboard/presence?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/presence"} style={{ color: "var(--meaning-blue)" }}>{t("settings.presence")}</Link>
       </p>
-      <PageHeader title="Settings" subtitle="Preferences and configuration" />
-      <nav className="mb-8 flex flex-wrap gap-2" aria-label="Settings sections">
+      <PageHeader title={t("settings.pageTitle")} subtitle={t("settings.pageSubtitle")} />
+      <nav className="mb-8 flex flex-wrap gap-2" aria-label={t("settings.sectionsAria")}>
         {settingsLinks.map(({ href, label }) => (
           <Link key={href} href={href + q} className="px-3 py-2 rounded-lg text-sm font-medium border" style={{ borderColor: "var(--border)", color: "var(--text-secondary)", background: "var(--surface)" }}>
             {label}
           </Link>
         ))}
       </nav>
-      <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--text-primary)" }}>General preferences</h2>
+      <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--text-primary)" }}>{t("settings.generalPreferences")}</h2>
       {!workspaceId ? (
-        <EmptyState title="Follow-through in progress appears here." subtitle="In place." icon="watch" />
+        <EmptyState title={t("followThroughEmptyTitle")} subtitle={t("followThroughEmptySubtitle")} icon="watch" />
       ) : (
         <div className="space-y-6">
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Operating profile</h2>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.operatingProfile")}</h2>
             <select
               value={operationalProfile}
               onChange={(e) => {
@@ -241,21 +246,21 @@ export default function SettingsPage() {
               className="w-full max-w-xs text-sm py-2 px-3 border rounded focus-ring"
               style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--text-primary)" }}
             >
-              <option value="org">Organization</option>
-              <option value="solo">Solo professional</option>
-              <option value="creator">Creator / personal brand</option>
-              <option value="vendor">Ecommerce / vendor</option>
-              <option value="recruiting">Recruiting / hiring</option>
-              <option value="legal">Legal / accounting</option>
-              <option value="customer_success">Customer onboarding / CS</option>
+              <option value="org">{t("settings.operatingProfileOrg")}</option>
+              <option value="solo">{t("settings.operatingProfileSolo")}</option>
+              <option value="creator">{t("settings.operatingProfileCreator")}</option>
+              <option value="vendor">{t("settings.operatingProfileVendor")}</option>
+              <option value="recruiting">{t("settings.operatingProfileRecruiting")}</option>
+              <option value="legal">{t("settings.operatingProfileLegal")}</option>
+              <option value="customer_success">{t("settings.operatingProfileCustomerSuccess")}</option>
             </select>
           </section>
           {sessionEmail && (
             <Card>
-              <CardHeader>Account</CardHeader>
+              <CardHeader>{t("settings.account")}</CardHeader>
               <CardBody>
                 <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Signed in as <span style={{ color: "var(--text-primary)" }}>{sessionEmail}</span>
+                  {t("settings.signedInAs")} <span style={{ color: "var(--text-primary)" }}>{sessionEmail}</span>
                 </p>
                 <button
                   type="button"
@@ -266,15 +271,15 @@ export default function SettingsPage() {
                   className="mt-2 text-sm font-medium"
                   style={{ color: "var(--meaning-blue)" }}
                 >
-                  Log out
+                  {t("settings.logOut")}
                 </button>
               </CardBody>
             </Card>
           )}
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Business context</h2>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.businessContext")}</h2>
             <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>
-              Match your tone and offer so follow-through stays on brand. No manual follow-through required.
+              {t("settings.businessContextIntro")}
             </p>
             <button
               type="button"
@@ -282,63 +287,63 @@ export default function SettingsPage() {
               className="text-sm mb-3"
               style={{ color: "var(--meaning-blue)" }}
             >
-              {showBusinessContext ? "−" : "+"} {showBusinessContext ? "Hide" : "Show"} business context
+              {showBusinessContext ? "−" : "+"} {showBusinessContext ? t("settings.hideBusinessContext") : t("settings.showBusinessContext")}
             </button>
             {showBusinessContext && (
               <div className="space-y-4 mt-4">
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Business name</label>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>{t("settings.businessName")}</label>
                   <input
                     type="text"
                     value={businessContext.business_name}
                     onChange={(e) => setBusinessContext({ ...businessContext, business_name: e.target.value })}
-                    placeholder="Business name"
+                    placeholder={t("settings.businessNamePlaceholder")}
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>What you offer (1-2 lines)</label>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>{t("settings.whatYouOffer")}</label>
                   <textarea
                     value={businessContext.offer_summary}
                     onChange={(e) => setBusinessContext({ ...businessContext, offer_summary: e.target.value })}
-                    placeholder="Brief description of the service or product"
+                    placeholder={t("settings.whatYouOfferPlaceholder")}
                     rows={2}
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Ideal customer</label>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>{t("settings.idealCustomer")}</label>
                   <input
                     type="text"
                     value={businessContext.ideal_customer}
                     onChange={(e) => setBusinessContext({ ...businessContext, ideal_customer: e.target.value })}
-                    placeholder="Who this is for"
+                    placeholder={t("settings.idealCustomerPlaceholder")}
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Pricing (optional)</label>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>{t("settings.pricingOptional")}</label>
                   <input
                     type="text"
                     value={businessContext.pricing_range}
                     onChange={(e) => setBusinessContext({ ...businessContext, pricing_range: e.target.value })}
-                    placeholder="e.g., Starts at $500"
+                    placeholder={t("settings.pricingPlaceholder")}
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
                 </div>
                 <div>
                   <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>
-                    Booking link <span style={{ color: "var(--text-muted)" }}>(recommended)</span>
+                    {t("settings.bookingLink")} <span style={{ color: "var(--text-muted)" }}>{t("settings.bookingLinkRecommended")}</span>
                   </label>
                   <input
                     type="url"
                     value={businessContext.booking_link}
                     onChange={(e) => setBusinessContext({ ...businessContext, booking_link: e.target.value })}
-                    placeholder="https://calendly.com/..."
+                    placeholder={t("settings.bookingLinkPlaceholder")}
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
@@ -358,7 +363,7 @@ export default function SettingsPage() {
                     style={{ accentColor: "var(--meaning-blue)" }}
                   />
                   <label htmlFor="discounts_allowed" className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                    Allow discounts in negotiations
+                    {t("settings.allowDiscountsInNegotiations")}
                   </label>
                 </div>
               </div>
@@ -366,9 +371,9 @@ export default function SettingsPage() {
           </section>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Sources</h2>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.sources")}</h2>
             <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>
-              Connect where your leads come from
+              {t("settings.sourcesIntro")}
             </p>
             <button
               type="button"
@@ -376,7 +381,7 @@ export default function SettingsPage() {
               className="text-sm mb-3"
               style={{ color: "var(--meaning-blue)" }}
             >
-              {showSources ? "−" : "+"} {showSources ? "Hide" : "Show"} sources
+              {showSources ? "−" : "+"} {showSources ? t("settings.hideSources") : t("settings.showSources")}
             </button>
             {showSources && (
               <div className="space-y-4 mt-4">
@@ -385,18 +390,18 @@ export default function SettingsPage() {
                   {twilioPhone ? (
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-mono" style={{ color: "var(--text-primary)" }}>{twilioPhone}</p>
-                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>In place</span>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>{t("settings.inPlace")}</span>
                     </div>
                   ) : (
-                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>Not in place</p>
+                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>{t("settings.notInPlace")}</p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Email</label>
-                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>Not configured</p>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>{t("settings.email")}</label>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>{t("settings.notConfigured")}</p>
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Inbound address</label>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>{t("settings.inboundAddress")}</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
@@ -413,14 +418,14 @@ export default function SettingsPage() {
                       className="px-3 py-2 rounded text-xs"
                       style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                     >
-                      Copy
+                      {t("settings.copy")}
                     </button>
                   </div>
                   <p className="text-[11px] mt-1" style={{ color: "var(--text-muted)" }}>
-                    External sources send new enquiries to this address.
+                    {t("settings.externalSourcesHint")}
                   </p>
                   <details className="mt-2">
-                    <summary className="text-xs cursor-pointer" style={{ color: "var(--text-muted)" }}>Request structure</summary>
+                    <summary className="text-xs cursor-pointer" style={{ color: "var(--text-muted)" }}>{t("settings.requestStructure")}</summary>
                     <pre className="mt-2 p-3 rounded text-xs overflow-x-auto" style={{ background: "var(--surface)", color: "var(--text-secondary)" }}>
 {`POST ${inboundWebhookUrl}
 Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
@@ -446,34 +451,34 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
           </section>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>How we sound</h2>
-            <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>Tone for follow-through</p>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.howWeSound")}</h2>
+            <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.toneForFollowThrough")}</p>
             <select
               value={communicationStyle}
               onChange={(e) => setCommunicationStyle(e.target.value as typeof communicationStyle)}
               className="w-full px-3 py-2 rounded text-sm"
               style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
             >
-              <option value="direct">Direct — short and clear</option>
-              <option value="consultative">Consultative — warm, asks questions</option>
+              <option value="direct">{t("settings.directOption")}</option>
+              <option value="consultative">{t("settings.consultativeOption")}</option>
             </select>
           </section>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Coverage scope</h2>
-            <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>Select what we&apos;re responsible for</p>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.coverageScope")}</h2>
+            <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>{t("settings.coverageSelectDesc")}</p>
             <div className="space-y-3 mb-4">
               {[
-                { key: "continuity_messaging" as const, label: "Continuity messaging", desc: "Replies, follow-ups, recoveries" },
-                { key: "booking_protection" as const, label: "Booking protection", desc: "Qualification to booking routing" },
-                { key: "attendance_protection" as const, label: "Attendance protection", desc: "Confirmations, reminders, rescue" },
-                { key: "post_call_continuity" as const, label: "Post-call continuity", desc: "Call-aware follow-ups, hesitation monitor" },
-                { key: "notifications" as const, label: "Notifications", desc: "Outbound notifications to external systems" },
-              ].map(({ key, label, desc }) => (
+                { key: "continuity_messaging" as const, labelKey: "settings.continuityMessaging", descKey: "settings.continuityMessagingDesc" },
+                { key: "booking_protection" as const, labelKey: "settings.bookingProtection", descKey: "settings.bookingProtectionDesc" },
+                { key: "attendance_protection" as const, labelKey: "settings.attendanceProtection", descKey: "settings.attendanceProtectionDesc" },
+                { key: "post_call_continuity" as const, labelKey: "settings.postCallContinuity", descKey: "settings.postCallContinuityDesc" },
+                { key: "notifications" as const, labelKey: "settings.notificationsLabel", descKey: "settings.notificationsDesc" },
+              ].map(({ key, labelKey, descKey }) => (
                 <div key={key} className="flex items-center justify-between p-3 rounded-lg" style={{ background: "var(--surface)" }}>
                   <div>
-                    <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{label}</p>
-                    <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{desc}</p>
+                    <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{t(labelKey)}</p>
+                    <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{t(descKey)}</p>
                   </div>
                   <button
                     type="button"
@@ -494,19 +499,19 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
           </section>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Handling coverage</h2>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.handlingCoverage")}</h2>
             {billingStatus?.billing_status === "active" ? (
-              <p className="text-sm mb-2" style={{ color: "var(--meaning-green)" }}>In place.</p>
+              <p className="text-sm mb-2" style={{ color: "var(--meaning-green)" }}>{t("settings.inPlaceShort")}</p>
             ) : billingStatus?.renewal_at ? (
               <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
-                Handling coverage ends on {new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" })}.
+                {t("settings.coverageEndsOn", { date: new Date(billingStatus.renewal_at).toLocaleDateString(undefined, { dateStyle: "long" }) })}
               </p>
             ) : (
               <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
-                Coverage continues under governance. Pause protection anytime. Resume as needed.
+                {t("settings.coverageContinues")}
               </p>
             )}
-            <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>Responsibility for follow-through remains in place during this period.</p>
+            <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>{t("settings.responsibilityRemains")}</p>
             {absenceStatements && (
               <div className="mb-4 p-4 rounded-lg text-sm space-y-2" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 {(() => {
@@ -523,7 +528,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                   className="text-xs mt-2"
                   style={{ color: "var(--meaning-blue)" }}
                 >
-                  Done
+                  {t("settings.done")}
                 </button>
               </div>
             )}
@@ -533,7 +538,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                 className="inline-block px-4 py-2 rounded-lg font-medium text-sm"
                 style={{ background: "var(--meaning-green)", color: "#0E1116" }}
               >
-                Continue coverage
+                {t("settings.continueCoverage")}
               </Link>
               <button
                 type="button"
@@ -541,19 +546,19 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                 className="px-4 py-2 rounded-lg font-medium text-sm"
                 style={{ borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-secondary)" }}
               >
-                Pause coverage
+                {t("settings.pauseCoverage")}
               </button>
             </div>
           </section>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Connect your calendar</h2>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.connectCalendar")}</h2>
             <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
-              Follow-through continues here in place.
+              {t("settings.connectCalendarIntro")}
             </p>
             {zoomHealth?.connected && (
               <div className="mb-3 p-3 rounded-lg text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
-                <p className="font-medium" style={{ color: "var(--meaning-green)" }}>In place</p>
+                <p className="font-medium" style={{ color: "var(--meaning-green)" }}>{t("settings.inPlace")}</p>
                 {disconnectStatements === null ? (
                   <button
                     type="button"
@@ -585,7 +590,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                     className="mt-2 text-xs hover:underline disabled:opacity-50"
                     style={{ color: "var(--meaning-red)" }}
                   >
-                    Disconnect Zoom
+                    {t("settings.disconnectZoom")}
                   </button>
                 ) : (
                   <div className="mt-2 space-y-1">
@@ -599,7 +604,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                         className="text-xs"
                         style={{ color: "var(--text-muted)" }}
                       >
-                        Cancel
+                        {t("settings.cancel")}
                       </button>
                       <button
                         type="button"
@@ -615,7 +620,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                         className="text-xs"
                         style={{ color: "var(--meaning-red)" }}
                       >
-                        Disconnect anyway
+                        {t("settings.disconnectAnyway")}
                       </button>
                     </div>
                   </div>
@@ -627,12 +632,12 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
               className="inline-block px-4 py-2 rounded-lg font-medium text-sm"
               style={{ background: "var(--meaning-green)", color: "#0E1116" }}
             >
-              Connect
+              {t("settings.connect")}
             </Link>
           </section>
 
           <section className="p-5 rounded-xl" style={{ background: "var(--card)", borderColor: "var(--border)", borderWidth: "1px" }}>
-            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>When we ask before acting</h2>
+            <h2 className="text-sm font-medium mb-3" style={{ color: "var(--text-secondary)" }}>{t("settings.whenWeAskBeforeActing")}</h2>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <input
@@ -644,7 +649,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                   style={{ accentColor: "var(--meaning-blue)" }}
                 />
                 <label htmlFor="preview" className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Draft only — we prepare but do not send
+                  {t("settings.draftOnlyLabel")}
                 </label>
               </div>
               <div className="flex items-center gap-3">
@@ -657,7 +662,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                   style={{ accentColor: "var(--meaning-blue)" }}
                 />
                 <label htmlFor="escalation" className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Hand off to you before acting on high-value follow-through
+                  {t("settings.handOffLabel")}
                 </label>
               </div>
               <div className="flex items-center gap-3">
@@ -670,7 +675,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                   style={{ accentColor: "var(--meaning-blue)" }}
                 />
                 <label htmlFor="callAware" className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Maintain continuity after calls
+                  {t("settings.maintainContinuityLabel")}
                 </label>
               </div>
             </div>
@@ -681,7 +686,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
             className="px-4 py-2 rounded-lg font-medium"
             style={{ background: "var(--meaning-green)", color: "#0E1116" }}
           >
-            Save
+            {t("settings.save")}
           </button>
 
           <div className="pt-6" style={{ borderTop: "1px solid var(--border)" }}>
@@ -690,33 +695,33 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
               className="text-sm"
               style={{ color: "var(--text-muted)" }}
             >
-              {showAdvanced ? "−" : "+"} External sources
+              {showAdvanced ? "−" : "+"} {t("settings.externalSources")}
             </button>
             {showAdvanced && (
               <div className="mt-4 space-y-4">
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Event notification URL</label>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>{t("settings.eventNotificationUrl")}</label>
                   <input
                     type="url"
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
-                    placeholder="https://..."
+                    placeholder={t("settings.eventNotificationUrlPlaceholder")}
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>Team awareness (handoffs + booking only)</label>
+                  <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>{t("settings.teamAwarenessLabel")}</label>
                   <input
                     type="text"
                     value={teamHandoffEmails}
                     onChange={(e) => setTeamHandoffEmails(e.target.value)}
-                    placeholder="email@company.com, other@company.com"
+                    placeholder={t("settings.teamAwarenessPlaceholder")}
                     className="w-full px-3 py-2 rounded text-sm"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   />
                   <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-                    These addresses receive only handoffs and booking-ownership notices. No logs or summaries.
+                    {t("settings.teamAwarenessHint")}
                   </p>
                 </div>
               </div>
@@ -727,9 +732,9 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
       {pauseConfirmOpen && (
         <ConfirmDialog
           open
-          title="Pause protection?"
-          message="Coverage runs until period end. You can resume anytime."
-          confirmLabel="Pause coverage"
+          title={t("settings.pauseProtectionTitle")}
+          message={t("settings.pauseProtectionMessage")}
+          confirmLabel={t("settings.pauseCoverage")}
           variant="default"
           onConfirm={async () => {
             if (!workspaceId) return;
