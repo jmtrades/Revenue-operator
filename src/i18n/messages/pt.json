@@ -1315,7 +1315,9 @@
       "responseDelay": "Atraso de resposta",
       "responseDelayNote": "Uma pausa leve soa mais pensativa. 0,3-0,5 s costuma ser o ideal.",
       "backchannelLabel": "Sons de apoio enquanto ouve",
-      "denoisingLabel": "Redução de ruído de fundo"
+      "denoisingLabel": "Redução de ruído de fundo",
+      "selectedLabel": "Selecionado.",
+      "selectThisVoiceLabel": "Selecionar esta voz."
     },
     "profile": {
       "agentNameLabel": "Nome do agente",
@@ -2657,6 +2659,7 @@
     "getNewNumberTitle": "Obter um novo número",
     "getNewNumberDesc": "Atribuímos um número local em Configurações → Telefone.",
     "getMyNumber": "Obter meu número →",
+    "gettingNumber": "Obtendo número…",
     "orSkipHint": "— ou pular por agora e conectar um número depois em Configurações.",
     "useCases": {
       "answer_calls": "Atender ligações",
@@ -2793,7 +2796,19 @@
   },
   "connect": {
     "testing": "Testando…",
-    "testNow": "Testar agora"
+    "testNow": "Testar agora",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "textThisNumber": "Envie mensagem para este número:",
+    "sampleMessage": "Oi, tenho interesse. Pode me contar mais?",
+    "waitingForFirstMessage": "Aguardando sua primeira mensagem…",
+    "dontHaveLead": "Não tem um lead agora?",
+    "addNumberHint": "Adicione este número ao seu site, anúncio ou bio para que cheguem ao seu calendário.",
+    "copyNumber": "Copiar número",
+    "illTestLater": "Testo depois",
+    "completeSetupLink": "Completar configuração da IA (5 passos) →",
+    "decisionCompletionHint": "A conclusão da decisão continua aqui para que completem ações e apareçam.",
+    "testInstructions": "Envie \"{number}\" do número usado neste workspace com: \"Oi, tenho interesse\"\n\nDepois volte aqui para ver o atendimento."
   },
   "compliance": {
     "title": "Conformidade",

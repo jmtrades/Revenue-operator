@@ -1414,7 +1414,9 @@
       "responseDelay": "Délai de réponse",
       "responseDelayNote": "Une légère pause paraît plus réfléchie. 0,3-0,5 s est souvent idéal.",
       "backchannelLabel": "Sons d'acquiescement pendant l'écoute",
-      "denoisingLabel": "Réduction du bruit de fond"
+      "denoisingLabel": "Réduction du bruit de fond",
+      "selectedLabel": "Sélectionné.",
+      "selectThisVoiceLabel": "Sélectionner cette voix."
     },
     "profile": {
       "agentNameLabel": "Nom de l'agent",
@@ -2952,6 +2954,7 @@
     "getNewNumberTitle": "Obtenir un nouveau numéro",
     "getNewNumberDesc": "Nous vous attribuerons un numéro local dans Paramètres → Téléphone.",
     "getMyNumber": "Obtenir mon numéro →",
+    "gettingNumber": "Obtention du numéro…",
     "orSkipHint": "— ou passer pour l'instant et connecter un numéro plus tard dans Paramètres.",
     "useCases": {
       "answer_calls": "Répondre aux appels",
@@ -3103,7 +3106,19 @@
   },
   "connect": {
     "testing": "Test en cours…",
-    "testNow": "Tester maintenant"
+    "testNow": "Tester maintenant",
+    "copy": "Copier",
+    "copied": "Copié",
+    "textThisNumber": "Envoyez un SMS à ce numéro :",
+    "sampleMessage": "Bonjour, je suis intéressé, pouvez-vous m'en dire plus ?",
+    "waitingForFirstMessage": "En attente de votre premier message…",
+    "dontHaveLead": "Vous n'avez pas de prospect pour l'instant ?",
+    "addNumberHint": "Ajoutez ce numéro à votre site, annonce ou bio pour que le suivi mène à votre calendrier.",
+    "copyNumber": "Copier le numéro",
+    "illTestLater": "Je testerai plus tard",
+    "completeSetupLink": "Compléter la config IA (5 étapes) →",
+    "decisionCompletionHint": "La prise de décision continue ici pour qu'ils accomplissent les actions et apparaissent.",
+    "testInstructions": "Envoyez « {number} » depuis le numéro utilisé pour cet espace avec : « Bonjour, je suis intéressé »\n\nPuis revenez ici pour voir la prise en charge."
   },
   "compliance": {
     "title": "Conformité",

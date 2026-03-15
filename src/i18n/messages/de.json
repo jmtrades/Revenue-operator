@@ -1315,7 +1315,9 @@
       "responseDelay": "Antwortverzögerung",
       "responseDelayNote": "Eine kurze Pause wirkt durchdachter. 0,3-0,5 s ist meist optimal.",
       "backchannelLabel": "Rückmeldungslaute beim Zuhören",
-      "denoisingLabel": "Hintergrundgeräusch-Reduktion"
+      "denoisingLabel": "Hintergrundgeräusch-Reduktion",
+      "selectedLabel": "Ausgewählt.",
+      "selectThisVoiceLabel": "Diese Stimme wählen."
     },
     "profile": {
       "agentNameLabel": "Agentenname",
@@ -2658,6 +2660,7 @@
     "getNewNumberTitle": "Neue Telefonnummer",
     "getNewNumberDesc": "Wir weisen dir unter Einstellungen → Telefon eine lokale Nummer zu.",
     "getMyNumber": "Meine Nummer holen →",
+    "gettingNumber": "Nummer wird geholt…",
     "orSkipHint": "— oder erstmal überspringen und später unter Einstellungen eine Nummer verbinden.",
     "useCases": {
       "answer_calls": "Anrufe entgegennehmen",
@@ -2794,7 +2797,19 @@
   },
   "connect": {
     "testing": "Teste…",
-    "testNow": "Jetzt testen"
+    "testNow": "Jetzt testen",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "textThisNumber": "Sende eine Nachricht an diese Nummer:",
+    "sampleMessage": "Hallo, ich bin interessiert – können Sie mir mehr sagen?",
+    "waitingForFirstMessage": "Warte auf deine erste Nachricht…",
+    "dontHaveLead": "Noch keinen Lead?",
+    "addNumberHint": "Füge diese Nummer zu deiner Website, Anzeige oder Bio hinzu – so kommen sie zu deinem Kalender.",
+    "copyNumber": "Numero kopieren",
+    "illTestLater": "Später testen",
+    "completeSetupLink": "KI-Einrichtung abschließen (5 Schritte) →",
+    "decisionCompletionHint": "Die Entscheidung wird hier fortgesetzt, damit sie Aktionen abschließen und erscheinen.",
+    "testInstructions": "Sende \"{number}\" von der für diesen Workspace genutzten Nummer mit: \"Hallo, ich bin interessiert\"\n\nDann komm hierher zurück, um die Bearbeitung zu sehen."
   },
   "compliance": {
     "title": "Compliance",

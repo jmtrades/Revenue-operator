@@ -1578,7 +1578,9 @@
       "responseDelay": "Response delay",
       "responseDelayNote": "A slight pause can sound more thoughtful. 0.3-0.5 seconds is usually best.",
       "backchannelLabel": "Backchannel sounds while listening",
-      "denoisingLabel": "Background noise reduction"
+      "denoisingLabel": "Background noise reduction",
+      "selectedLabel": "Selected.",
+      "selectThisVoiceLabel": "Select this voice."
     },
     "profile": {
       "agentNameLabel": "Agent name",
@@ -3111,6 +3113,7 @@
     "getNewNumberTitle": "Get a new phone number",
     "getNewNumberDesc": "We'll assign you a local number in Settings → Phone.",
     "getMyNumber": "Get my number →",
+    "gettingNumber": "Getting number…",
     "orSkipHint": "— or skip for now and connect a number later in Settings.",
     "useCases": {
       "answer_calls": "Answer calls",
@@ -3196,7 +3199,19 @@
   },
   "connect": {
     "testing": "Testing…",
-    "testNow": "Test it now"
+    "testNow": "Test it now",
+    "copy": "Copy",
+    "copied": "Copied",
+    "textThisNumber": "Text this number:",
+    "sampleMessage": "Hi — interested, can you tell me more?",
+    "waitingForFirstMessage": "Waiting for your first message…",
+    "dontHaveLead": "Don't have a lead right now?",
+    "addNumberHint": "Add this number to your website, ad, or bio — follow-through continues so they reach your calendar.",
+    "copyNumber": "Copy number",
+    "illTestLater": "I'll test later",
+    "completeSetupLink": "Complete AI setup (5 steps) →",
+    "decisionCompletionHint": "Decision completion continues here so they complete actions and show up.",
+    "testInstructions": "Text \"{number}\" from the number used for this workspace with: \"Hi, I'm interested\"\n\nThen return here to see it handled."
   },
   "compliance": {
     "title": "Compliance",

@@ -314,7 +314,7 @@ export default function OnboardingPage() {
             </ul>
             {error && <p className="text-sm mb-4" style={{ color: "var(--meaning-red)" }}>{error}</p>}
             <button type="button" onClick={submitStep4} disabled={loading} className="w-full py-3 rounded-lg font-medium" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
-              {loading ? "Getting number…" : "Get my number →"}
+              {loading ? t("gettingNumber") : t("getMyNumber")}
             </button>
           </div>
         )}
