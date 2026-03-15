@@ -201,9 +201,22 @@
       "errorSendFailed": "E-Mail zum Zurücksetzen konnte nicht gesendet werden.",
       "errorNetwork": "Netzwerkfehler. Bitte erneut versuchen.",
       "successMessage": "Prüfen Sie Ihre E-Mails für den Link zum Zurücksetzen.",
+      "setPasswordError": "Etwas ist schiefgelaufen. Versuchen Sie den Link zum Zurücksetzen erneut.",
+      "authNotConfigured": "Authentifizierung ist nicht konfiguriert.",
+      "passwordSavedMessage": "Passwort gespeichert. Sie können sich jetzt anmelden.",
       "sending": "Wird gesendet...",
       "submitLabel": "Link senden",
-      "backToSignIn": "Zurück zur Anmeldung"
+      "backToSignIn": "Zurück zur Anmeldung",
+      "chooseNewPassword": "Neues Passwort wählen",
+      "openResetLinkThenSet": "Öffnen Sie den Link in Ihrer E-Mail und legen Sie hier ein neues Passwort fest.",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "passwordMinLength": "Das Passwort muss mindestens 6 Zeichen haben.",
+      "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein.",
+      "couldNotUpdatePassword": "Passwort konnte nicht aktualisiert werden.",
+      "openEmailResetFirst": "Öffnen Sie zuerst den Link in der E-Mail und kehren Sie bei Bedarf hierher zurück.",
+      "saving": "Wird gespeichert...",
+      "savePassword": "Passwort speichern"
     },
     "noAccount": "Noch kein Konto?",
     "startFree": "Kostenlos starten",
@@ -4725,6 +4738,24 @@
       "daysAgo": "Vor {count} Tagen"
     },
     "avatarFallback": "S",
+    "acceptInviteError": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "signInFirstToAccept": "Bitte melden Sie sich an, um diese Einladung anzunehmen.",
+    "acceptInvite": {
+      "checkingInvite": "Einladung wird geprüft…",
+      "invalidLink": "Ungültiger Einladungslink",
+      "invalidLinkDesc": "Dieser Link ist möglicherweise defekt oder wurde bereits verwendet.",
+      "goHome": "Zur Startseite",
+      "expiredTitle": "Diese Einladung ist abgelaufen",
+      "expiredDesc": "Bitten Sie die einladende Person, eine neue zu senden.",
+      "joinTitle": "{workspaceName} beitreten",
+      "invitedYou": "{inviterName} hat Sie eingeladen, diesem Workspace in Recall Touch beizutreten.",
+      "accepting": "Wird angenommen…",
+      "acceptButton": "Einladung annehmen",
+      "noAccount": "Noch kein Konto?",
+      "signIn": "Anmelden",
+      "createAccount": "Konto erstellen",
+      "defaultInviter": "Ein Teammitglied"
+    },
     "errors": {
       "inviteFailed": "Einladung konnte nicht gesendet werden. Bitte erneut versuchen."
     },

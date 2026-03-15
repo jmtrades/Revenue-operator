@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 type ValidateState =
   | { status: "loading" }
@@ -12,6 +13,7 @@ type ValidateState =
   | { status: "accepted"; redirectUrl: string };
 
 export default function AcceptInvitePage() {
+  const t = useTranslations("team");
   const searchParams = useSearchParams();
   const token = searchParams.get("token")?.trim() ?? "";
   const [state, setState] = useState<ValidateState>(token ? { status: "loading" } : { status: "invalid" });
@@ -32,7 +34,7 @@ export default function AcceptInvitePage() {
           setState({
             status: "valid",
             workspaceName: data.workspaceName,
-            inviterName: data.inviterName ?? "A team member",
+            inviterName: data.inviterName ?? t("acceptInvite.defaultInviter"),
             email: data.email,
           });
         } else if (data.error === "expired") {
@@ -43,7 +45,7 @@ export default function AcceptInvitePage() {
       })
       .catch(() => { if (!cancelled) setState({ status: "invalid" }); });
     return () => { cancelled = true; };
-  }, [token]);
+  }, [token, t]);
 
   const handleAccept = () => {
     if (!token || state.status !== "valid" || accepting) return;
@@ -64,14 +66,14 @@ export default function AcceptInvitePage() {
           setState({ status: "accepted", redirectUrl: data.redirectUrl });
           window.location.href = data.redirectUrl;
         } else if (data.error === "Unauthorized" || status === 401) {
-          setAcceptError("Please sign in first to accept this invitation.");
+          setAcceptError(t("signInFirstToAccept"));
         } else if (data.error === "expired") {
           setState({ status: "expired" });
         } else {
-          setAcceptError(data.error ?? "Something went wrong. Try again.");
+          setAcceptError(data.error ?? t("acceptInviteError"));
         }
       })
-      .catch(() => setAcceptError("Something went wrong. Try again."))
+      .catch(() => setAcceptError(t("acceptInviteError")))
       .finally(() => setAccepting(false));
   };
 
@@ -79,31 +81,31 @@ export default function AcceptInvitePage() {
     <div className="min-h-screen bg-[var(--bg-base)] flex flex-col items-center justify-center p-6 text-[var(--text-primary)]">
       <div className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8">
         {state.status === "loading" && (
-          <p className="text-[var(--text-secondary)] text-center">Checking invite…</p>
+          <p className="text-[var(--text-secondary)] text-center">{t("acceptInvite.checkingInvite")}</p>
         )}
         {state.status === "invalid" && (
           <>
-            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Invalid invite link</h1>
-            <p className="text-[var(--text-secondary)] text-sm mb-6">This link may be broken or already used.</p>
+            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{t("acceptInvite.invalidLink")}</h1>
+            <p className="text-[var(--text-secondary)] text-sm mb-6">{t("acceptInvite.invalidLinkDesc")}</p>
             <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none">
-              Go home
+              {t("acceptInvite.goHome")}
             </Link>
           </>
         )}
         {state.status === "expired" && (
           <>
-            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">This invite has expired</h1>
-            <p className="text-[var(--text-secondary)] text-sm mb-6">Ask the person who invited you to send a new one.</p>
+            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{t("acceptInvite.expiredTitle")}</h1>
+            <p className="text-[var(--text-secondary)] text-sm mb-6">{t("acceptInvite.expiredDesc")}</p>
             <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none">
-              Go home
+              {t("acceptInvite.goHome")}
             </Link>
           </>
         )}
         {state.status === "valid" && (
           <>
-            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Join {state.workspaceName}</h1>
+            <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{t("acceptInvite.joinTitle", { workspaceName: state.workspaceName })}</h1>
             <p className="text-[var(--text-secondary)] text-sm mb-6">
-              {state.inviterName} invited you to join this workspace on Recall Touch.
+              {t("acceptInvite.invitedYou", { inviterName: state.inviterName })}
             </p>
             {acceptError && <p className="text-[var(--accent-red)] text-sm mb-4" role="alert">{acceptError}</p>}
             <div className="flex flex-col gap-3">
@@ -113,22 +115,22 @@ export default function AcceptInvitePage() {
                 disabled={accepting}
                 className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
               >
-                {accepting ? "Accepting…" : "Accept invitation"}
+                {accepting ? t("acceptInvite.accepting") : t("acceptInvite.acceptButton")}
               </button>
-              <p className="text-xs text-[var(--text-tertiary)] text-center">Don’t have an account?</p>
+              <p className="text-xs text-[var(--text-tertiary)] text-center">{t("acceptInvite.noAccount")}</p>
               <div className="flex gap-3 justify-center">
                 <Link
                   href={`/sign-in?next=${encodeURIComponent(`/accept-invite?token=${token}`)}`}
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 >
-                  Sign in
+                  {t("acceptInvite.signIn")}
                 </Link>
                 <span className="text-[var(--text-tertiary)]">·</span>
                 <Link
                   href={`/sign-in?create=1&next=${encodeURIComponent(`/accept-invite?token=${token}`)}`}
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 >
-                  Create account
+                  {t("acceptInvite.createAccount")}
                 </Link>
               </div>
             </div>
