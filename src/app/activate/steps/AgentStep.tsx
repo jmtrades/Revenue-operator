@@ -121,7 +121,7 @@ export function AgentStep({
                 }}
                 className="text-[11px] text-sky-400 hover:text-sky-300 mt-1"
               >
-                Preview voice ▶
+                {t("previewVoice")}
               </button>
             </button>
           );

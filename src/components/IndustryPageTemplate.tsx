@@ -160,7 +160,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
               color: "var(--text-primary)",
             }}
           >
-            Missed calls cost {industry.name.toLowerCase()} businesses every day.
+            {t("problemHeading", { industry: industry.name.toLowerCase() })}
           </h2>
           <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto">
             {industry.problemStats.map((stat, i) => {
@@ -288,7 +288,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
               color: "var(--text-primary)",
             }}
           >
-            Built for {industry.name.toLowerCase()} workflows.
+            {t("capabilitiesHeading", { industry: industry.name.toLowerCase() })}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {industry.capabilities.map((cap, i) => {
@@ -347,33 +347,30 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
                 lineHeight: 1.7,
               }}
             >
-              The average {industry.name.toLowerCase()} business misses{" "}
+              {t("roiText", { industry: industry.name.toLowerCase() })}{" "}
               <strong style={{ color: "var(--text-primary)" }}>
-                {industry.roi.missedCallsPerWeek} calls per week
+                {t("roiCallsPerWeek", { count: industry.roi.missedCallsPerWeek })}
               </strong>
-              . At{" "}
-              <strong style={{ color: "var(--text-primary)" }}>
-                ${industry.roi.avgValueNumber.toLocaleString()} per {industry.roi.avgValueLabel}
-              </strong>
-              , that&apos;s{" "}
+              . {t("roiAtValue", { value: industry.roi.avgValueNumber.toLocaleString(), label: industry.roi.avgValueLabel })}
+              , {t("roiThatsLost")}{" "}
               <strong
                 style={{
                   color: "var(--accent-primary)",
                 }}
               >
-                ${industry.roi.recoveredPerMonth.toLocaleString()}/month
+                ${industry.roi.recoveredPerMonth.toLocaleString()}/{t("month")}
               </strong>{" "}
-              in lost revenue.
+              {t("roiInLostRevenue")}
             </p>
             <p
               className="text-base md:text-lg font-medium"
               style={{ color: "var(--text-primary)" }}
             >
-              Recall Touch pays for itself in{" "}
-              {industry.roi.paybackDays != null
-                ? `${industry.roi.paybackDays} day${industry.roi.paybackDays === 1 ? "" : "s"}`
-                : "days"}
-              .
+              {t("roiPayback", {
+                days: industry.roi.paybackDays != null
+                  ? `${industry.roi.paybackDays} ${industry.roi.paybackDays === 1 ? t("day") : t("days")}`
+                  : t("days"),
+              })}
             </p>
           </div>
         </Container>

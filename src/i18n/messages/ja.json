@@ -2291,7 +2291,8 @@
       "addToLeads": "リードに追加",
       "flag": "フラグ",
       "addToCallIntelligence": "通話インテリジェンスに追加",
-      "leadInfo": "リード情報"
+      "leadInfo": "リード情報",
+      "download": "ダウンロード"
     },
     "empty": {
       "title": "まだ通話がありません",
@@ -4504,7 +4505,20 @@
     "capabilitiesLabel": "主な機能",
     "roiLabel": "ROI",
     "ctaStartFree": "無料で始める →",
-    "ctaPricing": "料金を見る →"
+    "ctaPricing": "料金を見る →",
+    "problemHeading": "取りこぼした電話は{industry}のビジネスに毎日コストをかけています。",
+    "capabilitiesHeading": "{industry}のワークフロー向けに構築。",
+    "roiText": "平均的な{industry}ビジネスは",
+    "roiCallsPerWeek": "週{count}件の電話",
+    "roiAtValue": "{label}あたり${value}で",
+    "roiThatsLost": "それは",
+    "roiPerMonth": "月${amount}",
+    "roiInLostRevenue": "の収益損失です。",
+    "roiPayback": "Recall Touchは{days}で元が取れます。",
+    "per": "{label}あたり",
+    "month": "月",
+    "day": "日",
+    "days": "日"
   },
   "compliance": {
     "title": "コンプライアンス",
@@ -5243,6 +5257,10 @@
       "next": "次へ →"
     },
     "agent": {
+      "defaultAgentName": "受付",
+      "greetingTemplate": "{business}へお電話ありがとうございます。本日はどのようなご用件でしょうか。",
+      "yourBusiness": "御社",
+      "previewVoice": "音声をプレビュー ▶",
       "heading": "開始テンプレートを選ぶ",
       "subtitleForIndustry": "{industry}用にスクリプトを調整します。",
       "all": "すべて",

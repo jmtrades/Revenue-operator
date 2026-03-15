@@ -2291,7 +2291,8 @@
       "addToLeads": "Zu Leads hinzufügen",
       "flag": "Markieren",
       "addToCallIntelligence": "Zur Anrufintelligenz hinzufügen",
-      "leadInfo": "Lead-Informationen"
+      "leadInfo": "Lead-Informationen",
+      "download": "Herunterladen"
     },
     "empty": {
       "title": "Noch keine Anrufe",
@@ -4505,7 +4506,20 @@
     "capabilitiesLabel": "Kernfunktionen",
     "roiLabel": "ROI",
     "ctaStartFree": "Kostenlos starten →",
-    "ctaPricing": "Preise ansehen →"
+    "ctaPricing": "Preise ansehen →",
+    "problemHeading": "Verpasste Anrufe kosten {industry}-Unternehmen jeden Tag.",
+    "capabilitiesHeading": "Konzipiert für {industry}-Workflows.",
+    "roiText": "Das durchschnittliche {industry}-Unternehmen verpasst",
+    "roiCallsPerWeek": "{count} Anrufe pro Woche",
+    "roiAtValue": "Bei ${value} pro {label}",
+    "roiThatsLost": "das sind",
+    "roiPerMonth": "${amount}/Monat",
+    "roiInLostRevenue": "an entgangenem Umsatz.",
+    "roiPayback": "Recall Touch rechnet sich in {days}.",
+    "per": "pro {label}",
+    "month": "Monat",
+    "day": "Tag",
+    "days": "Tage"
   },
   "compliance": {
     "title": "Compliance",
@@ -5244,6 +5258,10 @@
       "next": "Weiter →"
     },
     "agent": {
+      "defaultAgentName": "Empfang",
+      "greetingTemplate": "Danke für Ihren Anruf bei {business}, wie kann ich Ihnen heute helfen?",
+      "yourBusiness": "Ihr Unternehmen",
+      "previewVoice": "Stimme anhören ▶",
       "heading": "Wähle eine Startvorlage",
       "subtitleForIndustry": "Wir passen das Skript für {industry} an.",
       "all": "Alle",
