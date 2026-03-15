@@ -61,6 +61,8 @@ type VoiceCardProps = {
   voice: CuratedVoice;
   selected: boolean;
   previewing: boolean;
+  selectedLabel: string;
+  selectThisVoiceLabel: string;
   onSelect: () => void;
   onPreview: () => void;
 };
@@ -69,6 +71,8 @@ function VoiceCard({
   voice,
   selected,
   previewing,
+  selectedLabel,
+  selectThisVoiceLabel,
   onSelect,
   onPreview,
 }: VoiceCardProps) {
@@ -85,7 +89,7 @@ function VoiceCard({
       }}
       aria-pressed={selected}
       aria-label={`${voice.name}, ${voice.description}. ${
-        selected ? "Selected." : "Select this voice."
+        selected ? selectedLabel : selectThisVoiceLabel
       }`}
       className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
         selected
@@ -140,6 +144,8 @@ export function VoiceSelector({
             voice={voice}
             selected={agent.voice === voice.id}
             previewing={previewingVoiceId === voice.id}
+            selectedLabel={t("voiceSelector.selectedLabel")}
+            selectThisVoiceLabel={t("voiceSelector.selectThisVoiceLabel")}
             onSelect={() => onChange({ voice: voice.id })}
             onPreview={() => onVoicePreview(voice.id)}
           />

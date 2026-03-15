@@ -123,7 +123,7 @@ function ConnectPageContent() {
     
     if (isProduction) {
       // In production, guide user to text the number
-      alert(`Text "${phoneNumber}" from the number used for this workspace with: "Hi, I'm interested"\n\nThen return here to see it handled.`);
+      alert(t("testInstructions", { number: phoneNumber ?? "" }));
       return;
     }
 
@@ -259,7 +259,7 @@ function ConnectPageContent() {
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
                 style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
               >
-                {copySuccess ? "Copied" : "Copy"}
+                {copySuccess ? t("copied") : t("copy")}
               </button>
             </div>
             <div className="p-4 rounded-lg mb-4" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
@@ -272,15 +272,15 @@ function ConnectPageContent() {
             </div>
             {!showFallback ? (
               <p className="text-sm text-center" style={{ color: "var(--text-muted)" }}>
-                Waiting for your first message…
+                {t("waitingForFirstMessage")}
               </p>
             ) : (
               <div className="mt-4 p-4 rounded-lg" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 <p className="text-sm mb-3" style={{ color: "var(--text-primary)" }}>
-                  Don&apos;t have a lead right now?
+                  {t("dontHaveLead")}
                 </p>
                 <p className="text-xs mb-4" style={{ color: "var(--text-secondary)" }}>
-                  Add this number to your website, ad, or bio — follow-through continues so they reach your calendar.
+                  {t("addNumberHint")}
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -288,14 +288,14 @@ function ConnectPageContent() {
                     className="flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
                     style={{ background: "var(--meaning-green)", color: "#0c0f13" }}
                   >
-                    Copy number
+                    {t("copyNumber")}
                   </button>
                   <button
                     onClick={handleGoToDashboard}
                     className="flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
                     style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px", color: "var(--text-primary)" }}
                   >
-                    I&apos;ll test later
+                    {t("illTestLater")}
                   </button>
                 </div>
                 <p className="text-center mt-3">
@@ -304,7 +304,7 @@ function ConnectPageContent() {
                     className="text-sm"
                     style={{ color: "var(--accent-primary)" }}
                   >
-                    Complete AI setup (5 steps) →
+                    {t("completeSetupLink")}
                   </Link>
                 </p>
               </div>
@@ -313,7 +313,7 @@ function ConnectPageContent() {
             {showCopyConfirmation && (
               <div className="mt-3 p-3 rounded-lg text-xs text-center" style={{ background: "var(--surface)", borderColor: "var(--border)", borderWidth: "1px" }}>
                 <p style={{ color: "var(--text-secondary)" }}>
-                  Decision completion continues here so they complete actions and show up.
+                  {t("decisionCompletionHint")}
                 </p>
               </div>
             )}

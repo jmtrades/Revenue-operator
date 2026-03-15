@@ -1315,7 +1315,9 @@
       "responseDelay": "応答遅延",
       "responseDelayNote": "わずかな間は丁寧に聞こえます。0.3〜0.5秒がおすすめです。",
       "backchannelLabel": "相づちを入れながら聞く",
-      "denoisingLabel": "背景ノイズ低減"
+      "denoisingLabel": "背景ノイズ低減",
+      "selectedLabel": "選択済み。",
+      "selectThisVoiceLabel": "この音声を選択。"
     },
     "profile": {
       "agentNameLabel": "エージェント名",
@@ -2657,6 +2659,7 @@
     "getNewNumberTitle": "新しい電話番号を取得",
     "getNewNumberDesc": "設定 → 電話でローカル番号を割り当てます。",
     "getMyNumber": "番号を取得 →",
+    "gettingNumber": "番号を取得中…",
     "orSkipHint": "— または今はスキップして、後で設定で番号を接続。",
     "useCases": {
       "answer_calls": "着信対応",
@@ -2793,7 +2796,19 @@
   },
   "connect": {
     "testing": "テスト中…",
-    "testNow": "今すぐテスト"
+    "testNow": "今すぐテスト",
+    "copy": "コピー",
+    "copied": "コピーしました",
+    "textThisNumber": "この番号にメッセージを送信：",
+    "sampleMessage": "こんにちは、興味があります。詳しく教えてください。",
+    "waitingForFirstMessage": "最初のメッセージを待っています…",
+    "dontHaveLead": "今リードがありませんか？",
+    "addNumberHint": "この番号をウェブサイト、広告、プロフィールに追加すると、カレンダーまでつながります。",
+    "copyNumber": "番号をコピー",
+    "illTestLater": "後でテスト",
+    "completeSetupLink": "AI設定を完了（5ステップ）→",
+    "decisionCompletionHint": "ここで意思決定が続き、アクションを完了して表示されます。",
+    "testInstructions": "このワークスペースで使用している番号から「{number}」に「こんにちは、興味があります」と送信してください。\n\nその後、ここに戻って処理を確認してください。"
   },
   "compliance": {
     "title": "コンプライアンス",
