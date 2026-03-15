@@ -1359,6 +1359,19 @@
       "currentlyOn": "Currently: {label}"
     },
     "behavior": {
+      "title": "How should your agent behave?",
+      "neverDoTitle": "What should your AI never do?",
+      "neverDoHint": "Set clear boundaries so calls stay on-brand and in-bounds.",
+      "presets": {
+        "noPricing": "Never discuss pricing or give quotes",
+        "noAfterHours": "Never schedule outside business hours",
+        "noPromises": "Never make promises about delivery dates",
+        "noCompetitors": "Never discuss competitors",
+        "noInternal": "Never share internal information"
+      },
+      "qualTitle": "Qualification questions",
+      "qualHint": "Questions your AI asks to qualify leads. Drag to reorder priority.",
+      "presetLabel": "Preset:",
       "handoff": {
         "title": "When to transfer",
         "subtitle": "Reasons that trigger a handoff to a human."
@@ -1395,6 +1408,17 @@
       "remove": "Remove",
       "add": "Add Q&A",
       "importUrlPlaceholder": "https://your-website.com"
+    },
+    "knowledge": {
+      "title": "What does your agent know?",
+      "importFromWebsite": "Import from website",
+      "importing": "Importing…",
+      "quickStartHint": "Quick start: add common Q&As for your business.",
+      "suggestQAs": "Suggest Q&As",
+      "adding": "Adding…",
+      "minQAHint": "Add at least one Q&A for better results. You can also continue and add knowledge later.",
+      "back": "Back",
+      "continue": "Continue"
     },
     "toast": {
       "testLinkCopied": "Test link copied!",
@@ -1494,6 +1518,33 @@
       "deleteAria": "Delete this agent",
       "savingAria": "Saving agent",
       "saveAndSyncAria": "Save agent and sync to voice"
+    },
+    "testStep": {
+      "title": "Talk to your AI",
+      "description": "Chat with your agent to see how it responds. It uses your actual greeting, knowledge, and behavior rules.",
+      "scenarioLabel": "Scenario",
+      "scenarios": {
+        "general": "General inquiry",
+        "generalPrompt": "Hi, I need some information about your services.",
+        "booking": "Booking",
+        "bookingPrompt": "I want to book an appointment for next Thursday.",
+        "pricing": "Pricing",
+        "pricingPrompt": "How much do your services cost?",
+        "complaint": "Complaint",
+        "complaintPrompt": "I've been waiting for a callback and nobody has contacted me."
+      },
+      "scorecardTitle": "Scorecard",
+      "scorecard": {
+        "greeting": "Greeting",
+        "knowledge": "Knowledge",
+        "booking": "Booking",
+        "tone": "Tone"
+      },
+      "copyLink": "Copy test link",
+      "readyTitle": "Ready to go live?",
+      "continue": "Continue",
+      "back": "Back",
+      "starsAria": "{count} out of 5 stars"
     },
     "goLive": {
       "heading": "Go live",
@@ -2549,7 +2600,8 @@
       "retentionHelp": "Recordings and transcripts older than this are deleted automatically.",
       "saveChanges": "Save changes",
       "exportData": "Export all data",
-      "exportRequested": "Export requested. We'll email you when it's ready."
+      "exportRequested": "Export requested. We'll email you when it's ready.",
+      "backToSettings": "← Settings"
     },
     "errorReports": "Error reports",
     "errorsPage": {

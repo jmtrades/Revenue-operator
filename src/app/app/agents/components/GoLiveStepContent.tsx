@@ -55,30 +55,30 @@ export function GoLiveStepContent({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-white">Go live</h3>
-      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label="Phone number assignment">
-        <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Phone number</p>
-        <p className="text-[11px] text-[var(--text-tertiary)] mb-3">Assign a workspace number to this agent. Calls to that number will be answered by this agent.</p>
+      <h3 className="text-sm font-semibold text-white">{t("goLive.heading")}</h3>
+      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label={t("goLive.phoneSectionAria")}>
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">{t("goLive.phoneLabel")}</p>
+        <p className="text-[11px] text-[var(--text-tertiary)] mb-3">{t("goLive.phoneDescription")}</p>
         <select
           value={assignedNumber?.id ?? ""}
           onChange={(e) => void handleAssign(e.target.value)}
           disabled={unassignedNumbers.length === 0}
           className="w-full max-w-md px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
-          aria-label="Assign phone number"
+          aria-label={t("goLive.assignAria")}
         >
-          <option value="">{unassignedNumbers.length === 0 ? "No numbers available" : "None"}</option>
+          <option value="">{unassignedNumbers.length === 0 ? t("goLive.noNumbers") : t("goLive.none")}</option>
           {unassignedNumbers.map((n) => (
             <option key={n.id} value={n.id}>
-              {n.phone_number} {n.assigned_agent_id === agent.id ? "(this agent)" : ""}
+              {n.phone_number} {n.assigned_agent_id === agent.id ? t("goLive.thisAgent") : ""}
             </option>
           ))}
         </select>
         {assignedNumber && (
-          <p className="text-[11px] text-emerald-400/90 mt-1.5">Assigned: {assignedNumber.phone_number}</p>
+          <p className="text-[11px] text-emerald-400/90 mt-1.5">{t("goLive.assigned")}: {assignedNumber.phone_number}</p>
         )}
       </section>
       <div>
-        <p className="text-xs text-[var(--text-secondary)] mb-1.5">Readiness: {r.percent}%</p>
+        <p className="text-xs text-[var(--text-secondary)] mb-1.5">{t("goLive.readiness")}: {r.percent}%</p>
         <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg-hover)]">
           <div
             className="h-full rounded-full bg-white/20 transition-[width] duration-300"
@@ -116,17 +116,17 @@ export function GoLiveStepContent({
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label={t("goLive.carrierAria")}>
         <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">{t("goLive.forwardNumber")}</p>
         <div className="space-y-0">
-          <AccordionItem title="AT&T" defaultOpen={false}>
-            <p className="text-xs text-[var(--text-secondary)] pt-1">Dial *72, then your Recall Touch number. Wait for confirmation. To turn off, dial *73.</p>
+          <AccordionItem title={t("goLive.carrierAtt")} defaultOpen={false}>
+            <p className="text-xs text-[var(--text-secondary)] pt-1">{t("goLive.carrierAttBody")}</p>
           </AccordionItem>
-          <AccordionItem title="Verizon" defaultOpen={false}>
-            <p className="text-xs text-[var(--text-secondary)] pt-1">Dial *72 followed by your Recall Touch number. Listen for the confirmation tone. To cancel, dial *73.</p>
+          <AccordionItem title={t("goLive.carrierVerizon")} defaultOpen={false}>
+            <p className="text-xs text-[var(--text-secondary)] pt-1">{t("goLive.carrierVerizonBody")}</p>
           </AccordionItem>
-          <AccordionItem title="T-Mobile" defaultOpen={false}>
-            <p className="text-xs text-[var(--text-secondary)] pt-1">In the T-Mobile app: Phone → More → Call forwarding. Enter your Recall Touch number. Or dial *72 + number.</p>
+          <AccordionItem title={t("goLive.carrierTMobile")} defaultOpen={false}>
+            <p className="text-xs text-[var(--text-secondary)] pt-1">{t("goLive.carrierTMobileBody")}</p>
           </AccordionItem>
-          <AccordionItem title="Other carriers" defaultOpen={false}>
-            <p className="text-xs text-[var(--text-secondary)] pt-1">Most carriers: dial *72 or 72 + your Recall Touch number to turn on call forwarding. Dial *73 or 73 to turn off. Check your carrier’s support site for exact codes.</p>
+          <AccordionItem title={t("goLive.carrierOther")} defaultOpen={false}>
+            <p className="text-xs text-[var(--text-secondary)] pt-1">{t("goLive.carrierOtherBody")}</p>
           </AccordionItem>
         </div>
       </section>

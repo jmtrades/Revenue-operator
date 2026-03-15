@@ -1254,6 +1254,33 @@
       "backToKnowledge": "Volver a Conocimiento",
       "continueToTest": "Continuar a Prueba"
     },
+    "testStep": {
+      "title": "Habla con tu IA",
+      "description": "Chatea con tu agente para ver cómo responde. Usa tu saludo, conocimiento y reglas de comportamiento reales.",
+      "scenarioLabel": "Escenario",
+      "scenarios": {
+        "general": "Consulta general",
+        "generalPrompt": "Hola, necesito información sobre sus servicios.",
+        "booking": "Reserva",
+        "bookingPrompt": "Quiero reservar una cita para el próximo jueves.",
+        "pricing": "Precios",
+        "pricingPrompt": "¿Cuánto cuestan sus servicios?",
+        "complaint": "Queja",
+        "complaintPrompt": "He estado esperando una llamada y nadie me ha contactado."
+      },
+      "scorecardTitle": "Puntuación",
+      "scorecard": {
+        "greeting": "Saludo",
+        "knowledge": "Conocimiento",
+        "booking": "Reserva",
+        "tone": "Tono"
+      },
+      "copyLink": "Copiar enlace de prueba",
+      "readyTitle": "¿Listo para publicar?",
+      "continue": "Continuar",
+      "back": "Atrás",
+      "starsAria": "{count} de 5 estrellas"
+    },
     "goLive": {
       "heading": "Publicar",
       "phoneSectionAria": "Asignación de número de teléfono",
@@ -1503,6 +1530,19 @@
       "flow": "Flow builder"
     },
     "behavior": {
+      "title": "¿Cómo debe comportarse tu agente?",
+      "neverDoTitle": "¿Qué no debe hacer nunca tu IA?",
+      "neverDoHint": "Marca límites claros para que las llamadas sigan la marca y estén dentro de lo permitido.",
+      "presets": {
+        "noPricing": "Nunca hablar de precios ni dar presupuestos",
+        "noAfterHours": "Nunca agendar fuera del horario comercial",
+        "noPromises": "Nunca prometer plazos de entrega",
+        "noCompetitors": "Nunca hablar de la competencia",
+        "noInternal": "Nunca compartir información interna"
+      },
+      "qualTitle": "Preguntas de calificación",
+      "qualHint": "Preguntas que tu IA hace para calificar prospectos. Arrastra para cambiar el orden.",
+      "presetLabel": "Plantilla:",
       "objectionHandling": {
         "title": "Manejo de objeciones",
         "subtitle": "Guía a tu agente a través de objeciones comunes con respuestas humanas y tranquilas."
@@ -1523,6 +1563,17 @@
       "objectionCompetitorPlaceholder": "Es una buena idea. ¿Qué estás comparando exactamente? Puedo destacar en qué nos diferenciamos.",
       "objectionNotInterestedLabel": "\"No me interesa\"",
       "objectionNotInterestedPlaceholder": "Sin problema. ¿Qué tendría que cambiar para que te resultara útil?"
+    },
+    "knowledge": {
+      "title": "¿Qué sabe tu agente?",
+      "importFromWebsite": "Importar desde la web",
+      "importing": "Importando…",
+      "quickStartHint": "Inicio rápido: añade preguntas y respuestas habituales para tu negocio.",
+      "suggestQAs": "Sugerir P&R",
+      "adding": "Añadiendo…",
+      "minQAHint": "Añade al menos una P&R para mejores resultados. También puedes continuar y añadir conocimiento después.",
+      "back": "Atrás",
+      "continue": "Continuar"
     },
     "deleteAgent": "Eliminar agente",
     "deleteAgentTitle": "Eliminar agente",
@@ -2237,7 +2288,8 @@
       "retentionHelp": "Las grabaciones y transcripciones anteriores a esto se eliminan automáticamente.",
       "saveChanges": "Guardar cambios",
       "exportData": "Exportar todos los datos",
-      "exportRequested": "Exportación solicitada. Te avisaremos por correo cuando esté lista."
+      "exportRequested": "Exportación solicitada. Te avisaremos por correo cuando esté lista.",
+      "backToSettings": "← Ajustes"
     },
     "errorReports": "Informes de errores",
     "errorsPage": {

@@ -1232,6 +1232,33 @@
       "backToKnowledge": "Zurück zu Wissen",
       "continueToTest": "Weiter zu Test"
     },
+    "testStep": {
+      "title": "Sprechen Sie mit Ihrer KI",
+      "description": "Chatten Sie mit Ihrem Agenten, um zu sehen, wie er reagiert. Er nutzt Ihre Begrüßung, Ihr Wissen und Verhaltensregeln.",
+      "scenarioLabel": "Szenario",
+      "scenarios": {
+        "general": "Allgemeine Anfrage",
+        "generalPrompt": "Hallo, ich brauche Informationen zu Ihren Leistungen.",
+        "booking": "Buchung",
+        "bookingPrompt": "Ich möchte einen Termin für nächsten Donnerstag buchen.",
+        "pricing": "Preise",
+        "pricingPrompt": "Was kosten Ihre Leistungen?",
+        "complaint": "Beschwerde",
+        "complaintPrompt": "Ich warte auf einen Rückruf und niemand hat mich kontaktiert."
+      },
+      "scorecardTitle": "Bewertung",
+      "scorecard": {
+        "greeting": "Begrüßung",
+        "knowledge": "Wissen",
+        "booking": "Buchung",
+        "tone": "Ton"
+      },
+      "copyLink": "Test-Link kopieren",
+      "readyTitle": "Bereit für die Veröffentlichung?",
+      "continue": "Weiter",
+      "back": "Zurück",
+      "starsAria": "{count} von 5 Sternen"
+    },
     "goLive": {
       "heading": "Live schalten",
       "phoneSectionAria": "Telefonnummernzuweisung",
@@ -1465,6 +1492,19 @@
       "flow": "Flow builder"
     },
     "behavior": {
+      "title": "Wie soll sich dein Agent verhalten?",
+      "neverDoTitle": "Was darf deine KI niemals tun?",
+      "neverDoHint": "Setze klare Grenzen, damit Anrufe on-brand und im Rahmen bleiben.",
+      "presets": {
+        "noPricing": "Niemals Preise nennen oder Angebote machen",
+        "noAfterHours": "Niemals außerhalb der Geschäftszeiten planen",
+        "noPromises": "Niemals Liefertermine versprechen",
+        "noCompetitors": "Niemals über Konkurrenten sprechen",
+        "noInternal": "Niemals interne Informationen teilen"
+      },
+      "qualTitle": "Qualifizierungsfragen",
+      "qualHint": "Fragen, die deine KI zur Lead-Qualifizierung stellt. Zum Umsortieren ziehen.",
+      "presetLabel": "Vorgabe:",
       "objectionHandling": {
         "title": "Einwandbehandlung",
         "subtitle": "Führe deinen Agenten durch typische Einwände mit ruhigen, menschlichen Antworten."
@@ -1485,6 +1525,17 @@
       "objectionCompetitorPlaceholder": "Das ist ein kluger Ansatz. Was vergleichen Sie konkret? Ich kann unsere Unterschiede hervorheben.",
       "objectionNotInterestedLabel": "\"Nicht interessiert\"",
       "objectionNotInterestedPlaceholder": "Kein Problem. Was müsste sich ändern, damit es für Sie nützlich wäre?"
+    },
+    "knowledge": {
+      "title": "Was weiß dein Agent?",
+      "importFromWebsite": "Von Website importieren",
+      "importing": "Importiere…",
+      "quickStartHint": "Schnellstart: Füge häufige Q&As für dein Geschäft hinzu.",
+      "suggestQAs": "Q&As vorschlagen",
+      "adding": "Füge hinzu…",
+      "minQAHint": "Füge mindestens eine Q&A hinzu für bessere Ergebnisse. Du kannst auch weitermachen und später Wissen hinzufügen.",
+      "back": "Zurück",
+      "continue": "Weiter"
     },
     "deleteAgent": "Agent löschen",
     "deleteAgentTitle": "Agent löschen",
@@ -2167,7 +2218,8 @@
       "retentionHelp": "Ältere Aufzeichnungen und Transkripte werden automatisch gelöscht.",
       "saveChanges": "Änderungen speichern",
       "exportData": "Alle Daten exportieren",
-      "exportRequested": "Export angefordert. Wir mailen, wenn fertig."
+      "exportRequested": "Export angefordert. Wir mailen, wenn fertig.",
+      "backToSettings": "← Einstellungen"
     },
     "errorReports": "Fehlerberichte",
     "errorsPage": {
