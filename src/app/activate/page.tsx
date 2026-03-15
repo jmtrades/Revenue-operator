@@ -1,10 +1,15 @@
-export const metadata = {
-  title: "Activate your agent",
-  description: "Guided setup to hear your phone agent handle a real call.",
-};
-
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Navbar } from "@/components/sections/Navbar";
 import { ActivateWizard } from "./ActivateWizard";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("activate");
+  return {
+    title: t("activatePage.title"),
+    description: t("activatePage.description"),
+  };
+}
 
 export default function ActivatePage() {
   return (

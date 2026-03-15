@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 /**
  * Handoff cards: who, when, decision_needed + Open. No previews, no counts.
- * Doctrine: authority boundary (Outside authority. / Within authority.)
  */
-
 export interface HandoffItem {
   id: string;
   lead_id: string;
@@ -19,11 +18,14 @@ interface HandoffListProps {
   handoffs: HandoffItem[];
   /** When 5+, show this heading and list; otherwise 1–4 show stacked cards */
   heading?: string;
-  /** When true and handoffs exist, show one muted line: Beyond scope. Never explain. */
+  /** When true and handoffs exist, show one muted line */
   beyondScope?: boolean;
 }
 
-export function HandoffList({ handoffs, heading = "Outside authority.", beyondScope }: HandoffListProps) {
+export function HandoffList({ handoffs, heading, beyondScope }: HandoffListProps) {
+  const t = useTranslations("banners.handoff");
+  const defaultHeading = t("outsideAuthority");
+
   if (handoffs.length === 0) return null;
 
   const isSeveral = handoffs.length >= 5;
@@ -32,20 +34,20 @@ export function HandoffList({ handoffs, heading = "Outside authority.", beyondSc
   return (
     <section>
       <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
-        Outside authority.
+        {t("outsideAuthority")}
       </p>
       {beyondScope && (
         <p className="text-sm mb-4 -mt-2" style={{ color: "var(--text-muted)" }}>
-          Beyond scope.
+          {t("beyondScope")}
         </p>
       )}
       {isSeveral ? (
         <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>
-          Multiple items exist outside authority.
+          {t("multipleOutside")}
         </h2>
       ) : handoffs.length > 1 ? (
         <h2 className="text-sm font-medium mb-4" style={{ color: "var(--text-secondary)" }}>
-          {heading}
+          {heading ?? defaultHeading}
         </h2>
       ) : null}
       <div className="space-y-3">
@@ -59,10 +61,10 @@ export function HandoffList({ handoffs, heading = "Outside authority.", beyondSc
           >
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate" style={{ color: "var(--text-primary)" }}>
-                {h.who || "Unnamed"}
+                {h.who || t("unnamed")}
               </p>
               <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
-                {h.decision_needed || "Outside authority."}
+                {h.decision_needed || t("outsideAuthority")}
               </p>
             </div>
             <Link
@@ -70,7 +72,7 @@ export function HandoffList({ handoffs, heading = "Outside authority.", beyondSc
               className="shrink-0 text-sm font-medium focus-ring rounded-lg px-3 py-2"
               style={{ color: "var(--meaning-blue)" }}
             >
-              Enter outcome
+              {t("enterOutcome")}
             </Link>
           </div>
         ))}

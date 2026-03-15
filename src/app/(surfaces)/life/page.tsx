@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 interface LifeSections {
@@ -10,6 +11,7 @@ interface LifeSections {
 }
 
 export default function LifePage() {
+  const t = useTranslations("life");
   const { workspaceId } = useWorkspace();
   const [identity, setIdentity] = useState<string | null>(null);
   const [sections, setSections] = useState<LifeSections | null>(null);
@@ -105,7 +107,7 @@ export default function LifePage() {
 
       <section>
         <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
-          What is being tracked
+          {t("whatIsBeingTracked")}
         </h2>
         <ul className="space-y-2">
           {sections?.what_is_being_tracked?.map((s, i) => (
@@ -117,14 +119,14 @@ export default function LifePage() {
         <div className="mt-6 flex flex-col gap-2 max-w-md">
           <input
             type="text"
-            placeholder="Add reference (label)"
+            placeholder={t("refLabelPlaceholder")}
             value={refLabel}
             onChange={(e) => setRefLabel(e.target.value)}
             className="rounded border border-[#e7e5e4] px-3 py-2 text-[16px] text-[#1c1917] placeholder-[#a8a29e]"
           />
           <input
             type="text"
-            placeholder="Category (optional)"
+            placeholder={t("refCategoryPlaceholder")}
             value={refCategory}
             onChange={(e) => setRefCategory(e.target.value)}
             className="rounded border border-[#e7e5e4] px-3 py-2 text-[16px] text-[#1c1917] placeholder-[#a8a29e]"
@@ -135,20 +137,20 @@ export default function LifePage() {
             disabled={!refLabel.trim() || submitting}
             className="text-[15px] rounded border border-[#d6d3d1] py-2 px-3 text-[#44403c] hover:bg-[#f5f5f4] disabled:opacity-50"
           >
-            {submitting ? "Adding…" : "Add reference"}
+            {submitting ? t("adding") : t("addReference")}
           </button>
         </div>
         {submitResult === "ok" && (
-          <p className="mt-2 text-[15px] text-[#78716c]">Reference added.</p>
+          <p className="mt-2 text-[15px] text-[#78716c]">{t("referenceAdded")}</p>
         )}
         {submitResult === "err" && (
-          <p className="mt-2 text-[15px] text-[#78716c]">Failed to add.</p>
+          <p className="mt-2 text-[15px] text-[#78716c]">{t("failedToAdd")}</p>
         )}
       </section>
 
       <section className="border-t border-[#e7e5e4] pt-8">
         <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
-          What was handled
+          {t("whatWasHandled")}
         </h2>
         <ul className="space-y-2">
           {sections?.what_was_handled?.length ? (
@@ -158,14 +160,14 @@ export default function LifePage() {
               </li>
             ))
           ) : (
-            <li className="text-[18px] leading-relaxed text-[#78716c]">Nothing recorded yet.</li>
+            <li className="text-[18px] leading-relaxed text-[#78716c]">{t("nothingRecordedYet")}</li>
           )}
         </ul>
       </section>
 
       <section className="border-t border-[#e7e5e4] pt-8">
         <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
-          What required no action
+          {t("whatRequiredNoAction")}
         </h2>
         <ul className="space-y-2">
           {sections?.what_required_no_action?.map((s, i) => (

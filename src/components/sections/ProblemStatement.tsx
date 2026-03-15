@@ -59,7 +59,7 @@ export function ProblemStatement() {
                 className="card-marketing p-6 md:p-8"
               >
                 <div className="w-14 h-14 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-5">
-                  <Icon className="w-7 h-7 text-[#4F8CFF]" />
+                  <Icon className="w-7 h-7 text-[var(--accent-primary)]" />
                 </div>
                 <h3
                   className="text-sm font-semibold uppercase tracking-wider mb-5 text-center md:text-left"

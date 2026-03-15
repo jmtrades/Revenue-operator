@@ -1,28 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 
 const ACTIVATE_STORAGE_KEY = "recall_touch_activate";
 const RT_SIGNUP_KEY = "rt_signup";
 const RECALLTOUCH_SIGNUP_KEY = "recalltouch_signup";
 
-const BUSINESS_TYPE_CHIPS: { value: string; label: string }[] = [
-  { value: "home_services", label: "Home Services" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "legal", label: "Legal" },
-  { value: "real_estate", label: "Real Estate" },
-  { value: "insurance", label: "Insurance" },
-  { value: "b2b_sales", label: "B2B Sales" },
-  { value: "local_business", label: "Local Business" },
-  { value: "contractors", label: "Contractors" },
-];
+const BUSINESS_TYPE_IDS = [
+  "home_services",
+  "healthcare",
+  "legal",
+  "real_estate",
+  "insurance",
+  "b2b_sales",
+  "local_business",
+  "contractors",
+] as const;
+
+const BUSINESS_TYPE_KEY_MAP: Record<(typeof BUSINESS_TYPE_IDS)[number], string> = {
+  home_services: "businessTypeHomeServices",
+  healthcare: "businessTypeHealthcare",
+  legal: "businessTypeLegal",
+  real_estate: "businessTypeRealEstate",
+  insurance: "businessTypeInsurance",
+  b2b_sales: "businessTypeB2bSales",
+  local_business: "businessTypeLocalBusiness",
+  contractors: "businessTypeContractors",
+};
 
 export function ActivateForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("activate");
+  const businessTypeChips = useMemo(
+    () => BUSINESS_TYPE_IDS.map((value) => ({ value, label: t(BUSINESS_TYPE_KEY_MAP[value]) })),
+    [t]
+  );
   const [name, setName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [email, setEmail] = useState("");
@@ -50,8 +67,8 @@ export function ActivateForm() {
   }, []);
 
   useEffect(() => {
-    if (searchParams.get("canceled") === "1") setError("No problem — protection didn't start.");
-  }, [searchParams]);
+    if (searchParams.get("canceled") === "1") setError(t("cancelError"));
+  }, [searchParams, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,15 +82,15 @@ export function ActivateForm() {
       website: website.trim(),
     };
     if (!payload.email) {
-      setError("Email is required.");
+      setError(t("emailRequired"));
       return;
     }
 
     setSubmitting(true);
     setError(null);
-    setSubmitMessage("Creating your account…");
+    setSubmitMessage(t("creatingAccount"));
 
-    const loadingTimer = setTimeout(() => setSubmitMessage("Almost there…"), 1500);
+    const loadingTimer = setTimeout(() => setSubmitMessage(t("almostThere")), 1500);
 
     fetch("/api/signup", {
       method: "POST",
@@ -147,19 +164,19 @@ export function ActivateForm() {
             <Sparkles className="h-7 w-7 text-amber-400" />
           </div>
         </div>
-        <h2 className="text-xl font-bold text-white mb-3">Welcome aboard!</h2>
+        <h2 className="text-xl font-bold text-white mb-3">{t("welcomeAboard")}</h2>
         <p className="text-sm mb-6 text-zinc-400">
-          Your AI phone system is ready.
+          {t("aiReady")}
         </p>
         <button
           type="button"
           onClick={() => router.push("/app")}
           className="w-full max-w-[320px] py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200 transition"
         >
-          Set up my AI agent →
+          {t("setUpAgent")}
         </button>
         <p className="text-xs mt-4 text-zinc-500">
-          Takes 2 minutes · Your first 14 days are free
+          {t("takes2Min")}
         </p>
       </div>
     );
@@ -169,75 +186,75 @@ export function ActivateForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="name" className="block text-xs font-medium mb-1.5 text-zinc-400">
-          Your name
+          {t("formName")}
         </label>
         <input
           id="name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Jane Smith"
+          placeholder={t("namePlaceholder")}
           className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
         <label htmlFor="business_name" className="block text-xs font-medium mb-1.5 text-zinc-400">
-          Business name
+          {t("formBusinessName")}
         </label>
         <input
           id="business_name"
           type="text"
           value={businessName}
           onChange={(e) => setBusinessName(e.target.value)}
-          placeholder="Acme Plumbing"
+          placeholder={t("businessPlaceholder")}
           className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
         <label htmlFor="email" className="block text-xs font-medium mb-1.5 text-zinc-400">
-          Email
+          {t("formEmail")}
         </label>
         <input
           id="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@company.com"
+          placeholder={t("emailPlaceholder")}
           required
           className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
         <label htmlFor="phone" className="block text-xs font-medium mb-1.5 text-zinc-400">
-          Phone number
+          {t("formPhone")}
         </label>
         <input
           id="phone"
           type="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="(555) 123-4567"
+          placeholder={t("phonePlaceholder")}
           className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
         <label htmlFor="website" className="block text-xs font-medium mb-1.5 text-zinc-400">
-          Website URL (optional)
+          {t("formWebsite")}
         </label>
-        <p className="text-[11px] mb-1 text-zinc-600">Helps tailor your experience.</p>
+        <p className="text-[11px] mb-1 text-zinc-600">{t("formWebsiteHint")}</p>
         <input
           id="website"
           type="url"
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
-          placeholder="https://yourbusiness.com"
+          placeholder={t("websitePlaceholder")}
           className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--border-medium)]"
         />
       </div>
       <div>
-        <span className="block text-xs font-medium mb-2 text-zinc-400">What type of business?</span>
+        <span className="block text-xs font-medium mb-2 text-zinc-400">{t("formBusinessType")}</span>
         <div className="flex flex-wrap gap-2">
-          {BUSINESS_TYPE_CHIPS.map(({ value, label }) => (
+          {businessTypeChips.map(({ value, label }) => (
             <button
               key={value}
               type="button"
@@ -259,15 +276,15 @@ export function ActivateForm() {
         disabled={submitting}
         className="w-full max-w-[320px] py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200 transition disabled:opacity-60"
       >
-        {submitting ? "Creating your account…" : "Get started free →"}
+        {submitting ? t("creatingAccount") : t("getStartedFree")}
       </button>
       <p className="text-xs text-center mt-2 text-zinc-500">
-        No credit card required · 14-day free trial · Cancel anytime
+        {t("noCardRequired")}
       </p>
       <p className="text-sm text-center text-zinc-400">
-        Already have an account?{" "}
+        {t("alreadyHaveAccount")}{" "}
         <Link href="/sign-in" className="underline">
-          Sign in →
+          {t("signInLink")}
         </Link>
       </p>
       {submitting && submitMessage && (
@@ -283,18 +300,18 @@ export function ActivateForm() {
             onClick={() => setError(null)}
             className="w-full py-2 px-4 rounded-lg text-sm font-medium bg-white text-black hover:bg-zinc-200 transition"
           >
-            Try again
+            {t("tryAgain")}
           </button>
         </div>
       )}
       <p className="text-xs mt-6 text-center text-zinc-600">
-        By signing up you agree to our{" "}
+        {t("bySigningUp")}{" "}
         <Link href="/terms" className="underline">
-          Terms
+          {t("terms")}
         </Link>{" "}
-        and{" "}
+        {t("and")}{" "}
         <Link href="/privacy" className="underline">
-          Privacy Policy
+          {t("privacyPolicy")}
         </Link>
         .
       </p>

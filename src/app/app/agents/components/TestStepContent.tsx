@@ -152,7 +152,7 @@ export function TestStepContent({
         <button
           type="button"
           onClick={onBack}
-          aria-label="Back to Behavior"
+          aria-label={t("testStep.backToBehavior")}
           className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("testStep.back")}
@@ -160,7 +160,7 @@ export function TestStepContent({
         <button
           type="button"
           onClick={onNext}
-          aria-label="Continue to Go live"
+          aria-label={t("testStep.continueToGoLive")}
           className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("testStep.continue")}

@@ -29,13 +29,6 @@ const STEP_KEYS: { id: number; titleKey: string; subtitleKey: string }[] = [
   { id: 4, titleKey: "step.phone", subtitleKey: "phone.description" },
   { id: 5, titleKey: "step.test", subtitleKey: "test.description" },
 ];
-const ONBOARDING_VOICES = CURATED_VOICES.slice(0, 6).map((v) => ({
-  id: v.id,
-  name: v.name,
-  desc: v.desc,
-  gender: v.gender,
-  preview: "Thanks for calling. How can I help you today?",
-}));
 
 const ONBOARDING_SCENARIO_IDS = ["normal", "angry", "booking", "afterhours", "unknown"] as const;
 
@@ -127,7 +120,44 @@ export default function AppOnboardingPage() {
   const [_numberOption, _setNumberOption] = useState<"forward" | "new" | "skip">("new");
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const defaultGreeting = `Thanks for calling ${businessName || "[Business]"}! This is ${agentName}. How can I help you today?`;
+  const defaultGreeting = t("defaultGreeting", { businessName: businessName || t("businessPlaceholder"), agentName });
+
+  const step2VoiceButtons = useMemo(() => {
+    const voices = CURATED_VOICES.slice(0, 6).map((v) => ({
+      id: v.id,
+      name: v.name,
+      desc: v.desc,
+      gender: v.gender,
+      preview: t("defaultPreview"),
+    }));
+    return voices.map((v) => {
+      const selected = voiceId === v.id;
+      return (
+        <button
+          key={v.id}
+          type="button"
+          onClick={() => { setVoiceId(v.id); setAgentName(v.name); }}
+          className={`rounded-xl border p-4 text-left transition-all ${
+            selected ? "border-[var(--border-medium)] bg-[var(--bg-hover)] ring-2 ring-zinc-500/40" : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)]"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm font-medium text-[var(--text-primary)]">{v.name}</span>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); void speakTextViaApi(v.preview, { gender: v.gender, voiceId: v.id }); }}
+              className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-primary)] text-xs"
+              aria-label={t("previewVoiceAria", { name: v.name })}
+            >
+              ▶
+            </button>
+          </div>
+          <p className="text-xs text-zinc-400 mt-0.5">{v.desc}</p>
+          {selected && <p className="text-[10px] text-[var(--text-primary)] mt-1">{t("selected")}</p>}
+        </button>
+      );
+    });
+  }, [t, voiceId]);
 
   const addService = () => {
     const t = serviceInput.trim();
@@ -230,7 +260,7 @@ export default function AppOnboardingPage() {
           <p className="text-xs font-semibold tracking-wide text-zinc-400">
             Recall Touch
           </p>
-          <p className="text-sm text-zinc-500 mt-1">Onboarding</p>
+          <p className="text-sm text-zinc-500 mt-1">{t("sidebarLabel")}</p>
         </div>
         <nav aria-label={t("stepsAria")} className="space-y-4">
           {STEP_KEYS.map((s) => {
@@ -405,33 +435,7 @@ export default function AppOnboardingPage() {
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("chooseSoundsHeading")}</h1>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {ONBOARDING_VOICES.map((v) => {
-                const selected = voiceId === v.id;
-                return (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => { setVoiceId(v.id); setAgentName(v.name); }}
-                    className={`rounded-xl border p-4 text-left transition-all ${
-                      selected ? "border-[var(--border-medium)] bg-[var(--bg-hover)] ring-2 ring-zinc-500/40" : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)]"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-[var(--text-primary)]">{v.name}</span>
-                      <button
-                        type="button"
-                        onClick={(e) => { e.stopPropagation(); void speakTextViaApi(v.preview, { gender: v.gender, voiceId: v.id }); }}
-                        className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-primary)] text-xs"
-                        aria-label={t("previewVoiceAria", { name: v.name })}
-                      >
-                        ▶
-                      </button>
-                    </div>
-                    <p className="text-xs text-zinc-400 mt-0.5">{v.desc}</p>
-                    {selected && <p className="text-[10px] text-[var(--text-primary)] mt-1">{t("selected")}</p>}
-                  </button>
-                );
-              })}
+              {step2VoiceButtons}
             </div>
             <div>
               <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("openingGreetingLabel")}</label>
@@ -449,7 +453,7 @@ export default function AppOnboardingPage() {
                 onClick={() => {
                   setGreetingPlaying(true);
                   void speakTextViaApi(greetingToPlay, {
-                    gender: ONBOARDING_VOICES.find((x) => x.id === voiceId)?.gender ?? "female",
+                    gender: CURATED_VOICES.find((x) => x.id === voiceId)?.gender ?? "female",
                     voiceId: voiceId || undefined,
                     onEnd: () => setGreetingPlaying(false),
                   });
@@ -573,7 +577,7 @@ export default function AppOnboardingPage() {
                   }}
                   className="shrink-0 py-2.5 px-4 rounded-xl bg-white text-gray-900 font-semibold text-sm hover:bg-white/90"
                 >
-                  Add them now
+                  {t("addThemNow")}
                 </button>
               </div>
             )}
@@ -586,21 +590,21 @@ export default function AppOnboardingPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        const q = (window.prompt("Question", item.q) ?? item.q ?? "").trim();
-                        const a = (window.prompt("Answer", item.a) ?? item.a ?? "").trim();
+                        const q = (window.prompt(t("questionPrompt"), item.q) ?? item.q ?? "").trim();
+                        const a = (window.prompt(t("answerPrompt"), item.a) ?? item.a ?? "").trim();
                         const next = [...knowledgeItems];
                         next[i] = { q, a };
                         setKnowledgeItems(next);
                       }}
                       className="text-xs text-zinc-400 hover:text-[var(--text-primary)]"
                     >
-                      Edit
+                      {t("edit")}
                     </button>
                     <button
                       type="button"
                       onClick={() => setKnowledgeItems((prev) => prev.filter((_, j) => j !== i))}
                       className="text-xs text-zinc-400 hover:text-red-400"
-                      aria-label="Remove"
+                      aria-label={t("remove")}
                     >
                       ✕
                     </button>

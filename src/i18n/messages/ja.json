@@ -19,6 +19,45 @@
       }
     }
   },
+  "banners": {
+    "offline": {
+      "message": "接続が切れました — 保護は継続中。再接続中…"
+    },
+    "preview": {
+      "title": "プレビューモード",
+      "description": "チームが返答を作成しますが送信されません。デモと信頼構築用。"
+    },
+    "handoff": {
+      "outsideAuthority": "権限外。",
+      "beyondScope": "範囲外。",
+      "multipleOutside": "複数項目が権限外にあります。",
+      "unnamed": "名前なし",
+      "enterOutcome": "結果を入力"
+    },
+    "heartbeat": {
+      "atRisk": "フォローが危機",
+      "warning": "通常の処理外",
+      "nothingRequired": "不要。"
+    },
+    "executionState": {
+      "underReview": "通話対応を検討中。",
+      "underReviewNext": "管轄と検討レベルを確認。",
+      "paused": "通話対応を一時停止中。",
+      "pausedNext": "請求または認証を解決。",
+      "active": "通話対応は稼働中。",
+      "activeNext": "会話はガバナンスの下で継続。"
+    },
+    "trial": {
+      "coverageEndsOn": "保護は{date}に終了します。",
+      "coverageEndingSoon": "保護はまもなく終了します。",
+      "ifNotContinue": "継続しない場合：フォローは保護されません。",
+      "continueCoverage": "保護を継続",
+      "coverageActive": "保護は有効",
+      "coverageRunning": "保護は稼働中",
+      "nothingRequiresSupervision": "監督不要。必要時に通知します。",
+      "remindBeforeCharge": "監督不要。必要時に通知します。請求前にリマインドします。"
+    }
+  },
   "siteNav": {
     "product": "製品",
     "solutions": "ソリューション",
@@ -272,13 +311,49 @@
       "title": "Recall Touch へようこそ",
       "body": "最初の通話が入るまで、このスペースを準備しておきます。"
     },
-    "needsAttention": {
-      "title": "要対応",
-      "empty": "すべて完了しています。対応が必要なものがあれば、ここに表示されます。"
-    },
+    "needsAttention": "要対応",
     "activity": {
-      "title": "最近のアクティビティ",
-      "empty": "まだアクティビティがありません。通話、リード、キャンペーンが動き始めると、ここに表示されます。"
+      "selectWorkspace": "ワークスペースを選ぶとアクティビティが表示されます。",
+      "title": "アクティビティ",
+      "liveBadge": "ライブ",
+      "statCalls7d": "通話（7日）",
+      "statAnswered": "応答",
+      "statNewLeads": "新規リード",
+      "statAppts": "予定",
+      "filters": {
+        "all": "すべて",
+        "needs_action": "対応が必要",
+        "leads": "リード",
+        "appointments": "予約",
+        "urgent": "緊急",
+        "outbound": "発信",
+        "spam": "スパム"
+      },
+      "cardLabels": {
+        "lead": "新規リード",
+        "appointment": "予約済み",
+        "emergency": "緊急",
+        "outbound": "フォローアップ通話",
+        "action": "対応が必要",
+        "info": "対応済み",
+        "spam": "スパム"
+      },
+      "callerFallback": "発信者",
+      "callFallback": "通話",
+      "completed": "完了",
+      "inProgress": "進行中",
+      "noCallsYet": "まだ通話がありません",
+      "noCallsHint": "転送を設定し、番号がRecall Touchに届くようにしてください。新しい通話がここに表示されます。",
+      "setUpForwarding": "転送を設定 →",
+      "recordACall": "通話を記録",
+      "calling": "発信中…",
+      "callBack": "折り返し",
+      "message": "メッセージ",
+      "view": "表示",
+      "viewDetails": "詳細",
+      "markDone": "完了にする",
+      "requiresAttention": "要対応",
+      "callFailed": "通話に失敗"
     },
     "pageTitle": "ダッシュボード — Recall Touch",
     "importContacts": "連絡先をインポート",
@@ -370,32 +445,120 @@
       "noTeamYet": "まだメンバーがいません。設定で追加してください。"
     },
     "pages": {
-      "analytics": { "title": "分析", "subtitle": "通話、結果、収益帰属。", "subtitleShort": "通話、結果、使用状況。" },
-      "agents": { "title": "エージェント", "subtitle": "AI音声エージェントを設定。", "subtitleShort": "AI音声エージェント。" },
-      "agent": { "title": "エージェント", "subtitle": "エージェントを編集。" },
-      "team": { "title": "チーム", "subtitle": "メンバーとロールを管理。", "subtitleShort": "チームメンバー。" },
-      "calendar": { "title": "カレンダー", "subtitle": "予約済み予約。", "subtitleShort": "予約。" },
-      "callsCalendar": { "title": "カレンダー", "subtitle": "出席状況と準備状態。", "subtitleShort": "今後の通話と出席状況。" },
-      "compose": { "title": "作成", "subtitle": "テンプレートでガバナンスされたメッセージを送信。" },
-      "billing": { "title": "請求", "subtitle": "現在のプラン、使用量、支払い。", "subtitleShort": "プランと使用量。" },
-      "newCampaign": { "title": "新規キャンペーン", "subtitle": "アウトバウンド通話キャンペーンを設定。", "subtitleShort": "アウトバウンドキャンペーンを作成。" },
-      "campaigns": { "title": "キャンペーン", "subtitle": "アウトバウンド通話キャンペーン。", "subtitleShort": "アウトバウンドキャンペーン。" },
-      "contacts": { "title": "連絡先", "subtitle": "リードまたは会社で検索・フィルター。", "subtitleShort": "リードと連絡先。" },
-      "messages": { "title": "メッセージ", "subtitle": "連絡先との双方向SMS。", "subtitleShort": "送信トレイと受信トレイ。" },
-      "followUps": { "title": "フォローアップ", "subtitle": "通話コミットメントからの保留中のフォローアップ。" },
-      "escalations": { "title": "エスカレーション", "subtitle": "アクティブなL1→L2→L3エスカレーションと解決状況。" },
-      "compliance": { "title": "コンプライアンス", "subtitle": "管轄設定、枠組み概要、記録エクスポート。" },
-      "integrations": { "title": "連携", "subtitle": "Googleカレンダー、CRM、その他のツールを接続。", "subtitleShort": "カレンダーとCRMを接続。" },
-      "complianceSettings": { "title": "コンプライアンス", "subtitle": "録音開示、管轄、データ保持、エクスポート。" },
-      "billingSettings": { "title": "請求", "subtitle": "現在のプラン、使用量、アップグレード、支払い方法、請求書。" },
-      "integrationsSettings": { "title": "連携", "subtitle": "APIキー、Webhook、サードパーティ接続。" },
-      "notificationsSettings": { "title": "通知", "subtitle": "Push、SMS、メール — トリガー、 Quiet hours。" },
-      "callRulesSettings": { "title": "通話ルール", "subtitle": "営業時間内/外、緊急検知、転送ルール。" },
-      "phoneSettings": { "title": "電話", "subtitle": "番号、転送、発信者ID。" },
-      "operatorsSettings": { "title": "オペレーター", "subtitle": "オペレーター席とアクセスを管理。" },
-      "businessSettings": { "title": "ビジネス", "subtitle": "名前、住所、営業時間、サービス、ウェブサイト。" },
-      "teamSettings": { "title": "チーム", "subtitle": "メンバー、ロール、稼働、エスカレーションを追加。" },
-      "record": { "title": "記録" }
+      "analytics": {
+        "title": "分析",
+        "subtitle": "通話、結果、収益帰属。",
+        "subtitleShort": "通話、結果、使用状況。"
+      },
+      "agents": {
+        "title": "エージェント",
+        "subtitle": "AI音声エージェントを設定。",
+        "subtitleShort": "AI音声エージェント。"
+      },
+      "agent": {
+        "title": "エージェント",
+        "subtitle": "エージェントを編集。"
+      },
+      "team": {
+        "title": "チーム",
+        "subtitle": "メンバーとロールを管理。",
+        "subtitleShort": "チームメンバー。"
+      },
+      "calendar": {
+        "title": "カレンダー",
+        "subtitle": "予約済み予約。",
+        "subtitleShort": "予約。"
+      },
+      "callsCalendar": {
+        "title": "カレンダー",
+        "subtitle": "出席状況と準備状態。",
+        "subtitleShort": "今後の通話と出席状況。"
+      },
+      "compose": {
+        "title": "作成",
+        "subtitle": "テンプレートでガバナンスされたメッセージを送信。"
+      },
+      "billing": {
+        "title": "請求",
+        "subtitle": "現在のプラン、使用量、支払い。",
+        "subtitleShort": "プランと使用量。"
+      },
+      "newCampaign": {
+        "title": "新規キャンペーン",
+        "subtitle": "アウトバウンド通話キャンペーンを設定。",
+        "subtitleShort": "アウトバウンドキャンペーンを作成。"
+      },
+      "campaigns": {
+        "title": "キャンペーン",
+        "subtitle": "アウトバウンド通話キャンペーン。",
+        "subtitleShort": "アウトバウンドキャンペーン。"
+      },
+      "contacts": {
+        "title": "連絡先",
+        "subtitle": "リードまたは会社で検索・フィルター。",
+        "subtitleShort": "リードと連絡先。"
+      },
+      "messages": {
+        "title": "メッセージ",
+        "subtitle": "連絡先との双方向SMS。",
+        "subtitleShort": "送信トレイと受信トレイ。"
+      },
+      "followUps": {
+        "title": "フォローアップ",
+        "subtitle": "通話コミットメントからの保留中のフォローアップ。"
+      },
+      "escalations": {
+        "title": "エスカレーション",
+        "subtitle": "アクティブなL1→L2→L3エスカレーションと解決状況。"
+      },
+      "compliance": {
+        "title": "コンプライアンス",
+        "subtitle": "管轄設定、枠組み概要、記録エクスポート。"
+      },
+      "integrations": {
+        "title": "連携",
+        "subtitle": "Googleカレンダー、CRM、その他のツールを接続。",
+        "subtitleShort": "カレンダーとCRMを接続。"
+      },
+      "complianceSettings": {
+        "title": "コンプライアンス",
+        "subtitle": "録音開示、管轄、データ保持、エクスポート。"
+      },
+      "billingSettings": {
+        "title": "請求",
+        "subtitle": "現在のプラン、使用量、アップグレード、支払い方法、請求書。"
+      },
+      "integrationsSettings": {
+        "title": "連携",
+        "subtitle": "APIキー、Webhook、サードパーティ接続。"
+      },
+      "notificationsSettings": {
+        "title": "通知",
+        "subtitle": "Push、SMS、メール — トリガー、 Quiet hours。"
+      },
+      "callRulesSettings": {
+        "title": "通話ルール",
+        "subtitle": "営業時間内/外、緊急検知、転送ルール。"
+      },
+      "phoneSettings": {
+        "title": "電話",
+        "subtitle": "番号、転送、発信者ID。"
+      },
+      "operatorsSettings": {
+        "title": "オペレーター",
+        "subtitle": "オペレーター席とアクセスを管理。"
+      },
+      "businessSettings": {
+        "title": "ビジネス",
+        "subtitle": "名前、住所、営業時間、サービス、ウェブサイト。"
+      },
+      "teamSettings": {
+        "title": "チーム",
+        "subtitle": "メンバー、ロール、稼働、エスカレーションを追加。"
+      },
+      "record": {
+        "title": "記録"
+      }
     },
     "agentDetail": {
       "agentNotFound": "エージェントが見つかりません。",
@@ -509,49 +672,6 @@
       "auditTrailTitle": "監査ログ",
       "auditTrailBody": "誰がいつどの記録にアクセスしたか。ログはワークスペースごとに保持されます。",
       "policiesLink": "ポリシー"
-    },
-    "activity": {
-      "selectWorkspace": "ワークスペースを選ぶとアクティビティが表示されます。",
-      "title": "アクティビティ",
-      "liveBadge": "ライブ",
-      "statCalls7d": "通話（7日）",
-      "statAnswered": "応答",
-      "statNewLeads": "新規リード",
-      "statAppts": "予定",
-      "filters": {
-        "all": "すべて",
-        "needs_action": "対応が必要",
-        "leads": "リード",
-        "appointments": "予約",
-        "urgent": "緊急",
-        "outbound": "発信",
-        "spam": "スパム"
-      },
-      "cardLabels": {
-        "lead": "新規リード",
-        "appointment": "予約済み",
-        "emergency": "緊急",
-        "outbound": "フォローアップ通話",
-        "action": "対応が必要",
-        "info": "対応済み",
-        "spam": "スパム"
-      },
-      "callerFallback": "発信者",
-      "callFallback": "通話",
-      "completed": "完了",
-      "inProgress": "進行中",
-      "noCallsYet": "まだ通話がありません",
-      "noCallsHint": "転送を設定し、番号がRecall Touchに届くようにしてください。新しい通話がここに表示されます。",
-      "setUpForwarding": "転送を設定 →",
-      "recordACall": "通話を記録",
-      "calling": "発信中…",
-      "callBack": "折り返し",
-      "message": "メッセージ",
-      "view": "表示",
-      "viewDetails": "詳細",
-      "markDone": "完了にする",
-      "requiresAttention": "要対応",
-      "callFailed": "通話に失敗"
     },
     "startPage": {
       "activationGovernance": "実行は制度的ガバナンスの下に置かれました。",
@@ -1127,11 +1247,22 @@
       "agentLaunched": "エージェント公開済み"
     },
     "dayLabels": {
-      "mon": "月", "tue": "火", "wed": "水", "thu": "木",
-      "fri": "金", "sat": "土", "sun": "日"
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土",
+      "sun": "日"
     },
     "days": {
-      "sun": "日", "mon": "月", "tue": "火", "wed": "水", "thu": "木", "fri": "金", "sat": "土"
+      "sun": "日",
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土"
     },
     "activityType": {
       "lead": "リード",
@@ -1139,7 +1270,6 @@
       "urgent": "緊急",
       "follow-up": "フォローアップ"
     },
-    "needsAttention": "要対応",
     "recentSystemEvents": "最近のシステムイベント",
     "setupEventsPlaceholder": "設定イベントはここに表示されます。",
     "viewLink": "表示 →",
@@ -1255,7 +1385,19 @@
     },
     "defaultBadge": "デフォルト",
     "callsSuffix": "通話",
-    "toast": { "paused": "エージェント一時停止", "active": "エージェント有効" },
+    "toast": {
+      "testLinkCopied": "テストリンクをコピーしました！",
+      "selectVoiceFirst": "プレビューを聞くには音声を選択してください。",
+      "previewFailed": "プレビューを再生できませんでした",
+      "saveFailed": "エージェントを保存できませんでした",
+      "saveRetry": "変更を保存できませんでした。もう一度お試しください。",
+      "deleted": "エージェントを削除しました",
+      "deleteFailed": "エージェントを削除できませんでした",
+      "created": "エージェントを作成して同期しました",
+      "changesSaved": "変更を保存しました ✓",
+      "createFailed": "エージェントを作成できませんでした",
+      "agentLive": "AIエージェントが公開されました！"
+    },
     "actions": {
       "activate": "有効化",
       "deactivate": "無効化",
@@ -1293,7 +1435,9 @@
       "readyTitle": "公開する準備はできましたか？",
       "continue": "続ける",
       "back": "戻る",
-      "starsAria": "5つ星のうち{count}つ"
+      "starsAria": "5つ星のうち{count}つ",
+      "backToBehavior": "行動に戻る",
+      "continueToGoLive": "Go live へ進む"
     },
     "goLive": {
       "heading": "公開",
@@ -1386,10 +1530,63 @@
       "dismiss": "閉じる"
     },
     "identity": {
-      "tone": { "professional": "プロフェッショナル", "friendly": "フレンドリー", "casual": "カジュアル", "formal": "フォーマル" },
-      "industry": { "general": "一般", "dental": "歯科", "legal": "法律", "plumbing": "配管", "real_estate": "不動産", "auto": "自動車", "salon": "サロン", "restaurant": "レストラン", "medical": "医療", "consulting": "コンサル", "contractor": "請負" },
-      "industryGreeting": { "dental": "歯科医院へお電話ありがとうございます。どのようなご用件でしょうか。", "legal": "お電話ありがとうございます。どのようにご用件を承りましょうか。", "plumbing": "お電話ありがとうございます。緊急でしょうか、それともご予約でしょうか。", "real_estate": "お電話ありがとうございます。ご購入、売却、内見のご予約のどれでしょうか。", "auto": "お電話ありがとうございます。点検・修理のご予約でしょうか、ご質問でしょうか。", "salon": "お電話ありがとうございます。ご予約でしょうか、サービスについてのご質問でしょうか。", "restaurant": "お電話ありがとうございます。ご予約でしょうか、ご質問でしょうか。", "medical": "お電話ありがとうございます。どのようなご用件でしょうか。", "consulting": "お問い合わせありがとうございます。どのようなご用件でしょうか。", "contractor": "お電話ありがとうございます。お見積りでしょうか、作業のご予約でしょうか。" },
-      "templates": { "receptionist": { "label": "受付", "desc": "電話対応、伝言、取り次ぎ。" }, "appointment_setter": { "label": "予約", "desc": "予約を入れ、詳細を確認。" }, "lead_qualifier": { "label": "リード認定", "desc": "リードを認定し、有望な見込み客を取り次ぐ。" }, "follow_up": { "label": "フォローアップ", "desc": "リードに折り返し、再エンゲージ。" }, "support": { "label": "カスタマーサポート", "desc": "質問対応、トラブルシュート、解決。" }, "scratch": { "label": "カスタム", "desc": "ゼロからフルコントロールで構築。" } }
+      "tone": {
+        "professional": "プロフェッショナル",
+        "friendly": "フレンドリー",
+        "casual": "カジュアル",
+        "formal": "フォーマル"
+      },
+      "industry": {
+        "general": "一般",
+        "dental": "歯科",
+        "legal": "法律",
+        "plumbing": "配管",
+        "real_estate": "不動産",
+        "auto": "自動車",
+        "salon": "サロン",
+        "restaurant": "レストラン",
+        "medical": "医療",
+        "consulting": "コンサル",
+        "contractor": "請負"
+      },
+      "industryGreeting": {
+        "dental": "歯科医院へお電話ありがとうございます。どのようなご用件でしょうか。",
+        "legal": "お電話ありがとうございます。どのようにご用件を承りましょうか。",
+        "plumbing": "お電話ありがとうございます。緊急でしょうか、それともご予約でしょうか。",
+        "real_estate": "お電話ありがとうございます。ご購入、売却、内見のご予約のどれでしょうか。",
+        "auto": "お電話ありがとうございます。点検・修理のご予約でしょうか、ご質問でしょうか。",
+        "salon": "お電話ありがとうございます。ご予約でしょうか、サービスについてのご質問でしょうか。",
+        "restaurant": "お電話ありがとうございます。ご予約でしょうか、ご質問でしょうか。",
+        "medical": "お電話ありがとうございます。どのようなご用件でしょうか。",
+        "consulting": "お問い合わせありがとうございます。どのようなご用件でしょうか。",
+        "contractor": "お電話ありがとうございます。お見積りでしょうか、作業のご予約でしょうか。"
+      },
+      "templates": {
+        "receptionist": {
+          "label": "受付",
+          "desc": "電話対応、伝言、取り次ぎ。"
+        },
+        "appointment_setter": {
+          "label": "予約",
+          "desc": "予約を入れ、詳細を確認。"
+        },
+        "lead_qualifier": {
+          "label": "リード認定",
+          "desc": "リードを認定し、有望な見込み客を取り次ぐ。"
+        },
+        "follow_up": {
+          "label": "フォローアップ",
+          "desc": "リードに折り返し、再エンゲージ。"
+        },
+        "support": {
+          "label": "カスタマーサポート",
+          "desc": "質問対応、トラブルシュート、解決。"
+        },
+        "scratch": {
+          "label": "カスタム",
+          "desc": "ゼロからフルコントロールで構築。"
+        }
+      }
     },
     "voiceSelector": {
       "voiceLabel": "音声",
@@ -1402,7 +1599,8 @@
       "backchannelLabel": "相づちを入れながら聞く",
       "denoisingLabel": "背景ノイズ低減",
       "selectedLabel": "選択済み。",
-      "selectThisVoiceLabel": "この音声を選択。"
+      "selectThisVoiceLabel": "この音声を選択。",
+      "previewVoiceAria": "{name}の音声をプレビュー"
     },
     "profile": {
       "agentNameLabel": "エージェント名",
@@ -1465,6 +1663,57 @@
       "angry": "発信者が怒っている、または不満",
       "billing": "請求・支払いに関する質問",
       "noAnswer": "2 回試行しても回答できない"
+    },
+    "defaultFaq": {
+      "hoursQuestion": "営業時間はいつですか？",
+      "hoursAnswer": "月曜〜金曜 9:00〜17:00 です。",
+      "locationQuestion": "所在地はどこですか？",
+      "locationAnswer": "担当者から住所をお伝えします。連絡方法は何がよいですか？",
+      "appointmentQuestion": "予約はどうすればいいですか？",
+      "appointmentAnswer": "今からご案内します。ご希望の日はありますか？",
+      "servicesQuestion": "どんなサービスがありますか？",
+      "servicesAnswer": "各種サービスをご用意しています。具体的にどのようなご用件ですか？",
+      "pricingQuestion": "料金はいくらですか？",
+      "pricingAnswer": "内容により異なります。担当からお見積りをお送りします。お名前とメールをいただけますか？"
+    },
+    "defaultTransfer": {
+      "explicitlyAsksHuman": "発信者が明示的に人間を要求",
+      "angryFrustrated": "発信者が怒っている、または不満",
+      "billingPayments": "請求・支払いに関する質問",
+      "cannotAnswerAttempts": "2 回試行しても回答できない"
+    },
+    "templateGreeting": {
+      "afterHours": "お電話ありがとうございます。営業時間外です。AIアシスタントです。伝言・質問・折り返しの予約ができます。どのようなご用件ですか？",
+      "emergency": "お電話ありがとうございます。緊急の場合は電話を切り、119番へ。それ以外は今から対応します。どうされましたか？",
+      "leadQualifier": "お問い合わせありがとうございます。次のステップのためにいくつかうかがいます。",
+      "followUp": "お疲れ様です。AIアシスタントです。漏れがないようフォローします。今お時間よろしいですか？",
+      "reviewRequest": "ご意見をお聞かせください。少々お時間いただけますか？",
+      "appointmentSetter": "ご予約のご案内をします。ご希望の日はありますか？",
+      "support": "サポートへお電話ありがとうございます。本日はどのようなご用件ですか？",
+      "receptionist": "お電話ありがとうございます。本日はどのようなご用件ですか？"
+    },
+    "defaultAgent": {
+      "receptionist": "受付",
+      "hasBudget": "予算あり",
+      "hasTimeline": "スケジュールあり",
+      "isDecisionMaker": "意思決定者",
+      "confusedCallerHandling": "発信者が混乱している場合は、転送前に確認の質問をしてください。",
+      "offTopicHandling": "話題から外れた質問には、提供サービスへ丁寧に誘導してください。"
+    },
+    "faqCategories": {
+      "all": "すべて",
+      "hours": "時間",
+      "services": "サービス",
+      "pricing": "料金",
+      "policies": "ポリシー"
+    },
+    "defaultObjections": {
+      "tooExpensive": "高すぎます",
+      "tooExpensiveResponse": "多くのお客様が最初は同じように感じましたが、価値がコストを上回りました。内容をご説明しましょうか？",
+      "thinkAboutIt": "検討させてください",
+      "thinkAboutItResponse": "承知しました。ご検討用の資料をお送りしましょうか？",
+      "alreadyWorking": "すでに他社と取引しています",
+      "alreadyWorkingResponse": "当社の優良顧客の多くが同様の状況から来られました。代替を検討するには何が必要でしょうか？"
     },
     "deleteConfirmMessage": "「{name}」を削除しますか？元に戻せません。",
     "createFirstAria": "最初のエージェントを作成",
@@ -1530,10 +1779,31 @@
       "high": "高",
       "qualificationFramework": "リード認定",
       "whatMakesQualified": "どんなリードを認定する？",
-      "hesitation": { "wait_patiently": "辛抱強く待つ", "ask_what_thinking": "何を考えているか聞く", "acknowledge_offer_info": "懸念を認め情報を提供", "offer_alternatives": "代替案を提示", "redirect": "本題に戻す" },
-      "thinkAboutIt": { "accept_gracefully": "穏やかに受け入れる", "offer_follow_up": "フォローアップを提案：「明日お電話します — 何時がよいですか？」", "create_urgency": "軽い緊急性を作る", "ask_what_help": "決断に何が役立つか聞く" },
-      "pricing": { "give_full": "全料金を伝える", "range_then_pivot": "可能なら範囲を伝え予約に誘導", "redirect_consultation": "相談に誘導", "defer_human": "人間に任せる" },
-      "competitor": { "acknowledge": "認めるのみ", "acknowledge_differentiate": "認めて差別化（批判なし）", "redirect_strengths": "自社の強みに誘導", "defer_human": "人間に任せる" },
+      "hesitation": {
+        "wait_patiently": "辛抱強く待つ",
+        "ask_what_thinking": "何を考えているか聞く",
+        "acknowledge_offer_info": "懸念を認め情報を提供",
+        "offer_alternatives": "代替案を提示",
+        "redirect": "本題に戻す"
+      },
+      "thinkAboutIt": {
+        "accept_gracefully": "穏やかに受け入れる",
+        "offer_follow_up": "フォローアップを提案：「明日お電話します — 何時がよいですか？」",
+        "create_urgency": "軽い緊急性を作る",
+        "ask_what_help": "決断に何が役立つか聞く"
+      },
+      "pricing": {
+        "give_full": "全料金を伝える",
+        "range_then_pivot": "可能なら範囲を伝え予約に誘導",
+        "redirect_consultation": "相談に誘導",
+        "defer_human": "人間に任せる"
+      },
+      "competitor": {
+        "acknowledge": "認めるのみ",
+        "acknowledge_differentiate": "認めて差別化（批判なし）",
+        "redirect_strengths": "自社の強みに誘導",
+        "defer_human": "人間に任せる"
+      },
       "previewAiLabel": "AI:",
       "previewTransferQuestion": "担当者と話したい",
       "previewTransferAnswer": "承知しました。ただいま転送します。",
@@ -1599,16 +1869,39 @@
       "escalationTitle": "エスカレーションと転送",
       "escalationHint": "いつAIが人間に引き継ぐべきか。",
       "transferWhen": "次の場合に転送：",
+      "escalation": {
+        "asksForManager": "責任者との通話を求める",
+        "angry": "怒っている、または不満",
+        "complexQuestion": "複雑な法的・医療的質問がある",
+        "requestsHuman": "明示的に人間を要求",
+        "emergency": "緊急事態に言及"
+      },
       "addQuestion": "+ 質問を追加",
       "remove": "削除",
       "custom": "カスタム",
-      "bant": { "q1": "このための予算はありますか？", "q2": "いつまでに完了したいですか？", "q3": "最終決定者はあなたですか？", "q4": "どんな課題を解決したいですか？" },
-      "meddic": { "q1": "成功をどう測定しますか？", "q2": "他に誰が決定に関与していますか？", "q3": "何もしない場合の影響は？", "q4": "正式な決定プロセスやスケジュールはありますか？" },
+      "bant": {
+        "q1": "このための予算はありますか？",
+        "q2": "いつまでに完了したいですか？",
+        "q3": "最終決定者はあなたですか？",
+        "q4": "どんな課題を解決したいですか？"
+      },
+      "meddic": {
+        "q1": "成功をどう測定しますか？",
+        "q2": "他に誰が決定に関与していますか？",
+        "q3": "何もしない場合の影響は？",
+        "q4": "正式な決定プロセスやスケジュールはありますか？"
+      },
       "placeholderQ1": "何をお探しですか？",
       "placeholderQ2": "予算の範囲は？",
       "placeholderQ3": "いつ必要ですか？",
       "placeholderQ4": "どのように当社を知りましたか？",
-      "escalation": { "asksForManager": "担当者との通話を求める", "angry": "怒っている、または不満", "complexQuestion": "複雑な法的・医療的質問がある", "requestsHuman": "人間を明示的に求める", "emergency": "緊急事態に言及する" }
+      "escalation": {
+        "asksForManager": "担当者との通話を求める",
+        "angry": "怒っている、または不満",
+        "complexQuestion": "複雑な法的・医療的質問がある",
+        "requestsHuman": "人間を明示的に求める",
+        "emergency": "緊急事態に言及する"
+      }
     },
     "knowledge": {
       "title": "エージェントは何を知っていますか？",
@@ -1617,6 +1910,8 @@
       "importError": "そのURLを読み込めませんでした。もう一度お試しください。",
       "importErrorGeneric": "問題が発生しました。",
       "quickStartHint": "クイックスタート：よくあるQ&Aを追加します。",
+      "backToVoice": "音声に戻る",
+      "continueToBehavior": "行動へ進む",
       "suggestQAs": "Q&Aを提案",
       "adding": "追加中…",
       "minQAHint": "より良い結果のために少なくとも1つのQ&Aを追加してください。後でナレッジを追加することもできます。",
@@ -1631,18 +1926,6 @@
     "createFirst": "最初のエージェントを作成",
     "saveAndUpdate": "保存してエージェントを更新",
     "editSubtitle": "エージェントを編集。",
-    "toast": {
-      "testLinkCopied": "テストリンクをコピーしました！",
-      "selectVoiceFirst": "プレビューを聞くには音声を選択してください。",
-      "previewFailed": "プレビューを再生できませんでした",
-      "saveFailed": "エージェントを保存できませんでした",
-      "saveRetry": "変更を保存できませんでした。もう一度お試しください。",
-      "deleted": "エージェントを削除しました",
-      "deleteFailed": "エージェントを削除できませんでした",
-      "created": "エージェントを作成して同期しました",
-      "createFailed": "エージェントを作成できませんでした",
-      "agentLive": "AIエージェントが公開されました！"
-    },
     "newWizard": {
       "title": "AIエージェントを作成",
       "subtitle": "手順に沿って音声エージェントを設定します。",
@@ -1722,7 +2005,18 @@
       "voicemailForward": "番号に転送",
       "voicemailClosed": "閉店メッセージを再生",
       "assignNumberHint": "起動後に",
-      "assignNumberHintAfter": "から電話番号を割り当ててください。"
+      "assignNumberHintAfter": "から電話番号を割り当ててください。",
+      "testHint": "公開前にエージェントを試しましょう。",
+      "openTestCall": "テスト通話を開く",
+      "saveDraftFirst": "先に下書きを保存してからテストできます。",
+      "testFromAgentPage": "起動後はエージェントページからもテストできます。",
+      "launchHint": "エージェントを確認して有効化します。",
+      "reviewName": "名前:",
+      "reviewPurpose": "目的:",
+      "reviewVoice": "音声:",
+      "reviewGreeting": "挨拶:",
+      "costNote": "推定コストは利用量により異なります。エージェントページでいつでもオフにできます。",
+      "back": "戻る"
     }
   },
   "calls": {
@@ -1736,9 +2030,24 @@
     "filterOutcome": "結果でフィルター",
     "filterSentiment": "感情でフィルター",
     "all": "すべて",
-    "outcomes": { "booked": "予約", "lead": "リード", "info": "情報", "transferred": "転送", "missed": "不在", "voicemail": "留守番" },
-    "sentiments": { "positive": "ポジティブ", "neutral": "ニュートラル", "negative": "ネガティブ" },
-    "sort": { "newest": "新しい順", "longest": "最長通話", "bestSentiment": "感情が良好" },
+    "outcomes": {
+      "booked": "予約",
+      "lead": "リード",
+      "info": "情報",
+      "transferred": "転送",
+      "missed": "不在",
+      "voicemail": "留守番"
+    },
+    "sentiments": {
+      "positive": "ポジティブ",
+      "neutral": "ニュートラル",
+      "negative": "ネガティブ"
+    },
+    "sort": {
+      "newest": "新しい順",
+      "longest": "最長通話",
+      "bestSentiment": "感情が良好"
+    },
     "filters": {
       "all": "すべての通話",
       "missed": "不在着信",
@@ -1786,8 +2095,20 @@
       "testAgent": "エージェントをテスト",
       "body": "エージェントが通話を処理し始めると、ここに表示されます。"
     },
-    "table": { "dateTime": "日付 / 時刻", "caller": "発信者", "phone": "電話", "duration": "時間", "outcome": "結果", "sentiment": "感情", "agent": "エージェント", "actions": "操作" },
-    "types": { "inbound": "着信", "outbound": "発信" },
+    "table": {
+      "dateTime": "日付 / 時刻",
+      "caller": "発信者",
+      "phone": "電話",
+      "duration": "時間",
+      "outcome": "結果",
+      "sentiment": "感情",
+      "agent": "エージェント",
+      "actions": "操作"
+    },
+    "types": {
+      "inbound": "着信",
+      "outbound": "発信"
+    },
     "defaultCaller": "発信者",
     "aiSummary": "AIサマリー",
     "noSummary": "サマリーはありません。",
@@ -1939,7 +2260,15 @@
     "heading": "通話ルール",
     "description": "営業時間内・外でAIが通話をどう処理するか設定します。",
     "businessHours": "営業時間",
-    "days": { "mon": "月", "tue": "火", "wed": "水", "thu": "木", "fri": "金", "sat": "土", "sun": "日" },
+    "days": {
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土",
+      "sun": "日"
+    },
     "timeRange": "9:00 – 17:00",
     "closed": "休業",
     "afterHoursBehavior": "営業時間外の動作",
@@ -1958,10 +2287,14 @@
     "transferNumberPlaceholder": "(503) 555-0101",
     "saveChanges": "変更を保存",
     "backToSettings": "← 設定",
-    "toast": { "saved": "通話ルールを保存しました" }
+    "toast": {
+      "saved": "通話ルールを保存しました"
+    }
   },
   "inbox": {
     "title": "受信箱",
+    "subtitle": "会話を一箇所で管理。",
+    "viewInLeads": "リードで表示",
     "pageTitle": "受信箱 — Recall Touch",
     "filters": {
       "all": "すべて",
@@ -2014,7 +2347,6 @@
       "send": "送信"
     },
     "contact": "連絡先",
-    "viewInLeads": "リードで表示",
     "openContactPanel": "連絡先パネルを開く"
   },
   "leads": {
@@ -2040,14 +2372,48 @@
     "inlinePhonePlaceholder": "電話",
     "inlineEmailPlaceholder": "メール（任意）",
     "inlineAdd": "+ 追加",
-    "scoreFilter": { "all": "すべてのスコア", "high": "高 (70+)", "medium": "中 (40–69)", "low": "低 (0–39)" },
-    "sortOptions": { "newest": "新しい順", "highestScore": "スコア順", "recentContact": "連絡日順" },
+    "scoreFilter": {
+      "all": "すべてのスコア",
+      "high": "高 (70+)",
+      "medium": "中 (40–69)",
+      "low": "低 (0–39)"
+    },
+    "sortOptions": {
+      "newest": "新しい順",
+      "highestScore": "スコア順",
+      "recentContact": "連絡日順"
+    },
     "selectedCount": "{count} 件選択中",
     "clear": "クリア",
     "changeStatus": "ステータスを変更:",
     "assign": "担当:",
-    "modal": { "title": "リードを追加", "nameLabel": "名前 *", "namePlaceholder": "氏名", "phoneLabel": "電話 *", "phonePlaceholder": "+1 (555) 000-0000", "emailLabel": "メール", "emailPlaceholder": "email@example.com", "companyLabel": "会社", "companyPlaceholder": "会社名", "needLabel": "必要なものは？", "needPlaceholder": "例: 月次清掃、相談", "sourceLabel": "ソース", "statusLabel": "ステータス", "notesLabel": "メモ", "notesPlaceholder": "任意のメモ", "cancel": "キャンセル", "saving": "追加中…", "save": "リードを保存" },
-    "sources": { "inboundCall": "着信", "outbound": "アウトバウンド", "website": "ウェブサイト", "referral": "紹介", "other": "その他" },
+    "modal": {
+      "title": "リードを追加",
+      "nameLabel": "名前 *",
+      "namePlaceholder": "氏名",
+      "phoneLabel": "電話 *",
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "emailLabel": "メール",
+      "emailPlaceholder": "email@example.com",
+      "companyLabel": "会社",
+      "companyPlaceholder": "会社名",
+      "needLabel": "必要なものは？",
+      "needPlaceholder": "例: 月次清掃、相談",
+      "sourceLabel": "ソース",
+      "statusLabel": "ステータス",
+      "notesLabel": "メモ",
+      "notesPlaceholder": "任意のメモ",
+      "cancel": "キャンセル",
+      "saving": "追加中…",
+      "save": "リードを保存"
+    },
+    "sources": {
+      "inboundCall": "着信",
+      "outbound": "アウトバウンド",
+      "website": "ウェブサイト",
+      "referral": "紹介",
+      "other": "その他"
+    },
     "csvPreview": "{count} 件のリードが見つかりました",
     "csvPreviewLabel": "プレビュー（最初の5件）:",
     "csvCancel": "キャンセル",
@@ -2100,7 +2466,11 @@
       "textButton": "メッセージ",
       "addNote": "メモを追加",
       "callTypeLabel": "通話タイプ",
-      "callTypes": { "default": "標準", "followUp": "フォローアップ", "reminder": "リマインダー" },
+      "callTypes": {
+        "default": "標準",
+        "followUp": "フォローアップ",
+        "reminder": "リマインダー"
+      },
       "startingCall": "開始中…",
       "haveAiCall": "AIに発信",
       "archive": "アーカイブ"
@@ -2178,10 +2548,22 @@
       "audiencePlaceholder": "例：フォローアップ待ちのリード",
       "leadStatusOptionalLabel": "リードのステータス（任意）",
       "quickTypes": {
-        "followup": { "label": "リードフォローアップ", "desc": "関心を示したリードに電話" },
-        "reactivation": { "label": "再活性化", "desc": "冷えたリードを再エンゲージ" },
-        "reminder": { "label": "予約リマインダー", "desc": "近日の予約を確認" },
-        "qualification": { "label": "スクリーニング", "desc": "新規リードを電話で判定" }
+        "followup": {
+          "label": "リードフォローアップ",
+          "desc": "関心を示したリードに電話"
+        },
+        "reactivation": {
+          "label": "再活性化",
+          "desc": "冷えたリードを再エンゲージ"
+        },
+        "reminder": {
+          "label": "予約リマインダー",
+          "desc": "近日の予約を確認"
+        },
+        "qualification": {
+          "label": "スクリーニング",
+          "desc": "新規リードを電話で判定"
+        }
       }
     },
     "type": {
@@ -2218,17 +2600,36 @@
       "qualifyAudience": "新規リードの認定",
       "qualifyTemplate": "ご興味ありがとうございます。お手すきのときにいくつか質問させてください。"
     },
-    "errors": { "updateFailed": "キャンペーンを更新できませんでした。", "createFailed": "キャンペーンを作成できませんでした。" },
+    "errors": {
+      "updateFailed": "キャンペーンを更新できませんでした。",
+      "createFailed": "キャンペーンを作成できませんでした。"
+    },
     "outcomeAudience": "結果ベースのオーディエンス",
-    "leadStatuses": { "new": "新規", "contacted": "連絡済み", "qualified": "認定", "appointmentSet": "予約済み", "won": "受注", "lost": "失注" },
+    "leadStatuses": {
+      "new": "新規",
+      "contacted": "連絡済み",
+      "qualified": "認定",
+      "appointmentSet": "予約済み",
+      "won": "受注",
+      "lost": "失注"
+    },
     "namePlaceholder": "不在着信リカバリー",
     "filterAny": "すべて",
-    "scheduleLabel": { "once": "実行日時", "recurring": "次回実行（日時）" },
+    "scheduleLabel": {
+      "once": "実行日時",
+      "recurring": "次回実行（日時）"
+    },
     "saving": "保存中…",
     "creating": "作成中…",
     "saveChanges": "変更を保存",
     "createCampaign": "キャンペーンを作成",
-    "statusFilter": { "all": "すべてのステータス", "draft": "下書き", "active": "アクティブ", "paused": "一時停止", "completed": "完了" },
+    "statusFilter": {
+      "all": "すべてのステータス",
+      "draft": "下書き",
+      "active": "アクティブ",
+      "paused": "一時停止",
+      "completed": "完了"
+    },
     "new": "新規キャンペーン",
     "removeStep": "ステップを削除",
     "runAt": "実行日時",
@@ -2262,24 +2663,63 @@
     "signOut": "サインアウト",
     "backToDashboard": "← ダッシュボード",
     "deleteAllDataTitle": "すべてのデータを削除",
-    "deleteAllDataMessage": "ワークスペースのすべてのデータ（通話、リード、エージェント）を削除しますか？取り消せません。サポートに連絡してください。",
+    "deleteAllDataMessage": "ワークスペースの全データ（通話、リード、エージェント）を削除しますか？元に戻せません。サポートにお問い合わせください。",
     "deleteAllDataConfirmLabel": "すべてのデータを削除",
     "deleteAccountMessage": "アカウントと関連データを完全に削除しますか？取り消せません。サポートに連絡してください。",
     "deleteAccountConfirmLabel": "アカウントを削除",
     "links": {
-      "business": { "label": "ビジネス設定", "desc": "名前、住所、サイト、タイムゾーン、業界" },
-      "phone": { "label": "電話と番号", "desc": "番号の購入、転送状況、発信者ID、ルーティング" },
-      "agent": { "label": "AIエージェント設定", "desc": "音声、挨拶、動作、ナレッジ、言語" },
-      "callRules": { "label": "通話ルール", "desc": "営業時間、時間外、緊急、転送" },
-      "team": { "label": "チームと権限", "desc": "メンバー、ロール、エスカレーション、アクセス" },
-      "notifications": { "label": "通知", "desc": "新規通話、リード、予約、取り逃しのアラート" },
-      "leadScoring": { "label": "リードスコア", "desc": "通話・インタラクションからのリードスコア用ウェイト" },
-      "integrations": { "label": "連携", "desc": "カレンダー、CRM、Webhook、Slack、Zapier" },
-      "billing": { "label": "請求とプラン", "desc": "現在のプラン、利用状況、請求書、解約" },
-      "compliance": { "label": "コンプライアンス", "desc": "録音同意、Do-not-call、地域ルール" },
-      "activity": { "label": "アクティビティログ", "desc": "設定とワークスペースの最近の変更" },
-      "errors": { "label": "エラーレポート", "desc": "このワークスペースのクライアントエラーとレポート" },
-      "developer": { "label": "開発者", "desc": "APIキー、Webhook、技術ドキュメント" }
+      "business": {
+        "label": "ビジネス設定",
+        "desc": "名前、住所、サイト、タイムゾーン、業界"
+      },
+      "phone": {
+        "label": "電話と番号",
+        "desc": "番号の購入、転送状況、発信者ID、ルーティング"
+      },
+      "agent": {
+        "label": "AIエージェント設定",
+        "desc": "音声、挨拶、動作、ナレッジ、言語"
+      },
+      "callRules": {
+        "label": "通話ルール",
+        "desc": "営業時間、時間外、緊急、転送"
+      },
+      "team": {
+        "label": "チームと権限",
+        "desc": "メンバー、ロール、エスカレーション、アクセス"
+      },
+      "notifications": {
+        "label": "通知",
+        "desc": "新規通話、リード、予約、取り逃しのアラート"
+      },
+      "leadScoring": {
+        "label": "リードスコア",
+        "desc": "通話・インタラクションからのリードスコア用ウェイト"
+      },
+      "integrations": {
+        "label": "連携",
+        "desc": "カレンダー、CRM、Webhook、Slack、Zapier"
+      },
+      "billing": {
+        "label": "請求とプラン",
+        "desc": "現在のプラン、利用状況、請求書、解約"
+      },
+      "compliance": {
+        "label": "コンプライアンス",
+        "desc": "録音同意、Do-not-call、地域ルール"
+      },
+      "activity": {
+        "label": "アクティビティログ",
+        "desc": "設定とワークスペースの最近の変更"
+      },
+      "errors": {
+        "label": "エラーレポート",
+        "desc": "このワークスペースのクライアントエラーとレポート"
+      },
+      "developer": {
+        "label": "開発者",
+        "desc": "APIキー、Webhook、技術ドキュメント"
+      }
     },
     "nav": {
       "general": "一般",
@@ -2396,8 +2836,6 @@
       }
     },
     "activityLog": "アクティビティログ",
-    "deleteAllDataTitle": "すべてのデータを削除",
-    "deleteAllDataMessage": "ワークスペースの全データ（通話、リード、エージェント）を削除しますか？元に戻せません。サポートにお問い合わせください。",
     "deleteAccountTitle": "アカウントを削除",
     "business.saveFailed": "ビジネス設定を保存できませんでした。もう一度お試しください。",
     "business.nameNoMatch": "ワークスペース名が一致しません。確認のため正確に入力してください。",
@@ -2639,7 +3077,8 @@
     "sendMessage": "メッセージを送る",
     "scheduleCall": "通話を予約 →",
     "startFree": "無料で開始 →",
-    "backToHome": "ホームに戻る"
+    "backToHome": "ホームに戻る",
+    "formSubject": "件名"
   },
   "productPage": {
     "metaTitle": "製品",
@@ -2685,21 +3124,18 @@
     "viewDocs": "ドキュメントを見る"
   },
   "footer": {
-    "tagline": "AI電話システムがビジネスの通話に24時間365日対応し、選別・予約まで行います。",
-    "product": "製品",
-    "features": "機能",
-    "pricing": "料金",
-    "demo": "デモ",
-    "docs": "ドキュメント",
-    "company": "会社",
-    "emailUs": "お問い合わせ",
-    "blog": "ブログ",
-    "contact": "連絡",
-    "legalSecurity": "法務・セキュリティ",
-    "privacyPolicy": "プライバシーポリシー",
-    "termsOfService": "利用規約",
-    "securityBadges": "SOC 2 • GDPR • 256ビット暗号化",
-    "copyright": "© {year} Recall Touch. All rights reserved."
+    "cta": {
+      "bookDemo": "デモを予約",
+      "contact": "お問い合わせ"
+    },
+    "links": {
+      "product": "プロダクト",
+      "pricing": "料金",
+      "docs": "ドキュメント",
+      "terms": "利用規約",
+      "privacy": "プライバシー"
+    },
+    "copyright": "All rights reserved."
   },
   "pricing": {
     "title": "料金",
@@ -2739,7 +3175,16 @@
     "featureComparison": "機能比較",
     "feature": "機能",
     "annualNote": "年額契約で2か月分が途切れず適用されます。",
-    "roi": { "intro": "着信を留守電に回さなくなった場合の効果をシミュレートします。", "missedCallsPerWeek": "週あたりの取りこぼし着信数", "avgValuePerCall": "1通話あたりの平均価値（$）", "monthlyRecovered": "月間回収収入", "annualBaseline": "年間受付ベースライン", "annualProtected": "Recall Touchが守る年間収入", "receptionistCost": "受付コスト。", "recommendedPlan": "おすすめプラン：" },
+    "roi": {
+      "intro": "着信を留守電に回さなくなった場合の効果をシミュレートします。",
+      "missedCallsPerWeek": "週あたりの取りこぼし着信数",
+      "avgValuePerCall": "1通話あたりの平均価値（$）",
+      "monthlyRecovered": "月間回収収入",
+      "annualBaseline": "年間受付ベースライン",
+      "annualProtected": "Recall Touchが守る年間収入",
+      "receptionistCost": "受付コスト。",
+      "recommendedPlan": "おすすめプラン："
+    },
     "faq": {
       "title": "料金に関するよくある質問",
       "trial": "無料トライアルはありますか？",
@@ -2796,12 +3241,42 @@
       "description": "AI の設定と接続が完了し、ビジネスの電話対応を任せられる状態になりました。"
     },
     "templates": {
-      "receptionist": { "name": "受付", "description": "電話の応対、伝言、取り次ぎを担当します。", "agentName": "Sarah", "greeting": "お電話ありがとうございます。ご用件・伝言・お取り次ぎのご案内をいたします。" },
-      "appointment_scheduler": { "name": "予約", "description": "予約の取得・確認・リマインドをスムーズに。", "agentName": "Emma", "greeting": "お電話ありがとうございます。ご希望の日時を確認し、予約を承ります。" },
-      "lead_qualifier": { "name": "リード選別", "description": "重要情報を聞き取り、有望な機会を優先して取り次ぎます。", "agentName": "Alex", "greeting": "お問い合わせありがとうございます。いくつかお伺いして、次のステップをご案内します。" },
-      "after_hours": { "name": "時間外対応", "description": "営業時間外の着信に対応し、緊急度をフラグ付けします。", "agentName": "Sarah", "greeting": "お電話ありがとうございます。現在は営業時間外です。内容を承り、適切なフォローアップをご案内します。" },
-      "follow_up": { "name": "フォローアップ", "description": "発信者・リードを再エンゲージし、取りこぼしを防ぎます。", "agentName": "Alex", "greeting": "フォローアップのご連絡です。状況の確認と次のステップのご案内をいたします。" },
-      "custom": { "name": "カスタム", "description": "ゼロから始めて、トーンを自分で決めます。", "agentName": "Sarah", "greeting": "お電話ありがとうございます。どのようなご用件でしょうか。" }
+      "receptionist": {
+        "name": "受付",
+        "description": "電話の応対、伝言、取り次ぎを担当します。",
+        "agentName": "Sarah",
+        "greeting": "お電話ありがとうございます。ご用件・伝言・お取り次ぎのご案内をいたします。"
+      },
+      "appointment_scheduler": {
+        "name": "予約",
+        "description": "予約の取得・確認・リマインドをスムーズに。",
+        "agentName": "Emma",
+        "greeting": "お電話ありがとうございます。ご希望の日時を確認し、予約を承ります。"
+      },
+      "lead_qualifier": {
+        "name": "リード選別",
+        "description": "重要情報を聞き取り、有望な機会を優先して取り次ぎます。",
+        "agentName": "Alex",
+        "greeting": "お問い合わせありがとうございます。いくつかお伺いして、次のステップをご案内します。"
+      },
+      "after_hours": {
+        "name": "時間外対応",
+        "description": "営業時間外の着信に対応し、緊急度をフラグ付けします。",
+        "agentName": "Sarah",
+        "greeting": "お電話ありがとうございます。現在は営業時間外です。内容を承り、適切なフォローアップをご案内します。"
+      },
+      "follow_up": {
+        "name": "フォローアップ",
+        "description": "発信者・リードを再エンゲージし、取りこぼしを防ぎます。",
+        "agentName": "Alex",
+        "greeting": "フォローアップのご連絡です。状況の確認と次のステップのご案内をいたします。"
+      },
+      "custom": {
+        "name": "カスタム",
+        "description": "ゼロから始めて、トーンを自分で決めます。",
+        "agentName": "Sarah",
+        "greeting": "お電話ありがとうございます。どのようなご用件でしょうか。"
+      }
     },
     "welcomeHeading": "Recall Touch へようこそ！",
     "welcomeSubtitle": "2分で AI 電話システムをセットアップします。",
@@ -2828,12 +3303,18 @@
     "businessInfoLabel": "ビジネス情報",
     "hoursLabel": "営業時間",
     "hoursPlaceholder": "例: 月–金 9:00–17:00",
-    "servicesLabel": "サービス",
+    "servicesLabel": "提供しているサービスは？",
     "removeAria": "{item} を削除",
     "starterEntriesCta": "選択内容に基づいてスターター項目を用意しました。編集したり独自の項目を追加できます。",
     "addThemNow": "今すぐ追加",
     "edit": "編集",
     "remove": "削除",
+    "sidebarLabel": "オンボーディング",
+    "defaultGreeting": "{businessName}にお電話いただきありがとうございます。{agentName}です。本日はどのようなご用件でしょうか？",
+    "businessPlaceholder": "[会社名]",
+    "defaultPreview": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
+    "questionPrompt": "質問",
+    "answerPrompt": "回答",
     "addAnotherQa": "+ 別の Q&A を追加",
     "addMoreLater": "エージェント設定でいつでも追加できます。",
     "step1Heading": "AI電話チームをセットアップしましょう。",
@@ -2843,7 +3324,15 @@
     "businessNamePlaceholderShort": "Acme Plumbing",
     "phonePlaceholderShort": "(555) 123-4567",
     "businessTypeLabel": "事業の種類は？",
-    "industries": { "home_services": "住宅サービス", "healthcare": "医療", "legal": "法務", "real_estate": "不動産", "retail": "小売・サービス", "b2b": "B2B・営業", "other": "その他" },
+    "industries": {
+      "home_services": "住宅サービス",
+      "healthcare": "医療",
+      "legal": "法務",
+      "real_estate": "不動産",
+      "retail": "小売・サービス",
+      "b2b": "B2B・営業",
+      "other": "その他"
+    },
     "errorNameRequired": "お名前と事業名は必須です。",
     "errorSomethingWentWrong": "問題が発生しました",
     "creating": "作成中…",
@@ -2853,12 +3342,19 @@
     "greetingLabelOptional": "挨拶（任意）",
     "greetingPlaceholderDynamic": "{business}へお電話ありがとうございます。{agent}です。どのようなご用件でしょうか。",
     "yourAgentCan": "エージェントは次のことができます",
-    "capabilities": { "answer_questions": "サービスについて質問に答える", "book_appointments": "予約を入れる", "capture_leads": "リードを取得して通知", "handle_emergencies": "緊急対応（即時通知）", "send_texts": "確認SMSを送信", "block_spam": "スパムをブロック" },
+    "capabilities": {
+      "answer_questions": "サービスについて質問に答える",
+      "book_appointments": "予約を入れる",
+      "capture_leads": "リードを取得して通知",
+      "handle_emergencies": "緊急対応（即時通知）",
+      "send_texts": "確認SMSを送信",
+      "block_spam": "スパムをブロック"
+    },
     "step3Heading": "AIに事業内容を教えてください。",
     "step3Subtitle": "サービス、営業時間、よくある質問は？",
-    "servicesLabel": "提供しているサービスは？",
     "servicesPlaceholder": "例：排水管クリーニング、給湯器修理、漏水検知…",
     "websiteHintShort": "またはサイトのURLを貼ると自動で入力します。",
+    "urlPlaceholder": "https://...",
     "hoursLabelShort": "営業時間は？",
     "hoursWeekdays": "月〜金 9:00–17:00",
     "hoursWeekdaysSat": "月〜金 9:00–17:00、土 9:00–14:00",
@@ -2889,11 +3385,31 @@
     "scenarioSimulatorLabel": "シナリオシミュレーター",
     "scenarioSimulatorHint": "テスト通話中に、次のいずれかを言って AI の反応を確認してください。",
     "scenarios": {
-      "normal": { "title": "通常の通話", "description": "標準的な問い合わせ", "phrase": "こんにちは、御社のサービスについて教えてください。" },
-      "angry": { "title": "怒っている発信者", "description": "共感と転送をテスト", "phrase": "折り返しを何日も待っています。ひどい対応です。" },
-      "booking": { "title": "予約リクエスト", "description": "予約フローをテスト", "phrase": "今週中に予約を取りたいです。" },
-      "afterhours": { "title": "営業時間外", "description": "閉店時の対応をテスト", "phrase": "今、営業していますか？営業時間は？" },
-      "unknown": { "title": "未知の質問", "description": "フォールバックをテスト", "phrase": "XYZ サービスはありますか？サイトに載っていませんでした。" }
+      "normal": {
+        "title": "通常の通話",
+        "description": "標準的な問い合わせ",
+        "phrase": "こんにちは、御社のサービスについて教えてください。"
+      },
+      "angry": {
+        "title": "怒っている発信者",
+        "description": "共感と転送をテスト",
+        "phrase": "折り返しを何日も待っています。ひどい対応です。"
+      },
+      "booking": {
+        "title": "予約リクエスト",
+        "description": "予約フローをテスト",
+        "phrase": "今週中に予約を取りたいです。"
+      },
+      "afterhours": {
+        "title": "営業時間外",
+        "description": "閉店時の対応をテスト",
+        "phrase": "今、営業していますか？営業時間は？"
+      },
+      "unknown": {
+        "title": "未知の質問",
+        "description": "フォールバックをテスト",
+        "phrase": "XYZ サービスはありますか？サイトに載っていませんでした。"
+      }
     },
     "readyHeading": "準備完了です。",
     "readinessChecklistLabel": "準備チェックリスト",
@@ -2922,7 +3438,6 @@
     "stepsAria": "オンボーディングのステップ",
     "addServicePlaceholder": "サービスを追加",
     "add": "追加",
-    "creating": "作成中…",
     "continue": "続ける →",
     "saving": "保存中…",
     "cta": {
@@ -2955,11 +3470,26 @@
     "startConversation": "会話を開始",
     "orTryScenario": "またはシナリオを試す：",
     "scenarios": {
-      "normalCall": { "label": "通常の通話", "prompt": "こんにちは、御社のサービスについてお伺いしたいです。" },
-      "bookingRequest": { "label": "予約希望", "prompt": "来週の木曜日に予約を取りたいです。" },
-      "pricingQuestion": { "label": "料金の質問", "prompt": "サービスの料金はいくらですか？" },
-      "angryCaller": { "label": "怒っている発信者", "prompt": "3日間折り返しを待っているのに誰も連絡してこない。許せない。" },
-      "wrongNumber": { "label": "かけ間違い", "prompt": "メインストリートのピザ屋さんですか？" }
+      "normalCall": {
+        "label": "通常の通話",
+        "prompt": "こんにちは、御社のサービスについてお伺いしたいです。"
+      },
+      "bookingRequest": {
+        "label": "予約希望",
+        "prompt": "来週の木曜日に予約を取りたいです。"
+      },
+      "pricingQuestion": {
+        "label": "料金の質問",
+        "prompt": "サービスの料金はいくらですか？"
+      },
+      "angryCaller": {
+        "label": "怒っている発信者",
+        "prompt": "3日間折り返しを待っているのに誰も連絡してこない。許せない。"
+      },
+      "wrongNumber": {
+        "label": "かけ間違い",
+        "prompt": "メインストリートのピザ屋さんですか？"
+      }
     },
     "youAsCaller": "あなた（発信者）",
     "aiAgent": "AIエージェント",
@@ -3007,11 +3537,29 @@
       "title": "アクセス権がありません",
       "body": "現在の権限では、このワークスペースまたはリソースを利用できません。"
     },
+    "data": {
+      "title": "問題が発生しました",
+      "body": "このページを読み込めませんでした。再試行するか、戻ってください。"
+    },
+    "unknown": {
+      "title": "問題が発生しました",
+      "body": "予期しないエラーが発生しました。再試行するか、問題を報告してください。"
+    },
+    "report": "問題を報告",
     "retry": "再試行する",
     "goHome": "ホームに戻る",
     "goToDashboard": "ダッシュボードへ",
     "support": "サポートに連絡する",
-    "pageLoadBody": "このページを読み込めませんでした。再試行するかダッシュボードに戻ってください。"
+    "pageLoadBody": "このページを読み込めませんでした。再試行するかダッシュボードに戻ってください。",
+    "connectionProblem": "接続の問題",
+    "connectionProblemDesc": "サーバーに接続できませんでした。接続を確認して再試行してください。",
+    "sessionExpired": "セッションの有効期限が切れました",
+    "sessionExpiredDesc": "続行するには再度サインインしてください。",
+    "somethingWrong": "問題が発生しました",
+    "loadPageError": "このページを読み込めませんでした。再試行するか戻ってください。",
+    "unexpectedError": "予期しないエラーが発生しました。再試行するか問題を報告してください。",
+    "tryAgain": "再試行",
+    "reportIssue": "問題を報告"
   },
   "forms": {
     "validation": {
@@ -3177,7 +3725,15 @@
     "timeLabel": "時刻",
     "durationLabel": "時間（分）",
     "availableTimes": "利用可能な時間（Google）",
-    "days": { "mon": "月", "tue": "火", "wed": "水", "thu": "木", "fri": "金", "sat": "土", "sun": "日" },
+    "days": {
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土",
+      "sun": "日"
+    },
     "outlookComingSoon": "Outlook カレンダーとの双方向同期は近日提供予定です。利用可能になり次第お知らせします。",
     "empty": {
       "title": "まだ予約はありません",
@@ -3204,7 +3760,15 @@
       "voiceProfessional": "プロ",
       "voiceFriendly": "フレンドリー",
       "voiceConcise": "簡潔",
-      "switchAgentTo": "エージェントを {name} に切り替え"
+      "switchAgentTo": "エージェントを {name} に切り替え",
+      "voiceInputLabel": "音声入力",
+      "messageInputLabel": "メッセージ入力",
+      "sendMessageLabel": "メッセージを送信",
+      "agents": {
+        "professional": { "name": "プロ", "greeting": "お電話ありがとうございます。本日はどのようなご用件ですか？" },
+        "friendly": { "name": "フレンドリー", "greeting": "お問い合わせありがとうございます。何かお手伝いできることはありますか？" },
+        "concise": { "name": "簡潔", "greeting": "お電話ありがとうございます。どのようなご用件ですか？" }
+      }
     },
     "noMessagesYet": "まだメッセージがありません",
     "now": "たった今",
@@ -3247,21 +3811,49 @@
     "removeMemberTitle": "メンバーを削除しますか？",
     "removeMemberMessage": "{name} はこのワークスペースにアクセスできなくなります。元に戻せません。",
     "removeConfirmLabel": "削除",
-    "roles": { "owner": "オーナー", "admin": "管理者", "manager": "マネージャー", "agent": "エージェント" },
-    "permissions": { "viewCalls": "通話を見る", "manageAgents": "エージェントを管理", "viewAnalytics": "分析を見る", "manageTeam": "チームを管理", "billing": "請求", "accountSettings": "アカウント設定" },
-    "time": { "justNow": "たった今", "minAgo": "{count}分前", "hoursAgo": "{count}時間前", "dayAgo": "1日前", "daysAgo": "{count}日前" },
+    "roles": {
+      "owner": "オーナー",
+      "admin": "管理者",
+      "manager": "マネージャー",
+      "agent": "エージェント"
+    },
+    "permissions": {
+      "viewCalls": "通話を見る",
+      "manageAgents": "エージェントを管理",
+      "viewAnalytics": "分析を見る",
+      "manageTeam": "チームを管理",
+      "billing": "請求",
+      "accountSettings": "アカウント設定"
+    },
+    "time": {
+      "justNow": "たった今",
+      "minAgo": "{count}分前",
+      "hoursAgo": "{count}時間前",
+      "dayAgo": "1日前",
+      "daysAgo": "{count}日前"
+    },
     "avatarFallback": "Y",
-    "errors": { "inviteFailed": "招待の送信に失敗しました。もう一度お試しください。" },
+    "errors": {
+      "inviteFailed": "招待の送信に失敗しました。もう一度お試しください。"
+    },
     "sending": "送信中…",
     "resend": "再送信",
     "revoking": "取り消し中…",
     "revoke": "取り消す",
     "sendInvite": "招待を送信",
-    "toast": { "inviteSent": "{email} に招待を送信しました", "inviteResent": "招待を再送信しました。", "inviteResendFailed": "再送信に失敗しました。", "inviteRevoked": "招待を取り消しました。", "inviteRevokeFailed": "取り消しに失敗しました。" }
+    "inviteEmailPlaceholder": "colleague@company.com",
+    "toast": {
+      "inviteSent": "{email} に招待を送信しました",
+      "inviteResent": "招待を再送信しました。",
+      "inviteResendFailed": "再送信に失敗しました。",
+      "inviteRevoked": "招待を取り消しました。",
+      "inviteRevokeFailed": "取り消しに失敗しました。"
+    }
   },
   "knowledge": {
     "pageTitle": "ナレッジ — Recall Touch",
     "defaultTitle": "無題",
+    "fromCall": "通話から",
     "addEntry": "エントリを追加",
     "editEntry": "エントリを編集",
     "heading": "ナレッジベース",
@@ -3375,7 +3967,19 @@
     "tableCreated": "作成日",
     "tableLastUsed": "最終使用",
     "tableStatus": "状態",
-    "tabs": { "apiKeys": "APIキー", "webhooks": "Webhooks", "eventLog": "イベントログ" },
+    "createdLabel": "作成日",
+    "usedLabel": "使用",
+    "formLabel": "ラベル",
+    "formPermissions": "権限",
+    "apiKeyCreatedTitle": "APIキーを作成しました: {label}",
+    "saveKeyWarning": "このキーを保存してください。再度表示されません。",
+    "copyKeyButton": "キーをコピー",
+    "savedConfirm": "保存しました",
+    "tabs": {
+      "apiKeys": "APIキー",
+      "webhooks": "Webhooks",
+      "eventLog": "イベントログ"
+    },
     "success": "成功",
     "failed": "失敗",
     "apiCall": "API呼び出し",
@@ -3540,7 +4144,13 @@
     "sourceManual": "手動",
     "viewList": "リスト",
     "viewCalendar": "カレンダー",
-    "table": { "dateTime": "日付 / 時刻", "contact": "連絡先", "type": "タイプ", "status": "ステータス", "source": "ソース" },
+    "table": {
+      "dateTime": "日付 / 時刻",
+      "contact": "連絡先",
+      "type": "タイプ",
+      "status": "ステータス",
+      "source": "ソース"
+    },
     "viewDetails": "詳細を見る",
     "noAppointments": "予約なし",
     "settings": "設定",
@@ -3550,7 +4160,15 @@
     "statusLabel": "ステータス",
     "sourceLabel": "ソース",
     "close": "閉じる",
-    "days": { "mon": "月", "tue": "火", "wed": "水", "thu": "木", "fri": "金", "sat": "土", "sun": "日" },
+    "days": {
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土",
+      "sun": "日"
+    },
     "empty": {
       "title": "まだ予約はありません",
       "body": "AI がカレンダーに予約を入れ始めると、すべての予約がここに表示されます。",
@@ -3597,6 +4215,7 @@
   },
   "industriesPage": {
     "fallback": {
+      "title": "業界",
       "solutions": "ソリューション",
       "dedicatedGuide": "専用ガイドを準備中",
       "description": "この業界向けのページを準備しています。今すぐ始めて、5分でAIエージェントを設定できます。",
@@ -3609,6 +4228,10 @@
     }
   },
   "activate": {
+    "activatePage": {
+      "title": "エージェントを有効化",
+      "description": "音声エージェントが実際の通話に対応するまでのガイド付きセットアップ。"
+    },
     "wizardHeading": "アクティベーション",
     "wizardTitle": "音声エージェントの準備をしましょう。",
     "wizardSubtitle": "約3分です。最後にエージェントの実際の通話を聞けます。",
@@ -3694,7 +4317,10 @@
       "adjustSettings": "設定を調整",
       "looksGreat": "問題なし！通話応答を開始 →",
       "back": "← 戻る"
-    }
+    },
+    "formName": "お名前",
+    "formYourName": "お名前",
+    "and": "および"
   },
   "onboard": {
     "complete": {
@@ -3704,7 +4330,33 @@
       "placeholder": "この記録に別の結果を追加",
       "adding": "追加中...",
       "addOutcome": "結果を追加"
+    },
+    "send": {
+      "contactPlaceholder": "email@example.com または +1234567890"
     }
+  },
+  "life": {
+    "selectWorkspace": "ライフ画面を表示するワークスペースを選択してください。",
+    "oneMoment": "少々お待ちください…",
+    "whatIsBeingTracked": "追跡中の項目",
+    "refLabelPlaceholder": "参照を追加（ラベル）",
+    "refCategoryPlaceholder": "カテゴリ（任意）",
+    "adding": "追加中…",
+    "addReference": "参照を追加",
+    "referenceAdded": "参照を追加しました。",
+    "failedToAdd": "追加に失敗しました。",
+    "whatWasHandled": "対応済み",
+    "nothingRecordedYet": "まだ記録がありません。",
+    "whatRequiredNoAction": "対応不要だった項目"
+  },
+  "publicAck": {
+    "title": "確認",
+    "entryStored": "記録しました。",
+    "confirm": "確認",
+    "newDeadline": "新しい期限",
+    "reschedule": "再スケジュール",
+    "reasonPlaceholder": "理由",
+    "dispute": "異議申し立て"
   },
   "wrapup": {
     "title": "コールまとめ",
@@ -3753,20 +4405,6 @@
       "no": "いいえ",
       "thankYou": "フィードバックありがとうございます。"
     }
-  },
-  "footer": {
-    "cta": {
-      "bookDemo": "デモを予約",
-      "contact": "お問い合わせ"
-    },
-    "links": {
-      "product": "プロダクト",
-      "pricing": "料金",
-      "docs": "ドキュメント",
-      "terms": "利用規約",
-      "privacy": "プライバシー"
-    },
-    "copyright": "All rights reserved."
   },
   "continuity": {
     "calmLine": "決定は予定どおり進んでいます。"
@@ -3898,6 +4536,13 @@
     "verifying": "確認中…",
     "areaCodePlaceholder": "例: 503",
     "areaCodePlaceholderAlt": "例: 212",
+    "testCallNumberPlaceholder": "(555) 123-4567",
+    "verifyPhonePlaceholder": "+1 (555) 000-0000",
+    "verificationCodePlaceholder": "000000",
+    "att": "AT&T",
+    "verizon": "Verizon",
+    "tmobile": "T-Mobile",
+    "yourPhoneNumber": "お客様の電話番号",
     "emailPlaceholder": "your@email.com",
     "toast": {
       "numberConnected": "番号を接続しました。通話とSMSを受信できます。",
@@ -4020,6 +4665,11 @@
       "webhookSaved": "Webhook destination saved.",
       "webhookSaveFailed": "Could not save webhook settings.",
       "webhookTestFailed": "Could not send webhook test.",
+      "webhookTestDelivered": "Webhookテスト送信完了（{status}）。",
+      "webhookTestError": "Webhookは{status}で応答しました。",
+      "calendarConnected": "Googleカレンダーを接続しました。",
+      "calendarError": "Googleカレンダーに接続できませんでした。",
+      "calendarNotConfigured": "Googleカレンダーが設定されていません。",
       "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
       "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
       "error": "Something went wrong. Try again."

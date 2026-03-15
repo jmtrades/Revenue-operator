@@ -9,21 +9,23 @@ import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, U
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import type { CrmProviderId, CrmStatusResponse } from "@/app/api/integrations/crm/status/route";
 
-const CRM_INTEGRATIONS: Array<{
+function getCrmIntegrations(t: ReturnType<typeof useTranslations>): Array<{
   id: CrmProviderId;
   name: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   comingSoon?: boolean;
-}> = [
-  { id: "salesforce", name: "Salesforce", description: "Sync contacts and deals with Salesforce", icon: Cloud },
-  { id: "hubspot", name: "HubSpot", description: "Send leads and appointments to HubSpot", icon: Building2 },
-  { id: "zoho_crm", name: "Zoho CRM", description: "Connect to Zoho CRM", icon: Database, comingSoon: true },
-  { id: "pipedrive", name: "Pipedrive", description: "Push leads and deals to Pipedrive", icon: TrendingUp, comingSoon: true },
-  { id: "gohighlevel", name: "GoHighLevel", description: "Push qualified leads and calls into pipelines", icon: Layers, comingSoon: true },
-  { id: "google_contacts", name: "Google Contacts", description: "Sync contacts so your AI knows who's calling", icon: Users },
-  { id: "microsoft_365", name: "Microsoft 365", description: "Connect Outlook contacts and calendars", icon: Building },
-];
+}> {
+  return [
+    { id: "salesforce", name: "Salesforce", description: t("card.salesforce.body"), icon: Cloud },
+    { id: "hubspot", name: "HubSpot", description: t("card.hubspot.body"), icon: Building2 },
+    { id: "zoho_crm", name: "Zoho CRM", description: t("card.zoho.body"), icon: Database, comingSoon: true },
+    { id: "pipedrive", name: "Pipedrive", description: t("card.pipedrive.body"), icon: TrendingUp, comingSoon: true },
+    { id: "gohighlevel", name: "GoHighLevel", description: t("card.gohighlevel.body"), icon: Layers, comingSoon: true },
+    { id: "google_contacts", name: "Google Contacts", description: t("card.googleContacts.body"), icon: Users },
+    { id: "microsoft_365", name: "Microsoft 365", description: t("card.microsoft365.body"), icon: Building },
+  ];
+}
 
 type WebhookConfig = {
   endpoint_url: string;
@@ -128,17 +130,17 @@ export default function AppSettingsIntegrationsPage() {
   useEffect(() => {
     const calendar = searchParams.get("calendar");
     if (!calendar) return;
-    const msg = calendar === "connected" ? "Google Calendar connected." : calendar === "error" ? "Could not connect Google Calendar." : calendar === "config" ? "Google Calendar is not configured." : null;
+    const msg = calendar === "connected" ? t("toast.calendarConnected") : calendar === "error" ? t("toast.calendarError") : calendar === "config" ? t("toast.calendarNotConfigured") : null;
     if (msg) {
       const connected = calendar === "connected";
       setToast(msg);
       setGoogleCalendarConnected(connected);
-      const t = setTimeout(() => setToast(null), 4000);
-      return () => clearTimeout(t);
+      const timeoutId = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timeoutId);
     }
-    const t = setTimeout(() => setToast(null), 4000);
-    return () => clearTimeout(t);
-  }, [searchParams]);
+    const timeoutId = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(timeoutId);
+  }, [searchParams, t]);
 
   const handleSaveWebhook = async () => {
     if (!workspaceId) return;
@@ -174,7 +176,7 @@ export default function AppSettingsIntegrationsPage() {
         setToast(data?.error ?? t("toast.webhookTestFailed"));
         return;
       }
-      setToast(data?.ok ? `Webhook test delivered (${data?.status ?? 200}).` : `Webhook responded with ${data?.status ?? "an error"}.`);
+      setToast(data?.ok ? t("toast.webhookTestDelivered", { status: String(data?.status ?? 200) }) : t("toast.webhookTestError", { status: data?.status ? String(data.status) : "an error" }));
     } catch {
       setToast(t("toast.webhookTestFailed"));
     } finally {
@@ -273,7 +275,7 @@ export default function AppSettingsIntegrationsPage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-            {CRM_INTEGRATIONS.map((crm) => {
+            {getCrmIntegrations(t).map((crm) => {
               const status = crmStatus?.integrations[crm.id];
               const connected = status?.connected ?? false;
               const Icon = crm.icon;

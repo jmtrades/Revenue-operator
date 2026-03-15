@@ -63,6 +63,7 @@ type VoiceCardProps = {
   previewing: boolean;
   selectedLabel: string;
   selectThisVoiceLabel: string;
+  previewAriaLabel: string;
   onSelect: () => void;
   onPreview: () => void;
 };
@@ -73,6 +74,7 @@ function VoiceCard({
   previewing,
   selectedLabel,
   selectThisVoiceLabel,
+  previewAriaLabel,
   onSelect,
   onPreview,
 }: VoiceCardProps) {
@@ -103,7 +105,7 @@ function VoiceCard({
           e.stopPropagation();
           onPreview();
         }}
-        aria-label={`Preview ${voice.name} voice`}
+        aria-label={previewAriaLabel}
         className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-hover)] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         {previewing ? (
@@ -146,6 +148,7 @@ export function VoiceSelector({
             previewing={previewingVoiceId === voice.id}
             selectedLabel={t("voiceSelector.selectedLabel")}
             selectThisVoiceLabel={t("voiceSelector.selectThisVoiceLabel")}
+            previewAriaLabel={t("voiceSelector.previewVoiceAria", { name: voice.name })}
             onSelect={() => onChange({ voice: voice.id })}
             onPreview={() => onVoicePreview(voice.id)}
           />

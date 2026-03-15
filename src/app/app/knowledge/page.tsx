@@ -40,18 +40,22 @@ interface KnowledgeGap {
   askCount: number;
 }
 
-const TYPE_OPTIONS: { value: KnowledgeType }[] = [
-  { value: "FAQ" },
-  { value: "Document" },
-  { value: "Website" },
-  { value: "Custom" },
-];
+function getTypeOptions(): { value: KnowledgeType }[] {
+  return [
+    { value: "FAQ" },
+    { value: "Document" },
+    { value: "Website" },
+    { value: "Custom" },
+  ];
+}
 
-const STATUS_OPTIONS: { value: KnowledgeStatus }[] = [
-  { value: "Active" },
-  { value: "Draft" },
-  { value: "Processing" },
-];
+function getStatusOptions(): { value: KnowledgeStatus }[] {
+  return [
+    { value: "Active" },
+    { value: "Draft" },
+    { value: "Processing" },
+  ];
+}
 
 function typeIcon(type: KnowledgeType) {
   switch (type) {
@@ -174,7 +178,7 @@ function KnowledgeModal({
               onChange={(e) => setType(e.target.value as KnowledgeType)}
               className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white focus:border-[var(--border-medium)] focus:outline-none text-sm"
             >
-              {TYPE_OPTIONS.map((o) => (
+              {getTypeOptions().map((o) => (
                 <option key={o.value} value={o.value}>{t(`types.${o.value}`)}</option>
               ))}
             </select>
@@ -283,18 +287,18 @@ function KnowledgeModal({
           <div>
             <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.status")}</label>
             <div className="flex gap-2">
-              {(["Active", "Draft"] as const).map((s) => (
+              {(getStatusOptions().filter((o) => o.value !== "Processing") as { value: "Active" | "Draft" }[]).map((s) => (
                 <button
-                  key={s}
+                  key={s.value}
                   type="button"
-                  onClick={() => setStatus(s)}
+                  onClick={() => setStatus(s.value)}
                   className={`px-4 py-2 rounded-xl text-sm font-medium border transition-colors ${
-                    status === s
+                    status === s.value
                       ? "bg-white text-black border-white"
                       : "bg-[var(--bg-input)] border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
                   }`}
                 >
-                  {t(`status.${s.toLowerCase()}`)}
+                  {t(`status.${s.value.toLowerCase()}`)}
                 </button>
               ))}
             </div>
@@ -348,7 +352,7 @@ export default function KnowledgePage() {
         ...prev,
         {
           id: `kb-call-${Date.now()}`,
-          title: title || "From call",
+          title: title || t("fromCall"),
           type: "FAQ",
           status: "Draft",
           content: summary,
@@ -544,7 +548,7 @@ export default function KnowledgePage() {
               className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-zinc-300 text-sm focus:border-[var(--border-medium)] focus:outline-none"
             >
               <option value="all">{t("allTypes")}</option>
-              {TYPE_OPTIONS.map((o) => (
+              {getTypeOptions().map((o) => (
                 <option key={o.value} value={o.value}>{t(`types.${o.value}`)}</option>
               ))}
             </select>
@@ -554,7 +558,7 @@ export default function KnowledgePage() {
               className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-zinc-300 text-sm focus:border-[var(--border-medium)] focus:outline-none"
             >
               <option value="all">{t("allStatuses")}</option>
-              {STATUS_OPTIONS.map((o) => (
+              {getStatusOptions().map((o) => (
                 <option key={o.value} value={o.value}>{t(`status.${o.value.toLowerCase()}`)}</option>
               ))}
             </select>
@@ -691,9 +695,7 @@ export default function KnowledgePage() {
                     }
                     setImportedEntries(data.entries);
                   } catch {
-                    setImportError(
-                      "Something went wrong importing this URL. Try again in a moment.",
-                    );
+                    setImportError(t("importErrorGeneric"));
                   } finally {
                     setImporting(false);
                   }

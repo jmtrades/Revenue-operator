@@ -439,9 +439,9 @@ export default function CampaignsPage() {
                   {campaign.total_contacts > 0 && (
                     <div className="mt-3">
                       <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-1">
-                        <span>Progress</span>
+                        <span>{t("progress")}</span>
                         <span>
-                          {campaign.called}/{campaign.total_contacts} contacted
+                          {campaign.called}/{campaign.total_contacts} {t("contacted")}
                         </span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-zinc-900 overflow-hidden">
@@ -461,7 +461,7 @@ export default function CampaignsPage() {
                   )}
                   {campaign.called > 0 && (
                     <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
-                      <p className="text-[10px] text-zinc-500 uppercase tracking-wide">Campaign ROI</p>
+                      <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{t("campaignRoi")}</p>
                       <p className="mt-1 text-xs text-zinc-400">
                         Est. cost ~${(campaign.called * 0.05 + campaign.answered * 0.02).toFixed(2)} · Est. revenue ~${(campaign.appointments_booked * 250).toFixed(0)}
                       </p>
@@ -648,7 +648,7 @@ export default function CampaignsPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Min score</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{t("minScore")}</label>
                   <input
                     type="number"
                     min={0}
@@ -663,7 +663,7 @@ export default function CampaignsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Not contacted in (days)</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{t("notContactedInDays")}</label>
                   <input
                     type="number"
                     min={1}
@@ -678,7 +678,7 @@ export default function CampaignsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Message template</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("messageTemplate")}</label>
                 <textarea
                   rows={4}
                   value={form.template}
@@ -687,16 +687,16 @@ export default function CampaignsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Schedule type</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("scheduleTypeLabel")}</label>
                 <select
                   value={form.scheduleType}
                   onChange={(e) => setForm((prev) => ({ ...prev, scheduleType: e.target.value as typeof form.scheduleType }))}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                 >
-                  <option value="manual">Manual run</option>
-                  <option value="once">One-time</option>
-                  <option value="recurring">Recurring</option>
-                  <option value="trigger">When new lead added</option>
+                  <option value="manual">{t("scheduleTypes.manual")}</option>
+                  <option value="once">{t("scheduleTypes.once")}</option>
+                  <option value="recurring">{t("scheduleTypes.recurring")}</option>
+                  <option value="trigger">{t("scheduleTypes.trigger")}</option>
                 </select>
               </div>
               {(form.scheduleType === "once" || form.scheduleType === "recurring") && (
@@ -713,8 +713,8 @@ export default function CampaignsPage() {
                 </div>
               )}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Sequence (touchpoints)</label>
-                <p className="text-[11px] text-zinc-500 mb-2">Order of actions: call, SMS, email, or wait.</p>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("sequenceLabel")}</label>
+                <p className="text-[11px] text-zinc-500 mb-2">{t("sequenceHint")}</p>
                 <div className="space-y-2">
                   {form.sequence.map((step, idx) => (
                     <div key={idx} className="flex items-center gap-2">
@@ -732,10 +732,10 @@ export default function CampaignsPage() {
                         }}
                         className="flex-1 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                       >
-                        <option value="call">Call</option>
-                        <option value="sms">SMS</option>
-                        <option value="email">Email</option>
-                        <option value="wait">Wait</option>
+                        <option value="call">{t("touchpointTypes.call")}</option>
+                        <option value="sms">{t("touchpointTypes.sms")}</option>
+                        <option value="email">{t("touchpointTypes.email")}</option>
+                        <option value="wait">{t("touchpointTypes.wait")}</option>
                       </select>
                       {step.type === "wait" && (
                         <input
@@ -754,7 +754,7 @@ export default function CampaignsPage() {
                           className="w-16 px-2 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
                         />
                       )}
-                      {step.type === "wait" && <span className="text-[11px] text-zinc-500">days</span>}
+                      {step.type === "wait" && <span className="text-[11px] text-zinc-500">{t("daysLabel")}</span>}
                       <button
                         type="button"
                         onClick={() =>
@@ -780,7 +780,7 @@ export default function CampaignsPage() {
                     }
                     className="mt-1 px-3 py-2 rounded-xl border border-zinc-700 text-zinc-400 hover:text-white text-xs"
                   >
-                    + Add step
+                    {t("addStep")}
                   </button>
                 </div>
               </div>

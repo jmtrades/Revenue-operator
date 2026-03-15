@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function PreviewBanner({ workspaceId }: { workspaceId: string }) {
+  const t = useTranslations("banners.preview");
   const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
@@ -20,9 +22,9 @@ export function PreviewBanner({ workspaceId }: { workspaceId: string }) {
 
   return (
     <div className="bg-amber-600/20 border-b border-amber-600/40 px-4 py-2 text-center text-sm text-amber-200">
-      <span className="font-medium">Preview Mode</span>
+      <span className="font-medium">{t("title")}</span>
       {" — "}
-      Your team drafts all responses but nothing is sent. For demos and trust building.
+      {t("description")}
     </div>
   );
 }

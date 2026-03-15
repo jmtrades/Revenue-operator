@@ -274,7 +274,7 @@ export default function CompliancePage() {
               type="search"
               value={auditSearch}
               onChange={(e) => setAuditSearch(e.target.value)}
-              placeholder="Search actions…"
+              placeholder={t("audit.searchPlaceholder")}
               className="flex-1 min-w-0 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:border-[var(--border-medium)]"
             />
             <select

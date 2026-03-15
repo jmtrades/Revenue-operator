@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 export function HeartbeatBar() {
+  const t = useTranslations("banners.heartbeat");
   const { workspaceId } = useWorkspace();
   const [statusLevel, setStatusLevel] = useState<"healthy" | "warning" | "risk">("healthy");
   const [_maintained, setMaintained] = useState(0);
@@ -38,10 +40,10 @@ export function HeartbeatBar() {
 
   const statusMessage =
     statusLevel === "risk"
-      ? "Follow-through at risk"
+      ? t("atRisk")
       : statusLevel === "warning"
-        ? "Falls outside normal handling"
-        : "Nothing required.";
+        ? t("warning")
+        : t("nothingRequired");
   const pulseColor = statusLevel === "healthy" ? "var(--meaning-green)" : statusLevel === "warning" ? "var(--meaning-amber)" : "var(--meaning-red)";
 
   if (!workspaceId) {
@@ -50,7 +52,7 @@ export function HeartbeatBar() {
         className="px-4 py-2.5 text-sm shrink-0"
         style={{ background: "var(--background)", borderBottom: "1px solid var(--border-subtle)" }}
       >
-        <span style={{ color: "var(--text-muted)" }}>Nothing required.</span>
+        <span style={{ color: "var(--text-muted)" }}>{t("nothingRequired")}</span>
       </div>
     );
   }

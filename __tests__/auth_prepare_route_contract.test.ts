@@ -26,7 +26,7 @@ describe("Auth prepare route contract", () => {
   it("sign-in page has Back to home and does not show Verifying session", () => {
     const content = readFileSync(SIGNIN_PAGE, "utf-8");
     expect(content).not.toContain("Verifying session.");
-    expect(content).toContain("Back to home");
+    expect(content).toContain("backToHome");
     expect(content).not.toMatch(/Preparing\.\.\.?/);
   });
 });

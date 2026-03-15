@@ -299,7 +299,7 @@ export default function AppointmentsPage() {
                       className={[
                         "aspect-square rounded-xl flex flex-col items-center justify-center gap-1 text-sm transition-all",
                         isSelected
-                          ? "bg-blue-500/20 border border-blue-500/40"
+                          ? "bg-white/10 border border-white/20"
                           : "hover:bg-white/[0.04]",
                         !isSelected && isToday
                           ? "border border-white/[0.12]"
@@ -317,7 +317,7 @@ export default function AppointmentsPage() {
                           {dayAppts.slice(0, 3).map((_, j) => (
                             <div
                               key={j}
-                              className="w-1 h-1 rounded-full bg-blue-500"
+                              className="w-1 h-1 rounded-full bg-white"
                             />
                           ))}
                         </div>
@@ -350,7 +350,7 @@ export default function AppointmentsPage() {
                           <p className="text-xs text-zinc-500 mt-0.5">
                             {formatDate(appt.date, t)} · {appt.time}
                           </p>
-                          <p className="text-xs text-[#8B8B8D] mt-0.5">
+                          <p className="text-xs text-zinc-500 mt-0.5">
                             {appt.contactName}
                           </p>
                         </div>

@@ -586,8 +586,8 @@ export default function InboxPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="p-4 md:p-6 lg:p-8 h-full">
-        <h1 className="text-xl md:text-2xl font-semibold text-white mb-4">Inbox</h1>
-        <p className="text-sm text-zinc-400 mb-4">All conversations in one place.</p>
+        <h1 className="text-xl md:text-2xl font-semibold text-white mb-4">{t("inbox.title")}</h1>
+        <p className="text-sm text-zinc-400 mb-4">{t("inbox.subtitle")}</p>
         {/* Mobile layout */}
         <div className="md:hidden h-[calc(100vh-7rem)] border border-[var(--border-default)] rounded-2xl overflow-hidden">
           {mobileMode === "list" ? (
@@ -675,7 +675,7 @@ export default function InboxPage() {
                     className="inline-flex items-center gap-1.5 text-xs text-[var(--accent-primary)] hover:opacity-80"
                   >
                     <User className="w-3.5 h-3.5" />
-                    View in Leads
+                    {t("inbox.viewInLeads")}
                   </Link>
                 </div>
               </div>

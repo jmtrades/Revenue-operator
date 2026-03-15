@@ -534,7 +534,7 @@ export default function AppAnalyticsPage() {
             disabled={!hasData}
             className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-200 hover:bg-[var(--bg-hover)] disabled:opacity-50"
           >
-            Export CSV
+            {t("analytics.exportCsv")}
           </button>
         </div>
       </div>
@@ -544,7 +544,7 @@ export default function AppAnalyticsPage() {
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
             <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("analytics.periodSummary.title")}</h3>
-            <span className="text-xs text-[#5A5A5C] ml-auto">{summaryLabel}</span>
+            <span className="text-xs text-zinc-500 ml-auto">{summaryLabel}</span>
           </div>
           <p
             className="text-sm text-zinc-400 leading-relaxed"
@@ -670,7 +670,7 @@ export default function AppAnalyticsPage() {
       {/* Row 3: heatmap + insights */}
       <div className="grid gap-4 lg:grid-cols-2 mb-6">
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-          <p className="text-sm font-medium text-white mb-3">Peak hours</p>
+          <p className="text-sm font-medium text-white mb-3">{t("analytics.peakHours")}</p>
           <div className="overflow-x-auto">
             <div className="min-w-[640px]">
               <div className="grid grid-rows-8 gap-1 text-[10px] text-zinc-500 mb-1">
@@ -719,7 +719,7 @@ export default function AppAnalyticsPage() {
         </div>
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 flex flex-col gap-3">
-          <p className="text-sm font-medium text-white">AI insights</p>
+          <p className="text-sm font-medium text-white">{t("analytics.aiInsights")}</p>
           <div className="space-y-2">
             {suggestions.length > 0
               ? suggestions.slice(0, 5).map((s) => (
@@ -749,7 +749,7 @@ export default function AppAnalyticsPage() {
                       }}
                       className="text-xs text-zinc-500 hover:text-zinc-400 shrink-0"
                     >
-                      Dismiss
+                      {t("analytics.dismiss")}
                     </button>
                   </div>
                 ))

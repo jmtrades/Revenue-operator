@@ -462,7 +462,7 @@ export default function TeamPage() {
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => { setInviteEmail(e.target.value); setInviteError(null); }}
-                  placeholder="colleague@company.com"
+                  placeholder={t("inviteEmailPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
               </div>

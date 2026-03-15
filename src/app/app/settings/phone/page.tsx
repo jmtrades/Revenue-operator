@@ -480,9 +480,9 @@ export default function AppSettingsPhonePage() {
                 <span className="group-open:inline hidden">▼</span><span className="group-open:hidden inline">▶</span> {tPhone("quickDialCodes")}
               </summary>
               <div className="mt-2 pt-2 border-t border-[var(--border-default)] space-y-1.5 text-xs text-zinc-400">
-                <p><span className="text-zinc-300">AT&T:</span> *21*{phoneNumber.replace(/\D/g, "")}#</p>
-                <p><span className="text-zinc-300">Verizon:</span> *72 then {formatPhoneNumber(phoneNumber)}</p>
-                <p><span className="text-zinc-300">T-Mobile:</span> **21*{phoneNumber.replace(/\D/g, "")}#</p>
+                <p><span className="text-zinc-300">{tPhone("att")}:</span> *21*{phoneNumber.replace(/\D/g, "")}#</p>
+                <p><span className="text-zinc-300">{tPhone("verizon")}:</span> *72 then {formatPhoneNumber(phoneNumber)}</p>
+                <p><span className="text-zinc-300">{tPhone("tmobile")}:</span> **21*{phoneNumber.replace(/\D/g, "")}#</p>
               </div>
             </details>
           </div>
@@ -502,7 +502,7 @@ export default function AppSettingsPhonePage() {
                   type="tel"
                   value={testCallNumber}
                   onChange={(e) => { setTestCallNumber(e.target.value); setTestCallError(null); }}
-                  placeholder="(555) 123-4567"
+                  placeholder={tPhone("testCallNumberPlaceholder")}
                   aria-label={tPhone("yourPhoneNumber")}
                   aria-invalid={!!testCallError}
                   aria-describedby={testCallError ? "test-call-error" : undefined}
@@ -533,8 +533,8 @@ export default function AppSettingsPhonePage() {
               type="tel"
               value={outboundFrom}
               onChange={(e) => setOutboundFrom(e.target.value)}
-              placeholder="(555) 123-4567"
-              aria-label="Outbound caller ID number"
+              placeholder={tPhone("testCallNumberPlaceholder")}
+              aria-label={tPhone("outboundCallerId")}
               className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-3"
             />
             <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer mb-3">
@@ -591,7 +591,7 @@ export default function AppSettingsPhonePage() {
                   type="tel"
                   value={verifyPhone}
                   onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder={tPhone("verifyPhonePlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
                 />
                 <div className="flex gap-2 mb-2">
@@ -621,14 +621,14 @@ export default function AppSettingsPhonePage() {
                         if (r.ok && d.sent) {
                           setToast(tPhone("toast.codeSent"));
                         } else {
-                          const msg = d.error ?? "Failed to send code.";
+                          const msg = d.error ?? tPhone("sendCodeFailed");
                           setVerifyError(msg);
                           if (d.action === "redirect") {
                             setToast(tPhone("toast.getAiNumber"));
                           }
                         }
                       } catch {
-                        setVerifyError("Failed to send code. Check your connection and try again.");
+                        setVerifyError(tPhone("failedToSendCode"));
                       } finally {
                         setVerifySending(false);
                       }
@@ -645,7 +645,7 @@ export default function AppSettingsPhonePage() {
                   maxLength={6}
                   value={verifyCode}
                   onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="000000"
+                  placeholder={tPhone("verificationCodePlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
                 />
                 <button
@@ -697,7 +697,7 @@ export default function AppSettingsPhonePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-[var(--bg-elevated)] border border-white/[0.08] rounded-2xl p-6">
               <div className="w-10 h-10 rounded-xl bg-zinc-800/70 flex items-center justify-center mb-4">
-                <Phone className="w-5 h-5 text-blue-400" />
+                <Phone className="w-5 h-5 text-zinc-400" />
               </div>
               <h2 className="text-base font-semibold text-white mb-1">Get a new AI number</h2>
               <p className="text-sm text-white/50 mb-1">Recommended</p>
@@ -776,7 +776,7 @@ export default function AppSettingsPhonePage() {
                   type="tel"
                   value={verifyPhone}
                   onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder={tPhone("verifyPhonePlaceholder")}
                   className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
                 />
               </div>
@@ -806,7 +806,7 @@ export default function AppSettingsPhonePage() {
                           if (d.action === "redirect") setToast(tPhone("toast.getAiNumber"));
                         }
                       } catch {
-                        setVerifyError("Failed to send code. Check your connection and try again.");
+                        setVerifyError(tPhone("failedToSendCode"));
                       } finally {
                         setVerifySending(false);
                       }
@@ -814,9 +814,9 @@ export default function AppSettingsPhonePage() {
                     disabled={verifySending || digitsOnly(verifyPhone).length < 10 || digitsOnly(verifyPhone).length > 15}
                     className="w-full py-2.5 bg-white/[0.06] border border-white/[0.1] text-white font-semibold rounded-lg text-sm hover:bg-white/[0.1] disabled:opacity-50 transition-colors"
               >
-                {verifySending ? "Sending code…" : "Verify my number →"}
+                {verifySending ? tPhone("sendingCode") : tPhone("verifyMyNumber")}
               </button>
-              <p className="text-xs text-white/30 mt-2 text-center">We&apos;ll send a verification code</p>
+              <p className="text-xs text-white/30 mt-2 text-center">{tPhone("weSendVerificationCode")}</p>
               {verifyError && <p className="mt-2 text-xs text-red-400" role="alert">{verifyError}</p>}
               {verifiedNumber ? (
                 <div className="mt-4 pt-4 border-t border-white/[0.08] space-y-3">
@@ -840,7 +840,7 @@ export default function AppSettingsPhonePage() {
                     maxLength={6}
                     value={verifyCode}
                     onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="000000"
+                    placeholder={tPhone("verificationCodePlaceholder")}
                     className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30"
                   />
                   <button

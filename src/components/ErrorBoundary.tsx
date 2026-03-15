@@ -3,9 +3,16 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { reportError, categorizeError, type ErrorCategory } from "@/lib/error-reporting";
 
+export type ErrorBoundaryMessages = {
+  getMessage: (category: ErrorCategory) => { title: string; body: string };
+  tryAgain: string;
+  report: string;
+};
+
 type Props = {
   children: ReactNode;
   fallback?: ReactNode;
+  messages?: ErrorBoundaryMessages;
 };
 
 type State = {
@@ -82,7 +89,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     if (this.state.hasError && this.state.error) {
-      const { title, body } = getMessage(this.state.errorCategory);
+      const msg = this.props.messages ?? {
+        getMessage,
+        tryAgain: "Try again",
+        report: "Report issue",
+      };
+      const { title, body } = msg.getMessage(this.state.errorCategory);
       if (this.props.fallback) return this.props.fallback;
 
       return (
@@ -95,14 +107,14 @@ export class ErrorBoundary extends Component<Props, State> {
               onClick={this.handleTryAgain}
               className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100"
             >
-              Try again
+              {msg.tryAgain}
             </button>
             <button
               type="button"
               onClick={this.handleReport}
               className="px-4 py-2.5 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm hover:text-[var(--text-primary)]"
             >
-              Report issue
+              {msg.report}
             </button>
           </div>
         </div>

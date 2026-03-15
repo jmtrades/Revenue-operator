@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
 
 export function TrialBanner() {
+  const t = useTranslations("banners.trial");
   const { workspaceId } = useWorkspace();
   const [day, setDay] = useState(0);
   const [_conversationsAtRisk, setConversationsAtRisk] = useState<Array<{ id: string; name?: string; company?: string }>>([]);
@@ -66,18 +68,17 @@ export function TrialBanner() {
       <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <div>
           <span className="font-medium" style={{ color: "var(--text-primary)" }}>
-            {renewalDate ? `Handling coverage ends on ${renewalDate}.` : "Handling coverage is ending soon."}
+            {renewalDate ? t("coverageEndsOn", { date: renewalDate }) : t("coverageEndingSoon")}
           </span>
           <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
-            If you do not continue: follow-through will no longer be protected. Response continuity, decision completion, and attendance stability will stop for in-progress work.
+            {t("ifNotContinue")}
           </p>
         </div>
         <Link
           href="/dashboard/continue-protection"
-          className="px-4 py-2 rounded-lg font-medium shrink-0"
-          style={{ background: "var(--meaning-green)", color: "#0E1116" }}
+          className="px-4 py-2 rounded-lg font-medium shrink-0 bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
         >
-          Continue coverage
+          {t("continueCoverage")}
         </Link>
       </div>
     );
@@ -88,19 +89,18 @@ export function TrialBanner() {
     return (
       <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <div>
-          <span className="font-medium" style={{ color: "var(--text-primary)" }}>Coverage active</span>
+          <span className="font-medium" style={{ color: "var(--text-primary)" }}>{t("coverageActive")}</span>
           <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
-            {renewalDate ? `Handling coverage ends on ${renewalDate}. ` : ""}
-            Nothing requires supervision. We&apos;ll notify you when your input is needed.
+            {renewalDate ? t("coverageEndsOn", { date: renewalDate }) + " " : ""}
+            {t("nothingRequiresSupervision")}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href="/dashboard/continue-protection"
-            className="px-4 py-2 rounded-lg font-medium shrink-0"
-            style={{ background: "var(--meaning-green)", color: "#0E1116" }}
+            className="px-4 py-2 rounded-lg font-medium shrink-0 bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
           >
-            Continue coverage
+            {t("continueCoverage")}
           </Link>
           <button onClick={() => setDismissed(true)} style={{ color: "var(--text-muted)" }}>×</button>
         </div>
@@ -113,10 +113,10 @@ export function TrialBanner() {
     return (
       <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <div>
-          <span className="font-medium" style={{ color: "var(--text-primary)" }}>Coverage running</span>
+          <span className="font-medium" style={{ color: "var(--text-primary)" }}>{t("coverageRunning")}</span>
           <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
-            {renewalDate ? `Handling coverage ends on ${renewalDate}. ` : ""}
-            We&apos;ll notify you when your input is needed.
+            {renewalDate ? t("coverageEndsOn", { date: renewalDate }) + " " : ""}
+            {t("nothingRequiresSupervision")}
           </p>
         </div>
         <button onClick={() => setDismissed(true)} className="shrink-0" style={{ color: "var(--text-muted)" }}>×</button>
@@ -128,7 +128,7 @@ export function TrialBanner() {
     return (
       <div className="px-4 py-2 flex items-center justify-between text-sm" style={{ background: "rgba(243, 156, 18, 0.1)", borderBottom: "1px solid var(--meaning-amber)" }}>
         <span style={{ color: "var(--text-primary)" }}>
-          Nothing requires supervision. We&apos;ll notify you when your input is needed. We&apos;ll remind you before any charge.
+          {t("remindBeforeCharge")}
         </span>
         <button onClick={() => setDismissed(true)} style={{ color: "var(--text-muted)" }}>×</button>
       </div>

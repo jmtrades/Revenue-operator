@@ -254,8 +254,8 @@ function ApiKeysTab({
               <span className="px-2 py-0.5 rounded bg-[var(--bg-card)] text-zinc-400">
                 {key.permission === "admin" ? t("permissionAdmin") : key.permission === "read_write" ? t("permissionReadWrite") : t("permissionReadOnly")}
               </span>
-              <span>Created {formatDate(key.createdAt)}</span>
-              <span>Used {formatRelative(key.lastUsedAt, t)}</span>
+              <span>{t("createdLabel")} {formatDate(key.createdAt)}</span>
+              <span>{t("usedLabel")} {formatRelative(key.lastUsedAt, t)}</span>
             </div>
             <button
               type="button"
@@ -275,7 +275,7 @@ function ApiKeysTab({
             <h3 className="text-lg font-semibold text-white mb-4">{t("createApiKey")}</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Label</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("formLabel")}</label>
                 <input
                   type="text"
                   value={createLabel}
@@ -285,7 +285,7 @@ function ApiKeysTab({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-2">Permissions</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-2">{t("formPermissions")}</label>
                 <div className="space-y-2">
                   {(["read", "read_write", "admin"] as const).map((p) => (
                     <label key={p} className="flex items-center gap-2 cursor-pointer">
@@ -320,8 +320,8 @@ function ApiKeysTab({
       {newKeyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)}>
           <div className="bg-[var(--bg-card)] border border-amber-500/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-amber-200 mb-2">API Key created: {newKeyModal.label}</h3>
-            <p className="text-sm text-amber-200/80 mb-4">Save this key — you won&apos;t see it again.</p>
+            <h3 className="text-lg font-semibold text-amber-200 mb-2">{t("apiKeyCreatedTitle", { label: newKeyModal.label })}</h3>
+            <p className="text-sm text-amber-200/80 mb-4">{t("saveKeyWarning")}</p>
             <div className="p-3 rounded-xl bg-black/40 border border-[var(--border-medium)] mb-4">
               <code className="font-mono text-xs text-zinc-300 break-all">{newKeyModal.fullKey}</code>
             </div>
@@ -332,10 +332,10 @@ function ApiKeysTab({
               }}
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
             >
-              <Copy className="w-4 h-4" /> Copy key
+              <Copy className="w-4 h-4" /> {t("copyKeyButton")}
             </button>
             <button type="button" onClick={() => setNewKeyModal(null)} className="w-full mt-2 px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-[var(--border-medium)]">
-              I&apos;ve saved it
+              {t("savedConfirm")}
             </button>
           </div>
         </div>

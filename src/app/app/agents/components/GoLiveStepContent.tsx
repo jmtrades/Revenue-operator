@@ -89,17 +89,30 @@ export function GoLiveStepContent({
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
         <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">{t("goLive.readinessChecklist")}</p>
         <ul className="space-y-2 text-xs text-[var(--text-secondary)]" role="list">
-          {r.tasks.map((task) => (
-            <li key={task.label} className="flex items-center gap-2">
+          {(() => {
+          const readinessLabelKeys: Record<string, string> = {
+            business: "businessInfoAdded",
+            use_cases: "useCasesSelected",
+            agent: "agentCreated",
+            voice: "voiceSelected",
+            greeting: "openingGreetingSet",
+            knowledge: "knowledgeEntries",
+            behavior: "behaviorConfigured",
+            phone: "phoneConnected",
+            tested: "agentTested",
+            launched: "voiceAssistantCreated",
+          };
+          return r.tasks.map((task) => (
+            <li key={task.key} className="flex items-center gap-2">
               {task.complete ? (
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden />
               ) : (
                 <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />
               )}
               <span className={task.complete ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>
-                {task.label}
+                {t(`goLive.${readinessLabelKeys[task.key] ?? task.key}`)}
               </span>
-              {task.label === "Voice assistant created" && !agent.vapiAgentId && allowActivate && (
+              {task.key === "launched" && !agent.vapiAgentId && allowActivate && (
                 <button
                   type="button"
                   onClick={() => void onActivate()}
@@ -110,7 +123,8 @@ export function GoLiveStepContent({
                 </button>
               )}
             </li>
-          ))}
+          ));
+        })()}
         </ul>
       </div>
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label={t("goLive.carrierAria")}>

@@ -135,9 +135,9 @@ export default function AppSettingsBillingPage() {
       <h1 className="text-lg font-semibold text-white mb-4">{tNav("billing")}</h1>
       {billingError && (
         <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-sm mb-4">
-          <p className="font-medium">Unable to load billing details.</p>
-          <p className="mt-1 text-amber-200/80">Connect your billing to manage your subscription, or try again in a moment.</p>
-          <Link href="/app/settings" className="inline-block mt-2 text-sm font-medium underline underline-offset-2">Back to Settings</Link>
+          <p className="font-medium">{tBilling("errors.loadingFailed")}</p>
+          <p className="mt-1 text-amber-200/80">{tBilling("errors.loadingFailedDesc")}</p>
+          <Link href="/app/settings" className="inline-block mt-2 text-sm font-medium underline underline-offset-2">{tBilling("backToSettingsLink")}</Link>
         </div>
       )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">

@@ -304,7 +304,7 @@ export default function NewAgentWizardClient({
                 </button>
               ))}
             </div>
-            <label className="block mt-4 text-sm text-zinc-400 mb-1">Agent name</label>
+            <label className="block mt-4 text-sm text-zinc-400 mb-1">{t("agentNameLabel")}</label>
             <input
               type="text"
               value={state.name}
@@ -342,24 +342,24 @@ export default function NewAgentWizardClient({
               className="w-full mb-2"
             />
             <span className="text-zinc-500 text-sm">{state.speakingSpeed.toFixed(2)}x</span>
-            <label className="block text-sm text-zinc-400 mt-4 mb-1">Conversation style</label>
+            <label className="block text-sm text-zinc-400 mt-4 mb-1">{t("conversationStyleLabel")}</label>
             <select
               value={state.conversationStyle}
               onChange={(e) => setState((p) => ({ ...p, conversationStyle: e.target.value as ConversationStyle }))}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white"
             >
-              <option value="professional">Professional</option>
-              <option value="friendly">Friendly</option>
-              <option value="casual">Casual</option>
-              <option value="authoritative">Authoritative</option>
+              <option value="professional">{t("conversationStyleProfessional")}</option>
+              <option value="friendly">{t("conversationStyleFriendly")}</option>
+              <option value="casual">{t("conversationStyleCasual")}</option>
+              <option value="authoritative">{t("conversationStyleAuthoritative")}</option>
             </select>
-            <label className="block text-sm text-zinc-400 mt-4 mb-1">Greeting</label>
+            <label className="block text-sm text-zinc-400 mt-4 mb-1">{t("greetingLabel")}</label>
             <textarea
               value={state.greeting}
               onChange={(e) => setState((p) => ({ ...p, greeting: e.target.value }))}
               rows={2}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:border-zinc-600"
-              placeholder="What the agent says when the call starts"
+              placeholder={t("greetingPlaceholder")}
             />
           </>
         )}
@@ -485,34 +485,34 @@ export default function NewAgentWizardClient({
 
         {step === 6 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">Test</h2>
-            <p className="text-zinc-400 text-sm mb-4">Try your agent before going live.</p>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("stepTest")}</h2>
+            <p className="text-zinc-400 text-sm mb-4">{t("testHint")}</p>
             {agentId ? (
               <Link
                 href={`/app/agents/${agentId}/voice-test`}
                 className="inline-flex items-center gap-2 bg-white text-black font-semibold rounded-xl px-4 py-2.5 hover:bg-zinc-100"
               >
                 <Play className="w-4 h-4" />
-                Open test call
+                {t("openTestCall")}
               </Link>
             ) : (
-              <p className="text-zinc-500 text-sm">Save the draft first, then you can test.</p>
+              <p className="text-zinc-500 text-sm">{t("saveDraftFirst")}</p>
             )}
-            <p className="text-zinc-500 text-sm mt-4">You can also test from the agent page after launch.</p>
+            <p className="text-zinc-500 text-sm mt-4">{t("testFromAgentPage")}</p>
           </>
         )}
 
         {step === 7 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">Launch</h2>
-            <p className="text-zinc-400 text-sm mb-4">Review and activate your agent.</p>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("stepLaunch")}</h2>
+            <p className="text-zinc-400 text-sm mb-4">{t("launchHint")}</p>
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-2 text-sm">
-              <p><span className="text-zinc-500">Name:</span> <span className="text-white">{state.name}</span></p>
-              <p><span className="text-zinc-500">Purpose:</span> <span className="text-white">{state.purpose}</span></p>
-              <p><span className="text-zinc-500">Voice:</span> <span className="text-white">{CURATED_VOICES.find((v) => v.id === state.voiceId)?.name ?? state.voiceId}</span></p>
-              <p><span className="text-zinc-500">Greeting:</span> <span className="text-zinc-300">{state.greeting.slice(0, 60)}{state.greeting.length > 60 ? "…" : ""}</span></p>
+              <p><span className="text-zinc-500">{t("reviewName")}</span> <span className="text-white">{state.name}</span></p>
+              <p><span className="text-zinc-500">{t("reviewPurpose")}</span> <span className="text-white">{state.purpose}</span></p>
+              <p><span className="text-zinc-500">{t("reviewVoice")}</span> <span className="text-white">{CURATED_VOICES.find((v) => v.id === state.voiceId)?.name ?? state.voiceId}</span></p>
+              <p><span className="text-zinc-500">{t("reviewGreeting")}</span> <span className="text-zinc-300">{state.greeting.slice(0, 60)}{state.greeting.length > 60 ? "…" : ""}</span></p>
             </div>
-            <p className="text-zinc-500 text-sm mt-4">Estimated cost depends on usage. You can toggle the agent off anytime from the Agents page.</p>
+            <p className="text-zinc-500 text-sm mt-4">{t("costNote")}</p>
           </>
         )}
       </div>
@@ -526,7 +526,7 @@ export default function NewAgentWizardClient({
           className="flex items-center gap-1 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium disabled:opacity-40 disabled:pointer-events-none hover:bg-zinc-800"
         >
           <ChevronLeft className="w-4 h-4" />
-          Back
+          {t("back")}
         </button>
         <div className="flex items-center gap-2">
           <button
