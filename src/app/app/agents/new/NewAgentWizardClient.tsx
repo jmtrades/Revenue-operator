@@ -54,25 +54,27 @@ interface WizardState {
   voicemailBehavior: "messages" | "forward" | "closed";
 }
 
-const defaultState: WizardState = {
-  purpose: "both",
-  templateId: null,
-  name: "Receptionist",
-  voiceId: DEFAULT_VOICE_ID,
-  speakingSpeed: 1,
-  conversationStyle: "professional",
-  language: "en",
-  greeting: "Thanks for calling. How can I help you today?",
-  businessHours: "Mon–Fri 9am–5pm",
-  faq: [],
-  neverSay: [],
-  objectionHandling: "",
-  bantEnabled: false,
-  phoneNumberId: null,
-  activeHours: "9:00-17:00",
-  timezone: "America/New_York",
-  voicemailBehavior: "messages",
-};
+function getDefaultState(tAgents: (key: string) => string): WizardState {
+  return {
+    purpose: "both",
+    templateId: null,
+    name: tAgents("defaultAgent.name"),
+    voiceId: DEFAULT_VOICE_ID,
+    speakingSpeed: 1,
+    conversationStyle: "professional",
+    language: "en",
+    greeting: tAgents("defaultAgent.simpleGreeting"),
+    businessHours: tAgents("defaultAgent.defaultHours"),
+    faq: [],
+    neverSay: [],
+    objectionHandling: "",
+    bantEnabled: false,
+    phoneNumberId: null,
+    activeHours: "9:00-17:00",
+    timezone: "America/New_York",
+    voicemailBehavior: "messages",
+  };
+}
 
 function getTemplatesForPurpose(purpose: PurposeChoice): AgentTemplate[] {
   if (purpose === "inbound")
@@ -91,9 +93,10 @@ export default function NewAgentWizardClient({
 }) {
   const router = useRouter();
   const t = useTranslations("agents.newWizard");
+  const tAgents = useTranslations("agents");
   const tCommon = useTranslations("common");
   const [step, setStep] = useState(1);
-  const [state, setState] = useState<WizardState>(defaultState);
+  const [state, setState] = useState<WizardState>(() => getDefaultState(tAgents));
   const [agentId, setAgentId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -150,7 +153,7 @@ export default function NewAgentWizardClient({
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: state.name.trim() || "Receptionist",
+          name: state.name.trim() || tAgents("defaultAgent.name"),
           voice_id: state.voiceId,
           personality: personalityMap[state.conversationStyle],
           purpose: state.purpose,
@@ -172,7 +175,7 @@ export default function NewAgentWizardClient({
     } finally {
       setSaving(false);
     }
-  }, [agentId, workspaceId, state, t]);
+  }, [agentId, workspaceId, state, t, tAgents]);
 
   const handleNext = useCallback(async () => {
     const err = validateStep(step);

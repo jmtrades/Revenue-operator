@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   Wrench,
   Smile,
@@ -77,6 +78,7 @@ interface IndustryPageTemplateProps {
 }
 
 export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
+  const t = useTranslations("industry");
   const HeroIcon = HERO_ICONS[industry.heroIcon] ?? Wrench;
 
   return (
@@ -100,13 +102,13 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
                 className="text-sm font-medium mb-2"
                 style={{ color: "var(--text-secondary)" }}
               >
-                This is one example of how Recall Touch works. It adapts to any business.
+                {t("heroSubtitle")}
               </p>
               <p
                 className="section-label mb-2"
                 style={{ color: "var(--accent-primary)" }}
               >
-                Solutions
+                {t("solutionsLabel")}
               </p>
               <h1
                 className="font-bold text-3xl md:text-4xl lg:text-5xl mb-4"
@@ -116,13 +118,13 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
                   color: "#F8FAFC",
                 }}
               >
-                {industry.name} AI Phone Agent
+                {t("heroTitle", { industry: industry.name })}
               </h1>
               <p
                 className="text-lg md:text-xl max-w-xl"
                 style={{ color: "#94A3B8", lineHeight: 1.6 }}
               >
-                Never miss a {industry.customerType} again.
+                {t("heroTagline", { customerType: industry.customerType })}
               </p>
             </div>
             <div
@@ -148,7 +150,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
             className="section-label mb-4 text-center"
             style={{ color: "var(--accent-primary)" }}
           >
-            The problem
+            {t("problemLabel")}
           </p>
           <h2
             className="font-semibold text-2xl md:text-3xl text-center max-w-2xl mx-auto mb-12"
@@ -205,7 +207,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
         style={{ background: "var(--bg-primary)" }}
       >
         <Container>
-          <SectionLabel>How it works</SectionLabel>
+          <SectionLabel>{t("howItWorks")}</SectionLabel>
           <h2
             className="font-semibold text-2xl md:text-3xl max-w-2xl mb-12"
             style={{
@@ -214,7 +216,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
               color: "var(--text-primary)",
             }}
           >
-            Three steps to an AI agent that answers every call.
+            {t("stepsHeading")}
           </h2>
           <div className="grid md:grid-cols-3 gap-8 md:gap-6">
             {industry.howItWorks.map((step, i) => {
@@ -277,7 +279,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
         style={{ background: "var(--bg-surface)" }}
       >
         <Container>
-          <SectionLabel>Key capabilities</SectionLabel>
+          <SectionLabel>{t("capabilitiesLabel")}</SectionLabel>
           <h2
             className="font-semibold text-2xl md:text-3xl max-w-2xl mb-12"
             style={{
@@ -333,7 +335,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
         style={{ background: "var(--bg-primary)" }}
       >
         <Container>
-          <SectionLabel>ROI</SectionLabel>
+          <SectionLabel>{t("roiLabel")}</SectionLabel>
           <div
             className="card-marketing p-8 md:p-10 max-w-3xl"
             style={{ borderColor: "var(--accent-primary)" }}
@@ -399,13 +401,13 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
                 href={ROUTES.START}
                 className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline"
               >
-                Start free →
+                {t("ctaStartFree")}
               </Link>
               <Link
                 href={ROUTES.PRICING}
                 className="btn-marketing-ghost inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium border no-underline"
               >
-                See pricing →
+                {t("ctaPricing")}
               </Link>
             </div>
           </div>

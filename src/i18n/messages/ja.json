@@ -1833,6 +1833,8 @@
     },
     "defaultAgent": {
       "name": "受付",
+      "simpleGreeting": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
+      "defaultHours": "月〜金 9:00〜17:00",
       "yourBusiness": "御社",
       "greeting": "{business} にお電話ありがとうございます。本日はどのようなご用件でしょうか？",
       "receptionist": "受付",
@@ -2251,6 +2253,7 @@
       "playAria": "再生",
       "pauseAria": "一時停止",
       "seekAria": "シーク",
+      "playbackSpeed": "速度",
       "speakerAgent": "AIエージェント",
       "summaryTitle": "通話サマリー",
       "sentiment": "感情",
@@ -3087,6 +3090,9 @@
     "agent.startLiveTest": "ライブテストを開始",
     "agent.endLiveTest": "ライブテストを終了",
     "agent.removeAria": "削除",
+    "agent.defaultAgentName": "受付",
+    "agent.defaultGreeting": "{business} にお電話ありがとうございます。どのようなご用件でしょうか？",
+    "agent.voicePreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
     "agent.defaultBusiness": "あなたのビジネス",
     "agent.defaultWorkspaceName": "マイワークスペース",
     "compliance.loadFailed": "録音同意設定を読み込めませんでした。",
@@ -4372,6 +4378,9 @@
     }
   },
   "errors": {
+    "heading": "エラーが発生しました",
+    "defaultMessage": "予期しないエラーが発生しました。",
+    "tryAgain": "もう一度試す",
     "generic": {
       "title": "問題が発生しました",
       "body": "リクエストを完了できませんでした。ページを更新するか、再度お試しください。"
@@ -4462,6 +4471,25 @@
     "completeSetupLink": "AI設定を完了（5ステップ）→",
     "decisionCompletionHint": "ここで意思決定が続き、アクションを完了して表示されます。",
     "testInstructions": "このワークスペースで使用している番号から「{number}」に「こんにちは、興味があります」と送信してください。\n\nその後、ここに戻って処理を確認してください。"
+  },
+  "coverage": {
+    "active": "カバレッジ: 電話継続が有効です",
+    "addNumberPrompt": "個人の電話スレッドからの会話を維持するには番号を追加してください。",
+    "addNumber": "番号を追加",
+    "dismiss": "閉じる"
+  },
+  "industry": {
+    "heroSubtitle": "Recall Touch の一例です。あらゆるビジネスに適応します。",
+    "solutionsLabel": "ソリューション",
+    "heroTitle": "{industry} AI 電話エージェント",
+    "heroTagline": "{customerType} を取り逃がさない。",
+    "problemLabel": "課題",
+    "howItWorks": "仕組み",
+    "stepsHeading": "すべての着信に応答する AI エージェントまで 3 ステップ。",
+    "capabilitiesLabel": "主な機能",
+    "roiLabel": "ROI",
+    "ctaStartFree": "無料で始める →",
+    "ctaPricing": "料金を見る →"
   },
   "compliance": {
     "title": "コンプライアンス",
@@ -5144,6 +5172,8 @@
     "wizardTitle": "音声エージェントの準備をしましょう。",
     "wizardSubtitle": "約3分です。最後にエージェントの実際の通話を聞けます。",
     "defaultGreeting": "お電話ありがとうございます。どのようなご用件でしょうか？",
+    "defaultAgentName": "エージェント",
+    "greetingTemplate": "{business} にお電話ありがとうございます。本日はどのようなご用件でしょうか？",
     "greetingWithBusiness": "{business} にお電話ありがとうございます。どのようなご用件でしょうか？",
     "yourBusiness": "御社",
     "customize": {
@@ -5356,14 +5386,54 @@
         "step5": "エージェントページのテストタブで実際に通話し、動作を確認。",
         "cta": "無料で始める →"
       },
-      "callForwarding": { "title": "着信転送", "description": "既存の事業番号を Recall Touch 番号に転送するか、提供番号を主回線として使用。エージェントが24時間対応。", "carrierSteps": "キャリア別の手順" },
+      "callForwarding": {
+        "title": "着信転送",
+        "description": "既存の事業番号を Recall Touch 番号に転送するか、提供番号を主回線として使用。エージェントが24時間対応。",
+        "carrierSteps": "キャリア別の手順",
+        "att": "*21*[RT番号]# をダイヤルしてから発信。キャンセル: #21#",
+        "verizon": "*72 をダイヤルしてから Recall Touch 番号。キャンセル: *73",
+        "tmobile": "**21*[RT番号]# をダイヤル。キャンセル: ##21#",
+        "comcast": "Voice → 着信転送 → Recall Touch 番号を入力。",
+        "googleVoice": "設定 → 通話 → RT 番号へ転送。"
+      },
       "aiAgents": { "title": "AIエージェント", "description": "エージェントの名前、音声、挨拶、機能を設定。サービス、営業時間、予約の扱いを教える。コーディング不要。" },
       "campaigns": { "title": "キャンペーン", "description": "アウトバウンドのフォローアップ、リマインダー、リカバリーフローを実行。ダッシュボードからキャンペーン作成、オーディエンスとスクリプトを設定し、結果を追跡。" },
-      "integrations": { "title": "連携", "description": "Recall Touch を電話プロバイダー（Twilio）、カレンダー、CRM と接続。Scale および Enterprise プランで Webhooks と API。" },
+      "integrations": {
+        "title": "連携",
+        "description": "Recall Touch を電話プロバイダー（Twilio）、カレンダー、CRM と接続。Scale および Enterprise プランで Webhooks と API。",
+        "zapierHeading": "Zapier & Make",
+        "zapierDesc": "OAuth で Recall Touch ワークスペースを接続し、トリガーをポーリングまたはアクションを呼び出します。",
+        "authorizeLabel": "認可",
+        "tokenLabel": "トークン",
+        "triggersHeading": "トリガー（GET、Bearer トークン）",
+        "actionsHeading": "アクション（POST、Bearer トークン）"
+      },
       "billing": { "title": "請求", "description": "プランは月額または年額。年額は2ヶ月分無料。設定 → 請求で変更または解約。請求書はダッシュボードで確認。", "cta": "料金を見る →" },
-      "api": { "title": "APIリファレンス", "description": "Recall Touch 統合用 REST API。全エンドポイントで有効なセッション（Cookie）または Bearer トークンが必要。ベース URL: https://your-domain.com。", "contactCta": "API フルアクセスはお問い合わせ →" },
-      "sdk": { "title": "SDK例", "description": "curl、JavaScript、Python での一般的な操作。" },
-      "changelog": { "title": "変更履歴", "description": "最近のプラットフォーム更新。" },
+      "api": {
+        "title": "APIリファレンス",
+        "description": "Recall Touch 統合用 REST API。全エンドポイントで有効なセッション（Cookie）または Bearer トークンが必要。ベース URL: https://your-domain.com。",
+        "contactCta": "API フルアクセスはお問い合わせ →",
+        "workspaceMeDesc": "現在のワークスペースとユーザーを返す。Auth: 必須（セッションまたは Bearer）。",
+        "leadsListDesc": "ワークスペースのリード一覧。Auth: 必須。Query: limit, offset, state。",
+        "leadsCreateDesc": "リードを作成。Auth: 必須。Body: name, phone, email?, company?。",
+        "exampleCurl": "例: curl",
+        "requestBody": "リクエストボディ"
+      },
+      "sdk": {
+        "title": "SDK例",
+        "description": "curl、JavaScript、Python での一般的な操作。",
+        "createLeadHeading": "リードを作成",
+        "curlTitle": "curl",
+        "jsTitle": "JavaScript (fetch)",
+        "pythonTitle": "Python (requests)"
+      },
+      "changelog": {
+        "title": "変更履歴",
+        "description": "最近のプラットフォーム更新。",
+        "entry202503": "キャンペーンシーケンス（通話、SMS、メール、待機）、リードスコアリング、通知センター、オンボーディングチェックリスト、エラー報告、SEO・アクセシビリティ改善。",
+        "entry202502": "Vapi 音声エージェント、Twilio 電話プロビジョニング、アクティビティ・受信トレイビュー、設定ハブ。",
+        "entry202501": "初回リリース: ワークスペース設定、サインイン、料金、デモシミュレーター。"
+      },
       "faq": { "title": "FAQ", "description": "セットアップ、着信転送、エージェント、請求に関するよくある質問は料金ページで。", "cta": "FAQ を見る →" }
     },
     "quickStart": {

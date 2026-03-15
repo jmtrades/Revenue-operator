@@ -145,11 +145,11 @@ export default function DocsPageContent() {
                 </p>
                 <p className="text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>{t("sections.callForwarding.carrierSteps")}</p>
                 <ul className="text-sm space-y-2 mb-4 list-disc pl-5" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  <li><strong>AT&amp;T:</strong> Dial <code className="px-1 rounded bg-black/10">*21*[your RT number]#</code> then call. To cancel: <code className="px-1 rounded bg-black/10">#21#</code></li>
-                  <li><strong>Verizon:</strong> Dial <code className="px-1 rounded bg-black/10">*72</code> then your Recall Touch number. To cancel: <code className="px-1 rounded bg-black/10">*73</code></li>
-                  <li><strong>T-Mobile:</strong> Dial <code className="px-1 rounded bg-black/10">**21*[RT number]#</code>. To cancel: <code className="px-1 rounded bg-black/10">##21#</code></li>
-                  <li><strong>Comcast Business:</strong> Voice → Call Forwarding → enter your Recall Touch number.</li>
-                  <li><strong>Google Voice:</strong> Settings → Calls → forward to your RT number.</li>
+                  <li><strong>AT&amp;T:</strong> {t("sections.callForwarding.att")}</li>
+                  <li><strong>Verizon:</strong> {t("sections.callForwarding.verizon")}</li>
+                  <li><strong>T-Mobile:</strong> {t("sections.callForwarding.tmobile")}</li>
+                  <li><strong>Comcast Business:</strong> {t("sections.callForwarding.comcast")}</li>
+                  <li><strong>Google Voice:</strong> {t("sections.callForwarding.googleVoice")}</li>
                 </ul>
                 <DocFeedback sectionId="call-forwarding" />
               </section>
@@ -189,26 +189,26 @@ export default function DocsPageContent() {
                 style={{ borderColor: "var(--border-default)", display: filterSection("integrations") ? undefined : "none" }}
                 data-keywords={SECTION_KEYWORDS["integrations"]}
               >
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Integrations</h2>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>{t("sections.integrations.title")}</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Scale and Enterprise plans.
+                  {t("sections.integrations.description")}
                 </p>
-                <h3 className="font-semibold text-lg mt-6 mb-2" style={{ color: "var(--text-primary)" }}>Zapier & Make</h3>
+                <h3 className="font-semibold text-lg mt-6 mb-2" style={{ color: "var(--text-primary)" }}>{t("sections.integrations.zapierHeading")}</h3>
                 <p className="text-sm mb-3" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                  Use OAuth to connect your Recall Touch workspace, then poll triggers or invoke actions.
+                  {t("sections.integrations.zapierDesc")}
                 </p>
                 <ul className="text-sm mb-2 list-disc pl-5 space-y-1" style={{ color: "var(--text-secondary)" }}>
-                  <li><strong>Authorize:</strong> GET /api/integrations/zapier/oauth/authorize?redirect_uri=...&state=...</li>
-                  <li><strong>Token:</strong> POST /api/integrations/zapier/oauth/token (body: code, client_id, client_secret, redirect_uri, grant_type=authorization_code)</li>
+                  <li><strong>{t("sections.integrations.authorizeLabel")}:</strong> GET /api/integrations/zapier/oauth/authorize?redirect_uri=...&state=...</li>
+                  <li><strong>{t("sections.integrations.tokenLabel")}:</strong> POST /api/integrations/zapier/oauth/token (body: code, client_id, client_secret, redirect_uri, grant_type=authorization_code)</li>
                 </ul>
-                <p className="text-xs font-medium mt-3 mb-1" style={{ color: "var(--text-primary)" }}>Triggers (GET, Bearer token)</p>
+                <p className="text-xs font-medium mt-3 mb-1" style={{ color: "var(--text-primary)" }}>{t("sections.integrations.triggersHeading")}</p>
                 <ul className="text-sm list-disc pl-5 space-y-0.5 mb-3" style={{ color: "var(--text-secondary)" }}>
                   <li>new_call — /api/integrations/zapier/triggers/new_call</li>
                   <li>new_lead — /api/integrations/zapier/triggers/new_lead</li>
                   <li>new_appointment — /api/integrations/zapier/triggers/new_appointment</li>
                   <li>call_completed — /api/integrations/zapier/triggers/call_completed</li>
                 </ul>
-                <p className="text-xs font-medium mt-3 mb-1" style={{ color: "var(--text-primary)" }}>Actions (POST, Bearer token)</p>
+                <p className="text-xs font-medium mt-3 mb-1" style={{ color: "var(--text-primary)" }}>{t("sections.integrations.actionsHeading")}</p>
                 <ul className="text-sm list-disc pl-5 space-y-0.5" style={{ color: "var(--text-secondary)" }}>
                   <li>create_lead — /api/integrations/zapier/actions/create_lead (name, phone, email?, company?)</li>
                   <li>update_lead — /api/integrations/zapier/actions/update_lead (id, name?, phone?, email?, company?, state?)</li>
@@ -227,9 +227,9 @@ export default function DocsPageContent() {
                     <h2 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>{card.title}</h2>
                     <p className="text-sm flex-1 mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.55 }}>{card.desc}</p>
                     {card.href ? (
-                      <Link href={card.href} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>View →</Link>
+                      <Link href={card.href} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{t("cards.viewLink")}</Link>
                     ) : (
-                      <span className="text-xs font-medium px-2.5 py-1 rounded-full inline-block w-fit" style={{ background: "var(--bg-elevated)", color: "var(--text-tertiary)" }}>Contact for access</span>
+                      <span className="text-xs font-medium px-2.5 py-1 rounded-full inline-block w-fit" style={{ background: "var(--bg-elevated)", color: "var(--text-tertiary)" }}>{t("cards.contactForAccess")}</span>
                     )}
                   </div>
                 ))}
@@ -264,8 +264,8 @@ export default function DocsPageContent() {
                 <div className="space-y-6">
                   <div>
                     <h3 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>GET /api/workspace/me</h3>
-                    <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>Returns current workspace and user. Auth: required (session or Bearer).</p>
-                    <DocCodeBlock language="bash" title="Example: curl" code={`curl -X GET "https://your-domain.com/api/workspace/me" \\
+                    <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{t("sections.api.workspaceMeDesc")}</p>
+                    <DocCodeBlock language="bash" title={t("sections.api.exampleCurl")} code={`curl -X GET "https://your-domain.com/api/workspace/me" \\
   -H "Cookie: revenue_session=..." \\
   -H "Accept: application/json"`} />
                   </div>
@@ -278,8 +278,8 @@ export default function DocsPageContent() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>POST /api/leads</h3>
-                    <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>Create a lead. Auth: required. Body: name, phone, email?, company?.</p>
-                    <DocCodeBlock language="json" title="Request body" code={`{
+                    <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{t("sections.api.leadsCreateDesc")}</p>
+                    <DocCodeBlock language="json" title={t("sections.api.requestBody")} code={`{
   "name": "Jane Smith",
   "phone": "+15551234567",
   "email": "jane@example.com",
@@ -302,8 +302,8 @@ export default function DocsPageContent() {
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                   {t("sections.sdk.description")}
                 </p>
-                <h3 className="font-semibold text-lg mt-6 mb-2" style={{ color: "var(--text-primary)" }}>Create a lead</h3>
-                <DocCodeBlock language="bash" title="curl" code={`curl -X POST "https://your-domain.com/api/leads" \\
+                <h3 className="font-semibold text-lg mt-6 mb-2" style={{ color: "var(--text-primary)" }}>{t("sections.sdk.createLeadHeading")}</h3>
+                <DocCodeBlock language="bash" title={t("sections.sdk.curlTitle")} code={`curl -X POST "https://your-domain.com/api/leads" \\
   -H "Authorization: Bearer YOUR_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{"name":"Jane Smith","phone":"+15551234567","email":"jane@example.com"}'`} />
@@ -320,7 +320,7 @@ export default function DocsPageContent() {
   }),
 });
 const lead = await res.json();`} />
-                <DocCodeBlock language="python" title="Python (requests)" code={`import requests
+                <DocCodeBlock language="python" title={t("sections.sdk.pythonTitle")} code={`import requests
 
 resp = requests.post(
     "https://your-domain.com/api/leads",
@@ -350,9 +350,9 @@ lead = resp.json()`} />
                   {t("sections.changelog.description")}
                 </p>
                 <ul className="text-sm space-y-3 list-none pl-0" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                  <li><strong className="text-[var(--text-primary)]">2025-03</strong> — Campaign sequences (Call, SMS, Email, Wait), lead scoring, notification center, onboarding checklist, error reporting, SEO and accessibility improvements.</li>
-                  <li><strong className="text-[var(--text-primary)]">2025-02</strong> — Vapi voice agents, Twilio phone provisioning, activity and inbox views, settings hub.</li>
-                  <li><strong className="text-[var(--text-primary)]">2025-01</strong> — Initial launch: workspace setup, sign-in, pricing, demo simulator.</li>
+                  <li><strong className="text-[var(--text-primary)]">2025-03</strong> — {t("sections.changelog.entry202503")}</li>
+                  <li><strong className="text-[var(--text-primary)]">2025-02</strong> — {t("sections.changelog.entry202502")}</li>
+                  <li><strong className="text-[var(--text-primary)]">2025-01</strong> — {t("sections.changelog.entry202501")}</li>
                 </ul>
                 <DocFeedback sectionId="changelog" />
               </section>

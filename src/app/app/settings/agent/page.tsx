@@ -62,7 +62,7 @@ export default function AppSettingsAgentPage() {
     initialConfig ?? {
       businessName: "",
       greeting: "",
-      agentName: "Receptionist",
+      agentName: tSettings("agent.defaultAgentName"),
       preferredLanguage: "en",
       elevenlabsVoiceId: DEFAULT_VOICE_ID,
       knowledgeItems: [],
@@ -171,7 +171,7 @@ export default function AppSettingsAgentPage() {
   };
 
   const playGreeting = () => {
-    const text = config.greeting.trim() || `Thanks for calling ${config.businessName || tSettings("agent.defaultBusiness")}. How can I help?`;
+    const text = config.greeting.trim() || tSettings("agent.defaultGreeting", { business: config.businessName || tSettings("agent.defaultBusiness") });
     setPreviewing(true);
     previewVoiceViaApi(text, {
       voiceId: config.elevenlabsVoiceId || undefined,
@@ -185,7 +185,7 @@ export default function AppSettingsAgentPage() {
       <div className="max-w-[600px] mx-auto p-4 md:p-6">
         <p className="text-sm text-zinc-500">{tSettings("agent.loading")}</p>
         <p className="mt-4">
-          <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link>
+          <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("agent.backToSettings")}</Link>
         </p>
       </div>
     );
@@ -241,7 +241,7 @@ export default function AppSettingsAgentPage() {
               const nextVoiceId = e.target.value;
               setConfig((c) => ({ ...c, elevenlabsVoiceId: nextVoiceId }));
               setPreviewing(true);
-              previewVoiceViaApi("Thanks for calling. How can I help you today?", {
+              previewVoiceViaApi(tSettings("agent.voicePreviewText"), {
                 voiceId: nextVoiceId,
                 gender: CURATED_VOICES.find((voice) => voice.id === nextVoiceId)?.gender ?? "female",
                 onEnd: () => setPreviewing(false),

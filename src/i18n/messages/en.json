@@ -313,8 +313,47 @@
     },
     "needsAttention": "Needs attention",
     "activity": {
-      "title": "Recent activity",
-      "empty": "No activity yet. Once calls, leads, and campaigns start flowing, you'll see them here."
+      "selectWorkspace": "Select a workspace to see activity.",
+      "title": "Activity",
+      "liveBadge": "Live",
+      "statCalls7d": "calls (7d)",
+      "statAnswered": "answered",
+      "statNewLeads": "new leads",
+      "statAppts": "appts",
+      "filters": {
+        "all": "All",
+        "needs_action": "Needs action",
+        "leads": "Leads",
+        "appointments": "Appointments",
+        "urgent": "Urgent",
+        "outbound": "Outbound",
+        "spam": "Spam"
+      },
+      "cardLabels": {
+        "lead": "NEW LEAD",
+        "appointment": "APPOINTMENT BOOKED",
+        "emergency": "URGENT",
+        "outbound": "FOLLOW-UP CALL",
+        "action": "NEEDS ACTION",
+        "info": "HANDLED",
+        "spam": "SPAM"
+      },
+      "callerFallback": "Caller",
+      "callFallback": "Call",
+      "completed": "Completed",
+      "inProgress": "In progress",
+      "noCallsYet": "No calls yet",
+      "noCallsHint": "Set up call forwarding so your number reaches Recall Touch. New calls will appear here.",
+      "setUpForwarding": "Set up call forwarding →",
+      "recordACall": "Record a call",
+      "calling": "Calling…",
+      "callBack": "Call back",
+      "message": "Message",
+      "view": "View",
+      "viewDetails": "View details",
+      "markDone": "Mark done",
+      "requiresAttention": "Requires attention",
+      "callFailed": "Call failed"
     },
     "pageTitle": "Dashboard — Recall Touch",
     "importContacts": "Import your contacts",
@@ -406,32 +445,120 @@
       "noTeamYet": "No team members yet. Add members in settings."
     },
     "pages": {
-      "analytics": { "title": "Analytics", "subtitle": "Calls, outcomes, and revenue attribution.", "subtitleShort": "Calls, outcomes, and usage." },
-      "agents": { "title": "Agents", "subtitle": "Configure AI phone agents.", "subtitleShort": "AI phone agents." },
-      "agent": { "title": "Agent", "subtitle": "Edit agent." },
-      "team": { "title": "Team", "subtitle": "Manage team members and roles.", "subtitleShort": "Team members." },
-      "calendar": { "title": "Calendar", "subtitle": "Booked appointments.", "subtitleShort": "Appointments." },
-      "callsCalendar": { "title": "Calendar", "subtitle": "Attendance confidence and preparation state.", "subtitleShort": "Upcoming calls and attendance status." },
-      "compose": { "title": "Compose", "subtitle": "Send a governed message using a template." },
-      "billing": { "title": "Billing", "subtitle": "Current plan, usage, and payment.", "subtitleShort": "Plan and usage." },
-      "newCampaign": { "title": "New campaign", "subtitle": "Set up an outbound call campaign.", "subtitleShort": "Create an outbound campaign." },
-      "campaigns": { "title": "Campaigns", "subtitle": "Outbound call campaigns.", "subtitleShort": "Outbound calling campaigns." },
-      "contacts": { "title": "Contacts", "subtitle": "Search and filter by lead or company.", "subtitleShort": "Leads and contacts." },
-      "messages": { "title": "Messages", "subtitle": "Two-way SMS with contacts.", "subtitleShort": "Outbox and inbox." },
-      "followUps": { "title": "Follow-ups", "subtitle": "Pending follow-up actions from call commitments." },
-      "escalations": { "title": "Escalations", "subtitle": "Active L1→L2→L3 escalations and resolution status." },
-      "compliance": { "title": "Compliance", "subtitle": "Jurisdiction settings, framework overview, and record export." },
-      "integrations": { "title": "Integrations", "subtitle": "Connect Google Calendar, CRM, and other tools.", "subtitleShort": "Connect calendar and CRM." },
-      "complianceSettings": { "title": "Compliance", "subtitle": "Recording disclosure, jurisdiction, data retention, export." },
-      "billingSettings": { "title": "Billing", "subtitle": "Current plan, usage, upgrade, payment method, invoices." },
-      "integrationsSettings": { "title": "Integrations", "subtitle": "API keys, webhooks, and third-party connections." },
-      "notificationsSettings": { "title": "Notifications", "subtitle": "Push, SMS, email — what triggers them, quiet hours." },
-      "callRulesSettings": { "title": "Call rules", "subtitle": "During/after hours, emergency detection, transfer rules." },
-      "phoneSettings": { "title": "Phone", "subtitle": "Phone numbers, forwarding, caller ID." },
-      "operatorsSettings": { "title": "Operators", "subtitle": "Manage operator seats and access." },
-      "businessSettings": { "title": "Business", "subtitle": "Name, address, hours, services, website." },
-      "teamSettings": { "title": "Team", "subtitle": "Add members, roles, availability, escalation." },
-      "record": { "title": "Record" }
+      "analytics": {
+        "title": "Analytics",
+        "subtitle": "Calls, outcomes, and revenue attribution.",
+        "subtitleShort": "Calls, outcomes, and usage."
+      },
+      "agents": {
+        "title": "Agents",
+        "subtitle": "Configure AI phone agents.",
+        "subtitleShort": "AI phone agents."
+      },
+      "agent": {
+        "title": "Agent",
+        "subtitle": "Edit agent."
+      },
+      "team": {
+        "title": "Team",
+        "subtitle": "Manage team members and roles.",
+        "subtitleShort": "Team members."
+      },
+      "calendar": {
+        "title": "Calendar",
+        "subtitle": "Booked appointments.",
+        "subtitleShort": "Appointments."
+      },
+      "callsCalendar": {
+        "title": "Calendar",
+        "subtitle": "Attendance confidence and preparation state.",
+        "subtitleShort": "Upcoming calls and attendance status."
+      },
+      "compose": {
+        "title": "Compose",
+        "subtitle": "Send a governed message using a template."
+      },
+      "billing": {
+        "title": "Billing",
+        "subtitle": "Current plan, usage, and payment.",
+        "subtitleShort": "Plan and usage."
+      },
+      "newCampaign": {
+        "title": "New campaign",
+        "subtitle": "Set up an outbound call campaign.",
+        "subtitleShort": "Create an outbound campaign."
+      },
+      "campaigns": {
+        "title": "Campaigns",
+        "subtitle": "Outbound call campaigns.",
+        "subtitleShort": "Outbound calling campaigns."
+      },
+      "contacts": {
+        "title": "Contacts",
+        "subtitle": "Search and filter by lead or company.",
+        "subtitleShort": "Leads and contacts."
+      },
+      "messages": {
+        "title": "Messages",
+        "subtitle": "Two-way SMS with contacts.",
+        "subtitleShort": "Outbox and inbox."
+      },
+      "followUps": {
+        "title": "Follow-ups",
+        "subtitle": "Pending follow-up actions from call commitments."
+      },
+      "escalations": {
+        "title": "Escalations",
+        "subtitle": "Active L1→L2→L3 escalations and resolution status."
+      },
+      "compliance": {
+        "title": "Compliance",
+        "subtitle": "Jurisdiction settings, framework overview, and record export."
+      },
+      "integrations": {
+        "title": "Integrations",
+        "subtitle": "Connect Google Calendar, CRM, and other tools.",
+        "subtitleShort": "Connect calendar and CRM."
+      },
+      "complianceSettings": {
+        "title": "Compliance",
+        "subtitle": "Recording disclosure, jurisdiction, data retention, export."
+      },
+      "billingSettings": {
+        "title": "Billing",
+        "subtitle": "Current plan, usage, upgrade, payment method, invoices."
+      },
+      "integrationsSettings": {
+        "title": "Integrations",
+        "subtitle": "API keys, webhooks, and third-party connections."
+      },
+      "notificationsSettings": {
+        "title": "Notifications",
+        "subtitle": "Push, SMS, email — what triggers them, quiet hours."
+      },
+      "callRulesSettings": {
+        "title": "Call rules",
+        "subtitle": "During/after hours, emergency detection, transfer rules."
+      },
+      "phoneSettings": {
+        "title": "Phone",
+        "subtitle": "Phone numbers, forwarding, caller ID."
+      },
+      "operatorsSettings": {
+        "title": "Operators",
+        "subtitle": "Manage operator seats and access."
+      },
+      "businessSettings": {
+        "title": "Business",
+        "subtitle": "Name, address, hours, services, website."
+      },
+      "teamSettings": {
+        "title": "Team",
+        "subtitle": "Add members, roles, availability, escalation."
+      },
+      "record": {
+        "title": "Record"
+      }
     },
     "agentDetail": {
       "agentNotFound": "Agent not found.",
@@ -545,49 +672,6 @@
       "auditTrailTitle": "Audit trail",
       "auditTrailBody": "Who accessed what record and when. Logs are retained per workspace.",
       "policiesLink": "Policies"
-    },
-    "activity": {
-      "selectWorkspace": "Select a workspace to see activity.",
-      "title": "Activity",
-      "liveBadge": "Live",
-      "statCalls7d": "calls (7d)",
-      "statAnswered": "answered",
-      "statNewLeads": "new leads",
-      "statAppts": "appts",
-      "filters": {
-        "all": "All",
-        "needs_action": "Needs action",
-        "leads": "Leads",
-        "appointments": "Appointments",
-        "urgent": "Urgent",
-        "outbound": "Outbound",
-        "spam": "Spam"
-      },
-      "cardLabels": {
-        "lead": "NEW LEAD",
-        "appointment": "APPOINTMENT BOOKED",
-        "emergency": "URGENT",
-        "outbound": "FOLLOW-UP CALL",
-        "action": "NEEDS ACTION",
-        "info": "HANDLED",
-        "spam": "SPAM"
-      },
-      "callerFallback": "Caller",
-      "callFallback": "Call",
-      "completed": "Completed",
-      "inProgress": "In progress",
-      "noCallsYet": "No calls yet",
-      "noCallsHint": "Set up call forwarding so your number reaches Recall Touch. New calls will appear here.",
-      "setUpForwarding": "Set up call forwarding →",
-      "recordACall": "Record a call",
-      "calling": "Calling…",
-      "callBack": "Call back",
-      "message": "Message",
-      "view": "View",
-      "viewDetails": "View details",
-      "markDone": "Mark done",
-      "requiresAttention": "Requires attention",
-      "callFailed": "Call failed"
     },
     "startPage": {
       "activationGovernance": "Execution is now under institutional governance.",
@@ -1375,16 +1459,22 @@
     "defaultBadge": "Default",
     "callsSuffix": "calls",
     "toast": {
-      "paused": "Agent paused",
-      "active": "Agent active"
+      "testLinkCopied": "Test link copied!",
+      "selectVoiceFirst": "Select a voice first to hear a preview.",
+      "previewFailed": "Could not play preview",
+      "saveFailed": "Could not save agent",
+      "saveRetry": "Changes couldn't be saved. Try again.",
+      "deleted": "Agent deleted",
+      "deleteFailed": "Could not delete agent",
+      "created": "Agent created and synced",
+      "changesSaved": "Changes saved ✓",
+      "createFailed": "Could not create agent",
+      "agentLive": "Your AI agent is live!"
     },
     "actions": {
-      "activate": "Activate",
-      "deactivate": "Deactivate",
-      "pause": "Pause",
-      "on": "On",
-      "editAgent": "Edit agent",
-      "deleteAgent": "Delete agent",
+      "deleteAria": "Delete this agent",
+      "savingAria": "Saving agent",
+      "saveAndSyncAria": "Save agent and sync to voice",
       "remove": "Remove",
       "addObjection": "Add objection",
       "addFromSuggestions": "Add from suggestions"
@@ -1537,19 +1627,6 @@
       "back": "Back",
       "continue": "Continue"
     },
-    "toast": {
-      "testLinkCopied": "Test link copied!",
-      "selectVoiceFirst": "Select a voice first to hear a preview.",
-      "previewFailed": "Could not play preview",
-      "saveFailed": "Could not save agent",
-      "saveRetry": "Changes couldn't be saved. Try again.",
-      "deleted": "Agent deleted",
-      "deleteFailed": "Could not delete agent",
-      "created": "Agent created and synced",
-      "changesSaved": "Changes saved ✓",
-      "createFailed": "Could not create agent",
-      "agentLive": "Your AI agent is live!"
-    },
     "deleteAgent": "Delete agent",
     "deleteAgentTitle": "Delete agent",
     "saveDraft": "Save draft",
@@ -1649,11 +1726,6 @@
       "testAria": "Test agent",
       "goLive": "Go live",
       "goLiveAria": "Go live"
-    },
-    "actions": {
-      "deleteAria": "Delete this agent",
-      "savingAria": "Saving agent",
-      "saveAndSyncAria": "Save agent and sync to voice"
     },
     "testStep": {
       "title": "Talk to your AI",
@@ -1816,12 +1888,35 @@
         "contractor": "Thanks for calling. Are you calling about an estimate or scheduling work?"
       },
       "templates": {
-        "receptionist": { "label": "Receptionist", "desc": "Answer calls, take messages, and route cleanly.", "greeting": "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?" },
-        "appointment_setter": { "label": "Appointment Booker", "desc": "Book appointments and confirm details.", "greeting": "Hi, I can help you schedule an appointment right now. What day works best for you?" },
-        "lead_qualifier": { "label": "Lead Qualifier", "desc": "Qualify leads, then route hot prospects.", "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step." },
-        "follow_up": { "label": "Follow-up Caller", "desc": "Call back leads and re-engage.", "greeting": "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?" },
-        "support": { "label": "Customer Support", "desc": "Answer questions, troubleshoot, resolve issues.", "greeting": "Thanks for calling support! What can I help you with?" },
-        "scratch": { "label": "Custom", "desc": "Build from scratch with full control" }
+        "receptionist": {
+          "label": "Receptionist",
+          "desc": "Answer calls, take messages, and route cleanly.",
+          "greeting": "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?"
+        },
+        "appointment_setter": {
+          "label": "Appointment Booker",
+          "desc": "Book appointments and confirm details.",
+          "greeting": "Hi, I can help you schedule an appointment right now. What day works best for you?"
+        },
+        "lead_qualifier": {
+          "label": "Lead Qualifier",
+          "desc": "Qualify leads, then route hot prospects.",
+          "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step."
+        },
+        "follow_up": {
+          "label": "Follow-up Caller",
+          "desc": "Call back leads and re-engage.",
+          "greeting": "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?"
+        },
+        "support": {
+          "label": "Customer Support",
+          "desc": "Answer questions, troubleshoot, resolve issues.",
+          "greeting": "Thanks for calling support! What can I help you with?"
+        },
+        "scratch": {
+          "label": "Custom",
+          "desc": "Build from scratch with full control"
+        }
       }
     },
     "voiceSelector": {
@@ -1930,6 +2025,8 @@
     },
     "defaultAgent": {
       "name": "Receptionist",
+      "simpleGreeting": "Thanks for calling. How can I help you today?",
+      "defaultHours": "Mon–Fri 9am–5pm",
       "yourBusiness": "your business",
       "greeting": "Thanks for calling {business}. How can I help you today?",
       "receptionist": "Receptionist",
@@ -2117,11 +2214,26 @@
     "startConversation": "Start conversation",
     "orTryScenario": "Or try a scenario:",
     "scenarios": {
-      "normalCall": { "label": "Normal call", "prompt": "Hi, I need some information about your services." },
-      "bookingRequest": { "label": "Booking request", "prompt": "I want to book an appointment for next Thursday." },
-      "pricingQuestion": { "label": "Pricing question", "prompt": "How much do your services cost?" },
-      "angryCaller": { "label": "Angry caller", "prompt": "I've been waiting for a callback for three days and nobody has contacted me. This is unacceptable." },
-      "wrongNumber": { "label": "Wrong number", "prompt": "Is this the pizza place on Main Street?" }
+      "normalCall": {
+        "label": "Normal call",
+        "prompt": "Hi, I need some information about your services."
+      },
+      "bookingRequest": {
+        "label": "Booking request",
+        "prompt": "I want to book an appointment for next Thursday."
+      },
+      "pricingQuestion": {
+        "label": "Pricing question",
+        "prompt": "How much do your services cost?"
+      },
+      "angryCaller": {
+        "label": "Angry caller",
+        "prompt": "I've been waiting for a callback for three days and nobody has contacted me. This is unacceptable."
+      },
+      "wrongNumber": {
+        "label": "Wrong number",
+        "prompt": "Is this the pizza place on Main Street?"
+      }
     },
     "youAsCaller": "You (as caller)",
     "aiAgent": "AI Agent",
@@ -2191,6 +2303,7 @@
       "playAria": "Play",
       "pauseAria": "Pause",
       "seekAria": "Seek",
+      "playbackSpeed": "Speed",
       "speakerAgent": "AI agent",
       "summaryTitle": "Call summary",
       "sentiment": "Sentiment",
@@ -2476,7 +2589,6 @@
       "send": "Send"
     },
     "contact": "Contact",
-    "viewInLeads": "View in Leads",
     "openContactPanel": "Open contact panel"
   },
   "leads": {
@@ -2768,10 +2880,22 @@
       "audiencePlaceholder": "e.g. Leads waiting on follow-up",
       "leadStatusOptionalLabel": "Lead status (optional)",
       "quickTypes": {
-        "followup": { "label": "Lead follow-up", "desc": "Call leads who showed interest" },
-        "reactivation": { "label": "Reactivation", "desc": "Re-engage cold leads" },
-        "reminder": { "label": "Appointment reminder", "desc": "Confirm upcoming appointments" },
-        "qualification": { "label": "Qualification", "desc": "Qualify new leads by phone" }
+        "followup": {
+          "label": "Lead follow-up",
+          "desc": "Call leads who showed interest"
+        },
+        "reactivation": {
+          "label": "Reactivation",
+          "desc": "Re-engage cold leads"
+        },
+        "reminder": {
+          "label": "Appointment reminder",
+          "desc": "Confirm upcoming appointments"
+        },
+        "qualification": {
+          "label": "Qualification",
+          "desc": "Qualify new leads by phone"
+        }
       }
     },
     "type": {
@@ -2874,19 +2998,58 @@
     "deleteAccountMessage": "Permanently delete your account and all associated data? This cannot be undone. Contact support to complete.",
     "deleteAccountConfirmLabel": "Delete account",
     "links": {
-      "business": { "label": "Business settings", "desc": "Business name, address, website, timezone, industry" },
-      "phone": { "label": "Phone & numbers", "desc": "Buy numbers, forwarding status, caller ID, routing" },
-      "agent": { "label": "AI agent configuration", "desc": "Voice, greeting, behavior, knowledge, languages" },
-      "callRules": { "label": "Call rules", "desc": "Hours, after-hours behavior, emergency, transfer logic" },
-      "team": { "label": "Team & permissions", "desc": "Members, roles, escalation contacts, login access" },
-      "notifications": { "label": "Notifications", "desc": "Alerts for new calls, leads, appointments, missed calls" },
-      "leadScoring": { "label": "Lead scoring", "desc": "Weights for scoring leads from calls and interactions" },
-      "integrations": { "label": "Integrations", "desc": "Calendar, CRM, webhooks, Slack, Zapier" },
-      "billing": { "label": "Billing & plans", "desc": "Current plan, usage, invoices, cancellation" },
-      "compliance": { "label": "Compliance", "desc": "Recording consent, do-not-call, regional rules" },
-      "activity": { "label": "Activity log", "desc": "Recent settings and workspace changes" },
-      "errors": { "label": "Error reports", "desc": "Client errors and reports from this workspace" },
-      "developer": { "label": "Developer", "desc": "API keys, webhooks, technical documentation" }
+      "business": {
+        "label": "Business settings",
+        "desc": "Business name, address, website, timezone, industry"
+      },
+      "phone": {
+        "label": "Phone & numbers",
+        "desc": "Buy numbers, forwarding status, caller ID, routing"
+      },
+      "agent": {
+        "label": "AI agent configuration",
+        "desc": "Voice, greeting, behavior, knowledge, languages"
+      },
+      "callRules": {
+        "label": "Call rules",
+        "desc": "Hours, after-hours behavior, emergency, transfer logic"
+      },
+      "team": {
+        "label": "Team & permissions",
+        "desc": "Members, roles, escalation contacts, login access"
+      },
+      "notifications": {
+        "label": "Notifications",
+        "desc": "Alerts for new calls, leads, appointments, missed calls"
+      },
+      "leadScoring": {
+        "label": "Lead scoring",
+        "desc": "Weights for scoring leads from calls and interactions"
+      },
+      "integrations": {
+        "label": "Integrations",
+        "desc": "Calendar, CRM, webhooks, Slack, Zapier"
+      },
+      "billing": {
+        "label": "Billing & plans",
+        "desc": "Current plan, usage, invoices, cancellation"
+      },
+      "compliance": {
+        "label": "Compliance",
+        "desc": "Recording consent, do-not-call, regional rules"
+      },
+      "activity": {
+        "label": "Activity log",
+        "desc": "Recent settings and workspace changes"
+      },
+      "errors": {
+        "label": "Error reports",
+        "desc": "Client errors and reports from this workspace"
+      },
+      "developer": {
+        "label": "Developer",
+        "desc": "API keys, webhooks, technical documentation"
+      }
     },
     "nav": {
       "general": "General",
@@ -3062,6 +3225,9 @@
     "agent.startLiveTest": "Start live test",
     "agent.endLiveTest": "End live test",
     "agent.removeAria": "Remove",
+    "agent.defaultAgentName": "Receptionist",
+    "agent.defaultGreeting": "Thanks for calling {business}. How can I help?",
+    "agent.voicePreviewText": "Thanks for calling. How can I help you today?",
     "agent.defaultBusiness": "your business",
     "agent.defaultWorkspaceName": "My Workspace",
     "compliance.loadFailed": "Failed to load recording consent settings.",
@@ -3176,12 +3342,12 @@
       "cardSubtitle": "Real-time appointment booking — fully automated",
       "callerLabel": "Caller",
       "agentLabel": "AI Agent",
-      "line1": "\u201cHi, I\u2019d like to schedule an appointment for Thursday.\u201d",
-      "line2": "\u201cOf course! I have openings at 10 AM, 2 PM, and 4 PM. Which works best?\u201d",
-      "line3": "\u201c2 PM sounds perfect.\u201d",
-      "line4": "\u201cGreat — Thursday at 2 PM is booked. Can I get your name and number?\u201d",
-      "line5": "\u201cSarah, 555-0142.\u201d",
-      "line6": "\u201cAll set, Sarah! You\u2019ll get a confirmation text shortly.\u201d",
+      "line1": "“Hi, I’d like to schedule an appointment for Thursday.”",
+      "line2": "“Of course! I have openings at 10 AM, 2 PM, and 4 PM. Which works best?”",
+      "line3": "“2 PM sounds perfect.”",
+      "line4": "“Great — Thursday at 2 PM is booked. Can I get your name and number?”",
+      "line5": "“Sarah, 555-0142.”",
+      "line6": "“All set, Sarah! You’ll get a confirmation text shortly.”",
       "cta": "Build yours free →",
       "trialNote": "No credit card · 14-day trial",
       "loading": "Loading…",
@@ -3332,7 +3498,7 @@
     "fillRequired": "Please fill in name, email, and message.",
     "thanksReply": "Thanks! We'll get back to you within 4 hours.",
     "sending": "Sending…",
-    "sendMessage": "Send message →",
+    "sendMessage": "Send a message",
     "responseTime": "Response within 4 hours",
     "salesEnterprise": "Sales & Enterprise",
     "salesEnterpriseDesc": "Talk to the team about Team plans, custom compliance, and volume pricing.",
@@ -3340,7 +3506,6 @@
     "support": "Support",
     "supportDesc": "Need help with your account, technical issues, or billing?",
     "emailSupport": "Email support →",
-    "sendMessage": "Send a message",
     "scheduleCall": "Schedule a call →",
     "startFree": "Start free →",
     "backToHome": "Back to home"
@@ -3427,24 +3592,66 @@
     "liveDemo": {
       "heading": "Hear the difference in 30 seconds",
       "subheading": "See how your AI handles real situations — missed calls, booking, follow-up, after-hours, and screening.",
-      "cardLabels": { "caller": "Caller", "agent": "Your AI", "result": "Result" },
+      "cardLabels": {
+        "caller": "Caller",
+        "agent": "Your AI",
+        "result": "Result"
+      },
       "sampleNote": "Sample conversation — your AI handles this 24/7 for any type of business.",
-      "cta": { "text": "Ready to make this your phone line?", "ariaLabel": "Open interactive call demo", "button": "Start free →" },
+      "cta": {
+        "text": "Ready to make this your phone line?",
+        "ariaLabel": "Open interactive call demo",
+        "button": "Start free →"
+      },
       "useCases": {
-        "missedCall": { "label": "Missed call recovery", "caller": "Hi, I called earlier and nobody answered. I need to schedule a visit.", "agent": "Thanks for calling back. I'll get you on the calendar — what day works best?", "result": "Callback captured · Appointment offered" },
-        "appointment": { "label": "Appointment booking", "caller": "I'd like to book an appointment for next week.", "agent": "Sure. We have Tuesday afternoon or Wednesday morning. Which do you prefer?", "result": "Slot confirmed · Reminder scheduled" },
-        "followUp": { "label": "Lead follow-up", "caller": "I filled out the form on your site. Wanted to know more about pricing.", "agent": "I've got your details. Our team will reach out within an hour. What's the best number?", "result": "Lead qualified · Follow-up queued" },
-        "afterHours": { "label": "After-hours handling", "caller": "It's 8pm — are you open? I have an urgent question.", "agent": "We're closed now, but I can take your name and number and have someone call you first thing tomorrow.", "result": "Message taken · Next-day callback" },
-        "screening": { "label": "Call screening", "caller": "I need to speak with the person in charge of billing.", "agent": "I can help with billing. Can you tell me your account name or number so I get you to the right person?", "result": "Intent captured · Routed to right team" }
+        "missedCall": {
+          "label": "Missed call recovery",
+          "caller": "Hi, I called earlier and nobody answered. I need to schedule a visit.",
+          "agent": "Thanks for calling back. I'll get you on the calendar — what day works best?",
+          "result": "Callback captured · Appointment offered"
+        },
+        "appointment": {
+          "label": "Appointment booking",
+          "caller": "I'd like to book an appointment for next week.",
+          "agent": "Sure. We have Tuesday afternoon or Wednesday morning. Which do you prefer?",
+          "result": "Slot confirmed · Reminder scheduled"
+        },
+        "followUp": {
+          "label": "Lead follow-up",
+          "caller": "I filled out the form on your site. Wanted to know more about pricing.",
+          "agent": "I've got your details. Our team will reach out within an hour. What's the best number?",
+          "result": "Lead qualified · Follow-up queued"
+        },
+        "afterHours": {
+          "label": "After-hours handling",
+          "caller": "It's 8pm — are you open? I have an urgent question.",
+          "agent": "We're closed now, but I can take your name and number and have someone call you first thing tomorrow.",
+          "result": "Message taken · Next-day callback"
+        },
+        "screening": {
+          "label": "Call screening",
+          "caller": "I need to speak with the person in charge of billing.",
+          "agent": "I can help with billing. Can you tell me your account name or number so I get you to the right person?",
+          "result": "Intent captured · Routed to right team"
+        }
       }
     },
     "outcomes": {
       "heading": "What you get from day one",
       "subheading": "Outcomes, not infrastructure. Your AI handles the rest.",
       "cards": {
-        "missedCalls": { "title": "Missed calls recovered", "desc": "Your AI answers 24/7 so every caller gets a real conversation, not voicemail." },
-        "leads": { "title": "Leads captured automatically", "desc": "Name, phone, and what they need — captured and routed in seconds." },
-        "appointments": { "title": "Appointments booked on the spot", "desc": "Integrated with your calendar. No back-and-forth, no no-shows." }
+        "missedCalls": {
+          "title": "Missed calls recovered",
+          "desc": "Your AI answers 24/7 so every caller gets a real conversation, not voicemail."
+        },
+        "leads": {
+          "title": "Leads captured automatically",
+          "desc": "Name, phone, and what they need — captured and routed in seconds."
+        },
+        "appointments": {
+          "title": "Appointments booked on the spot",
+          "desc": "Integrated with your calendar. No back-and-forth, no no-shows."
+        }
       },
       "pricing": {
         "heading": "Simple pricing that matches your revenue",
@@ -3452,52 +3659,139 @@
         "trialNote": "All plans start with a 14-day free trial. No credit card required."
       },
       "pricingTiers": {
-        "starter": { "name": "Starter", "tagline": "For solo operators and small teams getting started.", "f1": "400 inbound min included", "f2": "1 AI phone number", "f3": "Basic call summaries & lead capture", "f4": "Standard support" },
-        "growth": { "name": "Growth", "tagline": "For growing teams that need full coverage.", "f1": "1,500 inbound min included", "f2": "3 AI phone numbers", "f3": "Advanced call intelligence & routing", "f4": "Priority support" },
-        "scale": { "name": "Scale", "tagline": "For multi-location and higher volume teams.", "f1": "5,000 inbound min included", "f2": "10 phone numbers", "f3": "Dedicated success partner", "f4": "Custom reporting & integrations" },
+        "starter": {
+          "name": "Starter",
+          "tagline": "For solo operators and small teams getting started.",
+          "f1": "400 inbound min included",
+          "f2": "1 AI phone number",
+          "f3": "Basic call summaries & lead capture",
+          "f4": "Standard support"
+        },
+        "growth": {
+          "name": "Growth",
+          "tagline": "For growing teams that need full coverage.",
+          "f1": "1,500 inbound min included",
+          "f2": "3 AI phone numbers",
+          "f3": "Advanced call intelligence & routing",
+          "f4": "Priority support"
+        },
+        "scale": {
+          "name": "Scale",
+          "tagline": "For multi-location and higher volume teams.",
+          "f1": "5,000 inbound min included",
+          "f2": "10 phone numbers",
+          "f3": "Dedicated success partner",
+          "f4": "Custom reporting & integrations"
+        },
         "badgePopular": "Most popular"
       },
-      "cta": { "button": "Start free trial →" }
+      "cta": {
+        "button": "Start free trial →"
+      }
     },
     "features": {
       "label": "What it does",
       "heading": "Everything your phone communication needs. Nothing it used to cost.",
       "capabilities": {
-        "answersCalls": { "title": "Answers every call", "desc": "24/7, instantly, in a natural human voice." },
-        "unifiedInbox": { "title": "Unified inbox", "desc": "Calls, texts, and emails in one place. See every conversation with every contact. Reply from one screen." },
-        "outbound": { "title": "Makes outbound calls", "desc": "Follows up, reminds, re-engages." },
-        "campaigns": { "title": "Outbound campaigns", "desc": "Reach hundreds of leads with automated call and text sequences. Follow up until they respond, book, or opt out." },
-        "books": { "title": "Books appointments", "desc": "Checks your calendar, books, confirms." },
-        "captures": { "title": "Captures every lead", "desc": "Qualifies, scores, texts you instantly." },
-        "routing": { "title": "Smart routing", "desc": "Detects urgency, screens callers, routes to the right person or takes a message." },
-        "texting": { "title": "Two-way texting", "desc": "Send and receive texts from your business number. Confirmations, follow-ups, conversations — all automated or manual." },
-        "learns": { "title": "Learns your world", "desc": "Answers questions about your services, hours, policies, pricing — whatever you teach it." },
-        "roi": { "title": "Shows your ROI", "desc": "See how many leads were captured, appointments booked, and revenue recovered." },
-        "neverGivesUp": { "title": "Never gives up", "desc": "Follows up until the lead responds, books, or opts out." }
+        "answersCalls": {
+          "title": "Answers every call",
+          "desc": "24/7, instantly, in a natural human voice."
+        },
+        "unifiedInbox": {
+          "title": "Unified inbox",
+          "desc": "Calls, texts, and emails in one place. See every conversation with every contact. Reply from one screen."
+        },
+        "outbound": {
+          "title": "Makes outbound calls",
+          "desc": "Follows up, reminds, re-engages."
+        },
+        "campaigns": {
+          "title": "Outbound campaigns",
+          "desc": "Reach hundreds of leads with automated call and text sequences. Follow up until they respond, book, or opt out."
+        },
+        "books": {
+          "title": "Books appointments",
+          "desc": "Checks your calendar, books, confirms."
+        },
+        "captures": {
+          "title": "Captures every lead",
+          "desc": "Qualifies, scores, texts you instantly."
+        },
+        "routing": {
+          "title": "Smart routing",
+          "desc": "Detects urgency, screens callers, routes to the right person or takes a message."
+        },
+        "texting": {
+          "title": "Two-way texting",
+          "desc": "Send and receive texts from your business number. Confirmations, follow-ups, conversations — all automated or manual."
+        },
+        "learns": {
+          "title": "Learns your world",
+          "desc": "Answers questions about your services, hours, policies, pricing — whatever you teach it."
+        },
+        "roi": {
+          "title": "Shows your ROI",
+          "desc": "See how many leads were captured, appointments booked, and revenue recovered."
+        },
+        "neverGivesUp": {
+          "title": "Never gives up",
+          "desc": "Follows up until the lead responds, books, or opts out."
+        }
       }
     },
     "useCaseSection": {
       "heading": "One platform. Every call type.",
       "cases": {
-        "inbound": { "title": "Inbound", "desc": "Answer every call. Route, book, qualify, and follow up — automatically." },
-        "outbound": { "title": "Outbound", "desc": "Follow up with leads, confirm appointments, reactivate prospects — at scale." },
-        "intelligence": { "title": "Intelligence", "desc": "Analyze every conversation. Find what works. Make your team better." }
+        "inbound": {
+          "title": "Inbound",
+          "desc": "Answer every call. Route, book, qualify, and follow up — automatically."
+        },
+        "outbound": {
+          "title": "Outbound",
+          "desc": "Follow up with leads, confirm appointments, reactivate prospects — at scale."
+        },
+        "intelligence": {
+          "title": "Intelligence",
+          "desc": "Analyze every conversation. Find what works. Make your team better."
+        }
       },
-      "cta": { "button": "Start free →" }
+      "cta": {
+        "button": "Start free →"
+      }
     },
     "whoUses": {
       "label": "Who uses Recall Touch",
       "heading": "Built for how you communicate",
       "personas": {
-        "solo": { "name": "Solo operators", "desc": "I can't answer the phone while I'm working. Recall Touch answers, books, and follows up so I never miss a lead." },
-        "growing": { "name": "Growing teams", "desc": "We're losing leads because we can't keep up. Every call gets answered and every lead gets captured and followed up." },
-        "agencies": { "name": "Agencies & multi-location", "desc": "I manage multiple locations and need consistency. One platform, one standard, everywhere." },
-        "afterHours": { "name": "After-hours & overflow", "desc": "We need coverage when the office is closed. Calls get answered, messages taken, and we follow up first thing." },
-        "outbound": { "name": "Outbound campaigns", "desc": "We need to follow up with hundreds of leads. Recall Touch reaches out, qualifies, and books — at scale." },
-        "anyone": { "name": "Anyone with a phone", "desc": "I want my calls handled intelligently. Answer, book, follow up, screen — without hiring a front desk." }
+        "solo": {
+          "name": "Solo operators",
+          "desc": "I can't answer the phone while I'm working. Recall Touch answers, books, and follows up so I never miss a lead."
+        },
+        "growing": {
+          "name": "Growing teams",
+          "desc": "We're losing leads because we can't keep up. Every call gets answered and every lead gets captured and followed up."
+        },
+        "agencies": {
+          "name": "Agencies & multi-location",
+          "desc": "I manage multiple locations and need consistency. One platform, one standard, everywhere."
+        },
+        "afterHours": {
+          "name": "After-hours & overflow",
+          "desc": "We need coverage when the office is closed. Calls get answered, messages taken, and we follow up first thing."
+        },
+        "outbound": {
+          "name": "Outbound campaigns",
+          "desc": "We need to follow up with hundreds of leads. Recall Touch reaches out, qualifies, and books — at scale."
+        },
+        "anyone": {
+          "name": "Anyone with a phone",
+          "desc": "I want my calls handled intelligently. Answer, book, follow up, screen — without hiring a front desk."
+        }
       },
       "additionalNote": "Don't see your use case? Recall Touch works for any phone-based workflow.",
-      "cta": { "link": "Get started →" }
+      "cta": {
+        "link": "Get started →"
+      }
     },
     "metrics": {
       "label": "What if?",
@@ -3514,61 +3808,166 @@
       "preamble": "Built for businesses that depend on every call",
       "label": "What customers say",
       "testimonials": {
-        "amanda": { "quote": "We replaced three tools — phone answering, text follow-up, and scheduling — with one platform.", "author": "Amanda K.", "role": "Consulting firm" },
-        "ryan": { "quote": "Our sales team follows up 10x faster now. The AI handles the initial outreach and books qualified meetings.", "author": "Ryan D.", "role": "SaaS startup" },
-        "mike": { "quote": "Recall Touch paid for itself in the first week. We captured 14 leads we would have missed.", "author": "Mike R.", "role": "Plumbing company owner" },
-        "sarah": { "quote": "Our no-show rate dropped 40% since the AI started sending reminders.", "author": "Dr. Sarah L.", "role": "Dental practice" },
-        "james": { "quote": "I was skeptical about AI answering my phones. After one day I was convinced.", "author": "James T.", "role": "Roofing contractor" }
+        "amanda": {
+          "quote": "We replaced three tools — phone answering, text follow-up, and scheduling — with one platform.",
+          "author": "Amanda K.",
+          "role": "Consulting firm"
+        },
+        "ryan": {
+          "quote": "Our sales team follows up 10x faster now. The AI handles the initial outreach and books qualified meetings.",
+          "author": "Ryan D.",
+          "role": "SaaS startup"
+        },
+        "mike": {
+          "quote": "Recall Touch paid for itself in the first week. We captured 14 leads we would have missed.",
+          "author": "Mike R.",
+          "role": "Plumbing company owner"
+        },
+        "sarah": {
+          "quote": "Our no-show rate dropped 40% since the AI started sending reminders.",
+          "author": "Dr. Sarah L.",
+          "role": "Dental practice"
+        },
+        "james": {
+          "quote": "I was skeptical about AI answering my phones. After one day I was convinced.",
+          "author": "James T.",
+          "role": "Roofing contractor"
+        }
       },
       "badge": "Trusted by businesses that never miss a call"
     },
     "pricingPreview": {
       "label": "Pricing",
       "heading": "Plans that pay for themselves.",
-      "toggle": { "monthly": "Monthly", "annual": "Annual", "savings": "Save 17%" },
+      "toggle": {
+        "monthly": "Monthly",
+        "annual": "Annual",
+        "savings": "Save 17%"
+      },
       "badge": "Popular",
-      "tierRoi": { "starter": "Less than one missed call", "growth": "One recovered lead pays for the month", "scale": "Full AI communication team for a fraction of one hire", "enterprise": "Custom ROI and dedicated support" },
+      "tierRoi": {
+        "starter": "Less than one missed call",
+        "growth": "One recovered lead pays for the month",
+        "scale": "Full AI communication team for a fraction of one hire",
+        "enterprise": "Custom ROI and dedicated support"
+      },
       "footerNote": "All plans include: encrypted records · compliance framework · audit trail · 14-day free trial",
-      "cta": { "link": "View full plan comparison →" }
+      "cta": {
+        "link": "View full plan comparison →"
+      }
     },
     "difference": {
       "heading": "What makes us different",
       "subheading": "No voicemail. No missed opportunities. Real conversations, every time.",
       "rows": {
-        "manual": { "label": "Manual answering / voicemail", "i1": "Missed calls = lost leads", "i2": "Voicemail rarely returned", "i3": "After hours = no answer" },
-        "generic": { "label": "Generic voicemail or IVR", "i1": "Callers hang up or leave a message", "i2": "No qualification, no booking", "i3": "You still do the callback work" },
-        "recallTouch": { "label": "Recall Touch", "i1": "Every call answered 24/7", "i2": "Leads captured and qualified in real time", "i3": "Appointments booked while they're on the line" }
+        "manual": {
+          "label": "Manual answering / voicemail",
+          "i1": "Missed calls = lost leads",
+          "i2": "Voicemail rarely returned",
+          "i3": "After hours = no answer"
+        },
+        "generic": {
+          "label": "Generic voicemail or IVR",
+          "i1": "Callers hang up or leave a message",
+          "i2": "No qualification, no booking",
+          "i3": "You still do the callback work"
+        },
+        "recallTouch": {
+          "label": "Recall Touch",
+          "i1": "Every call answered 24/7",
+          "i2": "Leads captured and qualified in real time",
+          "i3": "Appointments booked while they're on the line"
+        }
       }
     },
-    "enterpriseComparison": { "text": "Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch starts at $297/month and takes 5 minutes." },
+    "enterpriseComparison": {
+      "text": "Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch starts at $297/month and takes 5 minutes."
+    },
     "finalCta": {
       "heading": "Your AI phone team starts in 5 minutes",
       "subheading": "No credit card. Set up in 5 minutes. Answer every call.",
-      "buttons": { "start": "Start free →", "demo": "Book a demo →" },
+      "buttons": {
+        "start": "Start free →",
+        "demo": "Book a demo →"
+      },
       "note": "Works for calls, texts, scheduling, follow-ups, and campaigns. One platform.",
-      "links": { "docs": "View documentation" }
+      "links": {
+        "docs": "View documentation"
+      }
     },
-    "scrollCta": { "message": "Your next customer could be calling. Ready?", "button": "Start free →", "dismiss": "Dismiss" },
-    "trust": { "text": "Trusted by operators who can't afford to miss decisive calls." },
+    "scrollCta": {
+      "message": "Your next customer could be calling. Ready?",
+      "button": "Start free →",
+      "dismiss": "Dismiss"
+    },
+    "trust": {
+      "text": "Trusted by operators who can't afford to miss decisive calls."
+    },
     "industries": {
       "label": "Industries",
       "heading": "See how it works across industries",
       "subheading": "Recall Touch adapts to any business that takes phone calls. Here are a few examples.",
       "industries": {
-        "plumbing": { "name": "Plumbing & HVAC", "desc": "Answer every service call. Emergency dispatch, scheduling, and quote capture." },
-        "healthcare": { "name": "Healthcare", "desc": "Schedule patients. Handle intake. HIPAA-compliant. Prescription refill routing." },
-        "legal": { "name": "Legal", "desc": "Professional intake. 24/7 availability. Every call documented." },
-        "realEstate": { "name": "Real Estate", "desc": "Qualify buyers instantly. Schedule showings. Never lose a listing lead." },
-        "dental": { "name": "Dental", "desc": "Book patients. Insurance verification. Recall reminders." },
-        "custom": { "name": "Your industry", "desc": "Don't see your business? Recall Touch works for any company that answers a phone." }
+        "plumbing": {
+          "name": "Plumbing & HVAC",
+          "desc": "Answer every service call. Emergency dispatch, scheduling, and quote capture."
+        },
+        "healthcare": {
+          "name": "Healthcare",
+          "desc": "Schedule patients. Handle intake. HIPAA-compliant. Prescription refill routing."
+        },
+        "legal": {
+          "name": "Legal",
+          "desc": "Professional intake. 24/7 availability. Every call documented."
+        },
+        "realEstate": {
+          "name": "Real Estate",
+          "desc": "Qualify buyers instantly. Schedule showings. Never lose a listing lead."
+        },
+        "dental": {
+          "name": "Dental",
+          "desc": "Book patients. Insurance verification. Recall reminders."
+        },
+        "custom": {
+          "name": "Your industry",
+          "desc": "Don't see your business? Recall Touch works for any company that answers a phone."
+        }
       }
     },
     "bentoVisuals": {
-      "timelineLabels": { "call": "Call", "followUp": "Follow-up", "confirm": "Confirm", "close": "Close" },
-      "complianceRecord": { "governedRecord": "Governed record", "jurisdiction": "Jurisdiction", "verified": "Verified", "reviewDepth": "Review depth", "standard": "Standard", "duration": "Duration", "status": "Status", "compliant": "Compliant", "chain": "Chain", "chainValue": "3 verified events" },
-      "audit": { "line1": "Recorded under declared jurisdiction", "line2": "Forwarded without modification", "line3": "Audit trail complete" },
-      "escalation": { "agent": "Agent", "manager": "Manager", "director": "Director" },
-      "channels": { "voice": "Voice", "message": "Message", "payment": "Payment" },
+      "timelineLabels": {
+        "call": "Call",
+        "followUp": "Follow-up",
+        "confirm": "Confirm",
+        "close": "Close"
+      },
+      "complianceRecord": {
+        "governedRecord": "Governed record",
+        "jurisdiction": "Jurisdiction",
+        "verified": "Verified",
+        "reviewDepth": "Review depth",
+        "standard": "Standard",
+        "duration": "Duration",
+        "status": "Status",
+        "compliant": "Compliant",
+        "chain": "Chain",
+        "chainValue": "3 verified events"
+      },
+      "audit": {
+        "line1": "Recorded under declared jurisdiction",
+        "line2": "Forwarded without modification",
+        "line3": "Audit trail complete"
+      },
+      "escalation": {
+        "agent": "Agent",
+        "manager": "Manager",
+        "director": "Director"
+      },
+      "channels": {
+        "voice": "Voice",
+        "message": "Message",
+        "payment": "Payment"
+      },
       "channelNote": "Single governance layer"
     },
     "activityPreview": {
@@ -3581,13 +3980,47 @@
     },
     "activityFeed": {
       "dateLabel": "Today",
-      "chips": { "all": "All", "needsAction": "Needs action", "leads": "Leads" },
+      "chips": {
+        "all": "All",
+        "needsAction": "Needs action",
+        "leads": "Leads"
+      },
       "feedCards": {
-        "lead": { "label": "NEW LEAD", "time": "10:32 AM", "name": "Sarah Mitchell", "meta": "Kitchen remodel quote", "detail": "Budget: $15–20K · Lead score: 85" },
-        "appointment": { "label": "APPOINTMENT BOOKED", "time": "9:47 AM", "name": "James Cooper", "meta": "AC maintenance — Tue Mar 3, 2:00 PM", "detail": "Confirmation text sent ✓" },
-        "emergency": { "label": "URGENT", "time": "9:15 AM", "name": "Maria Santos", "meta": "Water heater leaking", "detail": "You were alerted via text + call" },
-        "outbound": { "label": "FOLLOW-UP CALL", "time": "8:30 AM", "name": "AI called David Kim", "meta": "Appointment reminder", "detail": "Confirmed for tomorrow ✓" },
-        "info": { "label": "HANDLED", "time": "7:45 AM", "name": "Mike Johnson", "meta": "Asked about business hours", "detail": "AI answered: Mon–Fri 8am–6pm" }
+        "lead": {
+          "label": "NEW LEAD",
+          "time": "10:32 AM",
+          "name": "Sarah Mitchell",
+          "meta": "Kitchen remodel quote",
+          "detail": "Budget: $15–20K · Lead score: 85"
+        },
+        "appointment": {
+          "label": "APPOINTMENT BOOKED",
+          "time": "9:47 AM",
+          "name": "James Cooper",
+          "meta": "AC maintenance — Tue Mar 3, 2:00 PM",
+          "detail": "Confirmation text sent ✓"
+        },
+        "emergency": {
+          "label": "URGENT",
+          "time": "9:15 AM",
+          "name": "Maria Santos",
+          "meta": "Water heater leaking",
+          "detail": "You were alerted via text + call"
+        },
+        "outbound": {
+          "label": "FOLLOW-UP CALL",
+          "time": "8:30 AM",
+          "name": "AI called David Kim",
+          "meta": "Appointment reminder",
+          "detail": "Confirmed for tomorrow ✓"
+        },
+        "info": {
+          "label": "HANDLED",
+          "time": "7:45 AM",
+          "name": "Mike Johnson",
+          "meta": "Asked about business hours",
+          "detail": "AI answered: Mon–Fri 8am–6pm"
+        }
       }
     },
     "mockDashboard": {
@@ -3607,11 +4040,22 @@
       "label": "Built for",
       "heading": "From solo operators to regulated enterprises.",
       "cases": {
-        "inbound": { "title": "Inbound operations", "desc": "Teams handling inbound enquiries where every response must be consistent, documented, and legally defensible." },
-        "outbound": { "title": "Outbound sales", "desc": "Revenue teams making outbound calls where pricing commitments, verbal agreements, and follow-ups need a compliance trail." },
-        "regulated": { "title": "Regulated industries", "desc": "Organizations in financial services, insurance, healthcare, or legal where call documentation isn't optional — it's a regulatory requirement." }
+        "inbound": {
+          "title": "Inbound operations",
+          "desc": "Teams handling inbound enquiries where every response must be consistent, documented, and legally defensible."
+        },
+        "outbound": {
+          "title": "Outbound sales",
+          "desc": "Revenue teams making outbound calls where pricing commitments, verbal agreements, and follow-ups need a compliance trail."
+        },
+        "regulated": {
+          "title": "Regulated industries",
+          "desc": "Organizations in financial services, insurance, healthcare, or legal where call documentation isn't optional — it's a regulatory requirement."
+        }
       },
-      "cta": { "link": "Learn more →" }
+      "cta": {
+        "link": "Learn more →"
+      }
     }
   },
   "footer": {
@@ -3779,12 +4223,42 @@
     },
     "stepsAria": "Onboarding steps",
     "templates": {
-      "receptionist": { "name": "Receptionist", "description": "Answers calls, takes messages, and routes callers cleanly.", "agentName": "Sarah", "greeting": "Thanks for calling. I can help with questions, messages, and getting you to the right next step." },
-      "appointment_scheduler": { "name": "Appointment Scheduler", "description": "Books, confirms, and reminds without back-and-forth.", "agentName": "Emma", "greeting": "Thanks for calling. I can help you find a time, confirm the details, and book it now." },
-      "lead_qualifier": { "name": "Lead Qualifier", "description": "Captures key details and routes the hottest opportunities first.", "agentName": "Alex", "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step." },
-      "after_hours": { "name": "After-Hours Agent", "description": "Handles closed-office calls gracefully and flags urgency.", "agentName": "Sarah", "greeting": "You've reached us after hours. I can take your details now and make sure the right follow-up happens next." },
-      "follow_up": { "name": "Follow-Up Agent", "description": "Re-engages callers and leads so nothing gets dropped.", "agentName": "Alex", "greeting": "Hi, I'm following up so nothing slips through. I can confirm your status and help with the next step." },
-      "custom": { "name": "Custom", "description": "Start from scratch and shape the tone yourself.", "agentName": "Sarah", "greeting": "Thanks for calling. How can I help you today?" }
+      "receptionist": {
+        "name": "Receptionist",
+        "description": "Answers calls, takes messages, and routes callers cleanly.",
+        "agentName": "Sarah",
+        "greeting": "Thanks for calling. I can help with questions, messages, and getting you to the right next step."
+      },
+      "appointment_scheduler": {
+        "name": "Appointment Scheduler",
+        "description": "Books, confirms, and reminds without back-and-forth.",
+        "agentName": "Emma",
+        "greeting": "Thanks for calling. I can help you find a time, confirm the details, and book it now."
+      },
+      "lead_qualifier": {
+        "name": "Lead Qualifier",
+        "description": "Captures key details and routes the hottest opportunities first.",
+        "agentName": "Alex",
+        "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step."
+      },
+      "after_hours": {
+        "name": "After-Hours Agent",
+        "description": "Handles closed-office calls gracefully and flags urgency.",
+        "agentName": "Sarah",
+        "greeting": "You've reached us after hours. I can take your details now and make sure the right follow-up happens next."
+      },
+      "follow_up": {
+        "name": "Follow-Up Agent",
+        "description": "Re-engages callers and leads so nothing gets dropped.",
+        "agentName": "Alex",
+        "greeting": "Hi, I'm following up so nothing slips through. I can confirm your status and help with the next step."
+      },
+      "custom": {
+        "name": "Custom",
+        "description": "Start from scratch and shape the tone yourself.",
+        "agentName": "Sarah",
+        "greeting": "Thanks for calling. How can I help you today?"
+      }
     },
     "welcomeHeading": "Welcome to Recall Touch!",
     "welcomeSubtitle": "Let's get your AI phone system running in 2 minutes.",
@@ -3811,7 +4285,7 @@
     "businessInfoLabel": "Business info",
     "hoursLabel": "Hours",
     "hoursPlaceholder": "e.g. Monday–Friday 9 AM–5 PM",
-    "servicesLabel": "Services",
+    "servicesLabel": "What services do you offer?",
     "removeAria": "Remove {item}",
     "starterEntriesCta": "We've prepared starter entries based on what you selected. You can edit them or add your own.",
     "addThemNow": "Add them now",
@@ -3832,7 +4306,15 @@
     "businessNamePlaceholderShort": "Acme Plumbing",
     "phonePlaceholderShort": "(555) 123-4567",
     "businessTypeLabel": "What type of business?",
-    "industries": { "home_services": "Home Services", "healthcare": "Healthcare", "legal": "Legal", "real_estate": "Real Estate", "retail": "Retail / Service", "b2b": "B2B / Sales", "other": "Other" },
+    "industries": {
+      "home_services": "Home Services",
+      "healthcare": "Healthcare",
+      "legal": "Legal",
+      "real_estate": "Real Estate",
+      "retail": "Retail / Service",
+      "b2b": "B2B / Sales",
+      "other": "Other"
+    },
     "errorNameRequired": "Your name and business name are required.",
     "errorSomethingWentWrong": "Something went wrong",
     "creating": "Creating…",
@@ -3842,10 +4324,16 @@
     "greetingLabelOptional": "Greeting (optional)",
     "greetingPlaceholderDynamic": "Thanks for calling {business}! This is {agent}. How can I help?",
     "yourAgentCan": "Your agent can",
-    "capabilities": { "answer_questions": "Answer questions about your services", "book_appointments": "Book appointments", "capture_leads": "Capture leads and send you alerts", "handle_emergencies": "Handle emergencies (alert you immediately)", "send_texts": "Send confirmation texts to callers", "block_spam": "Block spam calls" },
+    "capabilities": {
+      "answer_questions": "Answer questions about your services",
+      "book_appointments": "Book appointments",
+      "capture_leads": "Capture leads and send you alerts",
+      "handle_emergencies": "Handle emergencies (alert you immediately)",
+      "send_texts": "Send confirmation texts to callers",
+      "block_spam": "Block spam calls"
+    },
     "step3Heading": "Quick — tell your AI about your business.",
     "step3Subtitle": "What services, hours, and common questions?",
-    "servicesLabel": "What services do you offer?",
     "servicesPlaceholder": "e.g. Drain cleaning, water heater repair, leak detection…",
     "websiteHintShort": "Or paste your website URL and we'll figure it out.",
     "urlPlaceholder": "https://...",
@@ -3879,11 +4367,31 @@
     "scenarioSimulatorLabel": "Scenario simulator",
     "scenarioSimulatorHint": "When you're on the test call, try saying one of these to see how your AI responds.",
     "scenarios": {
-      "normal": { "title": "Normal call", "description": "Standard inquiry", "phrase": "Hi, I need some information about your services." },
-      "angry": { "title": "Angry caller", "description": "Tests empathy and transfer", "phrase": "I've been waiting for a callback for days. I'm really frustrated." },
-      "booking": { "title": "Booking request", "description": "Tests appointment flow", "phrase": "I'd like to schedule an appointment for this week." },
-      "afterhours": { "title": "After hours", "description": "Tests closed behavior", "phrase": "Are you open right now? What are your hours?" },
-      "unknown": { "title": "Unknown question", "description": "Tests fallback", "phrase": "Do you offer XYZ service? I didn't see it on your website." }
+      "normal": {
+        "title": "Normal call",
+        "description": "Standard inquiry",
+        "phrase": "Hi, I need some information about your services."
+      },
+      "angry": {
+        "title": "Angry caller",
+        "description": "Tests empathy and transfer",
+        "phrase": "I've been waiting for a callback for days. I'm really frustrated."
+      },
+      "booking": {
+        "title": "Booking request",
+        "description": "Tests appointment flow",
+        "phrase": "I'd like to schedule an appointment for this week."
+      },
+      "afterhours": {
+        "title": "After hours",
+        "description": "Tests closed behavior",
+        "phrase": "Are you open right now? What are your hours?"
+      },
+      "unknown": {
+        "title": "Unknown question",
+        "description": "Tests fallback",
+        "phrase": "Do you offer XYZ service? I didn't see it on your website."
+      }
     },
     "readyHeading": "You're ready.",
     "readinessChecklistLabel": "Readiness checklist",
@@ -3911,7 +4419,6 @@
     },
     "addServicePlaceholder": "Add a service",
     "add": "Add",
-    "creating": "Creating…",
     "continue": "Continue →",
     "saving": "Saving…",
     "cta": {
@@ -3926,6 +4433,9 @@
     }
   },
   "errors": {
+    "heading": "Something went wrong",
+    "defaultMessage": "An unexpected error occurred.",
+    "tryAgain": "Try again",
     "generic": {
       "title": "Something went wrong",
       "body": "We couldn’t complete that request. Please try again or refresh the page."
@@ -4016,6 +4526,25 @@
     "completeSetupLink": "Complete AI setup (5 steps) →",
     "decisionCompletionHint": "Decision completion continues here so they complete actions and show up.",
     "testInstructions": "Text \"{number}\" from the number used for this workspace with: \"Hi, I'm interested\"\n\nThen return here to see it handled."
+  },
+  "coverage": {
+    "active": "Coverage: Phone continuity active",
+    "addNumberPrompt": "Add your number to maintain conversations from personal phone threads.",
+    "addNumber": "Add number",
+    "dismiss": "Dismiss"
+  },
+  "industry": {
+    "heroSubtitle": "This is one example of how Recall Touch works. It adapts to any business.",
+    "solutionsLabel": "Solutions",
+    "heroTitle": "{industry} AI Phone Agent",
+    "heroTagline": "Never miss a {customerType} again.",
+    "problemLabel": "The problem",
+    "howItWorks": "How it works",
+    "stepsHeading": "Three steps to an AI agent that answers every call.",
+    "capabilitiesLabel": "Key capabilities",
+    "roiLabel": "ROI",
+    "ctaStartFree": "Start free →",
+    "ctaPricing": "See pricing →"
   },
   "compliance": {
     "title": "Compliance",
@@ -4174,9 +4703,18 @@
       "messageInputLabel": "Message input",
       "sendMessageLabel": "Send message",
       "agents": {
-        "professional": { "name": "Professional", "greeting": "Hello. Thanks for calling. How can I help you today?" },
-        "friendly": { "name": "Friendly", "greeting": "Hi there! Thanks for reaching out. What can I do for you?" },
-        "concise": { "name": "Concise", "greeting": "Hi. How can I help?" }
+        "professional": {
+          "name": "Professional",
+          "greeting": "Hello. Thanks for calling. How can I help you today?"
+        },
+        "friendly": {
+          "name": "Friendly",
+          "greeting": "Hi there! Thanks for reaching out. What can I do for you?"
+        },
+        "concise": {
+          "name": "Concise",
+          "greeting": "Hi. How can I help?"
+        }
       }
     },
     "noMessagesYet": "No messages yet",
@@ -4248,7 +4786,11 @@
     "saveKeyWarning": "Save this key — you won't see it again.",
     "copyKeyButton": "Copy key",
     "savedConfirm": "I've saved it",
-    "tabs": { "apiKeys": "API Keys", "webhooks": "Webhooks", "eventLog": "Event Log" },
+    "tabs": {
+      "apiKeys": "API Keys",
+      "webhooks": "Webhooks",
+      "eventLog": "Event Log"
+    },
     "success": "Success",
     "failed": "Failed",
     "apiCall": "API Call",
@@ -4667,13 +5209,14 @@
     "tryAgain": "Try again",
     "bySigningUp": "By signing up you agree to our",
     "terms": "Terms",
-    "and": "and",
     "privacyPolicy": "Privacy Policy",
     "cancelError": "No problem — protection didn't start.",
     "wizardHeading": "Activation",
     "wizardTitle": "Let's get your phone agent ready.",
     "wizardSubtitle": "This takes about 3 minutes. You'll hear your agent handle a real call at the end.",
     "defaultGreeting": "Hi, thanks for calling. How can I help you today?",
+    "defaultAgentName": "Agent",
+    "greetingTemplate": "Hi, thanks for calling {business}. How can I help you today?",
     "greetingWithBusiness": "Hi, thanks for calling {business}. How can I help you today?",
     "yourBusiness": "your business",
     "customize": {
@@ -4823,12 +5366,30 @@
       "faq": "FAQ"
     },
     "cards": {
-      "gettingStarted": { "title": "Getting Started", "desc": "Set up your AI phone system in minutes." },
-      "apiReference": { "title": "API Reference", "desc": "Integrate Recall Touch into your existing systems." },
-      "compliance": { "title": "Compliance Framework", "desc": "Configure recording consent, retention, and regional rules." },
-      "integrations": { "title": "Integrations", "desc": "Connect Recall Touch with your existing sales and communication tools." },
-      "faq": { "title": "FAQ", "desc": "Common questions about setup, calls, and billing." },
-      "support": { "title": "Contact Support", "desc": "Talk to our team for technical or compliance questions." },
+      "gettingStarted": {
+        "title": "Getting Started",
+        "desc": "Set up your AI phone system in minutes."
+      },
+      "apiReference": {
+        "title": "API Reference",
+        "desc": "Integrate Recall Touch into your existing systems."
+      },
+      "compliance": {
+        "title": "Compliance Framework",
+        "desc": "Configure recording consent, retention, and regional rules."
+      },
+      "integrations": {
+        "title": "Integrations",
+        "desc": "Connect Recall Touch with your existing sales and communication tools."
+      },
+      "faq": {
+        "title": "FAQ",
+        "desc": "Common questions about setup, calls, and billing."
+      },
+      "support": {
+        "title": "Contact Support",
+        "desc": "Talk to our team for technical or compliance questions."
+      },
       "viewLink": "View →",
       "contactForAccess": "Contact for access"
     },
@@ -4848,15 +5409,69 @@
         "step5": "Use the Test tab on the Agents page to place a real call and confirm everything works.",
         "cta": "Start free →"
       },
-      "callForwarding": { "title": "Call Forwarding", "description": "Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7.", "carrierSteps": "Carrier-specific steps" },
-      "aiAgents": { "title": "AI Agents", "description": "Configure your AI agent name, voice, greeting, and capabilities. Teach it your services, hours, and how to handle appointments. No coding required." },
-      "campaigns": { "title": "Campaigns", "description": "Run outbound follow-up, reminders, and recovery flows. Create campaigns from the dashboard, set audiences and scripts, and track outcomes." },
-      "integrations": { "title": "Integrations", "description": "Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Scale and Enterprise plans." },
-      "billing": { "title": "Billing", "description": "Plans are billed monthly or annually. Annual billing includes two months free. You can change or cancel from Settings → Billing. Invoices are available in the dashboard.", "cta": "View pricing →" },
-      "api": { "title": "API Reference", "description": "REST API for integrating Recall Touch. All endpoints require a valid session (cookie) or Bearer token. Base URL: https://your-domain.com.", "contactCta": "Contact for full API access →" },
-      "sdk": { "title": "SDK Examples", "description": "Common operations in curl, JavaScript, and Python." },
-      "changelog": { "title": "Changelog", "description": "Recent platform updates." },
-      "faq": { "title": "FAQ", "description": "Common questions about setup, call forwarding, agents, and billing are answered on the pricing page.", "cta": "View FAQ →" }
+      "callForwarding": {
+        "title": "Call Forwarding",
+        "description": "Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7.",
+        "carrierSteps": "Carrier-specific steps",
+        "att": "Dial *21*[your RT number]# then call. To cancel: #21#",
+        "verizon": "Dial *72 then your Recall Touch number. To cancel: *73",
+        "tmobile": "Dial **21*[RT number]#. To cancel: ##21#",
+        "comcast": "Voice → Call Forwarding → enter your Recall Touch number.",
+        "googleVoice": "Settings → Calls → forward to your RT number."
+      },
+      "aiAgents": {
+        "title": "AI Agents",
+        "description": "Configure your AI agent name, voice, greeting, and capabilities. Teach it your services, hours, and how to handle appointments. No coding required."
+      },
+      "campaigns": {
+        "title": "Campaigns",
+        "description": "Run outbound follow-up, reminders, and recovery flows. Create campaigns from the dashboard, set audiences and scripts, and track outcomes."
+      },
+      "integrations": {
+        "title": "Integrations",
+        "description": "Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Scale and Enterprise plans.",
+        "zapierHeading": "Zapier & Make",
+        "zapierDesc": "Use OAuth to connect your Recall Touch workspace, then poll triggers or invoke actions.",
+        "authorizeLabel": "Authorize",
+        "tokenLabel": "Token",
+        "triggersHeading": "Triggers (GET, Bearer token)",
+        "actionsHeading": "Actions (POST, Bearer token)"
+      },
+      "billing": {
+        "title": "Billing",
+        "description": "Plans are billed monthly or annually. Annual billing includes two months free. You can change or cancel from Settings → Billing. Invoices are available in the dashboard.",
+        "cta": "View pricing →"
+      },
+      "api": {
+        "title": "API Reference",
+        "description": "REST API for integrating Recall Touch. All endpoints require a valid session (cookie) or Bearer token. Base URL: https://your-domain.com.",
+        "contactCta": "Contact for full API access →",
+        "workspaceMeDesc": "Returns current workspace and user. Auth: required (session or Bearer).",
+        "leadsListDesc": "List leads for the workspace. Auth: required. Query: limit, offset, state.",
+        "leadsCreateDesc": "Create a lead. Auth: required. Body: name, phone, email?, company?.",
+        "exampleCurl": "Example: curl",
+        "requestBody": "Request body"
+      },
+      "sdk": {
+        "title": "SDK Examples",
+        "description": "Common operations in curl, JavaScript, and Python.",
+        "createLeadHeading": "Create a lead",
+        "curlTitle": "curl",
+        "jsTitle": "JavaScript (fetch)",
+        "pythonTitle": "Python (requests)"
+      },
+      "changelog": {
+        "title": "Changelog",
+        "description": "Recent platform updates.",
+        "entry202503": "Campaign sequences (Call, SMS, Email, Wait), lead scoring, notification center, onboarding checklist, error reporting, SEO and accessibility improvements.",
+        "entry202502": "Vapi voice agents, Twilio phone provisioning, activity and inbox views, settings hub.",
+        "entry202501": "Initial launch: workspace setup, sign-in, pricing, demo simulator."
+      },
+      "faq": {
+        "title": "FAQ",
+        "description": "Common questions about setup, call forwarding, agents, and billing are answered on the pricing page.",
+        "cta": "View FAQ →"
+      }
     },
     "quickStart": {
       "title": "Quick start",
@@ -4888,34 +5503,6 @@
       "yes": "Yes",
       "no": "No",
       "thankYou": "Thanks for the feedback."
-    }
-  },
-  "footer": {
-    "tagline": "AI phone and text communication for businesses that depend on every call.",
-    "product": "Product",
-    "features": "Features",
-    "pricing": "Pricing",
-    "demo": "Demo",
-    "docs": "Docs",
-    "company": "Company",
-    "emailUs": "Email us",
-    "blog": "Blog",
-    "contact": "Contact",
-    "legalSecurity": "Legal & Security",
-    "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms of Service",
-    "securityBadges": "SOC 2 · GDPR · 256-bit encryption · 99.9% uptime",
-    "copyright": "© {year} Recall Touch. All rights reserved.",
-    "cta": {
-      "bookDemo": "Book a demo",
-      "contact": "Contact"
-    },
-    "links": {
-      "product": "Product",
-      "pricing": "Pricing",
-      "docs": "Docs",
-      "terms": "Terms",
-      "privacy": "Privacy"
     }
   },
   "timezone": {
@@ -5361,7 +5948,6 @@
     "onboardingSteps": "Onboarding steps",
     "quickSearch": "Quick search",
     "closeShortcutsHelp": "Close shortcuts help",
-    "closeMoreMenu": "Close more menu",
     "morePages": "More pages"
   }
 }
