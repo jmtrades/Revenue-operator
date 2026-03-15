@@ -77,7 +77,7 @@ export default function AppSettingsAgentPage() {
         const nextConfig = {
           businessName: data.businessName ?? "",
           greeting: data.greeting ?? "",
-          agentName: data.agentName ?? "Receptionist",
+          agentName: data.agentName ?? tSettings("agent.defaultAgentName"),
           preferredLanguage: data.preferredLanguage ?? "en",
           elevenlabsVoiceId: data.elevenlabsVoiceId || DEFAULT_VOICE_ID,
           knowledgeItems: Array.isArray(data.knowledgeItems) ? data.knowledgeItems : [],
