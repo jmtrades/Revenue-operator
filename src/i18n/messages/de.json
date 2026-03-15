@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Recall Touch — KI-Telefonanrufe",
-    "dashboardTitle": "Dashboard",
+    "dashboardTitle": "Übersicht",
     "dashboardDescription": "Recall Touch — Aktivität, Anrufe, Leads und Einstellungen.",
     "defaultWorkspaceName": "Mein Arbeitsbereich",
     "onboardingChecklist": {
@@ -64,7 +64,7 @@
     "pricing": "Preise",
     "demo": "Demo",
     "docs": "Dokumentation",
-    "dashboard": "Dashboard",
+    "dashboard": "Übersicht",
     "dashboardCta": "Dashboard →",
     "signIn": "Anmelden",
     "startFree": "Kostenlos starten",
@@ -78,7 +78,7 @@
     "allUseCases": "Alle Anwendungsfälle →"
   },
   "nav": {
-    "dashboard": "Dashboard",
+    "dashboard": "Übersicht",
     "agents": "Agenten",
     "calls": "Anrufe",
     "leads": "Interessenten",
@@ -315,7 +315,7 @@
     "activity": {
       "selectWorkspace": "Wählen Sie einen Arbeitsbereich, um Aktivität zu sehen.",
       "title": "Aktivität",
-      "liveBadge": "Live",
+      "liveBadge": "Aktiv",
       "statCalls7d": "Anrufe (7 T.)",
       "statAnswered": "angenommen",
       "statNewLeads": "neue Leads",
@@ -355,7 +355,7 @@
       "requiresAttention": "Erfordert Aufmerksamkeit",
       "callFailed": "Anruf fehlgeschlagen"
     },
-    "pageTitle": "Dashboard — Recall Touch",
+    "pageTitle": "Übersicht — Recall Touch",
     "importContacts": "Kontakte importieren",
     "addLead": "Lead hinzufügen",
     "loadError": {
@@ -1300,7 +1300,7 @@
     "testCallDesc": "Nutzen Sie den Test-Tab unter Agenten für einen echten Anruf mit Ihrem Agenten.",
     "tryTestCall": "Testanruf versuchen",
     "activityTimeline": "Aktivitätsverlauf",
-    "live": "Live",
+    "live": "Aktiv",
     "badgeLead": "Interessent",
     "badgeAppointment": "Termin",
     "badgeUrgent": "Dringend",
@@ -1447,7 +1447,7 @@
       "goliveDescription": "Mit deinem Telefon verbinden"
     },
     "status": {
-      "live": "Live",
+      "live": "Aktiv",
       "ready": "Bereit",
       "calls": "Anrufe",
       "active": "Aktiv",
@@ -2158,7 +2158,7 @@
     "title": "Anrufe",
     "heading": "Anruflog",
     "description": "Jeder beantwortete Anruf, jede Entscheidung und Nachverfolgung an einem Ort.",
-    "liveLabel": "Live",
+    "liveLabel": "Aktiv",
     "exportCsv": "CSV exportieren",
     "searchPlaceholder": "Nach Anrufer oder Telefon suchen…",
     "filterOutcome": "Nach Ergebnis filtern",
@@ -2271,7 +2271,7 @@
     "live": {
       "selectWorkspace": "Wähle einen Arbeitsbereich, um Live-Anrufe zu sehen.",
       "breadcrumbCalls": "Anrufe",
-      "breadcrumbLive": "Live",
+      "breadcrumbLive": "Aktiv",
       "pageTitle": "Live-Anruf-Monitoring",
       "pageSubtitle": "Aktive Anrufe in deinem Arbeitsbereich. Aktualisierung alle 5 Sekunden.",
       "inProgress": "In Bearbeitung",
@@ -2800,7 +2800,7 @@
     "deleteAccount": "Konto löschen",
     "signingOut": "Abmeldung…",
     "signOut": "Abmelden",
-    "backToDashboard": "← Dashboard",
+    "backToDashboard": "← Übersicht",
     "deleteAllDataTitle": "Alle Daten löschen",
     "deleteAllDataMessage": "Alle Arbeitsbereichsdaten löschen (Anrufe, Leads, Agenten)? Unwiderruflich. Support kontaktieren.",
     "deleteAllDataConfirmLabel": "Alle Daten löschen",
@@ -3467,7 +3467,7 @@
       },
       "pricingTiers": {
         "starter": {
-          "name": "Starter",
+          "name": "Einstieg",
           "tagline": "Für Solo und kleine Teams zum Einstieg.",
           "f1": "400 Inbound-Min. inkl.",
           "f2": "1 KI-Nummer",
@@ -3483,7 +3483,7 @@
           "f4": "Prioritäts-Support"
         },
         "scale": {
-          "name": "Scale",
+          "name": "Skalierung",
           "tagline": "Für Multi-Standort und höheres Volumen.",
           "f1": "5.000 Inbound-Min. inkl.",
           "f2": "10 Nummern",
@@ -3908,7 +3908,7 @@
     },
     "tier": {
       "starter": {
-        "name": "Starter",
+        "name": "Einstieg",
         "description": "Für Einzelunternehmer, die möchten, dass KI jeden Anruf beantwortet.",
         "f1": "400 Inbound-Min. inkl.",
         "f2": "50 Outbound-Anrufe",
@@ -3930,7 +3930,7 @@
         "f8": "Mehrverbrauch: 0,18 €/Min."
       },
       "scale": {
-        "name": "Scale",
+        "name": "Skalierung",
         "description": "Für Teams, die auf planbare Umsätze und komplexe Pipelines angewiesen sind.",
         "f1": "5.000 Inbound-Min. inkl.",
         "f2": "2.000 Outbound-Anrufe",
@@ -4863,7 +4863,7 @@
     "empty": "Keine Treffer. Versuche eine andere Suche.",
     "shortcuts": "Tastenkürzel",
     "page": {
-      "dashboard": "Dashboard",
+      "dashboard": "Übersicht",
       "agents": "Agenten",
       "calls": "Anrufe",
       "leads": "Interessenten",

@@ -205,7 +205,7 @@
   "Dashboard": {
     "es": "Panel",
     "fr": "Tableau de bord",
-    "de": "Dashboard",
+    "de": "Übersicht",
     "pt": "Painel",
     "ja": "ダッシュボード"
   },
@@ -443,7 +443,7 @@
   "Live": {
     "es": "En vivo",
     "fr": "En direct",
-    "de": "Live",
+    "de": "Aktiv",
     "pt": "Ao vivo",
     "ja": "ライブ"
   },
@@ -989,14 +989,14 @@
   "Starter": {
     "es": "Inicio",
     "fr": "Starter",
-    "de": "Starter",
+    "de": "Einstieg",
     "pt": "Início",
     "ja": "スターター"
   },
   "Scale": {
     "es": "Escala",
     "fr": "Scale",
-    "de": "Scale",
+    "de": "Skalierung",
     "pt": "Escala",
     "ja": "スケール"
   },
@@ -2347,7 +2347,7 @@
   "← Dashboard": {
     "es": "← Panel",
     "fr": "← Tableau de bord",
-    "de": "← Dashboard",
+    "de": "← Übersicht",
     "pt": "← Painel",
     "ja": "← ダッシュボード"
   },
@@ -2567,5 +2567,12 @@
     "de": "kollege@firma.com",
     "pt": "colega@empresa.com",
     "ja": "colleague@company.com"
+  },
+  "Dashboard — Recall Touch": {
+    "es": "Panel — Recall Touch",
+    "fr": "Tableau de bord — Recall Touch",
+    "de": "Übersicht — Recall Touch",
+    "pt": "Painel — Recall Touch",
+    "ja": "ダッシュボード — Recall Touch"
   }
 }
