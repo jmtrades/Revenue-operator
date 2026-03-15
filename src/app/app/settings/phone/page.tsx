@@ -752,12 +752,12 @@ export default function AppSettingsPhonePage() {
                           placeholder={tPhone("areaCodePlaceholderAlt")}
                           className="w-24 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white"
                         />
-                        <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm">Try again</button>
+                        <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm">{tPhone("tryAgain")}</button>
                       </div>
                     </div>
                   )}
                   {connectErrorCode === "PROVISION_ERROR" && (
-                    <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-sm text-zinc-300 hover:text-white hover:underline">Try again</button>
+                    <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-sm text-zinc-300 hover:text-white hover:underline">{tPhone("tryAgain")}</button>
                   )}
                 </div>
               ) : null}

@@ -2452,7 +2452,8 @@
     "titlePlaceholder": "Titre de l'appel (optionnel)",
     "transcriptPlaceholder": "Collez la transcription ici (au moins 100 caractères)...",
     "analyzing": "Analyse en cours…",
-    "analyzeTranscript": "Analyser la transcription"
+    "analyzeTranscript": "Analyser la transcription",
+    "dismiss": "Ignorer"
   },
   "callRules": {
     "pageTitle": "Règles d'appels — Recall Touch",
@@ -4374,6 +4375,7 @@
     "conversationAria": "Conversation"
   },
   "agents.voiceTest": {
+    "defaultPreviewText": "Merci d'avoir appelé. Comment puis-je vous aider aujourd'hui ?",
     "scriptPlaceholder": "Saisissez le texte pour l'écouter avec la voix sélectionnée…",
     "toast": {
       "played": "Lecture de {name}",
@@ -4477,7 +4479,8 @@
     "illTestLater": "Je testerai plus tard",
     "completeSetupLink": "Compléter la config IA (5 étapes) →",
     "decisionCompletionHint": "La prise de décision continue ici pour qu'ils accomplissent les actions et apparaissent.",
-    "testInstructions": "Envoyez « {number} » depuis le numéro utilisé pour cet espace avec : « Bonjour, je suis intéressé »\n\nPuis revenez ici pour voir la prise en charge."
+    "testInstructions": "Envoyez « {number} » depuis le numéro utilisé pour cet espace avec : « Bonjour, je suis intéressé »\n\nPuis revenez ici pour voir la prise en charge.",
+    "tryAgain": "Réessayer"
   },
   "coverage": {
     "active": "Couverture : continuité téléphonique active",
@@ -5623,6 +5626,7 @@
     "verifying": "Vérification…",
     "areaCodePlaceholder": "ex. 503",
     "areaCodePlaceholderAlt": "ex. 212",
+    "tryAgain": "Réessayer",
     "testCallNumberPlaceholder": "(555) 123-4567",
     "verifyPhonePlaceholder": "+1 (555) 000-0000",
     "verificationCodePlaceholder": "000000",

@@ -4380,6 +4380,7 @@
     "conversationAria": "Conversa"
   },
   "agents.voiceTest": {
+    "defaultPreviewText": "Obrigado por ligar. Como posso ajudá-lo hoje?",
     "scriptPlaceholder": "Digite o texto para ouvir na voz selecionada…",
     "toast": {
       "played": "{name} reproduzido",
@@ -4483,7 +4484,8 @@
     "illTestLater": "Testo depois",
     "completeSetupLink": "Completar configuração da IA (5 passos) →",
     "decisionCompletionHint": "A conclusão da decisão continua aqui para que completem ações e apareçam.",
-    "testInstructions": "Envie \"{number}\" do número usado neste workspace com: \"Oi, tenho interesse\"\n\nDepois volte aqui para ver o atendimento."
+    "testInstructions": "Envie \"{number}\" do número usado neste workspace com: \"Oi, tenho interesse\"\n\nDepois volte aqui para ver o atendimento.",
+    "tryAgain": "Tentar novamente"
   },
   "coverage": {
     "active": "Cobertura: continuidade telefónica ativa",
@@ -5629,6 +5631,7 @@
     "verifying": "A verificar…",
     "areaCodePlaceholder": "ex. 503",
     "areaCodePlaceholderAlt": "ex. 212",
+    "tryAgain": "Tentar novamente",
     "testCallNumberPlaceholder": "(555) 123-4567",
     "verifyPhonePlaceholder": "+1 (555) 000-0000",
     "verificationCodePlaceholder": "000000",

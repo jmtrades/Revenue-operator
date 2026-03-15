@@ -2266,6 +2266,7 @@
     "conversationAria": "Conversation"
   },
   "agents.voiceTest": {
+    "defaultPreviewText": "Thanks for calling. How can I help you today?",
     "scriptPlaceholder": "Enter text to hear in the selected voice…",
     "toast": {
       "played": "Played {name}",
@@ -2511,7 +2512,8 @@
     "titlePlaceholder": "Call title (optional)",
     "transcriptPlaceholder": "Paste transcript here (at least 100 characters)...",
     "analyzing": "Analyzing…",
-    "analyzeTranscript": "Analyze transcript"
+    "analyzeTranscript": "Analyze transcript",
+    "dismiss": "Dismiss"
   },
   "callRules": {
     "pageTitle": "Call Rules — Recall Touch",
@@ -4541,7 +4543,8 @@
     "illTestLater": "I'll test later",
     "completeSetupLink": "Complete AI setup (5 steps) →",
     "decisionCompletionHint": "Decision completion continues here so they complete actions and show up.",
-    "testInstructions": "Text \"{number}\" from the number used for this workspace with: \"Hi, I'm interested\"\n\nThen return here to see it handled."
+    "testInstructions": "Text \"{number}\" from the number used for this workspace with: \"Hi, I'm interested\"\n\nThen return here to see it handled.",
+    "tryAgain": "Try again"
   },
   "coverage": {
     "active": "Coverage: Phone continuity active",
@@ -5692,6 +5695,7 @@
     "verifying": "Verifying…",
     "areaCodePlaceholder": "e.g. 503",
     "areaCodePlaceholderAlt": "e.g. 212",
+    "tryAgain": "Try again",
     "emailPlaceholder": "your@email.com",
     "toast": {
       "numberConnected": "Number connected. You can now receive calls and texts.",
