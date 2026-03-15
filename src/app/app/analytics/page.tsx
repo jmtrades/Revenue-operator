@@ -540,10 +540,10 @@ export default function AppAnalyticsPage() {
       </div>
 
       {!loading && (
-        <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-5 mb-6">
+        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-[#4F8CFF]" />
-            <h3 className="text-sm font-medium text-[#EDEDEF]">{t("analytics.periodSummary.title")}</h3>
+            <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("analytics.periodSummary.title")}</h3>
             <span className="text-xs text-[#5A5A5C] ml-auto">{summaryLabel}</span>
           </div>
           <p
@@ -562,7 +562,7 @@ export default function AppAnalyticsPage() {
                 summaryLabel,
               ).replace(
                 /\*\*(.*?)\*\*/g,
-                '<strong class="text-[#EDEDEF]">$1</strong>',
+                '<strong class="text-[var(--text-primary)]">$1</strong>',
               ),
             }}
           />

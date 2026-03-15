@@ -1548,6 +1548,17 @@
       "support": "Support",
       "scratch": "Agent personnalisé"
     },
+    "greetings": {
+      "receptionist": "Bonjour, merci d'avoir appelé. Je suis votre réceptionniste IA — je recueille les informations et ne laisse rien passer.",
+      "after_hours": "Bonjour, c'est votre réceptionniste IA Recall Touch pour les appels hors horaires. Comment puis-je vous aider ?",
+      "emergency": "C'est votre ligne d'urgence. J'agis vite, je vous rassure et j'alerte la bonne personne.",
+      "lead_qualifier": "Merci de votre contact. Je vais poser quelques questions pour vous orienter.",
+      "follow_up": "Bonjour, c'est votre IA de suivi pour ne rien laisser passer. Puis-je faire le point sur votre dernière visite ?",
+      "review_request": "Bonjour, c'est votre assistant IA pour un quick feedback sur votre visite récente.",
+      "appointment_setter": "Bonjour, j'appelle pour vous aider à trouver un créneau. Comment se présente votre semaine ?",
+      "support": "Bonjour, merci d'avoir appelé. Je suis là pour les questions et pour vous orienter si besoin.",
+      "scratch": "Merci d'avoir appelé. Comment puis-je vous aider ?"
+    },
     "escalationTriggers": {
       "askHuman": "Le caller demande explicitement un humain",
       "angry": "Le caller est en colère ou frustré",
@@ -2998,6 +3009,12 @@
     },
     "cta": "Commencer gratuitement",
     "contactSales": "Parler aux ventes",
+    "allPlansInclude": "Tous les forfaits incluent : enregistrements chiffrés · cadre de conformité · journal d'audit · 14 jours d'essai.",
+    "roiCalculator": "Calculateur de ROI",
+    "featureComparison": "Comparatif des fonctionnalités",
+    "feature": "Fonctionnalité",
+    "annualNote": "Deux mois appliqués sans interruption en engagement annuel.",
+    "roi": { "intro": "Modélisez ce qui se passe quand vous arrêtez de laisser les appels passer au répondeur.", "missedCallsPerWeek": "Appels manqués par semaine", "avgValuePerCall": "Valeur moyenne par appel ($)", "monthlyRecovered": "Revenus récupérés par mois", "annualBaseline": "Base annuelle réceptionniste", "annualProtected": "Revenus annuels que Recall Touch protège", "receptionistCost": "coût réceptionniste.", "recommendedPlan": "Forfait recommandé :" },
     "faq": {
       "title": "Questions sur les tarifs",
       "trial": "Proposez-vous un essai gratuit ?",
@@ -3052,6 +3069,14 @@
     "complete": {
       "heading": "Prêt pour le lancement",
       "description": "Votre IA est configurée, connectée et prête à répondre aux appels de votre entreprise."
+    },
+    "templates": {
+      "receptionist": { "name": "Réceptionniste", "description": "Répond aux appels, prend les messages et oriente proprement.", "agentName": "Sarah", "greeting": "Merci d'avoir appelé. Je peux vous aider pour vos questions, messages et vous orienter." },
+      "appointment_scheduler": { "name": "Planification de rendez-vous", "description": "Réservation, confirmation et rappels sans va-et-vient.", "agentName": "Emma", "greeting": "Merci d'avoir appelé. Je peux vous trouver un créneau, confirmer et réserver." },
+      "lead_qualifier": { "name": "Qualification de leads", "description": "Capture les infos clés et oriente les meilleures opportunités.", "agentName": "Alex", "greeting": "Merci de votre contact. Je vais poser quelques questions pour vous orienter." },
+      "after_hours": { "name": "Agent hors horaires", "description": "Gère les appels en dehors des heures et signale l'urgence.", "agentName": "Sarah", "greeting": "Vous nous appelez hors horaires. Je peux prendre vos coordonnées et assurer le suivi." },
+      "follow_up": { "name": "Agent de suivi", "description": "Réengage les appelants et les leads pour ne rien perdre.", "agentName": "Alex", "greeting": "Bonjour, je fais le suivi pour ne rien laisser passer. Je peux confirmer votre statut et vous aider." },
+      "custom": { "name": "Personnalisé", "description": "Partez de zéro et définissez le ton vous-même.", "agentName": "Sarah", "greeting": "Merci d'avoir appelé. Comment puis-je vous aider ?" }
     },
     "welcomeHeading": "Bienvenue sur Recall Touch !",
     "welcomeSubtitle": "Mettons en place votre système téléphonique IA en 2 minutes.",

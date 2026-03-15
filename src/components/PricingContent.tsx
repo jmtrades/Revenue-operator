@@ -31,7 +31,7 @@ type RoiResult = {
   recommendedPlan: "Starter" | "Growth" | "Scale" | "Enterprise";
 };
 
-function ROICalculator({ className = "" }: { className?: string }) {
+function ROICalculator({ t, className = "" }: { t: (k: string) => string; className?: string }) {
   const [missedPerWeek, setMissedPerWeek] = useState(10);
   const [avgJobValue, setAvgJobValue] = useState(500);
 
@@ -100,7 +100,7 @@ function ROICalculator({ className = "" }: { className?: string }) {
             className="text-sm font-medium"
             style={{ color: "var(--text-primary)" }}
           >
-            Average value per call ($)
+            {t("roi.avgValuePerCall")}
           </span>
           <div className="flex items-center gap-3 mt-2">
             <input
@@ -128,21 +128,21 @@ function ROICalculator({ className = "" }: { className?: string }) {
       >
         <div className="grid gap-3 text-sm">
           <p style={{ color: "var(--text-primary)" }}>
-            Monthly revenue recovered{" "}
+            {t("roi.monthlyRecovered")}{" "}
             <span style={{ color: "var(--accent-primary)" }}>
               ${result.monthlyRecovered.toLocaleString()}
             </span>
             .
           </p>
           <p style={{ color: "var(--text-primary)" }}>
-            Annual receptionist baseline{" "}
+            {t("roi.annualBaseline")}{" "}
             <span style={{ color: "var(--accent-primary)" }}>
               ${result.receptionistAnnual.toLocaleString()}
             </span>
             .
           </p>
           <p style={{ color: "var(--text-primary)" }}>
-            Annual revenue Recall Touch protects{" "}
+            {t("roi.annualProtected")}{" "}
             <span style={{ color: "var(--accent-primary)" }}>
               ${result.annualRecovered.toLocaleString()}
             </span>{" "}
@@ -150,10 +150,10 @@ function ROICalculator({ className = "" }: { className?: string }) {
             <span style={{ color: "var(--accent-primary)" }}>
               {result.roiMultiple.toFixed(1)}x
             </span>{" "}
-            receptionist cost.
+            {t("roi.receptionistCost")}
           </p>
           <p style={{ color: "var(--text-primary)" }}>
-            Recommended plan:{" "}
+            {t("roi.recommendedPlan")}{" "}
             <span style={{ color: "var(--accent-primary)" }}>
               {result.recommendedPlan}
             </span>
@@ -257,7 +257,7 @@ export function PricingContent() {
                 className="text-sm mb-6"
                 style={{ color: "var(--text-secondary)" }}
               >
-                {tier.description}
+                {TIER_KEYS[tier.name] ? t(`tier.${TIER_KEYS[tier.name]}.description`) : tier.description}
               </p>
               <ul className="space-y-2 mb-8">
                 {tier.features.map((feat) => (
@@ -293,7 +293,7 @@ export function PricingContent() {
           className="text-center text-sm mb-10"
           style={{ color: "var(--text-tertiary)" }}
         >
-          All plans include: encrypted records · compliance framework · audit trail · 14-day free trial
+          {t("allPlansInclude")}
         </p>
 
         <h2
@@ -301,15 +301,15 @@ export function PricingContent() {
           className="font-semibold text-xl mb-4 mt-14 scroll-mt-24"
           style={{ color: "var(--text-primary)" }}
         >
-          ROI calculator
+          {t("roiCalculator")}
         </h2>
-        <ROICalculator className="mb-16" />
+        <ROICalculator t={t} className="mb-16" />
 
         <h2
           className="font-semibold text-xl mb-6 mt-8"
           style={{ color: "var(--text-primary)" }}
         >
-          Feature comparison
+          {t("featureComparison")}
         </h2>
         <div
           className="overflow-x-auto rounded-lg border mb-20"
@@ -322,31 +322,31 @@ export function PricingContent() {
                   className="py-4 px-4 font-semibold"
                   style={{ color: "var(--text-tertiary)" }}
                 >
-                  Feature
+                  {t("feature")}
                 </th>
                 <th
                   className="py-4 px-4 font-semibold"
                   style={{ color: "var(--text-tertiary)" }}
                 >
-                  Starter
+                  {t("tier.starter.name")}
                 </th>
                 <th
                   className="py-4 px-4 font-semibold"
                   style={{ color: "var(--text-tertiary)" }}
                 >
-                  Growth
+                  {t("tier.growth.name")}
                 </th>
                 <th
                   className="py-4 px-4 font-semibold"
                   style={{ color: "var(--text-tertiary)" }}
                 >
-                  Scale
+                  {t("tier.scale.name")}
                 </th>
                 <th
                   className="py-4 px-4 font-semibold"
                   style={{ color: "var(--text-tertiary)" }}
                 >
-                  Enterprise
+                  {t("tier.enterprise.name")}
                 </th>
               </tr>
             </thead>

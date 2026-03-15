@@ -783,7 +783,7 @@ export default function KnowledgePage() {
                     <h3 className="font-medium text-white truncate flex-1">{entry.title}</h3>
                     <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-[var(--bg-input)] text-zinc-400">
                       <TypeIcon className="w-3 h-3" />
-                      {entry.type}
+                      {t(`types.${entry.type}`)}
                     </span>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -796,7 +796,7 @@ export default function KnowledgePage() {
                             : "bg-zinc-700 text-zinc-400"
                       }`}
                     >
-                      {entry.status}
+                      {t(`status.${entry.status.toLowerCase()}`)}
                     </span>
                     <span className="text-[10px] text-zinc-500">{t("wordCount", { count: entry.wordCount })}</span>
                     <span className="text-[10px] text-zinc-500">
@@ -868,8 +868,8 @@ export default function KnowledgePage() {
           </div>
         </div>
 
-        <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6 mt-8">
-          <h3 className="text-sm font-medium text-[#EDEDEF] mb-3">
+        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-6 mt-8">
+          <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">
             {t("testHeading")}
           </h3>
           <p className="text-xs text-[#8B8B8D] mb-4">
@@ -890,7 +890,7 @@ export default function KnowledgePage() {
                 }
               }}
               placeholder={t("testPlaceholder")}
-              className="flex-1 bg-[#0A0A0B] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[#EDEDEF] placeholder:text-[#5A5A5C] focus:outline-none focus:ring-2 focus:ring-[#4F8CFF]/50"
+              className="flex-1 bg-[var(--bg-input)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/50"
             />
             <button
               type="button"
@@ -902,9 +902,9 @@ export default function KnowledgePage() {
             </button>
           </div>
           {testAnswer && (
-            <div className="mt-4 bg-[#0A0A0B] border border-white/[0.06] rounded-xl p-4">
+            <div className="mt-4 bg-[var(--bg-input)] border border-white/[0.06] rounded-xl p-4">
               <p className="text-xs text-[#8B8B8D] mb-1">{t("testAnswerLabel")}</p>
-              <p className="text-sm text-[#EDEDEF] leading-relaxed">{testAnswer}</p>
+              <p className="text-sm text-[var(--text-primary)] leading-relaxed">{testAnswer}</p>
             </div>
           )}
         </div>

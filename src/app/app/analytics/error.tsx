@@ -7,7 +7,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
       <div className="w-12 h-12 rounded-2xl bg-[#FF4D4D]/10 flex items-center justify-center">
         <AlertTriangle className="w-6 h-6 text-[#FF4D4D]" />
       </div>
-      <h2 className="text-lg font-semibold text-[#EDEDEF]">Something went wrong</h2>
+      <h2 className="text-lg font-semibold text-[var(--text-primary)]">Something went wrong</h2>
       <p className="text-sm text-[#8B8B8D] max-w-md text-center">
         {error.message || 'An unexpected error occurred.'}
       </p>

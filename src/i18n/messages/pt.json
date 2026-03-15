@@ -1449,6 +1449,17 @@
       "support": "Suporte",
       "scratch": "Agente personalizado"
     },
+    "greetings": {
+      "receptionist": "Olá, obrigado por ligar. Sou a sua rececionista IA — recolho os dados e não deixamos nada para trás.",
+      "after_hours": "Olá, é a sua rececionista IA da Recall Touch para chamadas fora de horário. Como posso ajudar?",
+      "emergency": "É a sua linha de emergência. Atuo rápido, acalmo e alerto a pessoa certa.",
+      "lead_qualifier": "Obrigado pelo contacto. Vou fazer algumas perguntas para o encaminhar.",
+      "follow_up": "Olá, é a sua IA de follow-up para nada ficar por fazer. Posso confirmar o seu estado e ajudar.",
+      "review_request": "Olá, é o seu assistente IA com um pedido rápido sobre a sua visita recente.",
+      "appointment_setter": "Olá, ligo para ajudar a agendar. Como está a sua semana?",
+      "support": "Olá, obrigado por ligar. Estou aqui para dúvidas e para o encaminhar se precisar.",
+      "scratch": "Obrigado por ligar. Como posso ajudar?"
+    },
     "escalationTriggers": {
       "askHuman": "Ligante pede explicitamente um humano",
       "angry": "Ligante está irritado ou frustrado",
@@ -2723,6 +2734,12 @@
     },
     "cta": "Começar grátis",
     "contactSales": "Falar com vendas",
+    "allPlansInclude": "Todos os planos incluem: gravações encriptadas · quadro de conformidade · registo de auditoria · 14 dias de trial.",
+    "roiCalculator": "Calculadora de ROI",
+    "featureComparison": "Comparação de funcionalidades",
+    "feature": "Funcionalidade",
+    "annualNote": "Dois meses aplicados sem interrupção no compromisso anual.",
+    "roi": { "intro": "Modele o que acontece quando deixa de deixar chamadas ir para o correio de voz.", "missedCallsPerWeek": "Chamadas perdidas por semana", "avgValuePerCall": "Valor médio por chamada ($)", "monthlyRecovered": "Receita recuperada mensalmente", "annualBaseline": "Base anual de rececionista", "annualProtected": "Receita anual que o Recall Touch protege", "receptionistCost": "custo de rececionista.", "recommendedPlan": "Plano recomendado:" },
     "faq": {
       "title": "Dúvidas sobre preços",
       "trial": "Vocês oferecem teste grátis?",
@@ -2777,6 +2794,14 @@
     "complete": {
       "heading": "Pronto para lançar",
       "description": "Sua IA está configurada, conectada e pronta para atender as ligações da sua empresa."
+    },
+    "templates": {
+      "receptionist": { "name": "Receção", "description": "Atende chamadas, toma mensagens e encaminha com clareza.", "agentName": "Sarah", "greeting": "Obrigado por ligar. Posso ajudar com perguntas, mensagens e encaminhá-lo." },
+      "appointment_scheduler": { "name": "Agendamento", "description": "Marca, confirma e lembra sem idas e voltas.", "agentName": "Emma", "greeting": "Obrigado por ligar. Posso ajudá-lo a encontrar horário e marcar." },
+      "lead_qualifier": { "name": "Qualificação de leads", "description": "Capta dados chave e encaminha as melhores oportunidades.", "agentName": "Alex", "greeting": "Obrigado pelo contacto. Vou fazer algumas perguntas para o encaminhar." },
+      "after_hours": { "name": "Fora do horário", "description": "Atende chamadas fora do horário e sinaliza urgência.", "agentName": "Sarah", "greeting": "Ligou fora do horário. Posso anotar os seus dados e garantir o seguimento." },
+      "follow_up": { "name": "Agente de follow-up", "description": "Reativa quem liga e leads para não perder nada.", "agentName": "Alex", "greeting": "Olá, estou a fazer follow-up para nada ficar por fazer. Posso confirmar o seu estado e ajudar." },
+      "custom": { "name": "Personalizado", "description": "Comece do zero e defina o tom você mesmo.", "agentName": "Sarah", "greeting": "Obrigado por ligar. Como posso ajudar?" }
     },
     "welcomeHeading": "Bem-vindo ao Recall Touch!",
     "welcomeSubtitle": "Vamos colocar seu sistema de telefonia com IA no ar em 2 minutos.",

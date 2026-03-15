@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -39,60 +39,30 @@ const ONBOARDING_VOICES = CURATED_VOICES.slice(0, 6).map((v) => ({
 
 const ONBOARDING_SCENARIO_IDS = ["normal", "angry", "booking", "afterhours", "unknown"] as const;
 
-const ONBOARDING_TEMPLATES = [
-  {
-    id: "receptionist",
-    name: "Receptionist",
-    description: "Answers calls, takes messages, and routes callers cleanly.",
-    icon: Headphones,
-    agentName: "Sarah",
-    greeting: "Thanks for calling. I can help with questions, messages, and getting you to the right next step.",
-  },
-  {
-    id: "appointment_scheduler",
-    name: "Appointment Scheduler",
-    description: "Books, confirms, and reminds without back-and-forth.",
-    icon: CalendarRange,
-    agentName: "Emma",
-    greeting: "Thanks for calling. I can help you find a time, confirm the details, and book it now.",
-  },
-  {
-    id: "lead_qualifier",
-    name: "Lead Qualifier",
-    description: "Captures key details and routes the hottest opportunities first.",
-    icon: ClipboardList,
-    agentName: "Alex",
-    greeting: "Thanks for reaching out. I’ll ask a few quick questions so we can get you to the right next step.",
-  },
-  {
-    id: "after_hours",
-    name: "After-Hours Agent",
-    description: "Handles closed-office calls gracefully and flags urgency.",
-    icon: MoonStar,
-    agentName: "Sarah",
-    greeting: "You’ve reached us after hours. I can take your details now and make sure the right follow-up happens next.",
-  },
-  {
-    id: "follow_up",
-    name: "Follow-Up Agent",
-    description: "Re-engages callers and leads so nothing gets dropped.",
-    icon: PhoneCall,
-    agentName: "Alex",
-    greeting: "Hi, I’m following up so nothing slips through. I can confirm your status and help with the next step.",
-  },
-  {
-    id: "custom",
-    name: "Custom",
-    description: "Start from scratch and shape the tone yourself.",
-    icon: Sparkles,
-    agentName: "Sarah",
-    greeting: "Thanks for calling. How can I help you today?",
-  },
+const ONBOARDING_TEMPLATE_IDS = [
+  { id: "receptionist", icon: Headphones },
+  { id: "appointment_scheduler", icon: CalendarRange },
+  { id: "lead_qualifier", icon: ClipboardList },
+  { id: "after_hours", icon: MoonStar },
+  { id: "follow_up", icon: PhoneCall },
+  { id: "custom", icon: Sparkles },
 ] as const;
 
 export default function AppOnboardingPage() {
   const t = useTranslations("onboarding");
   const router = useRouter();
+  const onboardingTemplates = useMemo(
+    () =>
+      ONBOARDING_TEMPLATE_IDS.map(({ id, icon }) => ({
+        id,
+        icon,
+        name: t(`templates.${id}.name`),
+        description: t(`templates.${id}.description`),
+        agentName: t(`templates.${id}.agentName`),
+        greeting: t(`templates.${id}.greeting`),
+      })),
+    [t],
+  );
   const onboardingScenarios = (ONBOARDING_SCENARIO_IDS as readonly string[]).map((id) => ({
     id,
     title: t(`scenarios.${id}.title`),
@@ -136,9 +106,9 @@ export default function AppOnboardingPage() {
   }, []);
 
   const [_selectedTemplate, _setSelectedTemplate] = useState<string>("receptionist");
-  const [agentName, setAgentName] = useState<string>(ONBOARDING_TEMPLATES[0].agentName);
+  const [agentName, setAgentName] = useState<string>(onboardingTemplates[0].agentName);
   const [voiceId, setVoiceId] = useState<string>(DEFAULT_VOICE_ID);
-  const [greeting, setGreeting] = useState<string>(ONBOARDING_TEMPLATES[0].greeting);
+  const [greeting, setGreeting] = useState<string>(onboardingTemplates[0].greeting);
   const [_personality, _setPersonality] = useState(50);
   const [_callStyle, _setCallStyle] = useState<"thorough" | "conversational" | "quick">("conversational");
   const [greetingPlaying, setGreetingPlaying] = useState(false);

@@ -1111,7 +1111,7 @@ export default function AppAgentsPageClient({
       template,
       name: nameByTemplate[template],
       voice: getTemplateVoiceId(template) || base.voice,
-      greeting: templateGreeting(template),
+      greeting: tAgents(`greetings.${template}`),
       services: [],
       faq: [],
       transferRules: [],

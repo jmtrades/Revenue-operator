@@ -1449,6 +1449,17 @@
       "support": "Support",
       "scratch": "Eigener Agent"
     },
+    "greetings": {
+      "receptionist": "Hallo, danke für Ihren Anruf. Ich bin Ihr KI-Empfang — ich erfasse die Daten und lasse nichts aus.",
+      "after_hours": "Hallo, Ihr KI-Empfang für Recall Touch außerhalb der Geschäftszeiten. Wie kann ich helfen?",
+      "emergency": "Ihre Notfallleitung. Ich handle schnell, beruhige Sie und alarmiere die richtige Person.",
+      "lead_qualifier": "Danke für Ihre Nachricht. Ich stelle ein paar Fragen, um Sie weiterzuleiten.",
+      "follow_up": "Hallo, Ihr KI-Nachfassen, damit nichts durchrutscht. Darf ich Ihren letzten Besuch prüfen?",
+      "review_request": "Hallo, Ihr KI-Assistent mit einer kurzen Bitte zu Ihrem letzten Besuch.",
+      "appointment_setter": "Hallo, ich rufe an, um einen passenden Termin zu finden. Wie sieht Ihre Woche aus?",
+      "support": "Hallo, danke für Ihren Anruf. Ich helfe bei Fragen und leite Sie bei Bedarf weiter.",
+      "scratch": "Danke für Ihren Anruf. Wie kann ich Ihnen helfen?"
+    },
     "escalationTriggers": {
       "askHuman": "Anrufer fragt explizit nach einem Menschen",
       "angry": "Anrufer ist wütend oder frustriert",
@@ -2724,6 +2735,12 @@
     },
     "cta": "Kostenlos starten",
     "contactSales": "Mit Vertrieb sprechen",
+    "allPlansInclude": "Alle Tarife beinhalten: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfprotokoll · 14 Tage Test.",
+    "roiCalculator": "ROI-Rechner",
+    "featureComparison": "Funktionsvergleich",
+    "feature": "Funktion",
+    "annualNote": "Zwei Monate ununterbrochen bei Jahresverpflichtung.",
+    "roi": { "intro": "Modellieren Sie, was passiert, wenn Anrufe nicht mehr in die Mailbox gehen.", "missedCallsPerWeek": "Verpasste Anrufe pro Woche", "avgValuePerCall": "Durchschnittswert pro Anruf ($)", "monthlyRecovered": "Monatlich wiedergewonnene Einnahmen", "annualBaseline": "Jahresbasis Empfang", "annualProtected": "Jahreseinnahmen, die Recall Touch schützt", "receptionistCost": "Empfangsmitarbeiter-Kosten.", "recommendedPlan": "Empfohlener Tarif:" },
     "faq": {
       "title": "Fragen zu Preisen",
       "trial": "Gibt es eine kostenlose Testphase?",
@@ -2778,6 +2795,14 @@
     "complete": {
       "heading": "Bereit für den Start",
       "description": "Deine KI ist konfiguriert, verbunden und bereit, die Anrufe deines Unternehmens zu übernehmen."
+    },
+    "templates": {
+      "receptionist": { "name": "Empfang", "description": "Nimmt Anrufe entgegen, notiert Nachrichten und leitet weiter.", "agentName": "Sarah", "greeting": "Danke für Ihren Anruf. Ich helfe bei Fragen, Nachrichten und der Weiterleitung." },
+      "appointment_scheduler": { "name": "Terminplanung", "description": "Bucht, bestätigt und erinnert ohne Hin und Her.", "agentName": "Emma", "greeting": "Danke für Ihren Anruf. Ich helfe Ihnen, einen Termin zu finden und zu buchen." },
+      "lead_qualifier": { "name": "Lead-Qualifizierung", "description": "Erfasst wichtige Daten und leitet die besten Gelegenheiten weiter.", "agentName": "Alex", "greeting": "Danke für Ihre Nachricht. Ich stelle ein paar Fragen, um Sie weiterzuleiten." },
+      "after_hours": { "name": "Außerhalb der Geschäftszeiten", "description": "Bearbeitet Anrufe außerhalb der Öffnungszeiten und kennzeichnet Dringlichkeit.", "agentName": "Sarah", "greeting": "Sie rufen außerhalb unserer Geschäftszeiten an. Ich nehme Ihre Daten auf und sorge für Nachbereitung." },
+      "follow_up": { "name": "Nachfass-Agent", "description": "Reaktiviert Anrufer und Leads, damit nichts untergeht.", "agentName": "Alex", "greeting": "Hallo, ich rufe nach, damit nichts durchrutscht. Ich kann Ihren Status bestätigen und weiterhelfen." },
+      "custom": { "name": "Benutzerdefiniert", "description": "Starten Sie von Grund auf und gestalten Sie den Ton selbst.", "agentName": "Sarah", "greeting": "Danke für Ihren Anruf. Wie kann ich Ihnen helfen?" }
     },
     "welcomeHeading": "Willkommen bei Recall Touch!",
     "welcomeSubtitle": "Wir richten dein KI-Telefonsystem in 2 Minuten ein.",

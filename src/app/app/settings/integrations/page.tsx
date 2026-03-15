@@ -302,7 +302,7 @@ export default function AppSettingsIntegrationsPage() {
                       </span>
                     )}
                   </div>
-                  <h4 className="text-sm font-medium text-[#EDEDEF]">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.title`)}</h4>
+                  <h4 className="text-sm font-medium text-[var(--text-primary)]">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.title`)}</h4>
                   <p className="text-xs text-zinc-500 mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>
                   {connected && status?.lastSyncAt && (
                     <p className="text-[11px] text-zinc-500 mt-2">

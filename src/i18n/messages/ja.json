@@ -1449,6 +1449,17 @@
       "support": "サポート",
       "scratch": "カスタムエージェント"
     },
+    "greetings": {
+      "receptionist": "お電話ありがとうございます。AI受付です。必要な情報をお聞きし、取りこぼしのないようにします。",
+      "after_hours": "お電話ありがとうございます。Recall Touchの時間外AI受付です。どのようなご用件でしょうか。",
+      "emergency": "緊急用回線です。迅速に対応し、適切な担当者に連絡します。",
+      "lead_qualifier": "お問い合わせありがとうございます。いくつかお伺いして、次のステップをご案内します。",
+      "follow_up": "フォローアップのご連絡です。取りこぼしのないよう、前回のご利用について確認いたします。",
+      "review_request": "最近のご利用について、簡単なご意見をお伺いするAIアシスタントです。",
+      "appointment_setter": "お電話ありがとうございます。ご希望の日時をお伺いして予約を承ります。",
+      "support": "お電話ありがとうございます。ご質問の対応と必要に応じた取り次ぎをいたします。",
+      "scratch": "お電話ありがとうございます。どのようなご用件でしょうか。"
+    },
     "escalationTriggers": {
       "askHuman": "発信者が明示的に人間を要求",
       "angry": "発信者が怒っている、または不満",
@@ -2723,6 +2734,12 @@
     },
     "cta": "無料で始める",
     "contactSales": "営業担当に相談する",
+    "allPlansInclude": "全プランに含まれる：暗号化記録・コンプライアンス枠組み・監査証跡・14日間無料トライアル。",
+    "roiCalculator": "ROI計算",
+    "featureComparison": "機能比較",
+    "feature": "機能",
+    "annualNote": "年額契約で2か月分が途切れず適用されます。",
+    "roi": { "intro": "着信を留守電に回さなくなった場合の効果をシミュレートします。", "missedCallsPerWeek": "週あたりの取りこぼし着信数", "avgValuePerCall": "1通話あたりの平均価値（$）", "monthlyRecovered": "月間回収収入", "annualBaseline": "年間受付ベースライン", "annualProtected": "Recall Touchが守る年間収入", "receptionistCost": "受付コスト。", "recommendedPlan": "おすすめプラン：" },
     "faq": {
       "title": "料金に関するよくある質問",
       "trial": "無料トライアルはありますか？",
@@ -2777,6 +2794,14 @@
     "complete": {
       "heading": "ローンチの準備ができました",
       "description": "AI の設定と接続が完了し、ビジネスの電話対応を任せられる状態になりました。"
+    },
+    "templates": {
+      "receptionist": { "name": "受付", "description": "電話の応対、伝言、取り次ぎを担当します。", "agentName": "Sarah", "greeting": "お電話ありがとうございます。ご用件・伝言・お取り次ぎのご案内をいたします。" },
+      "appointment_scheduler": { "name": "予約", "description": "予約の取得・確認・リマインドをスムーズに。", "agentName": "Emma", "greeting": "お電話ありがとうございます。ご希望の日時を確認し、予約を承ります。" },
+      "lead_qualifier": { "name": "リード選別", "description": "重要情報を聞き取り、有望な機会を優先して取り次ぎます。", "agentName": "Alex", "greeting": "お問い合わせありがとうございます。いくつかお伺いして、次のステップをご案内します。" },
+      "after_hours": { "name": "時間外対応", "description": "営業時間外の着信に対応し、緊急度をフラグ付けします。", "agentName": "Sarah", "greeting": "お電話ありがとうございます。現在は営業時間外です。内容を承り、適切なフォローアップをご案内します。" },
+      "follow_up": { "name": "フォローアップ", "description": "発信者・リードを再エンゲージし、取りこぼしを防ぎます。", "agentName": "Alex", "greeting": "フォローアップのご連絡です。状況の確認と次のステップのご案内をいたします。" },
+      "custom": { "name": "カスタム", "description": "ゼロから始めて、トーンを自分で決めます。", "agentName": "Sarah", "greeting": "お電話ありがとうございます。どのようなご用件でしょうか。" }
     },
     "welcomeHeading": "Recall Touch へようこそ！",
     "welcomeSubtitle": "2分で AI 電話システムをセットアップします。",
