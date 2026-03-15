@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
 
 type ContactType = "lead" | "customer" | "vip";
@@ -47,6 +48,11 @@ function loadContacts(): Contact[] {
     const parsed = JSON.parse(raw) as Contact[];
     return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEMO_CONTACTS;
   } catch {
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
     return DEMO_CONTACTS;
   }
 }
@@ -104,6 +110,7 @@ export default function AppContactsPage() {
     typeof window === "undefined" ? [] : loadContacts(),
   );
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
   const [tab, setTab] = useState<TabId>("all");
   const [sort, setSort] = useState<SortId>("newest");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -134,7 +141,7 @@ export default function AppContactsPage() {
   }, [toast]);
 
   const filtered = useMemo(() => {
-    const term = search.trim().toLowerCase();
+    const term = debouncedSearch.trim().toLowerCase();
     let list = contacts.filter((c) => {
       const name = `${c.firstName} ${c.lastName}`.toLowerCase();
       const phone = c.phone.toLowerCase();
@@ -164,7 +171,7 @@ export default function AppContactsPage() {
     });
 
     return list;
-  }, [contacts, search, tab, sort]);
+  }, [contacts, debouncedSearch, tab, sort]);
 
   const count = contacts.length;
   const selected = selectedId ? contacts.find((c) => c.id === selectedId) ?? null : null;

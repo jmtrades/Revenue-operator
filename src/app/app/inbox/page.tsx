@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
 import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, PanelRightOpen, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -53,6 +54,11 @@ function readInboxSnapshot(workspaceId: string): InboxThread[] {
     const parsed = raw ? (JSON.parse(raw) as InboxThread[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
+    try {
+      window.localStorage.removeItem(`${INBOX_SNAPSHOT_PREFIX}${workspaceId}`);
+    } catch {
+      /* ignore */
+    }
     return [];
   }
 }
@@ -126,6 +132,7 @@ function ConversationList({
   onSearchChange: (v: string) => void;
 }) {
   const t = useTranslations();
+  const debouncedSearch = useDebounce(search, 300);
   const filtered = useMemo(() => {
     let list = threads;
     if (filter === "unread") list = list.filter((t) => t.unread);
@@ -133,7 +140,7 @@ function ConversationList({
     if (filter === "sms") list = list.filter((t) => t.channel === "sms");
     if (filter === "email") list = list.filter((t) => t.channel === "email");
     if (filter === "whatsapp") list = list.filter((t) => t.channel === "whatsapp");
-    const q = search.trim().toLowerCase();
+    const q = debouncedSearch.trim().toLowerCase();
     if (q) {
       list = list.filter(
         (t) =>
@@ -145,7 +152,7 @@ function ConversationList({
     return [...list].sort(
       (a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime(),
     );
-  }, [threads, filter, search]);
+  }, [threads, filter, debouncedSearch]);
 
   const filterTabs = [
     { id: "all" as const, label: t("inbox.filters.all") },

@@ -66,6 +66,11 @@ function readPhoneSettingsSnapshot(workspaceId: string): PhoneSettingsSnapshot |
     );
     return raw ? (JSON.parse(raw) as PhoneSettingsSnapshot) : null;
   } catch {
+    try {
+      window.localStorage.removeItem(`${PHONE_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`);
+    } catch {
+      /* ignore */
+    }
     return null;
   }
 }

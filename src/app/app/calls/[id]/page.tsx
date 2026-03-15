@@ -205,6 +205,13 @@ function readCallDetailSnapshot(workspaceId: string, callId: string): CallDetail
     );
     return raw ? (JSON.parse(raw) as CallDetail) : null;
   } catch {
+    try {
+      window.localStorage.removeItem(
+        `${CALL_DETAIL_SNAPSHOT_PREFIX}${workspaceId}:${callId}`,
+      );
+    } catch {
+      /* ignore */
+    }
     return null;
   }
 }

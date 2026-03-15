@@ -29,6 +29,11 @@ function readAgentSettingsSnapshot(workspaceId: string): AgentConfig | null {
     );
     return raw ? (JSON.parse(raw) as AgentConfig) : null;
   } catch {
+    try {
+      window.localStorage.removeItem(`${AGENT_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`);
+    } catch {
+      /* ignore */
+    }
     return null;
   }
 }
