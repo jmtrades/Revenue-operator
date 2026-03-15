@@ -91,20 +91,23 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const eventId = event.id;
 
-  const { error: insertError } = await db.from("webhook_events").insert({
-    event_id: eventId,
-    event_type: event.type,
-    payload: event.data.object,
-    processed: false,
-  });
-  if (insertError && (insertError as { code?: string }).code === "23505") {
-    return NextResponse.json({ received: true, skipped: "duplicate" }, { status: 200 });
-  }
+  const { error: insertError } = await db
+    .from("webhook_events")
+    .insert({
+      event_id: eventId,
+      event_type: event.type,
+      payload: event.data.object,
+      processed: false,
+    })
+    .select("id")
+    .single();
+
   if (insertError) {
-    const { data: existing } = await db.from("webhook_events").select("processed").eq("event_id", eventId).maybeSingle();
-    if (existing && (existing as { processed?: boolean }).processed) {
+    if ((insertError as { code?: string }).code === "23505") {
       return NextResponse.json({ received: true, skipped: "duplicate" }, { status: 200 });
     }
+    console.error("Webhook event insert failed:", insertError);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 
   try {

@@ -13,6 +13,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { getClientOrNull } from "@/lib/supabase/client";
 import { useDebounce } from "@/hooks/useDebounce";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { LeadsList } from "./components/LeadsList";
 import { LeadsKanban } from "./components/LeadsKanban";
 import { LeadDetail } from "./components/LeadDetail";
@@ -155,30 +156,20 @@ const LEADS_SNAPSHOT_PREFIX = "rt_leads_snapshot:";
 
 function readLeadsSnapshot(workspaceId: string): LeadView[] {
   if (typeof window === "undefined" || !workspaceId) return [];
+  const key = `${LEADS_SNAPSHOT_PREFIX}${workspaceId}`;
   try {
-    const raw = window.localStorage.getItem(`${LEADS_SNAPSHOT_PREFIX}${workspaceId}`);
+    const raw = safeGetItem(key);
     const parsed = raw ? (JSON.parse(raw) as LeadView[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    try {
-      window.localStorage.removeItem(`${LEADS_SNAPSHOT_PREFIX}${workspaceId}`);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return [];
   }
 }
 
 function persistLeadsSnapshot(workspaceId: string, leads: LeadView[]) {
   if (typeof window === "undefined" || !workspaceId) return;
-  try {
-    window.localStorage.setItem(
-      `${LEADS_SNAPSHOT_PREFIX}${workspaceId}`,
-      JSON.stringify(leads),
-    );
-  } catch {
-    // ignore persistence errors
-  }
+  safeSetItem(`${LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(leads));
 }
 
 export default function LeadsPage() {
@@ -239,6 +230,7 @@ export default function LeadsPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
+    let cancelled = false;
     fetch(`/api/leads?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -247,14 +239,20 @@ export default function LeadsPage() {
         return r.json();
       })
       .then((data: { leads?: ApiLead[] }) => {
+        if (cancelled) return;
         const apiLeads = data.leads ?? [];
         const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i, t));
         setError(null);
         setLeads(mapped);
         persistLeadsSnapshot(workspaceId, mapped);
       })
-      .catch(() => setError(t("leads.errors.loadFailed")))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        if (!cancelled) setError(t("leads.errors.loadFailed"));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
   }, [workspaceId, t]);
 
   useEffect(() => {

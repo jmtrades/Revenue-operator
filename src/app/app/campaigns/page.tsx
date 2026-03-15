@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Megaphone } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -74,30 +75,20 @@ const CAMPAIGNS_SNAPSHOT_PREFIX = "rt_campaigns_snapshot:";
 
 function readCampaignsSnapshot(workspaceId: string): CampaignRow[] {
   if (typeof window === "undefined" || !workspaceId) return [];
+  const key = `${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`;
   try {
-    const raw = window.localStorage.getItem(`${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`);
+    const raw = safeGetItem(key);
     const parsed = raw ? (JSON.parse(raw) as CampaignRow[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    try {
-      window.localStorage.removeItem(`${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return [];
   }
 }
 
 function persistCampaignsSnapshot(workspaceId: string, campaigns: CampaignRow[]) {
   if (typeof window === "undefined" || !workspaceId) return;
-  try {
-    window.localStorage.setItem(
-      `${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`,
-      JSON.stringify(campaigns),
-    );
-  } catch {
-    // ignore persistence errors
-  }
+  safeSetItem(`${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(campaigns));
 }
 
 export default function CampaignsPage() {

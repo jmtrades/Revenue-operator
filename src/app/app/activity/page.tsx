@@ -26,6 +26,7 @@ import {
   UserPlus,
   Video,
 } from "lucide-react";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import {
   fetchWorkspaceMeCached,
   getWorkspaceMeSnapshotSync,
@@ -158,26 +159,18 @@ const ACTIVITY_SNAPSHOT_KEY = "rt_activity_snapshot";
 function readActivitySnapshot(): ActivityCard[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(ACTIVITY_SNAPSHOT_KEY);
+    const raw = safeGetItem(ACTIVITY_SNAPSHOT_KEY);
     const parsed = raw ? (JSON.parse(raw) as ActivityCard[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    try {
-      window.localStorage.removeItem(ACTIVITY_SNAPSHOT_KEY);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(ACTIVITY_SNAPSHOT_KEY);
     return [];
   }
 }
 
 function persistActivitySnapshot(cards: ActivityCard[]) {
   if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(ACTIVITY_SNAPSHOT_KEY, JSON.stringify(cards));
-  } catch {
-    // ignore persistence errors
-  }
+  safeSetItem(ACTIVITY_SNAPSHOT_KEY, JSON.stringify(cards));
 }
 
 const getPlaceholderArea = (t: (k: string) => string) =>
@@ -268,7 +261,7 @@ export default function AppActivityPage() {
   const [showFirstWelcome, setShowFirstWelcome] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
-      return window.localStorage.getItem("rt_dashboard_welcome_dismissed") !== "true";
+      return safeGetItem("rt_dashboard_welcome_dismissed") !== "true";
     } catch {
       return true;
     }
@@ -311,11 +304,13 @@ export default function AppActivityPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
+    let cancelled = false;
     apiFetch<{ calls?: CallRecord[] }>(
       `/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`,
       { credentials: "include", timeout: 8000, retries: 1 },
     )
       .then((data) => {
+        if (cancelled) return;
         setLoadError(false);
         const calls = (data.calls ?? []).slice(0, 20);
         const mapped: ActivityCard[] = calls.map((c) => {
@@ -410,13 +405,18 @@ export default function AppActivityPage() {
         setOutcomeData(nextOutcomeData);
       })
       .catch((err) => {
-        if (err instanceof ApiError && err.status === 408) {
-          setLoadError(true);
-        } else {
-          setLoadError(true);
+        if (!cancelled) {
+          if (err instanceof ApiError && err.status === 408) {
+            setLoadError(true);
+          } else {
+            setLoadError(true);
+          }
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
   }, [workspaceId, refreshKey, t]);
 
   useEffect(() => {
@@ -473,6 +473,7 @@ export default function AppActivityPage() {
   }, [t]);
 
   useEffect(() => {
+    let cancelled = false;
     fetchWorkspaceMeCached()
       .then((data: {
         name?: string;
@@ -480,6 +481,7 @@ export default function AppActivityPage() {
         progress?: { nextStep?: { href?: string } | null; items?: Array<{ key: string; completed?: boolean }> };
         stats?: { calls?: number; leads?: number; estRevenue?: number; lastCallAt?: string | null };
       } | null) => {
+        if (cancelled) return;
         setSystemEvents(data?.systemEvents ?? []);
         setNextStepHref(data?.progress?.nextStep?.href || "/app/settings/phone");
         setWorkspaceStats({
@@ -491,6 +493,7 @@ export default function AppActivityPage() {
         setLastCheckedAt(Date.now());
       })
       .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -611,7 +614,7 @@ export default function AppActivityPage() {
     if (!showFirstWelcome) return;
     if (!hasAnyCalls) return;
     try {
-      window.localStorage.setItem("rt_dashboard_welcome_dismissed", "true");
+      safeSetItem("rt_dashboard_welcome_dismissed", "true");
     } catch {
       // ignore
     }
@@ -622,7 +625,7 @@ export default function AppActivityPage() {
   const [checklistDismissed, setChecklistDismissed] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
-      return window.localStorage.getItem("rt_activity_checklist_dismissed") === "true";
+      return safeGetItem("rt_activity_checklist_dismissed") === "true";
     } catch {
       return false;
     }
@@ -630,14 +633,7 @@ export default function AppActivityPage() {
   const [showChecklistConfetti, setShowChecklistConfetti] = useState(false);
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem(
-        "rt_activity_checklist_dismissed",
-        checklistDismissed ? "true" : "false",
-      );
-    } catch {
-      // ignore
-    }
+    safeSetItem("rt_activity_checklist_dismissed", checklistDismissed ? "true" : "false");
   }, [checklistDismissed]);
 
   useEffect(() => {

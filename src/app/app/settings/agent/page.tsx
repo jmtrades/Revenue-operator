@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -9,6 +9,8 @@ import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 type AgentConfig = {
   businessName: string;
@@ -23,31 +25,20 @@ const AGENT_SETTINGS_SNAPSHOT_PREFIX = "rt_agent_settings_snapshot:";
 
 function readAgentSettingsSnapshot(workspaceId: string): AgentConfig | null {
   if (typeof window === "undefined" || !workspaceId) return null;
+  const key = `${AGENT_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`;
   try {
-    const raw = window.localStorage.getItem(
-      `${AGENT_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`,
-    );
+    const raw = safeGetItem(key);
     return raw ? (JSON.parse(raw) as AgentConfig) : null;
   } catch {
-    try {
-      window.localStorage.removeItem(`${AGENT_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return null;
   }
 }
 
 function persistAgentSettingsSnapshot(workspaceId: string, config: AgentConfig) {
   if (typeof window === "undefined" || !workspaceId) return;
-  try {
-    window.localStorage.setItem(
-      `${AGENT_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`,
-      JSON.stringify(config),
-    );
-  } catch {
-    // ignore persistence errors
-  }
+  const key = `${AGENT_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`;
+  safeSetItem(key, JSON.stringify(config));
 }
 
 export default function AppSettingsAgentPage() {
@@ -73,6 +64,9 @@ export default function AppSettingsAgentPage() {
       knowledgeItems: [],
     },
   );
+  const lastSavedRef = useRef<string>(JSON.stringify(config));
+  const isDirty = lastSavedRef.current !== JSON.stringify(config);
+  useUnsavedChanges(isDirty);
 
   const load = useCallback(async () => {
     try {
@@ -89,6 +83,7 @@ export default function AppSettingsAgentPage() {
         };
         setConfig(nextConfig);
         persistAgentSettingsSnapshot(snapshotWorkspaceId, nextConfig);
+        lastSavedRef.current = JSON.stringify(nextConfig);
       }
     } catch {
       const message = tSettings("agent.loadFailed");
@@ -105,6 +100,7 @@ export default function AppSettingsAgentPage() {
   }, [load]);
 
   const handleSave = async () => {
+    if (saving) return;
     setSaving(true);
     setInlineToast(null);
     try {
@@ -140,7 +136,8 @@ export default function AppSettingsAgentPage() {
       } else {
         const message = tSettings("agent.updated");
         setInlineToast(message);
-        toast.success(tToast("saved"));
+        toast.success(tSettings("agent.updated"));
+        lastSavedRef.current = JSON.stringify(config);
       }
       setTimeout(() => setInlineToast(null), 4000);
     } catch {

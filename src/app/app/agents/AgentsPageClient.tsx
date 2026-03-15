@@ -1387,7 +1387,7 @@ export default function AppAgentsPageClient({
             ) : agents.length === 0 ? (
               <div className="py-12 text-center">
                 <p className="text-sm font-medium text-white mb-1">
-                  No agents yet
+                  {tAgents("emptyTitle")}
                 </p>
                 <p className="text-xs text-zinc-500 mb-6 max-w-sm mx-auto">
                   {tAgents("emptySubtitle")}

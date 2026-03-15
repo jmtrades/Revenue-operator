@@ -20,6 +20,7 @@ import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices
 import { USE_CASE_OPTIONS } from "@/lib/constants/use-cases";
 import { buildStarterKnowledge, mergeKnowledgeItems, type KnowledgeItem } from "@/lib/workspace/starter-knowledge";
 import { invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 const STEPS = 5;
 const STEP_KEYS: { id: number; titleKey: string; subtitleKey: string }[] = [
@@ -82,19 +83,15 @@ export default function AppOnboardingPage() {
   useEffect(() => {
     const apply = () => {
       try {
-        const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
+        const raw = safeGetItem("rt_signup") ?? safeGetItem("recalltouch_signup");
         if (raw) {
           try {
             const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
             if (d?.businessName?.trim()) setBusinessName(d.businessName.trim());
             if (d?.website?.trim()) setWebsite(d.website.trim());
           } catch {
-            try {
-              localStorage.removeItem("rt_signup");
-              localStorage.removeItem("recalltouch_signup");
-            } catch {
-              /* ignore */
-            }
+            safeRemoveItem("rt_signup");
+            safeRemoveItem("recalltouch_signup");
           }
         }
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
@@ -222,12 +219,8 @@ export default function AppOnboardingPage() {
     } catch {
       // ignore and continue to local fallbacks
     }
-    try {
-      localStorage.setItem("rt_onboarded", "true");
-      localStorage.setItem("rt_onboarding_checklist", JSON.stringify(["business", "agent", "services", "phone", "test_call"]));
-    } catch {
-      // ignore
-    }
+    safeSetItem("rt_onboarded", "true");
+    safeSetItem("rt_onboarding_checklist", JSON.stringify(["business", "agent", "services", "phone", "test_call"]));
     router.push("/app/activity");
   };
 
@@ -252,11 +245,7 @@ export default function AppOnboardingPage() {
     } catch {
       // ignore
     }
-    try {
-      localStorage.setItem("rt_onboarded", "true");
-    } catch {
-      // ignore
-    }
+    safeSetItem("rt_onboarded", "true");
     router.push("/app/activity");
   };
 

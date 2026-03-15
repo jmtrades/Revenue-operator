@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { isRTL } from "@/lib/rtl";
+import { validateEnv } from "@/lib/env-check";
 import { DM_Sans, Playfair_Display, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+validateEnv();
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";

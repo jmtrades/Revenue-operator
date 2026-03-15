@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Check, Circle } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
+import { safeGetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 const ITEM_KEYS = [
   { key: "business", href: "/app/onboarding" },
@@ -19,16 +20,13 @@ const ITEM_KEYS = [
 
 function getProgress(): { completed: number; done: Set<string> } {
   if (typeof window === "undefined") return { completed: 0, done: new Set() };
+  const key = "rt_onboarding_checklist";
   try {
-    const raw = localStorage.getItem("rt_onboarding_checklist");
+    const raw = safeGetItem(key);
     const done = raw ? new Set(JSON.parse(raw) as string[]) : new Set<string>();
     return { completed: done.size, done };
   } catch {
-    try {
-      localStorage.removeItem("rt_onboarding_checklist");
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return { completed: 0, done: new Set() };
   }
 }

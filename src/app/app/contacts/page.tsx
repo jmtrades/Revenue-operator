@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 type ContactType = "lead" | "customer" | "vip";
 
@@ -43,27 +44,19 @@ const DEMO_CONTACTS: Contact[] = [
 function loadContacts(): Contact[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = safeGetItem(STORAGE_KEY);
     if (!raw) return DEMO_CONTACTS;
     const parsed = JSON.parse(raw) as Contact[];
     return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEMO_CONTACTS;
   } catch {
-    try {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(STORAGE_KEY);
     return DEMO_CONTACTS;
   }
 }
 
 function saveContacts(next: Contact[]) {
-  try {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    // ignore
-  }
+  if (typeof window === "undefined") return;
+  safeSetItem(STORAGE_KEY, JSON.stringify(next));
 }
 
 function getInitials(first: string, last: string) {
