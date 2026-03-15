@@ -68,7 +68,7 @@ export default function SignInForm() {
         if (shouldShowNoAccount) {
           setNoAccount(true);
         } else {
-          setErr((d as { error?: string }).error || "Something went wrong");
+          setErr((d as { error?: string }).error || t("genericError"));
         }
         setBusy(false);
         return;
