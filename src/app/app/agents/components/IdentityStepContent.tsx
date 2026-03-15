@@ -161,6 +161,22 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
   const [extractError, setExtractError] = useState<string | null>(null);
   const [pendingExtract, setPendingExtract] = useState<ExtractedBusinessDetails | null>(null);
 
+  const toneOptions = useMemo(
+    () => (["professional", "friendly", "casual", "formal"] as ToneId[]).map((id) => ({
+      id,
+      label: t(`identity.tone.${id}`),
+    })),
+    [t],
+  );
+  const industryOptions = useMemo(() => {
+    const ids = ["", "dental", "legal", "plumbing", "real_estate", "auto", "salon", "restaurant", "medical", "consulting", "contractor"] as const;
+    return ids.map((id) => ({
+      id,
+      label: id === "" ? t("identity.industry.general") : t(`identity.industry.${id}`),
+      greeting: id ? t(`identity.industryGreeting.${id}`) : undefined,
+    }));
+  }, [t]);
+
   useEffect(() => {
     setWebsiteUrl(agent.websiteUrl ?? "");
   }, [agent.websiteUrl]);
@@ -197,16 +213,11 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
         | (ExtractedBusinessDetails & { error?: string })
         | { error: string };
       if (!res.ok || "error" in data) {
-        setExtractError(
-          data.error ||
-            "We couldn't read that website. Check the URL and try again.",
-        );
+        setExtractError(data.error ?? t("identityStep.websiteError"));
         return;
       }
       if (!data.businessName && !data.industry && !data.services?.length) {
-        setExtractError(
-          "We couldn't find clear business details on that page. You can still fill them in manually.",
-        );
+        setExtractError(t("identityStep.websiteNoDetails"));
         return;
       }
       setPendingExtract({
@@ -218,8 +229,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
         faq: data.faq,
       });
     } catch (e) {
-      const message =
-        e instanceof Error ? e.message : "Something went wrong while reading that site.";
+      const message = e instanceof Error ? e.message : t("identityStep.websiteReadError");
       setExtractError(message);
     } finally {
       setExtracting(false);
@@ -252,7 +262,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
     const businessContext =
       contextParts.join(" · ") ||
       agent.businessContext ||
-      "Describe what you do and who you serve so your AI can represent you accurately.";
+      t("identityStep.describeHint");
 
     onChange({
       name: (agent.name ?? "").trim() ? agent.name : data.businessName || agent.name,
@@ -296,7 +306,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
         id="identity-heading"
         className="text-sm font-semibold text-white"
       >
-        What does this agent do?
+        {t("identityStep.purposeLabel")}
       </h3>
 
       <section
@@ -308,7 +318,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
             htmlFor="identity-industry"
             className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]"
           >
-            Industry template
+            {t("identityStep.industryLabel")}
           </label>
           <select
             id="identity-industry"
@@ -317,7 +327,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
             onChange={(e) => {
               const value = e.target.value;
               if (!value) return;
-              const industry = INDUSTRY_OPTIONS.find((opt) => opt.id === value);
+              const industry = industryOptions.find((opt) => opt.id === value);
               if (!industry) return;
               if (industry.greeting) {
                 onChange({
@@ -327,8 +337,8 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
               }
             }}
           >
-            <option value="">Select an industry</option>
-            {INDUSTRY_OPTIONS.map((opt) => (
+            <option value="">{t("identityStep.selectIndustry")}</option>
+            {industryOptions.map((opt) => (
               <option key={opt.id} value={opt.id}>
                 {opt.label}
               </option>
@@ -338,10 +348,10 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
 
         <div>
           <span className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]">
-            Tone
+            {t("identityStep.toneLabel")}
           </span>
           <div className="flex flex-wrap gap-2">
-            {TONE_OPTIONS.map((tone) => {
+            {toneOptions.map((tone) => {
               const selected = agentTone === tone.id;
               return (
                 <button
@@ -382,7 +392,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
               htmlFor="agent-name"
               className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]"
             >
-              Agent name
+              {t("identityStep.agentNameLabel")}
             </label>
             <input
               id="agent-name"
@@ -395,7 +405,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
             />
             {showNameError && (
               <p className="mt-1 text-[10px] text-red-400">
-                Add a name so callers know who they’re speaking with.
+                {t("identityStep.nameError")}
               </p>
             )}
           </div>
@@ -404,7 +414,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
               htmlFor="agent-purpose"
               className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]"
             >
-              Call direction
+              {t("identityStep.callDirectionLabel")}
             </label>
             <div className="flex gap-2">
               {(["inbound", "outbound", "both"] as AgentPurpose[]).map((value) => {
@@ -541,10 +551,10 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
       >
         <div>
           <h4 className="text-xs font-semibold text-[var(--text-primary)]">
-            Playbooks
+            {t("identityStep.playbooksLabel")}
           </h4>
           <p className="text-[10px] text-[var(--text-muted)]">
-            Start from a proven pattern, then fine-tune.
+            {t("identityStep.playbooksHint")}
           </p>
         </div>
         <div className="grid gap-2 sm:grid-cols-3">
@@ -570,9 +580,9 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
                   >
                     <Icon className="h-3 w-3" />
                   </span>
-                  <span className="text-xs font-semibold">{tpl.label}</span>
+                  <span className="text-xs font-semibold">{t(`identity.templates.${tpl.id}.label`)}</span>
                 </div>
-                <p className="text-[10px] leading-snug opacity-80">{tpl.desc}</p>
+                <p className="text-[10px] leading-snug opacity-80">{t(`identity.templates.${tpl.id}.desc`)}</p>
               </button>
             );
           })}
@@ -581,7 +591,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
 
       <div className="flex items-center justify-between pt-1">
         <div className="text-[11px] text-[var(--text-muted)]">
-          Step 1 of 6 — Identity
+          {t("identityStep.stepIndicator")}
         </div>
         <button
           type="button"
@@ -589,7 +599,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
           className="rounded-xl bg-white px-5 py-2 text-xs font-semibold text-black disabled:cursor-not-allowed disabled:bg-white/40"
           disabled={!canContinue}
         >
-          Continue to voice →
+          {t("identityStep.continueToVoice")}
         </button>
       </div>
     </div>

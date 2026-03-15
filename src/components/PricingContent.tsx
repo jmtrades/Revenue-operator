@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { AccordionItem } from "@/components/ui/Accordion";
@@ -164,31 +165,34 @@ function ROICalculator({ className = "" }: { className?: string }) {
   );
 }
 
+const TIER_KEYS: Record<string, string> = { Starter: "starter", Growth: "growth", Scale: "scale", Enterprise: "enterprise" };
+
 export function PricingContent() {
+  const t = useTranslations("pricing");
   const [annual, setAnnual] = useState(false);
 
   return (
     <main className="pt-28 pb-24">
       <Container>
-        <p className="section-label mb-4">Pricing</p>
+        <p className="section-label mb-4">{t("title")}</p>
         <h1
           className="font-bold text-3xl md:text-4xl mb-4"
           style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}
         >
-          Less than one missed call a month.
+          {t("tagline")}
         </h1>
         <p
           className="text-base mb-8 max-w-xl"
           style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
         >
-          Plans for solo operators through to established businesses. Start free, no credit card.
+          {t("plansDescription")}
         </p>
         <div className="flex items-center justify-center gap-3 mb-10">
           <span
             className="text-sm font-medium"
             style={{ color: annual ? "var(--text-tertiary)" : "var(--text-primary)" }}
           >
-            Monthly
+            {t("monthly")}
           </span>
           <button
             type="button"
@@ -210,12 +214,12 @@ export function PricingContent() {
             className="text-sm font-medium flex items-center gap-2"
             style={{ color: annual ? "var(--text-primary)" : "var(--text-tertiary)" }}
           >
-            Annual
+            {t("annual")}
             <span
               className="text-xs font-semibold px-2 py-0.5 rounded"
               style={{ background: "var(--accent-secondary)", color: "var(--bg-primary)" }}
             >
-              Save 17%
+              {t("save17")}
             </span>
           </span>
         </div>
@@ -228,14 +232,14 @@ export function PricingContent() {
             >
               {tier.popular && (
                 <span className="pill-popular absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-current" /> Most popular
+                  <span className="w-1.5 h-1.5 rounded-full bg-current" /> {t("mostPopular")}
                 </span>
               )}
               <h3
                 className="font-semibold text-lg mb-1"
                 style={{ color: "var(--text-primary)" }}
               >
-                {tier.name}
+                {TIER_KEYS[tier.name] ? t(`tier.${TIER_KEYS[tier.name]}.name`) : tier.name}
               </h3>
               <p
                 className="text-2xl font-bold mb-4"
@@ -280,7 +284,7 @@ export function PricingContent() {
                       : "btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline"
                 }
               >
-                {tier.cta}
+                {tier.cta === "Talk to sales" ? t("contactSales") : t("cta")}
               </Link>
             </div>
           ))}

@@ -443,11 +443,11 @@ export default function AppShellClient({
                             : ""}
                         </span>
                       </div>
-                      <div className="px-1 pt-1 text-[10px] text-[#5A5A5C]">
-                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D]">
+                      <div className="px-1 pt-1 text-[10px] text-zinc-500">
+                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-zinc-400">
                           ⌘
                         </kbd>
-                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[#8B8B8D] ml-0.5">
+                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-zinc-400 ml-0.5">
                           K
                         </kbd>
                         <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
