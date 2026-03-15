@@ -117,9 +117,9 @@ export default function AgentVoiceTestPage() {
   if (!agentId) {
     return (
       <div className="max-w-3xl mx-auto p-6">
-        <p className="text-zinc-400">No agent selected.</p>
+        <p className="text-zinc-400">{t("noAgent")}</p>
         <Link href="/app/agents" className="text-sm text-[var(--accent-primary)] hover:underline mt-2 inline-block">
-          Back to Agents
+          {t("backToAgents")}
         </Link>
       </div>
     );
@@ -149,7 +149,7 @@ export default function AgentVoiceTestPage() {
 
       {/* Test with my script */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
-        <h2 className="text-sm font-semibold text-white mb-2">Test with your script</h2>
+        <h2 className="text-sm font-semibold text-white mb-2">{t("scriptSection")}</h2>
         <textarea
           value={customScript}
           onChange={(e) => setCustomScript(e.target.value)}
@@ -158,16 +158,16 @@ export default function AgentVoiceTestPage() {
           className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--accent-primary)] focus:outline-none resize-y mb-3"
         />
         <p className="text-[11px] text-zinc-500 mb-3">
-          Select a voice below and click Play to hear this script. Or use &quot;Generate Preview&quot; after picking a voice.
+          {t("scriptHelp")}
         </p>
       </section>
 
       {/* A/B comparison */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
-        <h2 className="text-sm font-semibold text-white mb-3">A/B comparison</h2>
+        <h2 className="text-sm font-semibold text-white mb-3">{t("abComparison")}</h2>
         <div className="flex flex-wrap gap-4 items-end mb-3">
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">Voice A</label>
+            <label className="block text-[11px] text-zinc-500 mb-1">{t("voiceA")}</label>
             <select
               value={abVoiceA}
               onChange={(e) => setAbVoiceA(e.target.value)}
@@ -179,7 +179,7 @@ export default function AgentVoiceTestPage() {
             </select>
           </div>
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">Voice B</label>
+            <label className="block text-[11px] text-zinc-500 mb-1">{t("voiceB")}</label>
             <select
               value={abVoiceB}
               onChange={(e) => setAbVoiceB(e.target.value)}
@@ -241,7 +241,7 @@ export default function AgentVoiceTestPage() {
 
       {/* Voice list */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
-        <h2 className="text-sm font-semibold text-white mb-3">All voices</h2>
+        <h2 className="text-sm font-semibold text-white mb-3">{t("allVoices")}</h2>
         <div className="grid gap-3">
           {CURATED_VOICES.map((voice) => (
             <div
@@ -295,11 +295,11 @@ export default function AgentVoiceTestPage() {
 
       {/* Apply to agent */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-        <h2 className="text-sm font-semibold text-white mb-2">Apply to agent</h2>
+        <h2 className="text-sm font-semibold text-white mb-2">{t("applyToAgent")}</h2>
         <p className="text-xs text-zinc-500 mb-3">
           {selectedVoiceId
-            ? `Selected: ${CURATED_VOICES.find((v) => v.id === selectedVoiceId)?.name ?? selectedVoiceId}`
-            : "Select a voice above to apply."}
+            ? `${t("selected")}: ${CURATED_VOICES.find((v) => v.id === selectedVoiceId)?.name ?? selectedVoiceId}`
+            : t("selectVoicePrompt")}
         </p>
         <button
           type="button"
@@ -308,7 +308,7 @@ export default function AgentVoiceTestPage() {
           className="px-4 py-2.5 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 disabled:opacity-50 flex items-center gap-2"
         >
           {applying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-          Apply to agent
+          {t("applyToAgent")}
         </button>
       </section>
     </div>

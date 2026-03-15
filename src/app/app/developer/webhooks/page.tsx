@@ -223,7 +223,7 @@ export default function DeveloperWebhooksPage() {
                   <div className="min-w-0">
                     <p className="font-mono text-sm text-white truncate">{ep.url}</p>
                     <p className="text-xs text-zinc-500 mt-0.5">
-                      {ep.events.length} events · {ep.has_secret ? "Secret set" : "No secret"}
+                      {ep.events.length} events · {ep.has_secret ? tDev("secretSet") : tDev("noSecret")}
                     </p>
                   </div>
                 </button>

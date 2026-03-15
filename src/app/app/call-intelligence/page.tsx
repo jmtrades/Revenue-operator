@@ -888,7 +888,7 @@ export default function CallIntelligencePage() {
             onChange={(e) => setCallType(e.target.value)}
             className="w-full bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none"
           >
-            <option value="">Call type (optional)</option>
+            <option value="">{t("callTypeOptional")}</option>
             {Object.entries(callTypeLabels).map(([k, v]) => (
               <option key={k} value={k}>
                 {v as string}

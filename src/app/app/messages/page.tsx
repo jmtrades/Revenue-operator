@@ -45,6 +45,7 @@ function formatMsgTime(iso: string, yesterdayLabel: string): string {
 
 export default function AppMessagesPage() {
   const t = useTranslations("messages");
+  const tCommon = useTranslations("common");
   const searchParams = useSearchParams();
   const toParam = searchParams.get("to")?.trim() ?? "";
   const leadIdParam = searchParams.get("lead_id")?.trim() ?? "";
@@ -223,7 +224,7 @@ export default function AppMessagesPage() {
       <div className="flex flex-col md:flex-row gap-4 min-h-[420px]">
         <div className="md:w-72 shrink-0 border border-[var(--border-default)] rounded-2xl bg-[var(--bg-card)] overflow-hidden">
           {loadingThreads ? (
-            <div className="p-4 text-center text-xs text-zinc-500">Loading…</div>
+            <div className="p-4 text-center text-xs text-zinc-500">{tCommon("loadingEllipsis")}</div>
           ) : threads.length === 0 ? (
             <div className="p-4">
               <EmptyState

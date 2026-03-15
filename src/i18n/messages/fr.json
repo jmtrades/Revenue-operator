@@ -1437,6 +1437,7 @@
     "pageHeading": "Agents IA",
     "pageSubtitle": "Différents agents pour la journée, après les heures, les urgences et le suivi.",
     "createAgent": "+ Créer un agent",
+    "callVolumeByDay": "Volume d'appels par jour",
     "title": "Agents",
     "new": "Nouvel agent",
     "empty": {
@@ -2452,6 +2453,7 @@
     "untitledCall": "Appel sans titre",
     "notePlaceholder": "Ajoutez une note pour votre équipe…",
     "titlePlaceholder": "Titre de l'appel (optionnel)",
+    "callTypeOptional": "Type d'appel (optionnel)",
     "transcriptPlaceholder": "Collez la transcription ici (au moins 100 caractères)...",
     "analyzing": "Analyse en cours…",
     "analyzeTranscript": "Analyser la transcription",
@@ -3100,6 +3102,8 @@
     "agent.startLiveTest": "Démarrer le test en direct",
     "agent.endLiveTest": "Terminer le test en direct",
     "agent.removeAria": "Supprimer",
+    "agent.knowledgeDeleteConfirmTitle": "Supprimer l'entrée de connaissances ?",
+    "agent.knowledgeDeleteConfirmMessage": "Cette entrée sera définitivement supprimée de la base de connaissances de l'agent.",
     "agent.defaultAgentName": "Réceptionniste",
     "agent.defaultGreeting": "Merci d'avoir appelé {business}. Comment puis-je vous aider ?",
     "agent.voicePreviewText": "Merci d'avoir appelé. Comment puis-je vous aider aujourd'hui ?",
@@ -4377,15 +4381,32 @@
     "conversationAria": "Conversation"
   },
   "agents.voiceTest": {
-    "defaultPreviewText": "Merci d'avoir appelé. Comment puis-je vous aider aujourd'hui ?",
-    "scriptPlaceholder": "Saisissez le texte pour l'écouter avec la voix sélectionnée…",
+    "defaultPreviewText": "Bonjour, merci d'avoir appelé ! Comment puis-je vous aider ?",
+    "scriptPlaceholder": "Saisissez du texte pour prévisualiser avec cette voix…",
+    "noAgent": "Aucun agent sélectionné.",
+    "backToAgents": "Retour aux Agents",
+    "pageTitle": "Aperçu et test vocal",
+    "scriptSection": "Testez avec votre script",
+    "scriptHelp": "Sélectionnez une voix ci-dessous et cliquez sur Écouter pour entendre ce script.",
+    "abComparison": "Comparaison A/B",
+    "voiceA": "Voix A",
+    "voiceB": "Voix B",
+    "playA": "Écouter A",
+    "playB": "Écouter B",
+    "pickA": "Choisir A",
+    "pickB": "Choisir B",
+    "allVoices": "Toutes les voix",
+    "selected": "Sélectionnée",
+    "select": "Sélectionner",
+    "applyToAgent": "Appliquer à l'agent",
+    "selectVoicePrompt": "Sélectionnez une voix ci-dessus pour l'appliquer.",
     "toast": {
-      "played": "Lecture de {name}",
-      "applied": "Voix appliquée à l’agent."
+      "played": "Aperçu vocal lu",
+      "applied": "Paramètres vocaux appliqués"
     },
     "errors": {
-      "previewFailed": "La prévisualisation a échoué. Vérifiez la configuration ElevenLabs.",
-      "applyFailed": "Échec de l’application de la voix à l’agent. Veuillez réessayer."
+      "previewFailed": "Échec de l'aperçu vocal. Veuillez réessayer.",
+      "applyFailed": "Échec de l'application des paramètres vocaux. Veuillez réessayer."
     }
   },
   "errors": {
@@ -4725,6 +4746,7 @@
     "loading": "Chargement…",
     "membersCount": "{count, plural, one {# membre} other {# membres}}",
     "inviteMember": "Inviter un membre",
+    "emailLabel": "E-mail",
     "removeMemberTitle": "Supprimer le membre ?",
     "removeMemberMessage": "{name} n'aura plus accès à cet espace. Cette action est irréversible.",
     "removeConfirmLabel": "Supprimer",
@@ -4943,6 +4965,8 @@
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Envoyez des événements vers vos endpoints HTTP avec des payloads signés pour les appels, leads, rendez-vous et plus.",
+      "secretSet": "Secret défini",
+      "noSecret": "Aucun secret",
       "deleteTitle": "Supprimer l'endpoint webhook ?",
       "deleteMessage": "Retirer {url} ? L'historique des envois sera supprimé.",
       "deliveryLog": "Journal des envois",
@@ -5022,6 +5046,10 @@
     "pageTitle": "Contacts",
     "title": "Contacts",
     "subtitle": "Toutes les personnes avec qui votre IA parle, au même endroit.",
+    "callPhone": "Appeler {phone}",
+    "email": "E-mail",
+    "notes": "Notes",
+    "callHistory": "Historique des appels",
     "savedCount": "{count, plural, one {# enregistré} other {# enregistrés}}",
     "addContactCta": "Ajouter un contact",
     "searchPlaceholder": "Rechercher par nom, téléphone ou email…",

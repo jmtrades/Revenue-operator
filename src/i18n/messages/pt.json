@@ -1437,6 +1437,7 @@
     "pageHeading": "Agentes IA",
     "pageSubtitle": "Diferentes agentes para horário comercial, após expediente, emergências e follow-up.",
     "createAgent": "+ Criar agente",
+    "callVolumeByDay": "Chamadas por dia",
     "title": "Agentes",
     "new": "Novo agente",
     "empty": {
@@ -1548,18 +1549,6 @@
     "nav": {
       "backToKnowledge": "Voltar a Conhecimento",
       "continueToTest": "Continuar para Teste"
-    },
-    "voiceTest": {
-      "defaultPreviewText": "Olá, obrigado por ligar! Como posso ajudar?",
-      "errors": {
-        "applyFailed": "Falha ao aplicar configurações de voz. Tente novamente.",
-        "previewFailed": "Falha na pré-visualização da voz. Tente novamente."
-      },
-      "scriptPlaceholder": "Digite texto para pré-visualizar com esta voz…",
-      "toast": {
-        "applied": "Configurações de voz aplicadas",
-        "played": "Pré-visualização de voz reproduzida"
-      }
     },
     "testStep": {
       "title": "Fale com sua IA",
@@ -2470,6 +2459,7 @@
     "untitledCall": "Chamada sem título",
     "notePlaceholder": "Adicione uma nota para sua equipe…",
     "titlePlaceholder": "Título da chamada (opcional)",
+    "callTypeOptional": "Tipo de chamada (opcional)",
     "transcriptPlaceholder": "Cole a transcrição aqui (pelo menos 100 caracteres)...",
     "analyzing": "Analisando…",
     "analyzeTranscript": "Analisar transcrição"
@@ -3117,6 +3107,8 @@
     "agent.startLiveTest": "Iniciar teste em direto",
     "agent.endLiveTest": "Terminar teste em direto",
     "agent.removeAria": "Remover",
+    "agent.knowledgeDeleteConfirmTitle": "Remover entrada de conhecimento?",
+    "agent.knowledgeDeleteConfirmMessage": "Esta entrada será permanentemente removida da base de conhecimento do agente.",
     "agent.defaultAgentName": "Recepcionista",
     "agent.defaultGreeting": "Obrigado por ligar para {business}. Como posso ajudar?",
     "agent.voicePreviewText": "Obrigado por ligar. Como posso ajudar hoje?",
@@ -4394,15 +4386,32 @@
     "conversationAria": "Conversa"
   },
   "agents.voiceTest": {
-    "defaultPreviewText": "Obrigado por ligar. Como posso ajudá-lo hoje?",
-    "scriptPlaceholder": "Digite o texto para ouvir na voz selecionada…",
+    "defaultPreviewText": "Olá, obrigado por ligar! Como posso ajudar?",
+    "scriptPlaceholder": "Digite texto para pré-visualizar com esta voz…",
+    "noAgent": "Nenhum agente selecionado.",
+    "backToAgents": "Voltar para Agentes",
+    "pageTitle": "Pré-visualização e teste de voz",
+    "scriptSection": "Teste com seu script",
+    "scriptHelp": "Selecione uma voz abaixo e clique em Reproduzir para ouvir este script.",
+    "abComparison": "Comparação A/B",
+    "voiceA": "Voz A",
+    "voiceB": "Voz B",
+    "playA": "Reproduzir A",
+    "playB": "Reproduzir B",
+    "pickA": "Escolher A",
+    "pickB": "Escolher B",
+    "allVoices": "Todas as vozes",
+    "selected": "Selecionada",
+    "select": "Selecionar",
+    "applyToAgent": "Aplicar ao agente",
+    "selectVoicePrompt": "Selecione uma voz acima para aplicar.",
     "toast": {
-      "played": "{name} reproduzido",
-      "applied": "Voz aplicada ao agente."
+      "played": "Pré-visualização de voz reproduzida",
+      "applied": "Configurações de voz aplicadas"
     },
     "errors": {
-      "previewFailed": "Falha ao reproduzir a prévia. Verifique a configuração do ElevenLabs.",
-      "applyFailed": "Falha ao aplicar a voz ao agente. Tente novamente."
+      "previewFailed": "Falha na pré-visualização da voz. Tente novamente.",
+      "applyFailed": "Falha ao aplicar configurações de voz. Tente novamente."
     }
   },
   "errors": {
@@ -4742,6 +4751,7 @@
     "loading": "Carregando…",
     "membersCount": "{count, plural, one {# membro} other {# membros}}",
     "inviteMember": "Convidar membro",
+    "emailLabel": "E-mail",
     "removeMemberTitle": "Remover membro?",
     "removeMemberMessage": "{name} perderá o acesso a este espaço. Esta ação não pode ser desfeita.",
     "removeConfirmLabel": "Remover",
@@ -4960,6 +4970,8 @@
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Envie eventos para seus endpoints HTTP com payloads assinados para chamadas, leads, agendamentos e mais.",
+      "secretSet": "Secret definido",
+      "noSecret": "Sem secret",
       "deleteTitle": "Excluir endpoint do webhook?",
       "deleteMessage": "Remover {url}? O histórico de entrega será excluído.",
       "deliveryLog": "Registro de entregas",
@@ -5039,6 +5051,10 @@
     "pageTitle": "Contatos",
     "title": "Contatos",
     "subtitle": "Todas as pessoas com quem sua IA fala, em um único lugar.",
+    "callPhone": "Ligar para {phone}",
+    "email": "E-mail",
+    "notes": "Notas",
+    "callHistory": "Histórico de chamadas",
     "savedCount": "{count, plural, one {# salvo} other {# salvos}}",
     "addContactCta": "Adicionar contato",
     "searchPlaceholder": "Buscar por nome, telefone ou e-mail…",

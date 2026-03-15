@@ -1448,6 +1448,7 @@
     "pageHeading": "AI Agents",
     "pageSubtitle": "Different agents for daytime, after-hours, emergencies, and follow-up.",
     "createAgent": "+ Create Agent",
+    "callVolumeByDay": "Call volume by day",
     "title": "Agents",
     "new": "New agent",
     "empty": {
@@ -1515,18 +1516,6 @@
     "nav": {
       "backToKnowledge": "Back to Knowledge",
       "continueToTest": "Continue to Test"
-    },
-    "voiceTest": {
-      "defaultPreviewText": "Hi, thanks for calling! How can I help you today?",
-      "errors": {
-        "applyFailed": "Failed to apply voice settings. Please try again.",
-        "previewFailed": "Failed to preview voice. Please try again."
-      },
-      "scriptPlaceholder": "Enter text to preview with this voice…",
-      "toast": {
-        "applied": "Voice settings applied",
-        "played": "Voice preview played"
-      }
     },
     "testPanel": {
       "aiAgent": "AI Agent",
@@ -2328,15 +2317,32 @@
     "conversationAria": "Conversation"
   },
   "agents.voiceTest": {
-    "defaultPreviewText": "Thanks for calling. How can I help you today?",
-    "scriptPlaceholder": "Enter text to hear in the selected voice…",
+    "defaultPreviewText": "Hi, thanks for calling! How can I help you today?",
+    "scriptPlaceholder": "Enter text to preview with this voice…",
+    "noAgent": "No agent selected.",
+    "backToAgents": "Back to Agents",
+    "pageTitle": "Voice preview & test",
+    "scriptSection": "Test with your script",
+    "scriptHelp": "Select a voice below and click Play to hear this script. Or use \"Generate Preview\" after picking a voice.",
+    "abComparison": "A/B comparison",
+    "voiceA": "Voice A",
+    "voiceB": "Voice B",
+    "playA": "Play A",
+    "playB": "Play B",
+    "pickA": "Pick A",
+    "pickB": "Pick B",
+    "allVoices": "All voices",
+    "selected": "Selected",
+    "select": "Select",
+    "applyToAgent": "Apply to agent",
+    "selectVoicePrompt": "Select a voice above to apply.",
     "toast": {
-      "played": "Played {name}",
-      "applied": "Voice applied to agent."
+      "played": "Voice preview played",
+      "applied": "Voice settings applied"
     },
     "errors": {
-      "previewFailed": "Preview failed. Check ElevenLabs is configured.",
-      "applyFailed": "Failed to apply voice to agent. Please try again."
+      "previewFailed": "Failed to preview voice. Please try again.",
+      "applyFailed": "Failed to apply voice settings. Please try again."
     }
   },
   "calls": {
@@ -2576,6 +2582,7 @@
     "untitledCall": "Untitled call",
     "notePlaceholder": "Add a note for your team…",
     "titlePlaceholder": "Call title (optional)",
+    "callTypeOptional": "Call type (optional)",
     "transcriptPlaceholder": "Paste transcript here (at least 100 characters)...",
     "analyzing": "Analyzing…",
     "analyzeTranscript": "Analyze transcript",
@@ -3207,6 +3214,8 @@
       "previewVoice": "Preview voice",
       "questionPlaceholder": "Question",
       "removeAria": "Remove Q&A item",
+      "knowledgeDeleteConfirmTitle": "Remove knowledge entry?",
+      "knowledgeDeleteConfirmMessage": "This entry will be permanently removed from the agent's knowledge base.",
       "saveAndUpdateAgent": "Save & update agent",
       "saveFailed": "Failed to save agent settings",
       "saving": "Saving…",
@@ -5049,6 +5058,8 @@
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Send events to your HTTP endpoints with signed payloads for calls, leads, appointments, and more.",
+      "secretSet": "Secret set",
+      "noSecret": "No secret",
       "deleteTitle": "Delete webhook endpoint?",
       "deleteMessage": "Remove {url}? Delivery history will be deleted.",
       "deliveryLog": "Delivery log",
@@ -5085,6 +5096,7 @@
     "loading": "Loading…",
     "membersCount": "{count, plural, one {# member} other {# members}}",
     "inviteMember": "Invite Member",
+    "emailLabel": "Email",
     "removeMemberTitle": "Remove member?",
     "removeMemberMessage": "{name} will lose access to this workspace. This can't be undone.",
     "removeConfirmLabel": "Remove",
@@ -5205,6 +5217,10 @@
     "pageTitle": "Contacts",
     "title": "Contacts",
     "subtitle": "Every caller your AI speaks to, in one place.",
+    "callPhone": "Call {phone}",
+    "email": "Email",
+    "notes": "Notes",
+    "callHistory": "Call history",
     "savedCount": "{count, plural, one {# saved} other {# saved}}",
     "addContactCta": "Add contact",
     "searchPlaceholder": "Search by name, phone, or email…",

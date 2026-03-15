@@ -1437,6 +1437,7 @@
     "pageHeading": "KI-Agenten",
     "pageSubtitle": "Verschiedene Agenten für Tag, außerhalb der Geschäftszeiten, Notfälle und Nachfass.",
     "createAgent": "+ Agent erstellen",
+    "callVolumeByDay": "Anrufvolumen pro Tag",
     "title": "Agenten",
     "new": "Neuer Agent",
     "empty": {
@@ -1548,18 +1549,6 @@
     "nav": {
       "backToKnowledge": "Zurück zu Wissen",
       "continueToTest": "Weiter zu Test"
-    },
-    "voiceTest": {
-      "defaultPreviewText": "Hallo, danke für Ihren Anruf! Wie kann ich Ihnen helfen?",
-      "errors": {
-        "applyFailed": "Spracheinstellungen konnten nicht übernommen werden. Bitte erneut versuchen.",
-        "previewFailed": "Sprachvorschau fehlgeschlagen. Bitte erneut versuchen."
-      },
-      "scriptPlaceholder": "Text eingeben, um mit dieser Stimme vorzuhören…",
-      "toast": {
-        "applied": "Spracheinstellungen übernommen",
-        "played": "Sprachvorschau abgespielt"
-      }
     },
     "testStep": {
       "title": "Sprechen Sie mit Ihrer KI",
@@ -2470,6 +2459,7 @@
     "untitledCall": "Anruf ohne Titel",
     "notePlaceholder": "Notiz für Ihr Team hinzufügen…",
     "titlePlaceholder": "Anruftitel (optional)",
+    "callTypeOptional": "Anruftyp (optional)",
     "transcriptPlaceholder": "Transkript hier einfügen (mind. 100 Zeichen)...",
     "analyzing": "Analysiere…",
     "analyzeTranscript": "Transkript analysieren",
@@ -3118,6 +3108,8 @@
     "agent.startLiveTest": "Live-Test starten",
     "agent.endLiveTest": "Live-Test beenden",
     "agent.removeAria": "Entfernen",
+    "agent.knowledgeDeleteConfirmTitle": "Wissenseintrag entfernen?",
+    "agent.knowledgeDeleteConfirmMessage": "Dieser Eintrag wird dauerhaft aus der Wissensbasis des Agenten entfernt.",
     "agent.defaultAgentName": "Empfang",
     "agent.defaultGreeting": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen helfen?",
     "agent.voicePreviewText": "Danke für Ihren Anruf. Wie kann ich Ihnen heute helfen?",
@@ -4395,15 +4387,32 @@
     "conversationAria": "Konversation"
   },
   "agents.voiceTest": {
-    "defaultPreviewText": "Danke für Ihren Anruf. Wie kann ich Ihnen heute helfen?",
-    "scriptPlaceholder": "Text eingeben, um ihn in der gewählten Stimme zu hören…",
+    "defaultPreviewText": "Hallo, danke für Ihren Anruf! Wie kann ich Ihnen helfen?",
+    "scriptPlaceholder": "Text eingeben, um mit dieser Stimme vorzuhören…",
+    "noAgent": "Kein Agent ausgewählt.",
+    "backToAgents": "Zurück zu Agenten",
+    "pageTitle": "Sprachvorschau & Test",
+    "scriptSection": "Mit Ihrem Skript testen",
+    "scriptHelp": "Wählen Sie unten eine Stimme aus und klicken Sie auf Abspielen, um dieses Skript zu hören.",
+    "abComparison": "A/B-Vergleich",
+    "voiceA": "Stimme A",
+    "voiceB": "Stimme B",
+    "playA": "A abspielen",
+    "playB": "B abspielen",
+    "pickA": "A wählen",
+    "pickB": "B wählen",
+    "allVoices": "Alle Stimmen",
+    "selected": "Ausgewählt",
+    "select": "Auswählen",
+    "applyToAgent": "Auf Agent anwenden",
+    "selectVoicePrompt": "Wählen Sie oben eine Stimme zum Anwenden aus.",
     "toast": {
-      "played": "{name} wurde abgespielt",
-      "applied": "Stimme auf Agenten angewendet."
+      "played": "Sprachvorschau abgespielt",
+      "applied": "Spracheinstellungen übernommen"
     },
     "errors": {
-      "previewFailed": "Vorschau fehlgeschlagen. Prüfe die ElevenLabs-Konfiguration.",
-      "applyFailed": "Stimme konnte nicht auf den Agenten angewendet werden. Bitte versuche es erneut."
+      "previewFailed": "Sprachvorschau fehlgeschlagen. Bitte erneut versuchen.",
+      "applyFailed": "Spracheinstellungen konnten nicht übernommen werden. Bitte erneut versuchen."
     }
   },
   "errors": {
@@ -4743,6 +4752,7 @@
     "loading": "Laden…",
     "membersCount": "{count, plural, one {# Mitglied} other {# Mitglieder}}",
     "inviteMember": "Mitglied einladen",
+    "emailLabel": "E-Mail",
     "removeMemberTitle": "Mitglied entfernen?",
     "removeMemberMessage": "{name} verliert den Zugang zu diesem Arbeitsbereich. Das kann nicht rückgängig gemacht werden.",
     "removeConfirmLabel": "Entfernen",
@@ -4961,6 +4971,8 @@
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "Sende Ereignisse an deine HTTP-Endpoints mit signierten Payloads für Anrufe, Leads, Termine und mehr.",
+      "secretSet": "Secret gesetzt",
+      "noSecret": "Kein Secret",
       "deleteTitle": "Webhook-Endpoint löschen?",
       "deleteMessage": "{url} entfernen? Der Zustellverlauf wird gelöscht.",
       "deliveryLog": "Zustellprotokoll",
@@ -5040,6 +5052,10 @@
     "pageTitle": "Kontakte",
     "title": "Kontakte",
     "subtitle": "Jede Person, mit der dein KI-Assistent spricht, an einem Ort.",
+    "callPhone": "{phone} anrufen",
+    "email": "E-Mail",
+    "notes": "Notizen",
+    "callHistory": "Anrufverlauf",
     "savedCount": "{count, plural, one {# gespeichert} other {# gespeichert}}",
     "addContactCta": "Kontakt hinzufügen",
     "searchPlaceholder": "Nach Name, Telefon oder E-Mail suchen…",
