@@ -127,6 +127,7 @@
     "loading": "Carregando",
     "loadingEllipsis": "Carregando…",
     "error": "Erro",
+    "errorGeneric": "Algo deu errado. Tente novamente.",
     "success": "Sucesso",
     "retry": "Tentar novamente",
     "viewAll": "Ver tudo",
@@ -1547,6 +1548,18 @@
     "nav": {
       "backToKnowledge": "Voltar a Conhecimento",
       "continueToTest": "Continuar para Teste"
+    },
+    "voiceTest": {
+      "defaultPreviewText": "Olá, obrigado por ligar! Como posso ajudar?",
+      "errors": {
+        "applyFailed": "Falha ao aplicar configurações de voz. Tente novamente.",
+        "previewFailed": "Falha na pré-visualização da voz. Tente novamente."
+      },
+      "scriptPlaceholder": "Digite texto para pré-visualizar com esta voz…",
+      "toast": {
+        "applied": "Configurações de voz aplicadas",
+        "played": "Pré-visualização de voz reproduzida"
+      }
     },
     "testStep": {
       "title": "Fale com sua IA",
@@ -5052,6 +5065,7 @@
       "subtitle": "Sua IA usará essas informações em chamadas futuras."
     },
     "form": {
+      "addTag": "+ Adicionar tag",
       "firstNameLabel": "Nome*",
       "firstNamePlaceholder": "Mike",
       "lastNameLabel": "Sobrenome*",

@@ -282,20 +282,18 @@ export default function AppCallDetailPage() {
 
   if (loading) {
     return (
-      <div className="p-6 md:p-8 max-w-4xl mx-auto">
-        <div className="flex items-center gap-2 mb-4">
+      <div className="max-w-4xl mx-auto p-6 space-y-6 animate-pulse">
+        <div className="h-4 w-32 bg-zinc-800 rounded" />
+        <div className="h-8 w-64 bg-zinc-800 rounded" />
+        <div className="grid grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-20 bg-zinc-800 rounded-xl" />
+          ))}
+        </div>
+        <div className="h-40 bg-zinc-800 rounded-xl" />
+        <div className="flex items-center gap-2">
           <ArrowLeft className="w-4 h-4 text-zinc-500" />
           <span className="text-sm text-zinc-400">{t("calls.detail.backToCalls")}</span>
-        </div>
-        <div className="space-y-4">
-          <div className="h-10 w-2/3 rounded-xl animate-pulse bg-[var(--bg-card)]" />
-          <div className="h-4 w-1/2 rounded animate-pulse bg-[var(--bg-card)]" />
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="h-24 rounded-xl animate-pulse bg-[var(--bg-card)]" />
-            <div className="h-24 rounded-xl animate-pulse bg-[var(--bg-card)]" />
-          </div>
-          <div className="h-40 rounded-xl animate-pulse bg-[var(--bg-card)] mt-6" />
-          <div className="h-32 rounded-xl animate-pulse bg-[var(--bg-card)]" />
         </div>
       </div>
     );

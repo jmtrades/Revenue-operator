@@ -13,8 +13,11 @@ const REQUIRED_VARS = [
 export function validateEnv(): void {
   const missing = REQUIRED_VARS.filter((key) => !process.env[key]);
   if (missing.length > 0) {
-    console.warn(
-      `\n⚠️ Missing environment variables (some features may not work):\n${missing.map((k) => `   - ${k}`).join("\n")}\n`,
+    console.error(
+      `\n❌ Missing required environment variables:\n${missing.map((k) => `   - ${k}`).join("\n")}\n`,
     );
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(`Missing required env vars: ${missing.join(", ")}`);
+    }
   }
 }

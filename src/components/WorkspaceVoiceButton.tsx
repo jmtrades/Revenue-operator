@@ -47,10 +47,10 @@ export function WorkspaceVoiceButton({
       if (res.ok && data.ok) {
         setStatus(data.message ?? tAgents("toast.agentLive"));
       } else {
-        setError(data.error ?? tCommon("error.generic"));
+        setError(data.error ?? tCommon("errorGeneric"));
       }
     } catch {
-      setError(tCommon("error.generic"));
+      setError(tCommon("errorGeneric"));
     } finally {
       setLoading(false);
     }
