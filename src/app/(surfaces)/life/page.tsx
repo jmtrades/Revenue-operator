@@ -87,34 +87,34 @@ export default function LifePage() {
 
   if (!workspaceId) {
     return (
-      <p className="text-[18px] text-[#78716c]">Select a workspace to view the life surface.</p>
+      <p className="text-[18px] text-stone-500">{t("selectWorkspace")}</p>
     );
   }
 
   if (loading && !sections) {
-    return <p className="text-[18px]" style={{ color: "var(--text-tertiary)" }}>One moment…</p>;
+    return <p className="text-[18px] text-stone-500">{t("oneMoment")}</p>;
   }
 
   if (error) {
-    return <p className="text-[18px] text-[#78716c]">{error}</p>;
+    return <p className="text-[18px] text-stone-500">{error}</p>;
   }
 
   return (
     <article className="space-y-12">
       {identity && (
-        <p className="text-[21px] font-normal leading-snug text-[#1c1917]">{identity}</p>
+        <p className="text-[21px] font-normal leading-snug text-stone-900">{identity}</p>
       )}
 
       <section>
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           {t("whatIsBeingTracked")}
         </h2>
         <ul className="space-y-2">
           {sections?.what_is_being_tracked?.map((s, i) => (
-            <li key={i} className="text-[18px] leading-relaxed text-[#1c1917]">
+            <li key={i} className="text-[18px] leading-relaxed text-stone-900">
               {s}
             </li>
-          )) ?? <li className="text-[18px] text-[#78716c]">—</li>}
+          )) ?? <li className="text-[18px] text-stone-500">—</li>}
         </ul>
         <div className="mt-6 flex flex-col gap-2 max-w-md">
           <input
@@ -122,59 +122,59 @@ export default function LifePage() {
             placeholder={t("refLabelPlaceholder")}
             value={refLabel}
             onChange={(e) => setRefLabel(e.target.value)}
-            className="rounded border border-[#e7e5e4] px-3 py-2 text-[16px] text-[#1c1917] placeholder-[#a8a29e]"
+            className="rounded border border-stone-200 px-3 py-2 text-[16px] text-stone-900 placeholder-stone-400"
           />
           <input
             type="text"
             placeholder={t("refCategoryPlaceholder")}
             value={refCategory}
             onChange={(e) => setRefCategory(e.target.value)}
-            className="rounded border border-[#e7e5e4] px-3 py-2 text-[16px] text-[#1c1917] placeholder-[#a8a29e]"
+            className="rounded border border-stone-200 px-3 py-2 text-[16px] text-stone-900 placeholder-stone-400"
           />
           <button
             type="button"
             onClick={addReference}
             disabled={!refLabel.trim() || submitting}
-            className="text-[15px] rounded border border-[#d6d3d1] py-2 px-3 text-[#44403c] hover:bg-[#f5f5f4] disabled:opacity-50"
+            className="text-[15px] rounded border border-stone-300 py-2 px-3 text-stone-700 hover:bg-stone-100 disabled:opacity-50"
           >
             {submitting ? t("adding") : t("addReference")}
           </button>
         </div>
         {submitResult === "ok" && (
-          <p className="mt-2 text-[15px] text-[#78716c]">{t("referenceAdded")}</p>
+          <p className="mt-2 text-[15px] text-stone-500">{t("referenceAdded")}</p>
         )}
         {submitResult === "err" && (
-          <p className="mt-2 text-[15px] text-[#78716c]">{t("failedToAdd")}</p>
+          <p className="mt-2 text-[15px] text-stone-500">{t("failedToAdd")}</p>
         )}
       </section>
 
-      <section className="border-t border-[#e7e5e4] pt-8">
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+      <section className="border-t border-stone-200 pt-8">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           {t("whatWasHandled")}
         </h2>
         <ul className="space-y-2">
           {sections?.what_was_handled?.length ? (
             sections.what_was_handled.map((s, i) => (
-              <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+              <li key={i} className="text-[18px] leading-relaxed text-stone-700">
                 {s}
               </li>
             ))
           ) : (
-            <li className="text-[18px] leading-relaxed text-[#78716c]">{t("nothingRecordedYet")}</li>
+            <li className="text-[18px] leading-relaxed text-stone-500">{t("nothingRecordedYet")}</li>
           )}
         </ul>
       </section>
 
-      <section className="border-t border-[#e7e5e4] pt-8">
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+      <section className="border-t border-stone-200 pt-8">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           {t("whatRequiredNoAction")}
         </h2>
         <ul className="space-y-2">
           {sections?.what_required_no_action?.map((s, i) => (
-            <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+            <li key={i} className="text-[18px] leading-relaxed text-stone-700">
               {s}
             </li>
-          )) ?? <li className="text-[18px] text-[#78716c]">—</li>}
+          )) ?? <li className="text-[18px] text-stone-500">—</li>}
         </ul>
       </section>
     </article>

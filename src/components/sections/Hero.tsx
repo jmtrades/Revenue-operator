@@ -25,10 +25,7 @@ export function Hero() {
             >
               {tHero("title")}
             </h1>
-            <p
-              className="text-base md:text-lg max-w-lg mb-4"
-              style={{ color: "#94A3B8", lineHeight: 1.7 }}
-            >
+            <p className="text-base md:text-lg max-w-lg mb-4 text-slate-400 leading-relaxed">
               {tHero("subtitle")}
             </p>
             <p className="text-sm text-white/40 mt-4">{tHero("trustLine")}</p>
@@ -46,7 +43,7 @@ export function Hero() {
                 {tHero("secondaryCta")}
               </Link>
             </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm" style={{ color: "#64748B" }}>
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-500">
               <span>✓ {tHero("checkmark.existingNumber")}</span>
               <span>✓ {tHero("checkmark.setup")}</span>
               <span>✓ {tHero("checkmark.noCard")}</span>
@@ -55,7 +52,7 @@ export function Hero() {
 
           {/* Right: static conversation demo (no live voice / no mic widget) */}
           <div className="max-w-md lg:ml-auto">
-            <div className="bg-[#161B22] border border-white/[0.08] rounded-2xl p-6 relative overflow-hidden">
+            <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl p-6 relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
               <div className="flex items-center gap-2 mb-1">
                 <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span></span>

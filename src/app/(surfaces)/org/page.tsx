@@ -51,7 +51,7 @@ export default function OrgPage() {
 
   if (!workspaceId) {
     return (
-      <p className="text-[18px] text-[#78716c]">Select a workspace to view the org surface.</p>
+      <p className="text-[18px] text-stone-500">Select a workspace to view the org surface.</p>
     );
   }
 
@@ -60,81 +60,81 @@ export default function OrgPage() {
   }
 
   if (error) {
-    return <p className="text-[18px] text-[#78716c]">{error}</p>;
+    return <p className="text-[18px] text-stone-500">{error}</p>;
   }
 
   return (
     <article className="space-y-12">
       {identity && (
-        <p className="text-[21px] font-normal leading-snug text-[#1c1917]">{identity}</p>
+        <p className="text-[21px] font-normal leading-snug text-stone-900">{identity}</p>
       )}
 
       <section>
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           Current operation
         </h2>
         <ul className="space-y-2">
           {sections?.current_operation?.length
             ? sections.current_operation.map((s, i) => (
-                <li key={i} className="text-[18px] leading-relaxed text-[#1c1917]">
+                <li key={i} className="text-[18px] leading-relaxed text-stone-900">
                   {s}
                 </li>
               ))
             : [
-                <li key={0} className="text-[18px] leading-relaxed text-[#1c1917]">
+                <li key={0} className="text-[18px] leading-relaxed text-stone-900">
                   No active operation summary.
                 </li>,
               ]}
         </ul>
       </section>
 
-      <section className="border-t border-[#e7e5e4] pt-8">
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+      <section className="border-t border-stone-200 pt-8">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           Recent prevented issues
         </h2>
         <ul className="space-y-2">
           {sections?.recent_prevented_issues?.length ? (
             sections.recent_prevented_issues.map((s, i) => (
-              <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+              <li key={i} className="text-[18px] leading-relaxed text-stone-700">
                 {s}
               </li>
             ))
           ) : (
-            <li className="text-[18px] leading-relaxed text-[#78716c]">None recorded.</li>
+            <li className="text-[18px] leading-relaxed text-stone-500">None recorded.</li>
           )}
         </ul>
       </section>
 
-      <section className="border-t border-[#e7e5e4] pt-8">
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+      <section className="border-t border-stone-200 pt-8">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           Ongoing dependencies
         </h2>
         <ul className="space-y-2">
           {sections?.ongoing_dependencies?.length ? (
             sections.ongoing_dependencies.map((s, i) => (
-              <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+              <li key={i} className="text-[18px] leading-relaxed text-stone-700">
                 {s}
               </li>
             ))
           ) : (
-            <li className="text-[18px] leading-relaxed text-[#78716c]">None.</li>
+            <li className="text-[18px] leading-relaxed text-stone-500">None.</li>
           )}
         </ul>
       </section>
 
-      <section className="border-t border-[#e7e5e4] pt-8">
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+      <section className="border-t border-stone-200 pt-8">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           If disabled
         </h2>
         <ul className="space-y-2">
           {sections?.if_disabled?.length ? (
             sections.if_disabled.map((s, i) => (
-              <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+              <li key={i} className="text-[18px] leading-relaxed text-stone-700">
                 {s}
               </li>
             ))
           ) : (
-            <li className="text-[18px] leading-relaxed text-[#78716c]">Nothing listed.</li>
+            <li className="text-[18px] leading-relaxed text-stone-500">Nothing listed.</li>
           )}
         </ul>
       </section>

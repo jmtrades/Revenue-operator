@@ -46,13 +46,13 @@ export default function OnboardIdentityPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] p-6">
+    <main className="min-h-screen bg-stone-50 p-6">
       <div className="mx-auto max-w-[720px] pt-16">
         <div className="space-y-8">
           <OnboardExecutionStateBanner />
           <div className="space-y-6">
             <div>
-              <label htmlFor="business_name" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
+              <label htmlFor="business_name" className="block text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-2">
                 Business name
               </label>
               <input
@@ -60,12 +60,12 @@ export default function OnboardIdentityPage() {
                 type="text"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
+                className="w-full px-4 py-2 text-[18px] text-stone-900 bg-white border border-stone-200 focus:outline-none focus:border-stone-700"
                 disabled={loading}
               />
             </div>
             <div>
-              <label htmlFor="operator_name" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
+              <label htmlFor="operator_name" className="block text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-2">
                 Your name
               </label>
               <input
@@ -73,12 +73,12 @@ export default function OnboardIdentityPage() {
                 type="text"
                 value={operatorName}
                 onChange={(e) => setOperatorName(e.target.value)}
-                className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
+                className="w-full px-4 py-2 text-[18px] text-stone-900 bg-white border border-stone-200 focus:outline-none focus:border-stone-700"
                 disabled={loading}
               />
             </div>
             <div>
-              <label htmlFor="email" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-2">
+              <label htmlFor="email" className="block text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-2">
                 Email
               </label>
               <input
@@ -86,18 +86,18 @@ export default function OnboardIdentityPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
+                className="w-full px-4 py-2 text-[18px] text-stone-900 bg-white border border-stone-200 focus:outline-none focus:border-stone-700"
                 disabled={loading}
               />
             </div>
-            {error && <p className="text-[18px] text-[#78716c]">{error}</p>}
+            {error && <p className="text-[18px] text-stone-500">{error}</p>}
           </div>
-          <div className="border-t border-[#e7e5e4] pt-8">
+          <div className="border-t border-stone-200 pt-8">
             <form onSubmit={handleSubmit}>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] disabled:opacity-50 transition-colors"
+                className="w-full py-3 px-6 text-[18px] font-medium text-stone-900 bg-stone-200 hover:bg-stone-300 disabled:opacity-50 transition-colors"
               >
                 {loading ? "Creating..." : "Continue"}
               </button>

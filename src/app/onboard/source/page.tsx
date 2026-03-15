@@ -29,11 +29,11 @@ export default function OnboardSourcePage() {
   if (!workspaceId) return null;
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] p-6">
+    <main className="min-h-screen bg-stone-50 p-6">
       <div className="mx-auto max-w-[720px] pt-16">
         <div className="space-y-8">
           <OnboardExecutionStateBanner />
-          <p className="text-[18px] leading-relaxed text-[#1c1917]">
+          <p className="text-[18px] leading-relaxed text-stone-900">
             Where do requests currently arrive?
           </p>
           <div className="space-y-3">
@@ -42,7 +42,7 @@ export default function OnboardSourcePage() {
                 key={source}
                 type="button"
                 onClick={() => handleSelect(source)}
-                className="w-full py-3 px-6 text-[18px] text-left text-[#1c1917] bg-white border border-[#e7e5e4] hover:bg-[#fafaf9] transition-colors"
+                className="w-full py-3 px-6 text-[18px] text-left text-stone-900 bg-white border border-stone-200 hover:bg-stone-50 transition-colors"
               >
                 {source}
               </button>

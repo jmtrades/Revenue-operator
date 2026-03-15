@@ -64,31 +64,31 @@ export default function OnboardWaitingPage() {
   if (!workspaceId || !externalRef) return null;
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] p-6">
+    <main className="min-h-screen bg-stone-50 p-6">
       <div className="mx-auto max-w-[720px] pt-16">
         <div className="space-y-6">
           <OnboardExecutionStateBanner />
           {acknowledged ? (
             <>
-              <p className="text-[18px] leading-relaxed text-[#44403c]">
+              <p className="text-[18px] leading-relaxed text-stone-700">
                 Another party confirmed the outcome.
               </p>
-              <p className="text-[18px] leading-relaxed text-[#44403c]">
+              <p className="text-[18px] leading-relaxed text-stone-700">
                 The record is now complete.
               </p>
             </>
           ) : (
             <>
-              <p className="text-[18px] leading-relaxed text-[#1c1917]">
+              <p className="text-[18px] leading-relaxed text-stone-900">
                 The other side has the record.
               </p>
-              <p className="text-[18px] leading-relaxed text-[#44403c]">
+              <p className="text-[18px] leading-relaxed text-stone-700">
                 Completion happens when they see the same thing.
               </p>
               {stateSignals.length > 0 && (
-                <div className="border-t border-[#e7e5e4] pt-4 space-y-2">
+                <div className="border-t border-stone-200 pt-4 space-y-2">
                   {stateSignals.map((signal, i) => (
-                    <p key={i} className="text-[18px] leading-relaxed text-[#78716c]">
+                    <p key={i} className="text-[18px] leading-relaxed text-stone-500">
                       {signal}
                     </p>
                   ))}

@@ -59,20 +59,20 @@ export default function OnboardGovernancePage() {
   if (!workspaceId) return null;
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] p-6">
+    <main className="min-h-screen bg-stone-50 p-6">
       <div className="mx-auto max-w-[720px] pt-16">
         <div className="space-y-8">
           <OnboardExecutionStateBanner />
-          <p className="text-[18px] leading-relaxed text-[#1c1917]">
+          <p className="text-[18px] leading-relaxed text-stone-900">
             Execution infrastructure requires jurisdiction, approval mode, and voice governance. Set jurisdiction, approval mode, and voice governance.
           </p>
 
           <div className="space-y-4">
-            <p className="text-[15px] font-medium text-[#44403c]">Jurisdiction</p>
+            <p className="text-[15px] font-medium text-stone-700">Jurisdiction</p>
             <select
               value={jurisdiction}
               onChange={(e) => setJurisdiction(e.target.value)}
-              className="w-full py-3 px-4 text-[16px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:ring-2 focus:ring-[#1c1917]"
+              className="w-full py-3 px-4 text-[16px] text-stone-900 bg-white border border-stone-200 focus:outline-none focus:ring-2 focus:ring-stone-900"
             >
               {JURISDICTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -83,13 +83,13 @@ export default function OnboardGovernancePage() {
           </div>
 
           <div className="space-y-4">
-            <p className="text-[15px] font-medium text-[#44403c]">Approval mode</p>
+            <p className="text-[15px] font-medium text-stone-700">Approval mode</p>
             <div className="space-y-2">
               {APPROVAL_MODES.map((opt) => (
                 <label
                   key={opt.value}
                   className={`flex items-start gap-3 p-4 border cursor-pointer transition-colors ${
-                    approvalMode === opt.value ? "border-[#1c1917] bg-[#f5f5f4]" : "border-[#e7e5e4] bg-white hover:bg-[#fafaf9]"
+                    approvalMode === opt.value ? "border-stone-900 bg-stone-100" : "border-stone-200 bg-white hover:bg-stone-50"
                   }`}
                 >
                   <input
@@ -100,24 +100,24 @@ export default function OnboardGovernancePage() {
                     onChange={() => setApprovalMode(opt.value)}
                     className="mt-1"
                   />
-                  <span className="text-[15px] text-[#1c1917]">{opt.label}</span>
+                  <span className="text-[15px] text-stone-900">{opt.label}</span>
                 </label>
               ))}
             </div>
           </div>
 
-          <div className="border border-[#e7e5e4] bg-[#fafaf9] p-4">
-            <p className="text-[14px] text-[#44403c]">
+          <div className="border border-stone-200 bg-stone-50 p-4">
+            <p className="text-[14px] text-stone-700">
               Governed script blocks and consent capture are on by default.
             </p>
           </div>
 
-          <div className="border-t border-[#e7e5e4] pt-8">
+          <div className="border-t border-stone-200 pt-8">
             <button
               type="button"
               onClick={handleContinue}
               disabled={loading}
-              className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] disabled:opacity-50 transition-colors"
+              className="w-full py-3 px-6 text-[18px] font-medium text-stone-900 bg-stone-200 hover:bg-stone-300 disabled:opacity-50 transition-colors"
             >
               {loading ? "Saving..." : "Continue"}
             </button>

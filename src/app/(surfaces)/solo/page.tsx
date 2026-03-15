@@ -51,84 +51,84 @@ export default function SoloPage() {
 
   if (!workspaceId) {
     return (
-      <p className="text-[18px] text-[#78716c]">Select a workspace to view the solo surface.</p>
+      <p className="text-[18px] text-stone-500">Select a workspace to view the solo surface.</p>
     );
   }
 
   if (loading) {
-    return <p className="text-[18px]" style={{ color: "var(--text-tertiary)" }}>One moment…</p>;
+    return <p className="text-[18px] text-stone-500">One moment…</p>;
   }
 
   if (error) {
-    return <p className="text-[18px] text-[#78716c]">{error}</p>;
+    return <p className="text-[18px] text-stone-500">{error}</p>;
   }
 
   return (
     <article className="space-y-12">
       {identity && (
-        <p className="text-[21px] font-normal leading-snug text-[#1c1917]">{identity}</p>
+        <p className="text-[21px] font-normal leading-snug text-stone-900">{identity}</p>
       )}
 
       <section>
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           Client state
         </h2>
         <ul className="space-y-2">
           {sections?.client_state?.length ? (
             sections.client_state.map((s, i) => (
-              <li key={i} className="text-[18px] leading-relaxed text-[#1c1917]">
+              <li key={i} className="text-[18px] leading-relaxed text-stone-900">
                 {s}
               </li>
             ))
           ) : (
-            <li className="text-[18px] leading-relaxed text-[#78716c]">—</li>
+            <li className="text-[18px] leading-relaxed text-stone-500">—</li>
           )}
         </ul>
       </section>
 
-      <section className="border-t border-[#e7e5e4] pt-8">
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+      <section className="border-t border-stone-200 pt-8">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           Awaiting actions
         </h2>
         <ul className="space-y-2">
           {sections?.awaiting_actions?.map((s, i) => (
-            <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+            <li key={i} className="text-[18px] leading-relaxed text-stone-700">
               {s}
             </li>
-          )) ?? <li className="text-[18px] leading-relaxed text-[#78716c]">—</li>}
+          )) ?? <li className="text-[18px] leading-relaxed text-stone-500">—</li>}
         </ul>
       </section>
 
-      <section className="border-t border-[#e7e5e4] pt-8">
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+      <section className="border-t border-stone-200 pt-8">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           What progressed
         </h2>
         <ul className="space-y-2">
           {sections?.what_progressed?.length ? (
             sections.what_progressed.map((s, i) => (
-              <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+              <li key={i} className="text-[18px] leading-relaxed text-stone-700">
                 {s}
               </li>
             ))
           ) : (
-            <li className="text-[18px] leading-relaxed text-[#78716c]">—</li>
+            <li className="text-[18px] leading-relaxed text-stone-500">—</li>
           )}
         </ul>
       </section>
 
-      <section className="border-t border-[#e7e5e4] pt-8">
-        <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#78716c] mb-4">
+      <section className="border-t border-stone-200 pt-8">
+        <h2 className="text-[13px] font-medium uppercase tracking-wide text-stone-500 mb-4">
           What would stall
         </h2>
         <ul className="space-y-2">
           {sections?.what_would_stall?.length ? (
             sections.what_would_stall.map((s, i) => (
-              <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+              <li key={i} className="text-[18px] leading-relaxed text-stone-700">
                 {s}
               </li>
             ))
           ) : (
-            <li className="text-[18px] leading-relaxed text-[#78716c]">Nothing listed.</li>
+            <li className="text-[18px] leading-relaxed text-stone-500">Nothing listed.</li>
           )}
         </ul>
       </section>
