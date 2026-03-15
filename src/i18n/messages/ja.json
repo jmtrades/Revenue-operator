@@ -1318,6 +1318,7 @@
   },
   "analytics": {
     "pageTitle": "分析 — Recall Touch",
+    "heading": "分析",
     "title": "分析",
     "periodSummary": {
       "title": "期間サマリー",
@@ -1346,7 +1347,76 @@
     "successRate": "成功率 %",
     "emptyStateSummary": "通話が入り始めると、リード・予約・収益のサマリーが表示されます。",
     "am": "AM",
-    "pm": "PM"
+    "pm": "PM",
+    "description": "See how conversations turn into kept appointments and real revenue.",
+    "ranges": {
+      "today": "Today",
+      "sevenDay": "7D",
+      "thirtyDay": "30D",
+      "ninetyDay": "90D",
+      "custom": "Custom"
+    },
+    "rangeLabels": {
+      "today": "Today",
+      "last7": "Last 7 days",
+      "last30": "Last 30 days",
+      "last90": "Last 90 days",
+      "customRange": "Custom range"
+    },
+    "exportCsv": "Export CSV",
+    "emptyHeading": "Analytics populate as calls come in",
+    "emptyDescription": "Your first chart will appear after your first call.",
+    "emptyAction": "Make a test call",
+    "funnelStages": {
+      "calls": "Calls",
+      "leads": "Leads",
+      "qualified": "Qualified",
+      "appointments": "Appointments",
+      "won": "Won"
+    },
+    "atAGlance": "{label} at a glance",
+    "glanceSummary": "Handled {totalCalls} calls, created {leads} leads, booked {appointments} appointments, and protected an estimated ${revenue} in revenue.",
+    "glanceEmpty": "Once calls start coming in, you'll see a summary of how many became leads, appointments, and revenue.",
+    "leadConversionPct": "Lead conversion {pct}%",
+    "positiveSentimentPct": "Positive sentiment {pct}%",
+    "peakHours": "Peak hours",
+    "aiInsights": "AI insights",
+    "dismiss": "Dismiss",
+    "insightBusyHour": "Busiest hour this week stays stable around mid-morning.",
+    "insightAvailability": "Questions about availability often appear outside standard hours.",
+    "addToKnowledge": "Add to knowledge base",
+    "insightLiveAnswer": "Calls that reach a live answer are much more likely to become appointments.",
+    "insightPricing": "Make sure pricing and availability are easy to confirm in the first 30 seconds.",
+    "sentimentOverview": "Sentiment overview",
+    "sentimentPositive": "Positive {pct}%",
+    "sentimentNeutral": "Neutral {pct}%",
+    "sentimentNegative": "Negative {pct}%",
+    "outcomes": {
+      "booked": "Booked",
+      "lead": "Lead",
+      "info": "Info",
+      "transferred": "Transferred",
+      "missed": "Missed",
+      "voicemail": "Voicemail"
+    },
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "errors": {
+      "timeout": "Analytics request timed out. Try again.",
+      "loadFailed": "Could not load analytics for this workspace."
+    },
+    "periodNoData": "No calls recorded in the selected {period} period. Make a test call to start seeing insights here.",
+    "periodSummaryText": "{count} calls with a {rate}% answer rate",
+    "periodAppointments": "{count} appointments, converting {pct}% of qualified leads.",
+    "periodRevenue": "Estimated revenue impact: ${amount}.",
+    "periodDuration": "Average call duration: {duration}."
   },
   "agents": {
     "pageTitle": "エージェント — Recall Touch",
@@ -1404,7 +1474,10 @@
       "pause": "一時停止",
       "on": "オン",
       "editAgent": "エージェントを編集",
-      "deleteAgent": "エージェントを削除"
+      "deleteAgent": "エージェントを削除",
+      "deleteAria": "Delete this agent",
+      "savingAria": "Saving agent",
+      "saveAndSyncAria": "Save agent and sync to voice"
     },
     "nav": {
       "backToKnowledge": "ナレッジに戻る",
@@ -1496,7 +1569,16 @@
       "backButton": "戻る",
       "activating": "有効化中…",
       "activateAgentAria": "エージェントを有効化",
-      "activateAgent": "エージェントを有効化"
+      "activateAgent": "エージェントを有効化",
+      "businessInfoAdded": "Business info added",
+      "useCasesSelected": "Use cases selected",
+      "agentCreated": "Agent created",
+      "voiceSelected": "Voice selected",
+      "openingGreetingSet": "Opening greeting set",
+      "knowledgeEntries": "3+ knowledge entries",
+      "behaviorConfigured": "Behavior configured",
+      "phoneConnected": "Phone number connected",
+      "agentTested": "Agent tested"
     },
     "identityStep": {
       "purposeLabel": "このエージェントは何をしますか？",
@@ -1564,23 +1646,28 @@
       "templates": {
         "receptionist": {
           "label": "受付",
-          "desc": "電話対応、伝言、取り次ぎ。"
+          "desc": "電話対応、伝言、取り次ぎ。",
+          "greeting": "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?"
         },
         "appointment_setter": {
           "label": "予約",
-          "desc": "予約を入れ、詳細を確認。"
+          "desc": "予約を入れ、詳細を確認。",
+          "greeting": "Hi, I can help you schedule an appointment right now. What day works best for you?"
         },
         "lead_qualifier": {
           "label": "リード認定",
-          "desc": "リードを認定し、有望な見込み客を取り次ぐ。"
+          "desc": "リードを認定し、有望な見込み客を取り次ぐ。",
+          "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step."
         },
         "follow_up": {
           "label": "フォローアップ",
-          "desc": "リードに折り返し、再エンゲージ。"
+          "desc": "リードに折り返し、再エンゲージ。",
+          "greeting": "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?"
         },
         "support": {
           "label": "カスタマーサポート",
-          "desc": "質問対応、トラブルシュート、解決。"
+          "desc": "質問対応、トラブルシュート、解決。",
+          "greeting": "Thanks for calling support! What can I help you with?"
         },
         "scratch": {
           "label": "カスタム",
@@ -1870,11 +1957,11 @@
       "escalationHint": "いつAIが人間に引き継ぐべきか。",
       "transferWhen": "次の場合に転送：",
       "escalation": {
-        "asksForManager": "責任者との通話を求める",
+        "asksForManager": "担当者との通話を求める",
         "angry": "怒っている、または不満",
         "complexQuestion": "複雑な法的・医療的質問がある",
-        "requestsHuman": "明示的に人間を要求",
-        "emergency": "緊急事態に言及"
+        "requestsHuman": "人間を明示的に求める",
+        "emergency": "緊急事態に言及する"
       },
       "addQuestion": "+ 質問を追加",
       "remove": "削除",
@@ -1895,12 +1982,12 @@
       "placeholderQ2": "予算の範囲は？",
       "placeholderQ3": "いつ必要ですか？",
       "placeholderQ4": "どのように当社を知りましたか？",
-      "escalation": {
-        "asksForManager": "担当者との通話を求める",
-        "angry": "怒っている、または不満",
-        "complexQuestion": "複雑な法的・医療的質問がある",
-        "requestsHuman": "人間を明示的に求める",
-        "emergency": "緊急事態に言及する"
+      "handoff": {
+        "title": "When to transfer",
+        "subtitle": "Reasons that trigger a handoff to a human."
+      },
+      "objections": {
+        "placeholder": "Anything the agent should always remember on calls."
       }
     },
     "knowledge": {
@@ -2017,6 +2104,53 @@
       "reviewGreeting": "挨拶:",
       "costNote": "推定コストは利用量により異なります。エージェントページでいつでもオフにできます。",
       "back": "戻る"
+    },
+    "purpose": {
+      "inbound": "Inbound",
+      "outbound": "Outbound",
+      "both": "Both"
+    },
+    "template": {
+      "appointment_setter": "Appointment",
+      "lead_qualifier": "Sales",
+      "follow_up": "Follow-up",
+      "support": "Support",
+      "after_hours": "After-Hours",
+      "emergency": "Emergency",
+      "review_request": "Review",
+      "scratch": "Custom",
+      "receptionist": "Receptionist"
+    },
+    "setupProgress": {
+      "title": "Setup progress",
+      "forAgent": "For {name}",
+      "next": "Next"
+    },
+    "setup": {
+      "title": "Setup",
+      "stepOf": "Step {current} of {total}",
+      "jumpAria": "Jump to step",
+      "completed": "Completed",
+      "current": "Current step",
+      "currentlyOn": "Currently: {label}"
+    },
+    "knowledgePanel": {
+      "title": "Knowledge base",
+      "subtitle": "Q&A pairs your agent uses to answer callers.",
+      "questionPlaceholder": "When caller asks about…",
+      "answerPlaceholder": "Agent responds with…",
+      "remove": "Remove",
+      "add": "Add Q&A",
+      "importUrlPlaceholder": "https://your-website.com"
+    },
+    "quickActions": {
+      "label": "Quick actions",
+      "edit": "Edit",
+      "editAria": "Edit agent",
+      "test": "Test",
+      "testAria": "Test agent",
+      "goLive": "Go live",
+      "goLiveAria": "Go live"
     }
   },
   "calls": {
@@ -2511,7 +2645,12 @@
       "workspaceMissing": "ワークスペースが選択されていません。",
       "addFailed": "リードの追加に失敗しました。",
       "csvNoValidRows": "CSVに有効な行が見つかりません。"
-    }
+    },
+    "timeToday": "Today",
+    "timeDaysAgo": "{count} days ago",
+    "timeWeeksAgo": "{count} weeks ago",
+    "timeOneDayAgo": "1 day ago",
+    "timeOneWeekAgo": "1 week ago"
   },
   "campaigns": {
     "title": "キャンペーン",
@@ -2840,6 +2979,7 @@
     "business.saveFailed": "ビジネス設定を保存できませんでした。もう一度お試しください。",
     "business.nameNoMatch": "ワークスペース名が一致しません。確認のため正確に入力してください。",
     "business.deleted": "ワークスペースを削除しました。リダイレクト中です…",
+    "business.deleteWorkspaceError": "ワークスペースを削除できませんでした。",
     "businessPage": {
       "heading": "ビジネス",
       "description": "ビジネス情報はAIが正確に電話に対応するのに役立ちます。",
@@ -2982,7 +3122,28 @@
     "notifications.loadFailed": "通知設定を読み込めませんでした。デフォルト値を使用します。",
     "notifications.saved": "通知設定を保存しました。",
     "deleteDataInfo": "データを完全に削除するには、サポートまでお問い合わせください。",
-    "deleteAccountInfo": "アカウントを完全に削除するには、サポートまでお問い合わせください。"
+    "deleteAccountInfo": "アカウントを完全に削除するには、サポートまでお問い合わせください。",
+    "notifications.events": {
+      "call_received": "Call received",
+      "call_receivedDesc": "Every time your AI answers a call",
+      "lead_captured": "Lead captured",
+      "lead_capturedDesc": "When a caller is identified as a new lead",
+      "appointment_booked": "Appointment booked",
+      "appointment_bookedDesc": "When your AI books an appointment",
+      "urgent_call": "Urgent call",
+      "urgent_callDesc": "Emergency or high-priority calls",
+      "voicemail": "Voicemail left",
+      "voicemailDesc": "When a caller leaves a voicemail"
+    },
+    "notifications.channels": {
+      "push": "Push",
+      "sms": "SMS",
+      "email": "Email"
+    },
+    "activity.actions": {
+      "settings_update": "Settings updated",
+      "settings_business_update": "Business settings updated"
+    }
   },
   "hero": {
     "title": "あなたのビジネス電話に24時間365日対応するAI",
@@ -3016,7 +3177,71 @@
       "thatCallTook": "その通話は{seconds}秒でした。AIが24時間365日対応します。",
       "readyHeading": "準備はいいですか？",
       "readySubtext": "無料で開始 — 5分セットアップ。カード不要 · 14日間トライアル",
-      "ctaStartFree": "無料で開始 — 5分 →"
+      "ctaStartFree": "無料で開始 — 5分 →",
+      "script0Title": "Inbound Lead (Plumber)",
+      "script0Result": "Lead captured and appointment booked.",
+      "script0Line0": "Thanks for calling! How can I help you today?",
+      "script0Line1": "Yeah hi, I've got a leak under my kitchen sink.",
+      "script0Line2": "I can help with that. Can I get your name?",
+      "script0Line3": "Mike Johnson.",
+      "script0Line4": "Thanks Mike. Best number to reach you?",
+      "script0Line5": "503-555-0199.",
+      "script0Line6": "And your address?",
+      "script0Line7": "742 Elm Street, Portland.",
+      "script0Line8": "Is this an active leak or a slow drip?",
+      "script0Line9": "Slow drip, but it's getting worse.",
+      "script0Line10": "Got it. I have tomorrow at 10 AM or Thursday at 2 PM available.",
+      "script0Line11": "Tomorrow at 10 works.",
+      "script0Line12": "Perfect! You're booked for tomorrow at 10 AM at 742 Elm St. I'll send a text confirmation right now.",
+      "script0Line13": "Great, thanks.",
+      "script0Line14": "See you tomorrow morning, Mike!",
+      "script0Detail0": "Contact: Mike Johnson",
+      "script0Detail1": "Phone: (503) 555-0199",
+      "script0Detail2": "Address: 742 Elm St, Portland",
+      "script0Detail3": "Issue: Kitchen sink leak — slow drip",
+      "script0Detail4": "Appointment: Tomorrow 10:00 AM",
+      "script0Detail5": "Text sent: Confirmation ✓",
+      "script0Detail6": "Owner notified: Instantly ✓",
+      "script1Title": "Appointment Booking (Dental)",
+      "script1Result": "Appointment scheduled.",
+      "script1Line0": "Good morning, Maple Street Dental! This is Alex. How can I help?",
+      "script1Line1": "Hi, I'd like to schedule a cleaning.",
+      "script1Line2": "Of course! Are you an existing patient?",
+      "script1Line3": "Yes, Sarah Chen.",
+      "script1Line4": "Welcome back, Sarah! Do you prefer mornings or afternoons?",
+      "script1Line5": "Mornings are better.",
+      "script1Line6": "I have Tuesday at 9 AM or Wednesday at 10:30 with Dr. Martinez.",
+      "script1Line7": "Tuesday at 9 please.",
+      "script1Line8": "Booked! Tuesday at 9 AM with Dr. Martinez. You'll get a reminder on Monday.",
+      "script1Line9": "Thank you!",
+      "script1Line10": "See you Tuesday, Sarah! Have a great day.",
+      "script1Detail0": "Patient: Sarah Chen (existing)",
+      "script1Detail1": "Service: Cleaning",
+      "script1Detail2": "Provider: Dr. Martinez",
+      "script1Detail3": "Appointment: Tuesday 9:00 AM",
+      "script1Detail4": "Calendar synced: ✓",
+      "script1Detail5": "Reminder: Monday ✓",
+      "script2Title": "Outbound Follow-up (Roofing)",
+      "script2Result": "Speed-to-lead follow-up completed.",
+      "script2Line0": "Hi, is this James? This is Emma from Summit Roofing.",
+      "script2Line1": "Uh, yeah?",
+      "script2Line2": "You submitted a request on our website about 2 minutes ago regarding roof damage. I wanted to follow up right away.",
+      "script2Line3": "Oh right, yeah. We had storm damage last week.",
+      "script2Line4": "I'm sorry to hear that. Can you describe what you're seeing?",
+      "script2Line5": "There are missing shingles on the south side of the house.",
+      "script2Line6": "That definitely needs attention. We can send an estimator out tomorrow at 3 PM — would that work?",
+      "script2Line7": "Yeah, that works.",
+      "script2Line8": "Great. Have you started an insurance claim yet?",
+      "script2Line9": "No, not yet.",
+      "script2Line10": "No worries — our estimator can help document everything for your insurance claim while they're there.",
+      "script2Line11": "Oh that's helpful, thanks.",
+      "script2Line12": "Sending you a confirmation text now. See you tomorrow at 3, James!",
+      "script2Detail0": "Response time: 2 minutes",
+      "script2Detail1": "Contact: James Wilson",
+      "script2Detail2": "Issue: Storm damage — missing shingles, south side",
+      "script2Detail3": "Appointment: Tomorrow 3:00 PM",
+      "script2Detail4": "Insurance: Documentation flagged ✓",
+      "script2Detail5": "Text sent: Confirmation ✓"
     },
     "trust": {
       "sectionLabel": "信頼とコンプライアンス",
@@ -3078,7 +3303,19 @@
     "scheduleCall": "通話を予約 →",
     "startFree": "無料で開始 →",
     "backToHome": "ホームに戻る",
-    "formSubject": "件名"
+    "formSubject": "件名",
+    "formName": "Name",
+    "formEmail": "Email",
+    "formCompany": "Company",
+    "formMessage": "Message",
+    "subjectGeneral": "General",
+    "subjectSales": "Sales",
+    "subjectSupport": "Support",
+    "subjectBilling": "Billing",
+    "subjectPartnership": "Partnership",
+    "fillRequired": "Please fill in name, email, and message.",
+    "thanksReply": "Thanks! We'll get back to you within 4 hours.",
+    "sending": "Sending…"
   },
   "productPage": {
     "metaTitle": "製品",
@@ -3141,26 +3378,492 @@
       "card3Stat3Desc": "通話・SMS・予約・フォローに使うツールの数",
       "closing": "すべての通話・メッセージ・フォローを自動で処理し、何が起きたか正確に把握できたら？"
     },
-    "howItWorks": {"label": "使い方", "title": "3ステップで稼働開始。", "steps": {"connect": {"title": "接続", "desc": "番号を転送するか、新規取得。キャリア・端末問わず。"}, "configure": {"title": "設定", "desc": "AIにやることを伝える：着信対応、メッセージ、予約、フォロー、リード選別など。テンプレートまたはゼロから。"}, "done": {"title": "完了", "desc": "すべての通話に応答。リードをキャッチ。フォローを送信。"}}},
-    "liveDemo": {"heading": "30秒で違いを聞く", "subheading": "取りこぼし、予約、フォロー、時間外、スクリーニング — 実際のシーンでAIの動きを確認。", "cardLabels": {"caller": "発信者", "agent": "あなたのAI", "result": "結果"}, "sampleNote": "サンプル会話 — あらゆる業種で24時間365日、あなたのAIが対応。", "cta": {"text": "この番号を自社のラインにしませんか？", "ariaLabel": "インタラクティブ通話デモを開く", "button": "無料で始める →"}, "useCases": {"missedCall": {"label": "取りこぼし回収", "caller": "先ほど電話したが誰も出なかった。訪問の予約を取りたい。", "agent": "お電話ありがとうございます。ご予約を承ります。ご希望の日は？", "result": "折返しキャッチ・予約案内"}, "appointment": {"label": "予約", "caller": "来週の予約を取りたい。", "agent": "火曜午後か水曜午前が空いています。どちらがよろしいですか？", "result": "枠確定・リマインド設定"}, "followUp": {"label": "リードフォロー", "caller": "サイトのフォームから送った。料金をもう少し知りたい。", "agent": "情報は承りました。1時間以内にご連絡します。連絡先の番号は？", "result": "リード選別・フォローキュー"}, "afterHours": {"label": "時間外対応", "caller": "今は20時です — 営業していますか？至急質問があります。", "agent": "本日は閉まっております。お名前と番号をいただければ明日一早く折り返しします。", "result": "伝言受付・翌日折返し"}, "screening": {"label": "通話スクリーニング", "caller": "請求担当者と話したい。", "agent": "請求の件、承ります。担当へつなぐため、お客様名または番号を教えてください。", "result": "意図把握・適切なチームへ転送"}}},
-    "outcomes": {"heading": "初日から得られること", "subheading": "インフラではなく成果。残りはAIが担当。", "cards": {"missedCalls": {"title": "取りこぼし回収", "desc": "AIが24時間対応。すべての発信者に本当の会話を提供し、留守電にしません。"}, "leads": {"title": "リードを自動キャッチ", "desc": "名前・電話・用件を数秒でキャッチし、ルーティング。"}, "appointments": {"title": "その場で予約", "desc": "カレンダー連携。行き違いなし、無断キャンセル削減。"}}, "pricing": {"heading": "売上に合ったシンプルな料金", "subheading": "席数ライセンスなし。応答の信頼性に対して支払い、ログイン人数ではない。", "trialNote": "全プラン14日間無料トライアル。クレジットカード不要。"}, "pricingTiers": {"starter": {"name": "Starter", "tagline": "個人・小規模チームのスタート用。", "f1": "着信400分込み", "f2": "AI番号1本", "f3": "基本通話サマリー・リードキャッチ", "f4": "標準サポート"}, "growth": {"name": "Growth", "tagline": "成長チーム向けフルカバー。", "f1": "着信1,500分込み", "f2": "AI番号3本", "f3": "高度な通話分析・ルーティング", "f4": "優先サポート"}, "scale": {"name": "Scale", "tagline": "複数拠点・高ボリューム向け。", "f1": "着信5,000分込み", "f2": "番号10本", "f3": "専任サクセスパートナー", "f4": "カスタムレポート・連携"}, "badgePopular": "人気"}, "cta": {"button": "無料トライアルを開始 →"}},
-    "features": {"label": "できること", "heading": "電話コミュニケーションに必要なすべて。昔のコストは不要。", "capabilities": {"answersCalls": {"title": "すべての通話に応答", "desc": "24時間、即時、自然な声で。"}, "unifiedInbox": {"title": "統一受信箱", "desc": "通話・メッセージ・メールを一括。会話と連絡先を一画面で返信。"}, "outbound": {"title": "発信", "desc": "フォロー、リマインド、再エンゲージ。"}, "campaigns": {"title": "発信キャンペーン", "desc": "数百リードに通話・SMSシーケンス。反応・予約・オプトアウトまでフォロー。"}, "books": {"title": "予約", "desc": "カレンダー確認・予約・確認送信。"}, "captures": {"title": "リードをキャッチ", "desc": "選別・スコアリング・即時通知。"}, "routing": {"title": "スマートルーティング", "desc": "緊急度検知、発信者スクリーニング、適切な担当または伝言。"}, "texting": {"title": "双方向SMS", "desc": "ビジネス番号でSMS送受信。確認・フォロー・会話 — 自動または手動。"}, "learns": {"title": "あなたの世界を学習", "desc": "サービス・営業時間・ポリシー・料金 — 教えた内容に回答。"}, "roi": {"title": "ROIを表示", "desc": "キャッチしたリード、予約、回収した収益を可視化。"}, "neverGivesUp": {"title": "あきらめない", "desc": "リードが反応・予約・オプトアウトするまでフォロー。"}}},
-    "useCaseSection": {"heading": "1プラットフォームで、あらゆる通話タイプ。", "cases": {"inbound": {"title": "着信", "desc": "すべての通話に応答。転送・予約・選別・フォロー — 自動。"}, "outbound": {"title": "発信", "desc": "リードフォロー、予約確認、見込み再活性 — スケール。"}, "intelligence": {"title": "インテリジェンス", "desc": "会話を分析。効果を把握。チームを改善。"}}, "cta": {"button": "無料で始める →"}},
-    "whoUses": {"label": "Recall Touchを使う人", "heading": "コミュニケーションのやり方に合わせて設計。", "personas": {"solo": {"name": "個人事業主", "desc": "作業中は電話に出られない。Recall Touchが応答・予約・フォローでリードを取りこぼさない。"}, "growing": {"name": "成長チーム", "desc": "追いつかずリードを失っている。すべての通話に応答し、リードをキャッチ・フォロー。"}, "agencies": {"name": "代理店・複数拠点", "desc": "複数拠点を同じ基準で運用。1プラットフォーム、1標準、どこでも。"}, "afterHours": {"name": "時間外・オーバーフロー", "desc": "オフィス閉鎖時もカバー。応答・伝言・翌日フォロー。"}, "outbound": {"name": "発信キャンペーン", "desc": "数百リードにフォローが必要。Recall Touchが接触・選別・予約 — スケール。"}, "anyone": {"name": "電話を持つすべての人", "desc": "通話を賢く扱いたい。応答・予約・フォロー・スクリーニング — 受付不要。"}}, "additionalNote": "ご用途が見つからない？電話ベースのワークフローならRecall Touchで対応可能。", "cta": {"link": "始める →"}},
-    "metrics": {"label": "もしも？", "heading": "重要な数字。", "items": {"revenueLost": "取りこぼしによる年間平均収益損失", "answerRate": "Recall Touchの応答率（全国平均約60%比）", "speedToLead": "新規リードへのフォロー時間（通話・メッセージ）", "inbox": "通話・メッセージ・フォローを1か所に（多くのチームは4以上のツール）", "setupTime": "セットアップ時間（エンタープライズは6週間）"}},
-    "testimonials": {"preamble": "すべての通話を大切にする企業向けに", "label": "お客様の声", "testimonials": {"amanda": {"quote": "電話応答・テキストフォロー・予約の3ツールを1プラットフォームに統合しました。", "author": "Amanda K.", "role": "コンサルティング"}, "ryan": {"quote": "営業のフォローが10倍速く。AIが初回接触と予約済みミーティングを担当。", "author": "Ryan D.", "role": "SaaSスタートアップ"}, "mike": {"quote": "初週でRecall Touchの元が取れました。14件のリードをキャッチできた。", "author": "Mike R.", "role": "配管業"}, "sarah": {"quote": "AIがリマインドを送り始めてから無断キャンセルが40%減。", "author": "Dr. Sarah L.", "role": "歯科"}, "james": {"quote": "AIの電話応答には懐疑的だったが、1日で納得した。", "author": "James T.", "role": "屋根工事"}}, "badge": "通話を取りこぼさない企業に選ばれています。"},
-    "pricingPreview": {"label": "料金", "heading": "元が取れるプラン。", "toggle": {"monthly": "月払い", "annual": "年払い", "savings": "17%お得"}, "badge": "人気", "tierRoi": {"starter": "取りこぼし1件未満", "growth": "1件のリード回収で月額回収", "scale": "1人採用の一部でフルAI通信チーム", "enterprise": "カスタムROI・専任サポート"}, "footerNote": "全プランに含まれる：暗号化記録・コンプライアンス・監査証跡・14日間無料トライアル", "cta": {"link": "プラン比較を見る →"}},
-    "difference": {"heading": "他社との違い", "subheading": "留守電なし。機会損失なし。毎回、本当の会話を。", "rows": {"manual": {"label": "手動応答・留守電", "i1": "取りこぼし＝リード損失", "i2": "留守電は返信されにくい", "i3": "時間外＝応答なし"}, "generic": {"label": "一般的な留守電・IVR", "i1": "発信者は切るか伝言", "i2": "選別・予約なし", "i3": "折返しは依然あなたの作業"}, "recallTouch": {"label": "Recall Touch", "i1": "すべての通話に24時間対応", "i2": "リードをリアルタイムでキャッチ・選別", "i3": "通話中に予約"}}},
-    "enterpriseComparison": {"text": "エンタープライズ音声AIは年間15万ドル・導入6週間。Recall Touchは月297ドルから5分で開始。"},
-    "finalCta": {"heading": "5分でAI電話チームを開始", "subheading": "クレジットカード不要。5分でセットアップ。すべての通話に応答。", "buttons": {"start": "無料で始める →", "demo": "デモを予約 →"}, "note": "通話・メッセージ・予約・フォロー・キャンペーンに対応。1プラットフォーム。", "links": {"docs": "ドキュメントを見る"}},
-    "scrollCta": {"message": "次のお客様が今、電話しているかも。準備はいい？", "button": "無料で始める →", "dismiss": "閉じる"},
-    "trust": {"text": "決定的な通話を取りこぼせないオペレーターに選ばれています。"},
-    "industries": {"label": "業種", "heading": "業種別の活用方法", "subheading": "Recall Touchは通話を受けるあらゆるビジネスに適合。一例です。", "industries": {"plumbing": {"name": "配管・HVAC", "desc": "すべての問い合わせに応答。緊急対応・予約・見積もりキャッチ。"}, "healthcare": {"name": "医療", "desc": "患者予約・問い合わせ。HIPAA対応。処方リフィル転送。"}, "legal": {"name": "法務", "desc": "プロの問い合わせ。24時間対応。すべての通話を記録。"}, "realEstate": {"name": "不動産", "desc": "購入者を即選別。内見予約。リスティングリードを取りこぼさない。"}, "dental": {"name": "歯科", "desc": "患者予約。保険確認。リコールリマインド。"}, "custom": {"name": "ご自身の業種", "desc": "該当がない？電話を受ける企業ならRecall Touchで対応可能。"}}},
-    "bentoVisuals": {"timelineLabels": {"call": "通話", "followUp": "フォロー", "confirm": "確認", "close": "クローズ"}, "complianceRecord": {"governedRecord": "ガバナンス記録", "jurisdiction": "管轄", "verified": "検証済み", "reviewDepth": "レビュー深度", "standard": "標準", "duration": "時間", "status": "ステータス", "compliant": "準拠", "chain": "チェーン", "chainValue": "検証イベント3件"}, "audit": {"line1": "宣言管轄で記録", "line2": "変更なく転送", "line3": "監査証跡完了"}, "escalation": {"agent": "エージェント", "manager": "マネージャー", "director": "ディレクター"}, "channels": {"voice": "音声", "message": "メッセージ", "payment": "支払い"}, "channelNote": "単一ガバナンス層"},
-    "activityPreview": {"ariaLabel": "Recall Touchアクティビティダッシュボードのプレビュー", "title": "Recall Touch — アクティビティ", "heading": "最近の通話", "typeLead": "リード", "typeAppointment": "予約", "typeFollowUp": "フォロー"},
-    "activityFeed": {"dateLabel": "今日", "chips": {"all": "すべて", "needsAction": "要対応", "leads": "リード"}, "feedCards": {"lead": {"label": "新規リード", "time": "10:32", "name": "Sarah Mitchell", "meta": "キッチンリフォーム見積もり", "detail": "予算15–20k・リードスコア85"}, "appointment": {"label": "予約済み", "time": "9:47", "name": "James Cooper", "meta": "エアコン保守 — 3月3日 14:00", "detail": "確認SMS送信 ✓"}, "emergency": {"label": "緊急", "time": "9:15", "name": "Maria Santos", "meta": "給湯器漏水", "detail": "SMS・通話で通知"}, "outbound": {"label": "フォロー通話", "time": "8:30", "name": "AIがDavid Kimに発信", "meta": "予約リマインド", "detail": "明日に確認 ✓"}, "info": {"label": "対応済み", "time": "7:45", "name": "Mike Johnson", "meta": "営業時間の問い合わせ", "detail": "AI回答：月–金 8–18時"}}},
-    "mockDashboard": {"ariaLabel": "Recall Touchダッシュボードのプレビュー", "title": "Recall Touch — アクティブ記録", "heading": "アクティブ記録", "searchPlaceholder": "通話を検索…", "headerName": "名前", "headerTime": "時刻", "headerDuration": "時間", "headerStatus": "ステータス", "headerJurisdiction": "管轄", "statusGoverned": "ガバナンス済み", "statusPending": "保留"},
-    "useCasesAlt": {"label": "対象", "heading": "個人事業主から規制企業まで。", "cases": {"inbound": {"title": "着信オペレーション", "desc": "着信対応で一貫・記録・法的に主張可能な回答が求められるチーム向け。"}, "outbound": {"title": "発信営業", "desc": "価格約束・口頭合意・フォローにコンプライアンス証跡が必要な営業チーム向け。"}, "regulated": {"title": "規制業種", "desc": "金融・保険・医療・法務など、通話記録が任意ではなく規制要件となる組織向け。"}}, "cta": {"link": "詳細 →"}}
+    "howItWorks": {
+      "label": "使い方",
+      "title": "3ステップで稼働開始。",
+      "steps": {
+        "connect": {
+          "title": "接続",
+          "desc": "番号を転送するか、新規取得。キャリア・端末問わず。"
+        },
+        "configure": {
+          "title": "設定",
+          "desc": "AIにやることを伝える：着信対応、メッセージ、予約、フォロー、リード選別など。テンプレートまたはゼロから。"
+        },
+        "done": {
+          "title": "完了",
+          "desc": "すべての通話に応答。リードをキャッチ。フォローを送信。"
+        }
+      }
+    },
+    "liveDemo": {
+      "heading": "30秒で違いを聞く",
+      "subheading": "取りこぼし、予約、フォロー、時間外、スクリーニング — 実際のシーンでAIの動きを確認。",
+      "cardLabels": {
+        "caller": "発信者",
+        "agent": "あなたのAI",
+        "result": "結果"
+      },
+      "sampleNote": "サンプル会話 — あらゆる業種で24時間365日、あなたのAIが対応。",
+      "cta": {
+        "text": "この番号を自社のラインにしませんか？",
+        "ariaLabel": "インタラクティブ通話デモを開く",
+        "button": "無料で始める →"
+      },
+      "useCases": {
+        "missedCall": {
+          "label": "取りこぼし回収",
+          "caller": "先ほど電話したが誰も出なかった。訪問の予約を取りたい。",
+          "agent": "お電話ありがとうございます。ご予約を承ります。ご希望の日は？",
+          "result": "折返しキャッチ・予約案内"
+        },
+        "appointment": {
+          "label": "予約",
+          "caller": "来週の予約を取りたい。",
+          "agent": "火曜午後か水曜午前が空いています。どちらがよろしいですか？",
+          "result": "枠確定・リマインド設定"
+        },
+        "followUp": {
+          "label": "リードフォロー",
+          "caller": "サイトのフォームから送った。料金をもう少し知りたい。",
+          "agent": "情報は承りました。1時間以内にご連絡します。連絡先の番号は？",
+          "result": "リード選別・フォローキュー"
+        },
+        "afterHours": {
+          "label": "時間外対応",
+          "caller": "今は20時です — 営業していますか？至急質問があります。",
+          "agent": "本日は閉まっております。お名前と番号をいただければ明日一早く折り返しします。",
+          "result": "伝言受付・翌日折返し"
+        },
+        "screening": {
+          "label": "通話スクリーニング",
+          "caller": "請求担当者と話したい。",
+          "agent": "請求の件、承ります。担当へつなぐため、お客様名または番号を教えてください。",
+          "result": "意図把握・適切なチームへ転送"
+        }
+      }
+    },
+    "outcomes": {
+      "heading": "初日から得られること",
+      "subheading": "インフラではなく成果。残りはAIが担当。",
+      "cards": {
+        "missedCalls": {
+          "title": "取りこぼし回収",
+          "desc": "AIが24時間対応。すべての発信者に本当の会話を提供し、留守電にしません。"
+        },
+        "leads": {
+          "title": "リードを自動キャッチ",
+          "desc": "名前・電話・用件を数秒でキャッチし、ルーティング。"
+        },
+        "appointments": {
+          "title": "その場で予約",
+          "desc": "カレンダー連携。行き違いなし、無断キャンセル削減。"
+        }
+      },
+      "pricing": {
+        "heading": "売上に合ったシンプルな料金",
+        "subheading": "席数ライセンスなし。応答の信頼性に対して支払い、ログイン人数ではない。",
+        "trialNote": "全プラン14日間無料トライアル。クレジットカード不要。"
+      },
+      "pricingTiers": {
+        "starter": {
+          "name": "Starter",
+          "tagline": "個人・小規模チームのスタート用。",
+          "f1": "着信400分込み",
+          "f2": "AI番号1本",
+          "f3": "基本通話サマリー・リードキャッチ",
+          "f4": "標準サポート"
+        },
+        "growth": {
+          "name": "Growth",
+          "tagline": "成長チーム向けフルカバー。",
+          "f1": "着信1,500分込み",
+          "f2": "AI番号3本",
+          "f3": "高度な通話分析・ルーティング",
+          "f4": "優先サポート"
+        },
+        "scale": {
+          "name": "Scale",
+          "tagline": "複数拠点・高ボリューム向け。",
+          "f1": "着信5,000分込み",
+          "f2": "番号10本",
+          "f3": "専任サクセスパートナー",
+          "f4": "カスタムレポート・連携"
+        },
+        "badgePopular": "人気"
+      },
+      "cta": {
+        "button": "無料トライアルを開始 →"
+      }
+    },
+    "features": {
+      "label": "できること",
+      "heading": "電話コミュニケーションに必要なすべて。昔のコストは不要。",
+      "capabilities": {
+        "answersCalls": {
+          "title": "すべての通話に応答",
+          "desc": "24時間、即時、自然な声で。"
+        },
+        "unifiedInbox": {
+          "title": "統一受信箱",
+          "desc": "通話・メッセージ・メールを一括。会話と連絡先を一画面で返信。"
+        },
+        "outbound": {
+          "title": "発信",
+          "desc": "フォロー、リマインド、再エンゲージ。"
+        },
+        "campaigns": {
+          "title": "発信キャンペーン",
+          "desc": "数百リードに通話・SMSシーケンス。反応・予約・オプトアウトまでフォロー。"
+        },
+        "books": {
+          "title": "予約",
+          "desc": "カレンダー確認・予約・確認送信。"
+        },
+        "captures": {
+          "title": "リードをキャッチ",
+          "desc": "選別・スコアリング・即時通知。"
+        },
+        "routing": {
+          "title": "スマートルーティング",
+          "desc": "緊急度検知、発信者スクリーニング、適切な担当または伝言。"
+        },
+        "texting": {
+          "title": "双方向SMS",
+          "desc": "ビジネス番号でSMS送受信。確認・フォロー・会話 — 自動または手動。"
+        },
+        "learns": {
+          "title": "あなたの世界を学習",
+          "desc": "サービス・営業時間・ポリシー・料金 — 教えた内容に回答。"
+        },
+        "roi": {
+          "title": "ROIを表示",
+          "desc": "キャッチしたリード、予約、回収した収益を可視化。"
+        },
+        "neverGivesUp": {
+          "title": "あきらめない",
+          "desc": "リードが反応・予約・オプトアウトするまでフォロー。"
+        }
+      }
+    },
+    "useCaseSection": {
+      "heading": "1プラットフォームで、あらゆる通話タイプ。",
+      "cases": {
+        "inbound": {
+          "title": "着信",
+          "desc": "すべての通話に応答。転送・予約・選別・フォロー — 自動。"
+        },
+        "outbound": {
+          "title": "発信",
+          "desc": "リードフォロー、予約確認、見込み再活性 — スケール。"
+        },
+        "intelligence": {
+          "title": "インテリジェンス",
+          "desc": "会話を分析。効果を把握。チームを改善。"
+        }
+      },
+      "cta": {
+        "button": "無料で始める →"
+      }
+    },
+    "whoUses": {
+      "label": "Recall Touchを使う人",
+      "heading": "コミュニケーションのやり方に合わせて設計。",
+      "personas": {
+        "solo": {
+          "name": "個人事業主",
+          "desc": "作業中は電話に出られない。Recall Touchが応答・予約・フォローでリードを取りこぼさない。"
+        },
+        "growing": {
+          "name": "成長チーム",
+          "desc": "追いつかずリードを失っている。すべての通話に応答し、リードをキャッチ・フォロー。"
+        },
+        "agencies": {
+          "name": "代理店・複数拠点",
+          "desc": "複数拠点を同じ基準で運用。1プラットフォーム、1標準、どこでも。"
+        },
+        "afterHours": {
+          "name": "時間外・オーバーフロー",
+          "desc": "オフィス閉鎖時もカバー。応答・伝言・翌日フォロー。"
+        },
+        "outbound": {
+          "name": "発信キャンペーン",
+          "desc": "数百リードにフォローが必要。Recall Touchが接触・選別・予約 — スケール。"
+        },
+        "anyone": {
+          "name": "電話を持つすべての人",
+          "desc": "通話を賢く扱いたい。応答・予約・フォロー・スクリーニング — 受付不要。"
+        }
+      },
+      "additionalNote": "ご用途が見つからない？電話ベースのワークフローならRecall Touchで対応可能。",
+      "cta": {
+        "link": "始める →"
+      }
+    },
+    "metrics": {
+      "label": "もしも？",
+      "heading": "重要な数字。",
+      "items": {
+        "revenueLost": "取りこぼしによる年間平均収益損失",
+        "answerRate": "Recall Touchの応答率（全国平均約60%比）",
+        "speedToLead": "新規リードへのフォロー時間（通話・メッセージ）",
+        "inbox": "通話・メッセージ・フォローを1か所に（多くのチームは4以上のツール）",
+        "setupTime": "セットアップ時間（エンタープライズは6週間）"
+      }
+    },
+    "testimonials": {
+      "preamble": "すべての通話を大切にする企業向けに",
+      "label": "お客様の声",
+      "testimonials": {
+        "amanda": {
+          "quote": "電話応答・テキストフォロー・予約の3ツールを1プラットフォームに統合しました。",
+          "author": "Amanda K.",
+          "role": "コンサルティング"
+        },
+        "ryan": {
+          "quote": "営業のフォローが10倍速く。AIが初回接触と予約済みミーティングを担当。",
+          "author": "Ryan D.",
+          "role": "SaaSスタートアップ"
+        },
+        "mike": {
+          "quote": "初週でRecall Touchの元が取れました。14件のリードをキャッチできた。",
+          "author": "Mike R.",
+          "role": "配管業"
+        },
+        "sarah": {
+          "quote": "AIがリマインドを送り始めてから無断キャンセルが40%減。",
+          "author": "Dr. Sarah L.",
+          "role": "歯科"
+        },
+        "james": {
+          "quote": "AIの電話応答には懐疑的だったが、1日で納得した。",
+          "author": "James T.",
+          "role": "屋根工事"
+        }
+      },
+      "badge": "通話を取りこぼさない企業に選ばれています。"
+    },
+    "pricingPreview": {
+      "label": "料金",
+      "heading": "元が取れるプラン。",
+      "toggle": {
+        "monthly": "月払い",
+        "annual": "年払い",
+        "savings": "17%お得"
+      },
+      "badge": "人気",
+      "tierRoi": {
+        "starter": "取りこぼし1件未満",
+        "growth": "1件のリード回収で月額回収",
+        "scale": "1人採用の一部でフルAI通信チーム",
+        "enterprise": "カスタムROI・専任サポート"
+      },
+      "footerNote": "全プランに含まれる：暗号化記録・コンプライアンス・監査証跡・14日間無料トライアル",
+      "cta": {
+        "link": "プラン比較を見る →"
+      }
+    },
+    "difference": {
+      "heading": "他社との違い",
+      "subheading": "留守電なし。機会損失なし。毎回、本当の会話を。",
+      "rows": {
+        "manual": {
+          "label": "手動応答・留守電",
+          "i1": "取りこぼし＝リード損失",
+          "i2": "留守電は返信されにくい",
+          "i3": "時間外＝応答なし"
+        },
+        "generic": {
+          "label": "一般的な留守電・IVR",
+          "i1": "発信者は切るか伝言",
+          "i2": "選別・予約なし",
+          "i3": "折返しは依然あなたの作業"
+        },
+        "recallTouch": {
+          "label": "Recall Touch",
+          "i1": "すべての通話に24時間対応",
+          "i2": "リードをリアルタイムでキャッチ・選別",
+          "i3": "通話中に予約"
+        }
+      }
+    },
+    "enterpriseComparison": {
+      "text": "エンタープライズ音声AIは年間15万ドル・導入6週間。Recall Touchは月297ドルから5分で開始。"
+    },
+    "finalCta": {
+      "heading": "5分でAI電話チームを開始",
+      "subheading": "クレジットカード不要。5分でセットアップ。すべての通話に応答。",
+      "buttons": {
+        "start": "無料で始める →",
+        "demo": "デモを予約 →"
+      },
+      "note": "通話・メッセージ・予約・フォロー・キャンペーンに対応。1プラットフォーム。",
+      "links": {
+        "docs": "ドキュメントを見る"
+      }
+    },
+    "scrollCta": {
+      "message": "次のお客様が今、電話しているかも。準備はいい？",
+      "button": "無料で始める →",
+      "dismiss": "閉じる"
+    },
+    "trust": {
+      "text": "決定的な通話を取りこぼせないオペレーターに選ばれています。"
+    },
+    "industries": {
+      "label": "業種",
+      "heading": "業種別の活用方法",
+      "subheading": "Recall Touchは通話を受けるあらゆるビジネスに適合。一例です。",
+      "industries": {
+        "plumbing": {
+          "name": "配管・HVAC",
+          "desc": "すべての問い合わせに応答。緊急対応・予約・見積もりキャッチ。"
+        },
+        "healthcare": {
+          "name": "医療",
+          "desc": "患者予約・問い合わせ。HIPAA対応。処方リフィル転送。"
+        },
+        "legal": {
+          "name": "法務",
+          "desc": "プロの問い合わせ。24時間対応。すべての通話を記録。"
+        },
+        "realEstate": {
+          "name": "不動産",
+          "desc": "購入者を即選別。内見予約。リスティングリードを取りこぼさない。"
+        },
+        "dental": {
+          "name": "歯科",
+          "desc": "患者予約。保険確認。リコールリマインド。"
+        },
+        "custom": {
+          "name": "ご自身の業種",
+          "desc": "該当がない？電話を受ける企業ならRecall Touchで対応可能。"
+        }
+      }
+    },
+    "bentoVisuals": {
+      "timelineLabels": {
+        "call": "通話",
+        "followUp": "フォロー",
+        "confirm": "確認",
+        "close": "クローズ"
+      },
+      "complianceRecord": {
+        "governedRecord": "ガバナンス記録",
+        "jurisdiction": "管轄",
+        "verified": "検証済み",
+        "reviewDepth": "レビュー深度",
+        "standard": "標準",
+        "duration": "時間",
+        "status": "ステータス",
+        "compliant": "準拠",
+        "chain": "チェーン",
+        "chainValue": "検証イベント3件"
+      },
+      "audit": {
+        "line1": "宣言管轄で記録",
+        "line2": "変更なく転送",
+        "line3": "監査証跡完了"
+      },
+      "escalation": {
+        "agent": "エージェント",
+        "manager": "マネージャー",
+        "director": "ディレクター"
+      },
+      "channels": {
+        "voice": "音声",
+        "message": "メッセージ",
+        "payment": "支払い"
+      },
+      "channelNote": "単一ガバナンス層"
+    },
+    "activityPreview": {
+      "ariaLabel": "Recall Touchアクティビティダッシュボードのプレビュー",
+      "title": "Recall Touch — アクティビティ",
+      "heading": "最近の通話",
+      "typeLead": "リード",
+      "typeAppointment": "予約",
+      "typeFollowUp": "フォロー"
+    },
+    "activityFeed": {
+      "dateLabel": "今日",
+      "chips": {
+        "all": "すべて",
+        "needsAction": "要対応",
+        "leads": "リード"
+      },
+      "feedCards": {
+        "lead": {
+          "label": "新規リード",
+          "time": "10:32",
+          "name": "Sarah Mitchell",
+          "meta": "キッチンリフォーム見積もり",
+          "detail": "予算15–20k・リードスコア85"
+        },
+        "appointment": {
+          "label": "予約済み",
+          "time": "9:47",
+          "name": "James Cooper",
+          "meta": "エアコン保守 — 3月3日 14:00",
+          "detail": "確認SMS送信 ✓"
+        },
+        "emergency": {
+          "label": "緊急",
+          "time": "9:15",
+          "name": "Maria Santos",
+          "meta": "給湯器漏水",
+          "detail": "SMS・通話で通知"
+        },
+        "outbound": {
+          "label": "フォロー通話",
+          "time": "8:30",
+          "name": "AIがDavid Kimに発信",
+          "meta": "予約リマインド",
+          "detail": "明日に確認 ✓"
+        },
+        "info": {
+          "label": "対応済み",
+          "time": "7:45",
+          "name": "Mike Johnson",
+          "meta": "営業時間の問い合わせ",
+          "detail": "AI回答：月–金 8–18時"
+        }
+      }
+    },
+    "mockDashboard": {
+      "ariaLabel": "Recall Touchダッシュボードのプレビュー",
+      "title": "Recall Touch — アクティブ記録",
+      "heading": "アクティブ記録",
+      "searchPlaceholder": "通話を検索…",
+      "headerName": "名前",
+      "headerTime": "時刻",
+      "headerDuration": "時間",
+      "headerStatus": "ステータス",
+      "headerJurisdiction": "管轄",
+      "statusGoverned": "ガバナンス済み",
+      "statusPending": "保留"
+    },
+    "useCasesAlt": {
+      "label": "対象",
+      "heading": "個人事業主から規制企業まで。",
+      "cases": {
+        "inbound": {
+          "title": "着信オペレーション",
+          "desc": "着信対応で一貫・記録・法的に主張可能な回答が求められるチーム向け。"
+        },
+        "outbound": {
+          "title": "発信営業",
+          "desc": "価格約束・口頭合意・フォローにコンプライアンス証跡が必要な営業チーム向け。"
+        },
+        "regulated": {
+          "title": "規制業種",
+          "desc": "金融・保険・医療・法務など、通話記録が任意ではなく規制要件となる組織向け。"
+        }
+      },
+      "cta": {
+        "link": "詳細 →"
+      }
+    }
   },
   "footer": {
     "tagline": "すべての通話を大切にする企業のための、AI音声・テキスト通信。",
@@ -3206,19 +3909,48 @@
     "tier": {
       "starter": {
         "name": "スターター",
-        "description": "すべての通話をAIに任せたい個人事業者向け。"
+        "description": "すべての通話をAIに任せたい個人事業者向け。",
+        "f1": "着信400分込み",
+        "f2": "発信50通話",
+        "f3": "SMS 100通",
+        "f4": "AIエージェント1体",
+        "f5": "電話番号1本",
+        "f6": "超過: $0.25/分"
       },
       "growth": {
         "name": "グロース",
-        "description": "信頼できる対応とフォローアップが必要な成長中のチーム向け。"
+        "description": "信頼できる対応とフォローアップが必要な成長中のチーム向け。",
+        "f1": "着信1,500分込み",
+        "f2": "発信500通話",
+        "f3": "SMS 500通",
+        "f4": "AIエージェント3体",
+        "f5": "番号3本",
+        "f6": "予約",
+        "f7": "フォローアップシーケンス",
+        "f8": "超過: $0.18/分"
       },
       "scale": {
         "name": "スケール",
-        "description": "予約収入と複雑なパイプラインで動くチーム向け。"
+        "description": "予約収入と複雑なパイプラインで動くチーム向け。",
+        "f1": "着信5,000分込み",
+        "f2": "発信2,000通話",
+        "f3": "SMS無制限",
+        "f4": "AIエージェント無制限",
+        "f5": "番号10本",
+        "f6": "複数拠点",
+        "f7": "コンプライアンス",
+        "f8": "API",
+        "f9": "優先サポート",
+        "f10": "超過: $0.12/分"
       },
       "enterprise": {
         "name": "エンタープライズ",
-        "description": "カスタムルーティングやセキュリティ、SLA が必要な組織向け。"
+        "description": "カスタムルーティングやセキュリティ、SLA が必要な組織向け。",
+        "f1": "ホワイトラベル",
+        "f2": "カスタムコンプライアンス",
+        "f3": "SSO",
+        "f4": "専任マネージャー",
+        "f5": "SLA"
       }
     },
     "cta": "無料で始める",
@@ -3236,7 +3968,8 @@
       "annualBaseline": "年間受付ベースライン",
       "annualProtected": "Recall Touchが守る年間収入",
       "receptionistCost": "受付コスト。",
-      "recommendedPlan": "おすすめプラン："
+      "recommendedPlan": "おすすめプラン：",
+      "description": "Calculate your potential revenue recovery with our ROI calculator."
     },
     "faq": {
       "title": "料金に関するよくある質問",
@@ -3246,7 +3979,9 @@
       "overageAnswer": "超過分はプランに応じた1分あたりの料金で、ペナルティなしで請求されます。",
       "cancel": "いつでも解約できますか？",
       "cancelAnswer": "はい。請求設定からいつでもプランの解約や変更ができます。"
-    }
+    },
+    "trustedBy": "Trusted by leading teams in service, healthcare, and local business.",
+    "questionsTalkToUs": "Questions? Talk to us →"
   },
   "languageSwitcher": {
     "label": "言語",
@@ -3818,9 +4553,18 @@
       "messageInputLabel": "メッセージ入力",
       "sendMessageLabel": "メッセージを送信",
       "agents": {
-        "professional": { "name": "プロ", "greeting": "お電話ありがとうございます。本日はどのようなご用件ですか？" },
-        "friendly": { "name": "フレンドリー", "greeting": "お問い合わせありがとうございます。何かお手伝いできることはありますか？" },
-        "concise": { "name": "簡潔", "greeting": "お電話ありがとうございます。どのようなご用件ですか？" }
+        "professional": {
+          "name": "プロ",
+          "greeting": "お電話ありがとうございます。本日はどのようなご用件ですか？"
+        },
+        "friendly": {
+          "name": "フレンドリー",
+          "greeting": "お問い合わせありがとうございます。何かお手伝いできることはありますか？"
+        },
+        "concise": {
+          "name": "簡潔",
+          "greeting": "お電話ありがとうございます。どのようなご用件ですか？"
+        }
       }
     },
     "noMessagesYet": "まだメッセージがありません",
@@ -4105,16 +4849,36 @@
     "section": {
       "navigation": "ナビゲーション",
       "actions": "アクション",
-      "settings": "設定"
+      "settings": "設定",
+      "Pages": "Pages",
+      "Actions": "Actions"
     },
     "action": {
       "newLead": "新しいリードを作成",
       "newAgent": "新しいエージェントを作成",
       "newCampaign": "新しいキャンペーンを作成",
-      "importContacts": "連絡先をインポート"
+      "importContacts": "連絡先をインポート",
+      "testAgent": "Test agent"
     },
     "empty": "該当する項目がありません。別のキーワードを試してください。",
-    "shortcuts": "キーボードショートカット"
+    "shortcuts": "キーボードショートカット",
+    "page": {
+      "dashboard": "Dashboard",
+      "agents": "Agents",
+      "calls": "Calls",
+      "leads": "Leads",
+      "campaigns": "Campaigns",
+      "inbox": "Inbox",
+      "appointments": "Appointments",
+      "analytics": "Analytics",
+      "callIntelligence": "Call Intelligence",
+      "knowledge": "Knowledge",
+      "team": "Team",
+      "settings": "Settings"
+    },
+    "noMatches": "No matches.",
+    "showShortcuts": "Show shortcuts",
+    "close": "Close"
   },
   "contacts": {
     "pageTitle": "連絡先",
@@ -4177,7 +4941,15 @@
       "saveError": "連絡先を保存できませんでした。もう一度お試しください。",
       "deleteError": "連絡先を削除できませんでした。もう一度お試しください。",
       "updateError": "連絡先を更新できませんでした。もう一度お試しください。"
-    }
+    },
+    "lastContactUnknown": "Last contact: unknown",
+    "lastContactToday": "Last contact: today",
+    "lastContactYesterday": "Last contact: yesterday",
+    "lastContactDaysAgo": "Last contact: {count} days ago",
+    "filtersAria": "Contact filters",
+    "addedManually": "Added manually from dashboard.",
+    "inbound": "Inbound",
+    "outbound": "Outbound"
   },
   "appointments": {
     "pageTitle": "予約 — Recall Touch",
@@ -4250,7 +5022,9 @@
       "empty": {
         "title": "まだ通知はありません",
         "body": "新しいリード、通話サマリー、重要な更新をここに表示します。"
-      }
+      },
+      "loading": "Loading…",
+      "emptyBodyAlt": "You'll see call alerts and system updates here"
     },
     "type": {
       "lead": "新しいリード",
@@ -4258,12 +5032,26 @@
       "appointmentBooked": "予約が作成されました",
       "qualityAlert": "品質アラート",
       "billing": "請求",
-      "system": "システム更新"
+      "system": "システム更新",
+      "new_lead": "New lead",
+      "call_completed": "Call completed",
+      "appointment_booked": "Appointment booked",
+      "campaign_milestone": "Campaign",
+      "quality_alert": "Quality alert",
+      "billing_event": "Billing",
+      "system_update": "System"
     },
     "action": {
       "markRead": "既読にする",
       "markAllRead": "すべて既読にする",
       "preferences": "通知設定"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minAgo": "{count}m ago",
+      "hourAgo": "{count}h ago",
+      "yesterday": "Yesterday",
+      "daysAgo": "{count}d ago"
     }
   },
   "industriesPage": {
@@ -4373,7 +5161,42 @@
     },
     "formName": "お名前",
     "formYourName": "お名前",
-    "and": "および"
+    "and": "および",
+    "formBusinessName": "Business name",
+    "formEmail": "Email",
+    "formPhone": "Phone number",
+    "formWebsite": "Website URL (optional)",
+    "formWebsiteHint": "Helps tailor your experience.",
+    "formBusinessType": "What type of business?",
+    "namePlaceholder": "Jane Smith",
+    "businessPlaceholder": "Acme Plumbing",
+    "emailPlaceholder": "you@company.com",
+    "phonePlaceholder": "(555) 123-4567",
+    "websitePlaceholder": "https://yourbusiness.com",
+    "businessTypeHomeServices": "Home Services",
+    "businessTypeHealthcare": "Healthcare",
+    "businessTypeLegal": "Legal",
+    "businessTypeRealEstate": "Real Estate",
+    "businessTypeInsurance": "Insurance",
+    "businessTypeB2bSales": "B2B Sales",
+    "businessTypeLocalBusiness": "Local Business",
+    "businessTypeContractors": "Contractors",
+    "welcomeAboard": "Welcome aboard!",
+    "aiReady": "Your AI phone system is ready.",
+    "setUpAgent": "Set up my AI agent →",
+    "takes2Min": "Takes 2 minutes · Your first 14 days are free",
+    "emailRequired": "Email is required.",
+    "creatingAccount": "Creating your account…",
+    "almostThere": "Almost there…",
+    "getStartedFree": "Get started free →",
+    "noCardRequired": "No credit card required · 14-day free trial · Cancel anytime",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in →",
+    "tryAgain": "Try again",
+    "bySigningUp": "By signing up you agree to our",
+    "terms": "Terms",
+    "privacyPolicy": "Privacy Policy",
+    "cancelError": "No problem — protection didn't start."
   },
   "onboard": {
     "complete": {
@@ -4708,7 +5531,54 @@
       "next": "次へ",
       "submitting": "送信中…",
       "submitLabel": "ポート申請を送信"
-    }
+    },
+    "connectTitle": "Connect your phone number",
+    "connectDescription": "Legacy connection and forwarding. Your AI receives calls on the number above or via phone_config.",
+    "optionA": "Option A — Your AI number",
+    "optionB": "Option B — Forward your existing number",
+    "optionBDesc": "Keep your current number. Forward unanswered calls to your AI number below.",
+    "forwardStep1": "Open your phone carrier's app or website (AT&T, Verizon, T-Mobile, etc.).",
+    "forwardStep2": "Find \"Call forwarding\" or \"Forward when busy.\"",
+    "forwardStep3": "Enter the number below in your carrier or device settings.",
+    "forwardTo": "Forward to:",
+    "orByDevice": "Or by device:",
+    "iphonePath": "iPhone: Settings → Phone → Call Forwarding",
+    "androidPath": "Android: Phone → ⋮ → Settings → Call Forwarding",
+    "businessLinePath": "Business line: Call your carrier; ask to forward to {number}",
+    "quickDialCodes": "Quick dial codes",
+    "testForwarding": "Test forwarding",
+    "testForwardingDesc": "We'll call you so you can talk to your agent right now.",
+    "createAgentFirst": "Create an agent first so we know who should answer.",
+    "goToAgents": "Go to Agents →",
+    "validNumberError": "Enter a valid 10-digit US number.",
+    "validPhoneError": "Enter a valid phone number with country code (e.g., +1 555 000 0000).",
+    "callMyPhoneToTest": "Call my phone to test",
+    "callingYou": "Calling you…",
+    "ariaCallTest": "Call my phone to test",
+    "ariaEnterValid": "Enter a valid 10-digit number to enable",
+    "outboundCallerId": "Outbound caller ID (optional)",
+    "outboundCallerIdHint": "Show a different number when your AI places outbound calls. Leave blank to use your AI number above.",
+    "enableWhatsApp": "Enable WhatsApp on this number",
+    "verifyBySms": "Verify a number by SMS",
+    "verifyBySmsDesc": "We'll send a 6-digit code to confirm you own this number. Useful for forwarding numbers.",
+    "verifyMyNumber": "Verify my number →",
+    "sendingCode": "Sending code…",
+    "forwardCallsToAi": "Forward calls to your AI",
+    "iphone": "iPhone",
+    "android": "Android",
+    "businessLine": "Business line",
+    "testForwardingLink": "Test forwarding →",
+    "useExistingNumber": "Use your existing number",
+    "forwardUnansweredHint": "Forward unanswered calls to your AI number (get one from the left card first).",
+    "forwardInstructionIphone": "Settings → Phone → Call Forwarding → [your AI number]",
+    "forwardInstructionAndroid": "Phone → ⋮ → Settings → Call Forwarding → [your AI number]",
+    "forwardInstructionBusiness": "Call your provider: \"Forward unanswered calls to [your AI number]\"",
+    "verifiedLabel": "✓ Verified",
+    "codeNotMatch": "Code didn't match.",
+    "verificationFailed": "Verification failed.",
+    "failedToSendCode": "Failed to send code. Check your connection and try again.",
+    "addNumberLater": "I'll add a number later",
+    "backToSettings": "← Settings"
   },
   "integrations": {
     "pageTitle": "Integrations — Recall Touch",
@@ -4873,6 +5743,23 @@
       "notFound": "お探しの内容は見つかりませんでした。",
       "conflict": "このリソースは別のタブで更新されました。ページを更新してから再度お試しください。",
       "server": "サーバーで予期しないエラーが発生しました。担当チームに通知されています。"
+    }
+  },
+  "proofDrawer": {
+    "title": "How it progressed",
+    "closeAria": "Close",
+    "loading": "In progress.",
+    "empty": "No proof available yet.",
+    "progressHeading": "Progress",
+    "nextPlannedTouch": "Next planned touch",
+    "nextTouchAt": "Next touch at",
+    "conversationInProgress": "Conversation in progress. You are the decision owner when a handoff occurs.",
+    "outcome": {
+      "followThrough": "Follow-through continued",
+      "planningToAttend": "They're planning to attend",
+      "customerReturned": "Customer returned",
+      "theyreSet": "They're set",
+      "decisionProgressed": "Decision progressed"
     }
   }
 }

@@ -1234,6 +1234,7 @@
   },
   "analytics": {
     "pageTitle": "Analytics — Recall Touch",
+    "heading": "Analytics",
     "title": "Analytics",
     "periodSummary": {
       "title": "Period summary",
@@ -2953,6 +2954,7 @@
     "business.saveFailed": "Failed to save business settings. Please try again.",
     "business.nameNoMatch": "Workspace name does not match. Type it exactly to confirm.",
     "business.deleted": "Workspace deleted. Redirecting…",
+    "business.deleteWorkspaceError": "Could not delete workspace.",
     "businessPage": {
       "heading": "Business",
       "description": "Your business details help your AI answer calls accurately.",
@@ -3589,19 +3591,48 @@
     "tier": {
       "starter": {
         "name": "Starter",
-        "description": "For solo operators who want AI to answer every call."
+        "description": "For solo operators who want AI to answer every call.",
+        "f1": "400 inbound min included",
+        "f2": "50 outbound calls",
+        "f3": "100 SMS",
+        "f4": "1 AI agent",
+        "f5": "1 phone number",
+        "f6": "Overage: $0.25/min"
       },
       "growth": {
         "name": "Growth",
-        "description": "For growing teams that need reliable coverage and follow-up."
+        "description": "For growing teams that need reliable coverage and follow-up.",
+        "f1": "1,500 inbound min included",
+        "f2": "500 outbound calls",
+        "f3": "500 SMS",
+        "f4": "3 AI agents",
+        "f5": "3 numbers",
+        "f6": "Appointment booking",
+        "f7": "Follow-up sequences",
+        "f8": "Overage: $0.18/min"
       },
       "scale": {
         "name": "Scale",
-        "description": "For teams that run on scheduled revenue and complex pipelines."
+        "description": "For teams that run on scheduled revenue and complex pipelines.",
+        "f1": "5,000 inbound min included",
+        "f2": "2,000 outbound calls",
+        "f3": "Unlimited SMS",
+        "f4": "Unlimited AI agents",
+        "f5": "10 numbers",
+        "f6": "Multi-location",
+        "f7": "Compliance",
+        "f8": "API",
+        "f9": "Priority support",
+        "f10": "Overage: $0.12/min"
       },
       "enterprise": {
         "name": "Enterprise",
-        "description": "For organizations that need custom routing, security, and SLAs."
+        "description": "For organizations that need custom routing, security, and SLAs.",
+        "f1": "White label",
+        "f2": "Custom compliance",
+        "f3": "SSO",
+        "f4": "Dedicated manager",
+        "f5": "SLA"
       }
     },
     "cta": "Start free",

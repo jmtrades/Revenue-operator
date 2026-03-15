@@ -166,10 +166,16 @@ function ROICalculator({ t, className = "" }: { t: (k: string) => string; classN
 }
 
 const TIER_KEYS: Record<string, string> = { Starter: "starter", Growth: "growth", Scale: "scale", Enterprise: "enterprise" };
+const TIER_FEATURE_COUNTS: Record<string, number> = { starter: 6, growth: 8, scale: 10, enterprise: 5 };
 
 export function PricingContent() {
   const t = useTranslations("pricing");
   const [annual, setAnnual] = useState(false);
+
+  const getTierFeatures = (tierKey: string) => {
+    const n = TIER_FEATURE_COUNTS[tierKey] ?? 0;
+    return Array.from({ length: n }, (_, i) => t(`tier.${tierKey}.f${i + 1}`));
+  };
 
   return (
     <main className="pt-28 pb-24">
@@ -260,7 +266,7 @@ export function PricingContent() {
                 {TIER_KEYS[tier.name] ? t(`tier.${TIER_KEYS[tier.name]}.description`) : tier.description}
               </p>
               <ul className="space-y-2 mb-8">
-                {tier.features.map((feat) => (
+                {getTierFeatures(TIER_KEYS[tier.name] ?? "").map((feat) => (
                   <li
                     key={feat}
                     className="flex items-center gap-2 text-sm"
