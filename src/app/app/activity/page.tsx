@@ -845,7 +845,7 @@ export default function AppActivityPage() {
               className="bg-zinc-950 border border-white/10 rounded-2xl p-4 cursor-pointer hover:border-white/20 hover:bg-zinc-900 transition-colors duration-200 group"
             >
               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-white/10 transition-colors">
-                <a.icon className="w-5 h-5 text-[#8B8B8D] group-hover:text-zinc-100 transition-colors" />
+                <a.icon className="w-5 h-5 text-zinc-400 group-hover:text-zinc-100 transition-colors" />
               </div>
               <p className="text-sm font-medium text-zinc-100">{a.label}</p>
               <p className="text-xs text-[#5A5A5C] mt-0.5">{a.desc}</p>
@@ -994,8 +994,8 @@ export default function AppActivityPage() {
                   {t("dashboard.activityTimeline")}
                 </p>
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-[#00D4AA] opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00D4AA]" />
+                  <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
                 </span>
                 <span className="text-xs text-[#5A5A5C]">{t("dashboard.live")}</span>
               </div>
@@ -1103,13 +1103,13 @@ export default function AppActivityPage() {
               <AreaChart data={callVolumeData.length > 0 ? callVolumeData : placeholderArea}>
               <defs>
                 <linearGradient id="dashboardCallGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#4F8CFF" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#4F8CFF" stopOpacity={0} />
+                  <stop offset="0%" stopColor="var(--accent-primary)" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="var(--accent-primary)" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: 12, fill: "#5A5A5C" }}
+                tick={{ fontSize: 12, fill: "var(--text-tertiary)" }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -1125,7 +1125,7 @@ export default function AppActivityPage() {
                 <Area
                   type="monotone"
                   dataKey="calls"
-                  stroke="#4F8CFF"
+                  stroke="var(--accent-primary)"
                   fill="url(#dashboardCallGrad)"
                   strokeWidth={2}
                 />

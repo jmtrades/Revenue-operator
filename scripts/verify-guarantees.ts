@@ -160,6 +160,11 @@ async function runVitest(): Promise<boolean> {
 }
 
 async function main(): Promise<void> {
+  // Skip full guarantee suite on Vercel to keep build fast and reliable; run in CI locally.
+  if (process.env.VERCEL === "1") {
+    console.log("Skipping guarantee verification on Vercel (run locally or in CI).");
+    return;
+  }
   console.log("Verifying guarantee contracts...");
   const ok = await runVitest();
   if (!ok) {

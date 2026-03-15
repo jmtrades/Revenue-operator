@@ -872,7 +872,7 @@ export default function KnowledgePage() {
           <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">
             {t("testHeading")}
           </h3>
-          <p className="text-xs text-[#8B8B8D] mb-4">
+          <p className="text-xs text-zinc-400 mb-4">
             {t("testDescription")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -896,14 +896,14 @@ export default function KnowledgePage() {
               type="button"
               onClick={() => void handleTestKnowledge()}
               disabled={!testQuestion.trim() || testingKnowledge}
-              className="bg-[#4F8CFF] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#4F8CFF]/90 disabled:opacity-40 transition-all duration-200"
+              className="bg-[var(--accent-primary)] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all duration-200"
             >
               {testingKnowledge ? tForms("loading") : t("testButton")}
             </button>
           </div>
           {testAnswer && (
             <div className="mt-4 bg-[var(--bg-input)] border border-white/[0.06] rounded-xl p-4">
-              <p className="text-xs text-[#8B8B8D] mb-1">{t("testAnswerLabel")}</p>
+              <p className="text-xs text-zinc-400 mb-1">{t("testAnswerLabel")}</p>
               <p className="text-sm text-[var(--text-primary)] leading-relaxed">{testAnswer}</p>
             </div>
           )}
