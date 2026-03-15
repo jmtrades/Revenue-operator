@@ -120,7 +120,7 @@ export default function AppSettingsBusinessPage() {
       toast.success(tSettings("business.deleted"));
       window.location.href = "/";
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not delete workspace.");
+      toast.error(e instanceof Error ? e.message : tSettings("business.deleteWorkspaceError"));
     } finally {
       setDeleting(false);
     }

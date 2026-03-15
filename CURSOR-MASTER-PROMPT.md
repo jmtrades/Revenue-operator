@@ -1,6 +1,6 @@
-# HOMEPAGE i18n — 20 section components with hardcoded English
+# FINAL COMPREHENSIVE FIX — Missing Locale Keys + Live Bugs
 
-Every homepage section except Hero, Navbar, Footer, SocialProof, and ProblemStatement still has 100% hardcoded English. This is the ONLY remaining work. Fix all 20 files below.
+This prompt fixes ALL remaining issues found during a full live-site + codebase audit. After this, the product is launch-ready.
 
 ---
 
@@ -8,348 +8,163 @@ Every homepage section except Hero, Navbar, Footer, SocialProof, and ProblemStat
 
 **Stack**: Next.js App Router · React 19 · TypeScript · next-intl ^4.8.3 · Tailwind CSS v4
 **Locales**: `en`, `es`, `fr`, `de`, `pt`, `ja` at `src/i18n/messages/{locale}.json`
-**Pattern**: `useTranslations("homepage.sectionName")` → `t("key")` = `homepage.sectionName.key` in JSON
-**Brand names**: "Recall Touch", "Salesforce", "HubSpot", "HIPAA" etc. — do NOT translate
-**Numbers**: "$126K", "80%", "$297", "5 min" — keep the number, translate surrounding text
-**For EVERY file below**: (1) Add `import { useTranslations } from "next-intl"` (2) Add `const t = useTranslations("homepage.xxx")` inside the component (3) Replace EVERY hardcoded string with `t("key")` or `{t("key")}` (4) Move any hardcoded arrays/objects inside the component as useMemo using t() (5) Add ALL new keys to `homepage` namespace in ALL 6 locale files with proper native translations
+**Pattern**: `useTranslations("namespace")` → `t("key")` = `namespace.key` in JSON
+**Critical rule**: en.json is the source of truth. Every key in en.json MUST exist in ALL 5 other locale files with a proper native translation. No English placeholders.
 
 ---
 
-## FILE 1: `src/components/sections/HowItWorks.tsx`
-Namespace: `homepage.howItWorks`
+## PART 1 — SYNC ALL LOCALE FILES TO MATCH en.json (CRITICAL)
 
-Replace these hardcoded strings:
-- `"How it works"` → `t("label")`
-- `"Three steps. Then it runs."` → `t("title")`
-- `"Connect"` → `t("steps.connect.title")`
-- `"Forward your number or get a new one. Any carrier. Any phone."` → `t("steps.connect.desc")`
-- `"Configure"` → `t("steps.configure.title")`
-- `"Tell your AI what to do: answer calls, handle texts, book appointments, follow up, qualify leads, or all of it. Use a template or start from scratch."` → `t("steps.configure.desc")`
-- `"Done"` → `t("steps.done.title")`
-- `"Every call answered. Every lead captured. Every follow-up sent."` → `t("steps.done.desc")`
+There are significant gaps in translation files. These cause raw keys or fallback English to appear for non-English users.
 
-Move the STEPS array inside the component as `useMemo` using `t()`.
+### Missing key counts:
+| Language | Missing Keys | Key Namespaces |
+|----------|-------------|----------------|
+| fr | 229 | agents, analytics, commandPalette, contacts, leads, notifications, phone, pricing, proofDrawer, settings |
+| de | 343 | activate, agents, analytics, commandPalette, contactPage, contacts, hero, leads, notifications, phone, pricing, proofDrawer, settings |
+| pt | 343 | activate, agents, analytics, commandPalette, contactPage, contacts, hero, leads, notifications, phone, pricing, proofDrawer, settings |
+| ja | 352 | activate, agents, analytics, commandPalette, contactPage, contacts, hero, leads, notifications, phone, pricing, proofDrawer, settings |
 
----
+### How to fix:
+1. Load `en.json` as the source of truth
+2. For each of `fr.json`, `de.json`, `pt.json`, `ja.json`:
+   - Recursively compare against en.json
+   - For every key that exists in en.json but NOT in the target locale file, add it with a proper native translation
+   - Do NOT delete extra keys — leave them (they may be used by locale-specific content)
+3. For `es.json`: it has 15 extra keys — leave them. Check if it's missing any en.json keys and add those too.
 
-## FILE 2: `src/components/sections/HomepageLiveDemo.tsx`
-Namespace: `homepage.liveDemo`
+### The missing namespaces and what they contain:
 
-Replace these hardcoded strings:
-- `"Hear the difference in 30 seconds"` → `t("heading")`
-- `"See how your AI handles real situations..."` → `t("subheading")`
-- `"Caller"` → `t("cardLabels.caller")`
-- `"Your AI"` → `t("cardLabels.agent")`
-- `"Result"` → `t("cardLabels.result")`
-- `"Sample conversation — your AI handles this 24/7 for any type of business."` → `t("sampleNote")`
-- `"Ready to make this your phone line?"` → `t("cta.text")`
-- `"Open interactive call demo"` → `t("cta.ariaLabel")`
-- `"Start free →"` → `t("cta.button")`
+**`analytics` (63 keys)** — Full analytics page: headings, day names (Mon-Sun), chart labels, metrics labels, AI insights, sentiment analysis, call volume descriptions, export labels.
 
-Move the USE_CASES array inside the component. Each use case has label, caller, agent, result:
-- Missed call recovery: `t("useCases.missedCall.label")`, `.caller`, `.agent`, `.result`
-- Appointment booking: `t("useCases.appointment.label")`, `.caller`, `.agent`, `.result`
-- Lead follow-up: `t("useCases.followUp.label")`, `.caller`, `.agent`, `.result`
-- After-hours handling: `t("useCases.afterHours.label")`, `.caller`, `.agent`, `.result`
-- Call screening: `t("useCases.screening.label")`, `.caller`, `.agent`, `.result`
+**`agents` (51-63 keys)** — Agent behavior panel: handoff triggers, objection handling, identity templates (appointment_setter, follow_up, review_request, emergency, support, receptionist greetings), delete/save aria labels, knowledge panel titles.
 
----
+**`phone` (47 keys)** — Phone settings: forwarding instructions per platform (iPhone, Android, business line), test call flow, number provisioning, carrier instructions, call forwarding status messages.
 
-## FILE 3: `src/components/sections/OutcomeCardsSection.tsx`
-Namespace: `homepage.outcomes`
+**`activate` (35 keys, missing from de/pt/ja)** — Activation wizard: business type options (Healthcare, Legal, Contractors, Home Services, Insurance, B2B Sales), step labels, AI ready message, placeholder text, account creation flow.
 
-Replace these hardcoded strings:
-- `"What you get from day one"` → `t("heading")`
-- `"Outcomes, not infrastructure. Your AI handles the rest."` → `t("subheading")`
-- Card 1: `"Missed calls recovered"` → `t("cards.missedCalls.title")`, description → `t("cards.missedCalls.desc")`
-- Card 2: `"Leads captured automatically"` → `t("cards.leads.title")`, description → `t("cards.leads.desc")`
-- Card 3: `"Appointments booked on the spot"` → `t("cards.appointments.title")`, description → `t("cards.appointments.desc")`
-- `"Simple pricing that matches your revenue"` → `t("pricing.heading")`
-- `"No per-seat licenses..."` → `t("pricing.subheading")`
-- `"All plans start with a 14-day free trial. No credit card required."` → `t("pricing.trialNote")`
-- All pricing tier names, prices, taglines, features, badges → `t("pricingTiers.starter.name")` etc.
-- `"Start free trial →"` → `t("cta.button")`
+**`hero` (64 keys, missing from de/pt/ja)** — Hero section simulator: 3 demo call scripts with line-by-line dialogue, detail cards (contact name, phone, address, issue, appointment, confirmation), card labels.
 
-Move OUTCOME_CARDS and PRICING_TIERS arrays inside the component as useMemo.
+**`commandPalette` (19 keys)** — Command palette: page names, action labels ("Test agent"), close label, no matches text, section headers.
 
----
+**`notifications` (15 keys)** — Notification center: time labels (just now, Xm ago, Xh ago, Xd ago, yesterday), notification types (appointment_booked, billing_event, missed_call, new_lead, system), empty state, loading.
 
-## FILE 4: `src/components/sections/Features.tsx`
-Namespace: `homepage.features`
+**`proofDrawer` (15 keys)** — Proof drawer panel: outcome labels (customer returned, decision progressed), next touch labels, loading/empty states, close aria.
 
-Replace these hardcoded strings:
-- `"What it does"` → `t("label")`
-- `"Everything your phone communication needs. Nothing it used to cost."` → `t("heading")`
-- 11 capability cards — move array inside component. Each gets: `t("capabilities.answersCalls.title")`, `t("capabilities.answersCalls.desc")`, etc.
-- Full list: answersCalls, unifiedInbox, outbound, campaigns, books, captures, routing, texting, learns, roi, neverGivesUp
+**`contactPage` (12 keys, missing from de/pt/ja)** — Contact form: field labels (Name, Email, Company, Message), subject options (General, Sales, Partnership, Billing), sending state, validation message, success/error toasts.
+
+**`contacts` (8 keys)** — Contact list: filter aria, inbound/outbound labels, last contact time labels (today, yesterday, X days ago, unknown), manual add note.
+
+**`leads` (5 keys)** — Lead time labels: today, 1 day ago, X days ago, 1 week ago, X weeks ago.
+
+**`pricing` (3 keys)** — ROI calculator description, trusted-by text, questions CTA.
+
+**`settings` (3 keys)** — Notification channel/event labels, activity actions.
+
+### Implementation approach:
+For EACH missing key, look up the English value in en.json, then write the proper translation:
+- **fr**: French
+- **de**: German
+- **pt**: Brazilian Portuguese
+- **ja**: Japanese
+
+Do NOT use machine-translated placeholders. Use natural, professional translations appropriate for a business SaaS product.
 
 ---
 
-## FILE 5: `src/components/sections/UseCaseSection.tsx`
-Namespace: `homepage.useCaseSection`
+## PART 2 — FIX ANALYTICS PAGE RAW TRANSLATION KEY
 
-Replace:
-- `"One platform. Every call type."` → `t("heading")`
-- `"Inbound"` → `t("cases.inbound.title")`, description → `t("cases.inbound.desc")`
-- `"Outbound"` → `t("cases.outbound.title")`, description → `t("cases.outbound.desc")`
-- `"Intelligence"` → `t("cases.intelligence.title")`, description → `t("cases.intelligence.desc")`
-- `"Start free →"` → `t("cta.button")`
+**Live bug**: The analytics page shows `"analytics.heading"` as raw text in the main heading.
 
-Move USE_CASES array inside component.
+### Check: `src/app/app/analytics/page.tsx`
+Verify the component uses `useTranslations("analytics")` and calls `t("heading")`. If the code is correct, the issue is that the `analytics` namespace keys are missing from locale files (covered in Part 1). But double-check the code imports are correct.
 
 ---
 
-## FILE 6: `src/components/sections/WhoUsesSection.tsx`
-Namespace: `homepage.whoUses`
+## PART 3 — PRICING PAGE FEATURE LISTS
 
-Replace:
-- `"Who uses Recall Touch"` → `t("label")`
-- `"Built for how you communicate"` → `t("heading")`
-- 6 persona cards (solo, growing, agencies, afterHours, outbound, anyone) — each has `.name` and `.desc`
-- `"Don't see your use case?..."` → `t("additionalNote")`
-- `"Get started →"` → `t("cta.link")`
+**Live bug**: /pricing page shows Spanish nav/buttons but English feature list text like "400 inbound min included", "50 outbound calls", "100 SMS", "Appointment booking", etc.
 
-Move PERSONAS array inside component.
+### Check: `src/app/pricing/` and `src/components/PricingContent.tsx`
+Verify that ALL pricing plan feature list items use `t()` calls and that the keys exist in all locale files. The plan feature strings like:
+- "400 inbound min included"
+- "50 outbound calls"
+- "100 SMS"
+- "Appointment booking"
+- "Follow-up sequences"
+- "Analytics"
+- "Custom integrations"
+- "Dedicated success partner"
+- etc.
 
----
-
-## FILE 7: `src/components/sections/MetricsSection.tsx`
-Namespace: `homepage.metrics`
-
-Replace:
-- `"What if?"` → `t("label")`
-- `"The numbers that matter"` → `t("heading")`
-- 5 metrics — each has `.value` and `.label`: revenueLost ($126K), answerRate (100%), speedToLead (60 sec), inbox (1 inbox), setupTime (5 min)
-
-Move METRICS array inside component.
+Must ALL be wrapped in `t()` with keys in all 6 locale files.
 
 ---
 
-## FILE 8: `src/components/sections/TestimonialsSection.tsx`
-Namespace: `homepage.testimonials`
+## PART 4 — REMOVE UNUSED FUNCTIONS (ESLint warnings)
 
-Replace:
-- `"Built for businesses that depend on every call"` → `t("preamble")`
-- `"What customers say"` → `t("label")`
-- 5 testimonials — each has `.quote`, `.author`, `.role`: amanda, ryan, mike, sarah, james
-- `"Trusted by businesses that never miss a call"` → `t("badge")`
+**File**: `src/app/app/agents/AgentsPageClient.tsx`
 
-Move TESTIMONIALS array inside component.
+Two functions are defined but never used (causing ESLint warnings):
+1. `getDefaultFaqSeed` (line ~267) — either wire it up where it should be used, or remove it
+2. `getFaqCategoryTabs` (line ~1772) — either wire it up where it should be used, or remove it
 
----
-
-## FILE 9: `src/components/sections/PricingPreview.tsx`
-Namespace: `homepage.pricingPreview`
-
-Replace:
-- `"Pricing"` → `t("label")`
-- `"Plans that pay for themselves."` → `t("heading")`
-- `"Monthly"` / `"Annual"` → `t("toggle.monthly")` / `t("toggle.annual")`
-- `"Save 17%"` → `t("toggle.savings")`
-- `"Popular"` → `t("badge")`
-- Tier ROI descriptions (starter, growth, scale, enterprise)
-- `"All plans include: encrypted records · compliance framework · audit trail · 14-day free trial"` → `t("footerNote")`
-- `"View full plan comparison →"` → `t("cta.link")`
+Check the component to see if these functions SHOULD be used somewhere (e.g., in the FAQ section of the agent editor). If they should be used, add the calls. If they're truly dead code, remove them.
 
 ---
 
-## FILE 10: `src/components/sections/WhatMakesUsDifferentSection.tsx`
-Namespace: `homepage.difference`
+## PART 5 — HARDCODED ERROR/TOAST MESSAGES
 
-Replace:
-- `"What makes us different"` → `t("heading")`
-- `"No voicemail. No missed opportunities..."` → `t("subheading")`
-- Row 1 — `"Manual answering / voicemail"` + 3 items
-- Row 2 — `"Generic voicemail or IVR"` + 3 items
-- Row 3 — `"Recall Touch"` + 3 items (keep "Recall Touch" as brand name)
+**File**: `src/app/app/settings/business/page.tsx`
+Line ~123: `toast.error(e instanceof Error ? e.message : "Could not delete workspace.");`
 
-Move COMPARISON_ROWS inside component.
+Replace the hardcoded fallback with `t("deleteWorkspaceError")` and add the key to the `settings` namespace in all 6 locale files.
 
----
-
-## FILE 11: `src/components/sections/EnterpriseComparisonCard.tsx`
-Namespace: `homepage.enterpriseComparison`
-
-Replace single hardcoded comparison text → `t("text")`
-
----
-
-## FILE 12: `src/components/sections/FinalCTA.tsx`
-Namespace: `homepage.finalCta`
-
-Replace:
-- `"Your AI phone team starts in 5 minutes"` → `t("heading")`
-- `"No credit card. Set up in 5 minutes. Answer every call."` → `t("subheading")`
-- `"Start free →"` → `t("buttons.start")`
-- `"Book a demo →"` → `t("buttons.demo")`
-- `"Works for calls, texts, scheduling, follow-ups, and campaigns. One platform."` → `t("note")`
-- `"View documentation"` → `t("links.docs")`
-
----
-
-## FILE 13: `src/components/sections/ScrollDepthCTA.tsx`
-Namespace: `homepage.scrollCta`
-
-Replace:
-- `"Your next customer could be calling. Ready?"` → `t("message")`
-- `"Start free →"` → `t("button")`
-- `"Dismiss"` aria-label → `t("dismiss")`
-
----
-
-## FILE 14: `src/components/sections/TrustStackSection.tsx`
-Namespace: `homepage.trust`
-
-Replace:
-- `"Trusted by operators who can't afford to miss decisive calls."` → `t("text")`
-
----
-
-## FILE 15: `src/components/sections/Industries.tsx`
-Namespace: `homepage.industries`
-
-Replace:
-- `"Industries"` → `t("label")`
-- `"See how it works across industries"` → `t("heading")`
-- `"Recall Touch adapts to any business..."` → `t("subheading")`
-- 5 industries (plumbing, healthcare, legal, realEstate, dental) + custom — each has `.name` and `.desc`
-
-Move INDUSTRIES array inside component.
-
----
-
-## FILE 16: `src/components/sections/BentoVisuals.tsx`
-Namespace: `homepage.bentoVisuals`
-
-Replace all hardcoded strings:
-- Timeline labels: "Call", "Follow-up", "Confirm", "Close"
-- Compliance record labels: "Governed record", "Jurisdiction", "Verified", "Review depth", "Duration", "Status", "Chain"
-- Compliance values: "Standard", "Compliant", "3 verified events"
-- Audit trail: "Recorded under declared jurisdiction", "Forwarded without modification", "Audit trail complete"
-- Escalation levels: "Agent", "Manager", "Director"
-- Channel labels: "Voice", "Message", "Payment"
-- `"Single governance layer"` → `t("channelNote")`
-
----
-
-## FILE 17: `src/components/sections/HomepageActivityPreview.tsx`
-Namespace: `homepage.activityPreview`
-
-Replace:
-- `"Preview of the Recall Touch activity dashboard"` aria-label → `t("ariaLabel")`
-- `"Recall Touch — Activity"` → `t("title")`
-- `"Recent calls"` → `t("heading")`
-- Type labels: "Lead", "Appointment", "Follow-up"
-
-Move type labels / feed items inside component.
-
----
-
-## FILE 18: `src/components/sections/ActivityFeedMockup.tsx`
-Namespace: `homepage.activityFeed`
-
-Replace ALL hardcoded strings:
-- 5 feed cards — each has label, time, name, meta, detail
-- `"Recall Touch"` header (keep brand name)
-- `"Today"` → `t("dateLabel")`
-- Chips: "All", "Needs action", "Leads" → `t("chips.all")`, etc.
-
-Move FEED_ITEMS and CHIPS arrays inside component.
-
----
-
-## FILE 19: `src/components/sections/MockDashboard.tsx`
-Namespace: `homepage.mockDashboard`
-
-Replace:
-- `"Preview of the Recall Touch dashboard interface"` aria-label → `t("ariaLabel")`
-- `"Recall Touch — Active records"` → `t("title")`
-- `"Active Records"` → `t("heading")`
-- `"Search calls…"` placeholder → `t("searchPlaceholder")`
-- Table headers: "Name", "Time", "Duration", "Status", "Jurisdiction"
-- Status labels: "Governed", "Pending"
-
-Move table data inside component.
-
----
-
-## FILE 20: `src/components/sections/UseCases.tsx`
-Namespace: `homepage.useCasesAlt`
-
-Replace:
-- `"Built for"` → `t("label")`
-- `"From solo operators to regulated enterprises."` → `t("heading")`
-- 3 use cases (inbound, outbound, regulated) — each has `.title` and `.desc`
-- `"Learn more →"` → `t("cta.link")`
-
-Move USE_CASES array inside component.
-
----
-
-## LOCALE KEY STRUCTURE
-
-Create the `homepage` namespace in ALL 6 locale files. Structure:
-
-```json
-{
-  "homepage": {
-    "problem": { ... },  // ALREADY EXISTS — do not touch
-    "howItWorks": { "label": "...", "title": "...", "steps": { ... } },
-    "liveDemo": { "heading": "...", "subheading": "...", "useCases": { ... }, ... },
-    "outcomes": { "heading": "...", "cards": { ... }, "pricing": { ... }, ... },
-    "features": { "label": "...", "heading": "...", "capabilities": { ... } },
-    "useCaseSection": { "heading": "...", "cases": { ... }, "cta": { ... } },
-    "whoUses": { "label": "...", "heading": "...", "personas": { ... }, ... },
-    "metrics": { "label": "...", "heading": "...", "items": { ... } },
-    "testimonials": { "preamble": "...", "label": "...", "testimonials": { ... }, "badge": "..." },
-    "pricingPreview": { "label": "...", "heading": "...", "toggle": { ... }, ... },
-    "difference": { "heading": "...", "subheading": "...", "rows": { ... } },
-    "enterpriseComparison": { "text": "..." },
-    "finalCta": { "heading": "...", "subheading": "...", "buttons": { ... }, ... },
-    "scrollCta": { "message": "...", "button": "...", "dismiss": "..." },
-    "trust": { "text": "..." },
-    "industries": { "label": "...", "heading": "...", "industries": { ... } },
-    "bentoVisuals": { "timelineLabels": { ... }, "complianceRecord": { ... }, ... },
-    "activityPreview": { "ariaLabel": "...", "title": "...", ... },
-    "activityFeed": { "feedCards": { ... }, "dateLabel": "...", "chips": { ... } },
-    "mockDashboard": { "ariaLabel": "...", "title": "...", "heading": "...", ... },
-    "useCasesAlt": { "label": "...", "heading": "...", "cases": { ... }, ... }
-  }
-}
+Search the entire `src/` directory for other hardcoded toast messages:
+```bash
+grep -rn 'toast\.\(error\|success\|warning\|info\)(' src/ --include='*.tsx' --include='*.ts' | grep '"[A-Z]'
 ```
 
-English gets the original text. es, fr, de, pt, ja get PROPER NATIVE translations (not placeholders, not English).
+For each one found, replace the hardcoded string with a `t()` call and add the key to the appropriate namespace.
 
 ---
 
 ## VERIFICATION
 
-After implementing all files, run:
-
 ```bash
-# All section files should use useTranslations
-grep -rL 'useTranslations\|getTranslations' src/components/sections/*.tsx
-# Should return EMPTY (only non-section files if any)
-
-# Homepage namespace should exist with all sub-namespaces
+# 1. All locale files should match en.json structure
 python3 -c "
 import json
-data = json.load(open('src/i18n/messages/en.json'))
-hp = data.get('homepage', {})
-expected = ['howItWorks','liveDemo','outcomes','features','useCaseSection','whoUses','metrics','testimonials','pricingPreview','difference','enterpriseComparison','finalCta','scrollCta','trust','industries','bentoVisuals','activityPreview','activityFeed','mockDashboard','useCasesAlt','problem']
-missing = [k for k in expected if k not in hp]
-print(f'MISSING: {missing}' if missing else f'ALL {len(expected)} HOMEPAGE SECTIONS PRESENT')
+def get_keys(obj, prefix=''):
+    keys = set()
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            full = f'{prefix}.{k}' if prefix else k
+            keys.add(full)
+            keys.update(get_keys(v, full))
+    return keys
+
+en = json.load(open('src/i18n/messages/en.json'))
+en_keys = get_keys(en)
+for lang in ['es','fr','de','pt','ja']:
+    data = json.load(open(f'src/i18n/messages/{lang}.json'))
+    lang_keys = get_keys(data)
+    missing = en_keys - lang_keys
+    print(f'{lang}: {\"MISSING \" + str(len(missing)) + \" keys\" if missing else \"COMPLETE\"} ({len(lang_keys)} total)')
 "
 
-# TypeScript check
+# 2. No ESLint warnings
+npx eslint src/app/app/agents/AgentsPageClient.tsx --quiet 2>&1 | head -10
+
+# 3. TypeScript clean
 npx tsc --noEmit
 
-# Build
+# 4. Build
 npm run build
 
-# Commit
-git add -A && git commit -m "feat: complete homepage i18n — all 20 section components translated across 6 locales" && git push origin main
+# 5. Commit and push
+git add -A && git commit -m "fix: sync all locale files to en.json, fix analytics raw key, pricing features, remove dead code" && git push origin main
 git log --oneline -3
 ```
 
-Paste ONLY the git log output.
+Paste ONLY the verification output.

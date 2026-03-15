@@ -263,17 +263,6 @@ function generateAgentId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
-/** 5 starter Q&A entries (aligned with workspace onboarding seed). */
-function getDefaultFaqSeed(t: (key: string) => string) {
-  return [
-    { question: t("defaultFaq.hoursQuestion"), answer: t("defaultFaq.hoursAnswer") },
-    { question: t("defaultFaq.locationQuestion"), answer: t("defaultFaq.locationAnswer") },
-    { question: t("defaultFaq.appointmentQuestion"), answer: t("defaultFaq.appointmentAnswer") },
-    { question: t("defaultFaq.servicesQuestion"), answer: t("defaultFaq.servicesAnswer") },
-    { question: t("defaultFaq.pricingQuestion"), answer: t("defaultFaq.pricingAnswer") },
-  ];
-}
-
 function getAlwaysTransferOptions(t: (key: string) => string): string[] {
   return [
     t("defaultTransfer.explicitlyAsksHuman"),
@@ -1767,16 +1756,6 @@ function ProfileTab({
       </div>
     </div>
   );
-}
-
-function getFaqCategoryTabs(t: (key: string) => string) {
-  return [
-    { id: "all", label: t("faqCategories.all") },
-    { id: "hours", label: t("faqCategories.hours") },
-    { id: "services", label: t("faqCategories.services") },
-    { id: "pricing", label: t("faqCategories.pricing") },
-    { id: "policies", label: t("faqCategories.policies") },
-  ];
 }
 
 function _faqMatchesCategory(q: string, category: string): boolean {

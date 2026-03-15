@@ -1318,6 +1318,7 @@
   },
   "analytics": {
     "pageTitle": "Analyses — Recall Touch",
+    "heading": "Analyses",
     "title": "Analyses",
     "periodSummary": {
       "title": "Résumé de la période",
@@ -1346,7 +1347,76 @@
     "successRate": "% de succès",
     "emptyStateSummary": "Une fois les appels commencés, vous verrez un résumé du nombre de leads, rendez-vous et revenus.",
     "am": "AM",
-    "pm": "PM"
+    "pm": "PM",
+    "description": "See how conversations turn into kept appointments and real revenue.",
+    "ranges": {
+      "today": "Today",
+      "sevenDay": "7D",
+      "thirtyDay": "30D",
+      "ninetyDay": "90D",
+      "custom": "Custom"
+    },
+    "rangeLabels": {
+      "today": "Today",
+      "last7": "Last 7 days",
+      "last30": "Last 30 days",
+      "last90": "Last 90 days",
+      "customRange": "Custom range"
+    },
+    "exportCsv": "Export CSV",
+    "emptyHeading": "Analytics populate as calls come in",
+    "emptyDescription": "Your first chart will appear after your first call.",
+    "emptyAction": "Make a test call",
+    "funnelStages": {
+      "calls": "Calls",
+      "leads": "Leads",
+      "qualified": "Qualified",
+      "appointments": "Appointments",
+      "won": "Won"
+    },
+    "atAGlance": "{label} at a glance",
+    "glanceSummary": "Handled {totalCalls} calls, created {leads} leads, booked {appointments} appointments, and protected an estimated ${revenue} in revenue.",
+    "glanceEmpty": "Once calls start coming in, you'll see a summary of how many became leads, appointments, and revenue.",
+    "leadConversionPct": "Lead conversion {pct}%",
+    "positiveSentimentPct": "Positive sentiment {pct}%",
+    "peakHours": "Peak hours",
+    "aiInsights": "AI insights",
+    "dismiss": "Dismiss",
+    "insightBusyHour": "Busiest hour this week stays stable around mid-morning.",
+    "insightAvailability": "Questions about availability often appear outside standard hours.",
+    "addToKnowledge": "Add to knowledge base",
+    "insightLiveAnswer": "Calls that reach a live answer are much more likely to become appointments.",
+    "insightPricing": "Make sure pricing and availability are easy to confirm in the first 30 seconds.",
+    "sentimentOverview": "Sentiment overview",
+    "sentimentPositive": "Positive {pct}%",
+    "sentimentNeutral": "Neutral {pct}%",
+    "sentimentNegative": "Negative {pct}%",
+    "outcomes": {
+      "booked": "Booked",
+      "lead": "Lead",
+      "info": "Info",
+      "transferred": "Transferred",
+      "missed": "Missed",
+      "voicemail": "Voicemail"
+    },
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "errors": {
+      "timeout": "Analytics request timed out. Try again.",
+      "loadFailed": "Could not load analytics for this workspace."
+    },
+    "periodNoData": "No calls recorded in the selected {period} period. Make a test call to start seeing insights here.",
+    "periodSummaryText": "{count} calls with a {rate}% answer rate",
+    "periodAppointments": "{count} appointments, converting {pct}% of qualified leads.",
+    "periodRevenue": "Estimated revenue impact: ${amount}.",
+    "periodDuration": "Average call duration: {duration}."
   },
   "agents": {
     "pageTitle": "Agents — Recall Touch",
@@ -1570,23 +1640,28 @@
       "templates": {
         "receptionist": {
           "label": "Réceptionniste",
-          "desc": "Répond aux appels, prend les messages, oriente."
+          "desc": "Répond aux appels, prend les messages, oriente.",
+          "greeting": "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?"
         },
         "appointment_setter": {
           "label": "Prise de rendez-vous",
-          "desc": "Prend les rendez-vous et confirme les détails."
+          "desc": "Prend les rendez-vous et confirme les détails.",
+          "greeting": "Hi, I can help you schedule an appointment right now. What day works best for you?"
         },
         "lead_qualifier": {
           "label": "Qualification de leads",
-          "desc": "Qualifie les leads puis oriente les prospects chauds."
+          "desc": "Qualifie les leads puis oriente les prospects chauds.",
+          "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step."
         },
         "follow_up": {
           "label": "Relance",
-          "desc": "Rappelle les leads et réengage."
+          "desc": "Rappelle les leads et réengage.",
+          "greeting": "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?"
         },
         "support": {
           "label": "Support client",
-          "desc": "Répond aux questions, dépannage, résolution."
+          "desc": "Répond aux questions, dépannage, résolution.",
+          "greeting": "Thanks for calling support! What can I help you with?"
         },
         "scratch": {
           "label": "Personnalisé",
@@ -1877,8 +1952,8 @@
       "transferWhen": "Transférer quand l'appelant...",
       "escalation": {
         "asksForManager": "Demande à parler à un responsable",
-        "angry": "Se fâche ou se frustre",
-        "complexQuestion": "Pose une question juridique ou médicale complexe",
+        "angry": "Se fâche ou est frustré",
+        "complexQuestion": "A une question juridique ou médicale complexe",
         "requestsHuman": "Demande explicitement un humain",
         "emergency": "Mentionne une urgence"
       },
@@ -1901,12 +1976,12 @@
       "placeholderQ2": "Quelle est votre fourchette de budget ?",
       "placeholderQ3": "Quand en avez-vous besoin ?",
       "placeholderQ4": "Comment nous avez-vous connus ?",
-      "escalation": {
-        "asksForManager": "Demande à parler à un responsable",
-        "angry": "Se fâche ou est frustré",
-        "complexQuestion": "A une question juridique ou médicale complexe",
-        "requestsHuman": "Demande explicitement un humain",
-        "emergency": "Mentionne une urgence"
+      "handoff": {
+        "title": "When to transfer",
+        "subtitle": "Reasons that trigger a handoff to a human."
+      },
+      "objections": {
+        "placeholder": "Anything the agent should always remember on calls."
       }
     },
     "knowledge": {
@@ -2023,6 +2098,53 @@
       "reviewGreeting": "Message d'accueil :",
       "costNote": "Le coût estimé dépend de l'usage. Vous pouvez désactiver l'agent à tout moment depuis la page Agents.",
       "back": "Retour"
+    },
+    "purpose": {
+      "inbound": "Inbound",
+      "outbound": "Outbound",
+      "both": "Both"
+    },
+    "template": {
+      "appointment_setter": "Appointment",
+      "lead_qualifier": "Sales",
+      "follow_up": "Follow-up",
+      "support": "Support",
+      "after_hours": "After-Hours",
+      "emergency": "Emergency",
+      "review_request": "Review",
+      "scratch": "Custom",
+      "receptionist": "Receptionist"
+    },
+    "setupProgress": {
+      "title": "Setup progress",
+      "forAgent": "For {name}",
+      "next": "Next"
+    },
+    "setup": {
+      "title": "Setup",
+      "stepOf": "Step {current} of {total}",
+      "jumpAria": "Jump to step",
+      "completed": "Completed",
+      "current": "Current step",
+      "currentlyOn": "Currently: {label}"
+    },
+    "knowledgePanel": {
+      "title": "Knowledge base",
+      "subtitle": "Q&A pairs your agent uses to answer callers.",
+      "questionPlaceholder": "When caller asks about…",
+      "answerPlaceholder": "Agent responds with…",
+      "remove": "Remove",
+      "add": "Add Q&A",
+      "importUrlPlaceholder": "https://your-website.com"
+    },
+    "quickActions": {
+      "label": "Quick actions",
+      "edit": "Edit",
+      "editAria": "Edit agent",
+      "test": "Test",
+      "testAria": "Test agent",
+      "goLive": "Go live",
+      "goLiveAria": "Go live"
     }
   },
   "calls": {
@@ -2517,7 +2639,12 @@
       "workspaceMissing": "Aucun espace de travail sélectionné.",
       "addFailed": "Échec de l'ajout du lead.",
       "csvNoValidRows": "Aucune ligne valide trouvée dans le CSV."
-    }
+    },
+    "timeToday": "Today",
+    "timeDaysAgo": "{count} days ago",
+    "timeWeeksAgo": "{count} weeks ago",
+    "timeOneDayAgo": "1 day ago",
+    "timeOneWeekAgo": "1 week ago"
   },
   "campaigns": {
     "title": "Campagnes",
@@ -2846,6 +2973,7 @@
     "business.saveFailed": "Échec de l’enregistrement des informations d’entreprise. Réessayez.",
     "business.nameNoMatch": "Le nom de l’espace ne correspond pas. Saisissez-le exactement pour confirmer.",
     "business.deleted": "Espace supprimé. Redirection en cours…",
+    "business.deleteWorkspaceError": "Impossible de supprimer l'espace de travail.",
     "businessPage": {
       "heading": "Entreprise",
       "description": "Les informations de votre entreprise aident votre IA à répondre aux appels avec précision.",
@@ -2988,7 +3116,28 @@
     "notifications.loadFailed": "Échec du chargement des préférences de notification. Utilisation des valeurs par défaut.",
     "notifications.saved": "Préférences de notification enregistrées.",
     "deleteDataInfo": "Contactez le support pour supprimer définitivement vos données.",
-    "deleteAccountInfo": "Contactez le support pour supprimer définitivement votre compte."
+    "deleteAccountInfo": "Contactez le support pour supprimer définitivement votre compte.",
+    "notifications.events": {
+      "call_received": "Call received",
+      "call_receivedDesc": "Every time your AI answers a call",
+      "lead_captured": "Lead captured",
+      "lead_capturedDesc": "When a caller is identified as a new lead",
+      "appointment_booked": "Appointment booked",
+      "appointment_bookedDesc": "When your AI books an appointment",
+      "urgent_call": "Urgent call",
+      "urgent_callDesc": "Emergency or high-priority calls",
+      "voicemail": "Voicemail left",
+      "voicemailDesc": "When a caller leaves a voicemail"
+    },
+    "notifications.channels": {
+      "push": "Push",
+      "sms": "SMS",
+      "email": "Email"
+    },
+    "activity.actions": {
+      "settings_update": "Settings updated",
+      "settings_business_update": "Business settings updated"
+    }
   },
   "hero": {
     "title": "Une IA qui répond au téléphone de votre entreprise 24h/24 et 7j/7",
@@ -3223,26 +3372,492 @@
       "card3Stat3Desc": "Outils que les entreprises jonglent pour appels, SMS, planification et suivi",
       "closing": "Et si chaque appel, SMS et suivi était géré automatiquement — et que vous puissiez voir exactement ce qui s'est passé ?"
     },
-    "howItWorks": {"label": "Comment ça marche", "title": "Trois étapes. Puis ça tourne.", "steps": {"connect": {"title": "Connecter", "desc": "Transférez votre numéro ou en prenez un nouveau. N'importe quel opérateur. N'importe quel téléphone."}, "configure": {"title": "Configurer", "desc": "Dites à votre IA quoi faire : répondre aux appels, gérer les SMS, prendre des rendez-vous, relancer, qualifier les leads, ou tout ça. Modèle ou from scratch."}, "done": {"title": "Terminé", "desc": "Chaque appel répondu. Chaque lead capté. Chaque relance envoyée."}}},
-    "liveDemo": {"heading": "Écoutez la différence en 30 secondes", "subheading": "Voyez comment votre IA gère des situations réelles — appels manqués, réservation, relance, hors horaires, filtrage.", "cardLabels": {"caller": "Appelant", "agent": "Votre IA", "result": "Résultat"}, "sampleNote": "Conversation type — votre IA fait ça 24h/24 pour tout type d'entreprise.", "cta": {"text": "Prêt à en faire votre ligne ?", "ariaLabel": "Ouvrir la démo d'appel interactive", "button": "Commencer gratuit →"}, "useCases": {"missedCall": {"label": "Récupération d'appel manqué", "caller": "J'ai appelé tout à l'heure, personne n'a répondu. Je voudrais prendre rendez-vous.", "agent": "Merci de rappeler. Je vous mets sur le calendrier — quel jour vous convient ?", "result": "Rappel capté · Rendez-vous proposé"}, "appointment": {"label": "Prise de rendez-vous", "caller": "Je voudrais prendre rendez-vous pour la semaine prochaine.", "agent": "Mardi après-midi ou mercredi matin. Vous préférez ?", "result": "Créneau confirmé · Rappel programmé"}, "followUp": {"label": "Relance lead", "caller": "J'ai rempli le formulaire sur votre site. Je voulais en savoir plus sur les tarifs.", "agent": "J'ai vos coordonnées. Notre équipe vous recontacte sous une heure. Quel numéro ?", "result": "Lead qualifié · Relance en file"}, "afterHours": {"label": "Hors horaires", "caller": "Il est 20h — vous êtes ouverts ? J'ai une question urgente.", "agent": "Nous sommes fermés. Je peux noter votre nom et numéro pour un rappel demain matin.", "result": "Message pris · Rappel le lendemain"}, "screening": {"label": "Filtrage d'appels", "caller": "Je dois parler à quelqu'un pour la facturation.", "agent": "Je peux vous aider pour la facturation. Nom ou numéro de compte pour vous transférer au bon service ?", "result": "Intention captée · Transféré au bon équipe"}}},
-    "outcomes": {"heading": "Ce que vous obtenez dès le premier jour", "subheading": "Des résultats, pas de l'infra. Votre IA fait le reste.", "cards": {"missedCalls": {"title": "Appels manqués récupérés", "desc": "Votre IA répond 24h/24 pour que chaque appelant ait une vraie conversation, pas une messagerie."}, "leads": {"title": "Leads capturés automatiquement", "desc": "Nom, téléphone et besoin — capturé et acheminé en secondes."}, "appointments": {"title": "Rendez-vous pris sur le champ", "desc": "Intégré à votre agenda. Pas de va-et-vient, moins de no-show."}}, "pricing": {"heading": "Tarification simple qui suit vos revenus", "subheading": "Pas de licence par poste. Vous payez la fiabilité des appels répondus, pas le nombre de connexions.", "trialNote": "Tous les plans commencent par 14 jours d'essai. Sans carte."}, "pricingTiers": {"starter": {"name": "Starter", "tagline": "Pour indépendants et petites équipes qui démarrent.", "f1": "400 min entrants inclus", "f2": "1 numéro IA", "f3": "Résumés d'appels et capture de leads basiques", "f4": "Support standard"}, "growth": {"name": "Growth", "tagline": "Pour les équipes en croissance qui veulent une couverture complète.", "f1": "1 500 min entrants inclus", "f2": "3 numéros IA", "f3": "Intelligence d'appels et routage avancés", "f4": "Support prioritaire"}, "scale": {"name": "Scale", "tagline": "Pour équipes multi-sites et gros volume.", "f1": "5 000 min entrants inclus", "f2": "10 numéros", "f3": "Success partner dédié", "f4": "Reporting et intégrations sur mesure"}, "badgePopular": "Plus populaire"}, "cta": {"button": "Essai gratuit →"}},
-    "features": {"label": "Ce que ça fait", "heading": "Tout pour votre communication téléphone. Sans l'ancien coût.", "capabilities": {"answersCalls": {"title": "Répond à chaque appel", "desc": "24h/24, instantanément, avec une voix humaine naturelle."}, "unifiedInbox": {"title": "Boîte unifiée", "desc": "Appels, SMS et e-mails au même endroit. Chaque conversation, chaque contact. Répondez depuis un seul écran."}, "outbound": {"title": "Passe des appels sortants", "desc": "Relance, rappelle, réengage."}, "campaigns": {"title": "Campagnes sortantes", "desc": "Toucher des centaines de leads avec des séquences d'appels et SMS. Relance jusqu'à réponse, réservation ou opt-out."}, "books": {"title": "Prend des rendez-vous", "desc": "Vérifie votre agenda, réserve, confirme."}, "captures": {"title": "Capture chaque lead", "desc": "Qualifie, score, vous alerte par SMS."}, "routing": {"title": "Routage intelligent", "desc": "Détecte l'urgence, filtre les appelants, transfère à la bonne personne ou prend un message."}, "texting": {"title": "SMS bidirectionnels", "desc": "Envoyez et recevez des SMS depuis votre numéro pro. Confirmations, relances, conversations — auto ou manuel."}, "learns": {"title": "Apprend votre monde", "desc": "Répond sur vos services, horaires, politiques, tarifs — ce que vous lui enseignez."}, "roi": {"title": "Montre votre ROI", "desc": "Combien de leads captés, rendez-vous pris, revenus récupérés."}, "neverGivesUp": {"title": "Ne lâche jamais", "desc": "Relance jusqu'à ce que le lead réponde, réserve ou se désinscrive."}}},
-    "useCaseSection": {"heading": "Une plateforme. Tous types d'appels.", "cases": {"inbound": {"title": "Entrants", "desc": "Répondez à chaque appel. Routez, réservez, qualifiez, relancez — automatiquement."}, "outbound": {"title": "Sortants", "desc": "Relancez les leads, confirmez les rendez-vous, réactivez les prospects — à l'échelle."}, "intelligence": {"title": "Intelligence", "desc": "Analysez chaque conversation. Trouvez ce qui marche. Améliorez votre équipe."}}, "cta": {"button": "Commencer gratuit →"}},
-    "whoUses": {"label": "Qui utilise Recall Touch", "heading": "Conçu pour votre façon de communiquer", "personas": {"solo": {"name": "Indépendants", "desc": "Je ne peux pas décrocher en travaillant. Recall Touch répond, réserve et relance pour ne jamais rater un lead."}, "growing": {"name": "Équipes en croissance", "desc": "On perd des leads parce qu'on ne suit pas. Chaque appel est pris et chaque lead est capté et relancé."}, "agencies": {"name": "Agences et multi-sites", "desc": "Je gère plusieurs sites et j'ai besoin de cohérence. Une plateforme, un standard, partout."}, "afterHours": {"name": "Hors horaires et débordement", "desc": "On a besoin de couverture quand le bureau est fermé. Appels pris, messages notés, on rappelle le lendemain."}, "outbound": {"name": "Campagnes sortantes", "desc": "On doit relancer des centaines de leads. Recall Touch contacte, qualifie et réserve — à l'échelle."}, "anyone": {"name": "Toute personne avec un téléphone", "desc": "Je veux que mes appels soient gérés intelligemment. Répondre, réserver, relancer, filtrer — sans embaucher un standard."}}, "additionalNote": "Vous ne trouvez pas votre cas ? Recall Touch sert tout flux basé sur le téléphone.", "cta": {"link": "Commencer →"}},
-    "metrics": {"label": "Et si ?", "heading": "Les chiffres qui comptent", "items": {"revenueLost": "Revenus moyens perdus par an à cause des appels manqués", "answerRate": "Taux de réponse avec Recall Touch (vs ~60 % moyenne nationale)", "speedToLead": "Délai moyen de Recall Touch pour relancer un nouveau lead par appel ou SMS", "inbox": "Tous les appels, SMS et relances au même endroit (vs 4+ outils pour la plupart des équipes)", "setupTime": "Temps de mise en place (vs 6 semaines pour les solutions enterprise)"}},
-    "testimonials": {"preamble": "Conçu pour les entreprises qui dépendent de chaque appel", "label": "Ce que disent les clients", "testimonials": {"amanda": {"quote": "On a remplacé trois outils — réception téléphonique, relance SMS, prise de rendez-vous — par une plateforme.", "author": "Amanda K.", "role": "Cabinet de conseil"}, "ryan": {"quote": "Notre équipe commerciale relance 10 fois plus vite. L'IA fait le premier contact et réserve les réunions qualifiées.", "author": "Ryan D.", "role": "Startup SaaS"}, "mike": {"quote": "Recall Touch s'est remboursé la première semaine. On a capté 14 leads qu'on aurait ratés.", "author": "Mike R.", "role": "Entreprise de plomberie"}, "sarah": {"quote": "Notre taux de no-show a baissé de 40 % depuis que l'IA envoie des rappels.", "author": "Dr Sarah L.", "role": "Cabinet dentaire"}, "james": {"quote": "J'étais sceptique sur l'IA qui répond à mes appels. En un jour j'étais convaincu.", "author": "James T.", "role": "Artisan couvreur"}}, "badge": "Approuvé par les entreprises qui ne ratent pas un appel"},
-    "pricingPreview": {"label": "Tarifs", "heading": "Des plans qui se rentabilisent.", "toggle": {"monthly": "Mensuel", "annual": "Annuel", "savings": "Économisez 17 %"}, "badge": "Populaire", "tierRoi": {"starter": "Moins d'un appel manqué", "growth": "Un lead récupéré paie le mois", "scale": "Équipe communication IA pour une fraction d'un recrutement", "enterprise": "ROI et support dédié sur mesure"}, "footerNote": "Tous les plans incluent : enregistrements chiffrés · cadre de conformité · traçabilité · 14 jours d'essai gratuit", "cta": {"link": "Voir la comparaison des plans →"}},
-    "difference": {"heading": "Ce qui nous différencie", "subheading": "Pas de messagerie vocale. Pas d'opportunités manquées. De vraies conversations, à chaque fois.", "rows": {"manual": {"label": "Réponse manuelle / messagerie vocale", "i1": "Appels manqués = leads perdus", "i2": "La messagerie rappelle rarement", "i3": "Hors horaires = pas de réponse"}, "generic": {"label": "Messagerie ou IVR générique", "i1": "Les appelants raccrochent ou laissent un message", "i2": "Pas de qualification, pas de réservation", "i3": "C'est toujours à vous de rappeler"}, "recallTouch": {"label": "Recall Touch", "i1": "Chaque appel répondu 24h/24", "i2": "Leads captés et qualifiés en temps réel", "i3": "Rendez-vous pris pendant l'appel"}}},
-    "enterpriseComparison": {"text": "La voix IA enterprise coûte 150 000 $/an et prend 6 semaines à déployer. Recall Touch à partir de 297 $/mois en 5 minutes."},
-    "finalCta": {"heading": "Votre équipe téléphone IA en 5 minutes", "subheading": "Sans carte. Config en 5 minutes. Répondez à chaque appel.", "buttons": {"start": "Commencer gratuit →", "demo": "Réserver une démo →"}, "note": "Pour les appels, SMS, agenda, relances et campagnes. Une plateforme.", "links": {"docs": "Voir la documentation"}},
-    "scrollCta": {"message": "Votre prochain client pourrait appeler. Prêt ?", "button": "Commencer gratuit →", "dismiss": "Fermer"},
-    "trust": {"text": "Approuvé par les opérateurs qui ne peuvent pas se permettre de rater les appels décisifs."},
-    "industries": {"label": "Secteurs", "heading": "Voir comment ça marche par secteur", "subheading": "Recall Touch s'adapte à toute entreprise qui reçoit des appels. Voici quelques exemples.", "industries": {"plumbing": {"name": "Plomberie et CTA", "desc": "Répondez à chaque appel de dépannage. Dispatch urgence, planification, devis."}, "healthcare": {"name": "Santé", "desc": "Planifiez les patients. Intake. Conforme HIPAA. Routage renouvellement ordonnances."}, "legal": {"name": "Juridique", "desc": "Intake professionnel. Disponibilité 24h/24. Chaque appel documenté."}, "realEstate": {"name": "Immobilier", "desc": "Qualifiez les acheteurs à l'instant. Planifiez les visites. Ne perdez plus un lead."}, "dental": {"name": "Dentaire", "desc": "Réservez les patients. Vérification assurance. Rappels."}, "custom": {"name": "Votre secteur", "desc": "Vous ne voyez pas votre activité ? Recall Touch convient à toute entreprise qui décroche le téléphone."}}},
-    "bentoVisuals": {"timelineLabels": {"call": "Appel", "followUp": "Relance", "confirm": "Confirmer", "close": "Clôturer"}, "complianceRecord": {"governedRecord": "Enregistrement gouverné", "jurisdiction": "Juridiction", "verified": "Vérifié", "reviewDepth": "Profondeur de revue", "standard": "Standard", "duration": "Durée", "status": "Statut", "compliant": "Conforme", "chain": "Chaîne", "chainValue": "3 événements vérifiés"}, "audit": {"line1": "Enregistré sous juridiction déclarée", "line2": "Transmis sans modification", "line3": "Traçabilité complète"}, "escalation": {"agent": "Agent", "manager": "Responsable", "director": "Directeur"}, "channels": {"voice": "Voix", "message": "Message", "payment": "Paiement"}, "channelNote": "Une seule couche de gouvernance"},
-    "activityPreview": {"ariaLabel": "Aperçu du tableau de bord d'activité Recall Touch", "title": "Recall Touch — Activité", "heading": "Appels récents", "typeLead": "Lead", "typeAppointment": "Rendez-vous", "typeFollowUp": "Relance"},
-    "activityFeed": {"dateLabel": "Aujourd'hui", "chips": {"all": "Tout", "needsAction": "À traiter", "leads": "Leads"}, "feedCards": {"lead": {"label": "NOUVEAU LEAD", "time": "10h32", "name": "Sarah Mitchell", "meta": "Devis rénovation cuisine", "detail": "Budget 15–20k € · Score lead 85"}, "appointment": {"label": "RDV PRIS", "time": "9h47", "name": "James Cooper", "meta": "Maintenance clim — Mar 3, 14h", "detail": "SMS de confirmation envoyé ✓"}, "emergency": {"label": "URGENT", "time": "9h15", "name": "Maria Santos", "meta": "Fuite chauffe-eau", "detail": "Alerte par SMS et appel"}, "outbound": {"label": "APPEL DE RELANCE", "time": "8h30", "name": "IA a appelé David Kim", "meta": "Rappel de RDV", "detail": "Confirmé pour demain ✓"}, "info": {"label": "TRAITÉ", "time": "7h45", "name": "Mike Johnson", "meta": "Demande horaires", "detail": "IA a répondu : Lun–Ven 8h–18h"}}},
-    "mockDashboard": {"ariaLabel": "Aperçu de l'interface tableau de bord Recall Touch", "title": "Recall Touch — Enregistrements actifs", "heading": "Enregistrements actifs", "searchPlaceholder": "Rechercher des appels…", "headerName": "Nom", "headerTime": "Heure", "headerDuration": "Durée", "headerStatus": "Statut", "headerJurisdiction": "Juridiction", "statusGoverned": "Gouverné", "statusPending": "En attente"},
-    "useCasesAlt": {"label": "Conçu pour", "heading": "Des indépendants aux entreprises régulées.", "cases": {"inbound": {"title": "Opérations entrantes", "desc": "Équipes qui gèrent les demandes entrantes avec des réponses cohérentes, documentées et défendables juridiquement."}, "outbound": {"title": "Ventes sortantes", "desc": "Équipes revenus qui font des appels sortants avec engagements de prix, accords verbaux et relances tracées."}, "regulated": {"title": "Secteurs régulés", "desc": "Organisations en finance, assurance, santé ou juridique où la documentation des appels n'est pas optionnelle — c'est une obligation."}}, "cta": {"link": "En savoir plus →"}}
+    "howItWorks": {
+      "label": "Comment ça marche",
+      "title": "Trois étapes. Puis ça tourne.",
+      "steps": {
+        "connect": {
+          "title": "Connecter",
+          "desc": "Transférez votre numéro ou en prenez un nouveau. N'importe quel opérateur. N'importe quel téléphone."
+        },
+        "configure": {
+          "title": "Configurer",
+          "desc": "Dites à votre IA quoi faire : répondre aux appels, gérer les SMS, prendre des rendez-vous, relancer, qualifier les leads, ou tout ça. Modèle ou from scratch."
+        },
+        "done": {
+          "title": "Terminé",
+          "desc": "Chaque appel répondu. Chaque lead capté. Chaque relance envoyée."
+        }
+      }
+    },
+    "liveDemo": {
+      "heading": "Écoutez la différence en 30 secondes",
+      "subheading": "Voyez comment votre IA gère des situations réelles — appels manqués, réservation, relance, hors horaires, filtrage.",
+      "cardLabels": {
+        "caller": "Appelant",
+        "agent": "Votre IA",
+        "result": "Résultat"
+      },
+      "sampleNote": "Conversation type — votre IA fait ça 24h/24 pour tout type d'entreprise.",
+      "cta": {
+        "text": "Prêt à en faire votre ligne ?",
+        "ariaLabel": "Ouvrir la démo d'appel interactive",
+        "button": "Commencer gratuit →"
+      },
+      "useCases": {
+        "missedCall": {
+          "label": "Récupération d'appel manqué",
+          "caller": "J'ai appelé tout à l'heure, personne n'a répondu. Je voudrais prendre rendez-vous.",
+          "agent": "Merci de rappeler. Je vous mets sur le calendrier — quel jour vous convient ?",
+          "result": "Rappel capté · Rendez-vous proposé"
+        },
+        "appointment": {
+          "label": "Prise de rendez-vous",
+          "caller": "Je voudrais prendre rendez-vous pour la semaine prochaine.",
+          "agent": "Mardi après-midi ou mercredi matin. Vous préférez ?",
+          "result": "Créneau confirmé · Rappel programmé"
+        },
+        "followUp": {
+          "label": "Relance lead",
+          "caller": "J'ai rempli le formulaire sur votre site. Je voulais en savoir plus sur les tarifs.",
+          "agent": "J'ai vos coordonnées. Notre équipe vous recontacte sous une heure. Quel numéro ?",
+          "result": "Lead qualifié · Relance en file"
+        },
+        "afterHours": {
+          "label": "Hors horaires",
+          "caller": "Il est 20h — vous êtes ouverts ? J'ai une question urgente.",
+          "agent": "Nous sommes fermés. Je peux noter votre nom et numéro pour un rappel demain matin.",
+          "result": "Message pris · Rappel le lendemain"
+        },
+        "screening": {
+          "label": "Filtrage d'appels",
+          "caller": "Je dois parler à quelqu'un pour la facturation.",
+          "agent": "Je peux vous aider pour la facturation. Nom ou numéro de compte pour vous transférer au bon service ?",
+          "result": "Intention captée · Transféré au bon équipe"
+        }
+      }
+    },
+    "outcomes": {
+      "heading": "Ce que vous obtenez dès le premier jour",
+      "subheading": "Des résultats, pas de l'infra. Votre IA fait le reste.",
+      "cards": {
+        "missedCalls": {
+          "title": "Appels manqués récupérés",
+          "desc": "Votre IA répond 24h/24 pour que chaque appelant ait une vraie conversation, pas une messagerie."
+        },
+        "leads": {
+          "title": "Leads capturés automatiquement",
+          "desc": "Nom, téléphone et besoin — capturé et acheminé en secondes."
+        },
+        "appointments": {
+          "title": "Rendez-vous pris sur le champ",
+          "desc": "Intégré à votre agenda. Pas de va-et-vient, moins de no-show."
+        }
+      },
+      "pricing": {
+        "heading": "Tarification simple qui suit vos revenus",
+        "subheading": "Pas de licence par poste. Vous payez la fiabilité des appels répondus, pas le nombre de connexions.",
+        "trialNote": "Tous les plans commencent par 14 jours d'essai. Sans carte."
+      },
+      "pricingTiers": {
+        "starter": {
+          "name": "Starter",
+          "tagline": "Pour indépendants et petites équipes qui démarrent.",
+          "f1": "400 min entrants inclus",
+          "f2": "1 numéro IA",
+          "f3": "Résumés d'appels et capture de leads basiques",
+          "f4": "Support standard"
+        },
+        "growth": {
+          "name": "Growth",
+          "tagline": "Pour les équipes en croissance qui veulent une couverture complète.",
+          "f1": "1 500 min entrants inclus",
+          "f2": "3 numéros IA",
+          "f3": "Intelligence d'appels et routage avancés",
+          "f4": "Support prioritaire"
+        },
+        "scale": {
+          "name": "Scale",
+          "tagline": "Pour équipes multi-sites et gros volume.",
+          "f1": "5 000 min entrants inclus",
+          "f2": "10 numéros",
+          "f3": "Success partner dédié",
+          "f4": "Reporting et intégrations sur mesure"
+        },
+        "badgePopular": "Plus populaire"
+      },
+      "cta": {
+        "button": "Essai gratuit →"
+      }
+    },
+    "features": {
+      "label": "Ce que ça fait",
+      "heading": "Tout pour votre communication téléphone. Sans l'ancien coût.",
+      "capabilities": {
+        "answersCalls": {
+          "title": "Répond à chaque appel",
+          "desc": "24h/24, instantanément, avec une voix humaine naturelle."
+        },
+        "unifiedInbox": {
+          "title": "Boîte unifiée",
+          "desc": "Appels, SMS et e-mails au même endroit. Chaque conversation, chaque contact. Répondez depuis un seul écran."
+        },
+        "outbound": {
+          "title": "Passe des appels sortants",
+          "desc": "Relance, rappelle, réengage."
+        },
+        "campaigns": {
+          "title": "Campagnes sortantes",
+          "desc": "Toucher des centaines de leads avec des séquences d'appels et SMS. Relance jusqu'à réponse, réservation ou opt-out."
+        },
+        "books": {
+          "title": "Prend des rendez-vous",
+          "desc": "Vérifie votre agenda, réserve, confirme."
+        },
+        "captures": {
+          "title": "Capture chaque lead",
+          "desc": "Qualifie, score, vous alerte par SMS."
+        },
+        "routing": {
+          "title": "Routage intelligent",
+          "desc": "Détecte l'urgence, filtre les appelants, transfère à la bonne personne ou prend un message."
+        },
+        "texting": {
+          "title": "SMS bidirectionnels",
+          "desc": "Envoyez et recevez des SMS depuis votre numéro pro. Confirmations, relances, conversations — auto ou manuel."
+        },
+        "learns": {
+          "title": "Apprend votre monde",
+          "desc": "Répond sur vos services, horaires, politiques, tarifs — ce que vous lui enseignez."
+        },
+        "roi": {
+          "title": "Montre votre ROI",
+          "desc": "Combien de leads captés, rendez-vous pris, revenus récupérés."
+        },
+        "neverGivesUp": {
+          "title": "Ne lâche jamais",
+          "desc": "Relance jusqu'à ce que le lead réponde, réserve ou se désinscrive."
+        }
+      }
+    },
+    "useCaseSection": {
+      "heading": "Une plateforme. Tous types d'appels.",
+      "cases": {
+        "inbound": {
+          "title": "Entrants",
+          "desc": "Répondez à chaque appel. Routez, réservez, qualifiez, relancez — automatiquement."
+        },
+        "outbound": {
+          "title": "Sortants",
+          "desc": "Relancez les leads, confirmez les rendez-vous, réactivez les prospects — à l'échelle."
+        },
+        "intelligence": {
+          "title": "Intelligence",
+          "desc": "Analysez chaque conversation. Trouvez ce qui marche. Améliorez votre équipe."
+        }
+      },
+      "cta": {
+        "button": "Commencer gratuit →"
+      }
+    },
+    "whoUses": {
+      "label": "Qui utilise Recall Touch",
+      "heading": "Conçu pour votre façon de communiquer",
+      "personas": {
+        "solo": {
+          "name": "Indépendants",
+          "desc": "Je ne peux pas décrocher en travaillant. Recall Touch répond, réserve et relance pour ne jamais rater un lead."
+        },
+        "growing": {
+          "name": "Équipes en croissance",
+          "desc": "On perd des leads parce qu'on ne suit pas. Chaque appel est pris et chaque lead est capté et relancé."
+        },
+        "agencies": {
+          "name": "Agences et multi-sites",
+          "desc": "Je gère plusieurs sites et j'ai besoin de cohérence. Une plateforme, un standard, partout."
+        },
+        "afterHours": {
+          "name": "Hors horaires et débordement",
+          "desc": "On a besoin de couverture quand le bureau est fermé. Appels pris, messages notés, on rappelle le lendemain."
+        },
+        "outbound": {
+          "name": "Campagnes sortantes",
+          "desc": "On doit relancer des centaines de leads. Recall Touch contacte, qualifie et réserve — à l'échelle."
+        },
+        "anyone": {
+          "name": "Toute personne avec un téléphone",
+          "desc": "Je veux que mes appels soient gérés intelligemment. Répondre, réserver, relancer, filtrer — sans embaucher un standard."
+        }
+      },
+      "additionalNote": "Vous ne trouvez pas votre cas ? Recall Touch sert tout flux basé sur le téléphone.",
+      "cta": {
+        "link": "Commencer →"
+      }
+    },
+    "metrics": {
+      "label": "Et si ?",
+      "heading": "Les chiffres qui comptent",
+      "items": {
+        "revenueLost": "Revenus moyens perdus par an à cause des appels manqués",
+        "answerRate": "Taux de réponse avec Recall Touch (vs ~60 % moyenne nationale)",
+        "speedToLead": "Délai moyen de Recall Touch pour relancer un nouveau lead par appel ou SMS",
+        "inbox": "Tous les appels, SMS et relances au même endroit (vs 4+ outils pour la plupart des équipes)",
+        "setupTime": "Temps de mise en place (vs 6 semaines pour les solutions enterprise)"
+      }
+    },
+    "testimonials": {
+      "preamble": "Conçu pour les entreprises qui dépendent de chaque appel",
+      "label": "Ce que disent les clients",
+      "testimonials": {
+        "amanda": {
+          "quote": "On a remplacé trois outils — réception téléphonique, relance SMS, prise de rendez-vous — par une plateforme.",
+          "author": "Amanda K.",
+          "role": "Cabinet de conseil"
+        },
+        "ryan": {
+          "quote": "Notre équipe commerciale relance 10 fois plus vite. L'IA fait le premier contact et réserve les réunions qualifiées.",
+          "author": "Ryan D.",
+          "role": "Startup SaaS"
+        },
+        "mike": {
+          "quote": "Recall Touch s'est remboursé la première semaine. On a capté 14 leads qu'on aurait ratés.",
+          "author": "Mike R.",
+          "role": "Entreprise de plomberie"
+        },
+        "sarah": {
+          "quote": "Notre taux de no-show a baissé de 40 % depuis que l'IA envoie des rappels.",
+          "author": "Dr Sarah L.",
+          "role": "Cabinet dentaire"
+        },
+        "james": {
+          "quote": "J'étais sceptique sur l'IA qui répond à mes appels. En un jour j'étais convaincu.",
+          "author": "James T.",
+          "role": "Artisan couvreur"
+        }
+      },
+      "badge": "Approuvé par les entreprises qui ne ratent pas un appel"
+    },
+    "pricingPreview": {
+      "label": "Tarifs",
+      "heading": "Des plans qui se rentabilisent.",
+      "toggle": {
+        "monthly": "Mensuel",
+        "annual": "Annuel",
+        "savings": "Économisez 17 %"
+      },
+      "badge": "Populaire",
+      "tierRoi": {
+        "starter": "Moins d'un appel manqué",
+        "growth": "Un lead récupéré paie le mois",
+        "scale": "Équipe communication IA pour une fraction d'un recrutement",
+        "enterprise": "ROI et support dédié sur mesure"
+      },
+      "footerNote": "Tous les plans incluent : enregistrements chiffrés · cadre de conformité · traçabilité · 14 jours d'essai gratuit",
+      "cta": {
+        "link": "Voir la comparaison des plans →"
+      }
+    },
+    "difference": {
+      "heading": "Ce qui nous différencie",
+      "subheading": "Pas de messagerie vocale. Pas d'opportunités manquées. De vraies conversations, à chaque fois.",
+      "rows": {
+        "manual": {
+          "label": "Réponse manuelle / messagerie vocale",
+          "i1": "Appels manqués = leads perdus",
+          "i2": "La messagerie rappelle rarement",
+          "i3": "Hors horaires = pas de réponse"
+        },
+        "generic": {
+          "label": "Messagerie ou IVR générique",
+          "i1": "Les appelants raccrochent ou laissent un message",
+          "i2": "Pas de qualification, pas de réservation",
+          "i3": "C'est toujours à vous de rappeler"
+        },
+        "recallTouch": {
+          "label": "Recall Touch",
+          "i1": "Chaque appel répondu 24h/24",
+          "i2": "Leads captés et qualifiés en temps réel",
+          "i3": "Rendez-vous pris pendant l'appel"
+        }
+      }
+    },
+    "enterpriseComparison": {
+      "text": "La voix IA enterprise coûte 150 000 $/an et prend 6 semaines à déployer. Recall Touch à partir de 297 $/mois en 5 minutes."
+    },
+    "finalCta": {
+      "heading": "Votre équipe téléphone IA en 5 minutes",
+      "subheading": "Sans carte. Config en 5 minutes. Répondez à chaque appel.",
+      "buttons": {
+        "start": "Commencer gratuit →",
+        "demo": "Réserver une démo →"
+      },
+      "note": "Pour les appels, SMS, agenda, relances et campagnes. Une plateforme.",
+      "links": {
+        "docs": "Voir la documentation"
+      }
+    },
+    "scrollCta": {
+      "message": "Votre prochain client pourrait appeler. Prêt ?",
+      "button": "Commencer gratuit →",
+      "dismiss": "Fermer"
+    },
+    "trust": {
+      "text": "Approuvé par les opérateurs qui ne peuvent pas se permettre de rater les appels décisifs."
+    },
+    "industries": {
+      "label": "Secteurs",
+      "heading": "Voir comment ça marche par secteur",
+      "subheading": "Recall Touch s'adapte à toute entreprise qui reçoit des appels. Voici quelques exemples.",
+      "industries": {
+        "plumbing": {
+          "name": "Plomberie et CTA",
+          "desc": "Répondez à chaque appel de dépannage. Dispatch urgence, planification, devis."
+        },
+        "healthcare": {
+          "name": "Santé",
+          "desc": "Planifiez les patients. Intake. Conforme HIPAA. Routage renouvellement ordonnances."
+        },
+        "legal": {
+          "name": "Juridique",
+          "desc": "Intake professionnel. Disponibilité 24h/24. Chaque appel documenté."
+        },
+        "realEstate": {
+          "name": "Immobilier",
+          "desc": "Qualifiez les acheteurs à l'instant. Planifiez les visites. Ne perdez plus un lead."
+        },
+        "dental": {
+          "name": "Dentaire",
+          "desc": "Réservez les patients. Vérification assurance. Rappels."
+        },
+        "custom": {
+          "name": "Votre secteur",
+          "desc": "Vous ne voyez pas votre activité ? Recall Touch convient à toute entreprise qui décroche le téléphone."
+        }
+      }
+    },
+    "bentoVisuals": {
+      "timelineLabels": {
+        "call": "Appel",
+        "followUp": "Relance",
+        "confirm": "Confirmer",
+        "close": "Clôturer"
+      },
+      "complianceRecord": {
+        "governedRecord": "Enregistrement gouverné",
+        "jurisdiction": "Juridiction",
+        "verified": "Vérifié",
+        "reviewDepth": "Profondeur de revue",
+        "standard": "Standard",
+        "duration": "Durée",
+        "status": "Statut",
+        "compliant": "Conforme",
+        "chain": "Chaîne",
+        "chainValue": "3 événements vérifiés"
+      },
+      "audit": {
+        "line1": "Enregistré sous juridiction déclarée",
+        "line2": "Transmis sans modification",
+        "line3": "Traçabilité complète"
+      },
+      "escalation": {
+        "agent": "Agent",
+        "manager": "Responsable",
+        "director": "Directeur"
+      },
+      "channels": {
+        "voice": "Voix",
+        "message": "Message",
+        "payment": "Paiement"
+      },
+      "channelNote": "Une seule couche de gouvernance"
+    },
+    "activityPreview": {
+      "ariaLabel": "Aperçu du tableau de bord d'activité Recall Touch",
+      "title": "Recall Touch — Activité",
+      "heading": "Appels récents",
+      "typeLead": "Lead",
+      "typeAppointment": "Rendez-vous",
+      "typeFollowUp": "Relance"
+    },
+    "activityFeed": {
+      "dateLabel": "Aujourd'hui",
+      "chips": {
+        "all": "Tout",
+        "needsAction": "À traiter",
+        "leads": "Leads"
+      },
+      "feedCards": {
+        "lead": {
+          "label": "NOUVEAU LEAD",
+          "time": "10h32",
+          "name": "Sarah Mitchell",
+          "meta": "Devis rénovation cuisine",
+          "detail": "Budget 15–20k € · Score lead 85"
+        },
+        "appointment": {
+          "label": "RDV PRIS",
+          "time": "9h47",
+          "name": "James Cooper",
+          "meta": "Maintenance clim — Mar 3, 14h",
+          "detail": "SMS de confirmation envoyé ✓"
+        },
+        "emergency": {
+          "label": "URGENT",
+          "time": "9h15",
+          "name": "Maria Santos",
+          "meta": "Fuite chauffe-eau",
+          "detail": "Alerte par SMS et appel"
+        },
+        "outbound": {
+          "label": "APPEL DE RELANCE",
+          "time": "8h30",
+          "name": "IA a appelé David Kim",
+          "meta": "Rappel de RDV",
+          "detail": "Confirmé pour demain ✓"
+        },
+        "info": {
+          "label": "TRAITÉ",
+          "time": "7h45",
+          "name": "Mike Johnson",
+          "meta": "Demande horaires",
+          "detail": "IA a répondu : Lun–Ven 8h–18h"
+        }
+      }
+    },
+    "mockDashboard": {
+      "ariaLabel": "Aperçu de l'interface tableau de bord Recall Touch",
+      "title": "Recall Touch — Enregistrements actifs",
+      "heading": "Enregistrements actifs",
+      "searchPlaceholder": "Rechercher des appels…",
+      "headerName": "Nom",
+      "headerTime": "Heure",
+      "headerDuration": "Durée",
+      "headerStatus": "Statut",
+      "headerJurisdiction": "Juridiction",
+      "statusGoverned": "Gouverné",
+      "statusPending": "En attente"
+    },
+    "useCasesAlt": {
+      "label": "Conçu pour",
+      "heading": "Des indépendants aux entreprises régulées.",
+      "cases": {
+        "inbound": {
+          "title": "Opérations entrantes",
+          "desc": "Équipes qui gèrent les demandes entrantes avec des réponses cohérentes, documentées et défendables juridiquement."
+        },
+        "outbound": {
+          "title": "Ventes sortantes",
+          "desc": "Équipes revenus qui font des appels sortants avec engagements de prix, accords verbaux et relances tracées."
+        },
+        "regulated": {
+          "title": "Secteurs régulés",
+          "desc": "Organisations en finance, assurance, santé ou juridique où la documentation des appels n'est pas optionnelle — c'est une obligation."
+        }
+      },
+      "cta": {
+        "link": "En savoir plus →"
+      }
+    }
   },
   "footer": {
     "tagline": "Communication téléphone et SMS par IA pour les entreprises qui dépendent de chaque appel.",
@@ -3288,19 +3903,48 @@
     "tier": {
       "starter": {
         "name": "Starter",
-        "description": "Pour les indépendants qui veulent que l'IA réponde à chaque appel."
+        "description": "Pour les indépendants qui veulent que l'IA réponde à chaque appel.",
+        "f1": "400 min entrants inclus",
+        "f2": "50 appels sortants",
+        "f3": "100 SMS",
+        "f4": "1 agent IA",
+        "f5": "1 numéro",
+        "f6": "Dépassement : 0,25 €/min"
       },
       "growth": {
         "name": "Growth",
-        "description": "Pour les équipes en croissance qui ont besoin d'une couverture fiable et d'un suivi."
+        "description": "Pour les équipes en croissance qui ont besoin d'une couverture fiable et d'un suivi.",
+        "f1": "1 500 min entrants inclus",
+        "f2": "500 appels sortants",
+        "f3": "500 SMS",
+        "f4": "3 agents IA",
+        "f5": "3 numéros",
+        "f6": "Prise de rendez-vous",
+        "f7": "Séquences de relance",
+        "f8": "Dépassement : 0,18 €/min"
       },
       "scale": {
         "name": "Scale",
-        "description": "Pour les équipes qui fonctionnent avec des revenus planifiés et des pipelines complexes."
+        "description": "Pour les équipes qui fonctionnent avec des revenus planifiés et des pipelines complexes.",
+        "f1": "5 000 min entrants inclus",
+        "f2": "2 000 appels sortants",
+        "f3": "SMS illimités",
+        "f4": "Agents IA illimités",
+        "f5": "10 numéros",
+        "f6": "Multi-sites",
+        "f7": "Conformité",
+        "f8": "API",
+        "f9": "Support prioritaire",
+        "f10": "Dépassement : 0,12 €/min"
       },
       "enterprise": {
         "name": "Enterprise",
-        "description": "Pour les organisations qui ont besoin de routage personnalisé, de sécurité et de SLA."
+        "description": "Pour les organisations qui ont besoin de routage personnalisé, de sécurité et de SLA.",
+        "f1": "White label",
+        "f2": "Conformité sur mesure",
+        "f3": "SSO",
+        "f4": "Manager dédié",
+        "f5": "SLA"
       }
     },
     "cta": "Commencer gratuitement",
@@ -3318,7 +3962,8 @@
       "annualBaseline": "Base annuelle réceptionniste",
       "annualProtected": "Revenus annuels que Recall Touch protège",
       "receptionistCost": "coût réceptionniste.",
-      "recommendedPlan": "Forfait recommandé :"
+      "recommendedPlan": "Forfait recommandé :",
+      "description": "Calculate your potential revenue recovery with our ROI calculator."
     },
     "faq": {
       "title": "Questions sur les tarifs",
@@ -3328,7 +3973,9 @@
       "overageAnswer": "Nous facturons simplement le dépassement au tarif par minute de votre plan, sans pénalités.",
       "cancel": "Puis-je annuler à tout moment ?",
       "cancelAnswer": "Oui — vous pouvez annuler ou changer de plan à tout moment depuis les paramètres de facturation."
-    }
+    },
+    "trustedBy": "Trusted by leading teams in service, healthcare, and local business.",
+    "questionsTalkToUs": "Questions? Talk to us →"
   },
   "languageSwitcher": {
     "label": "Langue",
@@ -3900,9 +4547,18 @@
       "messageInputLabel": "Saisir un message",
       "sendMessageLabel": "Envoyer le message",
       "agents": {
-        "professional": { "name": "Professionnel", "greeting": "Bonjour. Merci d'avoir appelé. Comment puis-je vous aider ?" },
-        "friendly": { "name": "Amical", "greeting": "Salut ! Merci de nous contacter. Que puis-je faire pour vous ?" },
-        "concise": { "name": "Concis", "greeting": "Bonjour. Comment puis-je aider ?" }
+        "professional": {
+          "name": "Professionnel",
+          "greeting": "Bonjour. Merci d'avoir appelé. Comment puis-je vous aider ?"
+        },
+        "friendly": {
+          "name": "Amical",
+          "greeting": "Salut ! Merci de nous contacter. Que puis-je faire pour vous ?"
+        },
+        "concise": {
+          "name": "Concis",
+          "greeting": "Bonjour. Comment puis-je aider ?"
+        }
       }
     },
     "noMessagesYet": "Pas encore de messages",
@@ -4187,16 +4843,36 @@
     "section": {
       "navigation": "Navigation",
       "actions": "Actions",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "Pages": "Pages",
+      "Actions": "Actions"
     },
     "action": {
       "newLead": "Créer un nouveau lead",
       "newAgent": "Créer un nouvel agent",
       "newCampaign": "Créer une nouvelle campagne",
-      "importContacts": "Importer des contacts"
+      "importContacts": "Importer des contacts",
+      "testAgent": "Test agent"
     },
     "empty": "Aucune correspondance. Essayez une autre recherche.",
-    "shortcuts": "Raccourcis clavier"
+    "shortcuts": "Raccourcis clavier",
+    "page": {
+      "dashboard": "Dashboard",
+      "agents": "Agents",
+      "calls": "Calls",
+      "leads": "Leads",
+      "campaigns": "Campaigns",
+      "inbox": "Inbox",
+      "appointments": "Appointments",
+      "analytics": "Analytics",
+      "callIntelligence": "Call Intelligence",
+      "knowledge": "Knowledge",
+      "team": "Team",
+      "settings": "Settings"
+    },
+    "noMatches": "No matches.",
+    "showShortcuts": "Show shortcuts",
+    "close": "Close"
   },
   "contacts": {
     "pageTitle": "Contacts",
@@ -4259,7 +4935,15 @@
       "saveError": "Impossible d'enregistrer le contact. Réessayez.",
       "deleteError": "Impossible de supprimer le contact. Réessayez.",
       "updateError": "Impossible de mettre à jour le contact. Réessayez."
-    }
+    },
+    "lastContactUnknown": "Last contact: unknown",
+    "lastContactToday": "Last contact: today",
+    "lastContactYesterday": "Last contact: yesterday",
+    "lastContactDaysAgo": "Last contact: {count} days ago",
+    "filtersAria": "Contact filters",
+    "addedManually": "Added manually from dashboard.",
+    "inbound": "Inbound",
+    "outbound": "Outbound"
   },
   "appointments": {
     "pageTitle": "Rendez-vous — Recall Touch",
@@ -4332,7 +5016,9 @@
       "empty": {
         "title": "Aucune notification pour le moment",
         "body": "Nous afficherons ici les nouveaux leads, résumés d’appels et mises à jour importantes."
-      }
+      },
+      "loading": "Loading…",
+      "emptyBodyAlt": "You'll see call alerts and system updates here"
     },
     "type": {
       "lead": "Nouveau lead",
@@ -4340,12 +5026,26 @@
       "appointmentBooked": "Rendez-vous pris",
       "qualityAlert": "Alerte de qualité",
       "billing": "Facturation",
-      "system": "Mise à jour système"
+      "system": "Mise à jour système",
+      "new_lead": "New lead",
+      "call_completed": "Call completed",
+      "appointment_booked": "Appointment booked",
+      "campaign_milestone": "Campaign",
+      "quality_alert": "Quality alert",
+      "billing_event": "Billing",
+      "system_update": "System"
     },
     "action": {
       "markRead": "Marquer comme lue",
       "markAllRead": "Tout marquer comme lu",
       "preferences": "Préférences de notification"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minAgo": "{count}m ago",
+      "hourAgo": "{count}h ago",
+      "yesterday": "Yesterday",
+      "daysAgo": "{count}d ago"
     }
   },
   "industriesPage": {
@@ -4490,8 +5190,7 @@
       "looksGreat": "Parfait ! Démarrer la prise d'appels →",
       "back": "← Retour"
     },
-    "formName": "Votre nom",
-    "and": "et"
+    "formName": "Votre nom"
   },
   "onboard": {
     "complete": {
@@ -4826,7 +5525,54 @@
       "next": "Suivant",
       "submitting": "Envoi en cours…",
       "submitLabel": "Envoyer la demande de portabilité"
-    }
+    },
+    "connectTitle": "Connect your phone number",
+    "connectDescription": "Legacy connection and forwarding. Your AI receives calls on the number above or via phone_config.",
+    "optionA": "Option A — Your AI number",
+    "optionB": "Option B — Forward your existing number",
+    "optionBDesc": "Keep your current number. Forward unanswered calls to your AI number below.",
+    "forwardStep1": "Open your phone carrier's app or website (AT&T, Verizon, T-Mobile, etc.).",
+    "forwardStep2": "Find \"Call forwarding\" or \"Forward when busy.\"",
+    "forwardStep3": "Enter the number below in your carrier or device settings.",
+    "forwardTo": "Forward to:",
+    "orByDevice": "Or by device:",
+    "iphonePath": "iPhone: Settings → Phone → Call Forwarding",
+    "androidPath": "Android: Phone → ⋮ → Settings → Call Forwarding",
+    "businessLinePath": "Business line: Call your carrier; ask to forward to {number}",
+    "quickDialCodes": "Quick dial codes",
+    "testForwarding": "Test forwarding",
+    "testForwardingDesc": "We'll call you so you can talk to your agent right now.",
+    "createAgentFirst": "Create an agent first so we know who should answer.",
+    "goToAgents": "Go to Agents →",
+    "validNumberError": "Enter a valid 10-digit US number.",
+    "validPhoneError": "Enter a valid phone number with country code (e.g., +1 555 000 0000).",
+    "callMyPhoneToTest": "Call my phone to test",
+    "callingYou": "Calling you…",
+    "ariaCallTest": "Call my phone to test",
+    "ariaEnterValid": "Enter a valid 10-digit number to enable",
+    "outboundCallerId": "Outbound caller ID (optional)",
+    "outboundCallerIdHint": "Show a different number when your AI places outbound calls. Leave blank to use your AI number above.",
+    "enableWhatsApp": "Enable WhatsApp on this number",
+    "verifyBySms": "Verify a number by SMS",
+    "verifyBySmsDesc": "We'll send a 6-digit code to confirm you own this number. Useful for forwarding numbers.",
+    "verifyMyNumber": "Verify my number →",
+    "sendingCode": "Sending code…",
+    "forwardCallsToAi": "Forward calls to your AI",
+    "iphone": "iPhone",
+    "android": "Android",
+    "businessLine": "Business line",
+    "testForwardingLink": "Test forwarding →",
+    "useExistingNumber": "Use your existing number",
+    "forwardUnansweredHint": "Forward unanswered calls to your AI number (get one from the left card first).",
+    "forwardInstructionIphone": "Settings → Phone → Call Forwarding → [your AI number]",
+    "forwardInstructionAndroid": "Phone → ⋮ → Settings → Call Forwarding → [your AI number]",
+    "forwardInstructionBusiness": "Call your provider: \"Forward unanswered calls to [your AI number]\"",
+    "verifiedLabel": "✓ Verified",
+    "codeNotMatch": "Code didn't match.",
+    "verificationFailed": "Verification failed.",
+    "failedToSendCode": "Failed to send code. Check your connection and try again.",
+    "addNumberLater": "I'll add a number later",
+    "backToSettings": "← Settings"
   },
   "integrations": {
     "pageTitle": "Integrations — Recall Touch",
@@ -4991,6 +5737,23 @@
       "notFound": "Nous n’avons pas pu trouver ce que vous cherchiez.",
       "conflict": "Cette ressource a été modifiée dans un autre onglet. Actualisez et réessayez.",
       "server": "Le serveur a rencontré une erreur inattendue. Notre équipe a été prévenue."
+    }
+  },
+  "proofDrawer": {
+    "title": "How it progressed",
+    "closeAria": "Close",
+    "loading": "In progress.",
+    "empty": "No proof available yet.",
+    "progressHeading": "Progress",
+    "nextPlannedTouch": "Next planned touch",
+    "nextTouchAt": "Next touch at",
+    "conversationInProgress": "Conversation in progress. You are the decision owner when a handoff occurs.",
+    "outcome": {
+      "followThrough": "Follow-through continued",
+      "planningToAttend": "They're planning to attend",
+      "customerReturned": "Customer returned",
+      "theyreSet": "They're set",
+      "decisionProgressed": "Decision progressed"
     }
   }
 }
