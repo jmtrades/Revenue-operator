@@ -12,27 +12,31 @@ import { DocCodeBlock } from "@/components/docs/DocCodeBlock";
 import { DocFeedback } from "@/components/docs/DocFeedback";
 import { DocSearch } from "@/components/docs/DocSearch";
 
-const DOC_SIDEBAR = [
-  { id: "quick-start", label: "Quick Start" },
-  { id: "call-forwarding", label: "Call Forwarding" },
-  { id: "ai-agents", label: "Agent Config" },
-  { id: "campaigns", label: "Campaigns" },
-  { id: "integrations", label: "Integrations" },
-  { id: "billing", label: "Billing" },
-  { id: "api", label: "API" },
-  { id: "sdk", label: "SDK Examples" },
-  { id: "changelog", label: "Changelog" },
-  { id: "faq", label: "FAQ" },
-] as const;
+function getDocSidebar(t: (key: string) => string) {
+  return [
+    { id: "quick-start", label: t("sidebar.quickStart") },
+    { id: "call-forwarding", label: t("sidebar.callForwarding") },
+    { id: "ai-agents", label: t("sidebar.agentConfig") },
+    { id: "campaigns", label: t("sidebar.campaigns") },
+    { id: "integrations", label: t("sidebar.integrations") },
+    { id: "billing", label: t("sidebar.billing") },
+    { id: "api", label: t("sidebar.api") },
+    { id: "sdk", label: t("sidebar.sdkExamples") },
+    { id: "changelog", label: t("sidebar.changelog") },
+    { id: "faq", label: t("sidebar.faq") },
+  ];
+}
 
-const DOC_CARDS = [
-  { icon: BookOpen, title: "Getting Started", desc: "Set up your AI phone system in minutes.", href: "#quick-start" },
-  { icon: Code, title: "API Reference", desc: "Integrate Recall Touch into your existing systems.", href: "#api" },
-  { icon: Shield, title: "Compliance Framework", desc: "Configure recording consent, retention, and regional rules.", href: "/compliance" },
-  { icon: Plug, title: "Integrations", desc: "Connect Recall Touch with your existing sales and communication tools.", href: null },
-  { icon: HelpCircle, title: "FAQ", desc: "Common questions about setup, calls, and billing.", href: `${ROUTES.PRICING}#faq` },
-  { icon: MessageCircle, title: "Contact Support", desc: "Talk to our team for technical or compliance questions.", href: ROUTES.CONTACT },
-] as const;
+function getDocCards(t: (key: string) => string) {
+  return [
+    { icon: BookOpen, title: t("cards.gettingStarted.title"), desc: t("cards.gettingStarted.desc"), href: "#quick-start" },
+    { icon: Code, title: t("cards.apiReference.title"), desc: t("cards.apiReference.desc"), href: "#api" },
+    { icon: Shield, title: t("cards.compliance.title"), desc: t("cards.compliance.desc"), href: "/compliance" },
+    { icon: Plug, title: t("cards.integrations.title"), desc: t("cards.integrations.desc"), href: null },
+    { icon: HelpCircle, title: t("cards.faq.title"), desc: t("cards.faq.desc"), href: `${ROUTES.PRICING}#faq` },
+    { icon: MessageCircle, title: t("cards.support.title"), desc: t("cards.support.desc"), href: ROUTES.CONTACT },
+  ];
+}
 
 const SECTION_KEYWORDS: Record<string, string> = {
   "quick-start": "quick start setup sign up business agent phone test call 5 minute",
@@ -60,9 +64,11 @@ export default function DocsPageContent() {
     [searchQuery]
   );
 
+  const docSidebar = useMemo(() => getDocSidebar(t), [t]);
+  const docCards = useMemo(() => getDocCards(t), [t]);
   const visibleSections = useMemo(
-    () => DOC_SIDEBAR.filter((s) => filterSection(s.id)),
-    [filterSection]
+    () => docSidebar.filter((s) => filterSection(s.id)),
+    [docSidebar, filterSection]
   );
 
   return (
@@ -75,7 +81,7 @@ export default function DocsPageContent() {
               <div className="sticky top-24 space-y-4">
                 <DocSearch onSearch={setSearchQuery} placeholder={t("search.placeholder")} />
                 <nav className="space-y-1" aria-label="Documentation">
-                  {(searchQuery.trim() ? visibleSections : DOC_SIDEBAR).map(({ id, label }) => (
+                  {(searchQuery.trim() ? visibleSections : docSidebar).map(({ id, label }: { id: string; label: string }) => (
                     <a
                       key={id}
                       href={`#${id}`}
@@ -89,12 +95,12 @@ export default function DocsPageContent() {
             </aside>
             <div className="min-w-0 flex-1 max-w-3xl">
               <div className="max-w-2xl mb-16">
-                <p className="section-label mb-4">Documentation</p>
+                <p className="section-label mb-4">{t("title")}</p>
                 <h1 className="font-bold text-3xl md:text-4xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
-                  Documentation
+                  {t("title")}
                 </h1>
                 <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Step-by-step guides for forwarding your number, setting up your voice agent, and connecting Recall Touch to the tools your business already uses.
+                  {t("description")}
                 </p>
               </div>
 
@@ -106,20 +112,20 @@ export default function DocsPageContent() {
                 style={{ display: filterSection("quick-start") ? undefined : "none" }}
               >
                 <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>
-                  Quick Start
+                  {t("sections.quickStart.title")}
                 </h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Set up Recall Touch in about 5 minutes: sign up, add your business details, configure your AI agent, connect your phone number, and place a test call.
+                  {t("sections.quickStart.description")}
                 </p>
                 <ol className="list-decimal list-inside space-y-3 text-sm mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  <li><strong className="text-[var(--text-primary)]">Sign up</strong> — Go to Start free and create your account.</li>
-                  <li><strong className="text-[var(--text-primary)]">Business details</strong> — Enter business name, address, and phone.</li>
-                  <li><strong className="text-[var(--text-primary)]">AI agent</strong> — Choose a template (Receptionist, Appointment Setter, etc.) and customize greeting and voice.</li>
-                  <li><strong className="text-[var(--text-primary)]">Phone number</strong> — Add or verify your Recall Touch number; forward your existing number to it if needed.</li>
-                  <li><strong className="text-[var(--text-primary)]">Test call</strong> — Use the Test tab on the Agents page to place a real call and confirm everything works.</li>
+                  <li><strong className="text-[var(--text-primary)]">{t("sections.quickStart.step1Label")}</strong> — {t("sections.quickStart.step1")}</li>
+                  <li><strong className="text-[var(--text-primary)]">{t("sections.quickStart.step2Label")}</strong> — {t("sections.quickStart.step2")}</li>
+                  <li><strong className="text-[var(--text-primary)]">{t("sections.quickStart.step3Label")}</strong> — {t("sections.quickStart.step3")}</li>
+                  <li><strong className="text-[var(--text-primary)]">{t("sections.quickStart.step4Label")}</strong> — {t("sections.quickStart.step4")}</li>
+                  <li><strong className="text-[var(--text-primary)]">{t("sections.quickStart.step5Label")}</strong> — {t("sections.quickStart.step5")}</li>
                 </ol>
                 <Link href={ROUTES.START} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>
-                  Start free →
+                  {t("sections.quickStart.cta")}
                 </Link>
                 <DocFeedback sectionId="quick-start" />
               </section>
@@ -155,9 +161,9 @@ export default function DocsPageContent() {
                 style={{ borderColor: "var(--border-default)", display: filterSection("ai-agents") ? undefined : "none" }}
                 data-keywords={SECTION_KEYWORDS["ai-agents"]}
               >
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>AI Agents</h2>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>{t("sections.aiAgents.title")}</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Configure your AI agent name, voice, greeting, and capabilities. Teach it your services, hours, and how to handle appointments. No coding required.
+                  {t("sections.aiAgents.description")}
                 </p>
                 <DocFeedback sectionId="ai-agents" />
               </section>
@@ -169,9 +175,9 @@ export default function DocsPageContent() {
                 style={{ borderColor: "var(--border-default)", display: filterSection("campaigns") ? undefined : "none" }}
                 data-keywords={SECTION_KEYWORDS["campaigns"]}
               >
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Campaigns</h2>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>{t("sections.campaigns.title")}</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Run outbound follow-up, reminders, and recovery flows. Create campaigns from the dashboard, set audiences and scripts, and track outcomes.
+                  {t("sections.campaigns.description")}
                 </p>
                 <DocFeedback sectionId="campaigns" />
               </section>
@@ -213,7 +219,7 @@ export default function DocsPageContent() {
               </section>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 my-12">
-                {DOC_CARDS.map((card) => (
+                {docCards.map((card) => (
                   <div key={card.title} className="card-marketing p-6 flex flex-col">
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>
                       <card.icon className="w-5 h-5" />
@@ -236,11 +242,11 @@ export default function DocsPageContent() {
                 style={{ borderColor: "var(--border-default)", display: filterSection("billing") ? undefined : "none" }}
                 data-keywords={SECTION_KEYWORDS["billing"]}
               >
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Billing</h2>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>{t("sections.billing.title")}</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Plans are billed monthly or annually. Annual billing includes two months free. You can change or cancel from Settings → Billing. Invoices are available in the dashboard.
+                  {t("sections.billing.description")}
                 </p>
-                <Link href={ROUTES.PRICING} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>View pricing →</Link>
+                <Link href={ROUTES.PRICING} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{t("sections.billing.cta")}</Link>
                 <DocFeedback sectionId="billing" />
               </section>
 
@@ -251,9 +257,9 @@ export default function DocsPageContent() {
                 style={{ borderColor: "var(--border-default)", display: filterSection("api") ? undefined : "none" }}
                 data-keywords={SECTION_KEYWORDS["api"]}
               >
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>API Reference</h2>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>{t("sections.api.title")}</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  REST API for integrating Recall Touch. All endpoints require a valid session (cookie) or Bearer token. Base URL: <code className="px-1 rounded bg-black/10">https://your-domain.com</code>.
+                  {t("sections.api.description")}
                 </p>
                 <div className="space-y-6">
                   <div>
@@ -281,7 +287,7 @@ export default function DocsPageContent() {
 }`} />
                   </div>
                 </div>
-                <Link href={ROUTES.CONTACT} className="text-sm font-medium mt-4 inline-block" style={{ color: "var(--accent-primary)" }}>Contact for full API access →</Link>
+                <Link href={ROUTES.CONTACT} className="text-sm font-medium mt-4 inline-block" style={{ color: "var(--accent-primary)" }}>{t("sections.api.contactCta")}</Link>
                 <DocFeedback sectionId="api" />
               </section>
 
@@ -292,9 +298,9 @@ export default function DocsPageContent() {
                 style={{ borderColor: "var(--border-default)", display: filterSection("sdk") ? undefined : "none" }}
                 data-keywords={SECTION_KEYWORDS["sdk"]}
               >
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>SDK Examples</h2>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>{t("sections.sdk.title")}</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Common operations in curl, JavaScript, and Python.
+                  {t("sections.sdk.description")}
                 </p>
                 <h3 className="font-semibold text-lg mt-6 mb-2" style={{ color: "var(--text-primary)" }}>Create a lead</h3>
                 <DocCodeBlock language="bash" title="curl" code={`curl -X POST "https://your-domain.com/api/leads" \\
@@ -339,9 +345,9 @@ lead = resp.json()`} />
                 style={{ borderColor: "var(--border-default)", display: filterSection("changelog") ? undefined : "none" }}
                 data-keywords={SECTION_KEYWORDS["changelog"]}
               >
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>Changelog</h2>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>{t("sections.changelog.title")}</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Recent platform updates.
+                  {t("sections.changelog.description")}
                 </p>
                 <ul className="text-sm space-y-3 list-none pl-0" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
                   <li><strong className="text-[var(--text-primary)]">2025-03</strong> — Campaign sequences (Call, SMS, Email, Wait), lead scoring, notification center, onboarding checklist, error reporting, SEO and accessibility improvements.</li>
@@ -358,11 +364,11 @@ lead = resp.json()`} />
                 style={{ borderColor: "var(--border-default)", display: filterSection("faq") ? undefined : "none" }}
                 data-keywords={SECTION_KEYWORDS["faq"]}
               >
-                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>FAQ</h2>
+                <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>{t("sections.faq.title")}</h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Common questions about setup, call forwarding, agents, and billing are answered on the pricing page.
+                  {t("sections.faq.description")}
                 </p>
-                <Link href={`${ROUTES.PRICING}#faq`} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>View FAQ →</Link>
+                <Link href={`${ROUTES.PRICING}#faq`} className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{t("sections.faq.cta")}</Link>
                 <DocFeedback sectionId="faq" />
               </section>
             </div>

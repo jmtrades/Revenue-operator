@@ -1420,6 +1420,9 @@
   },
   "agents": {
     "pageTitle": "Agenten — Recall Touch",
+    "pageHeading": "KI-Agenten",
+    "pageSubtitle": "Verschiedene Agenten für Tag, außerhalb der Geschäftszeiten, Notfälle und Nachfass.",
+    "createAgent": "+ Agent erstellen",
     "title": "Agenten",
     "new": "Neuer Agent",
     "empty": {
@@ -1477,7 +1480,56 @@
       "deleteAgent": "Agent löschen",
       "deleteAria": "Diesen Agenten löschen",
       "savingAria": "Agent wird gespeichert…",
-      "saveAndSyncAria": "Agenten speichern und mit Sprache synchronisieren"
+      "saveAndSyncAria": "Agenten speichern und mit Sprache synchronisieren",
+      "remove": "Entfernen",
+      "addObjection": "Einwand hinzufügen",
+      "addFromSuggestions": "Aus Vorschlägen hinzufügen"
+    },
+    "sections": {
+      "objectionHandling": "Einwandbehandlung",
+      "objectionDesc": "Häufige Einwände und wie Sie reagieren.",
+      "outboundSettings": "Einstellungen ausgehender Anrufe",
+      "inboundSettings": "Einstellungen eingehender Anrufe"
+    },
+    "labels": {
+      "customCriterion": "Eigenes Kriterium",
+      "openingStrategy": "Eröffnungsstrategie",
+      "outboundGoal": "Ziel ausgehender Anrufe",
+      "ifNotInterested": "Wenn nicht interessiert",
+      "voicemailBehavior": "Verhalten bei Mailbox",
+      "confusedCallerHandling": "Umgang mit verwirrten Anrufern",
+      "offTopicHandling": "Umgang mit themenfremden Fragen",
+      "ifTheySay": "Wenn sie sagen…",
+      "response": "Antwort",
+      "voicemailTemplates": "Mailbox-Nachrichtenvorlagen"
+    },
+    "options": {
+      "outboundGoal": {
+        "book": "Termin buchen",
+        "qualify": "Lead qualifizieren",
+        "deliver": "Information übermitteln",
+        "custom": "Benutzerdefiniert"
+      },
+      "notInterested": {
+        "thankEnd": "Danken und höflich beenden",
+        "callback": "Rückruf anbieten",
+        "askHelp": "Fragen, was helfen würde"
+      },
+      "voicemail": {
+        "leave": "Nachricht hinterlassen",
+        "hangup": "Auflegen und später erneut versuchen",
+        "sms": "Stattdessen SMS senden"
+      }
+    },
+    "placeholders": {
+      "customCriterion": "z. B. Hat Zeichnungsberechtigung",
+      "objectionTrigger": "z. B. \"Zu teuer\"",
+      "objectionResponse": "Wir bieten flexible Preise...",
+      "outboundOpening": "Hallo {name}, Anruf von {business}. Ich rufe nach wegen...",
+      "describeGoal": "Ziel beschreiben",
+      "voicemailMessage": "Hallo {name}, hier {business}. Vorlagen oben nutzen oder eigenen Text. Variablen: {name}, {business}, {callback}, {service}, {date}",
+      "confusedCaller": "Entschuldigung, lassen Sie mich helfen. Was brauchen Sie?",
+      "offTopic": "Ich bin der Telefonassistent von {business}. Ich kann helfen bei..."
     },
     "nav": {
       "backToKnowledge": "Zurück zu Wissen",
@@ -1780,6 +1832,9 @@
       "receptionist": "Danke für den Anruf. Wie kann ich Ihnen heute helfen?"
     },
     "defaultAgent": {
+      "name": "Empfang",
+      "yourBusiness": "Ihr Unternehmen",
+      "greeting": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen heute helfen?",
       "receptionist": "Empfang",
       "hasBudget": "Hat Budget",
       "hasTimeline": "Hat Zeitrahmen",
@@ -3157,6 +3212,18 @@
       "noCard": "Keine Kreditkarte erforderlich"
     },
     "simulator": {
+      "heading": "Sehen Sie, wie Ihre KI einen Anruf bearbeitet",
+      "cardSubtitle": "Terminbuchung in Echtzeit — vollautomatisch",
+      "callerLabel": "Anrufer",
+      "agentLabel": "KI-Agent",
+      "line1": "\u201cHallo, ich möchte gerne einen Termin für Donnerstag vereinbaren.\u201d",
+      "line2": "\u201cNatürlich! Ich habe Termine um 10, 14 und 16 Uhr frei. Welcher passt Ihnen?\u201d",
+      "line3": "\u201c14 Uhr wäre perfekt.\u201d",
+      "line4": "\u201cSuper — Donnerstag um 14 Uhr ist gebucht. Darf ich Ihren Namen und Ihre Nummer notieren?\u201d",
+      "line5": "\u201cSarah, 555-0142.\u201d",
+      "line6": "\u201cAlles klar, Sarah! Sie erhalten in Kürze eine Bestätigungs-SMS.\u201d",
+      "cta": "Jetzt kostenlos erstellen →",
+      "trialNote": "Keine Kreditkarte · 14 Tage testen",
       "loading": "Laden…",
       "conversationPreview": "Gesprächsvorschau",
       "subtitle": "So geht deine KI mit einem echten Anruf um",
@@ -5250,6 +5317,55 @@
   },
   "docs": {
     "title": "Dokumentation",
+    "description": "Schritt-für-Schritt-Anleitungen: Nummer weiterleiten, Sprachenagent einrichten und Recall Touch mit den Tools Ihres Unternehmens verbinden.",
+    "sidebar": {
+      "quickStart": "Schnellstart",
+      "callForwarding": "Anrufweiterleitung",
+      "agentConfig": "Agent-Konfig.",
+      "campaigns": "Kampagnen",
+      "integrations": "Integrationen",
+      "billing": "Abrechnung",
+      "api": "API",
+      "sdkExamples": "SDK-Beispiele",
+      "changelog": "Changelog",
+      "faq": "FAQ"
+    },
+    "cards": {
+      "gettingStarted": { "title": "Erste Schritte", "desc": "Richten Sie Ihr KI-Telefonsystem in Minuten ein." },
+      "apiReference": { "title": "API-Referenz", "desc": "Recall Touch in Ihre bestehenden Systeme integrieren." },
+      "compliance": { "title": "Compliance-Rahmen", "desc": "Einwilligung, Aufbewahrung und regionale Regeln konfigurieren." },
+      "integrations": { "title": "Integrationen", "desc": "Recall Touch mit Ihren Vertriebs- und Kommunikationstools verbinden." },
+      "faq": { "title": "FAQ", "desc": "Häufige Fragen zu Einrichtung, Anrufen und Abrechnung." },
+      "support": { "title": "Support kontaktieren", "desc": "Sprechen Sie mit unserem Team bei technischen oder Compliance-Fragen." },
+      "viewLink": "Ansehen →",
+      "contactForAccess": "Für Zugang kontaktieren"
+    },
+    "sections": {
+      "quickStart": {
+        "title": "Schnellstart",
+        "description": "Recall Touch in ca. 5 Minuten einrichten: Registrierung, Unternehmensdaten, KI-Agent, Telefonnummer und Testanruf.",
+        "step1Label": "Registrierung",
+        "step1": "Gehen Sie zu Kostenlos starten und erstellen Sie Ihr Konto.",
+        "step2Label": "Unternehmensdaten",
+        "step2": "Name, Adresse und Telefon des Unternehmens eingeben.",
+        "step3Label": "KI-Agent",
+        "step3": "Vorlage wählen (Empfang, Terminbuchung usw.) und Begrüßung sowie Stimme anpassen.",
+        "step4Label": "Telefonnummer",
+        "step4": "Recall-Touch-Nummer hinzufügen oder verifizieren; ggf. bestehende Nummer weiterleiten.",
+        "step5Label": "Testanruf",
+        "step5": "Tab Test auf der Agenten-Seite nutzen, um einen echten Anruf zu tätigen und alles zu prüfen.",
+        "cta": "Kostenlos starten →"
+      },
+      "callForwarding": { "title": "Anrufweiterleitung", "description": "Leiten Sie Ihre Geschäftsnummer auf Ihre Recall-Touch-Nummer weiter oder nutzen Sie die bereitgestellte Nummer als Hauptleitung. Ihr Agent beantwortet Anrufe 24/7." },
+      "aiAgents": { "title": "KI-Agenten", "description": "Konfigurieren Sie Name, Stimme, Begrüßung und Fähigkeiten Ihres Agenten. Bringen Sie ihm Dienste, Öffnungszeiten und Terminbuchung bei. Ohne Programmierung." },
+      "campaigns": { "title": "Kampagnen", "description": "Outbound-Nachfass, Erinnerungen und Wiederholungsabläufe. Kampagnen im Dashboard erstellen, Zielgruppen und Skripte setzen, Ergebnisse verfolgen." },
+      "integrations": { "title": "Integrationen", "description": "Recall Touch mit Anbieter (Twilio), Kalender und CRM verbinden. Webhooks und API in Scale- und Enterprise-Plänen." },
+      "billing": { "title": "Abrechnung", "description": "Pläne monatlich oder jährlich. Jährlich inkl. zwei Monate gratis. Ändern oder kündigen unter Einstellungen → Abrechnung. Rechnungen im Dashboard.", "cta": "Preise ansehen →" },
+      "api": { "title": "API-Referenz", "description": "REST-API zur Integration von Recall Touch. Alle Endpoints benötigen gültige Session (Cookie) oder Bearer-Token. Basis-URL: https://your-domain.com.", "contactCta": "Kontakt für vollen API-Zugang →" },
+      "sdk": { "title": "SDK-Beispiele", "description": "Gängige Operationen in curl, JavaScript und Python." },
+      "changelog": { "title": "Changelog", "description": "Aktuelle Plattform-Updates." },
+      "faq": { "title": "FAQ", "description": "Häufige Fragen zu Einrichtung, Anrufweiterleitung, Agenten und Abrechnung auf der Preisseite.", "cta": "FAQ ansehen →" }
+    },
     "quickStart": {
       "title": "Schnellstart",
       "subtitle": "Bring Recall Touch in weniger als 5 Minuten in Produktion.",
