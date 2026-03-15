@@ -1833,6 +1833,8 @@
     },
     "defaultAgent": {
       "name": "Receptionista",
+      "simpleGreeting": "Gracias por llamar. ¿En qué puedo ayudarle hoy?",
+      "defaultHours": "Lun–Vie 9:00–17:00",
       "yourBusiness": "tu negocio",
       "greeting": "Gracias por llamar a {business}. ¿En qué puedo ayudarle hoy?",
       "receptionist": "Receptionista",
@@ -2251,6 +2253,7 @@
       "playAria": "Reproducir",
       "pauseAria": "Pausar",
       "seekAria": "Buscar",
+      "playbackSpeed": "Velocidad",
       "speakerAgent": "Agente IA",
       "summaryTitle": "Resumen de la llamada",
       "sentiment": "Sentimiento",
@@ -3087,6 +3090,9 @@
     "agent.startLiveTest": "Iniciar prueba en vivo",
     "agent.endLiveTest": "Finalizar prueba en vivo",
     "agent.removeAria": "Eliminar",
+    "agent.defaultAgentName": "Recepcionista",
+    "agent.defaultGreeting": "Gracias por llamar a {business}. ¿En qué puedo ayudarle?",
+    "agent.voicePreviewText": "Gracias por llamar. ¿En qué puedo ayudarle hoy?",
     "agent.defaultBusiness": "tu empresa",
     "agent.defaultWorkspaceName": "Mi espacio",
     "compliance.loadFailed": "No se pudieron cargar los ajustes de consentimiento de grabación.",
@@ -4372,6 +4378,9 @@
     }
   },
   "errors": {
+    "heading": "Algo salió mal",
+    "defaultMessage": "Ocurrió un error inesperado.",
+    "tryAgain": "Intentar de nuevo",
     "generic": {
       "title": "Algo salió mal",
       "body": "No pudimos completar la solicitud. Inténtalo de nuevo o vuelve a cargar la página."
@@ -4462,6 +4471,25 @@
     "completeSetupLink": "Completar configuración de IA (5 pasos) →",
     "decisionCompletionHint": "La decisión continúa aquí para que completen acciones y aparezcan.",
     "testInstructions": "Envía \"{number}\" desde el número usado en este espacio con: \"Hola, me interesa\"\n\nLuego vuelve aquí para ver cómo se gestiona."
+  },
+  "coverage": {
+    "active": "Cobertura: continuidad telefónica activa",
+    "addNumberPrompt": "Añade tu número para mantener conversaciones desde hilos de teléfono personal.",
+    "addNumber": "Añadir número",
+    "dismiss": "Descartar"
+  },
+  "industry": {
+    "heroSubtitle": "Un ejemplo de cómo funciona Recall Touch. Se adapta a cualquier negocio.",
+    "solutionsLabel": "Soluciones",
+    "heroTitle": "Agente de teléfono IA {industry}",
+    "heroTagline": "No vuelvas a perder un {customerType}.",
+    "problemLabel": "El problema",
+    "howItWorks": "Cómo funciona",
+    "stepsHeading": "Tres pasos para un agente IA que atiende cada llamada.",
+    "capabilitiesLabel": "Capacidades clave",
+    "roiLabel": "ROI",
+    "ctaStartFree": "Empezar gratis →",
+    "ctaPricing": "Ver precios →"
   },
   "compliance": {
     "title": "Cumplimiento",
@@ -5209,6 +5237,8 @@
     "wizardTitle": "Preparando tu agente de voz.",
     "wizardSubtitle": "Unos 3 minutos. Al final escucharás a tu agente en una llamada real.",
     "defaultGreeting": "Hola, gracias por llamar. ¿En qué puedo ayudarte?",
+    "defaultAgentName": "Agente",
+    "greetingTemplate": "Hola, gracias por llamar a {business}. ¿En qué puedo ayudarte hoy?",
     "greetingWithBusiness": "Hola, gracias por llamar a {business}. ¿En qué puedo ayudarte?",
     "yourBusiness": "tu negocio",
     "customize": {
@@ -5384,14 +5414,54 @@
         "step5": "Usa la pestaña Prueba en la página Agentes para hacer una llamada real y comprobar que todo funciona.",
         "cta": "Empezar gratis →"
       },
-      "callForwarding": { "title": "Desvío de llamadas", "description": "Desvía tu número de negocio al número Recall Touch o usa el número asignado como línea principal. Las llamadas entrantes las atiende tu agente 24/7.", "carrierSteps": "Pasos por operador" },
+      "callForwarding": {
+        "title": "Desvío de llamadas",
+        "description": "Desvía tu número de negocio al número Recall Touch o usa el número asignado como línea principal. Las llamadas entrantes las atiende tu agente 24/7.",
+        "carrierSteps": "Pasos por operador",
+        "att": "Marcar *21*[tu número RT]# y luego llamar. Para cancelar: #21#",
+        "verizon": "Marcar *72 y luego tu número Recall Touch. Para cancelar: *73",
+        "tmobile": "Marcar **21*[número RT]#. Para cancelar: ##21#",
+        "comcast": "Voice → Desvío de llamadas → introduce tu número Recall Touch.",
+        "googleVoice": "Ajustes → Llamadas → reenviar a tu número RT."
+      },
       "aiAgents": { "title": "Agentes IA", "description": "Configura nombre, voz, saludo y capacidades de tu agente. Enséñale tus servicios, horarios y cómo gestionar citas. Sin programación." },
       "campaigns": { "title": "Campañas", "description": "Ejecuta seguimientos salientes, recordatorios y flujos de recuperación. Crea campañas desde el panel, define audiencias y guiones y sigue los resultados." },
-      "integrations": { "title": "Integraciones", "description": "Conecta Recall Touch con tu proveedor de teléfono (Twilio), calendario y CRM. Webhooks y API en planes Scale y Enterprise." },
+      "integrations": {
+        "title": "Integraciones",
+        "description": "Conecta Recall Touch con tu proveedor de teléfono (Twilio), calendario y CRM. Webhooks y API en planes Scale y Enterprise.",
+        "zapierHeading": "Zapier y Make",
+        "zapierDesc": "Usa OAuth para conectar tu espacio Recall Touch y luego consultar disparadores o invocar acciones.",
+        "authorizeLabel": "Autorizar",
+        "tokenLabel": "Token",
+        "triggersHeading": "Disparadores (GET, Bearer token)",
+        "actionsHeading": "Acciones (POST, Bearer token)"
+      },
       "billing": { "title": "Facturación", "description": "Planes mensuales o anuales. La facturación anual incluye dos meses gratis. Cambia o cancela en Ajustes → Facturación. Facturas en el panel.", "cta": "Ver precios →" },
-      "api": { "title": "Referencia API", "description": "API REST para integrar Recall Touch. Todos los endpoints requieren sesión válida (cookie) o token Bearer. URL base: https://your-domain.com.", "contactCta": "Contactar para acceso completo a la API →" },
-      "sdk": { "title": "Ejemplos SDK", "description": "Operaciones habituales en curl, JavaScript y Python." },
-      "changelog": { "title": "Registro de cambios", "description": "Últimas actualizaciones de la plataforma." },
+      "api": {
+        "title": "Referencia API",
+        "description": "API REST para integrar Recall Touch. Todos los endpoints requieren sesión válida (cookie) o token Bearer. URL base: https://your-domain.com.",
+        "contactCta": "Contactar para acceso completo a la API →",
+        "workspaceMeDesc": "Devuelve el espacio y usuario actuales. Auth: requerido (sesión o Bearer).",
+        "leadsListDesc": "Lista de leads del espacio. Auth: requerido. Query: limit, offset, state.",
+        "leadsCreateDesc": "Crear un lead. Auth: requerido. Body: name, phone, email?, company?.",
+        "exampleCurl": "Ejemplo: curl",
+        "requestBody": "Cuerpo de la petición"
+      },
+      "sdk": {
+        "title": "Ejemplos SDK",
+        "description": "Operaciones habituales en curl, JavaScript y Python.",
+        "createLeadHeading": "Crear un lead",
+        "curlTitle": "curl",
+        "jsTitle": "JavaScript (fetch)",
+        "pythonTitle": "Python (requests)"
+      },
+      "changelog": {
+        "title": "Registro de cambios",
+        "description": "Últimas actualizaciones de la plataforma.",
+        "entry202503": "Secuencias de campaña (Llamada, SMS, Email, Espera), puntuación de leads, centro de notificaciones, lista de onboarding, informes de error, mejoras SEO y accesibilidad.",
+        "entry202502": "Agentes de voz Vapi, aprovisionamiento Twilio, vistas de actividad e bandeja de entrada, centro de ajustes.",
+        "entry202501": "Lanzamiento inicial: configuración del espacio, inicio de sesión, precios, simulador de demo."
+      },
       "faq": { "title": "FAQ", "description": "Preguntas sobre configuración, desvío, agentes y facturación en la página de precios.", "cta": "Ver FAQ →" }
     },
     "quickStart": {

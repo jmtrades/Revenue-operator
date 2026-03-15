@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 export function CoverageLimitedBanner() {
+  const t = useTranslations("coverage");
   const { workspaceId } = useWorkspace();
   const [coverage, setCoverage] = useState<"full" | "limited" | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -47,7 +49,7 @@ export function CoverageLimitedBanner() {
     >
       <div className="max-w-3xl mx-auto flex items-center justify-between gap-4 flex-wrap">
         <span>
-          Add your number to maintain conversations from personal phone threads.
+          {t("addNumberPrompt")}
         </span>
         <div className="flex items-center gap-2">
           <Link
@@ -55,7 +57,7 @@ export function CoverageLimitedBanner() {
             className="px-3 py-1.5 rounded-lg text-xs font-medium"
             style={{ background: "var(--meaning-blue)", color: "#fff" }}
           >
-            Add number
+            {t("addNumber")}
           </Link>
           <button
             type="button"
@@ -63,7 +65,7 @@ export function CoverageLimitedBanner() {
             className="text-xs px-2 py-1 rounded opacity-70 hover:opacity-100"
             style={{ color: "var(--text-muted)" }}
           >
-            Dismiss
+            {t("dismiss")}
           </button>
         </div>
       </div>

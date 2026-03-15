@@ -115,7 +115,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
         </div>
       </div>
       <div className="flex items-center gap-4 flex-wrap">
-        <span className="text-[11px] text-zinc-500">Speed</span>
+        <span className="text-[11px] text-zinc-500">{t("playbackSpeed")}</span>
         {PLAYBACK_SPEEDS.map((s) => (
           <button
             key={s}

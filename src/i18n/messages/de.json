@@ -1833,6 +1833,8 @@
     },
     "defaultAgent": {
       "name": "Empfang",
+      "simpleGreeting": "Danke für Ihren Anruf. Wie kann ich Ihnen heute helfen?",
+      "defaultHours": "Mo–Fr 9–17 Uhr",
       "yourBusiness": "Ihr Unternehmen",
       "greeting": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen heute helfen?",
       "receptionist": "Empfang",
@@ -2251,6 +2253,7 @@
       "playAria": "Abspielen",
       "pauseAria": "Pause",
       "seekAria": "Suchen",
+      "playbackSpeed": "Geschwindigkeit",
       "speakerAgent": "KI-Agent",
       "summaryTitle": "Anrufzusammenfassung",
       "sentiment": "Stimmung",
@@ -3087,6 +3090,9 @@
     "agent.startLiveTest": "Live-Test starten",
     "agent.endLiveTest": "Live-Test beenden",
     "agent.removeAria": "Entfernen",
+    "agent.defaultAgentName": "Empfang",
+    "agent.defaultGreeting": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen helfen?",
+    "agent.voicePreviewText": "Danke für Ihren Anruf. Wie kann ich Ihnen heute helfen?",
     "agent.defaultBusiness": "dein Unternehmen",
     "agent.defaultWorkspaceName": "Mein Arbeitsbereich",
     "compliance.loadFailed": "Einstellungen für Aufzeichnungs-Einwilligung konnten nicht geladen werden.",
@@ -4372,6 +4378,9 @@
     }
   },
   "errors": {
+    "heading": "Ein Fehler ist aufgetreten",
+    "defaultMessage": "Ein unerwarteter Fehler ist aufgetreten.",
+    "tryAgain": "Erneut versuchen",
     "generic": {
       "title": "Etwas ist schiefgelaufen",
       "body": "Wir konnten die Anfrage nicht abschließen. Bitte versuche es erneut oder lade die Seite neu."
@@ -4462,6 +4471,25 @@
     "completeSetupLink": "KI-Einrichtung abschließen (5 Schritte) →",
     "decisionCompletionHint": "Die Entscheidung wird hier fortgesetzt, damit sie Aktionen abschließen und erscheinen.",
     "testInstructions": "Sende \"{number}\" von der für diesen Workspace genutzten Nummer mit: \"Hallo, ich bin interessiert\"\n\nDann komm hierher zurück, um die Bearbeitung zu sehen."
+  },
+  "coverage": {
+    "active": "Abdeckung: Telefonkontinuität aktiv",
+    "addNumberPrompt": "Fügen Sie Ihre Nummer hinzu, um Gespräche von persönlichen Telefon-Threads beizubehalten.",
+    "addNumber": "Nummer hinzufügen",
+    "dismiss": "Schließen"
+  },
+  "industry": {
+    "heroSubtitle": "Ein Beispiel, wie Recall Touch funktioniert. Passt sich jedem Unternehmen an.",
+    "solutionsLabel": "Lösungen",
+    "heroTitle": "{industry} KI-Telefon-Agent",
+    "heroTagline": "Verpassen Sie nie wieder einen {customerType}.",
+    "problemLabel": "Das Problem",
+    "howItWorks": "So funktioniert es",
+    "stepsHeading": "Drei Schritte zu einem KI-Agenten, der jeden Anruf beantwortet.",
+    "capabilitiesLabel": "Kernfunktionen",
+    "roiLabel": "ROI",
+    "ctaStartFree": "Kostenlos starten →",
+    "ctaPricing": "Preise ansehen →"
   },
   "compliance": {
     "title": "Compliance",
@@ -5144,6 +5172,8 @@
     "wizardTitle": "Wir richten Ihren Sprachagenten ein.",
     "wizardSubtitle": "Dauert etwa 3 Minuten. Am Ende hören Sie Ihren Agenten in einem echten Anruf.",
     "defaultGreeting": "Hallo, danke für Ihren Anruf. Wie kann ich Ihnen helfen?",
+    "defaultAgentName": "Agent",
+    "greetingTemplate": "Hallo, danke für Ihren Anruf bei {business}. Wie kann ich Ihnen heute helfen?",
     "greetingWithBusiness": "Hallo, danke für Ihren Anruf bei {business}. Wie kann ich Ihnen helfen?",
     "yourBusiness": "Ihr Unternehmen",
     "customize": {
@@ -5356,14 +5386,54 @@
         "step5": "Tab Test auf der Agenten-Seite nutzen, um einen echten Anruf zu tätigen und alles zu prüfen.",
         "cta": "Kostenlos starten →"
       },
-      "callForwarding": { "title": "Anrufweiterleitung", "description": "Leiten Sie Ihre Geschäftsnummer auf Ihre Recall-Touch-Nummer weiter oder nutzen Sie die bereitgestellte Nummer als Hauptleitung. Ihr Agent beantwortet Anrufe 24/7.", "carrierSteps": "Schritte je Anbieter" },
+      "callForwarding": {
+        "title": "Anrufweiterleitung",
+        "description": "Leiten Sie Ihre Geschäftsnummer auf Ihre Recall-Touch-Nummer weiter oder nutzen Sie die bereitgestellte Nummer als Hauptleitung. Ihr Agent beantwortet Anrufe 24/7.",
+        "carrierSteps": "Schritte je Anbieter",
+        "att": "Wählen Sie *21*[Ihre RT-Nummer]# und rufen Sie dann. Zum Abbrechen: #21#",
+        "verizon": "Wählen Sie *72, dann Ihre Recall-Touch-Nummer. Zum Abbrechen: *73",
+        "tmobile": "Wählen Sie **21*[RT-Nummer]#. Zum Abbrechen: ##21#",
+        "comcast": "Voice → Anrufweiterleitung → Recall-Touch-Nummer eingeben.",
+        "googleVoice": "Einstellungen → Anrufe → an Ihre RT-Nummer weiterleiten."
+      },
       "aiAgents": { "title": "KI-Agenten", "description": "Konfigurieren Sie Name, Stimme, Begrüßung und Fähigkeiten Ihres Agenten. Bringen Sie ihm Dienste, Öffnungszeiten und Terminbuchung bei. Ohne Programmierung." },
       "campaigns": { "title": "Kampagnen", "description": "Outbound-Nachfass, Erinnerungen und Wiederholungsabläufe. Kampagnen im Dashboard erstellen, Zielgruppen und Skripte setzen, Ergebnisse verfolgen." },
-      "integrations": { "title": "Integrationen", "description": "Recall Touch mit Anbieter (Twilio), Kalender und CRM verbinden. Webhooks und API in Scale- und Enterprise-Plänen." },
+      "integrations": {
+        "title": "Integrationen",
+        "description": "Recall Touch mit Anbieter (Twilio), Kalender und CRM verbinden. Webhooks und API in Scale- und Enterprise-Plänen.",
+        "zapierHeading": "Zapier & Make",
+        "zapierDesc": "OAuth nutzen, um Ihren Recall-Touch-Workspace zu verbinden, dann Trigger abfragen oder Aktionen aufrufen.",
+        "authorizeLabel": "Autorisieren",
+        "tokenLabel": "Token",
+        "triggersHeading": "Trigger (GET, Bearer-Token)",
+        "actionsHeading": "Aktionen (POST, Bearer-Token)"
+      },
       "billing": { "title": "Abrechnung", "description": "Pläne monatlich oder jährlich. Jährlich inkl. zwei Monate gratis. Ändern oder kündigen unter Einstellungen → Abrechnung. Rechnungen im Dashboard.", "cta": "Preise ansehen →" },
-      "api": { "title": "API-Referenz", "description": "REST-API zur Integration von Recall Touch. Alle Endpoints benötigen gültige Session (Cookie) oder Bearer-Token. Basis-URL: https://your-domain.com.", "contactCta": "Kontakt für vollen API-Zugang →" },
-      "sdk": { "title": "SDK-Beispiele", "description": "Gängige Operationen in curl, JavaScript und Python." },
-      "changelog": { "title": "Changelog", "description": "Aktuelle Plattform-Updates." },
+      "api": {
+        "title": "API-Referenz",
+        "description": "REST-API zur Integration von Recall Touch. Alle Endpoints benötigen gültige Session (Cookie) oder Bearer-Token. Basis-URL: https://your-domain.com.",
+        "contactCta": "Kontakt für vollen API-Zugang →",
+        "workspaceMeDesc": "Gibt aktuellen Workspace und Benutzer zurück. Auth: erforderlich (Session oder Bearer).",
+        "leadsListDesc": "Leads des Workspaces auflisten. Auth: erforderlich. Query: limit, offset, state.",
+        "leadsCreateDesc": "Lead anlegen. Auth: erforderlich. Body: name, phone, email?, company?.",
+        "exampleCurl": "Beispiel: curl",
+        "requestBody": "Anfragekörper"
+      },
+      "sdk": {
+        "title": "SDK-Beispiele",
+        "description": "Gängige Operationen in curl, JavaScript und Python.",
+        "createLeadHeading": "Lead anlegen",
+        "curlTitle": "curl",
+        "jsTitle": "JavaScript (fetch)",
+        "pythonTitle": "Python (requests)"
+      },
+      "changelog": {
+        "title": "Changelog",
+        "description": "Aktuelle Plattform-Updates.",
+        "entry202503": "Kampagnen-Sequenzen (Anruf, SMS, E-Mail, Warten), Lead-Scoring, Benachrichtigungszentrum, Onboarding-Checkliste, Fehlerberichte, SEO- und Barrierefreiheits-Verbesserungen.",
+        "entry202502": "Vapi-Sprachagenten, Twilio-Telefonbereitstellung, Aktivitäts- und Posteingangs-Ansichten, Einstellungs-Hub.",
+        "entry202501": "Erstes Release: Workspace-Setup, Anmeldung, Preise, Demo-Simulator."
+      },
       "faq": { "title": "FAQ", "description": "Häufige Fragen zu Einrichtung, Anrufweiterleitung, Agenten und Abrechnung auf der Preisseite.", "cta": "FAQ ansehen →" }
     },
     "quickStart": {

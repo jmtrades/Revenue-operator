@@ -133,8 +133,8 @@ export function AgentStep({
             setState((prev) => ({
               ...prev,
               agentTemplate: "scratch",
-              agentName: prev.agentName || "Agent",
-              greeting: `Hi, thanks for calling ${prev.businessName || "your business"}. How can I help you today?`,
+              agentName: prev.agentName || t("defaultAgentName"),
+              greeting: t("greetingTemplate", { business: prev.businessName || t("yourBusiness") }),
             }))
           }
           className={`flex flex-col justify-center gap-2 rounded-2xl border px-4 py-4 text-left text-sm transition-colors ${

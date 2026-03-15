@@ -26,7 +26,7 @@ export function ActivateWizard() {
     agentTemplate: null,
     agentName: "",
     hours: DEFAULT_HOURS,
-    greeting: "Hi, thanks for calling. How can I help you today?",
+    greeting: t("defaultGreeting"),
     services: [],
     lastTestFeedback: null,
     preferredLanguage: "en",

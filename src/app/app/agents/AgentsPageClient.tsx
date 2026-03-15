@@ -390,7 +390,7 @@ function mapSliderToPersonality(
   return "professional";
 }
 
-function mapAgentRow(row: Record<string, unknown>): Agent {
+function mapAgentRow(row: Record<string, unknown>, tAgents: (key: string) => string): Agent {
   const knowledgeBase = (row.knowledge_base ?? {}) as {
     services?: string[];
     faq?: Array<{ q?: string; a?: string }>;
@@ -458,7 +458,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
   return {
     ...defaultAgent(undefined),
     id: String(row.id ?? generateAgentId("a")),
-    name: String(row.name ?? "Receptionist"),
+    name: String(row.name ?? tAgents("defaultAgent.name")),
     purpose,
     primaryGoal: validGoal,
     businessContext: typeof knowledgeBase.businessContext === "string" ? knowledgeBase.businessContext : "",
@@ -686,7 +686,7 @@ export default function AppAgentsPageClient({
   const workspaceId = contextWorkspaceId || initialWorkspaceId;
   const initialAgents = useMemo(() => {
     if (Array.isArray(initialAgentsRows) && initialAgentsRows.length > 0) {
-      return initialAgentsRows.map((row) => mapAgentRow(row));
+      return initialAgentsRows.map((row) => mapAgentRow(row, _t));
     }
     const fallbackAgent = buildFallbackAgent(initialFallbackAgent, _t);
     return fallbackAgent ? [fallbackAgent] : [];
@@ -796,7 +796,7 @@ export default function AppAgentsPageClient({
       .then((res) => (res.ok ? res.json() : null))
       .then(async (data: { agents?: Array<Record<string, unknown>> } | null) => {
         const mapped = Array.isArray(data?.agents)
-          ? data.agents.map((row) => mapAgentRow(row))
+          ? data.agents.map((row) => mapAgentRow(row, tAgents))
           : [];
         if (mapped.length > 0) {
           setAgents(mapped);

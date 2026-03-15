@@ -1827,6 +1827,8 @@
     },
     "defaultAgent": {
       "name": "Réceptionniste",
+      "simpleGreeting": "Merci d'avoir appelé. Comment puis-je vous aider aujourd'hui ?",
+      "defaultHours": "Lun–Ven 9h–17h",
       "yourBusiness": "votre entreprise",
       "greeting": "Merci d'avoir appelé {business}. Comment puis-je vous aider aujourd'hui ?",
       "receptionist": "Réceptionniste",
@@ -2245,6 +2247,7 @@
       "playAria": "Lecture",
       "pauseAria": "Pause",
       "seekAria": "Rechercher",
+      "playbackSpeed": "Vitesse",
       "speakerAgent": "Agent IA",
       "summaryTitle": "Résumé de l'appel",
       "sentiment": "Sentiment",
@@ -3081,6 +3084,9 @@
     "agent.startLiveTest": "Démarrer le test en direct",
     "agent.endLiveTest": "Terminer le test en direct",
     "agent.removeAria": "Supprimer",
+    "agent.defaultAgentName": "Réceptionniste",
+    "agent.defaultGreeting": "Merci d'avoir appelé {business}. Comment puis-je vous aider ?",
+    "agent.voicePreviewText": "Merci d'avoir appelé. Comment puis-je vous aider aujourd'hui ?",
     "agent.defaultBusiness": "votre entreprise",
     "agent.defaultWorkspaceName": "Mon espace",
     "compliance.loadFailed": "Échec du chargement des paramètres de consentement à l’enregistrement.",
@@ -4366,6 +4372,9 @@
     }
   },
   "errors": {
+    "heading": "Une erreur est survenue",
+    "defaultMessage": "Une erreur inattendue s'est produite.",
+    "tryAgain": "Réessayer",
     "generic": {
       "title": "Un problème est survenu",
       "body": "Nous n’avons pas pu terminer cette requête. Réessayez ou actualisez la page."
@@ -4456,6 +4465,25 @@
     "completeSetupLink": "Compléter la config IA (5 étapes) →",
     "decisionCompletionHint": "La prise de décision continue ici pour qu'ils accomplissent les actions et apparaissent.",
     "testInstructions": "Envoyez « {number} » depuis le numéro utilisé pour cet espace avec : « Bonjour, je suis intéressé »\n\nPuis revenez ici pour voir la prise en charge."
+  },
+  "coverage": {
+    "active": "Couverture : continuité téléphonique active",
+    "addNumberPrompt": "Ajoutez votre numéro pour maintenir les conversations depuis les fils de votre téléphone personnel.",
+    "addNumber": "Ajouter le numéro",
+    "dismiss": "Ignorer"
+  },
+  "industry": {
+    "heroSubtitle": "Un exemple de la façon dont Recall Touch fonctionne. Il s'adapte à toute entreprise.",
+    "solutionsLabel": "Solutions",
+    "heroTitle": "Agent téléphonique IA {industry}",
+    "heroTagline": "Ne ratez plus jamais un {customerType}.",
+    "problemLabel": "Le problème",
+    "howItWorks": "Comment ça marche",
+    "stepsHeading": "Trois étapes pour un agent IA qui répond à chaque appel.",
+    "capabilitiesLabel": "Capacités clés",
+    "roiLabel": "ROI",
+    "ctaStartFree": "Démarrer gratuitement →",
+    "ctaPricing": "Voir les tarifs →"
   },
   "compliance": {
     "title": "Conformité",
@@ -5175,6 +5203,8 @@
     "wizardTitle": "Préparons votre agent vocal.",
     "wizardSubtitle": "Environ 3 minutes. Vous entendrez votre agent en situation réelle à la fin.",
     "defaultGreeting": "Bonjour, merci d'avoir appelé. Comment puis-je vous aider ?",
+    "defaultAgentName": "Agent",
+    "greetingTemplate": "Bonjour, merci d'avoir appelé {business}. Comment puis-je vous aider aujourd'hui ?",
     "greetingWithBusiness": "Bonjour, merci d'avoir appelé {business}. Comment puis-je vous aider ?",
     "yourBusiness": "votre entreprise",
     "customize": {
@@ -5350,14 +5380,54 @@
         "step5": "Utilisez l'onglet Test sur la page Agents pour passer un appel réel et confirmer que tout fonctionne.",
         "cta": "Démarrer gratuitement →"
       },
-      "callForwarding": { "title": "Renvoi d'appel", "description": "Transférez votre numéro professionnel vers votre numéro Recall Touch, ou utilisez le numéro fourni comme ligne principale. Votre agent répond 24h/24 et 7j/7.", "carrierSteps": "Étapes par opérateur" },
+      "callForwarding": {
+        "title": "Renvoi d'appel",
+        "description": "Transférez votre numéro professionnel vers votre numéro Recall Touch, ou utilisez le numéro fourni comme ligne principale. Votre agent répond 24h/24 et 7j/7.",
+        "carrierSteps": "Étapes par opérateur",
+        "att": "Composez *21*[votre numéro RT]# puis appelez. Pour annuler : #21#",
+        "verizon": "Composez *72 puis votre numéro Recall Touch. Pour annuler : *73",
+        "tmobile": "Composez **21*[numéro RT]#. Pour annuler : ##21#",
+        "comcast": "Voice → Renvoi d'appel → entrez votre numéro Recall Touch.",
+        "googleVoice": "Paramètres → Appels → renvoyer vers votre numéro RT."
+      },
       "aiAgents": { "title": "Agents IA", "description": "Configurez le nom, la voix, la salutation et les capacités de votre agent. Enseignez-lui vos services, horaires et prise de rendez-vous. Sans code." },
       "campaigns": { "title": "Campagnes", "description": "Lancez relances sortantes, rappels et flux de récupération. Créez des campagnes depuis le tableau de bord, définissez audiences et scripts, suivez les résultats." },
-      "integrations": { "title": "Intégrations", "description": "Connectez Recall Touch à votre opérateur (Twilio), calendrier et CRM. Webhooks et API sur les offres Scale et Enterprise." },
+      "integrations": {
+        "title": "Intégrations",
+        "description": "Connectez Recall Touch à votre opérateur (Twilio), calendrier et CRM. Webhooks et API sur les offres Scale et Enterprise.",
+        "zapierHeading": "Zapier et Make",
+        "zapierDesc": "Utilisez OAuth pour connecter votre espace Recall Touch, puis interrogez les déclencheurs ou appelez les actions.",
+        "authorizeLabel": "Autoriser",
+        "tokenLabel": "Token",
+        "triggersHeading": "Déclencheurs (GET, Bearer token)",
+        "actionsHeading": "Actions (POST, Bearer token)"
+      },
       "billing": { "title": "Facturation", "description": "Plans facturés au mois ou à l'année. L'année inclut deux mois offerts. Modifiez ou annulez dans Paramètres → Facturation. Factures dans le tableau de bord.", "cta": "Voir les tarifs →" },
-      "api": { "title": "Référence API", "description": "API REST pour intégrer Recall Touch. Tous les endpoints requièrent une session (cookie) ou un token Bearer valide. URL de base : https://your-domain.com.", "contactCta": "Contacter pour accès API complet →" },
-      "sdk": { "title": "Exemples SDK", "description": "Opérations courantes en curl, JavaScript et Python." },
-      "changelog": { "title": "Changelog", "description": "Dernières mises à jour de la plateforme." },
+      "api": {
+        "title": "Référence API",
+        "description": "API REST pour intégrer Recall Touch. Tous les endpoints requièrent une session (cookie) ou un token Bearer valide. URL de base : https://your-domain.com.",
+        "contactCta": "Contacter pour accès API complet →",
+        "workspaceMeDesc": "Retourne l'espace et l'utilisateur actuels. Auth : requis (session ou Bearer).",
+        "leadsListDesc": "Liste des leads de l'espace. Auth : requis. Query : limit, offset, state.",
+        "leadsCreateDesc": "Créer un lead. Auth : requis. Body : name, phone, email?, company?.",
+        "exampleCurl": "Exemple : curl",
+        "requestBody": "Corps de la requête"
+      },
+      "sdk": {
+        "title": "Exemples SDK",
+        "description": "Opérations courantes en curl, JavaScript et Python.",
+        "createLeadHeading": "Créer un lead",
+        "curlTitle": "curl",
+        "jsTitle": "JavaScript (fetch)",
+        "pythonTitle": "Python (requests)"
+      },
+      "changelog": {
+        "title": "Changelog",
+        "description": "Dernières mises à jour de la plateforme.",
+        "entry202503": "Séquences de campagne (Appel, SMS, Email, Attente), scoring de leads, centre de notifications, checklist d'onboarding, rapports d'erreur, améliorations SEO et accessibilité.",
+        "entry202502": "Agents vocaux Vapi, provisionnement Twilio, vues activité et boîte de réception, hub paramètres.",
+        "entry202501": "Lancement initial : configuration de l'espace, connexion, tarifs, simulateur de démo."
+      },
       "faq": { "title": "FAQ", "description": "Questions sur la configuration, le renvoi d'appel, les agentes et la facturation sur la page tarifaire.", "cta": "Voir la FAQ →" }
     },
     "quickStart": {
