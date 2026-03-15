@@ -5356,7 +5356,7 @@
         "step5": "Tab Test auf der Agenten-Seite nutzen, um einen echten Anruf zu tätigen und alles zu prüfen.",
         "cta": "Kostenlos starten →"
       },
-      "callForwarding": { "title": "Anrufweiterleitung", "description": "Leiten Sie Ihre Geschäftsnummer auf Ihre Recall-Touch-Nummer weiter oder nutzen Sie die bereitgestellte Nummer als Hauptleitung. Ihr Agent beantwortet Anrufe 24/7." },
+      "callForwarding": { "title": "Anrufweiterleitung", "description": "Leiten Sie Ihre Geschäftsnummer auf Ihre Recall-Touch-Nummer weiter oder nutzen Sie die bereitgestellte Nummer als Hauptleitung. Ihr Agent beantwortet Anrufe 24/7.", "carrierSteps": "Schritte je Anbieter" },
       "aiAgents": { "title": "KI-Agenten", "description": "Konfigurieren Sie Name, Stimme, Begrüßung und Fähigkeiten Ihres Agenten. Bringen Sie ihm Dienste, Öffnungszeiten und Terminbuchung bei. Ohne Programmierung." },
       "campaigns": { "title": "Kampagnen", "description": "Outbound-Nachfass, Erinnerungen und Wiederholungsabläufe. Kampagnen im Dashboard erstellen, Zielgruppen und Skripte setzen, Ergebnisse verfolgen." },
       "integrations": { "title": "Integrationen", "description": "Recall Touch mit Anbieter (Twilio), Kalender und CRM verbinden. Webhooks und API in Scale- und Enterprise-Plänen." },

@@ -5350,7 +5350,7 @@
         "step5": "Utilisez l'onglet Test sur la page Agents pour passer un appel réel et confirmer que tout fonctionne.",
         "cta": "Démarrer gratuitement →"
       },
-      "callForwarding": { "title": "Renvoi d'appel", "description": "Transférez votre numéro professionnel vers votre numéro Recall Touch, ou utilisez le numéro fourni comme ligne principale. Votre agent répond 24h/24 et 7j/7." },
+      "callForwarding": { "title": "Renvoi d'appel", "description": "Transférez votre numéro professionnel vers votre numéro Recall Touch, ou utilisez le numéro fourni comme ligne principale. Votre agent répond 24h/24 et 7j/7.", "carrierSteps": "Étapes par opérateur" },
       "aiAgents": { "title": "Agents IA", "description": "Configurez le nom, la voix, la salutation et les capacités de votre agent. Enseignez-lui vos services, horaires et prise de rendez-vous. Sans code." },
       "campaigns": { "title": "Campagnes", "description": "Lancez relances sortantes, rappels et flux de récupération. Créez des campagnes depuis le tableau de bord, définissez audiences et scripts, suivez les résultats." },
       "integrations": { "title": "Intégrations", "description": "Connectez Recall Touch à votre opérateur (Twilio), calendrier et CRM. Webhooks et API sur les offres Scale et Enterprise." },

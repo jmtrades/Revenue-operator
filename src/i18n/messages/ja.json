@@ -5356,7 +5356,7 @@
         "step5": "エージェントページのテストタブで実際に通話し、動作を確認。",
         "cta": "無料で始める →"
       },
-      "callForwarding": { "title": "着信転送", "description": "既存の事業番号を Recall Touch 番号に転送するか、提供番号を主回線として使用。エージェントが24時間対応。" },
+      "callForwarding": { "title": "着信転送", "description": "既存の事業番号を Recall Touch 番号に転送するか、提供番号を主回線として使用。エージェントが24時間対応。", "carrierSteps": "キャリア別の手順" },
       "aiAgents": { "title": "AIエージェント", "description": "エージェントの名前、音声、挨拶、機能を設定。サービス、営業時間、予約の扱いを教える。コーディング不要。" },
       "campaigns": { "title": "キャンペーン", "description": "アウトバウンドのフォローアップ、リマインダー、リカバリーフローを実行。ダッシュボードからキャンペーン作成、オーディエンスとスクリプトを設定し、結果を追跡。" },
       "integrations": { "title": "連携", "description": "Recall Touch を電話プロバイダー（Twilio）、カレンダー、CRM と接続。Scale および Enterprise プランで Webhooks と API。" },

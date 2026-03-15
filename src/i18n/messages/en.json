@@ -4848,7 +4848,7 @@
         "step5": "Use the Test tab on the Agents page to place a real call and confirm everything works.",
         "cta": "Start free →"
       },
-      "callForwarding": { "title": "Call Forwarding", "description": "Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7." },
+      "callForwarding": { "title": "Call Forwarding", "description": "Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7.", "carrierSteps": "Carrier-specific steps" },
       "aiAgents": { "title": "AI Agents", "description": "Configure your AI agent name, voice, greeting, and capabilities. Teach it your services, hours, and how to handle appointments. No coding required." },
       "campaigns": { "title": "Campaigns", "description": "Run outbound follow-up, reminders, and recovery flows. Create campaigns from the dashboard, set audiences and scripts, and track outcomes." },
       "integrations": { "title": "Integrations", "description": "Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Scale and Enterprise plans." },
