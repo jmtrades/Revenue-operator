@@ -3205,7 +3205,41 @@
     "orBookDemo": "Réserver une démo",
     "viewDocs": "Voir la documentation"
   },
+  "homepage": {
+    "problem": {
+      "sectionLabel": "Le problème",
+      "heading": "La communication téléphonique est cassée. Pour tout le monde.",
+      "card1Title": "Les appels passent entre les mailles du filet",
+      "card1Stat1Desc": "Perdus par an à cause des appels manqués",
+      "card1Stat2Desc": "Raccrochent sur la messagerie vocale",
+      "card1Stat3Desc": "Ne rappellent jamais après un signal occupé",
+      "card2Title": "Le suivi ne fonctionne pas",
+      "card2Stat1Desc": "Des leads jamais contactés",
+      "card2Stat2Desc": "Délai de réponse moyen",
+      "card2Stat3Desc": "Des commerciaux abandonnent après 1 essai",
+      "card3Title": "La communication ne scale pas",
+      "card3Stat1Desc": "Réceptionniste + salaires SDR",
+      "card3Stat2Desc": "Turnover dans les rôles à fort volume d'appels",
+      "card3Stat3Desc": "Outils que les entreprises jonglent pour appels, SMS, planification et suivi",
+      "closing": "Et si chaque appel, SMS et suivi était géré automatiquement — et que vous puissiez voir exactement ce qui s'est passé ?"
+    }
+  },
   "footer": {
+    "tagline": "Communication téléphone et SMS par IA pour les entreprises qui dépendent de chaque appel.",
+    "product": "Produit",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "demo": "Démo",
+    "docs": "Documentation",
+    "company": "Entreprise",
+    "emailUs": "Nous écrire",
+    "blog": "Blog",
+    "contact": "Contact",
+    "legalSecurity": "Mentions légales et sécurité",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation",
+    "securityBadges": "SOC 2 · RGPD · Chiffrement 256 bits · 99,9 % disponibilité",
+    "copyright": "© {year} Recall Touch. Tous droits réservés.",
     "cta": {
       "bookDemo": "Réserver une démo",
       "contact": "Contact"
@@ -3216,8 +3250,7 @@
       "docs": "Docs",
       "terms": "Conditions",
       "privacy": "Confidentialité"
-    },
-    "copyright": "Tous droits réservés."
+    }
   },
   "pricing": {
     "title": "Tarifs",

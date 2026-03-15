@@ -3132,7 +3132,41 @@
     "orBookDemo": "Agendar demo",
     "viewDocs": "Ver documentação"
   },
+  "homepage": {
+    "problem": {
+      "sectionLabel": "O problema",
+      "heading": "A comunicação por telefone está quebrada. Para todos.",
+      "card1Title": "Ligações se perdem",
+      "card1Stat1Desc": "Perdido por ano com ligações perdidas",
+      "card1Stat2Desc": "Desligam na secretária eletrônica",
+      "card1Stat3Desc": "Nunca retornam após sinal de ocupado",
+      "card2Title": "O acompanhamento não funciona",
+      "card2Stat1Desc": "Dos leads nunca contactados",
+      "card2Stat2Desc": "Tempo médio de resposta",
+      "card2Stat3Desc": "Dos representantes desistem após 1 tentativa",
+      "card3Title": "A comunicação não escala",
+      "card3Stat1Desc": "Recepção + salários de SDR",
+      "card3Stat2Desc": "Rotatividade em funções com muito telefone",
+      "card3Stat3Desc": "Ferramentas que as empresas usam para ligações, mensagens, agendamento e follow-up",
+      "closing": "E se cada ligação, mensagem e follow-up fosse tratado automaticamente — e você pudesse ver exatamente o que aconteceu?"
+    }
+  },
   "footer": {
+    "tagline": "Comunicação por voz e texto com IA para negócios que dependem de cada chamada.",
+    "product": "Produto",
+    "features": "Recursos",
+    "pricing": "Preços",
+    "demo": "Demo",
+    "docs": "Documentação",
+    "company": "Empresa",
+    "emailUs": "Envie um e-mail",
+    "blog": "Blog",
+    "contact": "Contato",
+    "legalSecurity": "Legal e Segurança",
+    "privacyPolicy": "Política de Privacidade",
+    "termsOfService": "Termos de Serviço",
+    "securityBadges": "SOC 2 · LGPD · Criptografia 256 bits · 99,9% disponibilidade",
+    "copyright": "© {year} Recall Touch. Todos os direitos reservados.",
     "cta": {
       "bookDemo": "Agendar demo",
       "contact": "Contato"
@@ -3143,8 +3177,7 @@
       "docs": "Docs",
       "terms": "Termos",
       "privacy": "Privacidade"
-    },
-    "copyright": "Todos os direitos reservados."
+    }
   },
   "pricing": {
     "title": "Preços",

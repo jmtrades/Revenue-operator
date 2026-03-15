@@ -3123,7 +3123,41 @@
     "orBookDemo": "デモを予約",
     "viewDocs": "ドキュメントを見る"
   },
+  "homepage": {
+    "problem": {
+      "sectionLabel": "課題",
+      "heading": "電話コミュニケーションは、誰にとっても壊れています。",
+      "card1Title": "通話が抜け落ちる",
+      "card1Stat1Desc": "取りこぼし通話で年間損失",
+      "card1Stat2Desc": "留守電で切る",
+      "card1Stat3Desc": "話し中のあと折り返さない",
+      "card2Title": "フォローアップが機能していない",
+      "card2Stat1Desc": "一度も連絡されないリード",
+      "card2Stat2Desc": "平均応答時間",
+      "card2Stat3Desc": "1回で諦める営業",
+      "card3Title": "コミュニケーションがスケールしない",
+      "card3Stat1Desc": "受付・SDR人件費",
+      "card3Stat2Desc": "電話業務の離職率",
+      "card3Stat3Desc": "通話・SMS・予約・フォローに使うツールの数",
+      "closing": "すべての通話・メッセージ・フォローを自動で処理し、何が起きたか正確に把握できたら？"
+    }
+  },
   "footer": {
+    "tagline": "すべての通話を大切にする企業のための、AI音声・テキスト通信。",
+    "product": "プロダクト",
+    "features": "機能",
+    "pricing": "料金",
+    "demo": "デモ",
+    "docs": "ドキュメント",
+    "company": "会社",
+    "emailUs": "メールする",
+    "blog": "ブログ",
+    "contact": "お問い合わせ",
+    "legalSecurity": "法務・セキュリティ",
+    "privacyPolicy": "プライバシーポリシー",
+    "termsOfService": "利用規約",
+    "securityBadges": "SOC 2 · GDPR · 256ビット暗号化 · 99.9%稼働率",
+    "copyright": "© {year} Recall Touch. All rights reserved.",
     "cta": {
       "bookDemo": "デモを予約",
       "contact": "お問い合わせ"
@@ -3134,8 +3168,7 @@
       "docs": "ドキュメント",
       "terms": "利用規約",
       "privacy": "プライバシー"
-    },
-    "copyright": "All rights reserved."
+    }
   },
   "pricing": {
     "title": "料金",

@@ -3365,7 +3365,41 @@
     "orBookDemo": "Reservar demo",
     "viewDocs": "Ver documentación"
   },
+  "homepage": {
+    "problem": {
+      "sectionLabel": "El problema",
+      "heading": "La comunicación por teléfono está rota. Para todos.",
+      "card1Title": "Las llamadas se pierden",
+      "card1Stat1Desc": "Perdido al año por llamadas perdidas",
+      "card1Stat2Desc": "Cuelgan ante el buzón de voz",
+      "card1Stat3Desc": "No vuelven a llamar tras la señal de ocupado",
+      "card2Title": "El seguimiento no funciona",
+      "card2Stat1Desc": "De los leads nunca contactados",
+      "card2Stat2Desc": "Tiempo medio de respuesta",
+      "card2Stat3Desc": "De los comerciales abandonan tras 1 intento",
+      "card3Title": "La comunicación no escala",
+      "card3Stat1Desc": "Recepción + salarios SDR",
+      "card3Stat2Desc": "Rotación en roles con mucho teléfono",
+      "card3Stat3Desc": "Herramientas que las empresas combinan para llamadas, mensajes, agenda y seguimiento",
+      "closing": "¿Y si cada llamada, mensaje y seguimiento se gestionara automáticamente y pudieras ver exactamente qué pasó?"
+    }
+  },
   "footer": {
+    "tagline": "Comunicación telefónica y por texto con IA para negocios que dependen de cada llamada.",
+    "product": "Producto",
+    "features": "Características",
+    "pricing": "Precios",
+    "demo": "Demo",
+    "docs": "Documentación",
+    "company": "Empresa",
+    "emailUs": "Escríbenos",
+    "blog": "Blog",
+    "contact": "Contacto",
+    "legalSecurity": "Legal y Seguridad",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio",
+    "securityBadges": "SOC 2 · RGPD · Cifrado 256 bits · 99,9% disponibilidad",
+    "copyright": "© {year} Recall Touch. Todos los derechos reservados.",
     "cta": {
       "bookDemo": "Reservar demo",
       "contact": "Contacto"
@@ -3376,8 +3410,7 @@
       "docs": "Docs",
       "terms": "Términos",
       "privacy": "Privacidad"
-    },
-    "copyright": "Todos los derechos reservados."
+    }
   },
   "pricing": {
     "title": "Precios",
