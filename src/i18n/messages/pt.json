@@ -5356,7 +5356,7 @@
         "step5": "Use a aba Teste na página Agentes para fazer uma chamada real e confirmar que tudo funciona.",
         "cta": "Começar grátis →"
       },
-      "callForwarding": { "title": "Desvio de chamadas", "description": "Desvie seu número de negócio para o número Recall Touch ou use o número provisionado como linha principal. Seu agente atende 24/7." },
+      "callForwarding": { "title": "Desvio de chamadas", "description": "Desvie seu número de negócio para o número Recall Touch ou use o número provisionado como linha principal. Seu agente atende 24/7.", "carrierSteps": "Passos por operadora" },
       "aiAgents": { "title": "Agentes IA", "description": "Configure nome, voz, saudação e capacidades do agente. Ensine serviços, horários e agendamentos. Sem código." },
       "campaigns": { "title": "Campanhas", "description": "Execute follow-up outbound, lembretes e fluxos de recuperação. Crie campanhas no painel, defina audiências e scripts e acompanhe resultados." },
       "integrations": { "title": "Integrações", "description": "Conecte o Recall Touch ao provedor (Twilio), calendário e CRM. Webhooks e API nos planos Scale e Enterprise." },

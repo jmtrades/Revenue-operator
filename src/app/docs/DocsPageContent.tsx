@@ -138,12 +138,12 @@ export default function DocsPageContent() {
                 data-keywords={SECTION_KEYWORDS["call-forwarding"]}
               >
                 <h2 className="font-semibold text-xl mb-4" style={{ color: "var(--text-primary)" }}>
-                  Call Forwarding
+                  {t("sections.callForwarding.title")}
                 </h2>
                 <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                  Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7.
+                  {t("sections.callForwarding.description")}
                 </p>
-                <p className="text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>Carrier-specific steps</p>
+                <p className="text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>{t("sections.callForwarding.carrierSteps")}</p>
                 <ul className="text-sm space-y-2 mb-4 list-disc pl-5" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                   <li><strong>AT&amp;T:</strong> Dial <code className="px-1 rounded bg-black/10">*21*[your RT number]#</code> then call. To cancel: <code className="px-1 rounded bg-black/10">#21#</code></li>
                   <li><strong>Verizon:</strong> Dial <code className="px-1 rounded bg-black/10">*72</code> then your Recall Touch number. To cancel: <code className="px-1 rounded bg-black/10">*73</code></li>

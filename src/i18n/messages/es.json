@@ -5384,7 +5384,7 @@
         "step5": "Usa la pestaña Prueba en la página Agentes para hacer una llamada real y comprobar que todo funciona.",
         "cta": "Empezar gratis →"
       },
-      "callForwarding": { "title": "Desvío de llamadas", "description": "Desvía tu número de negocio al número Recall Touch o usa el número asignado como línea principal. Las llamadas entrantes las atiende tu agente 24/7." },
+      "callForwarding": { "title": "Desvío de llamadas", "description": "Desvía tu número de negocio al número Recall Touch o usa el número asignado como línea principal. Las llamadas entrantes las atiende tu agente 24/7.", "carrierSteps": "Pasos por operador" },
       "aiAgents": { "title": "Agentes IA", "description": "Configura nombre, voz, saludo y capacidades de tu agente. Enséñale tus servicios, horarios y cómo gestionar citas. Sin programación." },
       "campaigns": { "title": "Campañas", "description": "Ejecuta seguimientos salientes, recordatorios y flujos de recuperación. Crea campañas desde el panel, define audiencias y guiones y sigue los resultados." },
       "integrations": { "title": "Integraciones", "description": "Conecta Recall Touch con tu proveedor de teléfono (Twilio), calendario y CRM. Webhooks y API en planes Scale y Enterprise." },
