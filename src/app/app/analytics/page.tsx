@@ -542,12 +542,12 @@ export default function AppAnalyticsPage() {
       {!loading && (
         <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-[#4F8CFF]" />
+            <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
             <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("analytics.periodSummary.title")}</h3>
             <span className="text-xs text-[#5A5A5C] ml-auto">{summaryLabel}</span>
           </div>
           <p
-            className="text-sm text-[#8B8B8D] leading-relaxed"
+            className="text-sm text-zinc-400 leading-relaxed"
              
             dangerouslySetInnerHTML={{
               __html: generatePeriodSummary(
@@ -578,7 +578,7 @@ export default function AppAnalyticsPage() {
           <p className="text-xs text-zinc-500 mb-4">{t("analytics.emptyDescription")}</p>
           <Link
             href="/app/agents"
-            className="text-[#4F8CFF] hover:underline text-sm mt-2 inline-block"
+            className="text-[var(--accent-primary)] hover:underline text-sm mt-2 inline-block"
           >
             {t("analytics.emptyAction")} →
           </Link>
