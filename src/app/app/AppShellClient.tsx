@@ -30,7 +30,7 @@ import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
-import { ErrorBoundary, type ErrorBoundaryMessages } from "@/components/ErrorBoundary";
+import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
 import { initErrorReporting } from "@/lib/error-reporting";
 import { getClientOrNull } from "@/lib/supabase/client";
 import {
@@ -65,18 +65,6 @@ export default function AppShellClient({
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations();
-  const tErrors = useTranslations("errors");
-  const errorBoundaryMessages: ErrorBoundaryMessages = useMemo(
-    () => ({
-      getMessage: (category) => ({
-        title: tErrors(`${category}.title`),
-        body: tErrors(`${category}.body`),
-      }),
-      tryAgain: tErrors("retry"),
-      report: tErrors("report"),
-    }),
-    [tErrors]
-  );
   const sidebarGroups = useMemo(
     () => [
       {
@@ -525,9 +513,9 @@ export default function AppShellClient({
                 </div>
               )}
               <div className="flex-1 min-h-0">
-                <ErrorBoundary messages={errorBoundaryMessages}>
+                <TranslatedErrorBoundary>
                   <PageTransition>{children}</PageTransition>
-                </ErrorBoundary>
+                </TranslatedErrorBoundary>
               </div>
             </main>
           </div>
