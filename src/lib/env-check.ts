@@ -16,8 +16,8 @@ export function validateEnv(): void {
     console.error(
       `\n❌ Missing required environment variables:\n${missing.map((k) => `   - ${k}`).join("\n")}\n`,
     );
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(`Missing required env vars: ${missing.join(", ")}`);
-    }
+    // Warn only — do NOT throw. Throwing here crashes `next build` during
+    // page-data collection when runtime-only env vars are unavailable.
+    // The real runtime check lives in instrumentation.ts → @/lib/env/validate.
   }
 }

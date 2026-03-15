@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { isRTL } from "@/lib/rtl";
-import { validateEnv } from "@/lib/env-check";
 import { DM_Sans, Playfair_Display, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-validateEnv();
+// NOTE: validateEnv() is called in instrumentation.ts at server startup, NOT here.
+// Calling it in layout.tsx runs during `next build` page-data collection when
+// runtime-only env vars (STRIPE_SECRET_KEY etc.) are not yet available, which
+// causes the production build to crash.
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
