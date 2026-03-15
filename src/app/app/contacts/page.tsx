@@ -584,14 +584,14 @@ function ContactDetail({ contact }: { contact: Contact }) {
             href={`tel:${encodeURIComponent(contact.phone)}`}
             className="px-2 py-1 rounded-lg border border-[var(--border-medium)] text-zinc-200 hover:border-[var(--border-medium)]"
           >
-            Call {contact.phone}
+            {t("callPhone", { phone: contact.phone })}
           </a>
           {contact.email && (
             <a
               href={`mailto:${encodeURIComponent(contact.email)}`}
               className="px-2 py-1 rounded-lg border border-[var(--border-medium)] text-zinc-200 hover:border-[var(--border-medium)]"
             >
-              Email
+              {t("email")}
             </a>
           )}
         </div>
@@ -615,7 +615,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
         </div>
       )}
       <div>
-        <h3 className="text-xs font-semibold text-zinc-300 mb-2">Call history</h3>
+        <h3 className="text-xs font-semibold text-zinc-300 mb-2">{t("callHistory")}</h3>
         {contact.history && contact.history.length > 0 ? (
           <ul className="space-y-3">
             {contact.history.map((h) => (

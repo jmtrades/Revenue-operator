@@ -711,7 +711,7 @@ export default function CallsPage() {
             <div>
               <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">{t("calls.detail.transcript")}</p>
               {drawerLoading ? (
-                <p className="text-xs text-[var(--text-tertiary)]">Loading…</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{t("common.loadingEllipsis")}</p>
               ) : selectedCall.transcript_text ? (
                 <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 max-h-48 overflow-y-auto">
                   <p className="text-[11px] text-[var(--text-tertiary)] mb-1">

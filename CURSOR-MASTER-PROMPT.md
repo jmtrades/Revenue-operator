@@ -1,6 +1,6 @@
-# FINAL CURSOR MASTER PROMPT — COMPLETE PRODUCT HARDENING
+# FINAL CURSOR MASTER PROMPT — POST-AUDIT REMAINING FIXES
 
-> This is the LAST prompt. Fix every item below. Do NOT skip anything.
+> Fix every item below. Do NOT skip anything.
 > After all changes: `npx tsc --noEmit` must produce zero errors. Then commit and push.
 
 ---
@@ -10,345 +10,316 @@
 - Next.js App Router, React 19, TypeScript, Tailwind CSS v4, next-intl ^4.8.3
 - Supabase (auth + DB + realtime), Vapi (voice AI), Stripe (billing), Twilio (phone)
 - Locale files: `src/i18n/messages/{en,es,fr,de,pt,ja}.json`
-- next-intl supports BOTH nested objects AND flat dotted keys (e.g., `settings["agent.heading"]` is accessible via `t("agent.heading")`)
+- next-intl supports BOTH nested objects AND flat dotted keys
 - CSS variables: `var(--bg-card)`, `var(--border-default)`, `var(--text-primary)`, `var(--accent-primary)`
 - Brand names (Recall Touch, Salesforce, HubSpot) are NEVER translated
 
 ---
 
-## PART 1 — FIX CALL DIRECTION PILLS CLIPPING (CRITICAL UI BUG)
+## PART 1 — FIX CALL DIRECTION PILLS CLIPPING (CRITICAL — STILL BROKEN ON LIVE SITE)
 
 **File:** `src/app/app/agents/components/IdentityStepContent.tsx`
-**Line:** 338
+**Line:** ~338
 
-**Problem:** The "Inbound", "Outbound", "Both" call direction selector buttons show as "In bo un d", "Ou tb ou nd", "Bo th" because text wraps inside the flex-1 buttons.
+**Problem:** The "Entrante", "Saliente", "Ambos" (Spanish) / "Inbound", "Outbound", "Both" (English) call direction pills STILL show as "En tra nt e", "Sa lie nt e", "A m bo s" — each letter on its own line. The `whitespace-nowrap` that was added is NOT enough because `flex-1` (which is `flex: 1 1 0%`) allows the flex items to shrink below their content width.
 
-**Fix:** Add `whitespace-nowrap` to the button className:
+**Fix:** Replace `flex-1` with a flex config that prevents shrinking below content width:
 
 ```tsx
 // Line 338 — BEFORE:
-className={`flex-1 rounded-xl border px-3 py-2 text-[11px] font-medium transition ${
-
-// AFTER:
 className={`flex-1 rounded-xl border px-3 py-2 text-[11px] font-medium whitespace-nowrap transition ${
+
+// AFTER — remove flex-1, add flex-1 with min-w-fit:
+className={`flex-1 min-w-fit rounded-xl border px-3 py-2 text-[11px] font-medium whitespace-nowrap transition ${
 ```
 
-Also increase the minimum width or change `text-[11px]` to `text-xs` if the pills still clip after adding `whitespace-nowrap`. Test visually — the three pills must show "Inbound", "Outbound", "Both" on a single line each without any text wrapping.
-
----
-
-## PART 2 — ADD MISSING `agents.voiceTest` TRANSLATION KEYS
-
-**File affected:** `src/app/app/agents/[id]/voice-test/page.tsx`
-**Problem:** 6 translation keys used in code don't exist in any locale file. Users see raw keys.
-
-Add to `agents` namespace in ALL 6 locale files. Since the `agents` namespace already uses flat dotted keys in some locales, you can add these EITHER as nested objects OR as flat dotted keys — be consistent with what's already there.
-
-### en.json — add inside `agents` object:
-```json
-"voiceTest": {
-  "defaultPreviewText": "Hi, thanks for calling! How can I help you today?",
-  "errors": {
-    "applyFailed": "Failed to apply voice settings. Please try again.",
-    "previewFailed": "Failed to preview voice. Please try again."
-  },
-  "scriptPlaceholder": "Enter text to preview with this voice…",
-  "toast": {
-    "applied": "Voice settings applied",
-    "played": "Voice preview played"
-  }
-}
-```
-
-### es.json:
-```json
-"voiceTest": {
-  "defaultPreviewText": "Hola, gracias por llamar. ¿En qué puedo ayudarte hoy?",
-  "errors": {
-    "applyFailed": "Error al aplicar la configuración de voz. Inténtalo de nuevo.",
-    "previewFailed": "Error al previsualizar la voz. Inténtalo de nuevo."
-  },
-  "scriptPlaceholder": "Escribe texto para previsualizar con esta voz…",
-  "toast": {
-    "applied": "Configuración de voz aplicada",
-    "played": "Vista previa de voz reproducida"
-  }
-}
-```
-
-### fr.json:
-```json
-"voiceTest": {
-  "defaultPreviewText": "Bonjour, merci d'avoir appelé ! Comment puis-je vous aider ?",
-  "errors": {
-    "applyFailed": "Échec de l'application des paramètres vocaux. Veuillez réessayer.",
-    "previewFailed": "Échec de l'aperçu vocal. Veuillez réessayer."
-  },
-  "scriptPlaceholder": "Saisissez du texte pour prévisualiser avec cette voix…",
-  "toast": {
-    "applied": "Paramètres vocaux appliqués",
-    "played": "Aperçu vocal lu"
-  }
-}
-```
-
-### de.json:
-```json
-"voiceTest": {
-  "defaultPreviewText": "Hallo, danke für Ihren Anruf! Wie kann ich Ihnen helfen?",
-  "errors": {
-    "applyFailed": "Spracheinstellungen konnten nicht übernommen werden. Bitte erneut versuchen.",
-    "previewFailed": "Sprachvorschau fehlgeschlagen. Bitte erneut versuchen."
-  },
-  "scriptPlaceholder": "Text eingeben, um mit dieser Stimme vorzuhören…",
-  "toast": {
-    "applied": "Spracheinstellungen übernommen",
-    "played": "Sprachvorschau abgespielt"
-  }
-}
-```
-
-### pt.json:
-```json
-"voiceTest": {
-  "defaultPreviewText": "Olá, obrigado por ligar! Como posso ajudar?",
-  "errors": {
-    "applyFailed": "Falha ao aplicar configurações de voz. Tente novamente.",
-    "previewFailed": "Falha na pré-visualização da voz. Tente novamente."
-  },
-  "scriptPlaceholder": "Digite texto para pré-visualizar com esta voz…",
-  "toast": {
-    "applied": "Configurações de voz aplicadas",
-    "played": "Pré-visualização de voz reproduzida"
-  }
-}
-```
-
-### ja.json:
-```json
-"voiceTest": {
-  "defaultPreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
-  "errors": {
-    "applyFailed": "音声設定の適用に失敗しました。もう一度お試しください。",
-    "previewFailed": "音声プレビューに失敗しました。もう一度お試しください。"
-  },
-  "scriptPlaceholder": "この音声でプレビューするテキストを入力…",
-  "toast": {
-    "applied": "音声設定が適用されました",
-    "played": "音声プレビューが再生されました"
-  }
-}
-```
-
----
-
-## PART 3 — FIX `common.error.generic` (MISSING KEY)
-
-**Problem:** `common.error` is a STRING `"Error"` in all locale files. But `src/app/app/call-intelligence/page.tsx` and `src/components/WorkspaceVoiceButton.tsx` call `t("error.generic")` which tries to access `common.error.generic` — this fails because `common.error` is not an object.
-
-**Fix Option A (recommended — least disruptive):** Add a new key `common.errorGeneric` and update the 2 files to use it:
-
-In ALL 6 locale files, add to `common`:
-```json
-"errorGeneric": "Something went wrong. Please try again."
-```
-
-Then update:
-- `src/app/app/call-intelligence/page.tsx`: Change `t("error.generic")` to `tCommon("errorGeneric")` or however the common namespace is accessed
-- `src/components/WorkspaceVoiceButton.tsx`: Same change
-
-**Translations:**
-- es: `"errorGeneric": "Algo salió mal. Inténtalo de nuevo."`
-- fr: `"errorGeneric": "Une erreur est survenue. Veuillez réessayer."`
-- de: `"errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen."`
-- pt: `"errorGeneric": "Algo deu errado. Tente novamente."`
-- ja: `"errorGeneric": "エラーが発生しました。もう一度お試しください。"`
-
----
-
-## PART 4 — ADD `contacts.form.addTag` (MISSING KEY)
-
-**File affected:** `src/app/app/contacts/page.tsx`
-
-Add to `contacts.form` in ALL 6 locale files:
-
-```json
-"addTag": "+ Add tag"
-```
-
-Translations:
-- es: `"addTag": "+ Agregar etiqueta"`
-- fr: `"addTag": "+ Ajouter un tag"`
-- de: `"addTag": "+ Tag hinzufügen"`
-- pt: `"addTag": "+ Adicionar tag"`
-- ja: `"addTag": "+ タグを追加"`
-
----
-
-## PART 5 — ENSURE ALL JSON.parse CALLS HAVE TRY-CATCH
-
-Check ALL files that use `JSON.parse` on localStorage data. Most were already wrapped by the previous prompt, but verify these specific ones that the scan found still unwrapped:
-
-**`src/app/app/contacts/page.tsx` line 49**: If this `JSON.parse` is NOT inside a try-catch, wrap it:
+**Alternative if `min-w-fit` doesn't work in Tailwind v4:** Replace `flex-1` entirely:
 ```tsx
-let parsed: Contact[] = [];
-try {
-  if (raw) parsed = JSON.parse(raw) as Contact[];
-} catch {
-  try { localStorage.removeItem(SNAPSHOT_KEY); } catch { /* ignore */ }
-}
+className={`shrink-0 grow rounded-xl border px-3 py-2 text-[11px] font-medium whitespace-nowrap text-center transition ${
 ```
 
-Run a grep across all `.tsx` files in `src/app/app/` for `JSON.parse` and confirm every instance is inside a try-catch block. If any are not, wrap them using the pattern above.
+**Test visually:** Switch locale to Spanish. Go to Agents → click an agent → verify "Entrante", "Saliente", "Ambos" show on single lines without ANY text wrapping. Also test English "Inbound", "Outbound", "Both".
 
 ---
 
-## PART 6 — VERIFY ALL FUNCTIONALITY FIXES ARE WORKING
+## PART 2 — REMOVE DUPLICATE voiceTest TRANSLATION KEYS
 
-The previous prompt instructed several functionality improvements. Verify each exists and works:
+**Problem:** ALL 6 locale files contain DUPLICATE voiceTest keys:
+1. A **nested** `"voiceTest"` key inside the `"agents"` object (dead code — NOT read by any component)
+2. A **flat dotted** `"agents.voiceTest"` key at root level (this is what the code actually uses via `useTranslations("agents.voiceTest")`)
 
-### 6A. useDebounce hook
-✅ Already exists at `src/hooks/useDebounce.ts`. Verify it's imported and used in:
-- `src/app/app/calls/page.tsx` ✅
-- `src/app/app/contacts/page.tsx` — CHECK and add if missing
-- `src/app/app/leads/page.tsx` — CHECK and add if missing
-- `src/app/app/inbox/page.tsx` — CHECK and add if missing
+**Fix:** In ALL 6 locale files (en.json, es.json, fr.json, de.json, pt.json, ja.json):
+- DELETE the nested `"voiceTest": { ... }` block that sits INSIDE the `"agents"` object
+- KEEP the flat dotted `"agents.voiceTest": { ... }` key at the root level (this is the one the code reads)
 
-### 6B. useUnsavedChanges hook
-✅ Already exists at `src/hooks/useUnsavedChanges.ts`. Verify it's imported and used in settings pages:
-- `src/app/app/settings/agent/page.tsx`
-- `src/app/app/settings/business/page.tsx`
-- `src/app/app/settings/notifications/page.tsx`
-- `src/app/app/settings/compliance/page.tsx`
+To find the dead code: search for `"voiceTest"` inside the `"agents": { ... }` object. It will be around line 1519 in en.json and similar lines in other locales. Delete that entire nested block.
 
-### 6C. safe-storage utility
-✅ Already exists at `src/lib/client/safe-storage.ts`. Verify ALL pages that persist to localStorage use `safeSetItem`/`safeGetItem` instead of raw `localStorage.*` calls.
-
-### 6D. env-check
-✅ Already exists at `src/lib/env-check.ts`. Verify it's called at startup.
-
-### 6E. ConfirmDialog on destructive actions
-Currently used in 8 places. Verify these specific destructive actions have ConfirmDialog:
-- Agent deletion ✅
-- Campaign deletion — CHECK
-- Knowledge entry deletion — CHECK
-- Lead deletion — CHECK
-- Phone number release — CHECK
-
-If any of these are missing a ConfirmDialog, add one.
+**Also for fr.json:** Verify it has the nested duplicate — if it only has the flat dotted version, no deletion needed for French.
 
 ---
 
-## PART 7 — ADD useEffect CLEANUP TO REMAINING FETCH CALLS
+## PART 3 — TRANSLATE 18+ HARDCODED STRINGS IN VOICE-TEST PAGE
 
-Search all files in `src/app/app/` for this pattern:
+**File:** `src/app/app/agents/[id]/voice-test/page.tsx`
+
+This page has ~18 hardcoded English strings. The page uses `useTranslations("agents.voiceTest")`, so add all keys under the flat dotted `"agents.voiceTest"` key in ALL 6 locale files.
+
+### Keys to add to `"agents.voiceTest"` in en.json:
+```json
+"noAgent": "No agent selected.",
+"backToAgents": "Back to Agents",
+"pageTitle": "Voice preview & test",
+"scriptSection": "Test with your script",
+"scriptHelp": "Select a voice below and click Play to hear this script. Or use \"Generate Preview\" after picking a voice.",
+"abComparison": "A/B comparison",
+"voiceA": "Voice A",
+"voiceB": "Voice B",
+"playA": "Play A",
+"playB": "Play B",
+"pickA": "Pick A",
+"pickB": "Pick B",
+"allVoices": "All voices",
+"selected": "Selected",
+"select": "Select",
+"applyToAgent": "Apply to agent",
+"selectVoicePrompt": "Select a voice above to apply."
 ```
-useEffect(() => {
-  fetch(
+
+### es.json translations:
+```json
+"noAgent": "Ningún agente seleccionado.",
+"backToAgents": "Volver a Agentes",
+"pageTitle": "Vista previa y prueba de voz",
+"scriptSection": "Prueba con tu guión",
+"scriptHelp": "Selecciona una voz abajo y haz clic en Reproducir para escuchar este guión.",
+"abComparison": "Comparación A/B",
+"voiceA": "Voz A",
+"voiceB": "Voz B",
+"playA": "Reproducir A",
+"playB": "Reproducir B",
+"pickA": "Elegir A",
+"pickB": "Elegir B",
+"allVoices": "Todas las voces",
+"selected": "Seleccionada",
+"select": "Seleccionar",
+"applyToAgent": "Aplicar al agente",
+"selectVoicePrompt": "Selecciona una voz arriba para aplicar."
 ```
 
-For each match, check if there's a `let cancelled = false` with `return () => { cancelled = true }` cleanup. If not, add it:
+### fr.json translations:
+```json
+"noAgent": "Aucun agent sélectionné.",
+"backToAgents": "Retour aux Agents",
+"pageTitle": "Aperçu et test vocal",
+"scriptSection": "Testez avec votre script",
+"scriptHelp": "Sélectionnez une voix ci-dessous et cliquez sur Écouter pour entendre ce script.",
+"abComparison": "Comparaison A/B",
+"voiceA": "Voix A",
+"voiceB": "Voix B",
+"playA": "Écouter A",
+"playB": "Écouter B",
+"pickA": "Choisir A",
+"pickB": "Choisir B",
+"allVoices": "Toutes les voix",
+"selected": "Sélectionnée",
+"select": "Sélectionner",
+"applyToAgent": "Appliquer à l'agent",
+"selectVoicePrompt": "Sélectionnez une voix ci-dessus pour l'appliquer."
+```
 
+### de.json translations:
+```json
+"noAgent": "Kein Agent ausgewählt.",
+"backToAgents": "Zurück zu Agenten",
+"pageTitle": "Sprachvorschau & Test",
+"scriptSection": "Mit Ihrem Skript testen",
+"scriptHelp": "Wählen Sie unten eine Stimme aus und klicken Sie auf Abspielen, um dieses Skript zu hören.",
+"abComparison": "A/B-Vergleich",
+"voiceA": "Stimme A",
+"voiceB": "Stimme B",
+"playA": "A abspielen",
+"playB": "B abspielen",
+"pickA": "A wählen",
+"pickB": "B wählen",
+"allVoices": "Alle Stimmen",
+"selected": "Ausgewählt",
+"select": "Auswählen",
+"applyToAgent": "Auf Agent anwenden",
+"selectVoicePrompt": "Wählen Sie oben eine Stimme zum Anwenden aus."
+```
+
+### pt.json translations:
+```json
+"noAgent": "Nenhum agente selecionado.",
+"backToAgents": "Voltar para Agentes",
+"pageTitle": "Pré-visualização e teste de voz",
+"scriptSection": "Teste com seu script",
+"scriptHelp": "Selecione uma voz abaixo e clique em Reproduzir para ouvir este script.",
+"abComparison": "Comparação A/B",
+"voiceA": "Voz A",
+"voiceB": "Voz B",
+"playA": "Reproduzir A",
+"playB": "Reproduzir B",
+"pickA": "Escolher A",
+"pickB": "Escolher B",
+"allVoices": "Todas as vozes",
+"selected": "Selecionada",
+"select": "Selecionar",
+"applyToAgent": "Aplicar ao agente",
+"selectVoicePrompt": "Selecione uma voz acima para aplicar."
+```
+
+### ja.json translations:
+```json
+"noAgent": "エージェントが選択されていません。",
+"backToAgents": "エージェントに戻る",
+"pageTitle": "音声プレビュー＆テスト",
+"scriptSection": "スクリプトでテスト",
+"scriptHelp": "下の音声を選択し、再生をクリックしてこのスクリプトを聞いてください。",
+"abComparison": "A/B比較",
+"voiceA": "音声A",
+"voiceB": "音声B",
+"playA": "Aを再生",
+"playB": "Bを再生",
+"pickA": "Aを選択",
+"pickB": "Bを選択",
+"allVoices": "すべての音声",
+"selected": "選択済み",
+"select": "選択",
+"applyToAgent": "エージェントに適用",
+"selectVoicePrompt": "上から音声を選択して適用してください。"
+```
+
+**Then update `voice-test/page.tsx`:** Replace every hardcoded string with the corresponding `t("key")` call.
+
+---
+
+## PART 4 — TRANSLATE HARDCODED STRINGS IN CONTACTS PAGE
+
+**File:** `src/app/app/contacts/page.tsx`
+
+These strings are hardcoded in English:
+- Line 587: `>Call {contact.phone}</a>` → use `t("callPhone", { phone: contact.phone })`
+- Line 594: `>Email</a>` → use `t("email")`
+- Line 613: `<h3>Notes</h3>` → use `t("notes")`
+- Line 618: `<h3>Call history</h3>` → use `t("callHistory")`
+
+Add to `contacts` namespace in ALL 6 locale files:
+```json
+"callPhone": "Call {phone}",
+"email": "Email",
+"notes": "Notes",
+"callHistory": "Call history"
+```
+
+**es:** `"callPhone": "Llamar a {phone}", "email": "Correo electrónico", "notes": "Notas", "callHistory": "Historial de llamadas"`
+**fr:** `"callPhone": "Appeler {phone}", "email": "E-mail", "notes": "Notes", "callHistory": "Historique des appels"`
+**de:** `"callPhone": "{phone} anrufen", "email": "E-Mail", "notes": "Notizen", "callHistory": "Anrufverlauf"`
+**pt:** `"callPhone": "Ligar para {phone}", "email": "E-mail", "notes": "Notas", "callHistory": "Histórico de chamadas"`
+**ja:** `"callPhone": "{phone}に電話", "email": "メール", "notes": "メモ", "callHistory": "通話履歴"`
+
+---
+
+## PART 5 — TRANSLATE HARDCODED "Loading…" STRINGS
+
+Multiple pages have hardcoded "Loading…":
+
+1. `src/app/app/calls/page.tsx` line 714: `<p>Loading…</p>`
+2. `src/app/app/messages/page.tsx` line 226: `<div>Loading…</div>`
+3. `src/app/app/HydrationGate.tsx` line 26: `<p>Loading…</p>`
+
+**Fix:** Replace with the common namespace loading key. The `common` namespace already has `"loadingEllipsis": "Loading…"`.
+
+For HydrationGate (which renders before translations load), you can keep the hardcoded "Loading…" since it's a pre-hydration fallback — OR use a simple CSS spinner instead of text.
+
+For calls/page.tsx and messages/page.tsx, replace with `tCommon("loadingEllipsis")` or the page's own translation function accessing common.
+
+---
+
+## PART 6 — TRANSLATE REMAINING HARDCODED STRINGS
+
+### 6A. Agents analytics page
+**File:** `src/app/app/agents/[id]/analytics/page.tsx` line 182
+- `>Call volume by day</p>` → translate using appropriate key
+
+### 6B. Team page
+**File:** `src/app/app/team/page.tsx` line 460
+- `<label>Email</label>` → translate
+
+### 6C. Call Intelligence page
+**File:** `src/app/app/call-intelligence/page.tsx` line 891
+- `<option>Call type (optional)</option>` → translate
+
+### 6D. Webhooks page
+**File:** `src/app/app/developer/webhooks/page.tsx` line 226
+- `"Secret set"` / `"No secret"` → translate
+
+For each: add the keys to the appropriate namespace in ALL 6 locale files with proper translations, then update the component to use `t("key")`.
+
+---
+
+## PART 7 — ADD CONFIRM DIALOG TO KNOWLEDGE ENTRY DELETION
+
+**File:** `src/app/app/settings/agent/page.tsx` line ~302
+
+**Problem:** Knowledge entries can be removed with a single click (`onClick={() => removeKnowledge(idx)}`) with NO confirmation dialog. Every other destructive action (agent deletion, phone release, account deletion, webhook deletion) has a ConfirmDialog.
+
+**Fix:** Add a ConfirmDialog:
 ```tsx
-useEffect(() => {
-  let cancelled = false;
-  fetch(...)
-    .then((res) => res.json())
-    .then((data) => {
-      if (cancelled) return;
-      // existing state update logic
-    })
-    .catch((err) => {
-      if (cancelled) return;
-      // existing error handling
-    });
-  return () => { cancelled = true; };
-}, [deps]);
+const [pendingKnowledgeDelete, setPendingKnowledgeDelete] = useState<number | null>(null);
+
+// Replace direct removeKnowledge(idx) with:
+onClick={() => setPendingKnowledgeDelete(idx)}
+
+// Add ConfirmDialog:
+<ConfirmDialog
+  open={pendingKnowledgeDelete !== null}
+  onClose={() => setPendingKnowledgeDelete(null)}
+  onConfirm={() => {
+    if (pendingKnowledgeDelete !== null) removeKnowledge(pendingKnowledgeDelete);
+    setPendingKnowledgeDelete(null);
+  }}
+  title={t("knowledge.deleteConfirmTitle")}
+  message={t("knowledge.deleteConfirmMessage")}
+  variant="danger"
+/>
 ```
+
+Add translation keys for the confirm dialog to all 6 locale files under the `settings` namespace (or wherever the page uses translations from):
+- en: `"deleteConfirmTitle": "Remove knowledge entry?", "deleteConfirmMessage": "This entry will be permanently removed from the agent's knowledge base."`
+- es: `"deleteConfirmTitle": "¿Eliminar entrada de conocimiento?", "deleteConfirmMessage": "Esta entrada se eliminará permanentemente de la base de conocimiento del agente."`
+- fr: `"deleteConfirmTitle": "Supprimer l'entrée de connaissances ?", "deleteConfirmMessage": "Cette entrée sera définitivement supprimée de la base de connaissances de l'agent."`
+- de: `"deleteConfirmTitle": "Wissenseintrag entfernen?", "deleteConfirmMessage": "Dieser Eintrag wird dauerhaft aus der Wissensbasis des Agenten entfernt."`
+- pt: `"deleteConfirmTitle": "Remover entrada de conhecimento?", "deleteConfirmMessage": "Esta entrada será permanentemente removida da base de conhecimento do agente."`
+- ja: `"deleteConfirmTitle": "ナレッジエントリを削除しますか？", "deleteConfirmMessage": "このエントリはエージェントのナレッジベースから完全に削除されます。"`
 
 ---
 
-## PART 8 — VERIFY AUTH ON SENSITIVE API ROUTES
-
-Check these API routes and add `requireSession` + workspace ownership validation if missing:
-
-```
-src/app/api/leads/[id]/messages/route.ts
-src/app/api/leads/[id]/closing-call/route.ts
-src/app/api/leads/[id]/forensics/route.ts
-src/app/api/leads/[id]/next-action/route.ts
-src/app/api/leads/[id]/inaction-reason/route.ts
-src/app/api/leads/[id]/closer-packet/route.ts
-src/app/api/leads/[id]/follow-up/route.ts
-src/app/api/calls/[id]/coaching/route.ts
-```
-
-For each: if there is NO `requireSession` or `getSession` call at the top, add one:
-
-```tsx
-import { requireSession } from "@/lib/auth/session";
-
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requireSession(req);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  // ... existing logic
-}
-```
-
-If `requireSession` doesn't exist, check what auth function the codebase uses (it may be `getSession` or `requireWorkspaceAccess`) and use that instead.
-
----
-
-## PART 9 — VISUAL POLISH: LOADING SKELETONS FOR DRILL-DOWN PAGES
-
-Add loading skeletons to these pages that currently show blank screens while loading:
-
-### 9A. Call detail page (`src/app/app/calls/[id]/page.tsx`)
-When `loading === true`, render:
-```tsx
-<div className="max-w-4xl mx-auto p-6 space-y-6 animate-pulse">
-  <div className="h-4 w-32 bg-zinc-800 rounded" />
-  <div className="h-8 w-64 bg-zinc-800 rounded" />
-  <div className="grid grid-cols-3 gap-4">
-    {[1,2,3].map(i => <div key={i} className="h-20 bg-zinc-800 rounded-xl" />)}
-  </div>
-  <div className="h-40 bg-zinc-800 rounded-xl" />
-</div>
-```
-
-### 9B. Settings agent page (`src/app/app/settings/agent/page.tsx`)
-When loading, show a form-shaped skeleton instead of blank space.
-
----
-
-## PART 10 — FINAL VALIDATION
+## PART 8 — FINAL VALIDATION
 
 After all changes:
 
 1. **`npx tsc --noEmit`** — must produce ZERO errors
-2. **Visual check**: Open agents → create new agent → the "Inbound / Outbound / Both" pills must show full text without wrapping
-3. **Translation check**: Open voice-test page — no raw translation keys visible
-4. **Auth check**: Try accessing `/api/leads/[id]/messages` without auth — should return 401
-5. **Console check**: No React warnings about state updates on unmounted components
+2. **Visual check**: Switch to Spanish locale → Agents → click agent → verify "Entrante / Saliente / Ambos" pills show full text on single lines
+3. **Voice test page**: Navigate to agents/[id]/voice-test → no raw translation keys visible
+4. **Contacts page**: Open a contact → "Notes", "Call history", "Email" should be translated
+5. **Knowledge deletion**: Try removing a knowledge entry → confirm dialog must appear
+6. **Console check**: No React warnings, no missing translation warnings
 
 ---
 
-## PART 11 — GIT COMMIT & PUSH
+## PART 9 — GIT COMMIT & PUSH
 
 ```bash
 git add -A
-git commit -m "fix: final hardening — UI clipping, missing i18n keys, auth, cleanup
+git commit -m "fix: post-audit hardening — direction pills, voice-test i18n, confirm dialogs
 
-- Fix call direction pill text clipping (add whitespace-nowrap)
-- Add agents.voiceTest translations to all 6 locales
-- Fix common.error.generic missing key issue
-- Add contacts.form.addTag to all 6 locales
-- Verify JSON.parse try-catch wrapping on all pages
-- Verify useDebounce applied to all search inputs
-- Verify ConfirmDialog on all destructive actions
-- Add useEffect cleanup to remaining fetch calls
-- Add auth to unprotected lead/call API routes
-- Add loading skeletons to drill-down pages"
+- Fix direction pills clipping by adding min-w-fit (flex-1 alone caused zero-width shrink)
+- Remove duplicate voiceTest translation keys from all 6 locales
+- Translate 18 hardcoded strings in voice-test page
+- Translate hardcoded strings in contacts, calls, team, call-intelligence pages
+- Add ConfirmDialog to knowledge entry deletion
+- Replace hardcoded 'Loading…' with translation keys"
 git push origin HEAD
 ```
 
@@ -358,12 +329,10 @@ git push origin HEAD
 
 | # | Issue | Severity | Files |
 |---|-------|----------|-------|
-| 1 | Direction pills clipping | 🔴 CRITICAL (visible UI bug) | IdentityStepContent.tsx |
-| 2 | agents.voiceTest missing (6 keys) | 🔴 CRITICAL (raw keys visible) | voice-test/page.tsx + 6 locale files |
-| 3 | common.error.generic missing | 🟡 HIGH (error handling broken) | call-intelligence + WorkspaceVoiceButton + 6 locales |
-| 4 | contacts.form.addTag missing | 🟡 HIGH (raw key visible) | contacts/page.tsx + 6 locale files |
-| 5 | JSON.parse safety verification | 🟡 HIGH | ~12 pages |
-| 6 | Functionality fix verification | 🟢 MEDIUM | Various |
-| 7 | useEffect cleanup | 🟢 MEDIUM | ~16 pages |
-| 8 | API route auth | 🔴 CRITICAL (security) | 8 API routes |
-| 9 | Loading skeletons | 🟢 MEDIUM | 2 pages |
+| 1 | Direction pills STILL clipping | 🔴 CRITICAL | IdentityStepContent.tsx |
+| 2 | Duplicate voiceTest keys (dead code) | 🟡 HIGH (confusing) | 6 locale files |
+| 3 | 18 hardcoded strings in voice-test | 🔴 CRITICAL | voice-test/page.tsx + 6 locales |
+| 4 | 4 hardcoded strings in contacts | 🟡 HIGH | contacts/page.tsx + 6 locales |
+| 5 | Hardcoded "Loading…" in 3 files | 🟢 MEDIUM | calls, messages, HydrationGate |
+| 6 | 4 more hardcoded strings scattered | 🟡 HIGH | analytics, team, call-intel, webhooks |
+| 7 | Knowledge deletion has no confirm | 🟡 HIGH | settings/agent/page.tsx |

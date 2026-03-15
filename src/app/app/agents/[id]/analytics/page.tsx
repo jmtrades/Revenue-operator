@@ -179,7 +179,7 @@ export default function AgentAnalyticsPage({
 
       {/* Daily volume */}
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5 mb-6">
-        <p className="text-sm font-medium text-white mb-4">Call volume by day</p>
+        <p className="text-sm font-medium text-white mb-4">{t("callVolumeByDay")}</p>
         <div className="h-52">
           {volumeChartData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">

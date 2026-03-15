@@ -1437,6 +1437,7 @@
     "pageHeading": "AIエージェント",
     "pageSubtitle": "日中・時間外・緊急・フォローアップ用の各種エージェント。",
     "createAgent": "+ エージェントを作成",
+    "callVolumeByDay": "日別通話数",
     "title": "エージェント",
     "new": "新しいエージェント",
     "empty": {
@@ -1548,18 +1549,6 @@
     "nav": {
       "backToKnowledge": "ナレッジに戻る",
       "continueToTest": "テストへ進む"
-    },
-    "voiceTest": {
-      "defaultPreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
-      "errors": {
-        "applyFailed": "音声設定の適用に失敗しました。もう一度お試しください。",
-        "previewFailed": "音声プレビューに失敗しました。もう一度お試しください。"
-      },
-      "scriptPlaceholder": "この音声でプレビューするテキストを入力…",
-      "toast": {
-        "applied": "音声設定が適用されました",
-        "played": "音声プレビューが再生されました"
-      }
     },
     "testStep": {
       "title": "AIと話す",
@@ -3117,6 +3106,8 @@
     "agent.startLiveTest": "ライブテストを開始",
     "agent.endLiveTest": "ライブテストを終了",
     "agent.removeAria": "削除",
+    "agent.knowledgeDeleteConfirmTitle": "ナレッジエントリを削除しますか？",
+    "agent.knowledgeDeleteConfirmMessage": "このエントリはエージェントのナレッジベースから完全に削除されます。",
     "agent.defaultAgentName": "受付",
     "agent.defaultGreeting": "{business} にお電話ありがとうございます。どのようなご用件でしょうか？",
     "agent.voicePreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
@@ -4394,15 +4385,32 @@
     "conversationAria": "会話"
   },
   "agents.voiceTest": {
-    "defaultPreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか。",
-    "scriptPlaceholder": "選択した声で聞くテキストを入力…",
+    "defaultPreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
+    "scriptPlaceholder": "この音声でプレビューするテキストを入力…",
+    "noAgent": "エージェントが選択されていません。",
+    "backToAgents": "エージェントに戻る",
+    "pageTitle": "音声プレビュー＆テスト",
+    "scriptSection": "スクリプトでテスト",
+    "scriptHelp": "下の音声を選択し、再生をクリックしてこのスクリプトを聞いてください。",
+    "abComparison": "A/B比較",
+    "voiceA": "音声A",
+    "voiceB": "音声B",
+    "playA": "Aを再生",
+    "playB": "Bを再生",
+    "pickA": "Aを選択",
+    "pickB": "Bを選択",
+    "allVoices": "すべての音声",
+    "selected": "選択済み",
+    "select": "選択",
+    "applyToAgent": "エージェントに適用",
+    "selectVoicePrompt": "上から音声を選択して適用してください。",
     "toast": {
-      "played": "{name} を再生しました",
-      "applied": "ボイスをエージェントに適用しました。"
+      "played": "音声プレビューが再生されました",
+      "applied": "音声設定が適用されました"
     },
     "errors": {
-      "previewFailed": "プレビューに失敗しました。ElevenLabs の設定を確認してください。",
-      "applyFailed": "ボイスをエージェントに適用できませんでした。もう一度お試しください。"
+      "previewFailed": "音声プレビューに失敗しました。もう一度お試しください。",
+      "applyFailed": "音声設定の適用に失敗しました。もう一度お試しください。"
     }
   },
   "errors": {
@@ -4742,6 +4750,7 @@
     "loading": "読み込み中…",
     "membersCount": "{count, plural, one {# メンバー} other {# メンバー}}",
     "inviteMember": "メンバーを招待",
+    "emailLabel": "メール",
     "removeMemberTitle": "メンバーを削除しますか？",
     "removeMemberMessage": "{name} はこのワークスペースにアクセスできなくなります。元に戻せません。",
     "removeConfirmLabel": "削除",
@@ -4960,6 +4969,8 @@
     "webhooks": {
       "title": "Webhooks",
       "subtitle": "通話、リード、予約などの署名付きペイロードで HTTP エンドポイントにイベントを送信します。",
+      "secretSet": "シークレット設定済み",
+      "noSecret": "シークレットなし",
       "deleteTitle": "Webhookエンドポイントを削除しますか？",
       "deleteMessage": "{url} を削除しますか？配信履歴は削除されます。",
       "deliveryLog": "配信ログ",
@@ -5039,6 +5050,10 @@
     "pageTitle": "連絡先",
     "title": "連絡先",
     "subtitle": "あなたのAIが話したすべての相手を、1か所で管理します。",
+    "callPhone": "{phone}に電話",
+    "email": "メール",
+    "notes": "メモ",
+    "callHistory": "通話履歴",
     "savedCount": "{count, plural, one {# 件保存済み} other {# 件保存済み}}",
     "addContactCta": "連絡先を追加",
     "searchPlaceholder": "名前・電話番号・メールで検索…",

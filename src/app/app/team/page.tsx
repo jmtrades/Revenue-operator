@@ -457,7 +457,7 @@ export default function TeamPage() {
                 <p className="text-sm text-[var(--accent-red)]" role="alert">{inviteError}</p>
               )}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("emailLabel")}</label>
                 <input
                   type="email"
                   value={inviteEmail}

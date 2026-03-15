@@ -9,6 +9,7 @@ import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
@@ -54,6 +55,7 @@ export default function AppSettingsAgentPage() {
   const [saving, setSaving] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   const [inlineToast, setInlineToast] = useState<string | null>(null);
+  const [pendingKnowledgeDelete, setPendingKnowledgeDelete] = useState<number | null>(null);
   const [config, setConfig] = useState<AgentConfig>(
     initialConfig ?? {
       businessName: "",
@@ -299,7 +301,7 @@ export default function AppSettingsAgentPage() {
                   placeholder={tSettings("agent.answerPlaceholder")}
                   className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
-                <button type="button" onClick={() => removeKnowledge(idx)} className="shrink-0 text-zinc-500 hover:text-red-400 text-sm px-1" aria-label={tSettings("agent.removeAria")}>×</button>
+                <button type="button" onClick={() => setPendingKnowledgeDelete(idx)} className="shrink-0 text-zinc-500 hover:text-red-400 text-sm px-1" aria-label={tSettings("agent.removeAria")}>×</button>
               </div>
             ))}
           </div>
@@ -334,6 +336,19 @@ export default function AppSettingsAgentPage() {
           {inlineToast}
         </div>
       )}
+
+      <ConfirmDialog
+        open={pendingKnowledgeDelete !== null}
+        title={tSettings("agent.knowledgeDeleteConfirmTitle")}
+        message={tSettings("agent.knowledgeDeleteConfirmMessage")}
+        variant="danger"
+        confirmLabel={tSettings("agent.removeAria")}
+        onConfirm={() => {
+          if (pendingKnowledgeDelete !== null) removeKnowledge(pendingKnowledgeDelete);
+          setPendingKnowledgeDelete(null);
+        }}
+        onClose={() => setPendingKnowledgeDelete(null)}
+      />
 
       <p className="mt-6">
         <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("agent.backToSettings")}</Link>
