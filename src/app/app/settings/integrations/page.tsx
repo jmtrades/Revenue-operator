@@ -237,7 +237,7 @@ export default function AppSettingsIntegrationsPage() {
                 <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
                 <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.whatsappLabel")}</p>
               </div>
-              <p className="text-sm text-[#8B8B8D]">
+              <p className="text-sm text-zinc-400">
                 {t("comingSoon")}
               </p>
             </div>
@@ -280,7 +280,7 @@ export default function AppSettingsIntegrationsPage() {
               return (
                 <div
                   key={crm.id}
-                  className={`bg-[#111113] border border-white/[0.06] rounded-2xl p-5 flex flex-col ${
+                  className={`bg-zinc-950 border border-white/[0.06] rounded-2xl p-5 flex flex-col ${
                     crm.comingSoon ? "opacity-60" : ""
                   }`}
                 >
@@ -303,7 +303,7 @@ export default function AppSettingsIntegrationsPage() {
                     )}
                   </div>
                   <h4 className="text-sm font-medium text-[#EDEDEF]">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.title`)}</h4>
-                  <p className="text-xs text-[#5A5A5C] mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>
+                  <p className="text-xs text-zinc-500 mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>
                   {connected && status?.lastSyncAt && (
                     <p className="text-[11px] text-zinc-500 mt-2">
                       {t("hub.lastSyncLabel")} {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}

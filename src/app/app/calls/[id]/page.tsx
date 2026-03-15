@@ -432,17 +432,17 @@ export default function AppCallDetailPage() {
                   key={u.id}
                   className={cn(
                     "flex gap-3 p-3 rounded-xl mb-1",
-                    u.speaker === "agent" ? "bg-[#4F8CFF]/5" : "bg-white/[0.02]",
+                    u.speaker === "agent" ? "bg-blue-500/10" : "bg-white/[0.02]",
                   )}
                 >
                   <div className="shrink-0 mt-0.5">
                     {u.speaker === "agent" ? (
-                      <div className="w-7 h-7 rounded-full bg-[#4F8CFF]/20 flex items-center justify-center">
-                        <Bot className="w-3.5 h-3.5 text-[#4F8CFF]" />
+                      <div className="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center">
+                        <Bot className="w-3.5 h-3.5 text-blue-400" />
                       </div>
                     ) : (
                       <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center">
-                        <User className="w-3.5 h-3.5 text-[#8B8B8D]" />
+                        <User className="w-3.5 h-3.5 text-zinc-400" />
                       </div>
                     )}
                   </div>
@@ -451,13 +451,13 @@ export default function AppCallDetailPage() {
                       <span
                         className={cn(
                           "text-xs font-medium",
-                          u.speaker === "agent" ? "text-[#4F8CFF]" : "text-[#8B8B8D]",
+                          u.speaker === "agent" ? "text-blue-400" : "text-zinc-400",
                         )}
                       >
                         {formatSpeaker(u.speaker)}
                       </span>
                     </div>
-                    <p className="text-sm text-[#EDEDEF] leading-relaxed">
+                    <p className="text-sm text-zinc-100 leading-relaxed">
                       {u.text}
                     </p>
                   </div>

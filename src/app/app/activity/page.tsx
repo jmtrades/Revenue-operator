@@ -842,12 +842,12 @@ export default function AppActivityPage() {
           >
             <Link
               href={a.href}
-              className="bg-[#111113] border border-white/10 rounded-2xl p-4 cursor-pointer hover:border-white/20 hover:bg-[#1A1A1D] transition-colors duration-200 group"
+              className="bg-zinc-950 border border-white/10 rounded-2xl p-4 cursor-pointer hover:border-white/20 hover:bg-zinc-900 transition-colors duration-200 group"
             >
               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-white/10 transition-colors">
-                <a.icon className="w-5 h-5 text-[#8B8B8D] group-hover:text-[#EDEDEF] transition-colors" />
+                <a.icon className="w-5 h-5 text-[#8B8B8D] group-hover:text-zinc-100 transition-colors" />
               </div>
-              <p className="text-sm font-medium text-[#EDEDEF]">{a.label}</p>
+              <p className="text-sm font-medium text-zinc-100">{a.label}</p>
               <p className="text-xs text-[#5A5A5C] mt-0.5">{a.desc}</p>
             </Link>
           </motion.div>
@@ -1096,7 +1096,7 @@ export default function AppActivityPage() {
       {hasAnyCalls && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
           <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
-            <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
+            <h3 className="text-sm font-medium text-zinc-100 mb-4">
               {t("dashboard.callVolume7d")}
             </h3>
             <ResponsiveContainer width="100%" height={200}>
@@ -1116,7 +1116,7 @@ export default function AppActivityPage() {
               <YAxis hide />
               <Tooltip
                 contentStyle={{
-                  background: "#1A1A1D",
+                  background: "var(--bg-card)",
                   border: "1px solid rgba(255,255,255,0.06)",
                   borderRadius: 12,
                   fontSize: 13,
@@ -1134,7 +1134,7 @@ export default function AppActivityPage() {
           </div>
 
           <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative">
-            <h3 className="text-sm font-medium text-[#EDEDEF] mb-4">
+            <h3 className="text-sm font-medium text-zinc-100 mb-4">
               {t("dashboard.callOutcomes")}
             </h3>
             <ResponsiveContainer width="100%" height={200}>

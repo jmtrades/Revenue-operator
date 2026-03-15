@@ -264,8 +264,8 @@ export default function NewAgentWizardClient({
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 mb-6">
         {step === 1 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">What will this agent do?</h2>
-            <p className="text-zinc-400 text-sm mb-4">Choose the primary use.</p>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("purposeTitle")}</h2>
+            <p className="text-zinc-400 text-sm mb-4">{t("purposeHint")}</p>
             <div className="grid grid-cols-3 gap-3 mb-6">
               {(
                 [
@@ -289,7 +289,7 @@ export default function NewAgentWizardClient({
                 </button>
               ))}
             </div>
-            <p className="text-zinc-500 text-sm mb-2">Pick a template (optional)</p>
+            <p className="text-zinc-500 text-sm mb-2">{t("templateLabel")}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
               {templates.slice(0, 6).map((t) => (
                 <button
@@ -317,9 +317,9 @@ export default function NewAgentWizardClient({
 
         {step === 2 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">Personality</h2>
-            <p className="text-zinc-400 text-sm mb-4">Voice and conversation style.</p>
-            <label className="block text-sm text-zinc-400 mb-1">Voice</label>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("personalityTitle")}</h2>
+            <p className="text-zinc-400 text-sm mb-4">{t("personalityHint")}</p>
+            <label className="block text-sm text-zinc-400 mb-1">{t("voiceLabel")}</label>
             <select
               value={state.voiceId}
               onChange={(e) => setState((p) => ({ ...p, voiceId: e.target.value }))}

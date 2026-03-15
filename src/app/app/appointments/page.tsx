@@ -236,7 +236,7 @@ export default function AppointmentsPage() {
           </div>
         ) : (
           view === "calendar" && (
-            <div className="bg-[#111113] border border-white/[0.06] rounded-2xl p-6">
+            <div className="bg-zinc-950 border border-white/[0.06] rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <button
                   type="button"
@@ -248,11 +248,11 @@ export default function AppointmentsPage() {
                       ),
                     )
                   }
-                  className="p-2 rounded-lg hover:bg-white/[0.04] text-[#8B8B8D] hover:text-[#EDEDEF] transition-colors"
+                  className="p-2 rounded-lg hover:bg-white/[0.04] text-zinc-400 hover:text-zinc-100 transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
-                <h3 className="text-sm font-medium text-[#EDEDEF]">
+                <h3 className="text-sm font-medium text-zinc-100">
                   {currentMonth.toLocaleDateString(undefined, {
                     month: "long",
                     year: "numeric",
@@ -268,7 +268,7 @@ export default function AppointmentsPage() {
                       ),
                     )
                   }
-                  className="p-2 rounded-lg hover:bg-white/[0.04] text-[#8B8B8D] hover:text-[#EDEDEF] transition-colors"
+                  className="p-2 rounded-lg hover:bg-white/[0.04] text-zinc-400 hover:text-zinc-100 transition-colors"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -277,7 +277,7 @@ export default function AppointmentsPage() {
                 {(["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const).map((key) => (
                   <div
                     key={key}
-                    className="text-center text-xs text-[#5A5A5C] py-1"
+                    className="text-center text-xs text-zinc-500 py-1"
                   >
                     {t(`appointments.days.${key}`)}
                   </div>
@@ -299,14 +299,14 @@ export default function AppointmentsPage() {
                       className={[
                         "aspect-square rounded-xl flex flex-col items-center justify-center gap-1 text-sm transition-all",
                         isSelected
-                          ? "bg-[#4F8CFF]/20 border border-[#4F8CFF]/40"
+                          ? "bg-blue-500/20 border border-blue-500/40"
                           : "hover:bg-white/[0.04]",
                         !isSelected && isToday
                           ? "border border-white/[0.12]"
                           : "",
                         dayAppts.length > 0
-                          ? "text-[#EDEDEF]"
-                          : "text-[#5A5A5C]",
+                          ? "text-zinc-100"
+                          : "text-zinc-500",
                       ]
                         .filter(Boolean)
                         .join(" ")}
@@ -317,7 +317,7 @@ export default function AppointmentsPage() {
                           {dayAppts.slice(0, 3).map((_, j) => (
                             <div
                               key={j}
-                              className="w-1 h-1 rounded-full bg-[#4F8CFF]"
+                              className="w-1 h-1 rounded-full bg-blue-500"
                             />
                           ))}
                         </div>
@@ -328,7 +328,7 @@ export default function AppointmentsPage() {
               </div>
               {selectedDay && (
                 <div className="mt-4 pt-4 border-t border-white/[0.06]">
-                  <h4 className="text-sm font-medium text-[#EDEDEF] mb-3">
+                  <h4 className="text-sm font-medium text-zinc-100 mb-3">
                     {selectedDay.toLocaleDateString(undefined, {
                       weekday: "long",
                       month: "long",
@@ -336,18 +336,18 @@ export default function AppointmentsPage() {
                     })}
                   </h4>
                   {getAppointmentsForDay(selectedDay).length === 0 ? (
-                    <p className="text-sm text-[#5A5A5C]">{t("appointments.noAppointments")}</p>
+                    <p className="text-sm text-zinc-500">{t("appointments.noAppointments")}</p>
                   ) : (
                     <div className="space-y-2">
                       {getAppointmentsForDay(selectedDay).map((appt) => (
                         <div
                           key={appt.id}
-                          className="bg-[#0A0A0B] border border-white/[0.06] rounded-xl p-3"
+                          className="bg-black border border-white/[0.06] rounded-xl p-3"
                         >
-                          <p className="text-sm text-[#EDEDEF]">
+                          <p className="text-sm text-zinc-100">
                             {appt.type || appt.contactName}
                           </p>
-                          <p className="text-xs text-[#5A5A5C] mt-0.5">
+                          <p className="text-xs text-zinc-500 mt-0.5">
                             {formatDate(appt.date, t)} · {appt.time}
                           </p>
                           <p className="text-xs text-[#8B8B8D] mt-0.5">
