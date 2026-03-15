@@ -44,7 +44,7 @@ export default function OnboardRecordPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#fafaf9] p-6">
+      <main className="min-h-screen bg-stone-50 p-6">
         <div className="mx-auto max-w-[720px] pt-16">
           <p className="text-[18px]" style={{ color: "var(--text-tertiary)" }}>One moment…</p>
         </div>
@@ -53,25 +53,25 @@ export default function OnboardRecordPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] text-[#1c1917] p-6">
+    <main className="min-h-screen bg-stone-50 text-stone-900 p-6">
       <div className="mx-auto max-w-[720px] pt-16 space-y-8">
         <OnboardExecutionStateBanner />
-        <h1 className="text-[21px] font-normal text-[#1c1917]">Record #1</h1>
+        <h1 className="text-[21px] font-normal text-stone-900">Record #1</h1>
         <section>
           {orientationLines.length === 0 ? (
-            <p className="text-[18px] leading-relaxed text-[#78716c]">No entries.</p>
+            <p className="text-[18px] leading-relaxed text-stone-500">No entries.</p>
           ) : (
             <ul className="space-y-2">
               {orientationLines.map((line, i) => (
-                <li key={i} className="text-[18px] leading-relaxed text-[#44403c]">
+                <li key={i} className="text-[18px] leading-relaxed text-stone-700">
                   {line}
                 </li>
               ))}
             </ul>
           )}
         </section>
-        <footer className="border-t border-[#e7e5e4] pt-8">
-          <p className="text-[18px] leading-relaxed text-[#44403c]">
+        <footer className="border-t border-stone-200 pt-8">
+          <p className="text-[18px] leading-relaxed text-stone-700">
             This record becomes complete when another party confirms.
           </p>
         </footer>
@@ -79,7 +79,7 @@ export default function OnboardRecordPage() {
           <button
             type="button"
             onClick={() => router.push("/onboard/send")}
-            className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] transition-colors"
+            className="w-full py-3 px-6 text-[18px] font-medium text-stone-900 bg-stone-200 hover:bg-stone-300 transition-colors"
           >
             Continue
           </button>

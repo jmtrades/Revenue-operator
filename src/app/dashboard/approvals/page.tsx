@@ -95,7 +95,7 @@ export default function ApprovalsPage() {
             {pending.map((p) => (
               <li
                 key={p.id}
-                className="border-t border-[#e7e5e4] pt-4 first:border-t-0 first:pt-0"
+                className="border-t border-stone-200 pt-4 first:border-t-0 first:pt-0"
                 style={{ color: "var(--text-primary)" }}
               >
                 <p className="text-sm mb-2" style={{ lineHeight: 1.7 }}>
@@ -109,7 +109,7 @@ export default function ApprovalsPage() {
                     type="button"
                     onClick={() => decide(p.id, "approved")}
                     disabled={!!acting}
-                    className="text-sm py-1 px-2 border border-[#e7e5e4] hover:bg-[#f5f5f4] disabled:opacity-50"
+                    className="text-sm py-1 px-2 border border-stone-200 hover:bg-stone-100 disabled:opacity-50"
                   >
                     {ta("approve")}
                   </button>
@@ -117,12 +117,12 @@ export default function ApprovalsPage() {
                     type="button"
                     onClick={() => decide(p.id, "rejected")}
                     disabled={!!acting}
-                    className="text-sm py-1 px-2 border border-[#e7e5e4] hover:bg-[#f5f5f4] disabled:opacity-50"
+                    className="text-sm py-1 px-2 border border-stone-200 hover:bg-stone-100 disabled:opacity-50"
                   >
                     {ta("reject")}
                   </button>
                   {p.thread_id && (
-                    <Link href="/dashboard/record" className="text-sm py-1 px-2 border border-[#e7e5e4] hover:bg-[#f5f5f4]">
+                    <Link href="/dashboard/record" className="text-sm py-1 px-2 border border-stone-200 hover:bg-stone-100">
                       {ta("recordLink")}
                     </Link>
                   )}

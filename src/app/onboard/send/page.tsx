@@ -110,16 +110,16 @@ export default function OnboardSendPage() {
   if (!workspaceId || !externalRef) return null;
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] p-6">
+    <main className="min-h-screen bg-stone-50 p-6">
       <div className="mx-auto max-w-[720px] pt-16">
         <div className="space-y-8">
           <OnboardExecutionStateBanner />
           <div className="space-y-4">
-            <p className="text-[18px] leading-relaxed text-[#1c1917]">
+            <p className="text-[18px] leading-relaxed text-stone-900">
               Send this record to someone who can confirm it.
             </p>
-            <div className="border-t border-[#e7e5e4] pt-4">
-              <p className="text-[18px] leading-relaxed text-[#44403c]">
+            <div className="border-t border-stone-200 pt-4">
+              <p className="text-[18px] leading-relaxed text-stone-700">
                 This matches what we agreed. Adjust it if anything is off.
               </p>
             </div>
@@ -127,41 +127,41 @@ export default function OnboardSendPage() {
           {previewLoading ? (
             <p className="text-[18px]" style={{ color: "var(--text-tertiary)" }}>One moment…</p>
           ) : preview && (
-            <section className="border border-[#e7e5e4] p-4 space-y-3">
-              <p className="text-[13px] font-medium uppercase tracking-wide text-[#78716c]">Message preview</p>
-              <p className="text-[18px] leading-relaxed text-[#1c1917]">{preview.proposed_text}</p>
+            <section className="border border-stone-200 p-4 space-y-3">
+              <p className="text-[13px] font-medium uppercase tracking-wide text-stone-500">Message preview</p>
+              <p className="text-[18px] leading-relaxed text-stone-900">{preview.proposed_text}</p>
               {preview.disclosures.length > 0 && (
-                <ul className="list-disc pl-5 space-y-1 text-[16px] text-[#44403c]">
+                <ul className="list-disc pl-5 space-y-1 text-[16px] text-stone-700">
                   {preview.disclosures.map((d, i) => (
                     <li key={i}>{d}</li>
                   ))}
                 </ul>
               )}
               {preview.policy_basis.length > 0 && (
-                <p className="text-[13px] text-[#78716c]">
+                <p className="text-[13px] text-stone-500">
                   Policy checks: {preview.policy_basis.filter((c) => c.passed).length} passed.
                 </p>
               )}
               {preview.requires_approval && (
-                <p className="text-[13px] text-[#78716c]">This message type requires approval before send.</p>
+                <p className="text-[13px] text-stone-500">This message type requires approval before send.</p>
               )}
             </section>
           )}
 
           <div className="space-y-2">
-            <p className="text-[13px] font-medium uppercase tracking-wide text-[#78716c]">Approval mode</p>
+            <p className="text-[13px] font-medium uppercase tracking-wide text-stone-500">Approval mode</p>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setApprovalMode("autopilot")}
-                className={`py-2 px-4 text-[18px] ${approvalMode === "autopilot" ? "bg-[#1c1917] text-[#fafaf9]" : "bg-[#e7e5e4] text-[#1c1917]"}`}
+                className={`py-2 px-4 text-[18px] ${approvalMode === "autopilot" ? "bg-stone-900 text-stone-50" : "bg-stone-200 text-stone-900"}`}
               >
                 Autopilot
               </button>
               <button
                 type="button"
                 onClick={() => setApprovalMode("review_required")}
-                className={`py-2 px-4 text-[18px] ${approvalMode === "review_required" ? "bg-[#1c1917] text-[#fafaf9]" : "bg-[#e7e5e4] text-[#1c1917]"}`}
+                className={`py-2 px-4 text-[18px] ${approvalMode === "review_required" ? "bg-stone-900 text-stone-50" : "bg-stone-200 text-stone-900"}`}
               >
                 Review required
               </button>
@@ -169,7 +169,7 @@ export default function OnboardSendPage() {
           </div>
 
           <div className="space-y-4">
-            <label htmlFor="contact" className="block text-[13px] font-medium uppercase tracking-wide text-[#78716c]">
+            <label htmlFor="contact" className="block text-[13px] font-medium uppercase tracking-wide text-stone-500">
               Contact (email or phone)
             </label>
             <input
@@ -180,23 +180,23 @@ export default function OnboardSendPage() {
                 setCounterpartyContact(e.target.value);
                 setShowHesitationFallback(false);
               }}
-              className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
+              className="w-full px-4 py-2 text-[18px] text-stone-900 bg-white border border-stone-200 focus:outline-none focus:border-stone-700"
               disabled={loading}
               placeholder={t("send.contactPlaceholder")}
             />
           </div>
           {showHesitationFallback && (
-            <p className="text-[18px] leading-relaxed text-[#78716c]">
+            <p className="text-[18px] leading-relaxed text-stone-500">
               A record can be sent now or shared later.
             </p>
           )}
-          {error && <p className="text-[18px] text-[#78716c]">{error}</p>}
-          <div className="border-t border-[#e7e5e4] pt-8">
+          {error && <p className="text-[18px] text-stone-500">{error}</p>}
+          <div className="border-t border-stone-200 pt-8">
             <button
               type="button"
               onClick={handleSend}
               disabled={loading}
-              className="w-full py-3 px-6 text-[18px] font-medium text-[#1c1917] bg-[#e7e5e4] hover:bg-[#d6d3d1] disabled:opacity-50 transition-colors"
+              className="w-full py-3 px-6 text-[18px] font-medium text-stone-900 bg-stone-200 hover:bg-stone-300 disabled:opacity-50 transition-colors"
             >
               {loading ? "Sending..." : "Send record"}
             </button>
