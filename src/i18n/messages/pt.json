@@ -201,9 +201,22 @@
       "errorSendFailed": "Não foi possível enviar o e-mail de redefinição.",
       "errorNetwork": "Erro de rede. Tente novamente.",
       "successMessage": "Confira seu e-mail para o link de redefinição.",
+      "setPasswordError": "Algo deu errado. Tente o link de redefinição novamente.",
+      "authNotConfigured": "A autenticação não está configurada.",
+      "passwordSavedMessage": "Senha guardada. Já pode iniciar sessão.",
       "sending": "Enviando...",
       "submitLabel": "Enviar link",
-      "backToSignIn": "Voltar ao login"
+      "backToSignIn": "Voltar ao login",
+      "chooseNewPassword": "Escolher uma nova senha",
+      "openResetLinkThenSet": "Abra o link do e-mail e defina aqui uma nova senha.",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirmar senha",
+      "passwordMinLength": "A senha deve ter pelo menos 6 caracteres.",
+      "passwordsDoNotMatch": "As senhas não coincidem.",
+      "couldNotUpdatePassword": "Não foi possível atualizar a senha.",
+      "openEmailResetFirst": "Abra primeiro o link no e-mail e volte a esta página se precisar.",
+      "saving": "A guardar...",
+      "savePassword": "Guardar senha"
     },
     "noAccount": "Não tem uma conta?",
     "startFree": "Começar grátis",
@@ -4725,6 +4738,24 @@
       "daysAgo": "Há {count} dias"
     },
     "avatarFallback": "V",
+    "acceptInviteError": "Algo correu mal. Tente novamente.",
+    "signInFirstToAccept": "Inicie sessão para aceitar este convite.",
+    "acceptInvite": {
+      "checkingInvite": "A verificar convite…",
+      "invalidLink": "Link de convite inválido",
+      "invalidLinkDesc": "Este link pode estar quebrado ou já foi usado.",
+      "goHome": "Ir ao início",
+      "expiredTitle": "Este convite expirou",
+      "expiredDesc": "Peça à pessoa que o convidou para enviar um novo.",
+      "joinTitle": "Entrar em {workspaceName}",
+      "invitedYou": "{inviterName} convidou-o a entrar neste espaço no Recall Touch.",
+      "accepting": "A aceitar…",
+      "acceptButton": "Aceitar convite",
+      "noAccount": "Ainda não tem conta?",
+      "signIn": "Iniciar sessão",
+      "createAccount": "Criar conta",
+      "defaultInviter": "Um membro da equipa"
+    },
     "errors": {
       "inviteFailed": "Falha ao enviar convite. Tente novamente."
     },

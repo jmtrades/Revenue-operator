@@ -201,9 +201,22 @@
       "errorSendFailed": "リセットメールを送信できませんでした。",
       "errorNetwork": "ネットワークエラー。もう一度お試しください。",
       "successMessage": "パスワードリセットのリンクをご確認ください。",
+      "setPasswordError": "問題が発生しました。リセットリンクをもう一度お試しください。",
+      "authNotConfigured": "認証が設定されていません。",
+      "passwordSavedMessage": "パスワードを保存しました。サインインできます。",
       "sending": "送信中...",
       "submitLabel": "リンクを送信",
-      "backToSignIn": "サインインに戻る"
+      "backToSignIn": "サインインに戻る",
+      "chooseNewPassword": "新しいパスワードを設定",
+      "openResetLinkThenSet": "メールのリセットリンクを開き、このページで新しいパスワードを設定してください。",
+      "newPassword": "新しいパスワード",
+      "confirmPassword": "パスワードを確認",
+      "passwordMinLength": "パスワードは6文字以上にしてください。",
+      "passwordsDoNotMatch": "パスワードが一致しません。",
+      "couldNotUpdatePassword": "パスワードを更新できませんでした。",
+      "openEmailResetFirst": "まずメールのリセットリンクを開いてから、必要に応じてこのページに戻ってください。",
+      "saving": "保存中...",
+      "savePassword": "パスワードを保存"
     },
     "noAccount": "アカウントをお持ちではありませんか？",
     "startFree": "無料で始める",
@@ -4725,6 +4738,24 @@
       "daysAgo": "{count}日前"
     },
     "avatarFallback": "Y",
+    "acceptInviteError": "問題が発生しました。もう一度お試しください。",
+    "signInFirstToAccept": "この招待を承諾するには、まずサインインしてください。",
+    "acceptInvite": {
+      "checkingInvite": "招待を確認中…",
+      "invalidLink": "招待リンクが無効です",
+      "invalidLinkDesc": "このリンクは無効か、すでに使用されています。",
+      "goHome": "ホームに戻る",
+      "expiredTitle": "この招待の有効期限が切れています",
+      "expiredDesc": "招待した方に新しい招待の送信をお願いしてください。",
+      "joinTitle": "{workspaceName} に参加",
+      "invitedYou": "{inviterName} が Recall Touch のこのワークスペースへの参加に招待しています。",
+      "accepting": "承諾中…",
+      "acceptButton": "招待を承諾",
+      "noAccount": "アカウントをお持ちでないですか？",
+      "signIn": "サインイン",
+      "createAccount": "アカウントを作成",
+      "defaultInviter": "チームメンバー"
+    },
     "errors": {
       "inviteFailed": "招待の送信に失敗しました。もう一度お試しください。"
     },
