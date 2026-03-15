@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "./WorkspaceContext";
 import { useExecutionUxState, type ExecutionUxState } from "@/lib/execution-ux/state";
 
 function ExecutionStateBannerBase({ state, context }: { state: ExecutionUxState | null; context: "main" | "onboard" }) {
+  const t = useTranslations("banners.executionState");
   if (!state) return null;
 
   let headline: string;
@@ -13,16 +15,16 @@ function ExecutionStateBannerBase({ state, context }: { state: ExecutionUxState 
   let href: string | null = null;
 
   if (state === "under_review") {
-    headline = "Call handling under review.";
-    nextLine = "Confirm jurisdiction and review level.";
+    headline = t("underReview");
+    nextLine = t("underReviewNext");
     href = context === "onboard" ? "/onboard/governance" : "/dashboard/policies";
   } else if (state === "paused") {
-    headline = "Call handling paused.";
-    nextLine = "Resolve billing or authorization.";
+    headline = t("paused");
+    nextLine = t("pausedNext");
     href = "/dashboard/billing";
   } else {
-    headline = "Call handling active.";
-    nextLine = "Conversations continue under governance.";
+    headline = t("active");
+    nextLine = t("activeNext");
     href = null;
   }
 

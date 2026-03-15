@@ -252,7 +252,7 @@ export default function OnboardingPage() {
                 <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("servicesLabel")}</label>
                 <textarea value={services} onChange={(e) => setServices(e.target.value)} rows={3} className={inputClass} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={t("servicesPlaceholder")} disabled={loading} />
                 <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>{t("websiteHintShort")}</p>
-                <input type="url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} className={inputClass + " mt-1"} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder="https://..." disabled={loading} />
+                <input type="url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} className={inputClass + " mt-1"} style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)" }} placeholder={t("urlPlaceholder")} disabled={loading} />
               </div>
               <div>
                 <label className={labelClass} style={{ color: "var(--text-muted)" }}>{t("hoursLabelShort")}</label>

@@ -39,67 +39,27 @@ const PLAYBOOK_ICONS: Record<string, LucideIcon> = {
   scratch: Settings,
 };
 
-const TEMPLATES = [
-  {
-    id: "receptionist" as const,
-    label: "Receptionist",
-    desc: "Answer calls, take messages, and route cleanly.",
-    defaults: {
-      purpose: "inbound" as AgentPurpose,
-      primaryGoal: "answer_route" as PrimaryGoalId,
-      greeting:
-        "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?",
-    },
-  },
-  {
-    id: "appointment_setter" as const,
-    label: "Appointment Booker",
-    desc: "Book appointments and confirm details.",
-    defaults: {
-      purpose: "inbound" as AgentPurpose,
-      primaryGoal: "book_appointments" as PrimaryGoalId,
-      greeting: "Hi, I can help you schedule an appointment right now. What day works best for you?",
-    },
-  },
-  {
-    id: "lead_qualifier" as const,
-    label: "Lead Qualifier",
-    desc: "Qualify leads, then route hot prospects.",
-    defaults: {
-      purpose: "inbound" as AgentPurpose,
-      primaryGoal: "qualify_leads" as PrimaryGoalId,
-      greeting:
-        "Thanks for reaching out. I’ll ask a few quick questions so we can get you to the right next step.",
-    },
-  },
-  {
-    id: "follow_up" as const,
-    label: "Follow-up Caller",
-    desc: "Call back leads and re-engage.",
-    defaults: {
-      purpose: "outbound" as AgentPurpose,
-      primaryGoal: "follow_up" as PrimaryGoalId,
-      greeting:
-        "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?",
-    },
-  },
-  {
-    id: "support" as const,
-    label: "Customer Support",
-    desc: "Answer questions, troubleshoot, resolve issues",
-    defaults: {
-      purpose: "inbound" as AgentPurpose,
-      primaryGoal: "support" as PrimaryGoalId,
-      greeting: "Thanks for calling support! What can I help you with?",
-    },
-  },
-  {
-    id: "scratch" as const,
-    label: "Custom",
-    desc: "Build from scratch with full control",
-    defaults: {},
-  },
+const TEMPLATE_IDS = [
+  { id: "receptionist" as const, purpose: "inbound" as AgentPurpose, primaryGoal: "answer_route" as PrimaryGoalId },
+  { id: "appointment_setter" as const, purpose: "inbound" as AgentPurpose, primaryGoal: "book_appointments" as PrimaryGoalId },
+  { id: "lead_qualifier" as const, purpose: "inbound" as AgentPurpose, primaryGoal: "qualify_leads" as PrimaryGoalId },
+  { id: "follow_up" as const, purpose: "outbound" as AgentPurpose, primaryGoal: "follow_up" as PrimaryGoalId },
+  { id: "support" as const, purpose: "inbound" as AgentPurpose, primaryGoal: "support" as PrimaryGoalId },
+  { id: "scratch" as const },
 ] as const;
+
+function getTemplates(t: (k: string) => string) {
+  return TEMPLATE_IDS.map((row) => {
+    const id = row.id;
+    const label = t(`identity.templates.${id}.label`);
+    const desc = t(`identity.templates.${id}.desc`);
+    const greeting = id !== "scratch" ? t(`identity.templates.${id}.greeting`) : undefined;
+    const defaults = "purpose" in row && row.purpose
+      ? { purpose: row.purpose, primaryGoal: row.primaryGoal!, greeting }
+      : {};
+    return { id, label, desc, defaults };
+  });
+}
 
 function generateId(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
@@ -107,6 +67,7 @@ function generateId(prefix: string) {
 
 export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepContentProps) {
   const t = useTranslations("agents");
+  const templates = useMemo(() => getTemplates(t), [t]);
   const [websiteUrl, setWebsiteUrl] = useState(agent.websiteUrl ?? "");
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
@@ -228,7 +189,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
     });
   };
 
-  const applyTemplate = (tpl: (typeof TEMPLATES)[number]) => {
+  const applyTemplate = (tpl: ReturnType<typeof getTemplates>[number]) => {
     if ("purpose" in tpl.defaults && tpl.defaults.purpose != null) {
       onChange({
         template: tpl.id,
@@ -508,7 +469,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
           </p>
         </div>
         <div className="grid gap-2 sm:grid-cols-3">
-          {TEMPLATES.map((tpl) => {
+          {templates.map((tpl) => {
             const Icon = PLAYBOOK_ICONS[tpl.id] ?? Settings;
             const selected = agent.template === tpl.id;
             return (

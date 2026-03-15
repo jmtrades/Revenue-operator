@@ -848,7 +848,7 @@ export default function AppActivityPage() {
                 <a.icon className="w-5 h-5 text-zinc-400 group-hover:text-zinc-100 transition-colors" />
               </div>
               <p className="text-sm font-medium text-zinc-100">{a.label}</p>
-              <p className="text-xs text-[#5A5A5C] mt-0.5">{a.desc}</p>
+              <p className="text-xs text-zinc-500 mt-0.5">{a.desc}</p>
             </Link>
           </motion.div>
         ))}
@@ -997,7 +997,7 @@ export default function AppActivityPage() {
                   <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
                 </span>
-                <span className="text-xs text-[#5A5A5C]">{t("dashboard.live")}</span>
+                <span className="text-xs text-zinc-500">{t("dashboard.live")}</span>
               </div>
             </div>
             <Timeline

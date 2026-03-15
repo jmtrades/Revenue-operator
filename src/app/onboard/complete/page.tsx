@@ -128,7 +128,7 @@ export default function OnboardCompletePage() {
               type="text"
               value={continuityInput}
               onChange={(e) => setContinuityInput(e.target.value)}
-              placeholder="Add another outcome to this record"
+              placeholder={t("placeholder")}
               disabled={submitting}
               className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
             />

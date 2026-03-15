@@ -8,42 +8,34 @@ type AgentId = "sarah" | "alex" | "emma";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const AGENTS: Record<
-  AgentId,
-  {
-    id: AgentId;
-    name: string;
-    initials: string;
-    pill: string;
-    avatarBg: string;
-    greeting: string;
-  }
-> = {
-  sarah: {
-    id: "sarah",
-    name: "Professional",
-    initials: "P",
-    pill: "Professional",
-    avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
-    greeting: "Hello. Thanks for calling. How can I help you today?",
-  },
-  alex: {
-    id: "alex",
-    name: "Friendly",
-    initials: "F",
-    pill: "Friendly",
-    avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
-    greeting: "Hi there! Thanks for reaching out. What can I do for you?",
-  },
-  emma: {
-    id: "emma",
-    name: "Concise",
-    initials: "C",
-    pill: "Concise",
-    avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
-    greeting: "Hi. How can I help?",
-  },
-};
+function getAgents(t: (k: string) => string): Record<AgentId, { id: AgentId; name: string; initials: string; pill: string; avatarBg: string; greeting: string }> {
+  return {
+    sarah: {
+      id: "sarah",
+      name: t("liveChat.agents.professional.name"),
+      initials: "P",
+      pill: t("liveChat.agents.professional.name"),
+      avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+      greeting: t("liveChat.agents.professional.greeting"),
+    },
+    alex: {
+      id: "alex",
+      name: t("liveChat.agents.friendly.name"),
+      initials: "F",
+      pill: t("liveChat.agents.friendly.name"),
+      avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+      greeting: t("liveChat.agents.friendly.greeting"),
+    },
+    emma: {
+      id: "emma",
+      name: t("liveChat.agents.concise.name"),
+      initials: "C",
+      pill: t("liveChat.agents.concise.name"),
+      avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+      greeting: t("liveChat.agents.concise.greeting"),
+    },
+  };
+}
 
 function canUseSpeechRecognition(): boolean {
   if (typeof window === "undefined") return false;
@@ -74,13 +66,14 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
   } = props;
 
   const t = useTranslations("messages");
+  const agents = useMemo(() => getAgents(t), [t]);
   const [agent, setAgent] = useState<AgentId>(initialAgent);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
 
-  const cfg = AGENTS[agent];
+  const cfg = agents[agent];
   const heightClass = variant === "demo" ? "h-[500px]" : variant === "mini" ? "h-[220px]" : "h-[380px]";
   const agentPills: Record<AgentId, string> = useMemo(
     () => ({
@@ -266,7 +259,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
               type="button"
               onClick={startMic}
               className="w-10 h-10 rounded-xl border border-zinc-700 text-zinc-300 hover:border-zinc-500 flex items-center justify-center"
-              aria-label="Voice input"
+              aria-label={t("liveChat.voiceInputLabel")}
             >
               <Mic className="h-4 w-4" />
             </button>
@@ -282,14 +275,14 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
             }}
             className="flex-1 w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 outline-none"
             placeholder={t("inputPlaceholder")}
-            aria-label="Message input"
+            aria-label={t("liveChat.messageInputLabel")}
           />
           <button
             type="button"
             onClick={() => send(input)}
             disabled={!input.trim() || loading || atLimit}
             className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-zinc-200 disabled:opacity-60 transition-colors"
-            aria-label="Send message"
+            aria-label={t("liveChat.sendMessageLabel")}
           >
             →
           </button>

@@ -2,8 +2,10 @@
 
 import { Suspense, useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 function PublicAckContent() {
+  const t = useTranslations("publicAck");
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
   const [_action, setAction] = useState<"confirm" | "reschedule" | "dispute" | null>(null);
@@ -41,7 +43,7 @@ function PublicAckContent() {
   if (!token) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-stone-950 p-6">
-        <p className="text-stone-400">Acknowledgement</p>
+        <p className="text-stone-400">{t("title")}</p>
       </main>
     );
   }
@@ -49,14 +51,14 @@ function PublicAckContent() {
   if (result === true) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-stone-950 p-6">
-        <p className="text-stone-400">Entry stored.</p>
+        <p className="text-stone-400">{t("entryStored")}</p>
       </main>
     );
   }
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-stone-950 p-6">
-      <h1 className="text-stone-300 text-lg font-medium mb-6">Acknowledgement</h1>
+      <h1 className="text-stone-300 text-lg font-medium mb-6">{t("title")}</h1>
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <button
           type="button"
@@ -64,11 +66,11 @@ function PublicAckContent() {
           disabled={submitting}
           className="rounded border border-stone-600 bg-stone-800 text-stone-200 px-4 py-2 text-sm disabled:opacity-50"
         >
-          Confirm
+          {t("confirm")}
         </button>
         <div className="flex flex-col gap-1">
           <label htmlFor="new_deadline" className="text-stone-500 text-xs">
-            New deadline
+            {t("newDeadline")}
           </label>
           <input
             id="new_deadline"
@@ -83,13 +85,13 @@ function PublicAckContent() {
             disabled={submitting}
             className="rounded border border-stone-600 bg-stone-800 text-stone-200 px-4 py-2 text-sm disabled:opacity-50"
           >
-            Reschedule
+            {t("reschedule")}
           </button>
         </div>
         <div className="flex flex-col gap-1">
           <input
             type="text"
-            placeholder="Reason"
+            placeholder={t("reasonPlaceholder")}
             value={disputeReason}
             onChange={(e) => setDisputeReason(e.target.value)}
             className="rounded border border-stone-600 bg-stone-900 text-stone-200 px-3 py-2 text-sm placeholder-stone-500"
@@ -100,20 +102,29 @@ function PublicAckContent() {
             disabled={submitting}
             className="rounded border border-stone-600 bg-stone-800 text-stone-200 px-4 py-2 text-sm disabled:opacity-50"
           >
-            Dispute
+            {t("dispute")}
           </button>
         </div>
       </div>
       {result === false && (
-        <p className="mt-4 text-stone-500 text-sm">Acknowledgement</p>
+        <p className="mt-4 text-stone-500 text-sm">{t("title")}</p>
       )}
+    </main>
+  );
+}
+
+function PublicAckFallback() {
+  const t = useTranslations("publicAck");
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-stone-950 p-6">
+      <p className="text-stone-400">{t("title")}</p>
     </main>
   );
 }
 
 export default function PublicAckPage() {
   return (
-    <Suspense fallback={<main className="min-h-screen flex items-center justify-center bg-stone-950 p-6"><p className="text-stone-400">Acknowledgement</p></main>}>
+    <Suspense fallback={<PublicAckFallback />}>
       <PublicAckContent />
     </Suspense>
   );

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function ContactForm() {
+  const t = useTranslations("contactPage");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +21,7 @@ export function ContactForm() {
       message: (form.elements.namedItem("body") as HTMLTextAreaElement)?.value?.trim() ?? "",
     };
     if (!data.name || !data.email || !data.message) {
-      setError("Please fill in name, email, and message.");
+      setError(t("fillRequired"));
       return;
     }
     setLoading(true);
@@ -46,7 +48,7 @@ export function ContactForm() {
         className="text-base"
         style={{ color: "var(--meaning-green)" }}
       >
-        Thanks! We&apos;ll get back to you within 4 hours.
+        {t("thanksReply")}
       </p>
     );
   }
@@ -62,7 +64,7 @@ export function ContactForm() {
           className="block text-sm font-medium mb-1.5"
           style={{ color: "var(--text-secondary)" }}
         >
-          Name
+          {t("formName")}
         </label>
         <input
           id="name"
@@ -79,7 +81,7 @@ export function ContactForm() {
           className="block text-sm font-medium mb-1.5"
           style={{ color: "var(--text-secondary)" }}
         >
-          Email
+          {t("formEmail")}
         </label>
         <input
           id="email"
@@ -96,7 +98,7 @@ export function ContactForm() {
           className="block text-sm font-medium mb-1.5"
           style={{ color: "var(--text-secondary)" }}
         >
-          Company
+          {t("formCompany")}
         </label>
         <input
           id="company"
@@ -112,7 +114,7 @@ export function ContactForm() {
           className="block text-sm font-medium mb-1.5"
           style={{ color: "var(--text-secondary)" }}
         >
-          Subject
+          {t("formSubject")}
         </label>
         <select
           id="subject"
@@ -120,11 +122,11 @@ export function ContactForm() {
           className="w-full px-4 py-2.5 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]"
           style={{ background: "var(--bg-inset)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
         >
-          <option value="General">General</option>
-          <option value="Sales">Sales</option>
-          <option value="Support">Support</option>
-          <option value="Billing">Billing</option>
-          <option value="Partnership">Partnership</option>
+          <option value="General">{t("subjectGeneral")}</option>
+          <option value="Sales">{t("subjectSales")}</option>
+          <option value="Support">{t("subjectSupport")}</option>
+          <option value="Billing">{t("subjectBilling")}</option>
+          <option value="Partnership">{t("subjectPartnership")}</option>
         </select>
       </div>
       <div>
@@ -133,7 +135,7 @@ export function ContactForm() {
           className="block text-sm font-medium mb-1.5"
           style={{ color: "var(--text-secondary)" }}
         >
-          Message
+          {t("formMessage")}
         </label>
         <textarea
           id="body"
@@ -152,7 +154,7 @@ export function ContactForm() {
         disabled={loading}
         className="btn-marketing-primary px-6 py-2.5 rounded-lg text-sm disabled:opacity-70"
       >
-        {loading ? "Sending…" : "Send message →"}
+        {loading ? t("sending") : t("sendMessage")}
       </button>
     </form>
   );

@@ -21,7 +21,10 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const industry = getIndustryBySlug(slug);
-  if (!industry) return { title: "Industry" };
+  if (!industry) {
+    const t = await getTranslations("industriesPage.fallback");
+    return { title: t("title") };
+  }
   return {
     title: `${industry.name} AI Phone Agent`,
     description: `Never miss a ${industry.customerType} again. ${industry.name} AI phone agent for your business.`,

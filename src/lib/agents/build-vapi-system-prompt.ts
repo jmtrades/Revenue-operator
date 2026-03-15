@@ -192,9 +192,20 @@ export function buildVapiSystemPrompt(input: AgentPromptInput): string {
   const neverSay = (input.rules?.neverSay ?? []).map((v) => String(v).trim()).filter(Boolean);
   if (neverSay.length > 0) rules.push(`NEVER mention: ${neverSay.join(", ")}`);
 
+  const ESCALATION_KEY_TO_LABEL: Record<string, string> = {
+    asksForManager: "Asks to speak to a manager",
+    angry: "Gets angry or frustrated",
+    complexQuestion: "Has a complex legal or medical question",
+    requestsHuman: "Explicitly requests a human",
+    emergency: "Mentions an emergency",
+  };
+  const escalationLabels = (input.rules?.escalationTriggers ?? []).map((v) => {
+    const s = String(v).trim();
+    return ESCALATION_KEY_TO_LABEL[s] ?? s;
+  });
   const alwaysTransfer = [
     ...(input.rules?.alwaysTransfer ?? []),
-    ...(input.rules?.escalationTriggers ?? []),
+    ...escalationLabels,
   ]
     .map((v) => String(v).trim())
     .filter(Boolean);

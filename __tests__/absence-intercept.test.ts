@@ -28,7 +28,7 @@ describe("Absence intercept contract", () => {
 
   it("modal header is doctrine-safe (no marketing words)", () => {
     const content = readFileSync(PAGE, "utf-8");
-    expect(content).toContain("This outcome will not appear in the record.");
+    expect(content).toContain("recordLead.outcomeNotInRecord");
     for (const word of MARKETING_WORDS) {
       expect(content.toLowerCase()).not.toContain(word.toLowerCase());
     }
@@ -36,7 +36,7 @@ describe("Absence intercept contract", () => {
 
   it("modal offers Record outcome and Continue without record only", () => {
     const content = readFileSync(PAGE, "utf-8");
-    expect(content).toContain("Record outcome");
-    expect(content).toContain("Continue without record");
+    expect(content).toContain("recordLead.recordOutcome");
+    expect(content).toContain("recordLead.continueWithoutRecord");
   });
 });

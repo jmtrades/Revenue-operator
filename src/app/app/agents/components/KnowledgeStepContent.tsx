@@ -122,7 +122,7 @@ export function KnowledgeStepContent({
         </div>
         {importError && <p className="text-xs text-red-400">{importError}</p>}
         <p className="text-[11px] text-[var(--text-tertiary)]">
-          Quick start: add common Q&As for your business.
+          {t("knowledge.quickStartHint")}
         </p>
         <button
           type="button"
@@ -152,7 +152,7 @@ export function KnowledgeStepContent({
         <button
           type="button"
           onClick={onNext}
-          aria-label="Continue to Behavior"
+          aria-label={t("knowledge.continueToBehavior")}
           className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("knowledge.continue")}

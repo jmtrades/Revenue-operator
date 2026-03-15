@@ -19,6 +19,45 @@
       }
     }
   },
+  "banners": {
+    "offline": {
+      "message": "Connexion perdue — la protection continue. Reconnexion…"
+    },
+    "preview": {
+      "title": "Mode Aperçu",
+      "description": "Votre équipe rédige les réponses mais rien n'est envoyé. Pour démos et confiance."
+    },
+    "handoff": {
+      "outsideAuthority": "Hors autorité.",
+      "beyondScope": "Hors périmètre.",
+      "multipleOutside": "Plusieurs éléments hors autorité.",
+      "unnamed": "Sans nom",
+      "enterOutcome": "Saisir le résultat"
+    },
+    "heartbeat": {
+      "atRisk": "Suivi en péril",
+      "warning": "Hors gestion normale",
+      "nothingRequired": "Rien à faire."
+    },
+    "executionState": {
+      "underReview": "Prise d'appels en revue.",
+      "underReviewNext": "Confirmer juridiction et niveau de revue.",
+      "paused": "Prise d'appels en pause.",
+      "pausedNext": "Résoudre facturation ou autorisation.",
+      "active": "Prise d'appels active.",
+      "activeNext": "Les conversations continuent sous gouvernance."
+    },
+    "trial": {
+      "coverageEndsOn": "La couverture se termine le {date}.",
+      "coverageEndingSoon": "La couverture se termine bientôt.",
+      "ifNotContinue": "Si vous ne continuez pas : le suivi ne sera plus protégé.",
+      "continueCoverage": "Continuer la couverture",
+      "coverageActive": "Couverture active",
+      "coverageRunning": "Couverture en cours",
+      "nothingRequiresSupervision": "Rien ne requiert de supervision. Nous vous préviendrons si besoin.",
+      "remindBeforeCharge": "Rien ne requiert de supervision. Nous vous préviendrons si besoin. Rappel avant tout prélèvement."
+    }
+  },
   "siteNav": {
     "product": "Produit",
     "solutions": "Solutions",
@@ -1355,6 +1394,7 @@
       "deleted": "Agent supprimé",
       "deleteFailed": "Impossible de supprimer l'agent",
       "created": "Agent créé et synchronisé",
+      "changesSaved": "Modifications enregistrées ✓",
       "createFailed": "Impossible de créer l'agent",
       "agentLive": "Votre agent IA est en ligne !"
     },
@@ -1392,7 +1432,9 @@
       "readyTitle": "Prêt à publier ?",
       "continue": "Continuer",
       "back": "Retour",
-      "starsAria": "{count} sur 5 étoiles"
+      "starsAria": "{count} sur 5 étoiles",
+      "backToBehavior": "Retour au Comportement",
+      "continueToGoLive": "Continuer vers Mise en ligne"
     },
     "goLive": {
       "heading": "Mise en production",
@@ -1406,6 +1448,15 @@
       "assigned": "Attribué",
       "readiness": "Préparation",
       "readinessChecklist": "Liste de préparation",
+      "businessInfoAdded": "Infos entreprise ajoutées",
+      "useCasesSelected": "Cas d'usage sélectionnés",
+      "agentCreated": "Agent créé",
+      "voiceSelected": "Voix sélectionnée",
+      "openingGreetingSet": "Message d'accueil défini",
+      "knowledgeEntries": "3+ entrées de connaissance",
+      "behaviorConfigured": "Comportement configuré",
+      "phoneConnected": "Téléphone connecté",
+      "agentTested": "Agent testé",
       "voiceAssistantCreated": "Assistant vocal créé",
       "syncing": "Synchronisation…",
       "retrySync": "Réessayer la synchronisation",
@@ -1485,10 +1536,63 @@
       "dismiss": "Ignorer"
     },
     "identity": {
-      "tone": { "professional": "Professionnel", "friendly": "Amical", "casual": "Décontracté", "formal": "Formel" },
-      "industry": { "general": "Général", "dental": "Dentaire", "legal": "Juridique", "plumbing": "Plomberie", "real_estate": "Immobilier", "auto": "Auto", "salon": "Salon", "restaurant": "Restaurant", "medical": "Médical", "consulting": "Conseil", "contractor": "Entrepreneur" },
-      "industryGreeting": { "dental": "Merci d'avoir appelé notre cabinet dentaire. Comment pouvons-nous vous aider ?", "legal": "Merci de votre appel. Comment puis-je vous orienter ?", "plumbing": "Merci d'avoir appelé. S'agit-il d'une urgence ou d'une visite à planifier ?", "real_estate": "Bonjour, merci d'avoir appelé. Vous cherchez à acheter, vendre ou planifier une visite ?", "auto": "Merci d'avoir appelé. C'est pour un rendez-vous ou une question ?", "salon": "Merci d'avoir appelé ! Souhaitez-vous prendre rendez-vous ou des infos sur nos services ?", "restaurant": "Merci d'avoir appelé. Avez-vous besoin d'une réservation ou d'une question ?", "medical": "Merci d'avoir appelé. Comment pouvons-nous vous aider ?", "consulting": "Merci de votre contact. Comment puis-je vous aider ?", "contractor": "Merci d'avoir appelé. C'est pour un devis ou planifier des travaux ?" },
-      "templates": { "receptionist": { "label": "Réceptionniste", "desc": "Répond aux appels, prend les messages, oriente." }, "appointment_setter": { "label": "Prise de rendez-vous", "desc": "Prend les rendez-vous et confirme les détails." }, "lead_qualifier": { "label": "Qualification de leads", "desc": "Qualifie les leads puis oriente les prospects chauds." }, "follow_up": { "label": "Relance", "desc": "Rappelle les leads et réengage." }, "support": { "label": "Support client", "desc": "Répond aux questions, dépannage, résolution." }, "scratch": { "label": "Personnalisé", "desc": "Construisez de zéro avec un contrôle total." } }
+      "tone": {
+        "professional": "Professionnel",
+        "friendly": "Amical",
+        "casual": "Décontracté",
+        "formal": "Formel"
+      },
+      "industry": {
+        "general": "Général",
+        "dental": "Dentaire",
+        "legal": "Juridique",
+        "plumbing": "Plomberie",
+        "real_estate": "Immobilier",
+        "auto": "Auto",
+        "salon": "Salon",
+        "restaurant": "Restaurant",
+        "medical": "Médical",
+        "consulting": "Conseil",
+        "contractor": "Entrepreneur"
+      },
+      "industryGreeting": {
+        "dental": "Merci d'avoir appelé notre cabinet dentaire. Comment pouvons-nous vous aider ?",
+        "legal": "Merci de votre appel. Comment puis-je vous orienter ?",
+        "plumbing": "Merci d'avoir appelé. S'agit-il d'une urgence ou d'une visite à planifier ?",
+        "real_estate": "Bonjour, merci d'avoir appelé. Vous cherchez à acheter, vendre ou planifier une visite ?",
+        "auto": "Merci d'avoir appelé. C'est pour un rendez-vous ou une question ?",
+        "salon": "Merci d'avoir appelé ! Souhaitez-vous prendre rendez-vous ou des infos sur nos services ?",
+        "restaurant": "Merci d'avoir appelé. Avez-vous besoin d'une réservation ou d'une question ?",
+        "medical": "Merci d'avoir appelé. Comment pouvons-nous vous aider ?",
+        "consulting": "Merci de votre contact. Comment puis-je vous aider ?",
+        "contractor": "Merci d'avoir appelé. C'est pour un devis ou planifier des travaux ?"
+      },
+      "templates": {
+        "receptionist": {
+          "label": "Réceptionniste",
+          "desc": "Répond aux appels, prend les messages, oriente."
+        },
+        "appointment_setter": {
+          "label": "Prise de rendez-vous",
+          "desc": "Prend les rendez-vous et confirme les détails."
+        },
+        "lead_qualifier": {
+          "label": "Qualification de leads",
+          "desc": "Qualifie les leads puis oriente les prospects chauds."
+        },
+        "follow_up": {
+          "label": "Relance",
+          "desc": "Rappelle les leads et réengage."
+        },
+        "support": {
+          "label": "Support client",
+          "desc": "Répond aux questions, dépannage, résolution."
+        },
+        "scratch": {
+          "label": "Personnalisé",
+          "desc": "Construisez de zéro avec un contrôle total."
+        }
+      }
     },
     "voiceSelector": {
       "voiceLabel": "Voix",
@@ -1501,7 +1605,8 @@
       "backchannelLabel": "Sons d'acquiescement pendant l'écoute",
       "denoisingLabel": "Réduction du bruit de fond",
       "selectedLabel": "Sélectionné.",
-      "selectThisVoiceLabel": "Sélectionner cette voix."
+      "selectThisVoiceLabel": "Sélectionner cette voix.",
+      "previewVoiceAria": "Écouter un extrait de la voix {name}"
     },
     "profile": {
       "agentNameLabel": "Nom de l'agent",
@@ -1564,6 +1669,57 @@
       "angry": "Le caller est en colère ou frustré",
       "billing": "La question concerne la facturation ou les paiements",
       "noAnswer": "L'agent ne peut pas répondre après 2 tentatives"
+    },
+    "defaultFaq": {
+      "hoursQuestion": "Quels sont vos horaires ?",
+      "hoursAnswer": "Nous sommes ouverts du lundi au vendredi, de 9 h à 17 h.",
+      "locationQuestion": "Où vous situez-vous ?",
+      "locationAnswer": "Je peux faire partager notre adresse. Quelle est la meilleure façon de vous joindre ?",
+      "appointmentQuestion": "Comment réserver un rendez-vous ?",
+      "appointmentAnswer": "Je peux vous aider tout de suite. Quel jour vous convient ?",
+      "servicesQuestion": "Quels services proposez-vous ?",
+      "servicesAnswer": "Nous proposons une gamme complète. De quoi avez-vous besoin précisément ?",
+      "pricingQuestion": "Quels sont vos tarifs ?",
+      "pricingAnswer": "Les tarifs dépendent de vos besoins. Notre équipe peut vous envoyer un devis. Puis-je avoir votre nom et e-mail ?"
+    },
+    "defaultTransfer": {
+      "explicitlyAsksHuman": "Le caller demande explicitement un humain",
+      "angryFrustrated": "Le caller est en colère ou frustré",
+      "billingPayments": "La question concerne la facturation ou les paiements",
+      "cannotAnswerAttempts": "L'agent ne peut pas répondre après 2 tentatives"
+    },
+    "templateGreeting": {
+      "afterHours": "Vous nous appelez hors horaires. Je suis l'assistant IA — message, questions ou rappel. Comment vous aider ?",
+      "emergency": "Merci d'avoir appelé. En cas d'urgence, raccrochez et composez le 911. Sinon, je peux vous aider. De quoi avez-vous besoin ?",
+      "leadQualifier": "Merci de nous contacter. Je vais poser quelques questions pour vous orienter.",
+      "followUp": "Bonjour, assistant IA pour ne rien laisser en suspens. C'est un bon moment ?",
+      "reviewRequest": "Nous aimerions votre avis. Avez-vous un moment pour partager votre expérience ?",
+      "appointmentSetter": "Je peux vous aider à prendre rendez-vous. Quel jour vous convient ?",
+      "support": "Merci d'avoir appelé le support. En quoi puis-je vous aider ?",
+      "receptionist": "Merci d'avoir appelé. Comment vous aider aujourd'hui ?"
+    },
+    "defaultAgent": {
+      "receptionist": "Réceptionniste",
+      "hasBudget": "A un budget",
+      "hasTimeline": "A des délais",
+      "isDecisionMaker": "Est décideur",
+      "confusedCallerHandling": "Si le caller semble confus, posez des questions de clarification avant de transférer.",
+      "offTopicHandling": "Si le caller pose une question hors sujet, redirigez poliment vers vos services."
+    },
+    "faqCategories": {
+      "all": "Tous",
+      "hours": "Horaires",
+      "services": "Services",
+      "pricing": "Tarifs",
+      "policies": "Politiques"
+    },
+    "defaultObjections": {
+      "tooExpensive": "C'est trop cher",
+      "tooExpensiveResponse": "Beaucoup de nos clients ont pensé pareil au départ, puis ont trouvé que la valeur dépassait le coût. Voulez-vous que je détaille ce qui est inclus ?",
+      "thinkAboutIt": "Je dois réfléchir",
+      "thinkAboutItResponse": "Bien sûr. Puis-je vous envoyer des infos pour vous aider à décider ?",
+      "alreadyWorking": "Nous travaillons déjà avec quelqu'un",
+      "alreadyWorkingResponse": "Beaucoup de nos meilleurs clients étaient dans ce cas. Qu'est-ce qui vous ferait envisager une alternative ?"
     },
     "deleteConfirmMessage": "Supprimer « {name} » ? Cette action est irréversible.",
     "createFirstAria": "Créer votre premier agent",
@@ -1719,16 +1875,39 @@
       "escalationTitle": "Escalade et transfert",
       "escalationHint": "Quand votre IA doit-elle passer à un humain ?",
       "transferWhen": "Transférer quand l'appelant...",
+      "escalation": {
+        "asksForManager": "Demande à parler à un responsable",
+        "angry": "Se fâche ou se frustre",
+        "complexQuestion": "Pose une question juridique ou médicale complexe",
+        "requestsHuman": "Demande explicitement un humain",
+        "emergency": "Mentionne une urgence"
+      },
       "addQuestion": "+ Ajouter une question",
       "remove": "Supprimer",
       "custom": "Personnalisé",
-      "bant": { "q1": "Avez-vous un budget prévu pour cela ?", "q2": "Quand souhaitez-vous que ce soit fait ?", "q3": "Êtes-vous le décideur final ?", "q4": "Quel problème essayez-vous de résoudre ?" },
-      "meddic": { "q1": "Quelles métriques utiliserez-vous pour mesurer le succès ?", "q2": "Qui d'autre est impliqué dans la décision ?", "q3": "Quel est l'impact si vous ne faites rien ?", "q4": "Avez-vous un processus ou calendrier de décision formel ?" },
+      "bant": {
+        "q1": "Avez-vous un budget prévu pour cela ?",
+        "q2": "Quand souhaitez-vous que ce soit fait ?",
+        "q3": "Êtes-vous le décideur final ?",
+        "q4": "Quel problème essayez-vous de résoudre ?"
+      },
+      "meddic": {
+        "q1": "Quelles métriques utiliserez-vous pour mesurer le succès ?",
+        "q2": "Qui d'autre est impliqué dans la décision ?",
+        "q3": "Quel est l'impact si vous ne faites rien ?",
+        "q4": "Avez-vous un processus ou calendrier de décision formel ?"
+      },
       "placeholderQ1": "Que recherchez-vous ?",
       "placeholderQ2": "Quelle est votre fourchette de budget ?",
       "placeholderQ3": "Quand en avez-vous besoin ?",
       "placeholderQ4": "Comment nous avez-vous connus ?",
-      "escalation": { "asksForManager": "Demande à parler à un responsable", "angry": "Se fâche ou est frustré", "complexQuestion": "A une question juridique ou médicale complexe", "requestsHuman": "Demande explicitement un humain", "emergency": "Mentionne une urgence" }
+      "escalation": {
+        "asksForManager": "Demande à parler à un responsable",
+        "angry": "Se fâche ou est frustré",
+        "complexQuestion": "A une question juridique ou médicale complexe",
+        "requestsHuman": "Demande explicitement un humain",
+        "emergency": "Mentionne une urgence"
+      }
     },
     "knowledge": {
       "title": "Que sait votre agent ?",
@@ -1737,6 +1916,8 @@
       "importError": "Impossible de charger cette URL. Réessayez.",
       "importErrorGeneric": "Une erreur s'est produite.",
       "quickStartHint": "Démarrage rapide : ajoutez des Q&R courantes pour votre activité.",
+      "backToVoice": "Retour à la Voix",
+      "continueToBehavior": "Continuer au Comportement",
       "suggestQAs": "Suggérer des Q&R",
       "adding": "Ajout…",
       "minQAHint": "Ajoutez au moins une Q&R pour de meilleurs résultats. Vous pouvez aussi continuer et ajouter des connaissances plus tard.",
@@ -1830,7 +2011,18 @@
       "voicemailForward": "Transférer vers un numéro",
       "voicemailClosed": "Message de fermeture",
       "assignNumberHint": "Attribuez un numéro depuis",
-      "assignNumberHintAfter": "après le lancement."
+      "assignNumberHintAfter": "après le lancement.",
+      "testHint": "Testez votre agent avant la mise en ligne.",
+      "openTestCall": "Ouvrir l'appel test",
+      "saveDraftFirst": "Enregistrez d'abord le brouillon, puis vous pourrez tester.",
+      "testFromAgentPage": "Vous pouvez aussi tester depuis la page agent après le lancement.",
+      "launchHint": "Vérifiez et activez votre agent.",
+      "reviewName": "Nom :",
+      "reviewPurpose": "Objectif :",
+      "reviewVoice": "Voix :",
+      "reviewGreeting": "Message d'accueil :",
+      "costNote": "Le coût estimé dépend de l'usage. Vous pouvez désactiver l'agent à tout moment depuis la page Agents.",
+      "back": "Retour"
     }
   },
   "calls": {
@@ -2107,6 +2299,8 @@
   },
   "inbox": {
     "title": "Boîte de réception",
+    "subtitle": "Toutes les conversations au même endroit.",
+    "viewInLeads": "Voir dans Leads",
     "pageTitle": "Boîte de réception — Recall Touch",
     "filters": {
       "all": "Tous",
@@ -2159,7 +2353,6 @@
       "send": "Envoyer"
     },
     "contact": "Contact",
-    "viewInLeads": "Voir dans Leads",
     "openContactPanel": "Ouvrir le panneau contact"
   },
   "leads": {
@@ -2476,24 +2669,63 @@
     "signOut": "Se déconnecter",
     "backToDashboard": "← Tableau de bord",
     "deleteAllDataTitle": "Supprimer toutes les données",
-    "deleteAllDataMessage": "Supprimer toutes les données du workspace (appels, leads, agents) ? Irréversible. Contactez le support pour finaliser.",
+    "deleteAllDataMessage": "Supprimer toutes les données de l'espace (appels, leads, agents) ? Irréversible. Contactez le support.",
     "deleteAllDataConfirmLabel": "Supprimer toutes les données",
     "deleteAccountMessage": "Supprimer définitivement votre compte et toutes les données ? Irréversible. Contactez le support pour finaliser.",
     "deleteAccountConfirmLabel": "Supprimer le compte",
     "links": {
-      "business": { "label": "Paramètres entreprise", "desc": "Nom, adresse, site, fuseau, industrie" },
-      "phone": { "label": "Téléphone et numéros", "desc": "Acheter des numéros, statut transfert, ID appelant, routage" },
-      "agent": { "label": "Configuration agent IA", "desc": "Voix, salutation, comportement, connaissances, langues" },
-      "callRules": { "label": "Règles d'appels", "desc": "Horaires, hors heures, urgence, transfert" },
-      "team": { "label": "Équipe et permissions", "desc": "Membres, rôles, contacts d'escalade, accès" },
-      "notifications": { "label": "Notifications", "desc": "Alertes appels, leads, rendez-vous, manqués" },
-      "leadScoring": { "label": "Score des leads", "desc": "Pondérations pour scorer les leads (appels, interactions)" },
-      "integrations": { "label": "Intégrations", "desc": "Calendrier, CRM, webhooks, Slack, Zapier" },
-      "billing": { "label": "Facturation et plans", "desc": "Plan actuel, usage, factures, annulation" },
-      "compliance": { "label": "Conformité", "desc": "Consentement enregistrement, do-not-call, règles" },
-      "activity": { "label": "Journal d'activité", "desc": "Changements récents de paramètres et workspace" },
-      "errors": { "label": "Rapports d'erreurs", "desc": "Erreurs et rapports de ce workspace" },
-      "developer": { "label": "Développeur", "desc": "Clés API, webhooks, documentation technique" }
+      "business": {
+        "label": "Paramètres entreprise",
+        "desc": "Nom, adresse, site, fuseau, industrie"
+      },
+      "phone": {
+        "label": "Téléphone et numéros",
+        "desc": "Acheter des numéros, statut transfert, ID appelant, routage"
+      },
+      "agent": {
+        "label": "Configuration agent IA",
+        "desc": "Voix, salutation, comportement, connaissances, langues"
+      },
+      "callRules": {
+        "label": "Règles d'appels",
+        "desc": "Horaires, hors heures, urgence, transfert"
+      },
+      "team": {
+        "label": "Équipe et permissions",
+        "desc": "Membres, rôles, contacts d'escalade, accès"
+      },
+      "notifications": {
+        "label": "Notifications",
+        "desc": "Alertes appels, leads, rendez-vous, manqués"
+      },
+      "leadScoring": {
+        "label": "Score des leads",
+        "desc": "Pondérations pour scorer les leads (appels, interactions)"
+      },
+      "integrations": {
+        "label": "Intégrations",
+        "desc": "Calendrier, CRM, webhooks, Slack, Zapier"
+      },
+      "billing": {
+        "label": "Facturation et plans",
+        "desc": "Plan actuel, usage, factures, annulation"
+      },
+      "compliance": {
+        "label": "Conformité",
+        "desc": "Consentement enregistrement, do-not-call, règles"
+      },
+      "activity": {
+        "label": "Journal d'activité",
+        "desc": "Changements récents de paramètres et workspace"
+      },
+      "errors": {
+        "label": "Rapports d'erreurs",
+        "desc": "Erreurs et rapports de ce workspace"
+      },
+      "developer": {
+        "label": "Développeur",
+        "desc": "Clés API, webhooks, documentation technique"
+      }
     },
     "nav": {
       "general": "Général",
@@ -2610,8 +2842,6 @@
       }
     },
     "activityLog": "Journal d'activité",
-    "deleteAllDataTitle": "Supprimer toutes les données",
-    "deleteAllDataMessage": "Supprimer toutes les données de l'espace (appels, leads, agents) ? Irréversible. Contactez le support.",
     "deleteAccountTitle": "Supprimer le compte",
     "business.saveFailed": "Échec de l’enregistrement des informations d’entreprise. Réessayez.",
     "business.nameNoMatch": "Le nom de l’espace ne correspond pas. Saisissez-le exactement pour confirmer.",
@@ -2907,6 +3137,20 @@
     "metaDescription": "Contactez Recall Touch. Ventes, entreprise et support technique. Réponse sous 4 heures.",
     "heading": "Nous contacter",
     "subheading": "Que vous évaluiez Recall Touch pour votre équipe ou ayez besoin du support technique, nous sommes là.",
+    "formName": "Nom",
+    "formEmail": "E-mail",
+    "formCompany": "Société",
+    "formSubject": "Sujet",
+    "formMessage": "Message",
+    "subjectGeneral": "Général",
+    "subjectSales": "Ventes",
+    "subjectSupport": "Support",
+    "subjectBilling": "Facturation",
+    "subjectPartnership": "Partenariat",
+    "fillRequired": "Renseignez le nom, l'e-mail et le message.",
+    "thanksReply": "Merci ! Nous vous répondrons sous 4 heures.",
+    "sending": "Envoi…",
+    "sendMessage": "Envoyer un message",
     "responseTime": "Réponse sous 4 heures",
     "salesEnterprise": "Ventes et Entreprise",
     "salesEnterpriseDesc": "Parlez à l'équipe des plans Team, conformité et tarifs volume.",
@@ -2914,7 +3158,6 @@
     "support": "Support",
     "supportDesc": "Besoin d'aide pour votre compte, un problème technique ou la facturation ?",
     "emailSupport": "Email support →",
-    "sendMessage": "Envoyer un message",
     "scheduleCall": "Planifier un appel →",
     "startFree": "Commencer gratuit →",
     "backToHome": "Retour à l'accueil"
@@ -3014,7 +3257,16 @@
     "featureComparison": "Comparatif des fonctionnalités",
     "feature": "Fonctionnalité",
     "annualNote": "Deux mois appliqués sans interruption en engagement annuel.",
-    "roi": { "intro": "Modélisez ce qui se passe quand vous arrêtez de laisser les appels passer au répondeur.", "missedCallsPerWeek": "Appels manqués par semaine", "avgValuePerCall": "Valeur moyenne par appel ($)", "monthlyRecovered": "Revenus récupérés par mois", "annualBaseline": "Base annuelle réceptionniste", "annualProtected": "Revenus annuels que Recall Touch protège", "receptionistCost": "coût réceptionniste.", "recommendedPlan": "Forfait recommandé :" },
+    "roi": {
+      "intro": "Modélisez ce qui se passe quand vous arrêtez de laisser les appels passer au répondeur.",
+      "missedCallsPerWeek": "Appels manqués par semaine",
+      "avgValuePerCall": "Valeur moyenne par appel ($)",
+      "monthlyRecovered": "Revenus récupérés par mois",
+      "annualBaseline": "Base annuelle réceptionniste",
+      "annualProtected": "Revenus annuels que Recall Touch protège",
+      "receptionistCost": "coût réceptionniste.",
+      "recommendedPlan": "Forfait recommandé :"
+    },
     "faq": {
       "title": "Questions sur les tarifs",
       "trial": "Proposez-vous un essai gratuit ?",
@@ -3071,12 +3323,42 @@
       "description": "Votre IA est configurée, connectée et prête à répondre aux appels de votre entreprise."
     },
     "templates": {
-      "receptionist": { "name": "Réceptionniste", "description": "Répond aux appels, prend les messages et oriente proprement.", "agentName": "Sarah", "greeting": "Merci d'avoir appelé. Je peux vous aider pour vos questions, messages et vous orienter." },
-      "appointment_scheduler": { "name": "Planification de rendez-vous", "description": "Réservation, confirmation et rappels sans va-et-vient.", "agentName": "Emma", "greeting": "Merci d'avoir appelé. Je peux vous trouver un créneau, confirmer et réserver." },
-      "lead_qualifier": { "name": "Qualification de leads", "description": "Capture les infos clés et oriente les meilleures opportunités.", "agentName": "Alex", "greeting": "Merci de votre contact. Je vais poser quelques questions pour vous orienter." },
-      "after_hours": { "name": "Agent hors horaires", "description": "Gère les appels en dehors des heures et signale l'urgence.", "agentName": "Sarah", "greeting": "Vous nous appelez hors horaires. Je peux prendre vos coordonnées et assurer le suivi." },
-      "follow_up": { "name": "Agent de suivi", "description": "Réengage les appelants et les leads pour ne rien perdre.", "agentName": "Alex", "greeting": "Bonjour, je fais le suivi pour ne rien laisser passer. Je peux confirmer votre statut et vous aider." },
-      "custom": { "name": "Personnalisé", "description": "Partez de zéro et définissez le ton vous-même.", "agentName": "Sarah", "greeting": "Merci d'avoir appelé. Comment puis-je vous aider ?" }
+      "receptionist": {
+        "name": "Réceptionniste",
+        "description": "Répond aux appels, prend les messages et oriente proprement.",
+        "agentName": "Sarah",
+        "greeting": "Merci d'avoir appelé. Je peux vous aider pour vos questions, messages et vous orienter."
+      },
+      "appointment_scheduler": {
+        "name": "Planification de rendez-vous",
+        "description": "Réservation, confirmation et rappels sans va-et-vient.",
+        "agentName": "Emma",
+        "greeting": "Merci d'avoir appelé. Je peux vous trouver un créneau, confirmer et réserver."
+      },
+      "lead_qualifier": {
+        "name": "Qualification de leads",
+        "description": "Capture les infos clés et oriente les meilleures opportunités.",
+        "agentName": "Alex",
+        "greeting": "Merci de votre contact. Je vais poser quelques questions pour vous orienter."
+      },
+      "after_hours": {
+        "name": "Agent hors horaires",
+        "description": "Gère les appels en dehors des heures et signale l'urgence.",
+        "agentName": "Sarah",
+        "greeting": "Vous nous appelez hors horaires. Je peux prendre vos coordonnées et assurer le suivi."
+      },
+      "follow_up": {
+        "name": "Agent de suivi",
+        "description": "Réengage les appelants et les leads pour ne rien perdre.",
+        "agentName": "Alex",
+        "greeting": "Bonjour, je fais le suivi pour ne rien laisser passer. Je peux confirmer votre statut et vous aider."
+      },
+      "custom": {
+        "name": "Personnalisé",
+        "description": "Partez de zéro et définissez le ton vous-même.",
+        "agentName": "Sarah",
+        "greeting": "Merci d'avoir appelé. Comment puis-je vous aider ?"
+      }
     },
     "welcomeHeading": "Bienvenue sur Recall Touch !",
     "welcomeSubtitle": "Mettons en place votre système téléphonique IA en 2 minutes.",
@@ -3103,12 +3385,18 @@
     "businessInfoLabel": "Infos entreprise",
     "hoursLabel": "Horaires",
     "hoursPlaceholder": "ex. Lundi–Vendredi 9h–17h",
-    "servicesLabel": "Services",
+    "servicesLabel": "Quels services proposez-vous ?",
     "removeAria": "Retirer {item}",
     "starterEntriesCta": "Nous avons préparé des entrées de départ selon votre sélection. Vous pouvez les modifier ou en ajouter.",
     "addThemNow": "Les ajouter",
     "edit": "Modifier",
     "remove": "Retirer",
+    "sidebarLabel": "Intégration",
+    "defaultGreeting": "Merci d'avoir appelé {businessName}. Ici {agentName}. Comment puis-je vous aider aujourd'hui ?",
+    "businessPlaceholder": "[Entreprise]",
+    "defaultPreview": "Merci d'avoir appelé. Comment puis-je vous aider aujourd'hui ?",
+    "questionPrompt": "Question",
+    "answerPrompt": "Réponse",
     "addAnotherQa": "+ Ajouter une Q&R",
     "addMoreLater": "Vous pourrez toujours en ajouter plus tard dans les paramètres de l'agent.",
     "step1Heading": "Configurons votre équipe téléphonique IA.",
@@ -3118,7 +3406,15 @@
     "businessNamePlaceholderShort": "Acme Plumbing",
     "phonePlaceholderShort": "(555) 123-4567",
     "businessTypeLabel": "Type d'activité ?",
-    "industries": { "home_services": "Services à la personne", "healthcare": "Santé", "legal": "Juridique", "real_estate": "Immobilier", "retail": "Commerce / Service", "b2b": "B2B / Ventes", "other": "Autre" },
+    "industries": {
+      "home_services": "Services à la personne",
+      "healthcare": "Santé",
+      "legal": "Juridique",
+      "real_estate": "Immobilier",
+      "retail": "Commerce / Service",
+      "b2b": "B2B / Ventes",
+      "other": "Autre"
+    },
     "errorNameRequired": "Votre nom et le nom de l'entreprise sont requis.",
     "errorSomethingWentWrong": "Une erreur s'est produite",
     "creating": "Création…",
@@ -3128,12 +3424,19 @@
     "greetingLabelOptional": "Salutation (optionnel)",
     "greetingPlaceholderDynamic": "Merci d'avoir appelé {business}. Je suis {agent}. Comment puis-je vous aider ?",
     "yourAgentCan": "Votre agent peut",
-    "capabilities": { "answer_questions": "Répondre aux questions sur vos services", "book_appointments": "Prendre des rendez-vous", "capture_leads": "Capturer les leads et vous alerter", "handle_emergencies": "Gérer les urgences (vous alerter immédiatement)", "send_texts": "Envoyer des SMS de confirmation", "block_spam": "Bloquer les appels spam" },
+    "capabilities": {
+      "answer_questions": "Répondre aux questions sur vos services",
+      "book_appointments": "Prendre des rendez-vous",
+      "capture_leads": "Capturer les leads et vous alerter",
+      "handle_emergencies": "Gérer les urgences (vous alerter immédiatement)",
+      "send_texts": "Envoyer des SMS de confirmation",
+      "block_spam": "Bloquer les appels spam"
+    },
     "step3Heading": "Parlez de votre activité à votre IA.",
     "step3Subtitle": "Services, horaires et questions fréquentes ?",
-    "servicesLabel": "Quels services proposez-vous ?",
     "servicesPlaceholder": "ex. Dépannage plomberie, chauffe-eau, fuites…",
     "websiteHintShort": "Ou collez l'URL de votre site et on s'en charge.",
+    "urlPlaceholder": "https://...",
     "hoursLabelShort": "Vos horaires ?",
     "hoursWeekdays": "Lun–Ven 9h–17h",
     "hoursWeekdaysSat": "Lun–Ven 9h–17h, Sam 9h–14h",
@@ -3217,7 +3520,6 @@
     "stepsAria": "Étapes d'intégration",
     "addServicePlaceholder": "Ajouter un service",
     "add": "Ajouter",
-    "creating": "Création…",
     "continue": "Continuer →",
     "saving": "Enregistrement…",
     "cta": {
@@ -3317,11 +3619,29 @@
       "title": "Accès refusé",
       "body": "Cet espace de travail ou cette ressource n’est pas disponible avec vos permissions actuelles."
     },
+    "data": {
+      "title": "Une erreur s'est produite",
+      "body": "Impossible de charger cette page. Réessayez ou revenez en arrière."
+    },
+    "unknown": {
+      "title": "Une erreur s'est produite",
+      "body": "Une erreur inattendue s'est produite. Vous pouvez réessayer ou signaler le problème."
+    },
+    "report": "Signaler un problème",
     "retry": "Réessayer",
     "goHome": "Retour à l’accueil",
     "goToDashboard": "Aller au tableau de bord",
     "support": "Contacter le support",
-    "pageLoadBody": "Cette page n'a pas pu être chargée. Réessayez ou retournez au tableau de bord."
+    "pageLoadBody": "Cette page n'a pas pu être chargée. Réessayez ou retournez au tableau de bord.",
+    "connectionProblem": "Problème de connexion",
+    "connectionProblemDesc": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
+    "sessionExpired": "Session expirée",
+    "sessionExpiredDesc": "Veuillez vous reconnecter pour continuer.",
+    "somethingWrong": "Une erreur s'est produite",
+    "loadPageError": "Impossible de charger cette page. Réessayez ou revenez en arrière.",
+    "unexpectedError": "Une erreur inattendue s'est produite. Réessayez ou signalez le problème.",
+    "tryAgain": "Réessayer",
+    "reportIssue": "Signaler un problème"
   },
   "forms": {
     "validation": {
@@ -3522,7 +3842,15 @@
       "voiceProfessional": "Professionnel",
       "voiceFriendly": "Amical",
       "voiceConcise": "Concis",
-      "switchAgentTo": "Changer d'agent pour {name}"
+      "switchAgentTo": "Changer d'agent pour {name}",
+      "voiceInputLabel": "Entrée vocale",
+      "messageInputLabel": "Saisir un message",
+      "sendMessageLabel": "Envoyer le message",
+      "agents": {
+        "professional": { "name": "Professionnel", "greeting": "Bonjour. Merci d'avoir appelé. Comment puis-je vous aider ?" },
+        "friendly": { "name": "Amical", "greeting": "Salut ! Merci de nous contacter. Que puis-je faire pour vous ?" },
+        "concise": { "name": "Concis", "greeting": "Bonjour. Comment puis-je aider ?" }
+      }
     },
     "noMessagesYet": "Pas encore de messages",
     "now": "Maintenant",
@@ -3595,6 +3923,7 @@
     "revoking": "Révocation…",
     "revoke": "Révoquer",
     "sendInvite": "Envoyer l'invitation",
+    "inviteEmailPlaceholder": "colleague@company.com",
     "toast": {
       "inviteSent": "Invitation envoyée à {email}",
       "inviteResent": "Invitation renvoyée.",
@@ -3606,6 +3935,7 @@
   "knowledge": {
     "pageTitle": "Base de connaissances — Recall Touch",
     "defaultTitle": "Sans titre",
+    "fromCall": "D'après un appel",
     "addEntry": "Ajouter une entrée",
     "editEntry": "Modifier l'entrée",
     "heading": "Base de connaissances",
@@ -3719,7 +4049,19 @@
     "tableCreated": "Créé",
     "tableLastUsed": "Dernière utilisation",
     "tableStatus": "Statut",
-    "tabs": { "apiKeys": "Clés API", "webhooks": "Webhooks", "eventLog": "Journal des événements" },
+    "createdLabel": "Créé",
+    "usedLabel": "Utilisé",
+    "formLabel": "Libellé",
+    "formPermissions": "Permissions",
+    "apiKeyCreatedTitle": "Clé API créée : {label}",
+    "saveKeyWarning": "Enregistrez cette clé — vous ne la reverrez plus.",
+    "copyKeyButton": "Copier la clé",
+    "savedConfirm": "Je l'ai enregistrée",
+    "tabs": {
+      "apiKeys": "Clés API",
+      "webhooks": "Webhooks",
+      "eventLog": "Journal des événements"
+    },
     "success": "Succès",
     "failed": "Échec",
     "apiCall": "Appel API",
@@ -3955,6 +4297,7 @@
   },
   "industriesPage": {
     "fallback": {
+      "title": "Secteur",
       "solutions": "Solutions",
       "dedicatedGuide": "Guide dédié en cours",
       "description": "Nous préparons une page pour ce secteur. Démarrez maintenant et configurez votre agent en 5 minutes.",
@@ -3967,6 +4310,47 @@
     }
   },
   "activate": {
+    "activatePage": {
+      "title": "Activer votre agent",
+      "description": "Configuration guidée pour entendre votre agent vocal gérer un appel réel."
+    },
+    "formYourName": "Votre nom",
+    "formBusinessName": "Nom de l'entreprise",
+    "formEmail": "E-mail",
+    "formPhone": "Téléphone",
+    "formWebsite": "URL du site (optionnel)",
+    "formWebsiteHint": "Permet d'ajuster votre expérience.",
+    "formBusinessType": "Type d'entreprise ?",
+    "namePlaceholder": "Jane Smith",
+    "and": "et",
+    "businessPlaceholder": "Plomberie Acme",
+    "emailPlaceholder": "vous@entreprise.com",
+    "phonePlaceholder": "(555) 123-4567",
+    "websitePlaceholder": "https://votreentreprise.com",
+    "businessTypeHomeServices": "Services à domicile",
+    "businessTypeHealthcare": "Santé",
+    "businessTypeLegal": "Juridique",
+    "businessTypeRealEstate": "Immobilier",
+    "businessTypeInsurance": "Assurance",
+    "businessTypeB2bSales": "Ventes B2B",
+    "businessTypeLocalBusiness": "Commerce local",
+    "businessTypeContractors": "Artisans",
+    "welcomeAboard": "Bienvenue !",
+    "aiReady": "Votre système vocal IA est prêt.",
+    "setUpAgent": "Configurer mon agent IA →",
+    "takes2Min": "2 minutes · 14 jours gratuits",
+    "emailRequired": "L'e-mail est requis.",
+    "creatingAccount": "Création de votre compte…",
+    "almostThere": "Presque terminé…",
+    "getStartedFree": "Commencer gratuitement →",
+    "noCardRequired": "Sans carte · 14 jours gratuits · Annulez à tout moment",
+    "alreadyHaveAccount": "Déjà un compte ?",
+    "signInLink": "Se connecter →",
+    "tryAgain": "Réessayer",
+    "bySigningUp": "En vous inscrivant vous acceptez nos",
+    "terms": "Conditions",
+    "privacyPolicy": "Politique de confidentialité",
+    "cancelError": "Pas de souci — la protection n'a pas démarré.",
     "wizardHeading": "Activation",
     "wizardTitle": "Préparons votre agent vocal.",
     "wizardSubtitle": "Environ 3 minutes. Vous entendrez votre agent en situation réelle à la fin.",
@@ -4052,7 +4436,9 @@
       "adjustSettings": "Ajuster les paramètres",
       "looksGreat": "Parfait ! Démarrer la prise d'appels →",
       "back": "← Retour"
-    }
+    },
+    "formName": "Votre nom",
+    "and": "et"
   },
   "onboard": {
     "complete": {
@@ -4062,7 +4448,33 @@
       "placeholder": "Ajouter un autre résultat à cet enregistrement",
       "adding": "Ajout en cours...",
       "addOutcome": "Ajouter un résultat"
+    },
+    "send": {
+      "contactPlaceholder": "email@exemple.com ou +1234567890"
     }
+  },
+  "life": {
+    "selectWorkspace": "Sélectionnez un espace pour afficher la surface de vie.",
+    "oneMoment": "Un instant…",
+    "whatIsBeingTracked": "Ce qui est suivi",
+    "refLabelPlaceholder": "Ajouter une référence (libellé)",
+    "refCategoryPlaceholder": "Catégorie (optionnel)",
+    "adding": "Ajout…",
+    "addReference": "Ajouter une référence",
+    "referenceAdded": "Référence ajoutée.",
+    "failedToAdd": "Échec de l'ajout.",
+    "whatWasHandled": "Ce qui a été traité",
+    "nothingRecordedYet": "Rien enregistré pour l'instant.",
+    "whatRequiredNoAction": "Ce qui n'a requis aucune action"
+  },
+  "publicAck": {
+    "title": "Accusé de réception",
+    "entryStored": "Entrée enregistrée.",
+    "confirm": "Confirmer",
+    "newDeadline": "Nouvelle échéance",
+    "reschedule": "Reprogrammer",
+    "reasonPlaceholder": "Motif",
+    "dispute": "Contester"
   },
   "wrapup": {
     "title": "Clôture d'appel",
@@ -4242,6 +4654,13 @@
     "verifying": "Vérification…",
     "areaCodePlaceholder": "ex. 503",
     "areaCodePlaceholderAlt": "ex. 212",
+    "testCallNumberPlaceholder": "(555) 123-4567",
+    "verifyPhonePlaceholder": "+1 (555) 000-0000",
+    "verificationCodePlaceholder": "000000",
+    "att": "AT&T",
+    "verizon": "Verizon",
+    "tmobile": "T-Mobile",
+    "yourPhoneNumber": "Votre numéro de téléphone",
     "emailPlaceholder": "votre@email.com",
     "toast": {
       "numberConnected": "Numéro connecté. Vous pouvez recevoir appels et SMS.",
@@ -4364,6 +4783,11 @@
       "webhookSaved": "Webhook destination saved.",
       "webhookSaveFailed": "Could not save webhook settings.",
       "webhookTestFailed": "Could not send webhook test.",
+      "webhookTestDelivered": "Test webhook envoyé ({status}).",
+      "webhookTestError": "Le webhook a répondu avec {status}.",
+      "calendarConnected": "Google Calendar connecté.",
+      "calendarError": "Impossible de connecter Google Calendar.",
+      "calendarNotConfigured": "Google Calendar n'est pas configuré.",
       "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
       "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
       "error": "Something went wrong. Try again."

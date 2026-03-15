@@ -66,7 +66,7 @@ function ROICalculator({ t, className = "" }: { t: (k: string) => string; classN
         className="text-sm mb-4"
         style={{ color: "var(--text-secondary)" }}
       >
-        Model what happens when you stop letting calls slip through to voicemail.
+        {t("roi.description")}
       </p>
       <div className="grid gap-5 mb-6">
         <label className="block">
@@ -74,7 +74,7 @@ function ROICalculator({ t, className = "" }: { t: (k: string) => string; classN
             className="text-sm font-medium"
             style={{ color: "var(--text-primary)" }}
           >
-            Missed calls per week
+            {t("roi.missedCallsPerWeek")}
           </span>
           <div className="flex items-center gap-3 mt-2">
             <input
@@ -400,7 +400,7 @@ export function PricingContent() {
           className="font-semibold text-xl mb-6"
           style={{ color: "var(--text-primary)" }}
         >
-          Frequently asked questions
+          {t("faq")}
         </h2>
         <div className="max-w-2xl mb-16">
           {PRICING_FAQ.map((faq, i) => (
@@ -418,17 +418,17 @@ export function PricingContent() {
             href={ROUTES.START}
             className="btn-marketing-primary no-underline inline-block"
           >
-            Start free →
+            {t("cta")} →
           </Link>
           <p className="text-xs text-zinc-500">
-            Trusted by operators who can&apos;t afford to miss decisive calls.
+            {t("trustedBy")}
           </p>
           <p className="text-xs">
             <Link
               href={ROUTES.CONTACT}
               className="font-medium underline-offset-4 hover:underline"
             >
-              Questions? Talk to us →
+              {t("questionsTalkToUs")}
             </Link>
           </p>
         </div>

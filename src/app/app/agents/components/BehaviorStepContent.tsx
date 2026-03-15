@@ -217,10 +217,10 @@ export function BehaviorStepContent({
       </section>
       <section className="mt-6">
         <h3 className="text-sm font-medium text-white/70 mb-1">
-          Objection handling
+          {t("behavior.objectionTitle")}
         </h3>
         <p className="text-xs text-white/40 mb-3">
-          How your AI responds to common pushback.
+          {t("behavior.objectionHint")}
         </p>
 
         <div className="space-y-3">
@@ -272,12 +272,12 @@ export function BehaviorStepContent({
             </label>
             <div className="space-y-1.5">
               {([
-                { id: "asksForManager", value: "Asks to speak to a manager" },
-                { id: "angry", value: "Gets angry or frustrated" },
-                { id: "complexQuestion", value: "Has a complex legal or medical question" },
-                { id: "requestsHuman", value: "Explicitly requests a human" },
-                { id: "emergency", value: "Mentions an emergency" },
-              ] as const).map(({ id, value }) => (
+                "asksForManager",
+                "angry",
+                "complexQuestion",
+                "requestsHuman",
+                "emergency",
+              ] as const).map((id) => (
                 <label
                   key={id}
                   className="flex items-center gap-2 text-sm text-white/50 cursor-pointer hover:text-white/70"
@@ -285,12 +285,12 @@ export function BehaviorStepContent({
                   <input
                     type="checkbox"
                     className="rounded border-white/20 bg-transparent"
-                    checked={(agent.escalationTriggers || []).includes(value)}
+                    checked={(agent.escalationTriggers || []).includes(id)}
                     onChange={(e) => {
                       const current = agent.escalationTriggers || [];
                       const updated = e.target.checked
-                        ? [...current, value]
-                        : current.filter((tr) => tr !== value);
+                        ? [...current, id]
+                        : current.filter((tr) => tr !== id);
                       onChange({ escalationTriggers: updated });
                     }}
                   />

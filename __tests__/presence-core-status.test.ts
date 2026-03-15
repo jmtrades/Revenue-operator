@@ -18,9 +18,9 @@ describe("Presence core status contract", () => {
 
   it("renders Core status section with factual lines", () => {
     const content = readFileSync(PRESENCE_PAGE, "utf-8");
-    expect(content).toContain("Core status");
-    expect(content).toContain("Inbound was active");
-    expect(content).toContain("Queue was active");
+    expect(content).toContain("coreStatus");
+    expect(content).toContain("inboundWasActive");
+    expect(content).toContain("queueWasActive");
   });
 
   it("uses no icon or badge components", () => {

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { OnboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 
 type ApprovalMode = "autopilot" | "review_required";
@@ -14,6 +15,7 @@ interface PreviewData {
 }
 
 export default function OnboardSendPage() {
+  const t = useTranslations("onboard");
   const router = useRouter();
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
   const [externalRef, setExternalRef] = useState<string | null>(null);
@@ -180,7 +182,7 @@ export default function OnboardSendPage() {
               }}
               className="w-full px-4 py-2 text-[18px] text-[#1c1917] bg-white border border-[#e7e5e4] focus:outline-none focus:border-[#44403c]"
               disabled={loading}
-              placeholder="email@example.com or +1234567890"
+              placeholder={t("send.contactPlaceholder")}
             />
           </div>
           {showHesitationFallback && (

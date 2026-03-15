@@ -195,6 +195,7 @@ function getFirstIncompleteStep(agent: Agent): StepId {
 type ReadinessTaskCategory = "required" | "recommended" | "advanced";
 
 type ReadinessTask = {
+  key: string;
   label: string;
   complete: boolean;
   weight: number;
@@ -230,6 +231,7 @@ function getAgentReadiness(agent: Agent): AgentReadiness {
   const { percentage, items } = calculateReadiness(workspace, agentToReadinessAgent(agent));
   const percent = percentage;
   const tasks: ReadinessTask[] = items.map((item) => ({
+    key: item.key,
     label: item.label,
     complete: item.done,
     weight: item.weight,
@@ -262,20 +264,25 @@ function generateAgentId(prefix: string): string {
 }
 
 /** 5 starter Q&A entries (aligned with workspace onboarding seed). */
-const _DEFAULT_FAQ_SEED = [
-  { question: "What are your hours?", answer: "We are open Monday through Friday, 9 AM to 5 PM." },
-  { question: "Where are you located?", answer: "I can have someone share our address with you. What is the best way to reach you?" },
-  { question: "How do I book an appointment?", answer: "I can help you with that right now. What day works best for you?" },
-  { question: "What services do you offer?", answer: "We offer a full range of services. What specifically are you looking for help with?" },
-  { question: "What is your pricing?", answer: "Pricing depends on your specific needs. I can have our team send you a detailed quote. Can I get your name and email?" },
-];
+function getDefaultFaqSeed(t: (key: string) => string) {
+  return [
+    { question: t("defaultFaq.hoursQuestion"), answer: t("defaultFaq.hoursAnswer") },
+    { question: t("defaultFaq.locationQuestion"), answer: t("defaultFaq.locationAnswer") },
+    { question: t("defaultFaq.appointmentQuestion"), answer: t("defaultFaq.appointmentAnswer") },
+    { question: t("defaultFaq.servicesQuestion"), answer: t("defaultFaq.servicesAnswer") },
+    { question: t("defaultFaq.pricingQuestion"), answer: t("defaultFaq.pricingAnswer") },
+  ];
+}
 
-const ALWAYS_TRANSFER_OPTIONS: string[] = [
-  "Caller explicitly asks for a human",
-  "Caller is angry or frustrated",
-  "Question is about billing or payments",
-  "Agent cannot answer after 2 attempts",
-];
+function getAlwaysTransferOptions(t: (key: string) => string): string[] {
+  return [
+    t("defaultTransfer.explicitlyAsksHuman"),
+    t("defaultTransfer.angryFrustrated"),
+    t("defaultTransfer.billingPayments"),
+    t("defaultTransfer.cannotAnswerAttempts"),
+  ];
+}
+
 const TRANSFER_OPTION_TO_KEY: Record<string, string> = {
   "Caller explicitly asks for a human": "askHuman",
   "Caller is angry or frustrated": "angry",
@@ -283,39 +290,41 @@ const TRANSFER_OPTION_TO_KEY: Record<string, string> = {
   "Agent cannot answer after 2 attempts": "noAnswer",
 };
 
-function templateGreeting(id: AgentTemplateId): string {
+function templateGreeting(id: AgentTemplateId, t?: (key: string) => string): string {
+  const translate = t || ((key: string) => key);
   switch (id) {
     case "after_hours":
-      return "Hi, this is your AI receptionist for Recall Touch, handling your calls after hours. How can I help today?";
+      return translate("templateGreeting.afterHours");
     case "emergency":
-      return "This is your emergency line. I’ll move quickly, keep you calm, and make sure the right person is alerted.";
+      return translate("templateGreeting.emergency");
     case "lead_qualifier":
-      return "Thanks for reaching out. I’ll ask a few quick questions so we can get you to the right next step.";
+      return translate("templateGreeting.leadQualifier");
     case "follow_up":
-      return "Hi, this is your AI following up so nothing falls through the cracks. Can I check in on your last visit?";
+      return translate("templateGreeting.followUp");
     case "review_request":
-      return "Hi, this is your AI assistant with a quick favor about your recent visit. It will only take a moment.";
+      return translate("templateGreeting.reviewRequest");
     case "appointment_setter":
-      return "Hi, I'm calling to help schedule a time that works for you. What does your week look like?";
+      return translate("templateGreeting.appointmentSetter");
     case "support":
-      return "Hi, thanks for calling. I'm here to help with questions and get you to the right person if needed.";
+      return translate("templateGreeting.support");
     case "receptionist":
     default:
-      return "Hi, thanks for calling. I’m your AI receptionist — I’ll get the right details and make sure nothing is missed.";
+      return translate("templateGreeting.receptionist");
   }
 }
 
-function defaultAgent(): Agent {
+function defaultAgent(t?: (key: string) => string): Agent {
+  const translate = t || ((key: string) => key);
   return {
     id: "a-default",
-    name: "Receptionist",
+    name: translate("defaultAgent.receptionist"),
     template: "receptionist",
     purpose: "both",
     primaryGoal: "answer_route",
     businessContext: "",
     targetAudience: "",
     voice: DEFAULT_VOICE_ID,
-    greeting: templateGreeting("receptionist"),
+    greeting: templateGreeting("receptionist", t),
     personality: 60,
     callStyle: "thorough",
     active: true,
@@ -350,9 +359,9 @@ function defaultAgent(): Agent {
     persistence: "medium",
     qualification: {
       criteria: [
-        { id: "budget", label: "Has budget", enabled: false },
-        { id: "timeline", label: "Has timeline", enabled: false },
-        { id: "decision_maker", label: "Is decision maker", enabled: false },
+        { id: "budget", label: translate("defaultAgent.hasBudget"), enabled: false },
+        { id: "timeline", label: translate("defaultAgent.hasTimeline"), enabled: false },
+        { id: "decision_maker", label: translate("defaultAgent.isDecisionMaker"), enabled: false },
       ],
       customCriterion: "",
     },
@@ -363,8 +372,8 @@ function defaultAgent(): Agent {
     outboundNotInterested: "thank_end",
     voicemailBehavior: "leave",
     voicemailMessage: "",
-    confusedCallerHandling: "I'm sorry, let me try to help. Could you tell me what you need?",
-    offTopicHandling: "I'm the phone assistant here. I can help with appointments, pricing, and general questions. What can I help with?",
+    confusedCallerHandling: translate("defaultAgent.confusedCallerHandling"),
+    offTopicHandling: translate("defaultAgent.offTopicHandling"),
     assertiveness: 50,
     whenHesitation: "acknowledge_offer_info",
     whenThinkAboutIt: "offer_follow_up",
@@ -456,7 +465,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
       ? (knowledgeBase.primaryGoal as PrimaryGoalId)
       : "answer_route";
   return {
-    ...defaultAgent(),
+    ...defaultAgent(undefined),
     id: String(row.id ?? generateAgentId("a")),
     name: String(row.name ?? "Receptionist"),
     purpose,
@@ -555,7 +564,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     persistence: (knowledgeBase.persistence === "low" || knowledgeBase.persistence === "high") ? knowledgeBase.persistence : "medium",
     qualification: (() => {
       const q = knowledgeBase.qualification;
-      const defaultCriteria = defaultAgent().qualification.criteria;
+      const defaultCriteria = defaultAgent(undefined).qualification.criteria;
       const criteria = Array.isArray(q?.criteria) && q.criteria.length > 0
         ? q.criteria.map((c, i) => ({ id: c.id ?? `q-${i}`, label: c.label ?? "", enabled: Boolean(c.enabled) }))
         : defaultCriteria;
@@ -570,8 +579,8 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     outboundNotInterested: (knowledgeBase.outboundNotInterested === "callback" || knowledgeBase.outboundNotInterested === "ask_help") ? knowledgeBase.outboundNotInterested : "thank_end",
     voicemailBehavior: (knowledgeBase.voicemailBehavior === "hangup" || knowledgeBase.voicemailBehavior === "sms") ? knowledgeBase.voicemailBehavior : "leave",
     voicemailMessage: typeof knowledgeBase.voicemailMessage === "string" ? knowledgeBase.voicemailMessage : "",
-    confusedCallerHandling: typeof knowledgeBase.confusedCallerHandling === "string" ? knowledgeBase.confusedCallerHandling : defaultAgent().confusedCallerHandling,
-    offTopicHandling: typeof knowledgeBase.offTopicHandling === "string" ? knowledgeBase.offTopicHandling : defaultAgent().offTopicHandling,
+    confusedCallerHandling: typeof knowledgeBase.confusedCallerHandling === "string" ? knowledgeBase.confusedCallerHandling : defaultAgent(undefined).confusedCallerHandling,
+    offTopicHandling: typeof knowledgeBase.offTopicHandling === "string" ? knowledgeBase.offTopicHandling : defaultAgent(undefined).offTopicHandling,
     assertiveness: typeof knowledgeBase.assertiveness === "number" ? Math.max(0, Math.min(100, knowledgeBase.assertiveness)) : 50,
     whenHesitation: typeof knowledgeBase.whenHesitation === "string" ? knowledgeBase.whenHesitation : "acknowledge_offer_info",
     whenThinkAboutIt: typeof knowledgeBase.whenThinkAboutIt === "string" ? knowledgeBase.whenThinkAboutIt : "offer_follow_up",
@@ -579,7 +588,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
     whenCompetitor: typeof knowledgeBase.whenCompetitor === "string" ? knowledgeBase.whenCompetitor : "acknowledge_differentiate",
     active: Boolean(row.is_active ?? true),
     voiceSettings: {
-      ...defaultAgent().voiceSettings,
+      ...defaultAgent(undefined).voiceSettings,
       ...(knowledgeBase.voiceSettings ?? {}),
     },
   };
@@ -588,7 +597,7 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
 function buildFallbackAgent(fallback: InitialFallbackAgent): Agent | null {
   if (!fallback) return null;
   return {
-    ...defaultAgent(),
+    ...defaultAgent(undefined),
     id: "primary-agent",
     name: fallback.agentName?.trim() || "Receptionist",
     greeting:
@@ -1055,7 +1064,7 @@ export default function AppAgentsPageClient({
 
   const handleSave = async () => {
     if (!selected) return;
-    await persistAgent(selected, { showToast: true, successToast: "Changes saved ✓" });
+    await persistAgent(selected, { showToast: true, successToast: tAgents("toast.changesSaved") });
   };
 
   const handleStepChange = async (newStepId: StepId) => {
@@ -1093,7 +1102,7 @@ export default function AppAgentsPageClient({
 
   const createAgentFromTemplate = async (template: AgentTemplateId) => {
     if (!workspaceId) return;
-    const base = defaultAgent();
+    const base = defaultAgent(tAgents);
     const nameByTemplate: Record<AgentTemplateId, string> = {
       receptionist: tAgents("templateName.receptionist"),
       after_hours: tAgents("templateName.after_hours"),
@@ -1147,7 +1156,7 @@ export default function AppAgentsPageClient({
   const createAgentFromSharedTemplate = async (templateId: string) => {
     const t = AGENT_TEMPLATES.find((x) => x.id === templateId);
     if (!t || !workspaceId) return;
-    const base = defaultAgent();
+    const base = defaultAgent(tAgents);
     const name = t.name.replace(/^The\s+/, "") ?? t.name;
     const agent: Agent = {
       ...base,
@@ -1285,7 +1294,7 @@ export default function AppAgentsPageClient({
                           voiceId,
                           text:
                             selected.greeting.trim() ||
-                            "Thanks for calling. How can I help you today?",
+                            tAgents("greetings.scratch"),
                           settings: selected.voiceSettings,
                         })
                       }
@@ -1760,13 +1769,15 @@ function ProfileTab({
   );
 }
 
-const _FAQ_CATEGORY_TABS = [
-  { id: "all", label: "All" },
-  { id: "hours", label: "Hours" },
-  { id: "services", label: "Services" },
-  { id: "pricing", label: "Pricing" },
-  { id: "policies", label: "Policies" },
-];
+function getFaqCategoryTabs(t: (key: string) => string) {
+  return [
+    { id: "all", label: t("faqCategories.all") },
+    { id: "hours", label: t("faqCategories.hours") },
+    { id: "services", label: t("faqCategories.services") },
+    { id: "pricing", label: t("faqCategories.pricing") },
+    { id: "policies", label: t("faqCategories.policies") },
+  ];
+}
 
 function _faqMatchesCategory(q: string, category: string): boolean {
   if (category === "all") return true;
@@ -1780,11 +1791,13 @@ function _faqMatchesCategory(q: string, category: string): boolean {
 
 // KnowledgeTab now lives in components/AgentKnowledgePanel.
 
-const DEFAULT_OBJECTIONS = [
-  { trigger: "Too expensive", response: "We offer flexible pricing. Can I learn more about your budget?" },
-  { trigger: "I need to think about it", response: "Of course. Can I follow up tomorrow to answer any questions?" },
-  { trigger: "I'm already working with someone", response: "That's great. We'd love to be your backup. Can I send our info?" },
-];
+function getDefaultObjections(t: (key: string) => string) {
+  return [
+    { trigger: t("defaultObjections.tooExpensive"), response: t("defaultObjections.tooExpensiveResponse") },
+    { trigger: t("defaultObjections.thinkAboutIt"), response: t("defaultObjections.thinkAboutItResponse") },
+    { trigger: t("defaultObjections.alreadyWorking"), response: t("defaultObjections.alreadyWorkingResponse") },
+  ];
+}
 
 export function RulesTab({
   agent,
@@ -1914,7 +1927,7 @@ export function RulesTab({
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
         <h3 className="mb-2 text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.transferToHumanWhen")}</h3>
         <div className="space-y-2">
-          {ALWAYS_TRANSFER_OPTIONS.map((option) => (
+          {getAlwaysTransferOptions(t).map((option) => (
             <label key={option} className="flex items-center gap-2 text-sm text-zinc-300">
               <input
                 type="checkbox"
@@ -2310,7 +2323,7 @@ export function RulesTab({
                 <button
                   type="button"
                   onClick={() => {
-                    const next = DEFAULT_OBJECTIONS.map((o, i) => ({
+                    const next = getDefaultObjections(t).map((o, i) => ({
                       id: `obj-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 6)}`,
                       trigger: o.trigger,
                       response: o.response,
