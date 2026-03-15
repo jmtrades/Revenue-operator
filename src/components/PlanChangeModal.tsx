@@ -91,7 +91,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
       onClose();
       window.location.reload();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("genericErrorTryAgain"));
     } finally {
       setLoading(false);
     }

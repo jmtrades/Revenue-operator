@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function GlobalError({
   error,
@@ -10,6 +11,7 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations("errors");
   useEffect(() => {
     // Log error to console in development
     if (process.env.NODE_ENV === "development") {
@@ -23,10 +25,10 @@ export default function GlobalError({
         <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "#0c0f13", color: "#e5e7eb" }}>
           <div className="max-w-md w-full text-center">
             <h1 className="text-xl font-semibold mb-3" style={{ color: "#e5e7eb" }}>
-              Normal conditions are not present.
+              {t("heading")}
             </h1>
             <p className="text-sm mb-6" style={{ color: "#9ca3af" }}>
-              Something went wrong. You can try again or go home.
+              {t("loadPageError")}
             </p>
             <div className="flex gap-3 justify-center flex-wrap">
               <button
@@ -34,13 +36,13 @@ export default function GlobalError({
                 onClick={() => reset()}
                 className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition"
               >
-                Try again
+                {t("tryAgain")}
               </button>
               <Link
                 href="/"
                 className="px-6 py-3 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:text-white transition"
               >
-                Go home
+                {t("goHome")}
               </Link>
             </div>
           </div>
