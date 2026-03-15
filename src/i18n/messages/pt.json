@@ -62,7 +62,7 @@
     "product": "Produto",
     "solutions": "Soluções",
     "pricing": "Preços",
-    "demo": "Demo",
+    "demo": "Demonstração",
     "docs": "Documentação",
     "dashboard": "Painel",
     "dashboardCta": "Painel →",
@@ -145,8 +145,8 @@
     "closeDetails": "Fechar detalhes",
     "loadingApp": "Carregando aplicativo",
     "status": {
-      "active": "Active",
-      "inactive": "Inactive"
+      "active": "Ativo",
+      "inactive": "Inativo"
     },
     "item": "item",
     "items": "itens"
@@ -216,7 +216,7 @@
     "savePassword": "Salvar senha"
   },
   "billing": {
-    "pageTitle": "Billing — Recall Touch",
+    "pageTitle": "Faturamento — Recall Touch",
     "loadError": "Não foi possível carregar os dados de cobrança.",
     "loadErrorDesc": "Conecte sua cobrança para gerenciar a assinatura ou tente novamente em um momento.",
     "backToSettings": "Voltar às configurações",
@@ -255,10 +255,10 @@
     "backToSettingsLink": "← Configurações",
     "toast": {
       "planUpdated": "Plano atualizado. Seus novos recursos estão disponíveis.",
-      "pauseFailed": "Could not pause coverage.",
-      "paused": "Coverage paused.",
-      "paymentFailed": "Could not open payment settings.",
-      "portalFailed": "Could not open billing portal."
+      "pauseFailed": "Não foi possível pausar a cobertura.",
+      "paused": "Cobertura pausada.",
+      "paymentFailed": "Não foi possível abrir as configurações de pagamento.",
+      "portalFailed": "Não foi possível abrir o portal de faturamento."
     }
   },
   "dashboard": {
@@ -627,7 +627,7 @@
         "calls": "Chamadas",
         "presence": "Presença",
         "approvals": "Aprovações",
-        "followUps": "Follow-ups",
+        "followUps": "Acompanhamentos",
         "escalations": "Escalações",
         "policies": "Políticas",
         "templates": "Modelos",
@@ -1348,75 +1348,75 @@
     "emptyStateSummary": "Quando as chamadas começarem a chegar, você verá um resumo de quantas viraram leads, consultas e receita.",
     "am": "AM",
     "pm": "PM",
-    "description": "See how conversations turn into kept appointments and real revenue.",
+    "description": "Veja como conversas viram compromissos e receita real.",
     "ranges": {
-      "today": "Today",
+      "today": "Hoje",
       "sevenDay": "7D",
-      "thirtyDay": "30D",
-      "ninetyDay": "90D",
-      "custom": "Custom"
+      "thirtyDay": "30 d",
+      "ninetyDay": "90 d",
+      "custom": "Personalizado"
     },
     "rangeLabels": {
-      "today": "Today",
-      "last7": "Last 7 days",
-      "last30": "Last 30 days",
-      "last90": "Last 90 days",
-      "customRange": "Custom range"
+      "today": "Hoje",
+      "last7": "Últimos 7 dias",
+      "last30": "Últimos 30 dias",
+      "last90": "Últimos 90 dias",
+      "customRange": "Intervalo personalizado"
     },
-    "exportCsv": "Export CSV",
-    "emptyHeading": "Analytics populate as calls come in",
-    "emptyDescription": "Your first chart will appear after your first call.",
-    "emptyAction": "Make a test call",
+    "exportCsv": "Exportar CSV",
+    "emptyHeading": "As análises são preenchidas conforme as chamadas chegam",
+    "emptyDescription": "Seu primeiro gráfico aparecerá após sua primeira chamada.",
+    "emptyAction": "Fazer uma chamada de teste",
     "funnelStages": {
-      "calls": "Calls",
+      "calls": "Chamadas",
       "leads": "Leads",
-      "qualified": "Qualified",
-      "appointments": "Appointments",
-      "won": "Won"
+      "qualified": "Qualificado",
+      "appointments": "Compromissos",
+      "won": "Ganho"
     },
-    "atAGlance": "{label} at a glance",
-    "glanceSummary": "Handled {totalCalls} calls, created {leads} leads, booked {appointments} appointments, and protected an estimated ${revenue} in revenue.",
-    "glanceEmpty": "Once calls start coming in, you'll see a summary of how many became leads, appointments, and revenue.",
-    "leadConversionPct": "Lead conversion {pct}%",
-    "positiveSentimentPct": "Positive sentiment {pct}%",
-    "peakHours": "Peak hours",
-    "aiInsights": "AI insights",
-    "dismiss": "Dismiss",
-    "insightBusyHour": "Busiest hour this week stays stable around mid-morning.",
-    "insightAvailability": "Questions about availability often appear outside standard hours.",
-    "addToKnowledge": "Add to knowledge base",
-    "insightLiveAnswer": "Calls that reach a live answer are much more likely to become appointments.",
-    "insightPricing": "Make sure pricing and availability are easy to confirm in the first 30 seconds.",
-    "sentimentOverview": "Sentiment overview",
-    "sentimentPositive": "Positive {pct}%",
-    "sentimentNeutral": "Neutral {pct}%",
-    "sentimentNegative": "Negative {pct}%",
+    "atAGlance": "{label} em resumo",
+    "glanceSummary": "Atendemos {totalCalls} chamadas, criamos {leads} leads, agendamos {appointments} compromissos e protegemos cerca de ${revenue} em receita.",
+    "glanceEmpty": "Quando as chamadas chegarem, você verá um resumo de leads, compromissos e receita.",
+    "leadConversionPct": "Conversão de leads {pct}%",
+    "positiveSentimentPct": "Sentimento positivo {pct}%",
+    "peakHours": "Horário de pico",
+    "aiInsights": "Insights de IA",
+    "dismiss": "Dispensar",
+    "insightBusyHour": "O horário de pico esta semana permanece estável no meio da manhã.",
+    "insightAvailability": "Perguntas sobre disponibilidade costumam aparecer fora do horário padrão.",
+    "addToKnowledge": "Adicionar à base de conhecimento",
+    "insightLiveAnswer": "Chamadas que recebem resposta ao vivo têm mais chance de virar compromissos.",
+    "insightPricing": "Garanta que preço e disponibilidade sejam fáceis de confirmar nos primeiros 30 segundos.",
+    "sentimentOverview": "Visão geral do sentimento",
+    "sentimentPositive": "Positivo {pct}%",
+    "sentimentNeutral": "Neutro {pct}%",
+    "sentimentNegative": "Negativo {pct}%",
     "outcomes": {
-      "booked": "Booked",
+      "booked": "Reservado",
       "lead": "Lead",
       "info": "Info",
-      "transferred": "Transferred",
-      "missed": "Missed",
-      "voicemail": "Voicemail"
+      "transferred": "Transferido",
+      "missed": "Perdida",
+      "voicemail": "Correio de voz"
     },
     "days": {
-      "mon": "Mon",
-      "tue": "Tue",
-      "wed": "Wed",
-      "thu": "Thu",
-      "fri": "Fri",
-      "sat": "Sat",
-      "sun": "Sun"
+      "mon": "Seg",
+      "tue": "Ter",
+      "wed": "Qua",
+      "thu": "Qui",
+      "fri": "Sex",
+      "sat": "Sáb",
+      "sun": "Dom"
     },
     "errors": {
-      "timeout": "Analytics request timed out. Try again.",
-      "loadFailed": "Could not load analytics for this workspace."
+      "timeout": "A solicitação de análise expirou. Tente novamente.",
+      "loadFailed": "Não foi possível carregar as análises deste espaço."
     },
-    "periodNoData": "No calls recorded in the selected {period} period. Make a test call to start seeing insights here.",
-    "periodSummaryText": "{count} calls with a {rate}% answer rate",
-    "periodAppointments": "{count} appointments, converting {pct}% of qualified leads.",
-    "periodRevenue": "Estimated revenue impact: ${amount}.",
-    "periodDuration": "Average call duration: {duration}."
+    "periodNoData": "Nenhuma chamada no período {period}. Faça uma chamada de teste para ver insights.",
+    "periodSummaryText": "{count} chamadas com {rate}% de atendimento",
+    "periodAppointments": "{count} compromissos, convertendo {pct}% dos leads qualificados.",
+    "periodRevenue": "Impacto estimado na receita: ${amount}.",
+    "periodDuration": "Duração média da chamada: {duration}."
   },
   "agents": {
     "pageTitle": "Agentes — Recall Touch",
@@ -1447,9 +1447,9 @@
       "goliveDescription": "Conectar ao seu telefone"
     },
     "status": {
-      "live": "Live",
-      "ready": "Ready",
-      "calls": "calls",
+      "live": "Ao vivo",
+      "ready": "Pronto",
+      "calls": "chamadas",
       "active": "Ativo",
       "inactive": "Inativo"
     },
@@ -1476,7 +1476,7 @@
       "editAgent": "Editar agente",
       "deleteAgent": "Excluir agente",
       "deleteAria": "Delete this agent",
-      "savingAria": "Saving agent",
+      "savingAria": "Salvando agente",
       "saveAndSyncAria": "Save agent and sync to voice"
     },
     "nav": {
@@ -1624,7 +1624,7 @@
         "legal": "Jurídico",
         "plumbing": "Encanamento",
         "real_estate": "Imobiliário",
-        "auto": "Auto",
+        "auto": "Automático",
         "salon": "Salão",
         "restaurant": "Restaurante",
         "medical": "Médico",
@@ -1647,27 +1647,27 @@
         "receptionist": {
           "label": "Recepcionista",
           "desc": "Atende chamadas, anota recados e encaminha.",
-          "greeting": "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?"
+          "greeting": "Obrigado por ligar. Posso ajudar com dúvidas, anotar recados e encaminhar. Como posso ajudar hoje?"
         },
         "appointment_setter": {
           "label": "Agendador",
           "desc": "Agenda compromissos e confirma detalhes.",
-          "greeting": "Hi, I can help you schedule an appointment right now. What day works best for you?"
+          "greeting": "Olá, posso agendar um compromisso agora. Qual dia funciona melhor para você?"
         },
         "lead_qualifier": {
           "label": "Qualificador de leads",
           "desc": "Qualifica leads e encaminha prospects quentes.",
-          "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step."
+          "greeting": "Obrigado por entrar em contato. Farei algumas perguntas rápidas para o próximo passo."
         },
         "follow_up": {
           "label": "Follow-up",
           "desc": "Liga de volta e reengaja leads.",
-          "greeting": "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?"
+          "greeting": "Olá, sou seu assistente de IA fazendo acompanhamento. Agora é um bom momento?"
         },
         "support": {
           "label": "Suporte",
           "desc": "Responde dúvidas, diagnostica e resolve.",
-          "greeting": "Thanks for calling support! What can I help you with?"
+          "greeting": "Obrigado por ligar ao suporte! Com que posso ajudar?"
         },
         "scratch": {
           "label": "Personalizado",
@@ -1914,8 +1914,8 @@
       "breadcrumbAgents": "Agentes"
     },
     "links": {
-      "analytics": "Analytics",
-      "flow": "Flow builder"
+      "analytics": "Análises",
+      "flow": "Construtor de fluxo"
     },
     "behavior": {
       "title": "Como seu agente deve se comportar?",
@@ -1983,11 +1983,11 @@
       "placeholderQ3": "Quando precisa disto?",
       "placeholderQ4": "Como nos conheceu?",
       "handoff": {
-        "title": "When to transfer",
-        "subtitle": "Reasons that trigger a handoff to a human."
+        "title": "Quando transferir",
+        "subtitle": "Motivos que disparam a transferência para um humano."
       },
       "objections": {
-        "placeholder": "Anything the agent should always remember on calls."
+        "placeholder": "O que o agente deve sempre lembrar em chamadas."
       }
     },
     "knowledge": {
@@ -2106,51 +2106,51 @@
       "back": "Voltar"
     },
     "purpose": {
-      "inbound": "Inbound",
-      "outbound": "Outbound",
-      "both": "Both"
+      "inbound": "Entrada",
+      "outbound": "Saída",
+      "both": "Ambos"
     },
     "template": {
-      "appointment_setter": "Appointment",
-      "lead_qualifier": "Sales",
-      "follow_up": "Follow-up",
-      "support": "Support",
-      "after_hours": "After-Hours",
-      "emergency": "Emergency",
-      "review_request": "Review",
-      "scratch": "Custom",
-      "receptionist": "Receptionist"
+      "appointment_setter": "Compromisso",
+      "lead_qualifier": "Vendas",
+      "follow_up": "Acompanhamento",
+      "support": "Suporte",
+      "after_hours": "Fora do horário",
+      "emergency": "Emergência",
+      "review_request": "Revisão",
+      "scratch": "Personalizado",
+      "receptionist": "Recepcionista"
     },
     "setupProgress": {
-      "title": "Setup progress",
-      "forAgent": "For {name}",
-      "next": "Next"
+      "title": "Progresso da configuração",
+      "forAgent": "Para {name}",
+      "next": "Próximo"
     },
     "setup": {
-      "title": "Setup",
-      "stepOf": "Step {current} of {total}",
-      "jumpAria": "Jump to step",
-      "completed": "Completed",
-      "current": "Current step",
-      "currentlyOn": "Currently: {label}"
+      "title": "Configuração",
+      "stepOf": "Etapa {current} de {total}",
+      "jumpAria": "Ir para etapa",
+      "completed": "Concluído",
+      "current": "Etapa atual",
+      "currentlyOn": "Atualmente: {label}"
     },
     "knowledgePanel": {
-      "title": "Knowledge base",
-      "subtitle": "Q&A pairs your agent uses to answer callers.",
-      "questionPlaceholder": "When caller asks about…",
-      "answerPlaceholder": "Agent responds with…",
-      "remove": "Remove",
-      "add": "Add Q&A",
+      "title": "Base de conhecimento",
+      "subtitle": "Pares de pergunta e resposta do agente.",
+      "questionPlaceholder": "Quando o chamador pergunta sobre…",
+      "answerPlaceholder": "O agente responde com…",
+      "remove": "Remover",
+      "add": "Adicionar P&R",
       "importUrlPlaceholder": "https://your-website.com"
     },
     "quickActions": {
-      "label": "Quick actions",
-      "edit": "Edit",
-      "editAria": "Edit agent",
-      "test": "Test",
-      "testAria": "Test agent",
-      "goLive": "Go live",
-      "goLiveAria": "Go live"
+      "label": "Ações rápidas",
+      "edit": "Editar",
+      "editAria": "Editar agente",
+      "test": "Testar",
+      "testAria": "Testar agente",
+      "goLive": "Publicar",
+      "goLiveAria": "Publicar"
     }
   },
   "calls": {
@@ -2292,7 +2292,7 @@
     }
   },
   "callIntelligence": {
-    "pageTitle": "Call Intelligence — Recall Touch",
+    "pageTitle": "Inteligência de chamadas — Recall Touch",
     "heading": "Inteligência de Chamadas",
     "pageSubtitle": "Analise conversas reais para tornar seu agente de IA mais eficiente.",
     "title": "Inteligência de chamadas",
@@ -2390,7 +2390,7 @@
     "analyzeTranscript": "Analisar transcrição"
   },
   "callRules": {
-    "pageTitle": "Call Rules — Recall Touch",
+    "pageTitle": "Regras de chamadas — Recall Touch",
     "heading": "Regras de chamadas",
     "description": "Configure como a sua IA trata chamadas durante e fora do horário comercial.",
     "businessHours": "Horário comercial",
@@ -2527,7 +2527,7 @@
       "namePlaceholder": "Nome completo",
       "phoneLabel": "Telefone *",
       "phonePlaceholder": "+1 (555) 000-0000",
-      "emailLabel": "Email",
+      "emailLabel": "E-mail",
       "emailPlaceholder": "email@exemplo.com",
       "companyLabel": "Empresa",
       "companyPlaceholder": "Nome da empresa",
@@ -2602,7 +2602,7 @@
       "callTypeLabel": "Tipo de chamada",
       "callTypes": {
         "default": "Padrão",
-        "followUp": "Follow-up",
+        "followUp": "Acompanhamento",
         "reminder": "Lembrete"
       },
       "startingCall": "Iniciando…",
@@ -2646,11 +2646,11 @@
       "addFailed": "Falha ao adicionar lead.",
       "csvNoValidRows": "Nenhuma linha válida encontrada no CSV."
     },
-    "timeToday": "Today",
-    "timeDaysAgo": "{count} days ago",
-    "timeWeeksAgo": "{count} weeks ago",
-    "timeOneDayAgo": "1 day ago",
-    "timeOneWeekAgo": "1 week ago"
+    "timeToday": "Hoje",
+    "timeDaysAgo": "Há {count} dias",
+    "timeWeeksAgo": "Há {count} semanas",
+    "timeOneDayAgo": "Há 1 dia",
+    "timeOneWeekAgo": "Há 1 semana"
   },
   "campaigns": {
     "title": "Campanhas",
@@ -2786,7 +2786,7 @@
   },
   "settings": {
     "pageTitle": "Configurações — Recall Touch",
-    "agentPageTitle": "Agent Settings — Recall Touch",
+    "agentPageTitle": "Configurações do agente — Recall Touch",
     "title": "Configurações",
     "pageSubtitle": "Preferências e configuração",
     "profile": "Perfil",
@@ -2888,9 +2888,9 @@
       "invitePlaceholder": "colega@empresa.com",
       "sendInvite": "Enviar convite",
       "inviteSentToast": "Convite enviado para {email}",
-      "roleAdmin": "Admin",
-      "roleManager": "Manager",
-      "roleViewer": "Viewer",
+      "roleAdmin": "Administrador",
+      "roleManager": "Gerente",
+      "roleViewer": "Visualizador",
       "escalationOrderTitle": "Ordem de escalação",
       "escalationOrderHint": "Quando sua IA precisar de um humano, ela contata os membros nesta ordem. Arraste para reordenar.",
       "backToSettings": "← Configurações",
@@ -3124,25 +3124,25 @@
     "deleteDataInfo": "Entre em contato com o suporte para excluir seus dados de forma permanente.",
     "deleteAccountInfo": "Entre em contato com o suporte para excluir sua conta de forma permanente.",
     "notifications.events": {
-      "call_received": "Call received",
-      "call_receivedDesc": "Every time your AI answers a call",
-      "lead_captured": "Lead captured",
-      "lead_capturedDesc": "When a caller is identified as a new lead",
-      "appointment_booked": "Appointment booked",
-      "appointment_bookedDesc": "When your AI books an appointment",
-      "urgent_call": "Urgent call",
-      "urgent_callDesc": "Emergency or high-priority calls",
-      "voicemail": "Voicemail left",
-      "voicemailDesc": "When a caller leaves a voicemail"
+      "call_received": "Chamada recebida",
+      "call_receivedDesc": "Sempre que sua IA atende uma chamada",
+      "lead_captured": "Lead capturado",
+      "lead_capturedDesc": "Quando um chamador é identificado como novo lead",
+      "appointment_booked": "Compromisso agendado",
+      "appointment_bookedDesc": "Quando sua IA agenda um compromisso",
+      "urgent_call": "Chamada urgente",
+      "urgent_callDesc": "Chamadas de emergência ou prioritárias",
+      "voicemail": "Recado de voz deixado",
+      "voicemailDesc": "Quando um chamador deixa um recado de voz"
     },
     "notifications.channels": {
       "push": "Push",
       "sms": "SMS",
-      "email": "Email"
+      "email": "E-mail"
     },
     "activity.actions": {
-      "settings_update": "Settings updated",
-      "settings_business_update": "Business settings updated"
+      "settings_update": "Configurações atualizadas",
+      "settings_business_update": "Configurações da empresa atualizadas"
     }
   },
   "hero": {
@@ -3213,7 +3213,7 @@
       "script1Line6": "I have Tuesday at 9 AM or Wednesday at 10:30 with Dr. Martinez.",
       "script1Line7": "Tuesday at 9 please.",
       "script1Line8": "Booked! Tuesday at 9 AM with Dr. Martinez. You'll get a reminder on Monday.",
-      "script1Line9": "Thank you!",
+      "script1Line9": "Obrigado!",
       "script1Line10": "See you Tuesday, Sarah! Have a great day.",
       "script1Detail0": "Patient: Sarah Chen (existing)",
       "script1Detail1": "Service: Cleaning",
@@ -3232,7 +3232,7 @@
       "script2Line6": "That definitely needs attention. We can send an estimator out tomorrow at 3 PM — would that work?",
       "script2Line7": "Yeah, that works.",
       "script2Line8": "Great. Have you started an insurance claim yet?",
-      "script2Line9": "No, not yet.",
+      "script2Line9": "Ainda não.",
       "script2Line10": "No worries — our estimator can help document everything for your insurance claim while they're there.",
       "script2Line11": "Oh that's helpful, thanks.",
       "script2Line12": "Sending you a confirmation text now. See you tomorrow at 3, James!",
@@ -3304,18 +3304,18 @@
     "startFree": "Começar grátis →",
     "backToHome": "Voltar ao início",
     "formSubject": "Assunto",
-    "formName": "Name",
-    "formEmail": "Email",
-    "formCompany": "Company",
-    "formMessage": "Message",
-    "subjectGeneral": "General",
-    "subjectSales": "Sales",
-    "subjectSupport": "Support",
-    "subjectBilling": "Billing",
-    "subjectPartnership": "Partnership",
+    "formName": "Nome",
+    "formEmail": "E-mail",
+    "formCompany": "Empresa",
+    "formMessage": "Mensagem",
+    "subjectGeneral": "Geral",
+    "subjectSales": "Vendas",
+    "subjectSupport": "Suporte",
+    "subjectBilling": "Faturamento",
+    "subjectPartnership": "Parceria",
     "fillRequired": "Please fill in name, email, and message.",
     "thanksReply": "Thanks! We'll get back to you within 4 hours.",
-    "sending": "Sending…"
+    "sending": "Enviando…"
   },
   "productPage": {
     "metaTitle": "Produto",
@@ -3467,7 +3467,7 @@
       },
       "pricingTiers": {
         "starter": {
-          "name": "Starter",
+          "name": "Início",
           "tagline": "Para autônomos e pequenas equipes começando.",
           "f1": "400 min de entrada incluídos",
           "f2": "1 número de IA",
@@ -3475,7 +3475,7 @@
           "f4": "Suporte padrão"
         },
         "growth": {
-          "name": "Growth",
+          "name": "Crescimento",
           "tagline": "Para equipes em crescimento que precisam de cobertura total.",
           "f1": "1.500 min de entrada incluídos",
           "f2": "3 números de IA",
@@ -3483,7 +3483,7 @@
           "f4": "Suporte prioritário"
         },
         "scale": {
-          "name": "Scale",
+          "name": "Escala",
           "tagline": "Para multi-unidades e maior volume.",
           "f1": "5.000 min de entrada incluídos",
           "f2": "10 números",
@@ -3744,7 +3744,7 @@
     "bentoVisuals": {
       "timelineLabels": {
         "call": "Ligação",
-        "followUp": "Follow-up",
+        "followUp": "Acompanhamento",
         "confirm": "Confirmar",
         "close": "Fechar"
       },
@@ -3783,7 +3783,7 @@
       "heading": "Ligações recentes",
       "typeLead": "Lead",
       "typeAppointment": "Agendamento",
-      "typeFollowUp": "Follow-up"
+      "typeFollowUp": "Acompanhamento"
     },
     "activityFeed": {
       "dateLabel": "Hoje",
@@ -3870,7 +3870,7 @@
     "product": "Produto",
     "features": "Recursos",
     "pricing": "Preços",
-    "demo": "Demo",
+    "demo": "Demonstração",
     "docs": "Documentação",
     "company": "Empresa",
     "emailUs": "Envie um e-mail",
@@ -3888,7 +3888,7 @@
     "links": {
       "product": "Produto",
       "pricing": "Preços",
-      "docs": "Docs",
+      "docs": "Documentação",
       "terms": "Termos",
       "privacy": "Privacidade"
     }
@@ -3908,7 +3908,7 @@
     },
     "tier": {
       "starter": {
-        "name": "Starter",
+        "name": "Início",
         "description": "Para profissionais solo que querem que a IA atenda todas as chamadas.",
         "f1": "400 min de entrada incluídos",
         "f2": "50 ligações de saída",
@@ -3918,7 +3918,7 @@
         "f6": "Excedente: $0,25/min"
       },
       "growth": {
-        "name": "Growth",
+        "name": "Crescimento",
         "description": "Para equipes em crescimento que precisam de cobertura confiável e acompanhamento.",
         "f1": "1.500 min de entrada incluídos",
         "f2": "500 ligações de saída",
@@ -3930,7 +3930,7 @@
         "f8": "Excedente: $0,18/min"
       },
       "scale": {
-        "name": "Scale",
+        "name": "Escala",
         "description": "Para equipes que dependem de receita recorrente e funis complexos.",
         "f1": "5.000 min de entrada incluídos",
         "f2": "2.000 ligações de saída",
@@ -3944,9 +3944,9 @@
         "f10": "Excedente: $0,12/min"
       },
       "enterprise": {
-        "name": "Enterprise",
+        "name": "Empresa",
         "description": "Para organizações que precisam de roteamento personalizado, segurança e SLAs.",
-        "f1": "White label",
+        "f1": "Marca branca",
         "f2": "Conformidade sob medida",
         "f3": "SSO",
         "f4": "Gerente dedicado",
@@ -3969,7 +3969,7 @@
       "annualProtected": "Receita anual que o Recall Touch protege",
       "receptionistCost": "custo de rececionista.",
       "recommendedPlan": "Plano recomendado:",
-      "description": "Calculate your potential revenue recovery with our ROI calculator."
+      "description": "Calcule sua recuperação de receita com nossa calculadora de ROI."
     },
     "faq": {
       "title": "Dúvidas sobre preços",
@@ -3980,8 +3980,8 @@
       "cancel": "Posso cancelar a qualquer momento?",
       "cancelAnswer": "Sim — você pode cancelar ou trocar de plano a qualquer momento nas configurações de cobrança."
     },
-    "trustedBy": "Trusted by leading teams in service, healthcare, and local business.",
-    "questionsTalkToUs": "Questions? Talk to us →"
+    "trustedBy": "Confiado por equipes líderes em serviço, saúde e negócios locais.",
+    "questionsTalkToUs": "Dúvidas? Fale conosco →"
   },
   "languageSwitcher": {
     "label": "Idioma",
@@ -3994,8 +3994,8 @@
     "tooltip": "Alterar idioma da interface"
   },
   "onboarding": {
-    "pageTitle": "Get started — Recall Touch",
-    "title": "Onboarding",
+    "pageTitle": "Começar — Recall Touch",
+    "title": "Integração",
     "step": {
       "business": "Negócio",
       "agent": "Agente de IA",
@@ -4221,7 +4221,7 @@
       "qualify_leads": "Qualificar leads",
       "customer_support": "Suporte ao cliente",
       "sales_calls": "Ligações comerciais",
-      "follow_ups": "Follow-ups"
+      "follow_ups": "Acompanhamentos"
     },
     "stepsAria": "Passos do onboarding",
     "addServicePlaceholder": "Adicionar um serviço",
@@ -4535,7 +4535,7 @@
     }
   },
   "messages": {
-    "pageTitle": "Messages — Recall Touch",
+    "pageTitle": "Mensagens — Recall Touch",
     "liveChat": {
       "misheard": "Desculpe — pode repetir?",
       "misheardCatch": "Não entendi. Pode dizer mais uma vez?",
@@ -4591,8 +4591,8 @@
     "compose": "Escrever",
     "templates": "Modelos",
     "toast": {
-      "addContactFirst": "Add this contact in Leads first to send messages.",
-      "sent": "Message sent."
+      "addContactFirst": "Adicione este contato em Leads primeiro para enviar mensagens.",
+      "sent": "Mensagem enviada."
     },
     "empty": {
       "title": "Ainda não há conversas",
@@ -4610,7 +4610,7 @@
     "removeConfirmLabel": "Remover",
     "roles": {
       "owner": "Proprietário",
-      "admin": "Admin",
+      "admin": "Administrador",
       "manager": "Gerente",
       "agent": "Agente"
     },
@@ -4638,7 +4638,7 @@
     "revoking": "A revogar…",
     "revoke": "Revogar",
     "sendInvite": "Enviar convite",
-    "inviteEmailPlaceholder": "colleague@company.com",
+    "inviteEmailPlaceholder": "colega@empresa.com",
     "toast": {
       "inviteSent": "Convite enviado para {email}",
       "inviteResent": "Convite reenviado.",
@@ -4721,7 +4721,7 @@
       "status": "Status"
     },
     "types": {
-      "FAQ": "FAQ",
+      "FAQ": "Perguntas frequentes",
       "Document": "Documento",
       "Website": "URL do site",
       "Custom": "Personalizado"
@@ -4738,12 +4738,12 @@
     "activity": "Filtrar atividade"
   },
   "developer": {
-    "pageTitle": "Developer — Recall Touch",
+    "pageTitle": "Desenvolvedor — Recall Touch",
     "justNow": "Agora mesmo",
     "minAgo": "há {count} min",
     "hrAgo": "há {count} h",
     "daysAgo": "há {count} dias",
-    "permissionAdmin": "Admin",
+    "permissionAdmin": "Administrador",
     "permissionReadWrite": "Leitura/escrita",
     "permissionReadOnly": "Só leitura",
     "permissionReadPlusWrite": "Leitura + escrita",
@@ -4850,35 +4850,35 @@
       "navigation": "Navegar",
       "actions": "Ações",
       "settings": "Configurações",
-      "Pages": "Pages",
-      "Actions": "Actions"
+      "Pages": "Páginas",
+      "Actions": "Ações"
     },
     "action": {
       "newLead": "Criar novo lead",
       "newAgent": "Criar novo agente",
       "newCampaign": "Criar nova campanha",
       "importContacts": "Importar contatos",
-      "testAgent": "Test agent"
+      "testAgent": "Testar agente"
     },
     "empty": "Nenhuma correspondência. Tente outra busca.",
     "shortcuts": "Atalhos de teclado",
     "page": {
-      "dashboard": "Dashboard",
-      "agents": "Agents",
-      "calls": "Calls",
+      "dashboard": "Painel",
+      "agents": "Agentes",
+      "calls": "Chamadas",
       "leads": "Leads",
-      "campaigns": "Campaigns",
-      "inbox": "Inbox",
-      "appointments": "Appointments",
-      "analytics": "Analytics",
-      "callIntelligence": "Call Intelligence",
-      "knowledge": "Knowledge",
-      "team": "Team",
-      "settings": "Settings"
+      "campaigns": "Campanhas",
+      "inbox": "Caixa de entrada",
+      "appointments": "Compromissos",
+      "analytics": "Análises",
+      "callIntelligence": "Inteligência de chamadas",
+      "knowledge": "Conhecimento",
+      "team": "Equipe",
+      "settings": "Configurações"
     },
-    "noMatches": "No matches.",
-    "showShortcuts": "Show shortcuts",
-    "close": "Close"
+    "noMatches": "Nenhuma correspondência.",
+    "showShortcuts": "Mostrar atalhos",
+    "close": "Fechar"
   },
   "contacts": {
     "pageTitle": "Contatos",
@@ -4942,14 +4942,14 @@
       "deleteError": "Não foi possível excluir o contato. Tente novamente.",
       "updateError": "Não foi possível atualizar o contato. Tente novamente."
     },
-    "lastContactUnknown": "Last contact: unknown",
-    "lastContactToday": "Last contact: today",
-    "lastContactYesterday": "Last contact: yesterday",
-    "lastContactDaysAgo": "Last contact: {count} days ago",
-    "filtersAria": "Contact filters",
-    "addedManually": "Added manually from dashboard.",
-    "inbound": "Inbound",
-    "outbound": "Outbound"
+    "lastContactUnknown": "Último contato: desconhecido",
+    "lastContactToday": "Último contato: hoje",
+    "lastContactYesterday": "Último contato: ontem",
+    "lastContactDaysAgo": "Último contato: há {count} dias",
+    "filtersAria": "Filtros de contato",
+    "addedManually": "Adicionado manualmente pelo painel.",
+    "inbound": "Entrada",
+    "outbound": "Saída"
   },
   "appointments": {
     "pageTitle": "Agendamentos — Recall Touch",
@@ -5023,8 +5023,8 @@
         "title": "Ainda não há notificações",
         "body": "Mostraremos aqui novos leads, resumos de chamadas e atualizações importantes."
       },
-      "loading": "Loading…",
-      "emptyBodyAlt": "You'll see call alerts and system updates here"
+      "loading": "Carregando…",
+      "emptyBodyAlt": "Você verá alertas de chamadas e atualizações do sistema aqui"
     },
     "type": {
       "lead": "Novo lead",
@@ -5033,13 +5033,13 @@
       "qualityAlert": "Alerta de qualidade",
       "billing": "Cobrança",
       "system": "Atualização do sistema",
-      "new_lead": "New lead",
-      "call_completed": "Call completed",
-      "appointment_booked": "Appointment booked",
-      "campaign_milestone": "Campaign",
-      "quality_alert": "Quality alert",
-      "billing_event": "Billing",
-      "system_update": "System"
+      "new_lead": "Novo lead",
+      "call_completed": "Chamada concluída",
+      "appointment_booked": "Compromisso agendado",
+      "campaign_milestone": "Campanha",
+      "quality_alert": "Alerta de qualidade",
+      "billing_event": "Faturamento",
+      "system_update": "Sistema"
     },
     "action": {
       "markRead": "Marcar como lida",
@@ -5047,11 +5047,11 @@
       "preferences": "Preferências de notificação"
     },
     "time": {
-      "justNow": "Just now",
-      "minAgo": "{count}m ago",
-      "hourAgo": "{count}h ago",
-      "yesterday": "Yesterday",
-      "daysAgo": "{count}d ago"
+      "justNow": "Agora mesmo",
+      "minAgo": "Há {count} min",
+      "hourAgo": "Há {count} h",
+      "yesterday": "Ontem",
+      "daysAgo": "Há {count} d"
     }
   },
   "industriesPage": {
@@ -5163,8 +5163,8 @@
     "formYourName": "Seu nome",
     "and": "e",
     "formBusinessName": "Business name",
-    "formEmail": "Email",
-    "formPhone": "Phone number",
+    "formEmail": "E-mail",
+    "formPhone": "Número de telefone",
     "formWebsite": "Website URL (optional)",
     "formWebsiteHint": "Helps tailor your experience.",
     "formBusinessType": "What type of business?",
@@ -5173,28 +5173,28 @@
     "emailPlaceholder": "you@company.com",
     "phonePlaceholder": "(555) 123-4567",
     "websitePlaceholder": "https://yourbusiness.com",
-    "businessTypeHomeServices": "Home Services",
-    "businessTypeHealthcare": "Healthcare",
+    "businessTypeHomeServices": "Serviços domésticos",
+    "businessTypeHealthcare": "Saúde",
     "businessTypeLegal": "Legal",
-    "businessTypeRealEstate": "Real Estate",
-    "businessTypeInsurance": "Insurance",
-    "businessTypeB2bSales": "B2B Sales",
+    "businessTypeRealEstate": "Imobiliário",
+    "businessTypeInsurance": "Seguro",
+    "businessTypeB2bSales": "Vendas B2B",
     "businessTypeLocalBusiness": "Local Business",
-    "businessTypeContractors": "Contractors",
+    "businessTypeContractors": "Contratados",
     "welcomeAboard": "Welcome aboard!",
     "aiReady": "Your AI phone system is ready.",
     "setUpAgent": "Set up my AI agent →",
     "takes2Min": "Takes 2 minutes · Your first 14 days are free",
     "emailRequired": "Email is required.",
     "creatingAccount": "Creating your account…",
-    "almostThere": "Almost there…",
+    "almostThere": "Quase lá…",
     "getStartedFree": "Get started free →",
     "noCardRequired": "No credit card required · 14-day free trial · Cancel anytime",
     "alreadyHaveAccount": "Already have an account?",
-    "signInLink": "Sign in →",
-    "tryAgain": "Try again",
+    "signInLink": "Entrar →",
+    "tryAgain": "Tente novamente",
     "bySigningUp": "By signing up you agree to our",
-    "terms": "Terms",
+    "terms": "Termos",
     "privacyPolicy": "Privacy Policy",
     "cancelError": "No problem — protection didn't start."
   },
@@ -5370,7 +5370,7 @@
     }
   },
   "phone": {
-    "pageTitle": "Phone Settings — Recall Touch",
+    "pageTitle": "Configurações de telefone — Recall Touch",
     "heading": "Números de telefone",
     "description": "Gerir os números do seu espaço e ligar a sua IA.",
     "getNumber": "Obter número",
@@ -5425,7 +5425,7 @@
       "saved": "Definições guardadas.",
       "error": "Algo correu mal.",
       "createAgentFirst": "Crie primeiro um agente na secção Agentes e tente novamente.",
-      "testCallStarted": "Calling you now — answer your phone to hear your agent.",
+      "testCallStarted": "Ligando agora — atenda para ouvir seu agente.",
       "errorRetry": "Algo deu errado. Tente novamente.",
       "connectFailed": "Falha ao conectar número. Tente novamente.",
       "saveFailed": "Falha ao salvar. Tente novamente.",
@@ -5434,8 +5434,8 @@
       "releaseFailed": "Não foi possível liberar o número.",
       "codeSent": "Código enviado. Verifique seu telefone.",
       "getAiNumber": "Use «Obter um número de IA» para uma linha dedicada.",
-      "phoneVerified": "Phone verified ✓",
-      "waitlistJoined": "We'll notify you when numbers are available."
+      "phoneVerified": "Telefone verificado ✓",
+      "waitlistJoined": "Avisaremos quando houver números disponíveis."
     },
     "marketplace": {
       "title": "Marketplace de números de telefone",
@@ -5532,70 +5532,70 @@
       "submitting": "Enviando…",
       "submitLabel": "Enviar solicitação de portabilidade"
     },
-    "connectTitle": "Connect your phone number",
-    "connectDescription": "Legacy connection and forwarding. Your AI receives calls on the number above or via phone_config.",
-    "optionA": "Option A — Your AI number",
-    "optionB": "Option B — Forward your existing number",
-    "optionBDesc": "Keep your current number. Forward unanswered calls to your AI number below.",
-    "forwardStep1": "Open your phone carrier's app or website (AT&T, Verizon, T-Mobile, etc.).",
-    "forwardStep2": "Find \"Call forwarding\" or \"Forward when busy.\"",
-    "forwardStep3": "Enter the number below in your carrier or device settings.",
-    "forwardTo": "Forward to:",
-    "orByDevice": "Or by device:",
-    "iphonePath": "iPhone: Settings → Phone → Call Forwarding",
-    "androidPath": "Android: Phone → ⋮ → Settings → Call Forwarding",
-    "businessLinePath": "Business line: Call your carrier; ask to forward to {number}",
-    "quickDialCodes": "Quick dial codes",
-    "testForwarding": "Test forwarding",
-    "testForwardingDesc": "We'll call you so you can talk to your agent right now.",
-    "createAgentFirst": "Create an agent first so we know who should answer.",
-    "goToAgents": "Go to Agents →",
-    "validNumberError": "Enter a valid 10-digit US number.",
-    "validPhoneError": "Enter a valid phone number with country code (e.g., +1 555 000 0000).",
-    "callMyPhoneToTest": "Call my phone to test",
-    "callingYou": "Calling you…",
-    "ariaCallTest": "Call my phone to test",
-    "ariaEnterValid": "Enter a valid 10-digit number to enable",
-    "outboundCallerId": "Outbound caller ID (optional)",
+    "connectTitle": "Conecte seu número de telefone",
+    "connectDescription": "Conexão e encaminhamento legados. Sua IA recebe chamadas no número acima ou via phone_config.",
+    "optionA": "Opção A — Seu número de IA",
+    "optionB": "Opção B — Encaminhar seu número atual",
+    "optionBDesc": "Mantenha seu número. Encaminhe chamadas não atendidas para seu número de IA abaixo.",
+    "forwardStep1": "Abra o app ou site da sua operadora (AT&T, Verizon, T-Mobile, etc.).",
+    "forwardStep2": "Procure \"Desvio de chamadas\" ou \"Desviar quando ocupado\".",
+    "forwardStep3": "Digite o número abaixo nas configurações da sua operadora ou dispositivo.",
+    "forwardTo": "Encaminhar para:",
+    "orByDevice": "Ou por dispositivo:",
+    "iphonePath": "iPhone: Ajustes → Telefone → Desvio de chamadas",
+    "androidPath": "Android: Telefone → ⋮ → Ajustes → Desvio de chamadas",
+    "businessLinePath": "Linha de negócios: Ligue para sua operadora e peça para encaminhar para {number}",
+    "quickDialCodes": "Códigos de discagem rápida",
+    "testForwarding": "Testar encaminhamento",
+    "testForwardingDesc": "Ligaremos para você falar com seu agente agora.",
+    "createAgentFirst": "Crie um agente primeiro para definirmos quem deve atender.",
+    "goToAgents": "Ir para Agentes →",
+    "validNumberError": "Digite um número dos EUA válido de 10 dígitos.",
+    "validPhoneError": "Digite um número válido com código do país (ex.: +1 555 000 0000).",
+    "callMyPhoneToTest": "Ligar para meu telefone para testar",
+    "callingYou": "Ligando…",
+    "ariaCallTest": "Ligar para meu telefone para testar",
+    "ariaEnterValid": "Digite um número de 10 dígitos válido para habilitar",
+    "outboundCallerId": "ID de chamada de saída (opcional)",
     "outboundCallerIdHint": "Show a different number when your AI places outbound calls. Leave blank to use your AI number above.",
-    "enableWhatsApp": "Enable WhatsApp on this number",
-    "verifyBySms": "Verify a number by SMS",
+    "enableWhatsApp": "Habilitar WhatsApp neste número",
+    "verifyBySms": "Verificar um número por SMS",
     "verifyBySmsDesc": "We'll send a 6-digit code to confirm you own this number. Useful for forwarding numbers.",
-    "verifyMyNumber": "Verify my number →",
-    "sendingCode": "Sending code…",
-    "forwardCallsToAi": "Forward calls to your AI",
+    "verifyMyNumber": "Verificar meu número →",
+    "sendingCode": "Enviando código…",
+    "forwardCallsToAi": "Encaminhar chamadas para sua IA",
     "iphone": "iPhone",
     "android": "Android",
-    "businessLine": "Business line",
-    "testForwardingLink": "Test forwarding →",
-    "useExistingNumber": "Use your existing number",
-    "forwardUnansweredHint": "Forward unanswered calls to your AI number (get one from the left card first).",
-    "forwardInstructionIphone": "Settings → Phone → Call Forwarding → [your AI number]",
-    "forwardInstructionAndroid": "Phone → ⋮ → Settings → Call Forwarding → [your AI number]",
-    "forwardInstructionBusiness": "Call your provider: \"Forward unanswered calls to [your AI number]\"",
-    "verifiedLabel": "✓ Verified",
-    "codeNotMatch": "Code didn't match.",
-    "verificationFailed": "Verification failed.",
-    "failedToSendCode": "Failed to send code. Check your connection and try again.",
-    "addNumberLater": "I'll add a number later",
-    "backToSettings": "← Settings"
+    "businessLine": "Linha de negócios",
+    "testForwardingLink": "Testar encaminhamento →",
+    "useExistingNumber": "Use seu número atual",
+    "forwardUnansweredHint": "Encaminhe chamadas não atendidas para seu número de IA (obtenha um no card à esquerda).",
+    "forwardInstructionIphone": "Ajustes → Telefone → Desvio → [seu número de IA]",
+    "forwardInstructionAndroid": "Telefone → ⋮ → Ajustes → Desvio → [seu número de IA]",
+    "forwardInstructionBusiness": "Ligue para sua operadora: \"Encaminhar chamadas não atendidas para [seu número de IA]\"",
+    "verifiedLabel": "✓ Verificado",
+    "codeNotMatch": "O código não conferiu.",
+    "verificationFailed": "Verificação falhou.",
+    "failedToSendCode": "Falha ao enviar o código. Verifique sua conexão e tente novamente.",
+    "addNumberLater": "Adiciono um número depois",
+    "backToSettings": "← Configurações"
   },
   "integrations": {
-    "pageTitle": "Integrations — Recall Touch",
+    "pageTitle": "Integrações — Recall Touch",
     "toast": {
-      "oauthComingSoon": "OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.",
-      "invalidIntegration": "Invalid integration.",
-      "webhookSaved": "Webhook destination saved.",
-      "webhookSaveFailed": "Could not save webhook settings.",
-      "webhookTestFailed": "Could not send webhook test.",
+      "oauthComingSoon": "OAuth para este CRM estará disponível em breve. Use o webhook abaixo enquanto isso.",
+      "invalidIntegration": "Integração inválida.",
+      "webhookSaved": "Destino do webhook salvo.",
+      "webhookSaveFailed": "Não foi possível salvar as configurações do webhook.",
+      "webhookTestFailed": "Não foi possível enviar o teste do webhook.",
       "webhookTestDelivered": "Teste de webhook enviado ({status}).",
       "webhookTestError": "O webhook respondeu com {status}.",
       "calendarConnected": "Google Calendar ligado.",
       "calendarError": "Não foi possível ligar o Google Calendar.",
       "calendarNotConfigured": "Google Calendar não está configurado.",
-      "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
-      "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
-      "error": "Something went wrong. Try again."
+      "whatsappEmailRequired": "Digite seu e-mail para entrar na lista de espera do WhatsApp.",
+      "whatsappWaitlisted": "Você está na lista. Avisaremos quando o WhatsApp estiver disponível.",
+      "error": "Algo deu errado. Tente novamente."
     },
     "hub": {
       "title": "Integrações",
@@ -5746,20 +5746,20 @@
     }
   },
   "proofDrawer": {
-    "title": "How it progressed",
-    "closeAria": "Close",
-    "loading": "In progress.",
-    "empty": "No proof available yet.",
-    "progressHeading": "Progress",
-    "nextPlannedTouch": "Next planned touch",
-    "nextTouchAt": "Next touch at",
-    "conversationInProgress": "Conversation in progress. You are the decision owner when a handoff occurs.",
+    "title": "Como progrediu",
+    "closeAria": "Fechar",
+    "loading": "Em andamento.",
+    "empty": "Nenhuma prova disponível ainda.",
+    "progressHeading": "Progresso",
+    "nextPlannedTouch": "Próximo contato planejado",
+    "nextTouchAt": "Próximo contato às",
+    "conversationInProgress": "Conversa em andamento. Você é o responsável quando há transferência.",
     "outcome": {
-      "followThrough": "Follow-through continued",
-      "planningToAttend": "They're planning to attend",
-      "customerReturned": "Customer returned",
-      "theyreSet": "They're set",
-      "decisionProgressed": "Decision progressed"
+      "followThrough": "Acompanhamento continuado",
+      "planningToAttend": "Eles planejam comparecer",
+      "customerReturned": "Cliente retornou",
+      "theyreSet": "Estão definidos",
+      "decisionProgressed": "Decisão progrediu"
     }
   }
 }
