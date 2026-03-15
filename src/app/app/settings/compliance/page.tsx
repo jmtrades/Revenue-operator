@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { getDefaultTwoPartyAnnouncement } from "@/lib/compliance/recording-consent";
 import type { RecordingConsentMode } from "@/lib/compliance/recording-consent";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
 export default function AppSettingsCompliancePage() {
   const tSettings = useTranslations("settings");
@@ -17,6 +18,13 @@ export default function AppSettingsCompliancePage() {
   const [pauseOnSensitive, setPauseOnSensitive] = useState(false);
   const [consentLoading, setConsentLoading] = useState(true);
   const [consentSaving, setConsentSaving] = useState(false);
+  const lastConsentRef = useRef({ mode: recordingConsentMode, announcementText, pauseOnSensitive });
+  const isDirty =
+    recordingConsentMode !== lastConsentRef.current.mode ||
+    announcementText !== lastConsentRef.current.announcementText ||
+    pauseOnSensitive !== lastConsentRef.current.pauseOnSensitive;
+  useUnsavedChanges(isDirty);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -29,9 +37,13 @@ export default function AppSettingsCompliancePage() {
           pauseOnSensitive?: boolean;
         };
         if (!cancelled) {
-          setRecordingConsentMode(data.mode ?? "one_party");
-          setAnnouncementText(data.announcementText ?? "");
-          setPauseOnSensitive(data.pauseOnSensitive ?? false);
+          const mode = data.mode ?? "one_party";
+          const text = data.announcementText ?? "";
+          const pause = data.pauseOnSensitive ?? false;
+          setRecordingConsentMode(mode);
+          setAnnouncementText(text);
+          setPauseOnSensitive(pause);
+          lastConsentRef.current = { mode, announcementText: text, pauseOnSensitive: pause };
         }
       } catch {
         if (!cancelled) toast.error(tSettings("compliance.loadFailed"));
@@ -62,6 +74,7 @@ export default function AppSettingsCompliancePage() {
         toast.error(err.error ?? tSettings("compliance.saveFailed"));
         return;
       }
+      lastConsentRef.current = { mode: recordingConsentMode, announcementText, pauseOnSensitive };
       toast.success(tSettings("compliance.recordingSaved"));
     } catch {
       toast.error(tSettings("compliance.saveFailed"));

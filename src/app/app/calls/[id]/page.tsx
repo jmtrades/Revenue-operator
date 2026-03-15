@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { cn } from "@/lib/cn";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
 
@@ -199,19 +200,12 @@ const CALL_DETAIL_SNAPSHOT_PREFIX = "rt_call_detail_snapshot:";
 
 function readCallDetailSnapshot(workspaceId: string, callId: string): CallDetail | null {
   if (typeof window === "undefined" || !workspaceId || !callId) return null;
+  const key = `${CALL_DETAIL_SNAPSHOT_PREFIX}${workspaceId}:${callId}`;
   try {
-    const raw = window.localStorage.getItem(
-      `${CALL_DETAIL_SNAPSHOT_PREFIX}${workspaceId}:${callId}`,
-    );
+    const raw = safeGetItem(key);
     return raw ? (JSON.parse(raw) as CallDetail) : null;
   } catch {
-    try {
-      window.localStorage.removeItem(
-        `${CALL_DETAIL_SNAPSHOT_PREFIX}${workspaceId}:${callId}`,
-      );
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return null;
   }
 }
@@ -222,14 +216,7 @@ function persistCallDetailSnapshot(
   detail: CallDetail,
 ) {
   if (typeof window === "undefined" || !workspaceId || !callId) return;
-  try {
-    window.localStorage.setItem(
-      `${CALL_DETAIL_SNAPSHOT_PREFIX}${workspaceId}:${callId}`,
-      JSON.stringify(detail),
-    );
-  } catch {
-    // ignore persistence errors
-  }
+  safeSetItem(`${CALL_DETAIL_SNAPSHOT_PREFIX}${workspaceId}:${callId}`, JSON.stringify(detail));
 }
 
 export default function AppCallDetailPage() {
@@ -246,6 +233,7 @@ export default function AppCallDetailPage() {
 
   useEffect(() => {
     if (!id || !workspaceId) return;
+    let cancelled = false;
     fetch(`/api/calls/${id}?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
@@ -254,6 +242,7 @@ export default function AppCallDetailPage() {
         return r.json();
       })
       .then((data) => {
+        if (cancelled) return;
         const nextCall = (data as { call?: CallDetail }).call ?? null;
         setError(null);
         setCall(nextCall);
@@ -261,8 +250,13 @@ export default function AppCallDetailPage() {
           persistCallDetailSnapshot(workspaceId, id, nextCall);
         }
       })
-      .catch(() => setError(t("calls.detail.notFound")))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        if (!cancelled) setError(t("calls.detail.notFound"));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
   }, [id, workspaceId, t]);
 
   useEffect(() => {
@@ -293,7 +287,16 @@ export default function AppCallDetailPage() {
           <ArrowLeft className="w-4 h-4 text-zinc-500" />
           <span className="text-sm text-zinc-400">{t("calls.detail.backToCalls")}</span>
         </div>
-        <div className="h-32 rounded-lg animate-pulse bg-[var(--bg-card)]" />
+        <div className="space-y-4">
+          <div className="h-10 w-2/3 rounded-xl animate-pulse bg-[var(--bg-card)]" />
+          <div className="h-4 w-1/2 rounded animate-pulse bg-[var(--bg-card)]" />
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="h-24 rounded-xl animate-pulse bg-[var(--bg-card)]" />
+            <div className="h-24 rounded-xl animate-pulse bg-[var(--bg-card)]" />
+          </div>
+          <div className="h-40 rounded-xl animate-pulse bg-[var(--bg-card)] mt-6" />
+          <div className="h-32 rounded-xl animate-pulse bg-[var(--bg-card)]" />
+        </div>
       </div>
     );
   }

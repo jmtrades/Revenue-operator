@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
 const NOTIFICATION_EVENT_KEYS = ["call_received", "lead_captured", "appointment_booked", "urgent_call", "voicemail"] as const;
 
@@ -26,6 +27,16 @@ export default function AppSettingsNotificationsPage() {
     });
     return fromSnapshot;
   });
+  const lastSavedRef = useRef<string>("");
+  const prefsSerialized = JSON.stringify(
+    NOTIFICATION_EVENT_KEYS.map((k) => [k, [...(prefs[k] ?? [])].sort()].flat()),
+  );
+  const isDirty = lastSavedRef.current !== prefsSerialized;
+  useUnsavedChanges(isDirty);
+
+  useEffect(() => {
+    if (snapshot && lastSavedRef.current === "") lastSavedRef.current = prefsSerialized;
+  }, [snapshot, prefsSerialized]);
 
   useEffect(() => {
     if (snapshot) {
@@ -66,6 +77,7 @@ export default function AppSettingsNotificationsPage() {
   };
 
   const handleSave = async () => {
+    if (saving) return;
     setSaving(true);
     try {
       const payload: Record<string, Channel[]> = {};
@@ -79,6 +91,7 @@ export default function AppSettingsNotificationsPage() {
         body: JSON.stringify({ notification_preferences: payload }),
       });
       if (!res.ok) throw new Error("Failed to save");
+      lastSavedRef.current = prefsSerialized;
       toast.success(tSettings("notifications.saved"));
     } catch {
       toast.error(tToast("error.generic"));

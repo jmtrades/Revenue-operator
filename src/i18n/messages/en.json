@@ -2165,6 +2165,7 @@
     "createFirstAria": "Create your first agent",
     "createAgentButton": "+ Create Agent",
     "selectOrCreate": "Select or create an agent to edit how it answers calls.",
+    "emptyTitle": "No agents yet",
     "emptySubtitle": "Create your first AI agent to answer calls, capture leads, and book appointments.",
     "backToActivity": "← Activity",
     "transferToPhoneLabel": "Transfer to phone number",
@@ -2435,6 +2436,7 @@
     "assigned": "Assigned",
     "details": "Call details",
     "errors": {
+      "errorTitle": "Could not load calls",
       "timeout": "Request timed out. Try again.",
       "loadFailed": "Could not load calls for this workspace.",
       "exportFailed": "Export failed. Try again."
@@ -2505,7 +2507,9 @@
       }
     },
     "empty": {
-      "analyzed": "No analyzed calls yet. Paste a transcript or connect live calls to get started."
+      "analyzed": "No analyzed calls yet. Paste a transcript or connect live calls to get started.",
+      "cta": "View calls",
+      "ctaSecondary": "Analyze a transcript"
     },
     "recording": "Recording",
     "notes": {
@@ -5880,6 +5884,8 @@
     "releaseTitleUnassign": "Unassign from agent in Agents first",
     "releaseTitleRelease": "Release number",
     "releaseLabel": "Release",
+    "releaseConfirmTitle": "Release this number?",
+    "releaseConfirmMessage": "This number will be released and will no longer receive or make calls through Recall Touch. You can connect a new number anytime.",
     "copyNumber": "Copy number",
     "copied": "Copied",
     "copiedAria": "Copied to clipboard",

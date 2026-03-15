@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, Flag, Music2 } from "lucide-react";
+import { Brain, ChevronDown, Flag, Music2 } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -12,7 +12,9 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import Link from "next/link";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { cn } from "@/lib/cn";
 
 type CallExample = {
@@ -144,12 +146,8 @@ export default function CallIntelligencePage() {
   useEffect(() => {
     const notes: Record<string, string> = {};
     callExamples.forEach((c) => {
-      try {
-        const v = localStorage.getItem(`rt_call_note_${c.id}`);
-        if (v) notes[c.id] = v;
-      } catch {
-        // ignore
-      }
+      const v = safeGetItem(`rt_call_note_${c.id}`);
+      if (v) notes[c.id] = v;
     });
     setCallNotes((prev) => ({ ...notes, ...prev }));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run when list length changes
@@ -525,9 +523,25 @@ export default function CallIntelligencePage() {
                 <div className="h-4 w-32 rounded-xl bg-white/[0.04] animate-pulse" />
               </div>
             ) : callExamples.length === 0 ? (
-              <p className="text-sm text-[var(--text-secondary)]">
-                {t("empty.analyzed")}
-              </p>
+              <div className="py-8 px-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]/50 text-center">
+                <Brain className="w-10 h-10 text-zinc-500 mx-auto mb-3" aria-hidden />
+                <p className="text-sm font-medium text-white mb-1">{t("empty.analyzed")}</p>
+                <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+                  <Link
+                    href="/app/calls"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-zinc-100"
+                  >
+                    {t("empty.cta")} →
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("manual")}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  >
+                    {t("empty.ctaSecondary")}
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className="space-y-3">
                 {qualityPerCall
@@ -646,13 +660,12 @@ export default function CallIntelligencePage() {
                               type="button"
                               onClick={() => {
                                 const note = callNotes[call.id] ?? "";
-                                try {
-                                  const key = `rt_call_note_${call.id}`;
-                                  if (note) localStorage.setItem(key, note);
-                                  else localStorage.removeItem(key);
+                                const key = `rt_call_note_${call.id}`;
+                                if (note) {
+                                  setToast(safeSetItem(key, note) ? t("notes.saved") : t("notes.saveFailed"));
+                                } else {
+                                  safeRemoveItem(key);
                                   setToast(t("notes.saved"));
-                                } catch {
-                                  setToast(t("notes.saveFailed"));
                                 }
                                 setTimeout(() => setToast(null), 2000);
                               }}

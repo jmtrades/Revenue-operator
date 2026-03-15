@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast } from "sonner";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { TIMEZONES_BY_REGION } from "@/lib/constants";
 import { INDUSTRY_OPTIONS } from "@/lib/constants/industries";
 import {
@@ -51,25 +52,42 @@ export default function AppSettingsBusinessPage() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteConfirmName, setDeleteConfirmName] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const lastSavedRef = useRef({ name, address, website, timezone, industry });
+  const isDirty =
+    name !== lastSavedRef.current.name ||
+    address !== lastSavedRef.current.address ||
+    website !== lastSavedRef.current.website ||
+    timezone !== lastSavedRef.current.timezone ||
+    industry !== lastSavedRef.current.industry;
+  useUnsavedChanges(isDirty);
 
   useEffect(() => {
     fetchWorkspaceMeCached()
       .then((data: { name?: string; address?: string; website?: string; industry?: string } | null) => {
-        setName(data?.name ?? "");
-        setAddress(data?.address ?? "");
-        setWebsite(data?.website ?? "");
-        setIndustry(data?.industry && INDUSTRY_OPTIONS.some((item) => item.id === data.industry) ? data.industry : "other");
+        const n = data?.name ?? "";
+        const a = data?.address ?? "";
+        const w = data?.website ?? "";
+        const i = data?.industry && INDUSTRY_OPTIONS.some((item) => item.id === data.industry) ? data.industry : "other";
+        setName(n);
+        setAddress(a);
+        setWebsite(w);
+        setIndustry(i);
+        lastSavedRef.current = { name: n, address: a, website: w, timezone: lastSavedRef.current.timezone, industry: i };
       })
       .finally(() => setLoading(false));
     fetch("/api/workspace/timezone", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data: { timezone?: string } | null) => {
-        if (data?.timezone) setTimezone(data.timezone);
+        if (data?.timezone) {
+          setTimezone(data.timezone);
+          lastSavedRef.current = { ...lastSavedRef.current, timezone: data.timezone };
+        }
       })
       .catch(() => {});
   }, []);
 
   const handleSave = async () => {
+    if (saving) return;
     setSaving(true);
     try {
       const [resMe, _resTz] = await Promise.all([
@@ -88,6 +106,7 @@ export default function AppSettingsBusinessPage() {
       ]);
       if (!resMe.ok) throw new Error("save_failed");
       invalidateWorkspaceMeCache();
+      lastSavedRef.current = { name, address, website, timezone, industry };
       setInlineToast(tToast("saved"));
       toast.success(tToast("saved"));
     } catch {

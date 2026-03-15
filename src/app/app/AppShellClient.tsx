@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { WorkspaceProvider } from "@/components/WorkspaceContext";
 import { WorkspaceName } from "@/components/WorkspaceName";
 import { fetchWorkspaceMeCached, primeWorkspaceMeCache } from "@/lib/client/workspace-me";
+import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
 import {
   LayoutList,
   PhoneCall,
@@ -135,7 +136,7 @@ export default function AppShellClient({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
-      const stored = localStorage.getItem("rt_sidebar");
+      const stored = safeGetItem("rt_sidebar");
       return stored === "collapsed";
     } catch {
       return false;
@@ -148,11 +149,7 @@ export default function AppShellClient({
   const toggleSidebarCollapse = () => {
     setSidebarCollapsed((prev) => {
       const next = !prev;
-      try {
-        localStorage.setItem("rt_sidebar", next ? "collapsed" : "expanded");
-      } catch {
-        // ignore
-      }
+      safeSetItem("rt_sidebar", next ? "collapsed" : "expanded");
       return next;
     });
   };
@@ -189,7 +186,7 @@ export default function AppShellClient({
     if (!workspaceMetaLoaded || pathname === "/app/onboarding") return;
     try {
       const serverOnboarded = Boolean(workspaceMeta?.onboardingCompletedAt);
-      const localOnboarded = localStorage.getItem("rt_onboarded") === "true";
+      const localOnboarded = safeGetItem("rt_onboarded") === "true";
       if (!serverOnboarded && !localOnboarded) {
         router.replace("/app/onboarding");
       }

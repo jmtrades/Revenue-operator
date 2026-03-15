@@ -9,7 +9,7 @@ export function safeSetItem(key: string, value: string): boolean {
     }
     localStorage.setItem(key, value);
     return true;
-  } catch (e) {
+  } catch (_e) {
     // QuotaExceededError — try to free space
     console.warn("localStorage quota exceeded, clearing old snapshots");
     try {

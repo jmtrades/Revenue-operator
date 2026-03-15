@@ -7,11 +7,14 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { formatCurrencyCents } from "@/lib/currency";
 import { toast as sonnerToast } from "sonner";
 import { Phone, PhoneForwarded, Plus, FileInput } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import {
   fetchWorkspaceMeCached,
   getWorkspaceMeSnapshotSync,
   invalidateWorkspaceMeCache,
 } from "@/lib/client/workspace-me";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
 type WorkspacePhoneNumber = {
   id: string;
@@ -60,17 +63,12 @@ const PHONE_SETTINGS_SNAPSHOT_PREFIX = "rt_phone_settings_snapshot:";
 
 function readPhoneSettingsSnapshot(workspaceId: string): PhoneSettingsSnapshot | null {
   if (typeof window === "undefined" || !workspaceId) return null;
+  const key = `${PHONE_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`;
   try {
-    const raw = window.localStorage.getItem(
-      `${PHONE_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`,
-    );
+    const raw = safeGetItem(key);
     return raw ? (JSON.parse(raw) as PhoneSettingsSnapshot) : null;
   } catch {
-    try {
-      window.localStorage.removeItem(`${PHONE_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return null;
   }
 }
@@ -80,14 +78,7 @@ function persistPhoneSettingsSnapshot(
   snapshot: PhoneSettingsSnapshot,
 ) {
   if (typeof window === "undefined" || !workspaceId) return;
-  try {
-    window.localStorage.setItem(
-      `${PHONE_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`,
-      JSON.stringify(snapshot),
-    );
-  } catch {
-    // ignore persistence errors
-  }
+  safeSetItem(`${PHONE_SETTINGS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(snapshot));
 }
 
 export default function AppSettingsPhonePage() {
@@ -134,6 +125,12 @@ export default function AppSettingsPhonePage() {
   const [numbersLoading, setNumbersLoading] = useState(true);
   const [totalMonthlyCents, setTotalMonthlyCents] = useState(0);
   const [releasingId, setReleasingId] = useState<string | null>(null);
+  const [releaseConfirm, setReleaseConfirm] = useState<WorkspacePhoneNumber | null>(null);
+  const lastSavedOutboundRef = useRef({ outboundFrom, whatsappEnabled });
+  const isDirty =
+    outboundFrom !== lastSavedOutboundRef.current.outboundFrom ||
+    whatsappEnabled !== lastSavedOutboundRef.current.whatsappEnabled;
+  useUnsavedChanges(isDirty);
 
   useEffect(() => {
     document.title = tPhone("pageTitle");
@@ -174,11 +171,14 @@ export default function AppSettingsPhonePage() {
         setOutboundFrom(data.outbound_from_number ?? "");
         setWhatsappEnabled(data.whatsapp_enabled ?? false);
         setVerifiedNumber(data.verified_phone ?? null);
+        const outbound = data.outbound_from_number ?? "";
+        const whatsapp = data.whatsapp_enabled ?? false;
+        lastSavedOutboundRef.current = { outboundFrom: outbound, whatsappEnabled: whatsapp };
         persistPhoneSettingsSnapshot(snapshotWorkspaceId, {
           phoneNumber: data.phone_number ?? null,
           status: data.status ?? null,
-          outboundFrom: data.outbound_from_number ?? "",
-          whatsappEnabled: data.whatsapp_enabled ?? false,
+          outboundFrom: outbound,
+          whatsappEnabled: whatsapp,
         });
       }
     } catch {
@@ -254,6 +254,7 @@ export default function AppSettingsPhonePage() {
   };
 
   const handleSaveOutbound = async () => {
+    if (saving) return;
     setSaving(true);
     setToast(null);
     try {
@@ -268,6 +269,7 @@ export default function AppSettingsPhonePage() {
       });
       if (res.ok) {
         invalidateWorkspaceMeCache();
+        lastSavedOutboundRef.current = { outboundFrom, whatsappEnabled };
         setToast(tPhone("toast.saved"));
         sonnerToast.success(tPhone("toast.saved"));
       } else {
@@ -412,21 +414,9 @@ export default function AppSettingsPhonePage() {
                       type="button"
                       disabled={!!n.assigned_agent_id || releasingId === n.id}
                       title={n.assigned_agent_id ? tPhone("releaseTitleUnassign") : tPhone("releaseTitleRelease")}
-                      onClick={async () => {
+                      onClick={() => {
                         if (n.assigned_agent_id) return;
-                        setReleasingId(n.id);
-                        try {
-                          const res = await fetch(`/api/phone/numbers/${n.id}/release`, { method: "POST", credentials: "include" });
-                          const data = (await res.json()) as { error?: string };
-                          if (res.ok) {
-                            fetchWorkspaceNumbers();
-                            sonnerToast.success(tPhone("toast.numberReleased"));
-                          } else {
-                            sonnerToast.error(data.error ?? tPhone("toast.releaseFailed"));
-                          }
-                        } finally {
-                          setReleasingId(null);
-                        }
+                        setReleaseConfirm(n);
                       }}
                       className="text-[10px] px-2 py-1 rounded-lg border border-[var(--border-default)] text-zinc-400 hover:text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -889,6 +879,34 @@ export default function AppSettingsPhonePage() {
           </p>
 
         </>
+      )}
+
+      {releaseConfirm && (
+        <ConfirmDialog
+          open
+          title={tPhone("releaseConfirmTitle")}
+          message={tPhone("releaseConfirmMessage")}
+          confirmLabel={tPhone("releaseLabel")}
+          variant="danger"
+          onConfirm={async () => {
+            if (!releaseConfirm) return;
+            setReleasingId(releaseConfirm.id);
+            try {
+              const res = await fetch(`/api/phone/numbers/${releaseConfirm.id}/release`, { method: "POST", credentials: "include" });
+              const data = (await res.json()) as { error?: string };
+              if (res.ok) {
+                fetchWorkspaceNumbers();
+                sonnerToast.success(tPhone("toast.numberReleased"));
+              } else {
+                sonnerToast.error(data.error ?? tPhone("toast.releaseFailed"));
+              }
+            } finally {
+              setReleasingId(null);
+              setReleaseConfirm(null);
+            }
+          }}
+          onClose={() => setReleaseConfirm(null)}
+        />
       )}
 
       {toast && (

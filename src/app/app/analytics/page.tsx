@@ -11,6 +11,7 @@ import { StatCard } from "@/components/ui/StatCard";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useTranslations } from "next-intl";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 type RangeKey = "today" | "7d" | "30d" | "90d" | "custom";
 
@@ -56,27 +57,20 @@ const AnalyticsCharts = dynamic(
 
 function readAnalyticsSnapshot<T>(prefix: string, workspaceId: string): T[] {
   if (typeof window === "undefined" || !workspaceId) return [];
+  const key = `${prefix}${workspaceId}`;
   try {
-    const raw = window.localStorage.getItem(`${prefix}${workspaceId}`);
+    const raw = safeGetItem(key);
     const parsed = raw ? (JSON.parse(raw) as T[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    try {
-      window.localStorage.removeItem(`${prefix}${workspaceId}`);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return [];
   }
 }
 
 function persistAnalyticsSnapshot<T>(prefix: string, workspaceId: string, data: T[]) {
   if (typeof window === "undefined" || !workspaceId) return;
-  try {
-    window.localStorage.setItem(`${prefix}${workspaceId}`, JSON.stringify(data));
-  } catch {
-    // ignore persistence errors
-  }
+  safeSetItem(`${prefix}${workspaceId}`, JSON.stringify(data));
 }
 
 function getRangeBounds(range: RangeKey, dateFrom?: string, dateTo?: string): { start: Date; end: Date } {

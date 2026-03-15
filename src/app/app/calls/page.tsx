@@ -5,7 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag, Brain } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag, Brain, AlertCircle } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useTranslations } from "next-intl";
 import { useDebounce } from "@/hooks/useDebounce";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 type CallType = "inbound" | "outbound" | null;
 type CallOutcome = "appointment" | "lead" | "info" | "transfer" | "voicemail" | "missed" | null;
@@ -78,30 +79,20 @@ function durationSeconds(c: CallRecord): number {
 
 function readCallsSnapshot(workspaceId: string): CallRecord[] {
   if (typeof window === "undefined" || !workspaceId) return [];
+  const key = `${CALLS_SNAPSHOT_PREFIX}${workspaceId}`;
   try {
-    const raw = window.localStorage.getItem(`${CALLS_SNAPSHOT_PREFIX}${workspaceId}`);
+    const raw = safeGetItem(key);
     const parsed = raw ? (JSON.parse(raw) as CallRecord[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    try {
-      window.localStorage.removeItem(`${CALLS_SNAPSHOT_PREFIX}${workspaceId}`);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return [];
   }
 }
 
 function persistCallsSnapshot(workspaceId: string, calls: CallRecord[]) {
   if (typeof window === "undefined" || !workspaceId) return;
-  try {
-    window.localStorage.setItem(
-      `${CALLS_SNAPSHOT_PREFIX}${workspaceId}`,
-      JSON.stringify(calls),
-    );
-  } catch {
-    // ignore persistence errors
-  }
+  safeSetItem(`${CALLS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(calls));
 }
 
 export default function CallsPage() {
@@ -113,6 +104,7 @@ export default function CallsPage() {
   const initialRecords = readCallsSnapshot(snapshotWorkspaceId);
   const [loading, setLoading] = useState(initialRecords.length === 0);
   const [error, setError] = useState<string | null>(null);
+  const [retryTrigger, setRetryTrigger] = useState(0);
   const [records, setRecords] = useState<CallRecord[]>(initialRecords);
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 300);
@@ -130,16 +122,12 @@ export default function CallsPage() {
 
   useEffect(() => {
     if (!selectedCall?.id) return;
-    try {
-      const raw = localStorage.getItem(`rt_call_notes_${selectedCall.id}`);
-      if (raw) {
-        // This effect syncs localStorage into component state for the
-        // currently selected call. It is safe to update local state here.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setCallNotes((prev) => ({ ...prev, [selectedCall.id]: raw }));
-      }
-    } catch {
-      // ignore
+    const raw = safeGetItem(`rt_call_notes_${selectedCall.id}`);
+    if (raw) {
+      // This effect syncs localStorage into component state for the
+      // currently selected call. It is safe to update local state here.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCallNotes((prev) => ({ ...prev, [selectedCall.id]: raw }));
     }
   }, [selectedCall?.id]);
 
@@ -164,7 +152,7 @@ export default function CallsPage() {
         setError(message);
       })
       .finally(() => setLoading(false));
-  }, [workspaceId, t]);
+  }, [workspaceId, t, retryTrigger]);
 
   const filtered = useMemo(() => {
     const q = debouncedQuery.trim().toLowerCase();
@@ -412,6 +400,21 @@ export default function CallsPage() {
               ))}
             </div>
           </div>
+        </div>
+      ) : error && records.length === 0 ? (
+        <div className="mt-6 flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
+          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+            <AlertCircle className="h-6 w-6 text-red-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-white mb-2">{t("calls.errors.errorTitle")}</h3>
+          <p className="text-sm text-zinc-400 mb-6 max-w-sm">{error}</p>
+          <button
+            type="button"
+            onClick={() => { setError(null); setLoading(true); setRetryTrigger((c) => c + 1); }}
+            className="px-4 py-2 rounded-xl bg-white text-black text-sm font-medium hover:bg-zinc-100"
+          >
+            {t("common.retry")}
+          </button>
         </div>
       ) : error ? (
         <div className="mt-6 text-sm text-[var(--accent-red)]" role="alert">{error}</div>
@@ -773,14 +776,10 @@ export default function CallsPage() {
                 value={callNotes[selectedCall.id] ?? ""}
                 onChange={(e) => setCallNotes((prev) => ({ ...prev, [selectedCall.id]: e.target.value }))}
                 onBlur={() => {
-                  try {
-                    const key = `rt_call_notes_${selectedCall.id}`;
-                    const v = callNotes[selectedCall.id] ?? "";
-                    if (v) localStorage.setItem(key, v);
-                    else localStorage.removeItem(key);
-                  } catch {
-                    // ignore
-                  }
+                  const key = `rt_call_notes_${selectedCall.id}`;
+                  const v = callNotes[selectedCall.id] ?? "";
+                  if (v) safeSetItem(key, v);
+                  else safeRemoveItem(key);
                 }}
                 placeholder={t("calls.addNotesPlaceholder")}
                 rows={3}

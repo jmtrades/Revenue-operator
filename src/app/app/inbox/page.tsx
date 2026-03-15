@@ -8,6 +8,7 @@ import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, P
 import { motion, AnimatePresence } from "framer-motion";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 type InboxChannel = "phone" | "sms" | "email" | "whatsapp";
 type InboxStatus = "Open" | "Resolved" | "Pending";
@@ -49,30 +50,20 @@ const INBOX_SNAPSHOT_PREFIX = "rt_inbox_snapshot:";
 
 function readInboxSnapshot(workspaceId: string): InboxThread[] {
   if (typeof window === "undefined" || !workspaceId) return [];
+  const key = `${INBOX_SNAPSHOT_PREFIX}${workspaceId}`;
   try {
-    const raw = window.localStorage.getItem(`${INBOX_SNAPSHOT_PREFIX}${workspaceId}`);
+    const raw = safeGetItem(key);
     const parsed = raw ? (JSON.parse(raw) as InboxThread[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    try {
-      window.localStorage.removeItem(`${INBOX_SNAPSHOT_PREFIX}${workspaceId}`);
-    } catch {
-      /* ignore */
-    }
+    safeRemoveItem(key);
     return [];
   }
 }
 
 function persistInboxSnapshot(workspaceId: string, threads: InboxThread[]) {
   if (typeof window === "undefined" || !workspaceId) return;
-  try {
-    window.localStorage.setItem(
-      `${INBOX_SNAPSHOT_PREFIX}${workspaceId}`,
-      JSON.stringify(threads),
-    );
-  } catch {
-    // ignore persistence errors
-  }
+  safeSetItem(`${INBOX_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(threads));
 }
 
 function formatRelative(

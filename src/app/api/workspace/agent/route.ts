@@ -60,6 +60,8 @@ export async function GET(req: NextRequest) {
   }
 }
 
+const MAX_PAYLOAD_BYTES = 500_000; // 500KB
+
 export async function PATCH(req: NextRequest) {
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
@@ -67,6 +69,11 @@ export async function PATCH(req: NextRequest) {
   }
   const authErrPatch = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErrPatch) return authErrPatch;
+
+  const contentLength = req.headers.get("content-length");
+  if (contentLength && parseInt(contentLength, 10) > MAX_PAYLOAD_BYTES) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
 
   let body: {
     businessName?: string;
