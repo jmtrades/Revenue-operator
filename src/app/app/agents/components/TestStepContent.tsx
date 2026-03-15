@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Agent, AgentReadiness } from "../AgentsPageClient";
 import { AgentTestPanel } from "@/app/app/agents/AgentTestPanel";
 
-const TEST_SCENARIOS = [
-  { id: "general", label: "General inquiry", prompt: "Hi, I need some information about your services." },
-  { id: "booking", label: "Booking", prompt: "I want to book an appointment for next Thursday." },
-  { id: "pricing", label: "Pricing", prompt: "How much do your services cost?" },
-  { id: "complaint", label: "Complaint", prompt: "I've been waiting for a callback and nobody has contacted me." },
-] as const;
+function getTestScenarios(t: (k: string) => string) {
+  return [
+    { id: "general" as const, label: t("testStep.scenarios.general"), prompt: t("testStep.scenarios.generalPrompt") },
+    { id: "booking" as const, label: t("testStep.scenarios.booking"), prompt: t("testStep.scenarios.bookingPrompt") },
+    { id: "pricing" as const, label: t("testStep.scenarios.pricing"), prompt: t("testStep.scenarios.pricingPrompt") },
+    { id: "complaint" as const, label: t("testStep.scenarios.complaint"), prompt: t("testStep.scenarios.complaintPrompt") },
+  ];
+}
 
 type TestStepContentProps = {
   agent: Agent;
@@ -26,30 +29,31 @@ export function TestStepContent({
   onNext,
   getAgentReadiness,
 }: TestStepContentProps) {
+  const t = useTranslations("agents");
+  const testScenarios = getTestScenarios(t);
   const [showGoLiveCta, setShowGoLiveCta] = useState(false);
   const [scenarioId, setScenarioId] = useState<string>("general");
   const scenarioPrompt =
-    TEST_SCENARIOS.find((s) => s.id === scenarioId)?.prompt ?? TEST_SCENARIOS[0].prompt;
+    testScenarios.find((s) => s.id === scenarioId)?.prompt ?? testScenarios[0].prompt;
   const scorecardItems = [
-    { label: "Greeting", stars: 4 },
-    { label: "Knowledge", stars: 4 },
-    { label: "Booking", stars: 4 },
-    { label: "Tone", stars: 5 },
+    { label: t("testStep.scorecard.greeting"), stars: 4 },
+    { label: t("testStep.scorecard.knowledge"), stars: 4 },
+    { label: t("testStep.scorecard.booking"), stars: 4 },
+    { label: t("testStep.scorecard.tone"), stars: 5 },
   ];
 
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-white">Talk to your AI</h3>
+      <h3 className="text-sm font-semibold text-white">{t("testStep.title")}</h3>
       <p className="text-xs text-[var(--text-secondary)]">
-        Chat with your agent to see how it responds. It uses your actual greeting, knowledge, and
-        behavior rules.
+        {t("testStep.description")}
       </p>
       <div>
         <label
           htmlFor="test-scenario"
           className="block text-[11px] text-[var(--text-tertiary)] mb-1.5"
         >
-          Scenario
+          {t("testStep.scenarioLabel")}
         </label>
         <select
           id="test-scenario"
@@ -57,7 +61,7 @@ export function TestStepContent({
           onChange={(e) => setScenarioId(e.target.value)}
           className="w-full max-w-xs rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
         >
-          {TEST_SCENARIOS.map((s) => (
+          {testScenarios.map((s) => (
             <option key={s.id} value={s.id}>
               {s.label}
             </option>
@@ -96,7 +100,7 @@ export function TestStepContent({
       {showGoLiveCta && (
         <>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
-            <p className="text-sm font-medium text-[var(--text-primary)]">Scorecard</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">{t("testStep.scorecardTitle")}</p>
             <div className="grid grid-cols-2 gap-2">
               {scorecardItems.map(({ label, stars }) => (
                 <div
@@ -104,7 +108,7 @@ export function TestStepContent({
                   className="flex items-center justify-between rounded-lg bg-[var(--bg-input)]/50 px-3 py-2"
                 >
                   <span className="text-xs text-[var(--text-secondary)]">{label}</span>
-                  <span className="flex gap-0.5" aria-label={`${stars} out of 5 stars`}>
+                  <span className="flex gap-0.5" aria-label={t("testStep.starsAria", { count: stars })}>
                     {[1, 2, 3, 4, 5].map((i) => (
                       <span
                         key={i}
@@ -130,7 +134,7 @@ export function TestStepContent({
               })()}
           </div>
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-3">
-            <p className="text-sm text-[var(--text-primary)]">Ready to go live?</p>
+            <p className="text-sm text-[var(--text-primary)]">{t("testStep.readyTitle")}</p>
             <button
               type="button"
               onClick={() => {
@@ -139,7 +143,7 @@ export function TestStepContent({
               }}
               className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
             >
-              Continue
+              {t("testStep.continue")}
             </button>
           </div>
         </>
@@ -151,7 +155,7 @@ export function TestStepContent({
           aria-label="Back to Behavior"
           className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          Back
+          {t("testStep.back")}
         </button>
         <button
           type="button"
@@ -159,7 +163,7 @@ export function TestStepContent({
           aria-label="Continue to Go live"
           className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          Continue
+          {t("testStep.continue")}
         </button>
       </div>
     </div>

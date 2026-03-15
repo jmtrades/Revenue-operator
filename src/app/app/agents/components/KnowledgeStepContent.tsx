@@ -94,7 +94,7 @@ export function KnowledgeStepContent({
   return (
     <div className="space-y-6">
       <h3 id="knowledge-heading" className="text-sm font-semibold text-white">
-        What does your agent know?
+        {t("knowledge.title")}
       </h3>
       <section
         aria-label="Import and suggest"
@@ -137,7 +137,7 @@ export function KnowledgeStepContent({
       <AgentKnowledgePanel agent={agent} updateAgent={onChange} />
       {(agent.faq?.length ?? 0) === 0 && (
         <p className="text-[11px] text-amber-500/90">
-          Add at least one Q&A for better results. You can also continue and add knowledge later.
+          {t("knowledge.minQAHint")}
         </p>
       )}
       <div className="flex justify-between pt-4">
@@ -147,7 +147,7 @@ export function KnowledgeStepContent({
           aria-label="Back to Voice"
           className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          Back
+          {t("knowledge.back")}
         </button>
         <button
           type="button"
@@ -155,7 +155,7 @@ export function KnowledgeStepContent({
           aria-label="Continue to Behavior"
           className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          Continue
+          {t("knowledge.continue")}
         </button>
       </div>
     </div>

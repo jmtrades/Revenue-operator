@@ -1331,6 +1331,33 @@
       "backToKnowledge": "Retour à Connaissance",
       "continueToTest": "Continuer vers Test"
     },
+    "testStep": {
+      "title": "Parlez à votre IA",
+      "description": "Discutez avec votre agent pour voir comment il répond. Il utilise votre salutation, vos connaissances et règles réelles.",
+      "scenarioLabel": "Scénario",
+      "scenarios": {
+        "general": "Demande générale",
+        "generalPrompt": "Bonjour, j'ai besoin d'informations sur vos services.",
+        "booking": "Réservation",
+        "bookingPrompt": "Je voudrais réserver un rendez-vous pour jeudi prochain.",
+        "pricing": "Tarifs",
+        "pricingPrompt": "Combien coûtent vos services ?",
+        "complaint": "Réclamation",
+        "complaintPrompt": "J'attends un rappel et personne ne m'a contacté."
+      },
+      "scorecardTitle": "Score",
+      "scorecard": {
+        "greeting": "Salutation",
+        "knowledge": "Connaissance",
+        "booking": "Réservation",
+        "tone": "Ton"
+      },
+      "copyLink": "Copier le lien de test",
+      "readyTitle": "Prêt à publier ?",
+      "continue": "Continuer",
+      "back": "Retour",
+      "starsAria": "{count} sur 5 étoiles"
+    },
     "goLive": {
       "heading": "Mise en production",
       "phoneSectionAria": "Attribution du numéro",
@@ -1585,6 +1612,19 @@
       "flow": "Flow builder"
     },
     "behavior": {
+      "title": "Comment votre agent doit-il se comporter ?",
+      "neverDoTitle": "Que votre IA ne doit-elle jamais faire ?",
+      "neverDoHint": "Définissez des limites claires pour que les appels restent conformes à la marque.",
+      "presets": {
+        "noPricing": "Ne jamais discuter des prix ni donner de devis",
+        "noAfterHours": "Ne jamais planifier en dehors des heures d'ouverture",
+        "noPromises": "Ne jamais promettre de délais de livraison",
+        "noCompetitors": "Ne jamais parler des concurrents",
+        "noInternal": "Ne jamais partager d'informations internes"
+      },
+      "qualTitle": "Questions de qualification",
+      "qualHint": "Questions que votre IA pose pour qualifier les leads. Glissez pour réordonner.",
+      "presetLabel": "Préréglage :",
       "objectionHandling": {
         "title": "Gestion des objections",
         "subtitle": "Aidez votre agent à gérer les objections courantes avec des réponses humaines et calmes."
@@ -1605,6 +1645,17 @@
       "objectionCompetitorPlaceholder": "C'est une approche intelligente. Que comparez-vous précisément ? Je peux souligner nos différences.",
       "objectionNotInterestedLabel": "\"Pas intéressé\"",
       "objectionNotInterestedPlaceholder": "Aucun problème. Qu'est-ce qui devrait changer pour que ce soit utile ?"
+    },
+    "knowledge": {
+      "title": "Que sait votre agent ?",
+      "importFromWebsite": "Importer depuis le site",
+      "importing": "Importation…",
+      "quickStartHint": "Démarrage rapide : ajoutez des Q&R courantes pour votre activité.",
+      "suggestQAs": "Suggérer des Q&R",
+      "adding": "Ajout…",
+      "minQAHint": "Ajoutez au moins une Q&R pour de meilleurs résultats. Vous pouvez aussi continuer et ajouter des connaissances plus tard.",
+      "back": "Retour",
+      "continue": "Continuer"
     },
     "deleteAgent": "Supprimer l'agent",
     "deleteAgentTitle": "Supprimer l'agent",
@@ -2380,7 +2431,8 @@
       "retentionHelp": "Les enregistrements et transcriptions plus anciens sont supprimés automatiquement.",
       "saveChanges": "Enregistrer les modifications",
       "exportData": "Exporter toutes les données",
-      "exportRequested": "Export demandé. Nous vous enverrons un e-mail quand ce sera prêt."
+      "exportRequested": "Export demandé. Nous vous enverrons un e-mail quand ce sera prêt.",
+      "backToSettings": "← Paramètres"
     },
     "errorReports": "Rapports d'erreur",
     "errorsPage": {

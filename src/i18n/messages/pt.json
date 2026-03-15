@@ -1232,6 +1232,33 @@
       "backToKnowledge": "Voltar a Conhecimento",
       "continueToTest": "Continuar para Teste"
     },
+    "testStep": {
+      "title": "Fale com sua IA",
+      "description": "Converse com seu agente para ver como ele responde. Ele usa sua saudação, conhecimento e regras reais.",
+      "scenarioLabel": "Cenário",
+      "scenarios": {
+        "general": "Consulta geral",
+        "generalPrompt": "Olá, preciso de informações sobre seus serviços.",
+        "booking": "Agendamento",
+        "bookingPrompt": "Quero agendar uma consulta para a próxima quinta.",
+        "pricing": "Preços",
+        "pricingPrompt": "Quanto custam seus serviços?",
+        "complaint": "Reclamação",
+        "complaintPrompt": "Estou esperando um retorno e ninguém me contatou."
+      },
+      "scorecardTitle": "Pontuação",
+      "scorecard": {
+        "greeting": "Saudação",
+        "knowledge": "Conhecimento",
+        "booking": "Agendamento",
+        "tone": "Tom"
+      },
+      "copyLink": "Copiar link de teste",
+      "readyTitle": "Pronto para publicar?",
+      "continue": "Continuar",
+      "back": "Voltar",
+      "starsAria": "{count} de 5 estrelas"
+    },
     "goLive": {
       "heading": "Publicar",
       "phoneSectionAria": "Atribuição de número de telefone",
@@ -1465,6 +1492,19 @@
       "flow": "Flow builder"
     },
     "behavior": {
+      "title": "Como seu agente deve se comportar?",
+      "neverDoTitle": "O que sua IA nunca deve fazer?",
+      "neverDoHint": "Defina limites claros para que as chamadas permaneçam na marca e dentro do esperado.",
+      "presets": {
+        "noPricing": "Nunca discutir preços ou dar orçamentos",
+        "noAfterHours": "Nunca agendar fora do horário comercial",
+        "noPromises": "Nunca prometer prazos de entrega",
+        "noCompetitors": "Nunca falar da concorrência",
+        "noInternal": "Nunca compartilhar informações internas"
+      },
+      "qualTitle": "Perguntas de qualificação",
+      "qualHint": "Perguntas que sua IA faz para qualificar leads. Arraste para reordenar.",
+      "presetLabel": "Predefinição:",
       "objectionHandling": {
         "title": "Tratamento de objeções",
         "subtitle": "Guie seu agente por objeções comuns com respostas humanas e calmas."
@@ -1485,6 +1525,17 @@
       "objectionCompetitorPlaceholder": "É uma abordagem inteligente. O que está a comparar especificamente? Posso destacar as nossas diferenças.",
       "objectionNotInterestedLabel": "\"Não interessado\"",
       "objectionNotInterestedPlaceholder": "Sem problema. O que teria de mudar para isto ser útil?"
+    },
+    "knowledge": {
+      "title": "O que seu agente sabe?",
+      "importFromWebsite": "Importar do site",
+      "importing": "Importando…",
+      "quickStartHint": "Início rápido: adicione Q&Rs comuns para seu negócio.",
+      "suggestQAs": "Sugerir Q&Rs",
+      "adding": "Adicionando…",
+      "minQAHint": "Adicione pelo menos uma Q&R para melhores resultados. Você também pode continuar e adicionar conhecimento depois.",
+      "back": "Voltar",
+      "continue": "Continuar"
     },
     "deleteAgent": "Excluir agente",
     "deleteAgentTitle": "Excluir agente",
@@ -2166,7 +2217,8 @@
       "retentionHelp": "Gravações e transcrições mais antigas são excluídas automaticamente.",
       "saveChanges": "Salvar alterações",
       "exportData": "Exportar todos os dados",
-      "exportRequested": "Exportação solicitada. Enviaremos um e-mail quando estiver pronto."
+      "exportRequested": "Exportação solicitada. Enviaremos um e-mail quando estiver pronto.",
+      "backToSettings": "← Configurações"
     },
     "errorReports": "Relatórios de erro",
     "errorsPage": {

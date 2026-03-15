@@ -20,11 +20,11 @@ export function BehaviorStepContent({
   const t = useTranslations("agents");
   const tCommon = useTranslations("common");
   const NEVER_DO_PRESETS = [
-    "Never discuss pricing or give quotes",
-    "Never schedule outside business hours",
-    "Never make promises about delivery dates",
-    "Never discuss competitors",
-    "Never share internal information",
+    t("behavior.presets.noPricing"),
+    t("behavior.presets.noAfterHours"),
+    t("behavior.presets.noPromises"),
+    t("behavior.presets.noCompetitors"),
+    t("behavior.presets.noInternal"),
   ];
 
   const neverDo = Array.isArray(agent.neverSay) ? agent.neverSay : [];
@@ -79,17 +79,17 @@ export function BehaviorStepContent({
 
   return (
     <div className="space-y-6">
-      <h3 id="behavior-heading" className="text-sm font-semibold text-white">How should your agent behave?</h3>
+      <h3 id="behavior-heading" className="text-sm font-semibold text-white">{t("behavior.title")}</h3>
       <section
         aria-label="Guardrails"
         className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3"
       >
         <div>
           <p className="text-xs font-semibold text-white/80">
-            What should your AI never do?
+            {t("behavior.neverDoTitle")}
           </p>
           <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">
-            Set clear boundaries so calls stay on-brand and in-bounds.
+            {t("behavior.neverDoHint")}
           </p>
         </div>
         <div className="space-y-1.5">
@@ -137,13 +137,13 @@ export function BehaviorStepContent({
       <RulesTab agent={agent} onChange={onChange} />
       <section className="mt-4">
         <h3 className="text-sm font-medium text-white/70 mb-1">
-          Qualification questions
+          {t("behavior.qualTitle")}
         </h3>
         <p className="text-xs text-white/40 mb-2">
-          Questions your AI asks to qualify leads. Drag to reorder priority.
+          {t("behavior.qualHint")}
         </p>
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="text-[11px] text-white/40">Preset:</span>
+          <span className="text-[11px] text-white/40">{t("behavior.presetLabel")}</span>
           {(["bant", "meddic", "custom"] as const).map((preset) => (
             <button
               key={preset}

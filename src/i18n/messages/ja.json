@@ -1232,6 +1232,33 @@
       "backToKnowledge": "ナレッジに戻る",
       "continueToTest": "テストへ進む"
     },
+    "testStep": {
+      "title": "AIと話す",
+      "description": "エージェントとチャットして応答を確認します。実際の挨拶、ナレッジ、ルールを使用します。",
+      "scenarioLabel": "シナリオ",
+      "scenarios": {
+        "general": "一般的な問い合わせ",
+        "generalPrompt": "こんにちは、サービスの情報が必要です。",
+        "booking": "予約",
+        "bookingPrompt": "来週の木曜日に予約を取りたいです。",
+        "pricing": "料金",
+        "pricingPrompt": "サービスの料金はいくらですか？",
+        "complaint": "苦情",
+        "complaintPrompt": "折り返しの電話を待っていますが、まだ連絡がありません。"
+      },
+      "scorecardTitle": "スコア",
+      "scorecard": {
+        "greeting": "挨拶",
+        "knowledge": "ナレッジ",
+        "booking": "予約",
+        "tone": "トーン"
+      },
+      "copyLink": "テストリンクをコピー",
+      "readyTitle": "公開する準備はできましたか？",
+      "continue": "続ける",
+      "back": "戻る",
+      "starsAria": "5つ星のうち{count}つ"
+    },
     "goLive": {
       "heading": "公開",
       "phoneSectionAria": "電話番号の割り当て",
@@ -1465,6 +1492,19 @@
       "flow": "Flow builder"
     },
     "behavior": {
+      "title": "エージェントの振る舞い",
+      "neverDoTitle": "AIが絶対にやってはいけないことは？",
+      "neverDoHint": "コールがブランド内に収まるよう、明確な境界を設定します。",
+      "presets": {
+        "noPricing": "価格や見積もりを話さない",
+        "noAfterHours": "営業時間外の予約を入れない",
+        "noPromises": "納期を約束しない",
+        "noCompetitors": "競合について話さない",
+        "noInternal": "社内情報を共有しない"
+      },
+      "qualTitle": "認定質問",
+      "qualHint": "AIがリードを認定するための質問。ドラッグで並べ替え。",
+      "presetLabel": "プリセット：",
       "objectionHandling": {
         "title": "反論対応",
         "subtitle": "よくある反論に対して、落ち着いた人間らしい応答でエージェントを導きます。"
@@ -1485,6 +1525,17 @@
       "objectionCompetitorPlaceholder": "賢いアプローチですね。具体的に何を比較されていますか？当社の違いをご説明できます。",
       "objectionNotInterestedLabel": "「興味なし」",
       "objectionNotInterestedPlaceholder": "問題ありません。役に立つために何を変える必要がありますか？"
+    },
+    "knowledge": {
+      "title": "エージェントは何を知っていますか？",
+      "importFromWebsite": "ウェブサイトからインポート",
+      "importing": "インポート中…",
+      "quickStartHint": "クイックスタート：よくあるQ&Aを追加します。",
+      "suggestQAs": "Q&Aを提案",
+      "adding": "追加中…",
+      "minQAHint": "より良い結果のために少なくとも1つのQ&Aを追加してください。後でナレッジを追加することもできます。",
+      "back": "戻る",
+      "continue": "続ける"
     },
     "deleteAgent": "エージェントを削除",
     "deleteAgentTitle": "エージェントを削除",
@@ -2166,7 +2217,8 @@
       "retentionHelp": "これより古い録音と文字起こしは自動削除されます。",
       "saveChanges": "変更を保存",
       "exportData": "すべてのデータをエクスポート",
-      "exportRequested": "エクスポートをリクエストしました。準備できたらメールでお知らせします。"
+      "exportRequested": "エクスポートをリクエストしました。準備できたらメールでお知らせします。",
+      "backToSettings": "← 設定"
     },
     "errorReports": "エラーレポート",
     "errorsPage": {

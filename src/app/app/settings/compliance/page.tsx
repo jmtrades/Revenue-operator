@@ -110,7 +110,7 @@ export default function AppSettingsCompliancePage() {
               </div>
               {recordingConsentMode === "two_party" && (
                 <div className="mb-3">
-                  <label className="block text-[11px] text-zinc-400 mb-1">Consent announcement (played at call start)</label>
+                  <label className="block text-[11px] text-zinc-400 mb-1">{tSettings("compliance.announcementLabel")}</label>
                   <textarea
                     value={announcementText}
                     onChange={(e) => setAnnouncementText(e.target.value)}
@@ -188,7 +188,7 @@ export default function AppSettingsCompliancePage() {
         <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-colors">{tSettings("compliance.exportData")}</button>
       </div>
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("compliance.backToSettings")}</Link></p>
     </div>
   );
 }
