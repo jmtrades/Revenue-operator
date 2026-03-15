@@ -155,18 +155,8 @@ export function BehaviorStepContent({
                 }
                 const next =
                   preset === "bant"
-                    ? [
-                        "Do you have a budget set aside for this?",
-                        "When are you hoping to get this done?",
-                        "Are you the one making the final decision?",
-                        "What problem are you trying to solve?",
-                      ]
-                    : [
-                        "What metrics will you use to measure success?",
-                        "Who else is involved in the decision?",
-                        "What is the impact if you do nothing?",
-                        "Do you have a formal decision process or timeline?",
-                      ];
+                    ? [t("behavior.bant.q1"), t("behavior.bant.q2"), t("behavior.bant.q3"), t("behavior.bant.q4")]
+                    : [t("behavior.meddic.q1"), t("behavior.meddic.q2"), t("behavior.meddic.q3"), t("behavior.meddic.q4")];
                 onChange({ qualificationQuestions: next });
               }}
               className={`px-2.5 py-1 rounded-full border text-[11px] ${
@@ -190,14 +180,14 @@ export function BehaviorStepContent({
             <input
               value={q}
               onChange={(e) => updateQuestion(i, e.target.value)}
-              className="flex-1 bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white focus:border-zinc-500 focus:outline-none"
+              className="flex-1 bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white focus:border-zinc-500 focus:outline-none"
             />
             <button
               type="button"
               onClick={() => removeQuestion(i)}
               className="text-xs text-white/20 hover:text-red-400 p-1"
             >
-              Remove
+              {t("behavior.remove")}
             </button>
           </div>
         ))}
@@ -207,17 +197,12 @@ export function BehaviorStepContent({
           onClick={() => addQuestion("")}
           className="mt-2 text-xs text-white/40 hover:text-white/60"
         >
-          + Add question
+          {t("behavior.addQuestion")}
         </button>
 
         {qualificationQuestions.length === 0 && (
           <div className="mt-2 flex gap-2 flex-wrap">
-            {[
-              "What are you looking for?",
-              "What is your budget range?",
-              "When do you need this done?",
-              "How did you hear about us?",
-            ].map((preset) => (
+            {[t("behavior.placeholderQ1"), t("behavior.placeholderQ2"), t("behavior.placeholderQ3"), t("behavior.placeholderQ4")].map((preset) => (
               <button
                 key={preset}
                 type="button"
@@ -262,10 +247,10 @@ export function BehaviorStepContent({
       </section>
       <section className="mt-6">
         <h3 className="text-sm font-medium text-white/70 mb-1">
-          Escalation &amp; transfer
+          {t("behavior.escalationTitle")}
         </h3>
         <p className="text-xs text-white/40 mb-3">
-          When should your AI hand off to a human?
+          {t("behavior.escalationHint")}
         </p>
 
         <div className="space-y-3">
@@ -277,39 +262,39 @@ export function BehaviorStepContent({
               value={agent.transferPhone || ""}
               onChange={(e) => onChange({ transferPhone: e.target.value })}
               placeholder={t("behavior.transferPhonePlaceholder")}
-              className="w-full bg-[#0D1117] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:border-zinc-500 focus:outline-none"
+              className="w-full bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:border-zinc-500 focus:outline-none"
             />
           </div>
 
           <div>
             <label className="text-xs text-white/50 mb-1 block">
-              Transfer when the caller...
+              {t("behavior.transferWhen")}
             </label>
             <div className="space-y-1.5">
-              {[
-                "Asks to speak to a manager",
-                "Gets angry or frustrated",
-                "Has a complex legal or medical question",
-                "Explicitly requests a human",
-                "Mentions an emergency",
-              ].map((trigger) => (
+              {([
+                { id: "asksForManager", value: "Asks to speak to a manager" },
+                { id: "angry", value: "Gets angry or frustrated" },
+                { id: "complexQuestion", value: "Has a complex legal or medical question" },
+                { id: "requestsHuman", value: "Explicitly requests a human" },
+                { id: "emergency", value: "Mentions an emergency" },
+              ] as const).map(({ id, value }) => (
                 <label
-                  key={trigger}
+                  key={id}
                   className="flex items-center gap-2 text-sm text-white/50 cursor-pointer hover:text-white/70"
                 >
                   <input
                     type="checkbox"
                     className="rounded border-white/20 bg-transparent"
-                    checked={(agent.escalationTriggers || []).includes(trigger)}
+                    checked={(agent.escalationTriggers || []).includes(value)}
                     onChange={(e) => {
                       const current = agent.escalationTriggers || [];
                       const updated = e.target.checked
-                        ? [...current, trigger]
-                        : current.filter((t) => t !== trigger);
+                        ? [...current, value]
+                        : current.filter((tr) => tr !== value);
                       onChange({ escalationTriggers: updated });
                     }}
                   />
-                  {trigger}
+                  {t(`behavior.escalation.${id}`)}
                 </label>
               ))}
             </div>

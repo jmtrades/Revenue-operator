@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
@@ -43,6 +44,7 @@ export default async function IndustryPage({
   }
 
   if (!industry || !slug) {
+    const t = await getTranslations("industriesPage.fallback");
     return (
       <div
         className="min-h-screen"
@@ -59,7 +61,7 @@ export default async function IndustryPage({
                 className="section-label mb-4"
                 style={{ color: "var(--accent-primary)" }}
               >
-                Solutions
+                {t("solutions")}
               </p>
               <h1
                 className="font-bold text-2xl md:text-3xl mb-4"
@@ -68,7 +70,7 @@ export default async function IndustryPage({
                   lineHeight: 1.2,
                 }}
               >
-                Dedicated guide in the works
+                {t("dedicatedGuide")}
               </h1>
               <p
                 className="text-base mb-8"
@@ -77,34 +79,33 @@ export default async function IndustryPage({
                   lineHeight: 1.6,
                 }}
               >
-                We&apos;re building a dedicated page for this industry. Get
-                started now and set up your AI phone agent in 5 minutes.
+                {t("description")}
               </p>
               <Link
                 href={ROUTES.START}
                 className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline"
               >
-                Start free →
+                {t("startFreeCta")}
               </Link>
               <p className="mt-6 text-sm" style={{ color: "var(--text-tertiary)" }}>
                 <Link href="/industries/plumbing-hvac" className="underline">
-                  Plumbing & HVAC
+                  {t("linkPlumbing")}
                 </Link>
                 {" · "}
                 <Link href="/industries/dental" className="underline">
-                  Dental
+                  {t("linkDental")}
                 </Link>
                 {" · "}
                 <Link href="/industries/legal" className="underline">
-                  Legal
+                  {t("linkLegal")}
                 </Link>
                 {" · "}
                 <Link href="/industries/real-estate" className="underline">
-                  Real Estate
+                  {t("linkRealEstate")}
                 </Link>
                 {" · "}
                 <Link href="/industries/healthcare" className="underline">
-                  Healthcare
+                  {t("linkHealthcare")}
                 </Link>
               </p>
             </div>

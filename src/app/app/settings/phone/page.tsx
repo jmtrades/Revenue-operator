@@ -231,7 +231,7 @@ export default function AppSettingsPhonePage() {
         setToast(data.message ?? tPhone("toast.numberConnected"));
         setTimeout(() => numberHeadingRef.current?.focus({ preventScroll: true }), 100);
       } else {
-        const message = data.error ?? data.message ?? "Could not connect a number. Try again.";
+        const message = data.error ?? data.message ?? tPhone("toast.connectFailed");
         setConnectError(message);
         setConnectErrorCode(data.code ?? null);
         setToast(message);
@@ -267,7 +267,7 @@ export default function AppSettingsPhonePage() {
         sonnerToast.success(tPhone("toast.saved"));
       } else {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
-        const message = err.error ?? "Could not save.";
+        const message = err.error ?? tPhone("toast.saveFailed");
         setToast(message);
         sonnerToast.error(tPhone("toast.saveFailed"));
       }
@@ -283,7 +283,7 @@ export default function AppSettingsPhonePage() {
   const handleTestCall = async () => {
     const normalized = toE164(testCallNumber);
     if (!normalized || digitsOnly(testCallNumber).length < 10) {
-      setTestCallError("Enter a valid 10-digit US number.");
+      setTestCallError(tPhone("validNumberError"));
       return;
     }
     if (!primaryAgentId) {
@@ -304,7 +304,7 @@ export default function AppSettingsPhonePage() {
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string; error?: string };
       if (!res.ok) {
-        const msg = data.error ?? "Could not start a test call.";
+        const msg = data.error ?? tPhone("toast.testCallFailed");
         setToast(msg);
         setTestCallError(msg);
       } else {
@@ -435,8 +435,8 @@ export default function AppSettingsPhonePage() {
         )}
       </div>
 
-      <h2 className="text-lg font-semibold text-white mb-2">Connect your phone number</h2>
-      <p className="text-sm text-white/60 mb-6">Legacy connection and forwarding. Your AI receives calls on the number above or via phone_config.</p>
+      <h2 className="text-lg font-semibold text-white mb-2">{tPhone("connectTitle")}</h2>
+      <p className="text-sm text-white/60 mb-6">{tPhone("connectDescription")}</p>
 
       {loading ? (
         <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse h-24 mb-4" />
@@ -444,7 +444,7 @@ export default function AppSettingsPhonePage() {
         <>
           {/* Option A — Your AI number */}
           <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Option A — Your AI number</p>
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">{tPhone("optionA")}</p>
             <div className="flex flex-wrap items-center gap-3">
               <p ref={numberHeadingRef} tabIndex={-1} className="text-2xl font-semibold text-white font-mono tracking-tight outline-none" aria-label={`Your number: ${formatPhoneNumber(phoneNumber)}`}>{formatPhoneNumber(phoneNumber)}</p>
               <button
@@ -461,23 +461,23 @@ export default function AppSettingsPhonePage() {
 
           {/* Forward your current number — simple steps */}
           <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-sm font-medium text-white mb-1">Option B — Forward your existing number</p>
-            <p className="text-xs text-zinc-400 mb-4">Keep your current number. Forward unanswered calls to your AI number below.</p>
+            <p className="text-sm font-medium text-white mb-1">{tPhone("optionB")}</p>
+            <p className="text-xs text-zinc-400 mb-4">{tPhone("optionBDesc")}</p>
             <ol className="space-y-2 text-sm text-zinc-300 list-decimal list-inside">
-              <li>Open your phone carrier’s app or website (AT&T, Verizon, T-Mobile, etc.).</li>
-              <li>Find “Call forwarding” or “Forward when busy.”</li>
-              <li>Enter the number below in your carrier or device settings.</li>
+              <li>{tPhone("forwardStep1")}</li>
+              <li>{tPhone("forwardStep2")}</li>
+              <li>{tPhone("forwardStep3")}</li>
             </ol>
-            <p className="text-xs text-zinc-500 mt-2 mb-2">Forward to: <span className="font-mono text-white">{formatPhoneNumber(phoneNumber)}</span></p>
-            <p className="text-xs font-medium text-zinc-400 mb-1">Or by device:</p>
+            <p className="text-xs text-zinc-500 mt-2 mb-2">{tPhone("forwardTo")} <span className="font-mono text-white">{formatPhoneNumber(phoneNumber)}</span></p>
+            <p className="text-xs font-medium text-zinc-400 mb-1">{tPhone("orByDevice")}</p>
             <ul className="space-y-1 text-xs text-zinc-400 mb-3">
-              <li><span className="text-zinc-300">iPhone:</span> Settings → Phone → Call Forwarding</li>
-              <li><span className="text-zinc-300">Android:</span> Phone → ⋮ → Settings → Call Forwarding</li>
-              <li><span className="text-zinc-300">Business line:</span> Call your carrier; ask to forward to {formatPhoneNumber(phoneNumber)}</li>
+              <li><span className="text-zinc-300">{tPhone("iphone")}:</span> {tPhone("iphonePath")}</li>
+              <li><span className="text-zinc-300">{tPhone("android")}:</span> {tPhone("androidPath")}</li>
+              <li><span className="text-zinc-300">{tPhone("businessLine")}:</span> {tPhone("businessLinePath", { number: formatPhoneNumber(phoneNumber) })}</li>
             </ul>
             <details className="mt-4 group">
               <summary className="text-xs text-zinc-500 cursor-pointer hover:text-zinc-400 list-none flex items-center gap-1">
-                <span className="group-open:inline hidden">▼</span><span className="group-open:hidden inline">▶</span> Quick dial codes
+                <span className="group-open:inline hidden">▼</span><span className="group-open:hidden inline">▶</span> {tPhone("quickDialCodes")}
               </summary>
               <div className="mt-2 pt-2 border-t border-[var(--border-default)] space-y-1.5 text-xs text-zinc-400">
                 <p><span className="text-zinc-300">AT&T:</span> *21*{phoneNumber.replace(/\D/g, "")}#</p>
@@ -489,12 +489,12 @@ export default function AppSettingsPhonePage() {
 
           {/* Test forwarding */}
           <div id="test" className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-sm font-medium text-white mb-1">Test forwarding</p>
-            <p className="text-xs text-zinc-400 mb-3">We’ll call you so you can talk to your agent right now.</p>
+            <p className="text-sm font-medium text-white mb-1">{tPhone("testForwarding")}</p>
+            <p className="text-xs text-zinc-400 mb-3">{tPhone("testForwardingDesc")}</p>
             {!primaryAgentId ? (
               <div className="rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card)]/50 px-4 py-3 text-sm text-zinc-400">
-                <p>Create an agent first so we know who should answer.</p>
-                <Link href="/app/agents" className="mt-2 inline-block text-white font-medium hover:underline">Go to Agents →</Link>
+                <p>{tPhone("createAgentFirst")}</p>
+                <Link href="/app/agents" className="mt-2 inline-block text-white font-medium hover:underline">{tPhone("goToAgents")}</Link>
               </div>
             ) : (
               <>
@@ -503,7 +503,7 @@ export default function AppSettingsPhonePage() {
                   value={testCallNumber}
                   onChange={(e) => { setTestCallNumber(e.target.value); setTestCallError(null); }}
                   placeholder="(555) 123-4567"
-                  aria-label="Your phone number for test call"
+                  aria-label={tPhone("yourPhoneNumber")}
                   aria-invalid={!!testCallError}
                   aria-describedby={testCallError ? "test-call-error" : undefined}
                   className={`w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border text-white placeholder:text-zinc-500 text-base focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-2 ${testCallError ? "border-red-500/50" : "border-[var(--border-default)] focus:border-[var(--border-medium)]"}`}
@@ -513,10 +513,10 @@ export default function AppSettingsPhonePage() {
                   type="button"
                   onClick={handleTestCall}
                   disabled={testingCall || !testCallValid}
-                  aria-label={testCallValid ? "Call my phone to test" : "Enter a valid 10-digit number to enable"}
+                  aria-label={testCallValid ? tPhone("ariaCallTest") : tPhone("ariaEnterValid")}
                   className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {testingCall ? "Calling you…" : "Call my phone to test"}
+                  {testingCall ? tPhone("callingYou") : tPhone("callMyPhoneToTest")}
                 </button>
               </>
             )}
@@ -525,10 +525,10 @@ export default function AppSettingsPhonePage() {
           {/* Optional: outbound caller ID — collapsed by default */}
           <details className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4 group">
             <summary className="text-sm font-medium text-zinc-400 cursor-pointer hover:text-zinc-300 list-none flex items-center justify-between gap-2">
-              Outbound caller ID (optional)
+              {tPhone("outboundCallerId")}
               <span className="text-zinc-500 group-open:rotate-180 transition-transform">▼</span>
             </summary>
-            <p className="text-xs text-zinc-500 mt-3 mb-3">Show a different number when your AI places outbound calls. Leave blank to use your AI number above.</p>
+            <p className="text-xs text-zinc-500 mt-3 mb-3">{tPhone("outboundCallerIdHint")}</p>
             <input
               type="tel"
               value={outboundFrom}
@@ -544,7 +544,7 @@ export default function AppSettingsPhonePage() {
                 onChange={(e) => setWhatsappEnabled(e.target.checked)}
                 className="rounded border-[var(--border-medium)] bg-[var(--bg-card)] text-white focus:ring-[var(--border-medium)]"
               />
-              Enable WhatsApp on this number
+              {tPhone("enableWhatsApp")}
             </label>
             <button
               type="button"
@@ -558,28 +558,28 @@ export default function AppSettingsPhonePage() {
 
           {/* Verify a number by SMS */}
           <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-sm font-medium text-white mb-1">Verify a number by SMS</p>
-            <p className="text-xs text-zinc-400 mb-3">We’ll send a 6-digit code to confirm you own this number. Useful for forwarding numbers.</p>
+            <p className="text-sm font-medium text-white mb-1">{tPhone("verifyBySms")}</p>
+            <p className="text-xs text-zinc-400 mb-3">{tPhone("verifyBySmsDesc")}</p>
             {verifiedNumber ? (
               <>
-                <p className="text-sm text-green-400">Phone verified ✓ {formatPhoneNumber(verifiedNumber)}</p>
+                <p className="text-sm text-green-400">{tPhone("verifiedLabel")} {formatPhoneNumber(verifiedNumber)}</p>
                 {phoneNumber && (
                   <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 mt-4">
                     <h3 className="text-base font-medium text-[var(--text-primary)] mb-3">
-                      Forward calls to your AI
+                      {tPhone("forwardCallsToAi")}
                     </h3>
                     <div className="space-y-2">
                       <div className="bg-[var(--bg-input)] rounded-lg p-3">
-                        <p className="text-sm font-medium text-[var(--text-primary)]">iPhone</p>
-                        <p className="text-xs text-[var(--text-secondary)]">Settings → Phone → Call Forwarding → {formatPhoneNumber(phoneNumber)}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)]">{tPhone("iphone")}</p>
+                        <p className="text-xs text-[var(--text-secondary)]">{tPhone("forwardInstructionIphone")}</p>
                       </div>
                       <div className="bg-[var(--bg-input)] rounded-lg p-3">
-                        <p className="text-sm font-medium text-[var(--text-primary)]">Android</p>
-                        <p className="text-xs text-[var(--text-secondary)]">Phone → ⋮ → Settings → Call Forwarding → {formatPhoneNumber(phoneNumber)}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)]">{tPhone("android")}</p>
+                        <p className="text-xs text-[var(--text-secondary)]">{tPhone("forwardInstructionAndroid")}</p>
                       </div>
                       <div className="bg-[var(--bg-input)] rounded-lg p-3">
-                        <p className="text-sm font-medium text-[var(--text-primary)]">Business line</p>
-                        <p className="text-xs text-[var(--text-secondary)]">Call your provider: &quot;Forward unanswered calls to {formatPhoneNumber(phoneNumber)}&quot;</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)]">{tPhone("businessLine")}</p>
+                        <p className="text-xs text-[var(--text-secondary)]">{tPhone("forwardInstructionBusiness")}</p>
                       </div>
                     </div>
                   </div>
@@ -600,12 +600,12 @@ export default function AppSettingsPhonePage() {
                     onClick={async () => {
                       const cleaned = digitsOnly(verifyPhone);
                       if (cleaned.length < 10 || cleaned.length > 15) {
-                        setVerifyError("Enter a valid phone number with country code (e.g., +1 555 000 0000).");
+                        setVerifyError(tPhone("validPhoneError"));
                         return;
                       }
                       const num = toE164(verifyPhone);
                       if (!num) {
-                        setVerifyError("Enter a valid phone number with country code (e.g., +1 555 000 0000).");
+                        setVerifyError(tPhone("validPhoneError"));
                         return;
                       }
                       setVerifyError(null);
@@ -653,7 +653,7 @@ export default function AppSettingsPhonePage() {
                   onClick={async () => {
                     const num = toE164(verifyPhone);
                     if (!num || verifyCode.length < 4) {
-                      setVerifyError("Enter the 6-digit code from your phone.");
+                      setVerifyError(tPhone("enterCodeFromPhone"));
                       return;
                     }
                     setVerifyError(null);
@@ -671,10 +671,10 @@ export default function AppSettingsPhonePage() {
                         setVerifyCode("");
                         setToast(tPhone("toast.phoneVerified"));
                       } else {
-                        setVerifyError((d as { error?: string }).error ?? "Code didn’t match. Try again or resend.");
+                        setVerifyError((d as { error?: string }).error ?? tPhone("codeNotMatch"));
                       }
                     } catch {
-                      setVerifyError("Verification failed.");
+                      setVerifyError(tPhone("verificationFailed"));
                     } finally {
                       setVerifyChecking(false);
                     }
@@ -682,14 +682,14 @@ export default function AppSettingsPhonePage() {
                   disabled={verifyChecking || verifyCode.length < 4}
                   className="w-full py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-50"
                 >
-                  {verifyChecking ? "Verifying…" : "Verify"}
+                  {verifyChecking ? tPhone("verifying") : tPhone("verifyLabel")}
                 </button>
                 {verifyError && <p className="mt-2 text-sm text-[var(--accent-red)]" role="alert">{verifyError}</p>}
               </>
             )}
           </div>
 
-          <p className="text-xs text-zinc-500">Need another number? Available on Growth and Scale plans.</p>
+          <p className="text-xs text-zinc-500">{tPhone("needAnotherNumber")}</p>
         </>
       ) : (
         <>
@@ -766,11 +766,11 @@ export default function AppSettingsPhonePage() {
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
                 <PhoneForwarded className="w-5 h-5 text-emerald-400" />
               </div>
-              <h2 className="text-base font-semibold text-white mb-1">Use your existing number</h2>
-              <p className="text-sm text-white/50 mb-1">Forward calls to AI</p>
-              <p className="text-sm text-white/60 mb-4">Keep your current number. Set up call forwarding so unanswered calls go to your AI.</p>
+              <h2 className="text-base font-semibold text-white mb-1">{tPhone("useExistingNumber")}</h2>
+              <p className="text-sm text-white/50 mb-1">{tPhone("forwardCallsToAi")}</p>
+              <p className="text-sm text-white/60 mb-4">{tPhone("optionBDesc")}</p>
               <div className="mb-4">
-                <label htmlFor="verify-phone-existing" className="text-xs text-white/40 mb-1 block">Your phone number</label>
+                <label htmlFor="verify-phone-existing" className="text-xs text-white/40 mb-1 block">{tPhone("yourPhoneNumber")}</label>
                 <input
                   id="verify-phone-existing"
                   type="tel"
@@ -785,7 +785,7 @@ export default function AppSettingsPhonePage() {
                 onClick={async () => {
                   const num = toE164(verifyPhone);
                   if (!num || digitsOnly(verifyPhone).length < 10) {
-                    setVerifyError("Enter a valid 10-digit US number.");
+                    setVerifyError(tPhone("validNumberError"));
                     return;
                   }
                   setVerifyError(null);
@@ -802,7 +802,7 @@ export default function AppSettingsPhonePage() {
                           setToast(tPhone("toast.codeSent"));
                           setVerifyCodeSent(true);
                         } else {
-                          setVerifyError(d.error ?? "Failed to send code.");
+                          setVerifyError(d.error ?? tPhone("sendCodeFailed"));
                           if (d.action === "redirect") setToast(tPhone("toast.getAiNumber"));
                         }
                       } catch {
@@ -820,17 +820,17 @@ export default function AppSettingsPhonePage() {
               {verifyError && <p className="mt-2 text-xs text-red-400" role="alert">{verifyError}</p>}
               {verifiedNumber ? (
                 <div className="mt-4 pt-4 border-t border-white/[0.08] space-y-3">
-                  <p className="text-sm text-emerald-400">✓ Verified {formatPhoneNumber(verifiedNumber)}</p>
-                  <p className="text-xs text-white/50 mb-2">Forward unanswered calls to your AI number (get one from the left card first).</p>
+                  <p className="text-sm text-emerald-400">{tPhone("verifiedLabel")} {formatPhoneNumber(verifiedNumber)}</p>
+                  <p className="text-xs text-white/50 mb-2">{tPhone("forwardUnansweredHint")}</p>
                   <div className="space-y-2 text-xs text-white/60">
-                    <p className="font-medium text-white/70">iPhone:</p>
-                    <p>Settings → Phone → Call Forwarding → [your AI number]</p>
-                    <p className="font-medium text-white/70 mt-2">Android:</p>
-                    <p>Phone → ⋮ → Settings → Call Forwarding → [your AI number]</p>
-                    <p className="font-medium text-white/70 mt-2">Business line:</p>
-                    <p>Call your provider: &quot;Forward unanswered calls to [your AI number]&quot;</p>
+                    <p className="font-medium text-white/70">{tPhone("iphone")}:</p>
+                    <p>{tPhone("forwardInstructionIphone")}</p>
+                    <p className="font-medium text-white/70 mt-2">{tPhone("android")}:</p>
+                    <p>{tPhone("forwardInstructionAndroid")}</p>
+                    <p className="font-medium text-white/70 mt-2">{tPhone("businessLine")}:</p>
+                    <p>{tPhone("forwardInstructionBusiness")}</p>
                   </div>
-                  <Link href="/app/settings/phone#test" className="inline-block mt-2 text-sm font-medium text-emerald-400 hover:text-emerald-300">Test forwarding →</Link>
+                  <Link href="/app/settings/phone#test" className="inline-block mt-2 text-sm font-medium text-emerald-400 hover:text-emerald-300">{tPhone("testForwardingLink")}</Link>
                 </div>
               ) : (verifyCodeSent || verifyCode.length >= 4) && (
                 <div className="mt-4 space-y-2">
@@ -862,10 +862,10 @@ export default function AppSettingsPhonePage() {
                           setVerifyCode("");
                           setToast(tPhone("toast.phoneVerified"));
                         } else {
-                          setVerifyError((d as { error?: string }).error ?? "Code didn't match.");
+                          setVerifyError((d as { error?: string }).error ?? tPhone("codeNotMatch"));
                         }
                       } catch {
-                        setVerifyError("Verification failed.");
+                        setVerifyError(tPhone("verificationFailed"));
                       } finally {
                         setVerifyChecking(false);
                       }
@@ -880,7 +880,7 @@ export default function AppSettingsPhonePage() {
             </div>
           </div>
           <p className="mt-6 text-sm text-zinc-500 text-center">
-            <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">I&apos;ll add a number later</Link>
+            <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">{tPhone("addNumberLater")}</Link>
           </p>
 
         </>
@@ -894,7 +894,7 @@ export default function AppSettingsPhonePage() {
         </div>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tPhone("backToSettings")}</Link></p>
     </div>
   );
 }

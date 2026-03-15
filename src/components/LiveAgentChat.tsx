@@ -82,6 +82,14 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
 
   const cfg = AGENTS[agent];
   const heightClass = variant === "demo" ? "h-[500px]" : variant === "mini" ? "h-[220px]" : "h-[380px]";
+  const agentPills: Record<AgentId, string> = useMemo(
+    () => ({
+      sarah: t("liveChat.voiceProfessional"),
+      alex: t("liveChat.voiceFriendly"),
+      emma: t("liveChat.voiceConcise"),
+    }),
+    [t]
+  );
   const userMessageCount = messages.filter((m) => m.role === "user").length;
   const showChips = userMessageCount === 0;
   const MAX_EXCHANGES = 20;
@@ -137,17 +145,17 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
         }),
       });
       const data = (await r.json().catch(() => null)) as { text?: string };
-      const reply = typeof data?.text === "string" && data.text.trim() ? data.text.trim() : "Sorry — could you say that again?";
+      const reply = typeof data?.text === "string" && data.text.trim() ? data.text.trim() : t("liveChat.misheard");
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Sorry — I didn’t catch that. Could you say it one more time?" },
+        { role: "assistant", content: t("liveChat.misheardCatch") },
       ]);
     } finally {
       setLoading(false);
     }
-  }, [loading, atLimit, messages, onUserMessage, agent, businessName]);
+  }, [loading, atLimit, messages, onUserMessage, agent, businessName, t]);
 
   useImperativeHandle(ref, () => ({ send }), [send]);
 
@@ -176,7 +184,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
     rec.start();
   };
 
-  const SUGGESTIONS = ["I'd like to schedule an appointment", "Can someone call me back about pricing?", "What services do you offer?"];
+  const suggestions = [t("liveChat.suggestionAppointment"), t("liveChat.suggestionPricing"), t("liveChat.suggestionServices")];
 
   return (
     <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
@@ -188,7 +196,6 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
             {(["sarah", "alex", "emma"] as AgentId[]).map((id) => {
-              const a = AGENTS[id];
               const active = agent === id;
               return (
                 <button
@@ -198,9 +205,9 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
                   className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-colors ${
                     active ? "bg-white/10 border-white text-white" : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-zinc-500"
                   }`}
-                  aria-label={`Switch agent to ${a.name}`}
+                  aria-label={t("liveChat.switchAgentTo", { name: agentPills[id] })}
                 >
-                  {a.pill}
+                  {agentPills[id]}
                 </button>
               );
             })}
@@ -241,7 +248,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
       <div className="px-4 py-3 border-t border-zinc-800 bg-zinc-950/30">
         {showChips && (
           <div className="flex flex-wrap gap-2 mb-3">
-            {SUGGESTIONS.map((s) => (
+            {suggestions.map((s) => (
               <button
                 key={s}
                 type="button"
@@ -290,9 +297,9 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
 
         <div className="mt-2 flex items-center justify-between">
           <p className="text-[11px] text-zinc-500">
-            {variant === "mini" ? "Test how your agent responds before you connect your number." : "Try asking about services, pricing, or availability."}
+            {variant === "mini" ? t("liveChat.testHint") : t("liveChat.tryAsking")}
           </p>
-          {atLimit && <p className="text-[11px] text-amber-400">Session limit reached. Refresh to start a new conversation.</p>}
+          {atLimit && <p className="text-[11px] text-amber-400">{t("liveChat.sessionLimit")}</p>}
         </div>
       </div>
     </div>

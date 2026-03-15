@@ -93,7 +93,7 @@ export function TestStepContent({
             }}
             className="text-xs text-white/40 hover:text-white/60 border border-white/[0.08] rounded-lg px-3 py-1.5"
           >
-            Copy test link
+            {t("testStep.copyLink")}
           </button>
         </div>
       </div>

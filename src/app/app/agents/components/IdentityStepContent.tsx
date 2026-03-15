@@ -30,13 +30,6 @@ type ExtractedBusinessDetails = {
 
 type ToneId = "professional" | "friendly" | "casual" | "formal";
 
-const TONE_OPTIONS: { id: ToneId; label: string }[] = [
-  { id: "professional", label: "Professional" },
-  { id: "friendly", label: "Friendly" },
-  { id: "casual", label: "Casual" },
-  { id: "formal", label: "Formal" },
-];
-
 const PLAYBOOK_ICONS: Record<string, LucideIcon> = {
   receptionist: PhoneCall,
   appointment_setter: Calendar,
@@ -45,48 +38,6 @@ const PLAYBOOK_ICONS: Record<string, LucideIcon> = {
   support: Headphones,
   scratch: Settings,
 };
-
-const INDUSTRY_OPTIONS: { id: string; label: string; greeting?: string }[] = [
-  { id: "", label: "General" },
-  { id: "dental", label: "Dental", greeting: "Thanks for calling our dental office. How can we help you today?" },
-  { id: "legal", label: "Legal", greeting: "Thank you for calling. How may I direct your call?" },
-  {
-    id: "plumbing",
-    label: "Plumbing",
-    greeting: "Thanks for calling. Are you calling about an emergency or to schedule a visit?",
-  },
-  {
-    id: "real_estate",
-    label: "Real Estate",
-    greeting: "Hi, thanks for calling. Are you looking to buy, sell, or schedule a viewing?",
-  },
-  {
-    id: "auto",
-    label: "Auto",
-    greeting: "Thanks for calling. Is this about a service appointment or a question?",
-  },
-  {
-    id: "salon",
-    label: "Salon",
-    greeting: "Thanks for calling! Would you like to book an appointment or ask about our services?",
-  },
-  {
-    id: "restaurant",
-    label: "Restaurant",
-    greeting: "Thanks for calling. Do you need a reservation or have a question?",
-  },
-  {
-    id: "medical",
-    label: "Medical",
-    greeting: "Thank you for calling. How can we help you today?",
-  },
-  { id: "consulting", label: "Consulting", greeting: "Thanks for reaching out. How can I help you?" },
-  {
-    id: "contractor",
-    label: "Contractor",
-    greeting: "Thanks for calling. Are you calling about an estimate or scheduling work?",
-  },
-];
 
 const TEMPLATES = [
   {
@@ -539,8 +490,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
             </div>
           )}
           <p className="mt-1 text-[10px] text-[var(--text-muted)]">
-            We’ll scan your public site to prefill services, FAQ, and business context. Only
-            public information is used.
+            {t("identityStep.websitePrivacy")}
           </p>
         </div>
       </section>

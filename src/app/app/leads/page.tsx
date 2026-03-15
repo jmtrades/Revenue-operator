@@ -265,8 +265,8 @@ export default function LeadsPage() {
               const mapped = mapApiLeadToView(p.new as ApiLead, prev.length, t);
               return [mapped, ...prev];
             });
-            const name = p.new.name || p.new.email || "Unknown lead";
-            toast.info(`New lead: ${name}`);
+            const name = p.new.name || p.new.email || t("leads.unknownLead");
+            toast.info(t("leads.toast.newLead", { name }));
           } else if (p.eventType === "UPDATE" && p.new) {
             setLeads((prev) => {
               const updated = mapApiLeadToView(p.new as ApiLead, 0, t);

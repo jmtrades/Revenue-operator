@@ -118,8 +118,8 @@ export default function AppSettingsBillingPage() {
   if (loading && !workspaceId) {
     return (
       <div className="max-w-[600px] mx-auto p-4 md:p-6">
-        <Breadcrumbs items={[{ label: "Settings", href: "/app/settings" }, { label: "Billing" }]} />
-        <h1 className="text-lg font-semibold text-white mb-4">Billing</h1>
+        <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
+        <h1 className="text-lg font-semibold text-white mb-4">{tNav("billing")}</h1>
         <div className="animate-pulse space-y-3">
           <div className="h-20 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]" />
           <div className="h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] w-1/2" />
@@ -141,12 +141,12 @@ export default function AppSettingsBillingPage() {
         </div>
       )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
-        <p className="text-sm font-medium text-white">Starter — $297/mo</p>
+        <p className="text-sm font-medium text-white">{tBilling("planDisplay", { plan: "Starter", price: "297" })}</p>
         <p className="text-xs text-zinc-500 mt-1">
-          {usage.minutes_used} / {usage.minutes_limit} minutes used
+          {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
         </p>
         <p className="text-xs text-zinc-500 mt-1">
-          Status: {billingStatus}{renewalAt ? ` · renews ${new Date(renewalAt).toLocaleDateString()}` : ""}
+          {tBilling("status")} {billingStatus}{renewalAt ? ` · ${tBilling("renews")} ${new Date(renewalAt).toLocaleDateString()}` : ""}
         </p>
       </div>
       <button
@@ -157,7 +157,7 @@ export default function AppSettingsBillingPage() {
         aria-haspopup="dialog"
         aria-expanded={planChangeOpen}
       >
-        Change plan
+        {tBilling("changePlan")}
       </button>
       <PlanChangeModal
         currentPlanId={currentPlanId}
@@ -167,7 +167,7 @@ export default function AppSettingsBillingPage() {
         workspaceId={workspaceId}
       />
         <p className="text-xs text-zinc-500 mb-4">
-          Payment method: •••• 4242{" "}
+          {tBilling("paymentMethod")}{" "}
           <button
             type="button"
             onClick={async () => {
@@ -184,12 +184,12 @@ export default function AppSettingsBillingPage() {
             }}
             className="text-zinc-400 hover:text-white ml-2"
           >
-            Update
+            {tBilling("update")}
           </button>
         </p>
-      <p className="text-sm text-zinc-400 mb-2">Invoice history</p>
+      <p className="text-sm text-zinc-400 mb-2">{tBilling("invoiceHistory")}</p>
       <div className="rounded-xl border border-[var(--border-default)] p-3 mb-6">
-        <p className="text-xs text-zinc-500 mb-2">View and download invoices in Stripe.</p>
+        <p className="text-xs text-zinc-500 mb-2">{tBilling("invoiceDesc")}</p>
         <button
           type="button"
           onClick={async () => {
@@ -206,30 +206,30 @@ export default function AppSettingsBillingPage() {
           }}
           className="text-sm text-zinc-300 hover:text-white underline underline-offset-2"
         >
-          View invoices and payment history →
+          {tBilling("viewInvoices")}
         </button>
       </div>
       <div className="flex gap-2">
-        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-400 disabled:opacity-60 hover:bg-zinc-800/50">{pausing ? "Pausing…" : "Pause account"}</button>
+        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-400 disabled:opacity-60 hover:bg-zinc-800/50">{pausing ? tBilling("pausing") : tBilling("pauseAccount")}</button>
         <button
           type="button"
           onClick={() => setCancelStep(1)}
           className="px-4 py-2 rounded-xl text-sm border border-[var(--accent-red)]/30 text-[var(--accent-red)]"
         >
-          Cancel
+          {tBilling("cancel")}
         </button>
       </div>
 
       {pauseStep === 1 && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={() => setPauseStep(0)}>
           <div className="bg-[var(--bg-card)] border border-[var(--border-medium)] rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-white mb-2">Pause account</h2>
+            <h2 className="text-lg font-semibold text-white mb-2">{tBilling("pauseTitle")}</h2>
             <p className="text-sm text-zinc-400 mb-4">
-              Pausing stops all AI calls and preserves your setup. You can resume anytime.
+              {tBilling("pauseDesc")}
             </p>
             <div className="flex gap-2 justify-end">
-              <button type="button" onClick={() => setPauseStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">Cancel</button>
-              <button type="button" onClick={() => { void handlePauseCoverage(); }} disabled={pausing} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60">{pausing ? "Pausing…" : "Pause"}</button>
+              <button type="button" onClick={() => setPauseStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">{tBilling("cancel")}</button>
+              <button type="button" onClick={() => { void handlePauseCoverage(); }} disabled={pausing} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60">{pausing ? tBilling("pausing") : tBilling("pause")}</button>
             </div>
           </div>
         </div>
@@ -240,49 +240,49 @@ export default function AppSettingsBillingPage() {
           <div className="bg-[var(--bg-card)] border border-[var(--border-medium)] rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
             {cancelStep === 1 && (
               <>
-                <h2 className="text-lg font-semibold text-white mb-2">Before you go</h2>
+                <h2 className="text-lg font-semibold text-white mb-2">{tBilling("beforeYouGo")}</h2>
                 <p className="text-sm text-zinc-400 mb-4">
-                  This month you captured {usage.leads} lead{usage.leads !== 1 ? "s" : ""} worth ~${usage.estRevenue.toLocaleString()}. Your plan costs $297. Are you sure?
+                  {tBilling("beforeYouGoDesc", { leads: usage.leads, revenue: usage.estRevenue.toLocaleString() })}
                 </p>
                 <div className="flex gap-2 justify-end">
-                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">Stay</button>
-                  <button type="button" onClick={() => setCancelStep(2)} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium">Continue cancel</button>
+                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">{tBilling("stay")}</button>
+                  <button type="button" onClick={() => setCancelStep(2)} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium">{tBilling("continueCancel")}</button>
                 </div>
               </>
             )}
             {cancelStep === 2 && (
               <>
-                <h2 className="text-lg font-semibold text-white mb-2">Pause instead?</h2>
+                <h2 className="text-lg font-semibold text-white mb-2">{tBilling("pauseInstead")}</h2>
                 <p className="text-sm text-zinc-400 mb-4">
-                  Keep your number and settings for 30 days at $0. You can resume anytime.
+                  {tBilling("pauseInsteadDesc")}
                 </p>
                 <div className="flex gap-2 justify-end">
-                  <button type="button" onClick={() => setCancelStep(3)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">No, continue</button>
-                  <button type="button" onClick={() => { void handlePauseCoverage(); }} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60">{pausing ? "Pausing…" : "Pause for 30 days"}</button>
+                  <button type="button" onClick={() => setCancelStep(3)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">{tBilling("noContinue")}</button>
+                  <button type="button" onClick={() => { void handlePauseCoverage(); }} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60">{pausing ? tBilling("pausing") : tBilling("pauseFor30Days")}</button>
                 </div>
               </>
             )}
             {cancelStep === 3 && (
               <>
-                <h2 className="text-lg font-semibold text-white mb-2">Downgrade to Starter?</h2>
+                <h2 className="text-lg font-semibold text-white mb-2">{tBilling("downgradeTitle")}</h2>
                 <p className="text-sm text-zinc-400 mb-4">
-                  Stay on Starter at $297/mo with fewer minutes. You can upgrade again later.
+                  {tBilling("downgradeDesc")}
                 </p>
                 <div className="flex gap-2 justify-end">
-                  <button type="button" onClick={() => setCancelStep(4)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">No, cancel</button>
-                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium">Keep Starter</button>
+                  <button type="button" onClick={() => setCancelStep(4)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">{tBilling("noCancel")}</button>
+                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium">{tBilling("keepStarter")}</button>
                 </div>
               </>
             )}
             {cancelStep === 4 && (
               <>
-                <h2 className="text-lg font-semibold text-white mb-2">We&apos;re sorry to see you go</h2>
+                <h2 className="text-lg font-semibold text-white mb-2">{tBilling("sorryToSeeYouGo")}</h2>
                 <p className="text-sm text-zinc-400 mb-4">
-                  Your data will be available for 30 days. You can reactivate from Settings.
+                  {tBilling("sorryDesc")}
                 </p>
                 <div className="flex gap-2 justify-end">
-                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">Back</button>
-                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm bg-red-600 text-white font-medium">Confirm cancel</button>
+                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">{tBilling("back")}</button>
+                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm bg-red-600 text-white font-medium">{tBilling("confirmCancel")}</button>
                 </div>
               </>
             )}
@@ -296,7 +296,7 @@ export default function AppSettingsBillingPage() {
         </div>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">← Settings</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tBilling("backToSettingsLink")}</Link></p>
     </div>
   );
 }

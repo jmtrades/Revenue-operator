@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
@@ -14,6 +15,7 @@ import { TestStep } from "./steps/TestStep";
 import { ActivateStep } from "./steps/ActivateStep";
 
 export function ActivateWizard() {
+  const t = useTranslations("activate");
   const [step, setStep] = useState<StepId>(1);
   const [state, setState] = useState<ActivationState>(() => ({
     businessName: "",
@@ -24,8 +26,7 @@ export function ActivateWizard() {
     agentTemplate: null,
     agentName: "",
     hours: DEFAULT_HOURS,
-    greeting:
-      "Hi, thanks for calling. How can I help you today?",
+    greeting: "Hi, thanks for calling. How can I help you today?",
     services: [],
     lastTestFeedback: null,
     preferredLanguage: "en",
@@ -108,7 +109,7 @@ export function ActivateWizard() {
     const voiceText =
       state.greeting.trim().length > 0
         ? state.greeting.trim()
-        : `Hi, thanks for calling ${state.businessName || "your business"}.`;
+        : t("greetingWithBusiness", { business: state.businessName || t("yourBusiness") });
     previewVoiceViaApi(voiceText, {
       voiceId: state.elevenlabsVoiceId || undefined,
       gender: "female",
@@ -172,14 +173,13 @@ export function ActivateWizard() {
       <div className="max-w-4xl mx-auto">
         <header className="mb-10">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase text-sky-400">
-            Activation
+            {t("wizardHeading")}
           </p>
           <h1 className="mt-3 text-2xl md:text-3xl font-semibold text-slate-50">
-            Let&apos;s get your phone agent ready.
+            {t("wizardTitle")}
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-xl">
-            This takes about 3 minutes. You&apos;ll hear your agent handle a
-            real call at the end.
+            {t("wizardSubtitle")}
           </p>
         </header>
 
