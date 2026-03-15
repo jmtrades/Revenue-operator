@@ -127,6 +127,7 @@
     "loading": "Chargement",
     "loadingEllipsis": "Chargement…",
     "error": "Erreur",
+    "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
     "success": "Succès",
     "retry": "Réessayer",
     "viewAll": "Tout voir",
@@ -5047,6 +5048,7 @@
       "subtitle": "Votre IA utilisera ces informations lors des futurs appels."
     },
     "form": {
+      "addTag": "+ Ajouter un tag",
       "firstNameLabel": "Prénom*",
       "firstNamePlaceholder": "Mike",
       "lastNameLabel": "Nom*",

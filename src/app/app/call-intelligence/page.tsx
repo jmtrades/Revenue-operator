@@ -184,7 +184,7 @@ export default function CallIntelligencePage() {
         setToast(data.error ?? t("toast.analysisFailed"));
       }
     } catch {
-      setToast(tCommon("error.generic"));
+      setToast(tCommon("errorGeneric"));
     } finally {
       setAnalyzing(false);
       setTimeout(() => setToast(null), 4000);
@@ -223,7 +223,7 @@ export default function CallIntelligencePage() {
         setToast(data.error ?? t("toast.applyFailed"));
       }
     } catch {
-      setToast(tCommon("error.generic"));
+      setToast(tCommon("errorGeneric"));
     }
     setTimeout(() => setToast(null), 3000);
   };

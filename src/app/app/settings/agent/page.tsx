@@ -184,8 +184,16 @@ export default function AppSettingsAgentPage() {
 
   if (loading) {
     return (
-      <div className="max-w-[600px] mx-auto p-4 md:p-6">
-        <p className="text-sm text-zinc-500">{tSettings("agent.loading")}</p>
+      <div className="max-w-[600px] mx-auto p-4 md:p-6 space-y-6 animate-pulse">
+        <div className="h-6 w-48 bg-zinc-800 rounded" />
+        <div className="h-4 w-full max-w-md bg-zinc-800 rounded" />
+        <div className="space-y-4">
+          <div className="h-10 w-full bg-zinc-800 rounded-xl" />
+          <div className="h-10 w-full bg-zinc-800 rounded-xl" />
+          <div className="h-20 w-full bg-zinc-800 rounded-xl" />
+          <div className="h-32 w-full bg-zinc-800 rounded-xl" />
+        </div>
+        <div className="h-10 w-32 bg-zinc-800 rounded-xl" />
         <p className="mt-4">
           <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("agent.backToSettings")}</Link>
         </p>

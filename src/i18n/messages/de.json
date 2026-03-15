@@ -127,6 +127,7 @@
     "loading": "Laden",
     "loadingEllipsis": "Laden…",
     "error": "Fehler",
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
     "success": "Erfolg",
     "retry": "Erneut versuchen",
     "viewAll": "Alle anzeigen",
@@ -1547,6 +1548,18 @@
     "nav": {
       "backToKnowledge": "Zurück zu Wissen",
       "continueToTest": "Weiter zu Test"
+    },
+    "voiceTest": {
+      "defaultPreviewText": "Hallo, danke für Ihren Anruf! Wie kann ich Ihnen helfen?",
+      "errors": {
+        "applyFailed": "Spracheinstellungen konnten nicht übernommen werden. Bitte erneut versuchen.",
+        "previewFailed": "Sprachvorschau fehlgeschlagen. Bitte erneut versuchen."
+      },
+      "scriptPlaceholder": "Text eingeben, um mit dieser Stimme vorzuhören…",
+      "toast": {
+        "applied": "Spracheinstellungen übernommen",
+        "played": "Sprachvorschau abgespielt"
+      }
     },
     "testStep": {
       "title": "Sprechen Sie mit Ihrer KI",
@@ -5053,6 +5066,7 @@
       "subtitle": "Dein KI-Assistent nutzt diese Informationen bei zukünftigen Anrufen."
     },
     "form": {
+      "addTag": "+ Tag hinzufügen",
       "firstNameLabel": "Vorname*",
       "firstNamePlaceholder": "Mike",
       "lastNameLabel": "Nachname*",

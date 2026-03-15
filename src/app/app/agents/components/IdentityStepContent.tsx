@@ -335,7 +335,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
                   <button
                     key={value}
                     type="button"
-                    className={`flex-1 rounded-xl border px-3 py-2 text-[11px] font-medium transition ${
+                    className={`flex-1 rounded-xl border px-3 py-2 text-[11px] font-medium whitespace-nowrap transition ${
                       selected
                         ? "border-white bg-white text-black"
                         : "border-[var(--border-subtle)] bg-black/40 text-[var(--text-secondary)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)]"

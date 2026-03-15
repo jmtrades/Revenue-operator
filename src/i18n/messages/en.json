@@ -127,6 +127,7 @@
     "loading": "Loading",
     "loadingEllipsis": "Loading…",
     "error": "Error",
+    "errorGeneric": "Something went wrong. Please try again.",
     "success": "Success",
     "retry": "Retry",
     "genericErrorTryAgain": "Something went wrong. Please try again.",
@@ -1514,6 +1515,18 @@
     "nav": {
       "backToKnowledge": "Back to Knowledge",
       "continueToTest": "Continue to Test"
+    },
+    "voiceTest": {
+      "defaultPreviewText": "Hi, thanks for calling! How can I help you today?",
+      "errors": {
+        "applyFailed": "Failed to apply voice settings. Please try again.",
+        "previewFailed": "Failed to preview voice. Please try again."
+      },
+      "scriptPlaceholder": "Enter text to preview with this voice…",
+      "toast": {
+        "applied": "Voice settings applied",
+        "played": "Voice preview played"
+      }
     },
     "testPanel": {
       "aiAgent": "AI Agent",
@@ -4680,9 +4693,16 @@
   "forms": {
     "validation": {
       "required": "This field is required.",
+      "nameTooShort": "Name must be at least 2 characters.",
+      "nameTooLong": "Name must be 50 characters or less.",
+      "greetingTooShort": "Greeting must be at least 10 characters.",
+      "greetingTooLong": "Greeting must be 500 characters or less.",
       "email": "Enter a valid email address.",
+      "invalidEmail": "Please enter a valid email address.",
       "url": "Enter a valid URL.",
+      "invalidUrl": "Please enter a valid URL.",
       "phone": "Enter a valid phone number.",
+      "invalidPhone": "Please enter a valid phone number.",
       "minLength": "This field is too short.",
       "maxLength": "This field is too long.",
       "number": "Enter a valid number.",

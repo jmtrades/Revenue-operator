@@ -56,16 +56,23 @@ export default function AgentVoiceTestPage() {
 
   useEffect(() => {
     if (!agentId) return;
+    let cancelled = false;
     fetch(`/api/agents/${agentId}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data: { id?: string; name?: string; voice_id?: string | null } | null) => {
+        if (cancelled) return;
         if (data?.id) {
           setAgent({ id: data.id, name: data.name ?? "Agent", voice_id: data.voice_id ?? null });
           setSelectedVoiceId(data.voice_id ?? CURATED_VOICES[0]?.id ?? null);
         }
       })
-      .catch(() => setAgent(null))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        if (!cancelled) setAgent(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
   }, [agentId]);
 
   const handlePlay = useCallback(
