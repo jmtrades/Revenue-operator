@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Phone, MessageSquare, CreditCard } from "lucide-react";
 
@@ -32,17 +34,20 @@ export function WaveformVisual() {
 }
 
 /** Card 2: Automated follow-ups — horizontal timeline */
-const TIMELINE_STEPS = [
-  { label: "Call", time: "09:14", filled: true },
-  { label: "Follow-up", time: "+24h", filled: true },
-  { label: "Confirm", time: "+48h", filled: false },
-  { label: "Close", time: "+72h", filled: false },
-];
-
 export function TimelineVisual() {
+  const t = useTranslations("homepage.bentoVisuals");
+  const steps = useMemo(
+    () => [
+      { label: t("timelineLabels.call"), time: "09:14", filled: true },
+      { label: t("timelineLabels.followUp"), time: "+24h", filled: true },
+      { label: t("timelineLabels.confirm"), time: "+48h", filled: false },
+      { label: t("timelineLabels.close"), time: "+72h", filled: false },
+    ],
+    [t]
+  );
   return (
     <div className="mt-auto pt-6 flex items-end justify-between gap-2 opacity-60 group-hover:opacity-80 transition-opacity" aria-hidden>
-      {TIMELINE_STEPS.map((step, i) => (
+      {steps.map((step, i) => (
         <div key={i} className="flex flex-col items-center flex-1">
           <div className="flex items-center w-full">
             {i > 0 && (
@@ -55,7 +60,7 @@ export function TimelineVisual() {
                 border: step.filled ? "none" : "1.5px solid var(--text-tertiary)",
               }}
             />
-            {i < TIMELINE_STEPS.length - 1 && (
+            {i < steps.length - 1 && (
               <div className="flex-1 h-px min-w-2" style={{ background: "var(--border-default)" }} />
             )}
           </div>
@@ -69,6 +74,8 @@ export function TimelineVisual() {
 
 /** Card 3: Compliance record — record preview box */
 export function ComplianceRecordPreview() {
+  const t = useTranslations("homepage.bentoVisuals");
+  const auditLines = useMemo(() => [t("audit.line1"), t("audit.line2"), t("audit.line3")], [t]);
   return (
     <div
       className="mt-auto rounded-lg border p-6 opacity-90 group-hover:opacity-100 transition-opacity"
@@ -77,7 +84,7 @@ export function ComplianceRecordPreview() {
     >
       <div className="flex justify-between items-center">
         <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--accent-secondary)" }}>
-          Governed record
+          {t("complianceRecord.governedRecord")}
         </span>
         <span className="text-xs font-mono" style={{ color: "var(--text-tertiary)", fontFamily: "var(--font-jetbrains-mono), monospace" }}>
           REF-2024-0847
@@ -85,24 +92,24 @@ export function ComplianceRecordPreview() {
       </div>
       <div className="my-3 h-px" style={{ background: "var(--border-default)" }} />
       <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs font-mono" style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}>
-        <span style={{ color: "var(--text-tertiary)" }}>Jurisdiction</span>
+        <span style={{ color: "var(--text-tertiary)" }}>{t("complianceRecord.jurisdiction")}</span>
         <span style={{ color: "var(--text-primary)" }}>US-CA</span>
-        <span style={{ color: "var(--text-tertiary)" }}>Verified</span>
+        <span style={{ color: "var(--text-tertiary)" }}>{t("complianceRecord.verified")}</span>
         <span style={{ color: "var(--text-secondary)" }}>2024-01-15T09:14:00Z</span>
-        <span style={{ color: "var(--text-tertiary)" }}>Review depth</span>
-        <span style={{ color: "var(--text-primary)" }}>Standard</span>
-        <span style={{ color: "var(--text-tertiary)" }}>Duration</span>
+        <span style={{ color: "var(--text-tertiary)" }}>{t("complianceRecord.reviewDepth")}</span>
+        <span style={{ color: "var(--text-primary)" }}>{t("complianceRecord.standard")}</span>
+        <span style={{ color: "var(--text-tertiary)" }}>{t("complianceRecord.duration")}</span>
         <span style={{ color: "var(--text-secondary)" }}>4m 32s</span>
-        <span style={{ color: "var(--text-tertiary)" }}>Status</span>
+        <span style={{ color: "var(--text-tertiary)" }}>{t("complianceRecord.status")}</span>
         <span className="flex items-center gap-1" style={{ color: "var(--accent-secondary)" }}>
-          <span className="w-1.5 h-1.5 rounded-full bg-current inline-block animate-pulse" /> Compliant
+          <span className="w-1.5 h-1.5 rounded-full bg-current inline-block animate-pulse" /> {t("complianceRecord.compliant")}
         </span>
-        <span style={{ color: "var(--text-tertiary)" }}>Chain</span>
-        <span style={{ color: "var(--text-secondary)" }}>3 verified events</span>
+        <span style={{ color: "var(--text-tertiary)" }}>{t("complianceRecord.chain")}</span>
+        <span style={{ color: "var(--text-secondary)" }}>{t("complianceRecord.chainValue")}</span>
       </div>
       <div className="my-3 h-px" style={{ background: "var(--border-default)" }} />
       <div className="space-y-1.5">
-        {["Recorded under declared jurisdiction", "Forwarded without modification", "Audit trail complete"].map((line, i) => (
+        {auditLines.map((line, i) => (
           <div key={i} className="flex items-center gap-2 text-xs" style={{ color: "var(--text-tertiary)" }}>
             <Check className="w-3 h-3 shrink-0" style={{ color: "var(--accent-secondary)" }} />
             {line}
@@ -115,11 +122,15 @@ export function ComplianceRecordPreview() {
 
 /** Card 4: Escalation control — L1 → L2 → L3 flow */
 export function EscalationFlowVisual() {
-  const levels = [
-    { id: "L1", label: "Agent", active: false },
-    { id: "L2", label: "Manager", active: true },
-    { id: "L3", label: "Director", active: false },
-  ];
+  const t = useTranslations("homepage.bentoVisuals");
+  const levels = useMemo(
+    () => [
+      { id: "L1", label: t("escalation.agent"), active: false },
+      { id: "L2", label: t("escalation.manager"), active: true },
+      { id: "L3", label: t("escalation.director"), active: false },
+    ],
+    [t]
+  );
   return (
     <div className="mt-auto pt-6 flex items-center justify-center gap-4 opacity-60 group-hover:opacity-80 transition-opacity" aria-hidden>
       {levels.map((level, i) => (
@@ -153,11 +164,15 @@ export function EscalationFlowVisual() {
 
 /** Card 5: Multi-channel — channel icons row */
 export function ChannelIconsVisual() {
-  const channels = [
-    { icon: Phone, label: "Voice" },
-    { icon: MessageSquare, label: "Message" },
-    { icon: CreditCard, label: "Payment" },
-  ];
+  const t = useTranslations("homepage.bentoVisuals");
+  const channels = useMemo(
+    () => [
+      { icon: Phone, label: t("channels.voice") },
+      { icon: MessageSquare, label: t("channels.message") },
+      { icon: CreditCard, label: t("channels.payment") },
+    ],
+    [t]
+  );
   return (
     <div className="mt-auto pt-6 flex flex-col items-center gap-3 opacity-60 group-hover:opacity-80 transition-opacity" aria-hidden>
       <div className="flex items-center justify-center gap-8">
@@ -172,7 +187,7 @@ export function ChannelIconsVisual() {
           </div>
         ))}
       </div>
-      <span className="text-[10px]" style={{ color: "var(--accent-secondary)" }}>Single governance layer</span>
+      <span className="text-[10px]" style={{ color: "var(--accent-secondary)" }}>{t("channelNote")}</span>
     </div>
   );
 }

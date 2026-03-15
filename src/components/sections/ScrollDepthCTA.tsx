@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { ROUTES } from "@/lib/constants";
@@ -8,6 +9,7 @@ import { ROUTES } from "@/lib/constants";
 const SESSION_KEY = "recall-touch-scroll-cta-shown";
 
 export function ScrollDepthCTA() {
+  const t = useTranslations("homepage.scrollCta");
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -63,7 +65,7 @@ export function ScrollDepthCTA() {
     >
       <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
       <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-        Your next customer could be calling. Ready?
+        {t("message")}
       </p>
       <div className="flex items-center gap-2">
         <Link
@@ -71,11 +73,11 @@ export function ScrollDepthCTA() {
           className="btn-marketing-primary px-4 py-2 text-sm rounded-lg no-underline shrink-0"
           onClick={dismiss}
         >
-          Start free →
+          {t("button")}
         </Link>
         <button
           type="button"
-          aria-label="Dismiss"
+          aria-label={t("dismiss")}
           onClick={dismiss}
           className="p-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
           style={{ color: "var(--text-tertiary)" }}

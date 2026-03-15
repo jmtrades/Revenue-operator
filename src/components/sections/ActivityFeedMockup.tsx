@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 
-const FEED_CARDS = [
-  { type: "lead" as const, label: "NEW LEAD", time: "10:32 AM", name: "Sarah Mitchell", meta: "Kitchen remodel quote", detail: "Budget: $15–20K · Lead score: 85", accent: "var(--card-lead)" },
-  { type: "appointment" as const, label: "APPOINTMENT BOOKED", time: "9:47 AM", name: "James Cooper", meta: "AC maintenance — Tue Mar 3, 2:00 PM", detail: "Confirmation text sent ✓", accent: "var(--card-appointment)" },
-  { type: "emergency" as const, label: "URGENT", time: "9:15 AM", name: "Maria Santos", meta: "Water heater leaking", detail: "You were alerted via text + call", accent: "var(--card-emergency)" },
-  { type: "outbound" as const, label: "FOLLOW-UP CALL", time: "8:30 AM", name: "AI called David Kim", meta: "Appointment reminder", detail: "Confirmed for tomorrow ✓", accent: "var(--card-outbound)" },
-  { type: "info" as const, label: "HANDLED", time: "7:45 AM", name: "Mike Johnson", meta: "Asked about business hours", detail: "AI answered: Mon–Fri 8am–6pm", accent: "var(--card-info)" },
-];
+const CARD_IDS = ["lead", "appointment", "emergency", "outbound", "info"] as const;
+const ACCENTS = ["var(--card-lead)", "var(--card-appointment)", "var(--card-emergency)", "var(--card-outbound)", "var(--card-info)"] as const;
 
-function FeedCard({ card, index }: { card: (typeof FEED_CARDS)[0]; index: number }) {
+function FeedCard({ card, index }: { card: { label: string; time: string; name: string; meta: string; detail: string; accent: string }; index: number }) {
   return (
     <motion.div
       layout
@@ -41,9 +37,23 @@ function FeedCard({ card, index }: { card: (typeof FEED_CARDS)[0]; index: number
 const CARD_INTERVAL_MS = 3000;
 
 export function ActivityFeedMockup() {
+  const t = useTranslations("homepage.activityFeed");
   const [visibleCount, setVisibleCount] = useState(0);
 
-  // Initial stagger, then a new call card slides in every 3 seconds (spec)
+  const feedCards = useMemo(
+    () =>
+      CARD_IDS.map((id, i) => ({
+        label: t(`feedCards.${id}.label`),
+        time: t(`feedCards.${id}.time`),
+        name: t(`feedCards.${id}.name`),
+        meta: t(`feedCards.${id}.meta`),
+        detail: t(`feedCards.${id}.detail`),
+        accent: ACCENTS[i],
+      })),
+    [t]
+  );
+  const chips = useMemo(() => [t("chips.all"), t("chips.needsAction"), t("chips.leads")], [t]);
+
   useEffect(() => {
     const t1 = setTimeout(() => setVisibleCount(1), 400);
     const t2 = setTimeout(() => setVisibleCount(2), 900);
@@ -59,7 +69,7 @@ export function ActivityFeedMockup() {
     };
   }, []);
 
-  const displayCards = FEED_CARDS.slice(0, visibleCount);
+  const displayCards = feedCards.slice(0, visibleCount);
 
   return (
     <div className="w-full max-w-[340px] mx-auto" aria-hidden="true">
@@ -73,16 +83,16 @@ export function ActivityFeedMockup() {
         <div className="px-3 pt-4 pb-6" style={{ minHeight: "320px" }}>
           <div className="flex items-center justify-between mb-3 px-1">
             <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>Recall Touch</span>
-            <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>Today</span>
+            <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{t("dateLabel")}</span>
           </div>
           <div className="flex gap-1.5 overflow-x-auto pb-2 -mx-1 scrollbar-hide">
-            {["All", "Needs action", "Leads"].map((chip) => (
+            {chips.map((chip, idx) => (
               <span
                 key={chip}
                 className="px-2.5 py-1 rounded-full text-[10px] whitespace-nowrap"
                 style={{
-                  background: chip === "Needs action" ? "var(--accent-primary-subtle)" : "var(--bg-elevated)",
-                  color: chip === "Needs action" ? "var(--accent-primary)" : "var(--text-secondary)",
+                  background: idx === 1 ? "var(--accent-primary-subtle)" : "var(--bg-elevated)",
+                  color: idx === 1 ? "var(--accent-primary)" : "var(--text-secondary)",
                 }}
               >
                 {chip}

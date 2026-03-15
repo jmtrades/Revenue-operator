@@ -1,31 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Link2, Brain, Sparkles } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
 import { motion } from "framer-motion";
-
-const steps = [
-  {
-    num: 1,
-    icon: Link2,
-    title: "Connect",
-    desc: "Forward your number or get a new one. Any carrier. Any phone.",
-  },
-  {
-    num: 2,
-    icon: Brain,
-    title: "Configure",
-    desc: "Tell your AI what to do: answer calls, handle texts, book appointments, follow up, qualify leads, or all of it. Use a template or start from scratch.",
-  },
-  {
-    num: 3,
-    icon: Sparkles,
-    title: "Done",
-    desc: "Every call answered. Every lead captured. Every follow-up sent.",
-  },
-];
 
 function ConnectorLine() {
   return (
@@ -36,16 +17,26 @@ function ConnectorLine() {
 }
 
 export function HowItWorks() {
+  const t = useTranslations("homepage.howItWorks");
+  const steps = useMemo(
+    () => [
+      { num: 1, icon: Link2, title: t("steps.connect.title"), desc: t("steps.connect.desc") },
+      { num: 2, icon: Brain, title: t("steps.configure.title"), desc: t("steps.configure.desc") },
+      { num: 3, icon: Sparkles, title: t("steps.done.title"), desc: t("steps.done.desc") },
+    ],
+    [t]
+  );
+
   return (
     <section id="how-it-works" className="marketing-section" style={{ background: "var(--bg-surface)" }}>
       <Container>
         <AnimateOnScroll className="text-center mb-16 md:mb-20">
-          <SectionLabel>How it works</SectionLabel>
+          <SectionLabel>{t("label")}</SectionLabel>
           <h2
             className="font-semibold max-w-2xl mx-auto"
             style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}
           >
-            Three steps. Then it runs.
+            {t("title")}
           </h2>
         </AnimateOnScroll>
         <div className="max-w-[900px] mx-auto">
