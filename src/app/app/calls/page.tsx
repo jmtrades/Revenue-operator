@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useTranslations } from "next-intl";
+import { useDebounce } from "@/hooks/useDebounce";
 
 type CallType = "inbound" | "outbound" | null;
 type CallOutcome = "appointment" | "lead" | "info" | "transfer" | "voicemail" | "missed" | null;
@@ -82,6 +83,11 @@ function readCallsSnapshot(workspaceId: string): CallRecord[] {
     const parsed = raw ? (JSON.parse(raw) as CallRecord[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
+    try {
+      window.localStorage.removeItem(`${CALLS_SNAPSHOT_PREFIX}${workspaceId}`);
+    } catch {
+      /* ignore */
+    }
     return [];
   }
 }
@@ -109,6 +115,7 @@ export default function CallsPage() {
   const [error, setError] = useState<string | null>(null);
   const [records, setRecords] = useState<CallRecord[]>(initialRecords);
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 300);
   const [outcomeFilter, setOutcomeFilter] = useState<NonNullable<CallOutcome> | "all">("all");
   const [sentimentFilter, setSentimentFilter] =
     useState<NonNullable<CallSentiment> | "all">("all");
@@ -143,12 +150,13 @@ export default function CallsPage() {
       { credentials: "include", timeout: 8000, retries: 1 },
     )
       .then((data) => {
-        const next = data.calls ?? [];
+        const next = Array.isArray(data?.calls) ? data.calls : [];
         setError(null);
         setRecords(next);
-        persistCallsSnapshot(workspaceId, next);
+        if (next.length > 0) persistCallsSnapshot(workspaceId, next);
       })
       .catch((err) => {
+        console.error("Failed to load calls:", err);
         const message =
           err instanceof ApiError && err.status === 408
             ? t("calls.errors.timeout")
@@ -159,7 +167,7 @@ export default function CallsPage() {
   }, [workspaceId, t]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = debouncedQuery.trim().toLowerCase();
     let list = [...records];
     if (q) {
       list = list.filter((c) => {
@@ -205,7 +213,7 @@ export default function CallsPage() {
     });
 
     return list;
-  }, [records, query, outcomeFilter, sentimentFilter, sort]);
+  }, [records, debouncedQuery, outcomeFilter, sentimentFilter, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageSafe = Math.min(page, totalPages);

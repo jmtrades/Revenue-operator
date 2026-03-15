@@ -79,6 +79,11 @@ function readCampaignsSnapshot(workspaceId: string): CampaignRow[] {
     const parsed = raw ? (JSON.parse(raw) as CampaignRow[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
+    try {
+      window.localStorage.removeItem(`${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`);
+    } catch {
+      /* ignore */
+    }
     return [];
   }
 }

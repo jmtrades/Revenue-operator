@@ -162,6 +162,11 @@ function readActivitySnapshot(): ActivityCard[] {
     const parsed = raw ? (JSON.parse(raw) as ActivityCard[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
+    try {
+      window.localStorage.removeItem(ACTIVITY_SNAPSHOT_KEY);
+    } catch {
+      /* ignore */
+    }
     return [];
   }
 }

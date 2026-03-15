@@ -84,9 +84,18 @@ export default function AppOnboardingPage() {
       try {
         const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
         if (raw) {
-          const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
-          if (d?.businessName?.trim()) setBusinessName(d.businessName.trim());
-          if (d?.website?.trim()) setWebsite(d.website.trim());
+          try {
+            const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
+            if (d?.businessName?.trim()) setBusinessName(d.businessName.trim());
+            if (d?.website?.trim()) setWebsite(d.website.trim());
+          } catch {
+            try {
+              localStorage.removeItem("rt_signup");
+              localStorage.removeItem("recalltouch_signup");
+            } catch {
+              /* ignore */
+            }
+          }
         }
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
         setTimezone(tz);

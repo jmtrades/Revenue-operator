@@ -343,7 +343,17 @@ export default function KnowledgePage() {
     try {
       const raw = sessionStorage.getItem(ADD_FROM_CALL_KEY);
       if (!raw) return;
-      const data = JSON.parse(raw) as { summary?: string; callId?: string };
+      let data: { summary?: string; callId?: string };
+      try {
+        data = JSON.parse(raw) as { summary?: string; callId?: string };
+      } catch {
+        try {
+          sessionStorage.removeItem(ADD_FROM_CALL_KEY);
+        } catch {
+          /* ignore */
+        }
+        return;
+      }
       sessionStorage.removeItem(ADD_FROM_CALL_KEY);
       const summary = (data.summary ?? "").trim();
       if (!summary) return;

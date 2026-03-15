@@ -12,6 +12,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { getClientOrNull } from "@/lib/supabase/client";
+import { useDebounce } from "@/hooks/useDebounce";
 import { LeadsList } from "./components/LeadsList";
 import { LeadsKanban } from "./components/LeadsKanban";
 import { LeadDetail } from "./components/LeadDetail";
@@ -159,6 +160,11 @@ function readLeadsSnapshot(workspaceId: string): LeadView[] {
     const parsed = raw ? (JSON.parse(raw) as LeadView[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
+    try {
+      window.localStorage.removeItem(`${LEADS_SNAPSHOT_PREFIX}${workspaceId}`);
+    } catch {
+      /* ignore */
+    }
     return [];
   }
 }
@@ -187,6 +193,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(initialLeads.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
   const [view, setView] = useState<ViewMode>("table");
   const [statusFilter, setStatusFilter] = useState<LeadStatus[]>([]);
   const [sourceFilter, setSourceFilter] = useState<LeadSource[]>([]);
@@ -287,7 +294,7 @@ export default function LeadsPage() {
   const totalCount = leads.length;
 
   const filteredLeads = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = debouncedSearch.trim().toLowerCase();
     let list = [...leads];
     if (q) {
       list = list.filter((l) => {
@@ -319,7 +326,7 @@ export default function LeadsPage() {
     });
 
     return list;
-  }, [leads, search, sort, sourceFilter, scoreFilter, statusFilter]);
+  }, [leads, debouncedSearch, sort, sourceFilter, scoreFilter, statusFilter]);
 
   const groupedByStatus = useMemo(() => {
     const map = new Map<LeadStatus, LeadView[]>();

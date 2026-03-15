@@ -6,22 +6,31 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authSession = await getSession(req);
+    if (!authSession) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { id: callId } = await params;
     const db = getDb();
 
   const { data: session } = await db
     .from("call_sessions")
-    .select("id, lead_id, transcript, outcome, current_node")
+    .select("id, lead_id, workspace_id, transcript, outcome, current_node")
     .eq("id", callId)
     .single();
 
   if (!session) return NextResponse.json({ error: "Call not found" }, { status: 404 });
+  const workspaceId = (session as { workspace_id?: string }).workspace_id;
+  if (workspaceId) {
+    const accessErr = await requireWorkspaceAccess(req, workspaceId);
+    if (accessErr) return accessErr;
+  }
 
   const { data: existing } = await db
     .from("call_coaching")

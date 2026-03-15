@@ -24,6 +24,11 @@ function getProgress(): { completed: number; done: Set<string> } {
     const done = raw ? new Set(JSON.parse(raw) as string[]) : new Set<string>();
     return { completed: done.size, done };
   } catch {
+    try {
+      localStorage.removeItem("rt_onboarding_checklist");
+    } catch {
+      /* ignore */
+    }
     return { completed: 0, done: new Set() };
   }
 }

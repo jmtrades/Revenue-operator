@@ -61,6 +61,11 @@ function readAnalyticsSnapshot<T>(prefix: string, workspaceId: string): T[] {
     const parsed = raw ? (JSON.parse(raw) as T[]) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
+    try {
+      window.localStorage.removeItem(`${prefix}${workspaceId}`);
+    } catch {
+      /* ignore */
+    }
     return [];
   }
 }
