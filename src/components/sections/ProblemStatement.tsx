@@ -1,50 +1,54 @@
 "use client";
 
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
 import { motion } from "framer-motion";
 import { PhoneMissed, Clock, Layers } from "lucide-react";
 
-const PROBLEM_INBOUND = {
-  title: "Calls fall through the cracks",
-  stats: [
-    { value: "$126K", desc: "Lost per year to missed calls" },
-    { value: "80%", desc: "Hang up on voicemail" },
-    { value: "93%", desc: "Never call back after busy signal" },
-  ],
-  accent: "var(--accent-primary)",
-};
-
-const PROBLEM_OUTBOUND = {
-  title: "Follow-up is broken",
-  stats: [
-    { value: "51%", desc: "Of leads never contacted" },
-    { value: "42 hrs", desc: "Average response time" },
-    { value: "44%", desc: "Of reps give up after 1 try" },
-  ],
-  accent: "var(--accent-secondary)",
-};
-
-const PROBLEM_HUMAN = {
-  title: "Communication doesn't scale",
-  stats: [
-    { value: "$35K", desc: "Receptionist + $55K SDR salaries" },
-    { value: "30–45%", desc: "Turnover in phone-heavy roles" },
-    { value: "4+", desc: "Average tools businesses juggle for calls, texts, scheduling, and follow-up" },
-  ],
-  accent: "var(--accent-warning)",
-};
-
-const CARDS = [PROBLEM_INBOUND, PROBLEM_OUTBOUND, PROBLEM_HUMAN] as const;
-
 export function ProblemStatement() {
+  const t = useTranslations("homepage.problem");
+  const CARDS = useMemo(
+    () => [
+      {
+        title: t("card1Title"),
+        stats: [
+          { value: "$126K", desc: t("card1Stat1Desc") },
+          { value: "80%", desc: t("card1Stat2Desc") },
+          { value: "93%", desc: t("card1Stat3Desc") },
+        ],
+        accent: "var(--accent-primary)",
+      },
+      {
+        title: t("card2Title"),
+        stats: [
+          { value: "51%", desc: t("card2Stat1Desc") },
+          { value: "42 hrs", desc: t("card2Stat2Desc") },
+          { value: "44%", desc: t("card2Stat3Desc") },
+        ],
+        accent: "var(--accent-secondary)",
+      },
+      {
+        title: t("card3Title"),
+        stats: [
+          { value: "$35K", desc: t("card3Stat1Desc") },
+          { value: "30–45%", desc: t("card3Stat2Desc") },
+          { value: "4+", desc: t("card3Stat3Desc") },
+        ],
+        accent: "var(--accent-warning)",
+      },
+    ],
+    [t]
+  );
+
   return (
     <section id="problem" className="marketing-section" style={{ background: "var(--gradient-problem-bg)" }}>
       <Container>
         <AnimateOnScroll className="text-center mb-12 md:mb-16">
-          <p className="section-label mb-4" style={{ color: "var(--accent-warning)" }}>The problem</p>
+          <p className="section-label mb-4" style={{ color: "var(--accent-warning)" }}>{t("sectionLabel")}</p>
           <h2 className="font-semibold max-w-3xl mx-auto" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}>
-            Phone communication is broken. For everyone.
+            {t("heading")}
           </h2>
         </AnimateOnScroll>
 
@@ -82,7 +86,7 @@ export function ProblemStatement() {
 
         <AnimateOnScroll className="text-center mt-10">
           <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            What if every call, text, and follow-up was handled automatically — and you could see exactly what happened?
+            {t("closing")}
           </p>
         </AnimateOnScroll>
       </Container>

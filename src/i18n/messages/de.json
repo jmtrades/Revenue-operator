@@ -3132,7 +3132,41 @@
     "orBookDemo": "Demo buchen",
     "viewDocs": "Dokumentation ansehen"
   },
+  "homepage": {
+    "problem": {
+      "sectionLabel": "Das Problem",
+      "heading": "Telefonkommunikation ist kaputt. Für alle.",
+      "card1Title": "Anrufe fallen durch",
+      "card1Stat1Desc": "Verloren pro Jahr durch verpasste Anrufe",
+      "card1Stat2Desc": "Legen auf bei der Mailbox auf",
+      "card1Stat3Desc": "Rufen nach Besetzt nie zurück",
+      "card2Title": "Follow-up funktioniert nicht",
+      "card2Stat1Desc": "Der Leads werden nie kontaktiert",
+      "card2Stat2Desc": "Durchschnittliche Reaktionszeit",
+      "card2Stat3Desc": "Der Vertriebler geben nach 1 Versuch auf",
+      "card3Title": "Kommunikation skaliert nicht",
+      "card3Stat1Desc": "Empfang + SDR-Gehälter",
+      "card3Stat2Desc": "Fluktuation in telefonlastigen Rollen",
+      "card3Stat3Desc": "Tools, die Unternehmen für Anrufe, Texte, Termine und Follow-up jonglieren",
+      "closing": "Was, wenn jeder Anruf, jede Nachricht und jedes Follow-up automatisch erledigt würde — und Sie genau sehen könnten, was passiert ist?"
+    }
+  },
   "footer": {
+    "tagline": "KI-Telefonie und -Texte für Unternehmen, die von jedem Anruf abhängen.",
+    "product": "Produkt",
+    "features": "Funktionen",
+    "pricing": "Preise",
+    "demo": "Demo",
+    "docs": "Dokumentation",
+    "company": "Unternehmen",
+    "emailUs": "E-Mail an uns",
+    "blog": "Blog",
+    "contact": "Kontakt",
+    "legalSecurity": "Rechtliches & Sicherheit",
+    "privacyPolicy": "Datenschutz",
+    "termsOfService": "Nutzungsbedingungen",
+    "securityBadges": "SOC 2 · DSGVO · 256-Bit-Verschlüsselung · 99,9 % Uptime",
+    "copyright": "© {year} Recall Touch. Alle Rechte vorbehalten.",
     "cta": {
       "bookDemo": "Demo buchen",
       "contact": "Kontakt"
@@ -3143,8 +3177,7 @@
       "docs": "Docs",
       "terms": "Nutzungsbedingungen",
       "privacy": "Datenschutz"
-    },
-    "copyright": "Alle Rechte vorbehalten."
+    }
   },
   "pricing": {
     "title": "Preise",

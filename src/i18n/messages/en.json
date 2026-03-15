@@ -3319,8 +3319,27 @@
     "orBookDemo": "Book a demo",
     "viewDocs": "View documentation"
   },
+  "homepage": {
+    "problem": {
+      "sectionLabel": "The problem",
+      "heading": "Phone communication is broken. For everyone.",
+      "card1Title": "Calls fall through the cracks",
+      "card1Stat1Desc": "Lost per year to missed calls",
+      "card1Stat2Desc": "Hang up on voicemail",
+      "card1Stat3Desc": "Never call back after busy signal",
+      "card2Title": "Follow-up is broken",
+      "card2Stat1Desc": "Of leads never contacted",
+      "card2Stat2Desc": "Average response time",
+      "card2Stat3Desc": "Of reps give up after 1 try",
+      "card3Title": "Communication doesn't scale",
+      "card3Stat1Desc": "Receptionist + $55K SDR salaries",
+      "card3Stat2Desc": "Turnover in phone-heavy roles",
+      "card3Stat3Desc": "Average tools businesses juggle for calls, texts, scheduling, and follow-up",
+      "closing": "What if every call, text, and follow-up was handled automatically — and you could see exactly what happened?"
+    }
+  },
   "footer": {
-    "tagline": "AI phone system that answers, qualifies, and books calls for your business 24/7.",
+    "tagline": "AI phone and text communication for businesses that depend on every call.",
     "product": "Product",
     "features": "Features",
     "pricing": "Pricing",
@@ -3330,11 +3349,22 @@
     "emailUs": "Email us",
     "blog": "Blog",
     "contact": "Contact",
-    "legalSecurity": "Legal & security",
+    "legalSecurity": "Legal & Security",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
-    "securityBadges": "SOC 2 • GDPR • 256-bit encryption",
-    "copyright": "© {year} Recall Touch. All rights reserved."
+    "securityBadges": "SOC 2 · GDPR · 256-bit encryption · 99.9% uptime",
+    "copyright": "© {year} Recall Touch. All rights reserved.",
+    "cta": {
+      "bookDemo": "Book a demo",
+      "contact": "Contact"
+    },
+    "links": {
+      "product": "Product",
+      "pricing": "Pricing",
+      "docs": "Docs",
+      "terms": "Terms",
+      "privacy": "Privacy"
+    }
   },
   "pricing": {
     "title": "Pricing",
@@ -4507,6 +4537,21 @@
     }
   },
   "footer": {
+    "tagline": "AI phone and text communication for businesses that depend on every call.",
+    "product": "Product",
+    "features": "Features",
+    "pricing": "Pricing",
+    "demo": "Demo",
+    "docs": "Docs",
+    "company": "Company",
+    "emailUs": "Email us",
+    "blog": "Blog",
+    "contact": "Contact",
+    "legalSecurity": "Legal & Security",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "securityBadges": "SOC 2 · GDPR · 256-bit encryption · 99.9% uptime",
+    "copyright": "© {year} Recall Touch. All rights reserved.",
     "cta": {
       "bookDemo": "Book a demo",
       "contact": "Contact"
@@ -4517,8 +4562,7 @@
       "docs": "Docs",
       "terms": "Terms",
       "privacy": "Privacy"
-    },
-    "copyright": "All rights reserved."
+    }
   },
   "timezone": {
     "label": "Timezone",
