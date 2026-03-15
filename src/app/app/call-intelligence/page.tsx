@@ -710,7 +710,7 @@ export default function CallIntelligencePage() {
                                               onClick={() => handleDismiss(i.id)}
                                               className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
-                                              Dismiss
+                                              {t("dismiss")}
                                             </button>
                                           </>
                                         )}
@@ -795,7 +795,7 @@ export default function CallIntelligencePage() {
                                     onClick={() => handleDismiss(i.id)}
                                     className="text-xs text-zinc-500 hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
                                   >
-                                    Dismiss
+                                    {t("dismiss")}
                                   </button>
                                 </>
                               )}

@@ -9,8 +9,6 @@ import { useTranslations } from "next-intl";
 import { CURATED_VOICES, type CuratedVoice } from "@/lib/constants/curated-voices";
 import { cn } from "@/lib/cn";
 
-const DEFAULT_PREVIEW_TEXT = "Thanks for calling. How can I help you today?";
-
 function playVoicePreview(voiceId: string, text: string): Promise<void> {
   return fetch("/api/agent/preview-voice", {
     method: "POST",
@@ -44,13 +42,17 @@ export default function AgentVoiceTestPage() {
   const [agent, setAgent] = useState<{ id: string; name: string; voice_id: string | null } | null>(null);
   const [loading, setLoading] = useState(!!agentId);
   const [selectedVoiceId, setSelectedVoiceId] = useState<string | null>(null);
-  const [customScript, setCustomScript] = useState(DEFAULT_PREVIEW_TEXT);
+  const [customScript, setCustomScript] = useState("");
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [_generating, _setGenerating] = useState(false);
   const [abVoiceA, setAbVoiceA] = useState<string>(CURATED_VOICES[0]?.id ?? "");
   const [abVoiceB, setAbVoiceB] = useState<string>(CURATED_VOICES[1]?.id ?? "");
   const [abWinner, setAbWinner] = useState<string | null>(null);
   const [applying, setApplying] = useState(false);
+
+  useEffect(() => {
+    setCustomScript((prev) => (prev === "" ? t("defaultPreviewText") : prev));
+  }, [t]);
 
   useEffect(() => {
     if (!agentId) return;
@@ -70,7 +72,7 @@ export default function AgentVoiceTestPage() {
     async (voice: CuratedVoice) => {
       setPlayingId(voice.id);
       try {
-        await playVoicePreview(voice.id, customScript);
+        await playVoicePreview(voice.id, customScript || t("defaultPreviewText"));
         toast.success(t("toast.played", { name: voice.name }));
       } catch {
         toast.error(t("errors.previewFailed"));
@@ -188,7 +190,7 @@ export default function AgentVoiceTestPage() {
               onClick={async () => {
                 setPlayingId(abVoiceA);
                 try {
-                  await playVoicePreview(abVoiceA, customScript);
+                  await playVoicePreview(abVoiceA, customScript || t("defaultPreviewText"));
                 } finally {
                   setPlayingId(null);
                 }
@@ -203,7 +205,7 @@ export default function AgentVoiceTestPage() {
               onClick={async () => {
                 setPlayingId(abVoiceB);
                 try {
-                  await playVoicePreview(abVoiceB, customScript);
+                  await playVoicePreview(abVoiceB, customScript || t("defaultPreviewText"));
                 } finally {
                   setPlayingId(null);
                 }

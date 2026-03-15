@@ -4380,6 +4380,7 @@
     "conversationAria": "会話"
   },
   "agents.voiceTest": {
+    "defaultPreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか。",
     "scriptPlaceholder": "選択した声で聞くテキストを入力…",
     "toast": {
       "played": "{name} を再生しました",
@@ -4483,7 +4484,8 @@
     "illTestLater": "後でテスト",
     "completeSetupLink": "AI設定を完了（5ステップ）→",
     "decisionCompletionHint": "ここで意思決定が続き、アクションを完了して表示されます。",
-    "testInstructions": "このワークスペースで使用している番号から「{number}」に「こんにちは、興味があります」と送信してください。\n\nその後、ここに戻って処理を確認してください。"
+    "testInstructions": "このワークスペースで使用している番号から「{number}」に「こんにちは、興味があります」と送信してください。\n\nその後、ここに戻って処理を確認してください。",
+    "tryAgain": "再試行"
   },
   "coverage": {
     "active": "カバレッジ: 電話継続が有効です",
@@ -5629,6 +5631,7 @@
     "verifying": "確認中…",
     "areaCodePlaceholder": "例: 503",
     "areaCodePlaceholderAlt": "例: 212",
+    "tryAgain": "再試行",
     "testCallNumberPlaceholder": "(555) 123-4567",
     "verifyPhonePlaceholder": "+1 (555) 000-0000",
     "verificationCodePlaceholder": "000000",
