@@ -2291,7 +2291,8 @@
       "addToLeads": "Adicionar a leads",
       "flag": "Marcar",
       "addToCallIntelligence": "Adicionar à inteligência de chamadas",
-      "leadInfo": "Informações do lead"
+      "leadInfo": "Informações do lead",
+      "download": "Baixar"
     },
     "empty": {
       "title": "Ainda não há chamadas",
@@ -4504,7 +4505,20 @@
     "capabilitiesLabel": "Capacidades principais",
     "roiLabel": "ROI",
     "ctaStartFree": "Começar grátis →",
-    "ctaPricing": "Ver preços →"
+    "ctaPricing": "Ver preços →",
+    "problemHeading": "Chamadas perdidas custam caro aos negócios de {industry} todos os dias.",
+    "capabilitiesHeading": "Feito para fluxos de trabalho de {industry}.",
+    "roiText": "O negócio médio de {industry} perde",
+    "roiCallsPerWeek": "{count} chamadas por semana",
+    "roiAtValue": "A ${value} por {label}",
+    "roiThatsLost": "isso é",
+    "roiPerMonth": "${amount}/mês",
+    "roiInLostRevenue": "em receita perdida.",
+    "roiPayback": "O Recall Touch se paga em {days}.",
+    "per": "por {label}",
+    "month": "mês",
+    "day": "dia",
+    "days": "dias"
   },
   "compliance": {
     "title": "Conformidade",
@@ -5243,6 +5257,10 @@
       "next": "Próximo →"
     },
     "agent": {
+      "defaultAgentName": "Recepcionista",
+      "greetingTemplate": "Obrigado por ligar para {business}, como posso ajudar hoje?",
+      "yourBusiness": "sua empresa",
+      "previewVoice": "Ouvir voz ▶",
       "heading": "Escolha um modelo inicial",
       "subtitleForIndustry": "Ajustaremos o roteiro para {industry}.",
       "all": "Todos",

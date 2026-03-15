@@ -2285,7 +2285,8 @@
       "addToLeads": "Ajouter aux prospects",
       "flag": "Signaler",
       "addToCallIntelligence": "Ajouter à l'intelligence d'appel",
-      "leadInfo": "Informations sur le lead"
+      "leadInfo": "Informations sur le lead",
+      "download": "Télécharger"
     },
     "empty": {
       "title": "Aucun appel pour le moment",
@@ -4499,7 +4500,20 @@
     "capabilitiesLabel": "Capacités clés",
     "roiLabel": "ROI",
     "ctaStartFree": "Démarrer gratuitement →",
-    "ctaPricing": "Voir les tarifs →"
+    "ctaPricing": "Voir les tarifs →",
+    "problemHeading": "Les appels manqués coûtent cher aux entreprises {industry} chaque jour.",
+    "capabilitiesHeading": "Conçu pour les flux de travail {industry}.",
+    "roiText": "L'entreprise {industry} moyenne rate",
+    "roiCallsPerWeek": "{count} appels par semaine",
+    "roiAtValue": "À ${value} par {label}",
+    "roiThatsLost": "soit",
+    "roiPerMonth": "${amount}/mois",
+    "roiInLostRevenue": "de chiffre d'affaires perdu.",
+    "roiPayback": "Recall Touch se rentabilise en {days}.",
+    "per": "par {label}",
+    "month": "mois",
+    "day": "jour",
+    "days": "jours"
   },
   "compliance": {
     "title": "Conformité",
@@ -5275,6 +5289,10 @@
       "next": "Suivant →"
     },
     "agent": {
+      "defaultAgentName": "Réceptionniste",
+      "greetingTemplate": "Merci d'avoir appelé {business}, comment puis-je vous aider aujourd'hui ?",
+      "yourBusiness": "votre entreprise",
+      "previewVoice": "Aperçu vocal ▶",
       "heading": "Choisissez un modèle de départ",
       "subtitleForIndustry": "Nous adapterons le script pour {industry}.",
       "all": "Tous",

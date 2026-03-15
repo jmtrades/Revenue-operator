@@ -151,7 +151,11 @@
       "inactive": "Inactive"
     },
     "item": "item",
-    "items": "items"
+    "items": "items",
+    "activity": "Activity",
+    "agents": "Agents",
+    "title": "Title",
+    "url": "URL"
   },
   "toast": {
     "saved": "Settings saved",
@@ -275,6 +279,10 @@
       "paused": "Coverage paused.",
       "paymentFailed": "Could not open payment settings.",
       "portalFailed": "Could not open billing portal."
+    },
+    "errors": {
+      "loadingFailed": "Failed to load billing information",
+      "loadingFailedDesc": "Please try again or contact support if the problem persists."
     }
   },
   "dashboard": {
@@ -1475,6 +1483,8 @@
     "defaultBadge": "Default",
     "callsSuffix": "calls",
     "toast": {
+      "active": "Agent activated",
+      "paused": "Agent paused",
       "testLinkCopied": "Test link copied!",
       "selectVoiceFirst": "Select a voice first to hear a preview.",
       "previewFailed": "Could not play preview",
@@ -1488,6 +1498,12 @@
       "agentLive": "Your AI agent is live!"
     },
     "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "deleteAgent": "Delete agent",
+      "editAgent": "Edit agent",
+      "on": "On",
+      "pause": "Pause",
       "deleteAria": "Delete this agent",
       "savingAria": "Saving agent",
       "saveAndSyncAria": "Save agent and sync to voice",
@@ -1498,6 +1514,38 @@
     "nav": {
       "backToKnowledge": "Back to Knowledge",
       "continueToTest": "Continue to Test"
+    },
+    "testPanel": {
+      "aiAgent": "AI Agent",
+      "conversationAria": "Conversation with AI agent",
+      "defaultGreeting": "Hi! I'm your AI assistant. How can I help you today?",
+      "errors": {
+        "auth": "Authentication failed. Please sign in again.",
+        "connection": "Connection lost. Please try again.",
+        "generic": "Something went wrong. Please try again.",
+        "mic": "Microphone access denied. Please allow microphone access.",
+        "noResponse": "No response from agent. Please try again.",
+        "notConfigured": "Agent is not configured yet. Please complete setup first.",
+        "voiceUnsupported": "Voice is not supported in this browser."
+      },
+      "hint": {
+        "micOrType": "Use your microphone or type a message"
+      },
+      "inputAria": "Type a message",
+      "inputPlaceholder": "Type a message...",
+      "listeningClickToStop": "Listening… click to stop",
+      "orTryScenario": "Or try a scenario:",
+      "reset": "Reset",
+      "send": "Send",
+      "speaking": "Speaking…",
+      "startConversation": "Start conversation",
+      "stopListening": "Stop listening",
+      "tapToSpeak": "Tap to speak",
+      "testYourAgentHeading": "Test your agent",
+      "testYourAgentSubtitle": "Have a conversation with your AI agent to see how it responds.",
+      "testingLabel": "Testing",
+      "thinking": "Thinking…",
+      "youAsCaller": "You (caller)"
     },
     "noCallsYet": "No calls yet",
     "callsCount": "{count} calls",
@@ -2345,7 +2393,8 @@
       "addToLeads": "Add to leads",
       "flag": "Flag",
       "addToCallIntelligence": "Add to Call Intelligence",
-      "leadInfo": "Lead info"
+      "leadInfo": "Lead info",
+      "download": "Download"
     },
     "empty": {
       "title": "No calls yet",
@@ -2513,7 +2562,15 @@
     "transcriptPlaceholder": "Paste transcript here (at least 100 characters)...",
     "analyzing": "Analyzing…",
     "analyzeTranscript": "Analyze transcript",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "toast": {
+      "analysisFailed": "Analysis failed. Please try again.",
+      "analysisSuccess": "Analysis complete. {count} insights extracted.",
+      "applied": "Suggestion applied",
+      "applyFailed": "Failed to apply suggestion",
+      "dismissFailed": "Failed to dismiss suggestion",
+      "minTranscript": "Transcript is too short for analysis"
+    }
   },
   "callRules": {
     "pageTitle": "Call Rules — Recall Touch",
@@ -2984,6 +3041,29 @@
     "removeStep": "Remove step",
     "runAt": "Run at (date & time)",
     "nextRun": "Next run (date & time)",
+    "addStep": "+ Add step",
+    "campaignRoi": "Campaign ROI",
+    "contacted": "Contacted",
+    "daysLabel": "days",
+    "messageTemplate": "Message template",
+    "minScore": "Minimum score",
+    "notContactedInDays": "Not contacted in X days",
+    "progress": "Progress",
+    "scheduleTypeLabel": "Schedule type",
+    "scheduleTypes": {
+      "manual": "Manual",
+      "once": "One-time",
+      "recurring": "Recurring",
+      "trigger": "Trigger-based"
+    },
+    "sequenceHint": "Define the steps in your outreach sequence",
+    "sequenceLabel": "Sequence",
+    "touchpointTypes": {
+      "call": "Call",
+      "email": "Email",
+      "sms": "SMS",
+      "wait": "Wait"
+    },
     "toast": {
       "updated": "Campaign updated.",
       "created": "Campaign created.",
@@ -3078,13 +3158,87 @@
       "team": "Team",
       "compliance": "Compliance"
     },
-    "business": "Business",
+    "activity": {
+      "backToSettings": "← Back to Settings",
+      "description": "View recent activity and changes in your workspace.",
+      "empty": "No activity yet",
+      "heading": "Activity Log",
+      "loading": "Loading activity…"
+    },
+    "agent": {
+      "agentNameLabel": "Agent name",
+      "agentNamePlaceholder": "e.g. Receptionist",
+      "answerPlaceholder": "Answer",
+      "backToSettings": "← Back to Settings",
+      "businessNameLabel": "Business name",
+      "businessNamePlaceholder": "e.g. Acme Corp",
+      "defaultAgentName": "Receptionist",
+      "defaultBusiness": "your business",
+      "defaultGreeting": "Thanks for calling {business}, how can I help you today?",
+      "defaultWorkspaceName": "My Business",
+      "description": "Configure your AI phone agent's personality, greeting, and knowledge base.",
+      "endLiveTest": "End live test",
+      "greetingPlaceholderDefault": "e.g. Thanks for calling {business}, how can I help?",
+      "heading": "Agent Settings",
+      "knowledgeAdd": "+ Add Q&A",
+      "knowledgeLabel": "Knowledge base",
+      "loadFailed": "Failed to load agent settings",
+      "loading": "Loading agent settings…",
+      "openingGreetingHelp": "This is what callers hear first when the agent picks up.",
+      "openingGreetingLabel": "Opening greeting",
+      "playingVoicePreview": "Playing voice preview…",
+      "previewVoice": "Preview voice",
+      "questionPlaceholder": "Question",
+      "removeAria": "Remove Q&A item",
+      "saveAndUpdateAgent": "Save & update agent",
+      "saveFailed": "Failed to save agent settings",
+      "saving": "Saving…",
+      "startLiveTest": "Start live test",
+      "testDescription": "Test your agent by having a live phone conversation.",
+      "testTitle": "Live test",
+      "updated": "Agent settings updated",
+      "voiceLabel": "Voice",
+      "voicePreviewText": "Hi, thanks for calling! How can I help you today?",
+      "voiceSyncFailed": "Settings saved but voice sync failed. Please try again."
+    },
+    "business": {
+      "label": "Business",
+      "deleteWorkspaceError": "Failed to delete workspace",
+      "deleted": "Workspace deleted",
+      "nameNoMatch": "Name does not match",
+      "saveFailed": "Failed to save business settings"
+    },
     "phone": "Phone & numbers",
     "integrations": {
-      "title": "Integrations"
+      "title": "Integrations",
+      "addMapping": "+ Add mapping",
+      "backToIntegrations": "← Back to Integrations",
+      "breadcrumbIntegrations": "Integrations",
+      "breadcrumbSettings": "Settings",
+      "crmFallback": "CRM",
+      "defaultsLoaded": "Default mappings loaded",
+      "loadDefaults": "Load defaults",
+      "mappingBreadcrumb": "Field Mapping",
+      "mappingDescription": "Map fields between Recall Touch and your CRM.",
+      "mappingTitle": "Field Mapping",
+      "saveFailed": "Failed to save mapping",
+      "saveMapping": "Save mapping",
+      "saved": "Mapping saved",
+      "saving": "Saving…",
+      "testOutput": "Test output",
+      "testSuccess": "Test passed",
+      "testWithSampleData": "Test with sample data"
     },
     "notifications": {
-      "title": "Notifications"
+      "title": "Notifications",
+      "backToSettings": "← Back to Settings",
+      "description": "Manage how and when you receive notifications.",
+      "heading": "Notifications",
+      "loadFailed": "Failed to load notification preferences",
+      "loadingPrefs": "Loading preferences…",
+      "savePreferences": "Save preferences",
+      "saved": "Notification preferences saved",
+      "saving": "Saving…"
     },
     "billing": {
       "title": "Billing & plans"
@@ -3134,7 +3288,11 @@
       "saveChanges": "Save changes",
       "exportData": "Export all data",
       "exportRequested": "Export requested. We'll email you when it's ready.",
-      "backToSettings": "← Settings"
+      "backToSettings": "← Settings",
+      "loadFailed": "Failed to load compliance settings",
+      "recordingSaved": "Recording consent settings saved",
+      "saveFailed": "Failed to save compliance settings",
+      "saved": "Compliance settings saved"
     },
     "errorReports": "Error reports",
     "errorsPage": {
@@ -3150,6 +3308,23 @@
     "saveMapping": "Save mapping",
     "saveProfile": "Save profile",
     "savingProfile": "Saving…",
+    "profile": {
+      "saveFailed": "Failed to save profile",
+      "saved": "Profile saved"
+    },
+    "syncLog": {
+      "allDirections": "All directions",
+      "allProviders": "All providers",
+      "breadcrumb": "Sync Log",
+      "description": "View the history of data syncs between Recall Touch and your integrations.",
+      "empty": "No sync events yet",
+      "heading": "Sync Log",
+      "inbound": "Inbound",
+      "loadMore": "Load more",
+      "loading": "Loading sync log…",
+      "outbound": "Outbound",
+      "refresh": "Refresh"
+    },
     "displayNameLabel": "Display name",
     "displayNamePlaceholder": "Your name",
     "timezoneLabel": "Timezone",
@@ -4563,7 +4738,20 @@
     "capabilitiesLabel": "Key capabilities",
     "roiLabel": "ROI",
     "ctaStartFree": "Start free →",
-    "ctaPricing": "See pricing →"
+    "ctaPricing": "See pricing →",
+    "problemHeading": "Missed calls cost {industry} businesses every day.",
+    "capabilitiesHeading": "Built for {industry} workflows.",
+    "roiText": "The average {industry} business misses",
+    "roiCallsPerWeek": "{count} calls per week",
+    "roiAtValue": "At ${value} per {label}",
+    "roiThatsLost": "that's",
+    "roiPerMonth": "${amount}/month",
+    "roiInLostRevenue": "in lost revenue.",
+    "roiPayback": "Recall Touch pays for itself in {days}.",
+    "per": "per {label}",
+    "month": "month",
+    "day": "day",
+    "days": "days"
   },
   "compliance": {
     "title": "Compliance",
@@ -5014,6 +5202,9 @@
       "detail": "Select a contact to see call history and notes.",
       "noCallsForContact": "No calls logged yet for this contact."
     },
+    "form": {
+      "addTag": "+ Add tag"
+    },
     "drawer": {
       "title": "Add contact",
       "subtitle": "Your AI will use this on future calls."
@@ -5290,6 +5481,10 @@
       "next": "Next →"
     },
     "agent": {
+      "defaultAgentName": "Receptionist",
+      "greetingTemplate": "Thanks for calling {business}, how can I help you today?",
+      "yourBusiness": "your business",
+      "previewVoice": "Preview voice ▶",
       "heading": "Pick a starting template",
       "subtitleForIndustry": "We'll tune the script for {industry}.",
       "all": "All",
@@ -5696,6 +5891,9 @@
     "areaCodePlaceholder": "e.g. 503",
     "areaCodePlaceholderAlt": "e.g. 212",
     "tryAgain": "Try again",
+    "provisionFailed": "Failed to provision phone number",
+    "provisioned": "Phone number provisioned",
+    "searchFailed": "Failed to search phone numbers",
     "emailPlaceholder": "your@email.com",
     "toast": {
       "numberConnected": "Number connected. You can now receive calls and texts.",

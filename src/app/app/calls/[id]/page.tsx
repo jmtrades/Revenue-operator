@@ -134,7 +134,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
           className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white"
         >
           <Download className="h-3.5 w-3.5" />
-          Download
+          {t("download")}
         </a>
       </div>
     </div>
