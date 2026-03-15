@@ -1420,6 +1420,9 @@
   },
   "agents": {
     "pageTitle": "エージェント — Recall Touch",
+    "pageHeading": "AIエージェント",
+    "pageSubtitle": "日中・時間外・緊急・フォローアップ用の各種エージェント。",
+    "createAgent": "+ エージェントを作成",
     "title": "エージェント",
     "new": "新しいエージェント",
     "empty": {
@@ -1477,7 +1480,56 @@
       "deleteAgent": "エージェントを削除",
       "deleteAria": "このエージェントを削除",
       "savingAria": "エージェントを保存中",
-      "saveAndSyncAria": "エージェントを保存して音声と同期"
+      "saveAndSyncAria": "エージェントを保存して音声と同期",
+      "remove": "削除",
+      "addObjection": "反論を追加",
+      "addFromSuggestions": "提案から追加"
+    },
+    "sections": {
+      "objectionHandling": "反論対応",
+      "objectionDesc": "よくある反論と対応方法。",
+      "outboundSettings": "発信設定",
+      "inboundSettings": "着信設定"
+    },
+    "labels": {
+      "customCriterion": "カスタム条件",
+      "openingStrategy": "オープニング戦略",
+      "outboundGoal": "発信の目的",
+      "ifNotInterested": "興味がない場合",
+      "voicemailBehavior": "留守電の動作",
+      "confusedCallerHandling": "困惑した発信者への対応",
+      "offTopicHandling": "話題外への対応",
+      "ifTheySay": "もし…と言ったら",
+      "response": "返答",
+      "voicemailTemplates": "留守電メッセージテンプレート"
+    },
+    "options": {
+      "outboundGoal": {
+        "book": "予約を入れる",
+        "qualify": "リードを認定",
+        "deliver": "情報を伝える",
+        "custom": "カスタム"
+      },
+      "notInterested": {
+        "thankEnd": "感謝して丁寧に終了",
+        "callback": "後でかけ直す",
+        "askHelp": "何が役立つか聞く"
+      },
+      "voicemail": {
+        "leave": "伝言を残す",
+        "hangup": "切り、後でかけ直す",
+        "sms": "SMSを送る"
+      }
+    },
+    "placeholders": {
+      "customCriterion": "例：契約権限あり",
+      "objectionTrigger": "例：「高すぎる」",
+      "objectionResponse": "柔軟な料金をご用意...",
+      "outboundOpening": "{name}さん、{business}からです。フォローアップの電話で...",
+      "describeGoal": "目的を記述",
+      "voicemailMessage": "{name}さん、{business}です。上記テンプレートまたは独自入力。変数: {name}, {business}, {callback}, {service}, {date}",
+      "confusedCaller": "申し訳ありません。何が必要か教えてください。",
+      "offTopic": "{business}の電話アシスタントです。...についてお手伝いできます。"
     },
     "nav": {
       "backToKnowledge": "ナレッジに戻る",
@@ -1780,6 +1832,9 @@
       "receptionist": "お電話ありがとうございます。本日はどのようなご用件ですか？"
     },
     "defaultAgent": {
+      "name": "受付",
+      "yourBusiness": "御社",
+      "greeting": "{business} にお電話ありがとうございます。本日はどのようなご用件でしょうか？",
       "receptionist": "受付",
       "hasBudget": "予算あり",
       "hasTimeline": "スケジュールあり",
@@ -3157,6 +3212,18 @@
       "noCard": "クレジットカード不要"
     },
     "simulator": {
+      "heading": "AIがどのように電話対応するかご覧ください",
+      "cardSubtitle": "リアルタイム予約 — 完全自動化",
+      "callerLabel": "発信者",
+      "agentLabel": "AIエージェント",
+      "line1": "\u201c木曜日に予約を取りたいのですが。\u201d",
+      "line2": "\u201cかしこまりました！10時、14時、16時に空きがございます。ご都合の良い時間はありますか？\u201d",
+      "line3": "\u201c14時でお願いします。\u201d",
+      "line4": "\u201c承知しました — 木曜日14時で予約完了です。お名前とお電話番号をお伺いできますか？\u201d",
+      "line5": "\u201cSarah、555-0142です。\u201d",
+      "line6": "\u201c完了です、Sarahさん！まもなく確認のSMSをお送りします。\u201d",
+      "cta": "無料で作成する →",
+      "trialNote": "クレジットカード不要 · 14日間無料",
       "loading": "読み込み中…",
       "conversationPreview": "会話プレビュー",
       "subtitle": "AIが実際の通話をどう処理するか",
@@ -5250,6 +5317,55 @@
   },
   "docs": {
     "title": "ドキュメント",
+    "description": "番号転送、音声エージェントの設定、Recall Touch と既存ツールの接続のステップバイステップガイド。",
+    "sidebar": {
+      "quickStart": "クイックスタート",
+      "callForwarding": "着信転送",
+      "agentConfig": "エージェント設定",
+      "campaigns": "キャンペーン",
+      "integrations": "連携",
+      "billing": "請求",
+      "api": "API",
+      "sdkExamples": "SDK例",
+      "changelog": "変更履歴",
+      "faq": "FAQ"
+    },
+    "cards": {
+      "gettingStarted": { "title": "はじめに", "desc": "AI電話システムを数分でセットアップ。" },
+      "apiReference": { "title": "APIリファレンス", "desc": "Recall Touch を既存システムに統合。" },
+      "compliance": { "title": "コンプライアンス", "desc": "録音同意、保持、地域ルールの設定。" },
+      "integrations": { "title": "連携", "desc": "Recall Touch と営業・コミュニケーションツールを接続。" },
+      "faq": { "title": "FAQ", "desc": "セットアップ、通話、請求に関するよくある質問。" },
+      "support": { "title": "サポートに連絡", "desc": "技術・コンプライアンスの質問はチームまで。" },
+      "viewLink": "表示 →",
+      "contactForAccess": "アクセスはお問い合わせ"
+    },
+    "sections": {
+      "quickStart": {
+        "title": "クイックスタート",
+        "description": "約5分で Recall Touch をセットアップ：登録、事業情報、AIエージェント、電話番号、テスト通話。",
+        "step1Label": "登録",
+        "step1": "無料で始めるからアカウントを作成。",
+        "step2Label": "事業情報",
+        "step2": "事業名、住所、電話番号を入力。",
+        "step3Label": "AIエージェント",
+        "step3": "テンプレート（受付、予約など）を選び、挨拶と音声をカスタマイズ。",
+        "step4Label": "電話番号",
+        "step4": "Recall Touch 番号を追加または確認。必要に応じて既存番号を転送。",
+        "step5Label": "テスト通話",
+        "step5": "エージェントページのテストタブで実際に通話し、動作を確認。",
+        "cta": "無料で始める →"
+      },
+      "callForwarding": { "title": "着信転送", "description": "既存の事業番号を Recall Touch 番号に転送するか、提供番号を主回線として使用。エージェントが24時間対応。" },
+      "aiAgents": { "title": "AIエージェント", "description": "エージェントの名前、音声、挨拶、機能を設定。サービス、営業時間、予約の扱いを教える。コーディング不要。" },
+      "campaigns": { "title": "キャンペーン", "description": "アウトバウンドのフォローアップ、リマインダー、リカバリーフローを実行。ダッシュボードからキャンペーン作成、オーディエンスとスクリプトを設定し、結果を追跡。" },
+      "integrations": { "title": "連携", "description": "Recall Touch を電話プロバイダー（Twilio）、カレンダー、CRM と接続。Scale および Enterprise プランで Webhooks と API。" },
+      "billing": { "title": "請求", "description": "プランは月額または年額。年額は2ヶ月分無料。設定 → 請求で変更または解約。請求書はダッシュボードで確認。", "cta": "料金を見る →" },
+      "api": { "title": "APIリファレンス", "description": "Recall Touch 統合用 REST API。全エンドポイントで有効なセッション（Cookie）または Bearer トークンが必要。ベース URL: https://your-domain.com。", "contactCta": "API フルアクセスはお問い合わせ →" },
+      "sdk": { "title": "SDK例", "description": "curl、JavaScript、Python での一般的な操作。" },
+      "changelog": { "title": "変更履歴", "description": "最近のプラットフォーム更新。" },
+      "faq": { "title": "FAQ", "description": "セットアップ、着信転送、エージェント、請求に関するよくある質問は料金ページで。", "cta": "FAQ を見る →" }
+    },
     "quickStart": {
       "title": "クイックスタート",
       "subtitle": "5分以内に Recall Touch を本番環境に導入。",

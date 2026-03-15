@@ -1336,6 +1336,9 @@
   },
   "agents": {
     "pageTitle": "Agents — Recall Touch",
+    "pageHeading": "AI Agents",
+    "pageSubtitle": "Different agents for daytime, after-hours, emergencies, and follow-up.",
+    "createAgent": "+ Create Agent",
     "title": "Agents",
     "new": "New agent",
     "empty": {
@@ -1381,7 +1384,10 @@
       "pause": "Pause",
       "on": "On",
       "editAgent": "Edit agent",
-      "deleteAgent": "Delete agent"
+      "deleteAgent": "Delete agent",
+      "remove": "Remove",
+      "addObjection": "Add objection",
+      "addFromSuggestions": "Add from suggestions"
     },
     "nav": {
       "backToKnowledge": "Back to Knowledge",
@@ -1923,6 +1929,9 @@
       "receptionist": "Thanks for calling. How can I help you today?"
     },
     "defaultAgent": {
+      "name": "Receptionist",
+      "yourBusiness": "your business",
+      "greeting": "Thanks for calling {business}. How can I help you today?",
       "receptionist": "Receptionist",
       "hasBudget": "Has budget",
       "hasTimeline": "Has timeline",
@@ -1944,6 +1953,52 @@
       "thinkAboutItResponse": "Of course — take your time. Can I send you some additional information to help with your decision?",
       "alreadyWorking": "We're already working with someone",
       "alreadyWorkingResponse": "That makes sense. Many of our best clients came from similar situations. What would it take for you to consider an alternative?"
+    },
+    "sections": {
+      "objectionHandling": "Objection handling",
+      "objectionDesc": "Common objections and how to respond.",
+      "outboundSettings": "Outbound call settings",
+      "inboundSettings": "Inbound call settings"
+    },
+    "labels": {
+      "customCriterion": "Custom criterion",
+      "openingStrategy": "Opening strategy",
+      "outboundGoal": "Goal of outbound calls",
+      "ifNotInterested": "If not interested",
+      "voicemailBehavior": "Voicemail behavior",
+      "confusedCallerHandling": "Confused caller handling",
+      "offTopicHandling": "Off-topic handling",
+      "ifTheySay": "If they say…",
+      "response": "Response",
+      "voicemailTemplates": "Voicemail drop templates"
+    },
+    "options": {
+      "outboundGoal": {
+        "book": "Book an appointment",
+        "qualify": "Qualify the lead",
+        "deliver": "Deliver information",
+        "custom": "Custom"
+      },
+      "notInterested": {
+        "thankEnd": "Thank and end politely",
+        "callback": "Offer to call back later",
+        "askHelp": "Ask what would be helpful"
+      },
+      "voicemail": {
+        "leave": "Leave a message",
+        "hangup": "Hang up and try again later",
+        "sms": "Send SMS instead"
+      }
+    },
+    "placeholders": {
+      "customCriterion": "e.g., Has authority to sign",
+      "objectionTrigger": "e.g., \"Too expensive\"",
+      "objectionResponse": "We offer flexible pricing...",
+      "outboundOpening": "Hi {name}, this is calling from {business}. I'm following up on...",
+      "describeGoal": "Describe the goal",
+      "voicemailMessage": "Hi {name}, this is {business}. Use templates above or type your own. Variables: {name}, {business}, {callback}, {service}, {date}",
+      "confusedCaller": "I'm sorry, let me try to help. Could you tell me what you need?",
+      "offTopic": "I'm the phone assistant for {business}. I can help with..."
     },
     "deleteConfirmMessage": "Delete \"{name}\"? This cannot be undone.",
     "createFirstAria": "Create your first agent",
@@ -3117,6 +3172,18 @@
       "noCard": "No credit card required"
     },
     "simulator": {
+      "heading": "See how your AI handles a call",
+      "cardSubtitle": "Real-time appointment booking — fully automated",
+      "callerLabel": "Caller",
+      "agentLabel": "AI Agent",
+      "line1": "\u201cHi, I\u2019d like to schedule an appointment for Thursday.\u201d",
+      "line2": "\u201cOf course! I have openings at 10 AM, 2 PM, and 4 PM. Which works best?\u201d",
+      "line3": "\u201c2 PM sounds perfect.\u201d",
+      "line4": "\u201cGreat — Thursday at 2 PM is booked. Can I get your name and number?\u201d",
+      "line5": "\u201cSarah, 555-0142.\u201d",
+      "line6": "\u201cAll set, Sarah! You\u2019ll get a confirmation text shortly.\u201d",
+      "cta": "Build yours free →",
+      "trialNote": "No credit card · 14-day trial",
       "loading": "Loading…",
       "conversationPreview": "Conversation preview",
       "subtitle": "See how your AI handles a real call",
@@ -4742,6 +4809,55 @@
   },
   "docs": {
     "title": "Documentation",
+    "description": "Step-by-step guides for forwarding your number, setting up your voice agent, and connecting Recall Touch to the tools your business already uses.",
+    "sidebar": {
+      "quickStart": "Quick Start",
+      "callForwarding": "Call Forwarding",
+      "agentConfig": "Agent Config",
+      "campaigns": "Campaigns",
+      "integrations": "Integrations",
+      "billing": "Billing",
+      "api": "API",
+      "sdkExamples": "SDK Examples",
+      "changelog": "Changelog",
+      "faq": "FAQ"
+    },
+    "cards": {
+      "gettingStarted": { "title": "Getting Started", "desc": "Set up your AI phone system in minutes." },
+      "apiReference": { "title": "API Reference", "desc": "Integrate Recall Touch into your existing systems." },
+      "compliance": { "title": "Compliance Framework", "desc": "Configure recording consent, retention, and regional rules." },
+      "integrations": { "title": "Integrations", "desc": "Connect Recall Touch with your existing sales and communication tools." },
+      "faq": { "title": "FAQ", "desc": "Common questions about setup, calls, and billing." },
+      "support": { "title": "Contact Support", "desc": "Talk to our team for technical or compliance questions." },
+      "viewLink": "View →",
+      "contactForAccess": "Contact for access"
+    },
+    "sections": {
+      "quickStart": {
+        "title": "Quick Start",
+        "description": "Set up Recall Touch in about 5 minutes: sign up, add your business details, configure your AI agent, connect your phone number, and place a test call.",
+        "step1Label": "Sign up",
+        "step1": "Go to Start free and create your account.",
+        "step2Label": "Business details",
+        "step2": "Enter business name, address, and phone.",
+        "step3Label": "AI agent",
+        "step3": "Choose a template (Receptionist, Appointment Setter, etc.) and customize greeting and voice.",
+        "step4Label": "Phone number",
+        "step4": "Add or verify your Recall Touch number; forward your existing number to it if needed.",
+        "step5Label": "Test call",
+        "step5": "Use the Test tab on the Agents page to place a real call and confirm everything works.",
+        "cta": "Start free →"
+      },
+      "callForwarding": { "title": "Call Forwarding", "description": "Forward your existing business number to your Recall Touch number, or use the provisioned number as your primary line. Incoming calls are answered by your agent 24/7." },
+      "aiAgents": { "title": "AI Agents", "description": "Configure your AI agent name, voice, greeting, and capabilities. Teach it your services, hours, and how to handle appointments. No coding required." },
+      "campaigns": { "title": "Campaigns", "description": "Run outbound follow-up, reminders, and recovery flows. Create campaigns from the dashboard, set audiences and scripts, and track outcomes." },
+      "integrations": { "title": "Integrations", "description": "Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Scale and Enterprise plans." },
+      "billing": { "title": "Billing", "description": "Plans are billed monthly or annually. Annual billing includes two months free. You can change or cancel from Settings → Billing. Invoices are available in the dashboard.", "cta": "View pricing →" },
+      "api": { "title": "API Reference", "description": "REST API for integrating Recall Touch. All endpoints require a valid session (cookie) or Bearer token. Base URL: https://your-domain.com.", "contactCta": "Contact for full API access →" },
+      "sdk": { "title": "SDK Examples", "description": "Common operations in curl, JavaScript, and Python." },
+      "changelog": { "title": "Changelog", "description": "Recent platform updates." },
+      "faq": { "title": "FAQ", "description": "Common questions about setup, call forwarding, agents, and billing are answered on the pricing page.", "cta": "View FAQ →" }
+    },
     "quickStart": {
       "title": "Quick start",
       "subtitle": "Get Recall Touch live in under 5 minutes.",

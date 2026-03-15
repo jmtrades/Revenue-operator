@@ -272,12 +272,14 @@ function getAlwaysTransferOptions(t: (key: string) => string): string[] {
   ];
 }
 
-const TRANSFER_OPTION_TO_KEY: Record<string, string> = {
-  "Caller explicitly asks for a human": "askHuman",
-  "Caller is angry or frustrated": "angry",
-  "Question is about billing or payments": "billing",
-  "Agent cannot answer after 2 attempts": "noAnswer",
-};
+function getTransferOptionToKey(t: (key: string) => string): Record<string, string> {
+  return {
+    [t("defaultTransfer.explicitlyAsksHuman")]: "askHuman",
+    [t("defaultTransfer.angryFrustrated")]: "angry",
+    [t("defaultTransfer.billingPayments")]: "billing",
+    [t("defaultTransfer.cannotAnswerAttempts")]: "noAnswer",
+  };
+}
 
 function templateGreeting(id: AgentTemplateId, t?: (key: string) => string): string {
   const translate = t || ((key: string) => key);
@@ -583,15 +585,17 @@ function mapAgentRow(row: Record<string, unknown>): Agent {
   };
 }
 
-function buildFallbackAgent(fallback: InitialFallbackAgent): Agent | null {
+function buildFallbackAgent(fallback: InitialFallbackAgent, t?: (key: string, values?: Record<string, string>) => string): Agent | null {
   if (!fallback) return null;
+  const translate = t ?? ((key: string, _values?: Record<string, string>) => key);
+  const business = fallback.businessName?.trim() || translate("defaultAgent.yourBusiness");
   return {
-    ...defaultAgent(undefined),
+    ...defaultAgent(t),
     id: "primary-agent",
-    name: fallback.agentName?.trim() || "Receptionist",
+    name: fallback.agentName?.trim() || translate("defaultAgent.name"),
     greeting:
       fallback.greeting?.trim() ||
-      `Thanks for calling ${fallback.businessName?.trim() || "your business"}. How can I help you today?`,
+      translate("defaultAgent.greeting", { business }),
     voice: fallback.elevenlabsVoiceId?.trim() || DEFAULT_VOICE_ID,
     faq: Array.isArray(fallback.knowledgeItems)
       ? fallback.knowledgeItems.map((item, index) => ({
@@ -684,9 +688,9 @@ export default function AppAgentsPageClient({
     if (Array.isArray(initialAgentsRows) && initialAgentsRows.length > 0) {
       return initialAgentsRows.map((row) => mapAgentRow(row));
     }
-    const fallbackAgent = buildFallbackAgent(initialFallbackAgent);
+    const fallbackAgent = buildFallbackAgent(initialFallbackAgent, _t);
     return fallbackAgent ? [fallbackAgent] : [];
-  }, [initialAgentsRows, initialFallbackAgent]);
+  }, [initialAgentsRows, initialFallbackAgent, _t]);
   const hasInitialPayload = initialAgents.length > 0;
 
   const [agents, setAgents] = useState<Agent[]>(() => initialAgents);
@@ -816,7 +820,7 @@ export default function AppAgentsPageClient({
           return;
         }
         const fallback = (await fallbackRes.json()) as InitialFallbackAgent;
-        const agent = buildFallbackAgent(fallback);
+        const agent = buildFallbackAgent(fallback, tAgents);
         if (!agent) {
           if (!preserveExisting) {
             setAgents([]);
@@ -1188,16 +1192,16 @@ export default function AppAgentsPageClient({
       {showConfetti && <Confetti key="agent-activate-confetti" />}
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-lg md:text-xl font-semibold text-white">AI Agents</h1>
+          <h1 className="text-lg md:text-xl font-semibold text-white">{tAgents("pageHeading")}</h1>
           <p className="text-xs text-zinc-500 mt-1">
-            Different agents for daytime, after-hours, emergencies, and follow-up.
+            {tAgents("pageSubtitle")}
           </p>
         </div>
         <Link
           href="/app/agents/new"
           className="hidden sm:inline-flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
         >
-          + Create Agent
+          {tAgents("createAgent")}
         </Link>
       </div>
 
@@ -1205,7 +1209,7 @@ export default function AppAgentsPageClient({
         href="/app/agents/new"
         className="sm:hidden mb-4 w-full inline-flex justify-center items-center bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
       >
-        + Create Agent
+        {tAgents("createAgent")}
       </Link>
 
       {loading ? (
@@ -1920,7 +1924,7 @@ export function RulesTab({
                   })
                 }
               />
-              {TRANSFER_OPTION_TO_KEY[option] ? t(`escalationTriggers.${TRANSFER_OPTION_TO_KEY[option]}`) : option}
+              {getTransferOptionToKey(t)[option] ? t(`escalationTriggers.${getTransferOptionToKey(t)[option]}`) : option}
             </label>
           ))}
         </div>
@@ -2211,7 +2215,7 @@ export function RulesTab({
               </label>
             ))}
             <div>
-              <label className="block text-[11px] text-zinc-500 mb-1">Custom criterion</label>
+              <label className="block text-[11px] text-zinc-500 mb-1">{t("labels.customCriterion")}</label>
               <input
                 type="text"
                 value={agent.qualification?.customCriterion ?? ""}
@@ -2220,7 +2224,7 @@ export function RulesTab({
                     qualification: { ...agent.qualification, customCriterion: e.target.value },
                   })
                 }
-                placeholder="e.g., Has authority to sign"
+                placeholder={t("placeholders.customCriterion")}
                 className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
               />
             </div>
@@ -2236,16 +2240,16 @@ export function RulesTab({
           className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset"
           aria-expanded={openAdvanced.objection}
         >
-          Objection handling
+          {t("sections.objectionHandling")}
           <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${openAdvanced.objection ? "rotate-180" : ""}`} />
         </button>
         {openAdvanced.objection && (
           <div className="border-t border-[var(--border-default)] p-4 space-y-4">
-            <p className="text-[11px] text-zinc-500">Common objections and how to respond.</p>
+            <p className="text-[11px] text-zinc-500">{t("sections.objectionDesc")}</p>
             {(agent.objections ?? []).map((o) => (
               <div key={o.id} className="p-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-zinc-500">If they say…</span>
+                  <span className="text-[11px] text-zinc-500">{t("labels.ifTheySay")}</span>
                   <button
                     type="button"
                     onClick={() =>
@@ -2255,7 +2259,7 @@ export function RulesTab({
                     }
                     className="text-[11px] text-zinc-500 hover:text-zinc-200"
                   >
-                    Remove
+                    {t("actions.remove")}
                   </button>
                 </div>
                 <input
@@ -2269,9 +2273,9 @@ export function RulesTab({
                     })
                   }
                   className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder='e.g., "Too expensive"'
+                  placeholder={t("placeholders.objectionTrigger")}
                 />
-                <span className="text-[11px] text-zinc-500">Response</span>
+                <span className="text-[11px] text-zinc-500">{t("labels.response")}</span>
                 <input
                   type="text"
                   value={o.response}
@@ -2283,7 +2287,7 @@ export function RulesTab({
                     })
                   }
                   className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
-                  placeholder="We offer flexible pricing..."
+                  placeholder={t("placeholders.objectionResponse")}
                 />
               </div>
             ))}
@@ -2296,7 +2300,7 @@ export function RulesTab({
                 }}
                 className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
               >
-                Add objection
+                {t("actions.addObjection")}
               </button>
               {(agent.objections?.length ?? 0) === 0 && (
                 <button
@@ -2311,7 +2315,7 @@ export function RulesTab({
                   }}
                   className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
                 >
-                  Add from suggestions
+                  {t("actions.addFromSuggestions")}
                 </button>
               )}
             </div>
@@ -2328,69 +2332,69 @@ export function RulesTab({
             className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset"
             aria-expanded={openAdvanced.outbound}
           >
-            Outbound call settings
+            {t("sections.outboundSettings")}
             <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${openAdvanced.outbound ? "rotate-180" : ""}`} />
           </button>
           {openAdvanced.outbound && (
             <div className="border-t border-[var(--border-default)] p-4 space-y-4">
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Opening strategy</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("labels.openingStrategy")}</label>
                 <input
                   type="text"
                   value={agent.outboundOpening}
                   onChange={(e) => onChange({ outboundOpening: e.target.value })}
-                  placeholder="Hi {name}, this is calling from {business}. I'm following up on..."
+                  placeholder={t("placeholders.outboundOpening")}
                   className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Goal of outbound calls</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("labels.outboundGoal")}</label>
                 <select
                   value={agent.outboundGoal}
                   onChange={(e) => onChange({ outboundGoal: e.target.value as Agent["outboundGoal"] })}
                   className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 >
-                  <option value="book">Book an appointment</option>
-                  <option value="qualify">Qualify the lead</option>
-                  <option value="deliver">Deliver information</option>
-                  <option value="custom">Custom</option>
+                  <option value="book">{t("options.outboundGoal.book")}</option>
+                  <option value="qualify">{t("options.outboundGoal.qualify")}</option>
+                  <option value="deliver">{t("options.outboundGoal.deliver")}</option>
+                  <option value="custom">{t("options.outboundGoal.custom")}</option>
                 </select>
                 {agent.outboundGoal === "custom" && (
                   <input
                     type="text"
                     value={agent.outboundGoalCustom}
                     onChange={(e) => onChange({ outboundGoalCustom: e.target.value })}
-                    placeholder="Describe the goal"
+                    placeholder={t("placeholders.describeGoal")}
                     className="mt-2 w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                   />
                 )}
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">If not interested</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("labels.ifNotInterested")}</label>
                 <select
                   value={agent.outboundNotInterested}
                   onChange={(e) => onChange({ outboundNotInterested: e.target.value as Agent["outboundNotInterested"] })}
                   className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 >
-                  <option value="thank_end">Thank and end politely</option>
-                  <option value="callback">Offer to call back later</option>
-                  <option value="ask_help">Ask what would be helpful</option>
+                  <option value="thank_end">{t("options.notInterested.thankEnd")}</option>
+                  <option value="callback">{t("options.notInterested.callback")}</option>
+                  <option value="ask_help">{t("options.notInterested.askHelp")}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Voicemail behavior</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("labels.voicemailBehavior")}</label>
                 <select
                   value={agent.voicemailBehavior}
                   onChange={(e) => onChange({ voicemailBehavior: e.target.value as Agent["voicemailBehavior"] })}
                   className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 >
-                  <option value="leave">Leave a message</option>
-                  <option value="hangup">Hang up and try again later</option>
-                  <option value="sms">Send SMS instead</option>
+                  <option value="leave">{t("options.voicemail.leave")}</option>
+                  <option value="hangup">{t("options.voicemail.hangup")}</option>
+                  <option value="sms">{t("options.voicemail.sms")}</option>
                 </select>
                 {agent.voicemailBehavior === "leave" && (
                   <>
-                    <p className="text-[11px] text-zinc-500 mt-2 mb-1">Voicemail drop templates</p>
+                    <p className="text-[11px] text-zinc-500 mt-2 mb-1">{t("labels.voicemailTemplates")}</p>
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {VOICEMAIL_DROP_TEMPLATES.map((t) => (
                         <button
@@ -2407,7 +2411,7 @@ export function RulesTab({
                       rows={3}
                       value={agent.voicemailMessage}
                       onChange={(e) => onChange({ voicemailMessage: e.target.value })}
-                      placeholder="Hi {name}, this is {business}. Use templates above or type your own. Variables: {name}, {business}, {callback}, {service}, {date}"
+                      placeholder={t("placeholders.voicemailMessage")}
                       className="mt-1 w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)] resize-none"
                     />
                   </>
@@ -2427,28 +2431,28 @@ export function RulesTab({
             className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset"
             aria-expanded={openAdvanced.inbound}
           >
-            Inbound call settings
+            {t("sections.inboundSettings")}
             <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${openAdvanced.inbound ? "rotate-180" : ""}`} />
           </button>
           {openAdvanced.inbound && (
             <div className="border-t border-[var(--border-default)] p-4 space-y-4">
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Confused caller handling</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("labels.confusedCallerHandling")}</label>
                 <input
                   type="text"
                   value={agent.confusedCallerHandling}
                   onChange={(e) => onChange({ confusedCallerHandling: e.target.value })}
-                  placeholder="I'm sorry, let me try to help. Could you tell me what you need?"
+                  placeholder={t("placeholders.confusedCaller")}
                   className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)]"
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Off-topic handling</label>
+                <label className="block text-[11px] text-zinc-500 mb-1">{t("labels.offTopicHandling")}</label>
                 <textarea
                   rows={2}
                   value={agent.offTopicHandling}
                   onChange={(e) => onChange({ offTopicHandling: e.target.value })}
-                  placeholder="I'm the phone assistant for {business}. I can help with..."
+                  placeholder={t("placeholders.offTopic")}
                   className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-medium)] focus:outline-none focus:ring-1 focus:ring-[var(--border-medium)] resize-none"
                 />
               </div>
