@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { reportError, categorizeError, type ErrorCategory } from "@/lib/error-reporting";
 
 export type ErrorBoundaryMessages = {
@@ -123,4 +124,39 @@ export class ErrorBoundary extends Component<Props, State> {
 
     return this.props.children;
   }
+}
+
+/** Wrapper that supplies translated error messages from the errors namespace. Use this in app routes so the boundary is i18n-aware. */
+export function TranslatedErrorBoundary({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+}) {
+  const t = useTranslations("errors");
+  const messages: ErrorBoundaryMessages = React.useMemo(
+    () => ({
+      getMessage: (category: ErrorCategory) => {
+        switch (category) {
+          case "network":
+            return { title: t("connectionProblem"), body: t("connectionProblemDesc") };
+          case "auth":
+            return { title: t("sessionExpired"), body: t("sessionExpiredDesc") };
+          case "data":
+            return { title: t("somethingWrong"), body: t("loadPageError") };
+          default:
+            return { title: t("somethingWrong"), body: t("unexpectedError") };
+        }
+      },
+      tryAgain: t("tryAgain"),
+      report: t("reportIssue"),
+    }),
+    [t]
+  );
+  return (
+    <ErrorBoundary messages={messages} fallback={fallback}>
+      {children}
+    </ErrorBoundary>
+  );
 }
