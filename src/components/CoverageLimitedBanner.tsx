@@ -30,7 +30,7 @@ export function CoverageLimitedBanner() {
           color: "var(--text-muted)",
         }}
       >
-        <span>Coverage: Phone continuity active</span>
+        <span>{t("active")}</span>
       </div>
     );
   }

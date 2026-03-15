@@ -838,7 +838,7 @@ export default function AppAgentsPageClient({
         }
       })
       .finally(() => setLoading(false));
-  }, [workspaceId, initialWorkspaceId, hasInitialPayload]);
+  }, [workspaceId, initialWorkspaceId, hasInitialPayload, tAgents]);
 
   const selected = useMemo(
     () => (selectedId ? agents.find((a) => a.id === selectedId) ?? null : null),

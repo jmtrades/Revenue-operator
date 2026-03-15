@@ -134,7 +134,7 @@ export default function NewAgentWizardClient({
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ workspace_id: workspaceId, name: state.name.trim() || "Receptionist" }),
+          body: JSON.stringify({ workspace_id: workspaceId, name: state.name.trim() || tAgents("defaultAgent.name") }),
         });
         if (!res.ok) throw new Error("Create failed");
         const created = (await res.json()) as { id: string };
@@ -191,7 +191,7 @@ export default function NewAgentWizardClient({
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ workspace_id: workspaceId, name: state.name.trim() || "Receptionist" }),
+          body: JSON.stringify({ workspace_id: workspaceId, name: state.name.trim() || tAgents("defaultAgent.name") }),
         });
         if (!res.ok) throw new Error("Create failed");
         const created = (await res.json()) as { id: string };
@@ -224,7 +224,7 @@ export default function NewAgentWizardClient({
       return;
     }
     setStep((s) => Math.min(7, s + 1));
-  }, [step, agentId, state.name, workspaceId, validateStep, saveDraft, router, t]);
+  }, [step, agentId, state.name, workspaceId, validateStep, saveDraft, router, t, tAgents]);
 
   const handleBack = useCallback(() => {
     setToast(null);
