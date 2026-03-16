@@ -212,10 +212,6 @@ export default function AppOnboardingPage() {
         }),
       });
       invalidateWorkspaceMeCache();
-      await fetch("/api/vapi/create-agent", {
-        method: "POST",
-        credentials: "include",
-      }).catch(() => {});
     } catch {
       // ignore and continue to local fallbacks
     }

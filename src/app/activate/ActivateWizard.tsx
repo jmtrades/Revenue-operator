@@ -160,10 +160,12 @@ export function ActivateWizard() {
           elevenlabsVoiceId: state.elevenlabsVoiceId || undefined,
         }),
       });
-      if (res.ok) {
-        fetch("/api/vapi/create-agent", { method: "POST", credentials: "include" }).catch(() => {});
+      if (!res.ok) {
+        console.error("[activate] Onboard API returned", res.status);
       }
-    } catch { /* ignore */ }
+    } catch (err) {
+      console.error("[activate] Onboard failed:", err instanceof Error ? err.message : err);
+    }
     if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "true");
     window.location.href = "/app/activity";
   }, [state]);
