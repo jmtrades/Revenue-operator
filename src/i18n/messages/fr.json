@@ -150,7 +150,11 @@
       "inactive": "Inactif"
     },
     "item": "element",
-    "items": "elements"
+    "items": "elements",
+    "activity": "Activité",
+    "agents": "Agents",
+    "title": "Titre",
+    "url": "URL"
   },
   "toast": {
     "saved": "Paramètres enregistrés",
@@ -3117,26 +3121,28 @@
     "leadScoring.loadFailed": "Échec du chargement de la configuration de score de lead.",
     "leadScoring.saved": "Pondérations de score de lead enregistrées. Les scores seront mis à jour lors du prochain appel ou recalcul.",
     "leadScoring.usingDefaults": "Utilisation des pondérations par défaut. Enregistrez pour les conserver.",
-    "integrations.defaultsLoaded": "Valeurs par défaut chargées.",
-    "integrations.testSuccess": "Test terminé. Consultez le résultat ci-dessous.",
-    "integrations.saveFailed": "Échec de l’enregistrement du mappage. Réessayez.",
-    "integrations.saved": "Mappage enregistré.",
-    "integrations.breadcrumbSettings": "Paramètres",
-    "integrations.breadcrumbIntegrations": "Intégrations",
-    "integrations.mappingTitle": "Mappage des champs — {name}",
-    "integrations.mappingBreadcrumb": "Mappage {name}",
-    "integrations.mappingDescription": "Mappez les champs contact/lead Recall Touch vers les champs {name}. Utilisez les transformations pour le format téléphone ou les statuts.",
-    "integrations.recallTouch": "Recall Touch",
-    "integrations.crmField": "Champ CRM ({name})",
-    "integrations.transform": "Transformation",
-    "integrations.addMapping": "Ajouter un mappage",
-    "integrations.loadDefaults": "Charger les valeurs par défaut",
-    "integrations.testWithSampleData": "Tester avec des données d'exemple",
-    "integrations.saveMapping": "Enregistrer le mappage",
-    "integrations.saving": "Enregistrement…",
-    "integrations.testOutput": "Résultat du test (exemple : {name})",
-    "integrations.backToIntegrations": "Retour aux Intégrations",
-    "integrations.providers": {
+    "integrations": {
+      "defaultsLoaded": "Valeurs par défaut chargées.",
+      "testSuccess": "Test terminé. Consultez le résultat ci-dessous.",
+    "saveFailed": "Échec de l’enregistrement du mappage. Réessayez.",
+    "saved": "Mappage enregistré.",
+    "breadcrumbSettings": "Paramètres",
+    "breadcrumbIntegrations": "Intégrations",
+    "mappingTitle": "Mappage des champs — {name}",
+    "mappingBreadcrumb": "Mappage {name}",
+    "mappingDescription": "Mappez les champs contact/lead Recall Touch vers les champs {name}. Utilisez les transformations pour le format téléphone ou les statuts.",
+    "recallTouch": "Recall Touch",
+    "crmField": "Champ CRM ({name})",
+    "transform": "Transformation",
+    "addMapping": "Ajouter un mappage",
+    "loadDefaults": "Charger les valeurs par défaut",
+    "testWithSampleData": "Tester avec des données d'exemple",
+    "saveMapping": "Enregistrer le mappage",
+    "saving": "Enregistrement…",
+    "testOutput": "Résultat du test (exemple : {name})",
+    "backToIntegrations": "← Retour aux Intégrations",
+      "title": "Intégrations",
+      "providers": {
       "salesforce": "Salesforce",
       "hubspot": "HubSpot",
       "zoho_crm": "Zoho CRM",
@@ -3145,13 +3151,14 @@
       "google_contacts": "Google Contacts",
       "microsoft_365": "Microsoft 365"
     },
-    "integrations.transformations": {
+    "transformations": {
       "none": "Aucune",
       "format_phone": "Formater le téléphone (E.164)",
       "map_status": "Mapper le statut",
       "concatenate": "Concaténer les champs"
     },
-    "integrations.crmFallback": "CRM",
+    "crmFallback": "CRM"
+    },
     "syncLog.breadcrumb": "Journal de synchronisation",
     "syncLog.heading": "Journal de synchronisation",
     "syncLog.description": "Historique des événements de synchronisation CRM : sortant (Recall Touch → CRM) et entrant (CRM → Recall Touch).",
