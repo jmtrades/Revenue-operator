@@ -384,13 +384,13 @@ export function PricingContent() {
                     className="py-3 px-4"
                     style={{ color: "var(--text-secondary)" }}
                   >
-                    {"professional" in row ? row.professional : ""}
+                    {"growth" in row ? row.growth : ""}
                   </td>
                   <td
                     className="py-3 px-4"
                     style={{ color: "var(--text-secondary)" }}
                   >
-                    {"business" in row ? row.business : ""}
+                    {"scale" in row ? row.scale : ""}
                   </td>
                   <td
                     className="py-3 px-4"

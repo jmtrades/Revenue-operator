@@ -10,7 +10,6 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoiceProvider } from "@/lib/voice";
-import { hasVapiServerKey } from "@/lib/vapi/env";
 import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
@@ -33,8 +32,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ ok: true, message: "Add a phone number to receive a test call, or call from the Activity feed." });
   }
 
-  if (!hasVapiServerKey() || !process.env.VAPI_PHONE_NUMBER_ID) {
-    return NextResponse.json({ ok: true, message: "Voice is not configured yet. Set VAPI_API_KEY and VAPI_PHONE_NUMBER_ID to enable test calls." });
+  if (!process.env.ELEVENLABS_API_KEY) {
+    return NextResponse.json({ ok: true, message: "Voice is not configured yet. Set ELEVENLABS_API_KEY to enable test calls." });
   }
 
   const [ctxRes, agentRes] = await Promise.all([

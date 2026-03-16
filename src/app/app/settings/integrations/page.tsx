@@ -487,14 +487,32 @@ export default function AppSettingsIntegrationsPage() {
           </div>
         </section>
 
-        {/* CRM webhook usage is already explained above the cards; duplicate CRM section removed */}
+        {/* Other CRMs — webhook-based integration guidance */}
+        <section>
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Other CRMs (xLeads, Podio, etc.)</h2>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 space-y-3">
+            <p className="text-sm text-[var(--text-primary)] font-medium">Connect any CRM via webhooks</p>
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              For CRMs like xLeads, Podio, or any other platform, use the webhook configuration above to push lead and call data in real-time. Configure your webhook endpoint URL, select the events you want to send, and Recall Touch will POST JSON payloads whenever those events occur.
+            </p>
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              You can also use <a href="https://zapier.com" target="_blank" rel="noopener noreferrer" className="text-zinc-300 underline underline-offset-2 hover:text-white">Zapier</a> as a bridge — connect Recall Touch webhooks to 5,000+ apps including xLeads and Podio without writing any code.
+            </p>
+            <p className="text-xs text-zinc-500 mt-2">
+              Need help? Contact <a href="mailto:support@recall-touch.com" className="text-zinc-400 hover:text-white underline underline-offset-2">support@recall-touch.com</a>
+            </p>
+          </div>
+        </section>
       </div>
 
       {toast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{t("hub.backToSettings")}</Link></p>
+      <p className="text-xs text-zinc-500 mt-6">
+        Need help with integrations? <a href="mailto:support@recall-touch.com" className="text-zinc-400 hover:text-white underline underline-offset-2">support@recall-touch.com</a>
+      </p>
+      <p className="mt-4"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{t("hub.backToSettings")}</Link></p>
     </div>
   );
 }

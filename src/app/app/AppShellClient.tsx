@@ -135,6 +135,7 @@ export default function AppShellClient({
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [activeCalls, setActiveCalls] = useState(0);
+  const [minutesUsage, setMinutesUsage] = useState<{ used: number; limit: number } | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -226,6 +227,23 @@ export default function AppShellClient({
     return () => {
       client.removeChannel(channel);
     };
+  }, []);
+
+  useEffect(() => {
+    fetchWorkspaceMeCached()
+      .then((data: { id?: string | null } | null) => {
+        const wid = data?.id;
+        if (!wid) return;
+        fetch(`/api/billing/status?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((billing: { minutes_used?: number; minutes_limit?: number } | null) => {
+            if (billing && typeof billing.minutes_used === "number") {
+              setMinutesUsage({ used: billing.minutes_used, limit: billing.minutes_limit ?? 400 });
+            }
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -441,7 +459,15 @@ export default function AppShellClient({
                             ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered`
                             : ""}
                         </span>
+                        {minutesUsage && (
+                          <span className="block text-[11px] text-[var(--text-tertiary)] mt-1">
+                            {minutesUsage.used}/{minutesUsage.limit} min used
+                          </span>
+                        )}
                       </div>
+                      <a href="mailto:support@recall-touch.com" className="block text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors px-1">
+                        support@recall-touch.com
+                      </a>
                       <div className="px-1 pt-1 text-[10px] text-zinc-500">
                         <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-zinc-400">
                           ⌘

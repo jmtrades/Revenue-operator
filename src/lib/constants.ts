@@ -168,17 +168,17 @@ export const PRICING_FAQ = [
 ] as const;
 
 export const COMPARISON_FEATURES = [
-  { category: "Core", name: "Inbound min/mo", starter: "400", professional: "1,500", business: "5,000", enterprise: "Custom" },
-  { category: "Core", name: "AI agents", starter: "1", professional: "3", business: "Unlimited", enterprise: "Custom" },
-  { category: "Core", name: "Outbound calls/mo", starter: "50", professional: "500", business: "2,000", enterprise: "Custom" },
-  { category: "Core", name: "SMS included", starter: "100", professional: "500", business: "Unlimited", enterprise: "Custom" },
-  { category: "Features", name: "Inbox (unified messaging)", starter: "✓", professional: "✓", business: "✓", enterprise: "✓" },
-  { category: "Features", name: "Knowledge base", starter: "✓", professional: "✓", business: "✓", enterprise: "✓" },
-  { category: "Features", name: "Appointment booking", starter: "—", professional: "✓", business: "✓", enterprise: "✓" },
-  { category: "Features", name: "Outbound campaigns", starter: "—", professional: "✓", business: "✓", enterprise: "✓" },
-  { category: "Features", name: "API access", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
-  { category: "Features", name: "Compliance export", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
-  { category: "Support", name: "Priority support", starter: "—", professional: "—", business: "✓", enterprise: "✓" },
+  { category: "Core", name: "Inbound min/mo", starter: "400", growth: "1,500", scale: "5,000", enterprise: "Custom" },
+  { category: "Core", name: "AI agents", starter: "1", growth: "3", scale: "Unlimited", enterprise: "Custom" },
+  { category: "Core", name: "Outbound calls/mo", starter: "50", growth: "500", scale: "2,000", enterprise: "Custom" },
+  { category: "Core", name: "SMS included", starter: "100", growth: "500", scale: "Unlimited", enterprise: "Custom" },
+  { category: "Features", name: "Inbox (unified messaging)", starter: "✓", growth: "✓", scale: "✓", enterprise: "✓" },
+  { category: "Features", name: "Knowledge base", starter: "✓", growth: "✓", scale: "✓", enterprise: "✓" },
+  { category: "Features", name: "Appointment booking", starter: "—", growth: "✓", scale: "✓", enterprise: "✓" },
+  { category: "Features", name: "Outbound campaigns", starter: "—", growth: "✓", scale: "✓", enterprise: "✓" },
+  { category: "Features", name: "API access", starter: "—", growth: "—", scale: "✓", enterprise: "✓" },
+  { category: "Features", name: "Compliance export", starter: "—", growth: "—", scale: "✓", enterprise: "✓" },
+  { category: "Support", name: "Priority support", starter: "—", growth: "—", scale: "✓", enterprise: "✓" },
 ] as const;
 
 /** Timezones grouped by region for workspace scheduling (Phase 1 Task 8) */
