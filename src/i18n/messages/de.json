@@ -279,6 +279,33 @@
       "portalFailed": "Abrechnungsportal konnte nicht geöffnet werden."
     }
   },
+  "planChange": {
+    "title": "Plan ändern",
+    "upgradeTitle": "Upgrade auf {planName}",
+    "downgradeTitle": "Downgrade auf {planName}",
+    "currentlyOn": "Aktuell auf {planName}. Wählen Sie unten einen neuen Plan.",
+    "currentBadge": "Aktuell",
+    "contactUs": "Kontakt",
+    "continue": "Weiter",
+    "upgradeDescription": "Die anteilige Differenz wird berechnet. Ihre neuen Funktionen sind sofort verfügbar.",
+    "downgradeDescription": "Ihr Plan wechselt zum nächsten Abrechnungszeitpunkt. Sie behalten die aktuellen Funktionen bis dahin.",
+    "currentPlanLabel": "Aktueller Plan",
+    "newPlanLabel": "Neuer Plan",
+    "contactUsPrice": "Kontakt",
+    "processing": "Wird verarbeitet…",
+    "upgradeNow": "Jetzt upgraden",
+    "confirmDowngrade": "Downgrade bestätigen",
+    "couldNotChange": "Plan konnte nicht geändert werden.",
+    "billingBeingSetUp": "Abrechnung wird eingerichtet. Bitte Support kontaktieren.",
+    "perMonth": "/Monat",
+    "custom": "Individuell",
+    "plans": {
+      "starter": { "name": "Starter", "features": ["1 KI-Agent", "1 Rufnummer", "400 Min/Monat", "Nutzungsübersicht"] },
+      "growth": { "name": "Growth", "features": ["3 KI-Agenten", "3 Rufnummern", "1.500 Min/Monat", "Call Intelligence", "Prioritäts-Support"] },
+      "scale": { "name": "Scale", "features": ["Unbegrenzte KI-Agenten", "10 Rufnummern", "5.000 Min/Monat", "Detaillierte Berichte", "API-Zugang"] },
+      "enterprise": { "name": "Enterprise", "features": ["Unbegrenzte Agenten", "Unbegrenzte Rufnummern", "Individuelle Integrationen", "Dedizierter Support", "SLA"] }
+    }
+  },
   "dashboard": {
     "greeting": {
       "morning": "Guten Morgen",
@@ -313,6 +340,16 @@
     "checklist": {
       "title": "In wenigen Minuten eingerichtet",
       "progressLabel": "Einrichtungsfortschritt",
+      "business": "Geschäftsinfos hinzugefügt",
+      "use_cases": "Anwendungsfälle ausgewählt",
+      "agent": "Agent erstellt",
+      "voice": "Stimme ausgewählt",
+      "greeting": "Begrüßung festgelegt",
+      "knowledge": "3+ Wissenseinträge",
+      "behavior": "Verhalten konfiguriert",
+      "phone": "Rufnummer verbunden",
+      "tested": "Agent getestet",
+      "launched": "Agent gestartet",
       "item": {
         "businessProfile": "Unternehmensprofil einrichten",
         "agent": "Ersten KI-Agenten konfigurieren",
@@ -2742,6 +2779,9 @@
     "statContacted": "Kontaktiert",
     "statConverted": "Konvertiert",
     "estRoi": "Gesch. ROI",
+    "roiSummary": "Kosten ~{cost} · Umsatz ~{revenue}",
+    "roiCampaign": "Gesch. Kosten ~{cost} · Gesch. Umsatz ~{revenue}",
+    "createdDate": "Erstellt {date}",
     "metricContacts": "Kontakte",
     "metricContacted": "Kontaktiert",
     "metricReached": "Erreicht",
@@ -2951,9 +2991,6 @@
     },
     "business": "Unternehmen",
     "phone": "Telefon & Nummern",
-    "integrations": {
-      "title": "Integrationen"
-    },
     "notifications": {
       "title": "Benachrichtigungen"
     },
@@ -3752,11 +3789,18 @@
         "savings": "17 % sparen"
       },
       "badge": "Beliebt",
+      "period": "/Monat",
       "tierRoi": {
         "starter": "Weniger als ein verpasster Anruf",
         "growth": "Ein zurückgewonnener Lead zahlt den Monat",
         "scale": "Volles KI-Kommunikationsteam für einen Bruchteil einer Stelle",
         "enterprise": "Individueller ROI und dedizierter Support"
+      },
+      "tiers": {
+        "starter": { "name": "Starter", "description": "Jeden Anruf beantworten. Eine Nummer, ein Agent.", "features": ["400 Min inklusive", "50 ausgehende Anrufe", "100 SMS", "1 KI-Agent", "1 Rufnummer", "Mehrverbrauch: 0,25 €/Min"], "cta": "Kostenlos starten" },
+        "growth": { "name": "Growth", "description": "Ein zurückgewonnener Lead zahlt den Monat.", "features": ["1.500 Min inklusive", "500 ausgehende Anrufe", "500 SMS", "3 KI-Agenten", "3 Rufnummern", "Terminbuchung", "Follow-up-Sequenzen", "Analysen", "Mehrverbrauch: 0,18 €/Min"], "cta": "Kostenlos starten" },
+        "scale": { "name": "Scale", "description": "Volles KI-Kommunikationsteam für einen Bruchteil einer Stelle.", "features": ["5.000 Min inklusive", "2.000 ausgehende Anrufe", "SMS unbegrenzt", "KI-Agenten unbegrenzt", "10 Rufnummern", "Multi-Standort", "Compliance", "API", "Prioritäts-Support", "Mehrverbrauch: 0,12 €/Min"], "cta": "Kostenlos starten" },
+        "enterprise": { "name": "Enterprise", "description": "Individuelle Preise — White Label, Compliance, SSO, dedizierter Manager, SLA.", "features": ["White Label", "Individuelle Compliance", "SSO", "Dedizierter Manager", "SLA"], "cta": "Verkauf kontaktieren" }
       },
       "footerNote": "Alle Pläne inkl.: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfpfad · 14 Tage kostenlos.",
       "cta": {
@@ -3883,7 +3927,12 @@
       "heading": "Letzte Anrufe",
       "typeLead": "Interessent",
       "typeAppointment": "Termin",
-      "typeFollowUp": "Nachfassen"
+      "typeFollowUp": "Nachfassen",
+      "cards": {
+        "1": { "summary": "Terminvereinbarung", "outcome": "✅ 14 Uhr gebucht" },
+        "2": { "summary": "Preisfrage", "outcome": "✅ Info per SMS gesendet" },
+        "3": { "summary": "Rückruf angefordert", "outcome": "✅ Follow-up in 30 Min." }
+      }
     },
     "activityFeed": {
       "dateLabel": "Heute",

@@ -15,14 +15,14 @@ export type PlanOption = {
   features: string[];
 };
 
-const PLANS: PlanOption[] = [
-  { id: "starter", name: "Starter", price: 297, minutes: 400, features: ["1 AI agent", "1 phone number", "400 min/mo", "Usage insights"] },
-  { id: "growth", name: "Growth", price: 497, minutes: 1500, features: ["3 AI agents", "3 phone numbers", "1,500 min/mo", "Call Intelligence", "Priority support"] },
-  { id: "scale", name: "Scale", price: 2400, minutes: 5000, features: ["Unlimited AI agents", "10 numbers", "5,000 min/mo", "Detailed reporting", "API access"] },
-  { id: "enterprise", name: "Enterprise", price: null, minutes: null, features: ["Unlimited agents", "Unlimited numbers", "Custom integrations", "Dedicated support", "SLA"] },
-];
-
 const PLAN_ORDER: PlanId[] = ["starter", "growth", "scale", "enterprise"];
+
+const PLAN_PRICES: Record<PlanId, { price: number | null; minutes: number | null }> = {
+  starter: { price: 297, minutes: 400 },
+  growth: { price: 497, minutes: 1500 },
+  scale: { price: 2400, minutes: 5000 },
+  enterprise: { price: null, minutes: null },
+};
 
 type PlanChangeModalProps = {
   currentPlanId: PlanId;
@@ -34,10 +34,21 @@ type PlanChangeModalProps = {
 
 export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, workspaceId }: PlanChangeModalProps) {
   const t = useTranslations("common");
+  const tPlan = useTranslations("planChange");
   const [step, setStep] = useState<"select" | "confirm">("select");
   const [selected, setSelected] = useState<PlanId>(currentPlanId);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const getPlanOption = (id: PlanId): PlanOption => {
+    const prices = PLAN_PRICES[id];
+    const name = tPlan(`plans.${id}.name`);
+    const featuresRaw = tPlan.raw(`plans.${id}.features`) as string[] | undefined;
+    const features = Array.isArray(featuresRaw) ? featuresRaw : [];
+    return { id, name, price: prices.price, minutes: prices.minutes, features };
+  };
+
+  const PLANS: PlanOption[] = PLAN_ORDER.map((id) => getPlanOption(id));
 
   if (!isOpen) return null;
 
@@ -66,7 +77,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspace_id: workspaceId, plan_id: selected, planId: selected }),
+        body: JSON.stringify({ workspace_id: workspaceId, plan_id: selected, planId: selected, interval: "month" }),
       });
       const data = (await res.json().catch(() => null)) as {
         ok?: boolean;
@@ -79,10 +90,10 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
         return;
       }
       if (!res.ok || !data?.ok) {
-        const msg = data?.error ?? "Could not change plan.";
+        const msg = data?.error ?? tPlan("couldNotChange");
         setError(
           msg === "Plan not configured" || msg === "Billing not configured"
-            ? "Billing is being set up. Contact support."
+            ? tPlan("billingBeingSetUp")
             : msg
         );
         return;
@@ -111,7 +122,11 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
       >
         <div className="flex items-center justify-between p-4 border-b border-zinc-800">
           <h2 id="plan-change-title" className="text-lg font-semibold text-white">
-            {step === "select" ? "Change your plan" : isUpgrade ? `Upgrade to ${selectedPlan?.name}` : `Downgrade to ${selectedPlan?.name}`}
+            {step === "select"
+              ? tPlan("title")
+              : isUpgrade
+                ? tPlan("upgradeTitle", { planName: selectedPlan?.name ?? "" })
+                : tPlan("downgradeTitle", { planName: selectedPlan?.name ?? "" })}
           </h2>
           <button type="button" onClick={() => { setStep("select"); setError(null); onClose(); }} className="p-2 rounded-lg text-zinc-400 hover:text-white" aria-label={t("close")}>
             <X className="w-5 h-5" />
@@ -121,7 +136,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
           {step === "select" ? (
             <>
               <p className="text-sm text-zinc-400 mb-4">
-                Currently on {currentPlan.name}. Select a new plan below.
+                {tPlan("currentlyOn", { planName: currentPlan.name })}
               </p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
                 {PLANS.map((plan) => {
@@ -142,8 +157,8 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                     >
                       <p className="text-sm font-medium text-white">{plan.name}</p>
                       <p className="text-lg font-bold text-white mt-1">
-                        {plan.price != null ? `$${plan.price}` : "Custom"}
-                        {plan.price != null && <span className="text-xs font-normal text-zinc-400">/mo</span>}
+                        {plan.price != null ? `$${plan.price}` : tPlan("custom")}
+                        {plan.price != null && <span className="text-xs font-normal text-zinc-400">{tPlan("perMonth")}</span>}
                       </p>
                       <ul className="mt-2 space-y-0.5">
                         {plan.features.slice(0, 4).map((f, i) => (
@@ -152,7 +167,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                       </ul>
                       {isCurrent && (
                         <span className="inline-block mt-2 text-[10px] uppercase tracking-wide text-[var(--text-tertiary)] bg-[var(--bg-hover)] px-2 py-0.5 rounded">
-                          Current
+                          {tPlan("currentBadge")}
                         </span>
                       )}
                     </button>
@@ -170,25 +185,23 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   disabled={selected === currentPlanId}
                   className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 >
-                  {selected === "enterprise" ? "Contact us" : "Continue"}
+                  {selected === "enterprise" ? tPlan("contactUs") : tPlan("continue")}
                 </button>
               </div>
             </>
           ) : (
             <>
               <p className="text-sm text-zinc-400 mb-4">
-                {isUpgrade
-                  ? "You'll be charged the prorated difference. Your new features are available right away."
-                  : "Your plan will change at your next billing date. You'll keep current features until then."}
+                {isUpgrade ? tPlan("upgradeDescription") : tPlan("downgradeDescription")}
               </p>
               <div className="rounded-xl border border-zinc-700 bg-zinc-800/50 p-4 mb-6">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">Current plan</span>
-                  <span className="text-white">{currentPlan.name}{currentPlan.price != null ? ` — $${currentPlan.price}/mo` : ""}</span>
+                  <span className="text-zinc-500">{tPlan("currentPlanLabel")}</span>
+                  <span className="text-white">{currentPlan.name}{currentPlan.price != null ? ` — $${currentPlan.price}${tPlan("perMonth")}` : ""}</span>
                 </div>
                 <div className="flex justify-between text-sm mt-2">
-                  <span className="text-zinc-500">New plan</span>
-                  <span className="text-white font-medium">{selectedPlan?.name}{selectedPlan?.price != null ? ` — $${selectedPlan.price}/mo` : " — Contact us"}</span>
+                  <span className="text-zinc-500">{tPlan("newPlanLabel")}</span>
+                  <span className="text-white font-medium">{selectedPlan?.name}{selectedPlan?.price != null ? ` — $${selectedPlan.price}${tPlan("perMonth")}` : ` — ${tPlan("contactUsPrice")}`}</span>
                 </div>
               </div>
               {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
@@ -202,7 +215,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   disabled={loading}
                   className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 >
-                  {loading ? "Processing…" : isUpgrade ? "Upgrade now" : "Confirm downgrade"}
+                  {loading ? tPlan("processing") : isUpgrade ? tPlan("upgradeNow") : tPlan("confirmDowngrade")}
                 </button>
               </div>
             </>

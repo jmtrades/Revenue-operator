@@ -78,9 +78,15 @@ export async function POST(req: NextRequest) {
   const sig = req.headers.get("stripe-signature");
   if (!sig) return NextResponse.json({ error: "No signature" }, { status: 400 });
 
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeKey) {
+    logWebhookEvent("webhook_no_stripe_key", null, "error");
+    return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
+  }
+
   let event: Stripe.Event;
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    const stripe = new Stripe(stripeKey);
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (e) {
     logWebhookFailure("stripe", e);

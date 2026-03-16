@@ -4,9 +4,9 @@ import { useMemo, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
 const CARDS = [
-  { id: "1", type: "lead" as const, name: "Alex Rivera", time: "9:14 AM", summary: "Scheduling consultation", outcome: "✅ Booked 2 PM" },
-  { id: "2", type: "appointment" as const, name: "Sarah Chen", time: "9:31 AM", summary: "Pricing question", outcome: "✅ Info sent via text" },
-  { id: "3", type: "follow-up" as const, name: "James Wilson", time: "10:02 AM", summary: "Callback request", outcome: "✅ Follow-up in 30 min" },
+  { id: "1" as const, type: "lead" as const, name: "Alex Rivera", time: "9:14 AM" },
+  { id: "2" as const, type: "appointment" as const, name: "Sarah Chen", time: "9:31 AM" },
+  { id: "3" as const, type: "follow-up" as const, name: "James Wilson", time: "10:02 AM" },
 ];
 
 const CARD_STYLES: Record<string, { border: string; badge: string }> = {
@@ -86,9 +86,9 @@ export function HomepageActivityPreview() {
                       </span>
                     </div>
                     <p className="text-sm font-semibold text-white mt-1 truncate">{card.name}</p>
-                    <p className="text-xs text-zinc-500 truncate mt-0.5">{card.summary}</p>
+                    <p className="text-xs text-zinc-500 truncate mt-0.5">{t(`cards.${card.id}.summary`)}</p>
                   </div>
-                  <span className="text-xs text-green-400 shrink-0 font-medium">{card.outcome}</span>
+                  <span className="text-xs text-green-400 shrink-0 font-medium">{t(`cards.${card.id}.outcome`)}</span>
                 </div>
               </li>
             );

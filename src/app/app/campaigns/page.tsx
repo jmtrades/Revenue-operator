@@ -346,7 +346,10 @@ export default function CampaignsPage() {
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
             <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{t("estRoi")}</p>
             <p className="mt-1 text-sm font-semibold text-white">
-              Cost ~${(campaigns.reduce((s, c) => s + c.called * 0.05 + c.answered * 0.02, 0)).toFixed(0)} · Revenue ~${(campaigns.reduce((s, c) => s + c.appointments_booked * 250, 0)).toFixed(0)}
+              {t("roiSummary", {
+                cost: (campaigns.reduce((s, c) => s + c.called * 0.05 + c.answered * 0.02, 0)).toFixed(0),
+                revenue: (campaigns.reduce((s, c) => s + c.appointments_booked * 250, 0)).toFixed(0),
+              })}
             </p>
           </div>
         </div>
@@ -464,7 +467,7 @@ export default function CampaignsPage() {
                     </div>
                   )}
                   <p className="mt-3 text-[11px] text-zinc-500">
-                    Created {new Date(campaign.created_at).toLocaleDateString()}
+                    {t("createdDate", { date: new Date(campaign.created_at).toLocaleDateString() })}
                   </p>
                   {campaign.target_filter?.schedule_type && campaign.target_filter.schedule_type !== "manual" && (
                     <p className="mt-1 text-[11px] text-zinc-500">

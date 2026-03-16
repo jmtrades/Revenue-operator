@@ -68,9 +68,13 @@ export async function getPriceId(
   if (!priceId || priceId === "price_placeholder") {
     return { ok: false, reason: "missing_price_id" };
   }
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeKey) {
+    return { ok: false, reason: "stripe_unreachable" };
+  }
   try {
     const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    const stripe = new Stripe(stripeKey);
     const price = await stripe.prices.retrieve(priceId);
     if (price.type !== "recurring") {
       return { ok: false, reason: "wrong_price_mode" };
