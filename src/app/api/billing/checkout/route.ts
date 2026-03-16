@@ -61,7 +61,8 @@ export async function POST(req: NextRequest) {
     const priceResult = await getPriceId(tier, interval);
     if (!priceResult.ok) {
       log("checkout_failed", { reason: priceResult.reason, tier, interval });
-      return NextResponse.json({ ok: false, reason: priceResult.reason }, { status: 200 });
+      const status = priceResult.reason === "missing_price_id" || priceResult.reason === "stripe_unreachable" ? 503 : 400;
+      return NextResponse.json({ ok: false, reason: priceResult.reason }, { status });
     }
     const stripePriceId = priceResult.price_id;
 
@@ -238,7 +239,7 @@ export async function POST(req: NextRequest) {
           trial_period_days: 14,
           metadata: { workspace_id: finalWorkspaceId },
         },
-        customer_email: finalEmail,
+        ...(finalEmail && !customerId ? { customer_email: finalEmail } : {}),
         success_url: successUrl,
         cancel_url: cancelUrl,
         allow_promotion_codes: true,

@@ -60,9 +60,11 @@ export default function AppSettingsBillingPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
+    const controller = new AbortController();
     setBillingError(false);
     fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
+      signal: controller.signal,
     })
       .then((res) => {
         if (!res.ok) {
@@ -72,7 +74,7 @@ export default function AppSettingsBillingPage() {
         return res.json();
       })
       .then((data: { billing_status?: string; renewal_at?: string | null; billing_tier?: string } | null) => {
-        if (!data) return;
+        if (!data || controller.signal.aborted) return;
         setBillingStatus(data?.billing_status ?? "trial");
         setRenewalAt(data?.renewal_at ?? null);
         const tier = (data as { billing_tier?: string })?.billing_tier?.toLowerCase();
@@ -80,7 +82,10 @@ export default function AppSettingsBillingPage() {
         else if (tier === "growth") setCurrentPlanId("growth");
         else if (tier === "team" || tier === "scale") setCurrentPlanId("scale");
       })
-      .catch(() => setBillingError(true));
+      .catch((err) => {
+        if ((err as Error)?.name !== "AbortError") setBillingError(true);
+      });
+    return () => controller.abort();
   }, [workspaceId]);
 
   useEffect(() => {
@@ -156,7 +161,7 @@ export default function AppSettingsBillingPage() {
         </div>
       )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
-        <p className="text-sm font-medium text-white">{tBilling("planDisplay", { plan: "Starter", price: "297" })}</p>
+        <p className="text-sm font-medium text-white">{tBilling("planDisplay", { plan: currentPlanId === "starter" ? "Starter" : currentPlanId === "growth" ? "Growth" : currentPlanId === "scale" ? "Scale" : "Starter", price: currentPlanId === "starter" ? "297" : currentPlanId === "growth" ? "497" : currentPlanId === "scale" ? "2400" : "297" })}</p>
         <p className="text-xs text-zinc-500 mt-1">
           {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
         </p>
@@ -303,7 +308,7 @@ export default function AppSettingsBillingPage() {
                 </p>
                 <div className="flex gap-2 justify-end">
                   <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">{tBilling("back")}</button>
-                  <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm bg-red-600 text-white font-medium">{tBilling("confirmCancel")}</button>
+                  <button type="button" onClick={() => { void handlePauseCoverage(); setCancelStep(0); }} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm bg-red-600 text-white font-medium disabled:opacity-60">{pausing ? tBilling("pausing") : tBilling("confirmCancel")}</button>
                 </div>
               </>
             )}
