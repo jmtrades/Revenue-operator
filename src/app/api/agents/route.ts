@@ -93,7 +93,16 @@ export async function POST(req: NextRequest) {
   const err = await requireWorkspaceAccess(req, workspace_id);
   if (err) return err;
   const db = getDb();
-  const { data: agent, error } = await db.from("agents").insert({ workspace_id, name }).select().maybeSingle();
+  const { data: agent, error } = await db.from("agents").insert({
+    workspace_id,
+    name,
+    personality: "professional",
+    purpose: "both",
+    greeting: `Hi, thanks for calling! This is ${name}. How can I help you today?`,
+    knowledge_base: {},
+    rules: {},
+    is_active: true,
+  }).select().maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(agent);
 }

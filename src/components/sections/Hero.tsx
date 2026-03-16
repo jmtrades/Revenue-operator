@@ -28,8 +28,7 @@ export function Hero() {
             <p className="text-base md:text-lg max-w-lg mb-4 text-slate-400 leading-relaxed">
               {tHero("subtitle")}
             </p>
-            <p className="text-sm text-white/40 mt-4">{tHero("trustLine")}</p>
-            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6 mt-6">
               <Link
                 href={ROUTES.START}
                 className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors no-underline w-full sm:w-auto text-center"
