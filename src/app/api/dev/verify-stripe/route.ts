@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let body: any;
+    let body: unknown;
     try {
       body = await req.json();
     } catch (jsonError) {
@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
 
-    const { workspace_id } = body;
+    const workspace_id =
+      typeof body === "object" && body !== null && "workspace_id" in body
+        ? String((body as { workspace_id?: unknown }).workspace_id ?? "")
+        : "";
     if (!workspace_id) {
       return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
     }
