@@ -43,7 +43,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const allowed = ["name", "voice_id", "personality", "purpose", "greeting", "knowledge_base", "rules", "is_active", "tested_at", "conversation_flow", "vapi_agent_id"];
+  const allowed = ["name", "voice_id", "personality", "purpose", "greeting", "knowledge_base", "rules", "is_active", "tested_at", "conversation_flow", "vapi_agent_id", "template"];
   const validPersonality = ["friendly", "professional", "casual", "empathetic"] as const;
   const validPurpose = ["inbound", "outbound", "both"] as const;
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };

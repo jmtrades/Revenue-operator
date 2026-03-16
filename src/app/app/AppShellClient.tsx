@@ -26,6 +26,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Command as CommandIcon,
+  HelpCircle,
   } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -98,6 +99,7 @@ export default function AppShellClient({
         items: [
           { href: "/app/team", label: t("nav.team"), icon: Users },
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+          { href: "/contact", label: "Help & Support", icon: HelpCircle },
         ],
       },
     ],

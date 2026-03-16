@@ -304,6 +304,7 @@ export default function AppActivityPage() {
     estRevenue: workspaceSnapshot?.stats?.estRevenue ?? 0,
     lastCallAt: workspaceSnapshot?.stats?.lastCallAt ?? null,
   }));
+  const [minutesUsage, setMinutesUsage] = useState<{ used: number; limit: number } | null>(null);
   const [callVolumeData, setCallVolumeData] = useState<{ day: string; calls: number }[]>([]);
   const [outcomeData, setOutcomeData] = useState<{ name: string; value: number }[]>([]);
   const [recentActivity, setRecentActivity] = useState<ActivityCard[]>(() => readActivitySnapshot());
@@ -641,6 +642,22 @@ export default function AppActivityPage() {
     "completed" in p ? p.completed : (p as { done?: boolean }).done
   ).length;
 
+  // Fetch minutes usage for dashboard display
+  useEffect(() => {
+    if (!workspaceId) return;
+    let cancelled = false;
+    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data: { minutes_used?: number; minutes_limit?: number } | null) => {
+        if (cancelled || !data) return;
+        if (typeof data.minutes_used === "number" && typeof data.minutes_limit === "number") {
+          setMinutesUsage({ used: data.minutes_used, limit: data.minutes_limit });
+        }
+      })
+      .catch(() => { /* silent */ });
+    return () => { cancelled = true; };
+  }, [workspaceId]);
+
   const callCount = workspaceStats.calls || cards.length;
   const leadCount = workspaceStats.leads || cards.filter((c) => c.type === "lead").length;
   const estRevenue = workspaceStats.estRevenue || leadCount * 800;
@@ -790,14 +807,41 @@ export default function AppActivityPage() {
           prefix="$"
           trend={0}
         />
+        {minutesUsage && (
+          <StatCard
+            label="Minutes Used"
+            value={minutesUsage.used}
+            suffix={`/${minutesUsage.limit}`}
+            trend={0}
+          />
+        )}
       </KPIRow>
 
-      <UpgradeBanner
-        title={t("dashboard.readyForVolume")}
-        description={t("dashboard.readyForVolumeDesc")}
-        ctaLabel={t("dashboard.viewPlans")}
-        href="/app/settings/billing"
-      />
+      {minutesUsage && minutesUsage.used >= minutesUsage.limit * 0.8 ? (
+        <div className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-amber-200">
+              {minutesUsage.used >= minutesUsage.limit
+                ? "You\u2019ve used all your minutes this month."
+                : `You\u2019ve used ${Math.round((minutesUsage.used / minutesUsage.limit) * 100)}% of your minutes.`}
+            </p>
+            <p className="text-xs text-amber-200/70 mt-0.5">Upgrade your plan for more minutes and features.</p>
+          </div>
+          <Link
+            href="/app/settings/billing"
+            className="shrink-0 px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors"
+          >
+            Upgrade Plan
+          </Link>
+        </div>
+      ) : (
+        <UpgradeBanner
+          title={t("dashboard.readyForVolume")}
+          description={t("dashboard.readyForVolumeDesc")}
+          ctaLabel={t("dashboard.viewPlans")}
+          href="/app/settings/billing"
+        />
+      )}
 
       {showInactivityBanner && (
         <div className="mb-4 p-4 rounded-xl border border-[var(--accent-amber)]/30 bg-[var(--accent-amber)]/10">

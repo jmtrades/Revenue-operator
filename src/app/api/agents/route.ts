@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  let body: { workspace_id: string; name: string };
+  let body: { workspace_id: string; name: string; template?: string; purpose?: string; personality?: string; voice_id?: string; greeting?: string };
   try {
     body = await req.json();
   } catch {
@@ -92,13 +92,17 @@ export async function POST(req: NextRequest) {
   if (!workspace_id || !name) return NextResponse.json({ error: "workspace_id and name required" }, { status: 400 });
   const err = await requireWorkspaceAccess(req, workspace_id);
   if (err) return err;
+  const validPurpose = ["inbound", "outbound", "both"];
+  const validPersonality = ["friendly", "professional", "casual", "empathetic"];
   const db = getDb();
   const { data: agent, error } = await db.from("agents").insert({
     workspace_id,
     name,
-    personality: "professional",
-    purpose: "both",
-    greeting: `Hi, thanks for calling! This is ${name}. How can I help you today?`,
+    personality: validPersonality.includes(body.personality ?? "") ? body.personality : "professional",
+    purpose: validPurpose.includes(body.purpose ?? "") ? body.purpose : "both",
+    greeting: body.greeting || `Hi, thanks for calling! This is ${name}. How can I help you today?`,
+    ...(body.template ? { template: body.template } : {}),
+    ...(body.voice_id ? { voice_id: body.voice_id } : {}),
     knowledge_base: {},
     rules: {},
     is_active: true,
