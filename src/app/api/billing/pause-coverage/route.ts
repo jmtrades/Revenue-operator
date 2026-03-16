@@ -39,8 +39,12 @@ export async function POST(req: NextRequest) {
       const Stripe = (await import("stripe")).default;
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
       await stripe.subscriptions.update(subId, { cancel_at_period_end: true });
-    } catch {
-      // Stripe update failed; continue with pause
+    } catch (err) {
+      console.error("[pause-coverage] Stripe update failed:", err instanceof Error ? err.message : err);
+      return NextResponse.json(
+        { error: "Could not pause subscription with payment provider. Please try again or contact support." },
+        { status: 502 }
+      );
     }
   }
 
@@ -48,6 +52,7 @@ export async function POST(req: NextRequest) {
     .from("workspaces")
     .update({
       status: "paused",
+      billing_status: "paused",
       paused_at: new Date().toISOString(),
       pause_reason: "User paused protection",
       updated_at: new Date().toISOString(),

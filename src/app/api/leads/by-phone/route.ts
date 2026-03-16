@@ -11,8 +11,15 @@ import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
+/**
+ * Normalize phone to E.164 digits for comparison.
+ * Keeps full country code to avoid false matches across countries.
+ * 10-digit numbers (US/CA without country code) get "1" prepended.
+ */
 function normalizePhone(phone: string): string {
-  return phone.replace(/\D/g, "").slice(-10);
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) return `1${digits}`;
+  return digits;
 }
 
 export async function GET(req: NextRequest) {

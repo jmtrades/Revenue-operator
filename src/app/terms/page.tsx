@@ -1,21 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 
+// Note: Dynamic metadata with translations requires generateMetadata.
+// Static metadata.title/description do not have access to i18n.
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "Recall Touch terms of service. Acceptance, service description, and legal terms.",
 };
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const t = await getTranslations("legal");
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       <Navbar />
       <main className="pt-28 pb-24">
         <Container>
           <article className="max-w-[720px] mx-auto">
+            {t.has("languageNotice") && (
+              <div className="mb-6 p-4 rounded-lg" style={{ background: "var(--bg-surface)", borderLeft: "4px solid var(--accent-primary)" }}>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  {t("languageNotice")}
+                </p>
+              </div>
+            )}
             <h1 className="font-bold text-3xl mb-2" style={{ letterSpacing: "-0.02em" }}>Terms of Service</h1>
             <p className="text-sm mb-10" style={{ color: "var(--text-tertiary)" }}>Effective date: January 1, 2026</p>
 

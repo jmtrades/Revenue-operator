@@ -28,9 +28,16 @@ export async function POST(req: NextRequest) {
   const areaCode = body.area_code?.replace(/\D/g, "").slice(0, 3);
 
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("id, billing_status").eq("id", workspaceId).single();
   if (!ws) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+  }
+  const billingStatus = (ws as { billing_status?: string }).billing_status;
+  if (!billingStatus || !["trial", "active"].includes(billingStatus)) {
+    return NextResponse.json(
+      { error: "Active subscription required to provision phone numbers.", code: "SUBSCRIPTION_REQUIRED" },
+      { status: 403 }
+    );
   }
 
   // Check if already provisioned

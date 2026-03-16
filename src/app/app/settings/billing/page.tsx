@@ -100,11 +100,26 @@ export default function AppSettingsBillingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workspace_id: workspaceId }),
       });
-      const data = (await res.json().catch(() => null)) as { message?: string; error?: string } | null;
+
+      // Check response status before attempting to parse JSON
       if (!res.ok) {
-        setToast(data?.error ?? tBilling("toast.pauseFailed"));
+        let errorMessage = tBilling("toast.pauseFailed");
+        try {
+          const data = await res.json() as { message?: string; error?: string } | null;
+          if (data?.error) {
+            errorMessage = data.error;
+          }
+        } catch {
+          // If JSON parsing fails, use a generic message including status code
+          if (res.status === 502) {
+            errorMessage = tBilling("toast.stripeFailed") ?? "Stripe service temporarily unavailable. Please try again later.";
+          }
+        }
+        setToast(errorMessage);
         return;
       }
+
+      const data = (await res.json().catch(() => null)) as { message?: string; error?: string } | null;
       setBillingStatus("paused");
       setToast(data?.message ?? tBilling("toast.paused"));
       setCancelStep(0);
@@ -172,15 +187,18 @@ export default function AppSettingsBillingPage() {
             type="button"
             onClick={async () => {
               if (!workspaceId) return;
-              const res = await fetch("/api/billing/portal", {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ workspace_id: workspaceId, return_url: window.location.href }),
-              });
-              const data = (await res.json().catch(() => null)) as { url?: string } | null;
-              if (data?.url) window.location.href = data.url;
-              else setToast(tBilling("toast.paymentFailed"));
+              try {
+                const res = await fetch("/api/billing/portal", {
+                  method: "POST",
+                  credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ workspace_id: workspaceId, return_url: window.location.href }),
+                });
+                if (!res.ok) { setToast(tBilling("toast.paymentFailed")); return; }
+                const data = (await res.json().catch(() => null)) as { url?: string } | null;
+                if (data?.url) window.location.href = data.url;
+                else setToast(tBilling("toast.paymentFailed"));
+              } catch { setToast(tBilling("toast.paymentFailed")); }
             }}
             className="text-zinc-400 hover:text-white ml-2"
           >
@@ -194,15 +212,18 @@ export default function AppSettingsBillingPage() {
           type="button"
           onClick={async () => {
             if (!workspaceId) return;
-            const res = await fetch("/api/billing/portal", {
-              method: "POST",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ workspace_id: workspaceId, return_url: window.location.href }),
-            });
-            const data = (await res.json().catch(() => null)) as { url?: string } | null;
-            if (data?.url) window.location.href = data.url;
-            else setToast(tBilling("toast.portalFailed"));
+            try {
+              const res = await fetch("/api/billing/portal", {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ workspace_id: workspaceId, return_url: window.location.href }),
+              });
+              if (!res.ok) { setToast(tBilling("toast.portalFailed")); return; }
+              const data = (await res.json().catch(() => null)) as { url?: string } | null;
+              if (data?.url) window.location.href = data.url;
+              else setToast(tBilling("toast.portalFailed"));
+            } catch { setToast(tBilling("toast.portalFailed")); }
           }}
           className="text-sm text-zinc-300 hover:text-white underline underline-offset-2"
         >

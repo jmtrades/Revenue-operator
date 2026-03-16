@@ -12,6 +12,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import { useTranslations } from "next-intl";
 import { tokens } from "@/lib/design-tokens";
 
 type OutcomeSlice = {
@@ -26,13 +27,14 @@ type AnalyticsChartsProps = {
 };
 
 export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsProps) {
+  const t = useTranslations("analytics");
   return (
     <>
       {/* Row 2: charts */}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-6">
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
           <p className="text-sm font-medium text-white mb-4">
-            Call volume (by day)
+            {t("charts.callVolumeTitle")}
           </p>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">
@@ -79,7 +81,7 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
           <p className="text-sm font-medium text-white mb-4">
-            Outcome breakdown
+            {t("charts.outcomeBreakdown")}
           </p>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">

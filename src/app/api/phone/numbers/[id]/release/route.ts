@@ -26,7 +26,7 @@ export async function POST(
 
   const { data: row } = await db
     .from("phone_numbers")
-    .select("id, workspace_id, assigned_agent_id, status, provider_sid")
+    .select("id, workspace_id, phone_number, assigned_agent_id, status, provider_sid")
     .eq("id", numberId)
     .eq("workspace_id", session.workspaceId)
     .maybeSingle();
@@ -65,6 +65,38 @@ export async function POST(
 
   if (error) {
     return NextResponse.json({ error: "Update failed" }, { status: 500 });
+  }
+
+  // If this was the primary number in phone_configs, clear or switch to another active number
+  const releasedPhone = (row as { phone_number?: string }).phone_number;
+  if (releasedPhone) {
+    const { data: configRow } = await db
+      .from("phone_configs")
+      .select("proxy_number")
+      .eq("workspace_id", session.workspaceId)
+      .maybeSingle();
+    const currentProxy = (configRow as { proxy_number?: string } | null)?.proxy_number;
+    const normalizedReleased = releasedPhone.replace(/\s/g, "");
+    const normalizedProxy = (currentProxy ?? "").replace(/\s/g, "");
+    if (normalizedProxy && normalizedReleased && normalizedProxy === normalizedReleased) {
+      const { data: otherNumber } = await db
+        .from("phone_numbers")
+        .select("phone_number")
+        .eq("workspace_id", session.workspaceId)
+        .eq("status", "active")
+        .neq("id", numberId)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const nextNumber = (otherNumber as { phone_number?: string } | null)?.phone_number ?? null;
+      await db
+        .from("phone_configs")
+        .update({
+          proxy_number: nextNumber,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("workspace_id", session.workspaceId);
+    }
   }
 
   const providerSid = number.provider_sid;

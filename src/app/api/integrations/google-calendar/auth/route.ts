@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getGoogleCalendarClientId } from "@/lib/integrations/google-calendar-env";
+import { createOAuthState } from "@/lib/integrations/oauth-state";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Google Calendar not configured" }, { status: 503 });
   }
 
-  const state = session.workspaceId;
+  const state = createOAuthState(session.workspaceId);
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,

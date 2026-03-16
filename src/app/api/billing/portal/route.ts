@@ -22,12 +22,12 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
     }
 
     const workspaceId = body.workspace_id?.trim();
     if (!workspaceId) {
-      return NextResponse.json({ ok: false, reason: "workspace_id_required" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_id_required" }, { status: 400 });
     }
     const authErr = await requireWorkspaceAccess(req, workspaceId);
     if (authErr) return authErr;
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
       log("portal_failed", { reason: "missing_stripe_key" });
-      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
 
     const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(req.url).origin;
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     const customerId = (row as { stripe_customer_id?: string | null } | null)?.stripe_customer_id;
     if (!customerId) {
       log("portal_failed", { workspace_id: workspaceId, reason: "no_customer" });
-      return NextResponse.json({ ok: false, reason: "no_customer" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "no_customer" }, { status: 404 });
     }
 
     const Stripe = (await import("stripe")).default;
@@ -66,6 +66,6 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     log("portal_failed", { reason: "unexpected_error", error: msg });
-    return NextResponse.json({ ok: false, reason: "unexpected_error" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "unexpected_error" }, { status: 502 });
   }
 }

@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
     }
 
     const email = body.email?.trim();
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
         });
         if (wsInsertErr) {
           log("trial_start_failed", { workspace_id: wsId, reason: "workspace_creation_failed", db_error: wsInsertErr.message ?? String(wsInsertErr) });
-          return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 200 });
+          return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 502 });
         }
         const settingsResult = await db.from("settings").insert({
           workspace_id: wsId,
@@ -144,17 +144,22 @@ export async function POST(req: NextRequest) {
         const origin = effectiveOrigin(req);
         if (!origin) {
           log("trial_start_failed", { reason: "missing_env", missing: ["NEXT_PUBLIC_APP_URL"] });
-          return NextResponse.json({ ok: false, reason: "missing_env", missing: ["NEXT_PUBLIC_APP_URL"] }, { status: 200 });
+          return NextResponse.json({ ok: false, reason: "missing_env", missing: ["NEXT_PUBLIC_APP_URL"] }, { status: 503 });
+        }
+        const stripeKeyInner = process.env.STRIPE_SECRET_KEY;
+        if (!stripeKeyInner) {
+          log("trial_start_failed", { reason: "missing_env", missing: ["STRIPE_SECRET_KEY"] });
+          return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
         }
         const priceResult = await getPriceId(tier, interval);
         if (!priceResult.ok) {
           log("trial_start_failed", { reason: priceResult.reason, tier, interval });
-          return NextResponse.json({ ok: false, reason: priceResult.reason }, { status: 200 });
+          return NextResponse.json({ ok: false, reason: priceResult.reason }, { status: 502 });
         }
         const stripePriceId = priceResult.price_id;
         try {
           const Stripe = (await import("stripe")).default;
-          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+          const stripe = new Stripe(stripeKeyInner);
           let customerId: string | null = null;
           const { data: wsRow } = await db.from("workspaces").select("stripe_customer_id").eq("id", wsIdForCheckout).maybeSingle();
           customerId = (wsRow as { stripe_customer_id?: string | null })?.stripe_customer_id ?? null;
@@ -180,18 +185,18 @@ export async function POST(req: NextRequest) {
           const checkoutUrl = session.url ?? null;
           if (!checkoutUrl) {
             log("trial_start_failed", { reason: "checkout_creation_failed" });
-            return NextResponse.json({ ok: false, reason: "checkout_creation_failed" }, { status: 200 });
+            return NextResponse.json({ ok: false, reason: "checkout_creation_failed" }, { status: 502 });
           }
           log("trial_start_succeeded", { workspace_id: wsIdForCheckout });
           return jsonWithSession({ ok: true, workspace_id: wsIdForCheckout, checkout_url: checkoutUrl }, uidForCheckout, wsIdForCheckout);
         } catch (stripeErr) {
           const msg = stripeErr instanceof Error ? stripeErr.message : String(stripeErr);
           log("trial_start_failed", { reason: "stripe_unreachable", error: msg });
-          return NextResponse.json({ ok: false, reason: "stripe_unreachable" }, { status: 200 });
+          return NextResponse.json({ ok: false, reason: "stripe_unreachable" }, { status: 502 });
         }
       }
       log("trial_start_failed", { reason: "user_create_failed" });
-      return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 502 });
     }
 
     const workspaceId = randomUUID();
@@ -210,18 +215,23 @@ export async function POST(req: NextRequest) {
     if (wsErr) {
       const errMsg = wsErr.message ?? String(wsErr);
       log("trial_start_failed", { workspace_id: workspaceId, reason: "workspace_creation_failed", db_error: errMsg });
-      return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 502 });
     }
 
     const origin = effectiveOrigin(req);
     if (!origin) {
       log("trial_start_failed", { reason: "missing_env", missing: ["NEXT_PUBLIC_APP_URL"] });
-      return NextResponse.json({ ok: false, reason: "missing_env", missing: ["NEXT_PUBLIC_APP_URL"] }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "missing_env", missing: ["NEXT_PUBLIC_APP_URL"] }, { status: 503 });
+    }
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeKey) {
+      log("trial_start_failed", { reason: "missing_env", missing: ["STRIPE_SECRET_KEY"] });
+      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
     const priceResult = await getPriceId(tier, interval);
     if (!priceResult.ok) {
       log("trial_start_failed", { reason: priceResult.reason, tier, interval });
-      return NextResponse.json({ ok: false, reason: priceResult.reason }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: priceResult.reason }, { status: 502 });
     }
     const stripePriceId = priceResult.price_id;
 
@@ -261,7 +271,7 @@ export async function POST(req: NextRequest) {
 
     try {
       const Stripe = (await import("stripe")).default;
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+      const stripe = new Stripe(stripeKey);
       let customerId: string | null = null;
       const { data: wsRow } = await db.from("workspaces").select("stripe_customer_id").eq("id", workspaceId).maybeSingle();
       customerId = (wsRow as { stripe_customer_id?: string | null })?.stripe_customer_id ?? null;
@@ -287,18 +297,18 @@ export async function POST(req: NextRequest) {
       const checkoutUrl = session.url ?? null;
       if (!checkoutUrl) {
         log("trial_start_failed", { reason: "checkout_creation_failed" });
-        return NextResponse.json({ ok: false, reason: "checkout_creation_failed" }, { status: 200 });
+        return NextResponse.json({ ok: false, reason: "checkout_creation_failed" }, { status: 502 });
       }
       log("trial_start_succeeded", { workspace_id: workspaceId });
       return jsonWithSession({ ok: true, workspace_id: workspaceId, checkout_url: checkoutUrl }, userId, workspaceId);
     } catch (stripeErr) {
       const msg = stripeErr instanceof Error ? stripeErr.message : String(stripeErr);
       log("trial_start_failed", { reason: "stripe_unreachable", error: msg });
-      return NextResponse.json({ ok: false, reason: "stripe_unreachable" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "stripe_unreachable" }, { status: 502 });
     }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     log("trial_start_failed", { reason: "unexpected_error", error: errorMessage });
-    return NextResponse.json({ ok: false, reason: "checkout_creation_failed" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "checkout_creation_failed" }, { status: 502 });
   }
 }

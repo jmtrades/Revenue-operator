@@ -122,12 +122,34 @@ function KnowledgeModal({
     onClose();
   };
 
-  const handleMockUpload = () => {
+  const handleUpload = async (file: File) => {
     setUploadState("uploading");
-    setTimeout(() => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/knowledge/upload", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const data = (await res.json().catch(() => null)) as { ok?: boolean; fileName?: string; error?: string } | null;
+
+      if (!res.ok) {
+        setUploadState("idle");
+        toast.error(data?.error ?? "Failed to upload file");
+        return;
+      }
+
       setUploadState("done");
-      setFileName("uploaded-document.pdf");
-    }, 1200);
+      setFileName(data?.fileName ?? "uploaded-document.pdf");
+      toast.success("File uploaded successfully");
+    } catch (error) {
+      setUploadState("idle");
+      toast.error("Upload failed. Please try again.");
+      console.error("Upload error:", error);
+    }
   };
 
   const handleMockFetch = () => {
@@ -217,20 +239,31 @@ function KnowledgeModal({
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                   e.preventDefault();
-                  handleMockUpload();
+                  const file = e.dataTransfer.files[0];
+                  if (file) handleUpload(file);
                 }}
               >
                 {uploadState === "idle" && (
                   <>
                     <Upload className="w-10 h-10 text-zinc-500 mx-auto mb-2" />
                     <p className="text-sm text-zinc-400 mb-2">{t("modal.uploadHint")}</p>
-                    <button
-                      type="button"
-                      onClick={handleMockUpload}
-                      className="text-sm font-medium text-white bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg"
-                    >
-                      {t("modal.chooseFile")}
-                    </button>
+                    <label className="inline-block">
+                      <input
+                        type="file"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleUpload(file);
+                        }}
+                        className="sr-only"
+                        accept=".pdf,.doc,.docx,.txt"
+                      />
+                      <button
+                        type="button"
+                        className="text-sm font-medium text-white bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg"
+                      >
+                        {t("modal.chooseFile")}
+                      </button>
+                    </label>
                   </>
                 )}
                 {uploadState === "uploading" && (

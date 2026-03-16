@@ -1,4 +1,10 @@
 {
+  "notFoundPage": {
+    "title": "ページが見つかりません",
+    "description": "このページは存在しません。",
+    "goHome": "ホームへ",
+    "contactSupport": "サポートに連絡"
+  },
   "app": {
     "title": "Recall Touch — AI電話対応",
     "dashboardTitle": "ダッシュボード",
@@ -235,6 +241,11 @@
   },
   "billing": {
     "pageTitle": "請求 — Recall Touch",
+    "failureBanner": {
+      "primary": "処理カバレッジを継続できませんでした。",
+      "message": "設定で支払い方法を更新すると、カバレッジが再開されます。",
+      "preferencesLink": "設定"
+    },
     "loadError": "請求情報を読み込めませんでした。",
     "loadErrorDesc": "サブスクリプションを管理するには請求を接続するか、しばらくしてから再試行してください。",
     "backToSettings": "設定に戻る",
@@ -277,6 +288,18 @@
       "paused": "カバレッジを一時停止しました。",
       "paymentFailed": "支払い設定を開けませんでした。",
       "portalFailed": "請求ポータルを開けませんでした。"
+    },
+    "errors": {
+      "loadingFailed": "課金情報を読み込めませんでした",
+      "loadingFailedDesc": "もう一度お試いただくか、問題が解決しない場合はサポートにお問い合わせください。"
+    },
+    "protectionPaused": {
+      "title": "通常の状態ではありません。",
+      "noHandling": "新しいお問い合わせへの対応は停止しています。",
+      "manualConfirmation": "出席確認には手動での対応が必要です。",
+      "decisionsStall": "進行中の判断が滞る可能性があります。",
+      "upcomingManual": "今後の出席には手動での確認が必要です。",
+      "resumeHandling": "対応を再開"
     }
   },
   "planChange": {
@@ -300,10 +323,45 @@
     "perMonth": "/月",
     "custom": "カスタム",
     "plans": {
-      "starter": { "name": "Starter", "features": ["AIエージェント1台", "電話番号1本", "400分/月", "利用状況"] },
-      "growth": { "name": "Growth", "features": ["AIエージェント3台", "電話番号3本", "1,500分/月", "Call Intelligence", "優先サポート"] },
-      "scale": { "name": "Scale", "features": ["AIエージェント無制限", "10番号", "5,000分/月", "詳細レポート", "APIアクセス"] },
-      "enterprise": { "name": "Enterprise", "features": ["エージェント無制限", "番号無制限", "カスタム連携", "専任サポート", "SLA"] }
+      "starter": {
+        "name": "Starter",
+        "features": [
+          "AIエージェント1台",
+          "電話番号1本",
+          "400分/月",
+          "利用状況"
+        ]
+      },
+      "growth": {
+        "name": "Growth",
+        "features": [
+          "AIエージェント3台",
+          "電話番号3本",
+          "1,500分/月",
+          "Call Intelligence",
+          "優先サポート"
+        ]
+      },
+      "scale": {
+        "name": "Scale",
+        "features": [
+          "AIエージェント無制限",
+          "10番号",
+          "5,000分/月",
+          "詳細レポート",
+          "APIアクセス"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "features": [
+          "エージェント無制限",
+          "番号無制限",
+          "カスタム連携",
+          "専任サポート",
+          "SLA"
+        ]
+      }
     }
   },
   "dashboard": {
@@ -1453,6 +1511,10 @@
       "transferred": "転送済み",
       "missed": "不在",
       "voicemail": "ボイスメール"
+    },
+    "charts": {
+      "callVolumeTitle": "通話数（日別）",
+      "outcomeBreakdown": "結果の内訳"
     },
     "days": {
       "mon": "月",
@@ -2891,6 +2953,35 @@
     "removeStep": "ステップを削除",
     "runAt": "実行日時",
     "nextRun": "次回実行（日時）",
+    "addStep": "+ ステップを追加",
+    "campaignRoi": "キャンペーンROI",
+    "contacted": "接触済み",
+    "daysLabel": "日",
+    "messageTemplate": "メッセージテンプレート",
+    "minScore": "最小スコア",
+    "scoreGte": "スコア ≥ {score}",
+    "notContactedIn": "{days}日間未連絡",
+    "notContactedInDays": "X日間未連絡",
+    "scheduledAt": "予定日時 {date}",
+    "scheduleDisplay": "スケジュール: {type}",
+    "triggerDisplay": "トリガー: {type}",
+    "sequenceDisplay": "シーケンス: {steps}",
+    "waitStep": "{days}日待機",
+    "campaignType": {
+      "lead_follow_up": "リード追跡",
+      "reactivation": "再活性化",
+      "appointment_reminder": "予約リマインダー",
+      "qualification": "資格審査",
+      "missed_call_recovery": "不在着信リカバリー",
+      "custom": "カスタム"
+    },
+    "progress": "進捗",
+    "scheduleTypeLabel": "スケジュールタイプ",
+    "scheduleTypes": {
+      "manual": "手動",
+      "once": "1回のみ",
+      "recurring": "繰り返し"
+    },
     "toast": {
       "updated": "キャンペーンを更新しました。",
       "created": "キャンペーンを作成しました。",
@@ -3284,12 +3375,12 @@
       "cardSubtitle": "リアルタイム予約 — 完全自動化",
       "callerLabel": "発信者",
       "agentLabel": "AIエージェント",
-      "line1": "\u201c木曜日に予約を取りたいのですが。\u201d",
-      "line2": "\u201cかしこまりました！10時、14時、16時に空きがございます。ご都合の良い時間はありますか？\u201d",
-      "line3": "\u201c14時でお願いします。\u201d",
-      "line4": "\u201c承知しました — 木曜日14時で予約完了です。お名前とお電話番号をお伺いできますか？\u201d",
-      "line5": "\u201cSarah、555-0142です。\u201d",
-      "line6": "\u201c完了です、Sarahさん！まもなく確認のSMSをお送りします。\u201d",
+      "line1": "“木曜日に予約を取りたいのですが。”",
+      "line2": "“かしこまりました！10時、14時、16時に空きがございます。ご都合の良い時間はありますか？”",
+      "line3": "“14時でお願いします。”",
+      "line4": "“承知しました — 木曜日14時で予約完了です。お名前とお電話番号をお伺いできますか？”",
+      "line5": "“Sarah、555-0142です。”",
+      "line6": "“完了です、Sarahさん！まもなく確認のSMSをお送りします。”",
       "cta": "無料で作成する →",
       "trialNote": "クレジットカード不要 · 14日間無料",
       "loading": "読み込み中…",
@@ -3795,10 +3886,64 @@
         "enterprise": "カスタムROI・専任サポート"
       },
       "tiers": {
-        "starter": { "name": "Starter", "description": "すべての通話に応答。1番号、1エージェント。", "features": ["着信400分込み", "発信50件", "SMS 100件", "AIエージェント1台", "電話番号1本", "超過: $0.25/分"], "cta": "無料で始める" },
-        "growth": { "name": "Growth", "description": "1件のリード回収で月額回収。", "features": ["着信1,500分込み", "発信500件", "SMS 500件", "AIエージェント3台", "3番号", "予約", "フォローアップ", "分析", "超過: $0.18/分"], "cta": "無料で始める" },
-        "scale": { "name": "Scale", "description": "1人採用の一部でフルAI通信チーム。", "features": ["着信5,000分込み", "発信2,000件", "SMS無制限", "AIエージェント無制限", "10番号", "複数拠点", "コンプライアンス", "API", "優先サポート", "超過: $0.12/分"], "cta": "無料で始める" },
-        "enterprise": { "name": "Enterprise", "description": "カスタム料金 — ホワイトラベル、コンプライアンス、SSO、専任マネージャー、SLA。", "features": ["ホワイトラベル", "カスタムコンプライアンス", "SSO", "専任マネージャー", "SLA"], "cta": "営業に相談" }
+        "starter": {
+          "name": "Starter",
+          "description": "すべての通話に応答。1番号、1エージェント。",
+          "features": [
+            "着信400分込み",
+            "発信50件",
+            "SMS 100件",
+            "AIエージェント1台",
+            "電話番号1本",
+            "超過: $0.25/分"
+          ],
+          "cta": "無料で始める"
+        },
+        "growth": {
+          "name": "Growth",
+          "description": "1件のリード回収で月額回収。",
+          "features": [
+            "着信1,500分込み",
+            "発信500件",
+            "SMS 500件",
+            "AIエージェント3台",
+            "3番号",
+            "予約",
+            "フォローアップ",
+            "分析",
+            "超過: $0.18/分"
+          ],
+          "cta": "無料で始める"
+        },
+        "scale": {
+          "name": "Scale",
+          "description": "1人採用の一部でフルAI通信チーム。",
+          "features": [
+            "着信5,000分込み",
+            "発信2,000件",
+            "SMS無制限",
+            "AIエージェント無制限",
+            "10番号",
+            "複数拠点",
+            "コンプライアンス",
+            "API",
+            "優先サポート",
+            "超過: $0.12/分"
+          ],
+          "cta": "無料で始める"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "カスタム料金 — ホワイトラベル、コンプライアンス、SSO、専任マネージャー、SLA。",
+          "features": [
+            "ホワイトラベル",
+            "カスタムコンプライアンス",
+            "SSO",
+            "専任マネージャー",
+            "SLA"
+          ],
+          "cta": "営業に相談"
+        }
       },
       "footerNote": "全プランに含まれる：暗号化記録・コンプライアンス・監査証跡・14日間無料トライアル",
       "cta": {
@@ -3927,9 +4072,18 @@
       "typeAppointment": "予約",
       "typeFollowUp": "フォロー",
       "cards": {
-        "1": { "summary": "相談のスケジュール", "outcome": "✅ 14時予約" },
-        "2": { "summary": "料金の質問", "outcome": "✅ テキストで情報送信" },
-        "3": { "summary": "折り返し希望", "outcome": "✅ 30分後にフォロー" }
+        "1": {
+          "summary": "相談のスケジュール",
+          "outcome": "✅ 14時予約"
+        },
+        "2": {
+          "summary": "料金の質問",
+          "outcome": "✅ テキストで情報送信"
+        },
+        "3": {
+          "summary": "折り返し希望",
+          "outcome": "✅ 30分後にフォロー"
+        }
       }
     },
     "activityFeed": {
@@ -4038,6 +4192,38 @@
       "docs": "ドキュメント",
       "terms": "利用規約",
       "privacy": "プライバシー"
+    },
+    "solutions": {
+      "plumbingHvac": "配管・HVAC",
+      "dental": "歯科",
+      "legal": "法務",
+      "realEstate": "不動産",
+      "healthcare": "医療"
+    },
+    "productLinks": {
+      "bookDemo": "デモを予約",
+      "features": "機能",
+      "pricing": "料金",
+      "documentation": "ドキュメント",
+      "changelog": "Changelog",
+      "api": "API"
+    },
+    "companyLinks": {
+      "about": "会社概要",
+      "blog": "ブログ",
+      "contact": "お問い合わせ"
+    },
+    "useCases": {
+      "inboundCalls": "着信",
+      "outboundCampaigns": "発信キャンペーン",
+      "appointmentScheduling": "予約",
+      "leadFollowUp": "リードフォロー",
+      "afterHoursCoverage": "時間外対応",
+      "callScreening": "着信スクリーニング"
+    },
+    "legal": {
+      "privacy": "プライバシー",
+      "terms": "利用規約"
     }
   },
   "pricing": {
@@ -4106,7 +4292,103 @@
     "roiCalculator": "ROI計算",
     "featureComparison": "機能比較",
     "feature": "機能",
+    "comparisonRows": [
+      {
+        "category": "コア",
+        "name": "着信分数/月"
+      },
+      {
+        "category": "コア",
+        "name": "AIエージェント"
+      },
+      {
+        "category": "コア",
+        "name": "発信通話/月"
+      },
+      {
+        "category": "コア",
+        "name": "SMS付き"
+      },
+      {
+        "category": "機能",
+        "name": "受信トレイ（統合メッセージ）"
+      },
+      {
+        "category": "機能",
+        "name": "ナレッジベース"
+      },
+      {
+        "category": "機能",
+        "name": "予約"
+      },
+      {
+        "category": "機能",
+        "name": "発信キャンペーン"
+      },
+      {
+        "category": "機能",
+        "name": "APIアクセス"
+      },
+      {
+        "category": "機能",
+        "name": "コンプライアンス出力"
+      },
+      {
+        "category": "サポート",
+        "name": "優先サポート"
+      }
+    ],
     "annualNote": "年額契約で2か月分が途切れず適用されます。",
+    "faqItems": [
+      {
+        "q": "無料トライアルはどうなりますか？",
+        "a": "14日間、全機能、クレジットカード不要。"
+      },
+      {
+        "q": "利用分を超えた場合は？",
+        "a": "超過分の料金で通話は継続、切断されません。"
+      },
+      {
+        "q": "今の番号はそのまま使えますか？",
+        "a": "はい。Recall Touch番号に転送してください。"
+      },
+      {
+        "q": "利用できる音声は？",
+        "a": "6種類標準、プレミアムは月額$29のアドオン。"
+      },
+      {
+        "q": "契約はありますか？",
+        "a": "いいえ、月額制、いつでも解約可能。"
+      },
+      {
+        "q": "HIPAA対応は？",
+        "a": "はい、BAA付きで月額$99のアドオン。"
+      },
+      {
+        "q": "連携は？",
+        "a": "Google Calendar、Outlook、HubSpot、Zapier。Scale+でAPI。"
+      },
+      {
+        "q": "応答サービスとの違いは？",
+        "a": "24時間対応、発信も対応、約90%コスト削減。"
+      },
+      {
+        "q": "営業時間外は？",
+        "a": "営業時間外ルールに従って応答します。"
+      },
+      {
+        "q": "購入前に試せますか？",
+        "a": "14日間トライアルまたは今すぐインタラクティブデモ。"
+      },
+      {
+        "q": "解約方法は？",
+        "a": "設定 → 請求 → 解約。期間末に有効。"
+      },
+      {
+        "q": "請求はどうなりますか？",
+        "a": "月額または年額。含まれる分数＋超過分は分単位。"
+      }
+    ],
     "roi": {
       "intro": "着信を留守電に回さなくなった場合の効果をシミュレートします。",
       "missedCallsPerWeek": "週あたりの取りこぼし着信数",
@@ -4129,6 +4411,73 @@
     },
     "trustedBy": "サービス・医療・地域ビジネスのリーダーに信頼されています。",
     "questionsTalkToUs": "質問はこちら →"
+  },
+  "stripePricingTable": {
+    "configError": "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY と NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID を設定して、価格表を表示してください。"
+  },
+  "declare": {
+    "pageTitle": "運用姿勢の宣言",
+    "heading": "運用姿勢を宣言します。",
+    "descriptionLine1": "会話がどのように処理されるかを定義しています。",
+    "descriptionLine2": "実行を中断することなく宣言を変更することができます。",
+    "jurisdictionStep": {
+      "title": "宣言された管轄権",
+      "description": "すべての実行は宣言された管轄権に従って統治されます。"
+    },
+    "jurisdictionLabel": "管轄権",
+    "jurisdictionHint": "管轄権はコンプライアンスの境界を決定します。",
+    "jurisdictions": [
+      { "value": "United States", "label": "米国" },
+      { "value": "UK", "label": "英国" },
+      { "value": "EU", "label": "欧州連合" },
+      { "value": "Other", "label": "その他" }
+    ],
+    "reviewStep": {
+      "title": "レビュー構造",
+      "description": "エスカレーションと監視構造を定義します。"
+    },
+    "reviewLabel": "レビュー構造",
+    "reviewHint": "レビュー構造はエスカレーション動作を決定します。",
+    "reviewLevels": [
+      { "value": "Preview required", "label": "プレビューが必要" },
+      { "value": "Approval required", "label": "承認が必要" },
+      { "value": "Standard", "label": "標準" }
+    ],
+    "sourceStep": {
+      "title": "プライマリソースの記録",
+      "description": "ソースが記録された後にのみ実行が開始されます。"
+    },
+    "sourceOptions": [
+      { "id": "csv", "label": "ソースをアップロード" },
+      { "id": "calendar", "label": "カレンダーを接続" },
+      { "id": "phone", "label": "電話を接続" }
+    ],
+    "sourceHint1": "ソースなし。実行なし。",
+    "sourceHint2": "ソースにはアップロードされたリード リスト、電話回線、カレンダー問い合わせが含まれます。",
+    "sourceHint3": "単一のソースから始めることができます。",
+    "purposeStep": {
+      "title": "運用目的",
+      "description": "目的は目標と停止条件を決定します。"
+    },
+    "purposeOptions": [
+      { "value": "Qualify", "label": "認定" },
+      { "value": "Confirm", "label": "確認" },
+      { "value": "Collect", "label": "収集" },
+      { "value": "Reactivate", "label": "再度有効化" },
+      { "value": "Route", "label": "ルート" },
+      { "value": "Recover", "label": "復旧" }
+    ],
+    "purposeHint": "目的は目標と結果を決定します。",
+    "governanceStep": {
+      "title": "ガバナンス下に配置"
+    },
+    "governanceHint": "実行は宣言された管轄権とレビューの深さに従って適用されます。",
+    "activateButton": "ガバナンス下に配置",
+    "successMessage": "実行は機関ガバナンス下にあります。",
+    "successHint": "ソースが記録された後、処理が開始されます。",
+    "continueButton": "続行",
+    "backButton": "戻る",
+    "selectPlaceholder": "選択"
   },
   "languageSwitcher": {
     "label": "言語",
@@ -4472,7 +4821,7 @@
   "errors": {
     "heading": "エラーが発生しました",
     "defaultMessage": "予期しないエラーが発生しました。",
-    "tryAgain": "もう一度試す",
+    "tryAgain": "再試行",
     "generic": {
       "title": "問題が発生しました",
       "body": "リクエストを完了できませんでした。ページを更新するか、再度お試しください。"
@@ -4514,7 +4863,6 @@
     "somethingWrong": "問題が発生しました",
     "loadPageError": "このページを読み込めませんでした。再試行するか戻ってください。",
     "unexpectedError": "予期しないエラーが発生しました。再試行するか問題を報告してください。",
-    "tryAgain": "再試行",
     "reportIssue": "問題を報告"
   },
   "forms": {
@@ -5497,12 +5845,30 @@
       "faq": "FAQ"
     },
     "cards": {
-      "gettingStarted": { "title": "はじめに", "desc": "AI電話システムを数分でセットアップ。" },
-      "apiReference": { "title": "APIリファレンス", "desc": "Recall Touch を既存システムに統合。" },
-      "compliance": { "title": "コンプライアンス", "desc": "録音同意、保持、地域ルールの設定。" },
-      "integrations": { "title": "連携", "desc": "Recall Touch と営業・コミュニケーションツールを接続。" },
-      "faq": { "title": "FAQ", "desc": "セットアップ、通話、請求に関するよくある質問。" },
-      "support": { "title": "サポートに連絡", "desc": "技術・コンプライアンスの質問はチームまで。" },
+      "gettingStarted": {
+        "title": "はじめに",
+        "desc": "AI電話システムを数分でセットアップ。"
+      },
+      "apiReference": {
+        "title": "APIリファレンス",
+        "desc": "Recall Touch を既存システムに統合。"
+      },
+      "compliance": {
+        "title": "コンプライアンス",
+        "desc": "録音同意、保持、地域ルールの設定。"
+      },
+      "integrations": {
+        "title": "連携",
+        "desc": "Recall Touch と営業・コミュニケーションツールを接続。"
+      },
+      "faq": {
+        "title": "FAQ",
+        "desc": "セットアップ、通話、請求に関するよくある質問。"
+      },
+      "support": {
+        "title": "サポートに連絡",
+        "desc": "技術・コンプライアンスの質問はチームまで。"
+      },
       "viewLink": "表示 →",
       "contactForAccess": "アクセスはお問い合わせ"
     },
@@ -5532,8 +5898,14 @@
         "comcast": "Voice → 着信転送 → Recall Touch 番号を入力。",
         "googleVoice": "設定 → 通話 → RT 番号へ転送。"
       },
-      "aiAgents": { "title": "AIエージェント", "description": "エージェントの名前、音声、挨拶、機能を設定。サービス、営業時間、予約の扱いを教える。コーディング不要。" },
-      "campaigns": { "title": "キャンペーン", "description": "アウトバウンドのフォローアップ、リマインダー、リカバリーフローを実行。ダッシュボードからキャンペーン作成、オーディエンスとスクリプトを設定し、結果を追跡。" },
+      "aiAgents": {
+        "title": "AIエージェント",
+        "description": "エージェントの名前、音声、挨拶、機能を設定。サービス、営業時間、予約の扱いを教える。コーディング不要。"
+      },
+      "campaigns": {
+        "title": "キャンペーン",
+        "description": "アウトバウンドのフォローアップ、リマインダー、リカバリーフローを実行。ダッシュボードからキャンペーン作成、オーディエンスとスクリプトを設定し、結果を追跡。"
+      },
       "integrations": {
         "title": "連携",
         "description": "Recall Touch を電話プロバイダー（Twilio）、カレンダー、CRM と接続。Scale および Enterprise プランで Webhooks と API。",
@@ -5544,7 +5916,11 @@
         "triggersHeading": "トリガー（GET、Bearer トークン）",
         "actionsHeading": "アクション（POST、Bearer トークン）"
       },
-      "billing": { "title": "請求", "description": "プランは月額または年額。年額は2ヶ月分無料。設定 → 請求で変更または解約。請求書はダッシュボードで確認。", "cta": "料金を見る →" },
+      "billing": {
+        "title": "請求",
+        "description": "プランは月額または年額。年額は2ヶ月分無料。設定 → 請求で変更または解約。請求書はダッシュボードで確認。",
+        "cta": "料金を見る →"
+      },
       "api": {
         "title": "APIリファレンス",
         "description": "Recall Touch 統合用 REST API。全エンドポイントで有効なセッション（Cookie）または Bearer トークンが必要。ベース URL: https://your-domain.com。",
@@ -5570,7 +5946,11 @@
         "entry202502": "Vapi 音声エージェント、Twilio 電話プロビジョニング、アクティビティ・受信トレイビュー、設定ハブ。",
         "entry202501": "初回リリース: ワークスペース設定、サインイン、料金、デモシミュレーター。"
       },
-      "faq": { "title": "FAQ", "description": "セットアップ、着信転送、エージェント、請求に関するよくある質問は料金ページで。", "cta": "FAQ を見る →" }
+      "faq": {
+        "title": "FAQ",
+        "description": "セットアップ、着信転送、エージェント、請求に関するよくある質問は料金ページで。",
+        "cta": "FAQ を見る →"
+      }
     },
     "quickStart": {
       "title": "クイックスタート",
@@ -5717,6 +6097,9 @@
     "marketplaceNoNumbersFound": "番号が見つかりません。市外局番やタイプを変えてお試しください。",
     "marketplaceAdding": "追加中…",
     "marketplaceGetThisNumber": "この番号を取得",
+    "perMonth": "/月",
+    "inputPlaceholder": "電話番号",
+    "invalidNumber": "選択した国に対して無効な番号です",
     "releaseTitleUnassign": "まずエージェントで割り当てを解除してください",
     "releaseTitleRelease": "番号を解放",
     "releaseLabel": "解放",
@@ -6084,5 +6467,8 @@
       "theyreSet": "設定済み",
       "decisionProgressed": "決定が進行しました"
     }
+  },
+  "legal": {
+    "languageNotice": "このドキュメントは英語のみで利用できます。"
   }
 }

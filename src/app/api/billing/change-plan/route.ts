@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     .from("workspaces")
     .select("id, stripe_subscription_id, stripe_customer_id, owner_id")
     .eq("id", workspace_id)
-    .single();
+    .maybeSingle();
   if (!ws) return NextResponse.json({ ok: false, error: "Workspace not found" }, { status: 404 });
 
   const row = ws as { stripe_subscription_id?: string | null; stripe_customer_id?: string | null; owner_id?: string };
@@ -76,6 +76,8 @@ export async function POST(req: NextRequest) {
     try {
       const origin = getOrigin(req);
       if (!origin) return NextResponse.json({ ok: false, error: "App URL not configured" }, { status: 400 });
+
+      // Idempotent customer creation pattern (mirrors checkout route)
       let customerId = row.stripe_customer_id ?? null;
       if (!customerId) {
         const ownerId = row.owner_id;
@@ -84,13 +86,39 @@ export async function POST(req: NextRequest) {
           const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
           email = (user as { email?: string } | null)?.email ?? "";
         }
+
         const customer = await stripe.customers.create({
           email: email || undefined,
           metadata: { workspace_id },
           invoice_settings: { footer: RECEIPT_FOOTER },
         });
-        customerId = customer.id;
-        await db.from("workspaces").update({ stripe_customer_id: customerId }).eq("id", workspace_id);
+        const createdId = customer.id;
+
+        const { data: claimed, error: claimError } = await db
+          .from("workspaces")
+          .update({ stripe_customer_id: createdId, updated_at: new Date().toISOString() })
+          .eq("id", workspace_id)
+          .is("stripe_customer_id", null)
+          .select("stripe_customer_id")
+          .maybeSingle();
+
+        if (claimError) {
+          return NextResponse.json(
+            { ok: false, error: "Something went wrong with this service. Please try again." },
+            { status: 502 },
+          );
+        }
+
+        if (claimed?.stripe_customer_id) {
+          customerId = claimed.stripe_customer_id as string;
+        } else {
+          const { data: refreshed } = await db
+            .from("workspaces")
+            .select("stripe_customer_id")
+            .eq("id", workspace_id)
+            .maybeSingle();
+          customerId = (refreshed as { stripe_customer_id?: string | null } | null)?.stripe_customer_id ?? createdId;
+        }
       }
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
@@ -127,11 +155,15 @@ export async function POST(req: NextRequest) {
     const itemId = sub.items?.data?.[0]?.id;
     if (!itemId) return NextResponse.json({ ok: false, error: "Subscription has no items" }, { status: 400 });
 
-    const currentPriceId = sub.items?.data?.[0]?.price?.id;
-    const isUpgrade = currentPriceId !== priceResult.price_id; // simple: different price = prorate
+    const priceField = sub.items?.data?.[0]?.price;
+    const currentPriceId = typeof priceField === "string" ? priceField : priceField?.id;
+    if (currentPriceId === priceResult.price_id) {
+      return NextResponse.json({ ok: true, reason: "already_on_plan" }, { status: 200 });
+    }
+    // Prorate on all changes — Stripe handles credit/debit correctly
     await stripe.subscriptions.update(row.stripe_subscription_id, {
       items: [{ id: itemId, price: priceResult.price_id }],
-      proration_behavior: isUpgrade ? "always_invoice" : "none",
+      proration_behavior: "always_invoice",
     });
   } catch (_e) {
     // Stripe update error; return below

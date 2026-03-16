@@ -8,12 +8,13 @@ import {
   getGoogleCalendarClientId,
   getGoogleCalendarClientSecret,
 } from "@/lib/integrations/google-calendar-env";
+import { verifyOAuthState } from "@/lib/integrations/oauth-state";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
-  const state = req.nextUrl.searchParams.get("state"); // workspace_id
+  const rawState = req.nextUrl.searchParams.get("state");
   const error = req.nextUrl.searchParams.get("error");
 
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
@@ -22,8 +23,14 @@ export async function GET(req: NextRequest) {
   if (error || !code) {
     return NextResponse.redirect(`${returnUrl}?calendar=error`);
   }
-  if (!state) {
+  if (!rawState) {
     return NextResponse.redirect(returnUrl);
+  }
+
+  // Verify HMAC-signed state to prevent CSRF
+  const workspaceId = verifyOAuthState(rawState);
+  if (!workspaceId) {
+    return NextResponse.redirect(`${returnUrl}?calendar=error&reason=invalid_state`);
   }
 
   const clientId = getGoogleCalendarClientId();
@@ -61,7 +68,7 @@ export async function GET(req: NextRequest) {
     const db = getDb();
     const { error: upsertErr } = await db.from("google_calendar_tokens").upsert(
       {
-        workspace_id: state,
+        workspace_id: workspaceId,
         access_token: tokens.access_token ?? null,
         refresh_token: tokens.refresh_token ?? null,
         expires_at: expiresAt,

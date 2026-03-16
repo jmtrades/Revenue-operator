@@ -11,7 +11,7 @@ import { enqueue } from "@/lib/queue";
 const ADMIN_SECRET = process.env.CRON_SECRET ?? process.env.ADMIN_SECRET;
 
 function auth(req: NextRequest): boolean {
-  if (!ADMIN_SECRET) return true;
+  if (!ADMIN_SECRET) return false;
   return req.headers.get("authorization") === `Bearer ${ADMIN_SECRET}`;
 }
 

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   Area,
   AreaChart,
@@ -82,22 +82,26 @@ interface CallRecord {
   analysis_outcome?: unknown;
 }
 
-function _getPlaySummary(card: ActivityCard): string {
+function _getPlaySummary(card: ActivityCard, t: (key: string, values?: Record<string, unknown>) => string): string {
   const name = card.name;
   const summary = card.summary;
   if (card.type === "lead") {
-    return `${name} called. ${summary}. Lead qualified${card.score != null ? `, score ${card.score}` : ""}. Call ended.`;
+    return t("dashboard.playSummary.lead", {
+      name,
+      summary,
+      score: card.score != null ? String(card.score) : undefined,
+    });
   }
   if (card.type === "appointment") {
-    return `${name} called. ${summary}. Appointment confirmed. Call ended.`;
+    return t("dashboard.playSummary.appointment", { name, summary });
   }
   if (card.type === "follow-up") {
-    return `${name} — ${summary}. Follow-up completed. Call ended.`;
+    return t("dashboard.playSummary.followUp", { name, summary });
   }
   if (card.type === "urgent") {
-    return `Emergency call from ${name}. ${summary}. Owner alerted. Call ended.`;
+    return t("dashboard.playSummary.urgent", { name, summary });
   }
-  return `${name} — ${summary}. Call ended.`;
+  return t("dashboard.playSummary.generic", { name, summary });
 }
 
 function formatTimeLabel(iso?: string | null): string {
@@ -138,11 +142,12 @@ const getProgressLabels = (t: (k: string) => string): Record<string, string> => 
 });
 
 function ActivityDateLabel() {
+  const locale = useLocale();
   const [dateLabel, setDateLabel] = useState("");
   useEffect(() => {
     const id = window.setTimeout(() => {
       setDateLabel(
-        new Date().toLocaleDateString("en-US", {
+        new Date().toLocaleDateString(locale ?? "en", {
           weekday: "short",
           month: "short",
           day: "numeric",
@@ -150,7 +155,7 @@ function ActivityDateLabel() {
       );
     }, 0);
     return () => window.clearTimeout(id);
-  }, []);
+  }, [locale]);
   return <span className="text-xs text-[var(--text-tertiary)]">{dateLabel}</span>;
 }
 
@@ -471,6 +476,50 @@ export default function AppActivityPage() {
       client.removeChannel(channel);
     };
   }, [t]);
+
+  // Poll for activity updates every 30 seconds (fallback for realtime)
+  useEffect(() => {
+    if (!workspaceId) return;
+    const interval = setInterval(() => {
+      apiFetch<{ calls?: CallRecord[] }>(
+        `/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { credentials: "include", timeout: 8000, retries: 1 },
+      )
+        .then((data) => {
+          const calls = (data.calls ?? []).slice(0, 20);
+          const dayLabels = [
+            t("dashboard.days.sun"),
+            t("dashboard.days.mon"),
+            t("dashboard.days.tue"),
+            t("dashboard.days.wed"),
+            t("dashboard.days.thu"),
+            t("dashboard.days.fri"),
+            t("dashboard.days.sat"),
+          ];
+          const volumeMap = new Map<string, number>();
+          dayLabels.forEach((d) => volumeMap.set(d, 0));
+          calls.forEach((c) => {
+            const ts = c.call_started_at ?? c.call_ended_at ?? null;
+            if (!ts) return;
+            const d = new Date(ts);
+            if (Number.isNaN(d.getTime())) return;
+            const label = dayLabels[d.getDay()];
+            volumeMap.set(label, (volumeMap.get(label) ?? 0) + 1);
+          });
+          setCallVolumeData(
+            dayLabels.map((d) => ({
+              day: d,
+              calls: volumeMap.get(d) ?? 0,
+            })),
+          );
+        })
+        .catch(() => {
+          // Silent fail on polling errors
+        });
+    }, 30000); // Poll every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [workspaceId, t]);
 
   useEffect(() => {
     let cancelled = false;

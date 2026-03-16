@@ -34,8 +34,16 @@ export async function POST(req: NextRequest) {
     form = entries;
 
     const sig = req.headers.get("x-twilio-signature");
-    if (sig && process.env.TWILIO_AUTH_TOKEN) {
-      const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/voice`;
+    const hasToken = Boolean(process.env.TWILIO_AUTH_TOKEN);
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/voice`;
+
+    if (process.env.NODE_ENV === "production") {
+      // In production we require both a token and a valid signature.
+      if (!hasToken || !sig || !verifyTwilioSignature(url, entries, sig)) {
+        return new NextResponse("Invalid signature", { status: 401 });
+      }
+    } else if (sig && hasToken) {
+      // In non-production, verify when signature is present but don't require it
       if (!verifyTwilioSignature(url, entries, sig)) {
         return new NextResponse("Invalid signature", { status: 403 });
       }

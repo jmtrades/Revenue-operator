@@ -508,6 +508,29 @@ export default function InboxPage() {
     persistInboxSnapshot(workspaceId, threads);
   }, [workspaceId, threads]);
 
+  // Poll for new messages every 30 seconds (skip if user is actively composing)
+  useEffect(() => {
+    if (!workspaceId || input.trim()) return;
+    const interval = setInterval(() => {
+      fetch(`/api/inbox?workspace_id=${encodeURIComponent(workspaceId)}`, {
+        credentials: "include",
+      })
+        .then((r) => (r.ok ? r.json() : { threads: [] }))
+        .then((data: { threads?: InboxThread[] }) => {
+          const list = data.threads ?? [];
+          if (list.length > 0) {
+            setThreads(list);
+            persistInboxSnapshot(workspaceId, list);
+          }
+        })
+        .catch(() => {
+          // Silent fail on polling errors
+        });
+    }, 30000); // Poll every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [workspaceId, input]);
+
   const activeThread = useMemo(
     () => threads.find((t) => t.id === selectedId) ?? threads[0] ?? null,
     [threads, selectedId],
@@ -519,6 +542,7 @@ export default function InboxPage() {
     setThreads((prev) => prev.map((t) => (t.id === id ? { ...t, unread: false } : t)));
   };
 
+  // Send message via /api/messages/send which handles SMS, email, and WhatsApp delivery
   const handleSend = async () => {
     if (!activeThread || !input.trim()) return;
     const content = input.trim();
@@ -526,6 +550,7 @@ export default function InboxPage() {
     const channel: InboxChannel = replyChannel === "sms" ? "sms" : replyChannel === "whatsapp" ? "whatsapp" : "email";
     setSending(true);
     try {
+      // POST /api/messages/send accepts {lead_id, content, channel} and persists to messages table
       const res = await fetch("/api/messages/send", {
         method: "POST",
         credentials: "include",

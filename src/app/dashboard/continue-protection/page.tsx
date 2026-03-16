@@ -21,6 +21,7 @@ export default function ContinueProtectionPage() {
   const [billingStatus, setBillingStatus] = useState<{ renewal_at?: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [_step, _setStep] = useState<"interstitial" | "payment">("interstitial");
 
   useEffect(() => {
@@ -153,6 +154,7 @@ export default function ContinueProtectionPage() {
         <button
           disabled={checkoutLoading}
           onClick={async () => {
+            setCheckoutError(null);
             setCheckoutLoading(true);
             try {
               const res = await fetch("/api/billing/checkout", {
@@ -164,10 +166,17 @@ export default function ContinueProtectionPage() {
                   cancel_url: `${typeof window !== "undefined" ? window.location.origin : ""}/dashboard/continue-protection`,
                 }),
               });
-              const data = await res.json();
-              if (data.checkout_url) window.location.href = data.checkout_url;
+              const data = (await res.json().catch(() => ({}))) as { ok?: boolean; checkout_url?: string; reason?: string };
+              if (data.checkout_url) {
+                window.location.href = data.checkout_url;
+                return;
+              }
+              if (res.ok && data.ok && data.reason === "already_active") {
+                return;
+              }
+              setCheckoutError(tc("checkoutError"));
             } catch {
-              // fallback: continue protection without checkout (trial continues)
+              setCheckoutError(tc("checkoutError"));
             } finally {
               setCheckoutLoading(false);
             }
@@ -185,6 +194,15 @@ export default function ContinueProtectionPage() {
           {tc("notNow")}
         </Link>
       </div>
+
+      {checkoutError && (
+        <div className="mt-4 p-3 rounded-xl text-sm" style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)", color: "var(--text-primary)" }}>
+          <p className="mb-2">{checkoutError}</p>
+          <button type="button" onClick={() => setCheckoutError(null)} className="text-xs font-medium underline underline-offset-2" style={{ color: "var(--text-secondary)" }}>
+            {tc("checkoutErrorDismiss")}
+          </button>
+        </div>
+      )}
 
       <p className="mt-4 text-xs" style={{ color: "var(--text-muted)" }}>
         {tc("coverageRemainsHint")}
