@@ -1,4 +1,10 @@
 {
+  "notFoundPage": {
+    "title": "Page not found",
+    "description": "This page doesn't exist.",
+    "goHome": "Go home",
+    "contactSupport": "Contact support"
+  },
   "app": {
     "title": "Recall Touch — AI Phone Calls, Handled",
     "dashboardTitle": "Dashboard",
@@ -238,6 +244,11 @@
   },
   "billing": {
     "pageTitle": "Billing — Recall Touch",
+    "failureBanner": {
+      "primary": "Handling coverage could not continue.",
+      "message": "Update your payment method in Preferences to resume coverage.",
+      "preferencesLink": "Preferences"
+    },
     "loadError": "Unable to load billing details.",
     "loadErrorDesc": "Connect your billing to manage your subscription, or try again in a moment.",
     "backToSettings": "Back to Settings",
@@ -284,6 +295,14 @@
     "errors": {
       "loadingFailed": "Failed to load billing information",
       "loadingFailedDesc": "Please try again or contact support if the problem persists."
+    },
+    "protectionPaused": {
+      "title": "Normal conditions are not present.",
+      "noHandling": "Handling is no longer present for new enquiries.",
+      "manualConfirmation": "Attendance confirmation will require manual follow-through.",
+      "decisionsStall": "Ongoing decisions may stall.",
+      "upcomingManual": "Upcoming attendance will require manual confirmation.",
+      "resumeHandling": "Resume handling"
     }
   },
   "planChange": {
@@ -1029,7 +1048,9 @@
       "coverageRemainsInPlace": "Coverage remains in place",
       "notNow": "Not now",
       "coverageRemainsHint": "Coverage remains in place. Pause anytime. Resume as needed.",
-      "more": "+{count} more"
+      "more": "+{count} more",
+      "checkoutError": "Could not start checkout. Please try again or contact support.",
+      "checkoutErrorDismiss": "Dismiss"
     },
     "reportsPage": {
       "selectWorkspace": "Follow-through in progress appears here.",
@@ -1472,6 +1493,10 @@
       "transferred": "Transferred",
       "missed": "Missed",
       "voicemail": "Voicemail"
+    },
+    "charts": {
+      "callVolumeTitle": "Call volume (by day)",
+      "outcomeBreakdown": "Outcome breakdown"
     },
     "days": {
       "mon": "Mon",
@@ -3123,7 +3148,22 @@
     "daysLabel": "days",
     "messageTemplate": "Message template",
     "minScore": "Minimum score",
+    "scoreGte": "Score ≥ {score}",
+    "notContactedIn": "Not contacted in {days} days",
     "notContactedInDays": "Not contacted in X days",
+    "scheduledAt": "Scheduled {date}",
+    "scheduleDisplay": "Schedule: {type}",
+    "triggerDisplay": "Trigger: {type}",
+    "sequenceDisplay": "Sequence: {steps}",
+    "waitStep": "Wait {days}d",
+    "campaignType": {
+      "lead_follow_up": "Lead follow-up",
+      "reactivation": "Reactivation",
+      "appointment_reminder": "Appointment reminder",
+      "qualification": "Qualification",
+      "missed_call_recovery": "Missed-call recovery",
+      "custom": "Custom"
+    },
     "progress": "Progress",
     "scheduleTypeLabel": "Schedule type",
     "scheduleTypes": {
@@ -4352,6 +4392,38 @@
       "docs": "Docs",
       "terms": "Terms",
       "privacy": "Privacy"
+    },
+    "solutions": {
+      "plumbingHvac": "Plumbing & HVAC",
+      "dental": "Dental",
+      "legal": "Legal",
+      "realEstate": "Real Estate",
+      "healthcare": "Healthcare"
+    },
+    "productLinks": {
+      "bookDemo": "Book a demo",
+      "features": "Features",
+      "pricing": "Pricing",
+      "documentation": "Documentation",
+      "changelog": "Changelog",
+      "api": "API"
+    },
+    "companyLinks": {
+      "about": "About",
+      "blog": "Blog",
+      "contact": "Contact"
+    },
+    "useCases": {
+      "inboundCalls": "Inbound Calls",
+      "outboundCampaigns": "Outbound Campaigns",
+      "appointmentScheduling": "Appointment Scheduling",
+      "leadFollowUp": "Lead Follow-Up",
+      "afterHoursCoverage": "After-Hours Coverage",
+      "callScreening": "Call Screening"
+    },
+    "legal": {
+      "privacy": "Privacy",
+      "terms": "Terms"
     }
   },
   "pricing": {
@@ -4420,10 +4492,23 @@
     "roiCalculator": "ROI calculator",
     "featureComparison": "Feature comparison",
     "feature": "Feature",
+    "comparisonRows": [
+      { "category": "Core", "name": "Inbound min/mo" },
+      { "category": "Core", "name": "AI agents" },
+      { "category": "Core", "name": "Outbound calls/mo" },
+      { "category": "Core", "name": "SMS included" },
+      { "category": "Features", "name": "Inbox (unified messaging)" },
+      { "category": "Features", "name": "Knowledge base" },
+      { "category": "Features", "name": "Appointment booking" },
+      { "category": "Features", "name": "Outbound campaigns" },
+      { "category": "Features", "name": "API access" },
+      { "category": "Features", "name": "Compliance export" },
+      { "category": "Support", "name": "Priority support" }
+    ],
     "annualNote": "Two months applied without interruption on annual commitment.",
     "trustedBy": "Trusted by leading teams in service, healthcare, and local business.",
     "questionsTalkToUs": "Questions? Talk to us →",
-    "faq": [
+    "faqItems": [
       { "q": "How does the free trial work?", "a": "14 days, full features, no credit card needed." },
       { "q": "What if I exceed my minutes?", "a": "Calls continue at overage rate, never cut off." },
       { "q": "Can I keep my existing number?", "a": "Yes, forward it to your Recall Touch number." },
@@ -4457,6 +4542,73 @@
       "cancel": "Can I cancel anytime?",
       "cancelAnswer": "Yes — you can cancel or change plans at any time from the billing settings."
     }
+  },
+  "stripePricingTable": {
+    "configError": "Configure NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY and NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID to show the pricing table."
+  },
+  "declare": {
+    "pageTitle": "Declare operating posture",
+    "heading": "Declare operating posture.",
+    "descriptionLine1": "You are defining how conversations are handled.",
+    "descriptionLine2": "Declaration may be amended without interrupting execution.",
+    "jurisdictionStep": {
+      "title": "Declared jurisdiction",
+      "description": "All execution is governed according to declared jurisdiction."
+    },
+    "jurisdictionLabel": "Jurisdiction",
+    "jurisdictionHint": "Jurisdiction determines compliance boundaries.",
+    "jurisdictions": [
+      { "value": "United States", "label": "United States" },
+      { "value": "UK", "label": "UK" },
+      { "value": "EU", "label": "EU" },
+      { "value": "Other", "label": "Other" }
+    ],
+    "reviewStep": {
+      "title": "Review structure",
+      "description": "Defines escalation and oversight structure."
+    },
+    "reviewLabel": "Review structure",
+    "reviewHint": "Review structure determines escalation behavior.",
+    "reviewLevels": [
+      { "value": "Preview required", "label": "Preview required" },
+      { "value": "Approval required", "label": "Approval required" },
+      { "value": "Standard", "label": "Standard" }
+    ],
+    "sourceStep": {
+      "title": "Record primary source",
+      "description": "Execution begins only after a source is recorded."
+    },
+    "sourceOptions": [
+      { "id": "csv", "label": "Upload source" },
+      { "id": "calendar", "label": "Connect calendar" },
+      { "id": "phone", "label": "Connect phone" }
+    ],
+    "sourceHint1": "No source. No execution.",
+    "sourceHint2": "Sources include uploaded lead lists, phone lines, and calendar enquiries.",
+    "sourceHint3": "You may begin with a single source.",
+    "purposeStep": {
+      "title": "Operational purpose",
+      "description": "Purpose determines objective and stop conditions."
+    },
+    "purposeOptions": [
+      { "value": "Qualify", "label": "Qualify" },
+      { "value": "Confirm", "label": "Confirm" },
+      { "value": "Collect", "label": "Collect" },
+      { "value": "Reactivate", "label": "Reactivate" },
+      { "value": "Route", "label": "Route" },
+      { "value": "Recover", "label": "Recover" }
+    ],
+    "purposeHint": "Purpose directs objectives and outcomes.",
+    "governanceStep": {
+      "title": "Place under governance"
+    },
+    "governanceHint": "Execution is applied under declared jurisdiction and review depth.",
+    "activateButton": "Place under governance",
+    "successMessage": "Execution is now under institutional governance.",
+    "successHint": "Handling begins once a source is recorded.",
+    "continueButton": "Continue",
+    "backButton": "Back",
+    "selectPlaceholder": "Select"
   },
   "languageSwitcher": {
     "label": "Language",
@@ -5542,6 +5694,7 @@
     "terms": "Terms",
     "privacyPolicy": "Privacy Policy",
     "cancelError": "No problem — protection didn't start.",
+    "trialError": "We couldn't start checkout. Please try again or contact support.",
     "wizardHeading": "Activation",
     "wizardTitle": "Let's get your phone agent ready.",
     "wizardSubtitle": "This takes about 3 minutes. You'll hear your agent handle a real call at the end.",
@@ -5980,6 +6133,9 @@
     "marketplaceNoNumbersFound": "No numbers found. Try a different area code or type.",
     "marketplaceAdding": "Adding…",
     "marketplaceGetThisNumber": "Get this number",
+    "perMonth": "/mo",
+    "inputPlaceholder": "Phone number",
+    "invalidNumber": "Invalid number for selected country",
     "releaseTitleUnassign": "Unassign from agent in Agents first",
     "releaseTitleRelease": "Release number",
     "releaseLabel": "Release",
@@ -6290,5 +6446,8 @@
     "quickSearch": "Quick search",
     "closeShortcutsHelp": "Close shortcuts help",
     "morePages": "More pages"
+  },
+  "legal": {
+    "languageNotice": "This document is available in English only."
   }
 }

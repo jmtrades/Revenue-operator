@@ -19,7 +19,13 @@ export async function requireWorkspaceAccess(
   req: NextRequest,
   workspaceId: string
 ): Promise<NextResponse | null> {
-  if (!isSessionEnabled()) return null;
+  if (!isSessionEnabled()) {
+    if (process.env.NODE_ENV === "production") {
+      console.error("[SECURITY] requireWorkspaceAccess called with sessions disabled in production");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return null; // Allow in development only
+  }
   const session = await getSession(req);
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const db = getDb();
@@ -52,7 +58,12 @@ export async function requireWorkspaceRole(
 ): Promise<NextResponse | null> {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
-  if (!isSessionEnabled()) return null;
+  if (!isSessionEnabled()) {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return null;
+  }
   const session = await getSession(req);
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const db = getDb();

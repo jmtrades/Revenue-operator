@@ -33,7 +33,10 @@ export async function POST(req: NextRequest) {
     .select("billing_status")
     .eq("id", session.workspaceId)
     .maybeSingle();
-  const status = (workspace as { billing_status?: string } | null)?.billing_status;
+  if (!workspace) {
+    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+  }
+  const status = (workspace as { billing_status?: string }).billing_status;
   if (!status || !["trial", "active"].includes(status)) {
     return NextResponse.json(
       { error: "Active subscription required to provision phone numbers." },
@@ -53,13 +56,21 @@ export async function POST(req: NextRequest) {
   }
 
   const { phone_number, friendly_name, number_type, country } = parsed.data;
-  const normalized = phone_number.replace(/\D/g, "");
-  const e164 =
-    normalized.startsWith("+") || phone_number.trim().startsWith("+")
-      ? phone_number.trim()
-      : normalized.length === 10 && (!country || country === "US")
-        ? `+1${normalized}`
-        : `+${normalized}`;
+  const trimmed = phone_number.trim();
+  let e164: string;
+  if (trimmed.startsWith("+")) {
+    // Trust Twilio marketplace E.164 formatting when provided.
+    e164 = trimmed;
+  } else {
+    const digits = trimmed.replace(/\D/g, "");
+    const upperCountry = (country || "US").toUpperCase();
+    // North America (US/CA) share country code +1; handle 10‑digit NANP numbers explicitly.
+    if ((upperCountry === "US" || upperCountry === "CA") && digits.length === 10) {
+      e164 = `+1${digits}`;
+    } else {
+      e164 = `+${digits}`;
+    }
+  }
 
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -88,8 +99,27 @@ export async function POST(req: NextRequest) {
       });
       if (!purchaseRes.ok) {
         const errText = await purchaseRes.text().catch(() => "");
+        console.error(`[provision] Twilio purchase failed (${purchaseRes.status}):`, errText.slice(0, 500));
+
+        // Parse Twilio error for user-friendly messaging
+        let userMessage = "Could not provision number. It may already be in use or unavailable.";
+        let twilioCode = "";
+        try {
+          const errJson = JSON.parse(errText) as { code?: number; message?: string };
+          twilioCode = String(errJson.code ?? "");
+          if (errJson.code === 21422) userMessage = "This phone number is not available for purchase.";
+          else if (errJson.code === 21452) userMessage = "Your Twilio account is not authorized to purchase numbers in this country. Check your Twilio regulatory bundle.";
+          else if (errJson.code === 21606) userMessage = "This number is not available. Please try a different number.";
+          else if (errJson.code === 20003) userMessage = "Twilio authentication failed. Check TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN.";
+          else if (errJson.code === 20404) userMessage = "Twilio account not found. Verify your Account SID.";
+          else if (errJson.code === 21215 || errJson.code === 21218) userMessage = "Your Twilio account does not have permission to purchase phone numbers. You may need to upgrade from a trial account or complete identity verification.";
+          else if (errJson.message) userMessage = errJson.message;
+        } catch {
+          // Not JSON — use generic message
+        }
+
         return NextResponse.json(
-          { error: "Could not provision number. It may already be in use or unavailable.", details: errText.slice(0, 200) },
+          { error: userMessage, twilio_code: twilioCode, details: errText.slice(0, 300) },
           { status: 400 }
         );
       }
@@ -131,6 +161,31 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     return NextResponse.json({ error: "Failed to save number." }, { status: 500 });
+  }
+
+  // Set as primary workspace number if no config or no proxy yet (so Settings > Phone shows it)
+  const { data: existingConfig } = await db
+    .from("phone_configs")
+    .select("id, proxy_number")
+    .eq("workspace_id", session.workspaceId)
+    .maybeSingle();
+  const cfg = existingConfig as { proxy_number?: string | null } | null;
+  if (!cfg?.proxy_number) {
+    const { error: configErr } = await db.from("phone_configs").upsert(
+      {
+        workspace_id: session.workspaceId,
+        mode: "direct",
+        proxy_number: e164,
+        twilio_account_sid: accountSid ?? null,
+        twilio_phone_sid: providerSid,
+        status: "active",
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "workspace_id" }
+    );
+    if (configErr) {
+      console.error("[provision] phone_configs upsert failed:", configErr);
+    }
   }
 
   return NextResponse.json({

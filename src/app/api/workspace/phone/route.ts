@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   if (authErr) return authErr;
 
   const db = getDb();
-  const [{ data }, { data: ws }] = await Promise.all([
+  const [{ data: configData }, { data: ws }, { data: firstNumber }] = await Promise.all([
     db
       .from("phone_configs")
       .select("proxy_number, status, outbound_from_number, whatsapp_enabled")
@@ -27,18 +27,27 @@ export async function GET(req: NextRequest) {
       .eq("status", "active")
       .maybeSingle(),
     db.from("workspaces").select("verified_phone").eq("id", session.workspaceId).single(),
+    db
+      .from("phone_numbers")
+      .select("phone_number")
+      .eq("workspace_id", session.workspaceId)
+      .eq("status", "active")
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
-  const cfg = data as {
+  const cfg = configData as {
     proxy_number?: string | null;
     status?: string;
     outbound_from_number?: string | null;
     whatsapp_enabled?: boolean | null;
   } | null;
   const workspace = ws as { verified_phone?: string | null } | null;
+  const primaryNumber = cfg?.proxy_number ?? (firstNumber as { phone_number?: string } | null)?.phone_number ?? null;
   return NextResponse.json({
-    phone_number: cfg?.proxy_number ?? null,
-    status: cfg?.status ?? null,
+    phone_number: primaryNumber,
+    status: cfg?.status ?? (primaryNumber ? "active" : null),
     outbound_from_number: cfg?.outbound_from_number ?? null,
     whatsapp_enabled: cfg?.whatsapp_enabled ?? false,
     verified_phone: workspace?.verified_phone ?? null,

@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
       log("checkout_failed", { reason: "missing_stripe_key" });
-      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
     const origin = effectiveOrigin(req);
     if (!origin) {
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
     
     if (!ws) {
       log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "workspace_not_found" });
-      return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 404 });
     }
 
     const wsData = ws as { billing_status?: string; stripe_subscription_id?: string | null };
@@ -167,27 +167,63 @@ export async function POST(req: NextRequest) {
     const successUrl = body.success_url ?? `${origin}/connect?workspace_id=${encodeURIComponent(finalWorkspaceId)}&session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = body.cancel_url ?? `${origin}/activate?canceled=1`;
 
-    let customerId = (ws as { stripe_customer_id?: string | null }).stripe_customer_id;
+    // Idempotent customer creation to avoid race conditions:
+    // 1. Reuse existing stripe_customer_id when present.
+    // 2. If absent, create a customer, then attempt to claim the workspace row
+    //    only if stripe_customer_id is still null. If another request won the race,
+    //    fall back to the stored customer id and leave the extra Stripe customer orphaned.
+    let customerId = (ws as { stripe_customer_id?: string | null }).stripe_customer_id ?? null;
     if (!customerId) {
       try {
         const customer = await stripe.customers.create({
-          email: finalEmail,
+          email: finalEmail || undefined,
           metadata: { workspace_id: finalWorkspaceId },
           invoice_settings: { footer: RECEIPT_FOOTER },
         });
-        customerId = customer.id;
-        await db.from("workspaces").update({
-          stripe_customer_id: customerId,
-          updated_at: new Date().toISOString(),
-        }).eq("id", finalWorkspaceId);
-      } catch (_err) {
-        log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed" });
+        const createdId = customer.id;
+
+        const { data: claimed, error: claimError } = await db
+          .from("workspaces")
+          .update({
+            stripe_customer_id: createdId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", finalWorkspaceId)
+          .is("stripe_customer_id", null)
+          .select("stripe_customer_id")
+          .maybeSingle();
+
+        if (claimError) {
+          log("checkout_failed", {
+            workspace_id: finalWorkspaceId,
+            reason: "customer_claim_failed",
+            db_error: claimError.message,
+          });
+          return NextResponse.json({ ok: false, reason: "customer_create_failed" }, { status: 502 });
+        }
+
+        if (claimed?.stripe_customer_id) {
+          customerId = claimed.stripe_customer_id as string;
+        } else {
+          // Another request likely set stripe_customer_id first; reuse that value.
+          const { data: refreshed } = await db
+            .from("workspaces")
+            .select("stripe_customer_id")
+            .eq("id", finalWorkspaceId)
+            .maybeSingle();
+          customerId = (refreshed as { stripe_customer_id?: string | null } | null)?.stripe_customer_id ?? createdId;
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "unknown_error";
+        log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed", error: message });
         return NextResponse.json({ ok: false, reason: "customer_create_failed" }, { status: 502 });
       }
     } else {
-      await stripe.customers.update(customerId, {
-        invoice_settings: { footer: RECEIPT_FOOTER },
-      }).catch(() => {});
+      await stripe.customers
+        .update(customerId, {
+          invoice_settings: { footer: RECEIPT_FOOTER },
+        })
+        .catch(() => {});
     }
 
     try {

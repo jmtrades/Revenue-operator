@@ -109,7 +109,12 @@ export function getSourceDisplay(source: LeadSource, t: (key: string) => string)
   return map[source] ?? source;
 }
 
-function mapApiLeadToView(l: ApiLead, index: number, t: (key: string) => string): LeadView {
+function mapApiLeadToView(
+  l: ApiLead,
+  index: number,
+  t: (key: string) => string,
+  agentsById?: Map<string, { id: string; name?: string | null }>,
+): LeadView {
   const name = l.name?.trim() || l.company?.trim() || t("leads.defaultName");
   const status: LeadStatus =
     (l.state === "new" && "New") ||
@@ -125,6 +130,9 @@ function mapApiLeadToView(l: ApiLead, index: number, t: (key: string) => string)
   const service = meta?.service_requested?.trim() || l.company || t("leads.defaultService");
   const createdAt = l.last_activity_at;
   const lastContactAt = l.last_activity_at;
+  const assignedAgentId = (l as { assigned_agent_id?: string | null } | null)?.assigned_agent_id ?? null;
+  const assignedAgentName =
+    assignedAgentId && agentsById ? agentsById.get(assignedAgentId)?.name?.trim() || "" : "";
   const notes =
     meta?.notes?.trim() ||
     (l.company && l.value_cents ? `${l.company} with potential value ~$${Math.round((l.value_cents ?? 0) / 100).toLocaleString()}.` : t("leads.defaultDescription"));
@@ -143,7 +151,7 @@ function mapApiLeadToView(l: ApiLead, index: number, t: (key: string) => string)
     service,
     createdAt,
     lastContactAt,
-    assignedAgent: "Sarah",
+    assignedAgent: assignedAgentName,
     notes,
     linkedCallId: undefined,
     timeline,
@@ -181,6 +189,7 @@ export default function LeadsPage() {
   const snapshotWorkspaceId =
     workspaceId || workspaceSnapshot?.id?.trim() || "default";
   const initialLeads = readLeadsSnapshot(snapshotWorkspaceId);
+  const [agents, setAgents] = useState<Array<{ id: string; name?: string | null }>>([]);
   const [loading, setLoading] = useState(initialLeads.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -219,6 +228,23 @@ export default function LeadsPage() {
   }, [t]);
 
   useEffect(() => {
+    if (!workspaceId) return;
+    let cancelled = false;
+    fetch(`/api/agents?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { agents?: Array<{ id: string; name?: string | null }> } | null) => {
+        if (cancelled) return;
+        setAgents(Array.isArray(data?.agents) ? data!.agents : []);
+      })
+      .catch(() => {
+        if (!cancelled) setAgents([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [workspaceId]);
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
       if (addLeadOpen) setAddLeadOpen(false);
@@ -241,7 +267,11 @@ export default function LeadsPage() {
       .then((data: { leads?: ApiLead[] }) => {
         if (cancelled) return;
         const apiLeads = data.leads ?? [];
-        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i, t));
+        const agentsById =
+          agents.length > 0
+            ? new Map<string, { id: string; name?: string | null }>(agents.map((a) => [a.id, a]))
+            : undefined;
+        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i, t, agentsById));
         setError(null);
         setLeads(mapped);
         persistLeadsSnapshot(workspaceId, mapped);
@@ -253,7 +283,7 @@ export default function LeadsPage() {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [workspaceId, t]);
+  }, [workspaceId, t, agents]);
 
   useEffect(() => {
     const client = getClientOrNull();
@@ -288,6 +318,33 @@ export default function LeadsPage() {
       client.removeChannel(channel);
     };
   }, [t]);
+
+  // Poll for updates every 30 seconds (fallback for realtime; skip if drawer is open with unsaved edits)
+  useEffect(() => {
+    if (!workspaceId || drawerLead) return;
+    const interval = setInterval(() => {
+      fetch(`/api/leads?workspace_id=${encodeURIComponent(workspaceId)}`, {
+        credentials: "include",
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data: { leads?: ApiLead[] } | null) => {
+          if (!data?.leads) return;
+          const apiLeads = data.leads;
+          const agentsById =
+            agents.length > 0
+              ? new Map<string, { id: string; name?: string | null }>(agents.map((a) => [a.id, a]))
+              : undefined;
+          const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i, t, agentsById));
+          setLeads(mapped);
+          persistLeadsSnapshot(workspaceId, mapped);
+        })
+        .catch(() => {
+          // Silent fail on polling errors
+        });
+    }, 30000); // Poll every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [workspaceId, drawerLead, agents, t]);
 
   const totalCount = leads.length;
 
@@ -422,7 +479,11 @@ export default function LeadsPage() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data: { leads?: ApiLead[] }) => {
         const apiLeads = data?.leads ?? [];
-        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i, t));
+        const agentsById =
+          agents.length > 0
+            ? new Map<string, { id: string; name?: string | null }>(agents.map((a) => [a.id, a]))
+            : undefined;
+        const mapped = apiLeads.map((l, i) => mapApiLeadToView(l, i, t, agentsById));
         setLeads(mapped);
         persistLeadsSnapshot(workspaceId, mapped);
       })
@@ -807,14 +868,14 @@ export default function LeadsPage() {
             ))}
             <span className="h-4 w-px bg-[var(--bg-card)]" />
             <span className="text-zinc-500">{t("leads.assign")}</span>
-            {["Sarah", "Alex", "Emma"].map((agent) => (
+            {agents.map((agent) => (
               <button
-                key={agent}
+                key={agent.id}
                 type="button"
-                onClick={() => bulkAssignAgent(agent)}
+                onClick={() => bulkAssignAgent(agent.name || "")}
                 className="px-2 py-1 rounded-full border border-[var(--border-default)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
               >
-                {agent}
+                {agent.name || t("leads.unknownAgent")}
               </button>
             ))}
           </div>

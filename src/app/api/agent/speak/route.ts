@@ -5,6 +5,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const ELEVENLABS_VOICE_RACHEL = "21m00Tcm4TlvDq8ikWAM"; // Rachel — natural female
 const ELEVENLABS_MODEL = "eleven_turbo_v2_5"; // Same as live calls: fast, very human-like, 32 languages
@@ -15,6 +16,16 @@ async function getHumanVoiceDefaults() {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 10 TTS requests per minute per IP (expensive API)
+  const ip = getClientIp(req);
+  const rl = checkRateLimit(`agent-speak:${ip}`, 10, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests", fallback: "browser" },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+    );
+  }
+
   const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
   if (!apiKey) {
     return NextResponse.json(
@@ -67,7 +78,6 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       await res.text();
-      // ElevenLabs error; return below
       return NextResponse.json(
         { error: "TTS failed", fallback: "browser" },
         { status: 502 }
@@ -83,8 +93,7 @@ export async function POST(req: NextRequest) {
         "Cache-Control": "no-store",
       },
     });
-  } catch (e) {
-    // Request failed; error response below
+  } catch {
     return NextResponse.json(
       { error: "TTS request failed", fallback: "browser" },
       { status: 502 }

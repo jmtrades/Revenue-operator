@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
-import { PAYMENT_FAILURE_PRIMARY } from "@/lib/billing-copy";
+import { useTranslations } from "next-intl";
 
 /**
  * Payment failure banner: Primary message only; payment/retry in secondary line.
@@ -11,6 +11,7 @@ import { PAYMENT_FAILURE_PRIMARY } from "@/lib/billing-copy";
 
 export function BillingFailureBanner() {
   const { workspaceId } = useWorkspace();
+  const t = useTranslations("billing");
   const [billingStatus, setBillingStatus] = useState<{ billing_status?: string } | null>(null);
   const [dismissed, _setDismissed] = useState(false);
 
@@ -30,9 +31,9 @@ export function BillingFailureBanner() {
     <div className="px-4 py-3 border-b text-sm" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="font-medium" style={{ color: "var(--text-primary)" }}>{PAYMENT_FAILURE_PRIMARY}</p>
+          <p className="font-medium" style={{ color: "var(--text-primary)" }}>{t("failureBanner.primary")}</p>
           <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
-            Update your payment method in Preferences to resume coverage.
+            {t("failureBanner.message")}
           </p>
         </div>
         <Link
@@ -40,7 +41,7 @@ export function BillingFailureBanner() {
           className="text-sm font-medium shrink-0"
           style={{ color: "var(--meaning-green)" }}
         >
-          Preferences
+          {t("failureBanner.preferencesLink")}
         </Link>
       </div>
     </div>

@@ -1,26 +1,28 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const t = await getTranslations("notFoundPage");
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[var(--bg-base)]">
       <div className="max-w-md w-full text-center">
         <p className="text-6xl font-bold mb-2 text-white">404</p>
-        <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Page not found</h1>
-        <p className="text-sm text-[var(--text-secondary)] mb-6">This page doesn’t exist.</p>
+        <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-3">{t("title")}</h1>
+        <p className="text-sm text-[var(--text-secondary)] mb-6">{t("description")}</p>
         <div className="flex gap-3 justify-center flex-wrap">
           <Link
             href="/"
-            aria-label="Go to homepage"
+            aria-label={t("goHome")}
             className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none transition"
           >
-            Go home
+            {t("goHome")}
           </Link>
           <Link
             href="/contact"
-            aria-label="Contact support"
+            aria-label={t("contactSupport")}
             className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none transition"
           >
-            Contact support
+            {t("contactSupport")}
           </Link>
         </div>
       </div>

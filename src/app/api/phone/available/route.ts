@@ -5,6 +5,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { SUPPORTED_PHONE_COUNTRIES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +24,8 @@ export async function GET(req: NextRequest) {
   if (!session?.userId || !session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
 
   const { searchParams } = req.nextUrl;
   const country = searchParams.get("country") || "US";
@@ -33,13 +37,7 @@ export async function GET(req: NextRequest) {
   const authToken = process.env.TWILIO_AUTH_TOKEN;
 
   const countryCode = (country || "US").toUpperCase();
-  const SUPPORTED_COUNTRIES = [
-    "US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "SE",
-    "NO", "DK", "FI", "IE", "AT", "CH", "BE", "PT", "JP", "BR",
-    "MX", "IN", "SG", "HK", "NZ", "ZA", "IL", "PL", "CZ"
-  ];
-
-  if (!SUPPORTED_COUNTRIES.includes(countryCode)) {
+  if (!SUPPORTED_PHONE_COUNTRIES.includes(countryCode as (typeof SUPPORTED_PHONE_COUNTRIES)[number])) {
     return NextResponse.json({ error: "Country not supported" }, { status: 400 });
   }
 
@@ -82,25 +80,9 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Fallback: return placeholder options when Twilio not configured
-  const placeholders: AvailableNumber[] = [
-    {
-      phone_number: "+15551234567",
-      friendly_name: "(555) 123-4567",
-      type: "local" as const,
-      monthly_cost_cents: 150,
-      setup_fee_cents: 0,
-      capabilities: { voice: true, sms: true, mms: false },
-    },
-    {
-      phone_number: "+18005551234",
-      friendly_name: "(800) 555-1234",
-      type: "toll_free" as const,
-      monthly_cost_cents: 200,
-      setup_fee_cents: 0,
-      capabilities: { voice: true, sms: true, mms: false },
-    },
-  ].filter((n) => !areaCode || n.phone_number.includes(areaCode));
-
-  return NextResponse.json({ numbers: placeholders });
+  // Twilio not configured — return empty list with helpful message
+  return NextResponse.json({
+    numbers: [],
+    message: "Phone provider not configured. Contact support to enable number purchasing.",
+  });
 }

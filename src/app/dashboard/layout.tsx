@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * LIMITATION: This is a client component that performs auth checks client-side.
+ * Ideally, auth should be checked server-side with a redirect to /sign-in if no session.
+ * Refactoring to server-side is complex due to:
+ * - Multiple useEffect hooks for workspace loading, redirects, and localStorage access
+ * - Dynamic path validation (ALLOWED_DASHBOARD_PATHS array)
+ * - Client-side state management (WorkspaceContext)
+ * - useRouter for programmatic navigation
+ *
+ * Current client-side redirect fallback (line 154) ensures users without workspaces
+ * are redirected to /activate, maintaining security even without server-side checks.
+ */
+
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

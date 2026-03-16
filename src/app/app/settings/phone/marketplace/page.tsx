@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { formatCurrencyCents } from "@/lib/currency";
 import { toast } from "sonner";
 import { Phone, Search, Loader2, ArrowLeft } from "lucide-react";
+import { SUPPORTED_PHONE_COUNTRIES } from "@/lib/constants";
 
 type AvailableNumber = {
   phone_number: string;
@@ -34,6 +35,15 @@ export default function PhoneMarketplacePage() {
   const tToast = useTranslations("toast");
   const tPhone = useTranslations("phone");
   const [country, setCountry] = useState("US");
+
+  const countryNames = useMemo(() => {
+    try {
+      const dn = new Intl.DisplayNames([locale], { type: "region" });
+      return Object.fromEntries(SUPPORTED_PHONE_COUNTRIES.map((c) => [c, dn.of(c) ?? c]));
+    } catch {
+      return Object.fromEntries(SUPPORTED_PHONE_COUNTRIES.map((c) => [c, c]));
+    }
+  }, [locale]);
   const [state, setState] = useState("");
   const [areaCode, setAreaCode] = useState("");
   const [type, setType] = useState<"local" | "toll_free">("local");
@@ -70,8 +80,8 @@ export default function PhoneMarketplacePage() {
 
   useEffect(() => {
     search();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-search when country or type changes
+  }, [country, type]);
 
   const handleProvision = async (num: AvailableNumber) => {
     setProvisioning(num.phone_number);
@@ -87,9 +97,14 @@ export default function PhoneMarketplacePage() {
           country,
         }),
       });
-      const data = (await res.json()) as { error?: string; phone_number?: string };
+      const data = (await res.json()) as { error?: string; twilio_code?: string; phone_number?: string };
       if (!res.ok) {
-        toast.error(data.error ?? tSettings("phone.provisionFailed"));
+        const msg = data.error ?? tSettings("phone.provisionFailed");
+        setError(msg);
+        toast.error(msg);
+        if (data.twilio_code) {
+          console.error("[marketplace] Twilio error code:", data.twilio_code);
+        }
         return;
       }
       toast.success(tSettings("phone.provisioned"));
@@ -133,35 +148,9 @@ export default function PhoneMarketplacePage() {
               onChange={(e) => setCountry(e.target.value)}
               className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
             >
-              <option value="US">United States</option>
-              <option value="CA">Canada</option>
-              <option value="GB">United Kingdom</option>
-              <option value="AU">Australia</option>
-              <option value="DE">Germany</option>
-              <option value="FR">France</option>
-              <option value="ES">Spain</option>
-              <option value="IT">Italy</option>
-              <option value="NL">Netherlands</option>
-              <option value="SE">Sweden</option>
-              <option value="NO">Norway</option>
-              <option value="DK">Denmark</option>
-              <option value="FI">Finland</option>
-              <option value="IE">Ireland</option>
-              <option value="AT">Austria</option>
-              <option value="CH">Switzerland</option>
-              <option value="BE">Belgium</option>
-              <option value="PT">Portugal</option>
-              <option value="JP">Japan</option>
-              <option value="BR">Brazil</option>
-              <option value="MX">Mexico</option>
-              <option value="IN">India</option>
-              <option value="SG">Singapore</option>
-              <option value="HK">Hong Kong</option>
-              <option value="NZ">New Zealand</option>
-              <option value="ZA">South Africa</option>
-              <option value="IL">Israel</option>
-              <option value="PL">Poland</option>
-              <option value="CZ">Czech Republic</option>
+              {SUPPORTED_PHONE_COUNTRIES.map((code) => (
+                <option key={code} value={code}>{countryNames[code]}</option>
+              ))}
             </select>
           </div>
           <div>
@@ -210,8 +199,16 @@ export default function PhoneMarketplacePage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-200 text-sm">
-          {error}
+        <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-200 text-sm flex flex-wrap items-center justify-between gap-2">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => { setError(null); search(); }}
+            disabled={loading}
+            className="text-xs font-medium underline underline-offset-2 hover:no-underline disabled:opacity-50"
+          >
+            {tPhone("marketplaceSearch")}
+          </button>
         </div>
       )}
 
@@ -236,11 +233,11 @@ export default function PhoneMarketplacePage() {
                 </div>
                 <div>
                   <p className="font-semibold text-white font-mono">{formatPhoneDisplay(n.phone_number)}</p>
-                  <p className="text-xs text-zinc-500 capitalize">{n.type.replace("_", " ")}</p>
+                  <p className="text-xs text-zinc-500 capitalize">{n.type === "toll_free" ? tPhone("marketplace.results.type.tollFree") : tPhone("marketplace.results.type.local")}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm text-zinc-400">
-                <span>{formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</span>
+                <span>{formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}{tPhone("perMonth")}</span>
                 {n.capabilities.voice && <span>{tPhone("voice")}</span>}
                 {n.capabilities.sms && <span>{tPhone("sms")}</span>}
               </div>

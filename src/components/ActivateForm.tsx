@@ -135,8 +135,18 @@ export function ActivateForm() {
         window.location.href = trialData.checkout_url ?? trialData.url;
         return;
       }
+
+      if (!trialRes.ok || !trialData.ok) {
+        clearTimeout(loadingTimer);
+        setSubmitting(false);
+        setError(t("trialError"));
+        return;
+      }
     } catch {
-      // ignore; fall through to localStorage success
+      setSubmitting(false);
+      setError(t("trialError"));
+      clearTimeout(loadingTimer);
+      return;
     }
 
     clearTimeout(loadingTimer);

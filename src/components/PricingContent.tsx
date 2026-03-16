@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { AccordionItem } from "@/components/ui/Accordion";
-import { PRICING_TIERS, PRICING_FAQ, COMPARISON_FEATURES, ROUTES } from "@/lib/constants";
+import { PRICING_TIERS, COMPARISON_FEATURES, ROUTES } from "@/lib/constants";
 
 export const ANNUAL_NOTE = "Two months applied without interruption on annual commitment.";
 
@@ -357,7 +357,10 @@ export function PricingContent() {
               </tr>
             </thead>
             <tbody>
-              {COMPARISON_FEATURES.map((row, i) => (
+              {((t.raw("comparisonRows") as Array<{ category: string; name: string }> | undefined) ?? []).map((i18nRow, i) => {
+                const row = COMPARISON_FEATURES[i];
+                if (!row) return null;
+                return (
                 <tr
                   key={i}
                   style={{
@@ -369,7 +372,7 @@ export function PricingContent() {
                     className="py-3 px-4"
                     style={{ color: "var(--text-primary)" }}
                   >
-                    {row.name}
+                    {i18nRow.name}
                   </td>
                   <td
                     className="py-3 px-4"
@@ -396,7 +399,8 @@ export function PricingContent() {
                     {"enterprise" in row ? row.enterprise : ""}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -406,10 +410,10 @@ export function PricingContent() {
           className="font-semibold text-xl mb-6"
           style={{ color: "var(--text-primary)" }}
         >
-          {t("faq")}
+          {t("faq.title")}
         </h2>
         <div className="max-w-2xl mb-16">
-          {PRICING_FAQ.map((faq, i) => (
+          {((t.raw("faqItems") as Array<{ q: string; a: string }> | undefined) ?? []).map((faq, i) => (
             <AccordionItem
               key={i}
               title={faq.q}

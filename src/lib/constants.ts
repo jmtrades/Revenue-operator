@@ -1,3 +1,10 @@
+/** Phone marketplace + API: single source of truth for supported country codes */
+export const SUPPORTED_PHONE_COUNTRIES = [
+  "US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "SE",
+  "NO", "DK", "FI", "IE", "AT", "CH", "BE", "PT", "JP", "BR",
+  "MX", "IN", "SG", "HK", "NZ", "ZA", "IL", "PL", "CZ",
+] as const;
+
 export const ROUTES = {
   /** Core flow: Homepage → Start free → /activate → success → /app/onboarding → /app/activity */
   START: "/activate",
@@ -28,11 +35,11 @@ export const SOLUTIONS_LINKS = [
 ] as const;
 
 export const FOOTER_SOLUTIONS = [
-  { label: "Plumbing & HVAC", href: "/industries/plumbing-hvac" },
-  { label: "Dental", href: "/industries/dental" },
-  { label: "Legal", href: "/industries/legal" },
-  { label: "Real Estate", href: "/industries/real-estate" },
-  { label: "Healthcare", href: "/industries/healthcare" },
+  { labelKey: "solutions.plumbingHvac", href: "/industries/plumbing-hvac" },
+  { labelKey: "solutions.dental", href: "/industries/dental" },
+  { labelKey: "solutions.legal", href: "/industries/legal" },
+  { labelKey: "solutions.realEstate", href: "/industries/real-estate" },
+  { labelKey: "solutions.healthcare", href: "/industries/healthcare" },
 ] as const;
 
 export const PRICING_TIERS = [
@@ -117,32 +124,32 @@ export const PRICING_TIERS = [
 ] as const;
 
 export const FOOTER_PRODUCT = [
-  { label: "Book a demo", href: "/demo" },
-  { label: "Features", href: "/product" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Documentation", href: "/docs" },
-  { label: "Changelog", href: "/docs#changelog" },
-  { label: "API", href: "/docs#api" },
+  { labelKey: "productLinks.bookDemo", href: "/demo" },
+  { labelKey: "productLinks.features", href: "/product" },
+  { labelKey: "productLinks.pricing", href: "/pricing" },
+  { labelKey: "productLinks.documentation", href: "/docs" },
+  { labelKey: "productLinks.changelog", href: "/docs#changelog" },
+  { labelKey: "productLinks.api", href: "/docs#api" },
 ] as const;
 
 export const FOOTER_COMPANY = [
-  { label: "About", href: "/contact" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+  { labelKey: "companyLinks.about", href: "/contact" },
+  { labelKey: "companyLinks.blog", href: "/blog" },
+  { labelKey: "companyLinks.contact", href: "/contact" },
 ] as const;
 
 export const FOOTER_USE_CASES = [
-  { label: "Inbound Calls", href: "/product#answers-every-call" },
-  { label: "Outbound Campaigns", href: "/product#outbound" },
-  { label: "Appointment Scheduling", href: "/product#appointments" },
-  { label: "Lead Follow-Up", href: "/product#leads" },
-  { label: "After-Hours Coverage", href: "/product" },
-  { label: "Call Screening", href: "/product" },
+  { labelKey: "useCases.inboundCalls", href: "/product#answers-every-call" },
+  { labelKey: "useCases.outboundCampaigns", href: "/product#outbound" },
+  { labelKey: "useCases.appointmentScheduling", href: "/product#appointments" },
+  { labelKey: "useCases.leadFollowUp", href: "/product#leads" },
+  { labelKey: "useCases.afterHoursCoverage", href: "/product" },
+  { labelKey: "useCases.callScreening", href: "/product" },
 ] as const;
 
 export const FOOTER_LEGAL = [
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" },
+  { labelKey: "legal.privacy", href: "/privacy" },
+  { labelKey: "legal.terms", href: "/terms" },
 ] as const;
 
 export const PRICING_FAQ = [

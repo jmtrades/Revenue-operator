@@ -301,8 +301,11 @@ export default function CallIntelligencePage() {
         );
         const toneInsight = insightsForCall.find((i) => i.category === "tone");
         const closingInsight = insightsForCall.find((i) => i.category === "closing");
-        if (toneInsight?.insight?.toLowerCase().includes("negative") || toneInsight?.insight?.toLowerCase().includes("poor")) negativeTone += 1;
-        if (closingInsight?.insight?.toLowerCase().includes("missed") || closingInsight?.insight?.toLowerCase().includes("voicemail")) missedOutcome += 1;
+        // Use severity field instead of English keyword matching (locale-safe)
+        const toneSev = (toneInsight as { severity?: string } | undefined)?.severity;
+        if (toneInsight && (toneSev === "high" || toneSev === "critical")) negativeTone += 1;
+        const closeSev = (closingInsight as { severity?: string } | undefined)?.severity;
+        if (closingInsight && (closeSev === "high" || closeSev === "critical")) missedOutcome += 1;
         if (call.duration_seconds != null && call.duration_seconds < 10) shortDuration += 1;
       }
     });

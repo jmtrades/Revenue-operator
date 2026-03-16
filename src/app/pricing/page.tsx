@@ -7,6 +7,11 @@ export { ANNUAL_NOTE, pricingCopyForTests };
 
 const BASE = "https://www.recall-touch.com";
 
+// NOTE: Metadata is static and cannot use next-intl translations.
+// To support localized metadata, use generateMetadata() with getLocale() and getTranslations().
+// For now, metadata uses English strings. Each locale can override by providing locale-specific
+// metadata in separate layout files or using middleware to set metadata per locale.
+
 export const metadata: Metadata = {
   title: "Pricing",
   description: "Simple pricing for AI phone communication. From $297/month. Answer calls, send texts, book appointments, and follow up automatically.",

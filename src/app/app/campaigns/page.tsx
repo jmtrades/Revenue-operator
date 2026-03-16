@@ -186,6 +186,7 @@ export default function CampaignsPage() {
     return campaigns.filter((campaign) => campaign.status === statusFilter);
   }, [campaigns, statusFilter]);
 
+  // Campaign edits are persisted to backend via API calls (POST for create, PATCH for update)
   const createCampaign = async () => {
     if (!form.name.trim()) return;
     setSaving(true);
@@ -206,6 +207,7 @@ export default function CampaignsPage() {
         type: form.type,
         target_filter,
       };
+      // Persist changes to backend: POST /api/campaigns for new, PATCH /api/campaigns/{id} for updates
       const res = await fetch(editingId ? `/api/campaigns/${editingId}` : "/api/campaigns", {
         method: editingId ? "PATCH" : "POST",
         credentials: "include",
@@ -386,20 +388,20 @@ export default function CampaignsPage() {
                             if (src) parts.push(t(src.labelKey));
                           }
                           if (typeof tf?.audience_min_score === "number") {
-                            parts.push(`Score ≥ ${tf.audience_min_score}`);
+                            parts.push(t("scoreGte", { score: tf.audience_min_score }));
                           }
                           if (typeof tf?.audience_not_contacted_days === "number") {
-                            parts.push(`Not contacted in ${tf.audience_not_contacted_days} days`);
+                            parts.push(t("notContactedIn", { days: tf.audience_not_contacted_days }));
                           }
                           return parts.length > 0 ? ` · ${parts.join(" · ")}` : "";
                         })()}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300">
-                          {campaign.type.replace(/_/g, " ")}
+                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300 capitalize">
+                          {t.has(`campaignType.${campaign.type}`) ? t(`campaignType.${campaign.type}` as never) : campaign.type.replace(/_/g, " ")}
                         </span>
-                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300">
-                          {campaign.status}
+                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300 capitalize">
+                          {t.has(`statusFilter.${campaign.status}`) ? t(`statusFilter.${campaign.status}` as never) : campaign.status}
                         </span>
                       </div>
                     </div>
@@ -462,7 +464,10 @@ export default function CampaignsPage() {
                     <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
                       <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{t("campaignRoi")}</p>
                       <p className="mt-1 text-xs text-zinc-400">
-                        Est. cost ~${(campaign.called * 0.05 + campaign.answered * 0.02).toFixed(2)} · Est. revenue ~${(campaign.appointments_booked * 250).toFixed(0)}
+                        {t("roiCampaign", {
+                          cost: `$${(campaign.called * 0.05 + campaign.answered * 0.02).toFixed(2)}`,
+                          revenue: `$${(campaign.appointments_booked * 250).toFixed(0)}`,
+                        })}
                       </p>
                     </div>
                   )}
@@ -473,14 +478,14 @@ export default function CampaignsPage() {
                     <p className="mt-1 text-[11px] text-zinc-500">
                       {campaign.target_filter.schedule_type === "once" || campaign.target_filter.schedule_type === "recurring"
                         ? campaign.target_filter.schedule
-                          ? `Scheduled ${new Date(campaign.target_filter.schedule).toLocaleString()}`
-                          : `Schedule: ${campaign.target_filter.schedule_type}`
-                        : `Trigger: ${campaign.target_filter.schedule_type}`}
+                          ? t("scheduledAt", { date: new Date(campaign.target_filter.schedule).toLocaleString() })
+                          : t("scheduleDisplay", { type: t.has(`scheduleTypes.${campaign.target_filter.schedule_type}`) ? t(`scheduleTypes.${campaign.target_filter.schedule_type}` as never) : campaign.target_filter.schedule_type })
+                        : t("triggerDisplay", { type: campaign.target_filter.schedule_type })}
                     </p>
                   )}
                   {Array.isArray(campaign.target_filter?.sequence) && campaign.target_filter.sequence.length > 0 && (
                     <p className="mt-1 text-[11px] text-zinc-500">
-                      Sequence: {campaign.target_filter.sequence.map((s: { type: string; wait_days?: number }) => s.type === "wait" ? `Wait ${s.wait_days ?? 1}d` : s.type).join(" → ")}
+                      {t("sequenceDisplay", { steps: campaign.target_filter.sequence.map((s: { type: string; wait_days?: number }) => s.type === "wait" ? t("waitStep", { days: s.wait_days ?? 1 }) : (t.has(`touchpointTypes.${s.type}`) ? t(`touchpointTypes.${s.type}` as never) : s.type)).join(" → ") })}
                     </p>
                   )}
                 </div>

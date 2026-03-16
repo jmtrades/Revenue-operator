@@ -2,6 +2,7 @@
  * POST /api/onboard/identity
  * Create workspace immediately from business_name, operator_name, email.
  * No password required (magic link later).
+ * Rate limited to prevent abuse.
  */
 
 export const dynamic = "force-dynamic";
@@ -9,8 +10,24 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { randomUUID } from "crypto";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
+/** Basic email format validation */
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
+}
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 signups per IP per 10 minutes
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(`onboard:${ip}`, 5, 600_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many signup attempts. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+    );
+  }
+
   let body: { business_name?: string; operator_name?: string; email?: string };
   try {
     body = await request.json();
@@ -26,6 +43,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!isValidEmail(normalizedEmail)) {
+    return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+  }
+
+  // Also rate limit per email: 3 attempts per 10 minutes
+  const emailRl = checkRateLimit(`onboard-email:${normalizedEmail}`, 3, 600_000);
+  if (!emailRl.allowed) {
+    return NextResponse.json(
+      { error: "Too many attempts for this email. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const db = getDb();
   const userId = randomUUID();
   const workspaceId = randomUUID();
@@ -33,11 +64,11 @@ export async function POST(request: NextRequest) {
   try {
     await db.from("users").insert({
       id: userId,
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       full_name: operator_name.trim(),
     });
   } catch {
-    const { data: existing } = await db.from("users").select("id").eq("email", email.trim().toLowerCase()).limit(1).maybeSingle();
+    const { data: existing } = await db.from("users").select("id").eq("email", normalizedEmail).limit(1).maybeSingle();
     if (existing) {
       const uid = (existing as { id: string }).id;
       const { data: ws } = await db

@@ -71,10 +71,11 @@ export default function DashboardBillingPage() {
         return_url: typeof window !== "undefined" ? `${window.location.origin}/dashboard/billing` : undefined,
       }),
     })
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error("portal_failed"); return r.json(); })
       .then((d) => {
         if (d?.ok && d?.url) window.location.href = d.url;
       })
+      .catch(() => { /* portal unavailable — button re-enables on finally */ })
       .finally(() => setManaging(false));
   };
 

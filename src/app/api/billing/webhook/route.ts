@@ -67,11 +67,9 @@ async function getSettlementWorkspaceIdBySubscriptionId(subscriptionId: string):
 
 export async function POST(req: NextRequest) {
   if (!webhookSecret) {
-    if (process.env.NODE_ENV === "production") {
-      logWebhookEvent("webhook_no_secret", null, "error");
-      return NextResponse.json({ error: "Webhook secret required in production" }, { status: 500 });
-    }
-    return NextResponse.json({ received: true }, { status: 200 });
+    logWebhookEvent("webhook_no_secret", null, "error");
+    // Never process webhooks without signature verification
+    return NextResponse.json({ error: "Webhook secret not configured" }, { status: 500 });
   }
 
   const body = await req.text();
@@ -120,12 +118,16 @@ export async function POST(req: NextRequest) {
     await handleStripeWebhookEvent(db, event, eventId);
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    await db.from("system_webhook_failures").insert({
-      provider: "stripe",
-      event_id: eventId,
-      error: errMsg,
-    });
-    return NextResponse.json({ received: true }, { status: 200 });
+    console.error(`[webhook] handler failed for ${eventId}: ${errMsg}`);
+    try {
+      await db.from("system_webhook_failures").insert({
+        provider: "stripe",
+        event_id: eventId,
+        error: errMsg,
+      });
+    } catch { /* Don't let failure tracking crash the response */ }
+    // Return 500 so Stripe retries the webhook
+    return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
 
   return NextResponse.json({ received: true }, { status: 200 });

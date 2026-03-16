@@ -5,12 +5,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { encrypt } from "@/lib/encryption";
+import { verifyOAuthState } from "@/lib/integrations/oauth-state";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
-  const state = req.nextUrl.searchParams.get("state"); // workspace_id
+  const rawState = req.nextUrl.searchParams.get("state");
   const error = req.nextUrl.searchParams.get("error");
 
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
@@ -19,8 +20,14 @@ export async function GET(req: NextRequest) {
   if (error || !code) {
     return NextResponse.redirect(`${returnUrl}?slack=error`);
   }
-  if (!state) {
+  if (!rawState) {
     return NextResponse.redirect(returnUrl);
+  }
+
+  // Verify HMAC-signed state to prevent CSRF
+  const verifiedWorkspaceId = verifyOAuthState(rawState);
+  if (!verifiedWorkspaceId) {
+    return NextResponse.redirect(`${returnUrl}?slack=error&reason=invalid_state`);
   }
 
   const clientId = process.env.SLACK_CLIENT_ID?.trim();
@@ -59,7 +66,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${returnUrl}?slack=error`);
   }
 
-  const workspaceId = state;
+  const workspaceId = verifiedWorkspaceId;
   const tokenEnc = await encrypt(data.access_token);
   const teamId = data.team?.id ?? null;
   const teamName = data.team?.name ?? null;

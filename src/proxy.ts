@@ -23,6 +23,57 @@ import {
 
 const intlMiddleware = createIntlMiddleware(routing);
 
+function toHex(bytes: Uint8Array): string {
+  let out = "";
+  for (let i = 0; i < bytes.length; i++) out += bytes[i]!.toString(16).padStart(2, "0");
+  return out;
+}
+
+async function hmacSha256Hex(secret: string, payload: string): Promise<string> {
+  // WebCrypto available in edge runtime
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(payload));
+  return toHex(new Uint8Array(sig));
+}
+
+function constantTimeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let res = 0;
+  for (let i = 0; i < a.length; i++) res |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return res === 0;
+}
+
+/**
+ * Verify HMAC-signed ops session cookie.
+ * Cookie format: "payload.signature" where signature = HMAC-SHA256(payload, OPS_SESSION_SECRET).
+ * Falls back to existence check only if OPS_SESSION_SECRET is not set (dev mode).
+ */
+async function verifyOpsSession(cookie: string): Promise<boolean> {
+  const secret = process.env.OPS_SESSION_SECRET ?? process.env.SESSION_SECRET;
+  if (!secret) {
+    // No secret configured — reject in production, allow in dev
+    return process.env.NODE_ENV !== "production";
+  }
+  const dotIndex = cookie.lastIndexOf(".");
+  if (dotIndex < 1) return false;
+  const payload = cookie.slice(0, dotIndex);
+  const sig = cookie.slice(dotIndex + 1);
+  if (!payload || !sig) return false;
+  try {
+    const expected = await hmacSha256Hex(secret, payload);
+    return constantTimeEqual(sig, expected);
+  } catch {
+    return false;
+  }
+}
+
 /** Paths that must never require auth (crawlers, OG, link previews). Checked first. */
 function isPublicOrStaticPath(pathname: string): boolean {
   if (pathname === "/" || pathname === "/activate" || pathname === "/connect" || pathname === "/live") return true;
@@ -135,8 +186,6 @@ export async function proxy(req: NextRequest) {
       const cookieHeader = req.headers.get("cookie") ?? null;
       const session = await getSessionFromCookieAsync(cookieHeader);
       if (!session) {
-        const workspaceIdParam = req.nextUrl.searchParams.get("workspace_id");
-        if (workspaceIdParam) return NextResponse.next();
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
       const refreshedCookie = await createSessionCookieAsync({ userId: session.userId, workspaceId: session.workspaceId });
@@ -153,11 +202,12 @@ export async function proxy(req: NextRequest) {
   // ——— Public pages: never redirect, never require session ———
   if (isPublicPage(pathname)) return NextResponse.next();
 
-  // ——— Ops: staff session only ———
+  // ——— Ops: staff session only (HMAC-signed cookie) ———
   if (isOpsRoute(pathname)) {
     if (isOpsAuthRoute(pathname)) return NextResponse.next();
     const sessionCookie = req.cookies.get("ops_session")?.value;
-    if (!sessionCookie) {
+    const ok = sessionCookie ? await verifyOpsSession(sessionCookie) : false;
+    if (!ok) {
       if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       return NextResponse.redirect(new URL("/ops/login", req.url));
     }
@@ -182,9 +232,6 @@ export async function proxy(req: NextRequest) {
   const session = await getSessionFromCookieAsync(cookieHeader);
 
   if (!session) {
-    const workspaceIdParam = req.nextUrl.searchParams.get("workspace_id");
-    if (pathname.startsWith("/dashboard") && workspaceIdParam) return NextResponse.next();
-    if (pathname.startsWith("/api/") && workspaceIdParam) return NextResponse.next();
     if (isApp) return NextResponse.redirect(new URL("/sign-in", req.url));
     if (pathname.startsWith("/dashboard")) return NextResponse.redirect(new URL("/activate", req.url));
     if (pathname.startsWith("/admin")) return NextResponse.redirect(new URL("/activate", req.url));

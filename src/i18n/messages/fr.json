@@ -1,4 +1,10 @@
 {
+  "notFoundPage": {
+    "title": "Page introuvable",
+    "description": "Cette page n'existe pas.",
+    "goHome": "Accueil",
+    "contactSupport": "Contacter le support"
+  },
   "app": {
     "title": "Recall Touch — Appels téléphoniques IA",
     "dashboardTitle": "Tableau de bord",
@@ -235,6 +241,11 @@
   },
   "billing": {
     "pageTitle": "Facturation — Recall Touch",
+    "failureBanner": {
+      "primary": "La couverture de gestion n'a pas pu continuer.",
+      "message": "Mettez à jour votre moyen de paiement dans Préférences pour rétablir la couverture.",
+      "preferencesLink": "Préférences"
+    },
     "loadError": "Impossible de charger la facturation.",
     "loadErrorDesc": "Connectez votre facturation pour gérer l'abonnement ou réessayez dans un instant.",
     "backToSettings": "Retour aux paramètres",
@@ -277,6 +288,18 @@
       "paused": "Couverture en pause.",
       "paymentFailed": "Impossible d'ouvrir les paramètres de paiement.",
       "portalFailed": "Impossible d'ouvrir le portail de facturation."
+    },
+    "errors": {
+      "loadingFailed": "Impossible de charger les informations de facturation",
+      "loadingFailedDesc": "Veuillez réessayer ou contacter le support si le problème persiste."
+    },
+    "protectionPaused": {
+      "title": "Les conditions normales ne sont pas réunies.",
+      "noHandling": "Le traitement n'est plus actif pour les nouvelles demandes.",
+      "manualConfirmation": "La confirmation de présence nécessitera un suivi manuel.",
+      "decisionsStall": "Les décisions en cours peuvent stagner.",
+      "upcomingManual": "Les présences à venir nécessiteront une confirmation manuelle.",
+      "resumeHandling": "Reprendre le traitement"
     }
   },
   "planChange": {
@@ -300,10 +323,45 @@
     "perMonth": "/mois",
     "custom": "Personnalisé",
     "plans": {
-      "starter": { "name": "Starter", "features": ["1 agent IA", "1 numéro", "400 min/mois", "Statistiques d'usage"] },
-      "growth": { "name": "Growth", "features": ["3 agents IA", "3 numéros", "1 500 min/mois", "Call Intelligence", "Support prioritaire"] },
-      "scale": { "name": "Scale", "features": ["Agents IA illimités", "10 numéros", "5 000 min/mois", "Rapports détaillés", "Accès API"] },
-      "enterprise": { "name": "Enterprise", "features": ["Agents illimités", "Numéros illimités", "Intégrations sur mesure", "Support dédié", "SLA"] }
+      "starter": {
+        "name": "Starter",
+        "features": [
+          "1 agent IA",
+          "1 numéro",
+          "400 min/mois",
+          "Statistiques d'usage"
+        ]
+      },
+      "growth": {
+        "name": "Growth",
+        "features": [
+          "3 agents IA",
+          "3 numéros",
+          "1 500 min/mois",
+          "Call Intelligence",
+          "Support prioritaire"
+        ]
+      },
+      "scale": {
+        "name": "Scale",
+        "features": [
+          "Agents IA illimités",
+          "10 numéros",
+          "5 000 min/mois",
+          "Rapports détaillés",
+          "Accès API"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "features": [
+          "Agents illimités",
+          "Numéros illimités",
+          "Intégrations sur mesure",
+          "Support dédié",
+          "SLA"
+        ]
+      }
     }
   },
   "dashboard": {
@@ -1453,6 +1511,10 @@
       "transferred": "Transféré",
       "missed": "Manqué",
       "voicemail": "Messagerie vocale"
+    },
+    "charts": {
+      "callVolumeTitle": "Volume d'appels (par jour)",
+      "outcomeBreakdown": "Répartition des résultats"
     },
     "days": {
       "mon": "Lun",
@@ -2887,6 +2949,35 @@
     "removeStep": "Supprimer l'étape",
     "runAt": "Exécuter à (date et heure)",
     "nextRun": "Prochaine exécution (date et heure)",
+    "addStep": "+ Ajouter une étape",
+    "campaignRoi": "ROI de la campagne",
+    "contacted": "Contacté",
+    "daysLabel": "jours",
+    "messageTemplate": "Modèle de message",
+    "minScore": "Score minimum",
+    "scoreGte": "Score ≥ {score}",
+    "notContactedIn": "Non contacté depuis {days} jours",
+    "notContactedInDays": "Non contacté depuis X jours",
+    "scheduledAt": "Programmé {date}",
+    "scheduleDisplay": "Planning : {type}",
+    "triggerDisplay": "Déclencheur : {type}",
+    "sequenceDisplay": "Séquence : {steps}",
+    "waitStep": "Attendre {days}j",
+    "campaignType": {
+      "lead_follow_up": "Suivi de leads",
+      "reactivation": "Réactivation",
+      "appointment_reminder": "Rappel de rendez-vous",
+      "qualification": "Qualification",
+      "missed_call_recovery": "Récupération d'appels manqués",
+      "custom": "Personnalisé"
+    },
+    "progress": "Progression",
+    "scheduleTypeLabel": "Type de planning",
+    "scheduleTypes": {
+      "manual": "Manuel",
+      "once": "Une seule fois",
+      "recurring": "Récurrente"
+    },
     "toast": {
       "updated": "Campagne mise à jour.",
       "created": "Campagne créée.",
@@ -3161,40 +3252,40 @@
     "integrations": {
       "defaultsLoaded": "Valeurs par défaut chargées.",
       "testSuccess": "Test terminé. Consultez le résultat ci-dessous.",
-    "saveFailed": "Échec de l’enregistrement du mappage. Réessayez.",
-    "saved": "Mappage enregistré.",
-    "breadcrumbSettings": "Paramètres",
-    "breadcrumbIntegrations": "Intégrations",
-    "mappingTitle": "Mappage des champs — {name}",
-    "mappingBreadcrumb": "Mappage {name}",
-    "mappingDescription": "Mappez les champs contact/lead Recall Touch vers les champs {name}. Utilisez les transformations pour le format téléphone ou les statuts.",
-    "recallTouch": "Recall Touch",
-    "crmField": "Champ CRM ({name})",
-    "transform": "Transformation",
-    "addMapping": "Ajouter un mappage",
-    "loadDefaults": "Charger les valeurs par défaut",
-    "testWithSampleData": "Tester avec des données d'exemple",
-    "saveMapping": "Enregistrer le mappage",
-    "saving": "Enregistrement…",
-    "testOutput": "Résultat du test (exemple : {name})",
-    "backToIntegrations": "← Retour aux Intégrations",
+      "saveFailed": "Échec de l’enregistrement du mappage. Réessayez.",
+      "saved": "Mappage enregistré.",
+      "breadcrumbSettings": "Paramètres",
+      "breadcrumbIntegrations": "Intégrations",
+      "mappingTitle": "Mappage des champs — {name}",
+      "mappingBreadcrumb": "Mappage {name}",
+      "mappingDescription": "Mappez les champs contact/lead Recall Touch vers les champs {name}. Utilisez les transformations pour le format téléphone ou les statuts.",
+      "recallTouch": "Recall Touch",
+      "crmField": "Champ CRM ({name})",
+      "transform": "Transformation",
+      "addMapping": "Ajouter un mappage",
+      "loadDefaults": "Charger les valeurs par défaut",
+      "testWithSampleData": "Tester avec des données d'exemple",
+      "saveMapping": "Enregistrer le mappage",
+      "saving": "Enregistrement…",
+      "testOutput": "Résultat du test (exemple : {name})",
+      "backToIntegrations": "← Retour aux Intégrations",
       "title": "Intégrations",
       "providers": {
-      "salesforce": "Salesforce",
-      "hubspot": "HubSpot",
-      "zoho_crm": "Zoho CRM",
-      "pipedrive": "Pipedrive",
-      "gohighlevel": "GoHighLevel",
-      "google_contacts": "Google Contacts",
-      "microsoft_365": "Microsoft 365"
-    },
-    "transformations": {
-      "none": "Aucune",
-      "format_phone": "Formater le téléphone (E.164)",
-      "map_status": "Mapper le statut",
-      "concatenate": "Concaténer les champs"
-    },
-    "crmFallback": "CRM"
+        "salesforce": "Salesforce",
+        "hubspot": "HubSpot",
+        "zoho_crm": "Zoho CRM",
+        "pipedrive": "Pipedrive",
+        "gohighlevel": "GoHighLevel",
+        "google_contacts": "Google Contacts",
+        "microsoft_365": "Microsoft 365"
+      },
+      "transformations": {
+        "none": "Aucune",
+        "format_phone": "Formater le téléphone (E.164)",
+        "map_status": "Mapper le statut",
+        "concatenate": "Concaténer les champs"
+      },
+      "crmFallback": "CRM"
     },
     "syncLog.breadcrumb": "Journal de synchronisation",
     "syncLog.heading": "Journal de synchronisation",
@@ -3280,12 +3371,12 @@
       "cardSubtitle": "Prise de rendez-vous en temps réel — entièrement automatisée",
       "callerLabel": "Appelant",
       "agentLabel": "Agent IA",
-      "line1": "\u201cBonjour, j'aimerais prendre rendez-vous pour jeudi.\u201d",
-      "line2": "\u201cBien sûr ! J'ai des créneaux à 10h, 14h et 16h. Lequel vous convient ?\u201d",
-      "line3": "\u201c14h, c'est parfait.\u201d",
-      "line4": "\u201cParfait — jeudi à 14h, c'est réservé. Puis-je avoir votre nom et numéro ?\u201d",
-      "line5": "\u201cSarah, 555-0142.\u201d",
-      "line6": "\u201cC'est noté, Sarah ! Vous recevrez un SMS de confirmation sous peu.\u201d",
+      "line1": "“Bonjour, j'aimerais prendre rendez-vous pour jeudi.”",
+      "line2": "“Bien sûr ! J'ai des créneaux à 10h, 14h et 16h. Lequel vous convient ?”",
+      "line3": "“14h, c'est parfait.”",
+      "line4": "“Parfait — jeudi à 14h, c'est réservé. Puis-je avoir votre nom et numéro ?”",
+      "line5": "“Sarah, 555-0142.”",
+      "line6": "“C'est noté, Sarah ! Vous recevrez un SMS de confirmation sous peu.”",
       "cta": "Créez le vôtre gratuitement →",
       "trialNote": "Sans carte bancaire · Essai de 14 jours",
       "loading": "Chargement…",
@@ -3791,10 +3882,64 @@
         "enterprise": "ROI et support dédié sur mesure"
       },
       "tiers": {
-        "starter": { "name": "Starter", "description": "Répondez à chaque appel. Un numéro, un agent.", "features": ["400 min entrants inclus", "50 appels sortants", "100 SMS", "1 agent IA", "1 numéro", "Dépassement : 0,25 €/min"], "cta": "Commencer gratuit" },
-        "growth": { "name": "Growth", "description": "Un lead récupéré paie le mois.", "features": ["1 500 min entrants", "500 appels sortants", "500 SMS", "3 agents IA", "3 numéros", "Réservation", "Séquences de suivi", "Analytiques", "Dépassement : 0,18 €/min"], "cta": "Commencer gratuit" },
-        "scale": { "name": "Scale", "description": "Équipe communication IA pour une fraction d'un recrutement.", "features": ["5 000 min entrants", "2 000 appels sortants", "SMS illimités", "Agents IA illimités", "10 numéros", "Multi-sites", "Conformité", "API", "Support prioritaire", "Dépassement : 0,12 €/min"], "cta": "Commencer gratuit" },
-        "enterprise": { "name": "Enterprise", "description": "Tarifs sur mesure — marque blanche, conformité, SSO, manager dédié, SLA.", "features": ["Marque blanche", "Conformité sur mesure", "SSO", "Manager dédié", "SLA"], "cta": "Parler aux ventes" }
+        "starter": {
+          "name": "Starter",
+          "description": "Répondez à chaque appel. Un numéro, un agent.",
+          "features": [
+            "400 min entrants inclus",
+            "50 appels sortants",
+            "100 SMS",
+            "1 agent IA",
+            "1 numéro",
+            "Dépassement : 0,25 €/min"
+          ],
+          "cta": "Commencer gratuit"
+        },
+        "growth": {
+          "name": "Growth",
+          "description": "Un lead récupéré paie le mois.",
+          "features": [
+            "1 500 min entrants",
+            "500 appels sortants",
+            "500 SMS",
+            "3 agents IA",
+            "3 numéros",
+            "Réservation",
+            "Séquences de suivi",
+            "Analytiques",
+            "Dépassement : 0,18 €/min"
+          ],
+          "cta": "Commencer gratuit"
+        },
+        "scale": {
+          "name": "Scale",
+          "description": "Équipe communication IA pour une fraction d'un recrutement.",
+          "features": [
+            "5 000 min entrants",
+            "2 000 appels sortants",
+            "SMS illimités",
+            "Agents IA illimités",
+            "10 numéros",
+            "Multi-sites",
+            "Conformité",
+            "API",
+            "Support prioritaire",
+            "Dépassement : 0,12 €/min"
+          ],
+          "cta": "Commencer gratuit"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "Tarifs sur mesure — marque blanche, conformité, SSO, manager dédié, SLA.",
+          "features": [
+            "Marque blanche",
+            "Conformité sur mesure",
+            "SSO",
+            "Manager dédié",
+            "SLA"
+          ],
+          "cta": "Parler aux ventes"
+        }
       },
       "footerNote": "Tous les plans incluent : enregistrements chiffrés · cadre de conformité · traçabilité · 14 jours d'essai gratuit",
       "cta": {
@@ -3923,9 +4068,18 @@
       "typeAppointment": "Rendez-vous",
       "typeFollowUp": "Relance",
       "cards": {
-        "1": { "summary": "Consultation de rendez-vous", "outcome": "✅ Réservé 14h" },
-        "2": { "summary": "Question tarifaire", "outcome": "✅ Info envoyée par SMS" },
-        "3": { "summary": "Demande de rappel", "outcome": "✅ Relance dans 30 min" }
+        "1": {
+          "summary": "Consultation de rendez-vous",
+          "outcome": "✅ Réservé 14h"
+        },
+        "2": {
+          "summary": "Question tarifaire",
+          "outcome": "✅ Info envoyée par SMS"
+        },
+        "3": {
+          "summary": "Demande de rappel",
+          "outcome": "✅ Relance dans 30 min"
+        }
       }
     },
     "activityFeed": {
@@ -4034,6 +4188,38 @@
       "docs": "Documentation",
       "terms": "Conditions",
       "privacy": "Confidentialité"
+    },
+    "solutions": {
+      "plumbingHvac": "Plomberie et CTA",
+      "dental": "Dentaire",
+      "legal": "Juridique",
+      "realEstate": "Immobilier",
+      "healthcare": "Santé"
+    },
+    "productLinks": {
+      "bookDemo": "Réserver une démo",
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs",
+      "documentation": "Documentation",
+      "changelog": "Changelog",
+      "api": "API"
+    },
+    "companyLinks": {
+      "about": "À propos",
+      "blog": "Blog",
+      "contact": "Contact"
+    },
+    "useCases": {
+      "inboundCalls": "Appels entrants",
+      "outboundCampaigns": "Campagnes sortantes",
+      "appointmentScheduling": "Prise de rendez-vous",
+      "leadFollowUp": "Suivi leads",
+      "afterHoursCoverage": "Couverture 24h",
+      "callScreening": "Filtrage d'appels"
+    },
+    "legal": {
+      "privacy": "Confidentialité",
+      "terms": "Conditions"
     }
   },
   "pricing": {
@@ -4102,7 +4288,103 @@
     "roiCalculator": "Calculateur de ROI",
     "featureComparison": "Comparatif des fonctionnalités",
     "feature": "Fonctionnalité",
+    "comparisonRows": [
+      {
+        "category": "Coeur",
+        "name": "Min entrant/mois"
+      },
+      {
+        "category": "Coeur",
+        "name": "Agents IA"
+      },
+      {
+        "category": "Coeur",
+        "name": "Appels sortants/mois"
+      },
+      {
+        "category": "Coeur",
+        "name": "SMS inclus"
+      },
+      {
+        "category": "Fonctionnalités",
+        "name": "Boîte de réception (messagerie unifiée)"
+      },
+      {
+        "category": "Fonctionnalités",
+        "name": "Base de connaissances"
+      },
+      {
+        "category": "Fonctionnalités",
+        "name": "Prise de rendez-vous"
+      },
+      {
+        "category": "Fonctionnalités",
+        "name": "Campagnes sortantes"
+      },
+      {
+        "category": "Fonctionnalités",
+        "name": "Accès API"
+      },
+      {
+        "category": "Fonctionnalités",
+        "name": "Export conformité"
+      },
+      {
+        "category": "Support",
+        "name": "Support prioritaire"
+      }
+    ],
     "annualNote": "Deux mois appliqués sans interruption en engagement annuel.",
+    "faqItems": [
+      {
+        "q": "Comment fonctionne l'essai gratuit ?",
+        "a": "14 jours, toutes les fonctionnalités, pas de carte bancaire."
+      },
+      {
+        "q": "Que se passe-t-il si je dépasse mes minutes ?",
+        "a": "Les appels continuent au tarif de dépassement, jamais coupés."
+      },
+      {
+        "q": "Puis-je garder mon numéro actuel ?",
+        "a": "Oui, transférez-le vers votre numéro Recall Touch."
+      },
+      {
+        "q": "Quelles voix sont disponibles ?",
+        "a": "6 incluses, premium en option 29 €/mois."
+      },
+      {
+        "q": "Y a-t-il un contrat ?",
+        "a": "Non, au mois, annulez quand vous voulez."
+      },
+      {
+        "q": "Prenez-vous en charge HIPAA ?",
+        "a": "Oui, option 99 €/mois avec BAA."
+      },
+      {
+        "q": "Quelles intégrations ?",
+        "a": "Google Calendar, Outlook, HubSpot, Zapier. API sur Scale+."
+      },
+      {
+        "q": "En quoi c'est différent d'un standardiste ?",
+        "a": "24h/24, gère les sortants, coûte 90 % de moins."
+      },
+      {
+        "q": "Que se passe-t-il hors heures ?",
+        "a": "Répond selon vos règles hors heures."
+      },
+      {
+        "q": "Puis-je essayer avant d'acheter ?",
+        "a": "Essai 14 jours ou démo interactive tout de suite."
+      },
+      {
+        "q": "Comment annuler ?",
+        "a": "Paramètres → Facturation → Annuler. Effectif en fin de période."
+      },
+      {
+        "q": "Comment fonctionne la facturation ?",
+        "a": "Mensuel ou annuel. Minutes incluses plus dépassement à la minute."
+      }
+    ],
     "roi": {
       "intro": "Modélisez ce qui se passe quand vous arrêtez de laisser les appels passer au répondeur.",
       "missedCallsPerWeek": "Appels manqués par semaine",
@@ -4125,6 +4407,73 @@
     },
     "trustedBy": "Approuvé par des équipes leaders dans les services, la santé et le commerce local.",
     "questionsTalkToUs": "Des questions ? Parlez-nous →"
+  },
+  "stripePricingTable": {
+    "configError": "Configurez NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY et NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID pour afficher le tableau de prix."
+  },
+  "declare": {
+    "pageTitle": "Déclarez votre posture opérationnelle",
+    "heading": "Déclarez votre posture opérationnelle.",
+    "descriptionLine1": "Vous définissez comment les conversations sont gérées.",
+    "descriptionLine2": "La déclaration peut être modifiée sans interruption d'exécution.",
+    "jurisdictionStep": {
+      "title": "Juridiction déclarée",
+      "description": "Toute exécution est régie selon la juridiction déclarée."
+    },
+    "jurisdictionLabel": "Juridiction",
+    "jurisdictionHint": "La juridiction détermine les limites de conformité.",
+    "jurisdictions": [
+      { "value": "United States", "label": "États-Unis" },
+      { "value": "UK", "label": "Royaume-Uni" },
+      { "value": "EU", "label": "Union Européenne" },
+      { "value": "Other", "label": "Autre" }
+    ],
+    "reviewStep": {
+      "title": "Structure d'examen",
+      "description": "Définit la structure d'escalade et de surveillance."
+    },
+    "reviewLabel": "Structure d'examen",
+    "reviewHint": "La structure d'examen détermine le comportement d'escalade.",
+    "reviewLevels": [
+      { "value": "Preview required", "label": "Aperçu requis" },
+      { "value": "Approval required", "label": "Approbation requise" },
+      { "value": "Standard", "label": "Standard" }
+    ],
+    "sourceStep": {
+      "title": "Enregistrer la source principale",
+      "description": "L'exécution commence seulement après l'enregistrement d'une source."
+    },
+    "sourceOptions": [
+      { "id": "csv", "label": "Télécharger une source" },
+      { "id": "calendar", "label": "Connecter un calendrier" },
+      { "id": "phone", "label": "Connecter le téléphone" }
+    ],
+    "sourceHint1": "Pas de source. Pas d'exécution.",
+    "sourceHint2": "Les sources incluent les listes de contacts chargées, les lignes téléphoniques et les requêtes du calendrier.",
+    "sourceHint3": "Vous pouvez commencer avec une seule source.",
+    "purposeStep": {
+      "title": "Objectif opérationnel",
+      "description": "L'objectif détermine les objectifs et les conditions d'arrêt."
+    },
+    "purposeOptions": [
+      { "value": "Qualify", "label": "Qualifier" },
+      { "value": "Confirm", "label": "Confirmer" },
+      { "value": "Collect", "label": "Collecter" },
+      { "value": "Reactivate", "label": "Réactiver" },
+      { "value": "Route", "label": "Acheminer" },
+      { "value": "Recover", "label": "Récupérer" }
+    ],
+    "purposeHint": "L'objectif dirige les buts et les résultats.",
+    "governanceStep": {
+      "title": "Placer sous gouvernance"
+    },
+    "governanceHint": "L'exécution est appliquée selon la juridiction déclarée et la profondeur d'examen.",
+    "activateButton": "Placer sous gouvernance",
+    "successMessage": "L'exécution est maintenant sous gouvernance institutionnelle.",
+    "successHint": "La gestion commence une fois qu'une source est enregistrée.",
+    "continueButton": "Continuer",
+    "backButton": "Retour",
+    "selectPlaceholder": "Sélectionner"
   },
   "languageSwitcher": {
     "label": "Langue",
@@ -4510,7 +4859,6 @@
     "somethingWrong": "Une erreur s'est produite",
     "loadPageError": "Impossible de charger cette page. Réessayez ou revenez en arrière.",
     "unexpectedError": "Une erreur inattendue s'est produite. Réessayez ou signalez le problème.",
-    "tryAgain": "Réessayer",
     "reportIssue": "Signaler un problème"
   },
   "forms": {
@@ -5493,12 +5841,30 @@
       "faq": "FAQ"
     },
     "cards": {
-      "gettingStarted": { "title": "Premiers pas", "desc": "Configurez votre système téléphonique IA en quelques minutes." },
-      "apiReference": { "title": "Référence API", "desc": "Intégrez Recall Touch à vos systèmes existants." },
-      "compliance": { "title": "Cadre de conformité", "desc": "Configurez le consentement d'enregistrement, la rétention et les règles régionales." },
-      "integrations": { "title": "Intégrations", "desc": "Connectez Recall Touch à vos outils de vente et de communication." },
-      "faq": { "title": "FAQ", "desc": "Questions courantes sur la configuration, les appels et la facturation." },
-      "support": { "title": "Contacter le support", "desc": "Parlez à notre équipe pour des questions techniques ou de conformité." },
+      "gettingStarted": {
+        "title": "Premiers pas",
+        "desc": "Configurez votre système téléphonique IA en quelques minutes."
+      },
+      "apiReference": {
+        "title": "Référence API",
+        "desc": "Intégrez Recall Touch à vos systèmes existants."
+      },
+      "compliance": {
+        "title": "Cadre de conformité",
+        "desc": "Configurez le consentement d'enregistrement, la rétention et les règles régionales."
+      },
+      "integrations": {
+        "title": "Intégrations",
+        "desc": "Connectez Recall Touch à vos outils de vente et de communication."
+      },
+      "faq": {
+        "title": "FAQ",
+        "desc": "Questions courantes sur la configuration, les appels et la facturation."
+      },
+      "support": {
+        "title": "Contacter le support",
+        "desc": "Parlez à notre équipe pour des questions techniques ou de conformité."
+      },
       "viewLink": "Voir →",
       "contactForAccess": "Contacter pour accès"
     },
@@ -5528,8 +5894,14 @@
         "comcast": "Voice → Renvoi d'appel → entrez votre numéro Recall Touch.",
         "googleVoice": "Paramètres → Appels → renvoyer vers votre numéro RT."
       },
-      "aiAgents": { "title": "Agents IA", "description": "Configurez le nom, la voix, la salutation et les capacités de votre agent. Enseignez-lui vos services, horaires et prise de rendez-vous. Sans code." },
-      "campaigns": { "title": "Campagnes", "description": "Lancez relances sortantes, rappels et flux de récupération. Créez des campagnes depuis le tableau de bord, définissez audiences et scripts, suivez les résultats." },
+      "aiAgents": {
+        "title": "Agents IA",
+        "description": "Configurez le nom, la voix, la salutation et les capacités de votre agent. Enseignez-lui vos services, horaires et prise de rendez-vous. Sans code."
+      },
+      "campaigns": {
+        "title": "Campagnes",
+        "description": "Lancez relances sortantes, rappels et flux de récupération. Créez des campagnes depuis le tableau de bord, définissez audiences et scripts, suivez les résultats."
+      },
       "integrations": {
         "title": "Intégrations",
         "description": "Connectez Recall Touch à votre opérateur (Twilio), calendrier et CRM. Webhooks et API sur les offres Scale et Enterprise.",
@@ -5540,7 +5912,11 @@
         "triggersHeading": "Déclencheurs (GET, Bearer token)",
         "actionsHeading": "Actions (POST, Bearer token)"
       },
-      "billing": { "title": "Facturation", "description": "Plans facturés au mois ou à l'année. L'année inclut deux mois offerts. Modifiez ou annulez dans Paramètres → Facturation. Factures dans le tableau de bord.", "cta": "Voir les tarifs →" },
+      "billing": {
+        "title": "Facturation",
+        "description": "Plans facturés au mois ou à l'année. L'année inclut deux mois offerts. Modifiez ou annulez dans Paramètres → Facturation. Factures dans le tableau de bord.",
+        "cta": "Voir les tarifs →"
+      },
       "api": {
         "title": "Référence API",
         "description": "API REST pour intégrer Recall Touch. Tous les endpoints requièrent une session (cookie) ou un token Bearer valide. URL de base : https://your-domain.com.",
@@ -5566,7 +5942,11 @@
         "entry202502": "Agents vocaux Vapi, provisionnement Twilio, vues activité et boîte de réception, hub paramètres.",
         "entry202501": "Lancement initial : configuration de l'espace, connexion, tarifs, simulateur de démo."
       },
-      "faq": { "title": "FAQ", "description": "Questions sur la configuration, le renvoi d'appel, les agentes et la facturation sur la page tarifaire.", "cta": "Voir la FAQ →" }
+      "faq": {
+        "title": "FAQ",
+        "description": "Questions sur la configuration, le renvoi d'appel, les agentes et la facturation sur la page tarifaire.",
+        "cta": "Voir la FAQ →"
+      }
     },
     "quickStart": {
       "title": "Démarrage rapide",
@@ -5713,6 +6093,9 @@
     "marketplaceNoNumbersFound": "Aucun numéro. Essayez un autre indicatif ou type.",
     "marketplaceAdding": "Ajout…",
     "marketplaceGetThisNumber": "Obtenir ce numéro",
+    "perMonth": "/mois",
+    "inputPlaceholder": "Numéro de téléphone",
+    "invalidNumber": "Numéro invalide pour le pays sélectionné",
     "releaseTitleUnassign": "Désassigner d'abord dans Agents",
     "releaseTitleRelease": "Libérer le numéro",
     "releaseLabel": "Libérer",
@@ -6080,5 +6463,8 @@
       "theyreSet": "C'est réglé",
       "decisionProgressed": "Décision progressée"
     }
+  },
+  "legal": {
+    "languageNotice": "Ce document n'est disponible qu'en anglais."
   }
 }
