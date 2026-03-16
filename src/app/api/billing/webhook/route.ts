@@ -151,19 +151,21 @@ async function handleStripeWebhookEvent(
         );
       } else if (workspaceId && !isSettlement) {
         const subId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
-        if (subId) {
-          const { data: existing } = await db
-            .from("workspaces")
-            .select("stripe_subscription_id, billing_status")
-            .eq("id", workspaceId)
-            .maybeSingle();
-          const existingRow = existing as { stripe_subscription_id?: string | null; billing_status?: string } | null;
-          if (existingRow?.stripe_subscription_id === subId && (existingRow.billing_status === "trial" || existingRow.billing_status === "active")) {
-            break;
-          }
+        if (!subId) {
+          console.warn(`[billing-webhook] checkout.session.completed for workspace ${workspaceId} has no subscription — skipping`);
+          break;
+        }
+        const { data: existing } = await db
+          .from("workspaces")
+          .select("stripe_subscription_id, billing_status")
+          .eq("id", workspaceId)
+          .maybeSingle();
+        const existingRow = existing as { stripe_subscription_id?: string | null; billing_status?: string } | null;
+        if (existingRow?.stripe_subscription_id === subId && (existingRow.billing_status === "trial" || existingRow.billing_status === "active")) {
+          break;
         }
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-        const sub = await stripe.subscriptions.retrieve(session.subscription as string);
+        const sub = await stripe.subscriptions.retrieve(subId);
         const isTrialing = sub.status === "trialing";
         const trialEnd = (sub as Stripe.Subscription & { trial_end?: number }).trial_end;
         const periodEnd = (sub as Stripe.Subscription & { current_period_end?: number }).current_period_end;
@@ -177,12 +179,14 @@ async function handleStripeWebhookEvent(
           ? (typeof sub.items.data[0].price === "string" ? sub.items.data[0].price : sub.items.data[0].price?.id)
           : null;
         const tierInterval = priceIdToTierAndInterval(firstPriceId);
+        const customerId = typeof session.customer === "string" ? session.customer : (session.customer as { id?: string } | null)?.id;
         const updatePayload: Record<string, unknown> = {
           billing_status: isTrialing ? "trial" : "active",
           protection_renewal_at: renewsAt?.toISOString() ?? null,
           trial_end_at: trialEndAt?.toISOString() ?? null,
           renews_at: renewsAt?.toISOString() ?? null,
           stripe_subscription_id: sub.id,
+          ...(customerId ? { stripe_customer_id: customerId } : {}),
           status: "active",
           paused_at: null,
           pause_reason: null,

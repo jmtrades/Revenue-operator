@@ -13,9 +13,11 @@ import { getDb } from "@/lib/db/queries";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import { getPriceId } from "@/lib/stripe-prices";
 
-function log(_event: string, _data: Record<string, unknown>): void {
-  if (process.env.NODE_ENV === "development") {
-    // Optional logging
+function log(event: string, data: Record<string, unknown>): void {
+  if (data.reason || data.error) {
+    console.error(`[billing/checkout] ${event}:`, JSON.stringify(data));
+  } else if (process.env.NODE_ENV === "development") {
+    console.log(`[billing/checkout] ${event}:`, JSON.stringify(data));
   }
 }
 
@@ -117,7 +119,8 @@ export async function POST(req: NextRequest) {
         
         finalWorkspaceId = wsId;
         finalEmail = email;
-      } catch (_err) {
+      } catch (insertErr) {
+        console.error("[billing/checkout] workspace creation failed, looking up existing:", insertErr instanceof Error ? insertErr.message : insertErr);
         const { data: existing } = await db.from("users").select("id").eq("email", email).limit(1).maybeSingle();
         const uid = (existing as { id: string } | null)?.id;
         if (uid) {
@@ -239,7 +242,7 @@ export async function POST(req: NextRequest) {
           trial_period_days: 14,
           metadata: { workspace_id: finalWorkspaceId },
         },
-        ...(finalEmail && !customerId ? { customer_email: finalEmail } : {}),
+        /* customer_email is omitted because we always pass `customer` above */
         success_url: successUrl,
         cancel_url: cancelUrl,
         allow_promotion_codes: true,
