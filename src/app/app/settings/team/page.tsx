@@ -49,10 +49,25 @@ export default function AppSettingsTeamPage() {
     { name: t("team.memberYouOwner"), email: "", role: t("team.roleAdmin"), status: t("team.statusActive") },
   ]);
 
-  const handleInvite = () => {
-    if (!inviteEmail.trim()) return;
-    setToast(t("team.inviteSentToast", { email: inviteEmail }));
-    setInviteEmail("");
+  const handleInvite = async () => {
+    if (!inviteEmail.trim() || !workspaceId) return;
+    try {
+      const res = await fetch("/api/workspace/invite", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId, email: inviteEmail.trim(), role: inviteRole }),
+      });
+      if (res.ok) {
+        setToast(t("team.inviteSentToast", { email: inviteEmail }));
+        setInviteEmail("");
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setToast((data as { error?: string }).error || "Failed to send invite. Please try again.");
+      }
+    } catch {
+      setToast("Network error. Please try again.");
+    }
     setTimeout(() => setToast(null), 3000);
   };
 

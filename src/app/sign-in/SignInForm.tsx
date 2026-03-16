@@ -98,8 +98,24 @@ export default function SignInForm() {
   async function google() {
     if (googleBusy) return;
     setGoogleBusy(true);
-    toast.info(t("toasts.googleComingSoon"));
-    setTimeout(() => setGoogleBusy(false), 600);
+    try {
+      const res = await fetch("/api/auth/google", { method: "GET", redirect: "follow" });
+      if (res.redirected) {
+        window.location.href = res.url;
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      const url = (data as { url?: string }).url;
+      if (url) {
+        window.location.href = url;
+      } else {
+        toast.error("Google sign-in is not configured yet.");
+        setGoogleBusy(false);
+      }
+    } catch {
+      toast.error("Could not connect to Google. Please try again.");
+      setGoogleBusy(false);
+    }
   }
 
   return (
@@ -202,8 +218,8 @@ export default function SignInForm() {
           <button
             type="button"
             onClick={google}
-            disabled
-            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl flex items-center justify-center gap-2.5 opacity-60 cursor-not-allowed"
+            disabled={googleBusy}
+            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl flex items-center justify-center gap-2.5 hover:bg-[var(--bg-input-hover)] disabled:opacity-60 disabled:cursor-not-allowed transition-all"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -227,13 +243,12 @@ export default function SignInForm() {
           </button>
 
           <p className="text-center text-[var(--text-tertiary)] text-[13px] mt-4">
-            <button
-              type="button"
-              onClick={() => toast.success(tToast("password.resetSent"))}
+            <Link
+              href="/forgot-password"
               className="hover:text-[var(--text-secondary)] transition underline-offset-2 hover:underline"
             >
               {t("forgotPassword")}
-            </button>
+            </Link>
           </p>
         </div>
 

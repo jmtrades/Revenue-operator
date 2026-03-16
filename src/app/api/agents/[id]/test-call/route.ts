@@ -11,6 +11,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoiceProvider } from "@/lib/voice";
 import { hasVapiServerKey } from "@/lib/vapi/env";
+import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
@@ -38,9 +39,9 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const [ctxRes, agentRes] = await Promise.all([
     db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
-    db.from("agents").select("id, name, greeting, knowledge_base, vapi_agent_id").eq("id", id).maybeSingle(),
+    db.from("agents").select("id, name, greeting, knowledge_base, vapi_agent_id, voice_id").eq("id", id).maybeSingle(),
   ]);
-  const a = agentRes.data as { id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; vapi_agent_id?: string | null } | null;
+  const a = agentRes.data as { id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; vapi_agent_id?: string | null; voice_id?: string | null } | null;
   if (!a) return NextResponse.json({ error: "Agent not found" }, { status: 404 });
 
   const ctxData = ctxRes.data as { business_name?: string; offer_summary?: string; business_hours?: Record<string, unknown>; faq?: Array<{ q?: string; a?: string }> } | null;
@@ -76,14 +77,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       const { assistantId: aid } = await voice.createAssistant({
         name: `${agent_name} – ${workspaceId.slice(0, 8)}`,
         systemPrompt,
-        voiceId: "",
+        voiceId: a.voice_id || DEFAULT_VOICE_ID,
         voiceProvider: "elevenlabs",
         language: "en",
         tools: [],
         maxDuration: undefined,
         silenceTimeout: undefined,
         backgroundDenoising: true,
-        metadata: { workspace_id: workspaceId },
+        metadata: { workspace_id: workspaceId, greeting: a.greeting || "Hello, how can I help you?" },
       });
       assistantId = aid;
       await db.from("agents").update({ vapi_agent_id: assistantId, updated_at: new Date().toISOString() }).eq("id", a.id);
@@ -111,7 +112,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     .insert({
       workspace_id: workspaceId,
       lead_id: leadId,
-      provider: "vapi",
+      provider: "elevenlabs",
       call_started_at: new Date().toISOString(),
       external_meeting_id: `test-${Date.now()}`,
     })

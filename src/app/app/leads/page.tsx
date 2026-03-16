@@ -496,7 +496,9 @@ export default function LeadsPage() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ state: status }),
-    }).catch(() => {});
+    }).catch((err) => {
+      console.error("[leads] Failed to persist lead status:", err instanceof Error ? err.message : err);
+    });
   };
 
   const handleAddLeadSubmit = async (e: React.FormEvent) => {
