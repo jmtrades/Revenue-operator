@@ -13,14 +13,14 @@ export async function sendAgentLiveEmail(workspaceId: string): Promise<boolean> 
     .from("workspaces")
     .select("owner_id, name")
     .eq("id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!ws) return false;
 
   const { data: user } = await db
     .from("users")
     .select("email")
     .eq("id", (ws as { owner_id: string }).owner_id)
-    .single();
+    .maybeSingle();
   const email = (user as { email?: string } | null)?.email;
   if (!email) return false;
 

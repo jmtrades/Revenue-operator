@@ -77,7 +77,7 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
           .eq("workspace_id", workspaceId)
           .gte("created_at", weekStart.toISOString())
           .limit(200),
-        db.from("users").select("email").eq("id", row.owner_id).single(),
+        db.from("users").select("email").eq("id", row.owner_id).maybeSingle(),
       ]);
 
     const email = (user as { email?: string } | null)?.email;

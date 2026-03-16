@@ -19,12 +19,15 @@ export async function GET(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .order("created_at", { ascending: true });
 
-  const formatted = (members ?? []).map((m: any) => ({
-    name: m.users?.name || m.users?.email?.split("@")[0] || "Team member",
-    email: m.users?.email || "",
-    role: m.role || "member",
-    status: m.status || "active",
-  }));
+  const formatted = (members ?? []).map((m: Record<string, unknown>) => {
+    const users = m.users as { name?: string; email?: string } | null;
+    return {
+      name: users?.name || users?.email?.split("@")[0] || "Team member",
+      email: users?.email || "",
+      role: (m.role as string) || "member",
+      status: (m.status as string) || "active",
+    };
+  });
 
   // Fallback: if no members found, return current session user
   if (formatted.length === 0 && session?.userId) {

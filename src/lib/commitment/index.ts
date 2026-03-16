@@ -47,7 +47,7 @@ async function updateCommitmentScore(leadId: string): Promise<void> {
   }
   score = Math.max(0, Math.min(1, 0.5 + score));
 
-  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).maybeSingle();
   if (lead) {
     await db.from("leads").update({ commitment_score: score, updated_at: new Date().toISOString() }).eq("id", leadId);
   }
@@ -55,7 +55,7 @@ async function updateCommitmentScore(leadId: string): Promise<void> {
 
 export async function getCommitmentScore(leadId: string): Promise<number> {
   const db = getDb();
-  const { data } = await db.from("leads").select("commitment_score").eq("id", leadId).single();
+  const { data } = await db.from("leads").select("commitment_score").eq("id", leadId).maybeSingle();
   return Number((data as { commitment_score?: number })?.commitment_score ?? 0.5);
 }
 

@@ -32,7 +32,7 @@ export async function ingestCallOutcome(
       compliance_confirmed: input.compliance_confirmed ?? null,
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   const id = (row as { id: string } | null)?.id ?? null;
 

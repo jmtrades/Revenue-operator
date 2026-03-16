@@ -38,7 +38,7 @@ export async function processNormalizedInbound(
   const external_lead_id = participant.external_id;
   const thread_id = participant.thread_id ?? undefined;
 
-  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).single();
+  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).maybeSingle();
   if (!ws) {
     throw new Error(`Workspace ${workspace_id} not found`);
   }
@@ -60,7 +60,7 @@ export async function processNormalizedInbound(
       { onConflict: "workspace_id,external_id" }
     )
     .select()
-    .single();
+    .maybeSingle();
 
   if (leadError || !lead) {
     throw new Error(`Lead upsert failed: ${leadError?.message ?? "unknown"}`);
@@ -78,7 +78,7 @@ export async function processNormalizedInbound(
       { onConflict: "lead_id,channel,external_thread_id" }
     )
     .select()
-    .single();
+    .maybeSingle();
 
   if (convError || !conversation) {
     throw new Error(`Conversation upsert failed: ${convError?.message ?? "unknown"}`);
@@ -96,7 +96,7 @@ export async function processNormalizedInbound(
       external_id: msg.external_id ?? null,
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   const conversationContext = await getConversationContext(leadId, convId);
   const stateResult = await resolveConversationState({
@@ -122,7 +122,7 @@ export async function processNormalizedInbound(
   await stopSequence(workspace_id, leadId, "user_reply").catch(() => {});
   await cancelLeadPlan(workspace_id, leadId, "user_reply").catch(() => {});
 
-  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).single();
+  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).maybeSingle();
   const settings = mergeSettings(settingsRow as Parameters<typeof mergeSettings>[0]);
   if (isOptOut(msg.content, settings)) {
     await db.from("leads").update({ opt_out: true, updated_at: new Date().toISOString() }).eq("id", leadId);

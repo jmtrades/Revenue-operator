@@ -55,7 +55,7 @@ export async function createActionIntent(
         dedupe_key: input.dedupeKey,
       })
       .select("id")
-      .single();
+      .maybeSingle();
     return (data as { id: string } | null)?.id ?? null;
   } catch (err: unknown) {
     const code = (err as { code?: string })?.code;
@@ -91,7 +91,7 @@ export async function claimNextActionIntent(
     .eq("id", candidate.id)
     .is("claimed_at", null)
     .select("id, workspace_id, thread_id, work_unit_id, intent_type, payload_json, dedupe_key, created_at, claimed_at, claimed_by")
-    .single();
+    .maybeSingle();
 
   const row = updated as (ActionIntentRow & { claimed_at?: string; claimed_by?: string }) | null;
   return row ?? null;

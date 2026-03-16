@@ -28,7 +28,7 @@ export async function runSyntheticProtectionBootstrap(workspaceId: string): Prom
     .from("activation_states")
     .select("synthetic_bootstrap_completed, synthetic_bootstrap_started_at, synthetic_bootstrap_step")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const completed = (actState as { synthetic_bootstrap_completed?: boolean })?.synthetic_bootstrap_completed ?? false;
   if (completed) return { completed: true };
@@ -50,7 +50,7 @@ export async function runSyntheticProtectionBootstrap(workspaceId: string): Prom
         metadata: { synthetic_bootstrap: true },
       })
       .select("id")
-      .single();
+      .maybeSingle();
 
     const leadId = (synthLead as { id: string })?.id;
     if (!leadId) return {};
@@ -74,7 +74,7 @@ export async function runSyntheticProtectionBootstrap(workspaceId: string): Prom
     const requiredElapsed = step.delaySec * 1000;
     const elapsed = now.getTime() - startedAtDate.getTime();
     if (elapsed >= requiredElapsed) {
-      const { data: synthLead } = await db.from("leads").select("id").eq("workspace_id", workspaceId).limit(1).single();
+      const { data: synthLead } = await db.from("leads").select("id").eq("workspace_id", workspaceId).limit(1).maybeSingle();
       const leadId = (synthLead as { id?: string })?.id;
       if (!leadId) break;
 
@@ -126,6 +126,6 @@ export async function shouldRunBootstrap(workspaceId: string): Promise<boolean> 
   if ((leadCount ?? 0) > 0) return false;
   const { count: actionCount } = await db.from("action_logs").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
   if ((actionCount ?? 0) > 0) return false;
-  const { data: act } = await db.from("activation_states").select("synthetic_bootstrap_completed").eq("workspace_id", workspaceId).single();
+  const { data: act } = await db.from("activation_states").select("synthetic_bootstrap_completed").eq("workspace_id", workspaceId).maybeSingle();
   return !(act as { synthetic_bootstrap_completed?: boolean })?.synthetic_bootstrap_completed;
 }

@@ -50,7 +50,7 @@ export async function recordReciprocalEvent(input: RecordReciprocalEventInput): 
       recorded_at: new Date().toISOString(),
     })
     .select("id")
-    .single();
+    .maybeSingle();
   return (data as { id: string } | null)?.id ?? null;
 }
 

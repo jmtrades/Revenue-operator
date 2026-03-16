@@ -23,7 +23,7 @@ export async function maybePrependPresencePhrase(
     .from("human_presence_meta")
     .select("presence_phrase_used")
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
 
   if ((meta as { presence_phrase_used?: boolean } | null)?.presence_phrase_used) {
     return { message, used: false };

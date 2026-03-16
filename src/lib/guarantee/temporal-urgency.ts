@@ -27,7 +27,7 @@ async function computeTemporalScore(leadId: string, workspaceId: string): Promis
   const db = getDb();
   let score = 0;
 
-  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).single();
+  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).maybeSingle();
   const convId = (conv as { id?: string } | null)?.id;
   if (convId) {
     const { data: msgs } = await db
@@ -50,7 +50,7 @@ async function computeTemporalScore(leadId: string, workspaceId: string): Promis
     }
   }
 
-  const { data: leadRow } = await db.from("leads").select("metadata, created_at").eq("id", leadId).single();
+  const { data: leadRow } = await db.from("leads").select("metadata, created_at").eq("id", leadId).maybeSingle();
   const meta = (leadRow as { metadata?: Record<string, unknown>; created_at?: string } | null)?.metadata ?? {};
   const createdAt = (leadRow as { created_at?: string } | null)?.created_at;
   const serviceUrgency = meta.service_urgency as string | undefined;
@@ -117,7 +117,7 @@ export async function getTemporalUrgency(leadId: string): Promise<TemporalUrgenc
     .from("guarantee_temporal_urgency")
     .select("temporal_urgency_level, updated_at")
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
   return data as TemporalUrgencyRow | null;
 }
 

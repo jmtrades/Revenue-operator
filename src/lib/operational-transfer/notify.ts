@@ -13,14 +13,14 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "http
 
 async function getOwnerAndTeamEmails(workspaceId: string): Promise<{ owner: string | null; team: string[] }> {
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
   const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
   let owner: string | null = null;
   if (ownerId) {
-    const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+    const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
     owner = (user as { email?: string } | null)?.email ?? null;
   }
-  const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).single();
+  const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).maybeSingle();
   const raw = (settings as { team_handoff_emails?: unknown } | null)?.team_handoff_emails;
   const team = Array.isArray(raw) ? raw.filter((e): e is string => typeof e === "string" && e.includes("@")) : [];
   return { owner, team };
@@ -71,7 +71,7 @@ export async function notifyHandoff(
   const db = getDb();
   let itemName = params.who;
   if (itemName == null) {
-    const { data: lead } = await db.from("leads").select("name, email").eq("id", leadId).single();
+    const { data: lead } = await db.from("leads").select("name, email").eq("id", leadId).maybeSingle();
     itemName = (lead as { name?: string; email?: string } | null)?.name ?? (lead as { email?: string } | null)?.email ?? "Unnamed";
   }
   const fieldLabel = decisionNeededLabel(params.decisionNeeded) || "Outside authority.";
@@ -145,11 +145,11 @@ async function emitHandoffEvent(
     .from("webhook_configs")
     .select("endpoint_url, enabled, max_attempts")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!config || (config as { enabled?: boolean }).enabled === false) return;
   const cfg = config as { max_attempts?: number };
   const maxAttempts = cfg.max_attempts ?? 3;
-  const { data: row } = await db.from("webhook_configs").select("event_handoff_occurred").eq("workspace_id", workspaceId).single();
+  const { data: row } = await db.from("webhook_configs").select("event_handoff_occurred").eq("workspace_id", workspaceId).maybeSingle();
   const enabled = (row as { event_handoff_occurred?: boolean } | null)?.event_handoff_occurred !== false;
   if (!enabled) return;
   await db.from("outbound_events_log").insert({
@@ -201,7 +201,7 @@ export async function notifyBookingShortly(workspaceId: string): Promise<void> {
   const sent = await sendEmail(owner, text, text).catch(() => false);
   if (sent) {
     const db = getDb();
-    const { data: settings } = await db.from("settings").select("business_hours").eq("workspace_id", workspaceId).single();
+    const { data: settings } = await db.from("settings").select("business_hours").eq("workspace_id", workspaceId).maybeSingle();
     const tz = (settings as { business_hours?: { timezone?: string } } | null)?.business_hours?.timezone ?? "UTC";
     const formatter = new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" });
     const parts = formatter.formatToParts(new Date());

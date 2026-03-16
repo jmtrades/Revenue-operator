@@ -60,7 +60,7 @@ export async function chooseSequence(
     .eq("workspace_id", stateVector.workspace_id)
     .eq("purpose", purpose)
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (seq) {
     return seq as Sequence;
@@ -83,7 +83,7 @@ export async function chooseSequence(
       steps: defaultSteps,
     })
     .select("id, workspace_id, name, purpose, is_default, steps")
-    .single();
+    .maybeSingle();
 
   if (created && (created as { id: string }).id) {
     return created as Sequence;
@@ -94,7 +94,7 @@ export async function chooseSequence(
     .eq("workspace_id", stateVector.workspace_id)
     .eq("purpose", purpose)
     .limit(1)
-    .single();
+    .maybeSingle();
   if (fallback) return fallback as Sequence;
   return {
     id: "",
@@ -130,7 +130,7 @@ export async function startSequence(
       .select("id")
       .eq("workspace_id", workspaceId)
       .eq("lead_id", leadId)
-      .single();
+      .maybeSingle();
 
     if (existing) {
       await db
@@ -176,12 +176,12 @@ export async function advanceSequence(
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
     .eq("status", "running")
-    .single();
+    .maybeSingle();
 
   if (!run) return { advanced: false };
 
   const r = run as { sequence_id: string; current_step: number };
-  const { data: seq } = await db.from("sequences").select("steps").eq("id", r.sequence_id).single();
+  const { data: seq } = await db.from("sequences").select("steps").eq("id", r.sequence_id).maybeSingle();
   const steps = ((seq as { steps?: SequenceStep[] })?.steps ?? []) as SequenceStep[];
   const nextStepIndex = steps.findIndex((s) => s.step === r.current_step + 1);
   if (nextStepIndex < 0) {

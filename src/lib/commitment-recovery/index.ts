@@ -68,7 +68,7 @@ export async function createCommitment(
         state: "pending",
       })
       .select("id")
-      .single();
+      .maybeSingle();
     const id = (data as { id: string })?.id;
     if (id) {
       await db.from("commitment_events").insert({
@@ -176,10 +176,10 @@ export async function runRecoveryForCommitment(c: CommitmentRow): Promise<{ ok: 
         .from("conversations")
         .select("id, lead_id, channel")
         .eq("id", c.subject_id)
-        .single();
+        .maybeSingle();
       if (!conv) return { ok: false, error: "Conversation not found" };
       const convRow = conv as { id: string; lead_id: string; channel: string };
-      const { data: lead } = await db.from("leads").select("workspace_id").eq("id", convRow.lead_id).single();
+      const { data: lead } = await db.from("leads").select("workspace_id").eq("id", convRow.lead_id).maybeSingle();
       if (!lead) return { ok: false, error: "Lead not found" };
       const workspaceId = (lead as { workspace_id: string }).workspace_id;
       const { shouldSuppressOutbound } = await import("@/lib/outbound-suppression");
@@ -218,10 +218,10 @@ export async function runRecoveryForCommitment(c: CommitmentRow): Promise<{ ok: 
         .select("id, lead_id, channel")
         .eq("lead_id", (await getLeadIdForSubject(db, c)) ?? "")
         .limit(1)
-        .single();
+        .maybeSingle();
       if (conv) {
         const convRow = conv as { id: string; lead_id: string; channel: string };
-        const { data: lead } = await db.from("leads").select("workspace_id").eq("id", convRow.lead_id).single();
+        const { data: lead } = await db.from("leads").select("workspace_id").eq("id", convRow.lead_id).maybeSingle();
         if (lead) {
           const workspaceId = (lead as { workspace_id: string }).workspace_id;
           const { shouldSuppressOutbound } = await import("@/lib/outbound-suppression");
@@ -260,10 +260,10 @@ export async function runRecoveryForCommitment(c: CommitmentRow): Promise<{ ok: 
           .select("id, lead_id, channel")
           .eq("lead_id", leadId)
           .limit(1)
-          .single();
+          .maybeSingle();
         if (conv) {
           const convRow = conv as { id: string; lead_id: string; channel: string };
-          const { data: lead } = await db.from("leads").select("workspace_id").eq("id", convRow.lead_id).single();
+          const { data: lead } = await db.from("leads").select("workspace_id").eq("id", convRow.lead_id).maybeSingle();
           if (lead) {
             const workspaceId = (lead as { workspace_id: string }).workspace_id;
             const { shouldSuppressOutbound } = await import("@/lib/outbound-suppression");
@@ -315,11 +315,11 @@ export async function runRecoveryForCommitment(c: CommitmentRow): Promise<{ ok: 
 
 async function getLeadIdForSubject(db: ReturnType<typeof getDb>, c: CommitmentRow): Promise<string | null> {
   if (c.subject_type === "conversation") {
-    const { data } = await db.from("conversations").select("lead_id").eq("id", c.subject_id).single();
+    const { data } = await db.from("conversations").select("lead_id").eq("id", c.subject_id).maybeSingle();
     return (data as { lead_id?: string })?.lead_id ?? null;
   }
   if (c.subject_type === "booking") {
-    const { data } = await db.from("leads").select("id").eq("id", c.subject_id).single();
+    const { data } = await db.from("leads").select("id").eq("id", c.subject_id).maybeSingle();
     return (data as { id?: string })?.id ?? null;
   }
   return c.subject_id;
@@ -335,7 +335,7 @@ export async function escalateCommitmentToAuthority(commitmentId: string): Promi
     .from("commitments")
     .select("id, workspace_id, subject_type, subject_id, expected_at")
     .eq("id", commitmentId)
-    .single();
+    .maybeSingle();
   if (!c) return { escalated: false };
   const row = c as { workspace_id: string; subject_type: string; subject_id: string };
   const { getCommitmentBehaviorPattern } = await import("@/lib/operational-memory");
@@ -375,11 +375,11 @@ export async function escalateCommitmentToAuthority(commitmentId: string): Promi
 }
 
 async function getLeadIdFromCommitment(db: ReturnType<typeof getDb>, commitmentId: string): Promise<string | null> {
-  const { data: c } = await db.from("commitments").select("subject_type, subject_id").eq("id", commitmentId).single();
+  const { data: c } = await db.from("commitments").select("subject_type, subject_id").eq("id", commitmentId).maybeSingle();
   if (!c) return null;
   const r = c as { subject_type: string; subject_id: string };
   if (r.subject_type === "conversation") {
-    const { data: conv } = await db.from("conversations").select("lead_id").eq("id", r.subject_id).single();
+    const { data: conv } = await db.from("conversations").select("lead_id").eq("id", r.subject_id).maybeSingle();
     return (conv as { lead_id?: string })?.lead_id ?? null;
   }
   if (r.subject_type === "lead" || r.subject_type === "booking") return r.subject_id;
@@ -398,7 +398,7 @@ export async function resolveCommitment(
     .from("commitments")
     .select("workspace_id, state, recovery_attempts, subject_type, subject_id")
     .eq("id", commitmentId)
-    .single();
+    .maybeSingle();
   const prev = before as { workspace_id: string; state: string; recovery_attempts: number; subject_type: string; subject_id: string } | null;
   await runWithWriteContextAsync("delivery", async () => {
     const db2 = getDb();

@@ -30,7 +30,7 @@ export async function convertLegacyWebhookToSignalAndEnqueue(webhookId: string):
     .from("raw_webhook_events")
     .select("id, payload, processed")
     .eq("id", webhookId)
-    .single();
+    .maybeSingle();
 
   if (error || !raw) throw new Error(`Raw webhook not found: ${webhookId}`);
   if ((raw as { processed?: boolean }).processed) {

@@ -39,7 +39,7 @@ async function getSlackToken(workspaceId: string): Promise<string | null> {
     .from("workspace_slack_config")
     .select("access_token_encrypted")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   const enc = (data as { access_token_encrypted?: string | null } | null)?.access_token_encrypted?.trim();
   if (!enc) return null;
   try {
@@ -56,7 +56,7 @@ export async function getWorkspaceSlackConfig(workspaceId: string): Promise<Work
     .from("workspace_slack_config")
     .select("workspace_id, team_id, team_name, access_token_encrypted")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!data) return null;
   const r = data as { workspace_id: string; team_id?: string | null; team_name?: string | null; access_token_encrypted?: string | null };
   return {
@@ -73,7 +73,7 @@ export async function getWorkspaceTeamsConfig(workspaceId: string): Promise<Work
     .from("workspace_teams_config")
     .select("workspace_id, webhook_url_encrypted")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!data) return null;
   const r = data as { workspace_id: string; webhook_url_encrypted?: string | null };
   return {
@@ -167,7 +167,7 @@ async function getTeamsWebhookForNotification(
     .from("workspace_teams_config")
     .select("webhook_url_encrypted")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   const enc = (cfg as { webhook_url_encrypted?: string | null } | null)?.webhook_url_encrypted?.trim();
   if (!enc) return null;
   try {

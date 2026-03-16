@@ -22,7 +22,7 @@ export async function recordCloserFeedback(
     .eq("lead_id", leadId)
     .neq("status", "lost")
     .limit(1)
-    .single();
+    .maybeSingle();
 
   let predictedProbability = 0.5;
   if (deal) {

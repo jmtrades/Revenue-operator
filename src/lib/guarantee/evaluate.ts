@@ -42,7 +42,7 @@ export async function evaluateGuaranteesForLead(
     .select("id")
     .eq("lead_id", leadId)
     .limit(1)
-    .single();
+    .maybeSingle();
   const convId = (convRow as { id?: string } | null)?.id;
   if (convId) {
     const { data: lastUser } = await db
@@ -52,7 +52,7 @@ export async function evaluateGuaranteesForLead(
       .eq("role", "user")
       .order("created_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
     const { data: lastAssistant } = await db
       .from("messages")
       .select("created_at")
@@ -60,7 +60,7 @@ export async function evaluateGuaranteesForLead(
       .eq("role", "assistant")
       .order("created_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
     const userAt = (lastUser as { created_at?: string } | null)?.created_at
       ? new Date((lastUser as { created_at: string }).created_at).getTime()
       : 0;
@@ -96,7 +96,7 @@ export async function evaluateGuaranteesForLead(
       .eq("workspace_id", workspaceId)
       .eq("lead_id", leadId)
       .eq("status", "active")
-      .single();
+      .maybeSingle();
     const planRow = plan as { next_action_at?: string; next_action_type?: string } | null;
     const nextAt = planRow?.next_action_at ? new Date(planRow.next_action_at).getTime() : null;
     const isOverdue = nextAt != null && nextAt < now;

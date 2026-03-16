@@ -37,7 +37,7 @@ export async function getBusinessMemory(
     .select("content")
     .eq("workspace_id", workspaceId)
     .eq("memory_type", memoryType)
-    .single();
+    .maybeSingle();
   return (data as { content?: MemoryContent })?.content ?? null;
 }
 
@@ -51,7 +51,7 @@ export async function getBusinessMemoryWithProvenance(
     .select("content, source_type, confidence, sample_size, last_updated")
     .eq("workspace_id", workspaceId)
     .eq("memory_type", memoryType)
-    .single();
+    .maybeSingle();
   const row = data as { content?: MemoryContent; source_type?: string; confidence?: number; sample_size?: number; last_updated?: string } | null;
   return {
     content: row?.content ?? null,
@@ -78,7 +78,7 @@ export async function setBusinessMemory(
     .select("id")
     .eq("workspace_id", workspaceId)
     .eq("memory_type", memoryType)
-    .single();
+    .maybeSingle();
   const updatePayload = {
     content,
     source: source ?? null,

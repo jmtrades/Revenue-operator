@@ -11,7 +11,7 @@ async function getAccessToken(workspaceId: string): Promise<string> {
     .from("zoom_accounts")
     .select("access_token_enc, refresh_token_enc, expires_at")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (!data) throw new Error("Zoom not connected");
   const row = data as { access_token_enc: string; refresh_token_enc: string; expires_at: string };

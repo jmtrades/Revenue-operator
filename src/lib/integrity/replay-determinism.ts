@@ -29,7 +29,7 @@ export async function replayLeadFromSignals(leadId: string, workspaceId: string)
     .select("id, state")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!lead) return null;
 
   const { data: signals } = await db

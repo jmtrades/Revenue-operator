@@ -47,7 +47,7 @@ export async function runDecisionJob(
     .select("*")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (leadErr || !lead) {
     return;
@@ -57,7 +57,7 @@ export async function runDecisionJob(
     .from("settings")
     .select("*")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const settings = mergeSettings(settingsRow as Partial<import("@/lib/autopilot").WorkspaceSettings> | undefined);
   const communicationStyle =
@@ -101,7 +101,7 @@ export async function runDecisionJob(
   let confidence = 0.9;
   let lastUserMsg = "";
 
-  const { data: convRow } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).single();
+  const { data: convRow } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).maybeSingle();
   const convId = (convRow as { id?: string })?.id;
   if (!convId) return;
 
@@ -135,7 +135,7 @@ export async function runDecisionJob(
         .from("workspace_business_context")
         .select("*")
         .eq("workspace_id", workspaceId)
-        .single();
+        .maybeSingle();
 
       const businessContext = businessContextRow
         ? {
@@ -165,7 +165,7 @@ export async function runDecisionJob(
 
       // Get playbook for state
       const { getPlaybookForState, calculateNextActionAt } = await import("@/lib/playbooks");
-      const { data: leadRow } = await db.from("leads").select("created_at, last_activity_at").eq("id", leadId).single();
+      const { data: leadRow } = await db.from("leads").select("created_at, last_activity_at").eq("id", leadId).maybeSingle();
       const leadCreated = leadRow ? new Date((leadRow as { created_at?: string }).created_at ?? Date.now()) : new Date();
       const _lastActivity = leadRow ? new Date((leadRow as { last_activity_at?: string }).last_activity_at ?? Date.now()) : new Date();
       const conversationAgeHours = (Date.now() - leadCreated.getTime()) / (1000 * 60 * 60);
@@ -198,7 +198,7 @@ export async function runDecisionJob(
       const { conversationHadProofReference, conversationAlreadyHadRecordExpectation } = await import("@/lib/environmental-presence/proof-reference");
       const addRecordExpectation =
         (await conversationHadProofReference(workspaceId, convId)) && !(await conversationAlreadyHadRecordExpectation(convId));
-      const { data: convChannel } = await db.from("conversations").select("channel").eq("id", convId).single();
+      const { data: convChannel } = await db.from("conversations").select("channel").eq("id", convId).maybeSingle();
       const channel = ((convChannel as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
 
       const intent = stateToIntent(conversationState);
@@ -275,7 +275,7 @@ export async function runDecisionJob(
         (await conversationHadProofReference(workspaceId, convId)) && !(await conversationAlreadyHadRecordExpectation(convId));
       const fallbackIntent = actionToIntent(action);
       if (fallbackIntent) {
-        const { data: convChannel } = await db.from("conversations").select("channel").eq("id", convId).single();
+        const { data: convChannel } = await db.from("conversations").select("channel").eq("id", convId).maybeSingle();
         const ch = ((convChannel as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
         message = compileMessage(fallbackIntent, { channel: ch, entities: { name: lead.name ?? undefined }, addRecordExpectation: addRecordExpectationFallback });
         confidence = 0.8;
@@ -310,7 +310,7 @@ export async function runDecisionJob(
     }
     // Tiered booking routing
     if ((action === "booking" || action === "call_invite") && allowedActions.includes("qualification_question")) {
-      const { data: dealRow } = await db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1).single();
+      const { data: dealRow } = await db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1).maybeSingle();
       const dealId = (dealRow as { id?: string })?.id;
       if (dealId) {
         const route = await getBookingRoute(dealId);
@@ -319,14 +319,14 @@ export async function runDecisionJob(
         if (route.tier === "clarify_nurture") {
           action = "qualification_question";
           const { compileMessage } = await import("@/lib/message-compiler");
-          const { data: chRow } = await db.from("conversations").select("channel").eq("id", convId).single();
+          const { data: chRow } = await db.from("conversations").select("channel").eq("id", convId).maybeSingle();
           const ch = ((chRow as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
           message = compileMessage("clarification", { channel: ch, entities: { name: lead.name ?? undefined }, addRecordExpectation: addRec });
           reasoning = { ...reasoning, booking_route: route };
         } else if (route.tier === "triage_call" && action === "booking") {
           action = "call_invite";
           const { compileMessage } = await import("@/lib/message-compiler");
-          const { data: chRow } = await db.from("conversations").select("channel").eq("id", convId).single();
+          const { data: chRow } = await db.from("conversations").select("channel").eq("id", convId).maybeSingle();
           const ch = ((chRow as { channel?: string })?.channel ?? "sms") as "sms" | "email" | "web";
           message = compileMessage("follow_up", { channel: ch, entities: { name: lead.name ?? undefined }, addRecordExpectation: addRec });
           reasoning = { ...reasoning, booking_route: route };
@@ -390,7 +390,7 @@ export async function runDecisionJob(
     return;
   }
 
-  const { data: wsRow } = await db.from("workspaces").select("created_at, status").eq("id", workspaceId).single();
+  const { data: wsRow } = await db.from("workspaces").select("created_at, status").eq("id", workspaceId).maybeSingle();
   const ws = wsRow as { created_at?: string; status?: string } | undefined;
   if (ws?.status === "paused") {
     await logRestraint(workspaceId, leadId, "workspace_paused");
@@ -414,7 +414,7 @@ export async function runDecisionJob(
     }
   }
 
-  const { data: convRow2 } = await db.from("conversations").select("channel").eq("lead_id", leadId).limit(1).single();
+  const { data: convRow2 } = await db.from("conversations").select("channel").eq("lead_id", leadId).limit(1).maybeSingle();
   let channel = (convRow2 as { channel?: string })?.channel ?? "web";
   const channelCanSend = await canSend(channel);
   if (!channelCanSend) {
@@ -470,7 +470,7 @@ export async function runDecisionJob(
       approved_by_human: false,
       metadata: { action: "escalation_hold_limited_assist", reasoning },
     });
-    const { data: convH } = await db.from("conversations").select("channel").eq("id", convId).single();
+    const { data: convH } = await db.from("conversations").select("channel").eq("id", convId).maybeSingle();
     const outCh = (convH as { channel?: string })?.channel ?? "web";
     await enqueueSendMessage(
       workspaceId,
@@ -496,7 +496,7 @@ export async function runDecisionJob(
   }
 
   const sensitive = detectSensitiveIntent((reasoning.risk_flags ?? []) as string[], lastUserMsg);
-  const { data: dealRow } = await db.from("deals").select("value_cents").eq("lead_id", leadId).neq("status", "lost").limit(1).single();
+  const { data: dealRow } = await db.from("deals").select("value_cents").eq("lead_id", leadId).neq("status", "lost").limit(1).maybeSingle();
   const dealValue = (dealRow as { value_cents?: number })?.value_cents ?? 0;
 
   // Human presence layer: timing, variation, memory, validation, emotional complexity
@@ -531,7 +531,7 @@ export async function runDecisionJob(
   if (!forceSimulate && ((escalationCheck.shouldEscalate && escalationCheck.reason) || needsApproval || shouldEscalateByEmotion)) {
     const escReason = escalationCheck.reason ?? (shouldEscalateByEmotion ? "emotional_complexity" : "autonomy_assist_approval_required");
     const assignedUserId = await getAssignedUserId(workspaceId, leadId);
-    const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).single();
+    const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).maybeSingle();
     const timeoutHours = (escRules as { escalation_rules?: { escalation_timeout_hours?: number }; escalation_timeout_hours?: number })?.escalation_rules?.escalation_timeout_hours
       ?? (escRules as { escalation_timeout_hours?: number })?.escalation_timeout_hours
       ?? 24;
@@ -553,7 +553,7 @@ export async function runDecisionJob(
       await db.from("escalation_logs").update({ hold_until: holdUntil.toISOString(), holding_message_sent: true }).eq("id", escalationId);
     }
 
-    const { data: conv } = await db.from("conversations").select("channel").eq("id", convId).single();
+    const { data: conv } = await db.from("conversations").select("channel").eq("id", convId).maybeSingle();
     const outChannel = (conv as { channel?: string })?.channel ?? "web";
     await enqueueSendMessage(
       workspaceId,
@@ -630,7 +630,7 @@ export async function runDecisionJob(
     return;
   }
 
-  const { data: conv } = await db.from("conversations").select("channel").eq("id", convId).single();
+  const { data: conv } = await db.from("conversations").select("channel").eq("id", convId).maybeSingle();
   const outChannel = (conv as { channel?: string })?.channel ?? "web";
   await enqueueSendMessage(
     workspaceId,

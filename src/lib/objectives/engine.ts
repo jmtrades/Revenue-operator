@@ -28,7 +28,7 @@ export async function evaluateWorkspaceObjective(
     .from("settings")
     .select("weekly_call_target")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const target = (settings as { weekly_call_target?: number })?.weekly_call_target ?? 0;
   if (target < 1) return null;
@@ -147,7 +147,7 @@ export async function evaluateRevenueObjective(
     }
   }
 
-  const { data: settings } = await db.from("settings").select("weekly_revenue_target_cents").eq("workspace_id", workspaceId).single();
+  const { data: settings } = await db.from("settings").select("weekly_revenue_target_cents").eq("workspace_id", workspaceId).maybeSingle();
   const targetCents = (settings as { weekly_revenue_target_cents?: number })?.weekly_revenue_target_cents;
   if (targetCents == null || targetCents < 1) return { expected_revenue_cents: Math.round(expectedRevenueCents), status: "on_track" };
 
@@ -190,7 +190,7 @@ export async function getObjectiveStatus(
     .select("*")
     .eq("workspace_id", workspaceId)
     .eq("objective_type", "bookings")
-    .single();
+    .maybeSingle();
 
   if (!row) {
     const obj = await evaluateWorkspaceObjective(workspaceId);

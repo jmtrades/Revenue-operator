@@ -26,13 +26,13 @@ export async function detectDealDeath(
     .from("leads")
     .select("state, last_activity_at, created_at")
     .eq("id", leadId)
-    .single();
+    .maybeSingle();
 
   const { data: deal } = await db
     .from("deals")
     .select("created_at, status")
     .eq("id", dealId)
-    .single();
+    .maybeSingle();
 
   if (!lead || !deal) return null;
 

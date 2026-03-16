@@ -212,7 +212,7 @@ export async function runRevivalForOpportunity(opp: OpportunityStateRow): Promis
       .from("conversations")
       .select("id, lead_id, channel")
       .eq("id", opp.conversation_id)
-      .single();
+      .maybeSingle();
     if (!conv) return { ok: false, error: "Conversation not found" };
     const c = conv as { id: string; lead_id: string; channel: string };
     const { data: msgs } = await db
@@ -300,7 +300,7 @@ export async function onCustomerReply(workspaceId: string, conversationId: strin
     .from("opportunity_states")
     .select("id, momentum_state")
     .eq("conversation_id", conversationId)
-    .single();
+    .maybeSingle();
   if (!row) return;
   const r = row as { id: string; momentum_state: string };
   const wasDecayed = r.momentum_state === "slowing" || r.momentum_state === "stalled";
@@ -375,7 +375,7 @@ export async function onCustomerReply(workspaceId: string, conversationId: strin
       const { recordMemoryReplacementEvent } = await import("@/lib/memory-replacement");
       recordMemoryReplacementEvent(workspaceId, "conversation_revived").catch(() => {});
     }
-    const { data: conv } = await db.from("conversations").select("lead_id").eq("id", conversationId).single();
+    const { data: conv } = await db.from("conversations").select("lead_id").eq("id", conversationId).maybeSingle();
     const leadId = (conv as { lead_id?: string })?.lead_id;
     if (leadId) {
       try {

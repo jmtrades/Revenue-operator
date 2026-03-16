@@ -161,7 +161,7 @@ export async function getTrajectoryState(workspaceId: string): Promise<Trajector
       "high_value_underrepresented, low_value_overload, future_overload, future_empty, return_cycle_underperforming, demand_temperature, updated_at"
     )
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   return data as TrajectoryStateRow | null;
 }
 

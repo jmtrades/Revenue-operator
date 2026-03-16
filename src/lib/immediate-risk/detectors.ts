@@ -179,7 +179,7 @@ async function detectPromisedFollowup(): Promise<void> {
       .limit(1)
       .maybeSingle();
     if (later) continue;
-    const { data: lead } = await db.from("leads").select("workspace_id").eq("id", conv.lead_id).single();
+    const { data: lead } = await db.from("leads").select("workspace_id").eq("id", conv.lead_id).maybeSingle();
     if (!lead) continue;
     const workspaceId = (lead as { workspace_id: string }).workspace_id;
     await upsertImmediateRisk(workspaceId, "promised_followup", conv.id);

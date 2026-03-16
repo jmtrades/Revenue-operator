@@ -14,7 +14,7 @@ export async function refreshZoomTokenIfNeeded(workspaceId: string): Promise<boo
     .select("access_token_enc, refresh_token_enc, expires_at")
     .eq("workspace_id", workspaceId)
     .is("disconnected_at", null)
-    .single();
+    .maybeSingle();
 
   if (!data) return false;
   const row = data as { access_token_enc: string; refresh_token_enc: string; expires_at: string };

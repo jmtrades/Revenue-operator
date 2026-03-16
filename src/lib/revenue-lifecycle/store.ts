@@ -32,7 +32,7 @@ export async function getRevenueLifecycle(
     .select("*")
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
   return (data as RevenueLifecycleRow | null) ?? null;
 }
 
@@ -58,7 +58,7 @@ export async function upsertRevenueLifecycle(
     .select("id")
     .eq("lead_id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const row = {
     ...updates,

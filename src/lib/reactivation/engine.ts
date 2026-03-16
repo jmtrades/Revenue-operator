@@ -75,7 +75,7 @@ export async function scheduleReactivationAttempts(): Promise<number> {
 
     if (nextAttemptAt > now) continue;
 
-    const { data: conv } = await db.from("conversations").select("id").eq("lead_id", l.id).limit(1).single();
+    const { data: conv } = await db.from("conversations").select("id").eq("lead_id", l.id).limit(1).maybeSingle();
     const convId = (conv as { id?: string })?.id ?? "";
     if (convId) {
       const { data: recentReply } = await db
@@ -85,7 +85,7 @@ export async function scheduleReactivationAttempts(): Promise<number> {
         .eq("role", "user")
         .gte("created_at", lastAttempt?.toISOString() ?? "1970-01-01")
         .limit(1)
-        .single();
+        .maybeSingle();
       if (recentReply) continue;
     }
 
@@ -95,7 +95,7 @@ export async function scheduleReactivationAttempts(): Promise<number> {
       .eq("lead_id", l.id)
       .in("status", ["won", "lost", "booked"])
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (deal) continue;
 

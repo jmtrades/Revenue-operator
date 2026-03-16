@@ -78,7 +78,7 @@ export async function createPaymentObligation(input: CreateObligationInput): Pro
         ...(input.conversationId && { conversation_id: input.conversationId }),
       })
       .select("id")
-      .single();
+      .maybeSingle();
     return (data as { id: string })?.id ?? "";
   });
   if (id && input.leadId) {
@@ -87,7 +87,7 @@ export async function createPaymentObligation(input: CreateObligationInput): Pro
       .select("email, phone")
       .eq("id", input.leadId)
       .eq("workspace_id", input.workspaceId)
-      .single();
+      .maybeSingle();
     const identifier = (lead as { email?: string | null; phone?: string | null } | null)?.email
       ?? (lead as { phone?: string | null } | null)?.phone;
     if (identifier) {
@@ -171,7 +171,7 @@ export async function runRecoveryForObligation(obligation: PaymentObligationRow)
         .from("conversations")
         .select("id, lead_id, channel")
         .eq("id", obligation.conversation_id)
-        .single();
+        .maybeSingle();
       if (conv) {
         const c = conv as { id: string; lead_id: string; channel: string };
         const { compileMessage } = await import("@/lib/message-compiler");
@@ -245,7 +245,7 @@ export async function resolvePaymentObligation(
     .from("payment_obligations")
     .select("workspace_id, state, amount, currency, subject_type, subject_id, recovery_attempts")
     .eq("id", obligationId)
-    .single();
+    .maybeSingle();
   const before = beforeRow as { workspace_id: string; state: string; amount: number; currency: string; subject_type: string; subject_id: string; recovery_attempts?: number } | null;
   let obligationSnapshot: { workspace_id: string; amount: number; currency: string; subject_type: string; subject_id: string } | null = null;
   if (terminalOutcome === "paid" && before) {

@@ -87,7 +87,7 @@ async function getBehavioralExpectation(
   hoursSinceLastMessage: number
 ): Promise<{ value: number; hasData: boolean }> {
   const db = getDb();
-  const { data: settingsRow } = await db.from("settings").select("business_type").eq("workspace_id", workspaceId).single();
+  const { data: settingsRow } = await db.from("settings").select("business_type").eq("workspace_id", workspaceId).maybeSingle();
   const industry = toIndustryBucket((settingsRow as { business_type?: string })?.business_type);
   const timeBucket = toTimeBucket(hoursSinceLastMessage);
 

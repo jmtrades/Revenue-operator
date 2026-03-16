@@ -21,7 +21,7 @@ export async function verifyEscalationDeliverable(escalationId: string): Promise
     .from("escalation_logs")
     .select("id, workspace_id, lead_id, escalation_reason, notified_at")
     .eq("id", escalationId)
-    .single();
+    .maybeSingle();
   if (!esc) return;
 
   const { workspace_id, lead_id, escalation_reason } = esc as {

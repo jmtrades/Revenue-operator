@@ -19,7 +19,7 @@ export async function predictDealOutcome(dealId: string): Promise<DealPrediction
     .from("deals")
     .select("id, lead_id, workspace_id, status, created_at")
     .eq("id", dealId)
-    .single();
+    .maybeSingle();
   if (!deal) return { deal_id: dealId, probability: 0, signals: [], updated_at: new Date().toISOString() };
 
   const d = deal as { lead_id: string; workspace_id: string; status: string };
@@ -30,7 +30,7 @@ export async function predictDealOutcome(dealId: string): Promise<DealPrediction
     .from("leads")
     .select("state, last_activity_at, created_at")
     .eq("id", d.lead_id)
-    .single();
+    .maybeSingle();
   if (lead) {
     const l = lead as { state: string; last_activity_at: string; created_at: string };
     if (l.state === "QUALIFIED" || l.state === "BOOKED") {

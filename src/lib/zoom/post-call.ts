@@ -16,7 +16,7 @@ export async function executePostCallPlan(
   leadId: string
 ): Promise<void> {
   const db = getDb();
-  const { data: settings } = await db.from("settings").select("hired_roles").eq("workspace_id", workspaceId).single();
+  const { data: settings } = await db.from("settings").select("hired_roles").eq("workspace_id", workspaceId).maybeSingle();
   const hired = (settings as { hired_roles?: string[] })?.hired_roles ?? ["full_autopilot"];
   if (!hired.includes("follow_up_manager") && !hired.includes("full_autopilot")) return;
 
@@ -24,7 +24,7 @@ export async function executePostCallPlan(
     .from("call_analysis")
     .select("analysis_json")
     .eq("call_session_id", callSessionId)
-    .single();
+    .maybeSingle();
 
   if (!analysisRow) return;
 
@@ -32,7 +32,7 @@ export async function executePostCallPlan(
   const nextAction = analysis.next_best_action ?? "send_recap";
   const plan = analysis.followup_plan ?? [];
 
-  const { data: lead } = await db.from("leads").select("state").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("state").eq("id", leadId).maybeSingle();
   const currentState = (lead as { state?: string })?.state ?? "BOOKED";
 
   const newState = evaluateState(

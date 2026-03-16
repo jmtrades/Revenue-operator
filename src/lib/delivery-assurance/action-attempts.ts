@@ -49,7 +49,7 @@ export async function createAttempt(
       outbound_message_id: outboundMessageId ?? null,
     })
     .select("id")
-    .single();
+    .maybeSingle();
   return (data as { id: string }).id;
 }
 
@@ -60,7 +60,7 @@ export async function markAttemptSent(
 ): Promise<void> {
   const db = getDb();
   const now = new Date().toISOString();
-  const { data: row } = await db.from("action_attempts").select("action_command_id, attempt_number").eq("id", attemptId).single();
+  const { data: row } = await db.from("action_attempts").select("action_command_id, attempt_number").eq("id", attemptId).maybeSingle();
   if (!row) return;
   const attemptNum = (row as { attempt_number: number }).attempt_number;
   const nextRetryAt = attemptNum < MAX_ATTEMPTS ? new Date(Date.now() + RETRY_DELAYS_MS[attemptNum - 1]).toISOString() : null;
@@ -83,7 +83,7 @@ export async function markAttemptDelivered(providerMessageId: string): Promise<b
     .from("action_attempts")
     .select("id, action_command_id")
     .eq("provider_message_id", providerMessageId)
-    .single();
+    .maybeSingle();
   if (!attempt) return false;
   const cmdId = (attempt as { action_command_id: string }).action_command_id;
   await db.from("action_attempts").update({ status: "acknowledged", updated_at: now }).eq("id", (attempt as { id: string }).id);
@@ -98,7 +98,7 @@ export async function markAttemptFailed(
 ): Promise<{ actionCommandId: string; shouldDLQ: boolean }> {
   const db = getDb();
   const now = new Date().toISOString();
-  const { data: row } = await db.from("action_attempts").select("action_command_id, attempt_number").eq("id", attemptId).single();
+  const { data: row } = await db.from("action_attempts").select("action_command_id, attempt_number").eq("id", attemptId).maybeSingle();
   if (!row) return { actionCommandId: "", shouldDLQ: false };
   const cmdId = (row as { action_command_id: string }).action_command_id;
   const num = (row as { attempt_number: number }).attempt_number;
@@ -126,10 +126,10 @@ export async function markStaleSendingAttemptsAsFailed(): Promise<number> {
   for (const row of stale as { id: string }[]) {
     const { shouldDLQ } = await markAttemptFailed(row.id, "Delivery not confirmed within " + DELIVERY_STALE_HOURS + "h (stale sending)");
     if (shouldDLQ) {
-      const { data: attempt } = await db.from("action_attempts").select("action_command_id").eq("id", row.id).single();
+      const { data: attempt } = await db.from("action_attempts").select("action_command_id").eq("id", row.id).maybeSingle();
       if (attempt) {
         const { toFailedJobAndEscalate } = await import("./dlq-handoff");
-        const { data: cmd } = await db.from("action_commands").select("workspace_id, lead_id, payload, type").eq("id", (attempt as { action_command_id: string }).action_command_id).single();
+        const { data: cmd } = await db.from("action_commands").select("workspace_id, lead_id, payload, type").eq("id", (attempt as { action_command_id: string }).action_command_id).maybeSingle();
         if (cmd)
           await toFailedJobAndEscalate({
             workspaceId: (cmd as { workspace_id: string }).workspace_id,

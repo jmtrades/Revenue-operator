@@ -34,7 +34,7 @@ export async function getConversationMemory(
     .from("conversation_memory")
     .select("topic, intent, hesitation_reason, urgency_level, previous_objections, preferred_time_refs, availability_constraints, raw_notes")
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
   if (!data) return null;
   return data as ConversationMemoryRow;
 }

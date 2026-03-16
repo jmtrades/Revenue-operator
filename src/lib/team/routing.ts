@@ -31,7 +31,7 @@ export async function routeLead(
     .eq("lead_id", leadId)
     .neq("status", "lost")
     .limit(1)
-    .single();
+    .maybeSingle();
 
   let isHot = false;
   if (deal) {

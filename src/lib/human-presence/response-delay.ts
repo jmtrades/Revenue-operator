@@ -52,7 +52,7 @@ export async function getLastResponseDelaySeconds(leadId: string): Promise<numbe
     .from("human_presence_meta")
     .select("last_delay_used_seconds")
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
   const v = (data as { last_delay_used_seconds?: number } | null)?.last_delay_used_seconds;
   return v != null ? v : null;
 }

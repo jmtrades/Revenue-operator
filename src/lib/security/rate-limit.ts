@@ -25,7 +25,7 @@ export async function checkInboundRateLimit(workspaceId: string, ip: string): Pr
     .select("count, window_start")
     .eq("scope", "webhook_inbound")
     .eq("key_hash", key)
-    .single();
+    .maybeSingle();
 
   if (!row) return true;
 
@@ -38,7 +38,7 @@ export async function checkInboundRateLimit(workspaceId: string, ip: string): Pr
 export async function incrementInboundRateLimit(workspaceId: string, ip: string): Promise<void> {
   const db = getDb();
   const key = hashKey(`inbound:${workspaceId}:${ip}`);
-  const { data } = await db.from("rate_limits").select("count, window_start").eq("scope", "webhook_inbound").eq("key_hash", key).single();
+  const { data } = await db.from("rate_limits").select("count, window_start").eq("scope", "webhook_inbound").eq("key_hash", key).maybeSingle();
   const now = new Date().toISOString();
   if (!data) {
     await db.from("rate_limits").insert({ scope: "webhook_inbound", key_hash: key, count: 1, window_start: now });

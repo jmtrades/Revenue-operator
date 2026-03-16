@@ -111,11 +111,11 @@ export async function runStartOfWorkWindow(): Promise<
 
       if (await allActiveHandoffsTouchedInLastMinutes(workspaceId, 15)) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -173,11 +173,11 @@ export async function runMiddayClarityWindow(): Promise<
 
       if (await everyPendingHandoffHasHumanActivityAfter(workspaceId)) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -267,11 +267,11 @@ export async function runPreCallPreparationWindow(): Promise<
       const nowMs = now.getTime();
       if (nowMs < thirtyBefore || nowMs >= windowEnd) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -334,11 +334,11 @@ export async function runWorkdayCompletionSignal(): Promise<
       const text = anyCoordinationSent ? "Nothing further today." : "All set.";
       const table = anyCoordinationSent ? "workday_completion_sent" : "all_set_sent";
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 

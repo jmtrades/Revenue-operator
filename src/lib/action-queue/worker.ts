@@ -60,11 +60,11 @@ async function runActionJobInner(
     .select("id, opt_out, email, phone")
     .eq("id", lead_id)
     .eq("workspace_id", workspace_id)
-    .single();
+    .maybeSingle();
   if (!lead) throw new Error("Lead not found");
   if ((lead as { opt_out?: boolean }).opt_out) return;
 
-  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).single();
+  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).maybeSingle();
   const settings = mergeSettings(settingsRow as Parameters<typeof mergeSettings>[0]);
   if (!isWithinBusinessHours(settings)) return;
 
@@ -74,7 +74,7 @@ async function runActionJobInner(
       .from("conversations")
       .select("id")
       .eq("id", p.conversation_id)
-      .single();
+      .maybeSingle();
     if (!conv) return;
 
     const { checkConfidenceGate } = await import("@/lib/confidence-engine/gate");
@@ -141,7 +141,7 @@ async function runActionJobInner(
           metadata: { dedup_key, operator_id: command.operator_id },
         })
         .select("id")
-        .single();
+        .maybeSingle();
       if (!om) return;
       const omId = (om as { id: string }).id;
       const attemptId = await createAttempt(actionCommandId, attemptNumber, omId);
@@ -235,7 +235,7 @@ async function runActionJobInner(
         metadata: { dedup_key, operator_id: command.operator_id },
       })
       .select("id")
-      .single();
+      .maybeSingle();
     if (om) {
       const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
       const result = await sendOutbound(
@@ -315,7 +315,7 @@ async function runActionJobInner(
         metadata: { dedup_key, reminder: true },
       })
       .select("id")
-      .single();
+      .maybeSingle();
     if (om) {
       const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };
       const result = await sendOutbound(

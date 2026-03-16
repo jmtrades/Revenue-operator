@@ -59,7 +59,7 @@ export function createTwilioMessagingProvider(): MessagingReadProvider {
         .select("twilio_account_sid")
         .eq("workspace_id", workspaceId)
         .eq("status", "active")
-        .single();
+        .maybeSingle();
       const accountSid = (phoneConfig as { twilio_account_sid?: string } | null)?.twilio_account_sid ?? process.env.TWILIO_ACCOUNT_SID;
       const authToken = process.env.TWILIO_AUTH_TOKEN;
       if (!accountSid || !authToken) return [];
@@ -101,7 +101,7 @@ export function createTwilioMessagingProvider(): MessagingReadProvider {
         .select("twilio_account_sid, proxy_number")
         .eq("workspace_id", workspaceId)
         .eq("status", "active")
-        .single();
+        .maybeSingle();
       const accountSid = (phoneConfig as { twilio_account_sid?: string } | null)?.twilio_account_sid ?? process.env.TWILIO_ACCOUNT_SID;
       const authToken = process.env.TWILIO_AUTH_TOKEN;
       if (!accountSid || !authToken) return [];

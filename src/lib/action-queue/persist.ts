@@ -25,10 +25,10 @@ export async function persistActionCommand(command: ActionCommand): Promise<{ id
       type: command.type,
       payload: command.payload,
     };
-    const { data, error } = await db.from(TABLE).insert(row).select("id").single();
+    const { data, error } = await db.from(TABLE).insert(row).select("id").maybeSingle();
     if (error) {
       if (error.code === "23505") {
-        const { data: existing } = await db.from(TABLE).select("id").eq("dedup_key", command.dedup_key).single();
+        const { data: existing } = await db.from(TABLE).select("id").eq("dedup_key", command.dedup_key).maybeSingle();
         return { id: (existing as { id: string })?.id ?? "", isNew: false };
       }
       throw error;
@@ -55,7 +55,7 @@ export async function markActionCommandProcessed(actionCommandId: string): Promi
  */
 export async function isActionCommandProcessed(actionCommandId: string): Promise<boolean> {
   const db = getDb();
-  const { data } = await db.from(TABLE).select("processed_at").eq("id", actionCommandId).single();
+  const { data } = await db.from(TABLE).select("processed_at").eq("id", actionCommandId).maybeSingle();
   return (data as { processed_at: string | null } | null)?.processed_at != null;
 }
 
@@ -72,7 +72,7 @@ function nextRetryAt(attemptCount: number): string {
  */
 export async function scheduleActionRetry(actionCommandId: string, error: string): Promise<{ shouldDLQ: boolean }> {
   const db = getDb();
-  const { data: row } = await db.from(TABLE).select("attempt_count").eq("id", actionCommandId).single();
+  const { data: row } = await db.from(TABLE).select("attempt_count").eq("id", actionCommandId).maybeSingle();
   const attempt = ((row as { attempt_count?: number })?.attempt_count ?? 0) + 1;
   const shouldDLQ = attempt >= 8;
 

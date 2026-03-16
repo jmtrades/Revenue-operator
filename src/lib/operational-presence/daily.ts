@@ -57,7 +57,7 @@ export async function runOperationalPresenceDaily(): Promise<
         .from("workspaces")
         .select("owner_id, status, pause_reason, last_dashboard_open_at")
         .eq("id", workspaceId)
-        .single();
+        .maybeSingle();
       const w = ws as { owner_id?: string; status?: string; pause_reason?: string; last_dashboard_open_at?: string } | null;
       if (!w) continue;
       if (w.status !== "active" && w.status != null) continue;
@@ -79,7 +79,7 @@ export async function runOperationalPresenceDaily(): Promise<
 
       const ownerId = w.owner_id;
       if (!ownerId) continue;
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 

@@ -37,7 +37,7 @@ export async function escalateLead(
     holdUntil
   );
   const db = getDb();
-  const { data: conv } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).single();
+  const { data: conv } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).maybeSingle();
   if (conv) {
     const convId = (conv as { id: string }).id;
     const channel = (conv as { channel?: string }).channel ?? "web";
@@ -72,7 +72,7 @@ export async function enforceBreach(breach: GuaranteeBreach): Promise<"correctiv
   }
 
   const db = getDb();
-  const { data: lead } = await db.from("leads").select("state").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("state").eq("id", leadId).maybeSingle();
   const state = (lead as { state?: string } | null)?.state;
 
   switch (breach.invariant) {

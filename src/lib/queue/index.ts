@@ -68,7 +68,7 @@ export async function enqueue(payload: JobPayload): Promise<string> {
     job_type: payload.type,
     payload,
     status: "pending",
-  }).select("id").single();
+  }).select("id").maybeSingle();
   return (inserted as { id?: string })?.id ?? crypto.randomUUID();
 }
 
@@ -101,7 +101,7 @@ export async function dequeue(workerId?: string): Promise<DequeueResult | null> 
     .from("job_claims")
     .select("worker_id, expires_at")
     .eq("job_id", jobId)
-    .single();
+    .maybeSingle();
   const claimMeta =
     claimRow && (claimRow as { expires_at?: string }).expires_at
       ? {
@@ -116,7 +116,7 @@ export async function dequeue(workerId?: string): Promise<DequeueResult | null> 
     .from("job_queue")
     .select("id, payload, job_type")
     .eq("id", jobId)
-    .single();
+    .maybeSingle();
 
   if (!row) return null;
   const r = row as { id: string; payload: unknown; job_type: string };

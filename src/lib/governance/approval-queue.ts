@@ -29,7 +29,7 @@ export async function createMessageApproval(input: CreateMessageApprovalInput): 
       status: "pending",
     })
     .select("id")
-    .single();
+    .maybeSingle();
   return (data as { id: string }).id;
 }
 
@@ -72,6 +72,6 @@ export async function decideApproval(
     .eq("workspace_id", workspaceId)
     .eq("status", "pending")
     .select("id")
-    .single();
+    .maybeSingle();
   return !error && !!data;
 }

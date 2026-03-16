@@ -45,7 +45,7 @@ export async function buildConversationSnapshot(input: BuildConversationSnapshot
         snapshot_json: input.snapshotJson ?? {},
       })
       .select("id")
-      .single();
+      .maybeSingle();
     const id = (data as { id?: string } | null)?.id;
     if (id) {
       await appendLedgerEvent({

@@ -51,7 +51,7 @@ export async function runSilenceDefinesCompletion(): Promise<
         .from("organizational_embedding_state")
         .select("last_active_handoff_count")
         .eq("workspace_id", workspaceId)
-        .single();
+        .maybeSingle();
 
       const last = (stateRow as { last_active_handoff_count?: number } | null)?.last_active_handoff_count ?? 0;
 
@@ -65,7 +65,7 @@ export async function runSilenceDefinesCompletion(): Promise<
       );
 
       if (current === 0 && last > 0) {
-        const { data: user } = await db.from("users").select("email").eq("id", ws.owner_id).single();
+        const { data: user } = await db.from("users").select("email").eq("id", ws.owner_id).maybeSingle();
         const email = (user as { email?: string } | null)?.email;
         if (email) {
           const sent = await sendEmail(email, "Nothing else requires review.", "Nothing else requires review.");
@@ -164,11 +164,11 @@ export async function runMorningState(): Promise<
 
       const text = activeCount === 1 ? "A decision is ready." : "Today's decisions are ready.";
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -250,11 +250,11 @@ export async function runAfterHoursStability(): Promise<
         .gte("last_activity_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
       if ((count ?? 0) === 0) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -323,14 +323,14 @@ export async function runPostDecisionCalm(): Promise<
         continue;
       }
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) {
         await db.from("post_decision_calm_pending").delete().eq("workspace_id", workspaceId);
         continue;
       }
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) {
         await db.from("post_decision_calm_pending").delete().eq("workspace_id", workspaceId);

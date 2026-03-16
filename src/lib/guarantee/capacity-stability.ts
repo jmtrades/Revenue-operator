@@ -114,7 +114,7 @@ export async function getCapacityPressure(workspaceId: string): Promise<Capacity
     .from("guarantee_capacity_state")
     .select("pressure_level, updated_at")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   return data as CapacityStateRow | null;
 }
 

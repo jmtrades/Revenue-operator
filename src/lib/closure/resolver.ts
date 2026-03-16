@@ -36,7 +36,7 @@ export async function resolveResponsibility(leadId: string): Promise<Responsibil
     .from("leads")
     .select("id, workspace_id")
     .eq("id", leadId)
-    .single();
+    .maybeSingle();
   if (!lead) {
     throw new ClosureInvariantViolation("lead_not_found", leadId);
   }

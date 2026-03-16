@@ -35,7 +35,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
     .from("raw_webhook_events")
     .select("*")
     .eq("id", webhookId)
-    .single();
+    .maybeSingle();
 
   if (fetchErr || !raw || raw.processed) {
     if (fetchErr) { /* fetch error; response already returned */ }
@@ -45,7 +45,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
   const body = raw.payload as RawWebhookPayload;
   const { workspace_id, channel, external_lead_id, thread_id, email, phone, name, company, message, external_message_id } = body;
 
-  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).single();
+  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).maybeSingle();
   if (!ws) {
     throw new Error(`Workspace ${workspace_id} not found`);
   }
@@ -68,7 +68,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
         { onConflict: "workspace_id,external_id" }
       )
       .select()
-      .single();
+      .maybeSingle();
 
     if (leadError || !lead) {
       throw new Error(`Lead upsert failed: ${leadError?.message ?? "unknown"}`);
@@ -86,7 +86,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
         { onConflict: "lead_id,channel,external_thread_id" }
       )
       .select()
-      .single();
+      .maybeSingle();
 
     if (convError || !conversation) {
       throw new Error(`Conversation upsert failed: ${convError?.message ?? "unknown"}`);
@@ -97,7 +97,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       role: "user",
       content: message,
       external_id: external_message_id ?? null,
-    }).select("id").single();
+    }).select("id").maybeSingle();
 
     // Log inbound_received activation event (first message only)
     try {
@@ -158,7 +158,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       .eq("role", "assistant")
       .order("created_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
     const lastAction = (lastAssistant as { metadata?: { action?: string } })?.metadata?.action ?? "message";
     const outcome = message.length > 50 ? message.slice(0, 50) + "…" : message;
     recordLeadReaction(lead.id, workspace_id, lastAction, outcome).catch(() => {});
@@ -177,7 +177,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       await setLowPressureMode(workspace_id, lead.id, true);
     }
 
-    const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).single();
+    const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).maybeSingle();
     const settings = mergeSettings(settingsRow);
     const optOut = isOptOut(message, settings);
     if (optOut) {
@@ -223,7 +223,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
         state_reasoning_tags: stateResult.reasoning_tags,
       },
       trigger_source: "webhook",
-    }).select("id").single();
+    }).select("id").maybeSingle();
 
     await db.from("leads").update({
       state: decision.newState,

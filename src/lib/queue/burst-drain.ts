@@ -42,7 +42,7 @@ async function acquireLock(
     .eq("status", "pending")
     .order("created_at", { ascending: true })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (!row) return null;
   const r = row as { id: string; payload: unknown; job_type: string };
@@ -55,7 +55,7 @@ async function acquireLock(
       .eq("id", r.id)
       .eq("status", "pending")
       .select("id")
-      .single();
+      .maybeSingle();
     if (!updated) return null;
   } catch {
     return null;
@@ -87,7 +87,7 @@ async function processPayload(payload: JobPayload): Promise<void> {
     await runPostCallUnknownCheckin(payload.leadId, payload.workspaceId, payload.callSessionId);
   } else if (payload.type === "no_show_reminder" && payload.leadId) {
     const db = getDb();
-    const { data: lead } = await db.from("leads").select("workspace_id").eq("id", payload.leadId).single();
+    const { data: lead } = await db.from("leads").select("workspace_id").eq("id", payload.leadId).maybeSingle();
     if (lead) await runDecisionJobWithEngines(payload.leadId, (lead as { workspace_id: string }).workspace_id);
   } else if (payload.type === "decision" && payload.leadId && payload.workspaceId) {
     await runDecisionJobWithEngines(payload.leadId, payload.workspaceId);

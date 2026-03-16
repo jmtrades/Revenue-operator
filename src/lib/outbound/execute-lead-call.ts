@@ -181,7 +181,8 @@ YOUR GOAL:
       },
     });
     assistantId = createdId;
-  } catch {
+  } catch (assistantErr) {
+    console.error("[outbound] Failed to create voice assistant:", assistantErr instanceof Error ? assistantErr.message : assistantErr);
     return { ok: false, error: "Failed to create voice assistant for outbound call" };
   }
 
@@ -195,7 +196,7 @@ YOUR GOAL:
       external_meeting_id: `outbound-${Date.now()}-${leadId.slice(0, 8)}`,
     })
     .select("id")
-    .single();
+    .maybeSingle();
   if (insertErr || !sessionRow) {
     return { ok: false, error: "Failed to create call session" };
   }
@@ -214,7 +215,8 @@ YOUR GOAL:
         lead_id: leadId,
       },
     });
-  } catch {
+  } catch (callErr) {
+    console.error("[outbound] Outbound call failed:", callErr instanceof Error ? callErr.message : callErr);
     await db.from("call_sessions").update({ call_ended_at: new Date().toISOString() }).eq("id", callSessionId);
     return { ok: false, error: "Outbound call failed" };
   }

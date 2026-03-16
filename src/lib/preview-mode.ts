@@ -11,6 +11,6 @@ export async function isPreviewMode(workspaceId: string): Promise<boolean> {
     .from("settings")
     .select("preview_mode")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   return (data as { preview_mode?: boolean })?.preview_mode ?? false;
 }

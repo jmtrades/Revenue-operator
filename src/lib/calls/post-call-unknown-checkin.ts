@@ -14,14 +14,14 @@ export async function runPostCallUnknownCheckin(
   callSessionId: string
 ): Promise<void> {
   const db = getDb();
-  const { data: settings } = await db.from("settings").select("hired_roles").eq("workspace_id", workspaceId).single();
+  const { data: settings } = await db.from("settings").select("hired_roles").eq("workspace_id", workspaceId).maybeSingle();
   const hired = (settings as { hired_roles?: string[] })?.hired_roles ?? ["full_autopilot"];
   if (!hired.includes("show_manager") && !hired.includes("full_autopilot")) return;
 
-  const { data: lead } = await db.from("leads").select("id, email, phone").eq("id", leadId).eq("workspace_id", workspaceId).single();
+  const { data: lead } = await db.from("leads").select("id, email, phone").eq("id", leadId).eq("workspace_id", workspaceId).maybeSingle();
   if (!lead) return;
 
-  const { data: convRow } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).single();
+  const { data: convRow } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).maybeSingle();
   if (!convRow) return;
 
   const convId = (convRow as { id: string }).id;
@@ -39,7 +39,7 @@ export async function runPostCallUnknownCheckin(
       attempt_count: 1,
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (om) {
     const to = { email: (lead as { email?: string }).email, phone: (lead as { phone?: string }).phone };

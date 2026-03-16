@@ -44,7 +44,7 @@ export async function matchCallToLead(
       .select("id")
       .eq("id", context.calendarLeadId)
       .eq("workspace_id", workspaceId)
-      .single();
+      .maybeSingle();
     if (lead) return { lead_id: (lead as { id: string }).id, confidence: 1, method: "calendar" };
   }
 
@@ -60,7 +60,7 @@ export async function matchCallToLead(
       .eq("workspace_id", workspaceId)
       .ilike("email", email)
       .limit(1)
-      .single();
+      .maybeSingle();
     if (lead) return { lead_id: (lead as { id: string }).id, confidence: 0.95, method: "email" };
   }
 

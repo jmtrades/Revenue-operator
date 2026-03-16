@@ -72,7 +72,7 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
       .select("id, state")
       .eq("id", lead_id)
       .eq("workspace_id", workspace_id)
-      .single();
+      .maybeSingle();
     if (!lead) {
       try {
         const { toFailedJobAndEscalate } = await import("@/lib/delivery-assurance/dlq-handoff");
@@ -92,7 +92,7 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
 
     if (signal_type === "InboundMessageDiscovered") {
       const p = (payload ?? {}) as { conversation_id?: string; provider_message_id?: string; body?: string; received_at?: string };
-      const { data: conv } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).single();
+      const { data: conv } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).maybeSingle();
       if (conv) {
         const convId = (conv as { id: string }).id;
         const { data: existing } = await db
@@ -115,7 +115,7 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
 
     if (signal_type === "HumanReplyDiscovered") {
       const p = (payload ?? {}) as { conversation_id?: string; provider_message_id?: string; body?: string; sent_at?: string };
-      const { data: conv } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).single();
+      const { data: conv } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).maybeSingle();
       if (conv) {
         const convId = (conv as { id: string }).id;
         const { data: existing } = await db
@@ -196,13 +196,13 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
         state_after: "ENGAGED",
       });
     }
-    const { data: leadContact } = await db.from("leads").select("email, phone").eq("id", lead_id).eq("workspace_id", workspace_id).single();
+    const { data: leadContact } = await db.from("leads").select("email, phone").eq("id", lead_id).eq("workspace_id", workspace_id).maybeSingle();
     const counterpartyId = (leadContact as { email?: string | null; phone?: string | null } | null)?.email
       ?? (leadContact as { phone?: string | null } | null)?.phone;
     if (counterpartyId) {
       updateCounterpartyReliance(workspace_id, counterpartyId, "interaction").catch(() => {});
     }
-    const { data: convRow } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).single();
+    const { data: convRow } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).maybeSingle();
     if (convRow) {
       const convId = (convRow as { id: string }).id;
       await resolveCommitmentsBySubject(workspace_id, "conversation", convId, "completed");
@@ -225,7 +225,7 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
       trigger_source: "signal",
     });
     const { notifyBookingOwnership, notifyBookingShortly } = await import("@/lib/operational-transfer/notify");
-    const { data: leadRow } = await db.from("leads").select("name, email, phone").eq("id", lead_id).single();
+    const { data: leadRow } = await db.from("leads").select("name, email, phone").eq("id", lead_id).maybeSingle();
     const leadName = (leadRow as { name?: string } | null)?.name ?? undefined;
     const slotAt = (payload as { slot_at?: string; start_at?: string } | undefined)?.slot_at ?? (payload as { start_at?: string })?.start_at;
     notifyBookingOwnership(workspace_id, lead_id, { leadName, slotAt }).catch(() => {});
@@ -240,7 +240,7 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
         ?? (leadRow as { phone?: string | null } | null)?.phone
         ?? "";
       if (counterparty) {
-        const { data: convRow } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).single();
+        const { data: convRow } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).maybeSingle();
         ensureSharedTransactionForSubject({
           workspaceId: workspace_id,
           subjectType: "booking",

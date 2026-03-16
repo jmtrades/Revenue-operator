@@ -257,7 +257,7 @@ export async function insertUniversalOutcome(input: InsertUniversalOutcomeInput)
         structured_payload_json: input.structured_payload_json ?? {},
       })
       .select("id")
-      .single();
+      .maybeSingle();
     const id = (data as { id?: string } | null)?.id;
     if (id) {
       await appendLedgerEvent({

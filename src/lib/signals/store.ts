@@ -32,7 +32,7 @@ export async function insertSignal(signal: CanonicalSignal): Promise<InsertSigna
     .from(TABLE)
     .insert(row)
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (error) {
     if (error.code === "23505") {
@@ -88,7 +88,7 @@ export async function getSignalById(signalId: string): Promise<CanonicalSignalRo
     .from(TABLE)
     .select("id, workspace_id, lead_id, signal_type, payload, occurred_at, processed_at, failure_reason")
     .eq("id", signalId)
-    .single();
+    .maybeSingle();
   if (error || !data) return null;
   return data as CanonicalSignalRow;
 }
@@ -164,7 +164,7 @@ export async function setSignalProcessed(signalId: string): Promise<void> {
  */
 export async function incrementSignalProcessingAttempts(signalId: string): Promise<number> {
   const db = getDb();
-  const { data: row } = await db.from(TABLE).select("signal_processing_attempts").eq("id", signalId).single();
+  const { data: row } = await db.from(TABLE).select("signal_processing_attempts").eq("id", signalId).maybeSingle();
   const current = (row as { signal_processing_attempts?: number } | null)?.signal_processing_attempts ?? 0;
   const next = current + 1;
   await db.from(TABLE).update({ signal_processing_attempts: next }).eq("id", signalId);

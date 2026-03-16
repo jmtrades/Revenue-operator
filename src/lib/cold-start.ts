@@ -10,7 +10,7 @@ const MIN_MESSAGES_FOR_LEARNING = 20;
 
 export async function isColdStart(workspaceId: string): Promise<boolean> {
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("created_at").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("created_at").eq("id", workspaceId).maybeSingle();
   if (!ws) return true;
   const created = new Date((ws as { created_at: string }).created_at);
   const ageDays = (Date.now() - created.getTime()) / (1000 * 60 * 60 * 24);
