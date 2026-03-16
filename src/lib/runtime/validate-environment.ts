@@ -50,8 +50,10 @@ export function validateEnvironment(): void {
       if (v === undefined || v === "") missingStripe.push(key);
     }
     if (missingStripe.length > 0) {
+      const msg = `Stripe/settlement enabled but keys missing: ${missingStripe.join(", ")}`;
+      console.warn(msg);
       logStructured("warning", "optional_stripe_missing", {
-        message: "Stripe/settlement enabled but keys missing",
+        message: msg,
         missing: missingStripe,
       });
     }

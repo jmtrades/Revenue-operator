@@ -286,6 +286,45 @@
       "loadingFailedDesc": "Please try again or contact support if the problem persists."
     }
   },
+  "planChange": {
+    "title": "Change your plan",
+    "upgradeTitle": "Upgrade to {planName}",
+    "downgradeTitle": "Downgrade to {planName}",
+    "currentlyOn": "Currently on {planName}. Select a new plan below.",
+    "currentBadge": "Current",
+    "contactUs": "Contact us",
+    "continue": "Continue",
+    "upgradeDescription": "You'll be charged the prorated difference. Your new features are available right away.",
+    "downgradeDescription": "Your plan will change at your next billing date. You'll keep current features until then.",
+    "currentPlanLabel": "Current plan",
+    "newPlanLabel": "New plan",
+    "contactUsPrice": "Contact us",
+    "processing": "Processing…",
+    "upgradeNow": "Upgrade now",
+    "confirmDowngrade": "Confirm downgrade",
+    "couldNotChange": "Could not change plan.",
+    "billingBeingSetUp": "Billing is being set up. Contact support.",
+    "perMonth": "/mo",
+    "custom": "Custom",
+    "plans": {
+      "starter": {
+        "name": "Starter",
+        "features": ["1 AI agent", "1 phone number", "400 min/mo", "Usage insights"]
+      },
+      "growth": {
+        "name": "Growth",
+        "features": ["3 AI agents", "3 phone numbers", "1,500 min/mo", "Call Intelligence", "Priority support"]
+      },
+      "scale": {
+        "name": "Scale",
+        "features": ["Unlimited AI agents", "10 numbers", "5,000 min/mo", "Detailed reporting", "API access"]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "features": ["Unlimited agents", "Unlimited numbers", "Custom integrations", "Dedicated support", "SLA"]
+      }
+    }
+  },
   "dashboard": {
     "greeting": {
       "morning": "Good morning",
@@ -320,6 +359,16 @@
     "checklist": {
       "title": "Get set up in minutes",
       "progressLabel": "Setup progress",
+      "business": "Business info added",
+      "use_cases": "Use cases selected",
+      "agent": "Agent created",
+      "voice": "Voice selected",
+      "greeting": "Opening greeting set",
+      "knowledge": "3+ knowledge entries",
+      "behavior": "Behavior configured",
+      "phone": "Phone number connected",
+      "tested": "Agent tested",
+      "launched": "Agent launched",
       "item": {
         "businessProfile": "Set up your business profile",
         "agent": "Configure your first AI agent",
@@ -2954,6 +3003,9 @@
     "statContacted": "Contacted",
     "statConverted": "Converted",
     "estRoi": "Est. ROI",
+    "roiSummary": "Cost ~{cost} · Revenue ~{revenue}",
+    "roiCampaign": "Est. cost ~{cost} · Est. revenue ~{revenue}",
+    "createdDate": "Created {date}",
     "metricContacts": "Contacts",
     "metricContacted": "Contacted",
     "metricReached": "Reached",
@@ -3457,41 +3509,6 @@
     "leadScoring.loadFailed": "Could not load lead scoring configuration.",
     "leadScoring.saved": "Lead scoring weights saved. Scores will update on the next call or recalc.",
     "leadScoring.usingDefaults": "Using default weights. Save to persist.",
-    "integrations.defaultsLoaded": "Defaults loaded.",
-    "integrations.testSuccess": "Test run complete. See output below.",
-    "integrations.saveFailed": "Failed to save mapping. Please try again.",
-    "integrations.saved": "Mapping saved.",
-    "integrations.breadcrumbSettings": "Settings",
-    "integrations.breadcrumbIntegrations": "Integrations",
-    "integrations.mappingTitle": "Field mapping — {name}",
-    "integrations.mappingBreadcrumb": "{name} mapping",
-    "integrations.mappingDescription": "Map Recall Touch contact/lead fields to {name} fields. Use transformations for phone format or status values.",
-    "integrations.recallTouch": "Recall Touch",
-    "integrations.crmField": "CRM field ({name})",
-    "integrations.transform": "Transform",
-    "integrations.addMapping": "Add mapping",
-    "integrations.loadDefaults": "Load defaults",
-    "integrations.testWithSampleData": "Test with sample data",
-    "integrations.saveMapping": "Save mapping",
-    "integrations.saving": "Saving…",
-    "integrations.testOutput": "Test output (sample: {name})",
-    "integrations.backToIntegrations": "Back to Integrations",
-    "integrations.providers": {
-      "salesforce": "Salesforce",
-      "hubspot": "HubSpot",
-      "zoho_crm": "Zoho CRM",
-      "pipedrive": "Pipedrive",
-      "gohighlevel": "GoHighLevel",
-      "google_contacts": "Google Contacts",
-      "microsoft_365": "Microsoft 365"
-    },
-    "integrations.transformations": {
-      "none": "None",
-      "format_phone": "Format phone (E.164)",
-      "map_status": "Map status",
-      "concatenate": "Concatenate fields"
-    },
-    "integrations.crmFallback": "CRM",
     "syncLog.breadcrumb": "Sync log",
     "syncLog.heading": "Sync log",
     "syncLog.description": "Audit trail of CRM sync events: outbound (Recall Touch → CRM) and inbound (CRM → Recall Touch).",
@@ -4064,11 +4081,38 @@
         "savings": "Save 17%"
       },
       "badge": "Popular",
+      "period": "/mo",
       "tierRoi": {
         "starter": "Less than one missed call",
         "growth": "One recovered lead pays for the month",
         "scale": "Full AI communication team for a fraction of one hire",
         "enterprise": "Custom ROI and dedicated support"
+      },
+      "tiers": {
+        "starter": {
+          "name": "Starter",
+          "description": "Answer every call. One number, one agent.",
+          "features": ["400 inbound min included", "50 outbound calls", "100 SMS", "1 AI agent", "1 phone number", "Overage: $0.25/min"],
+          "cta": "Start free"
+        },
+        "growth": {
+          "name": "Growth",
+          "description": "One recovered lead pays for the whole month",
+          "features": ["1,500 inbound min included", "500 outbound calls", "500 SMS", "3 AI agents", "3 numbers", "Appointment booking", "Follow-up sequences", "Analytics", "Overage: $0.18/min"],
+          "cta": "Start free"
+        },
+        "scale": {
+          "name": "Scale",
+          "description": "Full AI communication team for a fraction of one hire",
+          "features": ["5,000 inbound min included", "2,000 outbound calls", "Unlimited SMS", "Unlimited AI agents", "10 numbers", "Multi-location", "Compliance", "API", "Priority support", "Overage: $0.12/min"],
+          "cta": "Start free"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "Custom pricing — white label, custom compliance, SSO, dedicated manager, SLA",
+          "features": ["White label", "Custom compliance", "SSO", "Dedicated manager", "SLA"],
+          "cta": "Talk to sales"
+        }
       },
       "footerNote": "All plans include: encrypted records · compliance framework · audit trail · 14-day free trial",
       "cta": {
@@ -4195,7 +4239,12 @@
       "heading": "Recent calls",
       "typeLead": "Lead",
       "typeAppointment": "Appointment",
-      "typeFollowUp": "Follow-up"
+      "typeFollowUp": "Follow-up",
+      "cards": {
+        "1": { "summary": "Scheduling consultation", "outcome": "✅ Booked 2 PM" },
+        "2": { "summary": "Pricing question", "outcome": "✅ Info sent via text" },
+        "3": { "summary": "Callback request", "outcome": "✅ Follow-up in 30 min" }
+      }
     },
     "activityFeed": {
       "dateLabel": "Today",
@@ -4374,6 +4423,20 @@
     "annualNote": "Two months applied without interruption on annual commitment.",
     "trustedBy": "Trusted by leading teams in service, healthcare, and local business.",
     "questionsTalkToUs": "Questions? Talk to us →",
+    "faq": [
+      { "q": "How does the free trial work?", "a": "14 days, full features, no credit card needed." },
+      { "q": "What if I exceed my minutes?", "a": "Calls continue at overage rate, never cut off." },
+      { "q": "Can I keep my existing number?", "a": "Yes, forward it to your Recall Touch number." },
+      { "q": "What voices are available?", "a": "6 included, premium via add-on $29/mo." },
+      { "q": "Is there a contract?", "a": "No, month-to-month, cancel anytime." },
+      { "q": "Do you support HIPAA?", "a": "Yes, add-on $99/mo with BAA." },
+      { "q": "What integrations?", "a": "Google Calendar, Outlook, HubSpot, Zapier. API on Scale+." },
+      { "q": "How is this different from an answering service?", "a": "24/7, handles outbound, costs 90% less." },
+      { "q": "What happens after hours?", "a": "Answers following your after-hours rules." },
+      { "q": "Can I try before buying?", "a": "14-day trial or use the interactive demo right now." },
+      { "q": "How do I cancel?", "a": "Settings → Billing → Cancel. Effective at period end." },
+      { "q": "How does billing work?", "a": "Monthly or annual. Included minutes plus overage per minute." }
+    ],
     "roi": {
       "intro": "Model what happens when you stop letting calls slip through to voicemail.",
       "description": "Calculate your potential revenue recovery with our ROI calculator.",

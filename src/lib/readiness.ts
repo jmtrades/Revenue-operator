@@ -5,7 +5,6 @@
 
 export interface ReadinessItem {
   key: string;
-  label: string;
   done: boolean;
   weight: number;
   href: string;
@@ -45,16 +44,16 @@ export function calculateReadiness(
     (Array.isArray(ag.rules?.neverSay) && ag.rules.neverSay.length > 0);
 
   const items: ReadinessItem[] = [
-    { key: "business", label: "Business info added", done: !!businessName, weight: 10, href: "/app/settings/business" },
-    { key: "use_cases", label: "Use cases selected", done: useCasesOk, weight: 5, href: "/app/onboarding" },
-    { key: "agent", label: "Agent created", done: !!agent, weight: 10, href: "/app/agents" },
-    { key: "voice", label: "Voice selected", done: !!(ag.voice_id ?? "").toString().trim(), weight: 5, href: "/app/agents" },
-    { key: "greeting", label: "Opening greeting set", done: !!(ag.greeting && ag.greeting.length > 10), weight: 5, href: "/app/agents" },
-    { key: "knowledge", label: "3+ knowledge entries", done: faqCount >= 3, weight: 15, href: "/app/agents" },
-    { key: "behavior", label: "Behavior configured", done: hasBehavior, weight: 10, href: "/app/agents" },
-    { key: "phone", label: "Phone number connected", done: phoneConnected, weight: 15, href: "/app/settings/phone" },
-    { key: "tested", label: "Agent tested", done: !!(ag.tested_at ?? "").toString().trim(), weight: 10, href: "/app/agents" },
-    { key: "launched", label: "Agent launched", done: !!(ag.vapi_agent_id ?? "").toString().trim(), weight: 15, href: "/app/agents" },
+    { key: "business", done: !!businessName, weight: 10, href: "/app/settings/business" },
+    { key: "use_cases", done: useCasesOk, weight: 5, href: "/app/onboarding" },
+    { key: "agent", done: !!agent, weight: 10, href: "/app/agents" },
+    { key: "voice", done: !!(ag.voice_id ?? "").toString().trim(), weight: 5, href: "/app/agents" },
+    { key: "greeting", done: !!(ag.greeting && ag.greeting.length > 10), weight: 5, href: "/app/agents" },
+    { key: "knowledge", done: faqCount >= 3, weight: 15, href: "/app/agents" },
+    { key: "behavior", done: hasBehavior, weight: 10, href: "/app/agents" },
+    { key: "phone", done: phoneConnected, weight: 15, href: "/app/settings/phone" },
+    { key: "tested", done: !!(ag.tested_at ?? "").toString().trim(), weight: 10, href: "/app/agents" },
+    { key: "launched", done: !!(ag.vapi_agent_id ?? "").toString().trim(), weight: 15, href: "/app/agents" },
   ];
 
   const percentage = items.reduce((sum, item) => sum + (item.done ? item.weight : 0), 0);

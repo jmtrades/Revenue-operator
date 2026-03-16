@@ -50,7 +50,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const priceResult = await getPriceId(tier, "month");
+  const interval = (body as { interval?: string }).interval ?? "month";
+  const priceResult = await getPriceId(tier, interval);
   if (!priceResult.ok) {
     return NextResponse.json(
       { ok: false, error: priceResult.reason === "missing_price_id" ? "Plan not configured" : "Could not resolve price" },

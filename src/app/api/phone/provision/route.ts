@@ -27,6 +27,20 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
+  const db = getDb();
+  const { data: workspace } = await db
+    .from("workspaces")
+    .select("billing_status")
+    .eq("id", session.workspaceId)
+    .maybeSingle();
+  const status = (workspace as { billing_status?: string } | null)?.billing_status;
+  if (!status || !["trial", "active"].includes(status)) {
+    return NextResponse.json(
+      { error: "Active subscription required to provision phone numbers." },
+      { status: 403 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -87,7 +101,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const db = getDb();
   const { data: existing } = await db
     .from("phone_numbers")
     .select("id")

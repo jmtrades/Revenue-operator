@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
     }
 
     const tier = (body.tier ?? "solo").toString().trim() || "solo";
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     const origin = effectiveOrigin(req);
     if (!origin) {
       log("checkout_failed", { reason: "missing_app_url" });
-      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
 
     const priceResult = await getPriceId(tier, interval);
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     const email = body.email?.trim();
     
     if (!workspaceId && !email) {
-      return NextResponse.json({ ok: false, reason: "workspace_id_or_email_required" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_id_or_email_required" }, { status: 400 });
     }
 
     if (workspaceId) {
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
     
     if (!finalWorkspaceId) {
       log("checkout_failed", { reason: "workspace_not_found" });
-      return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 404 });
     }
 
     // Idempotency: check if workspace already has active/trial subscription
@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
         }).eq("id", finalWorkspaceId);
       } catch (_err) {
         log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed" });
-        return NextResponse.json({ ok: false, reason: "customer_create_failed" }, { status: 200 });
+        return NextResponse.json({ ok: false, reason: "customer_create_failed" }, { status: 502 });
       }
     } else {
       await stripe.customers.update(customerId, {
@@ -219,11 +219,11 @@ export async function POST(req: NextRequest) {
     } catch (stripeError) {
       const errorMessage = stripeError instanceof Error ? stripeError.message : "Stripe checkout failed";
       log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "subscription_create_failed", error: errorMessage });
-      return NextResponse.json({ ok: false, reason: "subscription_create_failed" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "subscription_create_failed" }, { status: 502 });
     }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     log("checkout_failed", { reason: "unexpected_error", error: errorMessage });
-    return NextResponse.json({ ok: false, reason: "unexpected_error" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "unexpected_error" }, { status: 502 });
   }
 }

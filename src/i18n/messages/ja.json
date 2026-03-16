@@ -279,6 +279,33 @@
       "portalFailed": "請求ポータルを開けませんでした。"
     }
   },
+  "planChange": {
+    "title": "プランを変更",
+    "upgradeTitle": "{planName} にアップグレード",
+    "downgradeTitle": "{planName} にダウングレード",
+    "currentlyOn": "現在 {planName} です。以下から新しいプランを選択してください。",
+    "currentBadge": "現在",
+    "contactUs": "お問い合わせ",
+    "continue": "続ける",
+    "upgradeDescription": "日割り差額が請求されます。新しい機能はすぐにご利用いただけます。",
+    "downgradeDescription": "プランは次回の請求日に変更されます。それまで現在の機能をご利用いただけます。",
+    "currentPlanLabel": "現在のプラン",
+    "newPlanLabel": "新しいプラン",
+    "contactUsPrice": "お問い合わせ",
+    "processing": "処理中…",
+    "upgradeNow": "今すぐアップグレード",
+    "confirmDowngrade": "ダウングレードを確認",
+    "couldNotChange": "プランを変更できませんでした。",
+    "billingBeingSetUp": "請求を設定中です。サポートにお問い合わせください。",
+    "perMonth": "/月",
+    "custom": "カスタム",
+    "plans": {
+      "starter": { "name": "Starter", "features": ["AIエージェント1台", "電話番号1本", "400分/月", "利用状況"] },
+      "growth": { "name": "Growth", "features": ["AIエージェント3台", "電話番号3本", "1,500分/月", "Call Intelligence", "優先サポート"] },
+      "scale": { "name": "Scale", "features": ["AIエージェント無制限", "10番号", "5,000分/月", "詳細レポート", "APIアクセス"] },
+      "enterprise": { "name": "Enterprise", "features": ["エージェント無制限", "番号無制限", "カスタム連携", "専任サポート", "SLA"] }
+    }
+  },
   "dashboard": {
     "greeting": {
       "morning": "おはようございます",
@@ -313,6 +340,16 @@
     "checklist": {
       "title": "数分でセットアップ完了",
       "progressLabel": "設定の進行状況",
+      "business": "ビジネス情報を追加済み",
+      "use_cases": "ユースケースを選択済み",
+      "agent": "エージェント作成済み",
+      "voice": "音声を選択済み",
+      "greeting": "オープニング挨拶を設定済み",
+      "knowledge": "ナレッジ3件以上",
+      "behavior": "動作を設定済み",
+      "phone": "電話番号を接続済み",
+      "tested": "エージェントをテスト済み",
+      "launched": "エージェントを起動済み",
       "item": {
         "businessProfile": "ビジネスプロフィールを設定",
         "agent": "最初のAIエージェントを設定",
@@ -2740,6 +2777,9 @@
     "statContacted": "接触済み",
     "statConverted": "コンバート",
     "estRoi": "推定ROI",
+    "roiSummary": "コスト約{cost} · 収益約{revenue}",
+    "roiCampaign": "推定コスト約{cost} · 推定収益約{revenue}",
+    "createdDate": "作成日 {date}",
     "metricContacts": "コンタクト",
     "metricContacted": "接触済み",
     "metricReached": "リーチ",
@@ -2949,9 +2989,6 @@
     },
     "business": "ビジネス",
     "phone": "電話と番号",
-    "integrations": {
-      "title": "連携"
-    },
     "notifications": {
       "title": "通知"
     },
@@ -3750,11 +3787,18 @@
         "savings": "17%お得"
       },
       "badge": "人気",
+      "period": "/月",
       "tierRoi": {
         "starter": "取りこぼし1件未満",
         "growth": "1件のリード回収で月額回収",
         "scale": "1人採用の一部でフルAI通信チーム",
         "enterprise": "カスタムROI・専任サポート"
+      },
+      "tiers": {
+        "starter": { "name": "Starter", "description": "すべての通話に応答。1番号、1エージェント。", "features": ["着信400分込み", "発信50件", "SMS 100件", "AIエージェント1台", "電話番号1本", "超過: $0.25/分"], "cta": "無料で始める" },
+        "growth": { "name": "Growth", "description": "1件のリード回収で月額回収。", "features": ["着信1,500分込み", "発信500件", "SMS 500件", "AIエージェント3台", "3番号", "予約", "フォローアップ", "分析", "超過: $0.18/分"], "cta": "無料で始める" },
+        "scale": { "name": "Scale", "description": "1人採用の一部でフルAI通信チーム。", "features": ["着信5,000分込み", "発信2,000件", "SMS無制限", "AIエージェント無制限", "10番号", "複数拠点", "コンプライアンス", "API", "優先サポート", "超過: $0.12/分"], "cta": "無料で始める" },
+        "enterprise": { "name": "Enterprise", "description": "カスタム料金 — ホワイトラベル、コンプライアンス、SSO、専任マネージャー、SLA。", "features": ["ホワイトラベル", "カスタムコンプライアンス", "SSO", "専任マネージャー", "SLA"], "cta": "営業に相談" }
       },
       "footerNote": "全プランに含まれる：暗号化記録・コンプライアンス・監査証跡・14日間無料トライアル",
       "cta": {
@@ -3881,7 +3925,12 @@
       "heading": "最近の通話",
       "typeLead": "リード",
       "typeAppointment": "予約",
-      "typeFollowUp": "フォロー"
+      "typeFollowUp": "フォロー",
+      "cards": {
+        "1": { "summary": "相談のスケジュール", "outcome": "✅ 14時予約" },
+        "2": { "summary": "料金の質問", "outcome": "✅ テキストで情報送信" },
+        "3": { "summary": "折り返し希望", "outcome": "✅ 30分後にフォロー" }
+      }
     },
     "activityFeed": {
       "dateLabel": "今日",

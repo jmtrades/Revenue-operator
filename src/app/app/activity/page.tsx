@@ -542,8 +542,13 @@ export default function AppActivityPage() {
     fallbackProgressItems.length === 0
       ? 0
       : Math.round((fallbackProgressItems.filter((p) => p.completed).length / fallbackProgressItems.length) * 100);
+  const READINESS_CHECKLIST_KEYS = ["business", "use_cases", "agent", "voice", "greeting", "knowledge", "behavior", "phone", "tested", "launched"];
+  const tDashboard = useTranslations("dashboard");
   const progressItems =
-    readiness?.items ??
+    readiness?.items?.map((item) => ({
+      ...item,
+      label: READINESS_CHECKLIST_KEYS.includes(item.key) ? tDashboard(`checklist.${item.key}`) : (progressLabels[item.key] ?? item.key),
+    })) ??
     fallbackProgressItems.map((p) => ({
       ...p,
       label: progressLabels[p.key] ?? p.key,
@@ -557,7 +562,7 @@ export default function AppActivityPage() {
     ? serverProgressItems.map((p) => ({
         key: p.key,
         completed: p.completed ?? false,
-        label: p.label ?? progressLabels[p.key] ?? p.key,
+        label: p.label ?? (READINESS_CHECKLIST_KEYS.includes(p.key) ? tDashboard(`checklist.${p.key}`) : progressLabels[p.key]) ?? p.key,
         href: p.href ?? "/app/settings/phone",
       }))
     : progressItems;

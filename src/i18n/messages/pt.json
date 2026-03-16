@@ -279,6 +279,33 @@
       "portalFailed": "Não foi possível abrir o portal de faturamento."
     }
   },
+  "planChange": {
+    "title": "Mudar de plano",
+    "upgradeTitle": "Fazer upgrade para {planName}",
+    "downgradeTitle": "Fazer downgrade para {planName}",
+    "currentlyOn": "Atualmente em {planName}. Selecione um novo plano abaixo.",
+    "currentBadge": "Atual",
+    "contactUs": "Fale conosco",
+    "continue": "Continuar",
+    "upgradeDescription": "A diferença proporcional será cobrada. Suas novas funções ficam disponíveis na hora.",
+    "downgradeDescription": "Seu plano mudará na próxima data de cobrança. Você mantém as funções atuais até lá.",
+    "currentPlanLabel": "Plano atual",
+    "newPlanLabel": "Novo plano",
+    "contactUsPrice": "Fale conosco",
+    "processing": "Processando…",
+    "upgradeNow": "Fazer upgrade agora",
+    "confirmDowngrade": "Confirmar downgrade",
+    "couldNotChange": "Não foi possível mudar o plano.",
+    "billingBeingSetUp": "O faturamento está sendo configurado. Entre em contato com o suporte.",
+    "perMonth": "/mês",
+    "custom": "Personalizado",
+    "plans": {
+      "starter": { "name": "Starter", "features": ["1 agente IA", "1 número", "400 min/mês", "Insights de uso"] },
+      "growth": { "name": "Growth", "features": ["3 agentes IA", "3 números", "1.500 min/mês", "Call Intelligence", "Suporte prioritário"] },
+      "scale": { "name": "Scale", "features": ["Agentes IA ilimitados", "10 números", "5.000 min/mês", "Relatórios detalhados", "Acesso API"] },
+      "enterprise": { "name": "Enterprise", "features": ["Agentes ilimitados", "Números ilimitados", "Integrações sob medida", "Suporte dedicado", "SLA"] }
+    }
+  },
   "dashboard": {
     "greeting": {
       "morning": "Bom dia",
@@ -313,6 +340,16 @@
     "checklist": {
       "title": "Configure em poucos minutos",
       "progressLabel": "Progresso da configuração",
+      "business": "Informações do negócio adicionadas",
+      "use_cases": "Casos de uso selecionados",
+      "agent": "Agente criado",
+      "voice": "Voz selecionada",
+      "greeting": "Saudação inicial definida",
+      "knowledge": "3+ entradas de conhecimento",
+      "behavior": "Comportamento configurado",
+      "phone": "Número de telefone conectado",
+      "tested": "Agente testado",
+      "launched": "Agente em produção",
       "item": {
         "businessProfile": "Configurar o perfil da empresa",
         "agent": "Configurar seu primeiro agente de IA",
@@ -2741,6 +2778,9 @@
     "statContacted": "Contatados",
     "statConverted": "Convertidos",
     "estRoi": "ROI est.",
+    "roiSummary": "Custo ~{cost} · Receita ~{revenue}",
+    "roiCampaign": "Custo est. ~{cost} · Receita est. ~{revenue}",
+    "createdDate": "Criado em {date}",
     "metricContacts": "Contatos",
     "metricContacted": "Contatados",
     "metricReached": "Alcançados",
@@ -2950,9 +2990,6 @@
     },
     "business": "Empresa",
     "phone": "Telefone e números",
-    "integrations": {
-      "title": "Integrações"
-    },
     "notifications": {
       "title": "Notificações"
     },
@@ -3751,11 +3788,18 @@
         "savings": "Economize 17%"
       },
       "badge": "Popular",
+      "period": "/mês",
       "tierRoi": {
         "starter": "Menos de uma ligação perdida",
         "growth": "Um lead recuperado paga o mês",
         "scale": "Equipe de comunicação IA por uma fração de um contratação",
         "enterprise": "ROI e suporte dedicado sob medida"
+      },
+      "tiers": {
+        "starter": { "name": "Starter", "description": "Atenda cada ligação. Um número, um agente.", "features": ["400 min incluídos", "50 ligações outbound", "100 SMS", "1 agente IA", "1 número", "Excedente: $0,25/min"], "cta": "Começar grátis" },
+        "growth": { "name": "Growth", "description": "Um lead recuperado paga o mês.", "features": ["1.500 min incluídos", "500 ligações outbound", "500 SMS", "3 agentes IA", "3 números", "Agendamento", "Sequências de follow-up", "Análises", "Excedente: $0,18/min"], "cta": "Começar grátis" },
+        "scale": { "name": "Scale", "description": "Equipe de comunicação IA por uma fração de um contratação.", "features": ["5.000 min incluídos", "2.000 ligações outbound", "SMS ilimitado", "Agentes IA ilimitados", "10 números", "Multi-local", "Compliance", "API", "Suporte prioritário", "Excedente: $0,12/min"], "cta": "Começar grátis" },
+        "enterprise": { "name": "Enterprise", "description": "Preços sob medida — white label, compliance, SSO, gerente dedicado, SLA.", "features": ["White label", "Compliance sob medida", "SSO", "Gerente dedicado", "SLA"], "cta": "Falar com vendas" }
       },
       "footerNote": "Todos os planos incluem: gravações criptografadas · framework de conformidade · trilha de auditoria · 14 dias grátis",
       "cta": {
@@ -3882,7 +3926,12 @@
       "heading": "Ligações recentes",
       "typeLead": "Lead",
       "typeAppointment": "Agendamento",
-      "typeFollowUp": "Acompanhamento"
+      "typeFollowUp": "Acompanhamento",
+      "cards": {
+        "1": { "summary": "Consulta de agendamento", "outcome": "✅ Agendado 14h" },
+        "2": { "summary": "Dúvida sobre preço", "outcome": "✅ Info enviada por SMS" },
+        "3": { "summary": "Pedido de retorno", "outcome": "✅ Follow-up em 30 min" }
+      }
     },
     "activityFeed": {
       "dateLabel": "Hoje",

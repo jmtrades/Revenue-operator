@@ -224,7 +224,7 @@ function agentToReadinessAgent(agent: Agent): ReadinessAgent {
   };
 }
 
-function getAgentReadiness(agent: Agent): AgentReadiness {
+function getAgentReadiness(agent: Agent, getLabel: (key: string) => string): AgentReadiness {
   const snapshot = getWorkspaceMeSnapshotSync() as { name?: string; progress?: { items?: Array<{ key: string; completed?: boolean }> } } | null;
   const phoneConnected = snapshot?.progress?.items?.find((i) => i.key === "phone")?.completed ?? false;
   const workspace = { name: snapshot?.name ?? null, phoneConnected };
@@ -232,14 +232,14 @@ function getAgentReadiness(agent: Agent): AgentReadiness {
   const percent = percentage;
   const tasks: ReadinessTask[] = items.map((item) => ({
     key: item.key,
-    label: item.label,
+    label: getLabel(item.key),
     complete: item.done,
     weight: item.weight,
     category: "required" as const,
   }));
   const status =
     percent >= 90 ? "excellent" : percent >= 70 ? "good" : percent >= 40 ? "basic" : "not_ready";
-  const recommendations = items.filter((i) => !i.done).map((i) => i.label);
+  const recommendations = items.filter((i) => !i.done).map((i) => getLabel(i.key));
 
   return {
     score: percent,
@@ -706,6 +706,11 @@ export default function AppAgentsPageClient({
   const templateModalContentRef = useRef<HTMLDivElement | null>(null);
   const [deleteConfirmAgent, setDeleteConfirmAgent] = useState<Agent | null>(null);
   const tAgents = useTranslations("agents");
+  const tDashboard = useTranslations("dashboard");
+  const getAgentReadinessBound = useCallback(
+    (agent: Agent) => getAgentReadiness(agent, (key) => tDashboard(`checklist.${key}`)),
+    [tDashboard],
+  );
 
   useEffect(() => {
     document.title = tAgents("pageTitle");
@@ -1254,7 +1259,7 @@ export default function AppAgentsPageClient({
                 elevenLabsVoices={elevenLabsVoices}
                 workspaceName={initialWorkspaceName}
                 workspaceNumbers={workspaceNumbers}
-                getAgentReadiness={getAgentReadiness}
+                getAgentReadiness={getAgentReadinessBound}
                 handleStepChange={handleStepChange}
                 handleSave={handleSave}
                 handleDelete={handleDelete}
@@ -1331,7 +1336,7 @@ export default function AppAgentsPageClient({
                   <TestStepContent
                     agent={selected}
                     workspaceName={initialWorkspaceName}
-                    getAgentReadiness={getAgentReadiness}
+                    getAgentReadiness={getAgentReadinessBound}
                     onBack={() => void handleStepChange("behavior")}
                     onNext={async () => {
                       await handleStepChange("golive");
@@ -1358,7 +1363,7 @@ export default function AppAgentsPageClient({
                       if (res.ok) fetchWorkspaceNumbers();
                     }}
                     refetchNumbers={fetchWorkspaceNumbers}
-                    getReadiness={getAgentReadiness}
+                    getReadiness={getAgentReadinessBound}
                     onBack={() => void handleStepChange("test")}
                     onActivate={async () => {
                       const result = await persistAgent(selected, {
