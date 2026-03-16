@@ -46,7 +46,7 @@ export default function AppSettingsTeamPage() {
 
   // Fallback: show current user if API doesn't return members
   const displayMembers = members.length > 0 ? members : (loadingMembers ? [] : [
-    { name: t("team.memberYouOwner"), email: "", role: t("team.roleAdmin"), status: t("team.statusActive") },
+    { name: t("team.memberYouOwner"), email: "you@email.com", role: t("team.roleAdmin"), status: t("team.statusActive") },
   ]);
 
   const handleInvite = async () => {

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Users, Search, Filter, X, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -181,7 +180,6 @@ function persistLeadsSnapshot(workspaceId: string, leads: LeadView[]) {
 }
 
 export default function LeadsPage() {
-  useRouter();
   const t = useTranslations();
   const tToast = useTranslations("toast");
   const { workspaceId } = useWorkspace();
