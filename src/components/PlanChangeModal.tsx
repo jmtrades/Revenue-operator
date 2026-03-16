@@ -100,7 +100,12 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
       }
       onSuccess?.(selectedPlan?.name ?? selected);
       onClose();
-      window.location.reload();
+      // Soft refresh — refetch data without full page reload
+      if (typeof window !== "undefined" && "navigation" in window) {
+        try { window.location.href = window.location.href; } catch { window.location.reload(); }
+      } else {
+        window.location.reload();
+      }
     } catch {
       setError(t("genericErrorTryAgain"));
     } finally {

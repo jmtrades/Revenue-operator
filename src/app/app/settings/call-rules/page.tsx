@@ -1,24 +1,67 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useWorkspace } from "@/components/WorkspaceContext";
 
 export default function AppSettingsCallRulesPage() {
   const tRules = useTranslations("callRules");
+  const { workspaceId } = useWorkspace();
   const [afterHours, setAfterHours] = useState("messages");
   const [emergencyKeywords, setEmergencyKeywords] = useState("emergency, urgent, pipe burst, flooding");
   const [transferPhone, setTransferPhone] = useState("");
   const [toast, setToast] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     document.title = tRules("pageTitle");
   }, [tRules]);
 
-  const handleSave = () => {
-    setToast(tRules("toast.saved"));
+  // Load existing settings
+  useEffect(() => {
+    if (!workspaceId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/workspace/call-rules?workspace_id=${workspaceId}`, { credentials: "include" });
+        if (res.ok && !cancelled) {
+          const data = await res.json();
+          if (data.after_hours_behavior) setAfterHours(data.after_hours_behavior);
+          if (data.emergency_keywords) setEmergencyKeywords(data.emergency_keywords);
+          if (data.transfer_phone) setTransferPhone(data.transfer_phone);
+        }
+      } catch { /* use defaults */ }
+    })();
+    return () => { cancelled = true; };
+  }, [workspaceId]);
+
+  const handleSave = useCallback(async () => {
+    if (!workspaceId) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/workspace/call-rules", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workspace_id: workspaceId,
+          after_hours_behavior: afterHours,
+          emergency_keywords: emergencyKeywords,
+          transfer_phone: transferPhone,
+        }),
+      });
+      if (res.ok) {
+        setToast(tRules("toast.saved"));
+      } else {
+        setToast(tRules("toast.error") ?? "Failed to save");
+      }
+    } catch {
+      setToast(tRules("toast.error") ?? "Failed to save");
+    }
+    setSaving(false);
     setTimeout(() => setToast(null), 3000);
-  };
+  }, [workspaceId, afterHours, emergencyKeywords, transferPhone, tRules]);
 
   const weekdays = ["mon", "tue", "wed", "thu", "fri"] as const;
   const weekend = ["sat", "sun"] as const;
@@ -80,7 +123,7 @@ export default function AppSettingsCallRulesPage() {
         </div>
       </div>
 
-      <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors">{tRules("saveChanges")}</button>
+      <button type="button" onClick={() => void handleSave()} disabled={saving || !workspaceId} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors">{saving ? "…" : tRules("saveChanges")}</button>
 
       {toast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>

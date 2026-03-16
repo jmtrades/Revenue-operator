@@ -1,18 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useWorkspace } from "@/components/WorkspaceContext";
+
+interface TeamMember {
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+}
 
 export default function AppSettingsTeamPage() {
   const t = useTranslations("settings");
+  const { workspaceId } = useWorkspace();
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("viewer");
   const [toast, setToast] = useState<string | null>(null);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(true);
 
-  const demoMembers = [
-    { name: t("team.memberYouOwner"), email: "you@business.com", role: t("team.roleAdmin"), status: t("team.statusActive") },
-  ];
+  useEffect(() => {
+    if (!workspaceId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/workspace/members?workspace_id=${workspaceId}`, { credentials: "include" });
+        if (res.ok) {
+          const data = await res.json();
+          if (!cancelled && Array.isArray(data.members)) {
+            setMembers(data.members.map((m: { name?: string; email?: string; role?: string; status?: string }) => ({
+              name: m.name || m.email?.split("@")[0] || t("team.memberYouOwner"),
+              email: m.email || "",
+              role: m.role || "admin",
+              status: m.status || "active",
+            })));
+          }
+        }
+      } catch { /* ignore fetch error */ }
+      if (!cancelled) setLoadingMembers(false);
+    })();
+    return () => { cancelled = true; };
+  }, [workspaceId, t]);
+
+  // Fallback: show current user if API doesn't return members
+  const displayMembers = members.length > 0 ? members : (loadingMembers ? [] : [
+    { name: t("team.memberYouOwner"), email: "", role: t("team.roleAdmin"), status: t("team.statusActive") },
+  ]);
 
   const handleInvite = () => {
     if (!inviteEmail.trim()) return;
@@ -27,8 +62,14 @@ export default function AppSettingsTeamPage() {
       <p className="text-sm text-zinc-500 mb-6">{t("team.subtitle")}</p>
 
       <div className="space-y-2 mb-6">
-        {demoMembers.map((m) => (
-          <div key={m.email} className="flex items-center justify-between p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
+        {loadingMembers && displayMembers.length === 0 && (
+          <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse">
+            <div className="h-4 w-32 bg-zinc-800 rounded mb-2" />
+            <div className="h-3 w-48 bg-zinc-800 rounded" />
+          </div>
+        )}
+        {displayMembers.map((m, i) => (
+          <div key={m.email || i} className="flex items-center justify-between p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
             <div>
               <p className="text-sm font-medium text-white">{m.name}</p>
               <p className="text-xs text-zinc-500">{m.email}</p>
@@ -68,7 +109,7 @@ export default function AppSettingsTeamPage() {
         <p className="text-xs text-zinc-500">{t("team.escalationOrderHint")}</p>
         <div className="mt-3 space-y-1.5">
           <div className="flex items-center gap-2 p-2 rounded-xl bg-zinc-800/50 text-xs text-zinc-300">
-            <span className="text-zinc-500">1.</span> {t("team.memberYouOwner")} — SMS + Push
+            <span className="text-zinc-500">1.</span> {displayMembers[0]?.name || t("team.memberYouOwner")} — SMS + Push
           </div>
         </div>
       </div>

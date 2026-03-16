@@ -130,12 +130,7 @@ export default function AppSettingsAgentPage() {
         setTimeout(() => setInlineToast(null), 4000);
         return;
       }
-      const agentRes = await fetch("/api/vapi/create-agent", { method: "POST", credentials: "include" });
-      if (!agentRes.ok) {
-        const message = tSettings("agent.voiceSyncFailed");
-        setInlineToast(message);
-        toast.error(message);
-      } else {
+      {
         const message = tSettings("agent.updated");
         setInlineToast(message);
         toast.success(tSettings("agent.updated"));
