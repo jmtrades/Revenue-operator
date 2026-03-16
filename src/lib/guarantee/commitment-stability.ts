@@ -143,7 +143,7 @@ export async function getCommitmentPressure(leadId: string): Promise<CommitmentS
     .from("guarantee_commitment_state")
     .select("pressure_level, updated_at, last_increase_at, last_reset_at")
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
   return data as CommitmentStateRow | null;
 }
 
@@ -153,7 +153,7 @@ export async function getCommitmentPressure(leadId: string): Promise<CommitmentS
  */
 export async function updateCommitmentPressure(leadId: string, workspaceId: string): Promise<CommitmentPressureLevel> {
   const db = getDb();
-  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).single();
+  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).maybeSingle();
   const convId = (conv as { id?: string } | null)?.id;
   if (!convId) return 0;
 

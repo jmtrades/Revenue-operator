@@ -85,7 +85,7 @@ export async function runDecisionJobWithEngines(
     .select("name, company, email, phone, state, opt_out, is_vip")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!lead) return;
 
   if ((lead as { opt_out?: boolean }).opt_out) {
@@ -98,7 +98,7 @@ export async function runDecisionJobWithEngines(
     return;
   }
 
-  const { data: actionLock } = await db.from("lead_action_locks").select("locked_until").eq("lead_id", leadId).single();
+  const { data: actionLock } = await db.from("lead_action_locks").select("locked_until").eq("lead_id", leadId).maybeSingle();
   const lockedUntil = (actionLock as { locked_until?: string } | null)?.locked_until;
   if (lockedUntil && new Date(lockedUntil) > new Date()) {
     const recheckAt = new Date(lockedUntil);
@@ -106,7 +106,7 @@ export async function runDecisionJobWithEngines(
     return;
   }
 
-  const { data: convRow } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).single();
+  const { data: convRow } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).maybeSingle();
   const convId = (convRow as { id?: string })?.id;
   if (!convId) {
     const recheckAt = revenueState.transition_toward_risk_at
@@ -124,7 +124,7 @@ export async function runDecisionJobWithEngines(
     .limit(5);
   const lastUserMsg = (recentMessages ?? []).find((m: { role: string }) => m.role === "user")?.content ?? "";
 
-  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspaceId).single();
+  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspaceId).maybeSingle();
   const settings = mergeSettings(settingsRow as Parameters<typeof mergeSettings>[0]);
 
   const coverageFlags = (settingsRow as { coverage_flags?: Record<string, boolean> })?.coverage_flags;
@@ -205,7 +205,7 @@ export async function runDecisionJobWithEngines(
       { onConflict: "lead_id" }
     );
     const assignedUserId = await getAssignedUserId(workspaceId, leadId);
-    const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).single();
+    const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).maybeSingle();
     const timeoutHours = (escRules as { escalation_rules?: { escalation_timeout_hours?: number }; escalation_timeout_hours?: number })?.escalation_rules?.escalation_timeout_hours
       ?? (escRules as { escalation_timeout_hours?: number })?.escalation_timeout_hours
       ?? 24;
@@ -426,7 +426,7 @@ export async function runDecisionJobWithEngines(
     return;
   }
 
-  const { data: dealRow } = await db.from("deals").select("value_cents").eq("lead_id", leadId).neq("status", "lost").limit(1).single();
+  const { data: dealRow } = await db.from("deals").select("value_cents").eq("lead_id", leadId).neq("status", "lost").limit(1).maybeSingle();
   const dealValue = (dealRow as { value_cents?: number })?.value_cents ?? 0;
   const needsApproval = !forceSimulate && (await shouldRequireApproval(workspaceId, decision.intervention_type, {
     isSensitive: !!sensitive,
@@ -443,7 +443,7 @@ export async function runDecisionJobWithEngines(
   if (!forceSimulate && ((escalationCheck.shouldEscalate && escalationCheck.reason) || needsApproval || shouldEscalateByEmotion)) {
     const escReason = escalationCheck.reason ?? (shouldEscalateByEmotion ? "emotional_complexity" : "autonomy_assist_approval_required");
     const assignedUserId = await getAssignedUserId(workspaceId, leadId);
-    const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).single();
+    const { data: escRules } = await db.from("settings").select("escalation_rules, escalation_timeout_hours").eq("workspace_id", workspaceId).maybeSingle();
     const timeoutHours = (escRules as { escalation_rules?: { escalation_timeout_hours?: number }; escalation_timeout_hours?: number })?.escalation_rules?.escalation_timeout_hours
       ?? (escRules as { escalation_timeout_hours?: number })?.escalation_timeout_hours
       ?? 24;
@@ -579,7 +579,7 @@ export async function runDecisionJobWithEngines(
     // Non-blocking
   }
 
-  const { data: plan } = await db.from("lead_plans").select("sequence_id").eq("workspace_id", workspaceId).eq("lead_id", leadId).eq("status", "active").single();
+  const { data: plan } = await db.from("lead_plans").select("sequence_id").eq("workspace_id", workspaceId).eq("lead_id", leadId).eq("status", "active").maybeSingle();
   if (plan && (plan as { sequence_id?: string }).sequence_id) {
     const { advanceSequence } = await import("@/lib/sequences/engine");
     await advanceSequence(workspaceId, leadId, strategyState);

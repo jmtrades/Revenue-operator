@@ -13,14 +13,14 @@ export async function runReactivationJob(leadId: string): Promise<void> {
     .from("leads")
     .select("*")
     .eq("id", leadId)
-    .single();
+    .maybeSingle();
 
   if (error || !lead) return;
   const l = lead as { workspace_id: string; opt_out: boolean; reactivation_stage: number; name?: string; company?: string };
 
   if (l.opt_out) return;
 
-  const { data: conv } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).single();
+  const { data: conv } = await db.from("conversations").select("id, channel").eq("lead_id", leadId).limit(1).maybeSingle();
   if (!conv) return;
 
   const stage = l.reactivation_stage ?? 0;
@@ -46,7 +46,7 @@ export async function runReactivationJob(leadId: string): Promise<void> {
       attempt_count: 1,
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (om) {
     await sendOutbound(

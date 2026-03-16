@@ -17,7 +17,7 @@ export interface CloserPacket {
 
 export async function generateCloserPacket(leadId: string, dealId?: string): Promise<CloserPacket> {
   const db = getDb();
-  const { data: lead } = await db.from("leads").select("name, email, company, state").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("name, email, company, state").eq("id", leadId).maybeSingle();
   if (!lead) {
     return {
       lead_context: { name: "", email: "", company: "", state: "" },

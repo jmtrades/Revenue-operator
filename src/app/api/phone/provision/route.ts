@@ -162,9 +162,20 @@ export async function POST(req: NextRequest) {
     .select("id, phone_number, friendly_name, number_type, status, monthly_cost_cents, setup_fee_cents")
     .maybeSingle();
 
-  if (error) {
+  if (error || !inserted) {
+    console.error("[provision] DB insert failed:", error?.message ?? "inserted is null");
     return NextResponse.json({ error: "Failed to save number." }, { status: 500 });
   }
+
+  const row = inserted as {
+    id: string;
+    phone_number: string;
+    friendly_name?: string;
+    number_type: string;
+    status: string;
+    monthly_cost_cents: number;
+    setup_fee_cents?: number;
+  };
 
   // Bill setup fee via Stripe if customer exists
   if (setupFeeCents > 0) {
@@ -220,12 +231,12 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({
-    id: (inserted as { id: string }).id,
-    phone_number: (inserted as { phone_number: string }).phone_number,
-    friendly_name: (inserted as { friendly_name?: string }).friendly_name,
-    number_type: (inserted as { number_type: string }).number_type,
-    status: (inserted as { status: string }).status,
-    monthly_cost_cents: (inserted as { monthly_cost_cents: number }).monthly_cost_cents,
-    setup_fee_cents: (inserted as { setup_fee_cents: number }).setup_fee_cents,
+    id: row.id,
+    phone_number: row.phone_number,
+    friendly_name: row.friendly_name,
+    number_type: row.number_type,
+    status: row.status,
+    monthly_cost_cents: row.monthly_cost_cents,
+    setup_fee_cents: row.setup_fee_cents ?? setupFeeCents,
   });
 }

@@ -59,7 +59,7 @@ export async function recordCommitment(input: RecordCommitmentInput): Promise<{ 
         status: "open",
       })
       .select("commitment_id")
-      .single();
+      .maybeSingle();
     const id = (data as { commitment_id?: string } | null)?.commitment_id;
     if (id) {
       await appendLedgerEvent({

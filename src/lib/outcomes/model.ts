@@ -31,7 +31,7 @@ export async function evaluateDealOutcome(
     .select("id, workspace_id, state, last_activity_at")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!lead) return null;
 
   const l = lead as { state: string; last_activity_at: string | null };
@@ -48,7 +48,7 @@ export async function evaluateDealOutcome(
     .eq("lead_id", leadId)
     .neq("status", "lost")
     .limit(1)
-    .single();
+    .maybeSingle();
   const dealId = (dealRow as { id?: string })?.id ?? null;
 
   const riskFactors: string[] = [];
@@ -66,7 +66,7 @@ export async function evaluateDealOutcome(
       .gte("call_started_at", now.toISOString())
       .order("call_started_at", { ascending: true })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     const hoursToCall = session
       ? (new Date((session as { call_started_at: string }).call_started_at).getTime() - now.getTime()) / (1000 * 60 * 60)
@@ -157,7 +157,7 @@ export async function getDealOutcome(
     .select("*")
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
 
   if (!row) return null;
   const r = row as { stage: DealOutcomeStage; probability: number; risk_factors: unknown[]; last_evaluated_at: string };

@@ -86,7 +86,11 @@ export class ElevenLabsConversationalProvider implements VoiceProvider {
     }
 
     const data = (await res.json()) as { agent_id?: string };
-    return { assistantId: data.agent_id ?? "" };
+    const assistantId = data.agent_id;
+    if (!assistantId) {
+      throw new Error("ElevenLabs createAssistant returned no agent_id");
+    }
+    return { assistantId };
   }
 
   async updateAssistant(assistantId: string, params: Partial<CreateAssistantParams>): Promise<void> {
@@ -143,9 +147,13 @@ export class ElevenLabsConversationalProvider implements VoiceProvider {
   }
 
   async createOutboundCall(params: CreateCallParams): Promise<CallResult> {
+    const phoneNumberId = process.env.ELEVENLABS_PHONE_NUMBER_ID;
+    if (!phoneNumberId) {
+      throw new Error("ELEVENLABS_PHONE_NUMBER_ID is not configured — cannot place outbound calls");
+    }
     const body: Record<string, unknown> = {
       agent_id: params.assistantId,
-      agent_phone_number_id: process.env.ELEVENLABS_PHONE_NUMBER_ID,
+      agent_phone_number_id: phoneNumberId,
       to_number: params.phoneNumber,
       metadata: params.metadata ?? {},
     };

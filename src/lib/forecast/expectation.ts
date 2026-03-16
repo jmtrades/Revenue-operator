@@ -19,7 +19,7 @@ const MIN_INTERACTIONS = 30;
 async function isEligible(workspaceId: string): Promise<boolean> {
   const db = getDb();
 
-  const { data: ws } = await db.from("workspaces").select("created_at").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("created_at").eq("id", workspaceId).maybeSingle();
   if (!ws) return false;
 
   const created = new Date((ws as { created_at: string }).created_at).getTime();
@@ -110,7 +110,7 @@ export async function ensureWeeklyExpectation(workspaceId: string): Promise<Week
     .from("workspace_health")
     .select("expected_weekly_low, expected_weekly_high, expected_confidence, expected_computed_at")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const computedAt = (existing as { expected_computed_at?: string } | null)?.expected_computed_at;
   if (computedAt && new Date(computedAt) > oneDayAgo) {

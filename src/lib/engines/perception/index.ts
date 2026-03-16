@@ -45,7 +45,7 @@ export async function computeDealStateVector(
     .select("id, workspace_id, state, last_activity_at, opt_out, is_vip, company")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (!lead) return null;
   const l = lead as { id: string; workspace_id: string; state: string; last_activity_at?: string | null; opt_out?: boolean; is_vip?: boolean; company?: string | null };
@@ -81,7 +81,7 @@ export async function computeDealStateVector(
     .eq("lead_id", leadId)
     .neq("status", "lost")
     .limit(1)
-    .single();
+    .maybeSingle();
   const dealId = (dealRow as { id?: string })?.id ?? null;
 
   const readinessResult = await computeReadiness(workspaceId, leadId, dealId ?? undefined);
@@ -113,7 +113,7 @@ export async function computeDealStateVector(
       .gte("call_started_at", now.toISOString())
       .order("call_started_at", { ascending: true })
       .limit(1)
-      .single();
+      .maybeSingle();
     if (upcomingSession) {
       nextSessionAt = (upcomingSession as { call_started_at?: string })?.call_started_at ?? null;
     }
@@ -132,7 +132,7 @@ export async function computeDealStateVector(
     .from("automation_states")
     .select("no_reply_scheduled_at, last_event_at")
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
   if (autoState) {
     const a = autoState as { no_reply_scheduled_at?: string | null; last_event_at?: string | null };
     noReplyScheduledAt = a.no_reply_scheduled_at ?? null;

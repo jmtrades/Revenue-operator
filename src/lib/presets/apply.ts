@@ -15,7 +15,7 @@ export async function applyPresetToWorkspace(
   const preset = getPresetForBusinessType(businessType);
 
   // Ensure settings row exists and set business_type + preset
-  const { data: existing } = await db.from("settings").select("id, business_type, preset_id").eq("workspace_id", workspaceId).single();
+  const { data: existing } = await db.from("settings").select("id, business_type, preset_id").eq("workspace_id", workspaceId).maybeSingle();
   if (existing) {
     await db
       .from("settings")
@@ -46,7 +46,7 @@ async function ensureDefaultSequences(workspaceId: string, preset: RevenuePreset
       .eq("workspace_id", workspaceId)
       .eq("purpose", purpose)
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (existing) continue;
 

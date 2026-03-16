@@ -30,8 +30,8 @@ export async function resolveAuthority(
     { data: wsData },
     { data: leadData },
   ] = await Promise.all([
-    db.from("workspaces").select("status, kill_switch").eq("id", _workspaceId).single(),
-    db.from("leads").select("opt_out, state").eq("id", _leadId).single(),
+    db.from("workspaces").select("status, kill_switch").eq("id", _workspaceId).maybeSingle(),
+    db.from("leads").select("opt_out, state").eq("id", _leadId).maybeSingle(),
   ]);
 
   const ws = wsData as { status?: string; kill_switch?: boolean } | null;

@@ -139,11 +139,11 @@ export async function runMorningAbsence(): Promise<
         .limit(1);
       if (alreadySent?.length) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -222,11 +222,11 @@ export async function runBookingQuietGuarantee(): Promise<
       );
       if (bookingsToday.length === 0) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -292,11 +292,11 @@ export async function runDailyCompletionConfirmation(): Promise<
         .limit(1);
       if (alreadySent?.length) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -363,7 +363,7 @@ export async function runInterruptionSignal(): Promise<
         .limit(1);
       if (alreadySent?.length) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ws.owner_id).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ws.owner_id).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -427,11 +427,11 @@ export async function runWeekendState(): Promise<
         .lt("call_started_at", nextWeekEnd.toISOString());
       if ((count ?? 0) === 0) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 

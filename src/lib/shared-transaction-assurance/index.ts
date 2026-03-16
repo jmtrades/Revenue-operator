@@ -139,7 +139,7 @@ export async function createSharedTransaction(
         ...(input.conversationId && { conversation_id: input.conversationId }),
       })
       .select("id")
-      .single();
+      .maybeSingle();
     return (data as { id: string })?.id ?? "";
   });
   if (id) {
@@ -228,7 +228,7 @@ export async function createAcknowledgementToken(
     .from("shared_transactions")
     .select("external_ref, workspace_id")
     .eq("id", sharedTransactionId)
-    .single();
+    .maybeSingle();
   if (row) {
     const r = row as { external_ref: string; workspace_id: string };
     await appendProtocolEvent(r.external_ref, r.workspace_id, "token_issued", {});
@@ -330,7 +330,7 @@ export async function acknowledgeSharedTransaction(
     .from("shared_transactions")
     .select("id, state, external_ref, counterparty_identifier, workspace_id, reminder_sent_count, acknowledged_at")
     .eq("id", transactionId)
-    .single();
+    .maybeSingle();
   if (!row) return { ok: false, error: "Transaction not found" };
   const r = row as { id: string; state: string; external_ref: string; counterparty_identifier: string; workspace_id: string; reminder_sent_count?: number; acknowledged_at?: string | null };
   
@@ -350,7 +350,7 @@ export async function acknowledgeSharedTransaction(
         .from("shared_transactions")
         .select("state")
         .eq("id", transactionId)
-        .single();
+        .maybeSingle();
       if (!checkRow || (checkRow as { state: string }).state !== "pending_acknowledgement") {
         return;
       }
@@ -635,7 +635,7 @@ export async function runRecoveryForSharedTransaction(
       .from("conversations")
       .select("id, lead_id, channel")
       .eq("id", tx.conversation_id)
-      .single();
+      .maybeSingle();
     if (conv) {
       const c = conv as { id: string; lead_id: string; channel: string };
       const { shouldSuppressOutbound } = await import("@/lib/outbound-suppression");
@@ -770,7 +770,7 @@ export async function updateCounterpartyReliance(
     .select("interaction_count, shared_entries_count, acknowledged_count, last_interaction_at")
     .eq("workspace_id", workspaceId)
     .eq("counterparty_identifier", idn)
-    .single();
+    .maybeSingle();
   if (!rel) return;
   const rr = rel as { interaction_count: number; shared_entries_count: number; acknowledged_count: number; last_interaction_at: string };
 
@@ -853,7 +853,7 @@ export async function mirrorProtocolEventToCounterpartyWorkspace(
       .select("reliance_state")
       .eq("workspace_id", counterpartyWorkspaceId)
       .eq("counterparty_identifier", `workspace:${originId}`)
-      .single();
+      .maybeSingle();
     if ((rel as { reliance_state: string } | null)?.reliance_state === "critical") {
       await appendProtocolEvent(externalRef, counterpartyWorkspaceId, "network_pressure", {});
     }
@@ -882,7 +882,7 @@ export async function getPublicEntryByExternalRef(
     .from("shared_transactions")
     .select("external_ref, subject_type, state, authority_required, acknowledgement_deadline, created_at")
     .eq("external_ref", externalRef)
-    .single();
+    .maybeSingle();
   if (!tx) return null;
   const t = tx as {
     external_ref: string;
@@ -1111,7 +1111,7 @@ export async function maybeIssueCounterpartyInvite(
     .select("id, status")
     .eq("workspace_id", workspaceId)
     .eq("counterparty_identifier", counterpartyIdentifier)
-    .single();
+    .maybeSingle();
   if (!edge || (edge as { status: string }).status !== "observed") return { invited: false };
 
   const { getInstitutionalState } = await import("@/lib/institutional-state");
@@ -1324,7 +1324,7 @@ export async function issueProtocolParticipation(
     .select("id, invite_issued_at")
     .eq("workspace_id", workspaceId)
     .eq("counterparty_identifier", idn)
-    .single();
+    .maybeSingle();
   if (!rel || (rel as { invite_issued_at: string | null }).invite_issued_at) {
     return { ok: true, sent: false };
   }
@@ -1365,7 +1365,7 @@ export async function issueProtocolParticipation(
   if (!txId) return { ok: false, sent: false };
 
   const dbForRef = getDb();
-  const { data: txRow } = await dbForRef.from("shared_transactions").select("external_ref").eq("id", txId).single();
+  const { data: txRow } = await dbForRef.from("shared_transactions").select("external_ref").eq("id", txId).maybeSingle();
   const externalRef = (txRow as { external_ref?: string } | null)?.external_ref ?? "";
   const { rawToken } = await createAcknowledgementToken(txId);
   const recordLink = buildPublicRecordLink(externalRef);

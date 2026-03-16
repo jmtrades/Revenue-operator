@@ -16,12 +16,12 @@ export async function protectAttendance(leadId: string): Promise<{ action: strin
     .from("leads")
     .select("id, workspace_id, state")
     .eq("id", leadId)
-    .single();
+    .maybeSingle();
   if (!lead || (lead as { state: string }).state !== "BOOKED") return null;
 
   const workspaceId = (lead as { workspace_id: string }).workspace_id;
 
-  const { data: settingsRow } = await db.from("settings").select("coverage_flags").eq("workspace_id", workspaceId).single();
+  const { data: settingsRow } = await db.from("settings").select("coverage_flags").eq("workspace_id", workspaceId).maybeSingle();
   const { isCoverageEnabled } = await import("@/lib/coverage-flags");
   const flags = (settingsRow as { coverage_flags?: Record<string, boolean> })?.coverage_flags;
   if (!isCoverageEnabled(flags, "confirmation")) return null;
@@ -37,7 +37,7 @@ export async function protectAttendance(leadId: string): Promise<{ action: strin
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
     .eq("status", "active")
-    .single();
+    .maybeSingle();
 
   if (attendanceProb < 0.3) {
     const rescueAt = new Date(now.getTime() + 30 * 60 * 1000);

@@ -52,10 +52,10 @@ export async function shouldSuppressPresence(workspaceId: string, forType: Prese
 /** Owner assurance: sent when escalation is delivery_failed | system_integrity_violation | signal_unprocessable | progress_stalled. No internal details. */
 export async function sendOwnerAssuranceEmail(workspaceId: string): Promise<boolean> {
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
   const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
   if (!ownerId) return false;
-  const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+  const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
   const email = (user as { email?: string } | null)?.email;
   if (!email) return false;
 

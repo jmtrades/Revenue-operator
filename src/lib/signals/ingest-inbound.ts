@@ -39,7 +39,7 @@ export async function ingestInboundAsSignal(input: InboundInput): Promise<{ sign
     external_message_id,
   } = input;
 
-  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).single();
+  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).maybeSingle();
   if (!ws) throw new Error(`Workspace ${workspace_id} not found`);
 
   const { data: lead, error: leadError } = await db
@@ -59,7 +59,7 @@ export async function ingestInboundAsSignal(input: InboundInput): Promise<{ sign
       { onConflict: "workspace_id,external_id" }
     )
     .select("id")
-    .single();
+    .maybeSingle();
   if (leadError || !lead) throw new Error(`Lead upsert failed: ${leadError?.message ?? "unknown"}`);
   const leadId = (lead as { id: string }).id;
 
@@ -75,7 +75,7 @@ export async function ingestInboundAsSignal(input: InboundInput): Promise<{ sign
       { onConflict: "lead_id,channel,external_thread_id" }
     )
     .select("id")
-    .single();
+    .maybeSingle();
   if (convError || !conversation) throw new Error(`Conversation upsert failed: ${convError?.message ?? "unknown"}`);
   const conversationId = (conversation as { id: string }).id;
 
@@ -100,14 +100,14 @@ export async function ingestInboundAsSignal(input: InboundInput): Promise<{ sign
           external_id: external_message_id,
         })
         .select("id")
-        .single();
+        .maybeSingle();
       if (error?.code === "23505") {
         const { data: row } = await db
           .from("messages")
           .select("id")
           .eq("conversation_id", conversationId)
           .eq("external_id", external_message_id)
-          .single();
+          .maybeSingle();
         messageId = (row as { id: string })?.id ?? "";
       } else if (inserted) {
         messageId = (inserted as { id: string }).id;
@@ -123,7 +123,7 @@ export async function ingestInboundAsSignal(input: InboundInput): Promise<{ sign
         external_id: null,
       })
       .select("id")
-      .single();
+      .maybeSingle();
     messageId = (insertedMessage as { id: string } | null)?.id ?? "";
   }
 

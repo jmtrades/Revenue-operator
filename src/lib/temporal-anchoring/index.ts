@@ -119,11 +119,11 @@ export async function runWeekCompletionAnchor(): Promise<
         .limit(1);
       if (alreadySent?.length) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -171,7 +171,7 @@ export async function runMonthStartAnchor(): Promise<
     try {
       if (!isFirstOfMonth0930(tz)) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id, status").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id, status").eq("id", workspaceId).maybeSingle();
       const status = (ws as { status?: string } | null)?.status;
       if (status === "paused") continue;
 
@@ -188,7 +188,7 @@ export async function runMonthStartAnchor(): Promise<
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -257,11 +257,11 @@ export async function runMonthEndAnchor(): Promise<
         .limit(1);
       if (alreadySent?.length) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -323,11 +323,11 @@ export async function runPayrollSafetyWindow(): Promise<
         .lt("call_started_at", fiveDaysLater.toISOString());
       if ((count ?? 0) === 0) continue;
 
-      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+      const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
       const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
       if (!ownerId) continue;
 
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 
@@ -376,7 +376,7 @@ export async function runLongSilenceConfidence(): Promise<
   for (const ws of workspaces as { id: string; owner_id: string }[]) {
     const workspaceId = ws.id;
     try {
-      const { data: user } = await db.from("users").select("email").eq("id", ws.owner_id).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ws.owner_id).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (!email) continue;
 

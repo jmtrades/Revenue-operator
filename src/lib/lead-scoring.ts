@@ -133,7 +133,7 @@ export async function recalculateLeadScoreFromDb(leadId: string): Promise<number
     .from("leads")
     .select("id, workspace_id, metadata")
     .eq("id", leadId)
-    .single();
+    .maybeSingle();
   if (!lead) return null;
 
   const workspaceId = (lead as { workspace_id?: string }).workspace_id;

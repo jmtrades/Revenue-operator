@@ -77,7 +77,7 @@ export async function enqueueSync(params: {
       updated_at: new Date().toISOString(),
     })
     .select("id")
-    .single();
+    .maybeSingle();
   if (error || !data) return null;
   return (data as { id: string }).id;
 }

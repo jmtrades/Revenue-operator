@@ -89,7 +89,7 @@ async function getInitialShellData(defaultWorkspaceName: string): Promise<{
       .from("workspaces")
       .select("id, name, agent_name, knowledge_items, website, address, onboarding_completed_at, verified_phone")
       .eq("id", workspaceId)
-      .single(),
+      .maybeSingle(),
     db.from("workspace_business_context").select("business_name").eq("workspace_id", workspaceId).maybeSingle(),
     db.from("phone_configs").select("id").eq("workspace_id", workspaceId).eq("status", "active").maybeSingle(),
     db.from("call_sessions").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),

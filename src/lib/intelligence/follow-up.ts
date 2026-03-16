@@ -17,7 +17,7 @@ export interface FollowUpRecommendation {
 
 export async function getFollowUpRecommendation(leadId: string): Promise<FollowUpRecommendation> {
   const db = getDb();
-  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).maybeSingle();
   const workspaceId = (lead as { workspace_id?: string })?.workspace_id;
   const coldStart = workspaceId ? await isColdStart(workspaceId) : true;
   const commitmentScore = await getCommitmentScore(leadId);

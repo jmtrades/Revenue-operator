@@ -43,7 +43,7 @@ export async function assertPostSignalInvariants(signalId: string): Promise<void
     .select("id, state")
     .eq("id", lead_id)
     .eq("workspace_id", workspace_id)
-    .single();
+    .maybeSingle();
   if (!lead) return;
   const state = (lead as { state?: string | null }).state;
   if (state == null || state === "") {

@@ -16,7 +16,7 @@ export async function leadHasHumanReplyAfter(
     .select("id")
     .eq("lead_id", leadId)
     .limit(1)
-    .single();
+    .maybeSingle();
   if (!conv) return false;
   const convId = (conv as { id: string }).id;
   const { data: msg } = await db
@@ -43,7 +43,7 @@ export async function leadHasHumanMessageInLastMinutes(
     .select("id")
     .eq("lead_id", leadId)
     .limit(1)
-    .single();
+    .maybeSingle();
   if (!conv) return false;
   const convId = (conv as { id: string }).id;
   const { data: msg } = await db

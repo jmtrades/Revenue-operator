@@ -31,7 +31,7 @@ async function computeEconomicScore(leadId: string, workspaceId: string): Promis
       .select("lifetime_value_stage, lifecycle_stage")
       .eq("lead_id", leadId)
       .eq("workspace_id", workspaceId)
-      .single();
+      .maybeSingle();
 
     if (lifecycle) {
       const l = lifecycle as { lifetime_value_stage?: string; lifecycle_stage?: string };
@@ -63,12 +63,12 @@ async function computeEconomicScore(leadId: string, workspaceId: string): Promis
   if (totalWonCents >= VALUE_TIER_HIGH_CENTS) score += 2;
   else if (totalWonCents > 0) score += 1;
 
-  const { data: leadRow } = await db.from("leads").select("metadata").eq("id", leadId).single();
+  const { data: leadRow } = await db.from("leads").select("metadata").eq("id", leadId).maybeSingle();
   const meta = (leadRow as { metadata?: Record<string, unknown> } | null)?.metadata ?? {};
   if (meta.source === "referral" || meta.referral === true) score += 1;
   if (meta.local === true || meta.proximity === true) score += 1;
 
-  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).single();
+  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).maybeSingle();
   const convId = (conv as { id?: string } | null)?.id;
   if (convId) {
     const { data: msgs } = await db
@@ -108,7 +108,7 @@ export async function getEconomicPriority(leadId: string): Promise<EconomicPrior
     .from("guarantee_economic_priority")
     .select("economic_priority_level, updated_at")
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
   return data as EconomicPriorityRow | null;
 }
 

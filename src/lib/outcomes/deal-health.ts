@@ -17,7 +17,7 @@ export async function monitorDealHealth(leadId: string): Promise<{ risk?: string
     .from("leads")
     .select("id, workspace_id, state, last_activity_at")
     .eq("id", leadId)
-    .single();
+    .maybeSingle();
   if (!lead) return null;
 
   const l = lead as { workspace_id: string; state: string; last_activity_at: string | null };
@@ -38,7 +38,7 @@ export async function monitorDealHealth(leadId: string): Promise<{ risk?: string
     .not("call_ended_at", "is", null)
     .order("call_ended_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const sessionEndedAt = lastSession ? new Date((lastSession as { call_ended_at: string }).call_ended_at) : null;
   const hoursSinceCall = sessionEndedAt

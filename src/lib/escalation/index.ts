@@ -67,7 +67,7 @@ export async function isLeadInEscalationHold(leadId: string): Promise<boolean> {
     .not("hold_until", "is", null)
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
   const holdUntil = (data as { hold_until?: string })?.hold_until;
   if (!holdUntil) return false;
   return new Date(holdUntil) > new Date();
@@ -83,7 +83,7 @@ export async function hasEscalationHoldExpired(leadId: string): Promise<boolean>
     .not("hold_until", "is", null)
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
   const holdUntil = (data as { hold_until?: string })?.hold_until;
   if (!holdUntil) return false;
   return new Date(holdUntil) <= new Date();
@@ -111,7 +111,7 @@ export async function checkEscalation(
     .from("settings")
     .select("escalation_rules")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const rules = mergeEscalationRules(
     (settingsRow as { escalation_rules?: EscalationRules })?.escalation_rules ?? undefined
@@ -169,7 +169,7 @@ export async function logEscalation(
     assigned_user_id: assignedUserId ?? null,
     hold_until: holdUntil?.toISOString() ?? null,
     holding_message_sent: false,
-  }).select("id").single();
+  }).select("id").maybeSingle();
   const id = (data as { id?: string })?.id ?? null;
 
   if (id && OPERATIONAL_RISK_REASONS.includes(escalationReason)) {
@@ -193,6 +193,6 @@ export async function getAssignedUserId(workspaceId: string, leadId: string): Pr
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
     .limit(1)
-    .single();
+    .maybeSingle();
   return (data as { assigned_to?: string })?.assigned_to ?? null;
 }

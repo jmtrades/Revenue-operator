@@ -101,7 +101,7 @@ export async function decideIntervention(
     };
   }
 
-  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspaceId).single();
+  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspaceId).maybeSingle();
   const settings = mergeSettings(settingsRow as Parameters<typeof mergeSettings>[0]);
   if (settings.vip_rules?.exclude_from_messaging) {
     const domains = settings.vip_rules.domains ?? [];
@@ -130,7 +130,7 @@ export async function decideIntervention(
     };
   }
 
-  const { data: wsRow } = await db.from("workspaces").select("status, created_at").eq("id", workspaceId).single();
+  const { data: wsRow } = await db.from("workspaces").select("status, created_at").eq("id", workspaceId).maybeSingle();
   if ((wsRow as { status?: string })?.status === "paused") {
     return {
       intervene: false,
@@ -165,7 +165,7 @@ export async function decideIntervention(
       .not("sent_at", "is", null)
       .order("sent_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
     const lastSentAt = (lastOut as { sent_at?: string })?.sent_at ? new Date((lastOut as { sent_at: string }).sent_at) : null;
     const seventyTwoHoursAgo = new Date(Date.now() - 72 * 60 * 60 * 1000);
     if (lastSentAt && lastSentAt > seventyTwoHoursAgo) {
@@ -213,7 +213,7 @@ export async function decideIntervention(
     }
   }
 
-  const { data: convRow } = await db.from("conversations").select("channel").eq("lead_id", leadId).limit(1).single();
+  const { data: convRow } = await db.from("conversations").select("channel").eq("lead_id", leadId).limit(1).maybeSingle();
   let channel = (convRow as { channel?: string })?.channel ?? "web";
   const channelCanSend = await canSend(channel);
   if (!channelCanSend) {
@@ -362,7 +362,7 @@ export async function decideIntervention(
     confidence = 0.8;
     reasonCode = INTERVENTION_REASON_CODES.attendance_protection;
   } else if ((state === "QUALIFIED" || state === "ENGAGED") && stateVector.deal_probability > 0.6) {
-    const { data: dealRow } = await db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1).single();
+    const { data: dealRow } = await db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1).maybeSingle();
     const dealId = (dealRow as { id?: string })?.id;
     if (dealId && effectiveAllowedActions.includes("booking")) {
       const route = await getBookingRoute(dealId);

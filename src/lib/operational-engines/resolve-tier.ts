@@ -27,7 +27,7 @@ export async function resolveWorkspaceOperationalScope(
       .from("workspaces")
       .select("operational_tier")
       .eq("id", workspaceId)
-      .single();
+      .maybeSingle();
 
     if (error) return defaultScope();
     const raw = (row as { operational_tier?: number | null } | null)?.operational_tier;

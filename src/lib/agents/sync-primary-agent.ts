@@ -82,7 +82,7 @@ export async function syncPrimaryAgent(
       .update(updates)
       .eq("id", (firstExisting as { id: string }).id)
       .select("id")
-      .single();
+      .maybeSingle();
     return (updated as { id: string } | null) ?? null;
   }
 
@@ -98,7 +98,7 @@ export async function syncPrimaryAgent(
       },
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   return (created as { id: string } | null) ?? null;
 }

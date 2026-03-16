@@ -22,7 +22,7 @@ export async function getTargetSnapshot(workspaceId: string): Promise<TargetSnap
     .from("settings")
     .select("weekly_call_target")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const target = (settings as { weekly_call_target?: number })?.weekly_call_target ?? null;
   if (target == null || target < 1) return null;

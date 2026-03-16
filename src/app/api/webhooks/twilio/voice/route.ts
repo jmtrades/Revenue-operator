@@ -91,12 +91,18 @@ export async function POST(req: NextRequest) {
       } else {
         callSessionId = (existing as { id: string }).id;
       }
-    } catch {
-      // continue to return TwiML
+    } catch (sessionErr) {
+      console.error("[twilio-voice] Call session creation failed:", sessionErr instanceof Error ? sessionErr.message : sessionErr);
     }
   }
 
-  const voice = getVoiceProvider();
+  let voice: ReturnType<typeof getVoiceProvider>;
+  try {
+    voice = getVoiceProvider();
+  } catch (providerErr) {
+    console.error("[twilio-voice] Failed to initialize voice provider:", providerErr instanceof Error ? providerErr.message : providerErr);
+    return new NextResponse(FALLBACK_TWIML, { headers: { "Content-Type": "text/xml" } });
+  }
 
   if (workspaceId && callSessionId && from) {
     try {
@@ -160,7 +166,7 @@ export async function POST(req: NextRequest) {
       const { assistantId } = await voice.createAssistant({
         name: `${agent_name} – ${workspaceId.slice(0, 8)}`,
         systemPrompt,
-        voiceId: workspace?.agent_name || agent?.name || "default",
+        voiceId: process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM",  // Rachel default
         voiceProvider: "elevenlabs",
         language: workspace?.preferred_language ?? "en",
         tools: [],
@@ -172,8 +178,8 @@ export async function POST(req: NextRequest) {
 
       const twiml = await voice.createInboundCall(callSid, assistantId);
       return new NextResponse(twiml, { headers: { "Content-Type": "text/xml" } });
-    } catch {
-      // fallback to Say+Record
+    } catch (callErr) {
+      console.error("[twilio-voice] Voice AI handoff failed, falling back to TwiML:", callErr instanceof Error ? callErr.message : callErr);
     }
   }
 

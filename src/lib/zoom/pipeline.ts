@@ -15,7 +15,7 @@ export async function processZoomWebhook(
   meetingUuid: string
 ): Promise<void> {
   const db = getDb();
-  const { data: raw } = await db.from("raw_webhook_events").select("payload").eq("id", webhookId).single();
+  const { data: raw } = await db.from("raw_webhook_events").select("payload").eq("id", webhookId).maybeSingle();
   if (!raw) return;
 
   const _payload = (raw as { payload?: { payload?: { object?: Record<string, unknown> } } }).payload?.payload?.object ?? {};
@@ -47,7 +47,7 @@ export async function processZoomWebhook(
     matched_confidence: match.confidence,
     outcome: null,
     transcript: [],
-  }).select("id").single();
+  }).select("id").maybeSingle();
 
   if (!session) return;
 
@@ -70,7 +70,7 @@ export async function fetchRecordingAndTranscript(
   meetingId: string
 ): Promise<void> {
   const db = getDb();
-  const { data: settings } = await db.from("settings").select("consent_mode, call_aware_enabled").eq("workspace_id", workspaceId).single();
+  const { data: settings } = await db.from("settings").select("consent_mode, call_aware_enabled").eq("workspace_id", workspaceId).maybeSingle();
   const callAware = (settings as { call_aware_enabled?: boolean })?.call_aware_enabled ?? false;
   if (!callAware) return;
 
@@ -128,12 +128,12 @@ export async function fetchRecordingAndTranscript(
 
 export async function runAnalyzeCall(callSessionId: string, workspaceId: string): Promise<void> {
   const db = getDb();
-  const { data: session } = await db.from("call_sessions").select("transcript_text, matched_lead_id").eq("id", callSessionId).single();
+  const { data: session } = await db.from("call_sessions").select("transcript_text, matched_lead_id").eq("id", callSessionId).maybeSingle();
   if (!session) return;
 
   const s = session as { transcript_text?: string | null; matched_lead_id?: string | null };
   const transcript = s.transcript_text ?? "";
-  const { data: lead } = s.matched_lead_id ? await db.from("leads").select("name, company").eq("id", s.matched_lead_id).single() : { data: null };
+  const { data: lead } = s.matched_lead_id ? await db.from("leads").select("name, company").eq("id", s.matched_lead_id).maybeSingle() : { data: null };
   const context = lead ? { leadName: (lead as { name?: string }).name, company: (lead as { company?: string }).company } : undefined;
 
   const analysis = await analyzeClosingCall(transcript, context);

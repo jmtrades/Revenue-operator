@@ -67,7 +67,7 @@ export async function isLowPressureMode(
     .select("metadata")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const meta = (lead as { metadata?: { low_pressure_mode?: boolean } })?.metadata;
   return meta?.low_pressure_mode === true;
@@ -87,7 +87,7 @@ export async function setLowPressureMode(
     .select("metadata")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   const meta = (lead as { metadata?: Record<string, unknown> })?.metadata ?? {};
   await db
     .from("leads")

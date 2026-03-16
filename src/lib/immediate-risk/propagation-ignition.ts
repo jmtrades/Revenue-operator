@@ -49,10 +49,10 @@ export async function runPropagationIgnition(): Promise<void> {
       sent_at: new Date().toISOString(),
     });
 
-    const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+    const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
     const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
     if (ownerId) {
-      const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+      const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (email && process.env.RESEND_API_KEY) {
         await fetch("https://api.resend.com/emails", {

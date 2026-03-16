@@ -68,7 +68,7 @@ export async function checkWorkspaceAlerts(workspaceId: string): Promise<string[
     .eq("workspace_id", workspaceId)
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
   const baseline = (baselineRow as { baseline_value?: number })?.baseline_value ?? 0.8;
   if (baseline > 0 && replyRate < baseline * REPLY_RATE_COLLAPSE_THRESHOLD) {
     alerts.push(`reply_rate_collapse ${(replyRate * 100).toFixed(1)}% vs baseline ${(baseline * 100).toFixed(1)}%`);

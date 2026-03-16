@@ -58,7 +58,7 @@ export async function getWorkspaceEmailConfig(workspaceId: string): Promise<Work
     .from("workspace_email_config")
     .select("workspace_id, provider, from_email, from_name, api_key_encrypted")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!data) return null;
   const r = data as { workspace_id: string; provider: string; from_email: string; from_name?: string | null; api_key_encrypted?: string | null };
   return {
@@ -77,7 +77,7 @@ async function getSendApiKey(workspaceId: string): Promise<{ key: string; from: 
     .from("workspace_email_config")
     .select("provider, api_key_encrypted, from_email, from_name")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (data) {
     const r = data as { provider: string; api_key_encrypted?: string | null; from_email: string; from_name?: string | null };
     let key: string | null = null;
@@ -105,7 +105,7 @@ export async function getTemplate(workspaceId: string, slug: string): Promise<Em
     .select("id, slug, name, subject, body_html")
     .eq("workspace_id", workspaceId)
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
   if (!data) return null;
   const r = data as { id: string; slug: string; name: string; subject: string; body_html: string };
   return { id: r.id, slug: r.slug, name: r.name, subject: r.subject, body_html: r.body_html };
@@ -138,7 +138,7 @@ export async function sendEmail(
       status: "pending",
     })
     .select("id")
-    .single();
+    .maybeSingle();
   const queueId = (inserted as { id: string } | null)?.id;
   if (!queueId) return { ok: false, error: "Failed to create queue entry" };
 

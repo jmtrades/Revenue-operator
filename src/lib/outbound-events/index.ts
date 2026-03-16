@@ -31,7 +31,7 @@ export async function emitOutboundEvent(
     .from("webhook_configs")
     .select("endpoint_url, enabled, max_attempts")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (!config || !(config as { enabled?: boolean }).enabled) return;
 
@@ -40,7 +40,7 @@ export async function emitOutboundEvent(
     .from("webhook_configs")
     .select(toggle)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   const cfg = cfgFull as Record<string, unknown> | null;
   const enabled = cfg && typeof cfg[toggle] === "boolean" ? cfg[toggle] : true;
   if (!enabled) return;
@@ -54,7 +54,7 @@ export async function emitOutboundEvent(
     status: "pending",
     attempt_count: 0,
     max_attempts: maxAttempts,
-  }).select("id").single();
+  }).select("id").maybeSingle();
 
   if (inserted) {
     processWebhookDeliveries().catch(() => {});
@@ -95,7 +95,7 @@ export async function processWebhookDeliveries(): Promise<void> {
       .from("webhook_configs")
       .select("endpoint_url, secret, max_attempts")
       .eq("workspace_id", r.workspace_id)
-      .single();
+      .maybeSingle();
 
     if (!config) continue;
     const cfg = config as { endpoint_url: string; secret?: string; max_attempts?: number };

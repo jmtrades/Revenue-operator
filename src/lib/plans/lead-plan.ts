@@ -37,7 +37,7 @@ export async function getActiveLeadPlan(
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
     .eq("status", "active")
-    .single();
+    .maybeSingle();
   return (data as LeadPlan | null) ?? null;
 }
 

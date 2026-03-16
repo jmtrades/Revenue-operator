@@ -57,7 +57,7 @@ export async function getAutonomySettings(workspaceId: string): Promise<Autonomy
     .from("settings")
     .select("autonomy_mode, feature_flags, autonomy_ramp_day, responsibility_level")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const rawMode = (row?.autonomy_mode as AutonomyMode) ?? DEFAULT_AUTONOMY.autonomy_mode;
   const responsibility = (row?.responsibility_level as string) ?? "handle";
@@ -105,7 +105,7 @@ export async function isRampComplete(workspaceId: string): Promise<boolean> {
   const a = await getAutonomySettings(workspaceId);
   if (a.autonomy_ramp_day <= 0) return true;
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("created_at").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("created_at").eq("id", workspaceId).maybeSingle();
   const created = ws?.created_at ? new Date(ws.created_at) : new Date();
   const now = new Date();
   const daysSinceCreation = Math.floor((now.getTime() - created.getTime()) / (24 * 60 * 60 * 1000));

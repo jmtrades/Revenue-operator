@@ -28,7 +28,7 @@ const DEFAULT_RULES: SchedulingRules = {
 
 export async function getSchedulingRules(workspaceId: string): Promise<SchedulingRules> {
   const db = getDb();
-  const { data } = await db.from("settings").select("scheduling_rules").eq("workspace_id", workspaceId).single();
+  const { data } = await db.from("settings").select("scheduling_rules").eq("workspace_id", workspaceId).maybeSingle();
   const raw = (data as { scheduling_rules?: SchedulingRules })?.scheduling_rules;
   return { ...DEFAULT_RULES, ...raw };
 }
@@ -54,7 +54,7 @@ export async function getSlotRecommendation(dealId: string): Promise<SlotRecomme
     .from("deals")
     .select("id, lead_id, workspace_id")
     .eq("id", dealId)
-    .single();
+    .maybeSingle();
   if (!deal) return null;
 
   const d = deal as { id: string; lead_id: string; workspace_id: string };

@@ -168,7 +168,7 @@ async function detectReturningCustomerDrop(): Promise<void> {
         .from("conversations")
         .select("lead_id")
         .eq("id", opp.conversation_id)
-        .single();
+        .maybeSingle();
       const leadId = (conv as { lead_id?: string } | null)?.lead_id;
       if (!leadId || !repeatLeadIds.includes(leadId)) continue;
       if (await alreadyReported(workspaceId, "returning_customer_drop", opp.conversation_id)) continue;

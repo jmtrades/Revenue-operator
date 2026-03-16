@@ -94,7 +94,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
     .from("agents")
     .select("id, workspace_id, name, greeting, voice_id, personality, knowledge_base, rules, vapi_agent_id, purpose, is_active")
     .eq("id", agentId)
-    .single();
+    .maybeSingle();
   if (agentError || !agentData) {
     throw new Error("Agent not found");
   }
@@ -104,7 +104,7 @@ export async function syncVapiAgent(db: DbLike, agentId: string): Promise<{ assi
     .from("workspaces")
     .select("id, name, preferred_language, vapi_assistant_id, address, working_hours")
     .eq("id", agent.workspace_id)
-    .single();
+    .maybeSingle();
   if (workspaceError || !workspaceData) {
     throw new Error("Workspace not found");
   }

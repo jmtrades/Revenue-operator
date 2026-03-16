@@ -28,7 +28,7 @@ export async function appendConnectorInboxEvent(
       created_at: new Date().toISOString(),
     })
     .select("id")
-    .single();
+    .maybeSingle();
   return (row as { id: string }).id;
 }
 

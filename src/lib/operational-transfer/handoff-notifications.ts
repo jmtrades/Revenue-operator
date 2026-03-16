@@ -111,16 +111,16 @@ export async function runHandoffNotifications(): Promise<
           }
           continue;
         }
-        const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+        const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
         const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
         if (ownerId) {
-          const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+          const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
           const email = (user as { email?: string } | null)?.email;
           if (email) {
             const text = "Outside authority.\n\nMultiple items exist outside authority.\n\nOpen: " + (process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com") + "/dashboard" + "\n\nEntry restores reliance." + "\n\nEntry is the operational boundary.";
             const sent = await sendEmail(email, "Outside authority.", text);
             if (sent) {
-              const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).single();
+              const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).maybeSingle();
               const raw = (settings as { team_handoff_emails?: unknown } | null)?.team_handoff_emails;
               const team = Array.isArray(raw) ? raw.filter((e): e is string => typeof e === "string" && e.includes("@")) : [];
               for (const to of team) await sendEmail(to, text, text).catch(() => {});
@@ -194,16 +194,16 @@ export async function runHandoffRepeatNotifications(): Promise<number> {
 export async function runHandoffBatchSend(workspaceId: string, escalationIds: string[]): Promise<void> {
   const db = getDb();
   const now = new Date();
-  const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
   const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
   if (ownerId) {
-    const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+    const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
     const email = (user as { email?: string } | null)?.email;
     if (email) {
       const text = "Outside authority.\n\nMultiple items exist outside authority.\n\nOpen: " + (process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com") + "/dashboard" + "\n\nEntry restores reliance." + "\n\nEntry is the operational boundary.";
       const sent = await sendEmail(email, "Outside authority.", text);
       if (sent) {
-        const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).single();
+        const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).maybeSingle();
         const raw = (settings as { team_handoff_emails?: unknown } | null)?.team_handoff_emails;
         const team = Array.isArray(raw) ? raw.filter((e): e is string => typeof e === "string" && e.includes("@")) : [];
         for (const to of team) await sendEmail(to, text, text).catch(() => {});

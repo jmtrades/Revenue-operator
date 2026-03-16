@@ -329,7 +329,7 @@ export async function getConversationContext(
     .gte("call_started_at", now.toISOString())
     .order("call_started_at", { ascending: true })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const callScheduled = !!upcomingCall;
   const callInFutureHours = upcomingCall

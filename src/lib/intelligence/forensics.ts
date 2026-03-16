@@ -41,7 +41,7 @@ export async function generateForensics(leadId: string, dealId: string): Promise
     .in("conversation_id", convIds);
   const conv = (messages ?? []).map((m: { role: string; content: string }) => `${m.role}: ${m.content}`).join("\n");
 
-  const { data: lead } = await db.from("leads").select("state, company").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("state, company").eq("id", leadId).maybeSingle();
   const state = (lead as { state?: string })?.state ?? "LOST";
 
   const openai = getOpenAI();

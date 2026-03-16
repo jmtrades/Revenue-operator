@@ -49,7 +49,7 @@ export async function ensureCallSessionFromCalendarEvent(
     .select("id, lead_id, matched_lead_id")
     .eq("workspace_id", payload.workspace_id)
     .eq("external_event_id", payload.external_event_id)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     const row = existing as { id: string; lead_id?: string | null; matched_lead_id?: string | null };
@@ -85,7 +85,7 @@ export async function ensureCallSessionFromCalendarEvent(
       transcript: [],
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   const id = (inserted as { id: string } | null)?.id;
   if (!id) throw new Error("Failed to create call_session");

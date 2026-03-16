@@ -33,7 +33,7 @@ async function sendViaTwilio(
       .select("twilio_account_sid, proxy_number, twilio_phone_sid, outbound_from_number, whatsapp_enabled")
       .eq("workspace_id", workspaceId)
       .eq("status", "active")
-      .single();
+      .maybeSingle();
 
     if (phoneConfig) {
       const config = phoneConfig as {
@@ -113,7 +113,7 @@ async function applySafetyLayer(
         .eq("role", "user")
         .order("created_at", { ascending: false })
         .limit(1)
-        .single(),
+        .maybeSingle(),
       isLowPressureMode(workspaceId, leadId),
     ]);
 

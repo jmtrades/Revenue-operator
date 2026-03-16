@@ -86,7 +86,7 @@ export async function verifyMagicLinkAndCreateSession(token: string): Promise<St
     .from("staff_users")
     .select("id, email, role")
     .eq("id", link.staff_user_id)
-    .single();
+    .maybeSingle();
 
   if (!staff || (staff.role !== "ADMIN" && staff.role !== "STAFF")) {
     return { error: "Staff user not found" };
@@ -137,7 +137,7 @@ export async function getSessionFromCookie(): Promise<StaffSession | null> {
     .from("staff_users")
     .select("id, email, role")
     .eq("id", session.staff_user_id)
-    .single();
+    .maybeSingle();
 
   if (!staff) return null;
 

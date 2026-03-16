@@ -46,7 +46,7 @@ export async function verifyWrapupToken(
     .from("call_wrapup_tokens")
     .select("call_session_id, workspace_id, expires_at, used_at")
     .eq("token_hash", tokenHash)
-    .single();
+    .maybeSingle();
 
   if (!row) return { valid: false, reason: "invalid" };
   const r = row as { call_session_id: string; workspace_id: string; expires_at: string; used_at?: string | null };
@@ -64,7 +64,7 @@ export async function consumeWrapupToken(rawToken: string): Promise<{ callSessio
     .eq("token_hash", tokenHash)
     .is("used_at", null)
     .select("call_session_id, workspace_id")
-    .single();
+    .maybeSingle();
 
   if (!row) return null;
   return { callSessionId: (row as { call_session_id: string }).call_session_id, workspaceId: (row as { workspace_id: string }).workspace_id };

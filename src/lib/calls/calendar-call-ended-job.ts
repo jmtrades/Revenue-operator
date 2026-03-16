@@ -30,7 +30,7 @@ export async function runCalendarCallEndedJob(callSessionId: string): Promise<vo
     .from("call_sessions")
     .select("workspace_id, lead_id, matched_lead_id, transcript_text, call_started_at, call_ended_at, metadata")
     .eq("id", callSessionId)
-    .single();
+    .maybeSingle();
 
   if (!session) return;
 
@@ -46,7 +46,7 @@ export async function runCalendarCallEndedJob(callSessionId: string): Promise<vo
   const leadId = s.lead_id ?? s.matched_lead_id ?? null;
   if (!leadId) return;
 
-  const { data: settingsRow } = await db.from("settings").select("hired_roles").eq("workspace_id", s.workspace_id).single();
+  const { data: settingsRow } = await db.from("settings").select("hired_roles").eq("workspace_id", s.workspace_id).maybeSingle();
   const hired = (settingsRow as { hired_roles?: string[] })?.hired_roles ?? ["full_autopilot"];
   if (!hired.includes("show_manager") && !hired.includes("full_autopilot")) return;
 
@@ -71,7 +71,7 @@ export async function runCalendarCallEndedJob(callSessionId: string): Promise<vo
     .select("outcome")
     .eq("call_session_id", callSessionId)
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const result = inferShowStatus({
     callSession: {
@@ -92,7 +92,7 @@ export async function runCalendarCallEndedJob(callSessionId: string): Promise<vo
     })
     .eq("id", callSessionId);
 
-  const { data: existing } = await db.from("call_analysis").select("id").eq("call_session_id", callSessionId).single();
+  const { data: existing } = await db.from("call_analysis").select("id").eq("call_session_id", callSessionId).maybeSingle();
   if (!existing) {
     await db.from("call_analysis").insert({
       workspace_id: s.workspace_id,

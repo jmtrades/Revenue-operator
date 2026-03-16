@@ -206,7 +206,7 @@ export async function createStripeCheckoutSessionForSettlement(workspaceId: stri
     .from("settlement_accounts")
     .select("stripe_customer_id")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   let customerId: string | null = (account as { stripe_customer_id: string | null } | null)?.stripe_customer_id ?? null;
 
   if (!customerId) {
@@ -321,7 +321,7 @@ export async function computeExportPeriods(workspaceId: string): Promise<{ perio
     .from("settlement_accounts")
     .select("last_exported_period_end")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   const lastEnd = (acc as { last_exported_period_end: string | null } | null)?.last_exported_period_end ?? null;
   const start = lastEnd ? new Date(lastEnd) : new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
   const periods: { period_start: string; period_end: string }[] = [];
@@ -377,7 +377,7 @@ export async function exportUsageToStripe(
     .from("settlement_accounts")
     .select("settlement_state, stripe_subscription_id, stripe_subscription_item_id, suspended_at")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!acc) return { ok: false, failureReason: "no_settlement_account" };
   const a = acc as {
     settlement_state: string;
@@ -501,7 +501,7 @@ export async function exportUsageToStripe(
         .from("settlement_accounts")
         .select("suspension_entry_created_at")
         .eq("workspace_id", workspaceId)
-        .single();
+        .maybeSingle();
       const alreadyCreated = (ac as { suspension_entry_created_at: string | null } | null)?.suspension_entry_created_at != null;
       await db
         .from("settlement_accounts")

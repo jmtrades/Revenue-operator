@@ -81,7 +81,7 @@ export async function upsertLeadMemory(
  */
 export async function getLeadMemoryContextForReasoning(leadId: string): Promise<string | null> {
   const db = getDb();
-  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).maybeSingle();
   const workspaceId = (lead as { workspace_id?: string } | null)?.workspace_id;
   if (!workspaceId) return null;
   const mem = await getLeadMemory(workspaceId, leadId);

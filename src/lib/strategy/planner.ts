@@ -74,7 +74,7 @@ export async function planWorkspaceStrategy(
     .from("workspace_strategy_state")
     .select("id")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     await db
@@ -118,7 +118,7 @@ export async function getWorkspaceStrategy(
     .from("workspace_strategy_state")
     .select("*")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (!row) {
     return {

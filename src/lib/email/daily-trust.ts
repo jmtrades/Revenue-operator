@@ -33,7 +33,7 @@ export async function sendDailyTrustEmails(): Promise<Array<{ workspaceId: strin
     const replies = actions.filter((a) => /reply|response|message/i.test(a.action)).length;
     const attendance = actions.filter((a) => /attend|confirm|remind/i.test(a.action)).length;
 
-    const { data: user } = await db.from("users").select("email").eq("id", row.owner_id).single();
+    const { data: user } = await db.from("users").select("email").eq("id", row.owner_id).maybeSingle();
     const email = (user as { email?: string } | null)?.email;
     if (!email) continue;
 
