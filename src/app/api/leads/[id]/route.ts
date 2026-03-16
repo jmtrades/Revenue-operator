@@ -11,7 +11,7 @@ export async function GET(
 ) {
   const { id } = await params;
   const db = getDb();
-  const { data: lead, error } = await db.from("leads").select("*").eq("id", id).single();
+  const { data: lead, error } = await db.from("leads").select("*").eq("id", id).maybeSingle();
   if (error || !lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const workspaceId = (lead as { workspace_id?: string }).workspace_id;
   if (workspaceId) {
@@ -56,7 +56,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const db = getDb();
-  const { data: existing } = await db.from("leads").select("metadata, workspace_id").eq("id", id).single();
+  const { data: existing } = await db.from("leads").select("metadata, workspace_id").eq("id", id).maybeSingle();
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const workspaceId = (existing as { workspace_id?: string }).workspace_id;
   if (workspaceId) {
@@ -82,12 +82,12 @@ export async function PATCH(
     .update(updatePayload)
     .eq("id", id)
     .select()
-    .single();
+    .maybeSingle();
   if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
   const leadWorkspaceId = (updated as { workspace_id?: string })?.workspace_id;
   if (leadWorkspaceId) {
     const { recordProviderInteraction } = await import("@/lib/detachment");
-    recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch(() => {});
+    recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch((err) => { console.error("[leads/[id]] error:", err instanceof Error ? err.message : err); });
     // Enqueue outbound CRM sync for connected providers (Task 19)
     try {
       const { getConnectedCrmProviders, enqueueSync } = await import("@/lib/integrations/sync-engine");

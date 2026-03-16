@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       status: "draft",
     })
     .select("id, template_key, version, status")
-    .single();
+    .maybeSingle();
 
   if (!inserted) return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 200 });
   const id = (inserted as { id: string }).id;

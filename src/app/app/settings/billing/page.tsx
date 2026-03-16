@@ -29,7 +29,7 @@ export default function AppSettingsBillingPage() {
     const snapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
     return snapshot && typeof snapshot.id === "string" ? snapshot.id : null;
   });
-  const [billingStatus, setBillingStatus] = useState("trial");
+  const [billingStatus, setBillingStatus] = useState<string | null>(null);
   const [renewalAt, setRenewalAt] = useState<string | null>(null);
   const [currentPlanId, setCurrentPlanId] = useState<PlanId>("starter");
   const [planChangeOpen, setPlanChangeOpen] = useState(false);
@@ -161,13 +161,23 @@ export default function AppSettingsBillingPage() {
         </div>
       )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
-        <p className="text-sm font-medium text-white">{tBilling("planDisplay", { plan: currentPlanId === "starter" ? "Starter" : currentPlanId === "growth" ? "Growth" : currentPlanId === "scale" ? "Scale" : "Starter", price: currentPlanId === "starter" ? "297" : currentPlanId === "growth" ? "497" : currentPlanId === "scale" ? "2400" : "297" })}</p>
-        <p className="text-xs text-zinc-500 mt-1">
-          {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
-        </p>
-        <p className="text-xs text-zinc-500 mt-1">
-          {tBilling("status")} {billingStatus}{renewalAt ? ` · ${tBilling("renews")} ${new Date(renewalAt).toLocaleDateString()}` : ""}
-        </p>
+        {billingStatus === null ? (
+          <div className="animate-pulse space-y-2">
+            <div className="h-4 w-48 bg-zinc-800 rounded" />
+            <div className="h-3 w-32 bg-zinc-800 rounded" />
+            <div className="h-3 w-40 bg-zinc-800 rounded" />
+          </div>
+        ) : (
+          <>
+            <p className="text-sm font-medium text-white">{tBilling("planDisplay", { plan: currentPlanId === "starter" ? "Starter" : currentPlanId === "growth" ? "Growth" : currentPlanId === "scale" ? "Scale" : "Starter", price: currentPlanId === "starter" ? "297" : currentPlanId === "growth" ? "497" : currentPlanId === "scale" ? "2400" : "297" })}</p>
+            <p className="text-xs text-zinc-500 mt-1">
+              {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
+            </p>
+            <p className="text-xs text-zinc-500 mt-1">
+              {tBilling("status")} {billingStatus}{renewalAt ? ` · ${tBilling("renews")} ${new Date(renewalAt).toLocaleDateString()}` : ""}
+            </p>
+          </>
+        )}
       </div>
       <button
         type="button"

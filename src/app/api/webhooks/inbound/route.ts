@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
       .select("id")
       .eq("dedupe_key", dedupeKey)
       .eq("workspace_id", workspace_id)
-      .single();
+      .maybeSingle();
 
     if (existing) {
       await incrementInboundRateLimit(workspace_id, ip);
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
         processed: false,
       })
       .select("id")
-      .single();
+      .maybeSingle();
 
     if (error) {
       const isConflict = String(error).includes("duplicate") || String(error).includes("unique");

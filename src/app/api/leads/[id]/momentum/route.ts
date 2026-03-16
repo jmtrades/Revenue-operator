@@ -23,7 +23,7 @@ export async function GET(
     .from("leads")
     .select("id, workspace_id, created_at, last_activity_at, state")
     .eq("id", leadId)
-    .single();
+    .maybeSingle();
 
   if (error || !lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
@@ -34,7 +34,7 @@ export async function GET(
   const authErr = await requireWorkspaceAccess(req, wid);
   if (authErr) return authErr;
 
-  const { data: ws } = await db.from("workspaces").select("status, pause_reason").eq("id", wid).single();
+  const { data: ws } = await db.from("workspaces").select("status, pause_reason").eq("id", wid).maybeSingle();
   const isPaused = (ws as { status?: string; pause_reason?: string })?.pause_reason != null;
 
   const lastActivityRaw = (lead as { last_activity_at?: string }).last_activity_at;

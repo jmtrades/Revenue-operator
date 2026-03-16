@@ -87,12 +87,12 @@ export async function GET(request: NextRequest) {
   await ensureInstallationState(workspaceId, {
     messagingConnected: readiness.messaging_connected,
     paymentsConnected: readiness.payments_connected,
-  }).catch(() => {});
-  await advanceObservationPhaseIfDue(workspaceId).catch(() => {});
+  }).catch((err) => { console.error("[responsibility] error:", err instanceof Error ? err.message : err); });
+  await advanceObservationPhaseIfDue(workspaceId).catch((err) => { console.error("[responsibility] error:", err instanceof Error ? err.message : err); });
 
   for (const e of incomingEntries) {
     import("@/lib/record-reference").then(({ recordRecordReference }) =>
-      recordRecordReference(workspaceId, "staff", "dashboard_record", e.external_ref).catch(() => {})
+      recordRecordReference(workspaceId, "staff", "dashboard_record", e.external_ref).catch((err) => { console.error("[responsibility] error:", err instanceof Error ? err.message : err); })
     );
   }
 
@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
     hasInterruptedExposureLast24h(workspaceId),
     normalizationEstablished(workspaceId),
   ]);
-  recordAssumptionOrientationOnce(workspaceId).catch(() => {});
+  recordAssumptionOrientationOnce(workspaceId).catch((err) => { console.error("[responsibility] error:", err instanceof Error ? err.message : err); });
 
   const operationally_embedded =
     continuityDuration.operations_have_been_continuous &&
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
     const alreadyRecorded = (orientRow as { provider_detached_orientation_recorded_at?: string | null } | null)?.provider_detached_orientation_recorded_at;
     if (!alreadyRecorded) {
       const { recordOrientationStatement } = await import("@/lib/orientation/records");
-      await recordOrientationStatement(workspaceId, "The provider was no longer required for operation.").catch(() => {});
+      await recordOrientationStatement(workspaceId, "The provider was no longer required for operation.").catch((err) => { console.error("[responsibility] error:", err instanceof Error ? err.message : err); });
       const now = new Date().toISOString();
       try {
         const { data: row } = await db.from("workspace_orientation_state").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle();
@@ -217,7 +217,7 @@ export async function GET(request: NextRequest) {
     const alreadyRecorded = (orientRow as { operation_anchored_orientation_recorded_at?: string | null } | null)?.operation_anchored_orientation_recorded_at;
     if (!alreadyRecorded) {
       const { recordOrientationStatement } = await import("@/lib/orientation/records");
-      await recordOrientationStatement(workspaceId, "The operation became sustained through the process.").catch(() => {});
+      await recordOrientationStatement(workspaceId, "The operation became sustained through the process.").catch((err) => { console.error("[responsibility] error:", err instanceof Error ? err.message : err); });
       const now = new Date().toISOString();
       try {
         const { data: row } = await db.from("workspace_orientation_state").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle();
@@ -242,7 +242,7 @@ export async function GET(request: NextRequest) {
     const alreadyRecorded = (orientRow as { structural_orientation_recorded_at?: string | null } | null)?.structural_orientation_recorded_at;
     if (!alreadyRecorded) {
       const { recordOrientationStatement } = await import("@/lib/orientation/records");
-      await recordOrientationStatement(workspaceId, "The organization operated through the environment.").catch(() => {});
+      await recordOrientationStatement(workspaceId, "The organization operated through the environment.").catch((err) => { console.error("[responsibility] error:", err instanceof Error ? err.message : err); });
       const now = new Date().toISOString();
       try {
         if (orientRow) {
@@ -271,7 +271,7 @@ export async function GET(request: NextRequest) {
     const alreadyRecorded = (orientRow as { operational_process_established_at?: string | null } | null)?.operational_process_established_at;
     if (!alreadyRecorded) {
       const { recordOrientationStatement } = await import("@/lib/orientation/records");
-      await recordOrientationStatement(workspaceId, "The operating process became established.").catch(() => {});
+      await recordOrientationStatement(workspaceId, "The operating process became established.").catch((err) => { console.error("[responsibility] error:", err instanceof Error ? err.message : err); });
       const now = new Date().toISOString();
       try {
         if (orientRow) {

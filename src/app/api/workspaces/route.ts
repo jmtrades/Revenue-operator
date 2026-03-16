@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       kill_switch: false,
     })
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     log("error", "Workspace create error", { error: String(error) });

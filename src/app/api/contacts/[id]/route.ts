@@ -47,7 +47,7 @@ export async function PATCH(
     if (body[k] !== undefined) updates[k] = body[k];
   }
 
-  const { data: contact, error } = await db.from("leads").update(updates).eq("id", id).select().single();
+  const { data: contact, error } = await db.from("leads").update(updates).eq("id", id).select().maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(contact);
 }

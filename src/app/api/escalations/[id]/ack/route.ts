@@ -45,17 +45,17 @@ export async function POST(
       .limit(1);
     if ((silenceRows?.length ?? 0) > 0) {
       const { recordOperationalAssumption } = await import("@/lib/assumption-engine");
-      recordOperationalAssumption(workspaceId, "absence_only_attention", `escalation:${escalationId}`).catch(() => {});
+      recordOperationalAssumption(workspaceId, "absence_only_attention", `escalation:${escalationId}`).catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
     }
     const { recordProviderInteraction } = await import("@/lib/detachment");
-    recordProviderInteraction(workspaceId, `escalation:${escalationId}`).catch(() => {});
+    recordProviderInteraction(workspaceId, `escalation:${escalationId}`).catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
     const { data: escRow } = await db.from("escalation_logs").select("lead_id").eq("id", escalationId).maybeSingle();
     const leadId = (escRow as { lead_id?: string } | null)?.lead_id;
-    if (leadId) recordProviderInteraction(workspaceId, `lead:${leadId}`).catch(() => {});
+    if (leadId) recordProviderInteraction(workspaceId, `lead:${leadId}`).catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
     const { recordStaffRelianceEvent } = await import("@/lib/staff-reliance");
-    recordStaffRelianceEvent(workspaceId).catch(() => {});
+    recordStaffRelianceEvent(workspaceId).catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    recordOrientationStatement(workspaceId, "The request was addressed.").catch(() => {});
+    recordOrientationStatement(workspaceId, "The request was addressed.").catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
   }
 
   return NextResponse.json({ ok: true, escalation_id: escalationId });

@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   let email: string | null = null;
   try {
     const db = getDb();
-    const { data } = await db.from("users").select("email").eq("id", session.userId).single();
+    const { data } = await db.from("users").select("email").eq("id", session.userId).maybeSingle();
     email = (data as { email?: string } | null)?.email ?? null;
   } catch {
     // ignore

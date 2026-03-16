@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       { onConflict: "workspace_id,external_id" }
     )
     .select("id")
-    .single();
+    .maybeSingle();
   if (leadErr || !lead) {
     return NextResponse.json({ error: "Lead create failed" }, { status: 500 });
   }
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       { onConflict: "lead_id,channel,external_thread_id" }
     )
     .select("id")
-    .single();
+    .maybeSingle();
   if (convErr || !conv) {
     return NextResponse.json({ error: "Conversation create failed" }, { status: 500 });
   }
@@ -95,7 +95,11 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const base = request.nextUrl?.origin ?? process.env.NEXT_PUBLIC_APP_URL ?? process.env.APP_URL ?? "http://localhost:3000";
+  const base = request.nextUrl?.origin ?? process.env.NEXT_PUBLIC_APP_URL ?? process.env.APP_URL;
+  if (!base) {
+    console.error("[demo-seed] Cannot determine base URL");
+    return NextResponse.json({ error: "Configuration error" }, { status: 500 });
+  }
   const token = process.env.CRON_SECRET ?? "";
   try {
     await fetch(`${base.replace(/\/$/, "")}/api/cron/core`, {

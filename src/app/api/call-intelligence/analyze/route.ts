@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
         analysis: { insightCount: insights.length },
       })
       .select("id, title, status, created_at")
-      .single();
+      .maybeSingle();
 
     if (insertExampleErr || !example) {
       return NextResponse.json({ error: "Failed to save." }, { status: 500 });

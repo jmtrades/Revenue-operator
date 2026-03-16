@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   const areaCode = body.area_code?.replace(/\D/g, "").slice(0, 3);
 
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("id, billing_status").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("id, billing_status").eq("id", workspaceId).maybeSingle();
   if (!ws) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
   }

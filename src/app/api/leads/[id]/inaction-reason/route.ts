@@ -38,7 +38,7 @@ export async function GET(
     .eq("lead_id", leadId)
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (!latest) {
     return NextResponse.json({ inaction: null });

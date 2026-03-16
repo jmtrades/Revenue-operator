@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       .select("proxy_number")
       .eq("workspace_id", workspaceId)
       .eq("status", "active")
-      .single();
+      .maybeSingle();
 
     if (!phoneConfig?.proxy_number) {
       return NextResponse.json({ error: "Phone number not provisioned" }, { status: 400 });
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       }
       await enqueue({ type: "process_signal", signalId });
       await burstDrain();
-      const { data: leadRow } = await db.from("leads").select("id").eq("workspace_id", workspaceId).eq("external_id", testPhone).single();
+      const { data: leadRow } = await db.from("leads").select("id").eq("workspace_id", workspaceId).eq("external_id", testPhone).maybeSingle();
       leadId = (leadRow as { id: string })?.id;
       if (!leadId) return NextResponse.json({ error: "Lead not found after ingest" }, { status: 500 });
     } else {
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
           dedupe_key: `test_${Date.now()}_${testPhone}`,
         })
         .select("id")
-        .single();
+        .maybeSingle();
 
       if (!webhookEvent) {
         return NextResponse.json({ error: "Failed to create webhook event" }, { status: 500 });
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
       .from("conversations")
       .select("id")
       .eq("lead_id", leadId)
-      .single();
+      .maybeSingle();
 
     const conversationId = conversation ? (conversation as { id: string }).id : null;
 
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
           .eq("role", "assistant")
           .order("created_at", { ascending: false })
           .limit(1)
-          .single()
+          .maybeSingle()
       : { data: null };
 
     return NextResponse.json({

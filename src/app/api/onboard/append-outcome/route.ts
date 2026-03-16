@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     subjectType,
     subjectId,
     threadId: existingThreadId,
-  }).catch(() => {});
+  }).catch((err) => { console.error("[onboard/append-outcome] error:", err instanceof Error ? err.message : err); });
 
   await recordOutcomeDependency({
     workspaceId: workspace_id,
@@ -77,13 +77,13 @@ export async function POST(request: NextRequest) {
     dependentContextType: "shared_transaction",
     dependentContextId: newThreadId,
     dependencyType: "prior_outcome_reference",
-  }).catch(() => {});
+  }).catch((err) => { console.error("[onboard/append-outcome] error:", err instanceof Error ? err.message : err); });
 
   if (outcome_text && outcome_text.trim()) {
-    await recordOrientationStatement(workspace_id, outcome_text.trim().slice(0, 90)).catch(() => {});
+    await recordOrientationStatement(workspace_id, outcome_text.trim().slice(0, 90)).catch((err) => { console.error("[onboard/append-outcome] error:", err instanceof Error ? err.message : err); });
   }
 
-  const { data: tx } = await db.from("shared_transactions").select("external_ref").eq("id", newThreadId).single();
+  const { data: tx } = await db.from("shared_transactions").select("external_ref").eq("id", newThreadId).maybeSingle();
   const newExternalRef = (tx as { external_ref: string } | null)?.external_ref ?? "";
 
   return NextResponse.json({

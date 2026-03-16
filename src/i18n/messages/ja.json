@@ -2599,7 +2599,8 @@
     "saveChanges": "変更を保存",
     "backToSettings": "← 設定",
     "toast": {
-      "saved": "通話ルールを保存しました"
+      "saved": "通話ルールを保存しました",
+      "error": "通話ルールの保存に失敗しました"
     }
   },
   "inbox": {

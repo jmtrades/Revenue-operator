@@ -16,7 +16,7 @@ export async function GET(
   const { id: leadId } = await params;
   const db = getDb();
 
-  const { data: lead } = await db.from("leads").select("workspace_id, state").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("workspace_id, state").eq("id", leadId).maybeSingle();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   const workspaceId = (lead as { workspace_id: string }).workspace_id;
 

@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     .select("id, workspace_id, name, greeting, knowledge_base, rules")
     .eq("id", agentId)
     .eq("workspace_id", session.workspaceId)
-    .single();
+    .maybeSingle();
 
   if (agentError || !agentRow) {
     return NextResponse.json({ error: "Agent not found" }, { status: 404 });
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     .from("workspaces")
     .select("id, name, address, working_hours")
     .eq("id", session.workspaceId)
-    .single();
+    .maybeSingle();
 
   if (wsError || !workspaceRow) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });

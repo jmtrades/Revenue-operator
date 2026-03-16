@@ -100,7 +100,7 @@ export async function GET(req: NextRequest) {
     // Synthetic protection bootstrap removed - only show real activity
 
     const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
-    sendActivationConfirmationEmail(workspaceId).catch(() => {});
+    sendActivationConfirmationEmail(workspaceId).catch((err) => { console.error("[integrations/zoom/callback] error:", err instanceof Error ? err.message : err); });
   } catch (_err) {
     // Store error; redirect below
     return NextResponse.redirect(new URL("/dashboard/activation?error=zoom_store_failed", req.url));

@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       processed: false,
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (insertError) {
     if ((insertError as { code?: string }).code === "23505") {
@@ -246,7 +246,7 @@ async function handleStripeWebhookEvent(
             .from("settlement_accounts")
             .select("suspension_entry_created_at")
             .eq("workspace_id", settlementWorkspaceId)
-            .single();
+            .maybeSingle();
           const alreadyCreated = (ac as { suspension_entry_created_at: string | null } | null)?.suspension_entry_created_at != null;
           await db
             .from("settlement_accounts")
@@ -392,7 +392,7 @@ async function handleStripeWebhookEvent(
           .from("settlement_accounts")
           .select("settlement_state")
           .eq("workspace_id", settlementWid)
-          .single();
+          .maybeSingle();
         if ((acc as { settlement_state: string } | null)?.settlement_state === "suspended") {
           const subActive = subscriptionId
             ? (async () => {

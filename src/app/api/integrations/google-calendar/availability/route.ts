@@ -18,7 +18,7 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
     .from("google_calendar_tokens")
     .select("access_token, refresh_token, expires_at")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const row = data as { access_token?: string | null; refresh_token?: string | null; expires_at?: string | null } | null;
   if (!row?.access_token) return null;
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
   const busy = (data.calendars?.primary?.busy ?? []).map((b) => ({ start: new Date(b.start).getTime(), end: new Date(b.end).getTime() }));
   const slotMins = 30;
   const bufferMs = await (async () => {
-    const { data: ws } = await db.from("workspaces").select("calendar_buffer_minutes").eq("id", workspaceId).single();
+    const { data: ws } = await db.from("workspaces").select("calendar_buffer_minutes").eq("id", workspaceId).maybeSingle();
     const mins = (ws as { calendar_buffer_minutes?: number } | null)?.calendar_buffer_minutes ?? 15;
     return Math.min(120, Math.max(0, mins)) * 60 * 1000;
   })();

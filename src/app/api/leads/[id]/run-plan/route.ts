@@ -17,7 +17,7 @@ export async function POST(
   const { id: leadId } = await params;
   const db = getDb();
 
-  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("workspace_id").eq("id", leadId).maybeSingle();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   const workspaceId = (lead as { workspace_id: string }).workspace_id;
 
@@ -32,7 +32,7 @@ export async function POST(
     .or(`lead_id.eq.${leadId},matched_lead_id.eq.${leadId}`)
     .order("call_ended_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (!callSession) {
     return NextResponse.json({ error: "No closing call found for this lead" }, { status: 400 });

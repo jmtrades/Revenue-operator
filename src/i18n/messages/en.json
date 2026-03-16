@@ -2703,7 +2703,8 @@
     "saveChanges": "Save changes",
     "backToSettings": "← Settings",
     "toast": {
-      "saved": "Call rules saved"
+      "saved": "Call rules saved",
+      "error": "Failed to save call rules"
     }
   },
   "inbox": {

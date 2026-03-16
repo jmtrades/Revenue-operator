@@ -44,7 +44,7 @@ export async function PATCH(
     .eq("id", id)
     .eq("workspace_id", session.workspaceId)
     .select("id, applied, dismissed")
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     return NextResponse.json({ error: "Insight not found or update failed." }, { status: 404 });

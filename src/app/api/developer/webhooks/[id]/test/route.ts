@@ -25,7 +25,7 @@ export async function POST(
     .from("developer_webhook_endpoints")
     .select("id, workspace_id, url, secret")
     .eq("id", id)
-    .single();
+    .maybeSingle();
   if (!endpoint || (endpoint as { workspace_id: string }).workspace_id !== session.workspaceId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }

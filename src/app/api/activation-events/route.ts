@@ -41,14 +41,14 @@ export async function POST(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .eq("step", step)
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (!existing) {
     const { data: workspace } = await db
       .from("workspaces")
       .select("owner_id")
       .eq("id", workspaceId)
-      .single();
+      .maybeSingle();
 
     await db.from("activation_events").insert({
       workspace_id: workspaceId,
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
     query = query.eq("step", step);
   }
 
-  const { data } = await query.limit(1).single();
+  const { data } = await query.limit(1).maybeSingle();
 
   return NextResponse.json({ exists: !!data });
 }

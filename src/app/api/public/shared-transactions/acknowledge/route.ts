@@ -57,13 +57,13 @@ export async function POST(request: NextRequest) {
 
   if (result.externalRef) {
     const db = getDb();
-    const { data: txRow } = await db.from("shared_transactions").select("workspace_id").eq("id", transactionId).single();
+    const { data: txRow } = await db.from("shared_transactions").select("workspace_id").eq("id", transactionId).maybeSingle();
     const workspaceId = (txRow as { workspace_id: string } | null)?.workspace_id;
     if (workspaceId) {
       const { recordRecordReference } = await import("@/lib/record-reference");
-      recordRecordReference(workspaceId, "counterparty", "ack_flow", result.externalRef).catch(() => {});
+      recordRecordReference(workspaceId, "counterparty", "ack_flow", result.externalRef).catch((err) => { console.error("[public/shared-transactions/acknowledge] error:", err instanceof Error ? err.message : err); });
       const { recomputeInstitutionalState } = await import("@/lib/institutional-state");
-      recomputeInstitutionalState(workspaceId).catch(() => {});
+      recomputeInstitutionalState(workspaceId).catch((err) => { console.error("[public/shared-transactions/acknowledge] error:", err instanceof Error ? err.message : err); });
     }
   }
 
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
         .from("shared_transactions")
         .select("workspace_id")
         .eq("id", transactionId)
-        .single();
+        .maybeSingle();
       const originWorkspaceId = (txRow as { workspace_id: string } | null)?.workspace_id ?? null;
       const counterpartyWorkspaceId = await resolveWorkspaceByCounterparty(result.counterpartyIdentifier);
       await mirrorProtocolEventToCounterpartyWorkspace(

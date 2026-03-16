@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
               state: "NEW",
             })
             .select("id")
-            .single();
+            .maybeSingle();
           const leadId = (inserted as { id: string } | null)?.id;
           if (vapiCallId) {
             const { data: sess } = await db.from("call_sessions").select("id").eq("workspace_id", workspaceId).eq("external_meeting_id", vapiCallId).maybeSingle();
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
             const { data: existing } = await db.from("leads").select("id").eq("workspace_id", workspaceId).or(`phone.eq.${phone},phone.eq.${normalized}`).limit(1).maybeSingle();
             leadId = (existing as { id: string } | null)?.id ?? null;
             if (!leadId) {
-              const { data: created } = await db.from("leads").insert({ workspace_id: workspaceId, name: apptName, phone, state: "NEW" }).select("id").single();
+              const { data: created } = await db.from("leads").insert({ workspace_id: workspaceId, name: apptName, phone, state: "NEW" }).select("id").maybeSingle();
               leadId = (created as { id: string })?.id ?? null;
             }
           }
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
           };
           if (leadId) apptPayload.lead_id = leadId;
           if (notes) apptPayload.notes = notes;
-          const { data: appt } = await db.from("appointments").insert(apptPayload).select("id").single();
+          const { data: appt } = await db.from("appointments").insert(apptPayload).select("id").maybeSingle();
           const apptId = (appt as { id: string } | null)?.id;
           if (apptId) logAppointmentBooked(workspaceId, apptId, "voice");
           results.push({ name: "book_appointment", toolCallId: toolId, result: JSON.stringify({ ok: true, message: `Appointment booked for ${dateStr} at ${timeStr}` }) });

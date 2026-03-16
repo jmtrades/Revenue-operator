@@ -26,14 +26,14 @@ export async function GET(request: NextRequest) {
     const workspaceIds = (rows ?? []).map((r: { id: string }) => r.id);
     const now = new Date();
     for (const workspaceId of workspaceIds) {
-      await detectReplyDelayRisk(workspaceId, now).catch(() => {});
-      await detectAttendanceUncertaintyRisk(workspaceId, now).catch(() => {});
-      await detectPaymentStallRisk(workspaceId, now).catch(() => {});
-      await detectCounterpartyUnconfirmedRisk(workspaceId, now).catch(() => {});
-      await detectCommitmentOutcomeUncertain(workspaceId, now).catch(() => {});
+      await detectReplyDelayRisk(workspaceId, now).catch((err) => { console.error("[cron/exposure-engine] error:", err instanceof Error ? err.message : err); });
+      await detectAttendanceUncertaintyRisk(workspaceId, now).catch((err) => { console.error("[cron/exposure-engine] error:", err instanceof Error ? err.message : err); });
+      await detectPaymentStallRisk(workspaceId, now).catch((err) => { console.error("[cron/exposure-engine] error:", err instanceof Error ? err.message : err); });
+      await detectCounterpartyUnconfirmedRisk(workspaceId, now).catch((err) => { console.error("[cron/exposure-engine] error:", err instanceof Error ? err.message : err); });
+      await detectCommitmentOutcomeUncertain(workspaceId, now).catch((err) => { console.error("[cron/exposure-engine] error:", err instanceof Error ? err.message : err); });
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("exposure-engine").catch(() => {});
+    await recordCronHeartbeat("exposure-engine").catch((err) => { console.error("[cron/exposure-engine] error:", err instanceof Error ? err.message : err); });
     return { run: 1, workspaces: workspaceIds.length };
   });
 

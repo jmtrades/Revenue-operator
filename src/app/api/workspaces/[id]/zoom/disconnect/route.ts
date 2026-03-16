@@ -16,7 +16,7 @@ export async function POST(
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
   const db = getDb();
-  const { data: account } = await db.from("zoom_accounts").select("id").eq("workspace_id", workspaceId).single();
+  const { data: account } = await db.from("zoom_accounts").select("id").eq("workspace_id", workspaceId).maybeSingle();
   if (!account) return NextResponse.json({ ok: true, message: "Not connected" });
   await db.from("zoom_accounts").delete().eq("workspace_id", workspaceId);
   return NextResponse.json({ ok: true });

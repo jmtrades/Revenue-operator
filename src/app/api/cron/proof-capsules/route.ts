@@ -34,12 +34,12 @@ export async function GET(request: NextRequest) {
       if (lines.length > 0) {
         await saveProofCapsule(workspaceId, periodStart, periodEnd, lines);
       }
-      await recomputeInstitutionalState(workspaceId).catch(() => {});
+      await recomputeInstitutionalState(workspaceId).catch((err) => { console.error("[cron/proof-capsules] error:", err instanceof Error ? err.message : err); });
     } catch {
       // skip
     }
   }
 
-  await recordCronHeartbeat("proof-capsules").catch(() => {});
+  await recordCronHeartbeat("proof-capsules").catch((err) => { console.error("[cron/proof-capsules] error:", err instanceof Error ? err.message : err); });
   return NextResponse.json({ ok: true });
 }

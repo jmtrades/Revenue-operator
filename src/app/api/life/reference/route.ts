@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     .from("personal_references")
     .insert({ workspace_id: workspaceId, label, category })
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true, id: (row as { id: string }).id });

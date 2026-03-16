@@ -124,7 +124,7 @@ async function getOrCreateConversation(db: ReturnType<typeof getDb>, leadId: str
     .from("conversations")
     .insert({ lead_id: leadId, channel: "sms", external_thread_id: null, updated_at: new Date().toISOString() })
     .select("id")
-    .single();
+    .maybeSingle();
   if (error || !created) return null;
   return (created as { id: string }).id;
 }

@@ -42,6 +42,7 @@ import { Timeline } from "@/components/ui/Timeline";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { UpgradeBanner } from "@/components/ui/UpgradeBanner";
 import { Confetti } from "@/components/Confetti";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 type ActivityType = "lead" | "appointment" | "follow-up" | "urgent";
 
@@ -1154,71 +1155,75 @@ export default function AppActivityPage() {
             <h3 className="text-sm font-medium text-zinc-100 mb-4">
               {t("dashboard.callVolume7d")}
             </h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={callVolumeData.length > 0 ? callVolumeData : placeholderArea}>
-              <defs>
-                <linearGradient id="dashboardCallGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--accent-primary)" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="var(--accent-primary)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis
-                dataKey="day"
-                tick={{ fontSize: 12, fill: "var(--text-tertiary)" }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis hide />
-              <Tooltip
-                contentStyle={{
-                  background: "var(--bg-card)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  borderRadius: 12,
-                  fontSize: 13,
-                }}
-              />
-                <Area
-                  type="monotone"
-                  dataKey="calls"
-                  stroke="var(--accent-primary)"
-                  fill="url(#dashboardCallGrad)"
-                  strokeWidth={2}
+            <ErrorBoundary fallback={<div className="h-[200px] flex items-center justify-center text-xs text-zinc-500">Chart unavailable</div>}>
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={callVolumeData.length > 0 ? callVolumeData : placeholderArea}>
+                <defs>
+                  <linearGradient id="dashboardCallGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--accent-primary)" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="var(--accent-primary)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="day"
+                  tick={{ fontSize: 12, fill: "var(--text-tertiary)" }}
+                  axisLine={false}
+                  tickLine={false}
                 />
-              </AreaChart>
-            </ResponsiveContainer>
+                <YAxis hide />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--bg-card)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    borderRadius: 12,
+                    fontSize: 13,
+                  }}
+                />
+                  <Area
+                    type="monotone"
+                    dataKey="calls"
+                    stroke="var(--accent-primary)"
+                    fill="url(#dashboardCallGrad)"
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </ErrorBoundary>
           </div>
 
           <div className="bg-[var(--bg-surface)] border border-white/10 rounded-2xl p-6 relative">
             <h3 className="text-sm font-medium text-zinc-100 mb-4">
               {t("dashboard.callOutcomes")}
             </h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={outcomeData.length > 0 ? outcomeData : placeholderPie}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {(outcomeData.length > 0 ? outcomeData : placeholderPie).map(
-                    (_slice, i) => (
-                      <Cell
-                        key={i}
-                        fill={
-                          outcomeData.length > 0
-                            ? REAL_PIE_COLORS[i % REAL_PIE_COLORS.length]
-                            : PIE_COLORS[0]
-                        }
-                      />
-                    ),
-                  )}
-                </Pie>
-                {outcomeData.length > 0 && <Tooltip />}
-              </PieChart>
-            </ResponsiveContainer>
+            <ErrorBoundary fallback={<div className="h-[200px] flex items-center justify-center text-xs text-zinc-500">Chart unavailable</div>}>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={outcomeData.length > 0 ? outcomeData : placeholderPie}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {(outcomeData.length > 0 ? outcomeData : placeholderPie).map(
+                      (_slice, i) => (
+                        <Cell
+                          key={i}
+                          fill={
+                            outcomeData.length > 0
+                              ? REAL_PIE_COLORS[i % REAL_PIE_COLORS.length]
+                              : PIE_COLORS[0]
+                          }
+                        />
+                      ),
+                    )}
+                  </Pie>
+                  {outcomeData.length > 0 && <Tooltip />}
+                </PieChart>
+              </ResponsiveContainer>
+            </ErrorBoundary>
           </div>
         </div>
       )}

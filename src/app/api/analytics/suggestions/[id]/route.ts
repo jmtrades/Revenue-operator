@@ -30,7 +30,7 @@ export async function PATCH(
     .eq("id", id)
     .eq("workspace_id", session.workspaceId)
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     return NextResponse.json({ error: "Suggestion not found" }, { status: 404 });

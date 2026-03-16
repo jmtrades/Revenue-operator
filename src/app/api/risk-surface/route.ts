@@ -136,7 +136,7 @@ export async function GET(req: NextRequest) {
     .select("target_value, current_value")
     .eq("workspace_id", workspaceId)
     .eq("objective_type", "calls")
-    .single();
+    .maybeSingle();
 
   const target = (objRow as { target_value?: number })?.target_value ?? 12;
   const current = (objRow as { current_value?: number })?.current_value ?? 0;

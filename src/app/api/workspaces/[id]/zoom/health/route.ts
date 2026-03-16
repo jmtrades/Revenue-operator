@@ -20,7 +20,7 @@ export async function GET(
     .from("zoom_accounts")
     .select("expires_at, last_webhook_at, disconnected_at, updated_at")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (!account) {
     return NextResponse.json({ connected: false });

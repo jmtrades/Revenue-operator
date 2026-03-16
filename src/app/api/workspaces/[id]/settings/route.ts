@@ -20,7 +20,7 @@ export async function GET(
     .from("settings")
     .select("*")
     .eq("workspace_id", id)
-    .single();
+    .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
     return NextResponse.json({ error: String(error) }, { status: 500 });
@@ -69,13 +69,13 @@ export async function PATCH(
       { onConflict: "workspace_id" }
     )
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
 
   if (nextProfile && nextProfile !== prevProfile) {
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    recordOrientationStatement(id, "The operating profile was updated.").catch(() => {});
+    recordOrientationStatement(id, "The operating profile was updated.").catch((err) => { console.error("[workspaces/[id]/settings] error:", err instanceof Error ? err.message : err); });
   }
 
   return NextResponse.json(data);

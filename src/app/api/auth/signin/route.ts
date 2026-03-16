@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
         .from("workspaces")
         .insert({ name: "My Workspace", owner_id: userId, autonomy_level: "assisted", kill_switch: false })
         .select("id")
-        .single();
+        .maybeSingle();
       if (!createErr && created) {
         workspaceId = (created as { id: string }).id;
         await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });

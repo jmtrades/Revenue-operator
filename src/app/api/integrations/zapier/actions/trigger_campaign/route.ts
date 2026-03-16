@@ -25,9 +25,9 @@ export async function POST(req: NextRequest) {
   if (!campaign_id || !lead_id) return NextResponse.json({ error: "campaign_id and lead_id required" }, { status: 400 });
 
   const db = getDb();
-  const { data: campaign } = await db.from("campaigns").select("id").eq("id", campaign_id).eq("workspace_id", workspaceId).single();
+  const { data: campaign } = await db.from("campaigns").select("id").eq("id", campaign_id).eq("workspace_id", workspaceId).maybeSingle();
   if (!campaign) return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
-  const { data: lead } = await db.from("leads").select("id").eq("id", lead_id).eq("workspace_id", workspaceId).single();
+  const { data: lead } = await db.from("leads").select("id").eq("id", lead_id).eq("workspace_id", workspaceId).maybeSingle();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
   // Placeholder: in a full implementation we would enqueue a campaign run for this lead (calls, SMS, and email via enqueueSendMessage with channel "email" and options.email_subject).

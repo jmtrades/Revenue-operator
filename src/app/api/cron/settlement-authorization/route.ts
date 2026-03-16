@@ -27,10 +27,10 @@ async function sendSettlementEmail(workspaceId: string): Promise<boolean> {
 
 async function sendSettlementOwnerMessage(workspaceId: string, bodyText: string): Promise<boolean> {
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("owner_id").eq("id", workspaceId).maybeSingle();
   const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
   if (!ownerId) return false;
-  const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+  const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
   const email = (user as { email?: string } | null)?.email;
   if (!email) return false;
   const apiKey = process.env.RESEND_API_KEY;

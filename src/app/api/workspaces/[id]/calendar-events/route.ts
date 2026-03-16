@@ -38,7 +38,7 @@ export async function POST(
   if (authErr) return authErr;
 
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).maybeSingle();
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 
   const endAt = new Date(body.end_at);

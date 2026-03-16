@@ -18,7 +18,7 @@ export async function GET(
   if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const accessErr = await requireWorkspaceAccess(req, (lead as { workspace_id: string }).workspace_id);
   if (accessErr) return accessErr;
-  const { data: deal } = await db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1).single();
+  const { data: deal } = await db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1).maybeSingle();
 
   try {
     const result = await getNextBestAction({

@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
         metadata: { source: "calendar_manual" },
       })
       .select("id")
-      .single();
+      .maybeSingle();
     if (leadErr || !newLead) return NextResponse.json({ error: "Failed to create contact" }, { status: 500 });
     leadId = (newLead as { id: string }).id;
   }
@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
       status: "confirmed",
     })
     .select()
-    .single();
+    .maybeSingle();
   if (aptErr || !appointment) return NextResponse.json({ error: (aptErr as Error)?.message ?? "Insert failed" }, { status: 500 });
 
   const apt = appointment as { id: string; external_calendar_id?: string | null };
@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
     });
     const statusData = statusRes.ok ? (await statusRes.json()) as { connected?: boolean } : { connected: false };
     if (statusData.connected) {
-      const { data: leadRow } = await db.from("leads").select("name, phone").eq("id", leadId).single();
+      const { data: leadRow } = await db.from("leads").select("name, phone").eq("id", leadId).maybeSingle();
       const lead = leadRow as { name?: string | null; phone?: string | null } | null;
       const bookRes = await fetch(`${req.nextUrl.origin}/api/integrations/google-calendar/book`, {
         method: "POST",

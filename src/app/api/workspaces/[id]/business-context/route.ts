@@ -14,7 +14,7 @@ export async function GET(
     .from("workspace_business_context")
     .select("*")
     .eq("workspace_id", id)
-    .single();
+    .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
     return NextResponse.json({ error: String(error) }, { status: 500 });
@@ -73,7 +73,7 @@ export async function PUT(
       { onConflict: "workspace_id" }
     )
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
   return NextResponse.json(data);

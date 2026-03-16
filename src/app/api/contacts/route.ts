@@ -41,7 +41,7 @@ async function postContact(req: NextRequest) {
     .from("leads")
     .insert({ workspace_id, name, phone: phone ?? null, email: email ?? null, company: company ?? null, state: "NEW" })
     .select()
-    .single();
+    .maybeSingle();
   if (error) {
     console.error("[API Error] contacts POST:", error.message);
     return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });

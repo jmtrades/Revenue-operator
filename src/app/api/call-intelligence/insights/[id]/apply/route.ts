@@ -40,7 +40,7 @@ export async function POST(
     .select("id, insight, applied")
     .eq("id", insightId)
     .eq("workspace_id", session.workspaceId)
-    .single();
+    .maybeSingle();
 
   if (insightErr || !insight) {
     return NextResponse.json({ error: "Insight not found." }, { status: 404 });
@@ -51,7 +51,7 @@ export async function POST(
     .select("id, rules")
     .eq("id", agentId)
     .eq("workspace_id", session.workspaceId)
-    .single();
+    .maybeSingle();
 
   if (agentErr || !agent) {
     return NextResponse.json({ error: "Agent not found." }, { status: 404 });

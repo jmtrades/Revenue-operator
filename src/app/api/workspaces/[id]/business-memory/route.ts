@@ -53,7 +53,7 @@ export async function PUT(
     .select("id")
     .eq("workspace_id", id)
     .eq("memory_type", memoryType)
-    .single();
+    .maybeSingle();
 
   const updatePayload = {
     content,

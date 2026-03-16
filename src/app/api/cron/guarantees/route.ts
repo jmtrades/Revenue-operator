@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       }
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("guarantees").catch(() => {});
+    await recordCronHeartbeat("guarantees").catch((err) => { console.error("[cron/guarantees] error:", err instanceof Error ? err.message : err); });
     return { run: ran.length, steps: GUARANTEE_STEPS.length };
   });
 

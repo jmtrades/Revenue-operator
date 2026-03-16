@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         .from("workspaces")
         .insert({ name, owner_id: session.userId, autonomy_level: "assisted", kill_switch: false })
         .select("id")
-        .single();
+        .maybeSingle();
       if (createErr || !created) {
         return NextResponse.json({ error: "Failed to create workspace" }, { status: 500 });
       }
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
       knowledgeItems,
     });
 
-    sendAgentLiveEmail(workspaceId).catch(() => {});
+    sendAgentLiveEmail(workspaceId).catch((err) => { console.error("[workspace/create] error:", err instanceof Error ? err.message : err); });
 
     return NextResponse.json({ ok: true, workspaceId });
   } catch {

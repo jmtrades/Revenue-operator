@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       updates[k] = body[k];
     }
   }
-  const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).select().single();
+  const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).select().maybeSingle();
   if (error) {
     console.error("[DB Error] agents PATCH", error.message);
     return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });

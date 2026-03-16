@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     const elapsed = Date.now() - new Date(lastRan).getTime();
     if (elapsed < MIN_RUN_INTERVAL_MS) {
       const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-      await recordCronHeartbeat("hosted-executor").catch(() => {});
+      await recordCronHeartbeat("hosted-executor").catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
       return NextResponse.json({ ok: true, skipped: true, reason: "concurrency_guard" });
     }
   }
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
         intentType: "pause_execution",
         payload: { reason: "workspace_pattern_pause", workspace_id: workspaceId },
         dedupeKey: `hosted-exec:pattern:${workspaceId}:${Date.now()}`,
-      }).catch(() => {});
+      }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
       await appendLedgerEvent({
         workspaceId,
         eventType: "workspace_pattern_pause",
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         subjectType: "workspace",
         subjectRef: workspaceId,
         details: { advisory: guard.advisory },
-      }).catch(() => {});
+      }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
       skippedByPattern.push(workspaceId);
     }
     if (guard.requiresEscalation) {
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
         subjectType: "workspace",
         subjectRef: workspaceId,
         details: { advisory: guard.advisory },
-      }).catch(() => {});
+      }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
     }
   }
   workspaceIds = workspaceIds.filter((id) => !skippedByPattern.includes(id));
@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
             intentType: "pause_execution",
             payload: { reason: "rate_ceiling_triggered", workspace_id: workspaceId },
             dedupeKey: `hosted-exec:rate:${workspaceId}:${Date.now()}`,
-          }).catch(() => {});
+          }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
           await appendLedgerEvent({
             workspaceId,
             eventType: "rate_ceiling_triggered",
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
             subjectType: "workspace",
             subjectRef: workspaceId,
             details: { source: "hosted_executor" },
-          }).catch(() => {});
+          }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
           await appendLedgerEvent({
             workspaceId,
             eventType: "batch_wave_paused",
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
             subjectType: "workspace",
             subjectRef: workspaceId,
             details: { reason: "rate_ceiling" },
-          }).catch(() => {});
+          }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
           rateCeilingHit++;
           break;
         }
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
   }
 
   const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-  await recordCronHeartbeat("hosted-executor").catch(() => {});
+  await recordCronHeartbeat("hosted-executor").catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
 
   for (const wid of workspaceIds) {
     const intentsForWorkspace = byWorkspace.get(wid) ?? [];
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
       subjectType: "executor",
       subjectRef: "hosted-executor",
       details: { intent_count: intentsForWorkspace.length },
-    }).catch(() => {});
+    }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
 
     await appendLedgerEvent({
       workspaceId: wid,
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
       severity: "info",
       subjectType: "executor",
       subjectRef: "hosted-executor",
-    }).catch(() => {});
+    }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
 
     const stuckCount = intentsForWorkspace.length;
     const rateHit = rateCeilingHit > 0;
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
       escalationsThisCycle: 0,
       stuckIntentCount: stuckCount,
       rateCeilingHit: rateHit,
-    }).catch(() => {});
+    }).catch((err) => { console.error("[cron/hosted-executor] error:", err instanceof Error ? err.message : err); });
   }
 
   return NextResponse.json({

@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
 
     if (consecutive < CONSECUTIVE_DAYS_REQUIRED) continue;
 
-    const { data: user } = await db.from("users").select("email").eq("id", row.owner_id).single();
+    const { data: user } = await db.from("users").select("email").eq("id", row.owner_id).maybeSingle();
     const email = (user as { email?: string } | null)?.email;
     if (!email) {
       results.push({ workspaceId: row.id, sent: false });

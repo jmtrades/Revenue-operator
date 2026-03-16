@@ -24,14 +24,14 @@ export async function GET(request: NextRequest) {
     const workspaceIds = await getWorkspaceIdsWithInstallationState();
     let run = 0;
     for (const workspaceId of workspaceIds) {
-      await transitionInstallationPhase(workspaceId).catch(() => {});
-      await evaluateEconomicGravity(workspaceId).catch(() => {});
-      await recomputeInstitutionalState(workspaceId).catch(() => {});
-      await detectOperationalSilence(workspaceId).catch(() => {});
+      await transitionInstallationPhase(workspaceId).catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
+      await evaluateEconomicGravity(workspaceId).catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
+      await recomputeInstitutionalState(workspaceId).catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
+      await detectOperationalSilence(workspaceId).catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
       run++;
     }
-    await runStabilizationDetection().catch(() => {});
-    await runDomainStabilization().catch(() => {});
+    await runStabilizationDetection().catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
+    await runDomainStabilization().catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
     return { run };
   });
 

@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       .from("workspaces")
       .select("stripe_customer_id")
       .eq("id", workspace_id)
-      .single();
+      .maybeSingle();
 
     let customerId = (ws as { stripe_customer_id?: string | null })?.stripe_customer_id;
     if (!customerId) {
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
       .from("workspaces")
       .select("billing_status, trial_end_at, renews_at, stripe_subscription_id")
       .eq("id", workspace_id)
-      .single();
+      .maybeSingle();
 
       return NextResponse.json({
         success: true,

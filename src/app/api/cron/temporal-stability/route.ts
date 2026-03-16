@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       }
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("temporal-stability").catch(() => {});
+    await recordCronHeartbeat("temporal-stability").catch((err) => { console.error("[cron/temporal-stability] error:", err instanceof Error ? err.message : err); });
     return { run };
   });
 

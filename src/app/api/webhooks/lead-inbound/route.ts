@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       metadata: { source, service_requested, notes, score },
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ status: "created" });

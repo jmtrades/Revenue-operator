@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
   const violations: Array<{ standard_id: string; when: string; detail: string; lead_id?: string }> = [];
 
-  const { data: settings } = await db.from("settings").select("business_hours, min_message_interval_sec").eq("workspace_id", workspaceId).single();
+  const { data: settings } = await db.from("settings").select("business_hours, min_message_interval_sec").eq("workspace_id", workspaceId).maybeSingle();
   const bh = (settings as { business_hours?: { start?: string; end?: string; timezone?: string } })?.business_hours ?? {};
   const startHour = parseInt(String(bh.start ?? "09:00").split(":")[0], 10);
   const endHour = parseInt(String(bh.end ?? "17:00").split(":")[0], 10);

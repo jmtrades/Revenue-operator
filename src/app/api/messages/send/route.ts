@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     .select("id, phone, workspace_id")
     .eq("id", lead_id)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!lead) {
     return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   }
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
         updated_at: new Date().toISOString(),
       })
       .select("id")
-      .single();
+      .maybeSingle();
     if (convErr || !newConv) {
       return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
     }
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
       metadata: { trigger: "manual" },
     })
     .select("id")
-    .single();
+    .maybeSingle();
   if (omErr || !om) {
     return NextResponse.json({ error: "Failed to queue message" }, { status: 500 });
   }

@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     .select("payload, job_type")
     .eq("id", body.job_id)
     .in("status", ["failed", "dlq"])
-    .single();
+    .maybeSingle();
   if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
   const p = (job.payload ?? {}) as { type?: string; webhookId?: string; leadId?: string; workspaceId?: string; eventId?: string };
   if (p.type === "process_webhook" && p.webhookId) {

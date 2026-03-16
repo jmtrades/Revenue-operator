@@ -153,7 +153,7 @@ export async function GET(req: NextRequest) {
           kill_switch: false,
         })
         .select("id")
-        .single();
+        .maybeSingle();
       if (workspaceError || !createdWorkspace) {
         return fail("google_workspace");
       }

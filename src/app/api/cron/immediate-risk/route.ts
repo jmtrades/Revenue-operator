@@ -19,8 +19,8 @@ export async function GET(request: NextRequest) {
   const result = await runSafeCron("immediate-risk", async () => {
     await runImmediateRiskDetectors();
     await runImmediateRiskResolvers();
-    await runContinuationPreventedCheck().catch(() => {});
-    await runPropagationIgnition().catch(() => {});
+    await runContinuationPreventedCheck().catch((err) => { console.error("[cron/immediate-risk] error:", err instanceof Error ? err.message : err); });
+    await runPropagationIgnition().catch((err) => { console.error("[cron/immediate-risk] error:", err instanceof Error ? err.message : err); });
     return { run: 1 };
   });
 

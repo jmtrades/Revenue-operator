@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({ from, to: email, subject: "Welcome to Recall Touch — set up in 5 minutes", html: welcomeHtml }),
-      }).catch(() => {});
+      }).catch((err) => { console.error("[signup] error:", err instanceof Error ? err.message : err); });
     }
 
     return NextResponse.json({ ok: true });

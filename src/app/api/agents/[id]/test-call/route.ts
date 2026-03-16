@@ -102,7 +102,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       external_id: `test-${Date.now()}`,
     })
     .select("id")
-    .single();
+    .maybeSingle();
   const leadId = (testLead as { id: string } | null)?.id;
   if (!leadId) return NextResponse.json({ error: "Failed to create test contact" }, { status: 500 });
 
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       external_meeting_id: `test-${Date.now()}`,
     })
     .select("id")
-    .single();
+    .maybeSingle();
   if (sessErr || !sessionRow) return NextResponse.json({ error: "Failed to create call session" }, { status: 500 });
   const callSessionId = (sessionRow as { id: string }).id;
 

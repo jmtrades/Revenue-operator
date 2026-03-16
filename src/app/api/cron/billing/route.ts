@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       fee_percent: feePercent,
       fee_cents: feeCents,
       status: "draft",
-    }).select("id").single();
+    }).select("id").maybeSingle();
 
     if (invoice) {
       const disputeUntil = new Date();

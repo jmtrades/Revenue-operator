@@ -17,7 +17,7 @@ export async function GET(
   if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const accessErr = await requireWorkspaceAccess(req, (lead as { workspace_id: string }).workspace_id);
   if (accessErr) return accessErr;
-  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", id).limit(1).single();
+  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", id).limit(1).maybeSingle();
   if (!conv) return NextResponse.json({ messages: [] });
   const { data: msgs } = await db
     .from("messages")

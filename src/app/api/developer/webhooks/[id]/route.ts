@@ -42,7 +42,7 @@ async function ensureOwnership(
     .from("developer_webhook_endpoints")
     .select("workspace_id")
     .eq("id", endpointId)
-    .single();
+    .maybeSingle();
   if (!data || (data as { workspace_id: string }).workspace_id !== session.workspaceId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -63,7 +63,7 @@ export async function GET(
     .from("developer_webhook_endpoints")
     .select("id, url, events, enabled, created_at, updated_at")
     .eq("id", id)
-    .single();
+    .maybeSingle();
   if (!endpoint) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const { data: deliveries } = await db
@@ -125,7 +125,7 @@ export async function PATCH(
     .update(updates)
     .eq("id", id)
     .select()
-    .single();
+    .maybeSingle();
   if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   const row = data as { id: string; url: string; events: string[]; enabled: boolean; created_at: string };
   return NextResponse.json({

@@ -64,7 +64,7 @@ export async function POST(
     .from("shared_transactions")
     .select("counterparty_identifier")
     .eq("id", transactionId)
-    .single();
+    .maybeSingle();
   if (!tx) {
     return NextResponse.json({ ok: false }, { status: 200 });
   }
@@ -117,7 +117,7 @@ export async function GET(
     .from("shared_transactions")
     .select("counterparty_identifier")
     .eq("id", transactionId)
-    .single();
+    .maybeSingle();
   if (!tx) return NextResponse.json({ ok: false }, { status: 200 });
   const txCounterparty = (tx as { counterparty_identifier: string }).counterparty_identifier;
   if (txCounterparty.trim().toLowerCase() !== raw.trim().toLowerCase()) {

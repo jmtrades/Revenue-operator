@@ -120,7 +120,10 @@ export async function sendEmail(
 ): Promise<{ ok: boolean; id?: string; externalId?: string; error?: string }> {
   const db = getDb();
   const creds = await getSendApiKey(workspaceId);
-  if (!creds) return { ok: false, error: "Email not configured (set RESEND_API_KEY or workspace email config)" };
+  if (!creds) {
+    console.warn("[email] RESEND_API_KEY not configured — email not sent");
+    return { ok: false, error: "email_not_configured" };
+  }
 
   const from = creds.from.includes("<") ? creds.from : `${creds.fromName} <${creds.from}>`;
 

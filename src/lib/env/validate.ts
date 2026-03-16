@@ -1,27 +1,48 @@
 /**
  * Environment variable validation.
  * Production requires: DOCTRINE_ENFORCED, CRON_SECRET, SESSION_SECRET (and base required vars).
- * Throws with exact list of missing variable names.
+ * Warns (never crashes build) with exact list of missing variable names.
  */
 
 const REQUIRED_VARS = {
   SUPABASE: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
-  STRIPE: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "STRIPE_PRICE_ID"],
+  STRIPE: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
+  STRIPE_PRICES: ["STRIPE_PRICE_SOLO_MONTH", "STRIPE_PRICE_GROWTH_MONTH", "STRIPE_PRICE_TEAM_MONTH"],
   CRON: ["CRON_SECRET"],
   SESSION: ["SESSION_SECRET"],
   TWILIO: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"],
 } as const;
+
+/** Conditional checks — only warn when the related provider is active */
+const CONDITIONAL_VARS: Record<string, { condition: () => boolean; vars: string[] }> = {
+  ELEVENLABS: {
+    condition: () => (process.env.VOICE_PROVIDER ?? "elevenlabs") === "elevenlabs",
+    vars: ["ELEVENLABS_API_KEY", "ELEVENLABS_WEBHOOK_SECRET"],
+  },
+};
 
 /** Required only when NODE_ENV === "production" */
 const PRODUCTION_ONLY_VARS = ["DOCTRINE_ENFORCED", "CRON_SECRET", "SESSION_SECRET"] as const;
 
 export function validateEnv() {
   const missing: string[] = [];
+  const warnings: string[] = [];
 
   for (const [category, vars] of Object.entries(REQUIRED_VARS)) {
     for (const varName of vars) {
       if (!process.env[varName]) {
         missing.push(`${category}: ${varName}`);
+      }
+    }
+  }
+
+  // Conditional checks — warn-only
+  for (const [category, { condition, vars }] of Object.entries(CONDITIONAL_VARS)) {
+    if (condition()) {
+      for (const varName of vars) {
+        if (!process.env[varName]) {
+          warnings.push(`${category}: ${varName}`);
+        }
       }
     }
   }
@@ -36,19 +57,22 @@ export function validateEnv() {
     }
   }
 
+  // Log warnings for conditional vars (never crash)
+  if (warnings.length > 0) {
+    console.warn(`[env] Missing optional environment variables (features may be degraded):\n${warnings.map((v) => `  - ${v}`).join("\n")}`);
+  }
+
+  // Log missing required vars (warn-only — never crash the build)
   if (missing.length > 0) {
-    const error = `Missing required environment variables:\n${missing.map((v) => `  - ${v}`).join("\n")}\n\nSet these in your .env.local or production environment.`;
-    throw new Error(error);
+    console.warn(`[env] Missing required environment variables:\n${missing.map((v) => `  - ${v}`).join("\n")}\n\nSet these in your .env.local or production environment.`);
   }
 }
 
-// Auto-validate on import (server-side only), but never block startup.
+// Auto-validate on import (server-side only), never block startup.
 if (typeof window === "undefined") {
   try {
     validateEnv();
   } catch (error) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("[env] Missing environment variables (non-blocking):", error);
-    }
+    console.warn("[env] Validation error (non-blocking):", error);
   }
 }

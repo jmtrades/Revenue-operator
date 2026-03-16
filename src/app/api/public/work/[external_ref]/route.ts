@@ -78,13 +78,13 @@ export async function GET(
 
   const workspaceId = await getWorkspaceIdByExternalRef(external_ref);
   if (!workspaceId) {
-    await incrementPublicRecordRateLimit(ipHash, external_ref).catch(() => {});
+    await incrementPublicRecordRateLimit(ipHash, external_ref).catch((err) => { console.error("[public/work/[external_ref]] error:", err instanceof Error ? err.message : err); });
     const { overThreshold } = await recordPublicRecord404(ipHash).catch(() => ({ overThreshold: false }));
     if (overThreshold) return neutralResponse();
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  await incrementPublicRecordRateLimit(ipHash, external_ref).catch(() => {});
+  await incrementPublicRecordRateLimit(ipHash, external_ref).catch((err) => { console.error("[public/work/[external_ref]] error:", err instanceof Error ? err.message : err); });
 
   const threadId = await getThreadIdByExternalRef(external_ref);
   let reopenDetected = false;
@@ -98,14 +98,14 @@ export async function GET(
     
     if (reopenDetected) {
       const { recordOrientationStatement } = await import("@/lib/orientation/records");
-      await recordOrientationStatement(workspaceId, "This record was reopened after completion.").catch(() => {});
+      await recordOrientationStatement(workspaceId, "This record was reopened after completion.").catch((err) => { console.error("[public/work/[external_ref]] error:", err instanceof Error ? err.message : err); });
     }
   }
 
   const { detectAndRecordForwardedAccess } = await import("@/lib/third-party-reliance/forwarded-access");
-  await detectAndRecordForwardedAccess(external_ref, ip, workspaceId).catch(() => {});
+  await detectAndRecordForwardedAccess(external_ref, ip, workspaceId).catch((err) => { console.error("[public/work/[external_ref]] error:", err instanceof Error ? err.message : err); });
   const { detectAndRecordReturnToRecord } = await import("@/lib/operational-ambiguity/return-to-record");
-  await detectAndRecordReturnToRecord(external_ref, workspaceId, ip).catch(() => {});
+  await detectAndRecordReturnToRecord(external_ref, workspaceId, ip).catch((err) => { console.error("[public/work/[external_ref]] error:", err instanceof Error ? err.message : err); });
 
   const db = getDb();
   const [orientationRes, disableImpact, proofRow] = await Promise.all([

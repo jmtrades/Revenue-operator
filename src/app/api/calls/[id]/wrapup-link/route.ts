@@ -21,7 +21,7 @@ export async function POST(
     .from("call_sessions")
     .select("workspace_id")
     .eq("id", callSessionId)
-    .single();
+    .maybeSingle();
   if (!session) return NextResponse.json({ error: "Call session not found" }, { status: 404 });
   const workspaceId = (session as { workspace_id: string }).workspace_id;
 
@@ -36,7 +36,7 @@ export async function POST(
     .from("webhook_configs")
     .select("endpoint_url, enabled")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (webhook && (webhook as { enabled?: boolean }).enabled !== false && (webhook as { endpoint_url?: string }).endpoint_url) {
     const endpoint = (webhook as { endpoint_url: string }).endpoint_url;

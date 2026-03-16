@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         status: "pending",
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("[port-request] DB error:", error.message);

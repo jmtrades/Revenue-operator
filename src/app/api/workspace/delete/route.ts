@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     .from("workspaces")
     .select("id, name, owner_id")
     .eq("id", session.workspaceId)
-    .single();
+    .maybeSingle();
 
   if (fetchErr || !ws)
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });

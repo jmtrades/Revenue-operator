@@ -224,7 +224,7 @@ export async function POST(req: NextRequest) {
         .update(customerId, {
           invoice_settings: { footer: RECEIPT_FOOTER },
         })
-        .catch(() => {});
+        .catch((err) => { console.error("[billing/checkout] error:", err instanceof Error ? err.message : err); });
     }
 
     try {

@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
   const results: Array<{ workspaceId: string; email: string; sent: boolean }> = [];
 
   for (const { id: workspaceId, owner_id } of eligible) {
-    const { data: user } = await db.from("users").select("email").eq("id", owner_id).single();
+    const { data: user } = await db.from("users").select("email").eq("id", owner_id).maybeSingle();
     const email = (user as { email?: string } | null)?.email;
     if (!email) continue;
 

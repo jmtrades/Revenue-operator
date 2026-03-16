@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       knowledge_base: { capabilities: caps },
     })
     .select()
-    .single();
+    .maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(agent);
 }
