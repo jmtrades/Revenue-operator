@@ -41,12 +41,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     body = (await req.json()) as Body;
   } catch {
-    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   }
 
   const workspaceId = typeof body.workspace_id === "string" ? body.workspace_id.trim() : "";
   if (!workspaceId) {
-    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
   }
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator"]);
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Validate domain pack completeness before allowing execution.
     const validation = await validateDomainPackForActivation(workspaceId);
     if (!validation.ok) {
-      return NextResponse.json({ ok: false, reason: "domain_pack_incomplete" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "domain_pack_incomplete" }, { status: 422 });
     }
 
     // Enterprise immutability: fail-fast activation when configuration is incomplete.
@@ -109,13 +109,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         compliance.consent_required === false;
 
       if (!defaultJurisdiction || defaultJurisdiction === "UNSPECIFIED" || complianceIncomplete) {
-        return NextResponse.json({ ok: false, reason: "enterprise_configuration_incomplete" }, { status: 200 });
+        return NextResponse.json({ ok: false, reason: "enterprise_configuration_incomplete" }, { status: 422 });
       }
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch {
-    return NextResponse.json({ ok: false, reason: "internal_error" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "internal_error" }, { status: 500 });
   }
 }
 

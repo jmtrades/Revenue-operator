@@ -19,12 +19,12 @@ export async function GET(req: NextRequest) {
     .from("activation_states")
     .select("step, opportunities_found, simulated_actions_count, activated_at, zoom_connected, zoom_webhook_verified")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
-  const { data: settingsRow } = await db.from("settings").select("weekly_call_target").eq("workspace_id", workspaceId).single();
+  const { data: settingsRow } = await db.from("settings").select("weekly_call_target").eq("workspace_id", workspaceId).maybeSingle();
   const weeklyCallTarget = (settingsRow as { weekly_call_target?: number })?.weekly_call_target ?? null;
 
-  const { data: zoomAccount } = await db.from("zoom_accounts").select("id").eq("workspace_id", workspaceId).single();
+  const { data: zoomAccount } = await db.from("zoom_accounts").select("id").eq("workspace_id", workspaceId).maybeSingle();
 
   const current = (state as { step?: string; opportunities_found?: number; simulated_actions_count?: number; activated_at?: string; zoom_connected?: boolean; zoom_webhook_verified?: boolean }) ?? {};
 
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
   if (action === "recover_now") {
     const leadId = body.lead_id as string | undefined;
     if (!leadId) return NextResponse.json({ error: "lead_id required" }, { status: 400 });
-    const { data: lead } = await db.from("leads").select("id, workspace_id").eq("id", leadId).eq("workspace_id", workspaceId).single();
+    const { data: lead } = await db.from("leads").select("id, workspace_id").eq("id", leadId).eq("workspace_id", workspaceId).maybeSingle();
     if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     const { enqueue } = await import("@/lib/queue");
     await enqueue({ type: "decision", leadId, workspaceId, eventId: leadId });

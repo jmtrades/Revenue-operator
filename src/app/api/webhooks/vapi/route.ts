@@ -6,8 +6,18 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "node:crypto";
 import { getDb } from "@/lib/db/queries";
 import { logAppointmentBooked } from "@/lib/log/revenue-events";
+
+function verifyVapiSignature(rawBody: string, signature: string | null, secret: string): boolean {
+  if (!signature) return false;
+  const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+  const expectedBuf = Buffer.from(expected, "hex");
+  const providedBuf = Buffer.from(signature.replace(/^sha256=/, ""), "hex");
+  if (expectedBuf.length !== providedBuf.length) return false;
+  return crypto.timingSafeEqual(expectedBuf, providedBuf);
+}
 
 interface VapiWebhookPayload {
   message?: {
@@ -36,9 +46,22 @@ function getCallId(body: VapiWebhookPayload): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  const rawBody = await req.text();
+
+  // Verify webhook signature when VAPI_WEBHOOK_SECRET is configured
+  const vapiSecret = process.env.VAPI_WEBHOOK_SECRET;
+  if (vapiSecret) {
+    const signature = req.headers.get("x-vapi-signature");
+    if (!verifyVapiSignature(rawBody, signature, vapiSecret)) {
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    console.warn("[vapi-webhook] VAPI_WEBHOOK_SECRET not configured — signature verification skipped");
+  }
+
   let body: VapiWebhookPayload;
   try {
-    body = await req.json();
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -256,7 +279,9 @@ export async function POST(req: NextRequest) {
       caller_phone: call?.customer?.number ?? undefined,
       send_confirmation_sms: true,
     }),
-  }).catch(() => {});
+  }).catch((err) => {
+    console.error("[vapi-webhook] post-call processing failed:", err instanceof Error ? err.message : err);
+  });
 
   return NextResponse.json({ received: true, updated: callSessionId });
 }

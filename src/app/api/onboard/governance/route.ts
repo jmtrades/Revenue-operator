@@ -18,12 +18,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   }
 
   const workspaceId = typeof body.workspace_id === "string" ? body.workspace_id.trim() : "";
   if (!workspaceId) {
-    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
   }
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
@@ -88,6 +88,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch {
-    return NextResponse.json({ ok: false, reason: "internal_error" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "internal_error" }, { status: 500 });
   }
 }

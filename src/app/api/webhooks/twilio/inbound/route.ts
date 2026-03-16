@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
           .select("workspace_id")
           .eq("twilio_account_sid", accountSid)
           .eq("status", "active")
-          .single();
+          .maybeSingle();
         if (configByAccount) {
           const workspaceId = (configByAccount as { workspace_id: string }).workspace_id;
           const fromNorm = (from ?? "").startsWith("whatsapp:") ? from.slice(9).replace(/[^0-9+]/g, "") : from.replace(/[^0-9+]/g, "");
@@ -111,7 +111,11 @@ export async function POST(request: NextRequest) {
 
     const workspaceId = (phoneConfig as { workspace_id: string }).workspace_id;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
-    if (authToken && signature) {
+    if (authToken) {
+      if (!signature) {
+        console.warn("[twilio-inbound] Missing x-twilio-signature header");
+        return new NextResponse("Forbidden", { status: 403 });
+      }
       const params = new URLSearchParams();
       formData.forEach((value, key) => {
         if (typeof value === "string") params.append(key, value);
@@ -120,6 +124,8 @@ export async function POST(request: NextRequest) {
       if (!verifyTwilioSignature(validationUrl, params, signature, authToken)) {
         return new NextResponse("Forbidden", { status: 403 });
       }
+    } else if (process.env.NODE_ENV === "production") {
+      console.warn("[twilio-inbound] TWILIO_AUTH_TOKEN not configured — signature verification skipped");
     }
 
     try {

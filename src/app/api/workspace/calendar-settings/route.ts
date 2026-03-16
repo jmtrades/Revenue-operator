@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     .from("workspaces")
     .select("calendar_buffer_minutes")
     .eq("id", session.workspaceId)
-    .single();
+    .maybeSingle();
 
   const row = data as { calendar_buffer_minutes?: number } | null;
   const buffer = row?.calendar_buffer_minutes ?? 15;

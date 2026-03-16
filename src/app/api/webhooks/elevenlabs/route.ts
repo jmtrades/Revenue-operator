@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "node:crypto";
 import { getVoiceProvider } from "@/lib/voice";
 import { createClient } from "@supabase/supabase-js";
 
@@ -6,7 +7,26 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const rawBody = await req.text();
+
+    // Verify webhook signature when ELEVENLABS_WEBHOOK_SECRET is configured
+    const elSecret = process.env.ELEVENLABS_WEBHOOK_SECRET;
+    if (elSecret) {
+      const signature = req.headers.get("x-elevenlabs-signature") ?? req.headers.get("x-webhook-signature");
+      if (!signature) {
+        return NextResponse.json({ error: "Missing signature" }, { status: 401 });
+      }
+      const expected = crypto.createHmac("sha256", elSecret).update(rawBody).digest("hex");
+      const expectedBuf = Buffer.from(expected, "hex");
+      const providedBuf = Buffer.from(signature.replace(/^sha256=/, ""), "hex");
+      if (expectedBuf.length !== providedBuf.length || !crypto.timingSafeEqual(expectedBuf, providedBuf)) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+      }
+    } else if (process.env.NODE_ENV === "production") {
+      console.warn("[elevenlabs-webhook] ELEVENLABS_WEBHOOK_SECRET not configured — signature verification skipped");
+    }
+
+    const body = JSON.parse(rawBody);
     const voice = getVoiceProvider();
     const event = voice.parseWebhookEvent(body);
 
