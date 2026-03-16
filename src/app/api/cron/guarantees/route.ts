@@ -23,7 +23,11 @@ export async function GET(request: NextRequest) {
   if (authErr) return authErr;
 
   const result = await runSafeCron("guarantees", async () => {
-    const base = request.nextUrl?.origin ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const base = request.nextUrl?.origin ?? process.env.NEXT_PUBLIC_APP_URL;
+    if (!base) {
+      console.error("[cron/guarantees] Cannot determine base URL — set NEXT_PUBLIC_APP_URL");
+      return { run: 0, ran: 0, steps: GUARANTEE_STEPS.length, error: "no_base_url" };
+    }
     const token = process.env.CRON_SECRET ?? "";
     const ran: string[] = [];
     for (const path of GUARANTEE_STEPS) {

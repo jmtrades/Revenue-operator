@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
       const [ctxRes, agentRes, wsRes] = await Promise.all([
         db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
         db.from("agents").select("id, name, greeting, knowledge_base, vapi_agent_id").eq("workspace_id", workspaceId).limit(1).maybeSingle(),
-        db.from("workspaces").select("id, name, greeting, agent_name, vapi_assistant_id, preferred_language").eq("id", workspaceId).single(),
+        db.from("workspaces").select("id, name, greeting, agent_name, vapi_assistant_id, preferred_language").eq("id", workspaceId).maybeSingle(),
       ]);
       const ctx = ctxRes.data as { business_name?: string; offer_summary?: string; business_hours?: Record<string, unknown>; faq?: Array<{ q?: string; a?: string }> } | null;
       const agent = agentRes.data as { id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; vapi_agent_id?: string | null } | null;

@@ -37,10 +37,10 @@ export async function GET(req: NextRequest) {
     .order("created_at", { ascending: false })
     .limit(20);
 
-  const { data: ws } = await db.from("workspaces").select("status, pause_reason").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("status, pause_reason").eq("id", workspaceId).maybeSingle();
   const wsRow = ws as { status?: string; pause_reason?: string } | undefined;
 
-  const { data: settingsRow } = await db.from("settings").select("preview_mode").eq("workspace_id", workspaceId).single();
+  const { data: settingsRow } = await db.from("settings").select("preview_mode").eq("workspace_id", workspaceId).maybeSingle();
   const previewMode = (settingsRow as { preview_mode?: boolean })?.preview_mode ?? false;
 
   const { count: leadCount } = await db.from("leads").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
