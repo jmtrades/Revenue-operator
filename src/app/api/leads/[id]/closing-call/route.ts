@@ -38,7 +38,7 @@ export async function GET(
     .from("call_analysis")
     .select("analysis_json, confidence, created_at, analysis_source")
     .eq("call_session_id", latest.id)
-    .single();
+    .maybeSingle();
 
   const a = (analysis as { analysis_json?: Record<string, unknown>; confidence?: number; created_at?: string; analysis_source?: string })?.analysis_json ?? {};
   const anaSource = (analysis as { analysis_source?: string })?.analysis_source;

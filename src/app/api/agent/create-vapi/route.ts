@@ -1,3 +1,4 @@
+/** @deprecated Vapi no longer used. ElevenLabs is the active voice provider. Kept for backwards compatibility. */
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";

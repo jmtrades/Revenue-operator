@@ -64,7 +64,7 @@ async function ensureLeadForCaller(input: {
         state: "NEW",
       })
       .select("id")
-      .single();
+      .maybeSingle();
     leadId = (created as { id: string } | null)?.id ?? null;
   }
 
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       leadId = (sess as { lead_id?: string | null }).lead_id ?? null;
     }
   } else if (sessionId) {
-    const { data: sess } = await db.from("call_sessions").select("lead_id").eq("id", sessionId).single();
+    const { data: sess } = await db.from("call_sessions").select("lead_id").eq("id", sessionId).maybeSingle();
     leadId = (sess as { lead_id?: string | null } | null)?.lead_id ?? null;
   }
 
@@ -280,7 +280,7 @@ export async function POST(req: NextRequest) {
         payload: { conversation_id: conversationId, channel: "sms", content: "Thanks for your call. We'll follow up if needed." },
         dedup_key: `post-call-confirm-${sessionId ?? call_sid ?? "unknown"}`,
       };
-      await enqueueAction(cmd).catch(() => {});
+      await enqueueAction(cmd).catch((err) => { console.error("[inbound/post-call] error:", err instanceof Error ? err.message : err); });
     }
   }
 
@@ -291,7 +291,7 @@ export async function POST(req: NextRequest) {
       outcome: businessOutcome,
       summary: summaryText || transcriptText.slice(0, 220),
       callerPhone: body.caller_phone ?? null,
-    }).catch(() => {});
+    }).catch((err) => { console.error("[inbound/post-call] error:", err instanceof Error ? err.message : err); });
   }
 
   // Slack/Teams call summary notifications (Task 24)
@@ -306,7 +306,7 @@ export async function POST(req: NextRequest) {
           leadName = (leadRow as { name?: string | null } | null)?.name ?? null;
         }
         if (durationSeconds == null) {
-          const { data: sess } = await db.from("call_sessions").select("call_started_at, call_ended_at").eq("id", sessionId).single();
+          const { data: sess } = await db.from("call_sessions").select("call_started_at, call_ended_at").eq("id", sessionId).maybeSingle();
           if (sess) {
             const s = sess as { call_started_at?: string | null; call_ended_at?: string | null };
             const start = s.call_started_at ? new Date(s.call_started_at).getTime() : null;
@@ -334,13 +334,13 @@ export async function POST(req: NextRequest) {
     .eq("workspace_id", workspace_id)
     .not("call_ended_at", "is", null);
   if (Number(completedCount) === 1) {
-    const { data: ws } = await db.from("workspaces").select("name, owner_id").eq("id", workspace_id).single();
+    const { data: ws } = await db.from("workspaces").select("name, owner_id").eq("id", workspace_id).maybeSingle();
     const ownerId = (ws as { owner_id?: string } | null)?.owner_id;
     if (ownerId) {
       const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (email) {
-        void sendGoLiveEmail(email, (ws as { name?: string | null } | null)?.name ?? null).catch(() => {});
+        void sendGoLiveEmail(email, (ws as { name?: string | null } | null)?.name ?? null).catch((err) => { console.error("[inbound/post-call] error:", err instanceof Error ? err.message : err); });
       }
     }
   }

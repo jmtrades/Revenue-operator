@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       updated_at: now,
     })
     .select("id, slug, name, subject, body_html, created_at, updated_at")
-    .single();
+    .maybeSingle();
 
   if (error) {
     if ((error as { code?: string }).code === "23505") return NextResponse.json({ error: "Template slug already exists" }, { status: 409 });

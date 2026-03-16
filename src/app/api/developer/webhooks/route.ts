@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
       updated_at: new Date().toISOString(),
     })
     .select("id, url, events, enabled, created_at")
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   return NextResponse.json({

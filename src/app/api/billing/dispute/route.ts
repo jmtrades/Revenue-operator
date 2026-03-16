@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     .from("invoice_items")
     .select("id, dispute_until")
     .eq("id", invoiceItemId)
-    .single();
+    .maybeSingle();
   if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const until = (item as { dispute_until?: string }).dispute_until
     ? new Date((item as { dispute_until: string }).dispute_until)

@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     for (const tx of list) {
       if (!allowedWorkspaces.has(tx.workspace_id)) {
         const { recordObservedRisk } = await import("@/lib/adoption-acceleration/observed-risks");
-        await recordObservedRisk(tx.workspace_id, "missed_confirmation", "shared_transaction", tx.id).catch(() => {});
+        await recordObservedRisk(tx.workspace_id, "missed_confirmation", "shared_transaction", tx.id).catch((err) => { console.error("[cron/shared-transaction-recovery] error:", err instanceof Error ? err.message : err); });
       }
     }
     let reminders = 0;

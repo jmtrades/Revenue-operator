@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
   let state = await getInstallationState(workspaceId);
   if (!state) {
-    await ensureWorkspaceInstallationState(workspaceId).catch(() => {});
+    await ensureWorkspaceInstallationState(workspaceId).catch((err) => { console.error("[installation/state] error:", err instanceof Error ? err.message : err); });
     state = await getInstallationState(workspaceId);
   }
   if (!state) {

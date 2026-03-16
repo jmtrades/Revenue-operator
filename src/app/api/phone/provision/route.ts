@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
       updated_at: new Date().toISOString(),
     })
     .select("id, phone_number, friendly_name, number_type, status, monthly_cost_cents")
-    .single();
+    .maybeSingle();
 
   if (error) {
     return NextResponse.json({ error: "Failed to save number." }, { status: 500 });

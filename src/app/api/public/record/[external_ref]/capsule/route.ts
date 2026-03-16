@@ -47,13 +47,13 @@ export async function GET(
 
   const workspaceId = await getWorkspaceIdByExternalRef(external_ref);
   if (!workspaceId) {
-    await incrementPublicRecordRateLimit(ipHash, external_ref).catch(() => {});
+    await incrementPublicRecordRateLimit(ipHash, external_ref).catch((err) => { console.error("[public/record/[external_ref]/capsule] error:", err instanceof Error ? err.message : err); });
     const { overThreshold } = await recordPublicRecord404(ipHash).catch(() => ({ overThreshold: false }));
     if (overThreshold) return neutralResponse();
     return NextResponse.json({ proof: [] }, { status: 404 });
   }
 
-  await incrementPublicRecordRateLimit(ipHash, external_ref).catch(() => {});
+  await incrementPublicRecordRateLimit(ipHash, external_ref).catch((err) => { console.error("[public/record/[external_ref]/capsule] error:", err instanceof Error ? err.message : err); });
 
   let proof: string[] = [];
   try {

@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create thread" }, { status: 500 });
   }
 
-  const { data: tx } = await db.from("shared_transactions").select("external_ref").eq("id", threadId).single();
+  const { data: tx } = await db.from("shared_transactions").select("external_ref").eq("id", threadId).maybeSingle();
   const externalRef = (tx as { external_ref: string } | null)?.external_ref ?? "";
 
   await recordOrientationStatement(workspaceId, "A request for work was received.");

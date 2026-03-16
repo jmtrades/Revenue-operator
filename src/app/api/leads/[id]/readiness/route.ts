@@ -26,7 +26,7 @@ export async function GET(
     .select("id, workspace_id")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 

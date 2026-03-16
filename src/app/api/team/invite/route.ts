@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
       expires_at: expiresAt.toISOString(),
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (insertErr || !inserted) {
     return NextResponse.json({ error: "Failed to create invite" }, { status: 500 });

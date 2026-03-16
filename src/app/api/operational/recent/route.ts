@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   if (authErr) return authErr;
 
   const lines = await getRecentOrientationStatements(workspaceId, 20);
-  await updateLastOrientationViewedAt(workspaceId).catch(() => {});
+  await updateLastOrientationViewedAt(workspaceId).catch((err) => { console.error("[operational/recent] error:", err instanceof Error ? err.message : err); });
 
   return NextResponse.json(lines);
 }

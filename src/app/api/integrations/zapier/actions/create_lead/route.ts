@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       metadata: { source: "zapier" },
     })
     .select("id, name, phone, email, company, state, created_at")
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   return NextResponse.json({ id: (data as { id: string }).id, ...(data as object) });

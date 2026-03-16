@@ -57,18 +57,18 @@ export async function GET(
 
   const entry = await getPublicEntryByExternalRef(external_ref);
   if (!entry) {
-    await incrementPublicRecordRateLimit(ipHash, external_ref).catch(() => {});
+    await incrementPublicRecordRateLimit(ipHash, external_ref).catch((err) => { console.error("[public/record/[external_ref]] error:", err instanceof Error ? err.message : err); });
     const { overThreshold } = await recordPublicRecord404(ipHash).catch(() => ({ overThreshold: false }));
     if (overThreshold) return neutralResponse();
     return NextResponse.json({ ok: false }, { status: 404 });
   }
 
-  await incrementPublicRecordRateLimit(ipHash, external_ref).catch(() => {});
+  await incrementPublicRecordRateLimit(ipHash, external_ref).catch((err) => { console.error("[public/record/[external_ref]] error:", err instanceof Error ? err.message : err); });
   const { getWorkspaceIdByExternalRef } = await import("@/lib/shared-transaction-assurance");
   const workspaceId = await getWorkspaceIdByExternalRef(external_ref);
   if (workspaceId) {
     const { recordRecordReference } = await import("@/lib/record-reference");
-    recordRecordReference(workspaceId, "counterparty", "public_record", external_ref).catch(() => {});
+    recordRecordReference(workspaceId, "counterparty", "public_record", external_ref).catch((err) => { console.error("[public/record/[external_ref]] error:", err instanceof Error ? err.message : err); });
   }
   const state = toPublicState(entry.state);
   return NextResponse.json({

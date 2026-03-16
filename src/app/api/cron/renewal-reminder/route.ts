@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     if (hoursUntil > 25 || hoursUntil < 23) continue;
     if (row.renewal_reminder_sent_at) continue;
 
-    const { data: user } = await db.from("users").select("email").eq("id", row.owner_id).single();
+    const { data: user } = await db.from("users").select("email").eq("id", row.owner_id).maybeSingle();
     const email = (user as { email?: string } | null)?.email;
     if (!email) continue;
 

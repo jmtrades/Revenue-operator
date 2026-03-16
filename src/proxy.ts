@@ -103,7 +103,7 @@ function isPublicApi(pathname: string): boolean {
   if (pathname.startsWith("/api/health")) return true;
   if (pathname.startsWith("/api/cron/")) return true;
   if (pathname.startsWith("/api/auth/")) return true;
-  if (pathname === "/api/vapi/demo-config") return true;
+  // Vapi routes removed — ElevenLabs is the active voice provider
   if (pathname === "/api/agent/speak" || pathname === "/api/agent/voices") return true;
   if (pathname.startsWith("/api/webhooks/") || pathname.startsWith("/api/integrations/twilio")) return true;
   if (pathname.startsWith("/api/command-center")) return true;

@@ -2601,7 +2601,8 @@
     "saveChanges": "Guardar cambios",
     "backToSettings": "← Ajustes",
     "toast": {
-      "saved": "Reglas de llamadas guardadas"
+      "saved": "Reglas de llamadas guardadas",
+      "error": "Error al guardar las reglas de llamadas"
     }
   },
   "inbox": {

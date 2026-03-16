@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         expected_stop_reason: expectedStop || null,
       })
       .select("id")
-      .single();
+      .maybeSingle();
     if (error) {
       return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 200 });
     }

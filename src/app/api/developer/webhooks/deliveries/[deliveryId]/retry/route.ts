@@ -25,14 +25,14 @@ export async function POST(
     .from("developer_webhook_deliveries")
     .select("id, endpoint_id, event, payload")
     .eq("id", deliveryId)
-    .single();
+    .maybeSingle();
   if (!delivery) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const { data: endpoint } = await db
     .from("developer_webhook_endpoints")
     .select("id, workspace_id, url, secret")
     .eq("id", (delivery as { endpoint_id: string }).endpoint_id)
-    .single();
+    .maybeSingle();
   if (!endpoint || (endpoint as { workspace_id: string }).workspace_id !== session.workspaceId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }

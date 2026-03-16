@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
 
     if (!ownerId || !renewsAt) continue;
 
-    const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+    const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
     const email = (user as { email?: string })?.email;
     if (!email) continue;
 
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
 
     if (!ownerId || !renewsAt) continue;
 
-    const { data: user } = await db.from("users").select("email").eq("id", ownerId).single();
+    const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
     const email = (user as { email?: string })?.email;
     if (!email) continue;
 

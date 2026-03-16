@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       updated_at: new Date().toISOString(),
     },
     { onConflict: "workspace_id" }
-  ).select().single();
+  ).select().maybeSingle();
 
   return NextResponse.json({
     proxy_number: proxyNumber,

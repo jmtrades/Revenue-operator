@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     .limit(limit);
 
   if (since) {
-    const { data: cursorRow } = await db.from("call_sessions").select("started_at").eq("id", since).eq("workspace_id", workspaceId).single();
+    const { data: cursorRow } = await db.from("call_sessions").select("started_at").eq("id", since).eq("workspace_id", workspaceId).maybeSingle();
     if (cursorRow) {
       const ts = (cursorRow as { started_at: string }).started_at;
       query = query.lt("started_at", ts);

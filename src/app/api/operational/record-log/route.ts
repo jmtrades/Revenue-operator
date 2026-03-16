@@ -66,10 +66,10 @@ export async function GET(request: NextRequest) {
                 .maybeSingle();
               if (!existing) {
                 const { recordOrientationStatement } = await import("@/lib/orientation/records");
-                await recordOrientationStatement(workspaceId, "Completion was recorded without shared confirmation.").catch(() => {});
+                await recordOrientationStatement(workspaceId, "Completion was recorded without shared confirmation.").catch((err) => { console.error("[operational/record-log] error:", err instanceof Error ? err.message : err); });
               }
             }
-            await detectAndRecordCompletionDecay(threadId, workspaceId).catch(() => {});
+            await detectAndRecordCompletionDecay(threadId, workspaceId).catch((err) => { console.error("[operational/record-log] error:", err instanceof Error ? err.message : err); });
           } catch {
             // Continue to next thread
           }

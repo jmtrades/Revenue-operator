@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       .from("workspaces")
       .select("id, name, greeting, agent_name, vapi_assistant_id, preferred_language, elevenlabs_voice_id, phone, working_hours, knowledge_items, agent_template")
       .eq("id", session.workspaceId)
-      .single();
+      .maybeSingle();
 
     if (wsErr || !ws) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });

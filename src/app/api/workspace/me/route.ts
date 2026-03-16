@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
           "id, name, agent_name, vapi_assistant_id, knowledge_items, website, industry, address, onboarding_completed_at, notification_preferences, verified_phone",
         )
         .eq("id", workspaceId)
-        .single(),
+        .maybeSingle(),
       db
         .from("workspace_business_context")
         .select("business_name")
@@ -258,7 +258,7 @@ export async function PATCH(req: NextRequest) {
         .from("workspaces")
         .select("knowledge_items")
         .eq("id", session.workspaceId)
-        .single();
+        .maybeSingle();
       const current = (existing as { knowledge_items?: Array<{ q?: string; a?: string }> } | null)?.knowledge_items;
       const hasContent = Array.isArray(current) && current.some((x) => (x?.q ?? "").trim() && (x?.a ?? "").trim());
       if (!hasContent) {

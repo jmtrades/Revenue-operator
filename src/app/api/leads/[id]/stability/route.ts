@@ -28,7 +28,7 @@ export async function GET(
     .select("state")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
   const plan = await getActiveLeadPlan(workspaceId, leadId);
@@ -46,10 +46,10 @@ export async function GET(
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
     .eq("status", "running")
-    .single();
+    .maybeSingle();
   if (run) {
     const r = run as { sequence_id: string; current_step: number; status: string };
-    const { data: seq } = await db.from("sequences").select("name").eq("id", r.sequence_id).single();
+    const { data: seq } = await db.from("sequences").select("name").eq("id", r.sequence_id).maybeSingle();
     sequenceRun = {
       ...r,
       sequence_name: (seq as { name?: string })?.name,
@@ -61,7 +61,7 @@ export async function GET(
     .select("last_intervened_at, cooldown_until, daily_touch_count, daily_touch_reset_at")
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
-    .single();
+    .maybeSingle();
 
   return NextResponse.json({
     plan: plan

@@ -16,7 +16,7 @@ async function isAdmin(req: NextRequest): Promise<boolean> {
   if (!session?.userId) return false;
   try {
     const db = getDb();
-    const { data } = await db.from("users").select("email").eq("id", session.userId).single();
+    const { data } = await db.from("users").select("email").eq("id", session.userId).maybeSingle();
     const email = (data as { email?: string } | null)?.email ?? null;
     return !!email && email.trim().toLowerCase() === ADMIN_EMAIL;
   } catch {

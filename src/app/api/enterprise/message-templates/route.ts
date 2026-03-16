@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       max_chars: body.max_chars ?? maxChars,
     })
     .select("id, template_id, channel, intent_type, created_at")
-    .single();
+    .maybeSingle();
 
   if (error && (error as { code?: string }).code === "23505") return NextResponse.json({ ok: false, reason: "duplicate_template_id" }, { status: 200 });
   if (error || !inserted) return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 200 });

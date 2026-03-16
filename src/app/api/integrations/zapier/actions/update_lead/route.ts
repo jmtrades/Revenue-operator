@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
   const db = getDb();
-  const { data: existing } = await db.from("leads").select("id").eq("id", id).eq("workspace_id", workspaceId).single();
+  const { data: existing } = await db.from("leads").select("id").eq("id", id).eq("workspace_id", workspaceId).maybeSingle();
   if (!existing) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
   const updates: { name?: string; phone?: string; email?: string | null; company?: string | null; state?: string; updated_at: string } = {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   if (body.company !== undefined) updates.company = body.company.toString().trim() || null;
   if (body.state !== undefined) updates.state = body.state.toString().toLowerCase().replace(/\s+/g, "_");
 
-  const { data, error } = await db.from("leads").update(updates).eq("id", id).select("id, name, phone, email, company, state").single();
+  const { data, error } = await db.from("leads").update(updates).eq("id", id).select("id, name, phone, email, company, state").maybeSingle();
   if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   return NextResponse.json(data);
 }

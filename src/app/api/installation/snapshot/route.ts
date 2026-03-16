@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
   if (state.phase === "activation_ready") {
     await setSnapshotSeen(workspaceId);
     const { transitionInstallationPhase } = await import("@/lib/installation");
-    await transitionInstallationPhase(workspaceId).catch(() => {});
+    await transitionInstallationPhase(workspaceId).catch((err) => { console.error("[installation/snapshot] error:", err instanceof Error ? err.message : err); });
   }
 
   return NextResponse.json({ snapshot_text });

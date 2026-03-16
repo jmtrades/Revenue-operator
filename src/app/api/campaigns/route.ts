@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       .from("campaigns")
       .insert(insertPayload)
       .select("id, name, type, status, total_contacts, called, answered, appointments_booked, created_at, target_filter")
-      .single();
+      .maybeSingle();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     const row = campaign as Record<string, unknown> | null;
     return NextResponse.json({

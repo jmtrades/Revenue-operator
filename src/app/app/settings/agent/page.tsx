@@ -262,7 +262,7 @@ export default function AppSettingsAgentPage() {
           </select>
         </div>
         <div>
-          <label htmlFor="agent-lang" className="block text-xs font-medium text-zinc-400 mb-1">Language</label>
+          <label htmlFor="agent-lang" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.languageLabel")}</label>
           <select
             id="agent-lang"
             value={config.preferredLanguage}

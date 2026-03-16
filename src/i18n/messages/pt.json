@@ -2600,7 +2600,8 @@
     "saveChanges": "Guardar alterações",
     "backToSettings": "← Definições",
     "toast": {
-      "saved": "Regras de chamadas guardadas"
+      "saved": "Regras de chamadas guardadas",
+      "error": "Falha ao salvar regras de chamadas"
     }
   },
   "inbox": {

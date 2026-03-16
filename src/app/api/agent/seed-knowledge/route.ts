@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     })
     .eq("id", agentId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 });
   return NextResponse.json(updated);

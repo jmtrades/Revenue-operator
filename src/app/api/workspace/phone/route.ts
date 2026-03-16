@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
       .eq("workspace_id", session.workspaceId)
       .eq("status", "active")
       .maybeSingle(),
-    db.from("workspaces").select("verified_phone").eq("id", session.workspaceId).single(),
+    db.from("workspaces").select("verified_phone").eq("id", session.workspaceId).maybeSingle(),
     db
       .from("phone_numbers")
       .select("phone_number")

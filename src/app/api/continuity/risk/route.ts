@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
   const threeDaysAgo = new Date(now);
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-  const { data: ws } = await db.from("workspaces").select("status, pause_reason, protection_renewal_at, created_at").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("status, pause_reason, protection_renewal_at, created_at").eq("id", workspaceId).maybeSingle();
   const wsRow = ws as { status?: string; pause_reason?: string | null; protection_renewal_at?: string | null; created_at?: string } | undefined;
   const isPaused = Boolean(wsRow?.pause_reason);
   const trialEnding = wsRow?.protection_renewal_at

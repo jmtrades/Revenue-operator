@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     .from("workspaces")
     .select("protection_renewal_at, created_at")
     .eq("id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const row = ws as { protection_renewal_at?: string | null; created_at?: string } | undefined;
   let renewal_at: string | null = null;

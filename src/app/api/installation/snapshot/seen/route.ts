@@ -25,6 +25,6 @@ export async function POST(request: NextRequest) {
 
   await setSnapshotSeen(workspaceId);
   const { transitionInstallationPhase } = await import("@/lib/installation");
-  await transitionInstallationPhase(workspaceId).catch(() => {});
+  await transitionInstallationPhase(workspaceId).catch((err) => { console.error("[installation/snapshot/seen] error:", err instanceof Error ? err.message : err); });
   return NextResponse.json({ ok: true });
 }

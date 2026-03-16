@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
-  const { data: lead } = await db.from("leads").select("id").eq("id", lead_id).eq("workspace_id", workspaceId).single();
+  const { data: lead } = await db.from("leads").select("id").eq("id", lead_id).eq("workspace_id", workspaceId).maybeSingle();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
   const end_time = body.end_time?.toString().trim() || new Date(new Date(start_time).getTime() + 3600000).toISOString();
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       status: "confirmed",
     })
     .select("id, lead_id, title, start_time, end_time, status, created_at")
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   return NextResponse.json(data);

@@ -56,7 +56,7 @@ export async function PATCH(
     .eq("workspace_id", session.workspaceId)
     .eq("slug", slug)
     .select("id, slug, name, subject, body_html, created_at, updated_at")
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   if (!data) return NextResponse.json({ error: "Not found" }, { status: 404 });

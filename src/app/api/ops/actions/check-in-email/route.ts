@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("id").eq("id", workspaceId).maybeSingle();
   if (!ws) return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 200 });
 
   const { data: lead } = await db.from("leads").select("id").eq("workspace_id", workspaceId).ilike("email", toEmail).limit(1).maybeSingle();

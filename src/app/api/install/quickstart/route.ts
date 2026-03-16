@@ -33,12 +33,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
   }
 
-  await ensureWorkspaceInstallationState(workspaceId).catch(() => {});
+  await ensureWorkspaceInstallationState(workspaceId).catch((err) => { console.error("[install/quickstart] error:", err instanceof Error ? err.message : err); });
   const readiness = await getWorkspaceReadiness(workspaceId);
   await ensureInstallationState(workspaceId, {
     messagingConnected: readiness.messaging_connected,
     paymentsConnected: readiness.payments_connected,
-  }).catch(() => {});
+  }).catch((err) => { console.error("[install/quickstart] error:", err instanceof Error ? err.message : err); });
 
   return NextResponse.json({ ok: true });
 }

@@ -59,7 +59,7 @@ export async function PATCH(
     .eq("id", id)
     .eq("workspace_id", workspaceId)
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (error || !data) return NextResponse.json({ ok: false, reason: "not_found_or_update_failed" }, { status: 200 });
   return NextResponse.json({ ok: true });

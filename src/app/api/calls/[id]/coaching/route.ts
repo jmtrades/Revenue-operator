@@ -23,7 +23,7 @@ export async function GET(
     .from("call_sessions")
     .select("id, lead_id, workspace_id, transcript, outcome, current_node")
     .eq("id", callId)
-    .single();
+    .maybeSingle();
 
   if (!session) return NextResponse.json({ error: "Call not found" }, { status: 404 });
   const workspaceId = (session as { workspace_id?: string }).workspace_id;
@@ -36,7 +36,7 @@ export async function GET(
     .from("call_coaching")
     .select("what_worked, missed_signals, recommended_next_step")
     .eq("call_session_id", callId)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     return NextResponse.json(existing);
@@ -49,7 +49,7 @@ export async function GET(
         .join("\n")
     : "";
 
-  const { data: lead } = await db.from("leads").select("state, company").eq("id", s.lead_id).single();
+  const { data: lead } = await db.from("leads").select("state, company").eq("id", s.lead_id).maybeSingle();
   const _state = (lead as { state?: string })?.state ?? "unknown";
 
   const whatWorked = s.outcome === "booked" || s.outcome === "qualified"

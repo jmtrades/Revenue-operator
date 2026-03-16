@@ -19,7 +19,7 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
     .from("google_calendar_tokens")
     .select("access_token, refresh_token, expires_at")
     .eq("workspace_id", workspaceId)
-    .single();
+    .maybeSingle();
 
   const row = data as { access_token?: string | null; refresh_token?: string | null; expires_at?: string | null } | null;
   if (!row?.access_token) return null;

@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  await recordCronHeartbeat("settlement-export").catch(() => {});
+  await recordCronHeartbeat("settlement-export").catch((err) => { console.error("[cron/settlement-export] error:", err instanceof Error ? err.message : err); });
   return NextResponse.json({
     ok: true,
     workspaces_processed: workspaceIds.length,

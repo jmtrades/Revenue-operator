@@ -118,6 +118,9 @@ export default function AppOnboardingPage() {
   const [_afterHours, _setAfterHours] = useState<"messages" | "emergency" | "forward">("messages");
   const [_faqRows, _setFaqRows] = useState<string[]>(["", "", ""]);
   const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([]);
+  const [editingKnowledgeIdx, setEditingKnowledgeIdx] = useState<number | null>(null);
+  const [editingQ, setEditingQ] = useState("");
+  const [editingA, setEditingA] = useState("");
   const [starterAdded, setStarterAdded] = useState(false);
   const [businessHoursDisplay, setBusinessHoursDisplay] = useState("");
 
@@ -578,31 +581,51 @@ export default function AppOnboardingPage() {
             <div className="space-y-3">
               {knowledgeItems.map((item, i) => (
                 <div key={i} className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-                  <p className="text-xs font-medium text-zinc-400 mb-0.5">Q: {item.q}</p>
-                  <p className="text-sm text-zinc-300 mb-2">A: {item.a}</p>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const q = (window.prompt(t("questionPrompt"), item.q) ?? item.q ?? "").trim();
-                        const a = (window.prompt(t("answerPrompt"), item.a) ?? item.a ?? "").trim();
-                        const next = [...knowledgeItems];
-                        next[i] = { q, a };
-                        setKnowledgeItems(next);
-                      }}
-                      className="text-xs text-zinc-400 hover:text-[var(--text-primary)]"
-                    >
-                      {t("edit")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setKnowledgeItems((prev) => prev.filter((_, j) => j !== i))}
-                      className="text-xs text-zinc-400 hover:text-red-400"
-                      aria-label={t("remove")}
-                    >
-                      ✕
-                    </button>
-                  </div>
+                  {editingKnowledgeIdx === i ? (
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        value={editingQ}
+                        onChange={(e) => setEditingQ(e.target.value)}
+                        placeholder={t("questionPrompt")}
+                        className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                        autoFocus
+                      />
+                      <input
+                        type="text"
+                        value={editingA}
+                        onChange={(e) => setEditingA(e.target.value)}
+                        placeholder={t("answerPrompt")}
+                        className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                      />
+                      <div className="flex gap-2">
+                        <button type="button" onClick={() => { const next = [...knowledgeItems]; next[i] = { q: editingQ.trim() || item.q || "", a: editingA.trim() || item.a || "" }; setKnowledgeItems(next); setEditingKnowledgeIdx(null); }} className="text-xs text-green-400 hover:text-green-300">Save</button>
+                        <button type="button" onClick={() => setEditingKnowledgeIdx(null)} className="text-xs text-zinc-400 hover:text-zinc-300">Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-xs font-medium text-zinc-400 mb-0.5">Q: {item.q}</p>
+                      <p className="text-sm text-zinc-300 mb-2">A: {item.a}</p>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => { setEditingKnowledgeIdx(i); setEditingQ(item.q ?? ""); setEditingA(item.a ?? ""); }}
+                          className="text-xs text-zinc-400 hover:text-[var(--text-primary)]"
+                        >
+                          {t("edit")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setKnowledgeItems((prev) => prev.filter((_, j) => j !== i))}
+                          className="text-xs text-zinc-400 hover:text-red-400"
+                          aria-label={t("remove")}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
               <button

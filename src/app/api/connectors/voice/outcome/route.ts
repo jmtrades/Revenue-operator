@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
       disclosures_read: body.disclosures_read ?? null,
       objection_key: body.objection_key ?? null,
       next_required_action: body.next_required_action ?? null,
-    }).catch(() => {});
+    }).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
   }
 
   const conversationId = body.conversation_id?.trim();
@@ -186,15 +186,15 @@ export async function POST(request: NextRequest) {
       outcome_confidence: resolved.outcome_confidence,
       next_required_action: resolved.next_required_action,
       structured_payload_json: { outcome: outcome ?? "failed", external_call_id: externalCallId },
-    }).catch(() => {});
+    }).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
 
     const threadIdTrim = body.thread_id?.trim();
     if (threadIdTrim) {
       const voiceStruct = { objection_key: body.objection_key, next_required_action: body.next_required_action, notes_structured: body.notes_structured };
       const questions = extractQuestionsFromVoiceOutcome(voiceStruct);
-      if (questions.length > 0) await recordUnresolvedQuestions(workspaceId, threadIdTrim, "voice", questions).catch(() => {});
+      if (questions.length > 0) await recordUnresolvedQuestions(workspaceId, threadIdTrim, "voice", questions).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
       if (body.consent_recorded === true && body.disclosures_read === true) {
-        await resolveQuestions(workspaceId, threadIdTrim, "answered", ["compliance"]).catch(() => {});
+        await resolveQuestions(workspaceId, threadIdTrim, "answered", ["compliance"]).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
       }
       const openQuestions = await getOpenQuestions(workspaceId, threadIdTrim).catch(() => []);
       const prevSnapshot = await getPreviousSnapshot(workspaceId, threadIdTrim).catch(() => null);
@@ -226,7 +226,7 @@ export async function POST(request: NextRequest) {
           resolved.outcome_type === "escalation_required" ||
           resolved.outcome_type === "legal_risk" ||
           resolved.outcome_type === "hostile",
-      }).catch(() => {});
+      }).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
 
       const variantScoreSnapshot = await getWorkspaceStrategyMatrix(workspaceId).catch(() => ({}));
       const horizonSteps = buildStrategicHorizon({
@@ -256,7 +256,7 @@ export async function POST(request: NextRequest) {
           strategic_horizon: horizonSteps,
           variant_score_snapshot: variantScoreSnapshot,
         },
-      }).catch(() => {});
+      }).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
     }
 
     if ((resolved.outcome_type === "call_back_requested" || resolved.outcome_type === "payment_promised") && threadIdTrim) {
@@ -264,7 +264,7 @@ export async function POST(request: NextRequest) {
         workspaceId,
         threadId: threadIdTrim,
         commitmentType: resolved.outcome_type === "payment_promised" ? "payment" : "call_back",
-      }).catch(() => {});
+      }).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
     }
 
     let nextAction: NextRequiredAction | null =
@@ -290,7 +290,7 @@ export async function POST(request: NextRequest) {
         subjectType: "thread",
         subjectRef: (threadIdTrim ?? workspaceId).slice(0, 160),
         details: { last_outcome_type: resolved.outcome_type, forced_next_action: closure.forcedNextAction },
-      }).catch(() => {});
+      }).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
     }
 
     if (nextAction && EMIT_INTENT_ACTIONS.includes(nextAction as (typeof EMIT_INTENT_ACTIONS)[number])) {
@@ -308,7 +308,7 @@ export async function POST(request: NextRequest) {
           next_required_action: nextAction,
         },
         dedupeKey,
-      }).catch(() => {});
+      }).catch((err) => { console.error("[connectors/voice/outcome] error:", err instanceof Error ? err.message : err); });
     }
   }
 

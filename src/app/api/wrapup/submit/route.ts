@@ -52,10 +52,10 @@ export async function POST(req: NextRequest) {
     .from("call_sessions")
     .select("lead_id, matched_lead_id")
     .eq("id", consumed.callSessionId)
-    .single();
+    .maybeSingle();
   const leadId = (session as { lead_id?: string | null; matched_lead_id?: string | null })?.lead_id ?? (session as { matched_lead_id?: string | null })?.matched_lead_id;
   if (leadId) {
-    const { data: existing } = await db.from("call_analysis").select("id").eq("call_session_id", consumed.callSessionId).single();
+    const { data: existing } = await db.from("call_analysis").select("id").eq("call_session_id", consumed.callSessionId).maybeSingle();
     const analysisJson = {
       outcome: analysisOutcome,
       next_best_action: body.outcome === "interested" ? "send_recap" : body.outcome === "thinking" ? "nurture" : "reactivation_schedule",

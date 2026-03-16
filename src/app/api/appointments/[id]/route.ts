@@ -35,7 +35,7 @@ export async function PATCH(
     .from("appointments")
     .select("id, workspace_id, start_time, end_time, external_calendar_id")
     .eq("id", id)
-    .single();
+    .maybeSingle();
   if (fetchErr || !existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const row = existing as { workspace_id: string; external_calendar_id?: string | null };
   if (row.workspace_id !== session.workspaceId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -53,7 +53,7 @@ export async function PATCH(
     .update(updatePayload)
     .eq("id", id)
     .select()
-    .single();
+    .maybeSingle();
   if (updateErr) return NextResponse.json({ error: (updateErr as Error).message }, { status: 500 });
 
   if (row.external_calendar_id) {
@@ -85,7 +85,7 @@ export async function DELETE(
     .from("appointments")
     .select("id, workspace_id, external_calendar_id")
     .eq("id", id)
-    .single();
+    .maybeSingle();
   if (fetchErr || !existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const row = existing as { workspace_id: string; external_calendar_id?: string | null };
   if (row.workspace_id !== session.workspaceId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });

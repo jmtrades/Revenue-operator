@@ -18,7 +18,7 @@ export async function GET(
   const { id: leadId } = await params;
   const db = getDb();
 
-  const { data: lead } = await db.from("leads").select("workspace_id, state").eq("id", leadId).single();
+  const { data: lead } = await db.from("leads").select("workspace_id, state").eq("id", leadId).maybeSingle();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   const workspaceId = (lead as { workspace_id?: string })?.workspace_id;
   if (workspaceId) {
@@ -115,10 +115,10 @@ export async function GET(
     const { canInterveneNow } = await import("@/lib/stability/cooldowns");
     const plan = await getActiveLeadPlan(workspaceId, leadId);
     const cooldownCheck = await canInterveneNow(workspaceId, leadId, "follow_up", (lead as { state: string }).state as import("@/lib/types").LeadState);
-    const { data: run } = await db.from("sequence_runs").select("sequence_id, current_step, status").eq("workspace_id", workspaceId).eq("lead_id", leadId).eq("status", "running").single();
+    const { data: run } = await db.from("sequence_runs").select("sequence_id, current_step, status").eq("workspace_id", workspaceId).eq("lead_id", leadId).eq("status", "running").maybeSingle();
     let sequenceName: string | undefined;
     if (run && (run as { sequence_id?: string }).sequence_id) {
-      const { data: seq } = await db.from("sequences").select("name").eq("id", (run as { sequence_id: string }).sequence_id).single();
+      const { data: seq } = await db.from("sequences").select("name").eq("id", (run as { sequence_id: string }).sequence_id).maybeSingle();
       sequenceName = (seq as { name?: string })?.name;
     }
     stability = {
@@ -147,7 +147,7 @@ export async function GET(
       impact: `Baseline conversion ~${(baselineConversion * 100).toFixed(1)}%. Engagement is associated with likelihood.`,
     };
 
-    const { data: inv } = await db.from("invoice_items").select("amount_cents, status").eq("lead_id", leadId).limit(1).single();
+    const { data: inv } = await db.from("invoice_items").select("amount_cents, status").eq("lead_id", leadId).limit(1).maybeSingle();
     if (inv) {
       billingImpact = { amount_cents: (inv as { amount_cents: number }).amount_cents, status: (inv as { status: string }).status };
     }

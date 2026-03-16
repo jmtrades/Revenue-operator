@@ -50,11 +50,11 @@ export async function GET(req: NextRequest) {
   const todayStart = new Date(now);
   todayStart.setUTCHours(0, 0, 0, 0);
 
-  const { data: ws } = await db.from("workspaces").select("status, pause_reason, created_at").eq("id", workspaceId).single();
+  const { data: ws } = await db.from("workspaces").select("status, pause_reason, created_at").eq("id", workspaceId).maybeSingle();
   const wsRow = ws as { status?: string; pause_reason?: string; created_at?: string } | undefined;
-  const { data: actState } = await db.from("activation_states").select("activated_at").eq("workspace_id", workspaceId).single();
+  const { data: actState } = await db.from("activation_states").select("activated_at").eq("workspace_id", workspaceId).maybeSingle();
   const activatedAt = (actState as { activated_at?: string } | null)?.activated_at ?? null;
-  const { data: settingsRow } = await db.from("settings").select("preview_mode, weekly_call_target, business_type").eq("workspace_id", workspaceId).single();
+  const { data: settingsRow } = await db.from("settings").select("preview_mode, weekly_call_target, business_type").eq("workspace_id", workspaceId).maybeSingle();
   const previewMode = (settingsRow as { preview_mode?: boolean })?.preview_mode ?? false;
   const weeklyTarget = (settingsRow as { weekly_call_target?: number })?.weekly_call_target ?? 12;
   const businessType = (settingsRow as { business_type?: string })?.business_type ?? null;
@@ -324,7 +324,7 @@ export async function GET(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const { data: pendingJobs } = await db
     .from("job_queue")
@@ -403,7 +403,7 @@ export async function GET(req: NextRequest) {
     .eq("action", "send_message")
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const lastOutreachAt = (lastOutreach as { created_at?: string } | null)?.created_at;
   const timeSinceLastOutreachMin = lastOutreachAt
@@ -459,7 +459,7 @@ export async function GET(req: NextRequest) {
   const targetSnapshot = await getTargetSnapshot(workspaceId);
 
   const { getWorkspaceStrategy, planWorkspaceStrategy } = await import("@/lib/strategy/planner");
-  const { data: objRow } = await db.from("workspace_objectives").select("last_evaluated_at").eq("workspace_id", workspaceId).eq("objective_type", "bookings").single();
+  const { data: objRow } = await db.from("workspace_objectives").select("last_evaluated_at").eq("workspace_id", workspaceId).eq("objective_type", "bookings").maybeSingle();
   const lastEval = (objRow as { last_evaluated_at?: string })?.last_evaluated_at;
   const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
   let revenue_trajectory: "On track" | "At risk" = "On track";
@@ -478,7 +478,7 @@ export async function GET(req: NextRequest) {
     }
     if (obj) await planWorkspaceStrategy(workspaceId, obj.status, revenueStatus);
   } else {
-    const { data: revRow } = await db.from("workspace_objectives").select("status").eq("workspace_id", workspaceId).eq("objective_type", "revenue").single();
+    const { data: revRow } = await db.from("workspace_objectives").select("status").eq("workspace_id", workspaceId).eq("objective_type", "revenue").maybeSingle();
     const revStatus = (revRow as { status?: string })?.status;
     if (revStatus === "behind") revenue_trajectory = "At risk";
   }

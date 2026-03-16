@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
   const businessName = normalizeBusinessName(body?.businessName);
   const sendWelcome = () => {
-    void sendWelcomeEmail(email, businessName).catch(() => {});
+    void sendWelcomeEmail(email, businessName).catch((err) => { console.error("[auth/signup] error:", err instanceof Error ? err.message : err); });
   };
   const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? "").trim();
 
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
           .from("workspaces")
           .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
           .select("id")
-          .single();
+          .maybeSingle();
         if (!insertErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
           .from("workspaces")
           .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
           .select("id")
-          .single();
+          .maybeSingle();
         if (!createErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
       .from("workspaces")
       .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
       .select("id")
-      .single();
+      .maybeSingle();
     if (!createErr && created) {
       workspaceId = (created as { id: string }).id;
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });

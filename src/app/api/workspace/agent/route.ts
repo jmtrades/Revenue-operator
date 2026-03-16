@@ -1,6 +1,6 @@
 /**
  * GET /api/workspace/agent — Load agent config (greeting, voice, knowledge, etc.) for current workspace.
- * PATCH /api/workspace/agent — Update agent config; then call POST /api/vapi/create-agent to sync to Vapi.
+ * PATCH /api/workspace/agent — Update agent config and sync to ElevenLabs voice provider.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       .from("workspaces")
       .select("id, name, greeting, agent_name, preferred_language, elevenlabs_voice_id, phone, working_hours, knowledge_items, agent_template")
       .eq("id", session.workspaceId)
-      .single();
+      .maybeSingle();
 
     if (error || !data) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });

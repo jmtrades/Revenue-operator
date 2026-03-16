@@ -2595,7 +2595,8 @@
     "saveChanges": "Enregistrer",
     "backToSettings": "← Paramètres",
     "toast": {
-      "saved": "Règles d'appel enregistrées"
+      "saved": "Règles d'appel enregistrées",
+      "error": "Impossible d'enregistrer les règles d'appel"
     }
   },
   "inbox": {

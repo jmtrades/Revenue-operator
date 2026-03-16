@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       }
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("core").catch(() => {});
+    await recordCronHeartbeat("core").catch((err) => { console.error("[cron/core] error:", err instanceof Error ? err.message : err); });
     return { run: ran.length, ran: ran.length, steps: CORE_STEPS.length };
   });
 

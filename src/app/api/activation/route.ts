@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
       .from("activation_states")
       .select("simulated_actions_count")
       .eq("workspace_id", workspaceId)
-      .single();
+      .maybeSingle();
 
     const count = ((current as { simulated_actions_count?: number })?.simulated_actions_count ?? 0) + 1;
     await db.from("activation_states").upsert(
@@ -208,7 +208,7 @@ export async function POST(req: NextRequest) {
     // Synthetic protection bootstrap removed - only show real activity
 
     const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
-    sendActivationConfirmationEmail(workspaceId).catch(() => {});
+    sendActivationConfirmationEmail(workspaceId).catch((err) => { console.error("[activation] error:", err instanceof Error ? err.message : err); });
 
     return NextResponse.json({
       step: "activated",

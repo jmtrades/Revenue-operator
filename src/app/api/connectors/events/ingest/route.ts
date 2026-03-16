@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       payload,
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (error && (error as { code?: string }).code === "23505") {
     return NextResponse.json({ ok: true, id: null, duplicate: true }, { status: 200 });

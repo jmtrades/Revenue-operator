@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
         },
       })
       .select("id")
-      .single();
+      .maybeSingle();
 
     if (uploadErr || !upload) {
       return NextResponse.json({ error: "Failed to save file metadata" }, { status: 500 });

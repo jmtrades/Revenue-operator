@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     .from("zapier_oauth_codes")
     .select("code, workspace_id, redirect_uri")
     .eq("code", body.code.trim())
-    .single();
+    .maybeSingle();
 
   if (!row) return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
 

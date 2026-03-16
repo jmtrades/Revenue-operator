@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       metadata,
     })
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
       name: createdLead.name,
       phone: createdLead.phone,
       email: createdLead.email,
-    }).catch(() => {});
+    }).catch((err) => { console.error("[leads] error:", err instanceof Error ? err.message : err); });
   } catch {
     // non-blocking
   }
@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
       title: "New lead",
       body: [createdLead.name, createdLead.phone].filter(Boolean).join(" · ") || "New lead captured",
       metadata: { lead_id: createdLead.id },
-    }).catch(() => {});
+    }).catch((err) => { console.error("[leads] error:", err instanceof Error ? err.message : err); });
   } catch {
     // non-blocking
   }

@@ -25,14 +25,14 @@ export async function GET(request: NextRequest) {
     const { data: rows } = await db.from("workspaces").select("id");
     const workspaceIds = (rows ?? []).map((r: { id: string }) => r.id);
     for (const workspaceId of workspaceIds) {
-      await refreshOperabilityAnchor(workspaceId).catch(() => {});
+      await refreshOperabilityAnchor(workspaceId).catch((err) => { console.error("[cron/operability-anchor] error:", err instanceof Error ? err.message : err); });
       const anchored = await processMaintainsOperation(workspaceId).catch(() => false);
-      if (anchored) await recordOperabilityAnchorDay(workspaceId).catch(() => {});
-      await recordAnchorLossOrientationIfDue(workspaceId).catch(() => {});
-      await detectOperationalRealizations(workspaceId).catch(() => {});
+      if (anchored) await recordOperabilityAnchorDay(workspaceId).catch((err) => { console.error("[cron/operability-anchor] error:", err instanceof Error ? err.message : err); });
+      await recordAnchorLossOrientationIfDue(workspaceId).catch((err) => { console.error("[cron/operability-anchor] error:", err instanceof Error ? err.message : err); });
+      await detectOperationalRealizations(workspaceId).catch((err) => { console.error("[cron/operability-anchor] error:", err instanceof Error ? err.message : err); });
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("operability-anchor").catch(() => {});
+    await recordCronHeartbeat("operability-anchor").catch((err) => { console.error("[cron/operability-anchor] error:", err instanceof Error ? err.message : err); });
     return { run: 1, workspaces: workspaceIds.length };
   });
 

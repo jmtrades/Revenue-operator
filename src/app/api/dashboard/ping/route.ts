@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     .eq("id", workspaceId);
 
   const { checkAndMarkOrientationChecked } = await import("@/lib/orientation/records");
-  await checkAndMarkOrientationChecked(workspaceId).catch(() => {});
+  await checkAndMarkOrientationChecked(workspaceId).catch((err) => { console.error("[dashboard/ping] error:", err instanceof Error ? err.message : err); });
 
   return NextResponse.json({ ok: true });
 }

@@ -2601,7 +2601,8 @@
     "saveChanges": "Speichern",
     "backToSettings": "← Einstellungen",
     "toast": {
-      "saved": "Anrufregeln gespeichert"
+      "saved": "Anrufregeln gespeichert",
+      "error": "Anrufregeln konnten nicht gespeichert werden"
     }
   },
   "inbox": {

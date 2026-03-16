@@ -42,7 +42,7 @@ async function processPayload(payload: {
     const { processCanonicalSignal } = await import("@/lib/signals/consumer");
     await processCanonicalSignal(payload.signalId);
     const db = (await import("@/lib/db/queries")).getDb();
-    const { data: sig } = await db.from("canonical_signals").select("workspace_id").eq("id", payload.signalId).single();
+    const { data: sig } = await db.from("canonical_signals").select("workspace_id").eq("id", payload.signalId).maybeSingle();
     if (sig) workspaceId = (sig as { workspace_id: string }).workspace_id;
   } else if (payload.type === "action" && payload.action) {
     const { runActionJob } = await import("@/lib/action-queue/worker");
@@ -74,7 +74,7 @@ async function processPayload(payload: {
     await runPostCallUnknownCheckin(payload.leadId, payload.workspaceId, payload.callSessionId);
   } else if (payload.type === "no_show_reminder" && payload.leadId) {
     const db = (await import("@/lib/db/queries")).getDb();
-    const { data: lead } = await db.from("leads").select("workspace_id").eq("id", payload.leadId).single();
+    const { data: lead } = await db.from("leads").select("workspace_id").eq("id", payload.leadId).maybeSingle();
     if (lead) {
       workspaceId = (lead as { workspace_id: string }).workspace_id;
       await runDecisionJobWithEngines(payload.leadId, workspaceId);
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
   if (authErr) return authErr;
 
-  await processWebhookDeliveries().catch(() => {});
+  await processWebhookDeliveries().catch((err) => { console.error("[cron/process-queue] error:", err instanceof Error ? err.message : err); });
 
   const { enqueueDecision, enqueue } = await import("@/lib/queue");
   const { getDueActionRetries, claimActionRetry } = await import("@/lib/action-queue/persist");
@@ -244,11 +244,11 @@ export async function GET(request: NextRequest) {
       body.claimed_via_rpc = true;
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("process-queue").catch(() => {});
+    await recordCronHeartbeat("process-queue").catch((err) => { console.error("[cron/process-queue] error:", err instanceof Error ? err.message : err); });
     return NextResponse.json(body);
   }
 
   const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-  await recordCronHeartbeat("process-queue").catch(() => {});
+  await recordCronHeartbeat("process-queue").catch((err) => { console.error("[cron/process-queue] error:", err instanceof Error ? err.message : err); });
   return NextResponse.json({ ok: true, processed: 0 });
 }
