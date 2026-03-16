@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
       }
     } else if (process.env.NODE_ENV === "production") {
-      console.warn("[elevenlabs-webhook] ELEVENLABS_WEBHOOK_SECRET not configured — signature verification skipped");
+      console.error("[elevenlabs-webhook] ELEVENLABS_WEBHOOK_SECRET not configured — rejecting unsigned webhook");
+      return NextResponse.json({ error: "Webhook secret not configured" }, { status: 503 });
     }
 
     const body = JSON.parse(rawBody);

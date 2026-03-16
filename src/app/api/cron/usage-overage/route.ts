@@ -1,54 +1,78 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+/**
+ * Cron: Monthly usage overage billing.
+ * Checks each active workspace's call minutes and bills overage via Stripe.
+ */
+
+export const dynamic = "force-dynamic";
+
+import { NextRequest, NextResponse } from "next/server";
+import { getDb } from "@/lib/db/queries";
 import { reportUsageOverage } from "@/lib/billing/overage";
+import "@/lib/runtime";
+import { assertCronAuthorized } from "@/lib/runtime";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export async function GET(request: NextRequest) {
+  const authErr = assertCronAuthorized(request);
+  if (authErr) return authErr;
 
-export async function POST() {
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json({ ok: true, skipped: "stripe_not_configured" });
   }
-  const { data: workspaces } = await supabase
+
+  const db = getDb();
+  const { data: workspaces } = await db
     .from("workspaces")
     .select("id, billing_status, billing_tier, stripe_subscription_id")
     .eq("billing_status", "active");
 
+  let billed = 0;
+  const errors: string[] = [];
+
   for (const ws of workspaces || []) {
-    if (!ws.stripe_subscription_id) continue;
+    const w = ws as { id: string; billing_tier: string; stripe_subscription_id?: string };
+    if (!w.stripe_subscription_id) continue;
 
-    const periodStart = new Date();
-    periodStart.setDate(1);
-    periodStart.setHours(0, 0, 0, 0);
+    try {
+      const periodStart = new Date();
+      periodStart.setDate(1);
+      periodStart.setHours(0, 0, 0, 0);
 
-    const { data: calls } = await supabase
-      .from("call_sessions")
-      .select("duration_seconds, started_at")
-      .eq("workspace_id", ws.id)
-      .gte("started_at", periodStart.toISOString());
+      const { data: calls } = await db
+        .from("call_sessions")
+        .select("duration_seconds, started_at")
+        .eq("workspace_id", w.id)
+        .gte("started_at", periodStart.toISOString());
 
-    const totalMinutes = Math.ceil(
-      (calls || []).reduce(
-        (sum, c) => sum + ((c as { duration_seconds?: number }).duration_seconds || 0),
-        0
-      ) / 60
-    );
+      const totalMinutes = Math.ceil(
+        (calls || []).reduce(
+          (sum, c) => sum + ((c as { duration_seconds?: number }).duration_seconds || 0),
+          0
+        ) / 60
+      );
 
-    const PLAN_MINUTES: Record<string, number> = {
-      solo: 400,
-      growth: 1500,
-      team: 5000,
-      enterprise: 50000,
-    };
-    const included = PLAN_MINUTES[ws.billing_tier] || 400;
+      const PLAN_MINUTES: Record<string, number> = {
+        solo: 400,
+        growth: 1500,
+        team: 5000,
+        enterprise: 50000,
+      };
+      const included = PLAN_MINUTES[w.billing_tier] || 400;
 
-    if (totalMinutes > included) {
-      await reportUsageOverage(ws.id, ws.stripe_subscription_id, ws.billing_tier, totalMinutes, included);
+      if (totalMinutes > included) {
+        await reportUsageOverage(w.id, w.stripe_subscription_id, w.billing_tier, totalMinutes, included);
+        billed++;
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`[usage-overage] Error for workspace ${w.id}:`, msg);
+      errors.push(`${w.id}: ${msg}`);
     }
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({
+    ok: true,
+    message: `Usage overage billing complete: ${billed} workspaces billed`,
+    billed,
+    errors: errors.length > 0 ? errors : undefined,
+  });
 }
-

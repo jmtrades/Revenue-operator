@@ -56,7 +56,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
   } else if (process.env.NODE_ENV === "production") {
-    console.warn("[vapi-webhook] VAPI_WEBHOOK_SECRET not configured — signature verification skipped");
+    console.error("[vapi-webhook] VAPI_WEBHOOK_SECRET not configured — rejecting unsigned webhook in production");
+    return NextResponse.json({ error: "Webhook secret not configured" }, { status: 503 });
   }
 
   let body: VapiWebhookPayload;

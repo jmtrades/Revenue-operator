@@ -70,8 +70,8 @@ export async function GET(req: NextRequest) {
         phone_number: n.phone_number,
         friendly_name: n.phone_number,
         type: (type === "toll_free" ? "toll_free" : "local") as "local" | "toll_free" | "mobile",
-        monthly_cost_cents: type === "toll_free" ? 200 : 150,
-        setup_fee_cents: 0,
+        monthly_cost_cents: type === "toll_free" ? 500 : 300,
+        setup_fee_cents: 100,
         capabilities: { voice: true, sms: true, mms: false },
       }));
       return NextResponse.json({ numbers: list });

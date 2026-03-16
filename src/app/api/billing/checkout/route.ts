@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
         
         await db.from("workspaces").insert({
           id: wsId,
-          name: "My workspace",
+          name: email.split("@")[0] + "'s workspace",
           owner_id: userId,
           autonomy_level: "assisted",
           kill_switch: false,
