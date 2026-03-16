@@ -140,10 +140,10 @@ export async function POST(req: NextRequest) {
         checkout_url: session.url,
         message: "Redirect to checkout to start your plan.",
       });
-    } catch (_e) {
-      // Stripe error; return below
+    } catch (err) {
+      console.error("[change-plan] Stripe checkout session creation failed:", err instanceof Error ? err.message : err);
       return NextResponse.json(
-        { ok: false, error: "Something went wrong with this service. Please try again." },
+        { ok: false, error: "Could not create checkout session. Please try again or contact support." },
         { status: 502 }
       );
     }
@@ -158,17 +158,17 @@ export async function POST(req: NextRequest) {
     const priceField = sub.items?.data?.[0]?.price;
     const currentPriceId = typeof priceField === "string" ? priceField : priceField?.id;
     if (currentPriceId === priceResult.price_id) {
-      return NextResponse.json({ ok: true, reason: "already_on_plan" }, { status: 200 });
+      return NextResponse.json({ ok: true, message: "Already on this plan" }, { status: 200 });
     }
     // Prorate on all changes — Stripe handles credit/debit correctly
     await stripe.subscriptions.update(row.stripe_subscription_id, {
       items: [{ id: itemId, price: priceResult.price_id }],
       proration_behavior: "always_invoice",
     });
-  } catch (_e) {
-    // Stripe update error; return below
+  } catch (err) {
+    console.error("[change-plan] Stripe subscription update failed:", err instanceof Error ? err.message : err);
     return NextResponse.json(
-      { ok: false, error: "Something went wrong with this service. Please try again." },
+      { ok: false, error: "Could not update subscription. Please try again or contact support." },
       { status: 502 }
     );
   }

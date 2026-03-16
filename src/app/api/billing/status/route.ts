@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     .from("workspaces")
     .select("billing_status, protection_renewal_at, stripe_customer_id, stripe_subscription_id, created_at, status, pause_reason, billing_tier")
     .eq("id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 

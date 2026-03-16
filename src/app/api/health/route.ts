@@ -18,26 +18,18 @@ export async function GET() {
     database = "fail";
   }
 
-  const hasStripePrice =
-    !!(
-      process.env.STRIPE_DEFAULT_PRICE_ID ||
-      process.env.STRIPE_PRICE_ID ||
-      process.env.STRIPE_PRICE_SOLO_MONTH ||
-      process.env.STRIPE_PRICE_SOLO_YEAR ||
-      process.env.STRIPE_PRICE_GROWTH_MONTH ||
-      process.env.STRIPE_PRICE_GROWTH_YEAR ||
-      process.env.STRIPE_PRICE_TEAM_MONTH ||
-      process.env.STRIPE_PRICE_TEAM_YEAR ||
-      process.env.STRIPE_GROWTH_MONTHLY ||
-      process.env.STRIPE_GROWTH_YEARLY ||
-      process.env.STRIPE_TEAM_MONTHLY ||
-      process.env.STRIPE_TEAM_YEARLY ||
-      process.env.STRIPE_SOLO_MONTHLY ||
-      process.env.STRIPE_SOLO_YEARLY
-    );
-  const stripe: "ok" | "missing" =
-    !!(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET && hasStripePrice)
-      ? "ok"
+  const stripePriceKeys = {
+    STRIPE_PRICE_SOLO_MONTH: !!process.env.STRIPE_PRICE_SOLO_MONTH,
+    STRIPE_PRICE_SOLO_YEAR: !!process.env.STRIPE_PRICE_SOLO_YEAR,
+    STRIPE_PRICE_GROWTH_MONTH: !!process.env.STRIPE_PRICE_GROWTH_MONTH,
+    STRIPE_PRICE_GROWTH_YEAR: !!process.env.STRIPE_PRICE_GROWTH_YEAR,
+    STRIPE_PRICE_TEAM_MONTH: !!process.env.STRIPE_PRICE_TEAM_MONTH,
+    STRIPE_PRICE_TEAM_YEAR: !!process.env.STRIPE_PRICE_TEAM_YEAR,
+  };
+  const hasStripePrice = Object.values(stripePriceKeys).some(Boolean);
+  const stripe: "ok" | "partial" | "missing" =
+    process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET && hasStripePrice
+      ? Object.values(stripePriceKeys).every(Boolean) ? "ok" : "partial"
       : "missing";
 
   let last_cron_execution: { commitment_recovery: string | null; settlement_export: string | null } = {
@@ -62,6 +54,9 @@ export async function GET() {
     status,
     database,
     stripe,
+    stripe_prices: stripePriceKeys,
+    has_stripe_secret: !!process.env.STRIPE_SECRET_KEY,
+    has_stripe_webhook_secret: !!process.env.STRIPE_WEBHOOK_SECRET,
     last_cron_execution,
     system_ready,
   });

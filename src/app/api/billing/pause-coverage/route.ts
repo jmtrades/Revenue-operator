@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     .from("workspaces")
     .select("stripe_subscription_id, status")
     .eq("id", workspaceId)
-    .single();
+    .maybeSingle();
 
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 

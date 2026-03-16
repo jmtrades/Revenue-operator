@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
   const { data: phoneConfig } = await db
     .from("phone_configs")
     .select("workspace_id, proxy_number")
-    .or(`proxy_number.eq.${to?.replace(/\s/g, "")},proxy_number.eq.${to}`)
+    .or(`proxy_number.eq.${to?.replace(/[\s()-]/g, "")},proxy_number.eq.${to},proxy_number.eq.+${to?.replace(/\D/g, "")}`)
     .eq("status", "active")
     .maybeSingle();
 
