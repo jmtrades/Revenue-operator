@@ -199,7 +199,8 @@ export async function POST(req: NextRequest) {
     provider: "twilio",
     provider_sid: phoneSid,
     status: "active",
-    monthly_cost_cents: 150,
+    monthly_cost_cents: 300,
+    setup_fee_cents: 100,
     capabilities: { voice: true, sms: true, mms: false },
     updated_at: new Date().toISOString(),
   });

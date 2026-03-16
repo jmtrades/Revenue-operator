@@ -140,7 +140,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This number is already provisioned to a workspace." }, { status: 409 });
   }
 
-  const monthlyCost = number_type === "toll_free" ? 200 : 150;
+  // Pricing: $3/mo local, $5/mo toll-free (Twilio cost ~$1.15/$2.15 → healthy margin)
+  const monthlyCost = number_type === "toll_free" ? 500 : 300;
+  const setupFeeCents = 100; // $1.00 one-time setup fee
   const { data: inserted, error } = await db
     .from("phone_numbers")
     .insert({
@@ -154,13 +156,42 @@ export async function POST(req: NextRequest) {
       provider_sid: providerSid,
       status: "active",
       monthly_cost_cents: monthlyCost,
+      setup_fee_cents: setupFeeCents,
       updated_at: new Date().toISOString(),
     })
-    .select("id, phone_number, friendly_name, number_type, status, monthly_cost_cents")
+    .select("id, phone_number, friendly_name, number_type, status, monthly_cost_cents, setup_fee_cents")
     .maybeSingle();
 
   if (error) {
     return NextResponse.json({ error: "Failed to save number." }, { status: 500 });
+  }
+
+  // Bill setup fee via Stripe if customer exists
+  if (setupFeeCents > 0) {
+    try {
+      const { data: wsData } = await db
+        .from("workspaces")
+        .select("stripe_customer_id")
+        .eq("id", session.workspaceId)
+        .maybeSingle();
+      const stripeCustomerId = (wsData as { stripe_customer_id?: string } | null)?.stripe_customer_id;
+      if (stripeCustomerId && process.env.STRIPE_SECRET_KEY) {
+        const Stripe = (await import("stripe")).default;
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+          apiVersion: "2024-12-18.acacia" as unknown as import("stripe").Stripe.StripeConfig["apiVersion"],
+        });
+        await stripe.invoiceItems.create({
+          customer: stripeCustomerId,
+          amount: setupFeeCents,
+          currency: "usd",
+          description: `Phone number setup fee: ${e164}`,
+          metadata: { workspace_id: session.workspaceId, type: "phone_setup_fee" },
+        });
+      }
+    } catch (err) {
+      console.error("[provision] Setup fee billing failed:", err instanceof Error ? err.message : err);
+      // Non-blocking — number is provisioned even if billing fails
+    }
   }
 
   // Set as primary workspace number if no config or no proxy yet (so Settings > Phone shows it)
@@ -195,5 +226,6 @@ export async function POST(req: NextRequest) {
     number_type: (inserted as { number_type: string }).number_type,
     status: (inserted as { status: string }).status,
     monthly_cost_cents: (inserted as { monthly_cost_cents: number }).monthly_cost_cents,
+    setup_fee_cents: (inserted as { setup_fee_cents: number }).setup_fee_cents,
   });
 }

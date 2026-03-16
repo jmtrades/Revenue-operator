@@ -34,23 +34,16 @@ type SortId = "newest" | "score" | "name";
 
 const STORAGE_KEY = "rt_contacts";
 
-const DEMO_CONTACTS: Contact[] = [
-  { id: "c-demo-1", firstName: "Mike", lastName: "Johnson", phone: "(503) 555-0101", type: "lead", score: 85, lastContact: new Date().toISOString(), tags: ["plumbing"] },
-  { id: "c-demo-2", firstName: "Sarah", lastName: "Chen", phone: "(503) 555-0102", type: "customer", lastContact: new Date(Date.now() - 86400000).toISOString() },
-  { id: "c-demo-3", firstName: "James", lastName: "Wilson", phone: "(503) 555-0103", type: "lead", score: 72, lastContact: new Date(Date.now() - 172800000).toISOString() },
-  { id: "c-demo-4", firstName: "Lisa", lastName: "Park", phone: "(503) 555-0104", type: "lead", lastContact: new Date().toISOString() },
-];
-
 function loadContacts(): Contact[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = safeGetItem(STORAGE_KEY);
-    if (!raw) return DEMO_CONTACTS;
+    if (!raw) return [];
     const parsed = JSON.parse(raw) as Contact[];
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEMO_CONTACTS;
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     safeRemoveItem(STORAGE_KEY);
-    return DEMO_CONTACTS;
+    return [];
   }
 }
 

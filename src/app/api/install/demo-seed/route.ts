@@ -4,6 +4,7 @@
  * Triggers engines once (core cron). Auth required.
  */
 
+/** @internal Development-only route for seeding demo data. Blocked in production. */
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
@@ -15,6 +16,11 @@ const DEMO_LEAD_EXTERNAL_ID = "demo-seed-lead";
 const DEMO_THREAD_ID = "demo-seed-thread";
 
 export async function POST(request: NextRequest) {
+  // Block in production to prevent demo data contamination
+  if (process.env.NODE_ENV === "production" && !process.env.ALLOW_DEMO_SEED) {
+    return NextResponse.json({ error: "Demo seed disabled in production" }, { status: 403 });
+  }
+
   let body: { workspace_id?: string };
   try {
     body = await request.json();
@@ -106,8 +112,8 @@ export async function POST(request: NextRequest) {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });
-  } catch {
-    // non-blocking
+  } catch (err) {
+    console.error("[demo-seed] cron trigger failed:", err instanceof Error ? err.message : err);
   }
 
   return NextResponse.json({ ok: true });
