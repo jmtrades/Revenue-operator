@@ -180,7 +180,7 @@ export default function AppointmentsPage() {
             description={t("appointments.empty.body")}
             primaryAction={{
               label: t("appointments.empty.action"),
-              href: "/app/agents",
+              href: "/app/calendar",
             }}
           />
         ) : view === "list" ? (

@@ -93,7 +93,6 @@ export default function AppSettingsPhonePage() {
   const [phoneNumber, setPhoneNumber] = useState<string | null>(
     initialSnapshot?.phoneNumber ?? null,
   );
-  const [_status, setStatus] = useState<string | null>(null);
   const [outboundFrom, setOutboundFrom] = useState<string>(
     initialSnapshot?.outboundFrom ?? "",
   );
@@ -167,7 +166,6 @@ export default function AppSettingsPhonePage() {
           verified_phone?: string | null;
         };
         setPhoneNumber(data.phone_number ?? null);
-        setStatus(data.status ?? null);
         setOutboundFrom(data.outbound_from_number ?? "");
         setWhatsappEnabled(data.whatsapp_enabled ?? false);
         setVerifiedNumber(data.verified_phone ?? null);
@@ -183,7 +181,6 @@ export default function AppSettingsPhonePage() {
       }
     } catch {
       setPhoneNumber(null);
-      setStatus(null);
     } finally {
       setLoading(false);
     }
@@ -228,7 +225,6 @@ export default function AppSettingsPhonePage() {
       };
       if (data.phone_number) {
         setPhoneNumber(data.phone_number);
-        setStatus("active");
         setConnectError(null);
         setConnectErrorCode(null);
         await fetchPhone();
