@@ -134,7 +134,15 @@ export default function NewAgentWizardClient({
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ workspace_id: workspaceId, name: state.name.trim() || tAgents("defaultAgent.name") }),
+          body: JSON.stringify({
+            workspace_id: workspaceId,
+            name: state.name.trim() || tAgents("defaultAgent.name"),
+            ...(state.templateId ? { template: state.templateId } : {}),
+            purpose: state.purpose,
+            personality: state.conversationStyle === "authoritative" ? "professional" : state.conversationStyle,
+            voice_id: state.voiceId,
+            greeting: state.greeting,
+          }),
         });
         if (!res.ok) throw new Error("Create failed");
         const created = (await res.json()) as { id: string };
@@ -158,6 +166,7 @@ export default function NewAgentWizardClient({
           personality: personalityMap[state.conversationStyle],
           purpose: state.purpose,
           greeting: state.greeting,
+          ...(state.templateId ? { template: state.templateId } : {}),
           knowledge_base: {
             faq: state.faq.map((f) => ({ q: f.question, a: f.answer })),
             businessContext: state.businessHours,
@@ -191,7 +200,15 @@ export default function NewAgentWizardClient({
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ workspace_id: workspaceId, name: state.name.trim() || tAgents("defaultAgent.name") }),
+          body: JSON.stringify({
+            workspace_id: workspaceId,
+            name: state.name.trim() || tAgents("defaultAgent.name"),
+            ...(state.templateId ? { template: state.templateId } : {}),
+            purpose: state.purpose,
+            personality: state.conversationStyle === "authoritative" ? "professional" : state.conversationStyle,
+            voice_id: state.voiceId,
+            greeting: state.greeting,
+          }),
         });
         if (!res.ok) throw new Error("Create failed");
         const created = (await res.json()) as { id: string };

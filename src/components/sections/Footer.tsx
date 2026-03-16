@@ -64,9 +64,27 @@ export function Footer() {
             <Link href="/terms" className="block hover:opacity-80 transition-opacity">
               {t("termsOfService")}
             </Link>
-            <p className="text-xs mt-2" style={{ color: "var(--text-tertiary)" }}>
-              {t("securityBadges")}
-            </p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {[
+                { label: "SOC 2", icon: "🛡️" },
+                { label: "256-bit SSL", icon: "🔒" },
+                { label: "GDPR", icon: "🔐" },
+                { label: "99.9% Uptime", icon: "✓" },
+              ].map((badge) => (
+                <span
+                  key={badge.label}
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium border"
+                  style={{
+                    borderColor: "var(--border-default)",
+                    color: "var(--text-tertiary)",
+                    background: "rgba(255,255,255,0.02)",
+                  }}
+                >
+                  <span aria-hidden>{badge.icon}</span>
+                  {badge.label}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">

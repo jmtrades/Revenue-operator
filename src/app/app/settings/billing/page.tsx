@@ -73,10 +73,13 @@ export default function AppSettingsBillingPage() {
         }
         return res.json();
       })
-      .then((data: { billing_status?: string; renewal_at?: string | null; billing_tier?: string } | null) => {
+      .then((data: { billing_status?: string; renewal_at?: string | null; billing_tier?: string; minutes_used?: number; minutes_limit?: number } | null) => {
         if (!data || controller.signal.aborted) return;
         setBillingStatus(data?.billing_status ?? "trial");
         setRenewalAt(data?.renewal_at ?? null);
+        if (typeof data.minutes_used === "number") {
+          setUsage((prev) => ({ ...prev, minutes_used: data.minutes_used ?? prev.minutes_used, minutes_limit: data.minutes_limit ?? prev.minutes_limit }));
+        }
         const tier = (data as { billing_tier?: string })?.billing_tier?.toLowerCase();
         if (tier === "solo" || tier === "starter") setCurrentPlanId("starter");
         else if (tier === "growth") setCurrentPlanId("growth");
@@ -179,6 +182,39 @@ export default function AppSettingsBillingPage() {
           </>
         )}
       </div>
+      {/* Minutes usage bar */}
+      {billingStatus !== null && (
+        <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium text-white">Minutes Usage</p>
+            <span className="text-xs text-zinc-400">
+              {usage.minutes_used} / {usage.minutes_limit} min
+            </span>
+          </div>
+          <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all ${
+                usage.minutes_limit > 0 && usage.minutes_used / usage.minutes_limit > 0.8
+                  ? "bg-amber-500"
+                  : "bg-white"
+              }`}
+              style={{ width: `${Math.min(100, usage.minutes_limit > 0 ? (usage.minutes_used / usage.minutes_limit) * 100 : 0)}%` }}
+            />
+          </div>
+          <p className="text-[11px] text-zinc-500 mt-1.5">
+            {usage.minutes_limit > 0 ? Math.round((usage.minutes_used / usage.minutes_limit) * 100) : 0}% used this billing period
+          </p>
+          {usage.minutes_limit > 0 && usage.minutes_used / usage.minutes_limit > 0.8 && (
+            <button
+              type="button"
+              onClick={() => setPlanChangeOpen(true)}
+              className="mt-2 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-black hover:bg-amber-400 transition-colors"
+            >
+              Upgrade for more minutes
+            </button>
+          )}
+        </div>
+      )}
       <button
         type="button"
         onClick={() => setPlanChangeOpen(true)}

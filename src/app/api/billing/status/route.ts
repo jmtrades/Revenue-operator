@@ -54,6 +54,27 @@ export async function GET(req: NextRequest) {
     has_upcoming_booking_24h = (count ?? 0) > 0;
   }
 
+  // Calculate minutes used this month
+  const PLAN_MINUTES: Record<string, number> = { solo: 400, starter: 400, growth: 1500, scale: 5000 };
+  const tier = (row.billing_tier ?? "starter").toLowerCase();
+  const minutesLimit = PLAN_MINUTES[tier] ?? 400;
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+  const { data: sessions } = await db
+    .from("call_sessions")
+    .select("call_started_at, call_ended_at")
+    .eq("workspace_id", workspaceId)
+    .gte("call_started_at", startOfMonth.toISOString());
+  const minutesUsed = Math.ceil(
+    (sessions ?? []).reduce((sum: number, s: { call_started_at: string; call_ended_at?: string | null }) => {
+      const start = new Date(s.call_started_at).getTime();
+      const end = s.call_ended_at ? new Date(s.call_ended_at).getTime() : start;
+      return sum + (end - start) / 60000;
+    }, 0)
+  );
+
   return NextResponse.json({
     billing_status: row.billing_status ?? "trial",
     renewal_at: row.protection_renewal_at ?? trialEnd?.toISOString() ?? null,
@@ -61,5 +82,7 @@ export async function GET(req: NextRequest) {
     has_subscription: Boolean(row.stripe_subscription_id),
     has_upcoming_booking_24h: has_upcoming_booking_24h,
     billing_tier: row.billing_tier ?? "solo",
+    minutes_used: minutesUsed,
+    minutes_limit: minutesLimit,
   });
 }

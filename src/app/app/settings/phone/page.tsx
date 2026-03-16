@@ -913,7 +913,10 @@ export default function AppSettingsPhonePage() {
         </div>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tPhone("backToSettings")}</Link></p>
+      <p className="text-xs text-zinc-500 mt-6">
+        Need help with phone setup? <a href="mailto:support@recall-touch.com" className="text-zinc-400 hover:text-white underline underline-offset-2">support@recall-touch.com</a>
+      </p>
+      <p className="mt-4"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tPhone("backToSettings")}</Link></p>
     </div>
   );
 }
