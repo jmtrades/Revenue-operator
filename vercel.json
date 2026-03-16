@@ -7,7 +7,7 @@
     },
     {
       "path": "/api/cron/speed-to-lead",
-      "schedule": "* * * * *"
+      "schedule": "*/2 * * * *"
     },
     {
       "path": "/api/cron/heartbeat",
