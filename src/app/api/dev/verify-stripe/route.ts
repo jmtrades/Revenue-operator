@@ -12,21 +12,29 @@ import Stripe from "stripe";
 const DEV_SIM_SECRET = process.env.DEV_SIM_SECRET;
 
 export async function POST(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${DEV_SIM_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const body = await req.json();
-  const { workspace_id } = body;
-  if (!workspace_id) {
-    return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
-  }
-
-  const db = getDb();
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
   try {
+    const authHeader = req.headers.get("authorization");
+    if (authHeader !== `Bearer ${DEV_SIM_SECRET}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    let body: any;
+    try {
+      body = await req.json();
+    } catch (jsonError) {
+      console.error("[dev/verify-stripe] JSON parse error:", jsonError);
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+
+    const { workspace_id } = body;
+    if (!workspace_id) {
+      return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+    }
+
+    const db = getDb();
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+    try {
     // Get or create customer
     const { data: ws } = await db
       .from("workspaces")
@@ -93,17 +101,24 @@ export async function POST(req: NextRequest) {
       .eq("id", workspace_id)
       .single();
 
-    return NextResponse.json({
-      success: true,
-      subscription_id: subscription.id,
-      workspace_state: updated,
-      trial_end: trialEndAt?.toISOString(),
-      renews_at: renewsAt?.toISOString(),
-    });
+      return NextResponse.json({
+        success: true,
+        subscription_id: subscription.id,
+        workspace_state: updated,
+        trial_end: trialEndAt?.toISOString(),
+        renews_at: renewsAt?.toISOString(),
+      });
+    } catch (error) {
+      // Error response below
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : "Unknown error" },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    // Error response below
+    console.error("[dev/verify-stripe] Unhandled error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
