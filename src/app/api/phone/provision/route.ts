@@ -28,21 +28,6 @@ export async function POST(req: NextRequest) {
   if (authErr) return authErr;
 
   const db = getDb();
-  const { data: workspace } = await db
-    .from("workspaces")
-    .select("billing_status")
-    .eq("id", session.workspaceId)
-    .maybeSingle();
-  if (!workspace) {
-    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
-  }
-  const status = (workspace as { billing_status?: string }).billing_status;
-  if (!status || !["trial", "active"].includes(status)) {
-    return NextResponse.json(
-      { error: "Active subscription required to provision phone numbers." },
-      { status: 403 }
-    );
-  }
 
   let body: unknown;
   try {
