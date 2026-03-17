@@ -783,6 +783,12 @@ export default function AppActivityPage() {
 
       <KPIRow>
         <StatCard
+          label={t("dashboard.kpis.revenueProtected")}
+          value={estRevenue}
+          prefix="$"
+          trend={0}
+        />
+        <StatCard
           label={t("dashboard.kpis.callsHandled")}
           value={callCount}
           prefix=""
@@ -799,12 +805,6 @@ export default function AppActivityPage() {
           label={t("dashboard.kpis.leadsCreated")}
           value={leadCount}
           suffix=""
-          trend={0}
-        />
-        <StatCard
-          label={t("dashboard.kpis.revenueProtected")}
-          value={estRevenue}
-          prefix="$"
           trend={0}
         />
         {minutesUsage && (
