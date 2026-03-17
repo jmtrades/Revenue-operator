@@ -3,14 +3,30 @@ import dynamic from "next/dynamic";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 
-const OutcomeCardsSection = dynamic(
-  () => import("@/components/sections/OutcomeCardsSection").then((m) => m.OutcomeCardsSection),
+const HomepageTrustBar = dynamic(
+  () => import("@/components/sections/HomepageTrustBar").then((m) => m.HomepageTrustBar),
 );
-const HomepageLiveDemo = dynamic(
-  () => import("@/components/sections/HomepageLiveDemo").then((m) => m.HomepageLiveDemo),
+const HomepageModeSelector = dynamic(
+  () =>
+    import("@/components/sections/HomepageModeSelector").then(
+      (m) => m.HomepageModeSelector,
+    ),
 );
-const HomepageActivitySection = dynamic(
-  () => import("@/components/sections/HomepageActivitySection").then((m) => m.HomepageActivitySection),
+const HomepageFAQ = dynamic(
+  () => import("@/components/sections/HomepageFAQ").then((m) => m.HomepageFAQ),
+);
+const HomepageTestCallCTA = dynamic(
+  () =>
+    import("@/components/sections/HomepageTestCallCTA").then(
+      (m) => m.HomepageTestCallCTA,
+    ),
+);
+
+const HomepageRoiCalculator = dynamic(
+  () =>
+    import("@/components/sections/HomepageRoiCalculator").then(
+      (module) => module.HomepageRoiCalculator,
+    ),
 );
 const ProblemStatement = dynamic(
   () => import("@/components/sections/ProblemStatement").then((m) => m.ProblemStatement),
@@ -21,9 +37,6 @@ const HowItWorks = dynamic(
 const Features = dynamic(
   () => import("@/components/sections/Features").then((m) => m.Features),
 );
-const WhoUsesSection = dynamic(
-  () => import("@/components/sections/WhoUsesSection").then((m) => m.WhoUsesSection),
-);
 const MetricsSection = dynamic(
   () => import("@/components/sections/MetricsSection").then((m) => m.MetricsSection),
 );
@@ -33,20 +46,14 @@ const TestimonialsSection = dynamic(
 const PricingPreview = dynamic(
   () => import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
 );
-const WhatMakesUsDifferentSection = dynamic(
-  () =>
-    import("@/components/sections/WhatMakesUsDifferentSection").then(
-      (m) => m.WhatMakesUsDifferentSection,
-    ),
-);
 const EnterpriseComparisonCard = dynamic(
   () =>
     import("@/components/sections/EnterpriseComparisonCard").then(
       (m) => m.EnterpriseComparisonCard,
     ),
 );
-const UseCaseSection = dynamic(
-  () => import("@/components/sections/UseCaseSection").then((m) => m.UseCaseSection),
+const Industries = dynamic(
+  () => import("@/components/sections/Industries").then((m) => m.Industries),
 );
 const SocialProof = dynamic(
   () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
@@ -77,20 +84,20 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
-        <SocialProof />
+        <HomepageTrustBar />
         <ProblemStatement />
         <HowItWorks />
-        <HomepageLiveDemo />
-        <OutcomeCardsSection />
-        <HomepageActivitySection />
+        <HomepageTestCallCTA />
+        <HomepageModeSelector />
         <Features />
-        <UseCaseSection />
-        <WhoUsesSection />
+        <HomepageRoiCalculator />
+        <Industries />
         <MetricsSection />
         <TestimonialsSection />
         <PricingPreview />
-        <WhatMakesUsDifferentSection />
         <EnterpriseComparisonCard />
+        <HomepageFAQ />
+        <SocialProof />
         <FinalCTA />
       </main>
       <Footer />

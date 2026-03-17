@@ -3609,11 +3609,11 @@
     "deleteAccountInfo": "Contact support to permanently delete your account."
   },
   "hero": {
-    "title": "Stop losing revenue to missed calls and forgotten follow-ups.",
-    "subtitle": "The AI Revenue Execution System for service businesses. Answer every call. Execute every follow-up. Recover every opportunity.",
-    "primaryCta": "Start Free Trial",
-    "secondaryCta": "Watch Demo",
-    "trustLine": "Works with your existing number · No contracts · 14-day free trial",
+    "title": "Never Lose a Customer to a Forgotten Follow-Up Again",
+    "subtitle": "Intelligent contact timing + multi-channel follow-ups — so deals don’t slip through the cracks. For solo operators, sales teams, and service businesses.",
+    "primaryCta": "Start free 14-day trial",
+    "secondaryCta": "Watch it work (2 min)",
+    "trustLine": "Revenue Execution OS · Works with your number · 14-day free trial",
     "checkmark": {
       "existingNumber": "Works with your existing number",
       "setup": "5-minute setup",
