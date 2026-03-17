@@ -1,0 +1,112 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Phone } from "lucide-react";
+import { Container } from "@/components/ui/Container";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+
+export function HomepageTestCallCTA() {
+  const router = useRouter();
+  const [phone, setPhone] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const helper = useMemo(
+    () => "We’ll validate your number and route you to a fast setup.",
+    []
+  );
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/public/test-call", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone_number: phone }),
+      });
+      const json = (await res.json().catch(() => null)) as
+        | { ok: true; next: string; normalized_phone_number: string; message?: string }
+        | { ok: false; error?: string };
+
+      if (!json || json.ok !== true) {
+        setError((json as { error?: string } | null)?.error ?? "Could not start test call.");
+        return;
+      }
+
+      try {
+        localStorage.setItem(
+          "rt_test_call_phone",
+          JSON.stringify({ phone: json.normalized_phone_number, at: Date.now() }),
+        );
+      } catch {
+        // ignore
+      }
+
+      router.push(json.next);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="marketing-section" style={{ background: "var(--bg-base)" }}>
+      <Container>
+        <div className="mx-auto max-w-3xl text-center">
+          <SectionLabel>Try it live</SectionLabel>
+          <h2
+            className="font-semibold"
+            style={{
+              fontSize: "clamp(1.6rem, 3.2vw, 2.4rem)",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.2,
+              color: "var(--text-primary)",
+            }}
+          >
+            Want a test call from your AI?
+          </h2>
+          <p className="mt-3 text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+            {helper}
+          </p>
+
+          <form
+            onSubmit={onSubmit}
+            className="mt-8 rounded-2xl border border-white/[0.08] bg-zinc-900/50 p-4 sm:p-5"
+          >
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+              <label className="sr-only" htmlFor="test-call-phone">
+                Phone number
+              </label>
+              <div className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-black/20 px-4 py-3 flex-1">
+                <Phone className="h-4 w-4 text-white/50" />
+                <input
+                  id="test-call-phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Your phone number"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  className="w-full bg-transparent outline-none text-sm text-white placeholder:text-white/30"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={busy}
+                className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors disabled:opacity-60"
+              >
+                {busy ? "Starting…" : "Start setup →"}
+              </button>
+            </div>
+            {error && <p className="mt-3 text-sm text-red-300 text-left">{error}</p>}
+            <p className="mt-3 text-xs text-white/45 text-left">
+              You’ll trigger the actual test call during onboarding after your agent is configured.
+            </p>
+          </form>
+        </div>
+      </Container>
+    </section>
+  );
+}
+

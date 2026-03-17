@@ -36,6 +36,22 @@
     {
       "path": "/api/cron/usage-overage",
       "schedule": "0 4 1 * *"
+    },
+    {
+      "path": "/api/cron/daily-metrics",
+      "schedule": "15 0 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-digest",
+      "schedule": "0 8 * * 1"
+    },
+    {
+      "path": "/api/cron/process-sequences",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/usage-alerts",
+      "schedule": "0 6 * * *"
     }
   ]
 }

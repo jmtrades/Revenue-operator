@@ -1,5 +1,5 @@
 export interface VoiceProviderConfig {
-  provider: "vapi" | "retell" | "bland" | "elevenlabs" | "custom";
+  provider: "vapi" | "retell" | "bland" | "elevenlabs" | "custom" | "recall";
   apiKey: string;
   phoneNumberId?: string;
   publicKey?: string;
@@ -44,7 +44,7 @@ export interface CallResult {
 }
 
 export interface WebhookEvent {
-  type: "call-started" | "tool-call" | "end-of-call" | "transcript";
+  type: "call-started" | "tool-call" | "end-of-call" | "transcript" | "error";
   callId: string;
   metadata?: Record<string, string>;
   transcript?: string;
@@ -53,6 +53,7 @@ export interface WebhookEvent {
   duration?: number;
   toolName?: string;
   toolArgs?: Record<string, unknown>;
+  error?: string;
 }
 
 export interface VoiceProvider {

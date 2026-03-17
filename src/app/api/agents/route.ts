@@ -95,16 +95,56 @@ export async function POST(req: NextRequest) {
   const validPurpose = ["inbound", "outbound", "both"];
   const validPersonality = ["friendly", "professional", "casual", "empathetic"];
   const db = getDb();
+
+  // If workspace has an industry set and no explicit templates were provided,
+  // seed from industry_templates for vertical-specific defaults
+  let industryGreeting: string | undefined;
+  let industryKnowledgeBase: Record<string, unknown> = {};
+  let industryRules: Record<string, unknown> = {};
+
+  if (!body.template) {
+    const { data: ws } = await db
+      .from("workspaces")
+      .select("industry")
+      .eq("id", workspace_id)
+      .maybeSingle();
+    const wsRow = ws as { industry?: string | null } | null;
+    if (wsRow?.industry) {
+      const { data: tmpl } = await db
+        .from("industry_templates")
+        .select("default_greeting, default_scripts, default_faq, default_follow_up_cadence")
+        .eq("industry_slug", wsRow.industry)
+        .maybeSingle();
+      const t = tmpl as {
+        default_greeting?: string | null;
+        default_scripts?: unknown;
+        default_faq?: unknown;
+        default_follow_up_cadence?: unknown;
+      } | null;
+      if (t) {
+        industryGreeting = t.default_greeting ?? undefined;
+        industryKnowledgeBase = { faq: t.default_faq ?? [], services: [] };
+        industryRules = {
+          templates: t.default_scripts ?? {},
+          followUpCadence: t.default_follow_up_cadence ?? {},
+          neverSay: [],
+          alwaysTransfer: [],
+          escalationChain: [],
+        };
+      }
+    }
+  }
+
   const { data: agent, error } = await db.from("agents").insert({
     workspace_id,
     name,
     personality: validPersonality.includes(body.personality ?? "") ? body.personality : "professional",
     purpose: validPurpose.includes(body.purpose ?? "") ? body.purpose : "both",
-    greeting: body.greeting || `Hi, thanks for calling! This is ${name}. How can I help you today?`,
+    greeting: body.greeting || industryGreeting || `Hi, thanks for calling! This is ${name}. How can I help you today?`,
     ...(body.template ? { template: body.template } : {}),
     ...(body.voice_id ? { voice_id: body.voice_id } : {}),
-    knowledge_base: {},
-    rules: {},
+    knowledge_base: Object.keys(industryKnowledgeBase).length > 0 ? industryKnowledgeBase : {},
+    rules: Object.keys(industryRules).length > 0 ? industryRules : {},
     is_active: true,
   }).select().maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

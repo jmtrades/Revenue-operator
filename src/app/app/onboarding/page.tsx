@@ -13,6 +13,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useOnboardingStep } from "../OnboardingStepContext";
+import IndustrySelector from "@/components/onboarding/IndustrySelector";
 import { speakTextViaApi } from "@/lib/voice-preview";
 import { Waveform } from "@/components/Waveform";
 import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
@@ -24,11 +25,11 @@ import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-stor
 
 const STEPS = 5;
 const STEP_KEYS: { id: number; titleKey: string; subtitleKey: string }[] = [
-  { id: 1, titleKey: "step.business", subtitleKey: "business.description" },
-  { id: 2, titleKey: "step.agent", subtitleKey: "agent.description" },
-  { id: 3, titleKey: "step.knowledge", subtitleKey: "knowledge.description" },
-  { id: 4, titleKey: "step.phone", subtitleKey: "phone.description" },
-  { id: 5, titleKey: "step.test", subtitleKey: "test.description" },
+  { id: 1, titleKey: "step.mode", subtitleKey: "mode.description" },
+  { id: 2, titleKey: "step.business", subtitleKey: "business.description" },
+  { id: 3, titleKey: "step.agent", subtitleKey: "agent.description" },
+  { id: 4, titleKey: "step.knowledge", subtitleKey: "knowledge.description" },
+  { id: 5, titleKey: "step.phone", subtitleKey: "phone.description" },
 ];
 
 const ONBOARDING_SCENARIO_IDS = ["normal", "angry", "booking", "afterhours", "unknown"] as const;
@@ -73,6 +74,8 @@ export default function AppOnboardingPage() {
     return () => { document.title = ""; };
   }, [t]);
 
+  const [mode, setMode] = useState<"solo" | "sales" | "business" | null>(null);
+  const [industrySlug, setIndustrySlug] = useState<string | null>(null);
   const [businessName, setBusinessName] = useState("");
   const [website, setWebsite] = useState("");
   const [useCases, setUseCases] = useState<string[]>([]);
@@ -204,6 +207,8 @@ export default function AppOnboardingPage() {
           preferredLanguage: "en",
           elevenlabsVoiceId: voiceId,
           businessHours: defaultHours,
+          mode: mode ?? undefined,
+          industry: industrySlug ?? undefined,
         }),
       });
       await fetch("/api/workspace/me", {
@@ -337,14 +342,73 @@ export default function AppOnboardingPage() {
           </div>
 
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">
-        {/* Step 1 — YOUR BUSINESS */}
+        {/* Step 1 — MODE + INDUSTRY */}
         {step === 1 && (
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <h1 className="text-xl font-bold text-white">
+                {t("welcomeHeading")}
+              </h1>
+              <p className="text-sm text-zinc-400">
+                {t("welcomeSubtitle")}
+              </p>
+            </div>
+            <div className="space-y-4">
+              <p className="text-xs font-medium text-zinc-400">
+                {t("modeLabel")}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { id: "solo" as const, title: t("modeSoloTitle"), desc: t("modeSoloDesc") },
+                  { id: "sales" as const, title: t("modeSalesTitle"), desc: t("modeSalesDesc") },
+                  { id: "business" as const, title: t("modeBusinessTitle"), desc: t("modeBusinessDesc") },
+                ].map((m) => {
+                  const active = mode === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => setMode(m.id)}
+                      className={`rounded-2xl border p-4 text-left transition-colors ${
+                        active
+                          ? "border-white bg-zinc-800"
+                          : "border-zinc-800 bg-zinc-950 hover:border-zinc-600"
+                      }`}
+                    >
+                      <div className="text-sm font-semibold text-white mb-1">
+                        {m.title}
+                      </div>
+                      <p className="text-xs text-zinc-400">
+                        {m.desc}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <IndustrySelector
+              selected={industrySlug}
+              onSelect={setIndustrySlug}
+            />
+            <button
+              type="button"
+              onClick={() => setStep(2)}
+              disabled={!mode || !industrySlug}
+              className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {t("cta.next")} →
+            </button>
+          </div>
+        )}
+
+        {/* Step 2 — YOUR BUSINESS */}
+        {step === 2 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-white">
-              {t("welcomeHeading")}
+              {t("businessHeading")}
             </h1>
             <p className="text-sm text-zinc-400">
-              {t("welcomeSubtitle")}
+              {t("businessSubtitle")}
             </p>
             <div>
               <label htmlFor="onboarding-business-name" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("businessNameLabel")}</label>
@@ -417,18 +481,27 @@ export default function AppOnboardingPage() {
                 className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
             </div>
-            <button
-              type="button"
-              onClick={() => setStep(2)}
-              className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
-            >
-              {t("cta.next")} →
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]"
+              >
+                ← {t("cta.back")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep(3)}
+                className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+              >
+                {t("cta.next")} →
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Step 2 — YOUR AI AGENT */}
-        {step === 2 && (
+        {/* Step 3 — YOUR AI AGENT */}
+        {step === 3 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("chooseSoundsHeading")}</h1>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -480,8 +553,8 @@ export default function AppOnboardingPage() {
           </div>
         )}
 
-        {/* Step 3 — TEACH YOUR AI */}
-        {step === 3 && (
+        {/* Step 4 — TEACH YOUR AI */}
+        {step === 4 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("whatShouldKnowHeading")}</h1>
             <p className="text-sm text-zinc-400">{t("whatShouldKnowSubtitle")}</p>
@@ -644,8 +717,8 @@ export default function AppOnboardingPage() {
           </div>
         )}
 
-        {/* Step 4 — TEST YOUR AI */}
-        {step === 4 && (
+        {/* Step 5 — TEST YOUR AI */}
+        {step === 5 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("talkToAiHeading")}</h1>
             <p className="text-sm text-zinc-400">{t("talkToAiSubtitle")}</p>
@@ -682,8 +755,8 @@ export default function AppOnboardingPage() {
           </div>
         )}
 
-        {/* Step 5 — GO LIVE */}
-        {step === 5 && (
+        {/* Final — GO LIVE */}
+        {step === 6 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("readyHeading")}</h1>
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">

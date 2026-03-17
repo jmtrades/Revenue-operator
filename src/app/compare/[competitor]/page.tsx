@@ -1,9 +1,8 @@
-import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
-import { ROUTES } from "@/lib/constants";
+import { ComparisonContent } from "@/components/ComparisonContent";
 
 const BASE = "https://www.recall-touch.com";
 
@@ -15,11 +14,54 @@ export const COMPARE_SLUGS = [
   "hiring-receptionist",
 ] as const;
 
-const SLUG_NAMES: Record<string, string> = {
-  "smith-ai": "Smith.ai",
-  ruby: "Ruby Receptionists",
-  gohighlevel: "GoHighLevel",
-  "hiring-receptionist": "Hiring a Receptionist",
+const COMPETITOR_DATA: Record<
+  string,
+  { name: string; description: string; keywords: string[] }
+> = {
+  "smith-ai": {
+    name: "Smith.ai",
+    description:
+      "Human + AI virtual receptionists. Limited capacity, expensive ($300-$1,125/mo), no follow-up engine or revenue tracking.",
+    keywords: [
+      "Smith.ai alternative",
+      "AI receptionist",
+      "vs Smith.ai",
+      "cheaper than Smith.ai",
+    ],
+  },
+  ruby: {
+    name: "Ruby Receptionists",
+    description:
+      "Premium live virtual receptionist service. Pure human cost model, no AI automation, no follow-up or booking capabilities.",
+    keywords: [
+      "Ruby Receptionists alternative",
+      "virtual receptionist",
+      "vs Ruby",
+      "cheaper than Ruby",
+    ],
+  },
+  gohighlevel: {
+    name: "GoHighLevel",
+    description:
+      "All-in-one marketing platform. Voice AI is basic and an afterthought, not purpose-built for revenue execution.",
+    keywords: [
+      "GoHighLevel alternative",
+      "better than GoHighLevel",
+      "vs GoHighLevel",
+      "AI phone answering",
+    ],
+  },
+  "hiring-receptionist": {
+    name: "Hiring a Receptionist",
+    description:
+      "Traditional employment ($3,200-$4,500/mo salary + benefits). Single call capacity, sick days, turnover, no analytics.",
+    keywords: [
+      "virtual receptionist vs hiring",
+      "receptionist AI alternative",
+      "save on receptionist costs",
+      "AI phone system",
+    ],
+  },
 };
 
 export function generateStaticParams() {
@@ -30,18 +72,67 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ competitor: string }>;
-}) {
+}): Promise<Metadata> {
   const { competitor } = await params;
-  const name = SLUG_NAMES[competitor] ?? competitor;
+  const data = COMPETITOR_DATA[competitor];
+
+  if (!data) {
+    return {
+      title: "Comparison | Recall Touch",
+      description: "Compare Recall Touch with other solutions.",
+    };
+  }
+
+  const title = `Recall Touch vs ${data.name} | AI Revenue Execution`;
+  const description = `${data.description} See how Recall Touch compares: 10x better capacity, 60-80% cheaper, automated follow-ups, and revenue attribution built in.`;
+
   return {
-    title: `Recall Touch vs ${name} | AI Revenue Execution`,
-    description: `Compare Recall Touch with ${name}. AI that answers every call, executes follow-ups, and recovers revenue — built for service businesses.`,
+    title,
+    description,
+    keywords: data.keywords,
+    alternates: {
+      canonical: `${BASE}/compare/${competitor}`,
+    },
     openGraph: {
-      title: `Recall Touch vs ${name}`,
+      title,
+      description,
       url: `${BASE}/compare/${competitor}`,
+      siteName: "Recall Touch",
+      type: "website",
+      images: [
+        {
+          url: `${BASE}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `Recall Touch vs ${data.name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
     },
   };
 }
+
+const jsonLdSchema = (competitor: string) => {
+  const data = COMPETITOR_DATA[competitor];
+  if (!data) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ComparisonChart",
+    name: `Recall Touch vs ${data.name}`,
+    description: data.description,
+    url: `${BASE}/compare/${competitor}`,
+    creator: {
+      "@type": "Organization",
+      name: "Recall Touch",
+      url: `${BASE}`,
+    },
+  };
+};
 
 export default async function ComparePage({
   params,
@@ -49,40 +140,20 @@ export default async function ComparePage({
   params: Promise<{ competitor: string }>;
 }) {
   const { competitor } = await params;
-  const t = await getTranslations("compare");
-  const name = SLUG_NAMES[competitor] ?? competitor.replace(/-/g, " ");
-  const title = t("title", { name });
-  const subtitle = t("subtitle");
-  const cta = t("cta");
+  const schema = jsonLdSchema(competitor);
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      )}
       <Navbar />
       <main className="py-16 md:py-24">
         <Container>
-          <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">
-              {title}
-            </h1>
-            <p className="text-zinc-400 text-lg">
-              {subtitle}
-            </p>
-            <div className="pt-4">
-              <Link
-                href={ROUTES.START}
-                className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-black font-semibold hover:bg-zinc-100 transition-colors"
-              >
-                {cta}
-              </Link>
-            </div>
-            <p className="text-sm text-zinc-500 pt-8">
-              <Link href="/product" className="underline hover:text-zinc-400">Product</Link>
-              {" · "}
-              <Link href={ROUTES.PRICING} className="underline hover:text-zinc-400">Pricing</Link>
-              {" · "}
-              <Link href={ROUTES.CONTACT} className="underline hover:text-zinc-400">Contact</Link>
-            </p>
-          </div>
+          <ComparisonContent competitor={competitor} />
         </Container>
       </main>
       <Footer />

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
+import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
 import { ROUTES } from "@/lib/constants";
 
 export function Hero() {
@@ -51,7 +52,9 @@ export function Hero() {
 
           {/* Right: static conversation demo (no live voice / no mic widget) */}
           <div className="max-w-md lg:ml-auto">
-            <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl p-6 relative overflow-hidden">
+            <div className="space-y-4">
+              <HeroRevenueWidget />
+              <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl p-6 relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
               <div className="flex items-center gap-2 mb-1">
                 <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span></span>
@@ -70,6 +73,7 @@ export function Hero() {
                 <a href="/sign-in?create=1" className="px-5 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors">{tHero("simulator.cta")}</a>
                 <span className="text-xs text-white/35">{tHero("simulator.trialNote")}</span>
               </div>
+            </div>
             </div>
           </div>
         </div>

@@ -1,0 +1,78 @@
+# Fly.io deployment configuration for voice synthesis server
+# Deploys to GPU instances for TTS/STT performance
+
+app = "voice-synthesis-server"
+primary_region = "sjc"  # San Jose, closest to US West
+
+[build]
+dockerfile = "../Dockerfile"
+builder = "docker"
+
+[[services]]
+processes = ["app"]
+protocol = "tcp"
+internal_port = 8100
+concurrency = {
+  type = "connections",
+  hard_limit = 1000,
+  soft_limit = 800,
+}
+
+[services.ports]
+port = 8100
+handlers = ["http"]
+force_https = false
+
+[[services.tcp_checks]]
+interval = "10s"
+timeout = "5s"
+grace_period = "5s"
+
+[env]
+PORT = "8100"
+HOST = "0.0.0.0"
+LOG_LEVEL = "info"
+LLM_ENDPOINT = "https://YOUR_APP_NAME.fly.dev/api/agent/respond"
+
+# Create a Fly Postgres for session persistence (optional)
+# [services]
+# [[services.volumes]]
+# source = "voice_cache"
+# destination = "/app/.cache"
+# initial_size = 10
+
+[[mounts]]
+source = "voice_cache"
+destination = "/app/.cache"
+
+[vm]
+# GPU instance - requires GPU support
+# For A100 GPU: machine = "gpu-a100-40gb"
+# For V100 GPU: machine = "gpu-v100"
+# For A10 GPU: machine = "gpu-a10-large"
+# For CPU-only: machine = "performance-4x"
+machine = "gpu-a10-large"
+memory_mb = 16384  # 16GB RAM recommended
+cpus = 4
+cpu_kind = "performance"
+gpus = 1
+
+[deploy]
+strategy = "rolling"
+max_unavailable = 0
+
+[[statics]]
+guest_path = "/app/voices"
+url_prefix = "/voices"
+
+# Health check configuration
+[checks]
+enable_http_checks = true
+
+[[checks.http]]
+grace_period = "30s"
+interval = "10s"
+method = "GET"
+path = "/health"
+protocol = "http"
+timeout = "5s"

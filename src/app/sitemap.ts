@@ -53,7 +53,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entries.push({ url: `${BASE}/industries/${slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 });
   }
   for (const slug of COMPARE_SLUGS) {
-    entries.push({ url: `${BASE}/compare/${slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 });
+    entries.push({ url: `${BASE}/compare/${slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 });
   }
   return entries;
 }
