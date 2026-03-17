@@ -1,4 +1,9 @@
 {
+  "compare": {
+    "title": "Recall Touch vs {name}",
+    "subtitle": "See how the AI Revenue Execution System compares.",
+    "cta": "Start free"
+  },
   "notFoundPage": {
     "title": "Page not found",
     "description": "This page doesn't exist.",

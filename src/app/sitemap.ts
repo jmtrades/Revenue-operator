@@ -3,6 +3,7 @@ import type { MetadataRoute } from "next";
 const BASE = "https://www.recall-touch.com";
 
 const INDUSTRY_SLUGS = ["plumbing-hvac", "dental", "legal", "real-estate", "healthcare"];
+const COMPARE_SLUGS = ["smith-ai", "ruby", "gohighlevel", "hiring-receptionist"];
 
 const BLOG_SLUGS = [
   "how-ai-phone-agents-work",
@@ -50,6 +51,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
   for (const slug of INDUSTRY_SLUGS) {
     entries.push({ url: `${BASE}/industries/${slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 });
+  }
+  for (const slug of COMPARE_SLUGS) {
+    entries.push({ url: `${BASE}/compare/${slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 });
   }
   return entries;
 }
