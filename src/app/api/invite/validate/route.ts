@@ -19,10 +19,10 @@ export async function GET(req: NextRequest) {
     .eq("invite_token", token)
     .maybeSingle();
 
-  if (!invite) return NextResponse.json({ error: "invalid" }, { status: 404 });
+  if (!invite) return NextResponse.json({ error: "invalid" }, { status: 200 });
   const inv = invite as { id: string; workspace_id: string; email: string | null; status: string | null; expires_at: string | null; invited_by: string | null };
-  if (inv.status !== "pending") return NextResponse.json({ error: "invalid" }, { status: 410 });
-  if (inv.expires_at && new Date(inv.expires_at) <= new Date()) return NextResponse.json({ error: "expired" }, { status: 410 });
+  if (inv.status !== "pending") return NextResponse.json({ error: "invalid" }, { status: 200 });
+  if (inv.expires_at && new Date(inv.expires_at) <= new Date()) return NextResponse.json({ error: "expired" }, { status: 200 });
 
   const [{ data: ws }, { data: inviter }] = await Promise.all([
     db.from("workspaces").select("name").eq("id", inv.workspace_id).maybeSingle(),

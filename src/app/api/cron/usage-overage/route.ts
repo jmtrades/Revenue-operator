@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { reportUsageOverage } from "@/lib/billing/overage";
+import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 
@@ -50,16 +51,14 @@ export async function GET(request: NextRequest) {
         ) / 60
       );
 
-      const PLAN_MINUTES: Record<string, number> = {
-        solo: 400,
-        growth: 1500,
-        team: 5000,
-        enterprise: 50000,
-      };
-      const included = PLAN_MINUTES[w.billing_tier] || 400;
+      const rawTier = (w.billing_tier ?? "solo").toLowerCase();
+      const tier: PlanSlug = (["solo", "business", "scale", "enterprise"] as const).includes(rawTier as PlanSlug)
+        ? (rawTier as PlanSlug)
+        : "solo";
+      const included = BILLING_PLANS[tier].includedMinutes;
 
       if (totalMinutes > included) {
-        await reportUsageOverage(w.id, w.stripe_subscription_id, w.billing_tier, totalMinutes, included);
+        await reportUsageOverage(w.id, w.stripe_subscription_id, tier, totalMinutes, included);
         billed++;
       }
     } catch (err) {

@@ -2927,6 +2927,82 @@
       "body": "Utilisez les campagnes pour relancer les appels manqués, réactiver les anciens leads et remplir votre calendrier.",
       "description": "Créez votre première campagne pour relancer les leads, envoyer des rappels de rendez-vous ou réactiver d'anciens contacts."
     },
+    "create": {
+      "back": "Back to campaigns",
+      "title": "Create campaign",
+      "subtitle": "Choose a type, audience, sequence, schedule, then launch.",
+      "steps": {
+        "type": "Type",
+        "audience": "Audience",
+        "sequence": "Sequence",
+        "schedule": "Schedule",
+        "review": "Review"
+      },
+      "type": {
+        "heading": "Campaign type",
+        "nameLabel": "Campaign name (optional)"
+      },
+      "audience": {
+        "heading": "Audience",
+        "subtext": "These filters are applied when the campaign is launched.",
+        "statusLabel": "Statuses",
+        "sourceLabel": "Source",
+        "sourceAny": "Any source",
+        "sourceInbound": "Inbound call",
+        "sourceOutbound": "Outbound",
+        "sourceWebsite": "Website",
+        "sourceReferral": "Referral",
+        "minScoreLabel": "Minimum score",
+        "minScorePlaceholder": "e.g. 70",
+        "notContactedLabel": "Not contacted in last (days)",
+        "notContactedPlaceholder": "e.g. 7",
+        "csvHint": "For cold outreach, import is handled in the audience step of the full campaign builder."
+      },
+      "sequence": {
+        "heading": "Sequence",
+        "subtext": "Edit steps and templates. Use merge fields where needed.",
+        "channel": "Channel",
+        "delayHours": "Delay (hours)",
+        "template": "Template",
+        "sms": "SMS",
+        "call": "Call",
+        "email": "Email",
+        "remove": "Remove step",
+        "addStep": "Add step"
+      },
+      "schedule": {
+        "heading": "Schedule",
+        "subtext": "Control when and how fast the campaign runs.",
+        "startAt": "Start date/time (optional)",
+        "dailyLimit": "Daily send limit",
+        "hourlyThrottle": "Contacts per hour",
+        "businessHours": "Business hours only",
+        "optOutConfirm": "I will include opt-out instructions in the first message for any SMS sequence."
+      },
+      "review": {
+        "heading": "Review & launch",
+        "name": "Name",
+        "type": "Type",
+        "steps": "Steps",
+        "schedule": "Hours",
+        "hoursOn": "Business-hours only",
+        "hoursOff": "Any time",
+        "note": "Drafts can be edited from the campaigns list.",
+        "saveDraft": "Save as draft",
+        "launch": "Launch campaign",
+        "saving": "Saving…",
+        "launching": "Launching…"
+      },
+      "errors": {
+        "noWorkspace": "Workspace not available.",
+        "createFailed": "Could not create campaign."
+      },
+      "toast": {
+        "saved": "Campaign saved as draft.",
+        "launched": "Campaign launched.",
+        "createdButLaunchFailed": "Campaign created, but launch failed."
+      }
+    },
     "heading": "Campagnes",
     "description": "Atteignez vos leads avec des appels et messages sortants automatisés.",
     "defaults": {
@@ -3387,6 +3463,7 @@
     "primaryCta": "Essai gratuit 14 jours →",
     "secondaryCta": "Voir comment ça marche",
     "trustLine": "Revenue Execution OS · Fonctionne avec votre numéro · Essai gratuit de 14 jours",
+    "exampleDashboardLabel": "Example dashboard",
     "checkmark": {
       "existingNumber": "Fonctionne avec votre numéro existant",
       "setup": "Configuration en 5 minutes",

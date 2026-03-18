@@ -581,7 +581,7 @@ export async function runDecisionJobWithEngines(
 
   const { data: plan } = await db.from("lead_plans").select("sequence_id").eq("workspace_id", workspaceId).eq("lead_id", leadId).eq("status", "active").maybeSingle();
   if (plan && (plan as { sequence_id?: string }).sequence_id) {
-    const { advanceSequence } = await import("@/lib/sequences/engine");
+    const { advanceSequence } = await import("@/lib/sequences/follow-up-engine");
     await advanceSequence(workspaceId, leadId, strategyState);
   } else {
     const { completeLeadPlan } = await import("@/lib/plans/lead-plan");

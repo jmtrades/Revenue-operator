@@ -4,11 +4,14 @@
  */
 
 export type CampaignType =
+  | "speed_to_lead"
   | "lead_followup"
   | "lead_qualification"
   | "appointment_reminder"
   | "appointment_setting"
+  | "no_show_recovery"
   | "reactivation"
+  | "quote_chase"
   | "cold_outreach"
   | "review_request"
   | "custom";
@@ -48,6 +51,7 @@ export function buildCampaignPrompt(
   const reactivationAction = options?.reactivationAction ?? "book a consultation";
 
   switch (campaignType) {
+    case "speed_to_lead":
     case "lead_qualification":
       return `
 CAMPAIGN GOAL: Qualify this lead.
@@ -59,6 +63,7 @@ ${notes ? `Notes: ${notes}` : ""}`;
 
     case "appointment_setting":
     case "appointment_reminder":
+    case "no_show_recovery":
       return `
 CAMPAIGN GOAL: Book or confirm an appointment.
 You are calling ${name} to schedule a ${appointmentType}.
@@ -68,6 +73,7 @@ If they decline: ask when would be better and note their preference.
 ${notes ? `Notes: ${notes}` : ""}`;
 
     case "lead_followup":
+    case "quote_chase":
       return `
 CAMPAIGN GOAL: Follow up with this contact.
 You are calling ${name} to follow up on ${followUpContext}.

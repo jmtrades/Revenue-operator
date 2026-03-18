@@ -3156,6 +3156,82 @@
       "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar.",
       "description": "Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts."
     },
+    "create": {
+      "back": "Back to campaigns",
+      "title": "Create campaign",
+      "subtitle": "Choose a type, audience, sequence, schedule, then launch.",
+      "steps": {
+        "type": "Type",
+        "audience": "Audience",
+        "sequence": "Sequence",
+        "schedule": "Schedule",
+        "review": "Review"
+      },
+      "type": {
+        "heading": "Campaign type",
+        "nameLabel": "Campaign name (optional)"
+      },
+      "audience": {
+        "heading": "Audience",
+        "subtext": "These filters are applied when the campaign is launched.",
+        "statusLabel": "Statuses",
+        "sourceLabel": "Source",
+        "sourceAny": "Any source",
+        "sourceInbound": "Inbound call",
+        "sourceOutbound": "Outbound",
+        "sourceWebsite": "Website",
+        "sourceReferral": "Referral",
+        "minScoreLabel": "Minimum score",
+        "minScorePlaceholder": "e.g. 70",
+        "notContactedLabel": "Not contacted in last (days)",
+        "notContactedPlaceholder": "e.g. 7",
+        "csvHint": "For cold outreach, import is handled in the audience step of the full campaign builder."
+      },
+      "sequence": {
+        "heading": "Sequence",
+        "subtext": "Edit steps and templates. Use merge fields where needed.",
+        "channel": "Channel",
+        "delayHours": "Delay (hours)",
+        "template": "Template",
+        "sms": "SMS",
+        "call": "Call",
+        "email": "Email",
+        "remove": "Remove step",
+        "addStep": "Add step"
+      },
+      "schedule": {
+        "heading": "Schedule",
+        "subtext": "Control when and how fast the campaign runs.",
+        "startAt": "Start date/time (optional)",
+        "dailyLimit": "Daily send limit",
+        "hourlyThrottle": "Contacts per hour",
+        "businessHours": "Business hours only",
+        "optOutConfirm": "I will include opt-out instructions in the first message for any SMS sequence."
+      },
+      "review": {
+        "heading": "Review & launch",
+        "name": "Name",
+        "type": "Type",
+        "steps": "Steps",
+        "schedule": "Hours",
+        "hoursOn": "Business-hours only",
+        "hoursOff": "Any time",
+        "note": "Drafts can be edited from the campaigns list.",
+        "saveDraft": "Save as draft",
+        "launch": "Launch campaign",
+        "saving": "Saving…",
+        "launching": "Launching…"
+      },
+      "errors": {
+        "noWorkspace": "Workspace not available.",
+        "createFailed": "Could not create campaign."
+      },
+      "toast": {
+        "saved": "Campaign saved as draft.",
+        "launched": "Campaign launched.",
+        "createdButLaunchFailed": "Campaign created, but launch failed."
+      }
+    },
     "heading": "Campaigns",
     "description": "Reach your leads with automated outbound calls and messages.",
     "defaults": {
@@ -3290,6 +3366,10 @@
         "label": "Call rules",
         "desc": "Hours, after-hours behavior, emergency, transfer logic"
       },
+      "outbound": {
+        "label": "Outbound settings",
+        "desc": "Calling hours, voicemail behavior, limits, suppression, DNC"
+      },
       "team": {
         "label": "Team & permissions",
         "desc": "Members, roles, escalation contacts, login access"
@@ -3381,6 +3461,50 @@
       "voiceLabel": "Voice",
       "voicePreviewText": "Hi, thanks for calling! How can I help you today?",
       "voiceSyncFailed": "Settings saved but voice sync failed. Please try again."
+    },
+    "outbound": {
+      "back": "Back to settings",
+      "title": "Outbound",
+      "subtitle": "Set limits, calling hours, and compliance controls for outbound outreach.",
+      "loading": "Loading settings…",
+      "save": "Save",
+      "saving": "Saving…",
+      "toast": { "saved": "Outbound settings saved." },
+      "callingHours": {
+        "heading": "Calling hours",
+        "start": "Start",
+        "end": "End",
+        "timezone": "Timezone",
+        "respectRecipientTimezone": "Respect recipient’s timezone"
+      },
+      "voicemail": {
+        "heading": "Voicemail behavior",
+        "scriptLabel": "Voicemail script",
+        "scriptHint": "Merge fields: {businessName}, {businessPhone}",
+        "option": {
+          "leave_message": { "label": "Leave a message", "desc": "Plays your script when voicemail is detected." },
+          "hang_up_silently": { "label": "Hang up silently", "desc": "No voicemail is left." },
+          "ai_generated": { "label": "AI-generated message", "desc": "Generates a short voicemail based on context." }
+        }
+      },
+      "limits": {
+        "heading": "Daily limits",
+        "dailyOutboundLimit": "Daily outbound limit",
+        "tierHint": "Limits are capped by your plan."
+      },
+      "suppression": {
+        "heading": "Suppression rules",
+        "maxCallsPerDay": "Max calls per contact per day",
+        "maxCallsPerWeek": "Max calls per contact per week",
+        "maxSmsPerDay": "Max SMS per contact per day",
+        "cooldownDecline": "Cooldown after decline (days)",
+        "cooldownConversion": "Cooldown after conversion (days)"
+      },
+      "dnc": {
+        "heading": "DNC compliance",
+        "toggleLabel": "Enable DNC checks",
+        "disclaimer": "You are responsible for TCPA compliance and honoring opt-outs."
+      }
     },
     "business": {
       "label": "Business",
@@ -3671,6 +3795,7 @@
     "primaryCta": "Try Free for 14 Days →",
     "secondaryCta": "See How It Works",
     "trustLine": "Revenue Execution OS · Works with your number · 14-day free trial",
+    "exampleDashboardLabel": "Example dashboard",
     "checkmark": {
       "existingNumber": "Works with your existing number",
       "setup": "5-minute setup",
@@ -5581,6 +5706,40 @@
       "deleteError": "Could not delete contact. Try again.",
       "updateError": "Could not update contact. Try again."
     },
+    "detail": {
+      "back": "Back to contacts",
+      "contact": "Contact",
+      "loading": "Loading contact…",
+      "loadFailed": "Could not load contact timeline.",
+      "empty": {
+        "title": "No history yet",
+        "description": "Once this contact has calls, messages, or bookings, they’ll appear here.",
+        "backToContacts": "Back to contacts"
+      },
+      "timeline": {
+        "heading": "Timeline",
+        "callTitle": "{direction, select, inbound {Inbound call} outbound {Outbound call} other {Call}}",
+        "messageTitle": "{channel} message",
+        "bookingTitle": "Booking",
+        "workflowTitle": "Workflow",
+        "campaignTitle": "Campaign",
+        "outcome": "Outcome: {outcome}",
+        "duration": "{duration}",
+        "scheduledFor": "Scheduled: {when}",
+        "estimatedValue": "Estimated: {value}",
+        "step": "Step {step}"
+      },
+      "sidebar": {
+        "heading": "Contact",
+        "noPhone": "No phone",
+        "noEmail": "No email",
+        "noRevenue": "No attributed revenue yet",
+        "noTags": "No tags",
+        "call": "Call",
+        "inbox": "Inbox",
+        "workspaceNote": "Actions apply to your current workspace."
+      }
+    },
     "lastContactUnknown": "Last contact: unknown",
     "lastContactToday": "Last contact: today",
     "lastContactYesterday": "Last contact: yesterday",
@@ -6498,6 +6657,62 @@
     "toast": {
       "connected": "Slack connected successfully.",
       "disconnected": "Slack disconnected."
+    }
+  },
+  "followUps": {
+    "title": "Follow-ups",
+    "create": "Create sequence",
+    "tabs": { "templates": "Templates", "active": "Active enrollments" },
+    "empty": {
+      "templatesTitle": "No follow-up templates yet",
+      "templatesBody": "Create a sequence to automate SMS, email, and call steps after missed calls or bookings.",
+      "activeTitle": "No active enrollments",
+      "activeBody": "When contacts enter a sequence, they appear here. Trigger from a call outcome or booking."
+    },
+    "createPage": {
+      "back": "Back to follow-ups",
+      "title": "Create follow-up sequence",
+      "subtitle": "Define a trigger and the steps that run until the revenue is recovered.",
+      "save": "Save",
+      "saving": "Saving…",
+      "basics": {
+        "heading": "Basics",
+        "name": "Name",
+        "namePlaceholder": "e.g. Missed call recovery",
+        "trigger": "Trigger",
+        "active": "Active"
+      },
+      "triggers": {
+        "leadCaptured": "When a call ends with outcome: lead captured",
+        "voicemailLeft": "When a call ends with outcome: voicemail left",
+        "noAnswer": "When a call ends with outcome: no answer",
+        "booked": "When a call ends with outcome: booked",
+        "bookingConfirmed": "When a booking is confirmed",
+        "bookingNoShow": "When a booking is a no-show",
+        "bookingCompleted": "When a booking is completed",
+        "manual": "Manual enrollment"
+      },
+      "steps": {
+        "heading": "Steps",
+        "add": "Add step",
+        "remove": "Remove",
+        "channel": "Channel",
+        "delay": "Delay from previous step",
+        "template": "Template",
+        "sms": "SMS",
+        "call": "Call",
+        "email": "Email",
+        "minutes": "Minutes",
+        "hours": "Hours",
+        "days": "Days",
+        "stopIfReply": "Stop if contact replies",
+        "stopIfBooked": "Stop if contact books"
+      },
+      "errors": {
+        "createFailed": "Could not create sequence.",
+        "stepFailed": "Could not add a step."
+      },
+      "toast": { "saved": "Sequence saved." }
     }
   },
   "api": {

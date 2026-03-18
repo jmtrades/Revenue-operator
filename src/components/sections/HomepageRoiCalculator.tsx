@@ -5,64 +5,30 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-type IndustryKey = "homeServices" | "health" | "legal" | "auto" | "other";
-
-const INDUSTRY_PRESETS: Record<
-  IndustryKey,
-  { label: string; missedPerWeek: number; avgJobValue: number }
-> = {
-  homeServices: { label: "Home services", missedPerWeek: 14, avgJobValue: 650 },
-  health: { label: "Health & wellness", missedPerWeek: 18, avgJobValue: 180 },
-  legal: { label: "Legal & professional", missedPerWeek: 10, avgJobValue: 1200 },
-  auto: { label: "Auto & repair", missedPerWeek: 16, avgJobValue: 450 },
-  other: { label: "Other / custom", missedPerWeek: 8, avgJobValue: 400 },
-};
-
 export function HomepageRoiCalculator() {
-  const [industry, setIndustry] = useState<IndustryKey>("homeServices");
-  const [missedPerWeek, setMissedPerWeek] = useState(
-    INDUSTRY_PRESETS.homeServices.missedPerWeek,
-  );
-  const [avgJobValue, setAvgJobValue] = useState(
-    INDUSTRY_PRESETS.homeServices.avgJobValue,
-  );
+  const [monthlyCalls, setMonthlyCalls] = useState(220);
+  const [avgJobValue, setAvgJobValue] = useState(650);
+  const [missedPct, setMissedPct] = useState(22);
 
-  const {
-    monthlyLost,
-    monthlyRecovered,
-    annualRecovered,
-    roiMultiple,
-  } = useMemo(() => {
-    const weekly = Math.max(0, Math.min(100, missedPerWeek));
+  const { monthlyLost, monthlyRecovered, annualRecovered, paysForItself } = useMemo(() => {
+    const calls = Math.max(0, Math.min(4000, monthlyCalls));
     const value = Math.max(50, Math.min(5000, avgJobValue));
+    const missed = Math.max(0, Math.min(80, missedPct)) / 100;
 
-    const monthlyLostRaw = weekly * 4 * value;
+    const monthlyLostRaw = calls * missed * value;
     const monthlyRecoveredRaw = monthlyLostRaw * 0.7;
     const annualRecoveredRaw = monthlyRecoveredRaw * 12;
 
-    const soloCost = 49;
-    const businessCost = 297;
-    const scaleCost = 997;
-
-    const bestCost =
-      monthlyRecoveredRaw <= 4000
-        ? soloCost
-        : monthlyRecoveredRaw <= 12000
-        ? businessCost
-        : scaleCost;
-
-    const roi =
-      bestCost > 0 && monthlyRecoveredRaw > 0
-        ? Number((monthlyRecoveredRaw / bestCost).toFixed(1))
-        : 0;
+    const businessPlan = 297;
+    const pays = businessPlan > 0 ? monthlyRecoveredRaw / businessPlan : 0;
 
     return {
       monthlyLost: monthlyLostRaw,
       monthlyRecovered: monthlyRecoveredRaw,
       annualRecovered: annualRecoveredRaw,
-      roiMultiple: roi,
+      paysForItself: pays,
     };
-  }, [avgJobValue, missedPerWeek]);
+  }, [avgJobValue, missedPct, monthlyCalls]);
 
   return (
     <section
@@ -79,7 +45,7 @@ export function HomepageRoiCalculator() {
               className="text-sm font-medium mb-2 tracking-wide uppercase"
               style={{ color: "var(--accent-primary)" }}
             >
-              Revenue math, not vibes
+              Revenue math
             </p>
             <h2
               className="font-semibold text-2xl md:text-3xl mb-4"
@@ -89,7 +55,7 @@ export function HomepageRoiCalculator() {
                 color: "var(--text-primary)",
               }}
             >
-              See how much missed-call revenue you can recover.
+              See how much revenue you can recover.
             </h2>
             <p
               className="text-sm md:text-base max-w-xl"
@@ -98,9 +64,7 @@ export function HomepageRoiCalculator() {
                 lineHeight: 1.7,
               }}
             >
-              Choose your industry and drag the sliders. We estimate how much revenue
-              is currently leaking from missed calls — and how much Recall Touch can
-              put back in your pipeline every month.
+              Drag the sliders. We estimate monthly revenue leak from missed calls — and what Recall Touch can recover with 24/7 answering and follow-up.
             </p>
             <ul className="mt-6 space-y-2 text-sm">
               <li
@@ -115,7 +79,7 @@ export function HomepageRoiCalculator() {
                   color: "var(--text-secondary)",
                 }}
               >
-                ✓ Shows estimated monthly recovery and ROI multiple on your plan.
+                ✓ Shows monthly recovery and whether Business pays for itself.
               </li>
             </ul>
           </div>
@@ -133,25 +97,23 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Industry
+                  Monthly calls
                 </span>
-                <select
-                  className="mt-2 w-full rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-2 text-sm focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 text-white"
-                  value={industry}
-                  onChange={(event) => {
-                    const key = event.target.value as IndustryKey;
-                    setIndustry(key);
-                    const preset = INDUSTRY_PRESETS[key];
-                    setMissedPerWeek(preset.missedPerWeek);
-                    setAvgJobValue(preset.avgJobValue);
-                  }}
-                >
-                  {Object.entries(INDUSTRY_PRESETS).map(([key, preset]) => (
-                    <option key={key} value={key}>
-                      {preset.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-3 mt-2">
+                  <input
+                    type="range"
+                    min={0}
+                    max={2000}
+                    step={10}
+                    value={monthlyCalls}
+                    onChange={(event) => setMonthlyCalls(Number(event.target.value))}
+                    className="flex-1 h-2 rounded-lg cursor-pointer"
+                    style={{ accentColor: "var(--accent-primary)" }}
+                  />
+                  <span className="text-sm font-medium w-16 text-right tabular-nums" style={{ color: "var(--text-primary)" }}>
+                    {monthlyCalls}
+                  </span>
+                </div>
               </label>
 
               <label className="block">
@@ -159,18 +121,16 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Missed or mishandled calls per week
+                  Missed calls (%)
                 </span>
                 <div className="flex items-center gap-3 mt-2">
                   <input
                     type="range"
                     min={0}
-                    max={80}
+                    max={60}
                     step={1}
-                    value={missedPerWeek}
-                    onChange={(event) =>
-                      setMissedPerWeek(Number(event.target.value))
-                    }
+                    value={missedPct}
+                    onChange={(event) => setMissedPct(Number(event.target.value))}
                     className="flex-1 h-2 rounded-lg cursor-pointer"
                     style={{ accentColor: "var(--accent-primary)" }}
                   />
@@ -178,7 +138,7 @@ export function HomepageRoiCalculator() {
                     className="text-sm font-medium w-12 text-right tabular-nums"
                     style={{ color: "var(--text-primary)" }}
                   >
-                    {missedPerWeek}
+                    {missedPct}%
                   </span>
                 </div>
               </label>
@@ -238,18 +198,13 @@ export function HomepageRoiCalculator() {
                 and ${annualRecovered.toLocaleString()}/year in additional booked
                 work.
               </p>
-              {roiMultiple > 0 && (
-                <p style={{ color: "var(--text-primary)" }}>
-                  That&apos;s roughly a{" "}
-                  <span
-                    className="font-semibold"
-                    style={{ color: "var(--accent-primary)" }}
-                  >
-                    {roiMultiple}x ROI
-                  </span>{" "}
-                  on a typical Recall Touch plan.
-                </p>
-              )}
+              <p style={{ color: "var(--text-primary)" }}>
+                Business plan pays for itself at{" "}
+                <span className="font-semibold" style={{ color: "var(--accent-primary)" }}>
+                  {paysForItself.toFixed(1)}x
+                </span>
+                .
+              </p>
             </div>
 
             <div className="mt-6 flex flex-col gap-3">

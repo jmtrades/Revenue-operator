@@ -6,11 +6,13 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Plus, Pause, Play } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type Sequence = { id: string; name: string; trigger_type?: string; is_active?: boolean };
 
 export default function AppFollowUpsPage() {
   const { workspaceId } = useWorkspace();
+  const t = useTranslations("followUps");
   const [tab, setTab] = useState<"templates" | "active">("templates");
   const [sequences, setSequences] = useState<Sequence[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,11 +45,11 @@ export default function AppFollowUpsPage() {
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-white">Follow-ups</h1>
-        <Link href="/app/campaigns">
+        <h1 className="text-xl font-semibold text-[var(--text-primary)]">{t("title")}</h1>
+        <Link href="/app/follow-ups/create">
           <Button variant="primary" size="sm" className="gap-1">
             <Plus className="w-4 h-4" />
-            New sequence
+            {t("create")}
           </Button>
         </Link>
       </div>
@@ -57,14 +59,14 @@ export default function AppFollowUpsPage() {
           onClick={() => setTab("templates")}
           className={`text-sm font-medium px-3 py-1.5 rounded-lg ${tab === "templates" ? "bg-white text-black" : "text-zinc-400 hover:text-white"}`}
         >
-          Templates
+          {t("tabs.templates")}
         </button>
         <button
           type="button"
           onClick={() => setTab("active")}
           className={`text-sm font-medium px-3 py-1.5 rounded-lg ${tab === "active" ? "bg-white text-black" : "text-zinc-400 hover:text-white"}`}
         >
-          Active enrollments
+          {t("tabs.active")}
         </button>
       </div>
       {loading ? (
@@ -72,8 +74,8 @@ export default function AppFollowUpsPage() {
       ) : tab === "templates" ? (
         sequences.length === 0 ? (
           <EmptyState
-            title="No follow-up templates yet"
-            description="Create a sequence to automate SMS, email, and call steps after missed calls or bookings."
+            title={t("empty.templatesTitle")}
+            description={t("empty.templatesBody")}
           />
         ) : (
           <ul className="space-y-3">
@@ -100,8 +102,8 @@ export default function AppFollowUpsPage() {
         )
       ) : (
         <EmptyState
-          title="No active enrollments"
-          description="When contacts enter a sequence, they appear here. Trigger from a call outcome or contact record."
+          title={t("empty.activeTitle")}
+          description={t("empty.activeBody")}
         />
       )}
     </div>

@@ -62,6 +62,7 @@ export async function POST(
     channel: "sms" | "email" | "call";
     delay_minutes?: number;
     template_content?: string;
+    conditions?: Record<string, unknown>;
   };
   try {
     body = await req.json();
@@ -69,7 +70,7 @@ export async function POST(
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { channel, delay_minutes = 0, template_content } = body;
+  const { channel, delay_minutes = 0, template_content, conditions } = body;
 
   if (!["sms", "email", "call"].includes(channel)) {
     return NextResponse.json(
@@ -93,7 +94,8 @@ export async function POST(
       nextStepOrder,
       channel,
       delay_minutes,
-      template_content
+      template_content,
+      conditions && typeof conditions === "object" ? conditions : {}
     );
 
     if (!step) {
