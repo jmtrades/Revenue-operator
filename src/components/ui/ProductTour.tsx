@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 type TourStep = {
@@ -30,11 +29,6 @@ export function ProductTour() {
         body: t("needsAttention.body"),
       },
       {
-        target: "sidebarNav",
-        title: t("sidebarNav.title"),
-        body: t("sidebarNav.body"),
-      },
-      {
         target: "sidebarCampaigns",
         title: t("campaigns.title"),
         body: t("campaigns.body"),
@@ -43,6 +37,11 @@ export function ProductTour() {
         target: "sidebarSettings",
         title: t("settings.title"),
         body: t("settings.body"),
+      },
+      {
+        target: "sidebarSettings",
+        title: t("sidebarNav.title"),
+        body: t("sidebarNav.body"),
       },
     ],
     [t],
@@ -58,7 +57,7 @@ export function ProductTour() {
 
     let completed = false;
     try {
-      completed = localStorage.getItem("rt_product_tour_completed") === "true";
+      completed = localStorage.getItem("rt_tour_completed") === "true";
     } catch {
       completed = false;
     }
@@ -113,7 +112,7 @@ export function ProductTour() {
   const close = () => {
     setOpen(false);
     try {
-      localStorage.setItem("rt_product_tour_completed", "true");
+      localStorage.setItem("rt_tour_completed", "true");
     } catch {
       // ignore
     }
@@ -172,18 +171,17 @@ export function ProductTour() {
               {step.body}
             </p>
           </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={close}
-            className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            aria-label={tCommon("common.close")}
+            className="text-xs font-semibold px-3 py-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           >
-            <X className="w-4 h-4" />
+            Skip
           </button>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+          <div className="text-xs text-[var(--text-tertiary)]">
             Step {stepIndex + 1} of {steps.length}
           </div>
           <Button
@@ -198,7 +196,7 @@ export function ProductTour() {
               setStepIndex((i) => Math.min(i + 1, steps.length - 1));
             }}
           >
-            {lastStep ? tCommon("common.close") : tCommon("common.next")}
+            {tCommon("common.next")}
           </Button>
         </div>
       </div>

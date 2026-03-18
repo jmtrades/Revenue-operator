@@ -6,7 +6,9 @@ import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
+import { TrialGraceEndedBanner } from "@/components/TrialGraceEndedBanner";
 import { AuthorityHeader } from "@/components/institutional";
+import { track } from "@/lib/analytics/posthog";
 
 const PURPOSE_VALUES = ["qualify", "confirm", "collect", "reactivate", "route", "recover"] as const;
 
@@ -97,6 +99,7 @@ export default function ImportPage() {
       }
     }
     setResult({ ingested, duplicates });
+    track("contact_imported", { count: ingested, source: "csv" });
     setImporting(false);
   };
 
@@ -112,6 +115,7 @@ export default function ImportPage() {
 
   return (
     <Shell>
+      <TrialGraceEndedBanner />
       <DashboardExecutionStateBanner />
       {!success ? (
         <div className="space-y-8">

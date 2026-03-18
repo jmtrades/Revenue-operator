@@ -6,6 +6,8 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { Phone, MessageSquare, Megaphone, LayoutList } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { track } from "@/lib/analytics/posthog";
+import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
 
 type Summary = {
   revenue_recovered_cents: number;
@@ -83,6 +85,57 @@ export function UnifiedDashboard() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (!workspaceId || !data) return;
+
+    const firstCallKey = `rt_first_call_received_${workspaceId}`;
+    if (data.calls_answered > 0 && !safeGetItem(firstCallKey)) {
+      track("first_call_received");
+      safeSetItem(firstCallKey, "1");
+    }
+
+    const firstApptKey = `rt_first_appointment_booked_${workspaceId}`;
+    if (data.appointments_booked > 0 && !safeGetItem(firstApptKey)) {
+      track("first_appointment_booked");
+      safeSetItem(firstApptKey, "1");
+    }
+
+    const firstRevenueKey = `rt_first_revenue_attributed_${workspaceId}`;
+    if (data.revenue_recovered_cents > 0 && !safeGetItem(firstRevenueKey)) {
+      track("first_revenue_attributed", { amount_cents: data.revenue_recovered_cents });
+      safeSetItem(firstRevenueKey, "1");
+    }
+  }, [data, workspaceId]);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+
+    const trialDay7Key = `rt_trial_day_7_active_${workspaceId}`;
+    if (safeGetItem(trialDay7Key)) return;
+
+    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((billing: { billing_status?: string; renewal_at?: string | null } | null) => {
+        const billingStatus = billing?.billing_status ?? null;
+        const renewalAt = billing?.renewal_at ?? null;
+        if (!billingStatus || !renewalAt) return;
+        if (billingStatus !== "trial") return;
+
+        const trialEndMs = new Date(renewalAt).getTime();
+        if (!Number.isFinite(trialEndMs) || Number.isNaN(trialEndMs)) return;
+
+        const day7StartMs = trialEndMs - 7 * 24 * 60 * 60 * 1000;
+        const day7EndMs = trialEndMs - 6 * 24 * 60 * 60 * 1000;
+        const nowMs = Date.now();
+
+        if (nowMs >= day7StartMs && nowMs < day7EndMs) {
+          track("trial_day_7_active");
+          safeSetItem(trialDay7Key, "1");
+        }
+      })
+      .catch(() => {});
+  }, [workspaceId]);
 
   const onCall = async (leadId: string) => {
     setCallingId(leadId);
@@ -189,7 +242,9 @@ export function UnifiedDashboard() {
         </div>
         <div className="mt-4 h-2 rounded-full bg-[var(--bg-hover)] overflow-hidden">
           <div
-            className={`h-full rounded-full ${pctMin >= 100 ? "bg-red-500" : pctMin >= 80 ? "bg-amber-500" : "bg-white"}`}
+            className={`h-full rounded-full ${
+              pctMin >= 100 ? "bg-red-500" : pctMin >= 80 ? "bg-amber-500" : "bg-[var(--accent-primary)]"
+            }`}
             style={{ width: `${pctMin}%` }}
           />
         </div>

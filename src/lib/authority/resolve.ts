@@ -40,7 +40,7 @@ export async function resolveAuthority(
   if (ws?.kill_switch === true) {
     return { level: 4, escalate: true, reason: "kill_switch" };
   }
-  if (ws?.status === "paused") {
+  if (ws?.status === "paused" || ws?.status === "expired") {
     return { level: 4, escalate: true, reason: "workspace_paused" };
   }
   if (lead?.opt_out === true) {

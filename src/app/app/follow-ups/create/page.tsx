@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { track } from "@/lib/analytics/posthog";
 
 type StepChannel = "sms" | "call" | "email";
 type Trigger =
@@ -93,6 +94,8 @@ export default function FollowUpCreatePage() {
         toast.error(created?.error ?? t("errors.createFailed"));
         return;
       }
+
+      track("sequence_created", { trigger });
 
       // 2) Add steps
       for (let i = 0; i < steps.length; i += 1) {

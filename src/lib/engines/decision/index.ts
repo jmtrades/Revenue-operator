@@ -145,7 +145,8 @@ export async function decideIntervention(
   const { data: wsRow } = await maybeSingleCompat(
     db.from("workspaces").select("status, created_at").eq("id", workspaceId),
   );
-  if ((wsRow as { status?: string })?.status === "paused") {
+  const wsStatus = (wsRow as { status?: string })?.status;
+  if (wsStatus === "paused" || wsStatus === "expired") {
     return {
       intervene: false,
       intervention_type: null,

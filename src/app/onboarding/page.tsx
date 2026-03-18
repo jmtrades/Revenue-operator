@@ -8,6 +8,7 @@ import {
   Wrench, Stethoscope, Scale, Sparkles, Droplets, Home, Building, GraduationCap, MoreHorizontal,
   ArrowRight, ArrowLeft, Check, Phone, User, Brain, Settings,
 } from "lucide-react";
+import { track } from "@/lib/analytics/posthog";
 
 const INDUSTRY_OPTIONS = [
   { id: "home_services", label: "HVAC & Mechanical", icon: Wrench, color: "bg-zinc-900" },
@@ -126,6 +127,7 @@ export default function OnboardingPage() {
       if (!res.ok) throw new Error(data.error || "Failed");
       setWorkspaceId(data.workspace_id);
       sessionStorage.setItem("onboarding_workspace_id", data.workspace_id);
+      track("onboarding_step_completed", { step: 2, name: "phone_number" });
       setStep(3);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("errorSomethingWentWrong"));
@@ -148,6 +150,7 @@ export default function OnboardingPage() {
         const data = await res.json();
         throw new Error(data.error || "Failed");
       }
+      track("onboarding_step_completed", { step: 3, name: "voice" });
       setStep(4);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("errorSomethingWentWrong"));
@@ -181,6 +184,8 @@ export default function OnboardingPage() {
         setPhoneNumber(numData.phone_number);
         sessionStorage.setItem("onboarding_phone_number", numData.phone_number);
       }
+      track("onboarding_step_completed", { step: 4, name: "hours" });
+      track("onboarding_step_completed", { step: 5, name: "test_call" });
       setStep(5);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("errorSomethingWentWrong"));
@@ -238,7 +243,11 @@ export default function OnboardingPage() {
             </div>
             <button
               type="button"
-              onClick={() => industry && setStep(2)}
+              onClick={() => {
+                if (!industry) return;
+                track("onboarding_step_completed", { step: 1, name: "industry" });
+                setStep(2);
+              }}
               disabled={!industry}
               className="mt-6 w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-40"
               style={{ background: "var(--accent-primary)", color: "#000" }}

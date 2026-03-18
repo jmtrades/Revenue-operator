@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   try {
     const { data: ws } = await db.from("workspaces").select("status, pause_reason").eq("id", workspaceId).maybeSingle();
     const row = ws as { status?: string; pause_reason?: string } | null;
-    if (row?.pause_reason || row?.status === "paused") call_handling = "Paused";
+    if (row?.pause_reason || row?.status === "paused" || row?.status === "expired") call_handling = "Paused";
     else if (row?.status === "under_review") call_handling = "Under review";
 
     const { count } = await db.from("leads").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);

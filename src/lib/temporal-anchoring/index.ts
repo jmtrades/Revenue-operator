@@ -173,7 +173,7 @@ export async function runMonthStartAnchor(): Promise<
 
       const { data: ws } = await db.from("workspaces").select("owner_id, status").eq("id", workspaceId).maybeSingle();
       const status = (ws as { status?: string } | null)?.status;
-      if (status === "paused") continue;
+      if (status === "paused" || status === "expired") continue;
 
       const loc = getWorkspaceLocal(tz);
       const monthKey = `${loc.year}-${String(loc.month).padStart(2, "0")}`;

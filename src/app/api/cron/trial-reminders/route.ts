@@ -46,6 +46,8 @@ export async function GET(req: NextRequest) {
 
   const db = getDb();
   const now = new Date();
+  const nowMs = now.getTime();
+  const GRACE_MS = 3 * 24 * 60 * 60 * 1000;
 
   // 2 days before renewal
   const twoDaysFromNow = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
@@ -158,10 +160,92 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // Trial grace period:
+  // - day14 (trial ends): set workspace.status = 'grace' and keep answering for 3 days
+  // - day17: set workspace.status = 'expired', set billing_status = 'trial_ended', and send reactivation email
+  // Notes:
+  // - Never override paused workspaces (pause_reason present or status === 'paused')
+  // - Never expire if the workspace has become active (upgraded during grace)
+  const { data: trialStateCandidates } = await db
+    .from("workspaces")
+    .select("id, owner_id, trial_end_at, protection_renewal_at, created_at, status, pause_reason, billing_status")
+    .limit(500);
+
+  let graceStarted = 0;
+  let expiredSet = 0;
+
+  for (const row of trialStateCandidates ?? []) {
+    const ws = row as {
+      id: string;
+      owner_id: string;
+      trial_end_at?: string | null;
+      protection_renewal_at?: string | null;
+      created_at?: string;
+      status?: string | null;
+      pause_reason?: string | null;
+      billing_status?: string | null;
+    };
+
+    if (!ws.owner_id) continue;
+    if (ws.pause_reason) continue;
+    if (ws.status === "paused") continue;
+
+    const trialEndMs = ws.trial_end_at
+      ? new Date(ws.trial_end_at).getTime()
+      : ws.protection_renewal_at
+        ? new Date(ws.protection_renewal_at).getTime()
+        : ws.created_at
+          ? new Date(new Date(ws.created_at).getTime() + 14 * 24 * 60 * 60 * 1000).getTime()
+          : null;
+    if (!trialEndMs || Number.isNaN(trialEndMs)) continue;
+
+    const inGraceWindow = nowMs >= trialEndMs && nowMs < trialEndMs + GRACE_MS;
+    const pastGraceWindow = nowMs >= trialEndMs + GRACE_MS;
+
+    const isActiveBilling = ws.billing_status === "active";
+
+    if (ws.status === "grace") {
+      if (pastGraceWindow && !isActiveBilling) {
+        const ownerId = ws.owner_id;
+        const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
+        const email = (user as { email?: string } | null)?.email;
+
+        await db
+          .from("workspaces")
+          .update({ status: "expired", billing_status: "trial_ended", updated_at: now.toISOString() })
+          .eq("id", ws.id);
+
+        // Reactivation email (non-blocking; try/catch)
+        if (email) {
+          void sendEmail(
+            email,
+            "Reactivate your Recall Touch trial",
+            `<p>Your Recall Touch trial has ended.</p>
+             <p>You can restore service by upgrading your billing.</p>
+             <p><a href="${APP_URL}/app/settings/billing">Upgrade to continue →</a></p>`,
+          ).catch(() => {});
+        }
+
+        expiredSet++;
+      }
+      continue;
+    }
+
+    if (ws.status !== "grace" && ws.status !== "expired") {
+      // Start grace on day14 when still not upgraded.
+      if (inGraceWindow && !isActiveBilling) {
+        await db.from("workspaces").update({ status: "grace", updated_at: now.toISOString() }).eq("id", ws.id);
+        graceStarted++;
+      }
+    }
+  }
+
   return NextResponse.json({
     sent_2d: sent2d,
     sent_3d: sent2d,
     sent_24h: sent24h,
+    grace_started: graceStarted,
+    expired_set: expiredSet,
     checked_at: now.toISOString(),
   });
 }

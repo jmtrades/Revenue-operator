@@ -19,6 +19,7 @@ import { activateSettlementFromStripe } from "@/lib/settlement";
 import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
 import Stripe from "stripe";
+import { sendEmail } from "@/lib/integrations/email";
 
 // Structured logging for webhook events (errors only in production)
 function logWebhookEvent(type: string, workspaceId: string | null, status: "success" | "error", details?: unknown) {
@@ -229,6 +230,13 @@ async function handleStripeWebhookEvent(
           updatePayload.billing_interval = tierInterval.interval;
         }
         await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        // If billing returns to active, resume call handling (undo grace/expired).
+        if (sub.status === "active") {
+          await db
+            .from("workspaces")
+            .update({ status: "active", paused_at: null, pause_reason: null, updated_at: new Date().toISOString() })
+            .eq("id", workspaceId);
+        }
         if (sub.cancel_at_period_end) {
           await db
             .from("workspaces")
@@ -451,13 +459,49 @@ async function handleStripeWebhookEvent(
         await appendSettlementWebhookEvent(settlementWid, "settlement_export_failed", { reason: "invoice_payment_failed" });
       }
       if (workspaceId) {
+        const { count: prevFailureCount } = await db
+          .from("webhook_events")
+          .select("id", { count: "exact", head: true })
+          .eq("workspace_id", workspaceId)
+          .eq("event_type", "invoice.payment_failed")
+          .eq("processed", true);
+
+        const failureNumber = (prevFailureCount ?? 0) + 1;
+        const customerEmail =
+          typeof (invoice as Stripe.Invoice).customer_email === "string"
+            ? (invoice as Stripe.Invoice).customer_email
+            : null;
+
+        const paymentFailedText = "Your payment failed. Please update your payment method to continue service.";
+        const impendingPauseText = "Your account will be paused in 48 hours unless payment is updated.";
+
+        if (customerEmail) {
+          // Non-blocking: email delivery happens via the send queue.
+          void sendEmail(workspaceId, customerEmail.trim().toLowerCase(), "Payment failed", `<p>${paymentFailedText}</p>`).catch(
+            () => {}
+          );
+          if (failureNumber === 3) {
+            void sendEmail(
+              workspaceId,
+              customerEmail.trim().toLowerCase(),
+              "Action required: payment update",
+              `<p>${impendingPauseText}</p>`
+            ).catch(() => {});
+          }
+        }
+
+        const pauseNow = failureNumber >= 4;
         await db
           .from("workspaces")
           .update({
-            billing_status: "payment_failed",
+            status: pauseNow ? "paused" : undefined,
+            billing_status: pauseNow ? "paused" : "payment_failed",
+            paused_at: pauseNow ? new Date().toISOString() : undefined,
+            pause_reason: pauseNow ? "Billing dunning: repeated payment failures" : undefined,
             updated_at: new Date().toISOString(),
           })
           .eq("id", workspaceId);
+
         const dueAt = invoice.due_date
           ? new Date(invoice.due_date * 1000)
           : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -471,10 +515,6 @@ async function handleStripeWebhookEvent(
         }).catch((err) => {
           console.error("Billing webhook background task failed:", err);
         });
-        const customerEmail =
-          typeof (invoice as Stripe.Invoice).customer_email === "string"
-            ? (invoice as Stripe.Invoice).customer_email
-            : null;
         if (customerEmail) {
           ensureSharedTransactionForSubject({
             workspaceId,

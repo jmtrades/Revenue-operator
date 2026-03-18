@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
+import { track } from "@/lib/analytics/posthog";
 
 const ACTIVATE_STORAGE_KEY = "recall_touch_activate";
 const RT_SIGNUP_KEY = "rt_signup";
@@ -90,6 +91,8 @@ export function ActivateForm() {
     setError(null);
     setSubmitMessage(t("creatingAccount"));
 
+    track("signup_started");
+
     const loadingTimer = setTimeout(() => setSubmitMessage(t("almostThere")), 1500);
 
     fetch("/api/signup", {
@@ -123,6 +126,7 @@ export function ActivateForm() {
       const trialData = await trialRes.json().catch(() => ({ ok: false }));
 
       if (trialData.ok && trialData.reason === "already_active" && trialData.workspace_id) {
+        track("signup_completed", { plan: "business" });
         clearTimeout(loadingTimer);
         setSubmitMessage(null);
         router.push(`/connect?workspace_id=${encodeURIComponent(trialData.workspace_id)}`);
@@ -130,6 +134,7 @@ export function ActivateForm() {
       }
 
       if (trialData.ok && (trialData.checkout_url ?? trialData.url)) {
+        track("signup_completed", { plan: "business" });
         clearTimeout(loadingTimer);
         setSubmitMessage(null);
         window.location.href = trialData.checkout_url ?? trialData.url;

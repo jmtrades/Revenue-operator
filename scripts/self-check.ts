@@ -25,6 +25,23 @@ async function fetchJson(url: string, init?: RequestInit) {
     },
   });
 
+  const setCookies: string[] = (() => {
+    const h = res.headers as unknown as {
+      getSetCookie?: () => string[];
+      get?: (name: string) => string | null;
+    };
+    if (typeof h.getSetCookie === "function") {
+      try {
+        const cookies = h.getSetCookie();
+        if (Array.isArray(cookies)) return cookies;
+      } catch {
+        // ignore
+      }
+    }
+    const single = typeof h.get === "function" ? h.get("set-cookie") : null;
+    return single ? [single] : [];
+  })();
+
   const parsed = await readJsonOnce(res);
   const raw = "raw" in parsed && typeof parsed.raw === "string" ? parsed.raw : "";
   const json = "json" in parsed ? (parsed as { json: unknown }).json : null;
@@ -39,7 +56,7 @@ async function fetchJson(url: string, init?: RequestInit) {
     throw err;
   }
 
-  return { res, json, raw };
+  return { res, json, raw, setCookies };
 }
 
 /** Read body once; does not throw on non-2xx. Use for endpoints that may return 400/404/500. */
@@ -53,6 +70,16 @@ async function fetchReadOnce(url: string, init?: RequestInit) {
   const raw = "raw" in parsed && typeof parsed.raw === "string" ? parsed.raw : "";
   const json = "json" in parsed ? (parsed as { json: unknown }).json : null;
   return { res, json, raw };
+}
+
+function buildCookieHeaderFromSetCookies(
+  setCookies: string[] | null | undefined
+): string | undefined {
+  if (!setCookies || setCookies.length === 0) return undefined;
+  const parts = setCookies
+    .map((sc) => sc.split(";")[0]?.trim())
+    .filter((p): p is string => Boolean(p));
+  return parts.length ? parts.join("; ") : undefined;
 }
 
 async function main() {
@@ -94,12 +121,14 @@ async function main() {
   // 1) Trial start: must return deterministic JSON (always 200, body has ok/reason/checkout_url)
   const trialUrl = `${base}/api/trial/start`;
   let trialJson: unknown;
+  let cookieHeader: string | undefined;
   try {
     const out = await fetchJson(trialUrl, {
       method: "POST",
       body: JSON.stringify({ email: `self-check-${Date.now()}@example.com` }),
     });
     trialJson = out.json;
+    cookieHeader = buildCookieHeaderFromSetCookies(out.setCookies);
   } catch (e) {
     const err = e as Error & { status?: number };
     if (err.status === 405) {
@@ -161,6 +190,7 @@ async function main() {
   const { res: threadRes, json: threadJson } = await fetchReadOnce(`${base}/api/onboard/create-thread`, {
     method: "POST",
     body: JSON.stringify({ workspace_id: threadWorkspaceId }),
+    headers: cookieHeader ? { cookie: cookieHeader } : undefined,
   });
   if (threadRes.status !== 200 && threadRes.status !== 400 && threadRes.status !== 500) {
     fail(`onboard/create-thread: unexpected status ${threadRes.status}`);
@@ -176,9 +206,16 @@ async function main() {
 
   // 6) Public work API: must return neutral response (no internal IDs)
   const extRef = (threadData.external_ref ?? "unknown-ref").replace(/[^a-zA-Z0-9_-]/g, "");
-  const { res: publicRes } = await fetchReadOnce(`${base}/api/public/work/${extRef || "x"}`, { method: "GET" });
+  console.log("[self-check] debug extRef:", extRef);
+  const { res: publicRes, raw: publicRaw } = await fetchReadOnce(
+    `${base}/api/public/work/${extRef || "x"}`,
+    { method: "GET" }
+  );
   if (publicRes.status !== 200 && publicRes.status !== 404 && publicRes.status !== 400) {
-    fail(`api/public/work: expected 200/404/400, got ${publicRes.status}`);
+    const snippet = typeof publicRaw === "string" ? publicRaw.slice(0, 600) : "";
+    fail(
+      `api/public/work: expected 200/404/400, got ${publicRes.status}. Body: ${snippet}`
+    );
   }
   console.log("[self-check] 6. Public work GET: ok");
 

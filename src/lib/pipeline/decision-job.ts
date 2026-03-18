@@ -392,7 +392,7 @@ export async function runDecisionJob(
 
   const { data: wsRow } = await db.from("workspaces").select("created_at, status").eq("id", workspaceId).maybeSingle();
   const ws = wsRow as { created_at?: string; status?: string } | undefined;
-  if (ws?.status === "paused") {
+  if (ws?.status === "paused" || ws?.status === "expired") {
     await logRestraint(workspaceId, leadId, "workspace_paused");
     await recordInaction(leadId, workspaceId, "workspace_paused");
     return;

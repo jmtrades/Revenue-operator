@@ -10,6 +10,7 @@ Phase 2 keeps Deepgram + Claude as providers while replacing Vapi with Pipecat.
 """
 
 import os
+import asyncio
 import json
 import time
 import hmac
@@ -33,12 +34,14 @@ from pipecat.services.llm_service import FunctionCallParams
 from pipecat.runner.utils import parse_telephony_websocket
 from pipecat.serializers.twilio import TwilioFrameSerializer
 from pipecat.services.anthropic import AnthropicLLMService
-from pipecat.services.deepgram import DeepgramTTSService
 from pipecat.services.deepgram.stt import DeepgramSTTService
+from pipecat.services.kokoro.tts import KokoroTTSService
 from pipecat.transports.websocket.fastapi import (
     FastAPIWebsocketParams,
     FastAPIWebsocketTransport,
 )
+from llm.confidence_router import ConfidenceRouter
+from llm.llama_service import create_llama_llm_service
 
 
 app = FastAPI(title="Recall Touch — Pipecat Voice Orchestration", version="phase2")
@@ -82,6 +85,42 @@ async def ws_conversation(websocket: WebSocket):
     tts = None
     tool_calls: List[Dict[str, Any]] = []
 
+    async def post_voice_event(event_name: str, payload: Dict[str, Any]) -> None:
+        """
+        Best-effort voice event persistence.
+
+        We keep this non-blocking (called via asyncio.create_task where possible)
+        so the voice pipeline can still meet answer latency requirements.
+        """
+        app_base = os.getenv("NEXT_PUBLIC_APP_URL") or ""
+        if not app_base or not workspace_id or not call_id:
+            return
+
+        url = f"{app_base}/api/voice/events"
+        secret = os.getenv("VOICE_WEBHOOK_SECRET") or ""
+
+        body = {
+            "event": event_name,
+            "workspace_id": workspace_id,
+            "call_sid": call_id,
+            "voice_id": voice_id or "unknown",
+            "entity_type": "call",
+            "entity_id": call_id,
+            "payload": payload,
+        }
+
+        raw = json.dumps(body)
+        headers = {"Content-Type": "application/json"}
+        if secret:
+            sig = hmac.new(secret.encode("utf-8"), raw.encode("utf-8"), hashlib.sha256).hexdigest()
+            headers["x-voice-webhook-signature"] = sig
+
+        try:
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                await client.post(url, content=raw, headers=headers)
+        except Exception as e:
+            logger.debug(f"[pipecat] voice event post failed: {e}")
+
     if not stream_id:
         logger.warning("Missing Twilio stream_id; closing websocket.")
         await websocket.close()
@@ -92,6 +131,12 @@ async def ws_conversation(websocket: WebSocket):
         logger.warning("Missing Twilio call_id; closing websocket.")
         await websocket.close()
         return
+
+    # Best-effort: log that the call was answered to the contact timeline.
+    try:
+        asyncio.create_task(post_voice_event("answered", {"stream_id": stream_id}))
+    except Exception:
+        pass
 
     serializer = TwilioFrameSerializer(
         stream_sid=stream_id,
@@ -125,20 +170,41 @@ async def ws_conversation(websocket: WebSocket):
         ),
     )
 
-    # Aura voices use a Deepgram Aura model name; keep the default aura voice for now.
-    tts = DeepgramTTSService(
-        api_key=deepgram_api_key,
-        settings=DeepgramTTSService.Settings(
-            voice="aura-2-helena-en",
+    # Kokoro voices are local and lightweight; use the requested `voice_id` as a best-effort voice selector.
+    # Fallback keeps the pipeline functional when `voice_id` is missing.
+    tts = KokoroTTSService(
+        settings=KokoroTTSService.Settings(
+            voice=str(voice_id or "af_heart"),
         ),
     )
 
-    llm = AnthropicLLMService(
+    claude_llm = AnthropicLLMService(
         api_key=anthropic_api_key,
         model="claude-haiku-4-5-20251001",
         # Keep deterministic behavior for business phone conversations.
         settings=AnthropicLLMService.Settings(temperature=0.35),
     )
+
+    # Priority 17: Llama 3.3 8B (local via OpenAI-compatible endpoint)
+    # Route 90% to Llama and 10% to Claude baseline, with threshold hook
+    # prepared in `ConfidenceRouter`.
+    router = ConfidenceRouter()
+    llama_confidence = router.estimate_llama_confidence()
+
+    llama_llm = None
+    try:
+        llama_llm = create_llama_llm_service(temperature=0.35)
+    except Exception as e:
+        # Best-effort: if the local Llama endpoint isn't configured yet,
+        # keep the pipeline functional via Claude.
+        logger.warning(f"[pipecat] Llama unavailable, falling back to Claude: {e}")
+
+    use_claude = llama_llm is None or router.should_use_claude(
+        routing_key=str(call_id or ""),
+        llama_confidence=llama_confidence,
+    )
+
+    llm = claude_llm if use_claude else llama_llm
 
     # The Next.js side passes `system_prompt` via TwiML <Parameter>.
     system_prompt = custom_params.get("system_prompt")
@@ -171,6 +237,23 @@ async def ws_conversation(websocket: WebSocket):
                 "result": "success",
             }
         )
+
+        try:
+            asyncio.create_task(
+                post_voice_event(
+                    "intent_detected",
+                    {
+                        "intent": "capture_lead",
+                        "name": name,
+                        "phone": phone,
+                        "email": email,
+                        "company": company,
+                    },
+                )
+            )
+        except Exception:
+            pass
+
         await params.result_callback({"ok": True})
 
     async def book_appointment_handler(params: FunctionCallParams):
@@ -187,6 +270,23 @@ async def ws_conversation(websocket: WebSocket):
                 "result": "success",
             }
         )
+
+        try:
+            asyncio.create_task(
+                post_voice_event(
+                    "booking_made",
+                    {
+                        "intent": "book_appointment",
+                        "date": date,
+                        "time": time_str,
+                        "service": service,
+                        "notes": notes,
+                    },
+                )
+            )
+        except Exception:
+            pass
+
         await params.result_callback({"ok": True})
 
     capture_lead_schema = FunctionSchema(

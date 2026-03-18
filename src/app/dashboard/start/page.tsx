@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
+import { TrialGraceEndedBanner } from "@/components/TrialGraceEndedBanner";
 import { ExecutionContinuityLine } from "@/components/ExecutionContinuityLine";
 import { OperatorStartCard } from "@/components/OperatorStartCard";
 import { FirstWinBanner } from "@/components/FirstWinBanner";
@@ -170,6 +171,7 @@ export default function DashboardStartPage() {
         message={ts("firstWinMessage")}
         onDone={handleFirstWinDone}
       />
+      <TrialGraceEndedBanner />
       {hasNoSource ? (
         <section className="mb-4 border-b pb-2" style={{ borderColor: "var(--border)" }}>
           <p className="text-xs font-medium uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>

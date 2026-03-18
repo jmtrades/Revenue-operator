@@ -64,6 +64,62 @@ When someone is ready to buy or book, they're comparing options. The first busin
 
 Recall Touch closes that gap. When a new lead comes in — from your website, a form, or a missed call — the system can call or text them back in under a minute. It gathers key details, books an appointment, or qualifies the lead so your team knows exactly who to follow up with. You get speed without dropping everything. The 60-second rule isn't a nice-to-have; it's a direct driver of revenue. With the right system, it's also achievable.`,
   },
+  "after-hours-lead-capture": {
+    title: "After-hours lead capture: stop losing calls after 5 PM",
+    date: "April 2026",
+    body: `After-hours calls are still revenue. The only difference is your team isn't available to answer them.
+
+Most businesses lose leads after hours in three common ways. Calls go to voicemail and callers never get a clear next step. Or the team checks messages the next morning, by which point the lead has already picked a competitor. Or nobody follows up with the details that matter: the caller's name, the purpose of the call, and the best time to reach them.
+
+An AI phone agent fixes this by turning every after-hours attempt into a structured outcome. It answers the call, asks the minimum questions needed to qualify the lead, captures the phone number and intent, and then triggers the next step: a callback, an SMS follow-up, or an appointment booking. Your business stays responsive even when your hours say otherwise.
+
+Recall Touch makes after-hours lead capture consistent. You control the script, the hours, and the booking rules. The agent handles the execution, so missed revenue becomes booked revenue.`,
+  },
+  "voicemail-to-appointment": {
+    title: "Turn voicemail into appointments (without hiring)",
+    date: "April 2026",
+    body: `Voicemail isn't a dead end. It's raw signal — and most teams waste it.
+
+When a caller leaves a message, the opportunity is already there: they raised their hand and asked for help. The problem is that the message usually arrives too late, and it often lacks the structured details your team needs to act quickly. Searching inboxes, summarizing what the caller said, and manually calling back is slow work.
+
+With Recall Touch, voicemail becomes an intake pipeline. The system transcribes the message, extracts intent, and asks follow-up questions only when necessary. Then it routes the caller toward the right outcome: callback scheduling, booking an appointment, or capturing the information needed to engage later. Instead of letting a voicemail disappear into a backlog, you turn it into a next action.
+
+The result is simple: fewer “we'll get back to you” promises and more booked times. You stop hiring for every new spike in call volume, while your appointment pipeline stays full.`,
+  },
+  "missed-call-metrics-revenue": {
+    title: "Missed call metrics that actually predict revenue",
+    date: "April 2026",
+    body: `Most teams measure vanity metrics. They report call volume, voicemail counts, or how many agents were online.
+
+Those numbers don't directly predict revenue. What does predict bookings is how quickly you respond and how consistently you move leads to the next step.
+
+Start with three measurements:
+
+1) Pickup rate (answer rate). It tells you how many opportunities you convert from “calling” into “talking.”
+2) Time-to-first-response. Speed-to-lead is real. If you wait hours, you lose the highest-intent callers first.
+3) Callback-to-booking conversion. Not every callback should become an appointment, but a high-quality follow-up flow will convert a measurable portion.
+
+Then connect those metrics to outcomes. If answer rate improves but booking conversion doesn't, your script and qualification rules need adjustment. If booking conversion improves but missed calls stay high, your hours and routing need expansion.
+
+Recall Touch gives you the dashboard signals to measure what matters, so you can fix the right bottleneck instead of guessing.`,
+  },
+  "follow-up-speed-automation": {
+    title: "Follow-up automation: how to book in minutes, not days",
+    date: "April 2026",
+    body: `Fast follow-up isn't about being “pushy.” It's about being the first business that actually moves.
+
+When someone reaches out, there is usually a window of intent. After that window closes, your lead doesn't disappear — but the likelihood of booking drops. Small businesses often lose this window because follow-up is manual, scattered across inboxes and message apps, and vulnerable to human scheduling.
+
+A follow-up system should do three things:
+
+First, immediately capture the details that a human needs to act (name, phone, intent, and the preferred time).
+Second, trigger a callback or SMS follow-up in minutes, not hours.
+Third, book when the lead is ready, and otherwise keep the conversation governed with a consistent next step.
+
+Recall Touch follows up with automation that stays tied to real call outcomes. You can configure the script, set the speed-to-lead behavior, and ensure that every follow-up results in a measurable next action — not an unanswered thread.
+
+When your follow-ups run on a schedule instead of a checklist, appointments stop being luck and become process.`,
+  },
 };
 
 export function generateStaticParams() {

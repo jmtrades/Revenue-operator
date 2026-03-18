@@ -9,6 +9,8 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
+import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
+import { purchaseTelnyxPhoneNumber } from "@/lib/telephony/telnyx/numbers";
 
 export const dynamic = "force-dynamic";
 
@@ -60,13 +62,28 @@ export async function POST(req: NextRequest) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin ?? "";
+  const telephonyProvider = getTelephonyProvider();
   const voiceWebhookUrl =
     process.env.VOICE_PROVIDER === "pipecat"
       ? `${baseUrl}/api/voice/connect`
       : `${baseUrl}/api/webhooks/twilio/voice`;
 
   let providerSid: string | null = null;
-  if (accountSid && authToken) {
+  if (telephonyProvider === "telnyx") {
+    const { providerSid: telnyxSid } = await purchaseTelnyxPhoneNumber({
+      phoneNumberE164: e164,
+      countryCode: country || "US",
+      phoneType: (number_type ?? "local") as "local" | "toll_free" | "mobile",
+    });
+
+    providerSid = telnyxSid;
+    if (!providerSid) {
+      return NextResponse.json(
+        { error: "Telnyx provisioning failed. Contact support or verify TELNYX_* env vars." },
+        { status: 502 }
+      );
+    }
+  } else if (accountSid && authToken) {
     try {
       const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
       const purchaseParams = new URLSearchParams({
@@ -141,7 +158,7 @@ export async function POST(req: NextRequest) {
       country_code: country || "US",
       number_type: number_type ?? "local",
       capabilities: { voice: true, sms: true, mms: false },
-      provider: "twilio",
+      provider: telephonyProvider,
       provider_sid: providerSid,
       status: "active",
       monthly_cost_cents: monthlyCost,
@@ -207,8 +224,8 @@ export async function POST(req: NextRequest) {
         workspace_id: session.workspaceId,
         mode: "direct",
         proxy_number: e164,
-        twilio_account_sid: accountSid ?? null,
-        twilio_phone_sid: providerSid,
+        twilio_account_sid: telephonyProvider === "twilio" ? accountSid ?? null : null,
+        twilio_phone_sid: telephonyProvider === "twilio" ? providerSid : null,
         status: "active",
         updated_at: new Date().toISOString(),
       },

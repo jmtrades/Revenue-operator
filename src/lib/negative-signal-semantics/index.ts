@@ -350,7 +350,7 @@ export async function runInterruptionSignal(): Promise<
   for (const ws of workspaces as { id: string; owner_id: string; status?: string }[]) {
     const workspaceId = ws.id;
     try {
-      const healthFailed = ws.status === "paused";
+      const healthFailed = ws.status === "paused" || ws.status === "expired";
       const queueStalled = stalledPayloadWorkspaceIds.has(workspaceId);
       if (!healthFailed && !queueStalled) continue;
 

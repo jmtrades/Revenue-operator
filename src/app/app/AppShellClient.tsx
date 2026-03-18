@@ -145,6 +145,30 @@ export default function AppShellClient({
     if (pathname === "/app/dashboard") track("dashboard_visited");
     if (pathname.startsWith("/app/analytics")) track("analytics_viewed");
     if (pathname.startsWith("/app/campaigns")) track("campaigns_viewed");
+
+    if (pathname.startsWith("/app/campaigns")) {
+      const firstUseKey = "rt_feature_first_use_campaigns";
+      if (!safeGetItem(firstUseKey)) {
+        track("feature_first_use", { feature: "campaigns" });
+        safeSetItem(firstUseKey, "1");
+      }
+    }
+
+    if (pathname.startsWith("/app/follow-ups")) {
+      const firstUseKey = "rt_feature_first_use_follow_ups";
+      if (!safeGetItem(firstUseKey)) {
+        track("feature_first_use", { feature: "follow_ups" });
+        safeSetItem(firstUseKey, "1");
+      }
+    }
+
+    if (pathname.startsWith("/app/analytics")) {
+      const firstUseKey = "rt_feature_first_use_analytics";
+      if (!safeGetItem(firstUseKey)) {
+        track("feature_first_use", { feature: "analytics" });
+        safeSetItem(firstUseKey, "1");
+      }
+    }
   }, [pathname]);
 
   useEffect(() => {
