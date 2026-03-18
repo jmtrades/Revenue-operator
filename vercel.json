@@ -1,5 +1,5 @@
 {
-  "buildCommand": "next build && node scripts/ensure-middleware-nft.mjs",
+  "buildCommand": "next build",
   "crons": [
     {
       "path": "/api/cron/core",

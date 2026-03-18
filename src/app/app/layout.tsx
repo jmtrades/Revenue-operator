@@ -176,6 +176,16 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Auth guard: redirect to sign-in if no session (replaces middleware.ts)
+  const cookieStore = await cookies();
+  const hasSession =
+    cookieStore.has("revenue_session") ||
+    cookieStore.getAll().some((c) => c.name.startsWith("sb-"));
+  if (!hasSession) {
+    const { redirect } = await import("next/navigation");
+    redirect("/sign-in");
+  }
+
   const t = await getTranslations("app");
   let initial = FALLBACK_SHELL;
   try {
