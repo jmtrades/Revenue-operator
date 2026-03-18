@@ -88,6 +88,8 @@
     "agents": "Agenten",
     "calls": "Anrufe",
     "leads": "Interessenten",
+    "contacts": "Kontakte",
+    "messages": "Nachrichten",
     "campaigns": "Kampagnen",
     "inbox": "Postfach",
     "analytics": "Analytik",
@@ -1462,6 +1464,29 @@
     "am": "AM",
     "pm": "PM",
     "description": "Sehen Sie, wie Gespräche zu Terminen und Umsatz werden.",
+    "tabs": { "overview": "Überblick", "inbound": "Eingehend", "outbound": "Ausgehend" },
+    "inboundTab": { "hint": "Eingehende Anrufe, Ergebnisse und Conversion im Zeitraum." },
+    "outboundTab": {
+      "hint": "SMS-Follow-ups und Kampagnen im Zeitraum.",
+      "smsSent": "Ausgehende SMS",
+      "replies": "Eingehende Antworten",
+      "activeCampaigns": "Aktive Kampagnen",
+      "totalDialed": "Kampagnen-Anrufe",
+      "connected": "Verbunden",
+      "apptsBooked": "Termine (Kampagnen)",
+      "campaignsHeading": "Kampagnen",
+      "campaignName": "Kampagne",
+      "status": "Status",
+      "smsVolume": "Ausgehende SMS pro Tag",
+      "empty": "Keine ausgehende Aktivität in diesem Zeitraum.",
+      "goCampaigns": "Kampagnen öffnen"
+    },
+    "outboundSnapshot": {
+      "title": "Ausgehend — Überblick",
+      "sms": "SMS gesendet",
+      "dials": "Anrufe",
+      "booked": "Termine"
+    },
     "ranges": {
       "today": "Heute",
       "sevenDay": "7D",
@@ -3363,11 +3388,11 @@
     }
   },
   "hero": {
-    "title": "KI, die das Telefon deines Unternehmens rund um die Uhr beantwortet",
-    "subtitle": "Verpasse nie wieder einen Anruf. Verliere nie wieder einen Lead. Recall Touch übernimmt jede Unterhaltung, bucht Termine und schützt deinen Umsatz, während du arbeitest.",
-    "primaryCta": "Kostenlose Testphase starten",
-    "secondaryCta": "Demo ansehen",
-    "trustLine": "Funktioniert mit deiner bestehenden Nummer · Keine Verträge · 14 Tage kostenlos testen",
+    "title": "Wir haben diese Woche 12.847 Anrufe beantwortet, die sonst auf der Mailbox gelandet wären.",
+    "subtitle": "Recall Touch geht ran, wenn du nicht kannst. Die KI beantwortet verpasste Anrufe, bucht Termine und schickt dir die Details per SMS — 24/7, für 297 $/Monat.",
+    "primaryCta": "14 Tage kostenlos testen →",
+    "secondaryCta": "So funktioniert es",
+    "trustLine": "Revenue Execution OS · Funktioniert mit deiner Nummer · 14 Tage kostenlos testen",
     "checkmark": {
       "existingNumber": "Funktioniert mit deiner bestehenden Nummer",
       "setup": "5-Minuten-Einrichtung",
@@ -3436,15 +3461,15 @@
       "script1Line0": "Guten Morgen, Maple Street Dental! Hier spricht Alex. Wie kann ich helfen?",
       "script1Line1": "Hallo, ich möchte eine Reinigung vereinbaren.",
       "script1Line2": "Sehr gern! Sind Sie bereits Patient bei uns?",
-      "script1Line3": "Ja, Sarah Chen.",
-      "script1Line4": "Willkommen zurück, Sarah! Bevorzugen Sie Vormittag oder Nachmittag?",
+      "script1Line3": "Ja, das ist Jane Smith.",
+      "script1Line4": "Willkommen zurück! Bevorzugen Sie Vormittag oder Nachmittag?",
       "script1Line5": "Vormittags wäre besser.",
       "script1Line6": "Ich habe Dienstag 9 Uhr oder Mittwoch 10:30 Uhr bei Dr. Martinez frei.",
       "script1Line7": "Dienstag um 9, bitte.",
       "script1Line8": "Gebucht! Dienstag 9 Uhr bei Dr. Martinez. Sie bekommen am Montag eine Erinnerung.",
       "script1Line9": "Danke!",
-      "script1Line10": "Bis Dienstag, Sarah! Einen schönen Tag noch.",
-      "script1Detail0": "Patient: Sarah Chen (bestehend)",
+      "script1Line10": "Bis Dienstag! Einen schönen Tag noch.",
+      "script1Detail0": "Patient: Jane Smith (bestehend)",
       "script1Detail1": "Leistung: Reinigung",
       "script1Detail2": "Arzt: Dr. Martinez",
       "script1Detail3": "Termin: Dienstag 9:00 Uhr",
@@ -3478,7 +3503,7 @@
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "DSGVO",
       "badgeEncryption": "256-Bit-Verschlüsselung",
-      "badgeUptime": "99,9 % Verfügbarkeit",
+      "badgeUptime": "",
       "ctaStartFree": "Kostenlos starten →",
       "optionalUpdates": "Optional: Produkt-Updates erhalten.",
       "notifyMe": "Benachrichtigen",
@@ -3845,28 +3870,28 @@
       "label": "Was Kunden sagen",
       "testimonials": {
         "amanda": {
-          "quote": "Wir haben drei Tools ersetzt – Anrufannahme, Text-Nachfassen, Termine – durch eine Plattform.",
-          "author": "Amanda K.",
+          "quote": "",
+          "author": "",
           "role": "Beratung"
         },
         "ryan": {
-          "quote": "Unser Vertrieb fasst 10x schneller nach. Die KI übernimmt den Erstkontakt und bucht qualifizierte Meetings.",
-          "author": "Ryan D.",
+          "quote": "",
+          "author": "",
           "role": "SaaS-Startup"
         },
         "mike": {
-          "quote": "Recall Touch hat sich in der ersten Woche amortisiert. Wir haben 14 Leads erfasst, die wir sonst verpasst hätten.",
-          "author": "Mike R.",
+          "quote": "",
+          "author": "",
           "role": "Klempnerei"
         },
         "sarah": {
-          "quote": "Unsere No-Show-Rate ist um 40 % gesunken, seit die KI Erinnerungen schickt.",
-          "author": "Dr. Sarah L.",
+          "quote": "",
+          "author": "",
           "role": "Zahnarztpraxis"
         },
         "james": {
-          "quote": "Ich war skeptisch, dass eine KI meine Anrufe annimmt. Nach einem Tag war ich überzeugt.",
-          "author": "James T.",
+          "quote": "",
+          "author": "",
           "role": "Dachdecker"
         }
       },
@@ -4183,7 +4208,7 @@
     "legalSecurity": "Rechtliches & Sicherheit",
     "privacyPolicy": "Datenschutz",
     "termsOfService": "Nutzungsbedingungen",
-    "securityBadges": "SOC 2 · DSGVO · 256-Bit-Verschlüsselung · 99,9 % Uptime",
+    "securityBadges": "SOC 2 in progress · 256-Bit-Verschlüsselung",
     "copyright": "© {year} Recall Touch. Alle Rechte vorbehalten.",
     "cta": {
       "bookDemo": "Demo buchen",
@@ -5056,7 +5081,7 @@
     "removeConfirm": "\"{contact} — {service}\" entfernen? Das kann nicht rückgängig gemacht werden.",
     "newAppointmentHeading": "Neuer Termin",
     "contactLabel": "Kontakt",
-    "contactPlaceholder": "Sarah Chen",
+    "contactPlaceholder": "Jane Smith",
     "phoneLabel": "Telefon",
     "phonePlaceholder": "+1 555 000 0000",
     "serviceLabel": "Service",

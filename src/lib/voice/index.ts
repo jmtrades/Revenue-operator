@@ -4,16 +4,17 @@ import { ElevenLabsConversationalProvider } from "./providers/elevenlabs-convers
 import { RecallVoiceProvider } from "./providers/recall-voice";
 
 export function getVoiceProvider(config?: VoiceProviderConfig): VoiceProvider {
-  const provider = (config?.provider ?? process.env.VOICE_PROVIDER ?? "elevenlabs") as VoiceProviderConfig["provider"];
+  const provider = (config?.provider ?? process.env.VOICE_PROVIDER ?? "recall") as VoiceProviderConfig["provider"];
   switch (provider) {
+    case "recall":
+      return new RecallVoiceProvider();
     case "elevenlabs":
       return new ElevenLabsConversationalProvider();
     case "vapi":
       return new VapiProvider();
-    case "recall":
-      return new RecallVoiceProvider();
     default:
-      return new ElevenLabsConversationalProvider();
+      // Default to self-hosted Recall voice server
+      return new RecallVoiceProvider();
   }
 }
 

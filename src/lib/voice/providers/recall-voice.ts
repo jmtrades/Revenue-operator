@@ -7,8 +7,6 @@ import type {
 } from "../types";
 import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
 
-const VOICE_SERVER_BASE = process.env.VOICE_SERVER_URL ?? "http://localhost:8100";
-
 function getVoiceServerUrl(): string {
   const url = process.env.VOICE_SERVER_URL;
   if (!url) {
@@ -132,20 +130,68 @@ export class RecallVoiceProvider implements VoiceProvider {
       throw new Error(`Assistant ${params.assistantId} not found`);
     }
 
-    // In production, this would integrate with Twilio to place the call
-    // For now, we return a mock call result
     const callId = `call_${Date.now()}_${crypto.randomUUID().slice(0, 9)}`;
 
-    console.log(
-      `Created outbound call ${callId} to ${params.phoneNumber} ` +
-      `with assistant ${params.assistantId}`
-    );
+    // Place outbound call via Twilio, streaming audio to our voice server
+    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+    const twilioAuth = process.env.TWILIO_AUTH_TOKEN;
+    const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
 
-    return {
-      callId,
-      status: "queued",
-      provider: "recall",
-    };
+    if (!twilioSid || !twilioAuth || !twilioPhone) {
+      console.warn("Twilio credentials not configured — outbound call queued but not placed");
+      return { callId, status: "queued", provider: "recall" };
+    }
+
+    const wsUrl = this.serverUrl.replace(/^https:/, "wss:").replace(/^http:/, "ws:");
+    const escXml = (s: string) =>
+      s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Connect>
+    <Stream url="${escXml(wsUrl)}/ws/conversation">
+      <Parameter name="assistant_id" value="${escXml(params.assistantId)}" />
+      <Parameter name="voice_id" value="${escXml(config.voice_id)}" />
+      <Parameter name="direction" value="outbound" />
+    </Stream>
+  </Connect>
+</Response>`;
+
+    try {
+      const authHeader = Buffer.from(`${twilioSid}:${twilioAuth}`).toString("base64");
+      const response = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Calls.json`,
+        {
+          method: "POST",
+          headers: {
+            "Authorization": `Basic ${authHeader}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            To: params.phoneNumber,
+            From: twilioPhone,
+            Twiml: twiml,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`Twilio API error: ${response.status} ${err}`);
+      }
+
+      const data = await response.json() as { sid: string };
+      console.log(`Outbound call placed: ${data.sid} → ${params.phoneNumber}`);
+
+      return {
+        callId: data.sid,
+        status: "queued",
+        provider: "recall",
+      };
+    } catch (error) {
+      console.error("Outbound call failed:", error);
+      return { callId, status: "failed", provider: "recall" };
+    }
   }
 
   async createInboundCall(twilioCallSid: string, assistantId: string): Promise<string> {

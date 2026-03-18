@@ -1,13 +1,31 @@
+# Recall Touch Voice Server v2.0
+
+# Core server
 fastapi==0.115.0
 uvicorn==0.30.0
 websockets==12.0
-numpy==1.26.4
-soundfile==0.12.1
-torch>=2.1.0
-torchaudio>=2.1.0
-transformers>=4.40.0
-fishspeech>=1.5.0
-faster-whisper==1.0.3
 pydantic>=2.0
 httpx>=0.27.0
 python-multipart>=0.0.6
+
+# Audio processing
+numpy==1.26.4
+soundfile==0.12.1
+
+# ML / TTS / STT
+torch>=2.1.0
+torchaudio>=2.1.0
+transformers>=4.40.0
+
+# Orpheus TTS (primary — best quality, emotion support)
+# SNAC codec for Orpheus token-to-audio conversion
+snac>=0.2.0
+
+# Fish Speech (multilingual fallback)
+fishspeech>=1.5.0
+
+# STT — Faster-Whisper (4x faster than OpenAI Whisper)
+faster-whisper==1.0.3
+
+# Optional: vLLM for maximum TTS throughput (16+ concurrent streams)
+# pip install vllm>=0.4.0

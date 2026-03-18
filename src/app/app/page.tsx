@@ -29,7 +29,7 @@ async function getUserId(): Promise<string | null> {
 export default async function AppRootPage() {
   const userId = await getUserId();
   if (!userId) {
-    redirect("/app/onboarding");
+    redirect("/activate");
   }
 
   const db = getDb();
@@ -45,5 +45,5 @@ export default async function AppRootPage() {
     (workspace as { onboarding_completed_at?: string | null } | null)?.onboarding_completed_at,
   );
 
-  redirect(onboarded ? "/app/activity" : "/app/onboarding");
+  redirect(onboarded ? "/app/dashboard" : "/activate");
 }

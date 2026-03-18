@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Link2, Brain, Sparkles } from "lucide-react";
+import { PhoneForwarded, Zap, MessageSquareText, Clock, CheckCircle2 } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
@@ -11,41 +11,63 @@ import { motion } from "framer-motion";
 function ConnectorLine() {
   return (
     <div className="hidden md:flex flex-shrink-0 w-6 md:w-10 items-center justify-center self-stretch">
-      <div className="w-full h-px md:h-px md:w-full" style={{ background: "var(--border-default)" }} />
+      <div className="w-full h-px md:h-px md:w-full bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
     </div>
   );
 }
 
 export function HowItWorks() {
-  const t = useTranslations("homepage.howItWorks");
+  const _t = useTranslations("homepage.howItWorks");
   const steps = useMemo(
     () => [
-      { num: 1, icon: Link2, title: t("steps.connect.title"), desc: t("steps.connect.desc") },
-      { num: 2, icon: Brain, title: t("steps.configure.title"), desc: t("steps.configure.desc") },
-      { num: 3, icon: Sparkles, title: t("steps.done.title"), desc: t("steps.done.desc") },
+      {
+        num: 1,
+        icon: PhoneForwarded,
+        title: "Forward Your Calls",
+        subtitle: "90 seconds",
+        desc: "Point your business line to Recall Touch. Keep your existing number. Takes 90 seconds — no new phone system, no IT needed.",
+      },
+      {
+        num: 2,
+        icon: Zap,
+        title: "AI Picks Up 24/7",
+        subtitle: "< 3 seconds",
+        desc: "Answers in under 3 seconds. Asks about their need. Books your appointments. Learns your FAQs. Recovers no-shows. Sends follow-ups.",
+      },
+      {
+        num: 3,
+        icon: MessageSquareText,
+        title: "You Get Notified",
+        subtitle: "Instant",
+        desc: "Text or email notification with caller details, appointment booked, or follow-up action ready. You stay in control — always.",
+      },
     ],
-    [t]
+    []
   );
 
   return (
-    <section id="how-it-works" className="marketing-section" style={{ background: "var(--bg-surface)" }}>
+    <section id="how-it-works" className="marketing-section py-20 md:py-28" style={{ background: "var(--bg-surface)" }}>
       <Container>
         <AnimateOnScroll className="text-center mb-16 md:mb-20">
-          <SectionLabel>{t("label")}</SectionLabel>
+          <SectionLabel>How it works</SectionLabel>
           <h2
-            className="font-semibold max-w-2xl mx-auto"
+            className="font-bold max-w-2xl mx-auto"
             style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}
           >
-            {t("title")}
+            Get live in three steps. Start collecting revenue immediately.
           </h2>
+          <p className="text-base mt-4 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
+            No engineers. No complicated setup. No new phone number.
+          </p>
         </AnimateOnScroll>
+
         <div className="max-w-[900px] mx-auto">
           <StaggerChildren className="flex flex-col md:flex-row md:items-stretch gap-8 md:gap-0">
             {steps.map((step, i) => (
               <div key={step.num} className="flex flex-col md:flex-row md:flex-1 items-center">
                 <motion.div
                   variants={fadeUpVariants}
-                  className="card-marketing p-8 md:p-10 text-center md:text-left flex-1 w-full flex flex-col items-center md:items-start"
+                  className="card-marketing p-8 md:p-10 text-center md:text-left flex-1 w-full flex flex-col items-center md:items-start group hover:border-emerald-500/30 transition-colors"
                 >
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center text-[15px] font-bold mb-4"
@@ -54,14 +76,18 @@ export function HowItWorks() {
                     {step.num}
                   </div>
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
                     style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                   >
                     <step.icon className="w-5 h-5" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2" style={{ color: "var(--text-primary)" }}>
+                  <h3 className="font-semibold text-lg mb-1" style={{ color: "var(--text-primary)" }}>
                     {step.title}
                   </h3>
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400 mb-3">
+                    <Clock className="w-3 h-3" />
+                    {step.subtitle}
+                  </span>
                   <p className="text-sm max-w-[280px]" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                     {step.desc}
                   </p>
@@ -70,6 +96,22 @@ export function HowItWorks() {
               </div>
             ))}
           </StaggerChildren>
+        </div>
+
+        {/* Setup timeline micro-copy */}
+        <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm">
+          <div className="flex items-center gap-2 text-white/50">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>Setup: <strong className="text-white/70">2 minutes</strong></span>
+          </div>
+          <div className="flex items-center gap-2 text-white/50">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>Test call: <strong className="text-white/70">1 minute</strong></span>
+          </div>
+          <div className="flex items-center gap-2 text-white/50">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>Start collecting revenue: <strong className="text-white/70">immediately</strong></span>
+          </div>
         </div>
       </Container>
     </section>

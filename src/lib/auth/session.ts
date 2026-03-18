@@ -6,13 +6,19 @@
 import { createHmac, timingSafeEqual } from "crypto";
 
 const COOKIE_NAME = "revenue_session";
-const MAX_AGE_SEC = 60 * 60 * 24 * 365; // 1 year
+const MAX_AGE_SEC = 60 * 60 * 24 * 30; // 30 days
 const SPLIT = ".";
 
 function getSecret(): string | null {
   const raw = process.env.SESSION_SECRET ?? process.env.ENCRYPTION_KEY ?? "";
   const secret = typeof raw === "string" ? raw.trim() : "";
-  return secret.length > 0 ? secret : null;
+  if (secret.length === 0) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("SESSION_SECRET is required in production.");
+    }
+    return null;
+  }
+  return secret;
 }
 
 function sign(payload: string): string {

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 
 const CARDS = [
   { id: "1" as const, type: "lead" as const, name: "Alex Rivera", time: "9:14 AM" },
-  { id: "2" as const, type: "appointment" as const, name: "Sarah Chen", time: "9:31 AM" },
+  { id: "2" as const, type: "appointment" as const, name: "New patient", time: "9:31 AM" },
   { id: "3" as const, type: "follow-up" as const, name: "James Wilson", time: "10:02 AM" },
 ];
 

@@ -26,6 +26,9 @@ export interface ElevenLabsVoice {
 export interface ActivationState {
   businessName: string;
   industry: string | null;
+  /** Pack id: dental, hvac, legal, … */
+  industryPackId: string | null;
+  businessLocation: string;
   businessPhone: string;
   orgType: OrgTypeId | null;
   useCases: UseCaseId[];
@@ -58,11 +61,11 @@ export const USE_CASE_OPTIONS: { id: UseCaseId; label: string }[] = [
 ];
 
 export const STEPS: { id: StepId; label: string }[] = [
-  { id: 1, label: "Business" },
-  { id: 2, label: "Agent" },
-  { id: 3, label: "Customize" },
-  { id: 4, label: "Test" },
-  { id: 5, label: "Activate" },
+  { id: 1, label: "You" },
+  { id: 2, label: "Business" },
+  { id: 3, label: "Phone" },
+  { id: 4, label: "AI setup" },
+  { id: 5, label: "Go live" },
 ];
 
 export const DAYS: DayId[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

@@ -66,10 +66,9 @@ export function Footer() {
             </Link>
             <div className="flex flex-wrap gap-2 mt-3">
               {[
-                { label: "SOC 2", icon: "🛡️" },
+                { label: "SOC 2 (in progress)", icon: "🛡️" },
                 { label: "256-bit SSL", icon: "🔒" },
-                { label: "GDPR", icon: "🔐" },
-                { label: "99.9% Uptime", icon: "✓" },
+                { label: "GDPR-ready", icon: "🔐" },
               ].map((badge) => (
                 <span
                   key={badge.label}

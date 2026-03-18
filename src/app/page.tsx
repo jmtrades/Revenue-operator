@@ -3,23 +3,9 @@ import dynamic from "next/dynamic";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 
-const HomepageTrustBar = dynamic(
-  () => import("@/components/sections/HomepageTrustBar").then((m) => m.HomepageTrustBar),
-);
-const HomepageModeSelector = dynamic(
-  () =>
-    import("@/components/sections/HomepageModeSelector").then(
-      (m) => m.HomepageModeSelector,
-    ),
-);
+// V8: Homepage reduced to 10 core sections (see master prompt).
 const HomepageFAQ = dynamic(
   () => import("@/components/sections/HomepageFAQ").then((m) => m.HomepageFAQ),
-);
-const HomepageTestCallCTA = dynamic(
-  () =>
-    import("@/components/sections/HomepageTestCallCTA").then(
-      (m) => m.HomepageTestCallCTA,
-    ),
 );
 
 const HomepageRoiCalculator = dynamic(
@@ -37,26 +23,11 @@ const HowItWorks = dynamic(
 const Features = dynamic(
   () => import("@/components/sections/Features").then((m) => m.Features),
 );
-const MetricsSection = dynamic(
-  () => import("@/components/sections/MetricsSection").then((m) => m.MetricsSection),
-);
-const TestimonialsSection = dynamic(
-  () => import("@/components/sections/TestimonialsSection").then((m) => m.TestimonialsSection),
-);
 const PricingPreview = dynamic(
   () => import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
 );
-const EnterpriseComparisonCard = dynamic(
-  () =>
-    import("@/components/sections/EnterpriseComparisonCard").then(
-      (m) => m.EnterpriseComparisonCard,
-    ),
-);
 const Industries = dynamic(
   () => import("@/components/sections/Industries").then((m) => m.Industries),
-);
-const SocialProof = dynamic(
-  () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
 );
 const FinalCTA = dynamic(
   () => import("@/components/sections/FinalCTA").then((m) => m.FinalCTA),
@@ -84,20 +55,13 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
-        <HomepageTrustBar />
         <ProblemStatement />
         <HowItWorks />
-        <HomepageTestCallCTA />
-        <HomepageModeSelector />
-        <Features />
         <HomepageRoiCalculator />
         <Industries />
-        <MetricsSection />
-        <TestimonialsSection />
+        <Features />
         <PricingPreview />
-        <EnterpriseComparisonCard />
         <HomepageFAQ />
-        <SocialProof />
         <FinalCTA />
       </main>
       <Footer />

@@ -10,10 +10,10 @@ export async function register() {
       validateEnv();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      // Always log the error
       console.error("[instrumentation] Environment validation failed:", errorMessage);
-      // Never block startup based on env; log and continue in a degraded mode.
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV === "production") {
+        throw error;
+      } else {
         console.warn("[instrumentation] Continuing startup despite missing env vars (degraded mode).");
       }
     }

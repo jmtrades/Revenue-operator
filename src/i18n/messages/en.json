@@ -93,11 +93,14 @@
     "agents": "Agents",
     "calls": "Calls",
     "leads": "Leads",
+    "contacts": "Contacts",
+    "messages": "Messages",
     "campaigns": "Campaigns",
     "inbox": "Inbox",
     "analytics": "Analytics",
     "settings": "Settings",
     "team": "Team",
+    "agency": "Agency",
     "calendar": "Calendar",
     "appointments": "Appointments",
     "knowledge": "Knowledge",
@@ -123,6 +126,30 @@
     "collapse": "Collapse",
     "more": "More",
     "shortcutsHeading": "Keyboard Shortcuts"
+  },
+  "agency": {
+    "kicker": "Partner operations",
+    "title": "Agency",
+    "subtitle": "Set up and manage client workspaces with a repeatable, ROI-first onboarding flow.",
+    "ctaCreateWorkspace": "Create a client workspace",
+    "ctaPricing": "View pricing",
+    "cards": {
+      "workspaces": {
+        "title": "Client workspaces",
+        "body": "Create one workspace per client to keep data isolated and reporting clean.",
+        "link": "Start a new workspace"
+      },
+      "provisioning": {
+        "title": "Provisioning checklist",
+        "body": "Use the same fast flow every time: pick mode + industry, create the agent, connect the phone, run a test call.",
+        "note": "Tip: use the demo simulator and the revenue recovered card as your proof loop during onboarding."
+      },
+      "branding": {
+        "title": "Branding & rollout",
+        "body": "Need a co-branded rollout plan, training, or a custom agreement? We’ll package the deployment so you can deliver outcomes, not setup.",
+        "link": "Talk to support"
+      }
+    }
   },
   "common": {
     "save": "Save",
@@ -1445,6 +1472,35 @@
     },
     "successRate": "Success %",
     "description": "See how conversations turn into kept appointments and real revenue.",
+    "tabs": {
+      "overview": "Overview",
+      "inbound": "Inbound",
+      "outbound": "Outbound"
+    },
+    "inboundTab": {
+      "hint": "Inbound calls, outcomes, and conversion for the selected range."
+    },
+    "outboundTab": {
+      "hint": "SMS follow-ups and campaign activity for the selected range.",
+      "smsSent": "Outbound SMS",
+      "replies": "Inbound replies",
+      "activeCampaigns": "Active campaigns",
+      "totalDialed": "Campaign dials",
+      "connected": "Connected",
+      "apptsBooked": "Appts (campaigns)",
+      "campaignsHeading": "Campaigns",
+      "campaignName": "Campaign",
+      "status": "Status",
+      "smsVolume": "Outbound SMS by day",
+      "empty": "No outbound messages or campaign activity in this range.",
+      "goCampaigns": "Open campaigns"
+    },
+    "outboundSnapshot": {
+      "title": "Outbound snapshot",
+      "sms": "SMS sent",
+      "dials": "Campaign dials",
+      "booked": "Appts booked"
+    },
     "ranges": {
       "today": "Today",
       "sevenDay": "7D",
@@ -3274,6 +3330,7 @@
     "nav": {
       "general": "General",
       "phone": "Phone",
+      "voices": "Voices",
       "integrations": "Integrations",
       "notifications": "Notifications",
       "billing": "Billing",
@@ -3609,10 +3666,10 @@
     "deleteAccountInfo": "Contact support to permanently delete your account."
   },
   "hero": {
-    "title": "Never Lose a Customer to a Forgotten Follow-Up Again",
-    "subtitle": "Intelligent contact timing + multi-channel follow-ups — so deals don’t slip through the cracks. For solo operators, sales teams, and service businesses.",
-    "primaryCta": "Start free 14-day trial",
-    "secondaryCta": "Watch it work (2 min)",
+    "title": "We Answered 12,847 Calls This Week That Would Have Gone to Voicemail.",
+    "subtitle": "Recall Touch picks up when you can't. AI answers your missed calls, books appointments, and texts you the details — 24/7, for $297/month.",
+    "primaryCta": "Try Free for 14 Days →",
+    "secondaryCta": "See How It Works",
     "trustLine": "Revenue Execution OS · Works with your number · 14-day free trial",
     "checkmark": {
       "existingNumber": "Works with your existing number",
@@ -3682,15 +3739,15 @@
       "script1Line0": "Good morning, Maple Street Dental! This is Alex. How can I help?",
       "script1Line1": "Hi, I'd like to schedule a cleaning.",
       "script1Line2": "Of course! Are you an existing patient?",
-      "script1Line3": "Yes, Sarah Chen.",
-      "script1Line4": "Welcome back, Sarah! Do you prefer mornings or afternoons?",
+      "script1Line3": "Yes, this is Jane Smith.",
+      "script1Line4": "Welcome back! Do you prefer mornings or afternoons?",
       "script1Line5": "Mornings are better.",
       "script1Line6": "I have Tuesday at 9 AM or Wednesday at 10:30 with Dr. Martinez.",
       "script1Line7": "Tuesday at 9 please.",
       "script1Line8": "Booked! Tuesday at 9 AM with Dr. Martinez. You'll get a reminder on Monday.",
       "script1Line9": "Thank you!",
-      "script1Line10": "See you Tuesday, Sarah! Have a great day.",
-      "script1Detail0": "Patient: Sarah Chen (existing)",
+      "script1Line10": "See you Tuesday! Have a great day.",
+      "script1Detail0": "Patient: Jane Smith (existing)",
       "script1Detail1": "Service: Cleaning",
       "script1Detail2": "Provider: Dr. Martinez",
       "script1Detail3": "Appointment: Tuesday 9:00 AM",
@@ -3724,7 +3781,7 @@
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "GDPR",
       "badgeEncryption": "256-bit encryption",
-      "badgeUptime": "99.9% uptime",
+      "badgeUptime": "",
       "ctaStartFree": "Start free →",
       "optionalUpdates": "Optional: get product updates.",
       "notifyMe": "Notify me",
@@ -4091,28 +4148,28 @@
       "label": "What customers say",
       "testimonials": {
         "amanda": {
-          "quote": "We replaced three tools — phone answering, text follow-up, and scheduling — with one platform.",
-          "author": "Amanda K.",
+          "quote": "",
+          "author": "",
           "role": "Consulting firm"
         },
         "ryan": {
-          "quote": "Our sales team follows up 10x faster now. The AI handles the initial outreach and books qualified meetings.",
-          "author": "Ryan D.",
+          "quote": "",
+          "author": "",
           "role": "SaaS startup"
         },
         "mike": {
-          "quote": "Recall Touch paid for itself in the first week. We captured 14 leads we would have missed.",
-          "author": "Mike R.",
+          "quote": "",
+          "author": "",
           "role": "Plumbing company owner"
         },
         "sarah": {
-          "quote": "Our no-show rate dropped 40% since the AI started sending reminders.",
-          "author": "Dr. Sarah L.",
+          "quote": "",
+          "author": "",
           "role": "Dental practice"
         },
         "james": {
-          "quote": "I was skeptical about AI answering my phones. After one day I was convinced.",
-          "author": "James T.",
+          "quote": "",
+          "author": "",
           "role": "Roofing contractor"
         }
       },
@@ -4386,7 +4443,7 @@
     "legalSecurity": "Legal & Security",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
-    "securityBadges": "SOC 2 · GDPR · 256-bit encryption · 99.9% uptime",
+    "securityBadges": "SOC 2 in progress · 256-bit encryption",
     "copyright": "© {year} Recall Touch. All rights reserved.",
     "cta": {
       "bookDemo": "Book a demo",
@@ -4446,45 +4503,44 @@
       "annual": "Annual (save 17%)"
     },
     "tier": {
-      "starter": {
-        "name": "Starter",
-        "description": "For solo operators who want AI to answer every call.",
-        "f1": "400 inbound min included",
-        "f2": "50 outbound calls",
-        "f3": "100 SMS",
-        "f4": "1 AI agent",
-        "f5": "1 phone number",
-        "f6": "Overage: $0.25/min"
+      "solo": {
+        "name": "Solo",
+        "description": "For solo operators who want follow-through without overhead.",
+        "f1": "1 AI agent",
+        "f2": "100 calls/month",
+        "f3": "3 active follow-ups",
+        "f4": "Appointment booking",
+        "f5": "Call transcripts",
+        "f6": "Basic analytics"
       },
-      "growth": {
-        "name": "Growth",
-        "description": "For growing teams that need reliable coverage and follow-up.",
-        "f1": "1,500 inbound min included",
-        "f2": "500 outbound calls",
-        "f3": "500 SMS",
-        "f4": "3 AI agents",
-        "f5": "3 numbers",
-        "f6": "Appointment booking",
-        "f7": "Follow-up sequences",
-        "f8": "Overage: $0.18/min"
+      "business": {
+        "name": "Business",
+        "description": "The Revenue Execution OS for a single-location service business.",
+        "f1": "3 AI agents",
+        "f2": "500 calls/month",
+        "f3": "Unlimited follow-ups",
+        "f4": "No-show recovery",
+        "f5": "Reactivation campaigns",
+        "f6": "Industry templates",
+        "f7": "Revenue analytics",
+        "f8": "CRM webhook"
       },
       "scale": {
         "name": "Scale",
-        "description": "For teams that run on scheduled revenue and complex pipelines.",
-        "f1": "5,000 inbound min included",
-        "f2": "2,000 outbound calls",
-        "f3": "Unlimited SMS",
-        "f4": "Unlimited AI agents",
-        "f5": "10 numbers",
-        "f6": "Multi-location",
-        "f7": "Compliance",
-        "f8": "API",
-        "f9": "Priority support",
-        "f10": "Overage: $0.12/min"
+        "description": "For teams, high volume, and advanced reporting.",
+        "f1": "10 AI agents",
+        "f2": "3,000 calls/month",
+        "f3": "Unlimited seats",
+        "f4": "Advanced analytics + benchmarks",
+        "f5": "Custom workflows",
+        "f6": "API access",
+        "f7": "Native CRM sync",
+        "f8": "Premium voice pack",
+        "f9": "Priority support"
       },
       "enterprise": {
         "name": "Enterprise",
-        "description": "For organizations that need custom routing, security, and SLAs.",
+        "description": "For multi-location, franchise, and agency deployments.",
         "f1": "White label",
         "f2": "Custom compliance",
         "f3": "SSO",
@@ -4499,16 +4555,16 @@
     "featureComparison": "Feature comparison",
     "feature": "Feature",
     "comparisonRows": [
-      { "category": "Core", "name": "Inbound min/mo" },
+      { "category": "Core", "name": "Calls / month" },
       { "category": "Core", "name": "AI agents" },
-      { "category": "Core", "name": "Outbound calls/mo" },
-      { "category": "Core", "name": "SMS included" },
-      { "category": "Features", "name": "Inbox (unified messaging)" },
-      { "category": "Features", "name": "Knowledge base" },
+      { "category": "Core", "name": "Follow-ups" },
+      { "category": "Core", "name": "Seats" },
       { "category": "Features", "name": "Appointment booking" },
-      { "category": "Features", "name": "Outbound campaigns" },
+      { "category": "Features", "name": "No-show recovery" },
+      { "category": "Features", "name": "Reactivation campaigns" },
+      { "category": "Features", "name": "Industry templates" },
+      { "category": "Features", "name": "Advanced analytics + benchmarks" },
       { "category": "Features", "name": "API access" },
-      { "category": "Features", "name": "Compliance export" },
       { "category": "Support", "name": "Priority support" }
     ],
     "annualNote": "Two months applied without interruption on annual commitment.",
@@ -4984,6 +5040,26 @@
   "industry": {
     "heroSubtitle": "This is one example of how Recall Touch works. It adapts to any business.",
     "solutionsLabel": "Solutions",
+    "solutionLabel": "The solution",
+    "solutionHeading": "Revenue execution that does the work for you.",
+    "solution": {
+      "answer": {
+        "title": "Answer",
+        "description": "{industry} calls are answered 24/7 — no voicemail, no missed opportunities."
+      },
+      "qualify": {
+        "title": "Qualify",
+        "description": "Capture who they are, what they need, and urgency — structured and consistent."
+      },
+      "book": {
+        "title": "Book",
+        "description": "Book appointments or callbacks during the call, synced to your calendar."
+      },
+      "followup": {
+        "title": "Follow up",
+        "description": "Confirm, remind, and recover no-shows so revenue doesn’t slip through the cracks."
+      }
+    },
     "heroTitle": "{industry} AI Phone Agent",
     "heroTagline": "Never miss a {customerType} again.",
     "problemLabel": "The problem",
@@ -5002,6 +5078,8 @@
     "roiPerMonth": "${amount}/month",
     "roiInLostRevenue": "in lost revenue.",
     "roiPayback": "Recall Touch pays for itself in {days}.",
+    "recommendedPlanLabel": "Recommended plan:",
+    "seePlans": "See plans →",
     "per": "per {label}",
     "month": "month",
     "day": "day",
@@ -5115,7 +5193,7 @@
     "removeConfirm": "Remove \"{contact} — {service}\"? This cannot be undone.",
     "newAppointmentHeading": "New appointment",
     "contactLabel": "Contact",
-    "contactPlaceholder": "Sarah Chen",
+    "contactPlaceholder": "Jane Smith",
     "phoneLabel": "Phone",
     "phonePlaceholder": "+1 555 000 0000",
     "serviceLabel": "Service",

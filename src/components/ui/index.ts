@@ -9,3 +9,4 @@ export { ContactsListSkeleton } from "./ContactsListSkeleton";
 export { ListSkeleton } from "./ListSkeleton";
 export { MetricsSkeleton } from "./MetricsSkeleton";
 export { ValueLine } from "./ValueLine";
+export { StatCard } from "./StatCard";

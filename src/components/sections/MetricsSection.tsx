@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 
 const METRIC_IDS = ["revenueLost", "answerRate", "speedToLead", "inbox", "setupTime"] as const;
-const VALUES = ["$126K", "100%", "60 sec", "1 inbox", "5 min"] as const;
+const VALUES = ["$126K", "100%", "<3 sec", "1 inbox", "<3 min"] as const;
 
 export function MetricsSection() {
   const t = useTranslations("homepage.metrics");

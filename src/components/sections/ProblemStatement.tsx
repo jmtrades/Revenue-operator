@@ -1,93 +1,134 @@
 "use client";
 
-import { useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
 import { Container } from "@/components/ui/Container";
-import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
-import { motion } from "framer-motion";
-import { PhoneMissed, Clock, Layers } from "lucide-react";
+import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
+import { PhoneOff, Calendar, UserX, Flame } from "lucide-react";
 
-export function ProblemStatement() {
-  const t = useTranslations("homepage.problem");
-  const CARDS = useMemo(
-    () => [
-      {
-        title: t("card1Title"),
-        stats: [
-          { value: "$126K", desc: t("card1Stat1Desc") },
-          { value: "80%", desc: t("card1Stat2Desc") },
-          { value: "93%", desc: t("card1Stat3Desc") },
-        ],
-        accent: "var(--accent-primary)",
-      },
-      {
-        title: t("card2Title"),
-        stats: [
-          { value: "51%", desc: t("card2Stat1Desc") },
-          { value: "42 hrs", desc: t("card2Stat2Desc") },
-          { value: "44%", desc: t("card2Stat3Desc") },
-        ],
-        accent: "var(--accent-secondary)",
-      },
-      {
-        title: t("card3Title"),
-        stats: [
-          { value: "$35K", desc: t("card3Stat1Desc") },
-          { value: "30–45%", desc: t("card3Stat2Desc") },
-          { value: "4+", desc: t("card3Stat3Desc") },
-        ],
-        accent: "var(--accent-warning)",
-      },
-    ],
-    [t]
-  );
+const INDUSTRY_DATA = [
+  { id: "hvac", label: "HVAC", icon: "🔧", avgJob: 450, missedPerWeek: 2, annualLoss: 46800 },
+  { id: "dental", label: "Dental", icon: "🦷", avgJob: 350, missedPerWeek: 3, annualLoss: 54600 },
+  { id: "legal", label: "Legal", icon: "⚖️", avgJob: 4000, missedPerWeek: 1, annualLoss: 208000 },
+  { id: "medspa", label: "Med Spa", icon: "💅", avgJob: 600, missedPerWeek: 2, annualLoss: 62400 },
+  { id: "plumbing", label: "Plumbing", icon: "🚿", avgJob: 300, missedPerWeek: 4, annualLoss: 62400 },
+  { id: "roofing", label: "Roofing", icon: "🏘️", avgJob: 800, missedPerWeek: 2, annualLoss: 83200 },
+] as const;
+
+function AnimatedNumber({ value, prefix = "$" }: { value: number; prefix?: string }) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    const start = performance.now();
+    const duration = 800;
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.floor(eased * value));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [value]);
 
   return (
-    <section id="problem" className="marketing-section" style={{ background: "var(--gradient-problem-bg)" }}>
+    <span className="tabular-nums">
+      {prefix}{display.toLocaleString()}
+    </span>
+  );
+}
+
+export function ProblemStatement() {
+  const [selectedIndustry, setSelectedIndustry] = useState(0);
+  const industry = INDUSTRY_DATA[selectedIndustry];
+
+  return (
+    <section
+      id="problem"
+      className="marketing-section py-20 md:py-28"
+      style={{ background: "var(--gradient-problem-bg)" }}
+    >
       <Container>
-        <AnimateOnScroll className="text-center mb-12 md:mb-16">
-          <p className="section-label mb-4" style={{ color: "var(--accent-warning)" }}>{t("sectionLabel")}</p>
-          <h2 className="font-semibold max-w-3xl mx-auto" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}>
-            {t("heading")}
-          </h2>
-        </AnimateOnScroll>
+        <AnimateOnScroll className="max-w-4xl mx-auto text-center space-y-8">
+          <div className="space-y-4">
+            <h2
+              className="font-bold text-2xl md:text-4xl"
+              style={{
+                letterSpacing: "-0.02em",
+                lineHeight: 1.2,
+                color: "var(--text-primary)",
+              }}
+            >
+              Missed Calls Cost You Money.{" "}
+              <span className="text-red-400">Here&apos;s How Much.</span>
+            </h2>
+            <p
+              className="text-base md:text-lg max-w-2xl mx-auto"
+              style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}
+            >
+              Every missed call from a potential customer is revenue walking out the door.
+              Most service businesses lose <span className="text-red-400 font-semibold">$5K–$50K/month</span> to voicemail.
+            </p>
+          </div>
 
-        <StaggerChildren className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
-          {CARDS.map((card, index) => {
-            const Icon =
-              index === 0 ? PhoneMissed : index === 1 ? Clock : Layers;
-            return (
-              <motion.div
-                key={card.title}
-                variants={fadeUpVariants}
-                className="card-marketing p-6 md:p-8"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-5">
-                  <Icon className="w-7 h-7 text-[var(--accent-primary)]" />
-                </div>
-                <h3
-                  className="text-sm font-semibold uppercase tracking-wider mb-5 text-center md:text-left"
-                  style={{ color: "var(--text-tertiary)" }}
+          {/* "Without Recall Touch" grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div className="rounded-xl border border-red-500/20 bg-red-500/[0.05] p-5 text-center">
+              <PhoneOff className="w-8 h-8 text-red-400 mx-auto mb-3" />
+              <p className="text-sm font-medium text-white">Calls ring to voicemail</p>
+              <p className="text-xs text-white/50 mt-1">62% of callers never leave one</p>
+            </div>
+            <div className="rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-5 text-center">
+              <Calendar className="w-8 h-8 text-orange-400 mx-auto mb-3" />
+              <p className="text-sm font-medium text-white">No appointment booked</p>
+              <p className="text-xs text-white/50 mt-1">Lost opportunity, zero follow-up</p>
+            </div>
+            <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/[0.05] p-5 text-center">
+              <UserX className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
+              <p className="text-sm font-medium text-white">Customer calls competitor</p>
+              <p className="text-xs text-white/50 mt-1">They call the next Google result</p>
+            </div>
+          </div>
+
+          {/* Industry-specific pain */}
+          <div className="space-y-4">
+            <p className="text-xs uppercase tracking-wide text-white/40">
+              See the impact for your industry
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {INDUSTRY_DATA.map((ind, i) => (
+                <button
+                  key={ind.id}
+                  type="button"
+                  onClick={() => setSelectedIndustry(i)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                  style={{
+                    background: i === selectedIndustry ? "var(--accent-primary)" : "rgba(255,255,255,0.05)",
+                    color: i === selectedIndustry ? "#000" : "var(--text-secondary)",
+                    border: i === selectedIndustry ? "1px solid var(--accent-primary)" : "1px solid rgba(255,255,255,0.1)",
+                  }}
                 >
-                  {card.title}
-                </h3>
-              <ul className="space-y-4">
-                {card.stats.map((s) => (
-                  <li key={s.desc}>
-                    <span className="text-xl md:text-2xl font-bold block mb-1" style={{ color: card.accent }}>{s.value}</span>
-                    <span className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>{s.desc}</span>
-                  </li>
-                ))}
-              </ul>
-              </motion.div>
-            );
-          })}
-        </StaggerChildren>
+                  {ind.icon} {ind.label}
+                </button>
+              ))}
+            </div>
 
-        <AnimateOnScroll className="text-center mt-10">
-          <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            {t("closing")}
-          </p>
+            <div className="inline-flex flex-col items-center gap-2 rounded-2xl border border-red-500/20 bg-black/40 px-8 py-5">
+              <div className="flex items-center gap-2 text-red-400">
+                <Flame className="w-5 h-5" />
+                <p className="text-xs uppercase tracking-wide">
+                  {industry.label} — estimated annual loss
+                </p>
+              </div>
+              <p className="text-3xl md:text-4xl font-bold text-red-400">
+                <AnimatedNumber value={industry.annualLoss} />
+                <span className="text-lg text-red-400/70">/year</span>
+              </p>
+              <p className="text-sm text-white/50">
+                Average {industry.label.toLowerCase()} job: ${industry.avgJob} ×{" "}
+                {industry.missedPerWeek} missed calls/week × 52 weeks
+              </p>
+            </div>
+          </div>
         </AnimateOnScroll>
       </Container>
     </section>

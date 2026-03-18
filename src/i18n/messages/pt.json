@@ -88,6 +88,8 @@
     "agents": "Agentes",
     "calls": "Chamadas",
     "leads": "Leads",
+    "contacts": "Contatos",
+    "messages": "Mensagens",
     "campaigns": "Campanhas",
     "inbox": "Caixa de entrada",
     "analytics": "Análises",
@@ -1462,6 +1464,29 @@
     "am": "AM",
     "pm": "PM",
     "description": "Veja como conversas viram compromissos e receita real.",
+    "tabs": { "overview": "Visão geral", "inbound": "Entrada", "outbound": "Saída" },
+    "inboundTab": { "hint": "Chamadas de entrada, resultados e conversão no período." },
+    "outboundTab": {
+      "hint": "SMS de acompanhamento e campanhas no período.",
+      "smsSent": "SMS saída",
+      "replies": "Respostas",
+      "activeCampaigns": "Campanhas ativas",
+      "totalDialed": "Discagens (campanhas)",
+      "connected": "Atendidas",
+      "apptsBooked": "Consultas (campanhas)",
+      "campaignsHeading": "Campanhas",
+      "campaignName": "Campanha",
+      "status": "Status",
+      "smsVolume": "SMS saída por dia",
+      "empty": "Sem atividade de saída neste período.",
+      "goCampaigns": "Abrir campanhas"
+    },
+    "outboundSnapshot": {
+      "title": "Resumo de saída",
+      "sms": "SMS enviados",
+      "dials": "Discagens",
+      "booked": "Consultas"
+    },
     "ranges": {
       "today": "Hoje",
       "sevenDay": "7D",
@@ -3362,11 +3387,11 @@
     }
   },
   "hero": {
-    "title": "IA que atende o telefone da sua empresa 24/7",
-    "subtitle": "Nunca perca uma chamada. Nunca perca um lead. O Recall Touch cuida de cada conversa, marca agendamentos e protege sua receita enquanto você trabalha.",
-    "primaryCta": "Começar teste grátis",
-    "secondaryCta": "Ver demo",
-    "trustLine": "Funciona com seu número atual · Sem contratos · Teste grátis de 14 dias",
+    "title": "Nesta semana atendemos 12.847 ligações que iriam para a caixa postal.",
+    "subtitle": "O Recall Touch atende quando você não pode. A IA atende chamadas perdidas, marca agendamentos e envia os detalhes por SMS — 24/7, por US$ 297/mês.",
+    "primaryCta": "Teste grátis por 14 dias →",
+    "secondaryCta": "Veja como funciona",
+    "trustLine": "Revenue Execution OS · Funciona com seu número · Teste grátis de 14 dias",
     "checkmark": {
       "existingNumber": "Funciona com seu número atual",
       "setup": "Configuração em 5 minutos",
@@ -3435,15 +3460,15 @@
       "script1Line0": "Bom dia, Maple Street Dental! Aqui é a Alex. Como posso ajudar?",
       "script1Line1": "Oi, gostaria de agendar uma limpeza.",
       "script1Line2": "Claro! Você já é paciente?",
-      "script1Line3": "Sim, Sarah Chen.",
-      "script1Line4": "Bem-vinda de volta, Sarah! Prefere manhã ou tarde?",
+      "script1Line3": "Sim, Jane Smith.",
+      "script1Line4": "Bem-vinda de volta! Prefere manhã ou tarde?",
       "script1Line5": "Manhã é melhor.",
       "script1Line6": "Tenho terça às 9h ou quarta às 10h30 com o Dr. Martinez.",
       "script1Line7": "Terça às 9, por favor.",
       "script1Line8": "Agendado! Terça às 9h com o Dr. Martinez. Você recebe um lembrete na segunda.",
       "script1Line9": "Obrigado!",
-      "script1Line10": "Até terça, Sarah! Tenha um ótimo dia.",
-      "script1Detail0": "Paciente: Sarah Chen (existente)",
+      "script1Line10": "Até terça! Tenha um ótimo dia.",
+      "script1Detail0": "Paciente: Jane Smith (existente)",
       "script1Detail1": "Serviço: Limpeza",
       "script1Detail2": "Profissional: Dr. Martinez",
       "script1Detail3": "Agendamento: Terça 9:00",
@@ -3477,7 +3502,7 @@
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "GDPR",
       "badgeEncryption": "Criptografia 256 bits",
-      "badgeUptime": "99,9% de disponibilidade",
+      "badgeUptime": "",
       "ctaStartFree": "Começar grátis →",
       "optionalUpdates": "Opcional: receber atualizações do produto.",
       "notifyMe": "Avise-me",
@@ -3844,28 +3869,28 @@
       "label": "O que os clientes dizem",
       "testimonials": {
         "amanda": {
-          "quote": "Substituímos três ferramentas — atendimento, follow-up por texto e agendamento — por uma plataforma.",
-          "author": "Amanda K.",
+          "quote": "",
+          "author": "",
           "role": "Consultoria"
         },
         "ryan": {
-          "quote": "Nosso time de vendas dá follow-up 10x mais rápido. A IA faz o primeiro contato e agenda reuniões qualificadas.",
-          "author": "Ryan D.",
+          "quote": "",
+          "author": "",
           "role": "Startup SaaS"
         },
         "mike": {
-          "quote": "Recall Touch se pagou na primeira semana. Capturamos 14 leads que teríamos perdido.",
-          "author": "Mike R.",
+          "quote": "",
+          "author": "",
           "role": "Empresa de encanamento"
         },
         "sarah": {
-          "quote": "Nossa taxa de falta caiu 40% desde que a IA envia lembretes.",
-          "author": "Dra. Sarah L.",
+          "quote": "",
+          "author": "",
           "role": "Clínica odontológica"
         },
         "james": {
-          "quote": "Era cético com IA atendendo minhas ligações. Em um dia me convenci.",
-          "author": "James T.",
+          "quote": "",
+          "author": "",
           "role": "Contratante de telhados"
         }
       },
@@ -4182,7 +4207,7 @@
     "legalSecurity": "Legal e Segurança",
     "privacyPolicy": "Política de Privacidade",
     "termsOfService": "Termos de Serviço",
-    "securityBadges": "SOC 2 · LGPD · Criptografia 256 bits · 99,9% disponibilidade",
+    "securityBadges": "SOC 2 em progresso · Criptografia 256 bits",
     "copyright": "© {year} Recall Touch. Todos os direitos reservados.",
     "cta": {
       "bookDemo": "Agendar demo",
@@ -5055,7 +5080,7 @@
     "removeConfirm": "Remover \"{contact} — {service}\"? Isso não pode ser desfeito.",
     "newAppointmentHeading": "Novo agendamento",
     "contactLabel": "Contato",
-    "contactPlaceholder": "Sarah Chen",
+    "contactPlaceholder": "Jane Smith",
     "phoneLabel": "Telefone",
     "phonePlaceholder": "+1 555 000 0000",
     "serviceLabel": "Serviço",

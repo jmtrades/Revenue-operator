@@ -88,6 +88,8 @@
     "agents": "Agents",
     "calls": "Appels",
     "leads": "Prospects",
+    "contacts": "Contacts",
+    "messages": "Messages",
     "campaigns": "Campagnes",
     "inbox": "Boîte de réception",
     "analytics": "Analyses",
@@ -1462,6 +1464,29 @@
     "am": "AM",
     "pm": "PM",
     "description": "Voyez comment les conversations deviennent des rendez-vous et du chiffre d'affaires.",
+    "tabs": { "overview": "Vue d'ensemble", "inbound": "Entrant", "outbound": "Sortant" },
+    "inboundTab": { "hint": "Appels entrants, résultats et conversion sur la période." },
+    "outboundTab": {
+      "hint": "SMS de relance et campagnes sur la période.",
+      "smsSent": "SMS sortants",
+      "replies": "Réponses entrantes",
+      "activeCampaigns": "Campagnes actives",
+      "totalDialed": "Appels campagne",
+      "connected": "Connectés",
+      "apptsBooked": "RDV (campagnes)",
+      "campaignsHeading": "Campagnes",
+      "campaignName": "Campagne",
+      "status": "Statut",
+      "smsVolume": "SMS sortants par jour",
+      "empty": "Aucune activité sortante sur cette période.",
+      "goCampaigns": "Ouvrir les campagnes"
+    },
+    "outboundSnapshot": {
+      "title": "Aperçu sortant",
+      "sms": "SMS envoyés",
+      "dials": "Appels",
+      "booked": "RDV"
+    },
     "ranges": {
       "today": "Aujourd'hui",
       "sevenDay": "7D",
@@ -3357,11 +3382,11 @@
     }
   },
   "hero": {
-    "title": "Une IA qui répond au téléphone de votre entreprise 24h/24 et 7j/7",
-    "subtitle": "Ne manquez plus jamais un appel. Ne perdez plus jamais un lead. Recall Touch gère chaque conversation, prend des rendez-vous et protège vos revenus pendant que vous travaillez.",
-    "primaryCta": "Commencer l'essai gratuit",
-    "secondaryCta": "Regarder la démo",
-    "trustLine": "Fonctionne avec votre numéro existant · Sans engagement · Essai gratuit de 14 jours",
+    "title": "Cette semaine, nous avons répondu à 12 847 appels qui seraient allés sur la messagerie.",
+    "subtitle": "Recall Touch décroche quand vous ne pouvez pas. L’IA répond à vos appels manqués, prend des rendez-vous et vous envoie les détails par SMS — 24h/24, 7j/7, pour 297 $/mois.",
+    "primaryCta": "Essai gratuit 14 jours →",
+    "secondaryCta": "Voir comment ça marche",
+    "trustLine": "Revenue Execution OS · Fonctionne avec votre numéro · Essai gratuit de 14 jours",
     "checkmark": {
       "existingNumber": "Fonctionne avec votre numéro existant",
       "setup": "Configuration en 5 minutes",
@@ -3430,15 +3455,15 @@
       "script1Line0": "Bonjour, Maple Street Dental ! Alex à l'appareil. Comment vous aider ?",
       "script1Line1": "Bonjour, je voudrais prendre un rendez-vous pour un détartrage.",
       "script1Line2": "Avec plaisir ! Êtes-vous déjà patient chez nous ?",
-      "script1Line3": "Oui, Sarah Chen.",
-      "script1Line4": "Bon retour, Sarah ! Vous préférez le matin ou l'après-midi ?",
+      "script1Line3": "Oui, c'est Jane Smith.",
+      "script1Line4": "Bon retour ! Vous préférez le matin ou l'après-midi ?",
       "script1Line5": "Le matin, de préférence.",
       "script1Line6": "J'ai mardi à 9 h ou mercredi à 10 h 30 avec le Dr Martinez.",
       "script1Line7": "Mardi à 9 h, s'il vous plaît.",
       "script1Line8": "C'est noté ! Mardi 9 h avec le Dr Martinez. Rappel envoyé lundi.",
       "script1Line9": "Merci !",
-      "script1Line10": "À mardi, Sarah ! Bonne journée.",
-      "script1Detail0": "Patient : Sarah Chen (existant)",
+      "script1Line10": "À mardi ! Bonne journée.",
+      "script1Detail0": "Patient : Jane Smith (existant)",
       "script1Detail1": "Service : Détartrage",
       "script1Detail2": "Praticien : Dr Martinez",
       "script1Detail3": "Rendez-vous : Mardi 9:00",
@@ -3472,7 +3497,7 @@
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "RGPD",
       "badgeEncryption": "Chiffrement 256 bits",
-      "badgeUptime": "99,9 % disponibilité",
+      "badgeUptime": "",
       "ctaStartFree": "Commencer gratuitement →",
       "optionalUpdates": "Optionnel : recevoir les actualités produit.",
       "notifyMe": "M'alerter",
@@ -3839,28 +3864,28 @@
       "label": "Ce que disent les clients",
       "testimonials": {
         "amanda": {
-          "quote": "On a remplacé trois outils — réception téléphonique, relance SMS, prise de rendez-vous — par une plateforme.",
-          "author": "Amanda K.",
+          "quote": "",
+          "author": "",
           "role": "Cabinet de conseil"
         },
         "ryan": {
-          "quote": "Notre équipe commerciale relance 10 fois plus vite. L'IA fait le premier contact et réserve les réunions qualifiées.",
-          "author": "Ryan D.",
+          "quote": "",
+          "author": "",
           "role": "Startup SaaS"
         },
         "mike": {
-          "quote": "Recall Touch s'est remboursé la première semaine. On a capté 14 leads qu'on aurait ratés.",
-          "author": "Mike R.",
+          "quote": "",
+          "author": "",
           "role": "Entreprise de plomberie"
         },
         "sarah": {
-          "quote": "Notre taux de no-show a baissé de 40 % depuis que l'IA envoie des rappels.",
-          "author": "Dr Sarah L.",
+          "quote": "",
+          "author": "",
           "role": "Cabinet dentaire"
         },
         "james": {
-          "quote": "J'étais sceptique sur l'IA qui répond à mes appels. En un jour j'étais convaincu.",
-          "author": "James T.",
+          "quote": "",
+          "author": "",
           "role": "Artisan couvreur"
         }
       },
@@ -4177,7 +4202,7 @@
     "legalSecurity": "Mentions légales et sécurité",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation",
-    "securityBadges": "SOC 2 · RGPD · Chiffrement 256 bits · 99,9 % disponibilité",
+    "securityBadges": "SOC 2 en cours · Chiffrement 256 bits",
     "copyright": "© {year} Recall Touch. Tous droits réservés.",
     "cta": {
       "bookDemo": "Réserver une démo",
@@ -5050,7 +5075,7 @@
     "removeConfirm": "Supprimer « {contact} — {service} » ? Cette action est irréversible.",
     "newAppointmentHeading": "Nouveau rendez-vous",
     "contactLabel": "Contact",
-    "contactPlaceholder": "Sarah Chen",
+    "contactPlaceholder": "Jane Smith",
     "phoneLabel": "Téléphone",
     "phonePlaceholder": "+1 555 000 0000",
     "serviceLabel": "Service",

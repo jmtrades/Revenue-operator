@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { ArrowUpRight, PhoneCall, CalendarCheck, Sparkles } from "lucide-react";
+import { ArrowUpRight, PhoneCall, CalendarCheck, Sparkles, Info } from "lucide-react";
 import { ROUTES } from "@/lib/constants";
 
 function formatCurrency(value: number) {
@@ -26,23 +26,23 @@ export function HeroRevenueWidget() {
     return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
   }, []);
 
-  const recovered = 12840;
+  const recovered = 4217;
 
   const kpis: HeroKpi[] = [
     {
-      label: "Calls answered",
+      label: "Calls answered (example)",
       value: "127",
       icon: PhoneCall,
       tone: "lead",
     },
     {
-      label: "Appointments booked",
+      label: "Appointments booked (example)",
       value: "34",
       icon: CalendarCheck,
       tone: "appointment",
     },
     {
-      label: "Follow-ups executed",
+      label: "Follow-ups executed (example)",
       value: "412",
       icon: Sparkles,
       tone: "followup",
@@ -50,24 +50,24 @@ export function HeroRevenueWidget() {
   ];
 
   const toneStyles: Record<HeroKpi["tone"], { border: string; fg: string; bg: string }> = {
-    lead: { border: "border-blue-500/60", fg: "text-blue-400", bg: "bg-blue-500/10" },
-    appointment: { border: "border-green-500/60", fg: "text-green-400", bg: "bg-green-500/10" },
-    followup: { border: "border-amber-500/60", fg: "text-amber-300", bg: "bg-amber-500/10" },
+    lead: { border: "border-zinc-700", fg: "text-blue-400", bg: "bg-zinc-900/60" },
+    appointment: { border: "border-zinc-700", fg: "text-green-400", bg: "bg-zinc-900/60" },
+    followup: { border: "border-zinc-700", fg: "text-amber-300", bg: "bg-zinc-900/60" },
   };
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-zinc-900/60 overflow-hidden">
+    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden">
       <div className="p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-white/50">
-              Revenue recovered this month
+            <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]">
+              Example revenue recovered this month
             </p>
             <div className="mt-2 flex items-baseline gap-3">
-              <p className="text-3xl md:text-4xl font-bold text-white tabular-nums">
+              <p className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] tabular-nums">
                 {formatCurrency(recovered)}
               </p>
-              <span className="inline-flex items-center gap-1 text-sm text-emerald-300">
+              <span className="inline-flex items-center gap-1 text-sm text-[var(--accent-secondary)]">
                 <ArrowUpRight className="h-4 w-4" />
                 Live
               </span>
@@ -93,15 +93,15 @@ export function HeroRevenueWidget() {
             return (
               <div
                 key={kpi.label}
-                className={`rounded-xl border ${tone.border} bg-white/[0.03] p-4`}
+                className={`rounded-xl border ${tone.border} bg-[var(--bg-inset)] p-4`}
               >
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-white/50">{kpi.label}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">{kpi.label}</p>
                   <span className={`inline-flex h-8 w-8 items-center justify-center rounded-lg ${tone.bg}`}>
                     <Icon className={`h-4 w-4 ${tone.fg}`} />
                   </span>
                 </div>
-                <p className="mt-2 text-2xl font-bold text-white tabular-nums">
+                <p className="mt-2 text-2xl font-bold text-[var(--text-primary)] tabular-nums">
                   {kpi.value}
                 </p>
               </div>
@@ -110,16 +110,23 @@ export function HeroRevenueWidget() {
         </div>
       </div>
 
-      <div className="border-t border-white/[0.08] bg-black/20 px-6 py-4 flex items-center justify-between gap-4">
-        <p className="text-xs text-white/45">
-          See what your AI did while you were busy.
-        </p>
-        <Link
-          href={ROUTES.DEMO}
-          className="text-xs font-semibold text-white hover:text-zinc-100 transition-colors"
-        >
-          Watch it work →
-        </Link>
+      <div className="border-t border-[var(--border-default)] bg-[var(--bg-inset)] px-6 py-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)]">
+            <Info className="h-3 w-3 text-[var(--text-secondary)]" />
+          </span>
+          <p className="text-xs text-[var(--text-secondary)]">
+            Illustration only — your real recovered revenue will appear once calls and follow-ups start running.
+          </p>
+        </div>
+        <div className="hidden sm:block">
+          <Link
+            href={ROUTES.DEMO}
+            className="text-xs font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary-hover)] transition-colors"
+          >
+            See a live demo →
+          </Link>
+        </div>
       </div>
     </div>
   );

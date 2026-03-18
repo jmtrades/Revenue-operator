@@ -11,23 +11,12 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getDb } from "@/lib/db/queries";
 import { calculateOverageCharges } from "@/lib/billing/overage";
-
-function verifyCronSecret(req: NextRequest): boolean {
-  const cronSecret = req.nextUrl.searchParams.get("secret");
-  const expected = process.env.CRON_SECRET;
-  if (!expected) {
-    console.warn("[billing/overage] CRON_SECRET not configured");
-    return false;
-  }
-  return cronSecret === expected;
-}
+import { assertCronAuthorized } from "@/lib/runtime";
 
 export async function POST(req: NextRequest) {
   try {
-    // Verify cron secret
-    if (!verifyCronSecret(req)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authErr = assertCronAuthorized(req);
+    if (authErr) return authErr;
 
     if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
@@ -82,17 +71,28 @@ export async function POST(req: NextRequest) {
         );
 
         if (charges && charges.subscription_id && wsData.stripe_customer_id) {
-          // Create invoice item for overage
+          // Build itemized description for invoice
+          const descParts: string[] = [];
+          if (charges.overage_minutes > 0) {
+            descParts.push(
+              `Call overage: ${charges.overage_minutes} min × $${(charges.rate_per_minute_cents / 100).toFixed(2)}/min`
+            );
+          }
+          if (charges.overage_voice_minutes > 0) {
+            descParts.push(
+              `Voice AI overage: ${charges.overage_voice_minutes} min × $${(charges.rate_per_voice_minute_cents / 100).toFixed(2)}/min`
+            );
+          }
+
           await stripe.invoiceItems.create({
             customer: wsData.stripe_customer_id,
             amount: charges.overage_amount_cents,
             currency: "usd",
-            description: `Voice overage: ${charges.overage_minutes} minutes × $${(
-              charges.rate_per_minute_cents / 100
-            ).toFixed(2)}/min`,
+            description: descParts.join("; ") || "Usage overage",
             metadata: {
               workspace_id: wsData.id,
               overage_minutes: String(charges.overage_minutes),
+              overage_voice_minutes: String(charges.overage_voice_minutes),
               billing_period_end: billingPeriodEnd.toISOString(),
             },
           });

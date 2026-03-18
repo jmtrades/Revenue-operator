@@ -5,13 +5,13 @@ import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
-import { getServicesForIndustry, getIndustryLabel } from "@/lib/constants/industries";
-import type { ActivationState, ElevenLabsVoice, StepId, TestFeedback } from "./steps/types";
+import { getServicesForIndustry } from "@/lib/constants/industries";
+import type { ActivationState, ElevenLabsVoice, StepId } from "./steps/types";
 import { DEFAULT_HOURS, STEPS } from "./steps/types";
-import { BusinessStep } from "./steps/BusinessStep";
-import { AgentStep } from "./steps/AgentStep";
+import { ModeStep } from "./steps/ModeStep";
+import { PackBusinessStep } from "./steps/PackBusinessStep";
+import { PhoneOnlyStep } from "./steps/PhoneOnlyStep";
 import { CustomizeStep } from "./steps/CustomizeStep";
-import { TestStep } from "./steps/TestStep";
 import { ActivateStep } from "./steps/ActivateStep";
 
 export function ActivateWizard() {
@@ -20,11 +20,13 @@ export function ActivateWizard() {
   const [state, setState] = useState<ActivationState>(() => ({
     businessName: "",
     industry: null,
+    industryPackId: null,
+    businessLocation: "",
     businessPhone: "",
     orgType: null,
-    useCases: [],
+    useCases: ["answer", "book", "followup"],
     agentTemplate: null,
-    agentName: "",
+    agentName: "Alex",
     hours: DEFAULT_HOURS,
     greeting: t("defaultGreeting"),
     services: [],
@@ -40,19 +42,20 @@ export function ActivateWizard() {
 
   const canGoNext = useMemo(() => {
     if (step === 1) {
-      return (
-        state.businessName.trim().length > 0 &&
-        state.businessPhone.trim().length > 0
-      );
+      return state.orgType === "solo" || state.orgType === "business" || state.orgType === "agency";
     }
     if (step === 2) {
-      return Boolean(state.agentTemplate);
+      return (
+        state.businessName.trim().length > 0 &&
+        Boolean(state.industryPackId) &&
+        state.businessLocation.trim().length > 0
+      );
     }
     if (step === 3) {
-      return state.agentName.trim().length > 0 && state.greeting.trim().length > 0;
+      return state.businessPhone.replace(/\D/g, "").length >= 10;
     }
     if (step === 4) {
-      return false;
+      return state.agentName.trim().length > 0 && state.greeting.trim().length > 0;
     }
     return true;
   }, [step, state]);
@@ -95,7 +98,7 @@ export function ActivateWizard() {
   );
   const [voices, setVoices] = useState<ElevenLabsVoice[]>(() => curatedVoiceList);
   useEffect(() => {
-    if (step !== 3) return;
+    if (step !== 4) return;
     fetch("/api/agent/voices")
       .then((r) => r.json())
       .then((data: { voices?: ElevenLabsVoice[] }) => {
@@ -114,15 +117,6 @@ export function ActivateWizard() {
       voiceId: state.elevenlabsVoiceId || undefined,
       gender: "female",
     });
-  };
-
-  const handleThumb = (fb: TestFeedback) => {
-    setState((prev) => ({ ...prev, lastTestFeedback: fb }));
-    if (fb === "up") {
-      setStep(5);
-    } else if (fb === "down") {
-      setStep(3);
-    }
   };
 
   const handleFinalize = useCallback(async (e?: React.MouseEvent) => {
@@ -226,19 +220,21 @@ export function ActivateWizard() {
           onKeyDown={step <= 3 ? handleKeyDownAdvance : undefined}
         >
           {step === 1 && (
-            <BusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
+            <ModeStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
           )}
           {step === 2 && (
-            <AgentStep
-              state={state}
-              setState={setState}
-              goBack={goBack}
-              goNext={goNext}
-              canGoNext={canGoNext}
-              getIndustryLabel={getIndustryLabel}
-            />
+            <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
           )}
           {step === 3 && (
+            <PhoneOnlyStep
+              state={state}
+              setState={setState}
+              goNext={goNext}
+              goBack={goBack}
+              canGoNext={canGoNext}
+            />
+          )}
+          {step === 4 && (
             <CustomizeStep
               state={state}
               setState={setState}
@@ -249,13 +245,6 @@ export function ActivateWizard() {
               goBack={goBack}
               goNext={goNext}
               canGoNext={canGoNext}
-            />
-          )}
-          {step === 4 && (
-            <TestStep
-              onPlayGreeting={handlePlayTestGreeting}
-              onThumb={handleThumb}
-              goBack={goBack}
             />
           )}
           {step === 5 && (
