@@ -76,40 +76,42 @@ export async function GET(
       checkPublicRecordRateLimit,
       incrementPublicRecordRateLimit,
       recordPublicRecord404,
-    } = rateLimitMod;
+    } = (rateLimitMod as any)?.default ?? rateLimitMod;
 
     const {
       getWorkspaceIdByExternalRef,
       getPendingTransactionIdByExternalRef,
       getAcknowledgedTransactionIdByExternalRef,
-    } = sharedMod;
+    } = (sharedMod as any)?.default ?? sharedMod;
 
     const {
       getThreadIdByExternalRef,
       getContinuationEntriesForThread,
       getReciprocalEventsForThread,
-    } = reciprocalMod;
+    } = (reciprocalMod as any)?.default ?? reciprocalMod;
 
     const {
       threadUnresolved,
       getPublicWorkStatement,
       STATEMENT_EXTERNAL_REFERENCE_UNRESOLVED,
       STATEMENT_ASSIGNED_OBLIGATION_UNRESOLVED,
-    } = opRespMod;
+    } = (opRespMod as any)?.default ?? opRespMod;
 
-    const { contextHasExternalUncertainty } = outcomeDepMod;
-    const { listParticipantsForThread } = threadParticipantsMod;
-    const { threadHasOpenAssignment } = threadAssignmentsMod;
-    const { threadHasEvidence } = threadEvidenceMod;
-    const { threadHasReference, STATEMENT_LATER_ACTIVITY_REFERENCED } = threadReferenceMod;
+    const { contextHasExternalUncertainty } = (outcomeDepMod as any)?.default ?? outcomeDepMod;
+    const { listParticipantsForThread } = (threadParticipantsMod as any)?.default ?? threadParticipantsMod;
+    const { threadHasOpenAssignment } = (threadAssignmentsMod as any)?.default ?? threadAssignmentsMod;
+    const { threadHasEvidence } = (threadEvidenceMod as any)?.default ?? threadEvidenceMod;
+    const { threadHasReference, STATEMENT_LATER_ACTIVITY_REFERENCED } =
+      ((threadReferenceMod as any)?.default ?? threadReferenceMod) as any;
     const {
       threadHasAmendment,
       STATEMENT_RECORD_UPDATED_AFTER_RELIANCE,
       getAmendmentLinesForThread,
-    } = institutionalAuditMod;
-    const { workspaceHasTemporalStability, STATEMENT_PUBLIC_STABILITY } = temporalStabilityMod;
-    const { getDisableImpactStatements } = disableImpactMod;
-    const { getDb } = dbMod;
+    } = (institutionalAuditMod as any)?.default ?? institutionalAuditMod;
+    const { workspaceHasTemporalStability, STATEMENT_PUBLIC_STABILITY } =
+      (temporalStabilityMod as any)?.default ?? temporalStabilityMod;
+    const { getDisableImpactStatements } = (disableImpactMod as any)?.default ?? disableImpactMod;
+    const { getDb } = (dbMod as any)?.default ?? dbMod;
 
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -122,12 +124,14 @@ export async function GET(
 
     const workspaceId = await getWorkspaceIdByExternalRef(external_ref);
     if (!workspaceId) {
-      await incrementPublicRecordRateLimit(ipHash, external_ref).catch((err) => {
+      await incrementPublicRecordRateLimit(ipHash, external_ref).catch(
+        (err: unknown) => {
         console.error(
           "[public/work/[external_ref]] error:",
           err instanceof Error ? err.message : err
         );
-      });
+        }
+      );
       const { overThreshold } = await recordPublicRecord404(ipHash).catch(() => ({
         overThreshold: false,
       }));
@@ -135,12 +139,14 @@ export async function GET(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    await incrementPublicRecordRateLimit(ipHash, external_ref).catch((err) => {
+    await incrementPublicRecordRateLimit(ipHash, external_ref).catch(
+      (err: unknown) => {
       console.error(
         "[public/work/[external_ref]] error:",
         err instanceof Error ? err.message : err
       );
-    });
+      }
+    );
 
     const threadId = await getThreadIdByExternalRef(external_ref);
     let reopenDetected = false;
@@ -300,7 +306,7 @@ export async function GET(
       : null;
     const participantsCap = (participants as { role: string; hint?: string | null }[]).slice(0, 4);
 
-    const response = NextResponse.json({
+    const payload = {
       what_happened,
       if_removed,
       reliance,
@@ -318,6 +324,26 @@ export async function GET(
       participants: participantsCap,
       can_respond,
       can_follow_up,
+    };
+
+    // Serialize explicitly with a BigInt-safe replacer.
+    // If serialization fails, fall back to the neutral 200 response
+    // instead of returning an empty 500.
+    let payloadJson: string;
+    try {
+      payloadJson = JSON.stringify(payload, (_key, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      );
+    } catch (err) {
+      console.error(
+        "[public/work/[external_ref]] GET payload serialization error:",
+        err instanceof Error ? err.message : err
+      );
+      return neutralResponse();
+    }
+
+    const response = new NextResponse(payloadJson, {
+      headers: { "content-type": "application/json" },
     });
 
     if (corridorToken) {
