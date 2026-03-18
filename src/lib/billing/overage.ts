@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db/queries";
 import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
+import Stripe from "stripe";
 
 /** Plan minute and SMS limits by tier (source of truth: BILLING_PLANS) */
 export const PLAN_LIMITS: Record<PlanSlug, { minutes: number; sms: number; voice_minutes?: number; overage_cents_per_minute: number }> =
@@ -227,8 +228,13 @@ export async function calculateOverageCharges(
   }
 
   const wsData = ws as { billing_tier?: string; stripe_subscription_id?: string | null };
-  const tier = (wsData.billing_tier ?? "starter").toLowerCase();
-  const limits = PLAN_LIMITS[tier] || PLAN_LIMITS.starter;
+  const rawTier = (wsData.billing_tier ?? "solo").toLowerCase();
+  const tier: PlanSlug = (["solo", "business", "scale", "enterprise"] as const).includes(
+    rawTier as PlanSlug,
+  )
+    ? (rawTier as PlanSlug)
+    : "solo";
+  const limits = PLAN_LIMITS[tier];
 
   // Calculate minutes used in billing period
   const { data: sessions } = await db
@@ -271,16 +277,16 @@ export async function calculateOverageCharges(
   }
 
   const overageAmountCents =
-    overageMinutes * OVERAGE_RATES.per_minute_cents +
-    overageVoiceMinutes * OVERAGE_RATES.per_voice_minute_cents;
+    overageMinutes * limits.overage_cents_per_minute +
+    overageVoiceMinutes * limits.overage_cents_per_minute;
 
   return {
     subscription_id: wsData.stripe_subscription_id,
     overage_minutes: overageMinutes,
     overage_voice_minutes: overageVoiceMinutes,
     overage_amount_cents: overageAmountCents,
-    rate_per_minute_cents: OVERAGE_RATES.per_minute_cents,
-    rate_per_voice_minute_cents: OVERAGE_RATES.per_voice_minute_cents,
+    rate_per_minute_cents: limits.overage_cents_per_minute,
+    rate_per_voice_minute_cents: limits.overage_cents_per_minute,
   };
 }
 
@@ -301,10 +307,15 @@ export async function reportUsageOverage(
 
   if (overageMinutes <= 0 && overageVoiceMinutes <= 0) return;
 
-  const ratePerMin = OVERAGE_RATES.per_minute_cents;
-  const ratePerVoiceMin = OVERAGE_RATES.per_voice_minute_cents;
-  const overageAmountCents =
-    overageMinutes * ratePerMin + overageVoiceMinutes * ratePerVoiceMin;
+  const rawTier = (tier || "solo").toLowerCase();
+  const tierSlug: PlanSlug = (["solo", "business", "scale", "enterprise"] as const).includes(
+    rawTier as PlanSlug,
+  )
+    ? (rawTier as PlanSlug)
+    : "solo";
+  const ratePerMin = PLAN_LIMITS[tierSlug].overage_cents_per_minute;
+  const ratePerVoiceMin = PLAN_LIMITS[tierSlug].overage_cents_per_minute;
+  const overageAmountCents = overageMinutes * ratePerMin + overageVoiceMinutes * ratePerVoiceMin;
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
   const customerId = subscription.customer as string;

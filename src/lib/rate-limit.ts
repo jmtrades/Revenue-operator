@@ -4,11 +4,16 @@
  */
 
 import { Ratelimit } from "@upstash/ratelimit";
-import Redis from "ioredis";
 
-const redisUrl = process.env.REDIS_URL;
+import { Redis } from "@upstash/redis";
 
-const redis = redisUrl ? new Redis(redisUrl) : null;
+const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const redis =
+  upstashUrl && upstashToken
+    ? new Redis({ url: upstashUrl, token: upstashToken })
+    : null;
 
 const limiterCache = new Map<string, Ratelimit>();
 
@@ -33,7 +38,7 @@ export async function checkRateLimit(
   if (!ratelimit) {
     ratelimit = new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(limit, windowMs / 1000),
+      limiter: Ratelimit.slidingWindow(limit, `${Math.ceil(windowMs / 1000)} s`),
       prefix: "rt_rl",
     });
     limiterCache.set(bucket, ratelimit);

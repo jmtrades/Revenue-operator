@@ -1142,7 +1142,7 @@
       "inboundWasActive": "Inbound was active.",
       "queueWasActive": "Queue was active.",
       "assuranceAttemptedRecently": "Assurance was attempted recently.",
-      "proofCapsuleRecentlyAvailable": "Proof capsule was recently available.",
+      "proofCapsuleRecentlyAvailable": "Progress report was recently available.",
       "guaranteesBundleConfigured": "Guarantees bundle was configured."
     },
     "leadDetailSituation": {

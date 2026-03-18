@@ -222,7 +222,7 @@ export default function PublicWorkPage() {
 
         <section className="text-left pt-12 border-t" style={{ borderColor: "var(--border)" }}>
           <h2 className="text-[13px] font-medium uppercase mb-4" style={{ color: "var(--text-muted)", letterSpacing: "0.12em" }}>
-            Reliance
+            Integrations
           </h2>
           {reliance.length === 0 ? (
             <p className="text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>Nothing listed.</p>

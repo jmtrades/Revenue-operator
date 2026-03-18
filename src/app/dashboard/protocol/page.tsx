@@ -3,7 +3,7 @@
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 /**
- * Protocol — entry is the operational boundary.
+ * Workflow — entry is the operational boundary.
  * Institutional only. No metrics, no claims.
  */
 export default function ProtocolPage() {
@@ -21,7 +21,7 @@ export default function ProtocolPage() {
     <div className="p-8 max-w-2xl space-y-16">
       <header>
         <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>
-          Protocol
+          Workflow
         </h1>
         <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
           Entry is the operational boundary.
@@ -34,8 +34,8 @@ export default function ProtocolPage() {
         </h2>
         <ul className="text-sm space-y-2 list-disc pl-5" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
           <li>Entry exists outside authority.</li>
-          <li>Entry defines exposure.</li>
-          <li>Entry restores reliance.</li>
+          <li>Entry defines usage.</li>
+          <li>Entry restores integrations.</li>
         </ul>
       </section>
 
@@ -45,7 +45,7 @@ export default function ProtocolPage() {
         </h2>
         <ul className="text-sm space-y-2 list-disc pl-5" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
           <li>Non-entry does not proceed within authority.</li>
-          <li>Non-entry sustains exposure.</li>
+          <li>Non-entry sustains usage.</li>
         </ul>
       </section>
 

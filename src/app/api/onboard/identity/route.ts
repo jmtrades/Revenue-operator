@@ -20,7 +20,7 @@ function isValidEmail(email: string): boolean {
 export async function POST(request: NextRequest) {
   // Rate limit: 5 signups per IP per 10 minutes
   const ip = getClientIp(request);
-  const rl = checkRateLimit(`onboard:${ip}`, 5, 600_000);
+  const rl = await checkRateLimit(`onboard:${ip}`, 5, 600_000);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many signup attempts. Please try again later." },
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Also rate limit per email: 3 attempts per 10 minutes
-  const emailRl = checkRateLimit(`onboard-email:${normalizedEmail}`, 3, 600_000);
+  const emailRl = await checkRateLimit(`onboard-email:${normalizedEmail}`, 3, 600_000);
   if (!emailRl.allowed) {
     return NextResponse.json(
       { error: "Too many attempts for this email. Please try again later." },
