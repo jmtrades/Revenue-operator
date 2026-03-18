@@ -53,8 +53,8 @@
     "executionState": {
       "underReview": "Call handling under review.",
       "underReviewNext": "Confirm jurisdiction and review level.",
-      "paused": "Call handling paused.",
-      "pausedNext": "Resolve billing or authorization.",
+      "paused": "Your account is paused due to a billing issue.",
+      "pausedNext": "Update Payment →",
       "active": "Call handling active.",
       "activeNext": "Conversations continue under governance."
     },
@@ -66,7 +66,9 @@
       "coverageActive": "Coverage active",
       "coverageRunning": "Coverage running",
       "nothingRequiresSupervision": "Nothing requires supervision. We'll notify you when your input is needed.",
-      "remindBeforeCharge": "Nothing requires supervision. We'll notify you when your input is needed. We'll remind you before any charge."
+      "remindBeforeCharge": "Nothing requires supervision. We'll notify you when your input is needed. We'll remind you before any charge.",
+      "trialGraceEnded": "Your trial has ended.",
+      "trialUpgradeToContinue": "Upgrade to continue →"
     }
   },
   "siteNav": {
@@ -315,6 +317,20 @@
     "keepStarter": "Keep Starter",
     "sorryToSeeYouGo": "We're sorry to see you go",
     "sorryDesc": "Your data will be available for 30 days. You can reactivate from Settings.",
+    "cancelReasonTitle": "We're sorry to see you go. What's the main reason?",
+    "cancelReasonTooExpensive": "Too expensive",
+    "cancelReasonUnused": "Not using it enough",
+    "cancelReasonMissingFeatures": "Missing features",
+    "cancelReasonCompetitor": "Switching to competitor",
+    "cancelReasonOther": "Other",
+    "cancelOfferText": "Stay and get 1 month free.",
+    "cancelAcceptOffer": "Accept offer",
+    "cancelContinueCancellation": "Continue cancellation",
+    "cancelDataRetainedText": "Your data will be retained for 30 days. You can export your contacts before leaving.",
+    "cancelExportContacts": "Export Contacts",
+    "cancelCancelSubscription": "Cancel Subscription",
+    "cancelSuccessTitle": "Your subscription has been cancelled.",
+    "cancelSuccessBody": "Service continues until {endDate}.",
     "back": "Back",
     "confirmCancel": "Confirm cancel",
     "backToSettingsLink": "← Settings",
@@ -4470,8 +4486,8 @@
       "subheading": "Recall Touch adapts to any business that takes phone calls. Here are a few examples.",
       "industries": {
         "plumbing": {
-          "name": "Plumbing & HVAC",
-          "desc": "Answer every service call. Emergency dispatch, scheduling, and quote capture."
+          "name": "HVAC",
+          "desc": "HVAC demand spikes are unforgiving: callers choose the first number that answers."
         },
         "healthcare": {
           "name": "Healthcare",
@@ -4489,6 +4505,18 @@
           "name": "Dental",
           "desc": "Book patients. Insurance verification. Recall reminders."
         },
+          "roofing": {
+            "name": "Roofing",
+            "desc": "Storm and inspection requests move fast. Miss the call and the next contractor gets the lead."
+          },
+          "medspa": {
+            "name": "Med Spa",
+            "desc": "When clients want results, speed wins. Missed calls lead to lost bookings and reactivation delays."
+          },
+          "recruiting": {
+            "name": "Recruiting",
+            "desc": "Top candidates expect instant responses. Delayed follow-up costs interviews, not just applicants."
+          },
         "custom": {
           "name": "Your industry",
           "desc": "Don't see your business? Recall Touch works for any company that answers a phone."
@@ -6948,24 +6976,24 @@
   },
   "productTour": {
     "revenue": {
-      "title": "Revenue recovered",
-      "body": "Your dashboard shows the money your AI has recovered."
+      "title": "Revenue Recovered",
+      "body": "This is your Revenue Recovered — the money your AI has brought back."
     },
     "needsAttention": {
       "title": "Needs your action",
-      "body": "This queue highlights leads and follow-ups that require review."
+      "body": "These contacts need your attention. Click to call or follow up."
     },
     "sidebarNav": {
-      "title": "Navigate your pipeline",
-      "body": "Use the sidebar to move between dashboard, calls, leads, campaigns, and settings."
+      "title": "All set",
+      "body": "You're set! Your AI is answering calls 24/7."
     },
     "campaigns": {
       "title": "Campaigns",
-      "body": "Launch outbound sequences that recover revenue proactively."
+      "body": "Create outbound campaigns to proactively chase revenue."
     },
     "settings": {
       "title": "Settings",
-      "body": "Control calling hours, compliance, voices, and billing from one place."
+      "body": "Configure your agent's voice, behavior, and escalation rules here."
     }
   },
   "legal": {

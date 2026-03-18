@@ -46,6 +46,9 @@ export const INDUSTRY_SLUGS = [
   "legal",
   "real-estate",
   "healthcare",
+  "auto-repair",
+  "insurance",
+  "construction",
 ] as const;
 
 export type IndustrySlug = (typeof INDUSTRY_SLUGS)[number];
@@ -385,6 +388,207 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       paybackDays: 5,
     },
     ctaHeadline: "Start your free Healthcare AI agent in 5 minutes",
+  },
+  "auto-repair": {
+    slug: "auto-repair",
+    name: "Auto Repair",
+    customerType: "drivers",
+    heroIcon: "Wrench",
+    problemStats: [
+      {
+        value: "55%",
+        description: "of drivers call a competitor when their first shop doesn't answer",
+        icon: "PhoneMissed",
+      },
+      {
+        value: "$2,400",
+        description: "average repair job value",
+        icon: "DollarSign",
+      },
+      {
+        value: "18%",
+        description: "of quote requests go unanswered",
+        icon: "TrendingDown",
+      },
+    ],
+    howItWorks: [
+      {
+        title: "Connect",
+        description: "Answer every inbound call and capture the vehicle + symptoms so every job starts with the right context.",
+      },
+      {
+        title: "Teach",
+        description: "Set your intake rules: hours, service types, and what details you need before you schedule an estimate.",
+      },
+      {
+        title: "Relax",
+        description: "Requests get qualified and booked without hold times. Your team gets a clean summary and next steps.",
+      },
+    ],
+    capabilities: [
+      {
+        title: "Service intake",
+        description: "Capture vehicle make/model, issue description, and urgency in one governed flow.",
+        icon: "ClipboardList",
+      },
+      {
+        title: "Quote scheduling",
+        description: "Book estimates and follow-ups with availability-aware confirmations.",
+        icon: "Calendar",
+      },
+      {
+        title: "Priority triage",
+        description: "Route urgent breakdown calls and escalation requests with clear handoff context.",
+        icon: "AlertCircle",
+      },
+      {
+        title: "Coverage checks",
+        description: "Ask the minimum questions so you can prepare before the caller reaches your desk.",
+        icon: "Shield",
+      },
+    ],
+    roi: {
+      missedCallsPerWeek: 10,
+      avgValueLabel: "repair job",
+      avgValueNumber: 2400,
+      recoveredPerMonth: 19200,
+      paybackDays: 2,
+    },
+    ctaHeadline: "Start your free Auto Repair AI agent in 5 minutes",
+  },
+  insurance: {
+    slug: "insurance",
+    name: "Insurance",
+    customerType: "policyholders",
+    heroIcon: "Scale",
+    problemStats: [
+      {
+        value: "63%",
+        description: "of claim calls go unanswered during business hours",
+        icon: "PhoneMissed",
+      },
+      {
+        value: "$1,800",
+        description: "average claim value",
+        icon: "DollarSign",
+      },
+      {
+        value: "27%",
+        description: "of callers abandon the process after delays",
+        icon: "TrendingDown",
+      },
+    ],
+    howItWorks: [
+      {
+        title: "Connect",
+        description: "Qualify inbound claim and policy questions with a structured intake your team can trust.",
+      },
+      {
+        title: "Teach",
+        description: "Define your workflows: what you need to collect, when to escalate, and how to schedule follow-ups.",
+      },
+      {
+        title: "Relax",
+        description: "Calls are answered 24/7 and converted into next actions your staff can complete without rework.",
+      },
+    ],
+    capabilities: [
+      {
+        title: "Claim intake",
+        description: "Capture incident details, contact info, and urgency with governed questions.",
+        icon: "ClipboardList",
+      },
+      {
+        title: "Appointment booking",
+        description: "Schedule adjuster calls and policy consults when your calendars allow.",
+        icon: "Calendar",
+      },
+      {
+        title: "Escalation routing",
+        description: "Detect high-urgency requests and route them for immediate handling.",
+        icon: "AlertCircle",
+      },
+      {
+        title: "Policy clarification",
+        description: "Answer basic questions and gather the right facts for a confident follow-up.",
+        icon: "Shield",
+      },
+    ],
+    roi: {
+      missedCallsPerWeek: 7,
+      avgValueLabel: "claim",
+      avgValueNumber: 1800,
+      recoveredPerMonth: 15120,
+      paybackDays: 3,
+    },
+    ctaHeadline: "Start your free Insurance AI agent in 5 minutes",
+  },
+  construction: {
+    slug: "construction",
+    name: "Construction",
+    customerType: "project owners",
+    heroIcon: "Home",
+    problemStats: [
+      {
+        value: "59%",
+        description: "of project leads call again only if you answer fast",
+        icon: "Phone",
+      },
+      {
+        value: "$12,000",
+        description: "average project discovery value",
+        icon: "DollarSign",
+      },
+      {
+        value: "22%",
+        description: "of estimate requests stall in voicemail queues",
+        icon: "PhoneMissed",
+      },
+    ],
+    howItWorks: [
+      {
+        title: "Connect",
+        description: "Answer calls and collect project basics: scope, timeline, address, and what outcome the caller wants.",
+      },
+      {
+        title: "Teach",
+        description: "Set intake questions, coverage rules, and your scheduling flow for discovery calls and estimates.",
+      },
+      {
+        title: "Relax",
+        description: "Leads get qualified and booked into your pipeline without repeated back-and-forth.",
+      },
+    ],
+    capabilities: [
+      {
+        title: "Project qualification",
+        description: "Gather key details so your estimator starts with the full context already captured.",
+        icon: "MapPin",
+      },
+      {
+        title: "Estimate scheduling",
+        description: "Book discovery and estimate appointments with confirmations and easy rescheduling.",
+        icon: "Calendar",
+      },
+      {
+        title: "Follow-up sequences",
+        description: "Trigger governed follow-ups when the lead is ready, not when someone remembers.",
+        icon: "Zap",
+      },
+      {
+        title: "Availability verification",
+        description: "Reduce wasted meetings by verifying timeframe fit during the call.",
+        icon: "Shield",
+      },
+    ],
+    roi: {
+      missedCallsPerWeek: 9,
+      avgValueLabel: "project",
+      avgValueNumber: 12000,
+      recoveredPerMonth: 32400,
+      paybackDays: 2,
+    },
+    ctaHeadline: "Start your free Construction AI agent in 5 minutes",
   },
 };
 

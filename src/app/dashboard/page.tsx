@@ -8,6 +8,7 @@ import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 import { Shell } from "@/components/Shell";
 import { HandoffList } from "@/components/HandoffList";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
+import { TrialGraceEndedBanner } from "@/components/TrialGraceEndedBanner";
 
 interface Capsule {
   today: string[];
@@ -121,6 +122,7 @@ export default function SituationPage() {
 
   return (
     <Shell>
+      <TrialGraceEndedBanner />
       <DashboardExecutionStateBanner />
       <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
         Handling active. Commitments secured. Compliance enforced. Confirmation recorded.

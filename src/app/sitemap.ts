@@ -2,7 +2,16 @@ import type { MetadataRoute } from "next";
 
 const BASE = "https://www.recall-touch.com";
 
-const INDUSTRY_SLUGS = ["plumbing-hvac", "dental", "legal", "real-estate", "healthcare"];
+const INDUSTRY_SLUGS = [
+  "plumbing-hvac",
+  "dental",
+  "legal",
+  "real-estate",
+  "healthcare",
+  "auto-repair",
+  "insurance",
+  "construction",
+];
 const COMPARE_SLUGS = ["smith-ai", "ruby", "gohighlevel", "hiring-receptionist"];
 
 const BLOG_SLUGS = [
@@ -12,6 +21,10 @@ const BLOG_SLUGS = [
   "setup-guide-5-minutes",
   "why-missed-calls-cost-more",
   "speed-to-lead-60-second-rule",
+  "after-hours-lead-capture",
+  "voicemail-to-appointment",
+  "missed-call-metrics-revenue",
+  "follow-up-speed-automation",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

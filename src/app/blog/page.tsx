@@ -11,6 +11,10 @@ const BLOG_POSTS = [
   { slug: "setup-guide-5-minutes", title: "Setup guide: Go live in 5 minutes", excerpt: "Get your AI phone agent answering calls in under 5 minutes. Step-by-step with no technical setup required.", date: "March 2026" },
   { slug: "why-missed-calls-cost-more", title: "Why missed calls cost more than you think", excerpt: "Every unanswered call is a potential customer walking to a competitor. This piece breaks down the real cost of missed calls and how to fix it.", date: "March 2026" },
   { slug: "speed-to-lead-60-second-rule", title: "Speed-to-lead: the 60-second rule", excerpt: "Responding within 60 seconds can dramatically increase your chance of closing. Here's why speed matters and how to get there.", date: "March 2026" },
+  { slug: "after-hours-lead-capture", title: "After-hours lead capture: stop losing calls after 5 PM", excerpt: "Answer every missed call, take the right details, and book appointments even when your team is offline.", date: "April 2026" },
+  { slug: "voicemail-to-appointment", title: "Turn voicemail into appointments (without hiring)", excerpt: "Voicemail transcripts are only the start. We show how to convert messages into booked times and qualified leads.", date: "April 2026" },
+  { slug: "missed-call-metrics-revenue", title: "Missed call metrics that actually predict revenue", excerpt: "Track the signals that correlate with bookings: pickup rate, time-to-first-response, and conversion from callbacks.", date: "April 2026" },
+  { slug: "follow-up-speed-automation", title: "Follow-up automation: how to book in minutes, not days", excerpt: "A practical blueprint for fast callback and SMS follow-ups that move leads to appointments.", date: "April 2026" },
 ];
 
 export default function BlogPage() {

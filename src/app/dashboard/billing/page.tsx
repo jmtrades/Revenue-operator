@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
+import { TrialGraceEndedBanner } from "@/components/TrialGraceEndedBanner";
 import { PageHeader } from "@/components/ui";
 
 interface BillingState {
@@ -114,6 +115,7 @@ export default function DashboardBillingPage() {
 
   return (
     <div className="p-6 max-w-lg space-y-6">
+      <TrialGraceEndedBanner />
       <DashboardExecutionStateBanner />
       <PageHeader title={t("pages.billing.title")} subtitle={t("pages.billing.subtitle")} />
 

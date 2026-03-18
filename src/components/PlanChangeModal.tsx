@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
+import { track } from "@/lib/analytics/posthog";
 
 export type PlanId = "starter" | "growth" | "scale" | "enterprise";
 
@@ -70,6 +71,12 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
 
   const handleConfirm = async () => {
     if (selected === "enterprise" || !workspaceId) return;
+    if (currentPlanId === "starter" && selected === "growth") {
+      track("upgrade_clicked", { from: "solo", to: "business" });
+    }
+    if (selected === "scale" && isUpgrade) {
+      track("plan_changed", { action: "upgrade", plan: "scale" });
+    }
     setError(null);
     setLoading(true);
     try {

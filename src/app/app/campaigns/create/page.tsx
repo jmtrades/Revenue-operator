@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { cn } from "@/lib/cn";
+import { track } from "@/lib/analytics/posthog";
 import {
   ArrowLeft,
   ChevronRight,
@@ -203,16 +204,20 @@ export default function CampaignCreatePage() {
         setToast(created?.error || t("errors.createFailed"));
         return;
       }
+      track("campaign_created", { type });
       if (launch) {
         const launchRes = await fetch(`/api/campaigns/${encodeURIComponent(created.id)}/launch`, {
           method: "POST",
           credentials: "include",
         });
-        if (!launchRes.ok) {
+        const launchJson = launchRes.ok ? await launchRes.json().catch(() => null) : null;
+        if (!launchRes.ok || !launchJson) {
           setToast(t("toast.createdButLaunchFailed"));
           router.push("/app/campaigns");
           return;
         }
+        const contacts = typeof (launchJson as { enqueued?: unknown } | null)?.enqueued === "number" ? (launchJson as { enqueued?: number }).enqueued : 0;
+        track("campaign_launched", { contacts });
       }
       setToast(launch ? t("toast.launched") : t("toast.saved"));
       router.push("/app/campaigns");

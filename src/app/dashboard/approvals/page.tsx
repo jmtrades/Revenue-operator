@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Shell } from "@/components/Shell";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
+import { TrialGraceEndedBanner } from "@/components/TrialGraceEndedBanner";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 
 interface PendingItem {
@@ -81,6 +82,7 @@ export default function ApprovalsPage() {
 
   return (
     <Shell>
+      <TrialGraceEndedBanner />
       <DashboardExecutionStateBanner />
       <div className="max-w-2xl space-y-8">
         <h1 className="text-[21px] font-normal" style={{ color: "var(--text-primary)" }}>

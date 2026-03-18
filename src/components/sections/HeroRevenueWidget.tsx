@@ -50,9 +50,9 @@ export function HeroRevenueWidget() {
   ];
 
   const toneStyles: Record<HeroKpi["tone"], { border: string; fg: string; bg: string }> = {
-    lead: { border: "border-zinc-700", fg: "text-blue-400", bg: "bg-zinc-900/60" },
-    appointment: { border: "border-zinc-700", fg: "text-green-400", bg: "bg-zinc-900/60" },
-    followup: { border: "border-zinc-700", fg: "text-amber-300", bg: "bg-zinc-900/60" },
+    lead: { border: "border-[var(--border-default)]", fg: "text-blue-600", bg: "bg-blue-50" },
+    appointment: { border: "border-[var(--border-default)]", fg: "text-emerald-600", bg: "bg-emerald-50" },
+    followup: { border: "border-[var(--border-default)]", fg: "text-amber-600", bg: "bg-amber-50" },
   };
 
   return (
@@ -72,14 +72,14 @@ export function HeroRevenueWidget() {
                 Live
               </span>
             </div>
-            {!prefersReducedMotion && <div className="mt-3 h-1.5 w-28 rounded-full bg-white/[0.06] overflow-hidden">
-              <div className="h-full w-1/2 bg-white/[0.18] animate-pulse" />
+            {!prefersReducedMotion && <div className="mt-3 h-1.5 w-28 rounded-full bg-[var(--bg-inset)] overflow-hidden">
+              <div className="h-full w-1/2 bg-[var(--accent-primary)]/20 animate-pulse" />
             </div>}
           </div>
           <div className="hidden sm:block">
             <Link
               href="/app/analytics"
-              className="text-sm font-semibold text-white/80 hover:text-white transition-colors"
+              className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors"
             >
               View analytics →
             </Link>

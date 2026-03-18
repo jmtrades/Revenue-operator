@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { SUPPORTED_PHONE_COUNTRIES } from "@/lib/constants";
+import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
+import { listAvailableTelnyxPhoneNumbers } from "@/lib/telephony/telnyx/numbers";
 
 export const dynamic = "force-dynamic";
 
@@ -35,10 +37,38 @@ export async function GET(req: NextRequest) {
 
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const telephonyProvider = getTelephonyProvider();
 
   const countryCode = (country || "US").toUpperCase();
   if (!SUPPORTED_PHONE_COUNTRIES.includes(countryCode as (typeof SUPPORTED_PHONE_COUNTRIES)[number])) {
     return NextResponse.json({ error: "Country not supported" }, { status: 400 });
+  }
+
+  if (telephonyProvider === "telnyx") {
+    try {
+      const telnyxNumbers = await listAvailableTelnyxPhoneNumbers({
+        countryCode,
+        areaCode,
+        state,
+        phoneType: type,
+      });
+
+      const list: AvailableNumber[] = telnyxNumbers.slice(0, 20).map((n) => ({
+        phone_number: n.phone_number,
+        friendly_name: n.phone_number,
+        type: (type === "toll_free" ? "toll_free" : type === "mobile" ? "mobile" : "local") as
+          | "local"
+          | "toll_free"
+          | "mobile",
+        monthly_cost_cents: type === "toll_free" ? 500 : 300,
+        setup_fee_cents: 100,
+        capabilities: { voice: true, sms: true, mms: false },
+      }));
+
+      return NextResponse.json({ numbers: list });
+    } catch {
+      // fall through to provider-not-configured response
+    }
   }
 
   if (accountSid && authToken) {
@@ -83,6 +113,9 @@ export async function GET(req: NextRequest) {
   // Twilio not configured — return empty list with helpful message
   return NextResponse.json({
     numbers: [],
-    message: "Phone provider not configured. Contact support to enable number purchasing.",
+    message:
+      telephonyProvider === "telnyx"
+        ? "Phone provider (Telnyx) not configured. Contact support to enable number purchasing."
+        : "Phone provider (Twilio) not configured. Contact support to enable number purchasing.",
   });
 }
