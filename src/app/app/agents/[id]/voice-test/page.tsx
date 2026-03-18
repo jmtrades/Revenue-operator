@@ -117,7 +117,7 @@ export default function AgentVoiceTestPage() {
   if (!agentId) {
     return (
       <div className="max-w-3xl mx-auto p-6">
-        <p className="text-zinc-400">{t("noAgent")}</p>
+        <p className="text-[var(--text-tertiary)]">{t("noAgent")}</p>
         <Link href="/app/agents" className="text-sm text-[var(--accent-primary)] hover:underline mt-2 inline-block">
           {t("backToAgents")}
         </Link>
@@ -128,7 +128,7 @@ export default function AgentVoiceTestPage() {
   if (loading || !agent) {
     return (
       <div className="max-w-3xl mx-auto p-6 flex items-center justify-center min-h-[200px]">
-        <Loader2 className="w-8 h-8 animate-spin text-zinc-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--text-secondary)]" />
       </div>
     );
   }
@@ -137,41 +137,41 @@ export default function AgentVoiceTestPage() {
     <div className="max-w-4xl mx-auto p-6">
       <Link
         href="/app/agents"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white mb-6 transition-colors"
+        className="inline-flex items-center gap-2 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] mb-6 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Agents
       </Link>
-      <h1 className="text-xl font-semibold text-white mb-1">Voice preview & test</h1>
-      <p className="text-sm text-zinc-400 mb-6">
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Voice preview & test</h1>
+      <p className="text-sm text-[var(--text-tertiary)] mb-6">
         Try voices for &quot;{agent.name}&quot;. Play samples, test your script, compare two voices, then apply.
       </p>
 
       {/* Test with my script */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
-        <h2 className="text-sm font-semibold text-white mb-2">{t("scriptSection")}</h2>
+        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-2">{t("scriptSection")}</h2>
         <textarea
           value={customScript}
           onChange={(e) => setCustomScript(e.target.value)}
           placeholder={t("scriptPlaceholder")}
           rows={3}
-          className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--accent-primary)] focus:outline-none resize-y mb-3"
+          className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--accent-primary)] focus:outline-none resize-y mb-3"
         />
-        <p className="text-[11px] text-zinc-500 mb-3">
+        <p className="text-[11px] text-[var(--text-secondary)] mb-3">
           {t("scriptHelp")}
         </p>
       </section>
 
       {/* A/B comparison */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
-        <h2 className="text-sm font-semibold text-white mb-3">{t("abComparison")}</h2>
+        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{t("abComparison")}</h2>
         <div className="flex flex-wrap gap-4 items-end mb-3">
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">{t("voiceA")}</label>
+            <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("voiceA")}</label>
             <select
               value={abVoiceA}
               onChange={(e) => setAbVoiceA(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:outline-none min-w-[160px]"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:outline-none min-w-[160px]"
             >
               {CURATED_VOICES.map((v) => (
                 <option key={v.id} value={v.id}>{v.name}</option>
@@ -179,11 +179,11 @@ export default function AgentVoiceTestPage() {
             </select>
           </div>
           <div>
-            <label className="block text-[11px] text-zinc-500 mb-1">{t("voiceB")}</label>
+            <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("voiceB")}</label>
             <select
               value={abVoiceB}
               onChange={(e) => setAbVoiceB(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:outline-none min-w-[160px]"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:outline-none min-w-[160px]"
             >
               {CURATED_VOICES.map((v) => (
                 <option key={v.id} value={v.id}>{v.name}</option>
@@ -241,7 +241,7 @@ export default function AgentVoiceTestPage() {
 
       {/* Voice list */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
-        <h2 className="text-sm font-semibold text-white mb-3">{t("allVoices")}</h2>
+        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{t("allVoices")}</h2>
         <div className="grid gap-3">
           {CURATED_VOICES.map((voice) => (
             <div
@@ -258,7 +258,7 @@ export default function AgentVoiceTestPage() {
                   type="button"
                   disabled={playingId !== null}
                   onClick={() => void handlePlay(voice)}
-                  className="p-2 rounded-lg bg-[var(--bg-hover)] text-white hover:bg-white/10 disabled:opacity-50 shrink-0"
+                  className="p-2 rounded-lg bg-[var(--bg-hover)] text-[var(--text-primary)] hover:bg-white/10 disabled:opacity-50 shrink-0"
                   aria-label={`Play ${voice.name}`}
                 >
                   {playingId === voice.id ? (
@@ -268,8 +268,8 @@ export default function AgentVoiceTestPage() {
                   )}
                 </button>
                 <div className="min-w-0">
-                  <p className="font-medium text-white truncate">{voice.name}</p>
-                  <p className="text-[11px] text-zinc-500">
+                  <p className="font-medium text-[var(--text-primary)] truncate">{voice.name}</p>
+                  <p className="text-[11px] text-[var(--text-secondary)]">
                     {voice.accent} · {voice.gender} · {voice.tone} · {voice.bestFor}
                   </p>
                 </div>
@@ -282,7 +282,7 @@ export default function AgentVoiceTestPage() {
                     "text-xs px-2.5 py-1.5 rounded-lg border",
                     selectedVoiceId === voice.id
                       ? "bg-white text-black border-white"
-                      : "border-[var(--border-default)] text-zinc-400 hover:text-white"
+                      : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
                   )}
                 >
                   {selectedVoiceId === voice.id ? "Selected" : "Select"}
@@ -295,8 +295,8 @@ export default function AgentVoiceTestPage() {
 
       {/* Apply to agent */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-        <h2 className="text-sm font-semibold text-white mb-2">{t("applyToAgent")}</h2>
-        <p className="text-xs text-zinc-500 mb-3">
+        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-2">{t("applyToAgent")}</h2>
+        <p className="text-xs text-[var(--text-secondary)] mb-3">
           {selectedVoiceId
             ? `${t("selected")}: ${CURATED_VOICES.find((v) => v.id === selectedVoiceId)?.name ?? selectedVoiceId}`
             : t("selectVoicePrompt")}

@@ -97,6 +97,7 @@
     "team": "Équipe",
     "calendar": "Calendrier",
     "appointments": "Rendez-vous",
+    "followUps": "Follow-Ups",
     "knowledge": "Connaissance",
     "callIntelligence": "Intelligence d'appel",
     "compliance": "Conformité",
@@ -4267,6 +4268,9 @@
   },
   "footer": {
     "tagline": "Communication téléphone et SMS par IA pour les entreprises qui dépendent de chaque appel.",
+    "founderPhotoAlt": "Junior, fondateur de Recall Touch",
+    "founderName": "Junior",
+    "founderBio": "Fondateur de Recall Touch. Développe la récupération de revenus avec l'IA pour que chaque appel compte.",
     "product": "Produit",
     "features": "Fonctionnalités",
     "pricing": "Tarifs",
@@ -6565,6 +6569,28 @@
       "customerReturned": "Client revenu",
       "theyreSet": "C'est réglé",
       "decisionProgressed": "Décision progressée"
+    }
+  },
+  "productTour": {
+    "revenue": {
+      "title": "Revenu récupéré",
+      "body": "Votre tableau de bord montre l'argent que votre IA a récupéré."
+    },
+    "needsAttention": {
+      "title": "À traiter",
+      "body": "Cette file met en évidence les leads et suivis qui nécessitent une revue."
+    },
+    "sidebarNav": {
+      "title": "Navigation",
+      "body": "Utilisez la barre latérale pour passer du tableau de bord aux appels, leads, campagnes et paramètres."
+    },
+    "campaigns": {
+      "title": "Campagnes",
+      "body": "Lancez des séquences outbound pour récupérer du revenu de manière proactive."
+    },
+    "settings": {
+      "title": "Paramètres",
+      "body": "Gérez heures d'appel, conformité, voix et facturation depuis un seul endroit."
     }
   },
   "legal": {

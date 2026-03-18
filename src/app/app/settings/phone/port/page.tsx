@@ -48,20 +48,20 @@ export default function PhonePortPage() {
       />
       <Link
         href="/app/settings/phone"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white mb-6 transition-colors"
+        className="inline-flex items-center gap-2 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] mb-6 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         {t("portPage.backToPhone")}
       </Link>
-      <h1 className="text-xl font-semibold text-white mb-1">{t("portPage.title")}</h1>
-      <p className="text-sm text-zinc-400 mb-8">
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{t("portPage.title")}</h1>
+      <p className="text-sm text-[var(--text-tertiary)] mb-8">
         {t("portPage.subtitle")}
       </p>
 
       {submitted ? (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-center">
-          <p className="text-white font-medium mb-1">{t("portPage.requestReceived")}</p>
-          <p className="text-sm text-zinc-400 mb-4">
+          <p className="text-[var(--text-primary)] font-medium mb-1">{t("portPage.requestReceived")}</p>
+          <p className="text-sm text-[var(--text-tertiary)] mb-4">
             {t("portPage.requestReceivedBody")}
           </p>
           <Link href="/app/settings/phone" className="text-sm font-medium text-[var(--accent-primary)] hover:underline">
@@ -72,26 +72,26 @@ export default function PhonePortPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {step >= 1 && (
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <p className="text-sm font-medium text-white mb-2">{t("portPage.step1Title")}</p>
+              <p className="text-sm font-medium text-[var(--text-primary)] mb-2">{t("portPage.step1Title")}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">{t("porting.numberLabel")}</label>
+                  <label className="block text-xs text-[var(--text-secondary)] mb-1">{t("porting.numberLabel")}</label>
                   <input
                     type="tel"
                     value={number}
                     onChange={(e) => setNumber(e.target.value)}
                     placeholder={t("portPage.numberPlaceholder")}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--accent-primary)] focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--accent-primary)] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">{t("porting.carrierLabel")}</label>
+                  <label className="block text-xs text-[var(--text-secondary)] mb-1">{t("porting.carrierLabel")}</label>
                   <input
                     type="text"
                     value={carrier}
                     onChange={(e) => setCarrier(e.target.value)}
                     placeholder={t("portPage.carrierPlaceholder")}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--accent-primary)] focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--accent-primary)] focus:outline-none"
                   />
                 </div>
               </div>
@@ -99,37 +99,37 @@ export default function PhonePortPage() {
           )}
           {step >= 2 && (
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <p className="text-sm font-medium text-white mb-2">{t("portPage.step2Title")}</p>
-              <p className="text-xs text-zinc-500 mb-4">{t("portPage.step2Body")}</p>
+              <p className="text-sm font-medium text-[var(--text-primary)] mb-2">{t("portPage.step2Title")}</p>
+              <p className="text-xs text-[var(--text-secondary)] mb-4">{t("portPage.step2Body")}</p>
               <div className="border border-dashed border-[var(--border-default)] rounded-xl p-8 text-center">
-                <Upload className="w-8 h-8 text-zinc-500 mx-auto mb-2" />
-                <p className="text-sm text-zinc-400">{t("portPage.uploadHint")}</p>
-                <p className="text-xs text-zinc-500 mt-1">{t("portPage.uploadFormats")}</p>
+                <Upload className="w-8 h-8 text-[var(--text-secondary)] mx-auto mb-2" />
+                <p className="text-sm text-[var(--text-tertiary)]">{t("portPage.uploadHint")}</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-1">{t("portPage.uploadFormats")}</p>
               </div>
             </div>
           )}
           {step >= 3 && (
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <p className="text-sm font-medium text-white mb-2">{t("portPage.step3Title")}</p>
-              <p className="text-xs text-zinc-500 mb-4">{t("portPage.step3Body")}</p>
+              <p className="text-sm font-medium text-[var(--text-primary)] mb-2">{t("portPage.step3Title")}</p>
+              <p className="text-xs text-[var(--text-secondary)] mb-4">{t("portPage.step3Body")}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">{t("porting.accountNumber")}</label>
+                  <label className="block text-xs text-[var(--text-secondary)] mb-1">{t("porting.accountNumber")}</label>
                   <input
                     type="text"
                     value={accountNumber}
                     onChange={(e) => setAccountNumber(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--accent-primary)] focus:outline-none"
                     placeholder={t("portPage.accountPlaceholder")}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">{t("portPage.pinLabel")}</label>
+                  <label className="block text-xs text-[var(--text-secondary)] mb-1">{t("portPage.pinLabel")}</label>
                   <input
                     type="password"
                     value={accountPin}
                     onChange={(e) => setAccountPin(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--accent-primary)] focus:outline-none"
                     placeholder={t("portPage.pinPlaceholder")}
                   />
                 </div>
@@ -138,7 +138,7 @@ export default function PhonePortPage() {
           )}
           <div className="flex items-center justify-between">
             {step > 1 ? (
-              <button type="button" onClick={() => setStep((s) => s - 1)} className="text-sm text-zinc-400 hover:text-white">
+              <button type="button" onClick={() => setStep((s) => s - 1)} className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
                 {t("portPage.back")}
               </button>
             ) : (

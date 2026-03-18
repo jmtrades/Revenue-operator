@@ -142,7 +142,7 @@ export default function AppSettingsBillingPage() {
     return (
       <div className="max-w-[600px] mx-auto p-4 md:p-6">
         <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
-        <h1 className="text-lg font-semibold text-white mb-4">{tNav("billing")}</h1>
+        <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
         <div className="animate-pulse space-y-3">
           <div className="h-20 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]" />
           <div className="h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] w-1/2" />
@@ -155,7 +155,7 @@ export default function AppSettingsBillingPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
-      <h1 className="text-lg font-semibold text-white mb-4">{tNav("billing")}</h1>
+      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
       {billingError && (
         <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-sm mb-4">
           <p className="font-medium">{tBilling("errors.loadingFailed")}</p>
@@ -166,17 +166,17 @@ export default function AppSettingsBillingPage() {
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
         {billingStatus === null ? (
           <div className="animate-pulse space-y-2">
-            <div className="h-4 w-48 bg-zinc-800 rounded" />
-            <div className="h-3 w-32 bg-zinc-800 rounded" />
-            <div className="h-3 w-40 bg-zinc-800 rounded" />
+            <div className="h-4 w-48 bg-[var(--bg-inset)] rounded" />
+            <div className="h-3 w-32 bg-[var(--bg-inset)] rounded" />
+            <div className="h-3 w-40 bg-[var(--bg-inset)] rounded" />
           </div>
         ) : (
           <>
-            <p className="text-sm font-medium text-white">{tBilling("planDisplay", { plan: currentPlanId === "starter" ? "Starter" : currentPlanId === "growth" ? "Growth" : currentPlanId === "scale" ? "Scale" : "Starter", price: currentPlanId === "starter" ? "297" : currentPlanId === "growth" ? "497" : currentPlanId === "scale" ? "2400" : "297" })}</p>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("planDisplay", { plan: currentPlanId === "starter" ? "Starter" : currentPlanId === "growth" ? "Growth" : currentPlanId === "scale" ? "Scale" : "Starter", price: currentPlanId === "starter" ? "297" : currentPlanId === "growth" ? "497" : currentPlanId === "scale" ? "2400" : "297" })}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
               {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
             </p>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
               {tBilling("status")} {billingStatus}{renewalAt ? ` · ${tBilling("renews")} ${new Date(renewalAt).toLocaleDateString()}` : ""}
             </p>
           </>
@@ -186,12 +186,12 @@ export default function AppSettingsBillingPage() {
       {billingStatus !== null && (
         <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-white">Minutes Usage</p>
-            <span className="text-xs text-zinc-400">
+            <p className="text-sm font-medium text-[var(--text-primary)]">Minutes Usage</p>
+            <span className="text-xs text-[var(--text-tertiary)]">
               {usage.minutes_used} / {usage.minutes_limit} min
             </span>
           </div>
-          <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-[var(--bg-inset)] rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${
                 usage.minutes_limit > 0 && usage.minutes_used / usage.minutes_limit > 0.8
@@ -201,7 +201,7 @@ export default function AppSettingsBillingPage() {
               style={{ width: `${Math.min(100, usage.minutes_limit > 0 ? (usage.minutes_used / usage.minutes_limit) * 100 : 0)}%` }}
             />
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1.5">
+          <p className="text-[11px] text-[var(--text-secondary)] mt-1.5">
             {usage.minutes_limit > 0 ? Math.round((usage.minutes_used / usage.minutes_limit) * 100) : 0}% used this billing period
           </p>
           {usage.minutes_limit > 0 && usage.minutes_used / usage.minutes_limit > 0.8 && (
@@ -218,7 +218,7 @@ export default function AppSettingsBillingPage() {
       <button
         type="button"
         onClick={() => setPlanChangeOpen(true)}
-        className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-600 text-zinc-300 mb-4 block hover:bg-zinc-800/50"
+        className="px-4 py-2 rounded-xl text-sm font-medium border border-zinc-600 text-zinc-300 mb-4 block hover:bg-[var(--bg-inset)]/50"
         data-testid="billing-change-plan"
         aria-haspopup="dialog"
         aria-expanded={planChangeOpen}
@@ -232,7 +232,7 @@ export default function AppSettingsBillingPage() {
         onSuccess={() => setToast(tBilling("toast.planUpdated"))}
         workspaceId={workspaceId}
       />
-        <p className="text-xs text-zinc-500 mb-4">
+        <p className="text-xs text-[var(--text-secondary)] mb-4">
           {tBilling("paymentMethod")}{" "}
           <button
             type="button"
@@ -251,14 +251,14 @@ export default function AppSettingsBillingPage() {
                 else setToast(tBilling("toast.paymentFailed"));
               } catch { setToast(tBilling("toast.paymentFailed")); }
             }}
-            className="text-zinc-400 hover:text-white ml-2"
+            className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] ml-2"
           >
             {tBilling("update")}
           </button>
         </p>
-      <p className="text-sm text-zinc-400 mb-2">{tBilling("invoiceHistory")}</p>
+      <p className="text-sm text-[var(--text-tertiary)] mb-2">{tBilling("invoiceHistory")}</p>
       <div className="rounded-xl border border-[var(--border-default)] p-3 mb-6">
-        <p className="text-xs text-zinc-500 mb-2">{tBilling("invoiceDesc")}</p>
+        <p className="text-xs text-[var(--text-secondary)] mb-2">{tBilling("invoiceDesc")}</p>
         <button
           type="button"
           onClick={async () => {
@@ -276,13 +276,13 @@ export default function AppSettingsBillingPage() {
               else setToast(tBilling("toast.portalFailed"));
             } catch { setToast(tBilling("toast.portalFailed")); }
           }}
-          className="text-sm text-zinc-300 hover:text-white underline underline-offset-2"
+          className="text-sm text-zinc-300 hover:text-[var(--text-primary)] underline underline-offset-2"
         >
           {tBilling("viewInvoices")}
         </button>
       </div>
       <div className="flex gap-2">
-        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-400 disabled:opacity-60 hover:bg-zinc-800/50">{pausing ? tBilling("pausing") : tBilling("pauseAccount")}</button>
+        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] disabled:opacity-60 hover:bg-[var(--bg-inset)]/50">{pausing ? tBilling("pausing") : tBilling("pauseAccount")}</button>
         <button
           type="button"
           onClick={() => setCancelStep(1)}
@@ -295,8 +295,8 @@ export default function AppSettingsBillingPage() {
       {pauseStep === 1 && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={() => setPauseStep(0)}>
           <div className="bg-[var(--bg-card)] border border-[var(--border-medium)] rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-white mb-2">{tBilling("pauseTitle")}</h2>
-            <p className="text-sm text-zinc-400 mb-4">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tBilling("pauseTitle")}</h2>
+            <p className="text-sm text-[var(--text-tertiary)] mb-4">
               {tBilling("pauseDesc")}
             </p>
             <div className="flex gap-2 justify-end">
@@ -312,8 +312,8 @@ export default function AppSettingsBillingPage() {
           <div className="bg-[var(--bg-card)] border border-[var(--border-medium)] rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
             {cancelStep === 1 && (
               <>
-                <h2 className="text-lg font-semibold text-white mb-2">{tBilling("beforeYouGo")}</h2>
-                <p className="text-sm text-zinc-400 mb-4">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tBilling("beforeYouGo")}</h2>
+                <p className="text-sm text-[var(--text-tertiary)] mb-4">
                   {tBilling("beforeYouGoDesc", { leads: usage.leads, revenue: usage.estRevenue.toLocaleString() })}
                 </p>
                 <div className="flex gap-2 justify-end">
@@ -324,8 +324,8 @@ export default function AppSettingsBillingPage() {
             )}
             {cancelStep === 2 && (
               <>
-                <h2 className="text-lg font-semibold text-white mb-2">{tBilling("pauseInstead")}</h2>
-                <p className="text-sm text-zinc-400 mb-4">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tBilling("pauseInstead")}</h2>
+                <p className="text-sm text-[var(--text-tertiary)] mb-4">
                   {tBilling("pauseInsteadDesc")}
                 </p>
                 <div className="flex gap-2 justify-end">
@@ -336,8 +336,8 @@ export default function AppSettingsBillingPage() {
             )}
             {cancelStep === 3 && (
               <>
-                <h2 className="text-lg font-semibold text-white mb-2">{tBilling("downgradeTitle")}</h2>
-                <p className="text-sm text-zinc-400 mb-4">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tBilling("downgradeTitle")}</h2>
+                <p className="text-sm text-[var(--text-tertiary)] mb-4">
                   {tBilling("downgradeDesc")}
                 </p>
                 <div className="flex gap-2 justify-end">
@@ -348,13 +348,13 @@ export default function AppSettingsBillingPage() {
             )}
             {cancelStep === 4 && (
               <>
-                <h2 className="text-lg font-semibold text-white mb-2">{tBilling("sorryToSeeYouGo")}</h2>
-                <p className="text-sm text-zinc-400 mb-4">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tBilling("sorryToSeeYouGo")}</h2>
+                <p className="text-sm text-[var(--text-tertiary)] mb-4">
                   {tBilling("sorryDesc")}
                 </p>
                 <div className="flex gap-2 justify-end">
                   <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-zinc-300">{tBilling("back")}</button>
-                  <button type="button" onClick={() => { void handlePauseCoverage(); setCancelStep(0); }} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm bg-red-600 text-white font-medium disabled:opacity-60">{pausing ? tBilling("pausing") : tBilling("confirmCancel")}</button>
+                  <button type="button" onClick={() => { void handlePauseCoverage(); setCancelStep(0); }} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm bg-red-600 text-[var(--text-primary)] font-medium disabled:opacity-60">{pausing ? tBilling("pausing") : tBilling("confirmCancel")}</button>
                 </div>
               </>
             )}
@@ -368,7 +368,7 @@ export default function AppSettingsBillingPage() {
         </div>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tBilling("backToSettingsLink")}</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tBilling("backToSettingsLink")}</Link></p>
     </div>
   );
 }

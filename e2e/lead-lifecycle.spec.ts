@@ -7,10 +7,12 @@ import { test, expect } from "@playwright/test";
 test.describe("Lead lifecycle", () => {
   test("activity page loads with calls or empty state", async ({ page }) => {
     await page.goto("/app/activity", { waitUntil: "domcontentloaded" });
+    if (page.url().includes("/sign-in")) {
+      await expect(page.getByRole("heading", { name: /Sign in/i })).toBeVisible({ timeout: 10000 });
+      return;
+    }
     await expect(
-      page.getByRole("heading", { name: /Activity|Calls|Inbox/i }).or(
-        page.getByText(/Sign in|Welcome back/i)
-      )
+      page.getByRole("heading", { name: /Activity|Calls/i }).or(page.getByText(/No calls/i)).first()
     ).toBeVisible({ timeout: 10000 });
   });
 

@@ -5,6 +5,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 
 export type EconomicPriorityLevel = 0 | 1 | 2 | 3;
 /** 0 low, 1 standard, 2 important, 3 critical */
@@ -26,12 +27,13 @@ async function computeEconomicScore(leadId: string, workspaceId: string): Promis
   let score = 0;
 
   try {
-    const { data: lifecycle } = await db
+    let lifecycle: unknown = null;
+    const q = db
       .from("revenue_lifecycles")
       .select("lifetime_value_stage, lifecycle_stage")
       .eq("lead_id", leadId)
-      .eq("workspace_id", workspaceId)
-      .maybeSingle();
+      .eq("workspace_id", workspaceId) as unknown as DbSingleQuery;
+    lifecycle = await fetchSingleRow(q);
 
     if (lifecycle) {
       const l = lifecycle as { lifetime_value_stage?: string; lifecycle_stage?: string };
@@ -63,12 +65,24 @@ async function computeEconomicScore(leadId: string, workspaceId: string): Promis
   if (totalWonCents >= VALUE_TIER_HIGH_CENTS) score += 2;
   else if (totalWonCents > 0) score += 1;
 
-  const { data: leadRow } = await db.from("leads").select("metadata").eq("id", leadId).maybeSingle();
+  let leadRow: unknown = null;
+  try {
+    const q = db.from("leads").select("metadata").eq("id", leadId) as unknown as DbSingleQuery;
+    leadRow = await fetchSingleRow(q);
+  } catch {
+    leadRow = null;
+  }
   const meta = (leadRow as { metadata?: Record<string, unknown> } | null)?.metadata ?? {};
   if (meta.source === "referral" || meta.referral === true) score += 1;
   if (meta.local === true || meta.proximity === true) score += 1;
 
-  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).maybeSingle();
+  let conv: unknown = null;
+  try {
+    const q = db.from("conversations").select("id").eq("lead_id", leadId) as unknown as DbSingleQuery;
+    conv = await fetchSingleRow(q);
+  } catch {
+    conv = null;
+  }
   const convId = (conv as { id?: string } | null)?.id;
   if (convId) {
     const { data: msgs } = await db
@@ -104,12 +118,15 @@ function scoreToLevel(score: number): EconomicPriorityLevel {
  */
 export async function getEconomicPriority(leadId: string): Promise<EconomicPriorityRow | null> {
   const db = getDb();
-  const { data } = await db
-    .from("guarantee_economic_priority")
-    .select("economic_priority_level, updated_at")
-    .eq("lead_id", leadId)
-    .maybeSingle();
-  return data as EconomicPriorityRow | null;
+  try {
+    const q = db
+      .from("guarantee_economic_priority")
+      .select("economic_priority_level, updated_at")
+      .eq("lead_id", leadId) as unknown as DbSingleQuery;
+    return (await fetchSingleRow(q)) as EconomicPriorityRow | null;
+  } catch {
+    return null;
+  }
 }
 
 /**

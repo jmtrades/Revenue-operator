@@ -28,6 +28,10 @@ export async function POST(req: NextRequest) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl?.origin ?? "";
+  const voiceWebhookUrl =
+    process.env.VOICE_PROVIDER === "pipecat"
+      ? `${baseUrl}/api/voice/connect`
+      : `${baseUrl}/api/webhooks/twilio/voice`;
 
   if (accountSid && authToken) {
     try {
@@ -42,7 +46,7 @@ export async function POST(req: NextRequest) {
           const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
           const purchaseParams = new URLSearchParams({
             PhoneNumber: num,
-            VoiceUrl: `${baseUrl}/api/webhooks/twilio/voice`,
+            VoiceUrl: voiceWebhookUrl,
             VoiceMethod: "POST",
             SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
             SmsMethod: "POST",

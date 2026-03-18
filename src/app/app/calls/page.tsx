@@ -257,17 +257,17 @@ export default function CallsPage() {
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-white flex items-center gap-2">
-            <PhoneCall className="w-5 h-5 text-zinc-400" />
+          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+            <PhoneCall className="w-5 h-5 text-[var(--text-tertiary)]" />
             {t("calls.heading")}
           </h1>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
             {t("calls.description")}
           </p>
         </div>
         <Link
           href="/app/calls/live"
-          className="inline-flex items-center gap-1.5 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2 text-sm font-medium hover:bg-zinc-800 hover:text-white"
+          className="inline-flex items-center gap-1.5 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2 text-sm font-medium hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
         >
           {t("calls.liveLabel")}
         </Link>
@@ -406,8 +406,8 @@ export default function CallsPage() {
           <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
             <AlertCircle className="h-6 w-6 text-red-400" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">{t("calls.errors.errorTitle")}</h3>
-          <p className="text-sm text-zinc-400 mb-6 max-w-sm">{error}</p>
+          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("calls.errors.errorTitle")}</h3>
+          <p className="text-sm text-[var(--text-tertiary)] mb-6 max-w-sm">{error}</p>
           <button
             type="button"
             onClick={() => { setError(null); setLoading(true); setRetryTrigger((c) => c + 1); }}
@@ -433,14 +433,14 @@ export default function CallsPage() {
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
             <tr>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.dateTime")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.caller")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.phone")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.duration")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.outcome")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.sentiment")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("calls.table.agent")}</th>
-              <th className="py-3 px-4 text-right text-xs font-medium text-zinc-500 w-20" aria-label={t("calls.table.actions")} />
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.dateTime")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.caller")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.phone")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.duration")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.outcome")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.sentiment")}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.agent")}</th>
+              <th className="py-3 px-4 text-right text-xs font-medium text-[var(--text-secondary)] w-20" aria-label={t("calls.table.actions")} />
             </tr>
           </thead>
           <tbody>
@@ -467,7 +467,7 @@ export default function CallsPage() {
                   className="group border-t border-zinc-900/70 hover:bg-[var(--bg-hover)] cursor-pointer"
                   onClick={() => handleRowClick(c.id)}
                 >
-                  <td className="py-3 px-4 text-xs text-zinc-400 whitespace-nowrap">
+                  <td className="py-3 px-4 text-xs text-[var(--text-tertiary)] whitespace-nowrap">
                     {d
                       ? `${d.toLocaleDateString()} · ${d.toLocaleTimeString([], {
                           hour: "2-digit",
@@ -476,7 +476,7 @@ export default function CallsPage() {
                       : "—"}
                   </td>
                   <td className="py-3 px-4 text-sm text-zinc-100">{name}</td>
-                  <td className="py-3 px-4 text-xs text-zinc-400">
+                  <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
                     {(c.matched_lead as { phone?: string | null } | undefined)?.phone ?? c.matched_lead?.email ?? "—"}
                   </td>
                   <td className="py-3 px-4 text-xs">
@@ -490,7 +490,7 @@ export default function CallsPage() {
                   <td className="py-3 px-4 text-xs text-zinc-200">
                     {sentimentEmoji && <span aria-hidden>{sentimentEmoji}</span>}
                     {!sentimentEmoji && sentiment && <span>{sentimentLabels[sentiment]}</span>}
-                    {!sentiment && !sentimentEmoji && <span className="text-zinc-500">—</span>}
+                    {!sentiment && !sentimentEmoji && <span className="text-[var(--text-secondary)]">—</span>}
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-300">
                     {c.matched_lead?.name ? t("calls.table.agent") : "—"}
@@ -500,7 +500,7 @@ export default function CallsPage() {
                       <button
                         type="button"
                         aria-label={t("calls.playRecording")}
-                        className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10"
+                        className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/10"
                         onClick={() => handleRowClick(c.id)}
                       >
                         <Play className="h-3.5 w-3.5" />
@@ -508,7 +508,7 @@ export default function CallsPage() {
                       <button
                         type="button"
                         aria-label={t("calls.viewTranscript")}
-                        className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10"
+                        className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/10"
                         onClick={() => handleRowClick(c.id)}
                       >
                         <FileText className="h-3.5 w-3.5" />
@@ -520,7 +520,7 @@ export default function CallsPage() {
             })}
             {pageItems.length === 0 && (
               <tr>
-                <td             colSpan={9} className="py-8 px-4 text-center text-sm text-zinc-500">
+                <td             colSpan={9} className="py-8 px-4 text-center text-sm text-[var(--text-secondary)]">
                   {t("calls.noMatchFilters")}
                 </td>
               </tr>
@@ -554,7 +554,7 @@ export default function CallsPage() {
               >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-medium text-zinc-100 truncate">{name}</p>
-                <span className="inline-flex items-center gap-1 text-[11px] text-zinc-400">
+                <span className="inline-flex items-center gap-1 text-[11px] text-[var(--text-tertiary)]">
                   {sentiment ? (
                     <>
                       <span
@@ -563,11 +563,11 @@ export default function CallsPage() {
                       {sentimentLabels[sentiment]}
                     </>
                   ) : (
-                    <span className="text-zinc-500">—</span>
+                    <span className="text-[var(--text-secondary)]">—</span>
                   )}
                 </span>
               </div>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-[var(--text-secondary)]">
                 {d
                   ? `${d.toLocaleDateString()} · ${d.toLocaleTimeString([], {
                       hour: "2-digit",
@@ -575,7 +575,7 @@ export default function CallsPage() {
                     })}`
                   : "—"}
               </p>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-[var(--text-tertiary)]">
                 {c.matched_lead?.email ?? "—"}
               </p>
               <div className="mt-2 flex items-center justify-between gap-2">
@@ -597,18 +597,18 @@ export default function CallsPage() {
                   )}
                 </span>
               </div>
-              <p className="mt-1 text-[11px] text-zinc-500">
+              <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                 {t("calls.agentLabel")} {c.matched_lead?.name ? t("calls.assigned") : "—"}
               </p>
             </button>
           );
         })}
         {pageItems.length === 0 && (
-          <p className="text-sm text-zinc-500 text-center py-4">{t("calls.noMatchFilters")}</p>
+          <p className="text-sm text-[var(--text-secondary)] text-center py-4">{t("calls.noMatchFilters")}</p>
         )}
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-3 text-xs text-zinc-500">
+      <div className="mt-5 flex items-center justify-between gap-3 text-xs text-[var(--text-secondary)]">
         <span>
           {t("calls.showing")} {pageItems.length === 0 ? 0 : start + 1}–
           {Math.min(start + PAGE_SIZE, filtered.length)} {t("calls.of")} {filtered.length} {t("calls.callsLabel")}

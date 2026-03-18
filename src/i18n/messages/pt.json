@@ -97,6 +97,7 @@
     "team": "Equipe",
     "calendar": "Calendário",
     "appointments": "Agendamentos",
+    "followUps": "Follow-Ups",
     "knowledge": "Conhecimento",
     "callIntelligence": "Inteligência de chamadas",
     "compliance": "Conformidade",
@@ -4272,6 +4273,9 @@
   },
   "footer": {
     "tagline": "Comunicação por voz e texto com IA para negócios que dependem de cada chamada.",
+    "founderPhotoAlt": "Junior, fundador da Recall Touch",
+    "founderName": "Junior",
+    "founderBio": "Fundador da Recall Touch. Criando recuperação de receitas com IA para que cada chamada gere valor.",
     "product": "Produto",
     "features": "Recursos",
     "pricing": "Preços",
@@ -6570,6 +6574,28 @@
       "customerReturned": "Cliente retornou",
       "theyreSet": "Estão definidos",
       "decisionProgressed": "Decisão progrediu"
+    }
+  },
+  "productTour": {
+    "revenue": {
+      "title": "Receita recuperada",
+      "body": "Seu dashboard mostra o dinheiro que sua IA recuperou."
+    },
+    "needsAttention": {
+      "title": "Precisa da sua ação",
+      "body": "Esta fila destaca leads e follow-ups que precisam de revisão."
+    },
+    "sidebarNav": {
+      "title": "Navegação",
+      "body": "Use a barra lateral para alternar entre dashboard, chamadas, leads, campanhas e configurações."
+    },
+    "campaigns": {
+      "title": "Campanhas",
+      "body": "Ative sequências outbound para recuperar receita proativamente."
+    },
+    "settings": {
+      "title": "Configurações",
+      "body": "Controle horários de chamada, conformidade, vozes e cobrança a partir de um lugar."
     }
   },
   "legal": {

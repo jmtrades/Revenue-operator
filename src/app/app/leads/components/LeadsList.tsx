@@ -115,10 +115,10 @@ export function LeadsList({
           className="w-12 h-12 text-zinc-600 mx-auto mb-3"
           aria-hidden
         />
-        <p className="text-sm font-medium text-white mb-1">
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
           {tLeads("empty.subtitle")}
         </p>
-        <p className="text-xs text-zinc-500 mb-4">
+        <p className="text-xs text-[var(--text-secondary)] mb-4">
           {tLeads("empty.hint")}
         </p>
         <EmptyState
@@ -144,10 +144,10 @@ export function LeadsList({
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-default)] bg-[var(--bg-card)]">
             <tr>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 <input
                   type="checkbox"
-                  className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
+                  className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-[var(--text-primary)]"
                   checked={
                     filteredLeads.length > 0 &&
                     selectedIds.size === filteredLeads.length
@@ -155,25 +155,25 @@ export function LeadsList({
                   onChange={(e) => toggleAllSelected(e.target.checked)}
                 />
               </th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 {tLeads("table.name")}
               </th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 {tLeads("table.phone")}
               </th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 {tLeads("table.source")}
               </th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 {tLeads("table.score")}
               </th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 {tLeads("table.stage")}
               </th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 {tLeads("table.lastContact")}
               </th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 {tLeads("table.agent")}
               </th>
             </tr>
@@ -197,7 +197,7 @@ export function LeadsList({
                   >
                     <input
                       type="checkbox"
-                      className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
+                      className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-[var(--text-primary)]"
                       checked={checked}
                       onChange={() => toggleSelected(lead.id)}
                     />
@@ -205,7 +205,7 @@ export function LeadsList({
                   <td className="py-3 px-4 text-sm text-zinc-100">
                     {lead.name}
                   </td>
-                  <td className="py-3 px-4 text-xs text-zinc-400">
+                  <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
                     {lead.phone}
                   </td>
                   <td className="py-3 px-4 text-xs">
@@ -232,7 +232,7 @@ export function LeadsList({
                       {getStatusDisplay(lead.status, t)}
                     </Badge>
                   </td>
-                  <td className="py-3 px-4 text-xs text-zinc-400">
+                  <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
                     {timeSince(lead.lastContactAt, tLeads)}
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-300">
@@ -268,13 +268,13 @@ export function LeadsList({
                     <span>{lead.score}</span>
                   </span>
                 </div>
-                <p className="text-xs text-zinc-400">{lead.phone}</p>
-                <p className="text-xs text-zinc-500">{lead.service}</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{lead.phone}</p>
+                <p className="text-xs text-[var(--text-secondary)]">{lead.service}</p>
                 <div className="mt-1 flex items-center justify-between gap-2">
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
                     {getStatusDisplay(lead.status, t)}
                   </span>
-                  <span className="text-[11px] text-zinc-500">
+                  <span className="text-[11px] text-[var(--text-secondary)]">
                     {timeSince(lead.createdAt, tLeads)}
                   </span>
                 </div>

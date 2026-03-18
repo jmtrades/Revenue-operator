@@ -88,8 +88,8 @@ export default function AgentAnalyticsPage({
   if (loading || !agentId) {
     return (
       <div className="max-w-4xl mx-auto p-4 md:p-6">
-        <div className="flex items-center gap-2 text-zinc-400 text-sm mb-6">
-          <Link href="/app/agents" className="hover:text-white">{t("analytics.breadcrumbAgents")}</Link>
+        <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-sm mb-6">
+          <Link href="/app/agents" className="hover:text-[var(--text-primary)]">{t("analytics.breadcrumbAgents")}</Link>
           <ChevronRight className="w-4 h-4" />
           <Skeleton className="h-4 w-32" />
         </div>
@@ -106,12 +106,12 @@ export default function AgentAnalyticsPage({
   if (!data) {
     return (
       <div className="max-w-4xl mx-auto p-4 md:p-6">
-        <div className="flex items-center gap-2 text-zinc-400 text-sm mb-6">
-          <Link href="/app/agents" className="hover:text-white">Agents</Link>
+        <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-sm mb-6">
+          <Link href="/app/agents" className="hover:text-[var(--text-primary)]">Agents</Link>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-white">{agentName}</span>
+          <span className="text-[var(--text-primary)]">{agentName}</span>
         </div>
-        <p className="text-zinc-400">Could not load analytics.</p>
+        <p className="text-[var(--text-tertiary)]">Could not load analytics.</p>
       </div>
     );
   }
@@ -124,62 +124,62 @@ export default function AgentAnalyticsPage({
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 pb-12">
-      <div className="flex items-center gap-2 text-zinc-400 text-sm mb-2">
-        <Link href="/app/agents" className="hover:text-white">{t("analytics.breadcrumbAgents")}</Link>
+      <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-sm mb-2">
+        <Link href="/app/agents" className="hover:text-[var(--text-primary)]">{t("analytics.breadcrumbAgents")}</Link>
         <ChevronRight className="w-4 h-4" />
-        <Link href={`/app/agents?selected=${agentId}`} className="hover:text-white">{agentName}</Link>
+        <Link href={`/app/agents?selected=${agentId}`} className="hover:text-[var(--text-primary)]">{agentName}</Link>
         <ChevronRight className="w-4 h-4" />
-        <span className="text-white">Analytics</span>
+        <span className="text-[var(--text-primary)]">Analytics</span>
       </div>
-      <h1 className="text-xl font-semibold text-white mb-1">Performance</h1>
-      <p className="text-zinc-400 text-sm mb-6">Last {data.periodDays} days</p>
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Performance</h1>
+      <p className="text-[var(--text-tertiary)] text-sm mb-6">Last {data.periodDays} days</p>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
-          <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4">
+          <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-xs mb-1">
             <Phone className="w-3.5 h-3.5" />
             Calls handled
           </div>
-          <p className="text-xl font-semibold text-white">{kpis.callsHandled}</p>
+          <p className="text-xl font-semibold text-[var(--text-primary)]">{kpis.callsHandled}</p>
         </div>
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
-          <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4">
+          <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-xs mb-1">
             <Clock className="w-3.5 h-3.5" />
             Avg duration
           </div>
-          <p className="text-xl font-semibold text-white">{formatDuration(kpis.avgDurationSec)}</p>
+          <p className="text-xl font-semibold text-[var(--text-primary)]">{formatDuration(kpis.avgDurationSec)}</p>
         </div>
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
-          <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4">
+          <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-xs mb-1">
             <TrendingUp className="w-3.5 h-3.5" />
             Success rate
           </div>
-          <p className="text-xl font-semibold text-white">{kpis.successRate}%</p>
+          <p className="text-xl font-semibold text-[var(--text-primary)]">{kpis.successRate}%</p>
         </div>
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
-          <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4">
+          <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-xs mb-1">
             <Star className="w-3.5 h-3.5" />
             Quality score
           </div>
-          <p className="text-xl font-semibold text-white">
+          <p className="text-xl font-semibold text-[var(--text-primary)]">
             {kpis.qualityScore != null ? `${kpis.qualityScore}%` : "—"}
           </p>
         </div>
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
-          <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4">
+          <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-xs mb-1">
             <ThumbsUp className="w-3.5 h-3.5" />
             Satisfaction
           </div>
-          <p className="text-xl font-semibold text-white">
+          <p className="text-xl font-semibold text-[var(--text-primary)]">
             {kpis.satisfactionPct != null ? `${kpis.satisfactionPct}%` : "—"}
           </p>
         </div>
       </div>
 
       {/* Daily volume */}
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5 mb-6">
-        <p className="text-sm font-medium text-white mb-4">{t("callVolumeByDay")}</p>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5 mb-6">
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-4">{t("callVolumeByDay")}</p>
         <div className="h-52">
           {volumeChartData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -197,14 +197,14 @@ export default function AgentAnalyticsPage({
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-zinc-500 text-sm">{t("analytics.noCallData")}</div>
+            <div className="flex items-center justify-center h-full text-[var(--text-secondary)] text-sm">{t("analytics.noCallData")}</div>
           )}
         </div>
       </div>
 
       {/* Success rate trend */}
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5 mb-6">
-        <p className="text-sm font-medium text-white mb-4">{t("analytics.successRateOverTime")}</p>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5 mb-6">
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-4">{t("analytics.successRateOverTime")}</p>
         <div className="h-48">
           {successRateTrend.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -216,54 +216,54 @@ export default function AgentAnalyticsPage({
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-full text-zinc-500 text-sm">{t("analytics.noTrendData")}</div>
+            <div className="flex items-center justify-center h-full text-[var(--text-secondary)] text-sm">{t("analytics.noTrendData")}</div>
           )}
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5">
-          <p className="text-sm font-medium text-white mb-3">{t("analytics.outcomeBreakdown")}</p>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5">
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.outcomeBreakdown")}</p>
           <ul className="space-y-2">
             {topOutcomes.length > 0 ? (
               topOutcomes.map((o) => (
                 <li key={o.outcome} className="flex justify-between text-sm">
-                  <span className="text-zinc-400 capitalize">{o.outcome.replace(/_/g, " ")}</span>
-                  <span className="text-white font-medium">{o.count}</span>
+                  <span className="text-[var(--text-tertiary)] capitalize">{o.outcome.replace(/_/g, " ")}</span>
+                  <span className="text-[var(--text-primary)] font-medium">{o.count}</span>
                 </li>
               ))
             ) : (
-              <li className="text-zinc-500 text-sm">{t("analytics.noOutcomes")}</li>
+              <li className="text-[var(--text-secondary)] text-sm">{t("analytics.noOutcomes")}</li>
             )}
           </ul>
         </div>
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5">
-          <p className="text-sm font-medium text-white mb-3">{t("analytics.commonTopics")}</p>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5">
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.commonTopics")}</p>
           <ul className="space-y-2">
             {commonIntents.length > 0 ? (
               commonIntents.map((i) => (
                 <li key={i.intent} className="flex justify-between text-sm">
-                  <span className="text-zinc-400">{i.intent}</span>
-                  <span className="text-white font-medium">{i.count}</span>
+                  <span className="text-[var(--text-tertiary)]">{i.intent}</span>
+                  <span className="text-[var(--text-primary)] font-medium">{i.count}</span>
                 </li>
               ))
             ) : (
-              <li className="text-zinc-500 text-sm">{t("analytics.noSummaryData")}</li>
+              <li className="text-[var(--text-secondary)] text-sm">{t("analytics.noSummaryData")}</li>
             )}
           </ul>
         </div>
       </div>
 
       {comparison.length > 0 && (
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5 mb-6">
-          <p className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5 mb-6">
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-3 flex items-center gap-2">
             <Users className="w-4 h-4" />
             {t("analytics.otherAgents")}
           </p>
           <ul className="space-y-2">
             {comparison.map((a) => (
               <li key={a.id}>
-                <Link href={`/app/agents/${a.id}/analytics`} className="text-zinc-400 hover:text-white text-sm">
+                <Link href={`/app/agents/${a.id}/analytics`} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-sm">
                   {a.name}
                 </Link>
               </li>
@@ -273,15 +273,15 @@ export default function AgentAnalyticsPage({
       )}
 
       {recommendations.length > 0 && (
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5">
-          <p className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5">
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-3 flex items-center gap-2">
             <Lightbulb className="w-4 h-4 text-amber-500" />
             Recommendations
           </p>
           <ul className="space-y-2">
             {recommendations.map((r, i) => (
               <li key={i} className="text-sm text-zinc-300 flex gap-2">
-                <span className="text-zinc-500">•</span>
+                <span className="text-[var(--text-secondary)]">•</span>
                 {r}
               </li>
             ))}

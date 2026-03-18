@@ -164,7 +164,7 @@ export default function AppOnboardingPage() {
               ▶
             </button>
           </div>
-          <p className="text-xs text-zinc-400 mt-0.5">{v.desc}</p>
+          <p className="text-xs text-[var(--text-tertiary)] mt-0.5">{v.desc}</p>
           {selected && <p className="text-[10px] text-[var(--text-primary)] mt-1">{t("selected")}</p>}
         </button>
       );
@@ -256,13 +256,13 @@ export default function AppOnboardingPage() {
   const greetingToPlay = greeting.trim() || defaultGreeting;
 
   return (
-    <div className="min-h-screen bg-black text-white flex">
+    <div className="min-h-screen bg-black text-[var(--text-primary)] flex">
       <aside className="hidden md:flex w-64 flex-col border-r border-zinc-900 bg-zinc-950 px-6 py-8 gap-8">
         <div>
-          <p className="text-xs font-semibold tracking-wide text-zinc-400">
+          <p className="text-xs font-semibold tracking-wide text-[var(--text-tertiary)]">
             Recall Touch
           </p>
-          <p className="text-sm text-zinc-500 mt-1">{t("sidebarLabel")}</p>
+          <p className="text-sm text-[var(--text-secondary)] mt-1">{t("sidebarLabel")}</p>
         </div>
         <nav aria-label={t("stepsAria")} className="space-y-4">
           {STEP_KEYS.map((s) => {
@@ -278,12 +278,12 @@ export default function AppOnboardingPage() {
                 <div>
                   <p
                     className={`text-xs font-medium ${
-                      active ? "text-white" : "text-zinc-400"
+                      active ? "text-[var(--text-primary)]" : "text-[var(--text-tertiary)]"
                     }`}
                   >
                     {s.id}. {t(s.titleKey)}
                   </p>
-                  <p className="text-[11px] text-zinc-500">{t(s.subtitleKey)}</p>
+                  <p className="text-[11px] text-[var(--text-secondary)]">{t(s.subtitleKey)}</p>
                 </div>
               </div>
             );
@@ -310,7 +310,7 @@ export default function AppOnboardingPage() {
             <button
               type="button"
               onClick={skipOnboarding}
-              className="text-[11px] text-zinc-400 hover:text-white border border-zinc-800 rounded-xl px-3 py-1 transition-colors"
+              className="text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-default)] rounded-xl px-3 py-1 transition-colors"
             >
               {t("cta.skip")}
             </button>
@@ -334,27 +334,27 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={skipOnboarding}
-                className="text-xs text-zinc-400 hover:text-white border border-zinc-800 rounded-xl px-3 py-1 transition-colors"
+                className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-default)] rounded-xl px-3 py-1 transition-colors"
               >
                 {t("cta.skip")} →
               </button>
             </div>
           </div>
 
-          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 md:p-8">
         {/* Step 1 — MODE + INDUSTRY */}
         {step === 1 && (
           <div className="space-y-8">
             <div className="space-y-3">
-              <h1 className="text-xl font-bold text-white">
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">
                 {t("welcomeHeading")}
               </h1>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-[var(--text-tertiary)]">
                 {t("welcomeSubtitle")}
               </p>
             </div>
             <div className="space-y-4">
-              <p className="text-xs font-medium text-zinc-400">
+              <p className="text-xs font-medium text-[var(--text-tertiary)]">
                 {t("modeLabel")}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -371,14 +371,14 @@ export default function AppOnboardingPage() {
                       onClick={() => setMode(m.id)}
                       className={`rounded-2xl border p-4 text-left transition-colors ${
                         active
-                          ? "border-white bg-zinc-800"
-                          : "border-zinc-800 bg-zinc-950 hover:border-zinc-600"
+                          ? "border-white bg-[var(--bg-inset)]"
+                          : "border-[var(--border-default)] bg-zinc-950 hover:border-zinc-600"
                       }`}
                     >
-                      <div className="text-sm font-semibold text-white mb-1">
+                      <div className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                         {m.title}
                       </div>
-                      <p className="text-xs text-zinc-400">
+                      <p className="text-xs text-[var(--text-tertiary)]">
                         {m.desc}
                       </p>
                     </button>
@@ -404,14 +404,14 @@ export default function AppOnboardingPage() {
         {/* Step 2 — YOUR BUSINESS */}
         {step === 2 && (
           <div className="space-y-6">
-            <h1 className="text-xl font-bold text-white">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">
               {t("businessHeading")}
             </h1>
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-[var(--text-tertiary)]">
               {t("businessSubtitle")}
             </p>
             <div>
-              <label htmlFor="onboarding-business-name" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("businessNameLabel")}</label>
+              <label htmlFor="onboarding-business-name" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">{t("businessNameLabel")}</label>
               <input
                 id="onboarding-business-name"
                 type="text"
@@ -422,7 +422,7 @@ export default function AppOnboardingPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5 text-zinc-400">{t("whatAiHandleLabel")}</label>
+              <label className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">{t("whatAiHandleLabel")}</label>
               <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("whatAiHandleHint")}</p>
               <div className="flex flex-wrap gap-2">
                 {useCaseOptions.map(({ id, label }) => {
@@ -443,49 +443,49 @@ export default function AppOnboardingPage() {
               </div>
             </div>
             <div>
-              <label htmlFor="onboarding-website" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("websiteLabel")}</label>
+              <label htmlFor="onboarding-website" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">{t("websiteLabel")}</label>
               <input
                 id="onboarding-website"
                 type="url"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder={t("websitePlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
-              <p className="mt-1 text-[11px] text-zinc-500">
+              <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                 {t("websiteHint")}
               </p>
             </div>
             <div>
-              <label htmlFor="onboarding-address" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("addressLabel")}</label>
+              <label htmlFor="onboarding-address" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">{t("addressLabel")}</label>
               <input
                 id="onboarding-address"
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder={t("addressPlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
-              <p className="mt-1 text-[11px] text-zinc-500">
+              <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                 {t("addressHint")}
               </p>
             </div>
             <div>
-              <label htmlFor="onboarding-phone" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("phoneLabel")}</label>
+              <label htmlFor="onboarding-phone" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">{t("phoneLabel")}</label>
               <input
                 id="onboarding-phone"
                 type="tel"
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
                 placeholder={t("phonePlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]"
+                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
               >
                 ← {t("cta.back")}
               </button>
@@ -508,7 +508,7 @@ export default function AppOnboardingPage() {
               {step2VoiceButtons}
             </div>
             <div>
-              <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-zinc-400">{t("openingGreetingLabel")}</label>
+              <label htmlFor="onboarding-greeting" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">{t("openingGreetingLabel")}</label>
               <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("openingGreetingHint")}</p>
               <textarea
                 id="onboarding-greeting"
@@ -538,7 +538,7 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]"
+                className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
               >
                 ← {t("cta.back")}
               </button>
@@ -557,11 +557,11 @@ export default function AppOnboardingPage() {
         {step === 4 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("whatShouldKnowHeading")}</h1>
-            <p className="text-sm text-zinc-400">{t("whatShouldKnowSubtitle")}</p>
+            <p className="text-sm text-[var(--text-tertiary)]">{t("whatShouldKnowSubtitle")}</p>
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
               <p className="text-xs font-medium text-[var(--text-secondary)]">{t("businessInfoLabel")}</p>
               <div>
-                <label htmlFor="onboarding-address" className="block text-[11px] text-zinc-500 mb-1">{t("addressLabel")}</label>
+                <label htmlFor="onboarding-address" className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("addressLabel")}</label>
                 <input
                   id="onboarding-address"
                   type="text"
@@ -572,7 +572,7 @@ export default function AppOnboardingPage() {
                 />
               </div>
               <div>
-                <label htmlFor="onboarding-hours" className="block text-[11px] text-zinc-500 mb-1">{t("hoursLabel")}</label>
+                <label htmlFor="onboarding-hours" className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("hoursLabel")}</label>
                 <input
                   id="onboarding-hours"
                   type="text"
@@ -583,7 +583,7 @@ export default function AppOnboardingPage() {
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">{t("servicesLabel")}</label>
+                <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("servicesLabel")}</label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {services.map((s) => (
                     <span
@@ -661,7 +661,7 @@ export default function AppOnboardingPage() {
                         value={editingQ}
                         onChange={(e) => setEditingQ(e.target.value)}
                         placeholder={t("questionPrompt")}
-                        className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                        className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                         autoFocus
                       />
                       <input
@@ -669,29 +669,29 @@ export default function AppOnboardingPage() {
                         value={editingA}
                         onChange={(e) => setEditingA(e.target.value)}
                         placeholder={t("answerPrompt")}
-                        className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                        className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                       />
                       <div className="flex gap-2">
                         <button type="button" onClick={() => { const next = [...knowledgeItems]; next[i] = { q: editingQ.trim() || item.q || "", a: editingA.trim() || item.a || "" }; setKnowledgeItems(next); setEditingKnowledgeIdx(null); }} className="text-xs text-green-400 hover:text-green-300">Save</button>
-                        <button type="button" onClick={() => setEditingKnowledgeIdx(null)} className="text-xs text-zinc-400 hover:text-zinc-300">Cancel</button>
+                        <button type="button" onClick={() => setEditingKnowledgeIdx(null)} className="text-xs text-[var(--text-tertiary)] hover:text-zinc-300">Cancel</button>
                       </div>
                     </div>
                   ) : (
                     <>
-                      <p className="text-xs font-medium text-zinc-400 mb-0.5">Q: {item.q}</p>
+                      <p className="text-xs font-medium text-[var(--text-tertiary)] mb-0.5">Q: {item.q}</p>
                       <p className="text-sm text-zinc-300 mb-2">A: {item.a}</p>
                       <div className="flex gap-2">
                         <button
                           type="button"
                           onClick={() => { setEditingKnowledgeIdx(i); setEditingQ(item.q ?? ""); setEditingA(item.a ?? ""); }}
-                          className="text-xs text-zinc-400 hover:text-[var(--text-primary)]"
+                          className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
                         >
                           {t("edit")}
                         </button>
                         <button
                           type="button"
                           onClick={() => setKnowledgeItems((prev) => prev.filter((_, j) => j !== i))}
-                          className="text-xs text-zinc-400 hover:text-red-400"
+                          className="text-xs text-[var(--text-tertiary)] hover:text-red-400"
                           aria-label={t("remove")}
                         >
                           ✕
@@ -704,14 +704,14 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={() => setKnowledgeItems((prev) => [...prev, { q: "", a: "" }])}
-                className="w-full py-2.5 rounded-xl border border-dashed border-[var(--border-medium)] text-zinc-400 hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
+                className="w-full py-2.5 rounded-xl border border-dashed border-[var(--border-medium)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
               >
                 {t("addAnotherQa")}
               </button>
             </div>
-            <p className="text-xs text-zinc-500">{t("addMoreLater")}</p>
+            <p className="text-xs text-[var(--text-secondary)]">{t("addMoreLater")}</p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
+              <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
               <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
             </div>
           </div>
@@ -721,7 +721,7 @@ export default function AppOnboardingPage() {
         {step === 5 && (
           <div className="space-y-6">
             <h1 className="text-xl font-bold text-[var(--text-primary)]">{t("talkToAiHeading")}</h1>
-            <p className="text-sm text-zinc-400">{t("talkToAiSubtitle")}</p>
+            <p className="text-sm text-[var(--text-tertiary)]">{t("talkToAiSubtitle")}</p>
             <div className="flex justify-center py-6">
               <WorkspaceVoiceButton
                 title=""
@@ -733,7 +733,7 @@ export default function AppOnboardingPage() {
             </div>
             <div>
               <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">{t("scenarioSimulatorLabel")}</p>
-              <p className="text-[11px] text-zinc-500 mb-3">{t("scenarioSimulatorHint")}</p>
+              <p className="text-[11px] text-[var(--text-secondary)] mb-3">{t("scenarioSimulatorHint")}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="list">
                 {onboardingScenarios.map((s) => (
                   <div
@@ -742,14 +742,14 @@ export default function AppOnboardingPage() {
                     className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 text-left"
                   >
                     <p className="font-medium text-sm text-[var(--text-primary)]">{s.title}</p>
-                    <p className="text-[11px] text-zinc-500 mt-0.5">{s.description}</p>
+                    <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{s.description}</p>
                     <p className="text-xs text-[var(--text-secondary)] mt-2">&ldquo;{s.phrase}&rdquo;</p>
                   </div>
                 ))}
               </div>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-zinc-400 hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
+              <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
               <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
             </div>
           </div>
@@ -780,19 +780,19 @@ export default function AppOnboardingPage() {
                 </li>
               </ul>
             </div>
-            <p className="text-sm text-zinc-400 mb-3">{t("phoneHelpParagraph")}</p>
+            <p className="text-sm text-[var(--text-tertiary)] mb-3">{t("phoneHelpParagraph")}</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
               <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("forwardExistingTitle")}</p>
-              <p className="text-xs text-zinc-400 mb-2">{t("forwardExistingDesc")}</p>
+              <p className="text-xs text-[var(--text-tertiary)] mb-2">{t("forwardExistingDesc")}</p>
               <a href="/app/settings/phone" className="text-xs text-[var(--text-primary)] hover:text-[var(--text-primary)] underline">{t("showMeHow")}</a>
             </div>
-            <p className="text-xs text-zinc-500 text-center mt-3">{t("orDivider")}</p>
+            <p className="text-xs text-[var(--text-secondary)] text-center mt-3">{t("orDivider")}</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
               <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("getNewNumberTitle")}</p>
-              <p className="text-xs text-zinc-400 mb-2">{t("getNewNumberDesc")}</p>
+              <p className="text-xs text-[var(--text-tertiary)] mb-2">{t("getNewNumberDesc")}</p>
               <a href="/app/settings/phone" className="inline-block py-2 px-4 rounded-xl bg-[var(--bg-hover)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--bg-active)]">{t("getMyNumber")}</a>
             </div>
-            <p className="text-xs text-zinc-500 text-center mt-3">{t("orSkipHint")}</p>
+            <p className="text-xs text-[var(--text-secondary)] text-center mt-3">{t("orSkipHint")}</p>
             <button
               type="button"
               onClick={handleGoToDashboard}

@@ -53,24 +53,24 @@ export default function AppFollowUpsPage() {
           </Button>
         </Link>
       </div>
-      <div className="flex gap-2 mb-6 border-b border-zinc-800 pb-2">
+      <div className="flex gap-2 mb-6 border-b border-[var(--border-default)] pb-2">
         <button
           type="button"
           onClick={() => setTab("templates")}
-          className={`text-sm font-medium px-3 py-1.5 rounded-lg ${tab === "templates" ? "bg-white text-black" : "text-zinc-400 hover:text-white"}`}
+          className={`text-sm font-medium px-3 py-1.5 rounded-lg ${tab === "templates" ? "bg-white text-black" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"}`}
         >
           {t("tabs.templates")}
         </button>
         <button
           type="button"
           onClick={() => setTab("active")}
-          className={`text-sm font-medium px-3 py-1.5 rounded-lg ${tab === "active" ? "bg-white text-black" : "text-zinc-400 hover:text-white"}`}
+          className={`text-sm font-medium px-3 py-1.5 rounded-lg ${tab === "active" ? "bg-white text-black" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"}`}
         >
           {t("tabs.active")}
         </button>
       </div>
       {loading ? (
-        <div className="animate-pulse h-40 rounded-2xl bg-zinc-900 border border-zinc-800" />
+        <div className="animate-pulse h-40 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)]" />
       ) : tab === "templates" ? (
         sequences.length === 0 ? (
           <EmptyState
@@ -82,11 +82,11 @@ export default function AppFollowUpsPage() {
             {sequences.map((s) => (
               <li
                 key={s.id}
-                className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900/50 px-4 py-3"
+                className="flex items-center justify-between rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3"
               >
                 <div>
-                  <p className="font-medium text-white">{s.name}</p>
-                  <p className="text-xs text-zinc-500">{s.trigger_type ?? "manual"}</p>
+                  <p className="font-medium text-[var(--text-primary)]">{s.name}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">{s.trigger_type ?? "manual"}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" aria-label="Pause">

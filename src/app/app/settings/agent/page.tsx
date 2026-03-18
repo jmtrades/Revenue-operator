@@ -182,17 +182,17 @@ export default function AppSettingsAgentPage() {
   if (loading) {
     return (
       <div className="max-w-[600px] mx-auto p-4 md:p-6 space-y-6 animate-pulse">
-        <div className="h-6 w-48 bg-zinc-800 rounded" />
-        <div className="h-4 w-full max-w-md bg-zinc-800 rounded" />
+        <div className="h-6 w-48 bg-[var(--bg-inset)] rounded" />
+        <div className="h-4 w-full max-w-md bg-[var(--bg-inset)] rounded" />
         <div className="space-y-4">
-          <div className="h-10 w-full bg-zinc-800 rounded-xl" />
-          <div className="h-10 w-full bg-zinc-800 rounded-xl" />
-          <div className="h-20 w-full bg-zinc-800 rounded-xl" />
-          <div className="h-32 w-full bg-zinc-800 rounded-xl" />
+          <div className="h-10 w-full bg-[var(--bg-inset)] rounded-xl" />
+          <div className="h-10 w-full bg-[var(--bg-inset)] rounded-xl" />
+          <div className="h-20 w-full bg-[var(--bg-inset)] rounded-xl" />
+          <div className="h-32 w-full bg-[var(--bg-inset)] rounded-xl" />
         </div>
-        <div className="h-10 w-32 bg-zinc-800 rounded-xl" />
+        <div className="h-10 w-32 bg-[var(--bg-inset)] rounded-xl" />
         <p className="mt-4">
-          <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("agent.backToSettings")}</Link>
+          <Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.backToSettings")}</Link>
         </p>
       </div>
     );
@@ -200,47 +200,47 @@ export default function AppSettingsAgentPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-lg font-semibold text-white mb-2">{tSettings("agent.heading")}</h1>
-      <p className="text-sm text-zinc-500 mb-6">{tSettings("agent.description")}</p>
+      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tSettings("agent.heading")}</h1>
+      <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("agent.description")}</p>
 
       <div className="space-y-4 mb-6">
         <div>
-          <label htmlFor="agent-business" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.businessNameLabel")}</label>
+          <label htmlFor="agent-business" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.businessNameLabel")}</label>
           <input
             id="agent-business"
             type="text"
             value={config.businessName}
             onChange={(e) => setConfig((c) => ({ ...c, businessName: e.target.value }))}
             placeholder={tSettings("agent.businessNamePlaceholder")}
-            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div>
-          <label htmlFor="agent-name" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.agentNameLabel")}</label>
+          <label htmlFor="agent-name" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.agentNameLabel")}</label>
           <input
             id="agent-name"
             type="text"
             value={config.agentName}
             onChange={(e) => setConfig((c) => ({ ...c, agentName: e.target.value }))}
             placeholder={tSettings("agent.agentNamePlaceholder")}
-            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div>
-          <label htmlFor="agent-greeting" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.openingGreetingLabel")}</label>
-          <p className="text-[11px] text-zinc-500 mb-1">{tSettings("agent.openingGreetingHelp")}</p>
+          <label htmlFor="agent-greeting" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.openingGreetingLabel")}</label>
+          <p className="text-[11px] text-[var(--text-secondary)] mb-1">{tSettings("agent.openingGreetingHelp")}</p>
           <textarea
             id="agent-greeting"
             rows={2}
             value={config.greeting}
             onChange={(e) => setConfig((c) => ({ ...c, greeting: e.target.value }))}
             placeholder={tSettings("agent.greetingPlaceholderDefault", { business: config.businessName || tSettings("agent.defaultBusiness") })}
-            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
           />
-          <button type="button" onClick={playGreeting} className="mt-1 text-xs text-zinc-400 hover:text-white transition-colors">{tSettings("agent.previewVoice")}</button>
+          <button type="button" onClick={playGreeting} className="mt-1 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.previewVoice")}</button>
         </div>
         <div>
-          <label htmlFor="agent-voice" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.voiceLabel")}</label>
+          <label htmlFor="agent-voice" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.voiceLabel")}</label>
           <select
             id="agent-voice"
             value={config.elevenlabsVoiceId}
@@ -254,7 +254,7 @@ export default function AppSettingsAgentPage() {
                 onEnd: () => setPreviewing(false),
               });
             }}
-            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           >
             {CURATED_VOICES.map((v) => (
               <option key={v.id} value={v.id}>{v.name} — {v.desc}</option>
@@ -262,12 +262,12 @@ export default function AppSettingsAgentPage() {
           </select>
         </div>
         <div>
-          <label htmlFor="agent-lang" className="block text-xs font-medium text-zinc-400 mb-1">{tSettings("agent.languageLabel")}</label>
+          <label htmlFor="agent-lang" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.languageLabel")}</label>
           <select
             id="agent-lang"
             value={config.preferredLanguage}
             onChange={(e) => setConfig((c) => ({ ...c, preferredLanguage: e.target.value }))}
-            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           >
             {SUPPORTED_LANGUAGES.map((l) => (
               <option key={l.code} value={l.code}>{l.name}</option>
@@ -276,8 +276,8 @@ export default function AppSettingsAgentPage() {
         </div>
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-xs font-medium text-zinc-400">{tSettings("agent.knowledgeLabel")}</label>
-            <button type="button" onClick={addKnowledge} className="text-xs text-zinc-400 hover:text-white transition-colors">{tSettings("agent.knowledgeAdd")}</button>
+            <label className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.knowledgeLabel")}</label>
+            <button type="button" onClick={addKnowledge} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.knowledgeAdd")}</button>
           </div>
           <div className="space-y-2">
             {config.knowledgeItems.map((item, idx) => (
@@ -287,16 +287,16 @@ export default function AppSettingsAgentPage() {
                   value={item.q ?? ""}
                   onChange={(e) => updateKnowledge(idx, "q", e.target.value)}
                   placeholder={tSettings("agent.questionPlaceholder")}
-                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
                 <input
                   type="text"
                   value={item.a ?? ""}
                   onChange={(e) => updateKnowledge(idx, "a", e.target.value)}
                   placeholder={tSettings("agent.answerPlaceholder")}
-                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
-                <button type="button" onClick={() => setPendingKnowledgeDelete(idx)} className="shrink-0 text-zinc-500 hover:text-red-400 text-sm px-1" aria-label={tSettings("agent.removeAria")}>×</button>
+                <button type="button" onClick={() => setPendingKnowledgeDelete(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1" aria-label={tSettings("agent.removeAria")}>×</button>
               </div>
             ))}
           </div>
@@ -304,7 +304,7 @@ export default function AppSettingsAgentPage() {
       </div>
 
       {previewing && (
-        <p className="mb-4 text-xs text-zinc-500">{tSettings("agent.playingVoicePreview")}</p>
+        <p className="mb-4 text-xs text-[var(--text-secondary)]">{tSettings("agent.playingVoicePreview")}</p>
       )}
 
       <button
@@ -346,7 +346,7 @@ export default function AppSettingsAgentPage() {
       />
 
       <p className="mt-6">
-        <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("agent.backToSettings")}</Link>
+        <Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.backToSettings")}</Link>
       </p>
     </div>
   );

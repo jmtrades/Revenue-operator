@@ -8,17 +8,17 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "list",
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3100",
     trace: "on-first-retry",
+    navigationTimeout: 45_000,
+    actionTimeout: 20_000,
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: "npm run dev",
-        url: "http://localhost:3000",
-        reuseExistingServer: !process.env.CI,
-        timeout: 180_000,
-      },
-  timeout: 20_000,
+  webServer: {
+    command: process.env.CI ? "npm run build && npm run start -- -p 3100" : "PORT=3100 npm run dev",
+    url: "http://localhost:3100",
+    reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
+  },
+  timeout: 60_000,
 });

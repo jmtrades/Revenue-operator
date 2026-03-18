@@ -11,8 +11,8 @@ import { motion } from "framer-motion";
 import { PRICING_TIERS, ROUTES } from "@/lib/constants";
 
 const TIER_ROI_KEYS: Record<string, string> = {
-  Starter: "starter",
-  Growth: "growth",
+  Solo: "solo",
+  Business: "business",
   Scale: "scale",
   Enterprise: "enterprise",
 };

@@ -339,18 +339,18 @@ export default function AppSettingsPhonePage() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <Breadcrumbs items={[{ label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" }, { label: tSettings("phone") }]} />
-      <h1 className="text-xl font-semibold text-white mb-1">{tPhone("heading")}</h1>
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tPhone("heading")}</h1>
       <p className="text-sm text-white/60 mb-6">{tPhone("description")}</p>
 
       {/* Management dashboard: list + Get New / Port */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-4">
-            <span className="text-sm text-zinc-400">
+            <span className="text-sm text-[var(--text-tertiary)]">
               {numbersLoading ? "…" : tPhone("numbersCount", { count: workspaceNumbers.length })}
             </span>
             {!numbersLoading && totalMonthlyCents > 0 && (
-              <span className="text-sm text-zinc-400">{formatCurrencyCents(totalMonthlyCents, "USD", locale)}{tPhone("moTotal")}</span>
+              <span className="text-sm text-[var(--text-tertiary)]">{formatCurrencyCents(totalMonthlyCents, "USD", locale)}{tPhone("moTotal")}</span>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -371,12 +371,12 @@ export default function AppSettingsPhonePage() {
           </div>
         </div>
         {numbersLoading ? (
-          <div className="py-6 text-center text-zinc-500 text-sm">{tPhone("loadingNumbers")}</div>
+          <div className="py-6 text-center text-[var(--text-secondary)] text-sm">{tPhone("loadingNumbers")}</div>
         ) : workspaceNumbers.length === 0 ? (
           <div className="py-8 text-center rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
-            <Phone className="w-10 h-10 text-zinc-500 mx-auto mb-2" />
-            <p className="text-sm font-medium text-white mb-1">{tPhone("noNumbersYet")}</p>
-            <p className="text-xs text-zinc-500 mb-4">{tPhone("noNumbersYetDesc")}</p>
+            <Phone className="w-10 h-10 text-[var(--text-secondary)] mx-auto mb-2" />
+            <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{tPhone("noNumbersYet")}</p>
+            <p className="text-xs text-[var(--text-secondary)] mb-4">{tPhone("noNumbersYetDesc")}</p>
             <Link
               href="/app/settings/phone/marketplace"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 transition-colors"
@@ -395,14 +395,14 @@ export default function AppSettingsPhonePage() {
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-[var(--accent-primary)]" />
                   <div>
-                    <p className="font-medium text-white font-mono text-sm">{formatPhoneNumber(n.phone_number)}</p>
-                    <p className="text-xs text-zinc-500 capitalize">{n.number_type.replace("_", " ")} · {formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</p>
+                    <p className="font-medium text-[var(--text-primary)] font-mono text-sm">{formatPhoneNumber(n.phone_number)}</p>
+                    <p className="text-xs text-[var(--text-secondary)] capitalize">{n.number_type.replace("_", " ")} · {formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</p>
                   </div>
                   {n.capabilities?.voice && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">{tPhone("voice")}</span>}
                   {n.capabilities?.sms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-300">{tPhone("sms")}</span>}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-[10px] px-2 py-0.5 rounded capitalize ${n.status === "active" ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-zinc-400"}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded capitalize ${n.status === "active" ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-[var(--text-tertiary)]"}`}>
                     {n.status}
                   </span>
                   {n.status === "active" && (
@@ -414,7 +414,7 @@ export default function AppSettingsPhonePage() {
                         if (n.assigned_agent_id) return;
                         setReleaseConfirm(n);
                       }}
-                      className="text-[10px] px-2 py-1 rounded-lg border border-[var(--border-default)] text-zinc-400 hover:text-white hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="text-[10px] px-2 py-1 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {releasingId === n.id ? "…" : tPhone("releaseLabel")}
                     </button>
@@ -426,7 +426,7 @@ export default function AppSettingsPhonePage() {
         )}
       </div>
 
-      <h2 className="text-lg font-semibold text-white mb-2">{tPhone("connectTitle")}</h2>
+      <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tPhone("connectTitle")}</h2>
       <p className="text-sm text-white/60 mb-6">{tPhone("connectDescription")}</p>
 
       {loading ? (
@@ -435,9 +435,9 @@ export default function AppSettingsPhonePage() {
         <>
           {/* Option A — Your AI number */}
           <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">{tPhone("optionA")}</p>
+            <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider mb-2">{tPhone("optionA")}</p>
             <div className="flex flex-wrap items-center gap-3">
-              <p ref={numberHeadingRef} tabIndex={-1} className="text-2xl font-semibold text-white font-mono tracking-tight outline-none" aria-label={`Your number: ${formatPhoneNumber(phoneNumber)}`}>{formatPhoneNumber(phoneNumber)}</p>
+              <p ref={numberHeadingRef} tabIndex={-1} className="text-2xl font-semibold text-[var(--text-primary)] font-mono tracking-tight outline-none" aria-label={`Your number: ${formatPhoneNumber(phoneNumber)}`}>{formatPhoneNumber(phoneNumber)}</p>
               <button
                 type="button"
                 onClick={handleCopyNumber}
@@ -447,30 +447,30 @@ export default function AppSettingsPhonePage() {
                 {copySuccess ? tPhone("copied") : tPhone("copyNumber")}
               </button>
             </div>
-            <p className="text-sm text-zinc-400 mt-2">{tPhone("aiNumberReady")}</p>
+            <p className="text-sm text-[var(--text-tertiary)] mt-2">{tPhone("aiNumberReady")}</p>
           </div>
 
           {/* Forward your current number — simple steps */}
           <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-sm font-medium text-white mb-1">{tPhone("optionB")}</p>
-            <p className="text-xs text-zinc-400 mb-4">{tPhone("optionBDesc")}</p>
+            <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{tPhone("optionB")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] mb-4">{tPhone("optionBDesc")}</p>
             <ol className="space-y-2 text-sm text-zinc-300 list-decimal list-inside">
               <li>{tPhone("forwardStep1")}</li>
               <li>{tPhone("forwardStep2")}</li>
               <li>{tPhone("forwardStep3")}</li>
             </ol>
-            <p className="text-xs text-zinc-500 mt-2 mb-2">{tPhone("forwardTo")} <span className="font-mono text-white">{formatPhoneNumber(phoneNumber)}</span></p>
-            <p className="text-xs font-medium text-zinc-400 mb-1">{tPhone("orByDevice")}</p>
-            <ul className="space-y-1 text-xs text-zinc-400 mb-3">
+            <p className="text-xs text-[var(--text-secondary)] mt-2 mb-2">{tPhone("forwardTo")} <span className="font-mono text-[var(--text-primary)]">{formatPhoneNumber(phoneNumber)}</span></p>
+            <p className="text-xs font-medium text-[var(--text-tertiary)] mb-1">{tPhone("orByDevice")}</p>
+            <ul className="space-y-1 text-xs text-[var(--text-tertiary)] mb-3">
               <li><span className="text-zinc-300">{tPhone("iphone")}:</span> {tPhone("iphonePath")}</li>
               <li><span className="text-zinc-300">{tPhone("android")}:</span> {tPhone("androidPath")}</li>
               <li><span className="text-zinc-300">{tPhone("businessLine")}:</span> {tPhone("businessLinePath", { number: formatPhoneNumber(phoneNumber) })}</li>
             </ul>
             <details className="mt-4 group">
-              <summary className="text-xs text-zinc-500 cursor-pointer hover:text-zinc-400 list-none flex items-center gap-1">
+              <summary className="text-xs text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-tertiary)] list-none flex items-center gap-1">
                 <span className="group-open:inline hidden">▼</span><span className="group-open:hidden inline">▶</span> {tPhone("quickDialCodes")}
               </summary>
-              <div className="mt-2 pt-2 border-t border-[var(--border-default)] space-y-1.5 text-xs text-zinc-400">
+              <div className="mt-2 pt-2 border-t border-[var(--border-default)] space-y-1.5 text-xs text-[var(--text-tertiary)]">
                 <p><span className="text-zinc-300">{tPhone("att")}:</span> *21*{phoneNumber.replace(/\D/g, "")}#</p>
                 <p><span className="text-zinc-300">{tPhone("verizon")}:</span> *72 then {formatPhoneNumber(phoneNumber)}</p>
                 <p><span className="text-zinc-300">{tPhone("tmobile")}:</span> **21*{phoneNumber.replace(/\D/g, "")}#</p>
@@ -480,12 +480,12 @@ export default function AppSettingsPhonePage() {
 
           {/* Test forwarding */}
           <div id="test" className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-sm font-medium text-white mb-1">{tPhone("testForwarding")}</p>
-            <p className="text-xs text-zinc-400 mb-3">{tPhone("testForwardingDesc")}</p>
+            <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{tPhone("testForwarding")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] mb-3">{tPhone("testForwardingDesc")}</p>
             {!primaryAgentId ? (
-              <div className="rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card)]/50 px-4 py-3 text-sm text-zinc-400">
+              <div className="rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card)]/50 px-4 py-3 text-sm text-[var(--text-tertiary)]">
                 <p>{tPhone("createAgentFirst")}</p>
-                <Link href="/app/agents" className="mt-2 inline-block text-white font-medium hover:underline">{tPhone("goToAgents")}</Link>
+                <Link href="/app/agents" className="mt-2 inline-block text-[var(--text-primary)] font-medium hover:underline">{tPhone("goToAgents")}</Link>
               </div>
             ) : (
               <>
@@ -497,7 +497,7 @@ export default function AppSettingsPhonePage() {
                   aria-label={tPhone("yourPhoneNumber")}
                   aria-invalid={!!testCallError}
                   aria-describedby={testCallError ? "test-call-error" : undefined}
-                  className={`w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border text-white placeholder:text-zinc-500 text-base focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-2 ${testCallError ? "border-red-500/50" : "border-[var(--border-default)] focus:border-[var(--border-medium)]"}`}
+                  className={`w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-base focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-2 ${testCallError ? "border-red-500/50" : "border-[var(--border-default)] focus:border-[var(--border-medium)]"}`}
                 />
                 {testCallError ? <p id="test-call-error" className="text-sm text-[var(--accent-red)] mb-3" role="alert">{testCallError}</p> : null}
                 <button
@@ -515,25 +515,25 @@ export default function AppSettingsPhonePage() {
 
           {/* Optional: outbound caller ID — collapsed by default */}
           <details className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4 group">
-            <summary className="text-sm font-medium text-zinc-400 cursor-pointer hover:text-zinc-300 list-none flex items-center justify-between gap-2">
+            <summary className="text-sm font-medium text-[var(--text-tertiary)] cursor-pointer hover:text-zinc-300 list-none flex items-center justify-between gap-2">
               {tPhone("outboundCallerId")}
-              <span className="text-zinc-500 group-open:rotate-180 transition-transform">▼</span>
+              <span className="text-[var(--text-secondary)] group-open:rotate-180 transition-transform">▼</span>
             </summary>
-            <p className="text-xs text-zinc-500 mt-3 mb-3">{tPhone("outboundCallerIdHint")}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-3 mb-3">{tPhone("outboundCallerIdHint")}</p>
             <input
               type="tel"
               value={outboundFrom}
               onChange={(e) => setOutboundFrom(e.target.value)}
               placeholder={tPhone("testCallNumberPlaceholder")}
               aria-label={tPhone("outboundCallerId")}
-              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-3"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-3"
             />
-            <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer mb-3">
+            <label className="flex items-center gap-2 text-sm text-[var(--text-tertiary)] cursor-pointer mb-3">
               <input
                 type="checkbox"
                 checked={whatsappEnabled}
                 onChange={(e) => setWhatsappEnabled(e.target.checked)}
-                className="rounded border-[var(--border-medium)] bg-[var(--bg-card)] text-white focus:ring-[var(--border-medium)]"
+                className="rounded border-[var(--border-medium)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-[var(--border-medium)]"
               />
               {tPhone("enableWhatsApp")}
             </label>
@@ -549,8 +549,8 @@ export default function AppSettingsPhonePage() {
 
           {/* Verify a number by SMS */}
           <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-sm font-medium text-white mb-1">{tPhone("verifyBySms")}</p>
-            <p className="text-xs text-zinc-400 mb-3">{tPhone("verifyBySmsDesc")}</p>
+            <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{tPhone("verifyBySms")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] mb-3">{tPhone("verifyBySmsDesc")}</p>
             {verifiedNumber ? (
               <>
                 <p className="text-sm text-green-400">{tPhone("verifiedLabel")} {formatPhoneNumber(verifiedNumber)}</p>
@@ -583,7 +583,7 @@ export default function AppSettingsPhonePage() {
                   value={verifyPhone}
                   onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
                   placeholder={tPhone("verifyPhonePlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
                 />
                 <div className="flex gap-2 mb-2">
                   <button
@@ -637,7 +637,7 @@ export default function AppSettingsPhonePage() {
                   value={verifyCode}
                   onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   placeholder={tPhone("verificationCodePlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
                 />
                 <button
                   type="button"
@@ -680,18 +680,18 @@ export default function AppSettingsPhonePage() {
             )}
           </div>
 
-          <p className="text-xs text-zinc-500">{tPhone("needAnotherNumber")}</p>
+          <p className="text-xs text-[var(--text-secondary)]">{tPhone("needAnotherNumber")}</p>
         </>
       ) : (
         <>
           {/* No number — two-option flow */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-[var(--bg-elevated)] border border-white/[0.08] rounded-2xl p-6">
-              <div className="w-10 h-10 rounded-xl bg-zinc-800/70 flex items-center justify-center mb-4">
-                <Phone className="w-5 h-5 text-zinc-400" />
+              <div className="w-10 h-10 rounded-xl bg-[var(--bg-inset)]/70 flex items-center justify-center mb-4">
+                <Phone className="w-5 h-5 text-[var(--text-tertiary)]" />
               </div>
-              <h2 className="text-base font-semibold text-white mb-1">Get a new AI number</h2>
-              <p className="text-sm text-white/50 mb-1">Recommended</p>
+              <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">Get a new AI number</h2>
+              <p className="text-sm text-[var(--text-tertiary)] mb-1">Recommended</p>
               <p className="text-sm text-white/60 mb-4">We&apos;ll give you a dedicated number. Give it out as your business line, or forward calls to it.</p>
               <div className="mb-4">
                 <label htmlFor="phone-area-code" className="text-xs text-white/40 mb-1 block">Area code (optional)</label>
@@ -703,7 +703,7 @@ export default function AppSettingsPhonePage() {
                   value={areaCode}
                   onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
                   placeholder={tPhone("areaCodePlaceholder")}
-                  className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
+                  className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/30 focus:outline-none focus:border-white/20"
                 />
               </div>
               <button
@@ -725,7 +725,7 @@ export default function AppSettingsPhonePage() {
                         value={notifyEmail}
                         onChange={(e) => setNotifyEmail(e.target.value)}
                         placeholder={tPhone("emailPlaceholder")}
-                        className="flex-1 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40"
+                        className="flex-1 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/40"
                       />
                       <button type="button" onClick={() => { setToast(tPhone("toast.waitlistJoined")); setTimeout(() => setToast(null), 4000); }} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm shrink-0">Notify me</button>
                     </div>
@@ -741,14 +741,14 @@ export default function AppSettingsPhonePage() {
                           value={areaCode}
                           onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
                           placeholder={tPhone("areaCodePlaceholderAlt")}
-                          className="w-24 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white"
+                          className="w-24 bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)]"
                         />
                         <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm">{tPhone("tryAgain")}</button>
                       </div>
                     </div>
                   )}
                   {connectErrorCode === "PROVISION_ERROR" && (
-                    <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-sm text-zinc-300 hover:text-white hover:underline">{tPhone("tryAgain")}</button>
+                    <button type="button" onClick={() => { setConnectError(null); setConnectErrorCode(null); setToast(null); handleConnectNumber(); }} disabled={connecting} className="mt-2 text-sm text-zinc-300 hover:text-[var(--text-primary)] hover:underline">{tPhone("tryAgain")}</button>
                   )}
                 </div>
               ) : null}
@@ -757,8 +757,8 @@ export default function AppSettingsPhonePage() {
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
                 <PhoneForwarded className="w-5 h-5 text-emerald-400" />
               </div>
-              <h2 className="text-base font-semibold text-white mb-1">{tPhone("useExistingNumber")}</h2>
-              <p className="text-sm text-white/50 mb-1">{tPhone("forwardCallsToAi")}</p>
+              <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">{tPhone("useExistingNumber")}</h2>
+              <p className="text-sm text-[var(--text-tertiary)] mb-1">{tPhone("forwardCallsToAi")}</p>
               <p className="text-sm text-white/60 mb-4">{tPhone("optionBDesc")}</p>
               <div className="mb-4">
                 <label htmlFor="verify-phone-existing" className="text-xs text-white/40 mb-1 block">{tPhone("yourPhoneNumber")}</label>
@@ -768,7 +768,7 @@ export default function AppSettingsPhonePage() {
                   value={verifyPhone}
                   onChange={(e) => { setVerifyPhone(e.target.value); setVerifyError(null); }}
                   placeholder={tPhone("verifyPhonePlaceholder")}
-                  className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
+                  className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/30 focus:outline-none focus:border-white/20"
                 />
               </div>
               <button
@@ -803,7 +803,7 @@ export default function AppSettingsPhonePage() {
                       }
                     }}
                     disabled={verifySending || digitsOnly(verifyPhone).length < 10 || digitsOnly(verifyPhone).length > 15}
-                    className="w-full py-2.5 bg-white/[0.06] border border-white/[0.1] text-white font-semibold rounded-lg text-sm hover:bg-white/[0.1] disabled:opacity-50 transition-colors"
+                    className="w-full py-2.5 bg-white/[0.06] border border-white/[0.1] text-[var(--text-primary)] font-semibold rounded-lg text-sm hover:bg-white/[0.1] disabled:opacity-50 transition-colors"
               >
                 {verifySending ? tPhone("sendingCode") : tPhone("verifyMyNumber")}
               </button>
@@ -812,13 +812,13 @@ export default function AppSettingsPhonePage() {
               {verifiedNumber ? (
                 <div className="mt-4 pt-4 border-t border-white/[0.08] space-y-3">
                   <p className="text-sm text-emerald-400">{tPhone("verifiedLabel")} {formatPhoneNumber(verifiedNumber)}</p>
-                  <p className="text-xs text-white/50 mb-2">{tPhone("forwardUnansweredHint")}</p>
+                  <p className="text-xs text-[var(--text-tertiary)] mb-2">{tPhone("forwardUnansweredHint")}</p>
                   <div className="space-y-2 text-xs text-white/60">
-                    <p className="font-medium text-white/70">{tPhone("iphone")}:</p>
+                    <p className="font-medium text-[var(--text-secondary)]">{tPhone("iphone")}:</p>
                     <p>{tPhone("forwardInstructionIphone")}</p>
-                    <p className="font-medium text-white/70 mt-2">{tPhone("android")}:</p>
+                    <p className="font-medium text-[var(--text-secondary)] mt-2">{tPhone("android")}:</p>
                     <p>{tPhone("forwardInstructionAndroid")}</p>
-                    <p className="font-medium text-white/70 mt-2">{tPhone("businessLine")}:</p>
+                    <p className="font-medium text-[var(--text-secondary)] mt-2">{tPhone("businessLine")}:</p>
                     <p>{tPhone("forwardInstructionBusiness")}</p>
                   </div>
                   <Link href="/app/settings/phone#test" className="inline-block mt-2 text-sm font-medium text-emerald-400 hover:text-emerald-300">{tPhone("testForwardingLink")}</Link>
@@ -832,7 +832,7 @@ export default function AppSettingsPhonePage() {
                     value={verifyCode}
                     onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder={tPhone("verificationCodePlaceholder")}
-                    className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30"
+                    className="w-full bg-[var(--bg-surface)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/30"
                   />
                   <button
                     type="button"
@@ -870,8 +870,8 @@ export default function AppSettingsPhonePage() {
               )}
             </div>
           </div>
-          <p className="mt-6 text-sm text-zinc-500 text-center">
-            <Link href="/app/activity" className="text-zinc-400 hover:text-white transition-colors">{tPhone("addNumberLater")}</Link>
+          <p className="mt-6 text-sm text-[var(--text-secondary)] text-center">
+            <Link href="/app/activity" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tPhone("addNumberLater")}</Link>
           </p>
 
         </>
@@ -913,10 +913,10 @@ export default function AppSettingsPhonePage() {
         </div>
       )}
 
-      <p className="text-xs text-zinc-500 mt-6">
-        Need help with phone setup? <a href="mailto:support@recall-touch.com" className="text-zinc-400 hover:text-white underline underline-offset-2">support@recall-touch.com</a>
+      <p className="text-xs text-[var(--text-secondary)] mt-6">
+        Need help with phone setup? <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
       </p>
-      <p className="mt-4"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tPhone("backToSettings")}</Link></p>
+      <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tPhone("backToSettings")}</Link></p>
     </div>
   );
 }

@@ -73,24 +73,24 @@ export default function AppSettingsTeamPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-lg font-semibold text-white mb-2">{t("team.pageTitle")}</h1>
-      <p className="text-sm text-zinc-500 mb-6">{t("team.subtitle")}</p>
+      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("team.pageTitle")}</h1>
+      <p className="text-sm text-[var(--text-secondary)] mb-6">{t("team.subtitle")}</p>
 
       <div className="space-y-2 mb-6">
         {loadingMembers && displayMembers.length === 0 && (
           <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse">
-            <div className="h-4 w-32 bg-zinc-800 rounded mb-2" />
-            <div className="h-3 w-48 bg-zinc-800 rounded" />
+            <div className="h-4 w-32 bg-[var(--bg-inset)] rounded mb-2" />
+            <div className="h-3 w-48 bg-[var(--bg-inset)] rounded" />
           </div>
         )}
         {displayMembers.map((m, i) => (
           <div key={m.email || i} className="flex items-center justify-between p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
             <div>
-              <p className="text-sm font-medium text-white">{m.name}</p>
-              <p className="text-xs text-zinc-500">{m.email}</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">{m.name}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{m.email}</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300">{m.role}</span>
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-zinc-300">{m.role}</span>
               <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500/15 text-green-400">{m.status}</span>
             </div>
           </div>
@@ -98,14 +98,14 @@ export default function AppSettingsTeamPage() {
       </div>
 
       <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-        <p className="text-sm font-medium text-white mb-3">{t("team.inviteSectionTitle")}</p>
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("team.inviteSectionTitle")}</p>
         <div className="flex gap-2">
           <input
             type="email"
             value={inviteEmail}
             onChange={(e) => setInviteEmail(e.target.value)}
             placeholder={t("team.invitePlaceholder")}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
             onKeyDown={(e) => e.key === "Enter" && handleInvite()}
           />
           <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 focus:outline-none">
@@ -120,11 +120,11 @@ export default function AppSettingsTeamPage() {
       </div>
 
       <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
-        <p className="text-sm font-medium text-white mb-2">{t("team.escalationOrderTitle")}</p>
-        <p className="text-xs text-zinc-500">{t("team.escalationOrderHint")}</p>
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-2">{t("team.escalationOrderTitle")}</p>
+        <p className="text-xs text-[var(--text-secondary)]">{t("team.escalationOrderHint")}</p>
         <div className="mt-3 space-y-1.5">
-          <div className="flex items-center gap-2 p-2 rounded-xl bg-zinc-800/50 text-xs text-zinc-300">
-            <span className="text-zinc-500">1.</span> {displayMembers[0]?.name || t("team.memberYouOwner")} — SMS + Push
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-[var(--bg-inset)]/50 text-xs text-zinc-300">
+            <span className="text-[var(--text-secondary)]">1.</span> {displayMembers[0]?.name || t("team.memberYouOwner")} — SMS + Push
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function AppSettingsTeamPage() {
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{t("team.backToSettings")}</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{t("team.backToSettings")}</Link></p>
     </div>
   );
 }

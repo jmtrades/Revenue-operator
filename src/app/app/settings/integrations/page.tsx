@@ -226,11 +226,11 @@ export default function AppSettingsIntegrationsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
               <div className="flex items-center gap-3 mb-2">
-                <Phone className="w-5 h-5 text-zinc-400" aria-hidden />
+                <Phone className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden />
                 <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.phoneLabel")}</p>
               </div>
               <p className="text-xs text-[var(--text-secondary)] mb-3">{t("hub.phoneDesc")}</p>
-              <Link href="/app/settings/phone" className="text-sm text-zinc-300 hover:text-white hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">
+              <Link href="/app/settings/phone" className="text-sm text-zinc-300 hover:text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">
                 {t("hub.manageLink")}
               </Link>
             </div>
@@ -239,7 +239,7 @@ export default function AppSettingsIntegrationsPage() {
                 <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
                 <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.whatsappLabel")}</p>
               </div>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-[var(--text-tertiary)]">
                 {t("comingSoon")}
               </p>
             </div>
@@ -251,7 +251,7 @@ export default function AppSettingsIntegrationsPage() {
           <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.crmHeading")}</h2>
           <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-              <RefreshCw className="w-4 h-4 text-zinc-500" aria-hidden />
+              <RefreshCw className="w-4 h-4 text-[var(--text-secondary)]" aria-hidden />
               <span>
                 {t("hub.lastSyncLabel")} {crmStatus?.global.lastSyncAt
                   ? new Date(crmStatus.global.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
@@ -288,7 +288,7 @@ export default function AppSettingsIntegrationsPage() {
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-zinc-400" aria-hidden />
+                      <Icon className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden />
                     </div>
                     {crm.comingSoon ? (
                       <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
@@ -299,15 +299,15 @@ export default function AppSettingsIntegrationsPage() {
                         {t("status.connected")}
                       </span>
                     ) : (
-                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-white/[0.08] text-zinc-500 shrink-0">
+                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-white/[0.08] text-[var(--text-secondary)] shrink-0">
                         {t("status.disconnected")}
                       </span>
                     )}
                   </div>
                   <h4 className="text-sm font-medium text-[var(--text-primary)]">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.title`)}</h4>
-                  <p className="text-xs text-zinc-500 mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>
                   {connected && status?.lastSyncAt && (
-                    <p className="text-[11px] text-zinc-500 mt-2">
+                    <p className="text-[11px] text-[var(--text-secondary)] mt-2">
                       {t("hub.lastSyncLabel")} {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
                     </p>
                   )}
@@ -316,7 +316,7 @@ export default function AppSettingsIntegrationsPage() {
                       <button
                         type="button"
                         disabled
-                        className="inline-block px-3 py-2 rounded-xl text-xs font-semibold border border-[var(--border-default)] text-zinc-500 cursor-not-allowed"
+                        className="inline-block px-3 py-2 rounded-xl text-xs font-semibold border border-[var(--border-default)] text-[var(--text-secondary)] cursor-not-allowed"
                       >
                         {t("comingSoon")}
                       </button>
@@ -353,8 +353,8 @@ export default function AppSettingsIntegrationsPage() {
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-sm font-medium text-white">{t("hub.googleCalendarLabel")}</p>
-              <p className="text-xs text-zinc-500 mt-1">{t("hub.calendarDesc")}</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.googleCalendarLabel")}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
             </div>
             {googleCalendarConnected ? (
               <span className="px-3 py-1.5 rounded-xl text-xs font-medium border border-green-500/30 text-green-400">
@@ -368,7 +368,7 @@ export default function AppSettingsIntegrationsPage() {
           </div>
           {googleCalendarConnected && availabilityPreview.length > 0 && (
             <div className="mt-4">
-              <p className="text-[11px] font-medium text-zinc-400 mb-2">{t("hub.todaysSlots")}</p>
+              <p className="text-[11px] font-medium text-[var(--text-tertiary)] mb-2">{t("hub.todaysSlots")}</p>
               <div className="flex flex-wrap gap-2">
                 {availabilityPreview.map((slot) => (
                   <span key={slot} className="rounded-full border border-[var(--border-medium)] px-3 py-1 text-[11px] text-zinc-300">
@@ -382,10 +382,10 @@ export default function AppSettingsIntegrationsPage() {
         </section>
 
         <section id="webhook-config">
-          <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">{t("hub.automationHeading")}</h2>
+          <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">{t("hub.automationHeading")}</h2>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 p-4">
-          <p className="text-sm font-medium text-white">{t("hub.webhookDestinationTitle")}</p>
-          <p className="text-xs text-zinc-500 mt-1">
+          <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.webhookDestinationTitle")}</p>
+          <p className="text-xs text-[var(--text-secondary)] mt-1">
             {t("hub.webhookDestinationDesc")}
           </p>
           <input
@@ -393,19 +393,19 @@ export default function AppSettingsIntegrationsPage() {
             value={webhookConfig.endpoint_url}
             onChange={(e) => setWebhookConfig((prev) => ({ ...prev, endpoint_url: e.target.value, enabled: true }))}
             placeholder={t("hub.webhookUrlPlaceholder")}
-            className="mt-4 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="mt-4 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
           <div className="mt-3">
-            <label className="block text-[11px] font-medium text-zinc-400 mb-1">{t("hub.signingSecretLabel")}</label>
+            <label className="block text-[11px] font-medium text-[var(--text-tertiary)] mb-1">{t("hub.signingSecretLabel")}</label>
             <input
               type="text"
               value={webhookSecret}
               onChange={(e) => setWebhookSecret(e.target.value)}
               placeholder={webhookConfig.has_secret ? t("hub.signingSecretPlaceholderSaved") : t("hub.signingSecretPlaceholderNew")}
-              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
             />
             {webhookConfig.has_secret ? (
-              <p className="mt-1 text-[11px] text-zinc-500">{t("hub.signingSecretStored")}</p>
+              <p className="mt-1 text-[11px] text-[var(--text-secondary)]">{t("hub.signingSecretStored")}</p>
             ) : null}
           </div>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-300">
@@ -442,15 +442,15 @@ export default function AppSettingsIntegrationsPage() {
               {t("hub.eventReactivatedLead")}
             </label>
           </div>
-          <div className="mt-4 rounded-xl border border-[var(--border-default)] bg-black/20 p-3">
-            <p className="text-[11px] font-medium text-zinc-400">{t("hub.eventsYouCanSend")}</p>
-            <p className="mt-1 text-[11px] text-zinc-500">
+          <div className="mt-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-3">
+            <p className="text-[11px] font-medium text-[var(--text-tertiary)]">{t("hub.eventsYouCanSend")}</p>
+            <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
               {t("hub.eventsList")}
             </p>
           </div>
           <div className="mt-4 flex items-center justify-between gap-3">
             <div>
-              <p className="text-[11px] font-medium text-zinc-400">{t("hub.retryAttempts")}</p>
+              <p className="text-[11px] font-medium text-[var(--text-tertiary)]">{t("hub.retryAttempts")}</p>
               <input
                 type="number"
                 min={1}
@@ -462,7 +462,7 @@ export default function AppSettingsIntegrationsPage() {
                     max_attempts: Math.max(1, Math.min(10, Number(e.target.value || 3))),
                   }))
                 }
-                className="mt-1 w-24 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                className="mt-1 w-24 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -496,10 +496,10 @@ export default function AppSettingsIntegrationsPage() {
               For CRMs like xLeads, Podio, or any other platform, use the webhook configuration above to push lead and call data in real-time. Configure your webhook endpoint URL, select the events you want to send, and Recall Touch will POST JSON payloads whenever those events occur.
             </p>
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-              You can also use <a href="https://zapier.com" target="_blank" rel="noopener noreferrer" className="text-zinc-300 underline underline-offset-2 hover:text-white">Zapier</a> as a bridge — connect Recall Touch webhooks to 5,000+ apps including xLeads and Podio without writing any code.
+              You can also use <a href="https://zapier.com" target="_blank" rel="noopener noreferrer" className="text-zinc-300 underline underline-offset-2 hover:text-[var(--text-primary)]">Zapier</a> as a bridge — connect Recall Touch webhooks to 5,000+ apps including xLeads and Podio without writing any code.
             </p>
-            <p className="text-xs text-zinc-500 mt-2">
-              Need help? Contact <a href="mailto:support@recall-touch.com" className="text-zinc-400 hover:text-white underline underline-offset-2">support@recall-touch.com</a>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">
+              Need help? Contact <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
             </p>
           </div>
         </section>
@@ -509,10 +509,10 @@ export default function AppSettingsIntegrationsPage() {
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
       )}
 
-      <p className="text-xs text-zinc-500 mt-6">
-        Need help with integrations? <a href="mailto:support@recall-touch.com" className="text-zinc-400 hover:text-white underline underline-offset-2">support@recall-touch.com</a>
+      <p className="text-xs text-[var(--text-secondary)] mt-6">
+        Need help with integrations? <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
       </p>
-      <p className="mt-4"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{t("hub.backToSettings")}</Link></p>
+      <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{t("hub.backToSettings")}</Link></p>
     </div>
   );
 }

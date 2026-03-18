@@ -97,6 +97,7 @@
     "team": "Team",
     "calendar": "Kalender",
     "appointments": "Termine",
+    "followUps": "Follow-Ups",
     "knowledge": "Wissen",
     "callIntelligence": "Anrufintelligenz",
     "compliance": "Compliance",
@@ -4273,6 +4274,9 @@
   },
   "footer": {
     "tagline": "KI-Telefonie und -Texte für Unternehmen, die von jedem Anruf abhängen.",
+    "founderPhotoAlt": "Junior, Gründer von Recall Touch",
+    "founderName": "Junior",
+    "founderBio": "Gründer von Recall Touch. Entwickelt KI-Revenue-Recovery, damit Unternehmen keine Umsätze verlieren.",
     "product": "Produkt",
     "features": "Funktionen",
     "pricing": "Preise",
@@ -6571,6 +6575,28 @@
       "customerReturned": "Kunde ist zurück",
       "theyreSet": "Sie sind eingestellt",
       "decisionProgressed": "Entscheidung fortgeschritten"
+    }
+  },
+  "productTour": {
+    "revenue": {
+      "title": "Wiederhergestellter Umsatz",
+      "body": "Dein Dashboard zeigt die Einnahmen, die deine KI wiederhergestellt hat."
+    },
+    "needsAttention": {
+      "title": "Benötigt dein Handeln",
+      "body": "Diese Liste zeigt Leads und Nachfassaktionen, die überprüft werden müssen."
+    },
+    "sidebarNav": {
+      "title": "Navigation",
+      "body": "Nutze die Sidebar, um zwischen Dashboard, Anrufen, Leads, Kampagnen und Einstellungen zu wechseln."
+    },
+    "campaigns": {
+      "title": "Kampagnen",
+      "body": "Starte Outbound-Sequenzen, um proaktiv Umsatz zurückzugewinnen."
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "body": "Steuere Öffnungszeiten, Compliance, Stimmen und Abrechnung von einem Ort aus."
     }
   },
   "legal": {

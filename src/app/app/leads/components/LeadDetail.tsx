@@ -64,17 +64,17 @@ export function LeadDetail({
           {lead.score}
         </span>
         <div>
-          <p className="text-xs text-zinc-500">{lead.service} · {getSourceDisplay(lead.source, tRoot)}</p>
+          <p className="text-xs text-[var(--text-secondary)]">{lead.service} · {getSourceDisplay(lead.source, tRoot)}</p>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <Badge variant={lead.status === "Won" ? "success" : lead.status === "Lost" ? "error" : "neutral"}>{getStatusDisplay(lead.status, tRoot)}</Badge>
-            <span className="text-[11px] text-zinc-500">{t("detail.agent")}: {lead.assignedAgent}</span>
-            <span className="text-[11px] text-zinc-500">{t("detail.created")} {formatDate(lead.createdAt)}</span>
+            <span className="text-[11px] text-[var(--text-secondary)]">{t("detail.agent")}: {lead.assignedAgent}</span>
+            <span className="text-[11px] text-[var(--text-secondary)]">{t("detail.created")} {formatDate(lead.createdAt)}</span>
           </div>
         </div>
       </div>
 
       <section>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.contact")}</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.contact")}</h3>
         <div className="grid gap-2">
           <Input label={t("detail.name")} value={lead.name} readOnly className="bg-[var(--bg-card)]" />
           <Input label={t("detail.phone")} value={lead.phone} readOnly className="bg-[var(--bg-card)]" />
@@ -84,13 +84,13 @@ export function LeadDetail({
 
       {lead.service && lead.service !== t("defaultService") && (
         <section>
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.whatTheyNeed")}</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.whatTheyNeed")}</h3>
           <p className="text-sm text-zinc-200">{lead.service}</p>
         </section>
       )}
 
       <section>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.stage")}</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.stage")}</h3>
         <select
           value={lead.status}
           onChange={(e) => onStatusChange(lead.id, e.target.value as LeadStatus)}
@@ -103,14 +103,14 @@ export function LeadDetail({
       </section>
 
       <section>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.timeline")}</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.timeline")}</h3>
         <ol className="space-y-2 text-xs">
           {lead.timeline.map((item) => (
             <li key={`${item.at}-${item.label}`} className="flex items-start gap-2">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400" />
               <div>
                 <p className="text-zinc-100">{item.label}</p>
-                <p className="text-[11px] text-zinc-500">{formatDate(item.at)}</p>
+                <p className="text-[11px] text-[var(--text-secondary)]">{formatDate(item.at)}</p>
               </div>
             </li>
           ))}
@@ -125,17 +125,17 @@ export function LeadDetail({
             </li>
           ))}
         </ol>
-        {callsLoading && <p className="text-xs text-zinc-500">{t("loadingCalls")}</p>}
+        {callsLoading && <p className="text-xs text-[var(--text-secondary)]">{t("loadingCalls")}</p>}
       </section>
 
       <section>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">{t("detail.notes")}</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.notes")}</h3>
         <textarea
           defaultValue={lead.notes}
           onBlur={(e) => onNotesBlur(lead.id, e.target.value.trim())}
           placeholder={t("detail.notesPlaceholder")}
           rows={3}
-          className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] resize-none"
+          className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-zinc-100 placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)] resize-none"
         />
       </section>
 

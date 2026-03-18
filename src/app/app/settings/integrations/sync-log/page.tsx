@@ -110,11 +110,11 @@ export default function IntegrationsSyncLogPage() {
       </div>
 
       {loading && entries.length === 0 ? (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-zinc-500">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-[var(--text-secondary)]">
           {tSettings("syncLog.loading")}
         </div>
       ) : entries.length === 0 ? (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-zinc-500">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-[var(--text-secondary)]">
           {tSettings("syncLog.empty")}
         </div>
       ) : (
@@ -124,11 +124,11 @@ export default function IntegrationsSyncLogPage() {
               <li key={e.id} className="p-4 flex flex-wrap items-start gap-3">
                 <div className="flex items-center gap-2 shrink-0">
                   {e.direction === "inbound" ? (
-                    <Inbox className="w-4 h-4 text-zinc-500" aria-hidden />
+                    <Inbox className="w-4 h-4 text-[var(--text-secondary)]" aria-hidden />
                   ) : (
-                    <Send className="w-4 h-4 text-zinc-500" aria-hidden />
+                    <Send className="w-4 h-4 text-[var(--text-secondary)]" aria-hidden />
                   )}
-                  <span className="text-[11px] font-medium text-zinc-500 uppercase">
+                  <span className="text-[11px] font-medium text-[var(--text-secondary)] uppercase">
                     {e.direction === "inbound" ? tSettings("syncLog.inbound") : tSettings("syncLog.outbound")}
                   </span>
                 </div>
@@ -137,7 +137,7 @@ export default function IntegrationsSyncLogPage() {
                     {SYNC_LOG_PROVIDERS.includes(e.provider as typeof SYNC_LOG_PROVIDERS[number]) ? tSettings(`integrations.providers.${e.provider}`) : e.provider} · {e.action}
                     {e.summary ? ` — ${e.summary}` : ""}
                   </p>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">
+                  <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">
                     {new Date(e.created_at).toLocaleString()}
                     {e.entity_id ? ` · ${e.entity_type} ${e.entity_id.slice(0, 8)}…` : ""}
                   </p>
@@ -162,7 +162,7 @@ export default function IntegrationsSyncLogPage() {
       <p className="mt-6">
         <Link
           href="/app/settings/integrations"
-          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> {tSettings("integrations.backToIntegrations")}
         </Link>

@@ -599,11 +599,11 @@ export default function LeadsPage() {
       <div className="p-6 md:p-8 max-w-6xl mx-auto">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white flex items-center gap-2">
-              <Users className="w-5 h-5 text-zinc-400" />
+            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+              <Users className="w-5 h-5 text-[var(--text-tertiary)]" />
               {t("leads.heading")}
             </h1>
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               {t("leads.description")}
             </p>
           </div>
@@ -617,7 +617,7 @@ export default function LeadsPage() {
               {t("leads.addLead")}
             </button>
             <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1 text-xs text-zinc-300">
-              {t("leads.total")} <span className="ml-1 font-semibold text-white">{totalCount}</span>
+              {t("leads.total")} <span className="ml-1 font-semibold text-[var(--text-primary)]">{totalCount}</span>
             </span>
             <button
               type="button"
@@ -676,7 +676,7 @@ export default function LeadsPage() {
             />
           </div>
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="inline-flex items-center gap-1 text-zinc-500">
+            <span className="inline-flex items-center gap-1 text-[var(--text-secondary)]">
               <Filter className="w-3 h-3" />
               {t("leads.filters")}
             </span>
@@ -761,7 +761,7 @@ export default function LeadsPage() {
                 setAddLeadForm((prev) => ({ ...prev, name: e.target.value }))
               }
               placeholder={t("leads.inlineNamePlaceholder")}
-              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
             />
             <input
               type="tel"
@@ -770,7 +770,7 @@ export default function LeadsPage() {
                 setAddLeadForm((prev) => ({ ...prev, phone: e.target.value }))
               }
               placeholder={t("leads.inlinePhonePlaceholder")}
-              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
             />
             <input
               type="email"
@@ -779,7 +779,7 @@ export default function LeadsPage() {
                 setAddLeadForm((prev) => ({ ...prev, email: e.target.value }))
               }
               placeholder={t("leads.inlineEmailPlaceholder")}
-              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
             />
             <button
               type="submit"
@@ -843,19 +843,19 @@ export default function LeadsPage() {
 
         {selectedIds.size > 0 && (
           <div className="mb-3 flex flex-wrap items-center gap-2 text-xs rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2">
-            <span className="text-zinc-400">
+            <span className="text-[var(--text-tertiary)]">
               {t("leads.selectedCount", { count: selectedIds.size })}
             </span>
             <button
               type="button"
               onClick={() => setSelectedIds(new Set())}
-              className="inline-flex items-center gap-1 text-zinc-400 hover:text-zinc-200"
+              className="inline-flex items-center gap-1 text-[var(--text-tertiary)] hover:text-zinc-200"
             >
               <X className="w-3 h-3" />
               {t("leads.clear")}
             </button>
             <span className="h-4 w-px bg-[var(--bg-card)]" />
-            <span className="text-zinc-500">{t("leads.changeStatus")}</span>
+            <span className="text-[var(--text-secondary)]">{t("leads.changeStatus")}</span>
             {STATUS_ORDER.map((status) => (
               <button
                 key={status}
@@ -867,7 +867,7 @@ export default function LeadsPage() {
               </button>
             ))}
             <span className="h-4 w-px bg-[var(--bg-card)]" />
-            <span className="text-zinc-500">{t("leads.assign")}</span>
+            <span className="text-[var(--text-secondary)]">{t("leads.assign")}</span>
             {agents.map((agent) => (
               <button
                 key={agent.id}
@@ -918,59 +918,59 @@ export default function LeadsPage() {
                 <p className="text-sm text-[var(--accent-red)]" role="alert">{addLeadError}</p>
               )}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.nameLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.nameLabel")}</label>
                 <input
                   type="text"
                   required
                   value={addLeadForm.name}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder={t("leads.modal.namePlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.phoneLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.phoneLabel")}</label>
                 <input
                   type="tel"
                   required
                   value={addLeadForm.phone}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, phone: e.target.value }))}
                   placeholder={t("leads.modal.phonePlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.emailLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.emailLabel")}</label>
                 <input
                   type="email"
                   value={addLeadForm.email}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, email: e.target.value }))}
                   placeholder={t("leads.modal.emailPlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.companyLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.companyLabel")}</label>
                 <input
                   type="text"
                   value={addLeadForm.company}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, company: e.target.value }))}
                   placeholder={t("leads.modal.companyPlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.needLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.needLabel")}</label>
                 <input
                   type="text"
                   value={addLeadForm.service_requested}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, service_requested: e.target.value }))}
                   placeholder={t("leads.modal.needPlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.sourceLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.sourceLabel")}</label>
                 <div className="flex flex-wrap gap-3 mt-1">
                   {(["website", "referral", "inbound_call", "other"] as const).map((src) => (
                     <label key={src} className="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
@@ -979,7 +979,7 @@ export default function LeadsPage() {
                         name="source"
                         checked={addLeadForm.source === src}
                         onChange={() => setAddLeadForm((prev) => ({ ...prev, source: src }))}
-                        className="rounded-full border-[var(--border-medium)] bg-[var(--bg-input)] text-white"
+                        className="rounded-full border-[var(--border-medium)] bg-[var(--bg-input)] text-[var(--text-primary)]"
                       />
                       {src === "inbound_call" ? t("leads.sources.inboundCall") : src === "website" ? t("leads.sources.website") : src === "referral" ? t("leads.sources.referral") : t("leads.sources.other")}
                     </label>
@@ -987,11 +987,11 @@ export default function LeadsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.statusLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.statusLabel")}</label>
                 <select
                   value={addLeadForm.status}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, status: e.target.value as LeadStatus }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 >
                   {STATUS_ORDER.map((s) => (
                     <option key={s} value={s}>{t(`leads.board.columns.${s === "Appointment Set" ? "appointment" : s.toLowerCase()}`)}</option>
@@ -999,13 +999,13 @@ export default function LeadsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("leads.modal.notesLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.notesLabel")}</label>
                 <textarea
                   value={addLeadForm.notes}
                   onChange={(e) => setAddLeadForm((prev) => ({ ...prev, notes: e.target.value }))}
                   placeholder={t("leads.modal.notesPlaceholder")}
                   rows={2}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 text-sm focus:border-[var(--border-medium)] focus:outline-none resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:outline-none resize-none"
                 />
               </div>
               <div className="flex gap-2 pt-2">
@@ -1027,8 +1027,8 @@ export default function LeadsPage() {
             </form>
             {csvPreviewRows.length > 0 ? (
               <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
-                <p className="text-sm font-medium text-white mb-1">{t("leads.csvPreview", { count: csvPreviewRows.length })}</p>
-                <p className="text-[11px] text-zinc-500 mb-2">{t("leads.csvPreviewLabel")}</p>
+                <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("leads.csvPreview", { count: csvPreviewRows.length })}</p>
+                <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("leads.csvPreviewLabel")}</p>
                 <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-2 max-h-32 overflow-y-auto text-xs text-zinc-300">
                   {csvPreviewRows.slice(0, 5).map((r, i) => (
                     <div key={i} className="py-1 border-b border-[var(--border-default)] last:border-0">
@@ -1082,8 +1082,8 @@ export default function LeadsPage() {
               </div>
             ) : (
             <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
-              <p className="text-xs text-zinc-500 mb-2">{t("leads.csvOr")}</p>
-              <label className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white cursor-pointer">
+              <p className="text-xs text-[var(--text-secondary)] mb-2">{t("leads.csvOr")}</p>
+              <label className="flex items-center gap-2 text-sm text-zinc-300 hover:text-[var(--text-primary)] cursor-pointer">
                 <span className="text-base">📎</span>
                 {t("leads.importFromCsv")}
                 <input
@@ -1125,7 +1125,7 @@ export default function LeadsPage() {
                   }}
                 />
               </label>
-              <p className="text-[11px] text-zinc-500 mt-1">{t("leads.csvUploadHint")}</p>
+              <p className="text-[11px] text-[var(--text-secondary)] mt-1">{t("leads.csvUploadHint")}</p>
             </div>
             )}
       </Modal>

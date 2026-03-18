@@ -319,12 +319,12 @@ export default function CampaignsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">{t("heading")}</h1>
-            <p className="text-sm text-zinc-500 mt-1">
+            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               {t("description")}
             </p>
           </div>
@@ -346,9 +346,9 @@ export default function CampaignsPage() {
           <StatCard label={t("statActive")} value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
           <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
           <StatCard label={t("statConverted")} value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
-            <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{t("estRoi")}</p>
-            <p className="mt-1 text-sm font-semibold text-white">
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4">
+            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("estRoi")}</p>
+            <p className="mt-1 text-sm font-semibold text-[var(--text-primary)]">
               {t("roiSummary", {
                 cost: (campaigns.reduce((s, c) => s + c.called * 0.05 + c.answered * 0.02, 0)).toFixed(0),
                 revenue: (campaigns.reduce((s, c) => s + c.appointments_booked * 250, 0)).toFixed(0),
@@ -360,7 +360,7 @@ export default function CampaignsPage() {
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="grid gap-4 md:grid-cols-2">
             {loading ? (
-              <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-sm text-zinc-500">
+              <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-sm text-[var(--text-secondary)]">
                 {t("loading")}
               </div>
             ) : filtered.length === 0 ? (
@@ -375,8 +375,8 @@ export default function CampaignsPage() {
                 <div key={campaign.id} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-white">{campaign.name}</p>
-                      <p className="mt-2 text-xs text-zinc-500">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">{campaign.name}</p>
+                      <p className="mt-2 text-xs text-[var(--text-secondary)]">
                         {campaign.target_filter?.audience ?? t("outcomeAudience")}
                         {(() => {
                           const tf = campaign.target_filter;
@@ -433,20 +433,20 @@ export default function CampaignsPage() {
                     <Metric label={t("metricReached")} value={campaign.answered} />
                     <Metric label={t("metricConverted")} value={campaign.appointments_booked} />
                   </div>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-zinc-500">
+                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-[var(--text-secondary)]">
                     <span>{t("remaining")}: {Math.max(0, campaign.total_contacts - campaign.called)}</span>
                     <span>·</span>
                     <span>{t("failed")}: {Math.max(0, campaign.called - campaign.answered)}</span>
                   </div>
                   {campaign.total_contacts > 0 && (
                     <div className="mt-3">
-                      <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-1">
+                      <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] mb-1">
                         <span>{t("progress")}</span>
                         <span>
                           {campaign.called}/{campaign.total_contacts} {t("contacted")}
                         </span>
                       </div>
-                      <div className="h-1.5 w-full rounded-full bg-zinc-900 overflow-hidden">
+                      <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
                         <div
                           className="h-full rounded-full bg-emerald-500"
                           style={{
@@ -462,9 +462,9 @@ export default function CampaignsPage() {
                     </div>
                   )}
                   {campaign.called > 0 && (
-                    <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
-                      <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{t("campaignRoi")}</p>
-                      <p className="mt-1 text-xs text-zinc-400">
+                    <div className="mt-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3">
+                      <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("campaignRoi")}</p>
+                      <p className="mt-1 text-xs text-[var(--text-tertiary)]">
                         {t("roiCampaign", {
                           cost: `$${(campaign.called * 0.05 + campaign.answered * 0.02).toFixed(2)}`,
                           revenue: `$${(campaign.appointments_booked * 250).toFixed(0)}`,
@@ -472,11 +472,11 @@ export default function CampaignsPage() {
                       </p>
                     </div>
                   )}
-                  <p className="mt-3 text-[11px] text-zinc-500">
+                  <p className="mt-3 text-[11px] text-[var(--text-secondary)]">
                     {t("createdDate", { date: new Date(campaign.created_at).toLocaleDateString() })}
                   </p>
                   {campaign.target_filter?.schedule_type && campaign.target_filter.schedule_type !== "manual" && (
-                    <p className="mt-1 text-[11px] text-zinc-500">
+                    <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                       {campaign.target_filter.schedule_type === "once" || campaign.target_filter.schedule_type === "recurring"
                         ? campaign.target_filter.schedule
                           ? t("scheduledAt", { date: new Date(campaign.target_filter.schedule).toLocaleString() })
@@ -485,7 +485,7 @@ export default function CampaignsPage() {
                     </p>
                   )}
                   {Array.isArray(campaign.target_filter?.sequence) && campaign.target_filter.sequence.length > 0 && (
-                    <p className="mt-1 text-[11px] text-zinc-500">
+                    <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                       {t("sequenceDisplay", { steps: campaign.target_filter.sequence.map((s: { type: string; wait_days?: number }) => s.type === "wait" ? t("waitStep", { days: s.wait_days ?? 1 }) : (t.has(`touchpointTypes.${s.type}`) ? t(`touchpointTypes.${s.type}` as never) : s.type)).join(" → ") })}
                     </p>
                   )}
@@ -500,10 +500,10 @@ export default function CampaignsPage() {
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">
                   {editingId ? t("form.titleEdit") : t("form.titleCreate")}
                 </p>
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-[var(--text-secondary)] mt-1">
                   {t("form.subtitle")}
                 </p>
               </div>
@@ -527,7 +527,7 @@ export default function CampaignsPage() {
                       sequence: [{ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" }],
                     });
                   }}
-                  className="text-xs text-zinc-400 hover:text-white"
+                  className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
                 >
                   {t("form.cancelEdit")}
                 </button>
@@ -560,10 +560,10 @@ export default function CampaignsPage() {
                           }));
                         }}
                         className={`p-3 rounded-lg border text-left text-xs transition-colors ${
-                          selected ? "border-zinc-500/50 bg-zinc-800/50" : "border-white/[0.08] hover:bg-white/[0.04]"
+                          selected ? "border-zinc-500/50 bg-[var(--bg-inset)]/50" : "border-white/[0.08] hover:bg-white/[0.04]"
                         }`}
                       >
-                        <p className="font-medium text-white">{t(typeOption.labelKey)}</p>
+                        <p className="font-medium text-[var(--text-primary)]">{t(typeOption.labelKey)}</p>
                         <p className="text-white/40 mt-0.5">{t(typeOption.descKey)}</p>
                       </button>
                     );
@@ -571,7 +571,7 @@ export default function CampaignsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
                   {t("form.campaignNameLabel")}
                 </label>
                 <input
@@ -579,17 +579,17 @@ export default function CampaignsPage() {
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder={t("namePlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
                   {t("form.typeLabel")}
                 </label>
                 <select
                   value={form.type}
                   onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 >
                   {TYPE_OPTIONS.map((option) => (
                     <option key={option.id} value={option.id}>
@@ -599,17 +599,17 @@ export default function CampaignsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("form.audienceLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("form.audienceLabel")}</label>
                 <input
                   type="text"
                   value={form.audience}
                   onChange={(e) => setForm((prev) => ({ ...prev, audience: e.target.value }))}
                   placeholder={t("form.audiencePlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("form.leadStatusOptionalLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("form.leadStatusOptionalLabel")}</label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {LEAD_STATUS_OPTIONS.map((status) => {
                     const checked = form.audienceStatuses.includes(status);
@@ -626,23 +626,23 @@ export default function CampaignsPage() {
                                 : [...prev.audienceStatuses, status],
                             }));
                           }}
-                          className="rounded border-[var(--border-default)] bg-[var(--bg-input)] text-white"
+                          className="rounded border-[var(--border-default)] bg-[var(--bg-input)] text-[var(--text-primary)]"
                         />
                         {t(`leadStatuses.${LEAD_STATUS_KEY[status as (typeof LEAD_STATUS_OPTIONS)[number]] ?? status}`)}
                       </label>
                     );
                   })}
                 </div>
-                <p className="text-[11px] text-zinc-500 mt-1">{t("form.leaveEmptyForAllStatuses")}</p>
+                <p className="text-[11px] text-[var(--text-secondary)] mt-1">{t("form.leaveEmptyForAllStatuses")}</p>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
                   {t("form.sourceLabel")}
                 </label>
                 <select
                   value={form.audienceSource}
                   onChange={(e) => setForm((prev) => ({ ...prev, audienceSource: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 >
                   {SOURCE_OPTIONS.map((opt) => (
                     <option key={opt.id || "any"} value={opt.id}>
@@ -653,7 +653,7 @@ export default function CampaignsPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">{t("minScore")}</label>
+                  <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("minScore")}</label>
                   <input
                     type="number"
                     min={0}
@@ -664,11 +664,11 @@ export default function CampaignsPage() {
                       setForm((prev) => ({ ...prev, audienceMinScore: v === "" ? "" : Number(v) }));
                     }}
                     placeholder={t("filterAny")}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">{t("notContactedInDays")}</label>
+                  <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("notContactedInDays")}</label>
                   <input
                     type="number"
                     min={1}
@@ -678,25 +678,25 @@ export default function CampaignsPage() {
                       setForm((prev) => ({ ...prev, audienceNotContactedDays: v === "" ? "" : Number(v) }));
                     }}
                     placeholder={t("filterAny")}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("messageTemplate")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("messageTemplate")}</label>
                 <textarea
                   rows={4}
                   value={form.template}
                   onChange={(e) => setForm((prev) => ({ ...prev, template: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm resize-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("scheduleTypeLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("scheduleTypeLabel")}</label>
                 <select
                   value={form.scheduleType}
                   onChange={(e) => setForm((prev) => ({ ...prev, scheduleType: e.target.value as typeof form.scheduleType }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 >
                   <option value="manual">{t("scheduleTypes.manual")}</option>
                   <option value="once">{t("scheduleTypes.once")}</option>
@@ -706,24 +706,24 @@ export default function CampaignsPage() {
               </div>
               {(form.scheduleType === "once" || form.scheduleType === "recurring") && (
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
                     {form.scheduleType === "once" ? t("scheduleLabel.once") : t("scheduleLabel.recurring")}
                   </label>
                   <input
                     type="datetime-local"
                     value={form.schedule}
                     onChange={(e) => setForm((prev) => ({ ...prev, schedule: e.target.value }))}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                   />
                 </div>
               )}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">{t("sequenceLabel")}</label>
-                <p className="text-[11px] text-zinc-500 mb-2">{t("sequenceHint")}</p>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("sequenceLabel")}</label>
+                <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("sequenceHint")}</p>
                 <div className="space-y-2">
                   {form.sequence.map((step, idx) => (
                     <div key={idx} className="flex items-center gap-2">
-                      <span className="text-[11px] text-zinc-500 w-6">{idx + 1}.</span>
+                      <span className="text-[11px] text-[var(--text-secondary)] w-6">{idx + 1}.</span>
                       <select
                         value={step.type}
                         onChange={(e) => {
@@ -735,7 +735,7 @@ export default function CampaignsPage() {
                             ),
                           }));
                         }}
-                        className="flex-1 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                        className="flex-1 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                       >
                         <option value="call">{t("touchpointTypes.call")}</option>
                         <option value="sms">{t("touchpointTypes.sms")}</option>
@@ -756,10 +756,10 @@ export default function CampaignsPage() {
                               ),
                             }))
                           }
-                          className="w-16 px-2 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm"
+                          className="w-16 px-2 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                         />
                       )}
-                      {step.type === "wait" && <span className="text-[11px] text-zinc-500">{t("daysLabel")}</span>}
+                      {step.type === "wait" && <span className="text-[11px] text-[var(--text-secondary)]">{t("daysLabel")}</span>}
                       <button
                         type="button"
                         onClick={() =>
@@ -768,7 +768,7 @@ export default function CampaignsPage() {
                             sequence: prev.sequence.filter((_, i) => i !== idx),
                           }))
                         }
-                        className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:text-white text-xs"
+                        className="p-2 rounded-lg border border-zinc-700 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
                         aria-label={t("removeStep")}
                       >
                         {t("removeStep")}
@@ -783,7 +783,7 @@ export default function CampaignsPage() {
                         sequence: [...prev.sequence, { type: "call" }],
                       }))
                     }
-                    className="mt-1 px-3 py-2 rounded-xl border border-zinc-700 text-zinc-400 hover:text-white text-xs"
+                    className="mt-1 px-3 py-2 rounded-xl border border-zinc-700 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
                   >
                     {t("addStep")}
                   </button>
@@ -856,8 +856,8 @@ function StatCard({
           ? "text-cyan-400"
           : "text-amber-400";
   return (
-    <div className={`rounded-xl border bg-zinc-900/50 p-4 ${border}`}>
-      <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{label}</p>
+    <div className={`rounded-xl border bg-[var(--bg-surface)] p-4 ${border}`}>
+      <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{label}</p>
       <p className={`mt-1 text-xl font-bold ${text}`}>{value}</p>
     </div>
   );
@@ -865,9 +865,9 @@ function StatCard({
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
-      <p className="text-[10px] text-zinc-500">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-white">{value}</p>
+    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3">
+      <p className="text-[10px] text-[var(--text-secondary)]">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }

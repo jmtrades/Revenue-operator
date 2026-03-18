@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
+import { ProductTour } from "@/components/ui/ProductTour";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
 import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
@@ -76,7 +77,7 @@ export default function AppShellClient({
           { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
           { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
           { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
-          { href: "/app/follow-ups", label: "Follow-Ups", icon: ListOrdered },
+          { href: "/app/follow-ups", label: t("nav.followUps"), icon: ListOrdered },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
@@ -97,7 +98,7 @@ export default function AppShellClient({
     () => [
       { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
       { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
-      { href: "/app/follow-ups", label: "Follow-Ups", icon: ListOrdered },
+      { href: "/app/follow-ups", label: t("nav.followUps"), icon: ListOrdered },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
@@ -345,7 +346,7 @@ export default function AppShellClient({
               <span>{workspaceMeta.banner.text}</span>
               <Link
                 href={workspaceMeta.banner.href || "/app/settings/phone"}
-                className="font-medium text-white underline underline-offset-2 hover:no-underline"
+                className="font-medium text-[var(--text-primary)] underline underline-offset-2 hover:no-underline"
               >
                 {workspaceMeta.banner.cta || t("nav.setupCta")}
               </Link>
@@ -371,6 +372,7 @@ export default function AppShellClient({
                   sidebarCollapsed ? "md:w-16" : "md:w-[220px]",
                   "w-[220px] md:transition-[width]"
                 )}
+                data-product-tour="sidebarNav"
                 aria-label={t("accessibility.appNav")}
               >
                 <div className={cn(
@@ -415,6 +417,13 @@ export default function AppShellClient({
                               key={href}
                               href={href}
                               onClick={() => setMobileSidebarOpen(false)}
+                              data-product-tour={
+                                href === "/app/campaigns"
+                                  ? "sidebarCampaigns"
+                                  : href === "/app/settings"
+                                    ? "sidebarSettings"
+                                    : undefined
+                              }
                               className={cn(
                                 "flex items-center border-l-2 py-2.5 rounded-r-xl text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
                                 sidebarCollapsed ? "md:justify-center md:px-0 md:pl-0 md:pr-0 px-3" : "gap-2.5 px-3",
@@ -450,14 +459,14 @@ export default function AppShellClient({
                           </span>
                         )}
                       </div>
-                      <a href="mailto:support@recall-touch.com" className="block text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors px-1">
+                      <a href="mailto:support@recall-touch.com" className="block text-[10px] text-[var(--text-secondary)] hover:text-zinc-300 transition-colors px-1">
                         support@recall-touch.com
                       </a>
-                      <div className="px-1 pt-1 text-[10px] text-zinc-500">
-                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-zinc-400">
+                      <div className="px-1 pt-1 text-[10px] text-[var(--text-secondary)]">
+                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-tertiary)]">
                           ⌘
                         </kbd>
-                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-zinc-400 ml-0.5">
+                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-tertiary)] ml-0.5">
                           K
                         </kbd>
                         <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
@@ -525,6 +534,7 @@ export default function AppShellClient({
               <div className="flex-1 min-h-0">
                 <TranslatedErrorBoundary>
                   <PageTransition>{children}</PageTransition>
+                  <ProductTour />
                 </TranslatedErrorBoundary>
               </div>
             </main>
@@ -730,7 +740,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium shrink-0 ${
                       isComplete
-                        ? "bg-green-500 text-white"
+                        ? "bg-green-500 text-[var(--text-primary)]"
                         : isCurrent
                           ? "bg-white text-black"
                           : "bg-[var(--bg-input)] text-[var(--text-tertiary)]"

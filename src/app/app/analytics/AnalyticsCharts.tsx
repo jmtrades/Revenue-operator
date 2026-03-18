@@ -33,7 +33,7 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
       {/* Row 2: charts */}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] mb-6">
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-          <p className="text-sm font-medium text-white mb-4">
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-4">
             {t("charts.callVolumeTitle")}
           </p>
           <div className="h-52">
@@ -80,7 +80,7 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
         </div>
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-          <p className="text-sm font-medium text-white mb-4">
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-4">
             {t("charts.outcomeBreakdown")}
           </p>
           <div className="h-52">

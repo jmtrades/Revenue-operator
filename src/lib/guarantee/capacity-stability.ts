@@ -5,6 +5,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 import { getSchedulingRules } from "@/lib/calendar-optimization";
 
 export type CapacityPressureLevel = 0 | 1 | 2 | 3;
@@ -110,12 +111,15 @@ export function computeCapacityPressure(inputs: CapacityInputs): CapacityPressur
  */
 export async function getCapacityPressure(workspaceId: string): Promise<CapacityStateRow | null> {
   const db = getDb();
-  const { data } = await db
-    .from("guarantee_capacity_state")
-    .select("pressure_level, updated_at")
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
-  return data as CapacityStateRow | null;
+  try {
+    const q = db
+      .from("guarantee_capacity_state")
+      .select("pressure_level, updated_at")
+      .eq("workspace_id", workspaceId) as unknown as DbSingleQuery;
+    return (await fetchSingleRow(q)) as CapacityStateRow | null;
+  } catch {
+    return null;
+  }
 }
 
 /**

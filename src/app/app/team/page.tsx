@@ -266,12 +266,12 @@ export default function TeamPage() {
   }, [workspaceId, revokingId, showToast, fetchTeam, t]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">{t("heading")}</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">{loading ? t("loading") : t("membersCount", { count: members.length })}</p>
+            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-0.5">{loading ? t("loading") : t("membersCount", { count: members.length })}</p>
           </div>
           <button
             type="button"
@@ -302,10 +302,10 @@ export default function TeamPage() {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-medium text-white truncate">{member.name}</span>
+                        <span className="font-medium text-[var(--text-primary)] truncate">{member.name}</span>
                         {isOwner && <Crown className="w-4 h-4 text-amber-400 shrink-0" aria-label={t("roles.owner")} />}
                       </div>
-                      <p className="text-xs text-zinc-500 truncate">{member.email}</p>
+                      <p className="text-xs text-[var(--text-secondary)] truncate">{member.email}</p>
                     </div>
                   </div>
                   {!isOwner && (
@@ -313,7 +313,7 @@ export default function TeamPage() {
                       <button
                         type="button"
                         onClick={() => setMenuMemberId(menuMemberId === member.id ? null : member.id)}
-                        className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-[var(--bg-card)]"
+                        className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]"
                         aria-label="Options"
                       >
                         <MoreVertical className="w-4 h-4" />
@@ -357,12 +357,12 @@ export default function TeamPage() {
                           ? "bg-zinc-600 text-zinc-200"
                           : member.role === "manager"
                             ? "bg-zinc-700 text-zinc-300"
-                            : "bg-zinc-700 text-zinc-400"
+                            : "bg-zinc-700 text-[var(--text-tertiary)]"
                     }`}
                   >
                     {roleLabels[member.role]}
                   </span>
-                  <span className="text-[10px] text-zinc-500">Last active {formatRelative(member.lastActive, t)}</span>
+                  <span className="text-[10px] text-[var(--text-secondary)]">Last active {formatRelative(member.lastActive, t)}</span>
                 </div>
                 <p className="text-[10px] text-zinc-600 mt-1">Joined {formatDate(member.joinedAt)}</p>
               </div>
@@ -373,14 +373,14 @@ export default function TeamPage() {
         {/* Pending invitations */}
         {pendingInvites.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Pending invitations</h2>
+            <h2 className="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Pending invitations</h2>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]/30 p-4">
               <ul className="space-y-2">
                 {pendingInvites.map((inv) => (
                   <li key={inv.id} className="flex flex-wrap items-center justify-between gap-2 py-2 border-b border-[var(--border-default)]/80 last:border-0">
                     <div>
                       <span className="text-sm text-zinc-300">{inv.email}</span>
-                      <span className="ml-2 text-xs text-zinc-500">— {roleLabels[inv.role]}</span>
+                      <span className="ml-2 text-xs text-[var(--text-secondary)]">— {roleLabels[inv.role]}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] text-zinc-600">Invited {formatRelative(inv.invitedAt, t)}</span>
@@ -388,7 +388,7 @@ export default function TeamPage() {
                         type="button"
                         onClick={() => handleResendInvite(inv.id)}
                         disabled={resendingId === inv.id}
-                        className="text-xs font-medium text-zinc-400 hover:text-white disabled:opacity-50"
+                        className="text-xs font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] disabled:opacity-50"
                       >
                         {resendingId === inv.id ? t("sending") : t("resend")}
                       </button>
@@ -415,7 +415,7 @@ export default function TeamPage() {
             onClick={() => setRolesExpanded((e) => !e)}
             className="flex items-center gap-2 w-full text-left py-3 border-b border-[var(--border-default)]"
           >
-            {rolesExpanded ? <ChevronDown className="w-4 h-4 text-zinc-500" /> : <ChevronRight className="w-4 h-4 text-zinc-500" />}
+            {rolesExpanded ? <ChevronDown className="w-4 h-4 text-[var(--text-secondary)]" /> : <ChevronRight className="w-4 h-4 text-[var(--text-secondary)]" />}
             <span className="text-sm font-semibold text-zinc-300">Roles & Permissions</span>
           </button>
           {rolesExpanded && (
@@ -423,11 +423,11 @@ export default function TeamPage() {
               <table className="w-full text-left text-sm border-collapse">
                 <thead>
                   <tr className="border-b border-[var(--border-default)]">
-                    <th className="py-2 pr-4 font-medium text-zinc-500">Permission</th>
-                    <th className="py-2 px-2 font-medium text-zinc-500">Owner</th>
-                    <th className="py-2 px-2 font-medium text-zinc-500">Admin</th>
-                    <th className="py-2 px-2 font-medium text-zinc-500">Manager</th>
-                    <th className="py-2 px-2 font-medium text-zinc-500">Agent</th>
+                    <th className="py-2 pr-4 font-medium text-[var(--text-secondary)]">Permission</th>
+                    <th className="py-2 px-2 font-medium text-[var(--text-secondary)]">Owner</th>
+                    <th className="py-2 px-2 font-medium text-[var(--text-secondary)]">Admin</th>
+                    <th className="py-2 px-2 font-medium text-[var(--text-secondary)]">Manager</th>
+                    <th className="py-2 px-2 font-medium text-[var(--text-secondary)]">Agent</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -451,27 +451,27 @@ export default function TeamPage() {
       {inviteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setInviteModalOpen(false)}>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-white mb-4">Invite team member</h3>
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Invite team member</h3>
             <div className="space-y-4">
               {inviteError && (
                 <p className="text-sm text-[var(--accent-red)]" role="alert">{inviteError}</p>
               )}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("emailLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("emailLabel")}</label>
                 <input
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => { setInviteEmail(e.target.value); setInviteError(null); }}
                   placeholder={t("inviteEmailPlaceholder")}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Role</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">Role</label>
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value as TeamRole)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-white text-sm focus:outline-none focus:border-[var(--border-medium)]"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-medium)]"
                 >
                   {invitableRoleOptions.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
@@ -480,7 +480,7 @@ export default function TeamPage() {
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button type="button" onClick={() => { setInviteModalOpen(false); setInviteError(null); }} className="px-4 py-2 rounded-xl text-sm text-zinc-400 border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">
+              <button type="button" onClick={() => { setInviteModalOpen(false); setInviteError(null); }} className="px-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">
                 Cancel
               </button>
               <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim() || inviteSending} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
@@ -495,21 +495,21 @@ export default function TeamPage() {
       {roleModalMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setRoleModalMember(null)}>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-white mb-2">Change role</h3>
-            <p className="text-sm text-zinc-500 mb-4">{roleModalMember.name} — {roleModalMember.email}</p>
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Change role</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-4">{roleModalMember.name} — {roleModalMember.email}</p>
             <div className="space-y-1">
               {(["admin", "manager", "agent"] as const).map((r) => (
                 <button
                   key={r}
                   type="button"
                   onClick={() => handleChangeRole(roleModalMember.id, r)}
-                  className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-[var(--bg-card)] hover:text-zinc-200"}`}
+                  className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-zinc-700 text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:bg-[var(--bg-card)] hover:text-zinc-200"}`}
                 >
                   {roleLabels[r]}
                 </button>
               ))}
             </div>
-            <button type="button" onClick={() => setRoleModalMember(null)} className="w-full mt-4 py-2 rounded-xl text-sm text-zinc-400 border border-[var(--border-medium)]">
+            <button type="button" onClick={() => setRoleModalMember(null)} className="w-full mt-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] border border-[var(--border-medium)]">
               Cancel
             </button>
           </div>

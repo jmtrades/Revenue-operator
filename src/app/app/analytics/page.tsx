@@ -570,11 +570,11 @@ export default function AppAnalyticsPage() {
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-zinc-400" />
+          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-[var(--text-tertiary)]" />
             {t("analytics.heading")}
           </h1>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
             {t("analytics.description")}
           </p>
         </div>
@@ -594,7 +594,7 @@ export default function AppAnalyticsPage() {
                 className={`px-3 py-1.5 rounded-lg ${
                   range === opt.key
                     ? "bg-white text-black font-medium"
-                    : "text-zinc-400"
+                    : "text-[var(--text-tertiary)]"
                 }`}
               >
                 {opt.label}
@@ -609,7 +609,7 @@ export default function AppAnalyticsPage() {
                 onChange={(e) => setDateFrom(e.target.value)}
                 className="rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1.5 text-zinc-200"
               />
-              <span className="text-zinc-500">→</span>
+              <span className="text-[var(--text-secondary)]">→</span>
               <input
                 type="date"
                 value={dateTo}
@@ -646,7 +646,7 @@ export default function AppAnalyticsPage() {
             className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-colors ${
               scope === key
                 ? "border-white bg-white text-black"
-                : "border-[var(--border-default)] bg-[var(--bg-card)] text-zinc-400 hover:text-white"
+                : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
             }`}
           >
             <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden />
@@ -655,7 +655,7 @@ export default function AppAnalyticsPage() {
         ))}
       </div>
       {(scope === "inbound" || scope === "outbound") && (
-        <p className="text-xs text-zinc-500 mb-4">
+        <p className="text-xs text-[var(--text-secondary)] mb-4">
           {scope === "inbound" ? t("analytics.inboundTab.hint") : t("analytics.outboundTab.hint")}
         </p>
       )}
@@ -706,7 +706,7 @@ export default function AppAnalyticsPage() {
                     </KPIRow>
                     {om.volume_by_day.length > 0 && (
                       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-                        <p className="text-sm font-medium text-white mb-3">{t("analytics.outboundTab.smsVolume")}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.outboundTab.smsVolume")}</p>
                         <div className="flex items-end gap-1 h-28">
                           {om.volume_by_day.map((row) => (
                             <div key={row.day} className="flex-1 min-w-0 flex flex-col items-center gap-1">
@@ -715,7 +715,7 @@ export default function AppAnalyticsPage() {
                                 style={{ height: `${Math.max(8, (row.count / maxSms) * 100)}%` }}
                                 title={`${row.day}: ${row.count}`}
                               />
-                              <span className="text-[9px] text-zinc-500 truncate w-full text-center">{row.day.slice(5)}</span>
+                              <span className="text-[9px] text-[var(--text-secondary)] truncate w-full text-center">{row.day.slice(5)}</span>
                             </div>
                           ))}
                         </div>
@@ -723,10 +723,10 @@ export default function AppAnalyticsPage() {
                     )}
                     {om.campaigns.length > 0 && (
                       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 overflow-x-auto">
-                        <p className="text-sm font-medium text-white mb-3">{t("analytics.outboundTab.campaignsHeading")}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.outboundTab.campaignsHeading")}</p>
                         <table className="w-full text-xs text-left">
                           <thead>
-                            <tr className="text-zinc-500 border-b border-[var(--border-default)]">
+                            <tr className="text-[var(--text-secondary)] border-b border-[var(--border-default)]">
                               <th className="pb-2 pr-3 font-medium">{t("analytics.outboundTab.campaignName")}</th>
                               <th className="pb-2 pr-3 font-medium">{t("analytics.outboundTab.status")}</th>
                               <th className="pb-2 pr-3 font-medium text-right">{t("analytics.outboundTab.totalDialed")}</th>
@@ -737,7 +737,7 @@ export default function AppAnalyticsPage() {
                           <tbody>
                             {om.campaigns.map((c) => (
                               <tr key={c.id} className="border-b border-[var(--border-default)]/50 text-zinc-300">
-                                <td className="py-2 pr-3 text-white">{c.name}</td>
+                                <td className="py-2 pr-3 text-[var(--text-primary)]">{c.name}</td>
                                 <td className="py-2 pr-3 capitalize">{c.status}</td>
                                 <td className="py-2 pr-3 text-right">{c.called}</td>
                                 <td className="py-2 pr-3 text-right">{c.answered}</td>
@@ -767,10 +767,10 @@ export default function AppAnalyticsPage() {
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
             <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("analytics.periodSummary.title")}</h3>
-            <span className="text-xs text-zinc-500 ml-auto">{summaryLabel}</span>
+            <span className="text-xs text-[var(--text-secondary)] ml-auto">{summaryLabel}</span>
           </div>
           <p
-            className="text-sm text-zinc-400 leading-relaxed"
+            className="text-sm text-[var(--text-tertiary)] leading-relaxed"
              
             dangerouslySetInnerHTML={{
               __html: generatePeriodSummary(
@@ -799,8 +799,8 @@ export default function AppAnalyticsPage() {
       {!hasData && !loading && !error && (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 mb-6 text-center">
           <BarChart3 className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-          <p className="text-sm font-medium text-white mb-1">{t("analytics.emptyHeading")}</p>
-          <p className="text-xs text-zinc-500 mb-4">{t("analytics.emptyDescription")}</p>
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("analytics.emptyHeading")}</p>
+          <p className="text-xs text-[var(--text-secondary)] mb-4">{t("analytics.emptyDescription")}</p>
           <Link
             href="/app/agents"
             className="text-[var(--accent-primary)] hover:underline text-sm mt-2 inline-block"
@@ -846,14 +846,14 @@ export default function AppAnalyticsPage() {
 
       {/* Lead funnel */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6">
-        <p className="text-sm font-medium text-white mb-4">{t("analytics.leadFunnel")}</p>
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-4">{t("analytics.leadFunnel")}</p>
         <div className="flex flex-col sm:flex-row items-stretch gap-2">
           {funnelData.map((item, i) => (
             <div key={item.stage} className="flex-1 min-w-0 flex flex-col items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 px-3 py-3">
-              <p className="text-[10px] uppercase tracking-wider text-zinc-500 mb-0.5">{item.stage}</p>
-              <p className="text-lg font-semibold text-white">{item.count}</p>
+              <p className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)] mb-0.5">{item.stage}</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)]">{item.count}</p>
               {i > 0 && (
-                <p className="text-[10px] text-zinc-500 mt-0.5">
+                <p className="text-[10px] text-[var(--text-secondary)] mt-0.5">
                   {item.pct > 0 ? `${Math.round(item.pct)}% conv.` : "—"}
                 </p>
               )}
@@ -866,10 +866,10 @@ export default function AppAnalyticsPage() {
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-start gap-3">
           <div className="mt-0.5 rounded-xl bg-[var(--bg-input)] p-2">
-            <CalendarRange className="h-4 w-4 text-zinc-400" />
+            <CalendarRange className="h-4 w-4 text-[var(--text-tertiary)]" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
               {t("analytics.atAGlance", { label: summaryLabel })}
             </p>
             <p className="text-sm text-zinc-300 mt-1">
@@ -885,7 +885,7 @@ export default function AppAnalyticsPage() {
           </div>
         </div>
         {hasData && (
-          <div className="flex flex-wrap gap-3 text-[11px] text-zinc-400">
+          <div className="flex flex-wrap gap-3 text-[11px] text-[var(--text-tertiary)]">
             <span>{t("analytics.leadConversionPct", { pct: leadConversionPct })}</span>
             <span>{t("analytics.positiveSentimentPct", { pct: positivePct })}</span>
           </div>
@@ -895,10 +895,10 @@ export default function AppAnalyticsPage() {
       {/* Row 3: heatmap + insights */}
       <div className="grid gap-4 lg:grid-cols-2 mb-6">
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-          <p className="text-sm font-medium text-white mb-3">{t("analytics.peakHours")}</p>
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.peakHours")}</p>
           <div className="overflow-x-auto">
             <div className="min-w-[640px]">
-              <div className="grid grid-rows-8 gap-1 text-[10px] text-zinc-500 mb-1">
+              <div className="grid grid-rows-8 gap-1 text-[10px] text-[var(--text-secondary)] mb-1">
                 <div />
                 <div className="col-span-7 grid grid-cols-24 gap-0.5">
                   {[0, 6, 12, 18].map((h) => (
@@ -914,7 +914,7 @@ export default function AppAnalyticsPage() {
                     key={row.day}
                     className="grid grid-cols-[40px_minmax(0,1fr)] items-center gap-1"
                   >
-                    <div className="text-[10px] text-zinc-500 text-right pr-1">
+                    <div className="text-[10px] text-[var(--text-secondary)] text-right pr-1">
                       {row.day}
                     </div>
                     <div className="grid grid-cols-24 gap-0.5">
@@ -944,7 +944,7 @@ export default function AppAnalyticsPage() {
         </div>
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 flex flex-col gap-3">
-          <p className="text-sm font-medium text-white">{t("analytics.aiInsights")}</p>
+          <p className="text-sm font-medium text-[var(--text-primary)]">{t("analytics.aiInsights")}</p>
           <div className="space-y-2">
             {suggestions.length > 0
               ? suggestions.slice(0, 5).map((s) => (
@@ -954,8 +954,8 @@ export default function AppAnalyticsPage() {
                   >
                     <Lightbulb className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-white">{s.title}</p>
-                      {s.description && <p className="text-xs text-zinc-500 mt-0.5">{s.description}</p>}
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{s.title}</p>
+                      {s.description && <p className="text-xs text-[var(--text-secondary)] mt-0.5">{s.description}</p>}
                       {s.actionHref && s.actionLabel && (
                         <Link
                           href={s.actionHref}
@@ -972,7 +972,7 @@ export default function AppAnalyticsPage() {
                           .then((r) => r.ok && setSuggestions((prev) => prev.filter((x) => x.id !== s.id)))
                           .catch(() => {});
                       }}
-                      className="text-xs text-zinc-500 hover:text-zinc-400 shrink-0"
+                      className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-tertiary)] shrink-0"
                     >
                       {t("analytics.dismiss")}
                     </button>
@@ -996,7 +996,7 @@ export default function AppAnalyticsPage() {
                     <p className="text-sm text-zinc-300">{t("analytics.insightLiveAnswer")}</p>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
-                    <Lightbulb className="h-4 w-4 shrink-0 text-zinc-400 mt-0.5" />
+                    <Lightbulb className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] mt-0.5" />
                     <p className="text-sm text-zinc-300">{t("analytics.insightPricing")}</p>
                   </div>
                 </>
@@ -1010,19 +1010,19 @@ export default function AppAnalyticsPage() {
         !outboundLoading &&
         (outboundMetrics.outbound_messages > 0 || outboundMetrics.totals.dialed > 0) && (
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6">
-            <p className="text-sm font-medium text-white mb-3">{t("analytics.outboundSnapshot.title")}</p>
+            <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.outboundSnapshot.title")}</p>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-2xl font-semibold text-white">{outboundMetrics.outbound_messages}</p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">{t("analytics.outboundSnapshot.sms")}</p>
+                <p className="text-2xl font-semibold text-[var(--text-primary)]">{outboundMetrics.outbound_messages}</p>
+                <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{t("analytics.outboundSnapshot.sms")}</p>
               </div>
               <div>
-                <p className="text-2xl font-semibold text-white">{outboundMetrics.totals.dialed}</p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">{t("analytics.outboundSnapshot.dials")}</p>
+                <p className="text-2xl font-semibold text-[var(--text-primary)]">{outboundMetrics.totals.dialed}</p>
+                <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{t("analytics.outboundSnapshot.dials")}</p>
               </div>
               <div>
-                <p className="text-2xl font-semibold text-white">{outboundMetrics.totals.appointments_booked}</p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">{t("analytics.outboundSnapshot.booked")}</p>
+                <p className="text-2xl font-semibold text-[var(--text-primary)]">{outboundMetrics.totals.appointments_booked}</p>
+                <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{t("analytics.outboundSnapshot.booked")}</p>
               </div>
             </div>
             <Link href="/app/campaigns" className="inline-block mt-3 text-xs text-[var(--accent-primary)] hover:opacity-80">
@@ -1033,7 +1033,7 @@ export default function AppAnalyticsPage() {
 
       {/* Row 4: sentiment overview */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-        <p className="text-sm font-medium text-white mb-3">{t("analytics.sentimentOverview")}</p>
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.sentimentOverview")}</p>
         <div className="h-4 w-full rounded-full bg-[var(--border-default)] overflow-hidden flex">
           <div
             className="h-full bg-emerald-500"
@@ -1048,7 +1048,7 @@ export default function AppAnalyticsPage() {
             style={{ width: `${negativePct}%` }}
           />
         </div>
-        <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-zinc-400">
+        <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-[var(--text-tertiary)]">
           <span>{t("analytics.sentimentPositive", { pct: positivePct })}</span>
           <span>{t("analytics.sentimentNeutral", { pct: neutralPct })}</span>
           <span>{t("analytics.sentimentNegative", { pct: negativePct })}</span>

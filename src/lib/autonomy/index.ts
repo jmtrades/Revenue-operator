@@ -7,6 +7,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 
 export type AutonomyMode = "observe" | "assist" | "act";
 
@@ -53,20 +54,22 @@ export async function getAutonomySettings(workspaceId: string): Promise<Autonomy
   if (cached && Date.now() - cached.at < CACHE_TTL_MS) return cached.s;
 
   const db = getDb();
-  const { data: row } = await db
-    .from("settings")
-    .select("autonomy_mode, feature_flags, autonomy_ramp_day, responsibility_level")
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
+  const row = await fetchSingleRow(
+    db
+      .from("settings")
+      .select("autonomy_mode, feature_flags, autonomy_ramp_day, responsibility_level")
+      .eq("workspace_id", workspaceId) as unknown as DbSingleQuery,
+  );
 
-  const rawMode = (row?.autonomy_mode as AutonomyMode) ?? DEFAULT_AUTONOMY.autonomy_mode;
-  const responsibility = (row?.responsibility_level as string) ?? "handle";
+  const raw = row as { autonomy_mode?: unknown; feature_flags?: unknown; autonomy_ramp_day?: unknown; responsibility_level?: unknown } | null;
+  const rawMode = (raw?.autonomy_mode as AutonomyMode) ?? DEFAULT_AUTONOMY.autonomy_mode;
+  const responsibility = (raw?.responsibility_level as string) ?? "handle";
   const mode = capModeByResponsibility(rawMode, responsibility);
   const flags = {
     ...DEFAULT_AUTONOMY.feature_flags,
-    ...(row?.feature_flags as Partial<Record<AutonomyFeature, boolean>> | undefined),
+    ...(raw?.feature_flags as Partial<Record<AutonomyFeature, boolean>> | undefined),
   };
-  const ramp = Math.max(0, Math.min(14, Number(row?.autonomy_ramp_day) ?? 0));
+  const ramp = Math.max(0, Math.min(14, Number(raw?.autonomy_ramp_day) ?? 0));
 
   const s: AutonomySettings = { autonomy_mode: mode, feature_flags: flags, autonomy_ramp_day: ramp };
   _cache.set(workspaceId, { s, at: Date.now() });
@@ -105,8 +108,10 @@ export async function isRampComplete(workspaceId: string): Promise<boolean> {
   const a = await getAutonomySettings(workspaceId);
   if (a.autonomy_ramp_day <= 0) return true;
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("created_at").eq("id", workspaceId).maybeSingle();
-  const created = ws?.created_at ? new Date(ws.created_at) : new Date();
+  const ws = await fetchSingleRow(
+    db.from("workspaces").select("created_at").eq("id", workspaceId) as unknown as DbSingleQuery,
+  );
+  const created = (ws as { created_at?: string } | null)?.created_at ? new Date((ws as { created_at: string }).created_at) : new Date();
   const now = new Date();
   const daysSinceCreation = Math.floor((now.getTime() - created.getTime()) / (24 * 60 * 60 * 1000));
   return daysSinceCreation >= a.autonomy_ramp_day;

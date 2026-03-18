@@ -1,5 +1,5 @@
 /**
- * GET /api/integrations/outlook-calendar/status — Placeholder for Microsoft Outlook Calendar (Task 20).
+ * GET /api/integrations/outlook-calendar/status — Outlook Calendar status (Task 20).
  * Returns connected: false until Outlook OAuth and sync are implemented.
  */
 

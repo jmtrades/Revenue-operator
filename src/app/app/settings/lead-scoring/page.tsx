@@ -91,13 +91,13 @@ export default function AppSettingsLeadScoringPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tSettings("title"), href: "/app/settings" }, { label: tSettings("leadScoring.title") }]} />
-      <h1 className="text-lg font-semibold text-white mb-2">{tSettings("leadScoring.title")}</h1>
-      <p className="text-sm text-zinc-500 mb-6">
+      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tSettings("leadScoring.title")}</h1>
+      <p className="text-sm text-[var(--text-secondary)] mb-6">
         {tSettings("leadScoring.description")}
       </p>
 
       {loading ? (
-        <p className="text-sm text-zinc-500">{tSettings("leadScoring.loading")}</p>
+        <p className="text-sm text-[var(--text-secondary)]">{tSettings("leadScoring.loading")}</p>
       ) : (
         <div className="space-y-4">
           {configKeys.map(({ key, label, help }) => {
@@ -106,8 +106,8 @@ export default function AppSettingsLeadScoringPage() {
             return (
               <div key={key} className="flex flex-wrap items-center gap-3">
                 <div className="flex-1 min-w-[180px]">
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">{label}</label>
-                  {help && <p className="text-[11px] text-zinc-500 mb-1">{help}</p>}
+                  <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{label}</label>
+                  {help && <p className="text-[11px] text-[var(--text-secondary)] mb-1">{help}</p>}
                   <input
                     type="number"
                     value={isNumber ? value : ""}
@@ -115,13 +115,13 @@ export default function AppSettingsLeadScoringPage() {
                       const v = e.target.value === "" ? (defaults[key] as number) : Number(e.target.value);
                       if (!Number.isNaN(v)) update(key, v);
                     }}
-                    className="w-full max-w-[100px] px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm"
+                    className="w-full max-w-[100px] px-3 py-2 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={() => resetToDefault(key)}
-                  className="text-xs text-zinc-500 hover:text-white"
+                  className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 >
                   {tSettings("leadScoring.resetToDefault", { value: String(defaults[key]) })}
                 </button>
@@ -140,7 +140,7 @@ export default function AppSettingsLeadScoringPage() {
             <button
               type="button"
               onClick={handleResetAll}
-              className="px-4 py-3 rounded-xl border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800/50"
+              className="px-4 py-3 rounded-xl border border-zinc-700 text-zinc-300 text-sm hover:bg-[var(--bg-inset)]/50"
             >
               {tSettings("leadScoring.useAllDefaults")}
             </button>
@@ -148,7 +148,7 @@ export default function AppSettingsLeadScoringPage() {
         </div>
       )}
 
-      <p className="mt-6 text-xs text-zinc-500">
+      <p className="mt-6 text-xs text-[var(--text-secondary)]">
         <Link href="/app/leads" className="underline hover:text-zinc-300">{tSettings("leadScoring.viewLeadsLink")}</Link>
         {tSettings("leadScoring.viewLeadsHintSuffix")}
       </p>

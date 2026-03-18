@@ -19,7 +19,7 @@ export default function Error({
         </svg>
       </div>
       <h2 className="text-lg font-semibold text-white/90 mb-2">{t("heading")}</h2>
-      <p className="text-sm text-white/50 text-center max-w-sm mb-6">
+      <p className="text-sm text-[var(--text-tertiary)] text-center max-w-sm mb-6">
         {error?.message || t("defaultMessage")}
       </p>
       <button onClick={reset} className="px-5 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100">

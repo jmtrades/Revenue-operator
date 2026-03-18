@@ -89,10 +89,10 @@ export default function IndustryTemplatesPage() {
           ]}
         />
         <div className="animate-pulse">
-          <div className="h-8 bg-zinc-800 rounded w-48 mb-6" />
+          <div className="h-8 bg-[var(--bg-inset)] rounded w-48 mb-6" />
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-32 bg-zinc-900 rounded-lg border border-zinc-800" />
+              <div key={i} className="h-32 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-default)]" />
             ))}
           </div>
         </div>
@@ -110,22 +110,22 @@ export default function IndustryTemplatesPage() {
       />
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Industry Templates</h1>
-        <p className="text-zinc-400">
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Industry Templates</h1>
+        <p className="text-[var(--text-tertiary)]">
           Production-ready templates for AI agents across {templates.length} industry verticals. Use these as starter packs when creating new agents.
         </p>
       </div>
 
       {templates.length === 0 ? (
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-8 text-center">
-          <p className="text-zinc-400">No industry templates available yet.</p>
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] p-8 text-center">
+          <p className="text-[var(--text-tertiary)]">No industry templates available yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {templates.map((template) => (
             <div
               key={template.industry_slug}
-              className="border border-zinc-800 rounded-lg bg-zinc-900/30 overflow-hidden hover:border-zinc-700 transition-colors"
+              className="border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] overflow-hidden hover:border-zinc-700 transition-colors"
             >
               {/* Header - Always visible */}
               <button
@@ -134,18 +134,18 @@ export default function IndustryTemplatesPage() {
                     expandedSlug === template.industry_slug ? null : template.industry_slug
                   )
                 }
-                className="w-full p-4 flex items-start justify-between hover:bg-zinc-800/20 transition-colors"
+                className="w-full p-4 flex items-start justify-between hover:bg-[var(--bg-inset)]/20 transition-colors"
               >
                 <div className="flex-1 text-left">
                   <div className="flex items-center gap-3 mb-1">
-                    <h2 className="text-lg font-semibold text-white">{template.name}</h2>
-                    <code className="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-300">
+                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">{template.name}</h2>
+                    <code className="text-xs px-2 py-1 rounded bg-[var(--bg-inset)] text-zinc-300">
                       {template.industry_slug}
                     </code>
                   </div>
-                  <p className="text-sm text-zinc-400">{template.description}</p>
+                  <p className="text-sm text-[var(--text-tertiary)]">{template.description}</p>
                 </div>
-                <div className="ml-4 flex-shrink-0 text-zinc-400">
+                <div className="ml-4 flex-shrink-0 text-[var(--text-tertiary)]">
                   {expandedSlug === template.industry_slug ? (
                     <ChevronUp className="w-5 h-5" />
                   ) : (
@@ -156,38 +156,38 @@ export default function IndustryTemplatesPage() {
 
               {/* Expanded content */}
               {expandedSlug === template.industry_slug && (
-                <div className="border-t border-zinc-800 p-4 bg-zinc-900/20 space-y-6">
+                <div className="border-t border-[var(--border-default)] p-4 bg-[var(--bg-surface)] space-y-6">
                   {/* Greeting */}
                   <section>
-                    <h3 className="text-sm font-semibold text-white mb-2 flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2 flex items-center justify-between">
                       Default Greeting
                       <button
                         onClick={() => copyToClipboard(template.default_greeting)}
-                        className="text-zinc-500 hover:text-white p-1"
+                        className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1"
                         title="Copy greeting"
                       >
                         <Copy className="w-4 h-4" />
                       </button>
                     </h3>
-                    <p className="text-sm text-zinc-300 bg-zinc-900 rounded p-3 italic">
+                    <p className="text-sm text-zinc-300 bg-[var(--bg-surface)] rounded p-3 italic">
                       &ldquo;{template.default_greeting}&rdquo;
                     </p>
                   </section>
 
                   {/* Scripts */}
                   <section>
-                    <h3 className="text-sm font-semibold text-white mb-3">Call Scripts ({template.default_scripts.length})</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Call Scripts ({template.default_scripts.length})</h3>
                     <div className="space-y-3">
                       {template.default_scripts.map((script, idx) => (
-                        <div key={idx} className="bg-zinc-900 rounded p-3 border border-zinc-800">
+                        <div key={idx} className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)]">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <p className="text-sm font-medium text-white">{script.name}</p>
-                              <p className="text-xs text-zinc-500">Trigger: {script.trigger}</p>
+                              <p className="text-sm font-medium text-[var(--text-primary)]">{script.name}</p>
+                              <p className="text-xs text-[var(--text-secondary)]">Trigger: {script.trigger}</p>
                             </div>
                             <button
                               onClick={() => copyToClipboard(script.content)}
-                              className="text-zinc-500 hover:text-white p-1 flex-shrink-0"
+                              className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1 flex-shrink-0"
                               title="Copy script"
                             >
                               <Copy className="w-4 h-4" />
@@ -201,11 +201,11 @@ export default function IndustryTemplatesPage() {
 
                   {/* FAQ */}
                   <section>
-                    <h3 className="text-sm font-semibold text-white mb-3">FAQ ({template.default_faq.length} items)</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">FAQ ({template.default_faq.length} items)</h3>
                     <div className="space-y-2">
                       {template.default_faq.map((item, idx) => (
-                        <div key={idx} className="bg-zinc-900 rounded p-3 border border-zinc-800">
-                          <p className="text-sm font-medium text-white mb-1">{item.q}</p>
+                        <div key={idx} className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)]">
+                          <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{item.q}</p>
                           <p className="text-xs text-zinc-300">{item.a}</p>
                         </div>
                       ))}
@@ -214,12 +214,12 @@ export default function IndustryTemplatesPage() {
 
                   {/* Follow-up Cadence */}
                   <section>
-                    <h3 className="text-sm font-semibold text-white mb-3">Follow-up Cadence ({template.default_follow_up_cadence.length} sequences)</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Follow-up Cadence ({template.default_follow_up_cadence.length} sequences)</h3>
                     <div className="space-y-3">
                       {template.default_follow_up_cadence.map((cadence, idx) => (
-                        <div key={idx} className="bg-zinc-900 rounded p-3 border border-zinc-800">
-                          <p className="text-sm font-medium text-white mb-2">{cadence.name}</p>
-                          <div className="text-xs text-zinc-400 mb-2">
+                        <div key={idx} className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)]">
+                          <p className="text-sm font-medium text-[var(--text-primary)] mb-2">{cadence.name}</p>
+                          <div className="text-xs text-[var(--text-tertiary)] mb-2">
                             Triggers: {cadence.triggers.join(", ")}
                           </div>
                           <div className="space-y-1">
@@ -233,11 +233,11 @@ export default function IndustryTemplatesPage() {
                               if (step.minutes_after) timing = `${step.minutes_after}m after`;
 
                               return (
-                                <div key={stepIdx} className="text-xs text-zinc-400">
-                                  <span className="inline-block bg-zinc-800 px-2 py-0.5 rounded mr-2">
+                                <div key={stepIdx} className="text-xs text-[var(--text-tertiary)]">
+                                  <span className="inline-block bg-[var(--bg-inset)] px-2 py-0.5 rounded mr-2">
                                     {step.channel.toUpperCase()}
                                   </span>
-                                  <span className="text-zinc-500">{timing}</span>
+                                  <span className="text-[var(--text-secondary)]">{timing}</span>
                                 </div>
                               );
                             })}
@@ -249,12 +249,12 @@ export default function IndustryTemplatesPage() {
 
                   {/* Recommended Features */}
                   <section>
-                    <h3 className="text-sm font-semibold text-white mb-3">Recommended Features</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Recommended Features</h3>
                     <div className="flex flex-wrap gap-2">
                       {template.recommended_features.map((feature, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-200"
+                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-inset)] text-zinc-200"
                         >
                           {feature.replace(/_/g, " ")}
                         </span>
@@ -263,27 +263,27 @@ export default function IndustryTemplatesPage() {
                   </section>
 
                   {/* API Info */}
-                  <section className="pt-4 border-t border-zinc-800">
-                    <h3 className="text-sm font-semibold text-white mb-3">API Access</h3>
-                    <div className="bg-zinc-900 rounded p-3 border border-zinc-800 space-y-2">
+                  <section className="pt-4 border-t border-[var(--border-default)]">
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">API Access</h3>
+                    <div className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)] space-y-2">
                       <div>
-                        <p className="text-xs text-zinc-500 mb-1">GET single template:</p>
+                        <p className="text-xs text-[var(--text-secondary)] mb-1">GET single template:</p>
                         <div className="flex items-center gap-2">
-                          <code className="text-xs flex-1 bg-zinc-800 rounded px-2 py-1 text-zinc-300 overflow-auto">
+                          <code className="text-xs flex-1 bg-[var(--bg-inset)] rounded px-2 py-1 text-zinc-300 overflow-auto">
                             /api/industry-templates/{template.industry_slug}
                           </code>
                           <button
                             onClick={() =>
                               copyToClipboard(`/api/industry-templates/${template.industry_slug}`)
                             }
-                            className="text-zinc-500 hover:text-white p-1"
+                            className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1"
                           >
                             <Copy className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
                       <div>
-                        <p className="text-xs text-zinc-500 mb-1">View in browser:</p>
+                        <p className="text-xs text-[var(--text-secondary)] mb-1">View in browser:</p>
                         <Link
                           href={`/api/industry-templates/${template.industry_slug}`}
                           target="_blank"
@@ -303,27 +303,27 @@ export default function IndustryTemplatesPage() {
       )}
 
       {/* API Documentation */}
-      <div className="mt-8 p-6 rounded-lg border border-zinc-800 bg-zinc-900/30">
-        <h2 className="text-lg font-semibold text-white mb-4">API Documentation</h2>
+      <div className="mt-8 p-6 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)]">
+        <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">API Documentation</h2>
         <div className="space-y-4 text-sm text-zinc-300">
           <div>
-            <p className="font-medium text-white mb-1">Get all templates:</p>
-            <code className="block bg-zinc-900 rounded p-2 text-xs text-zinc-400 overflow-auto mb-2">
+            <p className="font-medium text-[var(--text-primary)] mb-1">Get all templates:</p>
+            <code className="block bg-[var(--bg-surface)] rounded p-2 text-xs text-[var(--text-tertiary)] overflow-auto mb-2">
               GET /api/industry-templates
             </code>
-            <p className="text-xs text-zinc-500">Returns all {templates.length} industry templates with full configuration.</p>
+            <p className="text-xs text-[var(--text-secondary)]">Returns all {templates.length} industry templates with full configuration.</p>
           </div>
           <div>
-            <p className="font-medium text-white mb-1">Get single template:</p>
-            <code className="block bg-zinc-900 rounded p-2 text-xs text-zinc-400 overflow-auto mb-2">
+            <p className="font-medium text-[var(--text-primary)] mb-1">Get single template:</p>
+            <code className="block bg-[var(--bg-surface)] rounded p-2 text-xs text-[var(--text-tertiary)] overflow-auto mb-2">
               GET /api/industry-templates/[slug]
             </code>
-            <p className="text-xs text-zinc-500">
-              Example: <code className="text-zinc-400">/api/industry-templates/dental</code>
+            <p className="text-xs text-[var(--text-secondary)]">
+              Example: <code className="text-[var(--text-tertiary)]">/api/industry-templates/dental</code>
             </p>
           </div>
-          <div className="pt-3 border-t border-zinc-800">
-            <p className="text-xs text-zinc-500">
+          <div className="pt-3 border-t border-[var(--border-default)]">
+            <p className="text-xs text-[var(--text-secondary)]">
               These endpoints are public and require no authentication. Use them in your onboarding flow to populate agent templates by industry.
             </p>
           </div>

@@ -103,11 +103,11 @@ export default function AppSettingsNotificationsPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" }, { label: tSettings("nav.notifications") }]} />
-      <h1 className="text-lg font-semibold text-white mb-2">{tSettings("notifications.heading")}</h1>
-      <p className="text-sm text-zinc-500 mb-6">{tSettings("notifications.description")}</p>
+      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tSettings("notifications.heading")}</h1>
+      <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("notifications.description")}</p>
 
       {loading ? (
-        <p className="text-sm text-zinc-500 mb-6">{tSettings("notifications.loadingPrefs")}</p>
+        <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("notifications.loadingPrefs")}</p>
       ) : (
         <>
           <div className="space-y-3 mb-6">
@@ -118,8 +118,8 @@ export default function AppSettingsNotificationsPage() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-white">{tSettings(`notifications.events.${key}`)}</p>
-                    <p className="text-[11px] text-zinc-500 mt-0.5">{tSettings(`notifications.events.${key}Desc`)}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings(`notifications.events.${key}`)}</p>
+                    <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings(`notifications.events.${key}Desc`)}</p>
                   </div>
                   <div className="flex gap-3 shrink-0">
                     {(["push", "sms", "email"] as Channel[]).map((ch) => (
@@ -130,7 +130,7 @@ export default function AppSettingsNotificationsPage() {
                           onChange={() => toggle(key, ch)}
                           className="rounded accent-white"
                         />
-                        <span className="text-[11px] text-zinc-400">{tSettings(`notifications.channels.${ch}`)}</span>
+                        <span className="text-[11px] text-[var(--text-tertiary)]">{tSettings(`notifications.channels.${ch}`)}</span>
                       </label>
                     ))}
                   </div>
@@ -150,7 +150,7 @@ export default function AppSettingsNotificationsPage() {
         </>
       )}
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{tSettings("notifications.backToSettings")}</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("notifications.backToSettings")}</Link></p>
     </div>
   );
 }

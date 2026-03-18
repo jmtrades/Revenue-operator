@@ -19,6 +19,13 @@ export async function executeLeadOutboundCall(
 ): Promise<{ ok: true; call_session_id: string } | { ok: false; error: string }> {
   const db = getDb();
 
+  const orchestrationProvider = (process.env.VOICE_PROVIDER ?? "recall") as
+    | "vapi"
+    | "pipecat"
+    | "recall"
+    | "elevenlabs"
+    | "custom";
+
   const { data: lead } = await db
     .from("leads")
     .select("id, phone, name, company, metadata")
@@ -33,8 +40,25 @@ export async function executeLeadOutboundCall(
     return { ok: false, error: "Lead has no valid phone number" };
   }
 
-  if (!hasVapiServerKey()) {
-    return { ok: false, error: "Outbound calling not configured" };
+  // Outbound calling config differs by orchestration provider.
+  if (orchestrationProvider === "vapi" && !hasVapiServerKey()) {
+    return { ok: false, error: "Outbound calling not configured (vapi)" };
+  }
+
+  if (orchestrationProvider === "pipecat") {
+    const required = [
+      "TWILIO_ACCOUNT_SID",
+      "TWILIO_AUTH_TOKEN",
+      "TWILIO_PHONE_NUMBER",
+      "PIPECAT_SERVER_URL",
+    ] as const;
+    const missing = required.filter((k) => !process.env[k]);
+    if (missing.length) {
+      return {
+        ok: false,
+        error: `Outbound calling not configured (pipecat): missing ${missing.join(", ")}`,
+      };
+    }
   }
 
   const [ctxRes, agentRowsRes, wsConsentRes] = await Promise.all([
@@ -191,9 +215,8 @@ YOUR GOAL:
     .insert({
       workspace_id: workspaceId,
       lead_id: leadId,
-      provider: "elevenlabs",
+      provider: orchestrationProvider,
       call_started_at: new Date().toISOString(),
-      external_meeting_id: `outbound-${Date.now()}-${leadId.slice(0, 8)}`,
     })
     .select("id")
     .maybeSingle();
@@ -206,7 +229,7 @@ YOUR GOAL:
   const e164 = /^\+?\d{10,15}$/.test(customerNumber) ? customerNumber : customerNumber.replace(/\D/g, "").length === 10 ? `+1${customerNumber.replace(/\D/g, "")}` : customerNumber.replace(/\D/g, "");
 
   try {
-    await voice.createOutboundCall({
+    const result = await voice.createOutboundCall({
       assistantId,
       phoneNumber: e164 || customerNumber,
       metadata: {
@@ -215,6 +238,14 @@ YOUR GOAL:
         lead_id: leadId,
       },
     });
+
+    // Ensure webhook matching: backend voice webhook uses `call_sessions.external_meeting_id = payload.call_sid`.
+    if (result.callId) {
+      await db
+        .from("call_sessions")
+        .update({ external_meeting_id: result.callId })
+        .eq("id", callSessionId);
+    }
   } catch (callErr) {
     console.error("[outbound] Outbound call failed:", callErr instanceof Error ? callErr.message : callErr);
     await db.from("call_sessions").update({ call_ended_at: new Date().toISOString() }).eq("id", callSessionId);

@@ -70,7 +70,7 @@ export function OnboardingChecklist({
 
   return (
     <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3">
-      <p className="text-[10px] font-medium text-zinc-400 mb-1.5">
+      <p className="text-[10px] font-medium text-[var(--text-tertiary)] mb-1.5">
         {t("complete", { completed: progress.completed, total })}
       </p>
       <div className="h-1 rounded-full bg-[var(--border-default)] overflow-hidden mb-2">
@@ -88,17 +88,17 @@ export function OnboardingChecklist({
               </div>
             ) : (
               <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/[0.04]">
-                <Circle className="h-3.5 w-3.5 text-zinc-500" />
+                <Circle className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
               </div>
             )}
-            <Link href={item.href} className="text-zinc-400 hover:text-white truncate">
+            <Link href={item.href} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] truncate">
               {item.label}
             </Link>
           </li>
         ))}
       </ul>
       {progress.completed < total && (
-        <p className="text-[9px] text-zinc-500 mt-1">{t("finishCta")}</p>
+        <p className="text-[9px] text-[var(--text-secondary)] mt-1">{t("finishCta")}</p>
       )}
     </div>
   );

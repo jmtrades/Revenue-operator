@@ -110,20 +110,20 @@ export function AgentDetail(props: AgentDetailProps) {
       <div className="w-full lg:w-[240px] flex-shrink-0 border-r border-[var(--border-default)] p-4 space-y-4 overflow-y-auto">
         <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
           <div className="flex items-center justify-between gap-2 mb-1.5">
-            <p className="font-medium text-sm text-white truncate">
+            <p className="font-medium text-sm text-[var(--text-primary)] truncate">
               {agent.name}
             </p>
             <span
               className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
                 agent.active
                   ? "bg-green-500/15 text-green-400"
-                  : "bg-zinc-800 text-zinc-400"
+                  : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
               }`}
             >
               {agent.active ? tCommon("status.active") : tCommon("status.inactive")}
             </span>
           </div>
-          <p className="text-[11px] text-zinc-500 flex items-center gap-2 flex-wrap">
+          <p className="text-[11px] text-[var(--text-secondary)] flex items-center gap-2 flex-wrap">
             {agent.vapiAgentId?.trim() ? (
               <span className="text-green-500/80">
                 {t("status.live")}
@@ -135,7 +135,7 @@ export function AgentDetail(props: AgentDetailProps) {
                     ? "text-green-500/80"
                     : readiness.percent >= 40
                       ? "text-amber-500/80"
-                      : "text-zinc-500"
+                      : "text-[var(--text-secondary)]"
                 }
               >
                 {readiness.percent}% {t("status.ready")}
@@ -165,18 +165,18 @@ export function AgentDetail(props: AgentDetailProps) {
                 style={{ width: `${readiness.percent}%` }}
               />
             </div>
-            <span className="text-[10px] text-zinc-500">
+            <span className="text-[10px] text-[var(--text-secondary)]">
               {readiness.percent}% {t("status.ready")}
             </span>
           </div>
         </div>
 
         <div className="space-y-1">
-          <p className="text-[11px] font-medium text-zinc-500 mb-2">
+          <p className="text-[11px] font-medium text-[var(--text-secondary)] mb-2">
             {t("setup.title")}
           </p>
           <div className="lg:hidden mb-2">
-            <p className="text-[11px] text-zinc-500 mb-1.5">
+            <p className="text-[11px] text-[var(--text-secondary)] mb-1.5">
               {t("setup.stepOf", {
                 current: SETUP_STEPS.findIndex((s) => s.id === activeStep) + 1,
                 total: SETUP_STEPS.length,
@@ -192,7 +192,7 @@ export function AgentDetail(props: AgentDetailProps) {
                 void handleStepChange(e.target.value as StepId)
               }
               aria-label={t("setup.jumpAria")}
-              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
             >
               {SETUP_STEPS.map((step, i) => (
                 <option key={step.id} value={step.id}>
@@ -247,7 +247,7 @@ export function AgentDetail(props: AgentDetailProps) {
                     <p
                       className={`text-sm font-medium ${
                         active
-                          ? "text-white"
+                          ? "text-[var(--text-primary)]"
                           : "text-[var(--text-secondary)]"
                       }`}
                     >
@@ -269,7 +269,7 @@ export function AgentDetail(props: AgentDetailProps) {
           </div>
         </div>
 
-        <p className="text-[11px] font-medium text-zinc-500 mb-2 pt-2">
+        <p className="text-[11px] font-medium text-[var(--text-secondary)] mb-2 pt-2">
           {t("quickActions.label")}
         </p>
         <div className="flex flex-wrap gap-2">
@@ -336,7 +336,7 @@ export function AgentDetail(props: AgentDetailProps) {
         )}
         <h2
           id="agent-step-heading"
-          className="text-xs text-zinc-500 mb-4 font-normal"
+          className="text-xs text-[var(--text-secondary)] mb-4 font-normal"
         >
           {t("setup.currentlyOn", {
             label: t(

@@ -252,40 +252,40 @@ export default function NewAgentWizardClient({
 
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6 pb-24">
-      <div className="flex items-center gap-2 text-zinc-400 text-sm mb-6">
-        <Link href="/app/agents" className="hover:text-white">
+      <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-sm mb-6">
+        <Link href="/app/agents" className="hover:text-[var(--text-primary)]">
           {tCommon("agents")}
         </Link>
         <span>/</span>
-        <span className="text-white">{t("breadcrumbs.newAgent")}</span>
+        <span className="text-[var(--text-primary)]">{t("breadcrumbs.newAgent")}</span>
       </div>
 
-      <h1 className="text-xl font-semibold text-white mb-1">{t("title")}</h1>
-      <p className="text-zinc-400 text-sm mb-8">{t("subtitle")}</p>
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{t("title")}</h1>
+      <p className="text-[var(--text-tertiary)] text-sm mb-8">{t("subtitle")}</p>
 
       {/* Progress */}
       <div className="flex gap-1 mb-8" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={7}>
         {STEPS.map((s) => (
           <div
             key={s.id}
-            className={`h-1 flex-1 rounded-full ${s.id <= step ? "bg-white" : "bg-zinc-800"}`}
+            className={`h-1 flex-1 rounded-full ${s.id <= step ? "bg-white" : "bg-[var(--bg-inset)]"}`}
             title={`Step ${s.id}: ${t(s.labelKey)}`}
           />
         ))}
       </div>
 
       {toast && (
-        <div className="mb-4 p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-zinc-300 text-sm">
+        <div className="mb-4 p-3 rounded-xl bg-[var(--bg-surface)] border border-zinc-700 text-zinc-300 text-sm">
           {toast}
         </div>
       )}
 
       {/* Step content */}
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 mb-6">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 mb-6">
         {step === 1 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">{t("purposeTitle")}</h2>
-            <p className="text-zinc-400 text-sm mb-4">{t("purposeHint")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("purposeTitle")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("purposeHint")}</p>
             <div className="grid grid-cols-3 gap-3 mb-6">
               {(
                 [
@@ -300,8 +300,8 @@ export default function NewAgentWizardClient({
                   onClick={() => setState((p) => ({ ...p, purpose: value }))}
                   className={`p-4 rounded-xl border text-left transition-colors ${
                     state.purpose === value
-                      ? "border-white bg-white/10 text-white"
-                      : "border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300"
+                      ? "border-white bg-white/10 text-[var(--text-primary)]"
+                      : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-zinc-600 hover:text-zinc-300"
                   }`}
                 >
                   <Icon className="w-5 h-5 mb-2" />
@@ -309,7 +309,7 @@ export default function NewAgentWizardClient({
                 </button>
               ))}
             </div>
-            <p className="text-zinc-500 text-sm mb-2">{t("templateLabel")}</p>
+            <p className="text-[var(--text-secondary)] text-sm mb-2">{t("templateLabel")}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
               {templates.slice(0, 6).map((t) => (
                 <button
@@ -317,19 +317,19 @@ export default function NewAgentWizardClient({
                   type="button"
                   onClick={() => applyTemplate(t)}
                   className={`p-3 rounded-xl border text-left text-sm ${
-                    state.templateId === t.id ? "border-white bg-white/10 text-white" : "border-zinc-800 text-zinc-400 hover:border-zinc-600"
+                    state.templateId === t.id ? "border-white bg-white/10 text-[var(--text-primary)]" : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-zinc-600"
                   }`}
                 >
                   {t.name}
                 </button>
               ))}
             </div>
-            <label className="block mt-4 text-sm text-zinc-400 mb-1">{t("agentNameLabel")}</label>
+            <label className="block mt-4 text-sm text-[var(--text-tertiary)] mb-1">{t("agentNameLabel")}</label>
             <input
               type="text"
               value={state.name}
               onChange={(e) => setState((p) => ({ ...p, name: e.target.value }))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] placeholder-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
               placeholder={t("namePlaceholder")}
             />
           </>
@@ -337,13 +337,13 @@ export default function NewAgentWizardClient({
 
         {step === 2 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">{t("personalityTitle")}</h2>
-            <p className="text-zinc-400 text-sm mb-4">{t("personalityHint")}</p>
-            <label className="block text-sm text-zinc-400 mb-1">{t("voiceLabel")}</label>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("personalityTitle")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("personalityHint")}</p>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("voiceLabel")}</label>
             <select
               value={state.voiceId}
               onChange={(e) => setState((p) => ({ ...p, voiceId: e.target.value }))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] mb-4"
             >
               {CURATED_VOICES.map((v) => (
                 <option key={v.id} value={v.id}>
@@ -351,7 +351,7 @@ export default function NewAgentWizardClient({
                 </option>
               ))}
             </select>
-            <label className="block text-sm text-zinc-400 mb-1">{t("speakingSpeedLabel")}</label>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("speakingSpeedLabel")}</label>
             <input
               type="range"
               min="0.8"
@@ -361,24 +361,24 @@ export default function NewAgentWizardClient({
               onChange={(e) => setState((p) => ({ ...p, speakingSpeed: parseFloat(e.target.value) }))}
               className="w-full mb-2"
             />
-            <span className="text-zinc-500 text-sm">{state.speakingSpeed.toFixed(2)}x</span>
-            <label className="block text-sm text-zinc-400 mt-4 mb-1">{t("conversationStyleLabel")}</label>
+            <span className="text-[var(--text-secondary)] text-sm">{state.speakingSpeed.toFixed(2)}x</span>
+            <label className="block text-sm text-[var(--text-tertiary)] mt-4 mb-1">{t("conversationStyleLabel")}</label>
             <select
               value={state.conversationStyle}
               onChange={(e) => setState((p) => ({ ...p, conversationStyle: e.target.value as ConversationStyle }))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)]"
             >
               <option value="professional">{t("conversationStyleProfessional")}</option>
               <option value="friendly">{t("conversationStyleFriendly")}</option>
               <option value="casual">{t("conversationStyleCasual")}</option>
               <option value="authoritative">{t("conversationStyleAuthoritative")}</option>
             </select>
-            <label className="block text-sm text-zinc-400 mt-4 mb-1">{t("greetingLabel")}</label>
+            <label className="block text-sm text-[var(--text-tertiary)] mt-4 mb-1">{t("greetingLabel")}</label>
             <textarea
               value={state.greeting}
               onChange={(e) => setState((p) => ({ ...p, greeting: e.target.value }))}
               rows={2}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:border-zinc-600"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] placeholder-zinc-500 focus:border-zinc-600"
               placeholder={t("greetingPlaceholder")}
             />
           </>
@@ -386,17 +386,17 @@ export default function NewAgentWizardClient({
 
         {step === 3 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">{t("knowledgeHeading")}</h2>
-            <p className="text-zinc-400 text-sm mb-4">{t("knowledgeSubtitle")}</p>
-            <label className="block text-sm text-zinc-400 mb-1">{t("businessHoursLabel")}</label>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("knowledgeHeading")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("knowledgeSubtitle")}</p>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("businessHoursLabel")}</label>
             <input
               type="text"
               value={state.businessHours}
               onChange={(e) => setState((p) => ({ ...p, businessHours: e.target.value }))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] mb-4"
               placeholder={t("businessHoursPlaceholder")}
             />
-            <label className="block text-sm text-zinc-400 mb-1">{t("faqsLabel")}</label>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("faqsLabel")}</label>
             {state.faq.map((f, i) => (
               <div key={i} className="flex gap-2 mb-2">
                 <input
@@ -409,7 +409,7 @@ export default function NewAgentWizardClient({
                     }))
                   }
                   placeholder={t("questionPlaceholder")}
-                  className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm"
+                  className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-[var(--text-primary)] text-sm"
                 />
                 <input
                   type="text"
@@ -421,14 +421,14 @@ export default function NewAgentWizardClient({
                     }))
                   }
                   placeholder={t("answerPlaceholder")}
-                  className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm"
+                  className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-[var(--text-primary)] text-sm"
                 />
               </div>
             ))}
             <button
               type="button"
               onClick={() => setState((p) => ({ ...p, faq: [...p.faq, { question: "", answer: "" }] }))}
-              className="text-sm text-zinc-400 hover:text-white border border-zinc-700 rounded-xl px-3 py-2"
+              className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-zinc-700 rounded-xl px-3 py-2"
             >
               {t("addFaq")}
             </button>
@@ -437,25 +437,25 @@ export default function NewAgentWizardClient({
 
         {step === 4 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">{t("rulesHeading")}</h2>
-            <p className="text-zinc-400 text-sm mb-4">{t("rulesSubtitle")}</p>
-            <label className="block text-sm text-zinc-400 mb-1">{t("neverSayLabel")}</label>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("rulesHeading")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("rulesSubtitle")}</p>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("neverSayLabel")}</label>
             <textarea
               value={state.neverSay.join("\n")}
               onChange={(e) => setState((p) => ({ ...p, neverSay: e.target.value.split("\n").filter(Boolean) }))}
               rows={3}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] mb-4"
               placeholder={t("neverSayPlaceholder")}
             />
-            <label className="block text-sm text-zinc-400 mb-1">{t("objectionLabel")}</label>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("objectionLabel")}</label>
             <textarea
               value={state.objectionHandling}
               onChange={(e) => setState((p) => ({ ...p, objectionHandling: e.target.value }))}
               rows={2}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)]"
               placeholder={t("objectionPlaceholder")}
             />
-            <label className="flex items-center gap-2 mt-4 text-sm text-zinc-400">
+            <label className="flex items-center gap-2 mt-4 text-sm text-[var(--text-tertiary)]">
               <input
                 type="checkbox"
                 checked={state.bantEnabled}
@@ -469,44 +469,44 @@ export default function NewAgentWizardClient({
 
         {step === 5 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">{t("phoneScheduleHeading")}</h2>
-            <p className="text-zinc-400 text-sm mb-4">{t("phoneScheduleSubtitle")}</p>
-            <label className="block text-sm text-zinc-400 mb-1">{t("activeHoursLabel")}</label>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("phoneScheduleHeading")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("phoneScheduleSubtitle")}</p>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("activeHoursLabel")}</label>
             <input
               type="text"
               value={state.activeHours}
               onChange={(e) => setState((p) => ({ ...p, activeHours: e.target.value }))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] mb-4"
               placeholder={t("activeHoursPlaceholder")}
             />
-            <label className="block text-sm text-zinc-400 mb-1">{t("timezoneLabel")}</label>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("timezoneLabel")}</label>
             <input
               type="text"
               value={state.timezone}
               onChange={(e) => setState((p) => ({ ...p, timezone: e.target.value }))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white mb-4"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] mb-4"
               placeholder={t("timezonePlaceholder")}
             />
-            <label className="block text-sm text-zinc-400 mb-1">{t("whenOutsideHoursLabel")}</label>
+            <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("whenOutsideHoursLabel")}</label>
             <select
               value={state.voicemailBehavior}
               onChange={(e) => setState((p) => ({ ...p, voicemailBehavior: e.target.value as WizardState["voicemailBehavior"] }))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)]"
             >
               <option value="messages">{t("voicemailTakeMessage")}</option>
               <option value="forward">{t("voicemailForward")}</option>
               <option value="closed">{t("voicemailClosed")}</option>
             </select>
-            <p className="text-zinc-500 text-sm mt-4">
-              {t("assignNumberHint")} <Link href="/app/settings/phone" className="text-white underline">Settings → Phone</Link> {t("assignNumberHintAfter")}
+            <p className="text-[var(--text-secondary)] text-sm mt-4">
+              {t("assignNumberHint")} <Link href="/app/settings/phone" className="text-[var(--text-primary)] underline">Settings → Phone</Link> {t("assignNumberHintAfter")}
             </p>
           </>
         )}
 
         {step === 6 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">{t("stepTest")}</h2>
-            <p className="text-zinc-400 text-sm mb-4">{t("testHint")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("stepTest")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("testHint")}</p>
             {agentId ? (
               <Link
                 href={`/app/agents/${agentId}/voice-test`}
@@ -516,23 +516,23 @@ export default function NewAgentWizardClient({
                 {t("openTestCall")}
               </Link>
             ) : (
-              <p className="text-zinc-500 text-sm">{t("saveDraftFirst")}</p>
+              <p className="text-[var(--text-secondary)] text-sm">{t("saveDraftFirst")}</p>
             )}
-            <p className="text-zinc-500 text-sm mt-4">{t("testFromAgentPage")}</p>
+            <p className="text-[var(--text-secondary)] text-sm mt-4">{t("testFromAgentPage")}</p>
           </>
         )}
 
         {step === 7 && (
           <>
-            <h2 className="text-lg font-semibold text-white mb-2">{t("stepLaunch")}</h2>
-            <p className="text-zinc-400 text-sm mb-4">{t("launchHint")}</p>
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-2 text-sm">
-              <p><span className="text-zinc-500">{t("reviewName")}</span> <span className="text-white">{state.name}</span></p>
-              <p><span className="text-zinc-500">{t("reviewPurpose")}</span> <span className="text-white">{state.purpose}</span></p>
-              <p><span className="text-zinc-500">{t("reviewVoice")}</span> <span className="text-white">{CURATED_VOICES.find((v) => v.id === state.voiceId)?.name ?? state.voiceId}</span></p>
-              <p><span className="text-zinc-500">{t("reviewGreeting")}</span> <span className="text-zinc-300">{state.greeting.slice(0, 60)}{state.greeting.length > 60 ? "…" : ""}</span></p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("stepLaunch")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("launchHint")}</p>
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 space-y-2 text-sm">
+              <p><span className="text-[var(--text-secondary)]">{t("reviewName")}</span> <span className="text-[var(--text-primary)]">{state.name}</span></p>
+              <p><span className="text-[var(--text-secondary)]">{t("reviewPurpose")}</span> <span className="text-[var(--text-primary)]">{state.purpose}</span></p>
+              <p><span className="text-[var(--text-secondary)]">{t("reviewVoice")}</span> <span className="text-[var(--text-primary)]">{CURATED_VOICES.find((v) => v.id === state.voiceId)?.name ?? state.voiceId}</span></p>
+              <p><span className="text-[var(--text-secondary)]">{t("reviewGreeting")}</span> <span className="text-zinc-300">{state.greeting.slice(0, 60)}{state.greeting.length > 60 ? "…" : ""}</span></p>
             </div>
-            <p className="text-zinc-500 text-sm mt-4">{t("costNote")}</p>
+            <p className="text-[var(--text-secondary)] text-sm mt-4">{t("costNote")}</p>
           </>
         )}
       </div>
@@ -543,7 +543,7 @@ export default function NewAgentWizardClient({
           type="button"
           onClick={handleBack}
           disabled={step === 1}
-          className="flex items-center gap-1 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium disabled:opacity-40 disabled:pointer-events-none hover:bg-zinc-800"
+          className="flex items-center gap-1 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium disabled:opacity-40 disabled:pointer-events-none hover:bg-[var(--bg-inset)]"
         >
           <ChevronLeft className="w-4 h-4" />
           {t("back")}
@@ -553,7 +553,7 @@ export default function NewAgentWizardClient({
             type="button"
             onClick={saveDraft}
             disabled={saving}
-            className="border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-zinc-800 disabled:opacity-50"
+            className="border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-[var(--bg-inset)] disabled:opacity-50"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t("saveDraft")}
           </button>

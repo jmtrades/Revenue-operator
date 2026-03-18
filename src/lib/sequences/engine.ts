@@ -12,6 +12,16 @@ import { getDb } from "@/lib/db/queries";
 import type { DealStateVector } from "@/lib/engines/perception";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 import { getSequenceDelayMultiplier, type WorkspaceStrategyState } from "@/lib/strategy/planner";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
+
+async function maybeSingleCompat(q: { maybeSingle?: () => unknown; single?: () => unknown }): Promise<{ data: unknown | null }> {
+  try {
+    const res = (typeof q.maybeSingle === "function" ? await q.maybeSingle() : await q.single?.()) as { data?: unknown } | null;
+    return { data: res?.data ?? null };
+  } catch {
+    return { data: null };
+  }
+}
 
 export interface SequenceStep {
   step: number;
@@ -59,13 +69,14 @@ export async function chooseSequence(
       ? "revival"
       : "followup";
 
-  const { data: seq } = await db
-    .from("sequences")
-    .select("*")
-    .eq("workspace_id", stateVector.workspace_id)
-    .eq("purpose", purpose)
-    .limit(1)
-    .maybeSingle();
+  const { data: seq } = await maybeSingleCompat(
+    db
+      .from("sequences")
+      .select("*")
+      .eq("workspace_id", stateVector.workspace_id)
+      .eq("purpose", purpose)
+      .limit(1),
+  );
 
   if (seq) {
     return seq as Sequence;
@@ -78,28 +89,38 @@ export async function chooseSequence(
         ? DEFAULT_REVIVAL_STEPS
         : DEFAULT_FOLLOWUP_STEPS;
 
-  const { data: created } = await db
-    .from("sequences")
-    .insert({
-      workspace_id: stateVector.workspace_id,
-      name: `Default ${purpose}`,
-      purpose,
-      is_default: true,
-      steps: defaultSteps,
-    })
-    .select("id, workspace_id, name, purpose, is_default, steps")
-    .maybeSingle();
+  let created: unknown = null;
+  try {
+    const q = db
+      .from("sequences")
+      .insert({
+        workspace_id: stateVector.workspace_id,
+        name: `Default ${purpose}`,
+        purpose,
+        is_default: true,
+        steps: defaultSteps,
+      })
+      .select("id, workspace_id, name, purpose, is_default, steps") as unknown as DbSingleQuery;
+    created = await fetchSingleRow(q);
+  } catch {
+    created = null;
+  }
 
   if (created && (created as { id: string }).id) {
     return created as Sequence;
   }
-  const { data: fallback } = await db
-    .from("sequences")
-    .select("*")
-    .eq("workspace_id", stateVector.workspace_id)
-    .eq("purpose", purpose)
-    .limit(1)
-    .maybeSingle();
+  let fallback: unknown = null;
+  try {
+    const q = db
+      .from("sequences")
+      .select("*")
+      .eq("workspace_id", stateVector.workspace_id)
+      .eq("purpose", purpose)
+      .limit(1) as unknown as DbSingleQuery;
+    fallback = await fetchSingleRow(q);
+  } catch {
+    fallback = null;
+  }
   if (fallback) return fallback as Sequence;
   return {
     id: "",
@@ -130,12 +151,17 @@ export async function startSequence(
 
   if (sequenceId) {
     const db = getDb();
-    const { data: existing } = await db
-      .from("sequence_runs")
-      .select("id")
-      .eq("workspace_id", workspaceId)
-      .eq("lead_id", leadId)
-      .maybeSingle();
+    let existing: unknown = null;
+    try {
+      const q = db
+        .from("sequence_runs")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("lead_id", leadId) as unknown as DbSingleQuery;
+      existing = await fetchSingleRow(q);
+    } catch {
+      existing = null;
+    }
 
     if (existing) {
       await db
@@ -175,18 +201,29 @@ export async function advanceSequence(
   strategyState?: WorkspaceStrategyState | null
 ): Promise<{ advanced: boolean; nextStep?: SequenceStep; nextActionAt?: string }> {
   const db = getDb();
-  const { data: run } = await db
-    .from("sequence_runs")
-    .select("*")
-    .eq("workspace_id", workspaceId)
-    .eq("lead_id", leadId)
-    .eq("status", "running")
-    .maybeSingle();
+  let run: unknown = null;
+  try {
+    const q = db
+      .from("sequence_runs")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .eq("lead_id", leadId)
+      .eq("status", "running") as unknown as DbSingleQuery;
+    run = await fetchSingleRow(q);
+  } catch {
+    run = null;
+  }
 
   if (!run) return { advanced: false };
 
   const r = run as { sequence_id: string; current_step: number };
-  const { data: seq } = await db.from("sequences").select("steps").eq("id", r.sequence_id).maybeSingle();
+  let seq: unknown = null;
+  try {
+    const q = db.from("sequences").select("steps").eq("id", r.sequence_id) as unknown as DbSingleQuery;
+    seq = await fetchSingleRow(q);
+  } catch {
+    seq = null;
+  }
   const steps = ((seq as { steps?: SequenceStep[] })?.steps ?? []) as SequenceStep[];
   const nextStepIndex = steps.findIndex((s) => s.step === r.current_step + 1);
   if (nextStepIndex < 0) {

@@ -14,6 +14,7 @@ import { processZoomWebhook, fetchRecordingAndTranscript, runAnalyzeCall } from 
 import { executePostCallPlan } from "@/lib/zoom/post-call";
 import { runCalendarCallEndedJob } from "@/lib/calls/calendar-call-ended-job";
 import { runPostCallUnknownCheckin } from "@/lib/calls/post-call-unknown-checkin";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 
 const BURST_MAX_JOBS = 10;
 const BURST_BUDGET_MS = 7000;
@@ -36,26 +37,31 @@ async function acquireLock(
   db: ReturnType<typeof getDb>,
   _workerId: string
 ): Promise<{ id: string; payload: unknown; job_type: string } | null> {
-  const { data: row } = await db
-    .from("job_queue")
-    .select("id, payload, job_type")
-    .eq("status", "pending")
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+  let row: unknown = null;
+  try {
+    const q = db
+      .from("job_queue")
+      .select("id, payload, job_type")
+      .eq("status", "pending")
+      .order("created_at", { ascending: true })
+      .limit(1) as unknown as DbSingleQuery;
+    row = await fetchSingleRow(q);
+  } catch {
+    row = null;
+  }
 
   if (!row) return null;
   const r = row as { id: string; payload: unknown; job_type: string };
 
   const updatePayload = { status: "processing" as const, attempts: 1 };
   try {
-    const { data: updated } = await db
+    const q = db
       .from("job_queue")
       .update(updatePayload)
       .eq("id", r.id)
       .eq("status", "pending")
-      .select("id")
-      .maybeSingle();
+      .select("id") as unknown as DbSingleQuery;
+    const updated = await fetchSingleRow(q);
     if (!updated) return null;
   } catch {
     return null;
@@ -87,7 +93,13 @@ async function processPayload(payload: JobPayload): Promise<void> {
     await runPostCallUnknownCheckin(payload.leadId, payload.workspaceId, payload.callSessionId);
   } else if (payload.type === "no_show_reminder" && payload.leadId) {
     const db = getDb();
-    const { data: lead } = await db.from("leads").select("workspace_id").eq("id", payload.leadId).maybeSingle();
+    let lead: unknown = null;
+    try {
+      const q = db.from("leads").select("workspace_id").eq("id", payload.leadId) as unknown as DbSingleQuery;
+      lead = await fetchSingleRow(q);
+    } catch {
+      lead = null;
+    }
     if (lead) await runDecisionJobWithEngines(payload.leadId, (lead as { workspace_id: string }).workspace_id);
   } else if (payload.type === "decision" && payload.leadId && payload.workspaceId) {
     await runDecisionJobWithEngines(payload.leadId, payload.workspaceId);

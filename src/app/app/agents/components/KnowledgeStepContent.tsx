@@ -93,7 +93,7 @@ export function KnowledgeStepContent({
 
   return (
     <div className="space-y-6">
-      <h3 id="knowledge-heading" className="text-sm font-semibold text-white">
+      <h3 id="knowledge-heading" className="text-sm font-semibold text-[var(--text-primary)]">
         {t("knowledge.title")}
       </h3>
       <section
@@ -109,13 +109,13 @@ export function KnowledgeStepContent({
               setImportError(null);
             }}
             placeholder={t("knowledgePanel.importUrlPlaceholder")}
-            className="flex-1 min-w-[200px] rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+            className="flex-1 min-w-[200px] rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
           />
           <button
             type="button"
             onClick={handleImportFromWebsite}
             disabled={!importUrl.trim() || importing}
-            className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-white/[0.06] disabled:opacity-50"
+            className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] hover:bg-white/[0.06] disabled:opacity-50"
           >
             {importing ? t("knowledge.importing") : t("knowledge.importFromWebsite")}
           </button>
@@ -129,7 +129,7 @@ export function KnowledgeStepContent({
           onClick={seedFive}
           disabled={seeding}
           aria-busy={seeding}
-          className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-white hover:bg-white/[0.06] disabled:opacity-50"
+          className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] hover:bg-white/[0.06] disabled:opacity-50"
         >
           {seeding ? t("knowledge.adding") : t("knowledge.suggestQAs")}
         </button>

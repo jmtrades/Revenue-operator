@@ -216,7 +216,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
     <div className="space-y-6">
       <h3
         id="identity-heading"
-        className="text-sm font-semibold text-white"
+        className="text-sm font-semibold text-[var(--text-primary)]"
       >
         {t("identityStep.purposeLabel")}
       </h3>

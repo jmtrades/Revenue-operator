@@ -128,25 +128,25 @@ export default function PhoneMarketplacePage() {
       <div className="flex items-center gap-4 mb-6">
         <Link
           href="/app/settings/phone"
-          className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           {tPhone("marketplaceBack")}
         </Link>
       </div>
-      <h1 className="text-xl font-semibold text-white mb-1">{tPhone("marketplaceGetNewNumber")}</h1>
-      <p className="text-sm text-zinc-400 mb-6">
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tPhone("marketplaceGetNewNumber")}</h1>
+      <p className="text-sm text-[var(--text-tertiary)] mb-6">
         {tPhone("marketplaceGetNewNumberDesc")}
       </p>
 
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">{tPhone("marketplaceCountry")}</label>
+            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">{tPhone("marketplaceCountry")}</label>
             <select
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--accent-primary)] focus:outline-none"
             >
               {SUPPORTED_PHONE_COUNTRIES.map((code) => (
                 <option key={code} value={code}>{countryNames[code]}</option>
@@ -154,33 +154,33 @@ export default function PhoneMarketplacePage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">{tPhone("marketplace.search.region")}</label>
+            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">{tPhone("marketplace.search.region")}</label>
             <input
               type="text"
               value={state}
               onChange={(e) => setState(e.target.value)}
               placeholder={tPhone("marketplace.statePlaceholder")}
               maxLength={2}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm placeholder:text-zinc-500 focus:border-[var(--accent-primary)] focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-secondary)] focus:border-[var(--accent-primary)] focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">{tPhone("marketplaceAreaCode")}</label>
+            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">{tPhone("marketplaceAreaCode")}</label>
             <input
               type="text"
               value={areaCode}
               onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
               placeholder={tPhone("marketplace.areaCodePlaceholder")}
               maxLength={3}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm placeholder:text-zinc-500 focus:border-[var(--accent-primary)] focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-secondary)] focus:border-[var(--accent-primary)] focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-500 mb-1">{tPhone("marketplaceType")}</label>
+            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">{tPhone("marketplaceType")}</label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as "local" | "toll_free")}
-              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--accent-primary)] focus:outline-none"
             >
               <option value="local">{tPhone("marketplace.results.type.local")}</option>
               <option value="toll_free">{tPhone("marketplace.results.type.tollFree")}</option>
@@ -214,11 +214,11 @@ export default function PhoneMarketplacePage() {
 
       <div className="grid gap-3">
         {loading && numbers.length === 0 ? (
-          <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] text-center text-zinc-500 text-sm">
+          <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] text-center text-[var(--text-secondary)] text-sm">
             {tPhone("marketplaceSearching")}
           </div>
         ) : numbers.length === 0 ? (
-          <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] text-center text-zinc-500 text-sm">
+          <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] text-center text-[var(--text-secondary)] text-sm">
             {tPhone("marketplaceNoNumbersFound")}
           </div>
         ) : (
@@ -232,11 +232,11 @@ export default function PhoneMarketplacePage() {
                   <Phone className="w-5 h-5 text-[var(--accent-primary)]" />
                 </div>
                 <div>
-                  <p className="font-semibold text-white font-mono">{formatPhoneDisplay(n.phone_number)}</p>
-                  <p className="text-xs text-zinc-500 capitalize">{n.type === "toll_free" ? tPhone("marketplace.results.type.tollFree") : tPhone("marketplace.results.type.local")}</p>
+                  <p className="font-semibold text-[var(--text-primary)] font-mono">{formatPhoneDisplay(n.phone_number)}</p>
+                  <p className="text-xs text-[var(--text-secondary)] capitalize">{n.type === "toll_free" ? tPhone("marketplace.results.type.tollFree") : tPhone("marketplace.results.type.local")}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-sm text-zinc-400">
+              <div className="flex items-center gap-4 text-sm text-[var(--text-tertiary)]">
                 <span>{formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}{tPhone("perMonth")}</span>
                 {n.capabilities.voice && <span>{tPhone("voice")}</span>}
                 {n.capabilities.sms && <span>{tPhone("sms")}</span>}

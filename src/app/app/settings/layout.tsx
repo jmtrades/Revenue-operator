@@ -37,7 +37,7 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
                   "px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
                   active
                     ? "border-blue-500 text-zinc-100"
-                    : "border-transparent text-zinc-400 hover:text-zinc-100 hover:border-white/[0.12]",
+                    : "border-transparent text-[var(--text-tertiary)] hover:text-zinc-100 hover:border-white/[0.12]",
                 )}
               >
                 {label}

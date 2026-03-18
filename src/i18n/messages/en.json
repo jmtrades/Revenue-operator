@@ -103,6 +103,7 @@
     "agency": "Agency",
     "calendar": "Calendar",
     "appointments": "Appointments",
+    "followUps": "Follow-Ups",
     "knowledge": "Knowledge",
     "callIntelligence": "Call intelligence",
     "compliance": "Compliance",
@@ -360,19 +361,42 @@
     "plans": {
       "starter": {
         "name": "Starter",
-        "features": ["1 AI agent", "1 phone number", "400 min/mo", "Usage insights"]
+        "features": [
+          "1 AI agent",
+          "1 phone number",
+          "400 min/mo",
+          "Usage insights"
+        ]
       },
       "growth": {
         "name": "Growth",
-        "features": ["3 AI agents", "3 phone numbers", "1,500 min/mo", "Call Intelligence", "Priority support"]
+        "features": [
+          "3 AI agents",
+          "3 phone numbers",
+          "1,500 min/mo",
+          "Call Intelligence",
+          "Priority support"
+        ]
       },
       "scale": {
         "name": "Scale",
-        "features": ["Unlimited AI agents", "10 numbers", "5,000 min/mo", "Detailed reporting", "API access"]
+        "features": [
+          "Unlimited AI agents",
+          "10 numbers",
+          "5,000 min/mo",
+          "Detailed reporting",
+          "API access"
+        ]
       },
       "enterprise": {
         "name": "Enterprise",
-        "features": ["Unlimited agents", "Unlimited numbers", "Custom integrations", "Dedicated support", "SLA"]
+        "features": [
+          "Unlimited agents",
+          "Unlimited numbers",
+          "Custom integrations",
+          "Dedicated support",
+          "SLA"
+        ]
       }
     }
   },
@@ -555,7 +579,7 @@
       "noDataYetHint": "Set up call forwarding and take a few calls. Metrics and usage will appear here.",
       "setUpCallForwarding": "Set up call forwarding →",
       "noAgentsYet": "No agents yet",
-      "noAgentsYetHint": "Your AI receptionist is set up in onboarding. Add voice, greeting, and knowledge there.",
+      "noAgentsYetHint": "Your AI agent is configured in onboarding. Add voice, greeting, and knowledge there.",
       "createFirstAgent": "Create your first agent →",
       "loadAgentsError": "Could not load agents.",
       "recordSubtitle": "One moment…",
@@ -1204,7 +1228,7 @@
       "failedToSaveAgent": "Failed to save agent",
       "myBusiness": "My Business",
       "theBusiness": "the business",
-      "meetReceptionist": "Meet your receptionist",
+      "meetReceptionist": "Meet your AI agent",
       "agentWillAnswerFor": "Your agent will answer calls, capture leads, and book appointments for {name}.",
       "agentName": "Agent name",
       "voice": "Voice",
@@ -3083,79 +3107,6 @@
   "campaigns": {
     "title": "Campaigns",
     "pageTitle": "Campaigns — Recall Touch",
-    "create": "Create campaign",
-    "loading": "Loading campaigns…",
-    "statTotal": "Total campaigns",
-    "statActive": "Active campaigns",
-    "statContacted": "Contacted",
-    "statConverted": "Converted",
-    "estRoi": "Est. ROI",
-    "roiSummary": "Cost ~{cost} · Revenue ~{revenue}",
-    "roiCampaign": "Est. cost ~{cost} · Est. revenue ~{revenue}",
-    "createdDate": "Created {date}",
-    "metricContacts": "Contacts",
-    "metricContacted": "Contacted",
-    "metricReached": "Reached",
-    "metricConverted": "Converted",
-    "edit": "Edit",
-    "pause": "Pause",
-    "launchCampaign": "Launch campaign",
-    "pauseConfirmTitle": "Pause this campaign?",
-    "pauseConfirmMessage": "Pause \"{name}\"? You can resume it later from this page.",
-    "remaining": "Remaining",
-    "failed": "Failed",
-    "form": {
-      "typeLabel": "Type",
-      "sourceLabel": "Source",
-      "leaveEmptyForAllStatuses": "Leave empty for all statuses",
-      "titleCreate": "Create campaign",
-      "titleEdit": "Edit campaign",
-      "subtitle": "Keep it tied to real outcomes: follow-up, reminders, recovery, or reactivation.",
-      "cancelEdit": "Cancel",
-      "campaignTypeLabel": "Campaign type",
-      "campaignNameLabel": "Campaign name",
-      "audienceLabel": "Audience label",
-      "audiencePlaceholder": "e.g. Leads waiting on follow-up",
-      "leadStatusOptionalLabel": "Lead status (optional)",
-      "quickTypes": {
-        "followup": {
-          "label": "Lead follow-up",
-          "desc": "Call leads who showed interest"
-        },
-        "reactivation": {
-          "label": "Reactivation",
-          "desc": "Re-engage cold leads"
-        },
-        "reminder": {
-          "label": "Appointment reminder",
-          "desc": "Confirm upcoming appointments"
-        },
-        "qualification": {
-          "label": "Qualification",
-          "desc": "Qualify new leads by phone"
-        }
-      }
-    },
-    "type": {
-      "leadFollowup": "Lead qualification / follow-up",
-      "appointmentReminder": "Appointment setting / reminder",
-      "reactivation": "Reactivation",
-      "coldOutreach": "Announcement / cold outreach",
-      "reviewRequest": "Review request",
-      "custom": "Custom"
-    },
-    "source": {
-      "any": "Any source",
-      "inboundCall": "Inbound Call",
-      "outbound": "Outbound Outreach",
-      "website": "Website",
-      "referral": "Referral"
-    },
-    "empty": {
-      "title": "No campaigns yet",
-      "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar.",
-      "description": "Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts."
-    },
     "create": {
       "back": "Back to campaigns",
       "title": "Create campaign",
@@ -3231,6 +3182,78 @@
         "launched": "Campaign launched.",
         "createdButLaunchFailed": "Campaign created, but launch failed."
       }
+    },
+    "loading": "Loading campaigns…",
+    "statTotal": "Total campaigns",
+    "statActive": "Active campaigns",
+    "statContacted": "Contacted",
+    "statConverted": "Converted",
+    "estRoi": "Est. ROI",
+    "roiSummary": "Cost ~{cost} · Revenue ~{revenue}",
+    "roiCampaign": "Est. cost ~{cost} · Est. revenue ~{revenue}",
+    "createdDate": "Created {date}",
+    "metricContacts": "Contacts",
+    "metricContacted": "Contacted",
+    "metricReached": "Reached",
+    "metricConverted": "Converted",
+    "edit": "Edit",
+    "pause": "Pause",
+    "launchCampaign": "Launch campaign",
+    "pauseConfirmTitle": "Pause this campaign?",
+    "pauseConfirmMessage": "Pause \"{name}\"? You can resume it later from this page.",
+    "remaining": "Remaining",
+    "failed": "Failed",
+    "form": {
+      "typeLabel": "Type",
+      "sourceLabel": "Source",
+      "leaveEmptyForAllStatuses": "Leave empty for all statuses",
+      "titleCreate": "Create campaign",
+      "titleEdit": "Edit campaign",
+      "subtitle": "Keep it tied to real outcomes: follow-up, reminders, recovery, or reactivation.",
+      "cancelEdit": "Cancel",
+      "campaignTypeLabel": "Campaign type",
+      "campaignNameLabel": "Campaign name",
+      "audienceLabel": "Audience label",
+      "audiencePlaceholder": "e.g. Leads waiting on follow-up",
+      "leadStatusOptionalLabel": "Lead status (optional)",
+      "quickTypes": {
+        "followup": {
+          "label": "Lead follow-up",
+          "desc": "Call leads who showed interest"
+        },
+        "reactivation": {
+          "label": "Reactivation",
+          "desc": "Re-engage cold leads"
+        },
+        "reminder": {
+          "label": "Appointment reminder",
+          "desc": "Confirm upcoming appointments"
+        },
+        "qualification": {
+          "label": "Qualification",
+          "desc": "Qualify new leads by phone"
+        }
+      }
+    },
+    "type": {
+      "leadFollowup": "Lead qualification / follow-up",
+      "appointmentReminder": "Appointment setting / reminder",
+      "reactivation": "Reactivation",
+      "coldOutreach": "Announcement / cold outreach",
+      "reviewRequest": "Review request",
+      "custom": "Custom"
+    },
+    "source": {
+      "any": "Any source",
+      "inboundCall": "Inbound Call",
+      "outbound": "Outbound Outreach",
+      "website": "Website",
+      "referral": "Referral"
+    },
+    "empty": {
+      "title": "No campaigns yet",
+      "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar.",
+      "description": "Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts."
     },
     "heading": "Campaigns",
     "description": "Reach your leads with automated outbound calls and messages.",
@@ -3334,7 +3357,10 @@
     "agentPageTitle": "Agent Settings — Recall Touch",
     "title": "Settings",
     "pageSubtitle": "Preferences and configuration",
-    "profile": "Profile",
+    "profile": {
+      "saveFailed": "Failed to save profile",
+      "saved": "Profile saved"
+    },
     "emailLabel": "Email",
     "revisitOnboarding": "Need to revisit onboarding?",
     "revisitOnboardingDesc": "Run the 5-step setup again to tune your AI agent and phone settings.",
@@ -3469,7 +3495,9 @@
       "loading": "Loading settings…",
       "save": "Save",
       "saving": "Saving…",
-      "toast": { "saved": "Outbound settings saved." },
+      "toast": {
+        "saved": "Outbound settings saved."
+      },
       "callingHours": {
         "heading": "Calling hours",
         "start": "Start",
@@ -3482,9 +3510,18 @@
         "scriptLabel": "Voicemail script",
         "scriptHint": "Merge fields: {businessName}, {businessPhone}",
         "option": {
-          "leave_message": { "label": "Leave a message", "desc": "Plays your script when voicemail is detected." },
-          "hang_up_silently": { "label": "Hang up silently", "desc": "No voicemail is left." },
-          "ai_generated": { "label": "AI-generated message", "desc": "Generates a short voicemail based on context." }
+          "leave_message": {
+            "label": "Leave a message",
+            "desc": "Plays your script when voicemail is detected."
+          },
+          "hang_up_silently": {
+            "label": "Hang up silently",
+            "desc": "No voicemail is left."
+          },
+          "ai_generated": {
+            "label": "AI-generated message",
+            "desc": "Generates a short voicemail based on context."
+          }
         }
       },
       "limits": {
@@ -3613,10 +3650,6 @@
     "saveMapping": "Save mapping",
     "saveProfile": "Save profile",
     "savingProfile": "Saving…",
-    "profile": {
-      "saveFailed": "Failed to save profile",
-      "saved": "Profile saved"
-    },
     "syncLog": {
       "allDirections": "All directions",
       "allProviders": "All providers",
@@ -3790,11 +3823,11 @@
     "deleteAccountInfo": "Contact support to permanently delete your account."
   },
   "hero": {
-    "title": "We Answered 12,847 Calls This Week That Would Have Gone to Voicemail.",
-    "subtitle": "Recall Touch picks up when you can't. AI answers your missed calls, books appointments, and texts you the details — 24/7, for $297/month.",
+    "title": "Stop Losing Revenue to Missed Calls and Broken Follow-Up.",
+    "subtitle": "Recall Touch answers every call, books appointments, and runs automated recovery sequences — 24/7. See how much revenue you're leaving on the table.",
     "primaryCta": "Try Free for 14 Days →",
     "secondaryCta": "See How It Works",
-    "trustLine": "Revenue Execution OS · Works with your number · 14-day free trial",
+    "trustLine": "AI Revenue Recovery · Works with your number · 14-day free trial",
     "exampleDashboardLabel": "Example dashboard",
     "checkmark": {
       "existingNumber": "Works with your existing number",
@@ -4311,35 +4344,72 @@
       "badge": "Popular",
       "period": "/mo",
       "tierRoi": {
-        "starter": "Less than one missed call",
-        "growth": "One recovered lead pays for the month",
         "scale": "Full AI communication team for a fraction of one hire",
-        "enterprise": "Custom ROI and dedicated support"
+        "enterprise": "Custom ROI and dedicated support",
+        "solo": "Less than one missed call",
+        "business": "One recovered lead pays for the month"
       },
       "tiers": {
-        "starter": {
-          "name": "Starter",
-          "description": "Answer every call. One number, one agent.",
-          "features": ["400 inbound min included", "50 outbound calls", "100 SMS", "1 AI agent", "1 phone number", "Overage: $0.25/min"],
-          "cta": "Start free"
-        },
-        "growth": {
-          "name": "Growth",
-          "description": "One recovered lead pays for the whole month",
-          "features": ["1,500 inbound min included", "500 outbound calls", "500 SMS", "3 AI agents", "3 numbers", "Appointment booking", "Follow-up sequences", "Analytics", "Overage: $0.18/min"],
-          "cta": "Start free"
-        },
         "scale": {
           "name": "Scale",
           "description": "Full AI communication team for a fraction of one hire",
-          "features": ["5,000 inbound min included", "2,000 outbound calls", "Unlimited SMS", "Unlimited AI agents", "10 numbers", "Multi-location", "Compliance", "API", "Priority support", "Overage: $0.12/min"],
+          "features": [
+            "5,000 inbound min included",
+            "2,000 outbound calls",
+            "Unlimited SMS",
+            "Unlimited AI agents",
+            "10 numbers",
+            "Multi-location",
+            "Compliance",
+            "API",
+            "Priority support",
+            "Overage: $0.12/min"
+          ],
           "cta": "Start free"
         },
         "enterprise": {
           "name": "Enterprise",
           "description": "Custom pricing — white label, custom compliance, SSO, dedicated manager, SLA",
-          "features": ["White label", "Custom compliance", "SSO", "Dedicated manager", "SLA"],
+          "features": [
+            "White label",
+            "Custom compliance",
+            "SSO",
+            "Dedicated manager",
+            "SLA"
+          ],
           "cta": "Talk to sales"
+        },
+        "solo": {
+          "name": "Solo",
+          "description": "For solo operators — every call answered, every follow-up sent automatically.",
+          "features": [
+            "1 AI agent",
+            "100 voice minutes/month",
+            "Appointment booking",
+            "Missed call recovery",
+            "SMS follow-up",
+            "Call transcripts",
+            "Basic analytics"
+          ],
+          "cta": "Start free"
+        },
+        "business": {
+          "name": "Business",
+          "description": "The complete AI revenue recovery system for service businesses.",
+          "features": [
+            "3 AI agents",
+            "500 voice minutes/month",
+            "Unlimited follow-ups",
+            "No-show recovery",
+            "Outbound campaigns",
+            "Reactivation sequences",
+            "Industry templates",
+            "SMS + email + voice follow-up",
+            "Revenue analytics",
+            "CRM webhook",
+            "5 team seats"
+          ],
+          "cta": "Start free"
         }
       },
       "footerNote": "All plans include: encrypted records · compliance framework · audit trail · 14-day free trial",
@@ -4469,9 +4539,18 @@
       "typeAppointment": "Appointment",
       "typeFollowUp": "Follow-up",
       "cards": {
-        "1": { "summary": "Scheduling consultation", "outcome": "✅ Booked 2 PM" },
-        "2": { "summary": "Pricing question", "outcome": "✅ Info sent via text" },
-        "3": { "summary": "Callback request", "outcome": "✅ Follow-up in 30 min" }
+        "1": {
+          "summary": "Scheduling consultation",
+          "outcome": "✅ Booked 2 PM"
+        },
+        "2": {
+          "summary": "Pricing question",
+          "outcome": "✅ Info sent via text"
+        },
+        "3": {
+          "summary": "Callback request",
+          "outcome": "✅ Follow-up in 30 min"
+        }
       }
     },
     "activityFeed": {
@@ -4556,6 +4635,9 @@
   },
   "footer": {
     "tagline": "AI phone and text communication for businesses that depend on every call.",
+    "founderPhotoAlt": "Junior, founder of Recall Touch",
+    "founderName": "Junior",
+    "founderBio": "Founder of Recall Touch. Building AI revenue recovery so businesses never miss revenue.",
     "product": "Product",
     "features": "Features",
     "pricing": "Pricing",
@@ -4640,7 +4722,7 @@
       },
       "business": {
         "name": "Business",
-        "description": "The Revenue Execution OS for a single-location service business.",
+        "description": "The AI Revenue Recovery system for a single-location service business.",
         "f1": "3 AI agents",
         "f2": "500 calls/month",
         "f3": "Unlimited follow-ups",
@@ -4680,34 +4762,103 @@
     "featureComparison": "Feature comparison",
     "feature": "Feature",
     "comparisonRows": [
-      { "category": "Core", "name": "Calls / month" },
-      { "category": "Core", "name": "AI agents" },
-      { "category": "Core", "name": "Follow-ups" },
-      { "category": "Core", "name": "Seats" },
-      { "category": "Features", "name": "Appointment booking" },
-      { "category": "Features", "name": "No-show recovery" },
-      { "category": "Features", "name": "Reactivation campaigns" },
-      { "category": "Features", "name": "Industry templates" },
-      { "category": "Features", "name": "Advanced analytics + benchmarks" },
-      { "category": "Features", "name": "API access" },
-      { "category": "Support", "name": "Priority support" }
+      {
+        "category": "Core",
+        "name": "Calls / month"
+      },
+      {
+        "category": "Core",
+        "name": "AI agents"
+      },
+      {
+        "category": "Core",
+        "name": "Follow-ups"
+      },
+      {
+        "category": "Core",
+        "name": "Seats"
+      },
+      {
+        "category": "Features",
+        "name": "Appointment booking"
+      },
+      {
+        "category": "Features",
+        "name": "No-show recovery"
+      },
+      {
+        "category": "Features",
+        "name": "Reactivation campaigns"
+      },
+      {
+        "category": "Features",
+        "name": "Industry templates"
+      },
+      {
+        "category": "Features",
+        "name": "Advanced analytics + benchmarks"
+      },
+      {
+        "category": "Features",
+        "name": "API access"
+      },
+      {
+        "category": "Support",
+        "name": "Priority support"
+      }
     ],
     "annualNote": "Two months applied without interruption on annual commitment.",
     "trustedBy": "Trusted by leading teams in service, healthcare, and local business.",
     "questionsTalkToUs": "Questions? Talk to us →",
     "faqItems": [
-      { "q": "How does the free trial work?", "a": "14 days, full features, no credit card needed." },
-      { "q": "What if I exceed my minutes?", "a": "Calls continue at overage rate, never cut off." },
-      { "q": "Can I keep my existing number?", "a": "Yes, forward it to your Recall Touch number." },
-      { "q": "What voices are available?", "a": "6 included, premium via add-on $29/mo." },
-      { "q": "Is there a contract?", "a": "No, month-to-month, cancel anytime." },
-      { "q": "Do you support HIPAA?", "a": "Yes, add-on $99/mo with BAA." },
-      { "q": "What integrations?", "a": "Google Calendar, Outlook, HubSpot, Zapier. API on Scale+." },
-      { "q": "How is this different from an answering service?", "a": "24/7, handles outbound, costs 90% less." },
-      { "q": "What happens after hours?", "a": "Answers following your after-hours rules." },
-      { "q": "Can I try before buying?", "a": "14-day trial or use the interactive demo right now." },
-      { "q": "How do I cancel?", "a": "Settings → Billing → Cancel. Effective at period end." },
-      { "q": "How does billing work?", "a": "Monthly or annual. Included minutes plus overage per minute." }
+      {
+        "q": "How does the free trial work?",
+        "a": "14 days, full features, no credit card needed."
+      },
+      {
+        "q": "What if I exceed my minutes?",
+        "a": "Calls continue at overage rate, never cut off."
+      },
+      {
+        "q": "Can I keep my existing number?",
+        "a": "Yes, forward it to your Recall Touch number."
+      },
+      {
+        "q": "What voices are available?",
+        "a": "6 included, premium via add-on $29/mo."
+      },
+      {
+        "q": "Is there a contract?",
+        "a": "No, month-to-month, cancel anytime."
+      },
+      {
+        "q": "Do you support HIPAA?",
+        "a": "Yes, add-on $99/mo with BAA."
+      },
+      {
+        "q": "What integrations?",
+        "a": "Google Calendar, Outlook, HubSpot, Zapier. API on Scale+."
+      },
+      {
+        "q": "How is this different from an answering service?",
+        "a": "24/7, handles outbound, costs 90% less."
+      },
+      {
+        "q": "What happens after hours?",
+        "a": "Answers following your after-hours rules."
+      },
+      {
+        "q": "Can I try before buying?",
+        "a": "14-day trial or use the interactive demo right now."
+      },
+      {
+        "q": "How do I cancel?",
+        "a": "Settings → Billing → Cancel. Effective at period end."
+      },
+      {
+        "q": "How does billing work?",
+        "a": "Monthly or annual. Included minutes plus overage per minute."
+      }
     ],
     "roi": {
       "intro": "Model what happens when you stop letting calls slip through to voicemail.",
@@ -4745,10 +4896,22 @@
     "jurisdictionLabel": "Jurisdiction",
     "jurisdictionHint": "Jurisdiction determines compliance boundaries.",
     "jurisdictions": [
-      { "value": "United States", "label": "United States" },
-      { "value": "UK", "label": "UK" },
-      { "value": "EU", "label": "EU" },
-      { "value": "Other", "label": "Other" }
+      {
+        "value": "United States",
+        "label": "United States"
+      },
+      {
+        "value": "UK",
+        "label": "UK"
+      },
+      {
+        "value": "EU",
+        "label": "EU"
+      },
+      {
+        "value": "Other",
+        "label": "Other"
+      }
     ],
     "reviewStep": {
       "title": "Review structure",
@@ -4757,18 +4920,36 @@
     "reviewLabel": "Review structure",
     "reviewHint": "Review structure determines escalation behavior.",
     "reviewLevels": [
-      { "value": "Preview required", "label": "Preview required" },
-      { "value": "Approval required", "label": "Approval required" },
-      { "value": "Standard", "label": "Standard" }
+      {
+        "value": "Preview required",
+        "label": "Preview required"
+      },
+      {
+        "value": "Approval required",
+        "label": "Approval required"
+      },
+      {
+        "value": "Standard",
+        "label": "Standard"
+      }
     ],
     "sourceStep": {
       "title": "Record primary source",
       "description": "Execution begins only after a source is recorded."
     },
     "sourceOptions": [
-      { "id": "csv", "label": "Upload source" },
-      { "id": "calendar", "label": "Connect calendar" },
-      { "id": "phone", "label": "Connect phone" }
+      {
+        "id": "csv",
+        "label": "Upload source"
+      },
+      {
+        "id": "calendar",
+        "label": "Connect calendar"
+      },
+      {
+        "id": "phone",
+        "label": "Connect phone"
+      }
     ],
     "sourceHint1": "No source. No execution.",
     "sourceHint2": "Sources include uploaded lead lists, phone lines, and calendar enquiries.",
@@ -4778,12 +4959,30 @@
       "description": "Purpose determines objective and stop conditions."
     },
     "purposeOptions": [
-      { "value": "Qualify", "label": "Qualify" },
-      { "value": "Confirm", "label": "Confirm" },
-      { "value": "Collect", "label": "Collect" },
-      { "value": "Reactivate", "label": "Reactivate" },
-      { "value": "Route", "label": "Route" },
-      { "value": "Recover", "label": "Recover" }
+      {
+        "value": "Qualify",
+        "label": "Qualify"
+      },
+      {
+        "value": "Confirm",
+        "label": "Confirm"
+      },
+      {
+        "value": "Collect",
+        "label": "Collect"
+      },
+      {
+        "value": "Reactivate",
+        "label": "Reactivate"
+      },
+      {
+        "value": "Route",
+        "label": "Route"
+      },
+      {
+        "value": "Recover",
+        "label": "Recover"
+      }
     ],
     "purposeHint": "Purpose directs objectives and outcomes.",
     "governanceStep": {
@@ -4939,7 +5138,7 @@
     "errorNameRequired": "Your name and business name are required.",
     "errorSomethingWentWrong": "Something went wrong",
     "creating": "Creating…",
-    "step2Heading": "Meet your AI receptionist.",
+    "step2Heading": "Meet your AI agent.",
     "step2Subtitle": "Choose a name and what they can do.",
     "agentNameLabel": "Agent name",
     "greetingLabelOptional": "Greeting (optional)",
@@ -5098,7 +5297,6 @@
     "somethingWrong": "Something went wrong",
     "loadPageError": "We couldn't load this page. Try again or go back.",
     "unexpectedError": "An unexpected error occurred. You can try again or report the issue.",
-    "tryAgain": "Try again",
     "reportIssue": "Report issue"
   },
   "forms": {
@@ -5667,13 +5865,6 @@
       "noCallsForContact": "No calls logged yet for this contact."
     },
     "form": {
-      "addTag": "+ Add tag"
-    },
-    "drawer": {
-      "title": "Add contact",
-      "subtitle": "Your AI will use this on future calls."
-    },
-    "form": {
       "firstNameLabel": "First name*",
       "firstNamePlaceholder": "Mike",
       "lastNameLabel": "Last name*",
@@ -5694,6 +5885,10 @@
       "notesLabel": "Notes",
       "notesPlaceholder": "What matters for this contact…",
       "saveContact": "Save contact"
+    },
+    "drawer": {
+      "title": "Add contact",
+      "subtitle": "Your AI will use this on future calls."
     },
     "errors": {
       "firstNameRequired": "First name is required",
@@ -6662,7 +6857,10 @@
   "followUps": {
     "title": "Follow-ups",
     "create": "Create sequence",
-    "tabs": { "templates": "Templates", "active": "Active enrollments" },
+    "tabs": {
+      "templates": "Templates",
+      "active": "Active enrollments"
+    },
     "empty": {
       "templatesTitle": "No follow-up templates yet",
       "templatesBody": "Create a sequence to automate SMS, email, and call steps after missed calls or bookings.",
@@ -6712,7 +6910,9 @@
         "createFailed": "Could not create sequence.",
         "stepFailed": "Could not add a step."
       },
-      "toast": { "saved": "Sequence saved." }
+      "toast": {
+        "saved": "Sequence saved."
+      }
     }
   },
   "api": {
@@ -6745,6 +6945,28 @@
     "quickSearch": "Quick search",
     "closeShortcutsHelp": "Close shortcuts help",
     "morePages": "More pages"
+  },
+  "productTour": {
+    "revenue": {
+      "title": "Revenue recovered",
+      "body": "Your dashboard shows the money your AI has recovered."
+    },
+    "needsAttention": {
+      "title": "Needs your action",
+      "body": "This queue highlights leads and follow-ups that require review."
+    },
+    "sidebarNav": {
+      "title": "Navigate your pipeline",
+      "body": "Use the sidebar to move between dashboard, calls, leads, campaigns, and settings."
+    },
+    "campaigns": {
+      "title": "Campaigns",
+      "body": "Launch outbound sequences that recover revenue proactively."
+    },
+    "settings": {
+      "title": "Settings",
+      "body": "Control calling hours, compliance, voices, and billing from one place."
+    }
   },
   "legal": {
     "languageNotice": "This document is available in English only."

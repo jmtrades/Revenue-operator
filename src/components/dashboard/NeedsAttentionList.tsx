@@ -17,7 +17,6 @@ const NeedsAttentionList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Placeholder: In production, this would query Supabase
     setLoading(false);
   }, []);
 
