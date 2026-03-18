@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { withErrorHandling } from "@/lib/apiHandler";
 
 const GENERIC_ERROR = "An unexpected error occurred";
 
@@ -49,5 +48,26 @@ async function postContact(req: NextRequest) {
   return NextResponse.json(contact);
 }
 
-export const GET = withErrorHandling(getContacts);
-export const POST = withErrorHandling(postContact);
+export async function GET(req: NextRequest) {
+  try {
+    return await getContacts(req);
+  } catch (err) {
+    console.error(`[API Error] GET ${req.url}:`, err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    return await postContact(req);
+  } catch (err) {
+    console.error(`[API Error] POST ${req.url}:`, err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

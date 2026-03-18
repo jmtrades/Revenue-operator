@@ -17,7 +17,7 @@
     "verify:db": "tsx scripts/verify-db.ts",
     "urls:webhooks": "tsx scripts/print-webhook-urls.ts",
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint --max-warnings=9999",
     "test": "vitest run",
