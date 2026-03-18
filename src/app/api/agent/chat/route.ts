@@ -29,7 +29,7 @@ type Message = { role: "user" | "assistant"; content: string };
 export async function POST(req: NextRequest) {
   // Rate limit: 20 requests per minute per IP (demo endpoint)
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`agent-chat:${ip}`, 20, 60_000);
+  const rl = await checkRateLimit(`agent-chat:${ip}`, 20, 60_000);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Please try again shortly." },

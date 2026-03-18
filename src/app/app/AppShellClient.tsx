@@ -17,19 +17,15 @@ import {
   MessageSquare,
   Calendar,
   BarChart3,
-  BookOpen,
   Settings,
-  Building2,
   Menu,
   X,
-  Lightbulb,
-  Bot,
   PanelLeftClose,
   PanelLeftOpen,
   Command as CommandIcon,
   HelpCircle,
   ListOrdered,
-  } from "lucide-react";
+} from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
@@ -93,20 +89,16 @@ export default function AppShellClient({
       { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
       { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
       { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
-      { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
     ],
     [t]
   );
   const mobileMoreLinks = useMemo(
     () => [
-      { href: "/app/agents", label: t("nav.agents"), icon: Bot },
-      { href: "/app/appointments", label: t("nav.appointments"), icon: Calendar },
+      { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
+      { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
+      { href: "/app/follow-ups", label: "Follow-Ups", icon: ListOrdered },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
-      { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
-      { href: "/app/call-intelligence", label: t("nav.callIntelligence"), icon: Lightbulb },
-      { href: "/app/team", label: t("nav.team"), icon: Users },
-      { href: "/app/agency", label: t("nav.agency"), icon: Building2 },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
     ],
     [t]

@@ -18,7 +18,7 @@ async function getHumanVoiceDefaults() {
 export async function POST(req: NextRequest) {
   // Rate limit: 10 TTS requests per minute per IP (expensive API)
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`agent-speak:${ip}`, 10, 60_000);
+  const rl = await checkRateLimit(`agent-speak:${ip}`, 10, 60_000);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests", fallback: "browser" },
