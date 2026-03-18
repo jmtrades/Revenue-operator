@@ -4,10 +4,6 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
-  // Silence workspace-root inference warning when .next was built on a different machine
-  turbopack: {
-    root: __dirname,
-  },
   async redirects() {
     return [
       { source: "/app/onboarding", destination: "/activate", permanent: false },
