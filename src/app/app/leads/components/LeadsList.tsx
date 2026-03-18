@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import type { LeadView } from "../page";
-import { getStatusDisplay, getSourceDisplay } from "../page";
+import { getSourceDisplay, getStatusDisplay } from "../helpers";
 
 type ScoreBucket = "all" | "high" | "medium" | "low";
 

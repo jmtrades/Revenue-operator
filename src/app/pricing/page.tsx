@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
-import { PricingContent, ANNUAL_NOTE, pricingCopyForTests } from "@/components/PricingContent";
-
-export { ANNUAL_NOTE, pricingCopyForTests };
+import { PricingContent } from "@/components/PricingContent";
 
 const BASE = "https://www.recall-touch.com";
 

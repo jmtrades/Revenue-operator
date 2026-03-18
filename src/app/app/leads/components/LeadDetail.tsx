@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Phone, MessageSquare, Calendar, StickyNote, Archive } from "lucide-react";
 import type { LeadView } from "../page";
-import { getStatusDisplay, getSourceDisplay } from "../page";
+import { getSourceDisplay, getStatusDisplay } from "../helpers";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";

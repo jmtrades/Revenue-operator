@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 type Handler = (
   req: NextRequest,
-  ctx?: { params: Promise<Record<string, string>> }
+  ctx: { params: Promise<Record<string, string>> }
 ) => Promise<Response>;
 
 /**

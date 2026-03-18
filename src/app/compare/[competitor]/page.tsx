@@ -7,7 +7,7 @@ import { ComparisonContent } from "@/components/ComparisonContent";
 const BASE = "https://www.recall-touch.com";
 
 /** Known comparison slugs for sitemap and metadata. Brief: vs Smith.ai, Ruby, GoHighLevel, hiring a receptionist. */
-export const COMPARE_SLUGS = [
+const COMPARE_SLUGS = [
   "smith-ai",
   "ruby",
   "gohighlevel",

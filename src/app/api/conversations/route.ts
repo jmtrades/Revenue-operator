@@ -5,7 +5,6 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { withErrorHandling } from "@/lib/apiHandler";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
@@ -70,4 +69,14 @@ async function getConversations(req: NextRequest) {
   return NextResponse.json({ conversations });
 }
 
-export const GET = withErrorHandling(getConversations);
+export async function GET(req: NextRequest) {
+  try {
+    return await getConversations(req);
+  } catch (err) {
+    console.error(`[API Error] GET ${req.url}:`, err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

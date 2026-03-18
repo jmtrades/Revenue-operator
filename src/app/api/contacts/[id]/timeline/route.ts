@@ -203,11 +203,11 @@ async function getTimeline(req: NextRequest, id: string) {
 
 export async function GET(
   req: NextRequest,
-  ctx?: { params?: Promise<Record<string, string>> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const params = (await ctx?.params) ?? {};
-    const id = String(params.id ?? "");
+    const resolvedParams = await params;
+    const id = String(resolvedParams.id ?? "");
     if (!id) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return await getTimeline(req, id);
   } catch (err) {

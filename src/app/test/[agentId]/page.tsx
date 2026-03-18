@@ -13,7 +13,7 @@ type AgentSummary = {
 export default function PublicAgentTestPage({
   params,
 }: {
-  params: { agentId: string };
+  params: Promise<{ agentId: string }>;
 }) {
   const searchParams = useSearchParams();
   const [agent, setAgent] = useState<AgentSummary | null>(null);
@@ -26,8 +26,10 @@ export default function PublicAgentTestPage({
       try {
         setLoading(true);
         setError(null);
+        const resolvedParams = await params;
+        const agentId = resolvedParams.agentId;
         const res = await fetch(
-          `/api/agents/public/${encodeURIComponent(params.agentId)}`,
+          `/api/agents/public/${encodeURIComponent(agentId)}`,
           {
             signal: controller.signal,
           },
@@ -61,7 +63,7 @@ export default function PublicAgentTestPage({
     };
     void load();
     return () => controller.abort();
-  }, [params.agentId, searchParams]);
+  }, [params, searchParams]);
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center px-4 py-10">

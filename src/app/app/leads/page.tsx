@@ -86,7 +86,10 @@ const SOURCE_TO_LABEL: Record<string, LeadSource> = {
   other: "Inbound Call",
 };
 
-export function getStatusDisplay(status: LeadStatus, t: (key: string) => string): string {
+function getStatusDisplay(
+  status: LeadStatus,
+  t: (key: string) => string
+): string {
   const map: Record<LeadStatus, string> = {
     "New": t("leads.status.new"),
     "Contacted": t("leads.status.contacted"),
@@ -98,7 +101,10 @@ export function getStatusDisplay(status: LeadStatus, t: (key: string) => string)
   return map[status] ?? status;
 }
 
-export function getSourceDisplay(source: LeadSource, t: (key: string) => string): string {
+function getSourceDisplay(
+  source: LeadSource,
+  t: (key: string) => string
+): string {
   const map: Record<LeadSource, string> = {
     "Inbound Call": t("leads.sources.inboundCall"),
     "Outbound Outreach": t("leads.sources.outbound"),
