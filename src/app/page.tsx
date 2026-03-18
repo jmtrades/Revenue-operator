@@ -23,12 +23,6 @@ const HowItWorks = dynamic(
 const Features = dynamic(
   () => import("@/components/sections/Features").then((m) => m.Features),
 );
-const TestimonialsSection = dynamic(
-  () =>
-    import("@/components/sections/TestimonialsSection").then(
-      (m) => m.TestimonialsSection,
-    ),
-);
 const PricingPreview = dynamic(
   () => import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
 );
@@ -66,7 +60,6 @@ export default async function HomePage() {
         <HomepageRoiCalculator />
         <Industries />
         <Features />
-        <TestimonialsSection />
         <PricingPreview />
         <HomepageFAQ />
         <FinalCTA />
