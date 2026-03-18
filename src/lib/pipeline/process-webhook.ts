@@ -146,7 +146,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
         .eq("id", (insertedMessage as { id: string }).id);
     }
 
-    const { stopSequence } = await import("@/lib/sequences/engine");
+    const { stopSequence } = await import("@/lib/sequences/follow-up-engine");
     const { cancelLeadPlan } = await import("@/lib/plans/lead-plan");
     await stopSequence(workspace_id, lead.id, "user_reply").catch(() => {});
     await cancelLeadPlan(workspace_id, lead.id, "user_reply").catch(() => {});

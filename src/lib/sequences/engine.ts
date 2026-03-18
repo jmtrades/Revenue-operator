@@ -2,6 +2,11 @@
  * Deterministic Sequence Engine — Controlled cadences.
  * No freeform scheduling. Sequences define steps with delays and template keys.
  */
+/**
+ * @deprecated Use follow-up-engine.ts instead.
+ * This file uses legacy sequence_runs + hardcoded step cadences.
+ * Kept for reference only. Do not import in new code.
+ */
 
 import { getDb } from "@/lib/db/queries";
 import type { DealStateVector } from "@/lib/engines/perception";

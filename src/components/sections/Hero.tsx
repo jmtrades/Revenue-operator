@@ -72,6 +72,9 @@ export function Hero() {
           <div className="max-w-md lg:ml-auto">
             <div className="space-y-4">
               <HeroRevenueWidget />
+              <div className="-mt-2 text-xs text-[var(--text-secondary)]">
+                {tHero("exampleDashboardLabel")}
+              </div>
               <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-6 shadow-[var(--shadow-glow-primary)]">
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
                   Revenue Recovered Snapshot
@@ -81,6 +84,9 @@ export function Hero() {
                   based on kept appointments from answered calls and automated follow-up.
                 </p>
                 <HeroRevenueWidget />
+                <div className="mt-2 text-xs text-[var(--text-secondary)]">
+                  {tHero("exampleDashboardLabel")}
+                </div>
               </div>
             </div>
           </div>

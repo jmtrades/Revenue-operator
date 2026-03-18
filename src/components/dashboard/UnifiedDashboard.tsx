@@ -119,6 +119,7 @@ export function UnifiedDashboard() {
   }
 
   const pctMin = data.minutes_limit > 0 ? Math.min(100, Math.round((data.minutes_used / data.minutes_limit) * 100)) : 0;
+  const usageRatio = data.minutes_limit > 0 ? data.minutes_used / data.minutes_limit : 0;
   const hasSignal =
     data.calls_answered > 0 ||
     data.appointments_booked > 0 ||
@@ -134,6 +135,25 @@ export function UnifiedDashboard() {
 
       {/* Hero */}
       <section className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 border-l-4 border-l-white">
+        {usageRatio >= 0.8 && (
+          <div className={`mb-4 rounded-xl border px-4 py-3 ${usageRatio >= 1 ? "border-red-500/40 bg-red-500/10" : "border-amber-500/40 bg-amber-500/10"}`}>
+            <p className="text-sm text-white">
+              You&apos;ve used{" "}
+              <span className="font-semibold tabular-nums">
+                {data.minutes_used}/{data.minutes_limit}
+              </span>{" "}
+              minutes this month.{" "}
+              <Link href="/app/settings/billing" className="underline font-semibold">
+                Upgrade →
+              </Link>
+            </p>
+            {usageRatio >= 1 && (
+              <p className="mt-1 text-xs text-zinc-300">
+                You&apos;ve exceeded your included minutes. Additional usage is billed at your plan&apos;s overage rate.
+              </p>
+            )}
+          </div>
+        )}
         <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">This month</p>
         <div className="mt-2 flex flex-wrap items-baseline gap-3">
           <h1 className="text-2xl md:text-3xl font-bold text-white tabular-nums">

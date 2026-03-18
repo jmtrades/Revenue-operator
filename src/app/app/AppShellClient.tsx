@@ -32,6 +32,7 @@ import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
 import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
 import { initErrorReporting } from "@/lib/error-reporting";
+import { initPostHogClient, track } from "@/lib/analytics/posthog";
 import { getClientOrNull } from "@/lib/supabase/client";
 import {
   OnboardingStepProvider,
@@ -135,7 +136,15 @@ export default function AppShellClient({
 
   useEffect(() => {
     initErrorReporting();
+    initPostHogClient();
   }, []);
+
+  useEffect(() => {
+    if (!pathname) return;
+    if (pathname === "/app/dashboard") track("dashboard_visited");
+    if (pathname.startsWith("/app/analytics")) track("analytics_viewed");
+    if (pathname.startsWith("/app/campaigns")) track("campaigns_viewed");
+  }, [pathname]);
 
   useEffect(() => {
     if (initialWorkspaceMeta) {

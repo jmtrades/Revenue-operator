@@ -9,6 +9,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
+const CAMPAIGN_TYPES = [
+  "speed_to_lead",
+  "lead_qualification",
+  "appointment_setting",
+  "no_show_recovery",
+  "reactivation",
+  "quote_chase",
+  "review_request",
+  "cold_outreach",
+  "appointment_reminder",
+  "custom",
+  // Back-compat
+  "lead_followup",
+] as const;
+
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
@@ -55,7 +70,7 @@ export async function POST(req: NextRequest) {
   }
   if (!agentId) return NextResponse.json({ error: "No agent in workspace; create an agent first" }, { status: 400 });
 
-  const typeVal = ["lead_followup", "appointment_reminder", "reactivation", "custom"].includes(type) ? type : "lead_followup";
+  const typeVal = (CAMPAIGN_TYPES as readonly string[]).includes(type) ? type : "lead_followup";
   const insertPayload: Record<string, unknown> = {
     workspace_id: session.workspaceId,
     agent_id: agentId,

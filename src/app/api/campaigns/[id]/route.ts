@@ -8,6 +8,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
+const CAMPAIGN_TYPES = [
+  "speed_to_lead",
+  "lead_qualification",
+  "appointment_setting",
+  "no_show_recovery",
+  "reactivation",
+  "quote_chase",
+  "review_request",
+  "cold_outreach",
+  "appointment_reminder",
+  "custom",
+  // Back-compat
+  "lead_followup",
+] as const;
+
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const db = getDb();
@@ -28,7 +43,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (typeof body.name === "string" && body.name.trim()) {
     updates.name = body.name.trim();
   }
-  if (typeof body.type === "string" && ["lead_followup", "appointment_reminder", "reactivation", "custom"].includes(body.type)) {
+  if (typeof body.type === "string" && (CAMPAIGN_TYPES as readonly string[]).includes(body.type)) {
     updates.type = body.type;
   }
   if (body.target_filter && typeof body.target_filter === "object") {

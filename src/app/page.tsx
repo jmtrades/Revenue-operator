@@ -52,6 +52,65 @@ export default async function HomePage() {
       className="min-h-screen"
       style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "How fast can I be live?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Most workspaces can be live in minutes: choose an industry, connect your number (or add one), and run a test call. You can refine scripts and follow-ups after you’ve seen it work.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Do I need to replace my CRM?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "No. Recall Touch is the execution layer. Keep your CRM; we focus on answering, booking, follow-ups, and proof of ROI.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What does “Revenue Execution OS” mean?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "It means we don’t just log activity. We execute the work: answer calls, capture intent, book appointments, follow up, recover no-shows, and show you what it’s worth.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Is there a free trial?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Yes — 14 days. No credit card required.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Can I use my existing business number?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Yes. You can keep your number and forward calls, or add new numbers as needed.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "How do you prevent spammy automation?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Guardrails: per-contact limits, quiet hours, opt-outs, and reviewable actions. You can require approval before anything sends.",
+                },
+              },
+            ],
+          }),
+        }}
+      />
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />

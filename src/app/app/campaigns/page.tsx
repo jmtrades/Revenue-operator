@@ -8,6 +8,7 @@ import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
+import Link from "next/link";
 
 type TouchpointType = "call" | "sms" | "email" | "wait";
 
@@ -367,7 +368,7 @@ export default function CampaignsPage() {
                 icon={Megaphone}
                 title={t("empty.title")}
                 description={t("empty.description")}
-                primaryAction={{ label: t("create"), href: "#create-campaign" }}
+                primaryAction={{ label: t("create"), href: "/app/campaigns/create" }}
               />
             ) : (
               filtered.map((campaign) => (
