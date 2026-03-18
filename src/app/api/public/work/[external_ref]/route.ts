@@ -41,6 +41,14 @@ function neutralResponse(): NextResponse {
   });
 }
 
+function resolveDefaultExport<T>(mod: unknown): T {
+  if (mod && typeof mod === "object" && "default" in (mod as object)) {
+    const maybe = mod as { default?: unknown };
+    if (maybe.default != null) return maybe.default as T;
+  }
+  return mod as T;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ external_ref: string }> }
@@ -71,47 +79,100 @@ export async function GET(
     const disableImpactMod = await import("@/lib/operational-perception/disable-impact");
     const dbMod = await import("@/lib/db/queries");
 
+    type RateLimitModule = typeof import("@/lib/security/rate-limit");
+    const rateLimit = resolveDefaultExport<RateLimitModule>(rateLimitMod);
     const {
       hashIpForPublicRecord,
       checkPublicRecordRateLimit,
       incrementPublicRecordRateLimit,
       recordPublicRecord404,
-    } = (rateLimitMod as any)?.default ?? rateLimitMod;
+    } = rateLimit;
 
+    type SharedAssuranceModule = typeof import(
+      "@/lib/shared-transaction-assurance"
+    );
+    const sharedAssurance = resolveDefaultExport<SharedAssuranceModule>(sharedMod);
     const {
       getWorkspaceIdByExternalRef,
       getPendingTransactionIdByExternalRef,
       getAcknowledgedTransactionIdByExternalRef,
-    } = (sharedMod as any)?.default ?? sharedMod;
+    } = sharedAssurance;
 
+    type ReciprocalEventsModule = typeof import("@/lib/reciprocal-events");
+    const reciprocalEvents = resolveDefaultExport<ReciprocalEventsModule>(reciprocalMod);
     const {
       getThreadIdByExternalRef,
       getContinuationEntriesForThread,
       getReciprocalEventsForThread,
-    } = (reciprocalMod as any)?.default ?? reciprocalMod;
+    } = reciprocalEvents;
 
+    type OperationalResponsibilitiesModule = typeof import(
+      "@/lib/operational-responsibilities"
+    );
+    const opResp = resolveDefaultExport<OperationalResponsibilitiesModule>(opRespMod);
     const {
       threadUnresolved,
       getPublicWorkStatement,
       STATEMENT_EXTERNAL_REFERENCE_UNRESOLVED,
       STATEMENT_ASSIGNED_OBLIGATION_UNRESOLVED,
-    } = (opRespMod as any)?.default ?? opRespMod;
+    } = opResp;
 
-    const { contextHasExternalUncertainty } = (outcomeDepMod as any)?.default ?? outcomeDepMod;
-    const { listParticipantsForThread } = (threadParticipantsMod as any)?.default ?? threadParticipantsMod;
-    const { threadHasOpenAssignment } = (threadAssignmentsMod as any)?.default ?? threadAssignmentsMod;
-    const { threadHasEvidence } = (threadEvidenceMod as any)?.default ?? threadEvidenceMod;
-    const { threadHasReference, STATEMENT_LATER_ACTIVITY_REFERENCED } =
-      ((threadReferenceMod as any)?.default ?? threadReferenceMod) as any;
+    type OutcomeDependenciesModule = typeof import("@/lib/outcome-dependencies");
+    const outcomeDep = resolveDefaultExport<OutcomeDependenciesModule>(outcomeDepMod);
+    const { contextHasExternalUncertainty } = outcomeDep;
+
+    type ThreadParticipantsModule = typeof import("@/lib/thread-participants");
+    const threadParticipants = resolveDefaultExport<ThreadParticipantsModule>(
+      threadParticipantsMod
+    );
+    const { listParticipantsForThread } = threadParticipants;
+
+    type ThreadAssignmentsModule = typeof import("@/lib/thread-assignments");
+    const threadAssignments = resolveDefaultExport<ThreadAssignmentsModule>(
+      threadAssignmentsMod
+    );
+    const { threadHasOpenAssignment } = threadAssignments;
+
+    type ThreadEvidenceModule = typeof import("@/lib/thread-evidence");
+    const threadEvidence = resolveDefaultExport<ThreadEvidenceModule>(threadEvidenceMod);
+    const { threadHasEvidence } = threadEvidence;
+
+    type ThreadReferenceMemoryModule = typeof import(
+      "@/lib/thread-reference-memory"
+    );
+    const threadReference = resolveDefaultExport<ThreadReferenceMemoryModule>(
+      threadReferenceMod
+    );
+    const { threadHasReference, STATEMENT_LATER_ACTIVITY_REFERENCED } = threadReference;
+
+    type InstitutionalAuditabilityModule = typeof import(
+      "@/lib/institutional-auditability"
+    );
+    const institutionalAudit = resolveDefaultExport<InstitutionalAuditabilityModule>(
+      institutionalAuditMod
+    );
     const {
       threadHasAmendment,
       STATEMENT_RECORD_UPDATED_AFTER_RELIANCE,
       getAmendmentLinesForThread,
-    } = (institutionalAuditMod as any)?.default ?? institutionalAuditMod;
+    } = institutionalAudit;
+
+    type TemporalStabilityModule = typeof import("@/lib/temporal-stability");
+    const temporalStability = resolveDefaultExport<TemporalStabilityModule>(temporalStabilityMod);
     const { workspaceHasTemporalStability, STATEMENT_PUBLIC_STABILITY } =
-      (temporalStabilityMod as any)?.default ?? temporalStabilityMod;
-    const { getDisableImpactStatements } = (disableImpactMod as any)?.default ?? disableImpactMod;
-    const { getDb } = (dbMod as any)?.default ?? dbMod;
+      temporalStability;
+
+    type DisableImpactModule = typeof import(
+      "@/lib/operational-perception/disable-impact"
+    );
+    const disableImpactModule = resolveDefaultExport<DisableImpactModule>(
+      disableImpactMod
+    );
+    const { getDisableImpactStatements } = disableImpactModule;
+
+    type DbQueriesModule = typeof import("@/lib/db/queries");
+    const dbQueries = resolveDefaultExport<DbQueriesModule>(dbMod);
+    const { getDb } = dbQueries;
 
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
