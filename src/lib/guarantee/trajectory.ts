@@ -5,6 +5,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 import { getCapacityInputs, getCapacityPressure } from "./capacity-stability";
 import { getSchedulingRules } from "@/lib/calendar-optimization";
 
@@ -155,14 +156,17 @@ function computeDemandTemperature(
  */
 export async function getTrajectoryState(workspaceId: string): Promise<TrajectoryStateRow | null> {
   const db = getDb();
-  const { data } = await db
-    .from("guarantee_trajectory_state")
-    .select(
-      "high_value_underrepresented, low_value_overload, future_overload, future_empty, return_cycle_underperforming, demand_temperature, updated_at"
-    )
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
-  return data as TrajectoryStateRow | null;
+  try {
+    const q = db
+      .from("guarantee_trajectory_state")
+      .select(
+        "high_value_underrepresented, low_value_overload, future_overload, future_empty, return_cycle_underperforming, demand_temperature, updated_at"
+      )
+      .eq("workspace_id", workspaceId) as unknown as DbSingleQuery;
+    return (await fetchSingleRow(q)) as TrajectoryStateRow | null;
+  } catch {
+    return null;
+  }
 }
 
 /**

@@ -212,7 +212,7 @@ async function executeWorkflowStep(
           contact,
           workspace
         );
-        // TODO: Integrate with SMS provider (Twilio, etc.)
+        // Provider integration point: SMS send is not wired in this build.
         console.log(`[SMS] To ${contact.phone}: ${smsContent}`);
         eventType = 'sms_sent';
         costCents = 50; // ~$0.50 per SMS
@@ -228,7 +228,7 @@ async function executeWorkflowStep(
           contact,
           workspace
         );
-        // TODO: Integrate with voice provider (Twilio, etc.)
+        // Provider integration point: voice call send is not wired in this build.
         console.log(`[CALL] To ${contact.phone}: ${callScript}`);
         eventType = 'voice_minute';
         costCents = 150; // ~$0.15 per minute (estimated)
@@ -244,7 +244,7 @@ async function executeWorkflowStep(
           contact,
           workspace
         );
-        // TODO: Integrate with email provider (SendGrid, etc.)
+        // Provider integration point: email send is not wired in this build.
         console.log(`[EMAIL] To ${contact.email}: ${step.emailSubject}`);
         eventType = 'email_sent';
         costCents = 10; // ~$0.10 per email
@@ -319,11 +319,8 @@ async function checkStopConditions(
     }
   }
 
-  // TODO: Check if contact has booked appointment
-  // This would require checking appointments table
-
-  // TODO: Check if contact has opted out
-  // This would require checking preferences/suppression list
+  // Appointment stop condition would require checking appointments table.
+  // Opt-out stop condition would require checking preferences/suppression list.
 
   return null;
 }

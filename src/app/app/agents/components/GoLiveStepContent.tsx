@@ -55,7 +55,7 @@ export function GoLiveStepContent({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-white">{t("goLive.heading")}</h3>
+      <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("goLive.heading")}</h3>
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" aria-label={t("goLive.phoneSectionAria")}>
         <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">{t("goLive.phoneLabel")}</p>
         <p className="text-[11px] text-[var(--text-tertiary)] mb-3">{t("goLive.phoneDescription")}</p>
@@ -63,7 +63,7 @@ export function GoLiveStepContent({
           value={assignedNumber?.id ?? ""}
           onChange={(e) => void handleAssign(e.target.value)}
           disabled={unassignedNumbers.length === 0}
-          className="w-full max-w-md px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white text-sm focus:border-[var(--accent-primary)] focus:outline-none"
+          className="w-full max-w-md px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--accent-primary)] focus:outline-none"
           aria-label={t("goLive.assignAria")}
         >
           <option value="">{unassignedNumbers.length === 0 ? t("goLive.noNumbers") : t("goLive.none")}</option>
@@ -117,7 +117,7 @@ export function GoLiveStepContent({
                   type="button"
                   onClick={() => void onActivate()}
                   disabled={activating}
-                  className="ml-auto rounded text-[11px] font-medium text-[var(--text-primary)] underline underline-offset-1 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50"
+                  className="ml-auto rounded text-[11px] font-medium text-[var(--text-primary)] underline underline-offset-1 hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50"
                 >
                   {activating ? t("goLive.syncing") : t("goLive.retrySync")}
                 </button>
@@ -145,13 +145,13 @@ export function GoLiveStepContent({
         </div>
       </section>
       <section className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-5 space-y-4" aria-label={t("goLive.previewAria")}>
-        <h3 className="text-sm font-medium text-white/70 mb-4">{t("goLive.previewHeading")}</h3>
+        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4">{t("goLive.previewHeading")}</h3>
         <div className="space-y-4">
           <div>
             <p className="text-xs text-white/40 mb-1">
               {t("goLive.callerBookAppt")}
             </p>
-            <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
+            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
               {(() => {
                 const greeting = agent.greeting?.trim();
                 if (greeting) {
@@ -171,7 +171,7 @@ export function GoLiveStepContent({
 
           <div>
             <p className="text-xs text-white/40 mb-1">{t("goLive.callerPricing")}</p>
-            <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
+            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
               {(() => {
                 const faq = agent.faq ?? [];
                 const pricingFromFaq = faq.find((e) => {
@@ -199,7 +199,7 @@ export function GoLiveStepContent({
 
           <div>
             <p className="text-xs text-white/40 mb-1">{t("goLive.callerAfterHours")}</p>
-            <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
+            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
               {(() => {
                 switch (agent.afterHoursMode) {
                   case "forward":
@@ -225,7 +225,7 @@ export function GoLiveStepContent({
                 <p className="text-xs text-white/40 mb-1">
                   {t("goLive.callerPriceHigh")}
                 </p>
-                <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
+                <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
                   {priceObj.slice(0, 160) + (priceObj.length > 160 ? "…" : "")}
                 </p>
               </div>
@@ -243,7 +243,7 @@ export function GoLiveStepContent({
                 <p className="text-xs text-white/40 mb-1">
                   {t("goLive.callerSpeakToSomeone")}
                 </p>
-                <p className="text-sm text-white/70 bg-zinc-900/70 border border-zinc-700 rounded-lg p-3">
+                <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
                   {hasTransferNumber
                     ? t("goLive.escalationWithTransfer")
                     : t("goLive.escalationNoTransfer")}

@@ -5,6 +5,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 
 export type CommitmentPressureLevel = 0 | 1 | 2 | 3;
 /** 0 stable, 1 weakening, 2 unstable, 3 high_risk */
@@ -139,12 +140,15 @@ export interface CommitmentStateRow {
 
 export async function getCommitmentPressure(leadId: string): Promise<CommitmentStateRow | null> {
   const db = getDb();
-  const { data } = await db
-    .from("guarantee_commitment_state")
-    .select("pressure_level, updated_at, last_increase_at, last_reset_at")
-    .eq("lead_id", leadId)
-    .maybeSingle();
-  return data as CommitmentStateRow | null;
+  try {
+    const q = db
+      .from("guarantee_commitment_state")
+      .select("pressure_level, updated_at, last_increase_at, last_reset_at")
+      .eq("lead_id", leadId) as unknown as DbSingleQuery;
+    return (await fetchSingleRow(q)) as CommitmentStateRow | null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -153,7 +157,13 @@ export async function getCommitmentPressure(leadId: string): Promise<CommitmentS
  */
 export async function updateCommitmentPressure(leadId: string, workspaceId: string): Promise<CommitmentPressureLevel> {
   const db = getDb();
-  const { data: conv } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).maybeSingle();
+  let conv: unknown = null;
+  try {
+    const q = db.from("conversations").select("id").eq("lead_id", leadId) as unknown as DbSingleQuery;
+    conv = await fetchSingleRow(q);
+  } catch {
+    conv = null;
+  }
   const convId = (conv as { id?: string } | null)?.id;
   if (!convId) return 0;
 

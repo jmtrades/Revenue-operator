@@ -54,12 +54,12 @@ function BaseFlowNode({
     end_call: "bg-red-500/20 border-red-500/50",
     custom_action: "bg-zinc-500/20 border-zinc-500/50",
   };
-  const style = colors[nodeType ?? ""] ?? "bg-zinc-800 border-zinc-600";
+  const style = colors[nodeType ?? ""] ?? "bg-[var(--bg-inset)] border-zinc-600";
 
   return (
     <div className={`px-4 py-2 rounded-xl border min-w-[140px] ${style}`}>
       {!isSource && <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-zinc-400" />}
-      <span className="text-sm font-medium text-white capitalize">{String(label).replace(/_/g, " ")}</span>
+      <span className="text-sm font-medium text-[var(--text-primary)] capitalize">{String(label).replace(/_/g, " ")}</span>
       {nodeType !== "end_call" && <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-zinc-400" />}
     </div>
   );
@@ -183,7 +183,7 @@ export default function FlowBuilderClient({
 
   if (loading) {
     return (
-      <div className="h-[70vh] flex items-center justify-center text-zinc-400">
+      <div className="h-[70vh] flex items-center justify-center text-[var(--text-tertiary)]">
         Loading flow…
       </div>
     );
@@ -191,24 +191,24 @@ export default function FlowBuilderClient({
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
-      <div className="flex items-center gap-2 text-zinc-400 text-sm mb-2">
-        <Link href="/app/agents" className="hover:text-white">Agents</Link>
+      <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-sm mb-2">
+        <Link href="/app/agents" className="hover:text-[var(--text-primary)]">Agents</Link>
         <ChevronRight className="w-4 h-4" />
-        <Link href={`/app/agents?selected=${agentId}`} className="hover:text-white">{agentName}</Link>
+        <Link href={`/app/agents?selected=${agentId}`} className="hover:text-[var(--text-primary)]">{agentName}</Link>
         <ChevronRight className="w-4 h-4" />
-        <span className="text-white">Flow builder</span>
+        <span className="text-[var(--text-primary)]">Flow builder</span>
       </div>
       <div className="flex items-center justify-between gap-4 mb-3">
-        <h1 className="text-xl font-semibold text-white">Conversation flow</h1>
+        <h1 className="text-xl font-semibold text-[var(--text-primary)]">Conversation flow</h1>
         <div className="flex items-center gap-2">
-          {toast && <span className="text-sm text-zinc-400">{toast}</span>}
-          <div className="flex flex-wrap gap-1 border border-zinc-700 rounded-xl p-1.5 bg-zinc-900/50 max-w-xl">
+          {toast && <span className="text-sm text-[var(--text-tertiary)]">{toast}</span>}
+          <div className="flex flex-wrap gap-1 border border-zinc-700 rounded-xl p-1.5 bg-[var(--bg-surface)] max-w-xl">
             {NODE_TYPES_LIST.map(({ type, label }) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => addNode(type, label)}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-zinc-300 hover:text-white hover:bg-zinc-700 rounded-lg"
+                className="flex items-center gap-1 px-2 py-1 text-xs text-zinc-300 hover:text-[var(--text-primary)] hover:bg-zinc-700 rounded-lg"
                 title={`Add ${label}`}
               >
                 <Plus className="w-3 h-3 flex-shrink-0" />
@@ -227,7 +227,7 @@ export default function FlowBuilderClient({
           </button>
         </div>
       </div>
-      <div className="flex-1 rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden">
+      <div className="flex-1 rounded-2xl border border-[var(--border-default)] bg-zinc-950 overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -239,9 +239,9 @@ export default function FlowBuilderClient({
           className="bg-zinc-950"
         >
           <Background color="#3f3f46" gap={16} />
-          <Controls className="!bg-zinc-900 !border-zinc-700 !rounded-xl" />
-          <MiniMap className="!bg-zinc-900 !border-zinc-700" />
-          <Panel position="top-left" className="text-xs text-zinc-500">
+          <Controls className="!bg-[var(--bg-surface)] !border-zinc-700 !rounded-xl" />
+          <MiniMap className="!bg-[var(--bg-surface)] !border-zinc-700" />
+          <Panel position="top-left" className="text-xs text-[var(--text-secondary)]">
             Drag nodes to connect. Use the toolbar to add nodes.
           </Panel>
         </ReactFlow>

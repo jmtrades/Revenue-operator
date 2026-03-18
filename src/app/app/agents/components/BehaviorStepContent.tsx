@@ -79,7 +79,7 @@ export function BehaviorStepContent({
 
   return (
     <div className="space-y-6">
-      <h3 id="behavior-heading" className="text-sm font-semibold text-white">{t("behavior.title")}</h3>
+      <h3 id="behavior-heading" className="text-sm font-semibold text-[var(--text-primary)]">{t("behavior.title")}</h3>
       <section
         aria-label="Guardrails"
         className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3"
@@ -96,7 +96,7 @@ export function BehaviorStepContent({
           {NEVER_DO_PRESETS.map((rule) => (
             <label
               key={rule}
-              className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer hover:text-white"
+              className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]"
             >
               <input
                 type="checkbox"
@@ -121,7 +121,7 @@ export function BehaviorStepContent({
             id="custom-never-do"
             type="text"
             placeholder={t("behavior.customRulePlaceholder")}
-            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-xs text-white placeholder:text-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-xs text-[var(--text-primary)] placeholder:text-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 const value = e.currentTarget.value.trim();
@@ -136,7 +136,7 @@ export function BehaviorStepContent({
       </section>
       <RulesTab agent={agent} onChange={onChange} />
       <section className="mt-4">
-        <h3 className="text-sm font-medium text-white/70 mb-1">
+        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
           {t("behavior.qualTitle")}
         </h3>
         <p className="text-xs text-white/40 mb-2">
@@ -162,7 +162,7 @@ export function BehaviorStepContent({
               className={`px-2.5 py-1 rounded-full border text-[11px] ${
                 preset === "custom"
                   ? "border-white bg-white text-black"
-                  : "border-white/20 text-white/70 hover:border-white/40"
+                  : "border-white/20 text-[var(--text-secondary)] hover:border-white/40"
               }`}
             >
               {preset === "bant"
@@ -180,7 +180,7 @@ export function BehaviorStepContent({
             <input
               value={q}
               onChange={(e) => updateQuestion(i, e.target.value)}
-              className="flex-1 bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white focus:border-zinc-500 focus:outline-none"
+              className="flex-1 bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-zinc-500 focus:outline-none"
             />
             <button
               type="button"
@@ -216,7 +216,7 @@ export function BehaviorStepContent({
         )}
       </section>
       <section className="mt-6">
-        <h3 className="text-sm font-medium text-white/70 mb-1">
+        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
           {t("behavior.objectionTitle")}
         </h3>
         <p className="text-xs text-white/40 mb-3">
@@ -231,7 +231,7 @@ export function BehaviorStepContent({
             { id: "notInterested" as const, labelKey: "objectionNotInterestedLabel" as const, placeholderKey: "objectionNotInterestedPlaceholder" as const },
           ].map((obj) => (
             <div key={obj.id}>
-              <label className="text-xs text-white/50 mb-1 block">
+              <label className="text-xs text-[var(--text-tertiary)] mb-1 block">
                 {t(`behavior.${obj.labelKey}`)}
               </label>
               <textarea
@@ -239,14 +239,14 @@ export function BehaviorStepContent({
                 onChange={(e) => setObjection(obj.id, e.target.value)}
                 rows={2}
                 placeholder={t(`behavior.${obj.placeholderKey}`)}
-                className="w-full bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:border-zinc-500 focus:outline-none resize-none"
+                className="w-full bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-zinc-500 focus:outline-none resize-none"
               />
             </div>
           ))}
         </div>
       </section>
       <section className="mt-6">
-        <h3 className="text-sm font-medium text-white/70 mb-1">
+        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
           {t("behavior.escalationTitle")}
         </h3>
         <p className="text-xs text-white/40 mb-3">
@@ -255,19 +255,19 @@ export function BehaviorStepContent({
 
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-white/50 mb-1 block">
+            <label className="text-xs text-[var(--text-tertiary)] mb-1 block">
               {t("behavior.transferPhoneLabel")}
             </label>
             <input
               value={agent.transferPhone || ""}
               onChange={(e) => onChange({ transferPhone: e.target.value })}
               placeholder={t("behavior.transferPhonePlaceholder")}
-              className="w-full bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:border-zinc-500 focus:outline-none"
+              className="w-full bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:border-zinc-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="text-xs text-white/50 mb-1 block">
+            <label className="text-xs text-[var(--text-tertiary)] mb-1 block">
               {t("behavior.transferWhen")}
             </label>
             <div className="space-y-1.5">
@@ -280,7 +280,7 @@ export function BehaviorStepContent({
               ] as const).map((id) => (
                 <label
                   key={id}
-                  className="flex items-center gap-2 text-sm text-white/50 cursor-pointer hover:text-white/70"
+                  className="flex items-center gap-2 text-sm text-[var(--text-tertiary)] cursor-pointer hover:text-[var(--text-secondary)]"
                 >
                   <input
                     type="checkbox"

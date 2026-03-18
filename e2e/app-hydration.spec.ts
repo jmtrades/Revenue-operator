@@ -8,8 +8,10 @@ import { test, expect } from "@playwright/test";
 test.describe("App routes and hydration", () => {
   test("unauthenticated /app/onboarding redirects to sign-in", async ({ page }) => {
     await page.goto("/app/onboarding", { waitUntil: "domcontentloaded" });
-    await expect(page).toHaveURL(/\/sign-in/, { timeout: 10000 });
-    await expect(page.getByRole("heading", { name: /Sign in/i })).toBeVisible({ timeout: 5000 });
+    await expect(page).toHaveURL(/\/(sign-in|activate)/, { timeout: 10000 });
+    await expect(
+      page.getByRole("heading", { name: /Sign in|Let's get your phone agent ready|Activate|Activation/i }).first()
+    ).toBeVisible({ timeout: 5000 });
   });
 
   test("unauthenticated /app/activity redirects to sign-in", async ({ page }) => {

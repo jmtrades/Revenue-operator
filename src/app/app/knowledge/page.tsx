@@ -170,13 +170,13 @@ function KnowledgeModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
             {isNew ? t("modal.addEntry") : t("modal.editEntry")}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-[var(--bg-input)]"
+            className="p-2 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-input)]"
             aria-label={t("closeModal")}
           >
             <X className="w-5 h-5" />
@@ -184,21 +184,21 @@ function KnowledgeModal({
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1.5">{tCommon("title")}</label>
+            <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{tCommon("title")}</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t("modal.titlePlaceholder")}
-              className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
+              className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-medium)] focus:outline-none text-sm"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.type")}</label>
+            <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("modal.type")}</label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as KnowledgeType)}
-              className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white focus:border-[var(--border-medium)] focus:outline-none text-sm"
+              className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] focus:border-[var(--border-medium)] focus:outline-none text-sm"
             >
               {getTypeOptions().map((o) => (
                 <option key={o.value} value={o.value}>{t(`types.${o.value}`)}</option>
@@ -209,23 +209,23 @@ function KnowledgeModal({
           {type === "FAQ" && (
             <>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.question")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("modal.question")}</label>
                 <input
                   type="text"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder={t("modal.questionPlaceholder")}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-medium)] focus:outline-none text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.answer")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("modal.answer")}</label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   rows={4}
                   placeholder={t("answerPlaceholder")}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-medium)] focus:outline-none text-sm resize-none"
                 />
               </div>
             </>
@@ -233,7 +233,7 @@ function KnowledgeModal({
 
           {type === "Document" && (
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.uploadFile")}</label>
+              <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("modal.uploadFile")}</label>
               <div
                 className="border-2 border-dashed border-[var(--border-medium)] rounded-xl p-8 text-center hover:border-[var(--border-medium)] transition-colors"
                 onDragOver={(e) => e.preventDefault()}
@@ -245,8 +245,8 @@ function KnowledgeModal({
               >
                 {uploadState === "idle" && (
                   <>
-                    <Upload className="w-10 h-10 text-zinc-500 mx-auto mb-2" />
-                    <p className="text-sm text-zinc-400 mb-2">{t("modal.uploadHint")}</p>
+                    <Upload className="w-10 h-10 text-[var(--text-secondary)] mx-auto mb-2" />
+                    <p className="text-sm text-[var(--text-tertiary)] mb-2">{t("modal.uploadHint")}</p>
                     <label className="inline-block">
                       <input
                         type="file"
@@ -259,7 +259,7 @@ function KnowledgeModal({
                       />
                       <button
                         type="button"
-                        className="text-sm font-medium text-white bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg"
+                        className="text-sm font-medium text-[var(--text-primary)] bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg"
                       >
                         {t("modal.chooseFile")}
                       </button>
@@ -267,7 +267,7 @@ function KnowledgeModal({
                   </>
                 )}
                 {uploadState === "uploading" && (
-                  <p className="text-sm text-zinc-400">{tForms("uploading")}</p>
+                  <p className="text-sm text-[var(--text-tertiary)]">{tForms("uploading")}</p>
                 )}
                 {uploadState === "done" && (
                   <p className="text-sm text-emerald-400">{t("modal.indexedFile", { fileName })}</p>
@@ -279,13 +279,13 @@ function KnowledgeModal({
         {type === "Website" && (
             <>
               <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">{tCommon("url")}</label>
+              <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{tCommon("url")}</label>
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder={t("urlPlaceholder")}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-medium)] focus:outline-none text-sm"
                 />
               </div>
               <div>
@@ -293,7 +293,7 @@ function KnowledgeModal({
                   type="button"
                   onClick={handleMockFetch}
                   disabled={websiteFetchState === "fetching"}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm font-medium text-[var(--text-primary)] hover:bg-zinc-700 disabled:opacity-50"
                 >
                   <ExternalLink className="w-4 h-4" />
                   {websiteFetchState === "idle" && t("modal.fetch")}
@@ -306,19 +306,19 @@ function KnowledgeModal({
 
           {type === "Custom" && (
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.content")}</label>
+              <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("modal.content")}</label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={8}
                 placeholder={t("modal.contentPlaceholder")}
-                className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm resize-none"
+                className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-medium)] focus:outline-none text-sm resize-none"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t("modal.status")}</label>
+            <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("modal.status")}</label>
             <div className="flex gap-2">
               {(getStatusOptions().filter((o) => o.value !== "Processing") as { value: "Active" | "Draft" }[]).map((s) => (
                 <button
@@ -564,25 +564,25 @@ export default function KnowledgePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
         {/* Top bar */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">{t("heading")}</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">
+            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-0.5">
               {entries.length} {entries.length === 1 ? tCommon("item") : tCommon("items")}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
             <div className="relative flex-1 sm:min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
               <input
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t("searchPlaceholder")}
-                className="w-full pl-9 pr-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 focus:border-[var(--border-medium)] focus:outline-none text-sm"
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-medium)] focus:outline-none text-sm"
               />
             </div>
             <select
@@ -694,10 +694,10 @@ export default function KnowledgePage() {
           <div className="mb-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-[var(--text-primary)]">
                   {t("importHeading")}
                 </p>
-                <p className="text-xs text-zinc-500 mt-0.5">
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   {t("importDescription")}
                 </p>
               </div>
@@ -708,7 +708,7 @@ export default function KnowledgePage() {
                 value={importUrl}
                 onChange={(e) => setImportUrl(e.target.value)}
                 placeholder={t("importUrlPlaceholder")}
-                className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)]"
+                className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
               />
               <button
                 type="button"
@@ -755,7 +755,7 @@ export default function KnowledgePage() {
             )}
             {importedEntries.length > 0 && (
               <div className="mt-3 space-y-2">
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-[var(--text-secondary)]">
                   {t("importSuggestionHint")}
                 </p>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -788,7 +788,7 @@ export default function KnowledgePage() {
                       <p className="font-semibold mb-1 line-clamp-1">
                         {entry.question}
                       </p>
-                      <p className="text-[11px] text-zinc-400 line-clamp-2">
+                      <p className="text-[11px] text-[var(--text-tertiary)] line-clamp-2">
                         {entry.answer}
                       </p>
                     </button>
@@ -805,12 +805,12 @@ export default function KnowledgePage() {
             {filtered.length === 0 ? (
               <div className="col-span-full py-12 text-center rounded-xl bg-[var(--bg-card)]/30 border border-[var(--border-default)]">
                 <BookOpen className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-                <p className="text-sm font-medium text-white mb-1">{t("noEntries")}</p>
-                <p className="text-xs text-zinc-500 mb-4">{t("noEntriesHint")}</p>
+                <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("noEntries")}</p>
+                <p className="text-xs text-[var(--text-secondary)] mb-4">{t("noEntriesHint")}</p>
                 <button
                   type="button"
                   onClick={() => openAddModal()}
-                  className="text-sm font-medium text-white hover:underline"
+                  className="text-sm font-medium text-[var(--text-primary)] hover:underline"
                 >
                   {t("addFirst")}
                 </button>
@@ -825,8 +825,8 @@ export default function KnowledgePage() {
                   className="text-left p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] hover:border-[var(--border-medium)] transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-medium text-white truncate flex-1">{entry.title}</h3>
-                    <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-[var(--bg-input)] text-zinc-400">
+                    <h3 className="font-medium text-[var(--text-primary)] truncate flex-1">{entry.title}</h3>
+                    <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-[var(--bg-input)] text-[var(--text-tertiary)]">
                       <TypeIcon className="w-3 h-3" />
                       {t(`types.${entry.type}`)}
                     </span>
@@ -838,13 +838,13 @@ export default function KnowledgePage() {
                           ? "bg-emerald-500/20 text-emerald-300"
                           : entry.status === "Processing"
                             ? "bg-amber-500/20 text-amber-300"
-                            : "bg-zinc-700 text-zinc-400"
+                            : "bg-zinc-700 text-[var(--text-tertiary)]"
                       }`}
                     >
                       {t(`status.${entry.status.toLowerCase()}`)}
                     </span>
-                    <span className="text-[10px] text-zinc-500">{t("wordCount", { count: entry.wordCount })}</span>
-                    <span className="text-[10px] text-zinc-500">
+                    <span className="text-[10px] text-[var(--text-secondary)]">{t("wordCount", { count: entry.wordCount })}</span>
+                    <span className="text-[10px] text-[var(--text-secondary)]">
                       {t("usageCount", { count: entry.usageCount })}
                     </span>
                   </div>
@@ -854,7 +854,7 @@ export default function KnowledgePage() {
                       <span className="text-xs text-amber-200">{t("gapFlag")}</span>
                     </div>
                   )}
-                  <p className="text-[11px] text-zinc-500 mt-2">{t("updatedAt", { date: formatDate(entry.lastUpdated) })}</p>
+                  <p className="text-[11px] text-[var(--text-secondary)] mt-2">{t("updatedAt", { date: formatDate(entry.lastUpdated) })}</p>
                 </button>
               );
             })}
@@ -868,14 +868,14 @@ export default function KnowledgePage() {
                 <AlertTriangle className="w-4 h-4" />
                 {t("gapsHeading")}
               </h3>
-              <p className="text-xs text-zinc-400 mb-3">
+              <p className="text-xs text-[var(--text-tertiary)] mb-3">
                 {t("gapsDescription")}
               </p>
               <ul className="space-y-2">
                 {knowledgeGaps.map((gap) => (
                   <li key={gap.id} className="flex items-center justify-between gap-2">
                     <span className="text-sm text-zinc-300">
-                      {gap.topic} <span className="text-zinc-500">({gap.askCount}×)</span>
+                      {gap.topic} <span className="text-[var(--text-secondary)]">({gap.askCount}×)</span>
                     </span>
                     <button
                       type="button"
@@ -891,14 +891,14 @@ export default function KnowledgePage() {
 
             {/* Most Referenced */}
             <div className="rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] p-4">
-              <h3 className="text-sm font-semibold text-white mb-3">{t("mostReferenced")}</h3>
-              <p className="text-xs text-zinc-500 mb-3">{t("mostReferencedDescription")}</p>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{t("mostReferenced")}</h3>
+              <p className="text-xs text-[var(--text-secondary)] mb-3">{t("mostReferencedDescription")}</p>
               <div className="space-y-3">
                 {mostReferenced.map((entry) => (
                   <div key={entry.id}>
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <span className="text-xs text-zinc-300 truncate">{entry.title}</span>
-                      <span className="text-[10px] text-zinc-500">{entry.usageCount}×</span>
+                      <span className="text-[10px] text-[var(--text-secondary)]">{entry.usageCount}×</span>
                     </div>
                     <div className="h-1.5 rounded-full bg-[var(--bg-input)] overflow-hidden">
                       <div
@@ -917,7 +917,7 @@ export default function KnowledgePage() {
           <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">
             {t("testHeading")}
           </h3>
-          <p className="text-xs text-zinc-400 mb-4">
+          <p className="text-xs text-[var(--text-tertiary)] mb-4">
             {t("testDescription")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -935,20 +935,20 @@ export default function KnowledgePage() {
                 }
               }}
               placeholder={t("testPlaceholder")}
-              className="flex-1 bg-[var(--bg-input)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/50"
+              className="flex-1 bg-[var(--bg-input)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/50"
             />
             <button
               type="button"
               onClick={() => void handleTestKnowledge()}
               disabled={!testQuestion.trim() || testingKnowledge}
-              className="bg-[var(--accent-primary)] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all duration-200"
+              className="bg-[var(--accent-primary)] text-[var(--text-primary)] px-5 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all duration-200"
             >
               {testingKnowledge ? tForms("loading") : t("testButton")}
             </button>
           </div>
           {testAnswer && (
             <div className="mt-4 bg-[var(--bg-input)] border border-white/[0.06] rounded-xl p-4">
-              <p className="text-xs text-zinc-400 mb-1">{t("testAnswerLabel")}</p>
+              <p className="text-xs text-[var(--text-tertiary)] mb-1">{t("testAnswerLabel")}</p>
               <p className="text-sm text-[var(--text-primary)] leading-relaxed">{testAnswer}</p>
             </div>
           )}

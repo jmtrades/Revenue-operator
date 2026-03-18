@@ -6,6 +6,26 @@
 import { getDb } from "@/lib/db/queries";
 import type { ObjectiveStatus } from "@/lib/objectives/engine";
 
+async function oneRowCompat(q: { maybeSingle?: () => unknown; single?: () => unknown; limit?: (n: number) => unknown }): Promise<{ data: unknown | null }> {
+  try {
+    if (typeof q.maybeSingle === "function") {
+      const res = (await q.maybeSingle()) as { data?: unknown } | null;
+      return { data: res?.data ?? null };
+    }
+    if (typeof q.limit === "function") {
+      const res = (await q.limit(1)) as { data?: unknown[] } | null;
+      return { data: (res?.data ?? [])[0] ?? null };
+    }
+    if (typeof q.single === "function") {
+      const res = (await q.single()) as { data?: unknown } | null;
+      return { data: res?.data ?? null };
+    }
+    return { data: null };
+  } catch {
+    return { data: null };
+  }
+}
+
 export type AggressivenessLevel = "conservative" | "balanced" | "aggressive";
 export type RecoveryPriority = "low" | "normal" | "high";
 export type FollowupIntensity = "light" | "standard" | "heavy";
@@ -70,11 +90,10 @@ export async function planWorkspaceStrategy(
     reason = "On track toward weekly goal";
   }
 
-  const { data: existing } = await db
+  const { data: existing } = await oneRowCompat(db
     .from("workspace_strategy_state")
     .select("id")
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
+    .eq("workspace_id", workspaceId));
 
   if (existing) {
     await db
@@ -114,11 +133,10 @@ export async function getWorkspaceStrategy(
   workspaceId: string
 ): Promise<WorkspaceStrategyState> {
   const db = getDb();
-  const { data: row } = await db
+  const { data: row } = await oneRowCompat(db
     .from("workspace_strategy_state")
     .select("*")
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
+    .eq("workspace_id", workspaceId));
 
   if (!row) {
     return {

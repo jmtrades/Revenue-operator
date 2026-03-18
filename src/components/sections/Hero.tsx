@@ -70,23 +70,17 @@ export function Hero() {
           </div>
 
           <div className="max-w-md lg:ml-auto">
-            <div className="space-y-4">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-6 shadow-[var(--shadow-glow-primary)]">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
+                Revenue Recovered This Month
+              </h3>
+              <p className="text-xs text-[var(--text-secondary)] mb-4">
+                Recall Touch answers every call, books appointments, and runs follow-up sequences
+                until the revenue is recovered — automatically.
+              </p>
               <HeroRevenueWidget />
-              <div className="-mt-2 text-xs text-[var(--text-secondary)]">
+              <div className="mt-3 text-xs text-[var(--text-secondary)]">
                 {tHero("exampleDashboardLabel")}
-              </div>
-              <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-6 shadow-[var(--shadow-glow-primary)]">
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
-                  Revenue Recovered Snapshot
-                </h3>
-                <p className="text-xs text-[var(--text-secondary)] mb-4">
-                  That&apos;s what Recall Touch recovered this month for a typical service business —
-                  based on kept appointments from answered calls and automated follow-up.
-                </p>
-                <HeroRevenueWidget />
-                <div className="mt-2 text-xs text-[var(--text-secondary)]">
-                  {tHero("exampleDashboardLabel")}
-                </div>
               </div>
             </div>
           </div>

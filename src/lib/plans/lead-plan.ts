@@ -4,6 +4,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 
 export interface LeadPlanInput {
   next_action_type: string;
@@ -31,14 +32,17 @@ export async function getActiveLeadPlan(
   leadId: string
 ): Promise<LeadPlan | null> {
   const db = getDb();
-  const { data } = await db
-    .from("lead_plans")
-    .select("*")
-    .eq("workspace_id", workspaceId)
-    .eq("lead_id", leadId)
-    .eq("status", "active")
-    .maybeSingle();
-  return (data as LeadPlan | null) ?? null;
+  try {
+    const q = db
+      .from("lead_plans")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .eq("lead_id", leadId)
+      .eq("status", "active") as unknown as DbSingleQuery;
+    return (await fetchSingleRow(q)) as LeadPlan | null;
+  } catch {
+    return null;
+  }
 }
 
 export async function setLeadPlan(

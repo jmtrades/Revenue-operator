@@ -35,7 +35,7 @@ const MODES: Array<{
     name: "Business",
     description: "Answer every call, book appointments, reduce no-shows, and recover lost revenue.",
     icon: Building2,
-    bullets: ["AI phone receptionist", "Booking + reminders", "Recovery workflows"],
+    bullets: ["AI revenue recovery engine", "Booking + reminders", "Recovery workflows"],
   },
 ];
 

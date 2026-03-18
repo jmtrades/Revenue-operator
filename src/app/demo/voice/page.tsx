@@ -255,7 +255,7 @@ export default function VoiceDemoPage() {
           Hear the Difference AI Makes for Your Business
         </h1>
         <p className="text-lg md:text-xl mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-          Our AI receptionist sounds so real, your callers won&apos;t know the difference. Try it now — free.
+          Hear your AI revenue recovery engine in action — live calls, real voices, real outcomes. Try it now — free.
         </p>
         <button
           onClick={() => document.getElementById("demo-section")?.scrollIntoView({ behavior: "smooth" })}

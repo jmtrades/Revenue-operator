@@ -66,20 +66,20 @@ export default function CallsLivePage() {
   if (!workspaceId) {
     return (
       <div className="max-w-4xl mx-auto p-4 md:p-6">
-        <p className="text-zinc-400">{t("calls.live.selectWorkspace")}</p>
+        <p className="text-[var(--text-tertiary)]">{t("calls.live.selectWorkspace")}</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 pb-12">
-      <div className="flex items-center gap-2 text-zinc-400 text-sm mb-2">
-        <Link href="/app/calls" className="hover:text-white">{t("calls.live.breadcrumbCalls")}</Link>
+      <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-sm mb-2">
+        <Link href="/app/calls" className="hover:text-[var(--text-primary)]">{t("calls.live.breadcrumbCalls")}</Link>
         <ChevronRight className="w-4 h-4" />
-        <span className="text-white">{t("calls.live.breadcrumbLive")}</span>
+        <span className="text-[var(--text-primary)]">{t("calls.live.breadcrumbLive")}</span>
       </div>
-      <h1 className="text-xl font-semibold text-white mb-1">{t("calls.live.pageTitle")}</h1>
-      <p className="text-zinc-400 text-sm mb-6">{t("calls.live.pageSubtitle")}</p>
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{t("calls.live.pageTitle")}</h1>
+      <p className="text-[var(--text-tertiary)] text-sm mb-6">{t("calls.live.pageSubtitle")}</p>
 
       {loading ? (
         <div className="space-y-4">
@@ -89,34 +89,34 @@ export default function CallsLivePage() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
-              <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4">
+              <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-xs mb-1">
                 <Phone className="w-4 h-4" />
                 {t("calls.live.inProgress")}
               </div>
-              <p className="text-2xl font-semibold text-white">{data?.in_progress ?? 0}</p>
+              <p className="text-2xl font-semibold text-[var(--text-primary)]">{data?.in_progress ?? 0}</p>
             </div>
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4">
-              <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4">
+              <div className="flex items-center gap-2 text-[var(--text-tertiary)] text-xs mb-1">
                 <Clock className="w-4 h-4" />
                 {t("calls.live.waiting")}
               </div>
-              <p className="text-2xl font-semibold text-white">{data?.waiting ?? 0}</p>
+              <p className="text-2xl font-semibold text-[var(--text-primary)]">{data?.waiting ?? 0}</p>
             </div>
           </div>
 
           {!data?.active?.length ? (
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 text-center">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-8 text-center">
               <Phone className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-400">{t("calls.live.noActiveCalls")}</p>
-              <p className="text-zinc-500 text-sm mt-1">{t("calls.live.noActiveCallsHint")}</p>
+              <p className="text-[var(--text-tertiary)]">{t("calls.live.noActiveCalls")}</p>
+              <p className="text-[var(--text-secondary)] text-sm mt-1">{t("calls.live.noActiveCallsHint")}</p>
             </div>
           ) : (
             <div className="space-y-4">
               {data.active.map((call) => (
                 <div
                   key={call.id}
-                  className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5"
+                  className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
@@ -124,21 +124,21 @@ export default function CallsLivePage() {
                         <Phone className="w-5 h-5 text-green-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-[var(--text-primary)]">
                           {call.caller_name || call.caller_number || t("calls.live.unknownCaller")}
                         </p>
-                        <p className="text-xs text-zinc-500">{call.agent_name}</p>
+                        <p className="text-xs text-[var(--text-secondary)]">{call.agent_name}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5 text-zinc-400 text-sm">
+                      <div className="flex items-center gap-1.5 text-[var(--text-tertiary)] text-sm">
                         <Clock className="w-4 h-4" />
                         <DurationTimer startedAt={call.call_started_at} />
                       </div>
                       <div className="flex items-center gap-1">
                         <button
                           type="button"
-                          className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                          className="p-2 rounded-lg border border-zinc-700 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
                           title={t("calls.live.listenIn")}
                           onClick={() => toast.info(t("calls.live.listenInComingSoon"))}
                         >
@@ -146,7 +146,7 @@ export default function CallsLivePage() {
                         </button>
                         <button
                           type="button"
-                          className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                          className="p-2 rounded-lg border border-zinc-700 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
                           title={t("calls.live.whisper")}
                           onClick={() => toast.info(t("calls.live.whisperComingSoon"))}
                         >
@@ -154,7 +154,7 @@ export default function CallsLivePage() {
                         </button>
                         <button
                           type="button"
-                          className="p-2 rounded-lg border border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                          className="p-2 rounded-lg border border-zinc-700 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
                           title={t("calls.live.bargeIn")}
                           onClick={() => toast.info(t("calls.live.bargeInComingSoon"))}
                         >
@@ -163,13 +163,13 @@ export default function CallsLivePage() {
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-xl bg-zinc-950 border border-zinc-800 p-3 max-h-32 overflow-y-auto">
-                    <p className="text-xs text-zinc-500 mb-1">{t("calls.live.liveTranscript")}</p>
+                  <div className="rounded-xl bg-zinc-950 border border-[var(--border-default)] p-3 max-h-32 overflow-y-auto">
+                    <p className="text-xs text-[var(--text-secondary)] mb-1">{t("calls.live.liveTranscript")}</p>
                     <p className="text-sm text-zinc-300 whitespace-pre-wrap">
                       {call.transcript_text?.trim() || call.summary?.trim() || t("calls.live.noTranscript")}
                     </p>
                   </div>
-                  <div className="mt-2 flex items-center gap-2 text-xs text-zinc-500">
+                  <div className="mt-2 flex items-center gap-2 text-xs text-[var(--text-secondary)]">
                     <span className="inline-flex items-center gap-1">{t("calls.live.sentiment")}</span>
                   </div>
                 </div>

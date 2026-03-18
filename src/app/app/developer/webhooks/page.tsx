@@ -167,15 +167,15 @@ export default function DeveloperWebhooksPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
-      <div className="flex items-center gap-2 text-sm text-zinc-500 mb-2">
-        <Link href="/app/developer" className="hover:text-white transition-colors">
+      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)] mb-2">
+        <Link href="/app/developer" className="hover:text-[var(--text-primary)] transition-colors">
           Developer
         </Link>
         <span>/</span>
-        <span className="text-white">Webhooks</span>
+        <span className="text-[var(--text-primary)]">Webhooks</span>
       </div>
-      <h1 className="text-xl font-semibold text-white mb-1">{tDev("title")}</h1>
-      <p className="text-sm text-zinc-400 mb-6">
+      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tDev("title")}</h1>
+      <p className="text-sm text-[var(--text-tertiary)] mb-6">
         {tDev("subtitle")}
       </p>
 
@@ -190,7 +190,7 @@ export default function DeveloperWebhooksPage() {
       </div>
 
       {loading ? (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-zinc-500">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center text-[var(--text-secondary)]">
           Loading…
         </div>
       ) : endpoints.length === 0 ? (
@@ -216,13 +216,13 @@ export default function DeveloperWebhooksPage() {
                   className="flex items-center gap-3 min-w-0 text-left"
                 >
                   {expandedId === ep.id ? (
-                    <ChevronDown className="w-4 h-4 text-zinc-500 shrink-0" />
+                    <ChevronDown className="w-4 h-4 text-[var(--text-secondary)] shrink-0" />
                   ) : (
-                    <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-[var(--text-secondary)] shrink-0" />
                   )}
                   <div className="min-w-0">
-                    <p className="font-mono text-sm text-white truncate">{ep.url}</p>
-                    <p className="text-xs text-zinc-500 mt-0.5">
+                    <p className="font-mono text-sm text-[var(--text-primary)] truncate">{ep.url}</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                       {ep.events.length} events · {ep.has_secret ? tDev("secretSet") : tDev("noSecret")}
                     </p>
                   </div>
@@ -239,7 +239,7 @@ export default function DeveloperWebhooksPage() {
                   <button
                     type="button"
                     onClick={() => setDeleteConfirm(ep)}
-                    className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10"
+                    className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/10"
                     aria-label={tCommon("delete")}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -248,10 +248,10 @@ export default function DeveloperWebhooksPage() {
               </div>
 
               {expandedId === ep.id && (
-                <div className="border-t border-[var(--border-default)] p-4 bg-black/20">
-                  <p className="text-xs font-medium text-zinc-400 mb-3">{tDev("deliveryLog")}</p>
+                <div className="border-t border-[var(--border-default)] p-4 bg-[var(--bg-hover)]">
+                  <p className="text-xs font-medium text-[var(--text-tertiary)] mb-3">{tDev("deliveryLog")}</p>
                   {(!deliveriesByEndpoint[ep.id] || deliveriesByEndpoint[ep.id].length === 0) ? (
-                    <p className="text-xs text-zinc-500">{tDev("noDeliveriesYet")}</p>
+                    <p className="text-xs text-[var(--text-secondary)]">{tDev("noDeliveriesYet")}</p>
                   ) : (
                     <ul className="space-y-2">
                       {(deliveriesByEndpoint[ep.id] ?? []).map((d) => (
@@ -261,7 +261,7 @@ export default function DeveloperWebhooksPage() {
                         >
                           <div className="flex items-center justify-between gap-2 flex-wrap">
                             <span className="text-zinc-300">{d.event}</span>
-                            <span className="text-xs text-zinc-500">{formatTime(d.created_at)}</span>
+                            <span className="text-xs text-[var(--text-secondary)]">{formatTime(d.created_at)}</span>
                           </div>
                           <div className="flex items-center gap-3 mt-1.5 text-xs">
                             <span className={d.success ? "text-green-500" : "text-red-400"}>
@@ -281,12 +281,12 @@ export default function DeveloperWebhooksPage() {
                           <button
                             type="button"
                             onClick={() => setPayloadExpand(payloadExpand === d.id ? null : d.id)}
-                            className="mt-2 text-xs text-zinc-500 hover:text-white"
+                            className="mt-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                           >
                             {payloadExpand === d.id ? tDev("hidePayload") : tDev("showPayload")}
                           </button>
                           {payloadExpand === d.id && (
-                            <pre className="mt-2 p-2 rounded-lg bg-black/40 text-[10px] text-zinc-400 overflow-x-auto max-h-40 overflow-y-auto">
+                            <pre className="mt-2 p-2 rounded-lg bg-black/40 text-[10px] text-[var(--text-tertiary)] overflow-x-auto max-h-40 overflow-y-auto">
                               {JSON.stringify(d.payload, null, 2)}
                             </pre>
                           )}
@@ -310,31 +310,31 @@ export default function DeveloperWebhooksPage() {
             className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-white mb-4">{tDev("addEndpointTitle")}</h3>
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tDev("addEndpointTitle")}</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{tDev("urlLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{tDev("urlLabel")}</label>
                 <input
                   type="url"
                   value={formUrl}
                   onChange={(e) => setFormUrl(e.target.value)}
                   placeholder={tDev("urlPlaceholder")}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">{tDev("secretOptionalLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{tDev("secretOptionalLabel")}</label>
                 <input
                   type="password"
                   value={formSecret}
                   onChange={(e) => setFormSecret(e.target.value)}
                   placeholder={tDev("secretPlaceholder")}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--border-medium)] text-sm"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)] text-sm"
                 />
-                <p className="text-[11px] text-zinc-500 mt-1">{tDev("signatureHint")}</p>
+                <p className="text-[11px] text-[var(--text-secondary)] mt-1">{tDev("signatureHint")}</p>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-2">{tDev("eventsLabel")}</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">{tDev("eventsLabel")}</label>
                 <div className="flex flex-wrap gap-2">
                   {EVENT_TYPES.map((e) => (
                     <label key={e} className="flex items-center gap-1.5 cursor-pointer">
@@ -342,7 +342,7 @@ export default function DeveloperWebhooksPage() {
                         type="checkbox"
                         checked={formEvents.includes(e)}
                         onChange={() => toggleEvent(e)}
-                        className="rounded border-[var(--border-medium)] text-white"
+                        className="rounded border-[var(--border-medium)] text-[var(--text-primary)]"
                       />
                       <span className="text-xs text-zinc-300">{e}</span>
                     </label>
@@ -354,7 +354,7 @@ export default function DeveloperWebhooksPage() {
               <button
                 type="button"
                 onClick={() => setAddModal(false)}
-                className="px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-[var(--border-medium)]"
+                className="px-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-medium)]"
               >
                 {tCommon("cancel")}
               </button>

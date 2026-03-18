@@ -350,8 +350,8 @@ export default function CallIntelligencePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 p-6">
       <div>
-        <h1 className="text-xl font-semibold text-white">{t("heading")}</h1>
-        <p className="text-sm text-zinc-400 mt-1">
+        <h1 className="text-xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
+        <p className="text-sm text-[var(--text-tertiary)] mt-1">
           {t("pageSubtitle")}
         </p>
       </div>
@@ -388,30 +388,30 @@ export default function CallIntelligencePage() {
         <div className="space-y-6">
           {/* Section 1: Performance Overview */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
-              <p className="text-2xl font-bold text-white">{analyzedCount}</p>
-              <p className="text-xs text-zinc-500 mt-1">{t("stats.callsAnalyzed")}</p>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4 text-center">
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{analyzedCount}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">{t("stats.callsAnalyzed")}</p>
             </div>
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
-              <p className="text-2xl font-bold text-white">{insightCount}</p>
-              <p className="text-xs text-zinc-500 mt-1">{t("stats.insightsExtracted")}</p>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4 text-center">
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{insightCount}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">{t("stats.insightsExtracted")}</p>
             </div>
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
-              <p className="text-2xl font-bold text-white">{appliedCount}</p>
-              <p className="text-xs text-zinc-500 mt-1">{t("stats.appliedToAgent")}</p>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4 text-center">
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{appliedCount}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">{t("stats.appliedToAgent")}</p>
             </div>
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
-              <p className="text-2xl font-bold text-white">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4 text-center">
+              <p className="text-2xl font-bold text-[var(--text-primary)]">
                 {avgScore != null ? `${avgScore}/10` : "—"}
               </p>
-              <p className="text-xs text-zinc-500 mt-1">{t("stats.avgQuality")}</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">{t("stats.avgQuality")}</p>
             </div>
           </div>
 
           {/* Quality Trends */}
-          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6">
             <div className="flex items-center justify-between gap-3 mb-4">
-              <h2 className="text-base font-medium text-white">{t("chart.qualityTrends")}</h2>
+              <h2 className="text-base font-medium text-[var(--text-primary)]">{t("chart.qualityTrends")}</h2>
               <div className="flex gap-1">
                 {([7, 30, 90] as const).map((d) => (
                   <button
@@ -422,7 +422,7 @@ export default function CallIntelligencePage() {
                       "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
                       qualityTrendDays === d
                         ? "bg-white text-black"
-                        : "text-zinc-400 hover:text-white bg-zinc-800/50",
+                        : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] bg-[var(--bg-inset)]/50",
                     )}
                   >
                     {d}d
@@ -431,7 +431,7 @@ export default function CallIntelligencePage() {
               </div>
             </div>
             {qualityTrendData.length === 0 ? (
-              <p className="text-sm text-zinc-500 py-6 text-center">{t("chart.noData")}</p>
+              <p className="text-sm text-[var(--text-secondary)] py-6 text-center">{t("chart.noData")}</p>
             ) : (
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -453,10 +453,10 @@ export default function CallIntelligencePage() {
 
           {/* Common Issues + Agent Leaderboard row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
-              <h2 className="text-base font-medium text-white mb-3">{t("commonIssues.title")}</h2>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6">
+              <h2 className="text-base font-medium text-[var(--text-primary)] mb-3">{t("commonIssues.title")}</h2>
               {commonIssues.length === 0 ? (
-                <p className="text-sm text-zinc-500">{t("commonIssues.empty")}</p>
+                <p className="text-sm text-[var(--text-secondary)]">{t("commonIssues.empty")}</p>
               ) : (
                 <ul className="space-y-2">
                   {commonIssues.map((issue) => (
@@ -468,10 +468,10 @@ export default function CallIntelligencePage() {
                 </ul>
               )}
             </div>
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
-              <h2 className="text-base font-medium text-white mb-3">Agent leaderboard (avg quality)</h2>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6">
+              <h2 className="text-base font-medium text-[var(--text-primary)] mb-3">Agent leaderboard (avg quality)</h2>
               {agentLeaderboard.length === 0 ? (
-                <p className="text-sm text-zinc-500">No calls by agent yet.</p>
+                <p className="text-sm text-[var(--text-secondary)]">No calls by agent yet.</p>
               ) : (
                 <ol className="space-y-2">
                   {agentLeaderboard.map((row, idx) => (
@@ -479,7 +479,7 @@ export default function CallIntelligencePage() {
                       <span className="text-zinc-300">
                         {idx + 1}. {row.agentName}
                       </span>
-                      <span className="text-white font-medium">{row.avgScore} · {row.calls} {t("commonIssues.calls")}</span>
+                      <span className="text-[var(--text-primary)] font-medium">{row.avgScore} · {row.calls} {t("commonIssues.calls")}</span>
                     </li>
                   ))}
                 </ol>
@@ -501,7 +501,7 @@ export default function CallIntelligencePage() {
                     "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors",
                     qualityFilter === "flagged"
                       ? "bg-red-500/20 border-red-500/40 text-red-300"
-                      : "border-white/[0.08] text-zinc-400 hover:text-white",
+                      : "border-white/[0.08] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]",
                   )}
                 >
                   <Flag className="w-3.5 h-3.5" />
@@ -527,8 +527,8 @@ export default function CallIntelligencePage() {
               </div>
             ) : callExamples.length === 0 ? (
               <div className="py-8 px-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]/50 text-center">
-                <Brain className="w-10 h-10 text-zinc-500 mx-auto mb-3" aria-hidden />
-                <p className="text-sm font-medium text-white mb-1">{t("empty.analyzed")}</p>
+                <Brain className="w-10 h-10 text-[var(--text-secondary)] mx-auto mb-3" aria-hidden />
+                <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("empty.analyzed")}</p>
                 <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
                   <Link
                     href="/app/calls"
@@ -539,7 +539,7 @@ export default function CallIntelligencePage() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("manual")}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
                   >
                     {t("empty.ctaSecondary")}
                   </button>
@@ -629,7 +629,7 @@ export default function CallIntelligencePage() {
                         <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-3">
                           {call.audio_url && (
                             <div className="rounded-xl bg-[var(--bg-surface)]/80 p-3">
-                              <p className="text-[11px] font-medium text-zinc-500 mb-2 flex items-center gap-1.5">
+                              <p className="text-[11px] font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
                                 <Music2 className="w-3.5 h-3.5" />
                                 {t("recording")}
                               </p>
@@ -651,13 +651,13 @@ export default function CallIntelligencePage() {
                             </div>
                           )}
                           <div>
-                            <p className="text-[11px] font-medium text-zinc-500 mb-1.5">{t("notes.label")}</p>
+                            <p className="text-[11px] font-medium text-[var(--text-secondary)] mb-1.5">{t("notes.label")}</p>
                             <textarea
                               value={callNotes[call.id] ?? ""}
                               onChange={(e) => setCallNotes((prev) => ({ ...prev, [call.id]: e.target.value }))}
                               placeholder={t("notePlaceholder")}
                               rows={2}
-                              className="w-full px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-white/[0.06] text-sm text-[var(--text-primary)] placeholder:text-zinc-500 focus:border-[var(--accent-primary)] focus:outline-none resize-y"
+                              className="w-full px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-white/[0.06] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--accent-primary)] focus:outline-none resize-y"
                             />
                             <button
                               type="button"
@@ -748,17 +748,17 @@ export default function CallIntelligencePage() {
           </div>
 
           {/* Recent insights summary */}
-          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
-            <h2 className="text-base font-medium text-white mb-4">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6">
+            <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">
               {t("insights.title")}
             </h2>
             {loading && callInsights.length === 0 ? (
               <div className="py-8 flex flex-col items-center justify-center text-center">
-                <div className="h-8 w-48 rounded bg-zinc-800 animate-pulse mb-3" />
-                <div className="h-4 w-32 rounded bg-zinc-800 animate-pulse" />
+                <div className="h-8 w-48 rounded bg-[var(--bg-inset)] animate-pulse mb-3" />
+                <div className="h-4 w-32 rounded bg-[var(--bg-inset)] animate-pulse" />
               </div>
             ) : Object.keys(insightsByCategory).length === 0 ? (
-              <p className="text-sm text-zinc-400 py-6">
+              <p className="text-sm text-[var(--text-tertiary)] py-6">
                 {t("insights.empty")}
               </p>
             ) : (
@@ -768,26 +768,26 @@ export default function CallIntelligencePage() {
                   .map((cat) => (
                     <div
                       key={cat}
-                      className="border border-zinc-800 rounded-xl p-4 bg-zinc-900/30"
+                      className="border border-[var(--border-default)] rounded-xl p-4 bg-[var(--bg-surface)]"
                     >
-                      <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-3">
+                      <h3 className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-3">
                         {cat.replace(/_/g, " ")}
                       </h3>
                       <div className="space-y-3">
                         {insightsByCategory[cat].map((i) => (
                           <div
                             key={i.id}
-                            className="flex items-start justify-between gap-3 py-2 border-b border-zinc-800 last:border-0"
+                            className="flex items-start justify-between gap-3 py-2 border-b border-[var(--border-default)] last:border-0"
                           >
                             <div className="min-w-0 flex-1">
-                              <p className="text-sm text-white">{i.insight}</p>
+                              <p className="text-sm text-[var(--text-primary)]">{i.insight}</p>
                               {i.example_from_transcript && (
-                                <p className="text-xs text-zinc-500 mt-1 line-clamp-1">
+                                <p className="text-xs text-[var(--text-secondary)] mt-1 line-clamp-1">
                                   &quot;{i.example_from_transcript}&quot;
                                 </p>
                               )}
                               {typeof i.confidence === "number" && (
-                                <p className="text-xs text-zinc-500 mt-0.5">
+                                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                                   Quality: {Math.round(i.confidence * 10)}/10
                                 </p>
                               )}
@@ -802,14 +802,14 @@ export default function CallIntelligencePage() {
                                     onClick={() =>
                                       setApplyModal({ insightId: i.id, insight: i.insight })
                                     }
-                                    className="text-xs font-medium text-white hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
+                                    className="text-xs font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
                                   >
                                     Apply to agent
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => handleDismiss(i.id)}
-                                    className="text-xs text-zinc-500 hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
+                                    className="text-xs text-[var(--text-secondary)] hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
                                   >
                                     {t("dismiss")}
                                   </button>
@@ -826,11 +826,11 @@ export default function CallIntelligencePage() {
           </div>
 
           {/* Common Questions */}
-          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
-            <h2 className="text-base font-medium text-white mb-4">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6">
+            <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">
               {t("questions.title")}
             </h2>
-            <p className="text-sm text-zinc-400 mb-3">
+            <p className="text-sm text-[var(--text-tertiary)] mb-3">
               {t("questions.desc")}
             </p>
             {callInsights.filter(
@@ -849,9 +849,9 @@ export default function CallIntelligencePage() {
                   .map((i) => (
                     <li
                       key={i.id}
-                      className="text-sm text-white flex items-start gap-2"
+                      className="text-sm text-[var(--text-primary)] flex items-start gap-2"
                     >
-                      <span className="text-zinc-500">•</span>
+                      <span className="text-[var(--text-secondary)]">•</span>
                       <span>
                         {i.insight.trim().endsWith("?")
                           ? i.insight
@@ -861,7 +861,7 @@ export default function CallIntelligencePage() {
                   ))}
               </ul>
             ) : (
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-[var(--text-secondary)]">
                 {t("questions.empty")}
               </p>
             )}
@@ -920,7 +920,7 @@ export default function CallIntelligencePage() {
       )}
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-white text-sm shadow-lg z-50">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl bg-[var(--bg-surface)] border border-zinc-700 text-[var(--text-primary)] text-sm shadow-lg z-50">
           {toast}
         </div>
       )}
@@ -928,21 +928,21 @@ export default function CallIntelligencePage() {
       {applyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" onClick={() => setApplyModal(null)}>
           <div
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-md w-full"
+            className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-white mb-2">Apply to agent</h3>
-            <p className="text-zinc-400 text-sm mb-4 line-clamp-2">{applyModal.insight}</p>
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Apply to agent</h3>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4 line-clamp-2">{applyModal.insight}</p>
             <div className="space-y-2">
               {agents.length === 0 ? (
-                <p className="text-zinc-400 text-sm">No agents yet. Create one in Agents.</p>
+                <p className="text-[var(--text-tertiary)] text-sm">No agents yet. Create one in Agents.</p>
               ) : (
                 agents.map((a) => (
                   <button
                     key={a.id}
                     type="button"
                     onClick={() => handleApply(applyModal.insightId, a.id)}
-                    className="w-full px-4 py-2 rounded-xl border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                    className="w-full px-4 py-2 rounded-xl border border-zinc-700 text-zinc-300 text-sm hover:bg-[var(--bg-inset)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                   >
                     {a.name}
                   </button>
@@ -952,7 +952,7 @@ export default function CallIntelligencePage() {
             <button
               type="button"
               onClick={() => setApplyModal(null)}
-              className="mt-4 w-full px-4 py-2 rounded-xl text-zinc-400 text-sm hover:text-white focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+              className="mt-4 w-full px-4 py-2 rounded-xl text-[var(--text-tertiary)] text-sm hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
             >
               Cancel
             </button>

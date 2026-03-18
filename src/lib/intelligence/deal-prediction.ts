@@ -5,6 +5,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { isColdStart, COLD_START_PREDICTION_WEIGHT } from "@/lib/cold-start";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 
 export interface DealPrediction {
   deal_id: string;
@@ -15,22 +16,32 @@ export interface DealPrediction {
 
 export async function predictDealOutcome(dealId: string): Promise<DealPrediction> {
   const db = getDb();
-  const { data: deal } = await db
-    .from("deals")
-    .select("id, lead_id, workspace_id, status, created_at")
-    .eq("id", dealId)
-    .maybeSingle();
+  let deal: unknown = null;
+  try {
+    const q = db
+      .from("deals")
+      .select("id, lead_id, workspace_id, status, created_at")
+      .eq("id", dealId) as unknown as DbSingleQuery;
+    deal = await fetchSingleRow(q);
+  } catch {
+    deal = null;
+  }
   if (!deal) return { deal_id: dealId, probability: 0, signals: [], updated_at: new Date().toISOString() };
 
   const d = deal as { lead_id: string; workspace_id: string; status: string };
   let score = 0.5;
   const signals: string[] = [];
 
-  const { data: lead } = await db
-    .from("leads")
-    .select("state, last_activity_at, created_at")
-    .eq("id", d.lead_id)
-    .maybeSingle();
+  let lead: unknown = null;
+  try {
+    const q = db
+      .from("leads")
+      .select("state, last_activity_at, created_at")
+      .eq("id", d.lead_id) as unknown as DbSingleQuery;
+    lead = await fetchSingleRow(q);
+  } catch {
+    lead = null;
+  }
   if (lead) {
     const l = lead as { state: string; last_activity_at: string; created_at: string };
     if (l.state === "QUALIFIED" || l.state === "BOOKED") {

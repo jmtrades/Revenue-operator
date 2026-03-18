@@ -97,6 +97,7 @@
     "team": "チーム",
     "calendar": "カレンダー",
     "appointments": "予約",
+    "followUps": "Follow-Ups",
     "knowledge": "ナレッジ",
     "callIntelligence": "通話インテリジェンス",
     "compliance": "コンプライアンス",
@@ -4271,6 +4272,9 @@
   },
   "footer": {
     "tagline": "すべての通話を大切にする企業のための、AI音声・テキスト通信。",
+    "founderPhotoAlt": "Recall Touchの創業者Junior",
+    "founderName": "Junior",
+    "founderBio": "Recall Touchの創業者。AIで収益の取りこぼしを回収します。",
     "product": "プロダクト",
     "features": "機能",
     "pricing": "料金",
@@ -6569,6 +6573,28 @@
       "customerReturned": "顧客が戻りました",
       "theyreSet": "設定済み",
       "decisionProgressed": "決定が進行しました"
+    }
+  },
+  "productTour": {
+    "revenue": {
+      "title": "回収した収益",
+      "body": "ダッシュボードには、あなたのAIが回収した金額が表示されます。"
+    },
+    "needsAttention": {
+      "title": "対応が必要",
+      "body": "このキューは、レビューが必要なリードとフォローアップを示します。"
+    },
+    "sidebarNav": {
+      "title": "ナビゲーション",
+      "body": "サイドバーから、ダッシュボード、通話、リード、キャンペーン、設定に移動できます。"
+    },
+    "campaigns": {
+      "title": "キャンペーン",
+      "body": "アウトバウンドのシーケンスで、収益を積極的に回収します。"
+    },
+    "settings": {
+      "title": "設定",
+      "body": "通話時間、コンプライアンス、声、請求を一箇所で管理します。"
     }
   },
   "legal": {

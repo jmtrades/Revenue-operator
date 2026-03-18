@@ -146,8 +146,8 @@ export default function AppointmentsPage() {
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">{t("appointments.heading")}</h1>
-            <p className="text-sm text-zinc-400 mt-1">
+            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("appointments.heading")}</h1>
+            <p className="text-sm text-[var(--text-tertiary)] mt-1">
               {t("appointments.description")}
             </p>
           </div>
@@ -156,7 +156,7 @@ export default function AppointmentsPage() {
               type="button"
               onClick={() => setView("list")}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                view === "list" ? "bg-[var(--bg-card)] text-white" : "text-zinc-400 hover:text-white"
+                view === "list" ? "bg-[var(--bg-card)] text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
               }`}
             >
               {t("appointments.viewList")}
@@ -165,7 +165,7 @@ export default function AppointmentsPage() {
               type="button"
               onClick={() => setView("calendar")}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                view === "calendar" ? "bg-[var(--bg-card)] text-white" : "text-zinc-400 hover:text-white"
+                view === "calendar" ? "bg-[var(--bg-card)] text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
               }`}
             >
               {t("appointments.viewCalendar")}
@@ -191,11 +191,11 @@ export default function AppointmentsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[var(--border-default)]">
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.dateTime")}</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.contact")}</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.type")}</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.status")}</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-zinc-500">{t("appointments.table.source")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("appointments.table.dateTime")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("appointments.table.contact")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("appointments.table.type")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("appointments.table.status")}</th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("appointments.table.source")}</th>
                     <th className="py-3 px-4 w-8" aria-hidden />
                   </tr>
                 </thead>
@@ -205,11 +205,11 @@ export default function AppointmentsPage() {
                       key={apt.id}
                       className="border-b border-[var(--border-default)] hover:bg-[var(--bg-hover)] transition-colors"
                     >
-                      <td className="py-3 px-4 text-white">
+                      <td className="py-3 px-4 text-[var(--text-primary)]">
                         {formatDate(apt.date, t)} · {apt.time}
                       </td>
                       <td className="py-3 px-4 text-zinc-300">{apt.contactName}</td>
-                      <td className="py-3 px-4 text-zinc-400">{apt.type}</td>
+                      <td className="py-3 px-4 text-[var(--text-tertiary)]">{apt.type}</td>
                       <td className="py-3 px-4">
                         <span
                           className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border ${statusColor(apt.status)}`}
@@ -217,12 +217,12 @@ export default function AppointmentsPage() {
                           {getAppointmentStatusDisplay(apt.status, t)}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-zinc-500 text-xs">{getAppointmentSourceDisplay(apt.source, t)}</td>
+                      <td className="py-3 px-4 text-[var(--text-secondary)] text-xs">{getAppointmentSourceDisplay(apt.source, t)}</td>
                       <td className="py-3 px-4">
                         <button
                           type="button"
                           onClick={() => setSelected(apt)}
-                          className="p-1 rounded text-zinc-500 hover:text-white"
+                          className="p-1 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                           aria-label={t("appointments.viewDetails")}
                         >
                           <ChevronRight className="w-4 h-4" />
@@ -248,7 +248,7 @@ export default function AppointmentsPage() {
                       ),
                     )
                   }
-                  className="p-2 rounded-lg hover:bg-white/[0.04] text-zinc-400 hover:text-zinc-100 transition-colors"
+                  className="p-2 rounded-lg hover:bg-white/[0.04] text-[var(--text-tertiary)] hover:text-zinc-100 transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -268,7 +268,7 @@ export default function AppointmentsPage() {
                       ),
                     )
                   }
-                  className="p-2 rounded-lg hover:bg-white/[0.04] text-zinc-400 hover:text-zinc-100 transition-colors"
+                  className="p-2 rounded-lg hover:bg-white/[0.04] text-[var(--text-tertiary)] hover:text-zinc-100 transition-colors"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -277,7 +277,7 @@ export default function AppointmentsPage() {
                 {(["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const).map((key) => (
                   <div
                     key={key}
-                    className="text-center text-xs text-zinc-500 py-1"
+                    className="text-center text-xs text-[var(--text-secondary)] py-1"
                   >
                     {t(`appointments.days.${key}`)}
                   </div>
@@ -306,7 +306,7 @@ export default function AppointmentsPage() {
                           : "",
                         dayAppts.length > 0
                           ? "text-zinc-100"
-                          : "text-zinc-500",
+                          : "text-[var(--text-secondary)]",
                       ]
                         .filter(Boolean)
                         .join(" ")}
@@ -336,7 +336,7 @@ export default function AppointmentsPage() {
                     })}
                   </h4>
                   {getAppointmentsForDay(selectedDay).length === 0 ? (
-                    <p className="text-sm text-zinc-500">{t("appointments.noAppointments")}</p>
+                    <p className="text-sm text-[var(--text-secondary)]">{t("appointments.noAppointments")}</p>
                   ) : (
                     <div className="space-y-2">
                       {getAppointmentsForDay(selectedDay).map((appt) => (
@@ -347,10 +347,10 @@ export default function AppointmentsPage() {
                           <p className="text-sm text-zinc-100">
                             {appt.type || appt.contactName}
                           </p>
-                          <p className="text-xs text-zinc-500 mt-0.5">
+                          <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                             {formatDate(appt.date, t)} · {appt.time}
                           </p>
-                          <p className="text-xs text-zinc-500 mt-0.5">
+                          <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                             {appt.contactName}
                           </p>
                         </div>
@@ -364,12 +364,12 @@ export default function AppointmentsPage() {
         )}
 
         {!isEmpty && (
-          <div className="mt-6 flex items-center gap-2 text-sm text-zinc-500">
-            <Link href="/app/settings" className="hover:text-white transition-colors">
+          <div className="mt-6 flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+            <Link href="/app/settings" className="hover:text-[var(--text-primary)] transition-colors">
               {t("appointments.settings")}
             </Link>
             <span aria-hidden>·</span>
-            <Link href="/app/calendar" className="hover:text-white transition-colors">
+            <Link href="/app/calendar" className="hover:text-[var(--text-primary)] transition-colors">
               {t("appointments.calendarView")}
             </Link>
           </div>
@@ -388,20 +388,20 @@ export default function AppointmentsPage() {
             className="max-w-sm w-full rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 id="appointment-detail-title" className="text-sm font-semibold text-white mb-3">
+            <h2 id="appointment-detail-title" className="text-sm font-semibold text-[var(--text-primary)] mb-3">
               {selected.contactName}
             </h2>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500">{t("appointments.dateTimeLabel")}</dt>
-                <dd className="text-white">{formatDate(selected.date, t)} · {selected.time}</dd>
+                <dt className="text-[var(--text-secondary)]">{t("appointments.dateTimeLabel")}</dt>
+                <dd className="text-[var(--text-primary)]">{formatDate(selected.date, t)} · {selected.time}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500">{t("appointments.typeLabel")}</dt>
+                <dt className="text-[var(--text-secondary)]">{t("appointments.typeLabel")}</dt>
                 <dd className="text-zinc-300">{selected.type}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500">{t("appointments.statusLabel")}</dt>
+                <dt className="text-[var(--text-secondary)]">{t("appointments.statusLabel")}</dt>
                 <dd>
                   <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border ${statusColor(selected.status)}`}>
                     {getAppointmentStatusDisplay(selected.status, t)}
@@ -409,8 +409,8 @@ export default function AppointmentsPage() {
                 </dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500">{t("appointments.sourceLabel")}</dt>
-                <dd className="text-zinc-400 text-xs">{getAppointmentSourceDisplay(selected.source, t)}</dd>
+                <dt className="text-[var(--text-secondary)]">{t("appointments.sourceLabel")}</dt>
+                <dd className="text-[var(--text-tertiary)] text-xs">{getAppointmentSourceDisplay(selected.source, t)}</dd>
               </div>
             </dl>
             <div className="mt-4 pt-4 border-t border-[var(--border-default)] flex justify-end">

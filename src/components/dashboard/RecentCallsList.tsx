@@ -18,14 +18,13 @@ const RecentCallsList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Placeholder: In production, this would query Supabase for last 10 calls
     setLoading(false);
   }, []);
 
   const getOutcomeBadge = (outcome: CallOutcome) => {
     const badgeConfig = {
       appointment: { bg: 'bg-green-100', text: 'text-green-700', label: 'Appointment booked' },
-      lead: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Lead captured' },
+      lead: { bg: 'bg-zinc-100', text: 'text-zinc-700', label: 'Lead captured' },
       message: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Message taken' },
       transferred: { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Transferred' },
       spam: { bg: 'bg-red-100', text: 'text-red-700', label: 'Spam' },
@@ -68,8 +67,7 @@ const RecentCallsList = () => {
                 <tr
                   key={call.id}
                   onClick={() => {
-                    // Placeholder: Handle row click
-                    console.log('Call clicked:', call.id);
+                    // No-op (row click affordance only)
                   }}
                   className="border-b border-[#E5E5E0] hover:bg-[#FAFAF8] cursor-pointer transition-colors"
                 >

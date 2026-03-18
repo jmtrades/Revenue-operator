@@ -5,6 +5,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 import { getCapacityInputs } from "./capacity-stability";
 
 export type TemporalUrgencyLevel = 0 | 1 | 2 | 3;
@@ -113,12 +114,15 @@ function scoreToLevel(score: number): TemporalUrgencyLevel {
  */
 export async function getTemporalUrgency(leadId: string): Promise<TemporalUrgencyRow | null> {
   const db = getDb();
-  const { data } = await db
-    .from("guarantee_temporal_urgency")
-    .select("temporal_urgency_level, updated_at")
-    .eq("lead_id", leadId)
-    .maybeSingle();
-  return data as TemporalUrgencyRow | null;
+  try {
+    const q = db
+      .from("guarantee_temporal_urgency")
+      .select("temporal_urgency_level, updated_at")
+      .eq("lead_id", leadId) as unknown as DbSingleQuery;
+    return (await fetchSingleRow(q)) as TemporalUrgencyRow | null;
+  } catch {
+    return null;
+  }
 }
 
 /**

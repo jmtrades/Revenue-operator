@@ -44,7 +44,7 @@ export function TestStepContent({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-white">{t("testStep.title")}</h3>
+      <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("testStep.title")}</h3>
       <p className="text-xs text-[var(--text-secondary)]">
         {t("testStep.description")}
       </p>
@@ -141,7 +141,7 @@ export function TestStepContent({
                 onNext();
                 setShowGoLiveCta(false);
               }}
-              className="text-sm font-medium text-white hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
+              className="text-sm font-medium text-[var(--text-primary)] hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
             >
               {t("testStep.continue")}
             </button>

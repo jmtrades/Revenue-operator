@@ -2,6 +2,7 @@ import { VoiceProvider, VoiceProviderConfig } from "./types";
 import { VapiProvider } from "./providers/vapi";
 import { ElevenLabsConversationalProvider } from "./providers/elevenlabs-conversational";
 import { RecallVoiceProvider } from "./providers/recall-voice";
+import { PipecatVoiceProvider } from "./providers/pipecat";
 
 export function getVoiceProvider(config?: VoiceProviderConfig): VoiceProvider {
   const provider = (config?.provider ?? process.env.VOICE_PROVIDER ?? "recall") as VoiceProviderConfig["provider"];
@@ -10,6 +11,8 @@ export function getVoiceProvider(config?: VoiceProviderConfig): VoiceProvider {
       return new RecallVoiceProvider();
     case "elevenlabs":
       return new ElevenLabsConversationalProvider();
+    case "pipecat":
+      return new PipecatVoiceProvider();
     case "vapi":
       return new VapiProvider();
     default:

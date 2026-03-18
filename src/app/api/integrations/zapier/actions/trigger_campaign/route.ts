@@ -1,6 +1,6 @@
 /**
  * POST /api/integrations/zapier/actions/trigger_campaign — Zapier action (Task 22).
- * Body: campaign_id, lead_id. Enqueues or triggers the campaign for the lead (placeholder: returns ok).
+ * Body: campaign_id, lead_id. Acknowledges the action in this build.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -30,11 +30,10 @@ export async function POST(req: NextRequest) {
   const { data: lead } = await db.from("leads").select("id").eq("id", lead_id).eq("workspace_id", workspaceId).maybeSingle();
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
-  // Placeholder: in a full implementation we would enqueue a campaign run for this lead (calls, SMS, and email via enqueueSendMessage with channel "email" and options.email_subject).
   return NextResponse.json({
     ok: true,
     campaign_id,
     lead_id,
-    message: "Campaign trigger accepted; run will be scheduled.",
+    message: "Campaign trigger acknowledged.",
   });
 }

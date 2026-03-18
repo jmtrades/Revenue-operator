@@ -26,6 +26,9 @@ const Features = dynamic(
 const PricingPreview = dynamic(
   () => import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
 );
+const TestimonialsSection = dynamic(
+  () => import("@/components/sections/TestimonialsSection").then((m) => m.TestimonialsSection),
+);
 const Industries = dynamic(
   () => import("@/components/sections/Industries").then((m) => m.Industries),
 );
@@ -77,10 +80,10 @@ export default async function HomePage() {
               },
               {
                 "@type": "Question",
-                name: "What does “Revenue Execution OS” mean?",
+                name: "How is this different from an AI receptionist?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "It means we don’t just log activity. We execute the work: answer calls, capture intent, book appointments, follow up, recover no-shows, and show you what it’s worth.",
+                  text: "An AI receptionist answers calls and takes messages. Recall Touch answers calls AND runs automated follow-up sequences until the revenue is recovered — no-show recovery, reactivation campaigns, quote chasing, and proof of ROI in your dashboard. The follow-up is what pays for itself.",
                 },
               },
               {
@@ -115,11 +118,12 @@ export default async function HomePage() {
       <main id="main">
         <Hero />
         <ProblemStatement />
-        <HowItWorks />
         <HomepageRoiCalculator />
+        <HowItWorks />
         <Industries />
         <Features />
         <PricingPreview />
+        <TestimonialsSection />
         <HomepageFAQ />
         <FinalCTA />
       </main>

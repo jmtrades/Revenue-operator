@@ -5,6 +5,26 @@
 
 import { getDb } from "@/lib/db/queries";
 
+async function oneRowCompat(q: { maybeSingle?: () => unknown; single?: () => unknown; limit?: (n: number) => unknown }): Promise<{ data: unknown | null }> {
+  try {
+    if (typeof q.maybeSingle === "function") {
+      const res = (await q.maybeSingle()) as { data?: unknown } | null;
+      return { data: res?.data ?? null };
+    }
+    if (typeof q.limit === "function") {
+      const res = (await q.limit(1)) as { data?: unknown[] } | null;
+      return { data: (res?.data ?? [])[0] ?? null };
+    }
+    if (typeof q.single === "function") {
+      const res = (await q.single()) as { data?: unknown } | null;
+      return { data: res?.data ?? null };
+    }
+    return { data: null };
+  } catch {
+    return { data: null };
+  }
+}
+
 const DISINTEREST_SIGNALS = [
   /\b(?:later|later on)\b/i,
   /\b(?:busy|swamped|overwhelmed)\b/i,
@@ -62,12 +82,11 @@ export async function isLowPressureMode(
   const db = getDb();
 
   // Check lead metadata
-  const { data: lead } = await db
+  const { data: lead } = await oneRowCompat(db
     .from("leads")
     .select("metadata")
     .eq("id", leadId)
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
+    .eq("workspace_id", workspaceId));
 
   const meta = (lead as { metadata?: { low_pressure_mode?: boolean } })?.metadata;
   return meta?.low_pressure_mode === true;
@@ -82,13 +101,12 @@ export async function setLowPressureMode(
   enabled: boolean
 ): Promise<void> {
   const db = getDb();
-  const { data: lead } = await db
+  const { data: lead } = await oneRowCompat(db
     .from("leads")
     .select("metadata")
     .eq("id", leadId)
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
-  const meta = (lead as { metadata?: Record<string, unknown> })?.metadata ?? {};
+    .eq("workspace_id", workspaceId));
+  const meta = ((lead as { metadata?: Record<string, unknown> } | null)?.metadata) ?? {};
   await db
     .from("leads")
     .update({

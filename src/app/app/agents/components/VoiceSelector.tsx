@@ -36,9 +36,9 @@ function RangeSetting({
 }: RangeProps) {
   return (
     <div>
-      <label className="flex justify-between text-xs text-zinc-400">
+      <label className="flex justify-between text-xs text-[var(--text-tertiary)]">
         <span>{label}</span>
-        <span className="text-zinc-500">
+        <span className="text-[var(--text-secondary)]">
           {value}
           {suffix}
         </span>
@@ -52,7 +52,7 @@ function RangeSetting({
         onChange={(e) => onChange(parseFloat(e.target.value))}
         className="mt-2 w-full accent-white"
       />
-      {note ? <p className="mt-1 text-[10px] text-zinc-500">{note}</p> : null}
+      {note ? <p className="mt-1 text-[10px] text-[var(--text-secondary)]">{note}</p> : null}
     </div>
   );
 }
@@ -138,7 +138,7 @@ export function VoiceSelector({
   const t = useTranslations("agents");
   return (
     <div>
-      <p className="text-[11px] text-zinc-500 mb-2">{t("voiceSelector.voiceLabel")}</p>
+      <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("voiceSelector.voiceLabel")}</p>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {voices.map((voice) => (
           <VoiceCard
@@ -155,7 +155,7 @@ export function VoiceSelector({
         ))}
       </div>
       <details className="mt-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-        <summary className="cursor-pointer text-xs text-zinc-400 hover:text-white">
+        <summary className="cursor-pointer text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
           {t("voiceSelector.advancedVoiceSettings")}
         </summary>
         <div className="mt-4 space-y-4">
@@ -203,7 +203,7 @@ export function VoiceSelector({
               })
             }
           />
-          <label className="flex items-center gap-2 text-xs text-zinc-400">
+          <label className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
             <input
               type="checkbox"
               checked={agent.voiceSettings.backchannel}
@@ -219,7 +219,7 @@ export function VoiceSelector({
             />
             {t("voiceSelector.backchannelLabel")}
           </label>
-          <label className="flex items-center gap-2 text-xs text-zinc-400">
+          <label className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
             <input
               type="checkbox"
               checked={agent.voiceSettings.denoising}

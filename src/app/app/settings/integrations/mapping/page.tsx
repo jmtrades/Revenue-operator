@@ -158,7 +158,7 @@ export default function IntegrationsMappingPage() {
       ) : (
         <>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
-            <div className="grid grid-cols-12 gap-2 p-4 border-b border-[var(--border-default)] text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+            <div className="grid grid-cols-12 gap-2 p-4 border-b border-[var(--border-default)] text-[11px] font-medium text-[var(--text-secondary)] uppercase tracking-wider">
               <div className="col-span-4">Recall Touch</div>
               <div className="col-span-1" aria-hidden />
               <div className="col-span-4">CRM field ({name})</div>
@@ -181,7 +181,7 @@ export default function IntegrationsMappingPage() {
                     ))}
                   </select>
                 </div>
-                <div className="col-span-1 flex justify-center text-zinc-500" aria-hidden>→</div>
+                <div className="col-span-1 flex justify-center text-[var(--text-secondary)]" aria-hidden>→</div>
                 <div className="col-span-4">
                   <select
                     value={m.crmField}
@@ -208,7 +208,7 @@ export default function IntegrationsMappingPage() {
                   <button
                     type="button"
                     onClick={() => removeMapping(index)}
-                    className="p-2 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-red-400 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-zinc-500"
                     aria-label="Remove mapping"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -262,7 +262,7 @@ export default function IntegrationsMappingPage() {
                   ))}
                 </ul>
               )}
-              <pre className="text-xs text-zinc-400 bg-black/30 rounded-xl p-3 overflow-x-auto">
+              <pre className="text-xs text-[var(--text-tertiary)] bg-[var(--bg-inset)] rounded-xl p-3 overflow-x-auto">
                 {JSON.stringify(testResult.output, null, 2)}
               </pre>
             </div>
@@ -273,7 +273,7 @@ export default function IntegrationsMappingPage() {
       <p className="mt-6">
         <Link
           href="/app/settings/integrations"
-          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> {tSettings("integrations.backToIntegrations")}
         </Link>

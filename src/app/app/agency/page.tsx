@@ -12,11 +12,11 @@ export default function AgencyPage() {
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-8">
         <div>
-          <p className="text-sm text-zinc-500">{t("kicker")}</p>
-          <h1 className="text-2xl md:text-3xl font-semibold text-white mt-1">
+          <p className="text-sm text-[var(--text-secondary)]">{t("kicker")}</p>
+          <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text-primary)] mt-1">
             {t("title")}
           </h1>
-          <p className="text-sm text-zinc-400 mt-2 max-w-2xl leading-relaxed">
+          <p className="text-sm text-[var(--text-tertiary)] mt-2 max-w-2xl leading-relaxed">
             {t("subtitle")}
           </p>
         </div>
@@ -37,14 +37,14 @@ export default function AgencyPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.08]">
               <Building2 className="h-5 w-5 text-white/80" />
             </span>
             <div>
-              <p className="text-sm font-semibold text-white">{t("cards.workspaces.title")}</p>
-              <p className="mt-1 text-sm text-zinc-400 leading-relaxed">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{t("cards.workspaces.title")}</p>
+              <p className="mt-1 text-sm text-[var(--text-tertiary)] leading-relaxed">
                 {t("cards.workspaces.body")}
               </p>
             </div>
@@ -52,38 +52,38 @@ export default function AgencyPage() {
           <div className="mt-5 flex flex-col gap-2">
             <Link
               href={ROUTES.START}
-              className="text-sm font-semibold text-white/90 hover:text-white transition-colors no-underline inline-flex items-center gap-2"
+              className="text-sm font-semibold text-white/90 hover:text-[var(--text-primary)] transition-colors no-underline inline-flex items-center gap-2"
             >
               {t("cards.workspaces.link")} <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.08]">
               <Users className="h-5 w-5 text-white/80" />
             </span>
             <div>
-              <p className="text-sm font-semibold text-white">{t("cards.provisioning.title")}</p>
-              <p className="mt-1 text-sm text-zinc-400 leading-relaxed">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{t("cards.provisioning.title")}</p>
+              <p className="mt-1 text-sm text-[var(--text-tertiary)] leading-relaxed">
                 {t("cards.provisioning.body")}
               </p>
             </div>
           </div>
-          <p className="mt-5 text-xs text-zinc-500 leading-relaxed">
+          <p className="mt-5 text-xs text-[var(--text-secondary)] leading-relaxed">
             {t("cards.provisioning.note")}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.08]">
               <Palette className="h-5 w-5 text-white/80" />
             </span>
             <div>
-              <p className="text-sm font-semibold text-white">{t("cards.branding.title")}</p>
-              <p className="mt-1 text-sm text-zinc-400 leading-relaxed">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{t("cards.branding.title")}</p>
+              <p className="mt-1 text-sm text-[var(--text-tertiary)] leading-relaxed">
                 {t("cards.branding.body")}
               </p>
             </div>
@@ -91,7 +91,7 @@ export default function AgencyPage() {
           <div className="mt-5">
             <Link
               href={ROUTES.CONTACT}
-              className="text-sm font-semibold text-white/90 hover:text-white transition-colors no-underline inline-flex items-center gap-2"
+              className="text-sm font-semibold text-white/90 hover:text-[var(--text-primary)] transition-colors no-underline inline-flex items-center gap-2"
             >
               {t("cards.branding.link")} <ArrowUpRight className="h-4 w-4" />
             </Link>

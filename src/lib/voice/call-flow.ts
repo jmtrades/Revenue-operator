@@ -330,6 +330,7 @@ export async function handleInboundCall(
       maxDuration: 600,
       silenceTimeout: 30,
       backgroundDenoising: true,
+      metadata: { workspace_id: params.workspaceId },
     });
 
     const twiml = await voice.createInboundCall(

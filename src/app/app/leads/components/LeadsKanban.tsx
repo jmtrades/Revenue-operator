@@ -69,13 +69,13 @@ function BoardCard({ lead, onOpen, t }: { lead: LeadView; onOpen: () => void; t:
       className={`w-full text-left rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-xs hover:border-[var(--border-medium)] cursor-grab active:cursor-grabbing ${isDragging ? "opacity-50" : ""}`}
     >
       <p className="font-medium text-zinc-100 truncate">{lead.name}</p>
-      <p className="text-[11px] text-zinc-400">{lead.phone}</p>
-      <p className="text-[11px] text-zinc-500 truncate">{lead.service}</p>
+      <p className="text-[11px] text-[var(--text-tertiary)]">{lead.phone}</p>
+      <p className="text-[11px] text-[var(--text-secondary)] truncate">{lead.service}</p>
       <div className="mt-1 flex items-center justify-between gap-2">
         <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] ${scoreClass}`}>
           <span>{lead.score}</span>
         </span>
-        <span className="text-[11px] text-zinc-500">{timeSince(lead.createdAt, t)}</span>
+        <span className="text-[11px] text-[var(--text-secondary)]">{timeSince(lead.createdAt, t)}</span>
       </div>
     </div>
   );
@@ -100,7 +100,7 @@ function BoardColumn({
     >
       <div className="flex items-center justify-between mb-2">
         <p className="text-xs font-semibold text-zinc-200">{getStatusLabel(status, t)}</p>
-        <span className="text-[11px] text-zinc-500">{columnLeads.length}</span>
+        <span className="text-[11px] text-[var(--text-secondary)]">{columnLeads.length}</span>
       </div>
       <div className="space-y-2 overflow-y-auto min-h-0">
         {columnLeads.map((lead) => (

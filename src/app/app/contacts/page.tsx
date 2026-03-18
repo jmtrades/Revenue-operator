@@ -68,7 +68,7 @@ function formatLastContact(iso: string, t: (k: string, p?: { count?: number }) =
 }
 
 function avatarColorFromName(name: string) {
-  const palette = ["bg-zinc-700", "bg-zinc-600", "bg-zinc-500", "bg-zinc-800"];
+  const palette = ["bg-zinc-700", "bg-zinc-600", "bg-zinc-500", "bg-[var(--bg-inset)]"];
   let hash = 0;
   for (let i = 0; i < name.length; i += 1) {
     hash = (hash * 31 + name.charCodeAt(i)) | 0;
@@ -84,9 +84,9 @@ function typeStyles(type: ContactType) {
 }
 
 function typeBadgeStyles(type: ContactType) {
-  if (type === "lead") return "bg-zinc-800/60 text-blue-400";
-  if (type === "customer") return "bg-zinc-800/60 text-green-400";
-  return "bg-zinc-800/60 text-amber-400";
+  if (type === "lead") return "bg-[var(--bg-inset)]/60 text-blue-400";
+  if (type === "customer") return "bg-[var(--bg-inset)]/60 text-green-400";
+  return "bg-[var(--bg-inset)]/60 text-amber-400";
 }
 
 export default function AppContactsPage() {
@@ -224,11 +224,11 @@ export default function AppContactsPage() {
     <div className="relative max-w-5xl mx-auto p-4 md:p-6">
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-lg md:text-xl font-semibold text-white flex items-center gap-2">
+          <h1 className="text-lg md:text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
             {t("title")}
-            <span className="text-xs font-normal text-zinc-500">· {t("savedCount", { count })}</span>
+            <span className="text-xs font-normal text-[var(--text-secondary)]">· {t("savedCount", { count })}</span>
           </h1>
-          <p className="text-xs text-zinc-500 mt-1">
+          <p className="text-xs text-[var(--text-secondary)] mt-1">
             {t("subtitle")}
           </p>
         </div>
@@ -251,11 +251,11 @@ export default function AppContactsPage() {
             placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-zinc-500">{t("sortLabel")}</span>
+          <span className="text-xs text-[var(--text-secondary)]">{t("sortLabel")}</span>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortId)}
@@ -275,7 +275,7 @@ export default function AppContactsPage() {
             type="button"
             onClick={() => setTab(tabId)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize ${
-              tab === tabId ? "bg-zinc-800 text-white" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-400"
+              tab === tabId ? "bg-[var(--bg-inset)] text-[var(--text-primary)]" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-tertiary)]"
             }`}
           >
             {t(`tabs.${tabId}`)}
@@ -296,8 +296,8 @@ export default function AppContactsPage() {
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] py-12 px-6 text-center">
-          <p className="text-sm text-zinc-400 mb-2">{t("empty.title")}</p>
-          <p className="text-xs text-zinc-500">
+          <p className="text-sm text-[var(--text-tertiary)] mb-2">{t("empty.title")}</p>
+          <p className="text-xs text-[var(--text-secondary)]">
             {t("empty.subtitle")}
           </p>
         </div>
@@ -316,7 +316,7 @@ export default function AppContactsPage() {
                     } border-[var(--border-default)] hover:bg-[var(--bg-input)] transition-colors ${selectedId === c.id ? "ring-1 ring-[var(--border-medium)]" : ""}`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-white shrink-0 ${avatarColorFromName(
+                      className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-[var(--text-primary)] shrink-0 ${avatarColorFromName(
                         fullName
                       )}`}
                     >
@@ -324,7 +324,7 @@ export default function AppContactsPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="text-sm font-medium text-white truncate">{fullName}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] truncate">{fullName}</p>
                         <span
                           className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${typeBadgeStyles(
                             c.type
@@ -333,11 +333,11 @@ export default function AppContactsPage() {
                           {t(`form.type.${c.type}`)}
                         </span>
                       </div>
-                      <p className="text-xs text-zinc-400 truncate">
+                      <p className="text-xs text-[var(--text-tertiary)] truncate">
                         {c.phone}
                         {c.email ? ` · ${c.email}` : ""}
                       </p>
-                      <p className="text-[11px] text-zinc-500 mt-1">
+                      <p className="text-[11px] text-[var(--text-secondary)] mt-1">
                         {formatLastContact(c.lastContact, t)}
                       </p>
                     </div>
@@ -356,7 +356,7 @@ export default function AppContactsPage() {
             {selected ? (
               <ContactDetail contact={selected} />
             ) : (
-              <div className="rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-input)]/40 p-6 text-sm text-zinc-500">
+              <div className="rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-input)]/40 p-6 text-sm text-[var(--text-secondary)]">
                 {t("empty.detail")}
               </div>
             )}
@@ -365,7 +365,7 @@ export default function AppContactsPage() {
       )}
 
       <p className="mt-6">
-        <Link href="/app/activity" className="text-sm text-zinc-400 hover:text-white transition-colors">
+        <Link href="/app/activity" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
           ← {tCommon("activity")}
         </Link>
       </p>
@@ -389,13 +389,13 @@ export default function AppContactsPage() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-sm font-semibold text-white">{t("drawer.title")}</h2>
-                <p className="text-xs text-zinc-500 mt-0.5">{t("drawer.subtitle")}</p>
+                <h2 className="text-sm font-semibold text-[var(--text-primary)]">{t("drawer.title")}</h2>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{t("drawer.subtitle")}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowAdd(false)}
-                className="text-xs text-zinc-400 hover:text-white"
+                className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
                 aria-label={tCommon("close")}
               >
                 {tCommon("close")}
@@ -404,12 +404,12 @@ export default function AppContactsPage() {
             <div className="flex-1 overflow-y-auto space-y-3 pr-1">
               <div className="flex gap-2">
                 <div className="flex-1">
-                  <label className="block text-[11px] text-zinc-500 mb-1">{t("form.firstNameLabel")}</label>
+                  <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("form.firstNameLabel")}</label>
                   <input
                     type="text"
                     value={formFirstName}
                     onChange={(e) => setFormFirstName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder={t("form.firstNamePlaceholder")}
                   />
                   {formErrors.firstName && (
@@ -417,12 +417,12 @@ export default function AppContactsPage() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[11px] text-zinc-500 mb-1">{t("form.lastNameLabel")}</label>
+                  <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("form.lastNameLabel")}</label>
                   <input
                     type="text"
                     value={formLastName}
                     onChange={(e) => setFormLastName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder={t("form.lastNamePlaceholder")}
                   />
                   {formErrors.lastName && (
@@ -431,12 +431,12 @@ export default function AppContactsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.phoneLabel")}</label>
+                <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("form.phoneLabel")}</label>
                 <input
                   type="tel"
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("form.phonePlaceholder")}
                 />
                 {formErrors.phone && (
@@ -444,17 +444,17 @@ export default function AppContactsPage() {
                 )}
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.emailLabel")}</label>
+                <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("form.emailLabel")}</label>
                 <input
                   type="email"
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("form.emailPlaceholder")}
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.typeLabel")}</label>
+                <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("form.typeLabel")}</label>
                 <select
                   value={formType}
                   onChange={(e) => setFormType(e.target.value as ContactType)}
@@ -466,7 +466,7 @@ export default function AppContactsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.tagsLabel")}</label>
+                <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("form.tagsLabel")}</label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"
@@ -478,7 +478,7 @@ export default function AppContactsPage() {
                         handleAddTag();
                       }
                     }}
-                    className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                    className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder={t("form.tagsPlaceholder")}
                   />
                   <button
@@ -496,21 +496,21 @@ export default function AppContactsPage() {
                         key={tag}
                         type="button"
                         onClick={() => setFormTags((prev) => prev.filter((t) => t !== tag))}
-                        className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-200"
+                        className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-zinc-200"
                       >
-                        {tag} <span className="text-zinc-500">×</span>
+                        {tag} <span className="text-[var(--text-secondary)]">×</span>
                       </button>
                     ))}
                   </div>
                 )}
               </div>
               <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">{t("form.notesLabel")}</label>
+                <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("form.notesLabel")}</label>
                 <textarea
                   rows={3}
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-white placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none resize-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none resize-none"
                   placeholder={t("form.notesPlaceholder")}
                 />
               </div>
@@ -561,8 +561,8 @@ function ContactDetail({ contact }: { contact: Contact }) {
     <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/60 p-5 text-sm text-zinc-200">
       <div className="flex items-start justify-between gap-3 mb-4">
         <div>
-          <h2 className="text-sm font-semibold text-white">{fullName}</h2>
-          <p className="text-xs text-zinc-500 mt-0.5">{t(`form.type.${contact.type}`)}</p>
+          <h2 className="text-sm font-semibold text-[var(--text-primary)]">{fullName}</h2>
+          <p className="text-xs text-[var(--text-secondary)] mt-0.5">{t(`form.type.${contact.type}`)}</p>
         </div>
         {typeof contact.score === "number" && (
           <div className="w-10 h-10 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-zinc-200">
@@ -571,7 +571,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
         )}
       </div>
       <div className="space-y-2 mb-4">
-        <p className="text-xs text-zinc-400">{formatLastContact(contact.lastContact, t)}</p>
+        <p className="text-xs text-[var(--text-tertiary)]">{formatLastContact(contact.lastContact, t)}</p>
         <div className="flex flex-wrap gap-2 text-xs">
           <a
             href={`tel:${encodeURIComponent(contact.phone)}`}
@@ -593,7 +593,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
             {contact.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-200"
+                className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-zinc-200"
               >
                 {tag}
               </span>
@@ -604,7 +604,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
       {contact.notes && (
         <div className="mb-4">
           <h3 className="text-xs font-semibold text-zinc-300 mb-1.5">Notes</h3>
-          <p className="text-xs text-zinc-400 whitespace-pre-line">{contact.notes}</p>
+          <p className="text-xs text-[var(--text-tertiary)] whitespace-pre-line">{contact.notes}</p>
         </div>
       )}
       <div>
@@ -617,7 +617,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
                   <div className="w-1 h-1 rounded-full bg-zinc-500" />
                 </div>
                 <div>
-                  <p className="text-[11px] text-zinc-500">
+                  <p className="text-[11px] text-[var(--text-secondary)]">
                     {new Date(h.date).toLocaleString(undefined, {
                       month: "short",
                       day: "numeric",
@@ -632,7 +632,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
             ))}
           </ul>
         ) : (
-          <p className="text-xs text-zinc-500">{t("empty.noCallsForContact")}</p>
+          <p className="text-xs text-[var(--text-secondary)]">{t("empty.noCallsForContact")}</p>
         )}
       </div>
     </div>

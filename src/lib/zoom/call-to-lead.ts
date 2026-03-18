@@ -3,6 +3,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 
 export interface MatchResult {
   lead_id: string | null;
@@ -39,12 +40,17 @@ export async function matchCallToLead(
   const db = getDb();
 
   if (context.calendarLeadId) {
-    const { data: lead } = await db
-      .from("leads")
-      .select("id")
-      .eq("id", context.calendarLeadId)
-      .eq("workspace_id", workspaceId)
-      .maybeSingle();
+    let lead: unknown = null;
+    try {
+      const q = db
+        .from("leads")
+        .select("id")
+        .eq("id", context.calendarLeadId)
+        .eq("workspace_id", workspaceId) as unknown as DbSingleQuery;
+      lead = await fetchSingleRow(q);
+    } catch {
+      lead = null;
+    }
     if (lead) return { lead_id: (lead as { id: string }).id, confidence: 1, method: "calendar" };
   }
 
@@ -54,13 +60,18 @@ export async function matchCallToLead(
   ].map(normalizeEmail).filter(Boolean);
 
   for (const email of emails) {
-    const { data: lead } = await db
-      .from("leads")
-      .select("id")
-      .eq("workspace_id", workspaceId)
-      .ilike("email", email)
-      .limit(1)
-      .maybeSingle();
+    let lead: unknown = null;
+    try {
+      const q = db
+        .from("leads")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .ilike("email", email)
+        .limit(1) as unknown as DbSingleQuery;
+      lead = await fetchSingleRow(q);
+    } catch {
+      lead = null;
+    }
     if (lead) return { lead_id: (lead as { id: string }).id, confidence: 0.95, method: "email" };
   }
 

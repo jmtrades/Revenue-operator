@@ -34,11 +34,11 @@ export default function AppSettingsErrorsPage() {
   return (
     <div className="max-w-[700px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: t("title"), href: "/app/settings" }, { label: t("errorsPage.title") }]} />
-      <h1 className="text-lg font-semibold text-white mb-2">{t("errorsPage.title")}</h1>
-      <p className="text-sm text-zinc-500 mb-6">{t("errorsPage.description")}</p>
+      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("errorsPage.title")}</h1>
+      <p className="text-sm text-[var(--text-secondary)] mb-6">{t("errorsPage.description")}</p>
 
       {loading ? (
-        <p className="text-sm text-zinc-500">{t("errorsPage.loading")}</p>
+        <p className="text-sm text-[var(--text-secondary)]">{t("errorsPage.loading")}</p>
       ) : (
         <>
           {Object.keys(grouped).length > 0 && (
@@ -46,7 +46,7 @@ export default function AppSettingsErrorsPage() {
               {Object.entries(grouped).map(([type, count]) => (
                 <span
                   key={type}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900/50 px-3 py-2 text-sm text-zinc-300"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-[var(--bg-surface)] px-3 py-2 text-sm text-zinc-300"
                 >
                   <AlertTriangle className="w-4 h-4 text-amber-500" />
                   {type}: {count}
@@ -55,7 +55,7 @@ export default function AppSettingsErrorsPage() {
             </div>
           )}
           {entries.length === 0 ? (
-            <p className="text-sm text-zinc-500">{t("errorsPage.empty")}</p>
+            <p className="text-sm text-[var(--text-secondary)]">{t("errorsPage.empty")}</p>
           ) : (
             <ul className="space-y-3">
               {entries.map((e) => (
@@ -63,10 +63,10 @@ export default function AppSettingsErrorsPage() {
                   key={e.id}
                   className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4"
                 >
-                  <p className="text-sm font-medium text-white truncate" title={e.error_message}>
+                  <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={e.error_message}>
                     {e.error_message}
                   </p>
-                  <div className="mt-1 flex items-center gap-2 text-[11px] text-zinc-500">
+                  <div className="mt-1 flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
                     {e.error_type && (
                       <span className="rounded border border-zinc-700 px-1.5 py-0.5">{e.error_type}</span>
                     )}
@@ -85,7 +85,7 @@ export default function AppSettingsErrorsPage() {
       )}
 
       <p className="mt-6">
-        <Link href="/app/settings" className="text-sm text-zinc-400 hover:text-white transition-colors">{t("errorsPage.backToSettings")}</Link>
+        <Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{t("errorsPage.backToSettings")}</Link>
       </p>
     </div>
   );

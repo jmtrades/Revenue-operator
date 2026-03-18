@@ -5,6 +5,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import type { LeadState } from "@/lib/types";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
 
 const DEFAULT_COOLDOWN_HOURS: Record<string, number> = {
   reassurance: 6,
@@ -70,7 +71,16 @@ export async function canInterveneNow(
   stage: LeadState
 ): Promise<CanInterveneResult> {
   const db = getDb();
-  const { data: settingsRow } = await db.from("settings").select("cooldown_by_type_hours, max_touches_per_day_by_stage").eq("workspace_id", workspaceId).maybeSingle();
+  let settingsRow: unknown = null;
+  try {
+    const q = db
+      .from("settings")
+      .select("cooldown_by_type_hours, max_touches_per_day_by_stage")
+      .eq("workspace_id", workspaceId) as unknown as DbSingleQuery;
+    settingsRow = await fetchSingleRow(q);
+  } catch {
+    settingsRow = null;
+  }
 
   const cooldownByType = (settingsRow as { cooldown_by_type_hours?: Record<string, number> })?.cooldown_by_type_hours ?? DEFAULT_COOLDOWN_HOURS;
   const maxTouchesByStage = (settingsRow as { max_touches_per_day_by_stage?: Record<string, number> })?.max_touches_per_day_by_stage ?? DEFAULT_MAX_TOUCHES;
@@ -81,12 +91,17 @@ export async function canInterveneNow(
 
   const today = new Date().toISOString().slice(0, 10);
 
-  const { data: row } = await db
-    .from("lead_intervention_limits")
-    .select("*")
-    .eq("workspace_id", workspaceId)
-    .eq("lead_id", leadId)
-    .maybeSingle();
+  let row: unknown = null;
+  try {
+    const q = db
+      .from("lead_intervention_limits")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .eq("lead_id", leadId) as unknown as DbSingleQuery;
+    row = await fetchSingleRow(q);
+  } catch {
+    row = null;
+  }
 
   if (!row) {
     return { allowed: true };
@@ -161,18 +176,29 @@ export async function recordIntervention(
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
 
-  const { data: existing } = await db
-    .from("lead_intervention_limits")
-    .select("id, daily_touch_count, daily_touch_reset_at")
-    .eq("workspace_id", workspaceId)
-    .eq("lead_id", leadId)
-    .maybeSingle();
+  let existing: unknown = null;
+  try {
+    const q = db
+      .from("lead_intervention_limits")
+      .select("id, daily_touch_count, daily_touch_reset_at")
+      .eq("workspace_id", workspaceId)
+      .eq("lead_id", leadId) as unknown as DbSingleQuery;
+    existing = await fetchSingleRow(q);
+  } catch {
+    existing = null;
+  }
 
   if (existing) {
     const e = existing as { id: string; daily_touch_count: number; daily_touch_reset_at: string };
     const resetToday = e.daily_touch_reset_at === today;
     const newCount = resetToday ? e.daily_touch_count + 1 : 1;
-    const { data: settingsRow } = await db.from("settings").select("cooldown_by_type_hours").eq("workspace_id", workspaceId).maybeSingle();
+    let settingsRow: unknown = null;
+    try {
+      const q = db.from("settings").select("cooldown_by_type_hours").eq("workspace_id", workspaceId) as unknown as DbSingleQuery;
+      settingsRow = await fetchSingleRow(q);
+    } catch {
+      settingsRow = null;
+    }
     const cooldownByType = (settingsRow as { cooldown_by_type_hours?: Record<string, number> })?.cooldown_by_type_hours ?? DEFAULT_COOLDOWN_HOURS;
     const category = interventionToCooldownCategory(interventionType);
     const cooldownHours = cooldownByType[category] ?? DEFAULT_COOLDOWN_HOURS[category] ?? 12;
@@ -193,7 +219,13 @@ export async function recordIntervention(
       .eq("workspace_id", workspaceId)
       .eq("lead_id", leadId);
   } else {
-    const { data: settingsRow } = await db.from("settings").select("cooldown_by_type_hours").eq("workspace_id", workspaceId).maybeSingle();
+    let settingsRow: unknown = null;
+    try {
+      const q = db.from("settings").select("cooldown_by_type_hours").eq("workspace_id", workspaceId) as unknown as DbSingleQuery;
+      settingsRow = await fetchSingleRow(q);
+    } catch {
+      settingsRow = null;
+    }
     const cooldownByType = (settingsRow as { cooldown_by_type_hours?: Record<string, number> })?.cooldown_by_type_hours ?? DEFAULT_COOLDOWN_HOURS;
     const category = interventionToCooldownCategory(interventionType);
     const cooldownHours = cooldownByType[category] ?? DEFAULT_COOLDOWN_HOURS[category] ?? 12;

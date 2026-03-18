@@ -109,20 +109,20 @@ function CallRecordingPlayer({ src }: { src: string }) {
             className="w-full h-2 rounded-full appearance-none bg-[var(--border-default)] accent-white cursor-pointer"
             aria-label={t("seekAria")}
           />
-          <div className="flex justify-between text-[11px] text-zinc-500">
+          <div className="flex justify-between text-[11px] text-[var(--text-secondary)]">
             <span>{formatPlaybackTime(currentTime)}</span>
             <span>{formatPlaybackTime(duration)}</span>
           </div>
         </div>
       </div>
       <div className="flex items-center gap-4 flex-wrap">
-        <span className="text-[11px] text-zinc-500">{t("playbackSpeed")}</span>
+        <span className="text-[11px] text-[var(--text-secondary)]">{t("playbackSpeed")}</span>
         {PLAYBACK_SPEEDS.map((s) => (
           <button
             key={s}
             type="button"
             onClick={() => setSpeed(s)}
-            className={`text-xs px-2 py-1 rounded ${speed === s ? "bg-white text-black" : "text-zinc-400 hover:text-white bg-[var(--border-default)]"}`}
+            className={`text-xs px-2 py-1 rounded ${speed === s ? "bg-white text-black" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] bg-[var(--border-default)]"}`}
           >
             {s}x
           </button>
@@ -132,7 +132,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
           download
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white"
+          className="inline-flex items-center gap-1.5 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
         >
           <Download className="h-3.5 w-3.5" />
           {t("download")}
@@ -283,17 +283,17 @@ export default function AppCallDetailPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto p-6 space-y-6 animate-pulse">
-        <div className="h-4 w-32 bg-zinc-800 rounded" />
-        <div className="h-8 w-64 bg-zinc-800 rounded" />
+        <div className="h-4 w-32 bg-[var(--bg-inset)] rounded" />
+        <div className="h-8 w-64 bg-[var(--bg-inset)] rounded" />
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 bg-zinc-800 rounded-xl" />
+            <div key={i} className="h-20 bg-[var(--bg-inset)] rounded-xl" />
           ))}
         </div>
-        <div className="h-40 bg-zinc-800 rounded-xl" />
+        <div className="h-40 bg-[var(--bg-inset)] rounded-xl" />
         <div className="flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4 text-zinc-500" />
-          <span className="text-sm text-zinc-400">{t("calls.detail.backToCalls")}</span>
+          <ArrowLeft className="w-4 h-4 text-[var(--text-secondary)]" />
+          <span className="text-sm text-[var(--text-tertiary)]">{t("calls.detail.backToCalls")}</span>
         </div>
       </div>
     );
@@ -305,13 +305,13 @@ export default function AppCallDetailPage() {
         <button
           type="button"
           onClick={() => history.back()}
-          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white mb-4"
+          className="inline-flex items-center gap-2 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           {t("common.back")}
         </button>
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-[var(--text-tertiary)]">
             {error ?? t("calls.detail.notFound")}
           </p>
         </div>
@@ -330,11 +330,11 @@ export default function AppCallDetailPage() {
 
       <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-white flex items-center gap-2 flex-wrap">
-            <PhoneCall className="w-5 h-5 text-zinc-500" />
+          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2 flex-wrap">
+            <PhoneCall className="w-5 h-5 text-[var(--text-secondary)]" />
             {name}
           </h1>
-          <p className="mt-1 text-sm text-zinc-500 flex items-center gap-3 flex-wrap">
+          <p className="mt-1 text-sm text-[var(--text-secondary)] flex items-center gap-3 flex-wrap">
             <span className="inline-flex items-center gap-1.5">
               <CalendarClock className="w-4 h-4" />
               {formatTime(call.call_started_at)}
@@ -367,7 +367,7 @@ export default function AppCallDetailPage() {
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 space-y-5">
         {call.recording_url && (
           <section>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
               Recording
             </h2>
             <CallRecordingPlayer src={call.recording_url} />
@@ -376,7 +376,7 @@ export default function AppCallDetailPage() {
 
         {summaryText && (
           <section>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
               Call summary
             </h2>
             <p className="text-sm text-zinc-200 leading-relaxed">
@@ -387,14 +387,14 @@ export default function AppCallDetailPage() {
 
         {followupPlan && (
           <section>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
               Recommended follow-up
             </h2>
             <p className="text-sm text-zinc-300 leading-relaxed">{followupPlan}</p>
             {(call.lead_id ?? call.matched_lead?.id) && (
               <Link
                 href="/app/inbox"
-                className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-zinc-300 hover:text-white"
+                className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-zinc-300 hover:text-[var(--text-primary)]"
               >
                 Follow up in inbox →
               </Link>
@@ -404,24 +404,24 @@ export default function AppCallDetailPage() {
 
         {call.matched_lead && (
           <section>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
               Contact
             </h2>
             <p className="text-sm text-zinc-100">
               {call.matched_lead.name || "—"}
             </p>
             {call.matched_lead.email && (
-              <p className="text-xs text-zinc-400">{call.matched_lead.email}</p>
+              <p className="text-xs text-[var(--text-tertiary)]">{call.matched_lead.email}</p>
             )}
             {call.matched_lead.company && (
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-[var(--text-tertiary)]">
                 {call.matched_lead.company}
               </p>
             )}
             {(call.lead_id ?? call.matched_lead?.id) && (
               <Link
                 href="/app/leads"
-                className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-zinc-300 hover:text-white"
+                className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-zinc-300 hover:text-[var(--text-primary)]"
               >
                 View lead →
               </Link>
@@ -430,7 +430,7 @@ export default function AppCallDetailPage() {
         )}
 
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
             Transcript
           </h2>
           {utterances && utterances.length > 0 ? (
@@ -450,7 +450,7 @@ export default function AppCallDetailPage() {
                       </div>
                     ) : (
                       <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center">
-                        <User className="w-3.5 h-3.5 text-zinc-400" />
+                        <User className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
                       </div>
                     )}
                   </div>
@@ -459,7 +459,7 @@ export default function AppCallDetailPage() {
                       <span
                         className={cn(
                           "text-xs font-medium",
-                          u.speaker === "agent" ? "text-zinc-300" : "text-zinc-400",
+                          u.speaker === "agent" ? "text-zinc-300" : "text-[var(--text-tertiary)]",
                         )}
                       >
                         {formatSpeaker(u.speaker)}
@@ -477,7 +477,7 @@ export default function AppCallDetailPage() {
               {call.transcript_text}
             </pre>
           ) : (
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-[var(--text-secondary)]">
               No transcript available for this call.
             </p>
           )}

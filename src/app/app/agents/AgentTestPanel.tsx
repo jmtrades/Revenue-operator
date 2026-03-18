@@ -243,9 +243,9 @@ export function AgentTestPanel({
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-zinc-800 flex items-center justify-center mb-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-[var(--bg-inset)] flex items-center justify-center mb-4">
             <svg
-              className="w-7 h-7 text-zinc-400"
+              className="w-7 h-7 text-[var(--text-tertiary)]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -258,8 +258,8 @@ export function AgentTestPanel({
               />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-white mb-1">{tAgents("testYourAgentHeading")}</h2>
-          <p className="text-sm text-white/50 max-w-sm mx-auto">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-1">{tAgents("testYourAgentHeading")}</h2>
+          <p className="text-sm text-[var(--text-tertiary)] max-w-sm mx-auto">
             {tAgents("testYourAgentSubtitle")}
           </p>
         </div>
@@ -282,7 +282,7 @@ export function AgentTestPanel({
                 onClick={() => startTest(s.prompt)}
                 className="text-left px-4 py-2.5 rounded-xl border border-white/[0.08] hover:bg-white/[0.04] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
               >
-                <p className="text-sm font-medium text-white">{s.label}</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">{s.label}</p>
                 <p className="text-xs text-white/40 mt-0.5">{s.prompt}</p>
               </button>
             ))}
@@ -295,7 +295,7 @@ export function AgentTestPanel({
   return (
     <div className="flex flex-col h-[500px]">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-white/70">{tAgents("testingLabel", { name: agent.name })}</h2>
+        <h2 className="text-sm font-medium text-[var(--text-secondary)]">{tAgents("testingLabel", { name: agent.name })}</h2>
         <button
           type="button"
           onClick={() => {
@@ -323,12 +323,12 @@ export function AgentTestPanel({
             className={`rounded-xl p-3 ${
               msg.role === "caller"
                 ? "bg-white/[0.04] mr-8"
-                : "bg-zinc-800/80 border border-zinc-700/50 ml-8"
+                : "bg-[var(--bg-inset)]/80 border border-zinc-700/50 ml-8"
             }`}
           >
             <p
               className={`text-xs font-medium mb-0.5 ${
-                msg.role === "caller" ? "text-white/35" : "text-zinc-400"
+                msg.role === "caller" ? "text-white/35" : "text-[var(--text-tertiary)]"
               }`}
             >
               {msg.role === "caller" ? tAgents("youAsCaller") : tAgents("aiAgent")}
@@ -337,8 +337,8 @@ export function AgentTestPanel({
           </div>
         ))}
         {(loading || isSpeaking) && (
-          <div className="rounded-xl p-3 bg-zinc-800/80 border border-zinc-700/50 ml-8">
-            <p className="text-xs text-zinc-400">
+          <div className="rounded-xl p-3 bg-[var(--bg-inset)]/80 border border-zinc-700/50 ml-8">
+            <p className="text-xs text-[var(--text-tertiary)]">
               {loading ? tAgents("thinking") : tAgents("speaking")}
             </p>
             <div className="flex gap-1 mt-1">
@@ -399,7 +399,7 @@ export function AgentTestPanel({
             placeholder={tAgents("inputPlaceholder")}
             disabled={loading || isListening}
             aria-label={tAgents("inputAria")}
-            className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-zinc-600 focus:outline-none disabled:opacity-50"
+            className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:border-zinc-600 focus:outline-none disabled:opacity-50"
           />
           <button
             type="button"

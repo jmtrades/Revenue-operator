@@ -11,6 +11,15 @@ import { getDb } from "@/lib/db/queries";
 import { getWarmthScores } from "@/lib/momentum/warmth";
 import { predictDealOutcome } from "@/lib/intelligence/deal-prediction";
 
+async function maybeSingleCompat(q: { maybeSingle?: () => unknown; single?: () => unknown }): Promise<{ data: unknown | null }> {
+  try {
+    const res = (typeof q.maybeSingle === "function" ? await q.maybeSingle() : await q.single?.()) as { data?: unknown } | null;
+    return { data: res?.data ?? null };
+  } catch {
+    return { data: null };
+  }
+}
+
 export interface ReadinessDriver {
   factor: string;
   contribution: number;
@@ -58,12 +67,13 @@ export async function computeReadiness(
   const signals: Record<string, number> = {};
   const riskFactors: string[] = [];
 
-  const { data: lead } = await db
-    .from("leads")
-    .select("state, last_activity_at, created_at, opt_out")
-    .eq("id", leadId)
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
+  const { data: lead } = await maybeSingleCompat(
+    db
+      .from("leads")
+      .select("state, last_activity_at, created_at, opt_out")
+      .eq("id", leadId)
+      .eq("workspace_id", workspaceId),
+  );
 
   if (!lead) {
     return {
@@ -117,7 +127,9 @@ export async function computeReadiness(
     const workspaceWeight = Math.min(1, Math.max(0, localSampleSize / 50));
     const priorWeight = 1 - workspaceWeight;
 
-    const { data: settingsRow } = await db.from("settings").select("business_type").eq("workspace_id", workspaceId).maybeSingle();
+    const { data: settingsRow } = await maybeSingleCompat(
+      db.from("settings").select("business_type").eq("workspace_id", workspaceId),
+    );
     const businessType = (settingsRow as { business_type?: string })?.business_type;
     const bucket = !businessType ? "unknown" : /saas|software/i.test(businessType) ? "saas" : /consulting|agency|services/i.test(businessType) ? "professional_services" : "other";
     const { data: priors } = await db.from("network_patterns").select("pattern_type, aggregate_value, sample_count").eq("industry_bucket", bucket).gte("sample_count", 5);
@@ -221,7 +233,9 @@ export async function computeReadiness(
   for (const a of actionLogs ?? []) {
     evidenceChain.push(`action_log:${(a as { id: string }).id}`);
   }
-  const { data: convRow } = await db.from("conversations").select("id").eq("lead_id", leadId).limit(1).maybeSingle();
+  const { data: convRow } = await maybeSingleCompat(
+    db.from("conversations").select("id").eq("lead_id", leadId).limit(1),
+  );
   const convId = (convRow as { id?: string })?.id;
   if (convId) {
     const { data: msgs } = await db.from("messages").select("id").eq("conversation_id", convId).order("created_at", { ascending: false }).limit(10);

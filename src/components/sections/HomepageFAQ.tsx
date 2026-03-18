@@ -17,8 +17,8 @@ const FAQS: FaqItem[] = [
     a: "No. Recall Touch is the execution layer. Keep your CRM; we focus on answering, booking, follow-ups, and proof of ROI.",
   },
   {
-    q: "What does “Revenue Execution OS” mean?",
-    a: "It means we don’t just log activity. We execute the work: answer calls, capture intent, book appointments, follow up, recover no-shows, and show you what it’s worth.",
+    q: "How is this different from an AI receptionist?",
+    a: "An AI receptionist answers calls and takes messages. Recall Touch answers calls AND runs automated follow-up sequences until the revenue is recovered — no-show recovery, reactivation campaigns, quote chasing, and proof of ROI in your dashboard. The follow-up is what pays for itself.",
   },
   {
     q: "Is there a free trial?",

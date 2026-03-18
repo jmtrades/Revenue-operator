@@ -19,6 +19,16 @@ import { isFeatureEnabled, isRampComplete } from "@/lib/autonomy";
 import { canSend, getFallbackChannel } from "@/lib/channels/capabilities";
 import { getWarmupLimit } from "@/lib/warmup";
 import { getBookingRoute } from "@/lib/intelligence/booking-routing";
+import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
+
+async function maybeSingleCompat(q: { maybeSingle?: () => unknown; single?: () => unknown }): Promise<{ data: unknown | null }> {
+  try {
+    const res = (typeof q.maybeSingle === "function" ? await q.maybeSingle() : await q.single?.()) as { data?: unknown } | null;
+    return { data: res?.data ?? null };
+  } catch {
+    return { data: null };
+  }
+}
 
 export type InterventionType =
   | "follow_up"
@@ -101,7 +111,9 @@ export async function decideIntervention(
     };
   }
 
-  const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspaceId).maybeSingle();
+  const { data: settingsRow } = await maybeSingleCompat(
+    db.from("settings").select("*").eq("workspace_id", workspaceId),
+  );
   const settings = mergeSettings(settingsRow as Parameters<typeof mergeSettings>[0]);
   if (settings.vip_rules?.exclude_from_messaging) {
     const domains = settings.vip_rules.domains ?? [];
@@ -130,7 +142,9 @@ export async function decideIntervention(
     };
   }
 
-  const { data: wsRow } = await db.from("workspaces").select("status, created_at").eq("id", workspaceId).maybeSingle();
+  const { data: wsRow } = await maybeSingleCompat(
+    db.from("workspaces").select("status, created_at").eq("id", workspaceId),
+  );
   if ((wsRow as { status?: string })?.status === "paused") {
     return {
       intervene: false,
@@ -158,14 +172,19 @@ export async function decideIntervention(
         reason_code: "low_pressure_mode",
       };
     }
-    const { data: lastOut } = await db
-      .from("outbound_messages")
-      .select("sent_at")
-      .eq("lead_id", leadId)
-      .not("sent_at", "is", null)
-      .order("sent_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    let lastOut: unknown = null;
+    try {
+      const q = db
+        .from("outbound_messages")
+        .select("sent_at")
+        .eq("lead_id", leadId)
+        .not("sent_at", "is", null)
+        .order("sent_at", { ascending: false })
+        .limit(1) as unknown as DbSingleQuery;
+      lastOut = await fetchSingleRow(q);
+    } catch {
+      lastOut = null;
+    }
     const lastSentAt = (lastOut as { sent_at?: string })?.sent_at ? new Date((lastOut as { sent_at: string }).sent_at) : null;
     const seventyTwoHoursAgo = new Date(Date.now() - 72 * 60 * 60 * 1000);
     if (lastSentAt && lastSentAt > seventyTwoHoursAgo) {
@@ -213,7 +232,9 @@ export async function decideIntervention(
     }
   }
 
-  const { data: convRow } = await db.from("conversations").select("channel").eq("lead_id", leadId).limit(1).maybeSingle();
+  const { data: convRow } = await maybeSingleCompat(
+    db.from("conversations").select("channel").eq("lead_id", leadId).limit(1),
+  );
   let channel = (convRow as { channel?: string })?.channel ?? "web";
   const channelCanSend = await canSend(channel);
   if (!channelCanSend) {
@@ -362,7 +383,9 @@ export async function decideIntervention(
     confidence = 0.8;
     reasonCode = INTERVENTION_REASON_CODES.attendance_protection;
   } else if ((state === "QUALIFIED" || state === "ENGAGED") && stateVector.deal_probability > 0.6) {
-    const { data: dealRow } = await db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1).maybeSingle();
+    const { data: dealRow } = await maybeSingleCompat(
+      db.from("deals").select("id").eq("lead_id", leadId).neq("status", "lost").limit(1),
+    );
     const dealId = (dealRow as { id?: string })?.id;
     if (dealId && effectiveAllowedActions.includes("booking")) {
       const route = await getBookingRoute(dealId);
