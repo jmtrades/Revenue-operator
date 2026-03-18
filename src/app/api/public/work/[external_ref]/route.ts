@@ -20,8 +20,11 @@ function trim(s: string): string {
 
 const EVIDENCE_STATEMENT = "Outcome evidence was attached.";
 
+const DEBUG_PUBLIC_WORK_HEADER = "x-rt-public-work";
+const DEBUG_PUBLIC_WORK_HEADER_VALUE = "hardened-v2";
+
 function neutralResponse(): NextResponse {
-  return NextResponse.json({
+  const res = NextResponse.json({
     what_happened: [] as string[],
     if_removed: [] as string[],
     reliance: [] as string[],
@@ -39,6 +42,8 @@ function neutralResponse(): NextResponse {
     can_respond: false,
     can_follow_up: false,
   });
+  res.headers.set(DEBUG_PUBLIC_WORK_HEADER, DEBUG_PUBLIC_WORK_HEADER_VALUE);
+  return res;
 }
 
 function resolveDefaultExport<T>(mod: unknown): T {
@@ -60,7 +65,12 @@ export async function GET(
         ? resolvedParams.external_ref
         : "";
     if (!external_ref) {
-      return NextResponse.json({ error: "external_ref required" }, { status: 400 });
+      const res = NextResponse.json(
+        { error: "external_ref required" },
+        { status: 400 }
+      );
+      res.headers.set(DEBUG_PUBLIC_WORK_HEADER, DEBUG_PUBLIC_WORK_HEADER_VALUE);
+      return res;
     }
 
     // IMPORTANT: dynamic imports prevent import-time crashes (e.g. missing env
@@ -197,7 +207,9 @@ export async function GET(
         overThreshold: false,
       }));
       if (overThreshold) return neutralResponse();
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+      const res = NextResponse.json({ error: "Not found" }, { status: 404 });
+      res.headers.set(DEBUG_PUBLIC_WORK_HEADER, DEBUG_PUBLIC_WORK_HEADER_VALUE);
+      return res;
     }
 
     await incrementPublicRecordRateLimit(ipHash, external_ref).catch(
