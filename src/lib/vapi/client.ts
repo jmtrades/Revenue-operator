@@ -1,14 +1,23 @@
 /**
  * Vapi API client: create assistant, create phone call (Twilio inbound).
- * Uses ElevenLabs for TTS and Deepgram for STT when configured for human-like voice.
+ *
+ * COST OPTIMIZATION (Phase 1):
+ * - Default TTS: Deepgram Aura-2 ($0.022/min vs ElevenLabs $0.05/min)
+ * - Default LLM: Claude Haiku 4.5 for routine calls ($0.009/min vs Sonnet $0.03/min)
+ * - ElevenLabs available as premium TTS via usePremiumVoice flag
+ * - Claude Sonnet available for complex calls via useComplexLlm flag
+ *
+ * Phase 2 will replace Vapi entirely with Pipecat (saves $0.05/min orchestration fee).
  */
 
 import { getVapiServerKey } from "./env";
 import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
+import { ACTIVE_VOICE_STACK } from "@/lib/voice/types";
 
 const VAPI_BASE = "https://api.vapi.ai";
 
-const DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // Sarah — warm, professional
+const DEFAULT_VOICE_ID = "aura-asteria-en"; // Deepgram Aura-2 — warm, professional
+const PREMIUM_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // ElevenLabs Sarah — premium add-on
 
 export interface CreateAssistantInput {
   name: string;
@@ -35,6 +44,10 @@ export interface CreateAssistantInput {
     style?: number;
     useSpeakerBoost?: boolean;
   };
+  /** Optional: use premium ElevenLabs voice instead of Deepgram Aura-2 default. */
+  usePremiumVoice?: boolean;
+  /** Optional: use Claude Sonnet for complex calls instead of Haiku default. */
+  useComplexLlm?: boolean;
   /** Optional: max call duration in seconds. Default 600 (10 min). */
   maxDurationSeconds?: number | null;
   /** Optional: AMD config for outbound voicemail detection. */
@@ -56,18 +69,44 @@ export interface CreateCallInput {
 }
 
 /**
- * Create a Vapi assistant. When voiceId is provided, uses ElevenLabs turbo + Deepgram Nova-2
- * for human-like voice and low latency. Otherwise falls back to OpenAI model + default config.
+ * Build the Vapi assistant request body. Shared between create and update.
+ * Uses Deepgram Aura-2 + Claude Haiku by default (Phase 1 cost optimization).
+ * Set usePremiumVoice=true for ElevenLabs, useComplexLlm=true for Claude Sonnet.
  */
-export async function createAssistant(input: CreateAssistantInput): Promise<{ id: string }> {
-  const key = getVapiServerKey();
-  if (!key) throw new Error("VAPI_API_KEY not set");
-
+function buildAssistantBody(input: CreateAssistantInput): Record<string, unknown> {
   const firstMessage = input.firstMessage || "Hello, how can I help you today?";
-  const voiceId = (input.voiceId ?? "").trim() || DEFAULT_VOICE_ID;
   const lang = (input.language ?? "en").trim() || "en";
   const voiceSettings = input.voiceSettings ?? {};
   const v = { ...HUMAN_VOICE_DEFAULTS, ...voiceSettings };
+
+  // Cost optimization: Deepgram Aura-2 default ($0.022/min), ElevenLabs for premium ($0.05/min)
+  const usePremium = input.usePremiumVoice === true;
+  const voiceId = usePremium
+    ? ((input.voiceId ?? "").trim() || PREMIUM_VOICE_ID)
+    : ((input.voiceId ?? "").trim() || DEFAULT_VOICE_ID);
+
+  // Cost optimization: Haiku for routine ($0.009/min), Sonnet for complex ($0.03/min)
+  const useComplex = input.useComplexLlm === true;
+  const llmModel = useComplex ? "claude-sonnet-4-20250514" : "claude-haiku-4-5-20251001";
+  const maxTokens = useComplex ? 350 : 250;
+
+  const voiceConfig = usePremium
+    ? {
+        provider: "11labs",
+        voiceId,
+        model: "eleven_turbo_v2_5",
+        stability: v.stability,
+        speed: v.speed,
+        similarityBoost: v.similarityBoost,
+        style: v.style,
+        useSpeakerBoost: v.useSpeakerBoost,
+        optimizeStreamingLatency: 4,
+      }
+    : {
+        provider: "deepgram",
+        voiceId,
+        model: "aura-2",
+      };
 
   const body: Record<string, unknown> = {
     name: input.name,
@@ -75,22 +114,12 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
     endCallMessage: input.endCallMessage ?? `Thank you for calling. Have a great day!`,
     model: {
       provider: "anthropic",
-      model: "claude-sonnet-4-20250514",
+      model: llmModel,
       temperature: 0.45,
-      maxTokens: 350,
+      maxTokens,
       messages: [{ role: "system", content: input.systemPrompt }],
     },
-    voice: {
-      provider: "11labs",
-      voiceId,
-      model: "eleven_turbo_v2_5",
-      stability: v.stability,
-      speed: v.speed,
-      similarityBoost: v.similarityBoost,
-      style: v.style,
-      useSpeakerBoost: v.useSpeakerBoost,
-      optimizeStreamingLatency: 4,
-    },
+    voice: voiceConfig,
     transcriber: {
       provider: "deepgram",
       model: "nova-2",
@@ -114,13 +143,29 @@ export async function createAssistant(input: CreateAssistantInput): Promise<{ id
   if (Array.isArray(input.toolCalls) && input.toolCalls.length > 0) {
     (body.model as { tools?: unknown[] }).tools = input.toolCalls.map((t) => ({
       type: "function" as const,
-      function: {
-        name: t.name,
-        description: t.description,
-        parameters: t.parameters,
-      },
+      function: { name: t.name, description: t.description, parameters: t.parameters },
     }));
   }
+
+  if (input.voicemailDetection && Object.keys(input.voicemailDetection).length > 0) {
+    body.voicemailDetection = input.voicemailDetection;
+  }
+  if (input.voicemailMessage != null && String(input.voicemailMessage).trim()) {
+    body.voicemailMessage = String(input.voicemailMessage).trim();
+  }
+
+  return body;
+}
+
+/**
+ * Create a Vapi assistant. Uses Deepgram Aura-2 + Claude Haiku by default.
+ * Set usePremiumVoice/useComplexLlm for premium options.
+ */
+export async function createAssistant(input: CreateAssistantInput): Promise<{ id: string }> {
+  const key = getVapiServerKey();
+  if (!key) throw new Error("VAPI_API_KEY not set");
+
+  const body = buildAssistantBody(input);
 
   const res = await fetch(`${VAPI_BASE}/assistant`, {
     method: "POST",
@@ -151,63 +196,7 @@ export async function updateAssistant(
   const key = getVapiServerKey();
   if (!key) throw new Error("VAPI_API_KEY not set");
 
-  const firstMessage = input.firstMessage || "Hello, how can I help you today?";
-  const voiceId = (input.voiceId ?? "").trim() || DEFAULT_VOICE_ID;
-  const lang = (input.language ?? "en").trim() || "en";
-  const voiceSettings = input.voiceSettings ?? {};
-  const v = { ...HUMAN_VOICE_DEFAULTS, ...voiceSettings };
-
-  const body: Record<string, unknown> = {
-    name: input.name,
-    firstMessage,
-    endCallMessage: input.endCallMessage ?? `Thank you for calling. Have a great day!`,
-    model: {
-      provider: "anthropic",
-      model: "claude-sonnet-4-20250514",
-      temperature: 0.45,
-      maxTokens: 350,
-      messages: [{ role: "system", content: input.systemPrompt }],
-    },
-    voice: {
-      provider: "11labs",
-      voiceId,
-      model: "eleven_turbo_v2_5",
-      stability: v.stability,
-      speed: v.speed,
-      similarityBoost: v.similarityBoost,
-      style: v.style,
-      useSpeakerBoost: v.useSpeakerBoost,
-      optimizeStreamingLatency: 4,
-    },
-    transcriber: {
-      provider: "deepgram",
-      model: "nova-2",
-      language: lang,
-      smartFormat: true,
-    },
-    silenceTimeoutSeconds: 30,
-    maxDurationSeconds: input.maxDurationSeconds && input.maxDurationSeconds > 0 ? input.maxDurationSeconds : 600,
-    backgroundSound: "off",
-    backchannelingEnabled: v.backchannel,
-    backgroundDenoisingEnabled: v.denoising,
-    responseDelaySeconds: v.responseDelay,
-    numWordsToInterruptAssistant: 2,
-    modelOutputInMessagesEnabled: true,
-  };
-
-  if (input.workspaceId) body.metadata = { workspace_id: input.workspaceId };
-  if (input.voicemailDetection && Object.keys(input.voicemailDetection).length > 0) {
-    body.voicemailDetection = input.voicemailDetection;
-  }
-  if (input.voicemailMessage != null && String(input.voicemailMessage).trim()) {
-    body.voicemailMessage = String(input.voicemailMessage).trim();
-  }
-  if (Array.isArray(input.toolCalls) && input.toolCalls.length > 0) {
-    (body.model as { tools?: unknown[] }).tools = input.toolCalls.map((t) => ({
-      type: "function" as const,
-      function: { name: t.name, description: t.description, parameters: t.parameters },
-    }));
-  }
+  const body = buildAssistantBody(input);
 
   const res = await fetch(`${VAPI_BASE}/assistant/${assistantId}`, {
     method: "PATCH",

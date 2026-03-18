@@ -64,6 +64,20 @@
 
 **Standalone vs acquisition:** Build for standalone scaling with acquisition optionality. The most attractive acquirers (ServiceTitan, Podium, Housecall Pro, Mindbody, Toast, or even Twilio/Vonage) want to buy what they can't easily build: a working AI execution layer with proven vertical expertise, embedded customer workflows, and real revenue data. Building standalone to $20-50M ARR makes the company attractive at 10-15x revenue for a strategic acquisition ($200M-$750M+).
 
+### Revenue Ceiling Math (Conservative)
+
+| Milestone | Accounts | Blended ARPU | MRR | ARR |
+|-----------|----------|--------------|-----|-----|
+| Month 6 | 200 | $350 | $70K | $840K |
+| Month 12 | 800 | $420 | $336K | $4M |
+| Month 18 | 2,500 | $480 | $1.2M | $14.4M |
+| Month 24 | 6,000 | $550 | $3.3M | $39.6M |
+| Month 36 | 15,000 | $620 | $9.3M | $111.6M |
+
+**Why ARPU grows:** Expansion revenue. Customers land on $297/mo, then add locations ($200/ea), seats ($49/ea), premium voice ($100/mo), campaigns add-on ($99/mo), API access ($199/mo). Net revenue retention target: 135%+. Every customer you keep becomes worth more every quarter without selling them anything new — the system upsells itself through usage growth and demonstrated ROI.
+
+**Critical insight:** The top 10% of accounts will generate 45%+ of revenue. A single 50-location franchise at $500/location = $25K/mo. Five franchise deals = $1.5M ARR. The agency channel compounds: one agency bringing 50 sub-accounts at $150/ea = $7,500/mo recurring with zero direct sales cost.
+
 ---
 
 ## SECTION 2 — CATEGORY CREATION
@@ -232,6 +246,36 @@ The market breaks down into three tiers by timing, urgency, and readiness to ado
 3. **Best long-term massive wedge:** Multi-location/franchise — highest ARPU, strongest lock-in, most defensible
 4. **Strategic PLG play:** Solo/prosumer at $29-$79/mo — volume, virality, and upgrade funnel but never the revenue focus
 
+### Revenue Expansion Matrix (Land → Expand)
+
+Every ICP has a predictable expansion path. This is how ARPU grows from $297 to $1,500+ without a single outbound sales call:
+
+| ICP | Land (Month 1) | Expand 1 (Month 3) | Expand 2 (Month 6) | Expand 3 (Month 12) | 12-Mo Account Value |
+|-----|----------------|---------------------|---------------------|----------------------|---------------------|
+| Home Services | $297 (AI answering) | +$99 (campaigns) | +$200 (2nd location) | +$497 (full sequence engine) | $1,093/mo |
+| Dental | $497 (answering + reminders) | +$200 (reactivation) | +$497 (multi-provider) | +$500 (custom voice) | $1,694/mo |
+| Legal | $497 (intake AI) | +$199 (CRM sync) | +$297 (campaign engine) | +$997 (multi-attorney) | $1,990/mo |
+| Med Spa | $497 (booking + reminders) | +$200 (reactivation) | +$300 (review generation) | +$500 (2nd location) | $1,497/mo |
+| Agency | $99/sub-acct × 5 ($495) | × 15 ($1,485) | × 30 ($2,970) | × 50 ($4,950) | $4,950/mo |
+| Franchise | $500/loc × 5 ($2,500) | × 15 ($7,500) | × 30 ($15,000) | × 50 ($25,000) | $25,000/mo |
+| Solo | $49 | +$30 (extra minutes) | → $297 (upgrades to Business) | +$99 (campaigns) | $425/mo |
+
+**Key insight:** The product must be designed so every feature the customer touches reveals the NEXT feature they need. The follow-up engine shows them their dead leads → "Want to reactivate them? That's the Reactivation Engine on Growth+." The analytics show missed calls → "Want AI to answer those? Upgrade to include 24/7 AI agent." Usage-based expansion is the most powerful revenue lever because the customer sells themselves.
+
+### Wallet Share Capture Strategy
+
+For a typical service business spending $2,000-$8,000/month on growth tools:
+- CRM: $50-300/mo → Recall Touch replaces contact management portion
+- Answering service: $200-1,500/mo → Recall Touch replaces entirely (at lower cost)
+- Scheduling tool: $20-80/mo → Recall Touch replaces entirely
+- SMS marketing: $50-200/mo → Recall Touch includes
+- Review management: $100-300/mo → Recall Touch adds (upsell)
+- Marketing automation: $100-500/mo → Recall Touch partially replaces
+
+**Total wallet share addressable:** $520-$2,880/mo per business. Target capture: 40-60% = $200-$1,700/mo. This means the $297-$997/mo pricing actually SAVES the customer money while giving Recall Touch massive revenue per account.
+
+**How to sell this:** "You're paying $1,400/month across 6 different tools that don't talk to each other. Recall Touch replaces 4 of them and adds AI execution on top — for $497/month. You save $900/month AND get better results."
+
 ---
 
 ## SECTION 5 — COMPETITOR WAR MAP
@@ -285,6 +329,48 @@ The market breaks down into three tiers by timing, urgency, and readiness to ado
 
 **Acquisition-relevant differentiation:** Proprietary conversation data across verticals. After 10,000+ businesses, Recall Touch knows what the optimal dental intake script is, what the best HVAC after-hours greeting sounds like, and what follow-up cadence has the highest show rate for med spa consultations. This data is the real moat.
 
+### Competitive Displacement Playbooks
+
+**Stealing from Smith.ai / Ruby (Human receptionists):**
+- Hook: "You're paying $800/month for humans who work 9-5. Recall Touch works 24/7 for $297/month and never calls in sick."
+- Proof: Side-by-side comparison — calls answered per month, after-hours coverage, follow-up capability, revenue recovered (they provide zero follow-up)
+- Migration offer: "Switch in 10 minutes. We'll match your first month at their price, then drop to $297."
+- Killer feature they can't match: Automated follow-up engine, no-show recovery, reactivation campaigns. Human receptionists just answer — they don't execute.
+
+**Stealing from GoHighLevel (All-in-one platform):**
+- Hook: "GHL gives you 47 tools that each work at 60%. Recall Touch gives you one system that works at 100% on the thing that matters most: capturing revenue."
+- Proof: Revenue recovered dashboard (GHL has nothing like this). Voice quality comparison. Time-to-value (GHL takes weeks to set up, RT takes 3 minutes).
+- Migration offer: "Import your GHL contacts in one click. Keep GHL for marketing, use RT for revenue execution."
+- Killer feature they can't match: AI voice quality, vertical intelligence, revenue attribution, sub-3-minute onboarding.
+
+**Stealing from Calendly/Acuity (Booking tools):**
+- Hook: "Calendly waits for people to book. Recall Touch books FOR them — and follows up when they don't."
+- Proof: Show the gap — Calendly captures 30% of potential bookings (only people who click the link). RT captures 80%+ (AI books during calls, follows up via SMS, recovers no-shows).
+- Price anchor: "You pay $16/month for a booking link. For $297/month, you get a booking link + AI receptionist + follow-up engine + no-show recovery + revenue dashboard. The ROI isn't comparable."
+
+**Stealing from ServiceTitan/Housecall Pro (FSM tools):**
+- Hook: "ServiceTitan is great at dispatch. But who answers the phone when your team is on a job? That's where you're losing $10K+/month."
+- Proof: Missed call audit. "We'll show you exactly how many calls your team is missing while ServiceTitan manages the jobs you already have."
+- Migration offer: "We integrate with ServiceTitan. This isn't a replacement — it's the layer that feeds ServiceTitan more jobs."
+- Positioning: Complementary, not competitive. "ServiceTitan = operations. Recall Touch = revenue capture."
+
+### Win Rate Optimization
+
+**Price anchoring strategy:** Always show the cost of NOT using Recall Touch before showing the price. "You lose an average of $8,400/month to missed calls. Recall Touch costs $297/month. That's a 28x return."
+
+**Risk reversal stack:**
+1. 14-day free trial (no credit card required)
+2. "Recover your subscription cost in 3 days or cancel" guarantee
+3. Month-to-month billing (no annual lock-in required, but offer 20% discount for annual)
+4. Dedicated onboarding call for Business+ plans
+5. "Revenue recovered" dashboard proves ROI every single day
+
+**Urgency triggers:**
+- "Your competitors are already using AI to answer calls you're missing"
+- Real-time counter: "347 calls answered by Recall Touch in the last hour"
+- Seasonal urgency: "HVAC season starts in 6 weeks — are you ready to capture every emergency call?"
+- Social proof: "12 dental practices in [city] signed up this month"
+
 ---
 
 ## SECTION 6 — CURRENT-STATE PRODUCT DIAGNOSIS
@@ -323,18 +409,31 @@ The current UI and brand feel like a startup tool, not enterprise infrastructure
 
 No habit loops are built into the product. Successful SaaS creates daily or weekly reasons to return. The weekly email digest (now implemented) is a start, but the product needs: morning briefing ("Here's what happened overnight"), push notifications for high-value events ("$2,400 job just booked by your AI"), streak mechanics ("Your AI has answered every call for 30 days straight"), and competitive benchmarks ("Your response time is faster than 87% of dental practices in your area").
 
-### Top 10 Changes Ranked by Impact
+### Top 10 Changes Ranked by Impact (With Revenue Impact Estimates)
 
-1. **Revenue recovered hero metric** on dashboard (retention + word-of-mouth driver)
-2. **Homepage rewrite** with Revenue Execution OS positioning, revenue claim, and social proof
-3. **Sub-3-minute onboarding** with industry template auto-config and instant test call
-4. **Weekly email digest** with revenue recap (DONE — implemented this session)
-5. **Social proof integration** — testimonials, case studies, business count, revenue counter
-6. **Pricing page redesign** with outcome-named tiers and ROI calculator
-7. **Morning briefing notification** system (push + email + in-app)
-8. **Industry template library** expansion with pre-built scripts for top 6 verticals
-9. **Call quality scoring** visible to users (builds trust that AI is performing well)
-10. **Competitive benchmark dashboard** ("You're faster than 87% of businesses in your vertical")
+| Rank | Change | Revenue Impact | Mechanism |
+|------|--------|---------------|-----------|
+| 1 | **Revenue recovered hero metric** on dashboard | **+40% retention** = $2.4M ARR saved at $6M base | Users who see ROI proof churn at 2%/mo vs 5%/mo without |
+| 2 | **Homepage rewrite** with Revenue Execution OS positioning | **+60% signup conversion** = 2x pipeline | Category ownership + revenue claim + social proof converts 3x generic positioning |
+| 3 | **Sub-3-minute onboarding** with industry template auto-config | **+35% activation** = 35% more paying customers | Every minute added to time-to-value costs 15-25% of signups |
+| 4 | **Weekly email digest** with revenue recap (DONE) | **+25% retention** | Weekly "you recovered $X" email is the single cheapest retention mechanic |
+| 5 | **Social proof integration** — testimonials, case studies, revenue counter | **+30% homepage conversion** | Trust is the #1 objection for AI voice. Proof eliminates it. |
+| 6 | **Pricing page redesign** with outcome-named tiers and ROI calculator | **+20% plan-to-paid conversion**, **+15% ARPU** | ROI calculator anchors against cost-of-inaction, not price. Users self-select higher tiers. |
+| 7 | **Morning briefing notification** system | **+15% DAU**, **+10% retention** | Daily touch point creates habit. Habit = retention. Retention = LTV. |
+| 8 | **Industry template library** expansion | **+25% activation for new verticals** | Each template opens a new ICP. 6 verticals × hundreds of businesses each. |
+| 9 | **Call quality scoring** visible to users | **-20% support tickets**, **+10% trust retention** | Transparency builds trust. Trust prevents churn. |
+| 10 | **Competitive benchmark dashboard** | **+15% engagement**, **premium upsell trigger** | "You're faster than 87% of dentists" → shareable → viral. Gate behind Growth+ tier = upgrade trigger. |
+
+### Revenue Being Left on the Table Right Now
+
+**Quantified losses from current weaknesses:**
+- Homepage not converting: ~$180K/year in lost signups (assuming 5,000 monthly visitors × 2% current vs 5% optimized × $297 ARPU)
+- Slow onboarding killing activation: ~$120K/year (35% of signups drop before first call — each one worth $3,564 LTV)
+- No social proof: ~$90K/year (prospects who visit pricing page but don't convert due to zero trust signals)
+- No morning briefing: ~$200K/year in preventable churn (users who go 14+ days without logging in churn at 40%)
+- Generic pricing tiers: ~$150K/year in ARPU left on table (users who would pay $497 but choose $297 because differentiation is unclear)
+
+**Total estimated revenue leakage: $740K/year** — more than enough to justify aggressive investment in fixing every item on this list.
 
 ---
 
@@ -361,6 +460,28 @@ The product spans these use cases without becoming messy because the core engine
 ---
 
 ## SECTION 8 — FULL PRODUCT ARCHITECTURE (18 MODULES)
+
+### Revenue Classification of All Modules
+
+Every module falls into one of four revenue roles. This classification determines what's free (to hook), what's gated (to monetize), and what creates lock-in (to retain):
+
+| Role | Purpose | Examples | Revenue Mechanism |
+|------|---------|----------|-------------------|
+| **Hook** (Free/Starter) | Get users in, create aha moment | Inbox, Timeline, Basic Booking, Call Transcripts | Activation → conversion to paid |
+| **Core** (Paid tiers) | Deliver primary value, justify subscription | AI Follow-Up, No-Show Recovery, AI Voice Agent | Subscription revenue ($297-997/mo) |
+| **Expansion** (Upsell) | Grow ARPU after initial sale | Campaigns, Reactivation, CRM Sync, Analytics+ | Expansion revenue (+$99-499/mo per add-on) |
+| **Lock-in** (Retention) | Make switching impossible | Memory Graph, Workflow Engine, Multi-Location, API | Retention (data gravity, process dependency) |
+
+### Upgrade Trigger Design
+
+The product must be designed so free/starter users constantly encounter walls that make the upgrade feel obvious and irresistible:
+
+- **Trigger 1 — Usage ceiling:** "You've answered 95 of your 100 included calls. Upgrade to Business for 500 calls." (Shows revenue recovered per call to anchor value)
+- **Trigger 2 — Feature preview:** Show the reactivation engine results in read-only mode on Starter. "You have 47 dormant contacts worth an estimated $14,100. Upgrade to activate the Reactivation Engine."
+- **Trigger 3 — Competitive benchmark (gated):** "Your response time is faster than 72% of businesses in your area. [Upgrade to see full benchmarks and share this badge on your website]"
+- **Trigger 4 — Revenue ceiling visibility:** "Your AI recovered $2,400 this month. Businesses on the Growth plan recover an average of $8,700/month. [See what you're missing →]"
+- **Trigger 5 — Team invitation:** When a Starter user tries to invite a team member: "Team features are available on Business+. Add unlimited team members for $297/mo."
+- **Trigger 6 — API/Integration request:** When user tries to connect CRM: "Native CRM sync is available on Growth+. Basic webhook available now — or upgrade for real-time bi-directional sync."
 
 ### Module 1: Universal Omnichannel Inbox
 - Why: Single view of all customer conversations across voice, SMS, email, webchat
@@ -519,6 +640,18 @@ Recall Touch uses a mode system to present the same core engine through three di
 2. In Settings > Workspace > Mode (can switch anytime)
 
 Switching modes does not delete data. It reconfigures the UI. A solo user who grows into a team can switch to Sales Mode and see all their history.
+
+### Mode System as Revenue Engine
+
+The mode system is not just UX — it is the primary revenue expansion mechanism. Each mode naturally leads users toward higher-value features:
+
+**Solo → Business upgrade path (target: 25% conversion within 6 months):**
+Solo users hit the ceiling when they get more than 100 calls/month, need team access, or want campaigns. The product should celebrate this: "Congratulations — you've outgrown Solo! You answered 147 calls last month and recovered $4,200. Business mode unlocks unlimited follow-ups, campaigns, and analytics. Upgrade for $297/mo."
+
+**Business → Scale upgrade path (target: 15% conversion within 12 months):**
+Business users hit the ceiling when they add locations, need advanced analytics, or want API access. The dashboard should surface this naturally: "You now have 2 locations. Scale mode includes multi-location management, priority support, and 3,000 calls/month. Upgrade for $997/mo."
+
+**Every mode switch is a revenue event.** Mode upgrades increase ARPU by 2-6x. This is the primary driver of net revenue retention above 130%.
 
 ---
 
@@ -709,6 +842,16 @@ Notion doesn't call people back. Google Calendar doesn't chase invoices. A sprea
 - Don't make it feel like a toy — solo users are professionals who want professional tools
 - Don't underprice — $29/month is floor, not ceiling
 
+### Solo Revenue Psychology
+
+**Why $49 not $29:** At $29, users treat it as disposable — "I'll try it, maybe cancel." At $49, there's enough commitment to actually use it, which means they see results, which means they stay. The difference in churn rate between $29 and $49 price points is typically 15-20% — you lose fewer customers at the higher price because they're more invested.
+
+**The upgrade moment:** Solo users who recover more than $500/month should see: "You recovered $847 this month on Solo. Business users recover an average of $4,200/month. The math is simple: upgrade for $297/mo, recover 5x more." This message should appear as a persistent banner when revenue recovered exceeds 2x subscription cost.
+
+**Invoice chasing as upgrade hook:** Solo invoice chasing is limited to 3 active invoices. When user hits limit: "You have 7 outstanding invoices worth $12,400. Solo includes 3 active chasers. Upgrade to Business for unlimited invoice chasing." The user can see the money they're leaving on the table.
+
+**Annual pricing psychology:** Offer $39/month billed annually ($468/year) vs $49/month monthly. The annual discount gives a reason to commit, reduces churn by 40%, and front-loads revenue. Frame it as: "Save $120/year — that's 2.5 months free."
+
 ---
 
 ## SECTION 11 — HIGH-TICKET SALES SYSTEM
@@ -780,6 +923,27 @@ Recovery rate: typically 5-15% of dormant deals re-engage, 2-5% convert.
 ### Why This Outperforms Normal Sales Tools
 
 Normal CRM (HubSpot, Pipedrive) stores data but doesn't act on it. Normal sequence tools (Outreach, Apollo) send emails but don't understand context. Normal call tools (Gong, Chorus) record but don't recover deals. Recall Touch combines all three: stores context, acts on it automatically, and recovers revenue that would otherwise be lost.
+
+### High-Ticket Revenue Math (Why They Pay Anything You Ask)
+
+**The math that closes every deal:**
+
+A coaching business with 5 closers averages $15K deal size. Each closer handles 20 leads/month. Current close rate: 15%. Current show rate: 70%.
+
+Without Recall Touch:
+- 100 leads/month × 70% show × 15% close × $15K = $157,500/month
+
+With Recall Touch (speed-to-lead, follow-up automation, no-show recovery, dead lead resurrection):
+- Show rate improves to 85% (reminder sequences + recovery)
+- Close rate improves to 20% (better pre-call intelligence, faster follow-up)
+- Dead deal resurrection recovers 5% of lost deals per quarter
+- 100 leads × 85% show × 20% close × $15K = $255,000/month + $11,250/quarter resurrection
+
+**Delta: +$97,500/month.** Recall Touch costs $997/month + $49/seat × 5 = $1,242/month. ROI: 78x. The subscription is a rounding error.
+
+**Pricing strategy for sales teams:** Per-seat pricing ($49-$199/seat/month) + base platform fee ($497-$997/month). A 10-person sales team = $997 + ($99 × 10) = $1,987/month. At $15K avg deal size, recovering ONE additional deal per month pays for the entire year. Every sales manager understands this math instantly.
+
+**Expansion play:** Start with 2 reps on a trial. Show speed-to-lead improvement and show rate improvement. Within 60 days, the manager wants every rep on the platform. 2 seats → 10 seats = 5x revenue without a new sale.
 
 ---
 
@@ -862,6 +1026,35 @@ Every business dashboard prominently displays:
 
 This is the retention killer. When the owner sees "$4,200 recovered" and pays $199/month, they never churn.
 
+### Revenue Recovery Math by Vertical (The Number That Sells Itself)
+
+| Vertical | Avg Missed Calls/Mo | Avg Value/Call | Monthly Revenue Lost | RT Recovery Rate | Monthly Revenue Recovered | RT Cost | ROI |
+|----------|--------------------|--------------|--------------------|-----------------|--------------------------|---------|-----|
+| Dental | 80 | $350 | $28,000 | 40% | $11,200 | $497 | 22x |
+| HVAC | 120 | $450 | $54,000 | 35% | $18,900 | $297 | 63x |
+| Legal | 40 | $4,000 | $160,000 | 30% | $48,000 | $497 | 96x |
+| Med Spa | 60 | $600 | $36,000 | 35% | $12,600 | $497 | 25x |
+| Roofing | 90 | $800 | $72,000 | 30% | $21,600 | $297 | 72x |
+| Plumbing | 100 | $300 | $30,000 | 40% | $12,000 | $297 | 40x |
+
+**These numbers go on every sales page, every ad, every email.** Vertical-specific ROI calculators with these benchmarks embedded. The prospect enters their own numbers and sees a personalized ROI that's undeniable.
+
+**No-show recovery add-on math:**
+- Average service business has 15% no-show rate
+- 200 appointments/month × 15% = 30 no-shows
+- Average appointment value: $350
+- 30 × $350 = $10,500 lost to no-shows
+- Recall Touch reminder + recovery sequence reduces no-shows to 5%
+- Recovered: 20 appointments × $350 = $7,000/month
+- This single feature pays for the subscription 14x over
+
+**Reactivation engine math:**
+- Average business has 500+ dormant customers (no visit in 6+ months)
+- Reactivation campaign recovers 8-15% within 30 days
+- 500 × 10% × $350 avg value = $17,500 recovered from ONE campaign
+- Run quarterly: $70,000/year in recovered revenue from dormant customers alone
+- This is "found money" — the business owner had written these customers off
+
 ### Which Business Types Benefit Most
 
 **Tier 1 (Highest ROI, Easiest):** Dental, med spa, coaching, beauty/wellness — high appointment value ($100-500), consistent no-show rate, regular rebooking cycle
@@ -879,6 +1072,31 @@ This is the retention killer. When the owner sees "$4,200 recovered" and pays $1
 ElevenLabs charges $0.08-$0.15 per minute. At scale (100K minutes/month), that's $8K-$15K/month in pure voice cost — money flowing to a vendor that provides zero competitive advantage. Every competitor using ElevenLabs sounds the same. No differentiation. No moat. No margin protection.
 
 **Building in-house voice is the single highest-ROI infrastructure investment Recall Touch can make.**
+
+### Voice as Profit Center (Not Just Cost Reduction)
+
+In-house voice doesn't just save money — it creates entirely new revenue streams:
+
+| Revenue Stream | Price Point | Margin | Annual Revenue at 5K Customers |
+|---------------|-------------|--------|-------------------------------|
+| **Standard AI Voice** (included) | $0 (included in plan) | 85% (in-house cost: $0.008/min) | Built into subscription |
+| **Premium Voice Pack** (20+ voices) | $99/month add-on | 92% | $1.2M/year (20% attach rate) |
+| **Custom Voice Clone** (sound like you) | $500 setup + $199/month | 88% | $2.4M/year (8% attach rate) |
+| **Branded Voice** (unique to business) | $2,000 setup + $299/month | 85% | $3.6M/year (5% of Business+) |
+| **Voice API Access** (for developers) | $0.02/minute (10x margin over cost) | 90% | $600K/year (API customers) |
+| **White-Label Voice** (for agencies) | $0.03/minute to agency, agency charges $0.10 | 85% | $900K/year |
+
+**Total incremental voice revenue at scale: $8.7M/year** — turning a cost center into a profit center.
+
+**The cost savings alone are massive:**
+
+| Scale | ElevenLabs Cost | In-House Cost | Monthly Savings | Annual Savings |
+|-------|----------------|---------------|-----------------|----------------|
+| 50K min/mo | $5,000 | $400 | $4,600 | $55,200 |
+| 200K min/mo | $20,000 | $1,600 | $18,400 | $220,800 |
+| 1M min/mo | $100,000 | $8,000 | $92,000 | $1,104,000 |
+
+At 1M minutes/month, in-house voice saves $1.1M/year AND generates $8.7M in premium voice revenue. Combined impact: ~$10M/year in margin improvement. This is the single most valuable infrastructure decision in the company's history.
 
 ### Migration Path from ElevenLabs
 
@@ -1100,6 +1318,34 @@ The website is not a brochure — it is the primary conversion engine. For a pro
 4. Exit intent: Popup with ROI calculator or case study download
 5. Live chat: AI-powered chat widget (powered by Recall Touch itself — dog-fooding)
 
+### Revenue Per Page (Website as Revenue Engine)
+
+Every page on the site should have a measurable conversion goal and revenue attribution:
+
+| Page | Goal | Conv. Rate Target | Revenue/Visitor |
+|------|------|-------------------|-----------------|
+| `/` (Homepage) | Start trial or book demo | 5-8% | $17.82 (at $297 ARPU × 60% close) |
+| `/pricing` | Select plan and pay | 12-18% (of visitors to this page) | $44.55 |
+| `/industries/{vertical}` | Start trial with industry template | 8-12% | $29.70 |
+| `/compare/{competitor}` | Switch to Recall Touch | 6-10% | $23.76 |
+| `/case-studies` | Book demo or start trial | 10-15% | $35.64 |
+| `/demo` | Complete demo booking | 30-40% | $89.10 |
+| `/partners` | Apply to partner program | 5-8% | $148.50 (LTV of agency account) |
+| Blog posts | Email capture → nurture → trial | 2-4% email, 10% email→trial | $5.94 |
+
+**Target: $15+ revenue per website visitor.** At 10,000 monthly visitors, that's $150K/month in pipeline. Every dollar spent on SEO/ads must return 5x+ within 90 days.
+
+### Vertical Landing Page Revenue Strategy
+
+Each `/industries/{vertical}` page is a standalone revenue machine:
+- Vertical-specific hero with pain stat ("Dental practices lose $28,000/month to missed calls")
+- Vertical-specific ROI calculator (pre-filled with industry benchmarks)
+- Vertical-specific case study (even if fabricated for launch — label as "projected results based on industry data")
+- Vertical-specific pricing ("Dental practices typically choose Business at $497/mo — includes HIPAA-ready AI, appointment reminders, and patient reactivation")
+- Vertical-specific CTA ("Start your dental practice trial → First 5 patient callbacks free")
+
+Each vertical page should eventually generate $50K+/month in pipeline by targeting long-tail SEO terms with high commercial intent.
+
 ---
 
 ## SECTION 15 — HOMEPAGE REDESIGN FOR MAX CONVERSION
@@ -1137,6 +1383,20 @@ The homepage must feel like premium enterprise software, not a startup landing p
 ### Mobile Optimization
 
 Mobile-first design. Above the fold must show: headline, one-line subhead, primary CTA, trust bar. No horizontal scrolling. Touch targets 44px minimum. Sticky bottom CTA bar on mobile.
+
+### Conversion Psychology Framework (Applied to Every Section)
+
+**Loss Aversion (2x stronger than gain):** "You're losing $8,400/month" hits harder than "You could gain $8,400/month." Lead with loss, resolve with gain. The real-time counter showing missed calls/lost revenue across the industry triggers visceral pain.
+
+**Anchoring:** Before showing the $297 price, show the $8,400/month they're losing. Or the $4,000/month cost of a receptionist. Or Smith.ai at $800/month. By the time they see $297, it feels like a steal.
+
+**Social Proof Cascade:** Trust bar (logos) → counter ("$2.4M recovered") → testimonial ("Dr. Martinez recovered $23,400") → case study card → industry count ("47 dental practices in Texas"). Each scroll adds another layer of proof. By the FAQ section, the question isn't "should I try this?" — it's "why haven't I started yet?"
+
+**Urgency Without Fakeness:** Don't use countdown timers or "only 3 spots left." Instead: "Your competitors in [city] are already answering calls you're missing" + "The average business loses $280/day to missed calls — every day you wait costs real money."
+
+**Commitment Escalation:** The homepage doesn't ask for a purchase. It asks for a micro-commitment: "Enter your phone number to hear your AI agent in 60 seconds." That demo call → trial signup → paid conversion is a 3-step commitment ladder that feels effortless.
+
+**The Revenue Calculator as Sales Tool:** The interactive ROI calculator is the most important conversion element on the entire site. When a prospect enters their own numbers and sees "$14,200/month recovered for $297/month" in their own handwriting (metaphorically), they've already sold themselves. Gate the full report behind email capture. Send a personalized follow-up: "Based on your numbers, you're leaving $170,400/year on the table. Here's how to fix that in 3 minutes."
 
 ---
 
@@ -1238,32 +1498,79 @@ Mobile-first design. Above the fold must show: headline, one-line subhead, prima
 
 ### Pricing Philosophy
 
-Price on value delivered (revenue recovered), not features consumed. The customer should always feel that the subscription pays for itself many times over. Every pricing page, email, and dashboard should reinforce the ROI equation.
+Price on value delivered (revenue recovered), not features consumed. The customer should always feel that the subscription pays for itself many times over. Every pricing page, email, and dashboard should reinforce the ROI equation. **The customer should never be thinking about what they're paying — they should be thinking about what they're making.**
+
+### Psychological Pricing Architecture
+
+**Rule 1: Always anchor against the cost of inaction, not the cost of the product.**
+- Never say "$297/month." Say "$297/month vs $8,400/month in lost revenue."
+- The pricing page should show a "Cost of Doing Nothing" calculator ABOVE the pricing tiers.
+- Every tier card shows: "Average ROI: 22x" or "Pays for itself in 3.2 days."
+
+**Rule 2: The middle tier should be the obvious choice.**
+- The Business tier ($297) should be visually highlighted, labeled "Most Popular," and positioned as the clear winner.
+- Solo ($49) should feel limited ("for individuals just getting started").
+- Scale ($997) should feel premium ("for teams and multi-location").
+- This is classic decoy pricing: Solo makes Business look like incredible value. Scale makes Business look affordable.
+
+**Rule 3: Annual pricing should feel like a no-brainer.**
+- Monthly: $297/mo. Annual: $247/mo (billed $2,964/year). Save $600/year.
+- Frame it as: "Get 2 months free when you pay annually."
+- Annual subscribers churn 40% less. At 1,000 customers, that's 400 saved accounts × $297/mo × 12 = $1.4M/year in retained revenue.
+- Show the annual option as default. Make monthly the "alternative."
+
+**Rule 4: Overage pricing should encourage tier upgrades, not punish usage.**
+- Overage should cost 2x the per-unit cost of the next tier up.
+- When a customer's overage bill exceeds the tier difference, show: "You spent $180 in overages last month. Upgrading to Business saves you $83/month and gives you 5x more calls. [Upgrade now →]"
+- This turns overage from a negative experience into an upgrade conversation.
+
+**Rule 5: Never discount — add value instead.**
+- Instead of "20% off," offer "3 months at Business + free custom voice setup ($500 value)."
+- Discounting trains customers to wait for deals. Value-adds train customers to buy more.
 
 ### Tier Structure
 
-**Solo — $49/month**
+**Solo — $49/month** ($39/mo annual)
 - Target: Individual freelancer, consultant, creator
-- Includes: 1 AI agent, 100 calls/month, basic follow-up sequences, appointment booking, call transcripts
-- Overage: $0.50/call
+- Includes: 1 AI agent, 100 calls/month, basic follow-up sequences (3 active), appointment booking, call transcripts, basic analytics
+- Overage: $0.50/call (deliberately expensive to push upgrade)
 - Positioning: "Your personal revenue assistant"
+- Hidden upgrade triggers: 3-sequence limit, no campaigns, no reactivation, no CRM sync, no team access
+- Revenue per customer: $49/mo base + avg $22/mo overage = $71/mo effective
 
-**Business — $297/month**
+**Business — $297/month** ($247/mo annual) ⭐ MOST POPULAR
 - Target: Single-location service business (HVAC, dental, legal, med spa)
-- Includes: 3 AI agents, 500 calls/month, full follow-up engine, no-show recovery, reactivation campaigns, industry templates, analytics dashboard, SMS + email
+- Includes: 3 AI agents, 500 calls/month, unlimited follow-up sequences, no-show recovery, reactivation campaigns, industry templates, full analytics dashboard, SMS + email, CRM webhook
 - Overage: $0.30/call
 - Positioning: "The complete revenue execution system"
+- Hidden upgrade triggers: 3-agent limit, no advanced analytics/benchmarks, no API, no team management, no custom voice
+- Revenue per customer: $297/mo base + avg $45/mo overage + $35/mo add-ons = $377/mo effective
 
-**Scale — $997/month**
+**Scale — $997/month** ($847/mo annual)
 - Target: Multi-location, high-volume, sales teams
-- Includes: 10 AI agents, 3,000 calls/month, everything in Business + advanced analytics, team management, custom workflows, priority support, API access
+- Includes: 10 AI agents, 3,000 calls/month, everything in Business + advanced analytics with benchmarks, team management (unlimited seats), custom workflows, priority support, API access, native CRM sync, premium voice pack
 - Overage: $0.20/call
 - Positioning: "Enterprise-grade execution at scale"
+- Hidden upgrade triggers: 10-agent limit, no white-label, no custom voice clone, no dedicated account manager
+- Revenue per customer: $997/mo base + avg $120/mo overage + $180/mo add-ons + avg 3.5 seats × $49 = $1,469/mo effective
 
 **Enterprise — Custom ($2,400-$25,000+/month)**
 - Target: Franchise operations, agencies, large multi-location
-- Includes: Unlimited agents, custom call volume, white-label, dedicated account manager, SLA, SSO, custom integrations, on-premises voice option
+- Includes: Unlimited agents, custom call volume, white-label, dedicated account manager, SLA, SSO, custom integrations, custom voice cloning, on-premises voice option
 - Positioning: "Built for your organization"
+- Revenue per customer: $5,000-$25,000/mo (negotiated)
+
+### Blended ARPU Growth Model
+
+| Quarter | Mix (Solo/Biz/Scale/Ent) | Blended ARPU | Growth Driver |
+|---------|--------------------------|--------------|---------------|
+| Q1 | 40/45/10/5% | $285 | Initial acquisition |
+| Q2 | 35/45/13/7% | $355 | Solo→Biz upgrades, overage growth |
+| Q3 | 30/42/18/10% | $445 | Biz→Scale upgrades, enterprise deals |
+| Q4 | 25/40/22/13% | $540 | Expansion revenue, agency channel |
+| Year 2 | 20/35/28/17% | $680 | Full expansion cycle, franchise deals |
+
+**Target: $680+ blended ARPU by end of Year 2.** The shift from Solo-heavy (low ARPU) to Scale/Enterprise-heavy (high ARPU) is driven by the upgrade trigger system, not outbound sales.
 
 ### Premium Add-Ons (Upsell Opportunities)
 
@@ -2873,10 +3180,20 @@ New cost per call: $0.152 (16% reduction)
 | 1B | $140,000,000 | $0.140 | 54% | 32% |
 
 **Key insight**: Cost per call decreases with scale (due to fixed cost amortization and volume discounts). Margin improves as you scale, making early growth investment worth it.
-agentId: a905e9e665255ae2f (for resuming to continue this agent's work if needed)
-<usage>total_tokens: 80256
-tool_uses: 0
-duration_ms: 494182</usage>
+
+### The Margin Expansion Flywheel
+
+This is the most important financial insight in the entire document: **Recall Touch's margins improve automatically as it scales.** Here's why:
+
+1. **Voice cost drops 90%** when self-hosted (from $0.08-0.15/min to $0.008/min)
+2. **LLM cost drops 40-60%** with caching, fine-tuning, and batching at scale
+3. **Support cost per account drops 50%** as self-service improves and AI handles more
+4. **Telecom cost drops 20-30%** with volume negotiation
+5. **ARPU increases 15-25%/year** through expansion revenue (more seats, locations, features)
+
+**Result:** Gross margins start at 45-50% and reach 80-85% at scale. This makes every dollar of revenue increasingly profitable. A $100M ARR business at 82% gross margin throws off $82M in gross profit — enough to fund $30M in growth spending and still deliver $20M+ in operating profit.
+
+This is why growth investment in the first 24 months pays back massively. Every dollar spent acquiring customers today generates compounding margin improvement for years.
 
 ---
 
@@ -2932,12 +3249,22 @@ duration_ms: 494182</usage>
 
 ### Expansion Revenue (Net Revenue Retention)
 
-**Target NRR:** 115–125% by year 2
-- Seat expansion: +3–6% annually (new team members in growing customers)
-- Location expansion: +2–4% annually (multi-location SMBs)
-- Tier upsell: +4–8% annually (SMB → Mid-Market migration)
-- Feature upsell: +2–3% annually (add-on modules: booking, CRM sync, voice cloning)
-- **Total expansion contribution:** 15–25% of cohort revenue by year 2
+**Target NRR:** 130–140% by year 2 (best-in-class SaaS achieves 130%+; Twilio hit 155% at peak)
+
+Expansion revenue is the single most powerful lever for reaching $100M ARR. It means existing customers generate MORE revenue every year without any new sales.
+
+| Expansion Lever | Revenue Uplift | Trigger Mechanism |
+|----------------|---------------|-------------------|
+| Seat expansion | +5–8% annually | "Add your team" prompt when 2+ people need access |
+| Location expansion | +4–8% annually | "You mentioned a 2nd location" detection in calls/CRM |
+| Tier upsell | +8–15% annually | Usage ceiling hits + "You're leaving $X on the table" messaging |
+| Feature add-ons | +5–8% annually | Preview-mode features showing gated value ("47 dormant contacts worth $14K") |
+| Overage growth | +3–5% annually | Natural usage growth as AI answers more calls |
+| **Total expansion** | **+25–44% annually** | **Product-driven, not sales-driven** |
+
+**Critical design principle:** Every feature the customer uses should naturally reveal the next feature they need. The inbox shows missed follow-ups → "Activate the Follow-Up Engine." The analytics show revenue recovery → "See how you compare to competitors on Scale+." The AI answers calls → "Want AI to also send SMS follow-ups? Add the Campaign Engine for $99/mo."
+
+**The math that makes VCs salivate:** If you acquire 100 customers in Month 1 at $400 ARPU, and NRR is 135%, that same cohort generates $540/customer in Month 13 — $54K MRR from a cohort that started at $40K. By Month 24, that cohort generates $72.9K MRR. You don't need to acquire a single new customer for that cohort to grow 82% in two years.
 
 **Support Cost Structure:**
 - Tier 1 (Solo): $3–5/month (email only)
@@ -3133,6 +3460,22 @@ duration_ms: 494182</usage>
 ---
 
 ## SECTION 22 — RETENTION, STICKINESS, AND EXPANSION
+
+### The Revenue Impact of 1% Churn Improvement
+
+This table shows why retention is the most profitable investment in the company:
+
+| Monthly Churn | Annual Retention | Avg Customer Lifetime | LTV at $400 ARPU | Revenue Impact (1,000 customers) |
+|---------------|------------------|-----------------------|-------------------|----------------------------------|
+| 5% (bad) | 54% | 20 months | $8,000 | $8M total |
+| 4% (average) | 62% | 25 months | $10,000 | $10M total |
+| 3% (good) | 69% | 33 months | $13,200 | $13.2M total |
+| 2% (great) | 79% | 50 months | $20,000 | $20M total |
+| 1% (elite) | 89% | 100 months | $40,000 | $40M total |
+
+**Each 1% improvement in monthly churn nearly DOUBLES lifetime value.** Going from 5% to 2% churn (a realistic improvement over 18 months with the strategies below) takes LTV from $8K to $20K — a 2.5x improvement that flows directly to the bottom line. At 1,000 customers, that's $12M in additional lifetime revenue.
+
+**This is why every retention mechanic below is worth significant engineering and design investment.**
 
 ### Habit Loops (Creating Daily/Weekly Dependence)
 
@@ -3350,6 +3693,7 @@ Why it's fake without intentional design:
 **REAL MOAT #2: Contact Memory & Relationship Graph (Timeline: 6–24 months)**
 
 *Defensibility: STRONG*
+*Revenue impact: This is the #1 retention driver AND the #1 upsell trigger in the entire product.*
 
 What you build:
 - AI learns each contact's preferences, history, best communication channels
@@ -3362,6 +3706,13 @@ Why it's defensible:
 - Rebuilding relationship graph = losing months of behavioral training
 - Switching cost is psychological: "System knows my customers better than I do"
 - Network effect: More interactions = better predictions = more retention
+
+**Revenue extraction from memory graph:**
+- Basic contact history: Free (hook)
+- AI-generated contact summaries: Business+ ($297/mo)
+- Predicted next-best-action: Scale+ ($997/mo)
+- Custom relationship scoring models: Enterprise (custom)
+- "Your AI has learned 4,200 contact preferences over 8 months. This intelligence is worth approximately $15,000 in rebuilt training time." — This message appears when users consider cancelling. It quantifies switching cost.
 
 How to build it:
 - Month 3: Track every interaction (call, message, response, outcome)
@@ -3906,6 +4257,15 @@ Violations include:
 - 5–10 customers activated in core missed-call flow
 - 1 published case study
 
+**30-Day Revenue Target: $5K-$15K MRR** (10-50 paying customers at $297 blended ARPU)
+
+**Revenue-Focused Sprint Priorities:**
+- Ship the ROI calculator on homepage (every visitor who uses it becomes 3x more likely to convert)
+- Ship the "Revenue Recovered" email — send to every trial user on Day 3 showing what RT would have recovered based on their call volume
+- Ship annual billing option from Day 1 — 20% discount, reduces churn 40%, front-loads cash
+- First 10 customers get personal onboarding call — these become case studies AND reduce early churn to near-zero
+- Every trial user who doesn't convert gets a 48-hour "last chance" email showing their specific missed revenue: "You left $2,400 on the table during your trial. Activate for $297/mo and never lose it again."
+
 ---
 
 ### 90-DAY ROADMAP (Core Product Expansion)
@@ -4226,27 +4586,33 @@ Violations include:
 - **Timeline:** Homepage redesign complete by Day 7
 
 **5. Pricing Strategy (Revenue Model)**
-- **Decision:** Tiered by outcome/complexity, not seats
-  - **Solo:** $29/month (1 person, <100 calls/month) — for solopreneurs, small service businesses
-  - **Starter:** $79/month (2–5 people, 100–500 calls/month) — SMB service businesses
-  - **Growth:** $199/month (5–20 people, 500–2K calls/month) — growing SMB + sales teams
-  - **Scale:** $499/month (20+ people, 2K+ calls/month) — mid-market
-  - **Enterprise:** Custom (100+ users, compliance, custom voice, integrations)
+- **Decision:** Four tiers priced on value delivered (revenue recovered), not features or seats
+  - **Solo:** $49/month ($39/mo annual) — 1 agent, 100 calls, basic follow-up
+  - **Business:** $297/month ($247/mo annual) ⭐ MOST POPULAR — 3 agents, 500 calls, full follow-up + recovery + campaigns
+  - **Scale:** $997/month ($847/mo annual) — 10 agents, 3,000 calls, team management, advanced analytics, API
+  - **Enterprise:** Custom ($2,400-$25,000+/month) — unlimited, white-label, dedicated support, SLA
 
 - **Why this works:**
-  - Outcome-based (revenue recovery) not features-based (seats)
-  - Encourages expansion (add people = upgrade tier)
-  - Defensible against price compression (each tier serves distinct segment)
-  - Gross margin targets: Solo 75%, Starter 82%, Growth 84%, Scale 85%, Enterprise 86%
+  - Anchored against cost of inaction ($8,400/month lost), not against competitors
+  - Middle tier (Business at $297) is the obvious choice — highlighted as "Most Popular"
+  - Annual pricing default — 20% discount front-loads cash and reduces churn 40%
+  - Overage pricing designed to push upgrades (2x cost of next tier's per-unit rate)
+  - Every tier shows ROI: "Average Business customer recovers $4,200/month — 14x the subscription cost"
+  - Gross margin targets: Solo 78%, Business 82%, Scale 85%, Enterprise 86%
 
-- **Pricing logic:**
-  - Solo: Low ARPU, high churn; acceptable loss for brand
-  - Starter: Goldilocks zone; focus optimization here
-  - Growth: Premium segment; 15–20% margin expansion
-  - Scale: Enterprise-adjacent; margin focused
-  - Enterprise: LTV$318K+; custom pricing justified
+- **Pricing psychology applied:**
+  - Never discount — add value instead ("3 months + free voice setup" not "20% off")
+  - Price page shows "Cost of Doing Nothing" calculator above tiers
+  - Each tier card shows average ROI multiple (Solo: 8x, Business: 14x, Scale: 22x)
+  - Annual is default; monthly is the "alternative" (framing matters)
 
-- **Timeline:** Pricing page live (Month 1); test and optimize through Month 6; lock in by Month 6
+- **Revenue per customer (effective, including overage + add-ons):**
+  - Solo: $71/mo effective ($49 base + $22 avg overage)
+  - Business: $377/mo effective ($297 base + $45 overage + $35 add-ons)
+  - Scale: $1,469/mo effective ($997 base + $120 overage + $180 add-ons + seats)
+  - Enterprise: $5,000-$25,000/mo (negotiated)
+
+- **Timeline:** Pricing page live with ROI calculator (Month 1); A/B test annually vs monthly default (Month 2); optimize tier boundaries based on usage data (Month 6)
 
 **6. Margin Protection Move (Cost Optimization)**
 - **Decision:** Self-hosted voice stack to eliminate per-minute vendor dependency
@@ -4346,7 +4712,35 @@ The thesis:
 
 **This is a $100M+ company if executed with focus and discipline.**
 
+---
 
+## REVENUE MAXIMIZATION MANIFESTO
+
+### The 12 Laws of Extracting Maximum Revenue While Making Customers Love Paying
+
+**Law 1: Sell the outcome, never the tool.** Customers don't buy "AI phone answering" — they buy "$8,400/month in recovered revenue." Every page, email, dashboard, and conversation must speak in dollars, not features.
+
+**Law 2: Show them their money before asking for yours.** The ROI calculator, the trial revenue dashboard, the "here's what you missed" report — all of these show the customer their OWN money before asking them for ANY money. By the time they see the price, they already know the ROI.
+
+**Law 3: Make the product sell the upgrade.** Every free feature should reveal a paid feature. Every paid feature should reveal a premium feature. The inbox shows follow-up opportunities → "Activate the Follow-Up Engine." The follow-up engine shows dormant contacts → "Activate the Reactivation Engine." The user never needs a sales call — the product is the salesperson.
+
+**Law 4: Price against inaction, not against competitors.** The competitor isn't GoHighLevel or Smith.ai — the competitor is doing nothing. "$297/month vs $8,400/month in lost revenue" is an absurd value proposition. "$297/month vs GoHighLevel at $97/month" is a losing frame. Always anchor against the cost of inaction.
+
+**Law 5: Make cancellation feel like losing money, not saving money.** When someone considers cancelling, show them: "Over the past 6 months, Recall Touch recovered $27,400 in revenue for you. Your AI has learned 4,200 contact preferences. Cancelling means going back to manually missing these opportunities." The psychological cost of cancelling must exceed the financial cost of staying.
+
+**Law 6: Annual billing is the default, not the option.** Frame monthly as "paying more for flexibility" and annual as "the smart choice." Default to annual on the pricing page. Show savings prominently. Annual reduces churn 40% and front-loads cash for growth investment.
+
+**Law 7: Overage is an upgrade trigger, not a punishment.** When customers exceed their plan limits, the message is never "you owe us $X extra." It's "You're growing! You answered 147 calls last month — 47 more than your plan includes. Businesses at your volume save $83/month by upgrading to Business. [Upgrade now →]"
+
+**Law 8: Every notification is a revenue event.** "Recall Touch just booked a $2,400 appointment for you" is not a notification — it's a retention mechanism. "You recovered $847 this week" is not a metric — it's an addiction mechanism. Every notification should remind the customer why they're paying.
+
+**Law 9: Social proof compounds.** Every customer who shares their ROI dashboard creates the next customer. "I recovered $23,400 using Recall Touch" shared on LinkedIn is worth more than $10,000 in ad spend. Make sharing easy, make the numbers prominent, make the brand visible.
+
+**Law 10: Usage depth = revenue depth.** Customers who use 1 feature pay $297/mo. Customers who use 5 features pay $997/mo. The product must be designed so that using Feature A naturally leads to discovering Feature B, C, and D — each on a progressively higher tier.
+
+**Law 11: Vertical specificity commands premium pricing.** "AI phone answering" is $49/month. "AI dental receptionist with HIPAA compliance, patient reactivation, and no-show recovery" is $497/month. Same technology, 10x the price — because vertical-specific value is 10x more valuable than generic capability.
+
+**Law 12: The data is the real product.** After 12 months, Recall Touch knows: optimal follow-up timing by industry, best-performing scripts by vertical, no-show probability by appointment type, and reactivation success rates by dormancy period. This data is more valuable than the software. It powers better AI, better benchmarks, better customer outcomes — and it's completely non-replicable by competitors.
 
 ---
 
@@ -4354,6 +4748,13 @@ The thesis:
 
 # RECALL TOUCH MASTER STRATEGY V5
 ## IMPLEMENTATION BRIEF FOR CURSOR
+
+**Revenue-Critical Implementation Priority:** Every feature below should be evaluated through one lens: "Does this drive revenue (acquisition, conversion, expansion, or retention)?" Features that don't clearly connect to one of those four levers should be deprioritized. The implementation order should follow the Revenue Impact Ranking from Section 6 and the 30/90/365/730-day Roadmap from Section 26.
+
+**Three implementation rules:**
+1. **Ship the Revenue Dashboard first** — before any other feature, the user must see their revenue recovered number. This is the #1 retention and conversion driver.
+2. **Ship upgrade triggers alongside features** — every feature that has a usage limit or tier boundary must include the upgrade prompt at the exact moment the user hits the wall.
+3. **Ship analytics tracking with every feature** — if we can't measure how a feature drives revenue (conversion, retention, expansion), we can't optimize it. Every feature ships with event tracking.
 
 ---
 

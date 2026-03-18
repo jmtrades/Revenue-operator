@@ -12,7 +12,7 @@ import {
 
 const ROWS = [
   { name: "Marcus Johnson", time: "09:14 AM", duration: "4m 32s", status: "governed" as const, jurisdiction: "US-CA" },
-  { name: "Sarah Chen", time: "09:31 AM", duration: "2m 15s", status: "pending" as const, jurisdiction: "UK" },
+  { name: "Recent caller", time: "09:31 AM", duration: "2m 15s", status: "pending" as const, jurisdiction: "UK" },
   { name: "Alex Rivera", time: "10:02 AM", duration: "6m 48s", status: "governed" as const, jurisdiction: "US-CA" },
   { name: "Jamie Okafor", time: "10:17 AM", duration: "3m 05s", status: "governed" as const, jurisdiction: "EU" },
   { name: "Priya Sharma", time: "10:44 AM", duration: "1m 52s", status: "pending" as const, jurisdiction: "UK" },

@@ -5,34 +5,62 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
+type IndustryKey = "homeServices" | "health" | "legal" | "auto" | "other";
+
+const INDUSTRY_PRESETS: Record<
+  IndustryKey,
+  { label: string; missedPerWeek: number; avgJobValue: number }
+> = {
+  homeServices: { label: "Home services", missedPerWeek: 14, avgJobValue: 650 },
+  health: { label: "Health & wellness", missedPerWeek: 18, avgJobValue: 180 },
+  legal: { label: "Legal & professional", missedPerWeek: 10, avgJobValue: 1200 },
+  auto: { label: "Auto & repair", missedPerWeek: 16, avgJobValue: 450 },
+  other: { label: "Other / custom", missedPerWeek: 8, avgJobValue: 400 },
+};
+
 export function HomepageRoiCalculator() {
-  const [missedPerWeek, setMissedPerWeek] = useState(8);
-  const [avgJobValue, setAvgJobValue] = useState(600);
+  const [industry, setIndustry] = useState<IndustryKey>("homeServices");
+  const [missedPerWeek, setMissedPerWeek] = useState(
+    INDUSTRY_PRESETS.homeServices.missedPerWeek,
+  );
+  const [avgJobValue, setAvgJobValue] = useState(
+    INDUSTRY_PRESETS.homeServices.avgJobValue,
+  );
 
   const {
     monthlyLost,
     monthlyRecovered,
     annualRecovered,
-    paybackWeeks,
+    roiMultiple,
   } = useMemo(() => {
     const weekly = Math.max(0, Math.min(100, missedPerWeek));
     const value = Math.max(50, Math.min(5000, avgJobValue));
 
     const monthlyLostRaw = weekly * 4 * value;
-    const monthlyRecoveredRaw = monthlyLostRaw * 0.75;
+    const monthlyRecoveredRaw = monthlyLostRaw * 0.7;
     const annualRecoveredRaw = monthlyRecoveredRaw * 12;
 
-    const growthPlanMonthly = 297;
-    const payback =
-      monthlyRecoveredRaw > 0
-        ? Math.max(1, Math.ceil(growthPlanMonthly / (monthlyRecoveredRaw / 4)))
+    const soloCost = 49;
+    const businessCost = 297;
+    const scaleCost = 997;
+
+    const bestCost =
+      monthlyRecoveredRaw <= 4000
+        ? soloCost
+        : monthlyRecoveredRaw <= 12000
+        ? businessCost
+        : scaleCost;
+
+    const roi =
+      bestCost > 0 && monthlyRecoveredRaw > 0
+        ? Number((monthlyRecoveredRaw / bestCost).toFixed(1))
         : 0;
 
     return {
       monthlyLost: monthlyLostRaw,
       monthlyRecovered: monthlyRecoveredRaw,
       annualRecovered: annualRecoveredRaw,
-      paybackWeeks: payback,
+      roiMultiple: roi,
     };
   }, [avgJobValue, missedPerWeek]);
 
@@ -61,7 +89,7 @@ export function HomepageRoiCalculator() {
                 color: "var(--text-primary)",
               }}
             >
-              See how much revenue Recall Touch can recover for you.
+              See how much missed-call revenue you can recover.
             </h2>
             <p
               className="text-sm md:text-base max-w-xl"
@@ -70,9 +98,9 @@ export function HomepageRoiCalculator() {
                 lineHeight: 1.7,
               }}
             >
-              Plug in rough numbers for your business. We estimate how much
-              revenue is slipping through the cracks from missed calls and how
-              quickly an AI phone agent pays for itself on the Growth plan.
+              Choose your industry and drag the sliders. We estimate how much revenue
+              is currently leaking from missed calls — and how much Recall Touch can
+              put back in your pipeline every month.
             </p>
             <ul className="mt-6 space-y-2 text-sm">
               <li
@@ -80,16 +108,14 @@ export function HomepageRoiCalculator() {
                   color: "var(--text-secondary)",
                 }}
               >
-                ✓ Uses a simple 75% recovery assumption — conservative for most
-                service businesses.
+                ✓ Uses conservative recovery assumptions based on real call data.
               </li>
               <li
                 style={{
                   color: "var(--text-secondary)",
                 }}
               >
-                ✓ Benchmarked against a $297/mo Growth plan, not a hypothetical
-                enterprise quote.
+                ✓ Shows estimated monthly recovery and ROI multiple on your plan.
               </li>
             </ul>
           </div>
@@ -101,7 +127,33 @@ export function HomepageRoiCalculator() {
               border: "1px solid var(--border-default)",
             }}
           >
-            <div className="grid gap-5 mb-6">
+            <div className="grid gap-4 mb-6">
+              <label className="block">
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Industry
+                </span>
+                <select
+                  className="mt-2 w-full rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-2 text-sm focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 text-white"
+                  value={industry}
+                  onChange={(event) => {
+                    const key = event.target.value as IndustryKey;
+                    setIndustry(key);
+                    const preset = INDUSTRY_PRESETS[key];
+                    setMissedPerWeek(preset.missedPerWeek);
+                    setAvgJobValue(preset.avgJobValue);
+                  }}
+                >
+                  {Object.entries(INDUSTRY_PRESETS).map(([key, preset]) => (
+                    <option key={key} value={key}>
+                      {preset.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
               <label className="block">
                 <span
                   className="text-sm font-medium"
@@ -173,50 +225,46 @@ export function HomepageRoiCalculator() {
                 >
                   losing about ${monthlyLost.toLocaleString()}/month
                 </span>{" "}
-                when those callers don&apos;t get answered or followed up.
+                in missed-call revenue.
               </p>
               <p style={{ color: "var(--text-secondary)" }}>
-                With Recall Touch handling those calls and follow-ups,{" "}
+                With Recall Touch answering 24/7, you could recover around{" "}
                 <span
                   className="font-semibold"
                   style={{ color: "var(--accent-primary)" }}
                 >
-                  you recover around $
-                  {monthlyRecovered.toLocaleString()}/month
+                  ${monthlyRecovered.toLocaleString()}/month
                 </span>{" "}
-                and $
-                {annualRecovered.toLocaleString()}
-                /year in additional booked work.
+                and ${annualRecovered.toLocaleString()}/year in additional booked
+                work.
               </p>
-              {paybackWeeks > 0 && (
+              {roiMultiple > 0 && (
                 <p style={{ color: "var(--text-primary)" }}>
-                  On the{" "}
-                  <span className="font-semibold">Growth ($297/mo)</span> plan,
-                  your payback is roughly{" "}
+                  That&apos;s roughly a{" "}
                   <span
                     className="font-semibold"
                     style={{ color: "var(--accent-primary)" }}
                   >
-                    {paybackWeeks} week{paybackWeeks === 1 ? "" : "s"}
+                    {roiMultiple}x ROI
                   </span>{" "}
-                  of recovered revenue.
+                  on a typical Recall Touch plan.
                 </p>
               )}
             </div>
 
-            <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+            <div className="mt-6 flex flex-col gap-3">
               <Link
-                href={ROUTES.PRICING}
+                href={ROUTES.START}
                 className="bg-white text-black font-semibold rounded-xl px-5 py-2.5 text-sm text-center hover:bg-zinc-100 transition-colors no-underline"
               >
-                See recommended plan →
+                Get full ROI report →
               </Link>
               <p
-                className="text-xs"
+                className="text-xs text-center"
                 style={{ color: "var(--text-tertiary)" }}
               >
-                Real customers typically see 4–10x ROI on the Growth plan within
-                the first 30 days.
+                Share your email on the next step and we&apos;ll send a detailed
+                breakdown by call volume, channel, and plan.
               </p>
             </div>
           </div>

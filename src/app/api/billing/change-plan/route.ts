@@ -13,9 +13,12 @@ import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import type { BillingTier } from "@/lib/feature-gate/types";
 
 const PLAN_TO_TIER: Record<string, BillingTier> = {
-  starter: "solo",
-  growth: "growth",
-  scale: "team",
+  solo: "solo",
+  starter: "solo", // legacy alias
+  business: "business",
+  growth: "business", // legacy alias
+  scale: "scale",
+  team: "scale", // legacy alias
 };
 
 function getOrigin(req: NextRequest): string | null {

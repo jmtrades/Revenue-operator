@@ -49,24 +49,26 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — AI Phone Calls, Handled",
+    default: "Recall Touch — AI Revenue Recovery for Service Businesses",
   },
   description:
-    "Never miss a call. Never lose a lead. Recall Touch answers your phone with AI that books appointments, qualifies leads, and handles customer calls 24/7.",
+    "Recover lost revenue from missed calls, no-shows, and broken follow-up. AI answers every call, books appointments, and runs automated recovery sequences. See results in your first week.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://www.recall-touch.com",
     siteName: "Recall Touch",
-    title: "Recall Touch — AI Phone Calls, Handled",
-    description: "Never miss a call. Never lose a lead. AI that answers your phone 24/7.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Phone Calls, Handled" }],
+    title: "Recall Touch — AI Revenue Recovery for Service Businesses",
+    description:
+      "Recover lost revenue from missed calls, no-shows, and broken follow-up. AI answers every call, books appointments, and runs automated recovery sequences.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Revenue Recovery for Service Businesses" }],
   },
   icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — AI Phone Calls, Handled",
-    description: "Never miss a call. Never lose a lead.",
+    title: "Recall Touch — AI Revenue Recovery for Service Businesses",
+    description:
+      "Recover lost revenue from missed calls, no-shows, and broken follow-up. AI answers every call, books appointments, and runs automated recovery sequences.",
   },
   robots: {
     index: true,
@@ -83,7 +85,11 @@ const organizationJsonLd = {
   name: "Recall Touch",
   url: BASE_URL,
   description: "AI phone system for every business. Answer every call 24/7, follow up with leads in 60 seconds, book appointments.",
-  sameAs: [],
+  sameAs: [
+    // Add social profile URLs when they exist:
+    // "https://twitter.com/recalltouch",
+    // "https://linkedin.com/company/recalltouch",
+  ],
 };
 
 const softwareApplicationJsonLd = {
@@ -96,8 +102,8 @@ const softwareApplicationJsonLd = {
   url: BASE_URL,
   offers: {
     "@type": "AggregateOffer",
-    lowPrice: "297",
-    highPrice: "2400",
+    lowPrice: "49",
+    highPrice: "997",
     priceCurrency: "USD",
     offerCount: "4",
   },
@@ -122,13 +128,13 @@ export default async function RootLayout({
   const t = await getTranslations("accessibility");
 
   return (
-    <html lang={locale} dir={isRTL(locale) ? "rtl" : "ltr"} className="dark" suppressHydrationWarning>
+    <html lang={locale} dir={isRTL(locale) ? "rtl" : "ltr"} suppressHydrationWarning>
       <head suppressHydrationWarning>
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
       </head>
       <body
         suppressHydrationWarning
-        className={`${dmSans.variable} ${playfair.variable} ${geistMono.variable} ${jetbrainsMono.variable} bg-black text-white antialiased`}
+        className={`${dmSans.variable} ${playfair.variable} ${geistMono.variable} ${jetbrainsMono.variable} antialiased`}
       >
         <script
           type="application/ld+json"

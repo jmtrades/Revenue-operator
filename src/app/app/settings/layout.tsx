@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 const TAB_KEYS = [
   { key: "general" as const, href: "/app/settings/business" },
   { key: "phone", href: "/app/settings/phone" },
+  { key: "voices", href: "/app/settings/voices" },
   { key: "integrations", href: "/app/settings/integrations" },
   { key: "notifications", href: "/app/settings/notifications" },
   { key: "billing", href: "/app/settings/billing" },

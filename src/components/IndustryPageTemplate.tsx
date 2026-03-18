@@ -80,6 +80,12 @@ interface IndustryPageTemplateProps {
 export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
   const t = useTranslations("industry");
   const HeroIcon = HERO_ICONS[industry.heroIcon] ?? Wrench;
+  const recommendedPlan = (() => {
+    const recovered = industry.roi.recoveredPerMonth;
+    if (recovered <= 4000) return "Solo";
+    if (recovered <= 15000) return "Business";
+    return "Scale";
+  })();
 
   return (
     <>
@@ -201,7 +207,51 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
         </Container>
       </section>
 
-      {/* 3. How It Works — Connect, Teach, Relax */}
+      {/* 3. The Solution — Answer → Qualify → Book → Follow up */}
+      <section className="py-16 md:py-20" style={{ background: "var(--bg-primary)" }}>
+        <Container>
+          <SectionLabel>{t("solutionLabel")}</SectionLabel>
+          <h2
+            className="font-semibold text-2xl md:text-3xl max-w-2xl mb-12"
+            style={{
+              letterSpacing: "-0.02em",
+              lineHeight: 1.2,
+              color: "var(--text-primary)",
+            }}
+          >
+            {t("solutionHeading")}
+          </h2>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { key: "answer", icon: Phone },
+              { key: "qualify", icon: ClipboardList },
+              { key: "book", icon: Calendar },
+              { key: "followup", icon: Sparkles },
+            ].map(({ key, icon: Icon }) => (
+              <div key={key} className="card-marketing p-6 flex flex-col">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                  style={{
+                    background: "var(--accent-primary-subtle)",
+                    color: "var(--accent-primary)",
+                  }}
+                >
+                  <Icon className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-base mb-2" style={{ color: "var(--text-primary)" }}>
+                  {t(`solution.${key}.title`)}
+                </h3>
+                <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                  {t(`solution.${key}.description`, { industry: industry.name })}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* 4. How It Works — Connect, Teach, Relax */}
       <section
         className="py-16 md:py-20"
         style={{ background: "var(--bg-primary)" }}
@@ -273,7 +323,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
         </Container>
       </section>
 
-      {/* 4. Key Capabilities — 4 feature cards */}
+      {/* 5. Key Capabilities — 4 feature cards */}
       <section
         className="py-16 md:py-20"
         style={{ background: "var(--bg-surface)" }}
@@ -329,7 +379,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
         </Container>
       </section>
 
-      {/* 5. ROI Section */}
+      {/* 6. ROI Section */}
       <section
         className="py-16 md:py-20"
         style={{ background: "var(--bg-primary)" }}
@@ -372,11 +422,26 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
                   : t("days"),
               })}
             </p>
+            <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                {t("recommendedPlanLabel")}{" "}
+                <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>
+                  {recommendedPlan}
+                </span>
+              </p>
+              <Link
+                href={ROUTES.PRICING}
+                className="text-sm font-semibold underline-offset-4 hover:underline"
+                style={{ color: "var(--text-primary)" }}
+              >
+                {t("seePlans")}
+              </Link>
+            </div>
           </div>
         </Container>
       </section>
 
-      {/* 6. CTA Section */}
+      {/* 7. CTA Section */}
       <section
         className="py-16 md:py-20"
         style={{ background: "var(--bg-surface)" }}

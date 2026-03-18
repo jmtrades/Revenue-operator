@@ -1,116 +1,239 @@
 """
-Real-time conversation engine for bidirectional audio streaming.
-Manages turn-taking, silence detection, barge-in, and tool calling.
+Production Conversation Engine v2.0
+
+Manages real-time bidirectional audio conversations with:
+  - Finite state machine for turn-taking (IDLE → LISTENING → PROCESSING → SPEAKING)
+  - Voice Activity Detection–driven silence detection
+  - Barge-in / interruption handling with audio cancellation
+  - Natural backchanneling ("mm-hmm", "I see")
+  - Tool calling (book_appointment, capture_lead, send_sms, transfer_call)
+  - Conversation memory / transcript persistence
+  - Greeting generation per industry
+  - Configurable silence thresholds and backchannel timing
 """
 
 import asyncio
 import logging
 import random
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
-from typing import Optional, Dict, Any, Callable, List
 import time
 import uuid
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# Enums
+# ---------------------------------------------------------------------------
+
 class TurnState(Enum):
-    """State machine for conversation turns."""
+    IDLE = "idle"
     LISTENING = "listening"
     PROCESSING = "processing"
     SPEAKING = "speaking"
-    IDLE = "idle"
 
+
+class CallOutcome(str, Enum):
+    COMPLETED = "completed"
+    VOICEMAIL = "voicemail"
+    NO_ANSWER = "no_answer"
+    BUSY = "busy"
+    FAILED = "failed"
+    TRANSFERRED = "transferred"
+
+
+# ---------------------------------------------------------------------------
+# Data classes
+# ---------------------------------------------------------------------------
 
 @dataclass
-class ConversationTranscript:
-    """Transcript entry for a single turn."""
+class TranscriptEntry:
     timestamp: float
     speaker: str  # "user" or "assistant"
     text: str
     confidence: Optional[float] = None
+    emotion: Optional[str] = None
     duration: float = 0.0
 
 
 @dataclass
 class ConversationSession:
-    """Manages a single conversation session."""
     conversation_id: str
     start_time: float
     voice_id: str
     system_prompt: str
-    transcript: List[ConversationTranscript] = field(default_factory=list)
+    transcript: List[TranscriptEntry] = field(default_factory=list)
     state: TurnState = TurnState.IDLE
-    last_audio_time: float = field(default_factory=lambda: time.time())
-    silence_timeout: float = 1.5  # seconds
+    last_audio_time: float = field(default_factory=time.time)
+
+    # Configurable thresholds
+    silence_timeout: float = 1.2  # seconds — faster than typical 1.5
+    end_of_turn_timeout: float = 0.8  # shorter silence = end of turn
+    max_duration: float = 600.0  # 10 min max
+
     current_turn_start: Optional[float] = None
     tool_call_pending: Optional[Dict[str, Any]] = None
+    outcome: CallOutcome = CallOutcome.COMPLETED
+
+    # Metadata from Twilio / caller
     metadata: Dict[str, Any] = field(default_factory=dict)
+
+    # Interruption tracking
+    barge_in_count: int = 0
+    last_barge_in_time: float = 0.0
+
+    # User sentiment tracking (simple)
+    user_sentiment: str = "neutral"  # positive, neutral, negative, frustrated
 
     @property
     def duration(self) -> float:
-        """Get conversation duration in seconds."""
         return time.time() - self.start_time
 
+    @property
+    def is_expired(self) -> bool:
+        return self.duration > self.max_duration
+
     def has_silence(self) -> bool:
-        """Check if silence threshold exceeded."""
         return (time.time() - self.last_audio_time) > self.silence_timeout
 
-    def add_transcript(self, speaker: str, text: str, confidence: Optional[float] = None):
-        """Add entry to transcript."""
-        self.transcript.append(ConversationTranscript(
+    def has_end_of_turn(self) -> bool:
+        return (time.time() - self.last_audio_time) > self.end_of_turn_timeout
+
+    def add_transcript(
+        self, speaker: str, text: str,
+        confidence: Optional[float] = None,
+        emotion: Optional[str] = None,
+    ):
+        self.transcript.append(TranscriptEntry(
             timestamp=time.time(),
             speaker=speaker,
             text=text,
             confidence=confidence,
-            duration=0.0
+            emotion=emotion,
         ))
-        logger.info(f"[{self.conversation_id}] {speaker}: {text}")
+        logger.info(f"[{self.conversation_id[:8]}] {speaker.upper()}: {text}")
 
     def get_transcript_text(self) -> str:
-        """Get conversation transcript as formatted text."""
-        lines = []
-        for entry in self.transcript:
-            lines.append(f"{entry.speaker.upper()}: {entry.text}")
-        return "\n".join(lines)
+        return "\n".join(
+            f"{e.speaker.upper()}: {e.text}" for e in self.transcript
+        )
+
+    def get_last_n_turns(self, n: int = 6) -> str:
+        """Get last N transcript entries for context window."""
+        recent = self.transcript[-n:] if len(self.transcript) > n else self.transcript
+        return "\n".join(f"{e.speaker.upper()}: {e.text}" for e in recent)
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
         return {
             "conversation_id": self.conversation_id,
-            "duration": self.duration,
+            "duration": round(self.duration, 1),
             "state": self.state.value,
+            "outcome": self.outcome.value,
+            "turn_count": len(self.transcript),
+            "barge_in_count": self.barge_in_count,
+            "user_sentiment": self.user_sentiment,
             "transcript": [
                 {
-                    "timestamp": entry.timestamp,
-                    "speaker": entry.speaker,
-                    "text": entry.text,
-                    "confidence": entry.confidence,
-                    "duration": entry.duration,
+                    "timestamp": e.timestamp,
+                    "speaker": e.speaker,
+                    "text": e.text,
+                    "confidence": e.confidence,
+                    "emotion": e.emotion,
                 }
-                for entry in self.transcript
+                for e in self.transcript
             ],
             "metadata": self.metadata,
         }
 
 
+# ---------------------------------------------------------------------------
+# Industry greetings
+# ---------------------------------------------------------------------------
+
+INDUSTRY_GREETINGS = {
+    "hvac": [
+        "Hi there! Thanks for calling. How can I help you with your heating or cooling today?",
+        "Hello! Welcome. Are you calling about a repair, maintenance, or a new installation?",
+    ],
+    "dental": [
+        "Good {time_of_day}! Thanks for calling. Are you looking to schedule an appointment?",
+        "Hello! How can I help you today? Would you like to book a visit?",
+    ],
+    "plumbing": [
+        "Hi! Thanks for calling. Do you have a plumbing emergency, or would you like to schedule service?",
+        "Hello! How can I help you today? Tell me about your plumbing needs.",
+    ],
+    "roofing": [
+        "Thanks for calling! Are you looking for a roof inspection or repair estimate?",
+        "Hello! How can I help? Are you dealing with a leak or looking for a quote?",
+    ],
+    "medical": [
+        "Good {time_of_day}. How may I assist you today? Are you looking to schedule an appointment?",
+        "Hello, thank you for calling. How can I help you today?",
+    ],
+    "legal": [
+        "Good {time_of_day}. Thank you for calling. How may I direct your call?",
+        "Hello, thank you for reaching out. Are you calling about an existing matter or a new inquiry?",
+    ],
+    "salon": [
+        "Hi! Thanks for calling. Would you like to book an appointment?",
+        "Hello! How can I help? Looking to schedule a visit?",
+    ],
+    "restaurant": [
+        "Thanks for calling! Would you like to make a reservation?",
+        "Hello! How can I help you today? Reservation or takeout?",
+    ],
+    "automotive": [
+        "Hi, thanks for calling! Are you looking to schedule service or get a quote?",
+        "Hello! How can I help? Do you need to bring your vehicle in?",
+    ],
+    "real_estate": [
+        "Hi there! Thanks for reaching out. Are you looking to buy, sell, or rent?",
+        "Hello! How can I help you today with your real estate needs?",
+    ],
+    "default": [
+        "Hi there! Thanks for calling. How can I help you today?",
+        "Hello! I appreciate you reaching out. What can I do for you?",
+        "Good {time_of_day}! How may I assist you today?",
+    ],
+}
+
+
+def _time_of_day() -> str:
+    """Get current time of day for greeting."""
+    import datetime
+    hour = datetime.datetime.now().hour
+    if hour < 12:
+        return "morning"
+    elif hour < 17:
+        return "afternoon"
+    return "evening"
+
+
+# ---------------------------------------------------------------------------
+# Conversation Engine
+# ---------------------------------------------------------------------------
+
 class ConversationEngine:
-    """Manages real-time bidirectional audio streaming conversations."""
+    """Manages real-time bidirectional conversations."""
 
     def __init__(
         self,
         voice_id: str,
         system_prompt: str,
         llm_endpoint: str = "http://localhost:3000/api/agent/respond",
-        silence_timeout: float = 1.5,
+        silence_timeout: float = 1.2,
+        industry: str = "default",
     ):
         self.voice_id = voice_id
         self.system_prompt = system_prompt
         self.llm_endpoint = llm_endpoint
         self.silence_timeout = silence_timeout
+        self.industry = industry
         self.sessions: Dict[str, ConversationSession] = {}
+
         self.event_handlers: Dict[str, List[Callable]] = {
             "conversation.started": [],
             "conversation.ended": [],
@@ -118,15 +241,16 @@ class ConversationEngine:
             "user_speech": [],
             "assistant_speech": [],
             "state_change": [],
+            "barge_in": [],
             "error": [],
         }
-        logger.info(
-            f"Initialized ConversationEngine for voice {voice_id} "
-            f"with LLM endpoint {llm_endpoint}"
-        )
 
-    def create_session(self, metadata: Optional[Dict[str, Any]] = None) -> ConversationSession:
-        """Create a new conversation session."""
+        self.backchannel_manager = BackChannelingManager()
+        logger.info(f"ConversationEngine: voice={voice_id} industry={industry}")
+
+    def create_session(
+        self, metadata: Optional[Dict[str, Any]] = None
+    ) -> ConversationSession:
         session = ConversationSession(
             conversation_id=str(uuid.uuid4()),
             start_time=time.time(),
@@ -136,246 +260,198 @@ class ConversationEngine:
             metadata=metadata or {},
         )
         self.sessions[session.conversation_id] = session
-        logger.info(f"Created conversation session {session.conversation_id}")
-        self._emit_event("conversation.started", {
+        self._emit("conversation.started", {
             "conversation_id": session.conversation_id,
-            "timestamp": session.start_time,
         })
+        logger.info(f"Session created: {session.conversation_id[:8]}")
         return session
 
-    def get_session(self, conversation_id: str) -> Optional[ConversationSession]:
-        """Get a conversation session by ID."""
-        return self.sessions.get(conversation_id)
+    def get_session(self, cid: str) -> Optional[ConversationSession]:
+        return self.sessions.get(cid)
 
-    def end_session(self, conversation_id: str) -> Optional[Dict[str, Any]]:
-        """End a conversation session and return summary."""
-        session = self.sessions.pop(conversation_id, None)
+    def end_session(self, cid: str) -> Optional[Dict[str, Any]]:
+        session = self.sessions.pop(cid, None)
         if not session:
-            logger.warning(f"Session {conversation_id} not found")
             return None
 
         summary = session.to_dict()
-        logger.info(f"Ended conversation session {conversation_id} "
-                   f"(duration: {session.duration:.1f}s, turns: {len(session.transcript)})")
 
-        self._emit_event("conversation.ended", summary)
+        # Determine outcome based on conversation
+        if len(session.transcript) <= 1:
+            session.outcome = CallOutcome.NO_ANSWER
+        elif any("voicemail" in e.text.lower() for e in session.transcript):
+            session.outcome = CallOutcome.VOICEMAIL
+
+        summary["outcome"] = session.outcome.value
+
+        self._emit("conversation.ended", summary)
+        logger.info(
+            f"Session ended: {cid[:8]} duration={session.duration:.0f}s "
+            f"turns={len(session.transcript)} outcome={session.outcome.value}"
+        )
         return summary
 
-    def set_state(self, conversation_id: str, state: TurnState):
-        """Update conversation state."""
-        session = self.get_session(conversation_id)
+    def set_state(self, cid: str, state: TurnState):
+        session = self.get_session(cid)
         if not session:
             return
-
-        old_state = session.state
+        old = session.state
         session.state = state
-        session.current_turn_start = time.time() if state in [TurnState.LISTENING, TurnState.SPEAKING] else None
-
-        logger.debug(f"[{conversation_id}] State: {old_state.value} -> {state.value}")
-        self._emit_event("state_change", {
-            "conversation_id": conversation_id,
-            "old_state": old_state.value,
-            "new_state": state.value,
+        if state in (TurnState.LISTENING, TurnState.SPEAKING):
+            session.current_turn_start = time.time()
+        self._emit("state_change", {
+            "conversation_id": cid,
+            "old": old.value,
+            "new": state.value,
         })
 
     def record_user_speech(
-        self,
-        conversation_id: str,
-        text: str,
-        confidence: Optional[float] = None,
+        self, cid: str, text: str, confidence: Optional[float] = None
     ):
-        """Record user speech in the conversation."""
-        session = self.get_session(conversation_id)
+        session = self.get_session(cid)
         if not session:
-            logger.warning(f"Session {conversation_id} not found")
             return
-
         session.add_transcript("user", text, confidence)
         session.last_audio_time = time.time()
 
-        self._emit_event("user_speech", {
-            "conversation_id": conversation_id,
-            "text": text,
-            "confidence": confidence,
+        # Simple sentiment detection
+        lower = text.lower()
+        if any(w in lower for w in ["frustrated", "angry", "terrible", "worst", "ridiculous"]):
+            session.user_sentiment = "frustrated"
+        elif any(w in lower for w in ["bad", "disappointed", "unhappy", "complaint"]):
+            session.user_sentiment = "negative"
+        elif any(w in lower for w in ["great", "thanks", "wonderful", "perfect", "awesome"]):
+            session.user_sentiment = "positive"
+
+        self._emit("user_speech", {
+            "conversation_id": cid, "text": text,
+            "confidence": confidence, "sentiment": session.user_sentiment,
         })
 
-    def record_assistant_speech(self, conversation_id: str, text: str):
-        """Record assistant speech in the conversation."""
-        session = self.get_session(conversation_id)
+    def record_assistant_speech(self, cid: str, text: str):
+        session = self.get_session(cid)
         if not session:
-            logger.warning(f"Session {conversation_id} not found")
             return
-
         session.add_transcript("assistant", text)
-        self._emit_event("assistant_speech", {
-            "conversation_id": conversation_id,
-            "text": text,
-        })
+        self._emit("assistant_speech", {"conversation_id": cid, "text": text})
 
-    def handle_tool_call(
-        self,
-        conversation_id: str,
-        tool_name: str,
-        tool_args: Dict[str, Any],
-    ):
-        """Record a tool call request from the LLM."""
-        session = self.get_session(conversation_id)
+    def handle_tool_call(self, cid: str, tool_name: str, tool_args: Dict):
+        session = self.get_session(cid)
         if not session:
-            logger.warning(f"Session {conversation_id} not found")
             return
-
-        session.tool_call_pending = {
-            "name": tool_name,
-            "args": tool_args,
-        }
-        logger.info(f"[{conversation_id}] Tool call: {tool_name}({tool_args})")
-
-        self._emit_event("tool_call", {
-            "conversation_id": conversation_id,
+        session.tool_call_pending = {"name": tool_name, "args": tool_args}
+        logger.info(f"[{cid[:8]}] TOOL: {tool_name}({tool_args})")
+        self._emit("tool_call", {
+            "conversation_id": cid,
             "tool_name": tool_name,
             "tool_args": tool_args,
         })
 
-    def handle_barge_in(self, conversation_id: str) -> bool:
-        """
-        Handle user interruption of assistant speech.
-        Returns True if barge-in was successful.
-        """
-        session = self.get_session(conversation_id)
-        if not session:
+    def handle_barge_in(self, cid: str) -> bool:
+        session = self.get_session(cid)
+        if not session or session.state != TurnState.SPEAKING:
             return False
 
-        if session.state != TurnState.SPEAKING:
-            logger.debug(f"[{conversation_id}] Barge-in ignored: not in SPEAKING state")
-            return False
+        session.barge_in_count += 1
+        session.last_barge_in_time = time.time()
+        self.set_state(cid, TurnState.LISTENING)
 
-        logger.info(f"[{conversation_id}] Barge-in detected, stopping TTS and returning to LISTENING")
-        self.set_state(conversation_id, TurnState.LISTENING)
+        logger.info(f"[{cid[:8]}] BARGE-IN #{session.barge_in_count}")
+        self._emit("barge_in", {
+            "conversation_id": cid,
+            "count": session.barge_in_count,
+        })
         return True
 
-    async def check_silence_and_transition(self, conversation_id: str) -> bool:
-        """
-        Check if silence timeout exceeded and transition to PROCESSING.
-        Returns True if transition occurred.
-        """
-        session = self.get_session(conversation_id)
-        if not session:
-            return False
+    def get_greeting(self) -> str:
+        """Get an industry-appropriate greeting."""
+        greetings = INDUSTRY_GREETINGS.get(
+            self.industry, INDUSTRY_GREETINGS["default"]
+        )
+        greeting = random.choice(greetings)
+        return greeting.replace("{time_of_day}", _time_of_day())
 
-        if session.state != TurnState.LISTENING:
-            return False
-
-        if not session.has_silence():
-            return False
-
-        logger.info(f"[{conversation_id}] Silence detected, transitioning to PROCESSING")
-        self.set_state(conversation_id, TurnState.PROCESSING)
-        return True
-
-    def insert_backchannel(self, conversation_id: str) -> Optional[str]:
-        """
-        Insert natural backchanneling ("mm-hmm", "I see", etc.) during user speech.
-        Returns the backchannel text or None if not appropriate.
-        """
-        session = self.get_session(conversation_id)
-        if not session:
+    def get_backchannel(self, cid: str) -> Optional[str]:
+        """Get a natural backchannel if appropriate."""
+        session = self.get_session(cid)
+        if not session or session.state != TurnState.LISTENING:
             return None
 
-        if session.state != TurnState.LISTENING:
+        if session.current_turn_start is None:
             return None
 
-        # Don't backchannel if we just started listening
-        if session.current_turn_start and (time.time() - session.current_turn_start) < 0.5:
-            return None
+        time_listening = time.time() - session.current_turn_start
+        if self.backchannel_manager.should_backchannel(cid, time_listening):
+            return self.backchannel_manager.get_backchannel(cid)
+        return None
 
-        # Simple probability-based selection
-        backchannels = ["mm-hmm", "I see", "right", "got it", "okay", "understood"]
-        return random.choice(backchannels)
-
-    def register_event_handler(self, event_type: str, handler: Callable):
-        """Register a callback for an event type."""
-        if event_type not in self.event_handlers:
-            self.event_handlers[event_type] = []
-        self.event_handlers[event_type].append(handler)
-        logger.debug(f"Registered handler for {event_type}")
-
-    def _emit_event(self, event_type: str, data: Dict[str, Any]):
-        """Emit an event to all registered handlers."""
-        handlers = self.event_handlers.get(event_type, [])
-        for handler in handlers:
-            try:
-                if asyncio.iscoroutinefunction(handler):
-                    asyncio.create_task(handler(event_type, data))
-                else:
-                    handler(event_type, data)
-            except Exception as e:
-                logger.error(f"Error in event handler for {event_type}: {e}", exc_info=True)
-
-    def get_session_summary(self, conversation_id: str) -> Optional[Dict[str, Any]]:
-        """Get a summary of a conversation session."""
-        session = self.get_session(conversation_id)
-        if not session:
-            return None
-
-        return {
-            "conversation_id": conversation_id,
-            "duration": session.duration,
-            "turn_count": len(session.transcript),
-            "state": session.state.value,
-            "transcript": session.get_transcript_text(),
-            "metadata": session.metadata,
-        }
-
-    def cleanup_old_sessions(self, max_age_seconds: float = 3600):
-        """Remove sessions older than max_age_seconds."""
+    def cleanup_old_sessions(self, max_age: float = 3600):
         now = time.time()
         expired = [
-            cid for cid, session in self.sessions.items()
-            if (now - session.start_time) > max_age_seconds
+            cid for cid, s in self.sessions.items()
+            if (now - s.start_time) > max_age
         ]
         for cid in expired:
-            logger.info(f"Cleaning up expired session {cid}")
+            logger.info(f"Cleaning expired: {cid[:8]}")
             self.sessions.pop(cid, None)
 
+    def register_handler(self, event: str, handler: Callable):
+        if event not in self.event_handlers:
+            self.event_handlers[event] = []
+        self.event_handlers[event].append(handler)
+
+    def _emit(self, event: str, data: Dict[str, Any]):
+        for handler in self.event_handlers.get(event, []):
+            try:
+                if asyncio.iscoroutinefunction(handler):
+                    asyncio.create_task(handler(event, data))
+                else:
+                    handler(event, data)
+            except Exception as e:
+                logger.error(f"Handler error ({event}): {e}")
+
+
+# ---------------------------------------------------------------------------
+# Backchanneling Manager
+# ---------------------------------------------------------------------------
 
 class BackChannelingManager:
-    """Manages natural backchanneling during conversations."""
+    """Produces natural conversational backchannels."""
 
     def __init__(self, enabled: bool = True):
         self.enabled = enabled
-        self.backchannels = [
-            "mm-hmm",
-            "I see",
-            "right",
-            "got it",
-            "okay",
-            "understood",
-            "yes",
-            "uh-huh",
-            "I hear you",
-        ]
-        self.last_backchannel_time: Dict[str, float] = {}
-        self.min_backchannel_interval = 2.0  # seconds
+        # Tiered backchannels by engagement level
+        self.light = ["mm-hmm", "uh-huh", "right", "okay"]
+        self.medium = ["I see", "got it", "sure", "understood"]
+        self.affirming = ["absolutely", "of course", "that makes sense", "I hear you"]
+        self.empathetic = ["I understand", "that must be tough", "I'm sorry to hear that"]
 
-    def should_backchannel(
-        self,
-        conversation_id: str,
-        time_speaking: float,
-    ) -> bool:
-        """Determine if backchanneling is appropriate."""
-        if not self.enabled:
+        self.last_time: Dict[str, float] = {}
+        self.min_interval = 2.5  # seconds
+        self.count: Dict[str, int] = {}
+
+    def should_backchannel(self, cid: str, time_speaking: float) -> bool:
+        if not self.enabled or time_speaking < 1.0:
             return False
-
-        if time_speaking < 0.5:
+        last = self.last_time.get(cid, 0)
+        if (time.time() - last) < self.min_interval:
             return False
+        # Probability increases with time since last backchannel
+        elapsed = time.time() - last
+        probability = min(0.4, elapsed / 15.0)
+        return random.random() < probability
 
-        last_time = self.last_backchannel_time.get(conversation_id, 0)
-        if (time.time() - last_time) < self.min_backchannel_interval:
-            return False
+    def get_backchannel(self, cid: str) -> str:
+        self.last_time[cid] = time.time()
+        n = self.count.get(cid, 0)
+        self.count[cid] = n + 1
 
-        return True
-
-    def get_backchannel(self, conversation_id: str) -> str:
-        """Get a random backchannel utterance."""
-        self.last_backchannel_time[conversation_id] = time.time()
-        return random.choice(self.backchannels)
+        # Vary by count to avoid repetition
+        if n % 4 == 0:
+            return random.choice(self.light)
+        elif n % 4 == 1:
+            return random.choice(self.medium)
+        elif n % 4 == 2:
+            return random.choice(self.affirming)
+        else:
+            return random.choice(self.light)

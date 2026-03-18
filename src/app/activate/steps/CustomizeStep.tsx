@@ -44,7 +44,7 @@ export function CustomizeStep({
             value={state.agentName}
             onChange={(e) => setState((prev) => ({ ...prev, agentName: e.target.value }))}
             placeholder={t("agentNamePlaceholder")}
-            className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
           />
         </div>
         <div className="space-y-2">
@@ -53,7 +53,7 @@ export function CustomizeStep({
             id="preferred_language"
             value={state.preferredLanguage}
             onChange={(e) => setState((prev) => ({ ...prev, preferredLanguage: e.target.value }))}
-            className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
           >
             {SUPPORTED_LANGUAGES.map((lang) => (
               <option key={lang.code} value={lang.code}>{lang.name}</option>
@@ -70,7 +70,7 @@ export function CustomizeStep({
             id="agent_voice"
             value={state.elevenlabsVoiceId}
             onChange={(e) => setState((prev) => ({ ...prev, elevenlabsVoiceId: e.target.value }))}
-            className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
           >
             {voices.map((v) => (
               <option key={v.id} value={v.id}>{v.name}</option>
@@ -95,7 +95,7 @@ export function CustomizeStep({
                     })
                   }
                   className={`rounded-full border px-3 py-1 text-[11px] md:text-xs transition-colors ${
-                    isOn ? "border-sky-400 bg-sky-500/10 text-slate-50" : "border-slate-700 bg-slate-900/40 text-slate-300 hover:border-slate-500"
+                    isOn ? "border-white/50 bg-white/10 text-slate-50" : "border-slate-700 bg-slate-900/40 text-slate-300 hover:border-slate-500"
                   }`}
                 >
                   {svc}
@@ -138,7 +138,7 @@ export function CustomizeStep({
                     })
                   }
                   disabled={!slot.enabled}
-                  className="rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-1 text-[11px] text-slate-100 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-1 text-[11px] text-slate-100 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
                 >
                   <option value="09:00">9:00 AM</option>
                   <option value="10:00">10:00 AM</option>
@@ -155,7 +155,7 @@ export function CustomizeStep({
                     })
                   }
                   disabled={!slot.enabled}
-                  className="rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-1 text-[11px] text-slate-100 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-1 text-[11px] text-slate-100 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
                 >
                   <option value="17:00">5:00 PM</option>
                   <option value="18:00">6:00 PM</option>
@@ -180,7 +180,7 @@ export function CustomizeStep({
           />
           <div className="flex items-center justify-between px-3 pb-2 text-[11px] text-slate-500">
             <span>{state.greeting.length} {t("characters")}</span>
-            <button type="button" className="text-sky-400 hover:text-sky-300" onClick={onPlayGreeting}>
+            <button type="button" className="text-zinc-400 hover:text-white" onClick={onPlayGreeting}>
               {t("previewVoice")}
             </button>
           </div>

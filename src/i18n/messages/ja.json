@@ -88,6 +88,8 @@
     "agents": "エージェント",
     "calls": "通話",
     "leads": "リード",
+    "contacts": "連絡先",
+    "messages": "メッセージ",
     "campaigns": "キャンペーン",
     "inbox": "受信箱",
     "analytics": "分析",
@@ -1462,6 +1464,29 @@
     "am": "AM",
     "pm": "PM",
     "description": "会話が予約と収益に変わる様子を確認できます。",
+    "tabs": { "overview": "概要", "inbound": "受電", "outbound": "発信" },
+    "inboundTab": { "hint": "選択期間の受電・成果・転換。" },
+    "outboundTab": {
+      "hint": "選択期間のSMSフォローとキャンペーン。",
+      "smsSent": "送信SMS",
+      "replies": "返信",
+      "activeCampaigns": "稼働中キャンペーン",
+      "totalDialed": "キャンペーン発信数",
+      "connected": "接続",
+      "apptsBooked": "予約（キャンペーン）",
+      "campaignsHeading": "キャンペーン",
+      "campaignName": "名前",
+      "status": "状態",
+      "smsVolume": "日別送信SMS",
+      "empty": "この期間に発信データはありません。",
+      "goCampaigns": "キャンペーンへ"
+    },
+    "outboundSnapshot": {
+      "title": "発信サマリー",
+      "sms": "送信SMS",
+      "dials": "発信",
+      "booked": "予約"
+    },
     "ranges": {
       "today": "今日",
       "sevenDay": "7D",
@@ -3361,11 +3386,11 @@
     }
   },
   "hero": {
-    "title": "あなたのビジネス電話に24時間365日対応するAI",
-    "subtitle": "二度と電話を取り逃がさない。二度とリードを失わない。Recall Touch がすべての会話を引き受け、予約を取り、働いている間も売上を守ります。",
-    "primaryCta": "無料トライアルを始める",
-    "secondaryCta": "デモを見る",
-    "trustLine": "既存の番号で利用可能 · 契約なし · 14日間無料トライアル",
+    "title": "今週だけで、本来は留守番電話行きだった12,847件の電話に応答しました。",
+    "subtitle": "Recall Touch は、あなたが出られないときに代わりに電話に出ます。AI が取り逃がした通話に対応し、その場で予約を取り、内容をSMSで届けます —— 24時間365日、月297ドルで。",
+    "primaryCta": "14日間の無料トライアルを始める →",
+    "secondaryCta": "仕組みを見る",
+    "trustLine": "Revenue Execution OS · 既存の番号で利用可能 · 14日間無料トライアル",
     "checkmark": {
       "existingNumber": "既存の番号で利用可能",
       "setup": "5分でセットアップ",
@@ -3434,15 +3459,15 @@
       "script1Line0": "おはようございます、Maple Street Dentalです。Alexが承ります。どのようなご用件でしょうか？",
       "script1Line1": "こんにちは、クリーニングの予約を取りたいです。",
       "script1Line2": "かしこまりました。既に当院の患者様でしょうか？",
-      "script1Line3": "はい、Sarah Chenです。",
-      "script1Line4": "Sarahさん、おかえりなさい。午前と午後、どちらがよろしいですか？",
+      "script1Line3": "はい、Jane Smithです。",
+      "script1Line4": "おかえりなさい。午前と午後、どちらがよろしいですか？",
       "script1Line5": "午前の方がいいです。",
       "script1Line6": "火曜9時か水曜10時30分にDr. Martinezの枠が空いています。",
       "script1Line7": "火曜9時でお願いします。",
       "script1Line8": "予約できました。火曜9時にDr. Martinezで。月曜にリマインダーをお送りします。",
       "script1Line9": "ありがとうございます！",
-      "script1Line10": "火曜日にお会いしましょう、Sarahさん。良い一日を。",
-      "script1Detail0": "患者: Sarah Chen（既存）",
+      "script1Line10": "火曜日にお会いしましょう。良い一日を。",
+      "script1Detail0": "患者: Jane Smith（既存）",
       "script1Detail1": "サービス: クリーニング",
       "script1Detail2": "担当: Dr. Martinez",
       "script1Detail3": "予約: 火曜 9:00",
@@ -3476,7 +3501,7 @@
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "GDPR",
       "badgeEncryption": "256ビット暗号化",
-      "badgeUptime": "99.9% 稼働率",
+      "badgeUptime": "",
       "ctaStartFree": "無料で開始 →",
       "optionalUpdates": "オプション：製品アップデートを受け取る",
       "notifyMe": "通知する",
@@ -3843,28 +3868,28 @@
       "label": "お客様の声",
       "testimonials": {
         "amanda": {
-          "quote": "電話応答・テキストフォロー・予約の3ツールを1プラットフォームに統合しました。",
-          "author": "Amanda K.",
+          "quote": "",
+          "author": "",
           "role": "コンサルティング"
         },
         "ryan": {
-          "quote": "営業のフォローが10倍速く。AIが初回接触と予約済みミーティングを担当。",
-          "author": "Ryan D.",
+          "quote": "",
+          "author": "",
           "role": "SaaSスタートアップ"
         },
         "mike": {
-          "quote": "初週でRecall Touchの元が取れました。14件のリードをキャッチできた。",
-          "author": "Mike R.",
+          "quote": "",
+          "author": "",
           "role": "配管業"
         },
         "sarah": {
-          "quote": "AIがリマインドを送り始めてから無断キャンセルが40%減。",
-          "author": "Dr. Sarah L.",
+          "quote": "",
+          "author": "",
           "role": "歯科"
         },
         "james": {
-          "quote": "AIの電話応答には懐疑的だったが、1日で納得した。",
-          "author": "James T.",
+          "quote": "",
+          "author": "",
           "role": "屋根工事"
         }
       },
@@ -4181,7 +4206,7 @@
     "legalSecurity": "法務・セキュリティ",
     "privacyPolicy": "プライバシーポリシー",
     "termsOfService": "利用規約",
-    "securityBadges": "SOC 2 · GDPR · 256ビット暗号化 · 99.9%稼働率",
+    "securityBadges": "SOC 2 in progress · 256ビット暗号化",
     "copyright": "© {year} Recall Touch. All rights reserved.",
     "cta": {
       "bookDemo": "デモを予約",
@@ -5054,7 +5079,7 @@
     "removeConfirm": "「{contact} — {service}」を削除しますか？元に戻せません。",
     "newAppointmentHeading": "新規予約",
     "contactLabel": "連絡先",
-    "contactPlaceholder": "Sarah Chen",
+    "contactPlaceholder": "Jane Smith",
     "phoneLabel": "電話",
     "phonePlaceholder": "+1 555 000 0000",
     "serviceLabel": "サービス",

@@ -8,13 +8,13 @@ import type { BillingTier } from "@/lib/feature-gate/types";
 export type BillingInterval = "month" | "year";
 
 /** Tiers that have a Stripe price (checkout/trial). Enterprise is contract-only. */
-const TIERS_WITH_PRICE: BillingTier[] = ["solo", "growth", "team"];
+const TIERS_WITH_PRICE: BillingTier[] = ["solo", "business", "scale"];
 const INTERVALS: BillingInterval[] = ["month", "year"];
 
 const ENV_KEYS: Record<BillingTier, Record<BillingInterval, string>> = {
   solo: { month: "STRIPE_PRICE_SOLO_MONTH", year: "STRIPE_PRICE_SOLO_YEAR" },
-  growth: { month: "STRIPE_PRICE_GROWTH_MONTH", year: "STRIPE_PRICE_GROWTH_YEAR" },
-  team: { month: "STRIPE_PRICE_TEAM_MONTH", year: "STRIPE_PRICE_TEAM_YEAR" },
+  business: { month: "STRIPE_PRICE_BUSINESS_MONTH", year: "STRIPE_PRICE_BUSINESS_YEAR" },
+  scale: { month: "STRIPE_PRICE_SCALE_MONTH", year: "STRIPE_PRICE_SCALE_YEAR" },
   enterprise: { month: "STRIPE_PRICE_ENTERPRISE_MONTH", year: "STRIPE_PRICE_ENTERPRISE_YEAR" },
 };
 

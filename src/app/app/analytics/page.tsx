@@ -3,7 +3,18 @@
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { AlertTriangle, BadgeCheck, BarChart3, Lightbulb, TrendingUp, CalendarRange, Sparkles } from "lucide-react";
+import {
+  AlertTriangle,
+  BadgeCheck,
+  BarChart3,
+  Lightbulb,
+  TrendingUp,
+  CalendarRange,
+  Sparkles,
+  PhoneIncoming,
+  Send,
+  LayoutDashboard,
+} from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { KPIRow } from "@/components/ui/KPIRow";
@@ -14,6 +25,29 @@ import { useTranslations } from "next-intl";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 type RangeKey = "today" | "7d" | "30d" | "90d" | "custom";
+
+type AnalyticsScope = "overview" | "inbound" | "outbound";
+
+type OutboundMetricsPayload = {
+  outbound_messages: number;
+  inbound_replies: number;
+  volume_by_day: { day: string; count: number }[];
+  campaigns: Array<{
+    id: string;
+    name: string;
+    status: string;
+    called: number;
+    answered: number;
+    appointments_booked: number;
+    total_contacts: number;
+  }>;
+  totals: {
+    dialed: number;
+    answered: number;
+    appointments_booked: number;
+    active_campaigns: number;
+  };
+};
 
 type OutcomeSlice = {
   name: string;
@@ -35,6 +69,13 @@ interface CallRecord {
 interface LeadRecord {
   id: string;
   state: string;
+}
+
+interface RevenueRecoveredMetrics {
+  total_recovered: number;
+  calls_answered: number;
+  no_shows_recovered: number;
+  reactivations: number;
 }
 
 const ANALYTICS_CALLS_SNAPSHOT_PREFIX = "rt_analytics_calls_snapshot:";
@@ -199,6 +240,15 @@ export default function AppAnalyticsPage() {
       actionHref: string | null;
     }>
   >([]);
+  const [revenue, setRevenue] = useState<RevenueRecoveredMetrics | null>(null);
+  const [scope, setScope] = useState<AnalyticsScope>("overview");
+  const [outboundMetrics, setOutboundMetrics] = useState<OutboundMetricsPayload | null>(null);
+  const [outboundLoading, setOutboundLoading] = useState(false);
+
+  const { start: rangeStart, end: rangeEnd } = useMemo(
+    () => getRangeBounds(range, dateFrom, dateTo),
+    [range, dateFrom, dateTo],
+  );
 
   useEffect(() => {
     document.title = t("analytics.pageTitle");
@@ -225,6 +275,25 @@ export default function AppAnalyticsPage() {
         );
       })
       .catch(() => setSuggestions([]));
+  }, [workspaceId]);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    apiFetch<RevenueRecoveredMetrics>(
+      `/api/analytics/revenue-recovered?workspace_id=${encodeURIComponent(workspaceId)}`,
+      { credentials: "include", timeout: 8000, retries: 1 },
+    )
+      .then((data) => {
+        setRevenue({
+          total_recovered: data.total_recovered ?? 0,
+          calls_answered: data.calls_answered ?? 0,
+          no_shows_recovered: data.no_shows_recovered ?? 0,
+          reactivations: data.reactivations ?? 0,
+        });
+      })
+      .catch(() => {
+        setRevenue(null);
+      });
   }, [workspaceId]);
 
   useEffect(() => {
@@ -260,10 +329,32 @@ export default function AppAnalyticsPage() {
       .finally(() => setLoading(false));
   }, [workspaceId, t]);
 
-  const { start: rangeStart, end: rangeEnd } = useMemo(
-    () => getRangeBounds(range, dateFrom, dateTo),
-    [range, dateFrom, dateTo],
-  );
+  useEffect(() => {
+    if (!workspaceId) return;
+    if (scope !== "overview" && scope !== "outbound") return;
+    const start = rangeStart.toISOString().slice(0, 10);
+    const end = rangeEnd.toISOString().slice(0, 10);
+    let active = true;
+    queueMicrotask(() => {
+      if (active) setOutboundLoading(true);
+    });
+    apiFetch<OutboundMetricsPayload>(
+      `/api/analytics/outbound-metrics?workspace_id=${encodeURIComponent(workspaceId)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
+      { credentials: "include", timeout: 10000, retries: 0 },
+    )
+      .then((d) => {
+        if (active) setOutboundMetrics(d);
+      })
+      .catch(() => {
+        if (active) setOutboundMetrics(null);
+      })
+      .finally(() => {
+        if (active) setOutboundLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [workspaceId, scope, rangeStart, rangeEnd]);
 
   const filteredCalls = useMemo(() => {
     return calls.filter((c) => {
@@ -299,7 +390,7 @@ export default function AppAnalyticsPage() {
     (l) => l.state === "appointment_set" || l.state === "won",
   ).length;
 
-  const estRevenueImpact = appointments * 250;
+  const estRevenueImpact = revenue?.total_recovered ?? appointments * 250;
 
   const hasData = totalCalls > 0 || filteredLeads.length > 0;
   const leadConversionPct = totalCalls === 0 ? 0 : Math.round((callsWithLead / totalCalls) * 100);
@@ -530,7 +621,7 @@ export default function AppAnalyticsPage() {
           <button
             type="button"
             onClick={handleExportCsv}
-            disabled={!hasData}
+            disabled={!hasData || scope === "outbound"}
             className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-200 hover:bg-[var(--bg-hover)] disabled:opacity-50"
           >
             {t("analytics.exportCsv")}
@@ -538,7 +629,140 @@ export default function AppAnalyticsPage() {
         </div>
       </div>
 
-      {!loading && (
+      <div className="flex flex-wrap gap-2 mb-3" role="tablist" aria-label={t("analytics.heading")}>
+        {(
+          [
+            { key: "overview" as const, label: t("analytics.tabs.overview"), Icon: LayoutDashboard },
+            { key: "inbound" as const, label: t("analytics.tabs.inbound"), Icon: PhoneIncoming },
+            { key: "outbound" as const, label: t("analytics.tabs.outbound"), Icon: Send },
+          ] as const
+        ).map(({ key, label, Icon }) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={scope === key}
+            onClick={() => setScope(key)}
+            className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-colors ${
+              scope === key
+                ? "border-white bg-white text-black"
+                : "border-[var(--border-default)] bg-[var(--bg-card)] text-zinc-400 hover:text-white"
+            }`}
+          >
+            <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden />
+            {label}
+          </button>
+        ))}
+      </div>
+      {(scope === "inbound" || scope === "outbound") && (
+        <p className="text-xs text-zinc-500 mb-4">
+          {scope === "inbound" ? t("analytics.inboundTab.hint") : t("analytics.outboundTab.hint")}
+        </p>
+      )}
+
+      {scope === "outbound" && (
+        <div className="mb-8 space-y-6" role="tabpanel">
+          {outboundLoading && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} variant="card" className="h-24" />
+              ))}
+            </div>
+          )}
+          {!outboundLoading && outboundMetrics && (
+            <>
+              {(() => {
+                const om = outboundMetrics;
+                const hasOb =
+                  om.outbound_messages > 0 ||
+                  om.totals.dialed > 0 ||
+                  (om.campaigns?.length ?? 0) > 0;
+                if (!hasOb) {
+                  return (
+                    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center">
+                      <Send className="w-10 h-10 text-zinc-600 mx-auto mb-3" aria-hidden />
+                      <p className="text-sm text-zinc-300 mb-4">{t("analytics.outboundTab.empty")}</p>
+                      <Link
+                        href="/app/campaigns"
+                        className="inline-flex rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-zinc-100"
+                      >
+                        {t("analytics.outboundTab.goCampaigns")} →
+                      </Link>
+                    </div>
+                  );
+                }
+                const maxSms = Math.max(1, ...om.volume_by_day.map((x) => x.count));
+                return (
+                  <>
+                    <KPIRow className="lg:grid-cols-4">
+                      <StatCard label={t("analytics.outboundTab.smsSent")} value={om.outbound_messages} />
+                      <StatCard label={t("analytics.outboundTab.replies")} value={om.inbound_replies} />
+                      <StatCard label={t("analytics.outboundTab.activeCampaigns")} value={om.totals.active_campaigns} />
+                      <StatCard label={t("analytics.outboundTab.totalDialed")} value={om.totals.dialed} />
+                    </KPIRow>
+                    <KPIRow className="lg:grid-cols-3">
+                      <StatCard label={t("analytics.outboundTab.connected")} value={om.totals.answered} />
+                      <StatCard label={t("analytics.outboundTab.apptsBooked")} value={om.totals.appointments_booked} />
+                    </KPIRow>
+                    {om.volume_by_day.length > 0 && (
+                      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
+                        <p className="text-sm font-medium text-white mb-3">{t("analytics.outboundTab.smsVolume")}</p>
+                        <div className="flex items-end gap-1 h-28">
+                          {om.volume_by_day.map((row) => (
+                            <div key={row.day} className="flex-1 min-w-0 flex flex-col items-center gap-1">
+                              <div
+                                className="w-full max-w-[20px] rounded-t bg-[var(--accent-primary)]/80 mx-auto"
+                                style={{ height: `${Math.max(8, (row.count / maxSms) * 100)}%` }}
+                                title={`${row.day}: ${row.count}`}
+                              />
+                              <span className="text-[9px] text-zinc-500 truncate w-full text-center">{row.day.slice(5)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {om.campaigns.length > 0 && (
+                      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 overflow-x-auto">
+                        <p className="text-sm font-medium text-white mb-3">{t("analytics.outboundTab.campaignsHeading")}</p>
+                        <table className="w-full text-xs text-left">
+                          <thead>
+                            <tr className="text-zinc-500 border-b border-[var(--border-default)]">
+                              <th className="pb-2 pr-3 font-medium">{t("analytics.outboundTab.campaignName")}</th>
+                              <th className="pb-2 pr-3 font-medium">{t("analytics.outboundTab.status")}</th>
+                              <th className="pb-2 pr-3 font-medium text-right">{t("analytics.outboundTab.totalDialed")}</th>
+                              <th className="pb-2 pr-3 font-medium text-right">{t("analytics.outboundTab.connected")}</th>
+                              <th className="pb-2 font-medium text-right">{t("analytics.outboundTab.apptsBooked")}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {om.campaigns.map((c) => (
+                              <tr key={c.id} className="border-b border-[var(--border-default)]/50 text-zinc-300">
+                                <td className="py-2 pr-3 text-white">{c.name}</td>
+                                <td className="py-2 pr-3 capitalize">{c.status}</td>
+                                <td className="py-2 pr-3 text-right">{c.called}</td>
+                                <td className="py-2 pr-3 text-right">{c.answered}</td>
+                                <td className="py-2 text-right">{c.appointments_booked}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        <Link
+                          href="/app/campaigns"
+                          className="inline-block mt-4 text-xs font-medium text-[var(--accent-primary)] hover:opacity-80"
+                        >
+                          {t("analytics.outboundTab.goCampaigns")} →
+                        </Link>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </>
+          )}
+        </div>
+      )}
+
+      {scope !== "outbound" && !loading && (
         <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
@@ -568,6 +792,8 @@ export default function AppAnalyticsPage() {
         </div>
       )}
 
+      {scope !== "outbound" && (
+        <>
       {loading && <AnalyticsSkeleton />}
       {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
       {!hasData && !loading && !error && (
@@ -779,6 +1005,32 @@ export default function AppAnalyticsPage() {
         </div>
       </div>
 
+      {scope === "overview" &&
+        outboundMetrics &&
+        !outboundLoading &&
+        (outboundMetrics.outbound_messages > 0 || outboundMetrics.totals.dialed > 0) && (
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 mb-6">
+            <p className="text-sm font-medium text-white mb-3">{t("analytics.outboundSnapshot.title")}</p>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="text-2xl font-semibold text-white">{outboundMetrics.outbound_messages}</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">{t("analytics.outboundSnapshot.sms")}</p>
+              </div>
+              <div>
+                <p className="text-2xl font-semibold text-white">{outboundMetrics.totals.dialed}</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">{t("analytics.outboundSnapshot.dials")}</p>
+              </div>
+              <div>
+                <p className="text-2xl font-semibold text-white">{outboundMetrics.totals.appointments_booked}</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">{t("analytics.outboundSnapshot.booked")}</p>
+              </div>
+            </div>
+            <Link href="/app/campaigns" className="inline-block mt-3 text-xs text-[var(--accent-primary)] hover:opacity-80">
+              {t("analytics.outboundTab.goCampaigns")} →
+            </Link>
+          </div>
+        )}
+
       {/* Row 4: sentiment overview */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
         <p className="text-sm font-medium text-white mb-3">{t("analytics.sentimentOverview")}</p>
@@ -802,6 +1054,8 @@ export default function AppAnalyticsPage() {
           <span>{t("analytics.sentimentNegative", { pct: negativePct })}</span>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }

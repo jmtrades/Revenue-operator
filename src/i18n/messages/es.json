@@ -88,6 +88,8 @@
     "agents": "Agentes",
     "calls": "Llamadas",
     "leads": "Prospectos",
+    "contacts": "Contactos",
+    "messages": "Mensajes",
     "campaigns": "Campañas",
     "inbox": "Bandeja",
     "analytics": "Analítica",
@@ -1458,6 +1460,35 @@
     },
     "successRate": "% éxito",
     "description": "Descubre cómo las conversaciones se convierten en citas y ingresos reales.",
+    "tabs": {
+      "overview": "Resumen",
+      "inbound": "Entrantes",
+      "outbound": "Salientes"
+    },
+    "inboundTab": {
+      "hint": "Llamadas entrantes, resultados y conversión en el rango seleccionado."
+    },
+    "outboundTab": {
+      "hint": "SMS de seguimiento y actividad de campañas en el rango seleccionado.",
+      "smsSent": "SMS salientes",
+      "replies": "Respuestas entrantes",
+      "activeCampaigns": "Campañas activas",
+      "totalDialed": "Marcaciones (campañas)",
+      "connected": "Conectadas",
+      "apptsBooked": "Citas (campañas)",
+      "campaignsHeading": "Campañas",
+      "campaignName": "Campaña",
+      "status": "Estado",
+      "smsVolume": "SMS salientes por día",
+      "empty": "Sin actividad saliente en este rango.",
+      "goCampaigns": "Abrir campañas"
+    },
+    "outboundSnapshot": {
+      "title": "Resumen saliente",
+      "sms": "SMS enviados",
+      "dials": "Marcaciones",
+      "booked": "Citas reservadas"
+    },
     "ranges": {
       "today": "Hoy",
       "sevenDay": "7D",
@@ -3363,11 +3394,11 @@
     }
   },
   "hero": {
-    "title": "IA que atiende el teléfono de tu negocio 24/7",
-    "subtitle": "Nunca pierdas una llamada. Nunca pierdas un lead. Recall Touch gestiona cada conversación, reserva citas y protege tus ingresos mientras trabajas.",
-    "primaryCta": "Empieza prueba gratis",
-    "secondaryCta": "Ver demo",
-    "trustLine": "Funciona con tu número actual · Sin contratos · Prueba gratuita de 14 días",
+    "title": "Esta semana atendimos 12.847 llamadas que habrían ido al buzón de voz.",
+    "subtitle": "Recall Touch responde cuando tú no puedes. La IA atiende tus llamadas perdidas, reserva citas y te envía los detalles por SMS — 24/7, por 297 $/mes.",
+    "primaryCta": "Prueba gratis 14 días →",
+    "secondaryCta": "Ver cómo funciona",
+    "trustLine": "Revenue Execution OS · Funciona con tu número · Prueba gratuita de 14 días",
     "checkmark": {
       "existingNumber": "Funciona con tu número actual",
       "setup": "Configuración en 5 minutos",
@@ -3436,15 +3467,15 @@
       "script1Line0": "Buenos días, Maple Street Dental. Soy Alex. ¿En qué puedo ayudarle?",
       "script1Line1": "Hola, quiero pedir una limpieza.",
       "script1Line2": "¡Claro! ¿Es usted paciente nuestro?",
-      "script1Line3": "Sí, Sarah Chen.",
-      "script1Line4": "Bienvenida de nuevo, Sarah. ¿Prefiere mañanas o tardes?",
+      "script1Line3": "Sí, soy Jane Smith.",
+      "script1Line4": "Bienvenida de nuevo. ¿Prefiere mañanas o tardes?",
       "script1Line5": "Mañanas mejor.",
       "script1Line6": "Tengo el martes a las 9 o el miércoles a las 10:30 con la Dra. Martínez.",
       "script1Line7": "Martes a las 9, por favor.",
       "script1Line8": "Reservado. Martes a las 9 con la Dra. Martínez. Le recordamos el lunes.",
       "script1Line9": "Gracias.",
-      "script1Line10": "Hasta el martes, Sarah. Que tenga un buen día.",
-      "script1Detail0": "Paciente: Sarah Chen (existente)",
+      "script1Line10": "Hasta el martes. Que tenga un buen día.",
+      "script1Detail0": "Paciente: Jane Smith (existente)",
       "script1Detail1": "Servicio: Limpieza",
       "script1Detail2": "Profesional: Dra. Martínez",
       "script1Detail3": "Cita: Martes 9:00",
@@ -3478,7 +3509,7 @@
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "GDPR",
       "badgeEncryption": "Cifrado 256 bits",
-      "badgeUptime": "99,9 % disponibilidad",
+      "badgeUptime": "",
       "ctaStartFree": "Empieza gratis →",
       "optionalUpdates": "Opcional: recibe novedades del producto.",
       "notifyMe": "Avísame",
@@ -3845,28 +3876,28 @@
       "label": "Lo que dicen los clientes",
       "testimonials": {
         "amanda": {
-          "quote": "Sustituimos tres herramientas — atención telefónica, seguimiento por mensaje y agenda — por una plataforma.",
-          "author": "Amanda K.",
+          "quote": "",
+          "author": "",
           "role": "Consultoría"
         },
         "ryan": {
-          "quote": "Nuestro equipo comercial sigue 10 veces más rápido. La IA hace el primer contacto y reserva reuniones cualificadas.",
-          "author": "Ryan D.",
+          "quote": "",
+          "author": "",
           "role": "Startup SaaS"
         },
         "mike": {
-          "quote": "Recall Touch se pagó solo la primera semana. Capturamos 14 leads que habríamos perdido.",
-          "author": "Mike R.",
+          "quote": "",
+          "author": "",
           "role": "Empresa de fontanería"
         },
         "sarah": {
-          "quote": "Las ausencias cayeron un 40% desde que la IA envía recordatorios.",
-          "author": "Dra. Sarah L.",
+          "quote": "",
+          "author": "",
           "role": "Clínica dental"
         },
         "james": {
-          "quote": "Era escéptico con la IA atendiendo mis llamadas. En un día me convenció.",
-          "author": "James T.",
+          "quote": "",
+          "author": "",
           "role": "Contratista de tejados"
         }
       },
@@ -4183,7 +4214,7 @@
     "legalSecurity": "Legal y Seguridad",
     "privacyPolicy": "Política de Privacidad",
     "termsOfService": "Términos de Servicio",
-    "securityBadges": "SOC 2 · RGPD · Cifrado 256 bits · 99,9% disponibilidad",
+    "securityBadges": "SOC 2 en progreso · Cifrado 256 bits",
     "copyright": "© {year} Recall Touch. Todos los derechos reservados.",
     "cta": {
       "bookDemo": "Reservar demo",
@@ -5056,7 +5087,7 @@
     "removeConfirm": "¿Eliminar \"{contact} — {service}\"? No se puede deshacer.",
     "newAppointmentHeading": "Nueva cita",
     "contactLabel": "Contacto",
-    "contactPlaceholder": "Sarah Chen",
+    "contactPlaceholder": "Jane Smith",
     "phoneLabel": "Teléfono",
     "phonePlaceholder": "+1 555 000 0000",
     "serviceLabel": "Servicio",

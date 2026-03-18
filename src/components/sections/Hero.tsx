@@ -6,74 +6,82 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
 import { ROUTES } from "@/lib/constants";
+import { ArrowRight } from "lucide-react";
 
 export function Hero() {
   const tHero = useTranslations("hero");
 
   return (
-    <section className="min-h-screen flex items-center pt-28 pb-16 md:pt-32 md:pb-20 relative overflow-hidden bg-[var(--bg-base)] hero-atmosphere">
+    <section className="min-h-[80vh] flex items-center pt-24 pb-16 md:pt-28 md:pb-24 bg-[var(--bg-primary)]">
       <Container className="relative z-10">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <SectionLabel>{tHero("trustLine")}</SectionLabel>
+
             <h1
-              className="font-bold max-w-xl mt-4 mb-4 hero-headline"
+              className="font-bold max-w-xl mt-4 mb-4"
               style={{
-                fontSize: "clamp(2.4rem, 4vw, 3.5rem)",
+                fontSize: "clamp(2.4rem, 4vw, 3.2rem)",
                 letterSpacing: "-0.03em",
                 lineHeight: 1.05,
               }}
             >
-              {tHero("title")}
+              <span className="text-[var(--text-primary)]">
+                Stop Losing Revenue to Missed Calls
+              </span>
+              <br />
+              <span className="text-[var(--text-primary)]">
+                And Broken Follow-Up.
+              </span>
             </h1>
-            <p className="text-base md:text-lg max-w-lg mb-4 text-slate-400 leading-relaxed">
-              {tHero("subtitle")}
+
+            <p className="text-base md:text-lg max-w-xl mb-4 text-[var(--text-secondary)] leading-relaxed">
+              Recall Touch answers every call, books appointments, and runs automated follow-up
+              that recovers the revenue you&apos;re currently losing. See results in your first week.
             </p>
+
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6 mt-6">
               <Link
                 href={ROUTES.START}
-                className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors no-underline w-full sm:w-auto text-center"
+                className="group bg-[var(--accent-primary)] text-white font-semibold rounded-lg px-7 py-3.5 hover:bg-[var(--accent-primary-hover)] transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center gap-2 shadow-[var(--shadow-glow-primary)]"
               >
-                {tHero("primaryCta")}
+                Start Recovering Revenue — Free for 14 Days
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
-                href={ROUTES.DEMO}
-                className="border border-white/20 text-white/90 font-medium rounded-xl px-5 py-2.5 hover:bg-white/10 transition-colors no-underline w-full sm:w-auto text-center"
+                href="#how-it-works"
+                className="border border-[var(--border-default)] text-[var(--accent-primary)] font-medium rounded-lg px-5 py-3 hover:bg-[var(--bg-hover)]/60 transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center gap-2"
               >
-                {tHero("secondaryCta")}
+                See How It Works
               </Link>
             </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-500">
+
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-[var(--text-secondary)]">
               <span>✓ {tHero("checkmark.existingNumber")}</span>
               <span>✓ {tHero("checkmark.setup")}</span>
               <span>✓ {tHero("checkmark.noCard")}</span>
             </div>
+
+            <div className="flex flex-wrap gap-x-5 gap-y-2 mt-6 text-xs text-[var(--text-secondary)]">
+              <span><strong className="text-[var(--text-primary)]">&lt;3 sec</strong> answer time</span>
+              <span><strong className="text-[var(--text-primary)]">24/7</strong> availability</span>
+              <span><strong className="text-[var(--text-primary)]">14-day</strong> free trial</span>
+            </div>
           </div>
 
-          {/* Right: static conversation demo (no live voice / no mic widget) */}
           <div className="max-w-md lg:ml-auto">
             <div className="space-y-4">
               <HeroRevenueWidget />
-              <div className="bg-zinc-900 border border-white/[0.08] rounded-2xl p-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
-              <div className="flex items-center gap-2 mb-1">
-                <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span></span>
-                <h3 className="text-base font-semibold text-white">{tHero("simulator.heading")}</h3>
+              <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-6 shadow-[var(--shadow-glow-primary)]">
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
+                  Revenue Recovered Snapshot
+                </h3>
+                <p className="text-xs text-[var(--text-secondary)] mb-4">
+                  That&apos;s what Recall Touch recovered this month for a typical service business —
+                  based on kept appointments from answered calls and automated follow-up.
+                </p>
+                <HeroRevenueWidget />
               </div>
-              <p className="text-sm text-white/60 mb-5">{tHero("simulator.cardSubtitle")}</p>
-              <div className="space-y-3">
-                <div className="rounded-lg p-3 bg-white/[0.04] mr-6"><p className="text-xs font-medium text-white/35 mb-0.5">{tHero("simulator.callerLabel")}</p><p className="text-sm text-white">{tHero("simulator.line1")}</p></div>
-                <div className="rounded-lg p-3 bg-zinc-900/70 border border-zinc-700 ml-6"><p className="text-xs font-medium text-emerald-400 mb-0.5">{tHero("simulator.agentLabel")}</p><p className="text-sm text-white">{tHero("simulator.line2")}</p></div>
-                <div className="rounded-lg p-3 bg-white/[0.04] mr-6"><p className="text-xs font-medium text-white/35 mb-0.5">{tHero("simulator.callerLabel")}</p><p className="text-sm text-white">{tHero("simulator.line3")}</p></div>
-                <div className="rounded-lg p-3 bg-zinc-900/70 border border-zinc-700 ml-6"><p className="text-xs font-medium text-emerald-400 mb-0.5">{tHero("simulator.agentLabel")}</p><p className="text-sm text-white">{tHero("simulator.line4")}</p></div>
-                <div className="rounded-lg p-3 bg-white/[0.04] mr-6"><p className="text-xs font-medium text-white/35 mb-0.5">{tHero("simulator.callerLabel")}</p><p className="text-sm text-white">{tHero("simulator.line5")}</p></div>
-                <div className="rounded-lg p-3 bg-zinc-900/70 border border-zinc-700 ml-6"><p className="text-xs font-medium text-emerald-400 mb-0.5">{tHero("simulator.agentLabel")}</p><p className="text-sm text-white">{tHero("simulator.line6")}</p></div>
-              </div>
-              <div className="mt-5 pt-4 border-t border-white/[0.08] flex items-center gap-3">
-                <a href="/sign-in?create=1" className="px-5 py-2.5 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors">{tHero("simulator.cta")}</a>
-                <span className="text-xs text-white/35">{tHero("simulator.trialNote")}</span>
-              </div>
-            </div>
             </div>
           </div>
         </div>

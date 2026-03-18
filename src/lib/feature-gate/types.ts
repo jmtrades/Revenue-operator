@@ -1,9 +1,9 @@
 /**
  * Pricing layer feature flags — deterministic gating by tier.
- * Solo / Growth / Team / Enterprise. Enforced in policy layer.
+ * Solo / Business / Scale / Enterprise. Enforced in policy layer.
  */
 
-export const BILLING_TIERS = ["solo", "growth", "team", "enterprise"] as const;
+export const BILLING_TIERS = ["solo", "business", "scale", "enterprise"] as const;
 export type BillingTier = (typeof BILLING_TIERS)[number];
 
 export type FeatureKey =
@@ -73,7 +73,7 @@ export const TIER_FEATURES: Record<BillingTier, TierFeatures> = {
     immutable_archive: false,
     full_escalation: false,
   },
-  growth: {
+  business: {
     domain_packs_max: 3,
     channels_max: 5,
     governance: "full",
@@ -94,7 +94,7 @@ export const TIER_FEATURES: Record<BillingTier, TierFeatures> = {
     immutable_archive: false,
     full_escalation: true,
   },
-  team: {
+  scale: {
     domain_packs_max: 50,
     channels_max: 10,
     governance: "full",
@@ -108,8 +108,8 @@ export const TIER_FEATURES: Record<BillingTier, TierFeatures> = {
     dedicated_infra: false,
     custom_compliance: false,
     sso: false,
-    sla: false,
-    api_integrations: false,
+    sla: true,
+    api_integrations: true,
     adaptive_engine: true,
     audit_export: true,
     immutable_archive: false,

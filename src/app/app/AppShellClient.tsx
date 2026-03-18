@@ -19,6 +19,7 @@ import {
   BarChart3,
   BookOpen,
   Settings,
+  Building2,
   Menu,
   X,
   Lightbulb,
@@ -27,6 +28,7 @@ import {
   PanelLeftOpen,
   Command as CommandIcon,
   HelpCircle,
+  ListOrdered,
   } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -72,34 +74,15 @@ export default function AppShellClient({
       {
         label: t("nav.sectionMain"),
         items: [
-          { href: "/app/activity", label: t("nav.dashboard"), icon: LayoutList },
-          { href: "/app/agents", label: t("nav.agents"), icon: Bot },
+          { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
           { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
-          { href: "/app/leads", label: t("nav.leads"), icon: Users },
-          { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
-        ],
-      },
-      {
-        label: t("nav.sectionCommunication"),
-        items: [
+          { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
           { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
-          { href: "/app/appointments", label: t("nav.appointments"), icon: Calendar },
-        ],
-      },
-      {
-        label: t("nav.sectionIntelligence"),
-        items: [
+          { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
+          { href: "/app/follow-ups", label: "Follow-Ups", icon: ListOrdered },
+          { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
-          { href: "/app/call-intelligence", label: t("nav.callIntelligence"), icon: Lightbulb },
-          { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
-        ],
-      },
-      {
-        label: t("nav.sectionWorkspace"),
-        items: [
-          { href: "/app/team", label: t("nav.team"), icon: Users },
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
-          { href: "/contact", label: "Help & Support", icon: HelpCircle },
         ],
       },
     ],
@@ -107,9 +90,9 @@ export default function AppShellClient({
   );
   const mobileTabs = useMemo(
     () => [
-      { href: "/app/activity", label: t("nav.dashboard"), icon: LayoutList },
+      { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
       { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
-      { href: "/app/leads", label: t("nav.leads"), icon: Users },
+      { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
       { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
     ],
     [t]
@@ -123,6 +106,7 @@ export default function AppShellClient({
       { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
       { href: "/app/call-intelligence", label: t("nav.callIntelligence"), icon: Lightbulb },
       { href: "/app/team", label: t("nav.team"), icon: Users },
+      { href: "/app/agency", label: t("nav.agency"), icon: Building2 },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
     ],
     [t]
