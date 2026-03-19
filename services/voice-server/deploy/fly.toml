@@ -1,82 +1,66 @@
-# Fly.io deployment configuration for voice synthesis server
-# Deploys to GPU instances for TTS/STT performance
+# Fly.io deployment configuration for Recall Touch voice server
+# FREE TIER: CPU-only mode for development and testing
+# UPGRADE: Switch to GPU when ready for production (see comments below)
 
 app = "recall-voice"
-primary_region = "iad" # Northern Virginia, closest to most US East users
+primary_region = "iad" # Northern Virginia, closest to Supabase us-east-2
 
 [build]
-dockerfile = "../Dockerfile"
+dockerfile = "../Dockerfile.cpu"
 builder = "docker"
 
-[[services]]
-processes = ["app"]
-protocol = "tcp"
+[http_service]
 internal_port = 8100
-concurrency = {
-  type = "connections",
-  hard_limit = 1000,
-  soft_limit = 800,
-}
+force_https = true
+auto_stop_machines = true    # Stop when idle (saves money)
+auto_start_machines = true   # Start on first request
+min_machines_running = 0     # Allow full shutdown when idle
 
-[services.ports]
-port = 8100
-handlers = ["http"]
-force_https = false
+[http_service.concurrency]
+type = "connections"
+hard_limit = 100
+soft_limit = 50
 
-[[services.tcp_checks]]
-interval = "10s"
+[[http_service.checks]]
+interval = "15s"
 timeout = "5s"
-grace_period = "5s"
+grace_period = "30s"
+method = "GET"
+path = "/health"
 
 [env]
 PORT = "8100"
 HOST = "0.0.0.0"
 LOG_LEVEL = "info"
 LLM_ENDPOINT = "https://www.recall-touch.com/api/agent/respond"
+# CPU-only mode: use lighter TTS models (Kokoro 82M params)
+TTS_ENGINE = "kokoro"
+# Disable GPU-dependent features
+USE_GPU = "false"
 
-# Required (set in Fly dashboard):
-# - OPENAI_API_KEY (for LLM calls, if your voice stack uses it)
-# - TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN (if Twilio validation is enabled in your stack)
-
-# Create a Fly Postgres for session persistence (optional)
-# [services]
-# [[services.volumes]]
-# source = "voice_cache"
-# destination = "/app/.cache"
-# initial_size = 10
-
-[[mounts]]
-source = "voice_cache"
-destination = "/app/.cache"
+# Required secrets (set via: fly secrets set KEY=value):
+# - OPENAI_API_KEY (for LLM calls)
 
 [vm]
-# GPU instance - requires GPU support
-# For A100 GPU: machine = "gpu-a100-40gb"
-# For V100 GPU: machine = "gpu-v100"
-# For A10 GPU: machine = "gpu-a10-large"
-# For CPU-only: machine = "performance-4x"
-machine = "gpu-a10-large"
-memory_mb = 16384  # 16GB RAM recommended
-cpus = 4
-cpu_kind = "performance"
-gpus = 1
+# === FREE/DEV TIER (current) ===
+# Fly free tier: 3 shared-cpu-1x VMs, 256MB RAM each
+# Voice server needs more RAM for models, so using shared-cpu-2x
+memory = 512           # 512MB — enough for Kokoro (82M params)
+cpu_kind = "shared"
+cpus = 2
+
+# === PRODUCTION TIER (uncomment when ready) ===
+# machine = "performance-4x"   # Dedicated CPU, good for moderate volume
+# memory = 4096                 # 4GB RAM
+# cpus = 4
+# cpu_kind = "performance"
+
+# === GPU TIER (uncomment for high volume) ===
+# machine = "gpu-a10-large"    # ~$100-150/mo
+# memory = 16384               # 16GB RAM
+# cpus = 4
+# cpu_kind = "performance"
+# gpus = 1
 
 [deploy]
 strategy = "rolling"
-max_unavailable = 0
-
-[[statics]]
-guest_path = "/app/voices"
-url_prefix = "/voices"
-
-# Health check configuration
-[checks]
-enable_http_checks = true
-
-[[checks.http]]
-grace_period = "30s"
-interval = "10s"
-method = "GET"
-path = "/health"
-protocol = "http"
-timeout = "5s"
