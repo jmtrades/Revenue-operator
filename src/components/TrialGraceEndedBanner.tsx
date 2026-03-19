@@ -22,7 +22,7 @@ export function TrialGraceEndedBanner() {
       .catch(() => {});
   }, [workspaceId]);
 
-  if (!workspaceId || workspaceStatus !== "grace") return null;
+  if (!workspaceId || workspaceStatus !== "trial_expired") return null;
 
   return (
     <section className="mb-4 border-b pb-2" style={{ borderColor: "var(--border)" }}>

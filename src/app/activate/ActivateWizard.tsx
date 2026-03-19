@@ -13,6 +13,7 @@ import { PackBusinessStep } from "./steps/PackBusinessStep";
 import { PhoneOnlyStep } from "./steps/PhoneOnlyStep";
 import { CustomizeStep } from "./steps/CustomizeStep";
 import { ActivateStep } from "./steps/ActivateStep";
+import { track } from "@/lib/analytics/posthog";
 
 export function ActivateWizard() {
   const t = useTranslations("activate");
@@ -62,6 +63,12 @@ export function ActivateWizard() {
 
   const goNext = useCallback(() => {
     if (!canGoNext) return;
+    const current = step;
+    if (current >= 1 && current <= 4) {
+      const name =
+        current === 1 ? "industry" : current === 2 ? "phone_number" : current === 3 ? "voice" : "hours";
+      track("onboarding_step_completed", { step: current, name });
+    }
     setStep((prev) => {
       const next = prev < 5 ? ((prev + 1) as StepId) : prev;
       if (prev === 1) {
@@ -72,7 +79,7 @@ export function ActivateWizard() {
       }
       return next;
     });
-  }, [canGoNext, state.businessName]);
+  }, [canGoNext, state.businessName, step]);
 
   const goBack = useCallback(() => {
     setStep((prev) => (prev > 1 ? ((prev - 1) as StepId) : prev));
@@ -122,6 +129,7 @@ export function ActivateWizard() {
   const handleFinalize = useCallback(async (e?: React.MouseEvent) => {
     e?.preventDefault();
     try {
+      track("onboarding_step_completed", { step: 5, name: "test_call" });
       if (state.businessName.trim()) {
         localStorage.setItem("rt_business_name", state.businessName.trim());
       }

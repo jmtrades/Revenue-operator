@@ -8,9 +8,35 @@ import { useTranslations } from "next-intl";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
-const NOTIFICATION_EVENT_KEYS = ["call_received", "lead_captured", "appointment_booked", "urgent_call", "voicemail"] as const;
+const NOTIFICATION_EVENT_KEYS = [
+  "call_received",
+  "missed_call",
+  "appointment_booked",
+  "campaign_completed",
+  "weekly_digest",
+  "billing_alerts",
+] as const;
 
 type Channel = "push" | "sms" | "email";
+
+function defaultChannelsForEvent(key: (typeof NOTIFICATION_EVENT_KEYS)[number]): Channel[] {
+  switch (key) {
+    case "call_received":
+      return ["push", "email"];
+    case "missed_call":
+      return ["push", "sms", "email"];
+    case "appointment_booked":
+      return ["email", "push"];
+    case "campaign_completed":
+      return ["email"];
+    case "weekly_digest":
+      return ["email"];
+    case "billing_alerts":
+      return ["email", "push"];
+    default:
+      return ["push"];
+  }
+}
 
 export default function AppSettingsNotificationsPage() {
   const tSettings = useTranslations("settings");
@@ -22,8 +48,8 @@ export default function AppSettingsNotificationsPage() {
     const raw = snapshot?.notification_preferences ?? {};
     const fromSnapshot: Record<string, Set<Channel>> = {};
     NOTIFICATION_EVENT_KEYS.forEach((key) => {
-      const channels = raw[key] ?? (key === "urgent_call" ? ["push", "sms"] : ["push"]);
-      fromSnapshot[key] = new Set(channels as Channel[]);
+      const channels = raw[key] ?? defaultChannelsForEvent(key);
+      fromSnapshot[key] = new Set((channels as Channel[]) ?? []);
     });
     return fromSnapshot;
   });
@@ -52,8 +78,8 @@ export default function AppSettingsNotificationsPage() {
         setPrefs(() => {
           const next: Record<string, Set<Channel>> = {};
           NOTIFICATION_EVENT_KEYS.forEach((key) => {
-            const channels = raw[key] ?? (key === "urgent_call" ? ["push", "sms"] : ["push"]);
-            next[key] = new Set(channels as Channel[]);
+            const channels = raw[key] ?? defaultChannelsForEvent(key);
+            next[key] = new Set((channels as Channel[]) ?? []);
           });
           return next;
         });

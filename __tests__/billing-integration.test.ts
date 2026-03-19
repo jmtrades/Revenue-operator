@@ -129,7 +129,7 @@ describe("Billing Integration Tests", () => {
       const res = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
       const data = await res.json();
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(503);
       expect(data).toHaveProperty("ok", false);
       expect(data).toHaveProperty("reason", "missing_env");
     });
@@ -142,7 +142,7 @@ describe("Billing Integration Tests", () => {
       const res = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
       const data = await res.json();
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(503);
       expect(data).toHaveProperty("ok", false);
       expect(data).toHaveProperty("reason", "missing_price_id");
     });
@@ -157,7 +157,7 @@ describe("Billing Integration Tests", () => {
       const data = await res.json();
       (globalThis as Record<string, string>).__billingMockPriceType = "recurring";
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(503);
       expect(data).toHaveProperty("ok", false);
       expect(data).toHaveProperty("reason", "wrong_price_mode");
     });

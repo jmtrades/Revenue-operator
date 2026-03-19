@@ -74,7 +74,7 @@ describe("POST /api/billing/checkout", () => {
     const res = await callCheckout({ email: "test@example.com" });
     const data = await res.json();
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(503);
     expect(data).toHaveProperty("ok", false);
     expect(data).toHaveProperty("reason", "missing_env");
   });
@@ -87,7 +87,7 @@ describe("POST /api/billing/checkout", () => {
     const res = await callCheckout({ email: "test@example.com", tier: "solo", interval: "month" });
     const data = await res.json();
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(503);
     expect(data).toHaveProperty("ok", false);
     expect(data).toHaveProperty("reason", "missing_price_id");
   });
@@ -99,7 +99,7 @@ describe("POST /api/billing/checkout", () => {
     const res = await callCheckout({ email: "test@example.com", tier: "enterprise", interval: "month" });
     const data = await res.json();
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(400);
     expect(data).toHaveProperty("ok", false);
     expect(data).toHaveProperty("reason", "invalid_tier");
   });
@@ -112,7 +112,7 @@ describe("POST /api/billing/checkout", () => {
     const res = await callCheckout({ email: "test@example.com" });
     const data = await res.json();
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(503);
     expect(data).toHaveProperty("ok", false);
     expect(data).toHaveProperty("reason", "missing_env");
   });

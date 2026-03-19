@@ -19,7 +19,7 @@ import { activateSettlementFromStripe } from "@/lib/settlement";
 import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
 import Stripe from "stripe";
-import { sendEmail } from "@/lib/integrations/email";
+import { sendDunningEmail } from "@/lib/email/dunning";
 
 // Structured logging for webhook events (errors only in production)
 function logWebhookEvent(type: string, workspaceId: string | null, status: "success" | "error", details?: unknown) {
@@ -96,23 +96,43 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const eventId = event.id;
 
-  const { error: insertError } = await db
+  // Idempotency: SELECT before INSERT (no catch-based 23505 handling).
+  const { data: existingEvent } = await db
     .from("webhook_events")
-    .insert({
-      event_id: eventId,
-      event_type: event.type,
-      payload: event.data.object,
-      processed: false,
-    })
-    .select("id")
+    .select("id, processed")
+    .eq("event_id", eventId)
     .maybeSingle();
 
-  if (insertError) {
-    if ((insertError as { code?: string }).code === "23505") {
-      return NextResponse.json({ received: true, skipped: "duplicate" }, { status: 200 });
+  if (existingEvent?.processed) {
+    return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
+  }
+
+  // Only create the record if it doesn't exist. If a race occurs and we fail to insert,
+  // we re-check processed state to avoid double-processing.
+  if (!existingEvent) {
+    const { error: insertError } = await db
+      .from("webhook_events")
+      .insert({
+        event_id: eventId,
+        event_type: event.type,
+        payload: event.data.object,
+        processed: false,
+      })
+      .select("id")
+      .maybeSingle();
+
+    if (insertError) {
+      const { data: existingAfter } = await db
+        .from("webhook_events")
+        .select("processed")
+        .eq("event_id", eventId)
+        .maybeSingle();
+      if (existingAfter?.processed) {
+        return NextResponse.json({ received: true, skipped: "already_processed" }, { status: 200 });
+      }
+      console.error("Webhook event insert failed:", insertError);
+      return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }
-    console.error("Webhook event insert failed:", insertError);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 
   try {
@@ -184,6 +204,7 @@ async function handleStripeWebhookEvent(
         const updatePayload: Record<string, unknown> = {
           billing_status: isTrialing ? "trial" : "active",
           protection_renewal_at: renewsAt?.toISOString() ?? null,
+          trial_ends_at: trialEndAt?.toISOString() ?? null,
           trial_end_at: trialEndAt?.toISOString() ?? null,
           renews_at: renewsAt?.toISOString() ?? null,
           stripe_subscription_id: sub.id,
@@ -221,6 +242,7 @@ async function handleStripeWebhookEvent(
         const updatePayload: Record<string, unknown> = {
           billing_status: isTrialing ? "trial" : sub.status === "active" ? "active" : "paused",
           protection_renewal_at: renewsAt?.toISOString() ?? null,
+          trial_ends_at: trialEndAt?.toISOString() ?? null,
           trial_end_at: trialEndAt?.toISOString() ?? null,
           renews_at: renewsAt?.toISOString() ?? null,
           updated_at: new Date().toISOString(),
@@ -472,35 +494,19 @@ async function handleStripeWebhookEvent(
             ? (invoice as Stripe.Invoice).customer_email
             : null;
 
-        const paymentFailedText = "Your payment failed. Please update your payment method to continue service.";
-        const impendingPauseText = "Your account will be paused in 48 hours unless payment is updated.";
-
         if (customerEmail) {
           // Non-blocking: email delivery happens via the send queue.
-          void sendEmail(workspaceId, customerEmail.trim().toLowerCase(), "Payment failed", `<p>${paymentFailedText}</p>`).catch(
-            () => {}
-          );
-          if (failureNumber === 3) {
-            void sendEmail(
-              workspaceId,
-              customerEmail.trim().toLowerCase(),
-              "Action required: payment update",
-              `<p>${impendingPauseText}</p>`
-            ).catch(() => {});
-          }
+          void sendDunningEmail(workspaceId, customerEmail.trim().toLowerCase(), failureNumber);
         }
 
-        const pauseNow = failureNumber >= 4;
-        await db
-          .from("workspaces")
-          .update({
-            status: pauseNow ? "paused" : undefined,
-            billing_status: pauseNow ? "paused" : "payment_failed",
-            paused_at: pauseNow ? new Date().toISOString() : undefined,
-            pause_reason: pauseNow ? "Billing dunning: repeated payment failures" : undefined,
+        // Day-7 (4th failure): mark billing state to trigger in-app banner.
+        if (failureNumber >= 4) {
+          await db.from("workspaces").update({
+            status: "payment_failed",
+            billing_status: "payment_failed",
             updated_at: new Date().toISOString(),
-          })
-          .eq("id", workspaceId);
+          }).eq("id", workspaceId);
+        }
 
         const dueAt = invoice.due_date
           ? new Date(invoice.due_date * 1000)

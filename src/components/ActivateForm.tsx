@@ -109,8 +109,17 @@ export function ActivateForm() {
     }).catch(() => {});
 
     try {
-      const tier = searchParams.get("tier") || "solo";
+      const tierRaw = searchParams.get("tier") || "solo";
+      const tier = tierRaw.toString().trim().toLowerCase();
       const interval = searchParams.get("interval") || "year";
+      const plan =
+        tier === "business" || tier === "growth"
+          ? "business"
+          : tier === "scale" || tier === "team"
+            ? "scale"
+            : tier === "enterprise"
+              ? "enterprise"
+              : "solo";
       const trialRes = await fetch("/api/trial/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -126,7 +135,7 @@ export function ActivateForm() {
       const trialData = await trialRes.json().catch(() => ({ ok: false }));
 
       if (trialData.ok && trialData.reason === "already_active" && trialData.workspace_id) {
-        track("signup_completed", { plan: "business" });
+        track("signup_completed", { plan });
         clearTimeout(loadingTimer);
         setSubmitMessage(null);
         router.push(`/connect?workspace_id=${encodeURIComponent(trialData.workspace_id)}`);
@@ -134,7 +143,7 @@ export function ActivateForm() {
       }
 
       if (trialData.ok && (trialData.checkout_url ?? trialData.url)) {
-        track("signup_completed", { plan: "business" });
+        track("signup_completed", { plan });
         clearTimeout(loadingTimer);
         setSubmitMessage(null);
         window.location.href = trialData.checkout_url ?? trialData.url;

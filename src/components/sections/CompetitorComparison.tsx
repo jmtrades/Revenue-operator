@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import type { CSSProperties, ComponentType } from "react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
@@ -23,7 +23,7 @@ interface ComparisonRow {
   humanServices: string | boolean;
   basicAI: string | boolean;
   diyPlatforms: string | boolean;
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  icon: ComponentType<{ className?: string; style?: CSSProperties }>;
 }
 
 const COMPARISON_DATA: ComparisonRow[] = [
@@ -147,8 +147,7 @@ function CellValue({ value }: { value: string | boolean }) {
 }
 
 export function CompetitorComparison() {
-  const [showAll, setShowAll] = useState(false);
-  const visibleRows = showAll ? COMPARISON_DATA : COMPARISON_DATA.slice(0, 6);
+  const visibleRows = COMPARISON_DATA.slice(0, 5);
 
   return (
     <section
@@ -158,7 +157,7 @@ export function CompetitorComparison() {
     >
       <Container>
         <AnimateOnScroll className="text-center mb-12 md:mb-16">
-          <SectionLabel>Why Recall Touch</SectionLabel>
+          <SectionLabel>Not Just Another AI Receptionist</SectionLabel>
           <h2
             className="font-bold max-w-3xl mx-auto"
             style={{
@@ -168,7 +167,7 @@ export function CompetitorComparison() {
               color: "var(--text-primary)",
             }}
           >
-            The Only AI Phone Agent Built to Track Revenue
+            Not Just Another AI Receptionist.
           </h2>
           <p
             className="text-base mt-4 max-w-2xl mx-auto"
@@ -336,25 +335,6 @@ export function CompetitorComparison() {
           })}
         </div>
 
-        {/* Show more / less */}
-        {COMPARISON_DATA.length > 6 && (
-          <div className="text-center mt-8">
-            <button
-              type="button"
-              onClick={() => setShowAll(!showAll)}
-              className="text-sm font-medium px-5 py-2.5 rounded-lg border transition-colors hover:bg-white/5"
-              style={{
-                borderColor: "var(--border-default)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              {showAll
-                ? "Show less"
-                : `Show all ${COMPARISON_DATA.length} features`}
-            </button>
-          </div>
-        )}
-
         {/* Bottom CTA */}
         <div className="text-center mt-10">
           <p
@@ -365,10 +345,10 @@ export function CompetitorComparison() {
           </p>
           <a
             href="/activate"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all hover:scale-[1.02]"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-colors hover:bg-zinc-100"
             style={{
-              background: "var(--accent-primary)",
-              color: "#000",
+              background: "#FFFFFF",
+              color: "#000000",
             }}
           >
             <Phone className="w-4 h-4" />

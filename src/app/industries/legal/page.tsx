@@ -4,15 +4,46 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
+const BASE = "https://www.recall-touch.com";
+
 export const metadata = {
   title: "Legal Intake AI — Recall Touch",
   description:
     "Never miss a high-intent legal call. Capture intake, screen urgency, and follow up until consultation is booked.",
+  alternates: { canonical: `${BASE}/industries/legal` },
 };
 
 export default function LegalIndustryPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
+      { "@type": "ListItem", position: 3, name: "Legal", item: `${BASE}/industries/legal` },
+    ],
+  };
+
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "Legal AI Phone Agent",
+    url: `${BASE}/industries/legal`,
+    description:
+      "AI phone agent for legal teams: answers intake calls, captures structured summaries, and helps book consultations with follow-up.",
+    address: { "@type": "PostalAddress", addressCountry: "US" },
+  };
+
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
       <Navbar />
       <main className="pt-28 pb-20">
         <Container>
@@ -116,6 +147,9 @@ export default function LegalIndustryPage() {
               </Link>
               <Link href="/demo" className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline">
                 Watch the demo →
+              </Link>
+              <Link href={ROUTES.PRICING} className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline">
+                View pricing →
               </Link>
             </div>
 

@@ -116,6 +116,8 @@ export async function POST(req: NextRequest) {
           kill_switch: false,
           billing_status: "trial",
           protection_renewal_at: trialEnd.toISOString(),
+          trial_ends_at: trialEnd.toISOString(),
+          trial_end_at: trialEnd.toISOString(),
         });
         if (wsInsertErr) {
           log("trial_start_failed", { workspace_id: wsId, reason: "workspace_creation_failed", db_error: wsInsertErr.message ?? String(wsInsertErr) });
@@ -210,6 +212,8 @@ export async function POST(req: NextRequest) {
       kill_switch: false,
       billing_status: "trial",
       protection_renewal_at: trialEndIso,
+      trial_ends_at: trialEndIso,
+      trial_end_at: trialEndIso,
     });
 
     if (wsErr) {

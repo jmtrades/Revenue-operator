@@ -8,11 +8,11 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
-  title: "Security",
+  title: "Security — Recall Touch",
   description: "Enterprise-grade security for your business communications: encryption, access control, rate limiting, and compliance.",
   alternates: { canonical: `${BASE}/security` },
   openGraph: {
-    title: "Security",
+    title: "Security — Recall Touch",
     description: "Enterprise-grade security for your business communications: encryption, access control, rate limiting, and compliance.",
     url: `${BASE}/security`,
     siteName: "Recall Touch",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Security",
+    title: "Security — Recall Touch",
     description: "Enterprise-grade security for your business communications: encryption, access control, rate limiting, and compliance.",
   },
 };
@@ -28,6 +28,19 @@ export const metadata: Metadata = {
 export default function SecurityPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+              { "@type": "ListItem", position: 2, name: "Security", item: `${BASE}/security` },
+            ],
+          }),
+        }}
+      />
       <Navbar />
       <main id="main">
         <section className="marketing-section py-20 md:py-28" style={{ background: "var(--bg-primary, #FAFAF8)" }}>

@@ -186,6 +186,21 @@ export default async function AppLayout({
     redirect("/sign-in");
   }
 
+  // If a user session exists but email is not verified, route them to verification.
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.id && !user.email_confirmed_at) {
+      const { redirect } = await import("next/navigation");
+      const email = (user.email ?? "").trim();
+      redirect(email ? `/verify-email?email=${encodeURIComponent(email)}` : "/verify-email");
+    }
+  } catch {
+    // If we can't read the auth user, let the shell render and client-side redirect handle it.
+  }
+
   const t = await getTranslations("app");
   let initial = FALLBACK_SHELL;
   try {

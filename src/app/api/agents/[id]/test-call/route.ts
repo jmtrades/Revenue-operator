@@ -114,6 +114,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       provider: "elevenlabs",
       call_started_at: new Date().toISOString(),
       external_meeting_id: `test-${Date.now()}`,
+      // Used by /api/voice/webhook to flip agents.test_call_completed once the test finishes.
+      metadata: { test_call: true, agent_id: id },
     })
     .select("id")
     .maybeSingle();

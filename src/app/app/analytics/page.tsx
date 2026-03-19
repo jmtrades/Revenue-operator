@@ -799,14 +799,8 @@ export default function AppAnalyticsPage() {
       {!hasData && !loading && !error && (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 mb-6 text-center">
           <BarChart3 className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-          <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("analytics.emptyHeading")}</p>
+          <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">{t("analytics.emptyHeading")}</p>
           <p className="text-xs text-[var(--text-secondary)] mb-4">{t("analytics.emptyDescription")}</p>
-          <Link
-            href="/app/agents"
-            className="text-[var(--accent-primary)] hover:underline text-sm mt-2 inline-block"
-          >
-            {t("analytics.emptyAction")} →
-          </Link>
         </div>
       )}
 

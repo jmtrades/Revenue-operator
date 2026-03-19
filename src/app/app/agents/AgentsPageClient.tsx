@@ -84,6 +84,7 @@ export type Agent = {
   specialInstructions: string;
   websiteUrl?: string;
   vapiAgentId: string | null;
+  test_call_completed?: boolean;
   stats: {
     avgRating: number;
     totalCalls: number;
@@ -324,6 +325,7 @@ function defaultAgent(t?: (key: string) => string): Agent {
     specialInstructions: "",
     websiteUrl: "",
     vapiAgentId: null,
+    test_call_completed: false,
     stats: {
       avgRating: 0,
       totalCalls: 0,
@@ -481,6 +483,8 @@ function mapAgentRow(row: Record<string, unknown>, tAgents: (key: string) => str
     websiteUrl:
       typeof knowledgeBase.websiteUrl === "string" ? knowledgeBase.websiteUrl : "",
     vapiAgentId: typeof row.vapi_agent_id === "string" ? row.vapi_agent_id : null,
+    test_call_completed:
+      typeof row.test_call_completed === "boolean" ? row.test_call_completed : false,
     stats: {
       avgRating: typeof stats.avgRating === "number" ? stats.avgRating : 0,
       totalCalls: typeof stats.totalCalls === "number" ? stats.totalCalls : 0,

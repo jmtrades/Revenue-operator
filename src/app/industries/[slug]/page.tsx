@@ -10,6 +10,8 @@ import {
 } from "@/lib/data/industries";
 import { ROUTES } from "@/lib/constants";
 
+const BASE = "https://www.recall-touch.com";
+
 export function generateStaticParams() {
   return INDUSTRY_SLUGS.map((slug) => ({ slug }));
 }
@@ -26,8 +28,9 @@ export async function generateMetadata({
     return { title: t("title") };
   }
   return {
-    title: `${industry.name} AI Phone Agent`,
-    description: `Never miss a ${industry.customerType} again. ${industry.name} AI phone agent for your business.`,
+    title: `${industry.name} AI Phone Agent — Recall Touch`,
+    description: `Never miss ${industry.customerType} again. ${industry.name} AI phone agent answers calls, books appointments, and runs recovery follow-ups.`,
+    alternates: { canonical: `${BASE}/industries/${slug}` },
   };
 }
 
@@ -56,6 +59,19 @@ export default async function IndustryPage({
           color: "var(--text-primary)",
         }}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+                { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
+              ],
+            }),
+          }}
+        />
         <Navbar />
         <main className="pt-28 pb-24">
           <Container>
@@ -127,6 +143,41 @@ export default async function IndustryPage({
         color: "var(--text-primary)",
       }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+              { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: industry.name,
+                item: `${BASE}/industries/${slug}`,
+              },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            name: `${industry.name} AI Phone Agent`,
+            url: `${BASE}/industries/${slug}`,
+            description: `AI phone agent for ${industry.customerType}: answers calls, books appointments, and recovers missed revenue.`,
+            address: {
+              "@type": "PostalAddress",
+              addressCountry: "US",
+            },
+          }),
+        }}
+      />
       <Navbar />
       <main>
         <IndustryPageTemplate industry={industry} />

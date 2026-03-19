@@ -466,6 +466,12 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
                 {t("ctaStartFree")}
               </Link>
               <Link
+                href={ROUTES.DEMO}
+                className="btn-marketing-ghost inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium border no-underline"
+              >
+                Watch the demo →
+              </Link>
+              <Link
                 href={ROUTES.PRICING}
                 className="btn-marketing-ghost inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium border no-underline"
               >

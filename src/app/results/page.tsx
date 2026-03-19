@@ -11,11 +11,11 @@ export const dynamic = "force-dynamic";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
-  title: "Results",
+  title: "Results — Recall Touch",
   description: "Real revenue recovered from real calls — with proof in your dashboard.",
   alternates: { canonical: `${BASE}/results` },
   openGraph: {
-    title: "Results",
+    title: "Results — Recall Touch",
     description: "Real revenue recovered from real calls — with proof in your dashboard.",
     url: `${BASE}/results`,
     siteName: "Recall Touch",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Results",
+    title: "Results — Recall Touch",
     description: "Real revenue recovered from real calls — with proof in your dashboard.",
   },
 };
@@ -51,6 +51,19 @@ export default async function ResultsPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+              { "@type": "ListItem", position: 2, name: "Results", item: `${BASE}/results` },
+            ],
+          }),
+        }}
+      />
       <Navbar />
       <main id="main">
         <section className="marketing-section py-20 md:py-28" style={{ background: "var(--bg-primary, #FAFAF8)" }}>
@@ -130,7 +143,7 @@ export default async function ResultsPage() {
           <Container>
             <div className="max-w-4xl mx-auto">
               <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
-                Case Study Template (Filled with real customer outcomes)
+                Case Study Format (what you&apos;ll see after you go live)
               </h2>
               <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 This is the format we use to document outcomes as soon as live calls and follow-ups produce measurable results.
@@ -144,7 +157,7 @@ export default async function ResultsPage() {
                       Business name
                     </p>
                     <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      (populated after first deployment)
+                      Your business name
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -152,7 +165,7 @@ export default async function ResultsPage() {
                       Industry
                     </p>
                     <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      (HVAC / Dental / Legal and more)
+                      HVAC / Dental / Legal / Real Estate and more
                     </div>
                   </div>
 
@@ -190,7 +203,7 @@ export default async function ResultsPage() {
                       Quote
                     </p>
                     <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      (customer-provided feedback after the system is live)
+                      Customer quote appears here after live calls and follow-ups
                     </div>
                   </div>
                 </div>

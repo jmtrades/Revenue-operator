@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const { data: ws } = await db
     .from("workspaces")
-    .select("billing_status, protection_renewal_at, stripe_customer_id, stripe_subscription_id, created_at, status, pause_reason, billing_tier")
+    .select("billing_status, protection_renewal_at, trial_ends_at, trial_end_at, stripe_customer_id, stripe_subscription_id, created_at, status, pause_reason, billing_tier")
     .eq("id", workspaceId)
     .maybeSingle();
 
@@ -26,6 +27,7 @@ export async function GET(req: NextRequest) {
   const row = ws as {
     billing_status?: string | null;
     protection_renewal_at?: string | null;
+    trial_ends_at?: string | null;
     stripe_customer_id?: string | null;
     stripe_subscription_id?: string | null;
     created_at?: string;
@@ -34,11 +36,9 @@ export async function GET(req: NextRequest) {
     billing_tier?: string | null;
   };
 
-  const trialEnd = row.protection_renewal_at
-    ? new Date(row.protection_renewal_at)
-    : row.created_at
-      ? new Date(new Date(row.created_at).getTime() + 14 * 24 * 60 * 60 * 1000)
-      : null;
+  // Trial window is stored in the workspace row so checkout + trial start + billing status agree.
+  const trialEndIso = row.trial_ends_at ?? null;
+  const trialEnd = trialEndIso ? new Date(trialEndIso) : null;
 
   const isPaused = row.billing_status === "trial_ended" || row.pause_reason || (row.billing_status === "trial" && trialEnd && new Date(trialEnd) < new Date());
   let has_upcoming_booking_24h = false;
@@ -55,9 +55,8 @@ export async function GET(req: NextRequest) {
   }
 
   // Calculate minutes used this month
-  const PLAN_MINUTES: Record<string, number> = { solo: 400, starter: 400, growth: 1500, scale: 5000 };
-  const tier = (row.billing_tier ?? "starter").toLowerCase();
-  const minutesLimit = PLAN_MINUTES[tier] ?? 400;
+  const tier = (row.billing_tier ?? "solo").toLowerCase() as PlanSlug;
+  const planMinutes = BILLING_PLANS[tier]?.includedMinutes ?? 400;
 
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
@@ -77,12 +76,12 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     billing_status: row.billing_status ?? "trial",
-    renewal_at: row.protection_renewal_at ?? trialEnd?.toISOString() ?? null,
+    renewal_at: row.protection_renewal_at ?? row.trial_ends_at ?? trialEndIso ?? null,
     stripe_customer_id: row.stripe_customer_id,
     has_subscription: Boolean(row.stripe_subscription_id),
     has_upcoming_booking_24h: has_upcoming_booking_24h,
     billing_tier: row.billing_tier ?? "solo",
     minutes_used: minutesUsed,
-    minutes_limit: minutesLimit,
+    minutes_limit: planMinutes,
   });
 }

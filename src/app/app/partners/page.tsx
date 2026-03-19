@@ -1,0 +1,94 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useWorkspace } from "@/components/WorkspaceContext";
+
+type SummaryResponse = {
+  revenue_recovered_cents?: number;
+};
+
+export default function PartnersPage() {
+  const { workspaceId, workspaceName } = useWorkspace();
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [revenueCents, setRevenueCents] = useState(0);
+
+  const shareRate = 0.15;
+  const partnerShareCents = useMemo(() => Math.max(0, Math.round(revenueCents * shareRate)), [revenueCents]);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+
+    void (async () => {
+      try {
+        const r = await fetch(`/api/dashboard/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" });
+        if (!r.ok) throw new Error("Fetch failed");
+        const j = (await r.json()) as SummaryResponse;
+        setRevenueCents(typeof j?.revenue_recovered_cents === "number" ? j.revenue_recovered_cents : 0);
+        setError(null);
+      } catch {
+        setError("Unable to load partner dashboard");
+      } finally {
+        setLoaded(true);
+      }
+    })();
+  }, [workspaceId]);
+
+  const fmtMoney = (cents: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(cents / 100);
+
+  return (
+    <div className="max-w-5xl mx-auto p-4 md:p-6">
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="min-w-0">
+          <h1 className="text-xl md:text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
+            Agency Partner Dashboard
+          </h1>
+          <p className="text-sm" style={{ color: "var(--text-secondary)", marginTop: 4 }}>
+            {workspaceName ? `${workspaceName}` : "Workspace"} · Revenue share model (15%)
+          </p>
+        </div>
+      </div>
+
+      {!loaded ? (
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 animate-pulse">
+          <div className="h-10 w-56 bg-[var(--bg-hover)] rounded mb-4" />
+          <div className="h-14 w-full bg-[var(--bg-hover)] rounded" />
+        </div>
+      ) : error ? (
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            {error}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+            <p className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
+              Revenue recovered (this month)
+            </p>
+            <p className="text-3xl font-bold mt-2" style={{ color: "var(--text-primary)" }}>
+              {fmtMoney(revenueCents)}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 md:col-span-2">
+            <p className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
+              Partner share (15%)
+            </p>
+            <p className="text-3xl font-bold mt-2" style={{ color: "var(--text-primary)" }}>
+              {fmtMoney(partnerShareCents)}
+            </p>
+            <p className="text-sm mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
+              This dashboard uses the same revenue recovered rollups shown in the customer dashboard, so reporting stays consistent across teams.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+

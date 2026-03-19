@@ -20,17 +20,17 @@ const ProblemStatement = dynamic(
 const HowItWorks = dynamic(
   () => import("@/components/sections/HowItWorks").then((m) => m.HowItWorks),
 );
-const Features = dynamic(
-  () => import("@/components/sections/Features").then((m) => m.Features),
-);
 const PricingPreview = dynamic(
   () => import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
 );
-const TestimonialsSection = dynamic(
-  () => import("@/components/sections/TestimonialsSection").then((m) => m.TestimonialsSection),
-);
 const Industries = dynamic(
   () => import("@/components/sections/Industries").then((m) => m.Industries),
+);
+const Differentiation = dynamic(
+  () => import("@/components/sections/CompetitorComparison").then((m) => m.CompetitorComparison),
+);
+const HomepageModeSelector = dynamic(
+  () => import("@/components/sections/HomepageModeSelector").then((m) => m.HomepageModeSelector),
 );
 const FinalCTA = dynamic(
   () => import("@/components/sections/FinalCTA").then((m) => m.FinalCTA),
@@ -64,10 +64,10 @@ export default async function HomePage() {
             mainEntity: [
               {
                 "@type": "Question",
-                name: "How fast can I be live?",
+                name: "How is this different from an AI receptionist?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Most workspaces can be live in minutes: choose an industry, connect your number (or add one), and run a test call. You can refine scripts and follow-ups after you’ve seen it work.",
+                  text: "An AI receptionist answers calls and takes messages. Recall Touch answers calls AND runs automated recovery sequences until the revenue is recovered — appointment booking, no-show recovery, reactivation campaigns, quote chasing, and ROI proof in your dashboard. The follow-up is what pays for itself.",
                 },
               },
               {
@@ -80,10 +80,10 @@ export default async function HomePage() {
               },
               {
                 "@type": "Question",
-                name: "How is this different from an AI receptionist?",
+                name: "How fast can I be live?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "An AI receptionist answers calls and takes messages. Recall Touch answers calls AND runs automated follow-up sequences until the revenue is recovered — no-show recovery, reactivation campaigns, quote chasing, and proof of ROI in your dashboard. The follow-up is what pays for itself.",
+                  text: "Most workspaces can be live in minutes: choose an industry, connect your number (or add one), and run a test call. You can refine scripts and follow-ups after you’ve seen it work.",
                 },
               },
               {
@@ -121,9 +121,9 @@ export default async function HomePage() {
         <HomepageRoiCalculator />
         <HowItWorks />
         <Industries />
-        <Features />
+        <Differentiation />
+        <HomepageModeSelector />
         <PricingPreview />
-        <TestimonialsSection />
         <HomepageFAQ />
         <FinalCTA />
       </main>

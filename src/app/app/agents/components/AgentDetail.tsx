@@ -104,6 +104,7 @@ export function AgentDetail(props: AgentDetailProps) {
   const tForms = useTranslations("forms.state");
 
   const readiness = getAgentReadiness(agent);
+  const testCallCompleted = agent.test_call_completed === true;
 
   return (
     <div className="flex flex-col lg:flex-row flex-1 min-h-0 min-w-0">
@@ -208,20 +209,27 @@ export function AgentDetail(props: AgentDetailProps) {
                   ? Boolean(agent.vapiAgentId?.trim())
                   : readiness.percent >= (i + 1) * 10;
               const active = activeStep === step.id;
+              const disableGoLiveNavigation = step.id === "golive" && !testCallCompleted;
               return (
                 <button
                   key={step.id}
                   type="button"
                   onClick={() => void handleStepChange(step.id)}
+                  disabled={disableGoLiveNavigation}
                   aria-label={`${t(step.label)}: ${t(step.description)}${
                     complete ? `, ${t("setup.completed")}` : ""
                   }${active ? `, ${t("setup.current")}` : ""}`}
                   aria-current={active ? "step" : undefined}
+                  title={
+                    disableGoLiveNavigation
+                      ? "Complete your test call to enable Go Live."
+                      : undefined
+                  }
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                     active
                       ? "bg-[var(--bg-hover)] border border-[var(--border-medium)]"
                       : "hover:bg-[var(--bg-card)] border border-transparent"
-                  }`}
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -293,7 +301,9 @@ export function AgentDetail(props: AgentDetailProps) {
             type="button"
             onClick={() => void handleStepChange("golive")}
             aria-label={t("quickActions.goLiveAria")}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            disabled={!testCallCompleted}
+            title={!testCallCompleted ? "Complete your test call to enable Go Live." : undefined}
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t("quickActions.goLive")}
           </button>

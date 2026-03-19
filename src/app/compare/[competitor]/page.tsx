@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
@@ -83,7 +84,7 @@ export async function generateMetadata({
     };
   }
 
-  const title = `Recall Touch vs ${data.name} | AI Revenue Execution`;
+  const title = `Recall Touch vs ${data.name} — Recall Touch`;
   const description = `${data.description} See how Recall Touch compares: 10x better capacity, 60-80% cheaper, automated follow-ups, and revenue attribution built in.`;
 
   return {
@@ -141,9 +142,29 @@ export default async function ComparePage({
 }) {
   const { competitor } = await params;
   const schema = jsonLdSchema(competitor);
+  const data = COMPETITOR_DATA[competitor];
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+              { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: data?.name ?? competitor,
+                item: `${BASE}/compare/${competitor}`,
+              },
+            ],
+          }),
+        }}
+      />
       {schema && (
         <script
           type="application/ld+json"
@@ -154,6 +175,30 @@ export default async function ComparePage({
       <main className="py-16 md:py-24">
         <Container>
           <ComparisonContent competitor={competitor} />
+          <section className="mt-12">
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-8">
+              <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
+                See the proof (and the plan)
+              </h2>
+              <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                Want to validate outcomes and compare cost? Review real results and then match the right tier for your call volume.
+              </p>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/results"
+                  className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline"
+                >
+                  View results →
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline"
+                >
+                  View pricing →
+                </Link>
+              </div>
+            </div>
+          </section>
         </Container>
       </main>
       <Footer />

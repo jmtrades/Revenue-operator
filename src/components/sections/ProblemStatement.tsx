@@ -7,8 +7,9 @@ import { PhoneOff, Calendar, UserX, Flame } from "lucide-react";
 
 const INDUSTRY_DATA = [
   { id: "hvac", label: "HVAC", icon: "🔧", avgJob: 450, missedPerWeek: 2, annualLoss: 46800 },
-  { id: "dental", label: "Dental", icon: "🦷", avgJob: 350, missedPerWeek: 3, annualLoss: 54600 },
-  { id: "legal", label: "Legal", icon: "⚖️", avgJob: 4000, missedPerWeek: 1, annualLoss: 208000 },
+  { id: "dental", label: "Multi-location Dental", icon: "🦷", avgJob: 1200, missedPerWeek: 3, annualLoss: 187200 },
+  { id: "realestate", label: "Real Estate", icon: "🏡", avgJob: 12000, missedPerWeek: 1, annualLoss: 624000 },
+  { id: "legal", label: "Legal", icon: "⚖️", avgJob: 4000, missedPerWeek: 2, annualLoss: 416000 },
   { id: "medspa", label: "Med Spa", icon: "💅", avgJob: 600, missedPerWeek: 2, annualLoss: 62400 },
   { id: "plumbing", label: "Plumbing", icon: "🚿", avgJob: 300, missedPerWeek: 4, annualLoss: 62400 },
   { id: "roofing", label: "Roofing", icon: "🏘️", avgJob: 800, missedPerWeek: 2, annualLoss: 83200 },
@@ -58,15 +59,15 @@ export function ProblemStatement() {
                 color: "var(--text-primary)",
               }}
             >
-              Missed Calls Cost You Money.{" "}
+              Revenue Leaks Cost You Money.{" "}
               <span className="text-red-400">Here&apos;s How Much.</span>
             </h2>
             <p
               className="text-base md:text-lg max-w-2xl mx-auto"
               style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}
             >
-              Every missed call from a potential customer is revenue walking out the door.
-              Most service businesses lose <span className="text-red-400 font-semibold">$5K–$50K/month</span> to voicemail.
+              Every missed call and no-show is revenue walking out the door. Most service businesses lose{" "}
+              <span className="text-red-400 font-semibold">$5K–$50K/month</span> from missed calls, no-shows, and dead follow-up.
             </p>
           </div>
 
@@ -74,18 +75,18 @@ export function ProblemStatement() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
             <div className="rounded-xl border border-red-500/20 bg-red-500/[0.05] p-5 text-center">
               <PhoneOff className="w-8 h-8 text-red-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">Calls ring to voicemail</p>
-              <p className="text-xs text-white/50 mt-1">62% of callers never leave one</p>
+              <p className="text-sm font-medium text-white">Calls go unanswered</p>
+              <p className="text-xs text-white/50 mt-1">62% of callers never reach the right person</p>
             </div>
             <div className="rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-5 text-center">
               <Calendar className="w-8 h-8 text-orange-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">No appointment booked</p>
-              <p className="text-xs text-white/50 mt-1">Lost opportunity, zero follow-up</p>
+              <p className="text-sm font-medium text-white">No booking made</p>
+              <p className="text-xs text-white/50 mt-1">Lost opportunity — follow-up never runs</p>
             </div>
             <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/[0.05] p-5 text-center">
               <UserX className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">Customer calls competitor</p>
-              <p className="text-xs text-white/50 mt-1">They call the next Google result</p>
+              <p className="text-sm font-medium text-white">They pick the next option</p>
+              <p className="text-xs text-white/50 mt-1">Competitor captures the lead first</p>
             </div>
           </div>
 
@@ -124,8 +125,7 @@ export function ProblemStatement() {
                 <span className="text-lg text-red-400/70">/year</span>
               </p>
               <p className="text-sm text-white/50">
-                Average {industry.label.toLowerCase()} job: ${industry.avgJob} ×{" "}
-                {industry.missedPerWeek} missed calls/week × 52 weeks
+                Average {industry.label} booking: ${industry.avgJob} × {industry.missedPerWeek} revenue leaks/week × 52 weeks
               </p>
             </div>
           </div>

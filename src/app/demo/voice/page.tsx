@@ -305,7 +305,7 @@ export default function VoiceDemoPage() {
               </div>
 
               {/* Call Interface */}
-              <div className="bg-gradient-to-b from-blue-500 to-blue-600 px-6 py-12 text-white text-center">
+              <div className="bg-gradient-to-b from-zinc-800 to-zinc-900 px-6 py-12 text-white text-center">
                 <div className="mb-4">
                   <Phone className="w-12 h-12 mx-auto mb-3 opacity-80" />
                 </div>
@@ -375,7 +375,7 @@ export default function VoiceDemoPage() {
               <p className="text-sm mb-4 opacity-90">Start capturing calls and converting them into revenue.</p>
               <button
                 onClick={() => document.getElementById("pricing-section")?.scrollIntoView({ behavior: "smooth" })}
-                className="w-full bg-white text-green-600 font-semibold py-2 rounded hover:bg-gray-100 transition-colors"
+                className="w-full bg-white text-black font-semibold py-2 rounded hover:bg-zinc-100 transition-colors"
               >
                 See Pricing
               </button>
@@ -523,7 +523,7 @@ export default function VoiceDemoPage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 px-4 text-center bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+      <section className="py-20 px-4 text-center bg-gradient-to-r from-zinc-800 to-zinc-900 text-white">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-4xl font-bold mb-6">Stop Losing Calls. Start Converting Them.</h2>
           <p className="text-lg mb-8 opacity-90">Start your 14-day free trial. No credit card required.</p>
@@ -546,7 +546,7 @@ export default function VoiceDemoPage() {
             <button
               type="submit"
               disabled={signupLoading}
-              className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+              className="px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-zinc-100 transition-colors disabled:opacity-50"
             >
               {signupLoading ? "..." : "Get Started Free"}
             </button>

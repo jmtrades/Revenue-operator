@@ -151,9 +151,9 @@ async function main() {
 
   // 2) /activate and /pricing load (200 or redirect)
   const actRes = await fetch(base + "/activate", { redirect: "manual", cache: "no-store" });
-  if (actRes.status !== 200 && actRes.status !== 302 && actRes.status !== 307) fail("activate: expected 200 or redirect");
+  if (actRes.status !== 200 && actRes.status !== 302 && actRes.status !== 307 && actRes.status !== 308) fail("activate: expected 200 or redirect");
   const priceRes = await fetch(base + "/pricing", { redirect: "manual", cache: "no-store" });
-  if (priceRes.status !== 200 && priceRes.status !== 302 && priceRes.status !== 307) fail("pricing: expected 200 or redirect");
+  if (priceRes.status !== 200 && priceRes.status !== 302 && priceRes.status !== 307 && priceRes.status !== 308) fail("pricing: expected 200 or redirect");
   console.log("[self-check] 2. Activate + pricing load: ok");
 
   // 3) Checkout contract: POST returns { ok, checkout_url | reason }
@@ -162,9 +162,13 @@ async function main() {
     method: "POST",
     body: JSON.stringify({ email: `checkout-${Date.now()}@example.com` }),
   });
-  if (checkoutRes.status !== 200) fail("billing/checkout: must return 200 with JSON");
   const co = (checkoutJson || {}) as { ok?: boolean; reason?: string; checkout_url?: string };
   if (typeof co.ok !== "boolean") fail("billing/checkout: response must have ok: boolean");
+  if (co.ok) {
+    if (checkoutRes.status !== 200) fail(`billing/checkout: ok responses must be HTTP 200, got ${checkoutRes.status}`);
+  } else {
+    if (checkoutRes.status === 200) fail("billing/checkout: failures must not use HTTP 200");
+  }
   if (co.ok && !co.checkout_url && co.reason !== "already_active") fail("billing/checkout: success must have checkout_url or reason already_active");
   if (!co.ok && co.reason && !["invalid_json", "invalid_email", "missing_env", "missing_price_id", "workspace_id_or_email_required", "checkout_creation_failed", "stripe_unreachable", "invalid_tier", "invalid_interval"].includes(co.reason)) {
     // allow other reasons from getPriceId
@@ -237,14 +241,14 @@ async function main() {
 
   // 9) Dashboard surfaces: Situation, Record, Activity, Presence (200 or redirect to activate)
   const dashRes = await fetch(base + "/dashboard", { redirect: "manual", cache: "no-store" });
-  if (dashRes.status !== 200 && dashRes.status !== 302 && dashRes.status !== 307) {
+  if (dashRes.status !== 200 && dashRes.status !== 302 && dashRes.status !== 307 && dashRes.status !== 308) {
     fail(`dashboard: expected 200 or redirect, got ${dashRes.status}`);
   }
   console.log("[self-check] 9. Dashboard load: ok");
 
   // 10) Dashboard billing: 200 or redirect (portal creation is safe failure)
   const billRes = await fetch(base + "/dashboard/billing", { redirect: "manual", cache: "no-store" });
-  if (billRes.status !== 200 && billRes.status !== 302 && billRes.status !== 307) {
+  if (billRes.status !== 200 && billRes.status !== 302 && billRes.status !== 307 && billRes.status !== 308) {
     fail(`dashboard/billing: expected 200 or redirect, got ${billRes.status}`);
   }
   console.log("[self-check] 10. Dashboard billing: ok");

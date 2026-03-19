@@ -51,13 +51,13 @@ export function RevenueRecoveredCard() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 animate-pulse">
-        <div className="h-8 bg-zinc-800 rounded w-40 mb-4" />
-        <div className="h-16 bg-zinc-800 rounded mb-4" />
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 animate-pulse">
+        <div className="h-8 bg-[var(--bg-hover)] rounded w-40 mb-4" />
+        <div className="h-16 bg-[var(--bg-hover)] rounded mb-4" />
         <div className="grid grid-cols-3 gap-2">
-          <div className="h-12 bg-zinc-800 rounded" />
-          <div className="h-12 bg-zinc-800 rounded" />
-          <div className="h-12 bg-zinc-800 rounded" />
+          <div className="h-12 bg-[var(--bg-hover)] rounded" />
+          <div className="h-12 bg-[var(--bg-hover)] rounded" />
+          <div className="h-12 bg-[var(--bg-hover)] rounded" />
         </div>
       </div>
     );
@@ -65,8 +65,8 @@ export function RevenueRecoveredCard() {
 
   if (error || !metrics) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-        <p className="text-sm text-zinc-500">Unable to load revenue metrics</p>
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+        <p className="text-sm text-[var(--text-secondary)]">Unable to load revenue metrics</p>
       </div>
     );
   }
@@ -79,13 +79,13 @@ export function RevenueRecoveredCard() {
   }).format(metrics.total_recovered);
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-sm font-medium text-zinc-400 mb-1">
+          <p className="text-sm font-medium text-[var(--text-tertiary)] mb-1">
             Revenue Recovered This Month
           </p>
-          <p className="text-4xl font-bold text-white">{formattedAmount}</p>
+          <p className="text-4xl font-bold text-green-500">{formattedAmount}</p>
         </div>
         {metrics.total_recovered > 0 && (
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
@@ -97,35 +97,35 @@ export function RevenueRecoveredCard() {
 
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-lg bg-white/5 border border-white/10 p-3">
-          <p className="text-xs font-medium text-zinc-400 mb-1">
+          <p className="text-xs font-medium text-[var(--text-tertiary)] mb-1">
             Calls Answered
           </p>
-          <p className="text-lg font-bold text-white">
+          <p className="text-lg font-bold text-[var(--text-primary)]">
             {metrics.calls_answered}
           </p>
         </div>
 
         <div className="rounded-lg bg-white/5 border border-white/10 p-3">
-          <p className="text-xs font-medium text-zinc-400 mb-1">
+          <p className="text-xs font-medium text-[var(--text-tertiary)] mb-1">
             No-Shows Recovered
           </p>
-          <p className="text-lg font-bold text-white">
+          <p className="text-lg font-bold text-[var(--text-primary)]">
             {metrics.no_shows_recovered}
           </p>
         </div>
 
         <div className="rounded-lg bg-white/5 border border-white/10 p-3">
-          <p className="text-xs font-medium text-zinc-400 mb-1">
+          <p className="text-xs font-medium text-[var(--text-tertiary)] mb-1">
             Reactivations
           </p>
-          <p className="text-lg font-bold text-white">
+          <p className="text-lg font-bold text-[var(--text-primary)]">
             {metrics.reactivations}
           </p>
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-zinc-800">
-        <p className="text-xs text-zinc-500">
+      <div className="mt-4 pt-4 border-t border-[var(--border-default)]">
+        <p className="text-xs text-[var(--text-secondary)]">
           Based on answered calls that would have been missed and recovered revenue impact
         </p>
       </div>

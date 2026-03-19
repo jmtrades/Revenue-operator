@@ -94,9 +94,74 @@ export function DemoPageContent() {
 
       <div className="max-w-5xl mx-auto px-4 mt-8 text-center">
         <p className="text-sm text-zinc-500 mb-2">{t("voiceWidgetHint")}</p>
+        <p className="text-xs text-zinc-500 mb-4">
+          You are hearing Recall Touch's real AI assistant responding live, not a recording.
+        </p>
         <Link href={ROUTES.START} className="text-sm font-medium text-zinc-300 hover:text-white transition-colors" aria-label={t("getThisForYourNumber")}>
           {t("getThisForYourNumber")}
         </Link>
+      </div>
+
+      {/* "See the full product" mockups */}
+      <div className="max-w-5xl mx-auto px-4 mt-16">
+        <div className="max-w-2xl text-center mx-auto mb-10">
+          <p className="text-xs font-semibold uppercase text-zinc-500 mb-2">See the full product</p>
+          <h2 className="text-2xl md:text-3xl font-semibold text-white" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+            Beyond voice: dashboard, campaigns, and timeline proof
+          </h2>
+          <p className="mt-3 text-sm text-zinc-400" style={{ lineHeight: 1.7 }}>
+            These mockups show the non-voice parts you get when Recall Touch runs end-to-end: tracking, follow-up execution,
+            and contact activity you can audit.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            {
+              title: "Dashboard KPIs",
+              caption: "Calls answered, appointments booked, and revenue recovered.",
+            },
+            {
+              title: "Campaign builder",
+              caption: "Sequence templates with audiences, scheduling, and review.",
+            },
+            {
+              title: "Contact timeline",
+              caption: "Every touch is captured: calls, texts, bookings, and outcomes.",
+            },
+            {
+              title: "Analytics + attribution",
+              caption: "Conversion rates and revenue attribution you can act on.",
+            },
+          ].map((card) => (
+            <div
+              key={card.title}
+              className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 overflow-hidden"
+            >
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                  {card.title}
+                </h3>
+                <span className="text-[10px] px-2 py-1 rounded-full border border-white/10 text-zinc-400">
+                  Mockup
+                </span>
+              </div>
+              <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                {card.caption}
+              </p>
+              <div className="mt-4 rounded-xl border border-white/10 bg-black/30 p-3">
+                <div className="h-2 w-2/3 bg-white/10 rounded-full mb-2" />
+                <div className="h-2 w-full bg-white/10 rounded-full mb-2" />
+                <div className="h-2 w-3/4 bg-white/10 rounded-full mb-2" />
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  <div className="h-12 rounded-lg bg-white/5 border border-white/10" />
+                  <div className="h-12 rounded-lg bg-white/5 border border-white/10" />
+                  <div className="h-12 rounded-lg bg-white/5 border border-white/10" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );

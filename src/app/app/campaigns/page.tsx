@@ -368,7 +368,7 @@ export default function CampaignsPage() {
                 icon={Megaphone}
                 title={t("empty.title")}
                 description={t("empty.description")}
-                primaryAction={{ label: t("create"), href: "/app/campaigns/create" }}
+                primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
               />
             ) : (
               filtered.map((campaign) => (

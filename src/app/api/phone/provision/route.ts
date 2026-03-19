@@ -9,6 +9,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { purchaseTelnyxPhoneNumber } from "@/lib/telephony/telnyx/numbers";
 
@@ -28,6 +29,12 @@ export async function POST(req: NextRequest) {
   }
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
+
+  // Rate limit provisioning requests per workspace.
+  const rl = await checkRateLimit(`phone-provision:${session.workspaceId}`, 5, 3600_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many provisioning attempts" }, { status: 429 });
+  }
 
   const db = getDb();
 

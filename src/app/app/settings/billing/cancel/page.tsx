@@ -23,6 +23,7 @@ export default function BillingCancelPage() {
   const [renewalAt, setRenewalAt] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [didTrackCancelled, setDidTrackCancelled] = useState(false);
 
   const reasonOptions = useMemo(
     () =>
@@ -42,7 +43,19 @@ export default function BillingCancelPage() {
   }, [reasonOptions, selectedReason]);
 
   useEffect(() => {
-    if (cancelledFromQuery) setStep(4);
+    if (cancelledFromQuery) {
+      setStep(4);
+      // Restore the selected cancellation reason so we can attribute PostHog events.
+      try {
+        const raw = localStorage.getItem("rt_cancel_survey");
+        if (raw) {
+          const parsed = JSON.parse(raw) as { reasonId?: CancelReasonId };
+          if (parsed?.reasonId) setSelectedReason(parsed.reasonId);
+        }
+      } catch {
+        // ignore
+      }
+    }
   }, [cancelledFromQuery]);
 
   useEffect(() => {
@@ -63,11 +76,16 @@ export default function BillingCancelPage() {
     return () => controller.abort();
   }, [workspaceId]);
 
-  const exportContacts = () => {
-    if (!workspaceId) return;
-    // Uses the CSV attachment response from /api/leads/export.
-    window.location.href = `/api/leads/export?workspace_id=${encodeURIComponent(workspaceId)}`;
-  };
+  useEffect(() => {
+    if (!cancelledFromQuery) return;
+    if (step !== 4) return;
+    if (didTrackCancelled) return;
+    if (!selectedReasonLabel) return;
+    track("subscription_cancelled", {
+      reason: selectedReasonLabel ?? undefined,
+    });
+    setDidTrackCancelled(true);
+  }, [cancelledFromQuery, didTrackCancelled, renewalAt, selectedReasonLabel, step]);
 
   const openBillingPortalForCancellation = async () => {
     if (!workspaceId) return;
@@ -102,14 +120,6 @@ export default function BillingCancelPage() {
     }
   };
 
-  if (!workspaceId) {
-    return (
-      <div className="p-6 max-w-2xl mx-auto" style={{ color: "var(--text-primary)" }}>
-        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>No workspace selected.</p>
-      </div>
-    );
-  }
-
   const formatEndDate = (iso: string | null) => {
     if (!iso) return null;
     try {
@@ -120,6 +130,14 @@ export default function BillingCancelPage() {
   };
 
   const endDateFormatted = formatEndDate(renewalAt);
+
+  if (!workspaceId) {
+    return (
+      <div className="p-6 max-w-2xl mx-auto" style={{ color: "var(--text-primary)" }}>
+        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>No workspace selected.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-6">
@@ -176,18 +194,34 @@ export default function BillingCancelPage() {
           <div className="flex gap-2 flex-wrap">
             <button
               type="button"
-              className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
-              onClick={() => router.push("/app/settings/billing")}
+              className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60"
+              disabled={!selectedReasonLabel || busy}
+              onClick={() => {
+                track("subscription_cancel_offer_accepted", { reason: selectedReasonLabel ?? undefined });
+                router.push("/app/settings/billing");
+              }}
             >
               {t("cancelAcceptOffer")}
             </button>
+
             <button
               type="button"
-              className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60"
-              disabled={!selectedReason || !selectedReasonLabel}
+              className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
+              disabled={!selectedReasonLabel || busy}
               onClick={() => {
-                if (!selectedReasonLabel) return;
-                track("subscription_cancelled", { reason: selectedReasonLabel });
+                if (!selectedReasonLabel || !selectedReason) return;
+                if (typeof window !== "undefined") {
+                  localStorage.setItem(
+                    "rt_cancel_survey",
+                    JSON.stringify({
+                      reason: selectedReasonLabel,
+                      reasonId: selectedReason,
+                      action: "continue_cancellation",
+                      at: Date.now(),
+                    }),
+                  );
+                }
+                track("subscription_cancel_intent", { reason: selectedReasonLabel, action: "continue_cancellation" });
                 setStep(3);
               }}
             >
@@ -200,24 +234,29 @@ export default function BillingCancelPage() {
       {step === 3 && (
         <section className="rounded-2xl border p-6 space-y-4" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
           <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-            {t("cancelDataRetainedText")}
+            {t("confirmCancel")}
           </h2>
+          <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
+            {t("cancelSuccessBody", { endDate: endDateFormatted ?? "your renewal date" })}
+          </p>
 
           <div className="flex gap-2 flex-wrap">
             <button
               type="button"
               className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
-              onClick={exportContacts}
+              disabled={busy}
+              onClick={() => setStep(2)}
             >
-              {t("cancelExportContacts")}
+              {t("back")}
             </button>
+
             <button
               type="button"
               className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60"
               disabled={busy}
               onClick={() => void openBillingPortalForCancellation()}
             >
-              {busy ? "Working…" : t("cancelCancelSubscription")}
+              {t("cancelCancelSubscription")}
             </button>
           </div>
         </section>
@@ -229,8 +268,22 @@ export default function BillingCancelPage() {
             {t("cancelSuccessTitle")}
           </h1>
           <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            {t("cancelSuccessBody", { endDate: endDateFormatted ?? "your billing period" })}
+            {t("cancelSuccessBody", { endDate: endDateFormatted ?? "your renewal date" })}
           </p>
+
+          <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            {t("cancelDataRetainedText")}
+          </p>
+
+          <div className="flex gap-2 flex-wrap">
+            <button
+              type="button"
+              className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
+              onClick={() => router.push("/app/settings/billing")}
+            >
+              {t("back")}
+            </button>
+          </div>
         </section>
       )}
     </div>

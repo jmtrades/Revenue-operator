@@ -84,7 +84,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspace_id: workspaceId, plan_id: selected, planId: selected, interval: "month" }),
+        body: JSON.stringify({ workspace_id: workspaceId, plan_id: selected, interval: "month" }),
       });
       const data = (await res.json().catch(() => null)) as {
         ok?: boolean;

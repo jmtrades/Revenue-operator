@@ -109,6 +109,38 @@ export function UnifiedDashboard() {
   }, [data, workspaceId]);
 
   useEffect(() => {
+    if (!workspaceId || !data) return;
+    if (!Array.isArray(data.needs_attention) || data.needs_attention.length === 0) return;
+
+    // Only notify for the first few items to avoid spamming.
+    const items = data.needs_attention.slice(0, 3);
+
+    void (async () => {
+      await Promise.all(
+        items.map(async (item) => {
+          const localKey = `rt_needs_attention_notified_${workspaceId}_${item.id}`;
+          if (safeGetItem(localKey)) return;
+          try {
+            const res = await fetch("/api/notifications/needs-attention", {
+              method: "POST",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                needs_attention_id: item.id,
+                reason: item.reason,
+                phone: item.phone ?? undefined,
+              }),
+            });
+            if (res.ok) safeSetItem(localKey, "1");
+          } catch {
+            // Best-effort: notification failures shouldn't block the dashboard.
+          }
+        }),
+      );
+    })();
+  }, [workspaceId, data?.needs_attention]);
+
+  useEffect(() => {
     if (!workspaceId) return;
 
     const trialDay7Key = `rt_trial_day_7_active_${workspaceId}`;
@@ -212,7 +244,7 @@ export function UnifiedDashboard() {
         )}
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]">This month</p>
         <div className="mt-2 flex flex-wrap items-baseline gap-3">
-          <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums">
+          <h1 className="text-2xl md:text-3xl font-bold text-green-500 tabular-nums">
             Revenue recovered: {fmtMoney(data.revenue_recovered_cents)}
           </h1>
           {data.revenue_trend_pct !== 0 && (
@@ -243,7 +275,7 @@ export function UnifiedDashboard() {
         <div className="mt-4 h-2 rounded-full bg-[var(--bg-hover)] overflow-hidden">
           <div
             className={`h-full rounded-full ${
-              pctMin >= 100 ? "bg-red-500" : pctMin >= 80 ? "bg-amber-500" : "bg-[var(--accent-primary)]"
+              pctMin >= 100 ? "bg-red-500" : pctMin >= 80 ? "bg-amber-500" : "bg-green-500"
             }`}
             style={{ width: `${pctMin}%` }}
           />
