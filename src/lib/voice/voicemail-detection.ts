@@ -1,12 +1,16 @@
 /**
- * Voicemail detection (AMD) and handling for Vapi outbound calls.
- * Configures AMD on assistants; provides templates and behavior mapping.
+ * Voicemail handling templates + behavior mapping for Recall voice.
+ *
+ * These templates are used in the agent settings UI (voicemail templates)
+ * and in outbound call orchestration metadata.
+ *
+ * Vapi/ElevenLabs are intentionally not referenced here.
  */
 
 export type VoicemailBehavior = "leave" | "hangup" | "sms";
 
 export interface VoicemailDetectionConfig {
-  provider: "vapi" | "google" | "openai" | "twilio";
+  provider: "recall" | "google" | "openai" | "twilio";
   type?: "audio" | "transcript";
   backoffPlan?: {
     startAtSeconds: number;
@@ -17,7 +21,7 @@ export interface VoicemailDetectionConfig {
 }
 
 const DEFAULT_AMD: VoicemailDetectionConfig = {
-  provider: "vapi",
+  provider: "recall",
   type: "audio",
   backoffPlan: {
     startAtSeconds: 2,
@@ -28,7 +32,8 @@ const DEFAULT_AMD: VoicemailDetectionConfig = {
 };
 
 /**
- * Default AMD config for all outbound calls. Used when behavior is "leave" or "hangup".
+ * Default voicemail detection config for all outbound calls.
+ * Used when behavior is "leave" or "hangup".
  */
 export function getDefaultVoicemailDetectionConfig(): VoicemailDetectionConfig {
   return { ...DEFAULT_AMD };
@@ -83,7 +88,7 @@ export type VoicemailTemplateId = (typeof VOICEMAIL_DROP_TEMPLATES)[number]["id"
  */
 export function resolveVoicemailTemplate(
   templateId: string,
-  vars: { name?: string; business?: string; callback?: string; service?: string; date?: string } = {}
+  vars: { name?: string; business?: string; callback?: string; service?: string; date?: string } = {},
 ): string {
   const t = VOICEMAIL_DROP_TEMPLATES.find((x) => x.id === templateId);
   if (!t) return "";
@@ -101,13 +106,13 @@ export interface VoicemailConfigForAssistant {
 
 /**
  * When voicemail is detected: leave message, hang up, or (sms = hang up and rely on separate SMS flow).
- * - leave: enable AMD and set voicemailMessage so Vapi leaves the message.
- * - hangup: enable AMD but no message (or empty) so we hang up quickly.
- * - sms: enable AMD, hang up; caller should handle "send SMS instead" in their flow (we don't leave VM).
+ * - leave: enable detection and set voicemailMessage so Recall leaves the message
+ * - hangup: enable detection but no message (or empty) so it hangs up quickly
+ * - sms: enable detection, hang up (SMS flow handles the follow-up)
  */
 export function getVoicemailConfigForBehavior(
   behavior: VoicemailBehavior,
-  message?: string | null
+  message?: string | null,
 ): VoicemailConfigForAssistant {
   const detection = getDefaultVoicemailDetectionConfig();
 
@@ -134,3 +139,4 @@ export function getVoicemailConfigForBehavior(
       };
   }
 }
+

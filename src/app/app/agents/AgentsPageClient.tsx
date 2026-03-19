@@ -37,7 +37,7 @@ import {
 } from "@/lib/constants/recall-voices";
 import { getTemplateVoiceId } from "@/lib/data/agent-templates";
 import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
-import { VOICEMAIL_DROP_TEMPLATES } from "@/lib/vapi/voicemail-detection";
+import { VOICEMAIL_DROP_TEMPLATES } from "@/lib/voice/voicemail-detection";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { calculateReadiness, type ReadinessAgent } from "@/lib/readiness";
