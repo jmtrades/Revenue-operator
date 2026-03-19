@@ -21,7 +21,7 @@ export async function GET(
   const db = getDb();
   const { data: agent, error: agentErr } = await db
     .from("agents")
-    .select("id, name, workspace_id, vapi_agent_id")
+    .select("id, name, workspace_id")
     .eq("id", agentId)
     .maybeSingle();
   if (agentErr || !agent) return NextResponse.json({ error: "Agent not found" }, { status: 404 });

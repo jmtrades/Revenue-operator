@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   if (agents.length === 0) {
     const { data: workspace } = await db
       .from("workspaces")
-      .select("id, name, agent_name, greeting, elevenlabs_voice_id, vapi_assistant_id, knowledge_items")
+      .select("id, name, agent_name, greeting, voice_id, knowledge_items")
       .eq("id", workspaceId)
       .maybeSingle();
     const row = workspace as {
@@ -26,8 +26,7 @@ export async function GET(req: NextRequest) {
       name?: string | null;
       agent_name?: string | null;
       greeting?: string | null;
-      elevenlabs_voice_id?: string | null;
-      vapi_assistant_id?: string | null;
+      voice_id?: string | null;
       knowledge_items?: Array<{ q?: string; a?: string }> | null;
     } | null;
     if (row) {
@@ -37,14 +36,14 @@ export async function GET(req: NextRequest) {
           businessName: row.name?.trim() || "My Workspace",
           agentName: row.agent_name,
           greeting: row.greeting,
-          voiceId: row.elevenlabs_voice_id,
+          voiceId: row.voice_id,
           knowledgeItems: row.knowledge_items,
         });
       } catch {
         await db.from("agents").insert({
           workspace_id: row.id,
           name: row.agent_name?.trim() || "Receptionist",
-          voice_id: row.elevenlabs_voice_id?.trim() || DEFAULT_VOICE_ID,
+          voice_id: row.voice_id?.trim() || DEFAULT_VOICE_ID,
           personality: "professional",
           purpose: "both",
           greeting:
@@ -60,7 +59,6 @@ export async function GET(req: NextRequest) {
             escalationChain: [],
           },
           is_active: true,
-          vapi_agent_id: row.vapi_assistant_id?.trim() || null,
           stats: {
             totalCalls: 0,
             avgRating: 0,

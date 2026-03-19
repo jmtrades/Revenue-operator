@@ -15,7 +15,7 @@ import { DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const db = getDb();
-  const { data: agent } = await db.from("agents").select("id, workspace_id, name, greeting, knowledge_base, vapi_agent_id").eq("id", id).maybeSingle();
+  const { data: agent } = await db.from("agents").select("id, workspace_id, name, greeting, knowledge_base").eq("id", id).maybeSingle();
   if (!agent) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const workspaceId = (agent as { workspace_id: string }).workspace_id;
   const err = await requireWorkspaceAccess(req, workspaceId);
@@ -38,9 +38,9 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const [ctxRes, agentRes] = await Promise.all([
     db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
-    db.from("agents").select("id, name, greeting, knowledge_base, vapi_agent_id, voice_id").eq("id", id).maybeSingle(),
+    db.from("agents").select("id, name, greeting, knowledge_base, voice_id").eq("id", id).maybeSingle(),
   ]);
-  const a = agentRes.data as { id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; vapi_agent_id?: string | null; voice_id?: string | null } | null;
+  const a = agentRes.data as { id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; voice_id?: string | null } | null;
   if (!a) return NextResponse.json({ error: "Agent not found" }, { status: 404 });
 
   const ctxData = ctxRes.data as { business_name?: string; offer_summary?: string; business_hours?: Record<string, unknown>; faq?: Array<{ q?: string; a?: string }> } | null;
