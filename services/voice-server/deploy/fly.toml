@@ -32,7 +32,7 @@ grace_period = "5s"
 PORT = "8100"
 HOST = "0.0.0.0"
 LOG_LEVEL = "info"
-LLM_ENDPOINT = "https://YOUR_APP_NAME.fly.dev/api/agent/respond"
+LLM_ENDPOINT = "https://www.recall-touch.com/api/agent/respond"
 
 # Required (set in Fly dashboard):
 # - OPENAI_API_KEY (for LLM calls, if your voice stack uses it)
