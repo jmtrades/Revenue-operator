@@ -47,6 +47,7 @@ describe("GET /api/system/health", () => {
       "public_corridor_ok",
       "voice_checked_at",
       "voice_health",
+      "voice_hf_hub_token_configured",
       "voice_latency_ms",
       "voice_server_ok",
       "voice_status",
@@ -63,6 +64,10 @@ describe("GET /api/system/health", () => {
     expect(typeof data.db_reachable).toBe("boolean");
     expect(typeof data.public_corridor_ok).toBe("boolean");
     expect(typeof data.voice_server_ok).toBe("boolean");
+    expect(
+      data.voice_hf_hub_token_configured === null ||
+        typeof data.voice_hf_hub_token_configured === "boolean",
+    ).toBe(true);
     expect(data.voice_checked_at === null || typeof data.voice_checked_at === "string").toBe(true);
     expect(data.voice_latency_ms === null || typeof data.voice_latency_ms === "number").toBe(true);
     expect(data.voice_health === null || typeof data.voice_health === "object").toBe(true);

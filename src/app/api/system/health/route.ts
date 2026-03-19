@@ -28,6 +28,8 @@ export async function GET(_req: NextRequest) {
   let voice_latency_ms: number | null = null;
   let voice_health: Record<string, unknown> | null = null;
   let voice_status: Record<string, unknown> | null = null;
+  /** Mirrors voice server /health when present; null if not checked or field absent. */
+  let voice_hf_hub_token_configured: boolean | null = null;
 
   try {
     try {
@@ -69,6 +71,12 @@ export async function GET(_req: NextRequest) {
         if (resp && resp.ok) {
           voice_latency_ms = Date.now() - start;
           voice_health = (await resp.json().catch(() => null)) as Record<string, unknown> | null;
+          if (
+            voice_health &&
+            typeof voice_health.huggingface_hub_token_configured === "boolean"
+          ) {
+            voice_hf_hub_token_configured = voice_health.huggingface_hub_token_configured;
+          }
           voice_checked_at = new Date().toISOString();
           voice_server_ok = true;
         }
@@ -102,6 +110,7 @@ export async function GET(_req: NextRequest) {
     db_reachable,
     public_corridor_ok,
     voice_server_ok,
+    voice_hf_hub_token_configured,
     voice_checked_at,
     voice_latency_ms,
     voice_health,
