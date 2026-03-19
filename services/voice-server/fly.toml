@@ -39,8 +39,13 @@ ENABLE_KOKORO_FALLBACK = "false"
 # Disable GPU-dependent features
 USE_GPU = "false"
 
-# Required secrets (set via: fly secrets set KEY=value):
-# - OPENAI_API_KEY (for LLM calls)
+# Secrets (fly secrets set KEY=value):
+# - OPENAI_API_KEY — LLM calls to LLM_ENDPOINT
+# - HF_TOKEN or HUGGINGFACE_HUB_TOKEN — Hugging Face Hub (gated Orpheus TTS, faster model pulls)
+# Optional env (fly secrets set or [env] if non-sensitive):
+# - LOAD_STT_ENGINE=false — skip Faster-Whisper at startup (tiny VMs / no STT needed)
+# - STT_MODEL=base — whisper size: tiny|base|small|...
+# - MODEL_CACHE_DIR=/app/.cache — persist whisper/cache on a volume if you add one
 
 [vm]
 # === FREE/DEV TIER (current) ===
