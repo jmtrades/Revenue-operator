@@ -2,14 +2,75 @@
  * Outbound delivery provider adapter (SMS-first).
  * Status: queued | sent | delivered | failed
  * Retry with backoff, channel fallback, no silent failures.
+ * Supports both Twilio and Telnyx providers.
  */
 
 import { getDb } from "@/lib/db/queries";
 import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
+import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
+import { sendSms as sendSmsTelnyx } from "@/lib/telephony/telnyx-sms";
 
 export type MessageStatus = "queued" | "sent" | "delivered" | "failed";
 
 const RETRY_DELAYS_MS = [60_000, 5 * 60_000, 30 * 60_000];
+
+async function sendViaTelnyx(
+  channel: string,
+  to: string,
+  body: string,
+  workspaceId?: string
+): Promise<{ messageId: string } | { error: string }> {
+  if (channel !== "sms" && channel !== "whatsapp") {
+    return { error: "Telnyx: Channel must be sms (WhatsApp not yet supported)" };
+  }
+
+  const db = getDb();
+  let fromNumber: string | null = null;
+  let messagingProfileId: string | null = null;
+
+  // Try workspace-specific config first
+  if (workspaceId) {
+    const { data: phoneConfig } = await db
+      .from("phone_configs")
+      .select("proxy_number")
+      .eq("workspace_id", workspaceId)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (phoneConfig) {
+      const config = phoneConfig as { proxy_number?: string | null };
+      fromNumber = config.proxy_number ?? null;
+    }
+  }
+
+  // Fall back to environment default
+  if (!fromNumber) {
+    fromNumber = process.env.TELNYX_PHONE_NUMBER ?? null;
+  }
+
+  if (!fromNumber) {
+    return { error: "Telnyx not configured: no phone number available" };
+  }
+
+  messagingProfileId = process.env.TELNYX_MESSAGING_PROFILE_ID ?? null;
+
+  // Normalize phone numbers
+  const toAddr = to.startsWith("+") ? to : to.replace(/\D/g, "").length === 10 ? `+1${to.replace(/\D/g, "")}` : to;
+  const fromAddr = fromNumber.startsWith("+") ? fromNumber : fromNumber.replace(/\D/g, "").length === 10 ? `+1${fromNumber.replace(/\D/g, "")}` : fromNumber;
+
+  const result = await sendSmsTelnyx({
+    from: fromAddr,
+    to: toAddr,
+    text: body,
+    messagingProfileId: messagingProfileId ?? undefined,
+  });
+
+  if ("error" in result) {
+    return { error: result.error };
+  }
+
+  return { messageId: result.messageId };
+}
 
 async function sendViaTwilio(
   channel: string,
@@ -179,15 +240,26 @@ export async function sendOutbound(
           ? ["email", "sms", "web"]
           : ["web"];
 
+  const provider = getTelephonyProvider();
+
   for (const ch of fallbackOrder) {
     const destination = ch === "sms" || ch === "whatsapp" ? to.phone : ch === "email" ? to.email : null;
     if (!destination && ch !== "web") continue;
 
-    let result: { sid: string } | { error: string };
+    let result: { sid: string; messageId?: string } | { error: string };
     if (ch === "web") {
       result = { sid: `web-${messageId}` };
     } else if ((ch === "sms" || ch === "whatsapp") && to.phone) {
-      result = await sendViaTwilio(ch, to.phone, safeContent, workspaceId);
+      if (provider === "telnyx") {
+        const telnyxResult = await sendViaTelnyx(ch, to.phone, safeContent, workspaceId);
+        if ("error" in telnyxResult) {
+          result = telnyxResult;
+        } else {
+          result = { sid: telnyxResult.messageId, messageId: telnyxResult.messageId };
+        }
+      } else {
+        result = await sendViaTwilio(ch, to.phone, safeContent, workspaceId);
+      }
     } else if (ch === "email" && to.email) {
       const { sendEmail } = await import("@/lib/integrations/email");
       const sendResult = await sendEmail(workspaceId, to.email, emailSubject ?? "Message from Recall Touch", safeContent);
