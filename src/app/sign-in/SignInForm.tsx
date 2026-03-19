@@ -18,7 +18,7 @@ export default function SignInForm() {
   const [busy, setBusy] = useState(false);
   const [googleBusy, setGoogleBusy] = useState(false);
   const [showPw, setShowPw] = useState(false);
-  const tToast = useTranslations("toast");
+  const _tToast = useTranslations("toast");
 
   const oauthErrorMessage =
     oauthError === "google_config"

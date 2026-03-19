@@ -39,7 +39,7 @@ export interface ActivationState {
   services: string[];
   lastTestFeedback: TestFeedback;
   preferredLanguage: string;
-  elevenlabsVoiceId: string;
+  voiceId: string;
 }
 
 export const ORG_TYPES: { id: OrgTypeId; label: string }[] = [

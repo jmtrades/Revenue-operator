@@ -432,7 +432,7 @@ export async function resumeEnrollment(enrollmentId: string): Promise<boolean> {
  */
 export async function cancelEnrollment(
   enrollmentId: string,
-  reason?: string
+  _reason?: string
 ): Promise<boolean> {
   const db = getDb();
   const { error } = await db

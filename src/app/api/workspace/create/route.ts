@@ -3,31 +3,35 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { sendAgentLiveEmail } from "@/lib/email/agent-live";
 import { buildStarterKnowledge, mergeKnowledgeItems } from "@/lib/workspace/starter-knowledge";
 import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
+import { parseBody, phoneSchema } from "@/lib/api/validate";
 
 export const dynamic = "force-dynamic";
 
-interface OnboardingPayload {
-  businessName?: string;
-  businessPhone?: string;
-  website?: string;
-  address?: string;
-  industry?: string;
-  useCases?: string[];
-  orgType?: string;
-  agentTemplate?: string;
-  agentName?: string;
-  greeting?: string;
-  businessHours?: Record<string, unknown>;
-  knowledgeItems?: unknown[];
-  preferredLanguage?: string;
-  elevenlabsVoiceId?: string;
-}
+const workspaceCreateSchema = z.object({
+  businessName: z.string().max(255).optional(),
+  businessPhone: phoneSchema.optional(),
+  website: z.string().url("Invalid website URL").optional(),
+  address: z.string().max(500).optional(),
+  industry: z.string().max(100).optional(),
+  useCases: z.array(z.string()).optional(),
+  orgType: z.string().max(100).optional(),
+  agentTemplate: z.string().max(255).optional(),
+  agentName: z.string().max(255).optional(),
+  greeting: z.string().max(2000).optional(),
+  businessHours: z.record(z.string(), z.unknown()).optional(),
+  knowledgeItems: z.array(z.unknown()).optional(),
+  preferredLanguage: z.string().max(10).optional(),
+  voiceId: z.string().max(100).optional(),
+  elevenlabsVoiceId: z.string().max(100).optional(), // Deprecated: kept for backwards compatibility
+});
+
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -35,26 +39,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: OnboardingPayload;
-  try {
-    body = (await req.json()) as OnboardingPayload;
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  // Enforce email verification before workspace creation.
+  if (!session.emailVerified) {
+    return NextResponse.json({ error: "Please verify your email first" }, { status: 403 });
   }
 
-  const name = typeof body.businessName === "string" ? body.businessName.trim() || "My Workspace" : "My Workspace";
-  const phone = typeof body.businessPhone === "string" ? body.businessPhone.trim() || null : null;
-  const website = typeof body.website === "string" ? body.website.trim() || null : null;
-  const address = typeof body.address === "string" ? body.address.trim() || null : null;
-  const industry = typeof body.industry === "string" ? body.industry.trim() || null : null;
-  const useCases = Array.isArray(body.useCases) ? body.useCases.filter((u): u is string => typeof u === "string") : null;
-  const agentTemplate = typeof body.agentTemplate === "string" ? body.agentTemplate : null;
-  const agentName = typeof body.agentName === "string" ? body.agentName : null;
-  const greeting = typeof body.greeting === "string" ? body.greeting : null;
-  const businessHours = body.businessHours && typeof body.businessHours === "object" ? body.businessHours : null;
-  const rawKnowledgeItems = Array.isArray(body.knowledgeItems) ? body.knowledgeItems : null;
-  const preferredLanguage = typeof body.preferredLanguage === "string" ? body.preferredLanguage.trim() || null : null;
-  const elevenlabsVoiceId = typeof body.elevenlabsVoiceId === "string" ? body.elevenlabsVoiceId.trim() || null : null;
+  const parsed = await parseBody(req, workspaceCreateSchema);
+  if ('error' in parsed) return parsed.error;
+  const body = parsed.data;
+
+  const name = (body.businessName ?? "").trim() || "My Workspace";
+  const phone = (body.businessPhone ?? "").trim() || null;
+  const website = (body.website ?? "").trim() || null;
+  const address = (body.address ?? "").trim() || null;
+  const industry = (body.industry ?? "").trim() || null;
+  const useCases = body.useCases ?? null;
+  const agentTemplate = body.agentTemplate ?? null;
+  const agentName = body.agentName ?? null;
+  const greeting = body.greeting ?? null;
+  const businessHours = body.businessHours ?? null;
+  const rawKnowledgeItems = body.knowledgeItems ?? null;
+  const preferredLanguage = (body.preferredLanguage ?? "").trim() || null;
+  // Accept both voiceId and elevenlabsVoiceId for backwards compatibility
+  const voiceId = ((body.voiceId ?? body.elevenlabsVoiceId) ?? "").trim() || null;
 
   try {
     const db = getDb();
@@ -98,7 +105,7 @@ export async function POST(req: NextRequest) {
     if (businessHours !== null) update.working_hours = businessHours;
     if (knowledgeItems !== null) update.knowledge_items = knowledgeItems;
     if (preferredLanguage !== null) update.preferred_language = preferredLanguage;
-    if (elevenlabsVoiceId !== null) update.elevenlabs_voice_id = elevenlabsVoiceId;
+    if (voiceId !== null) update.elevenlabs_voice_id = voiceId;
 
     const { error: updateErr } = await db.from("workspaces").update(update).eq("id", workspaceId);
     if (updateErr) {
@@ -126,7 +133,7 @@ export async function POST(req: NextRequest) {
       businessName: name,
       agentName,
       greeting,
-      voiceId: elevenlabsVoiceId,
+      voiceId,
       knowledgeItems,
     });
 

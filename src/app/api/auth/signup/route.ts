@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
-  const emailRedirectTo = `${origin}/app/onboarding`;
+  const emailRedirectTo = `${origin}/activate`;
 
   let body: { email?: string; password?: string; businessName?: string };
   try {
@@ -95,12 +95,12 @@ export async function POST(req: NextRequest) {
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
         sendWelcome();
-        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding" });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
       sendWelcome();
-      return NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding", session: "missing" });
+      return NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate", session: "missing" });
     } catch (err) {
       log("error", "[signup] admin.createUser path failed", { err: String(err) });
       // fall through to signUp path
@@ -161,7 +161,7 @@ export async function POST(req: NextRequest) {
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
         sendWelcome();
-        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding" });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
@@ -201,7 +201,7 @@ export async function POST(req: NextRequest) {
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
         sendWelcome();
-        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding" });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
@@ -215,10 +215,10 @@ export async function POST(req: NextRequest) {
     // SESSION_SECRET/ENCRYPTION_KEY not configured. Degrade gracefully:
     log("warn", "[auth] Signup succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. App sessions running without revenue_session cookie.");
     sendWelcome();
-    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/app/onboarding" });
+    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/activate" });
   }
   sendWelcome();
-  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/onboarding" });
+  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
   res.headers.set("Set-Cookie", cookie);
   return res;
 }

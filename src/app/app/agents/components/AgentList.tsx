@@ -25,7 +25,7 @@ interface AgentListProps {
   setSelectedId: (id: string) => void;
   setActiveStep: (step: StepId) => void;
   setAgents: (updater: (current: Agent[]) => Agent[]) => void;
-  persistAgent: (agentToSave: Agent, options?: { showToast?: boolean; successToast?: string }) => Promise<{ patchOk: boolean; vapiId?: string | null }>;
+  persistAgent: (agentToSave: Agent, options?: { showToast?: boolean; successToast?: string }) => Promise<{ patchOk: boolean }>;
   setDeleteConfirmAgent: (agent: Agent | null) => void;
   getFirstIncompleteStep: (agent: Agent) => StepId;
 }

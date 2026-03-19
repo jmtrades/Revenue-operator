@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
+import { HomepageTrustBar } from "@/components/sections/HomepageTrustBar";
 
 // V8: Homepage reduced to 10 core sections (see master prompt).
 const HomepageFAQ = dynamic(
@@ -117,6 +118,7 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
+        <HomepageTrustBar />
         <ProblemStatement />
         <HomepageRoiCalculator />
         <HowItWorks />

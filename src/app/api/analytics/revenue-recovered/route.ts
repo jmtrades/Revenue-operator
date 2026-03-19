@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     startOfMonth.setHours(0, 0, 0, 0);
 
     // Count answered calls this month (calls that started and ended)
-    const { data: answeredCalls, count: callsAnsweredCount } = await db
+    const { data: _answeredCalls, count: callsAnsweredCount } = await db
       .from("call_sessions")
       .select("id", { count: "exact" })
       .eq("workspace_id", workspaceId)
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     // Count no-shows (calls scheduled but not answered) - estimate from appointments
     let noShowsRecovered = 0;
     try {
-      const { data: appointments, count: appointmentCount } = await db
+      const { data: _appointments, count: _appointmentCount } = await db
         .from("appointments")
         .select("id", { count: "exact" })
         .eq("workspace_id", workspaceId)
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
     // Count reactivations (contacts that had activity after a period of inactivity)
     let reactivations = 0;
     try {
-      const { data: leads } = await db
+      const { data: _leads } = await db
         .from("leads")
         .select("id, last_contact_at")
         .eq("workspace_id", workspaceId)

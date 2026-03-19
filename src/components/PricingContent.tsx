@@ -251,7 +251,7 @@ function FeatureCell({ value }: { value: boolean | string }) {
 
 /* ─── Main Pricing Content ─── */
 export function PricingContent() {
-  const t = useTranslations("pricing");
+  const _t = useTranslations("pricing");
   const [annual, setAnnual] = useState(true); // Annual is default
   const [faqSearch, setFaqSearch] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);

@@ -12,7 +12,6 @@
 
 import { getVapiServerKey } from "./env";
 import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
-import { ACTIVE_VOICE_STACK } from "@/lib/voice/types";
 
 const VAPI_BASE = "https://api.vapi.ai";
 

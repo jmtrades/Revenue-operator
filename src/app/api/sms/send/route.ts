@@ -4,11 +4,20 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { parseBody, phoneSchema } from "@/lib/api/validate";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
+
+const sendSmsSchema = z.object({
+  to: phoneSchema,
+  body: z.string().min(1, "Message body required").max(1600),
+  leadId: z.string().uuid().optional(),
+});
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -18,6 +27,11 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
+  const rl = await checkRateLimit(`sms:${session.workspaceId}`, 100, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const fromNumber = process.env.TWILIO_PHONE_NUMBER ?? process.env.TWILIO_MESSAGING_SERVICE_SID;
@@ -25,23 +39,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "SMS not configured" }, { status: 503 });
   }
 
-  let body: { to?: string; body?: string; leadId?: string };
-  try {
-    body = (await req.json()) as { to?: string; body?: string; leadId?: string };
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+  const parsed = await parseBody(req, sendSmsSchema);
+  if ('error' in parsed) return parsed.error;
+  const body = parsed.data;
 
-  const to = typeof body.to === "string" ? body.to.replace(/\D/g, "").trim() : "";
-  const text = typeof body.body === "string" ? body.body.trim() : "";
-  const leadId = typeof body.leadId === "string" ? body.leadId.trim() : null;
-
-  if (!to || to.length < 10) {
-    return NextResponse.json({ error: "Valid 'to' phone required" }, { status: 400 });
-  }
-  if (!text) {
-    return NextResponse.json({ error: "'body' required" }, { status: 400 });
-  }
+  const to = body.to.replace(/\D/g, "").trim();
+  const text = body.body.trim();
+  const leadId = body.leadId ?? null;
 
   const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
   const params = new URLSearchParams();

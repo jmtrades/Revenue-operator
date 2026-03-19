@@ -167,7 +167,7 @@ export async function GET(req: NextRequest) {
       return fail("google_session");
     }
 
-    const redirectPath = isNewUser ? "/app/onboarding" : nextFromCookie;
+    const redirectPath = isNewUser ? "/activate" : nextFromCookie;
     const res = NextResponse.redirect(new URL(redirectPath, req.nextUrl.origin));
     res.headers.append("Set-Cookie", cookie);
     clearCookies(res);

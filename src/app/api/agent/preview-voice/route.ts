@@ -18,15 +18,18 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+function getVoiceServerUrl(): string {
+  const url = process.env.VOICE_SERVER_URL;
+  if (!url) {
+    return "http://localhost:8100";
+  }
+  return url;
+}
+
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
   if (!session?.workspaceId || !session?.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
-  if (!apiKey) {
-    return NextResponse.json({ error: "ElevenLabs not configured" }, { status: 503 });
   }
 
   let body: PreviewVoiceBody;
@@ -48,40 +51,47 @@ export async function POST(req: NextRequest) {
   const { HUMAN_VOICE_DEFAULTS } = await import("@/lib/voice/human-voice-defaults");
   const defaults = { ...HUMAN_VOICE_DEFAULTS, ...settings };
 
-  const response = await fetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream`,
-    {
-      method: "POST",
-      headers: {
-        "xi-api-key": apiKey,
-        "Content-Type": "application/json",
-        Accept: "audio/mpeg",
-      },
-      body: JSON.stringify({
-        text: text.slice(0, 5000),
-        model_id: "eleven_turbo_v2_5",
-        voice_settings: {
+  const voiceServerUrl = getVoiceServerUrl();
+
+  try {
+    const response = await fetch(
+      `${voiceServerUrl}/tts/stream`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "audio/mpeg",
+        },
+        body: JSON.stringify({
+          voice_id: voiceId,
+          text: text.slice(0, 5000),
           stability: clamp(defaults.stability, 0, 1),
           similarity_boost: clamp(defaults.similarityBoost, 0, 1),
           style: clamp(defaults.style, 0, 1),
           use_speaker_boost: defaults.useSpeakerBoost,
-        },
-      }),
-    },
-  );
+        }),
+      },
+    );
 
-  if (!response.ok || !response.body) {
-    const errorText = await response.text().catch(() => "");
+    if (!response.ok || !response.body) {
+      const errorText = await response.text().catch(() => "");
+      return NextResponse.json(
+        { error: errorText || "Voice generation failed" },
+        { status: 502 },
+      );
+    }
+
+    return new Response(response.body, {
+      headers: {
+        "Content-Type": "audio/mpeg",
+        "Cache-Control": "public, max-age=3600",
+      },
+    });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Voice server request failed";
     return NextResponse.json(
-      { error: errorText || "Voice generation failed" },
-      { status: 502 },
+      { error: msg },
+      { status: 503 },
     );
   }
-
-  return new Response(response.body, {
-    headers: {
-      "Content-Type": "audio/mpeg",
-      "Cache-Control": "public, max-age=3600",
-    },
-  });
 }

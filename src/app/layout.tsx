@@ -49,26 +49,26 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — AI Revenue Operations Platform",
+    default: "Recall Touch — AI Phone System for Missed Call Recovery",
   },
   description:
-    "The AI platform that runs your revenue operations — inbound, outbound, follow-up, booking, and attribution — so every opportunity converts and every dollar is tracked.",
+    "AI-powered phone system that answers calls, books appointments, follows up with leads, and recovers missed revenue — so no opportunity falls through the cracks.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://www.recall-touch.com",
     siteName: "Recall Touch",
-    title: "Recall Touch — AI Revenue Operations Platform",
+    title: "Recall Touch — AI Phone System for Missed Call Recovery",
     description:
-      "The AI platform that runs your revenue operations — inbound, outbound, follow-up, booking, and attribution — so every opportunity converts and every dollar is tracked.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Revenue Operations Platform" }],
+      "AI-powered phone system that answers calls, books appointments, follows up with leads, and recovers missed revenue — so no opportunity falls through the cracks.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Phone System for Missed Call Recovery" }],
   },
   icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — AI Revenue Operations Platform",
+    title: "Recall Touch — AI Phone System for Missed Call Recovery",
     description:
-      "The AI platform that runs your revenue operations — inbound, outbound, follow-up, booking, and attribution — so every opportunity converts and every dollar is tracked.",
+      "AI-powered phone system that answers calls, books appointments, follows up with leads, and recovers missed revenue — so no opportunity falls through the cracks.",
   },
   robots: {
     index: true,

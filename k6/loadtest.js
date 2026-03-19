@@ -18,7 +18,7 @@ export const options = {
   },
 };
 
-export default function () {
+export default function loadTest() {
   // Always hit a lightweight public endpoint first.
   const h = http.get(`${BASE_URL}/api/health`, { timeout: "10s" });
   check(h, { "health status is 200": (r) => r.status === 200 });

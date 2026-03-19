@@ -8,10 +8,17 @@ import { createClient } from "@/lib/supabase/server";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import { validateEmail, validatePasswordForSignin, toFriendlySigninError } from "@/lib/auth/validate";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`signin:${ip}`, 10, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
+  }
+
   const url = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").trim();
   const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   if (!url || !anonKey) {

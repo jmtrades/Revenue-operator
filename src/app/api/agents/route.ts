@@ -38,7 +38,6 @@ export async function GET(req: NextRequest) {
           agentName: row.agent_name,
           greeting: row.greeting,
           voiceId: row.elevenlabs_voice_id,
-          vapiAssistantId: row.vapi_assistant_id,
           knowledgeItems: row.knowledge_items,
         });
       } catch {
@@ -135,6 +134,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // NOTE: Do not set vapi_agent_id for new agents. Keep reading it for backwards compatibility with existing agents.
   const { data: agent, error } = await db.from("agents").insert({
     workspace_id,
     name,

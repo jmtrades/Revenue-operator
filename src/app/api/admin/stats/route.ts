@@ -51,12 +51,54 @@ export async function GET(req: NextRequest) {
   } catch {
     // signups table or getDb may not exist / be configured
   }
+
+  // Voice server (best-effort)
+  let voiceServerOk = false;
+  let voiceServerLatencyMs: number | null = null;
+  let voiceServerHealth: Record<string, unknown> | null = null;
+  let voiceServerStatus: Record<string, unknown> | null = null;
+  try {
+    const voiceUrl = process.env.VOICE_SERVER_URL;
+    if (voiceUrl) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 2500);
+      const start = Date.now();
+      const resp = await fetch(`${voiceUrl}/health`, { method: "GET", signal: controller.signal, cache: "no-store" }).catch(() => null);
+      clearTimeout(timeout);
+
+      if (resp?.ok) {
+        voiceServerOk = true;
+        voiceServerLatencyMs = Date.now() - start;
+        voiceServerHealth = (await resp.json().catch(() => null)) as Record<string, unknown> | null;
+
+        const statusResp = await fetch(`${voiceUrl}/status`, { method: "GET", cache: "no-store" }).catch(() => null);
+        if (statusResp?.ok) voiceServerStatus = (await statusResp.json().catch(() => null)) as Record<string, unknown> | null;
+      }
+    }
+  } catch {
+    voiceServerOk = false;
+  }
+
   return NextResponse.json({
     signupsToday,
     signupsTotal,
     mrr: "$0",
     recentSignups,
-    health: { vapi: "Online", twilio: "Online", supabase: "Online" },
+    health: {
+      voiceServer: voiceServerOk ? "Online" : "Offline",
+      twilio: "—",
+      supabase: "—",
+      voiceServerDetails: {
+        ok: voiceServerOk,
+        latency_ms: voiceServerLatencyMs,
+        // Voice server returns active sessions + voices via /status
+        active_sessions: (voiceServerStatus?.active_conversations as number | undefined) ?? null,
+        voices_available: (voiceServerStatus?.voices_available as number | undefined) ?? null,
+        max_concurrent: (voiceServerStatus?.max_concurrent as number | undefined) ?? null,
+        tts_engine: (voiceServerHealth?.tts_engine as string | undefined) ?? null,
+        stt_engine: (voiceServerHealth?.stt_engine as string | undefined) ?? null,
+      },
+    },
     activeCalls: 0,
     callsToday: 0,
     textsToday: 0,

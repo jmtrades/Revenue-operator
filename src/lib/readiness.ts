@@ -24,7 +24,7 @@ export interface ReadinessAgent {
   greeting?: string | null;
   knowledge_base?: { faq?: Array<{ q?: string; a?: string }> } | null;
   rules?: { alwaysTransfer?: unknown[]; neverSay?: unknown[] } | null;
-  vapi_agent_id?: string | null;
+  recall_agent_id?: string | null;
   tested_at?: string | null;
 }
 
@@ -45,7 +45,7 @@ export function calculateReadiness(
 
   const items: ReadinessItem[] = [
     { key: "business", done: !!businessName, weight: 10, href: "/app/settings/business" },
-    { key: "use_cases", done: useCasesOk, weight: 5, href: "/app/onboarding" },
+    { key: "use_cases", done: useCasesOk, weight: 5, href: "/activate" },
     { key: "agent", done: !!agent, weight: 10, href: "/app/agents" },
     { key: "voice", done: !!(ag.voice_id ?? "").toString().trim(), weight: 5, href: "/app/agents" },
     { key: "greeting", done: !!(ag.greeting && ag.greeting.length > 10), weight: 5, href: "/app/agents" },
@@ -53,7 +53,7 @@ export function calculateReadiness(
     { key: "behavior", done: hasBehavior, weight: 10, href: "/app/agents" },
     { key: "phone", done: phoneConnected, weight: 15, href: "/app/settings/phone" },
     { key: "tested", done: !!(ag.tested_at ?? "").toString().trim(), weight: 10, href: "/app/agents" },
-    { key: "launched", done: !!(ag.vapi_agent_id ?? "").toString().trim(), weight: 15, href: "/app/agents" },
+    { key: "launched", done: !!(ag.recall_agent_id ?? "").toString().trim(), weight: 15, href: "/app/agents" },
   ];
 
   const percentage = items.reduce((sum, item) => sum + (item.done ? item.weight : 0), 0);

@@ -249,10 +249,7 @@ export async function initiateCall(
       name: `Outbound – ${params.workspaceId.slice(0, 8)}`,
       systemPrompt,
       voiceId,
-      voiceProvider: (process.env.VOICE_PROVIDER as
-        | "elevenlabs"
-        | "deepgram"
-        | "playht") || "elevenlabs",
+      voiceProvider: "deepgram-aura",
       language: undefined,
       tools: [],
       maxDuration: 600,
@@ -357,10 +354,7 @@ export async function handleInboundCall(
       name: `Inbound – ${params.workspaceId.slice(0, 8)}`,
       systemPrompt: "You are a helpful receptionist. Please wait for instructions.",
       voiceId,
-      voiceProvider: (process.env.VOICE_PROVIDER as
-        | "elevenlabs"
-        | "deepgram"
-        | "playht") || "elevenlabs",
+      voiceProvider: "deepgram-aura",
       language: undefined,
       tools: [],
       maxDuration: 600,

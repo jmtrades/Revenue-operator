@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Calendar, PhoneForwarded, CheckCircle2, Clock } from 'lucide-react';
+import { CheckCircle2, Clock, Calendar, PhoneForwarded } from 'lucide-react';
 
 interface ActivityStats {
   callsToday: number;
@@ -11,18 +10,12 @@ interface ActivityStats {
 }
 
 const TodaysActivity = () => {
-  const [stats, setStats] = useState<ActivityStats>({
+  const stats: ActivityStats = {
     callsToday: 0,
     followUpsSent: 0,
     appointmentsBooked: 0,
     nextAppointment: null,
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Placeholder: In production, this would query Supabase
-    setLoading(false);
-  }, []);
+  };
 
   const hasData = stats.callsToday > 0 || stats.followUpsSent > 0 || stats.appointmentsBooked > 0;
 
@@ -31,36 +24,36 @@ const TodaysActivity = () => {
       label: 'Calls today',
       value: stats.callsToday,
       icon: PhoneForwarded,
-      color: 'text-blue-600',
+      color: 'text-[var(--accent-primary)]',
     },
     {
       label: 'Follow-ups sent',
       value: stats.followUpsSent,
       icon: Calendar,
-      color: 'text-purple-600',
+      color: 'text-zinc-400',
     },
     {
       label: 'Appointments booked',
       value: stats.appointmentsBooked,
       icon: CheckCircle2,
-      color: 'text-green-600',
+      color: 'text-emerald-400',
     },
     {
       label: 'Next appointment',
       value: stats.nextAppointment || '—',
       icon: Clock,
-      color: 'text-[#0D6E6E]',
+      color: 'text-[var(--text-secondary)]',
     },
   ];
 
   return (
-    <div className="bg-white rounded-lg border border-[#E5E5E0] p-6">
-      <h2 className="text-lg font-semibold text-[#1A1A1A] mb-6">Today&apos;s Activity</h2>
+    <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6">
+      <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-6">Today&apos;s Activity</h2>
 
       {!hasData && !stats.nextAppointment ? (
         <div className="text-center py-8">
-          <p className="text-[#4A4A4A] text-sm mb-2">No activity yet today.</p>
-          <p className="text-[#4A4A4A] text-sm">Start taking calls to see your activity here.</p>
+          <p className="text-[var(--text-secondary)] text-sm mb-2">No activity yet today.</p>
+          <p className="text-[var(--text-secondary)] text-sm">Start taking calls to see your activity here.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-6">
@@ -70,9 +63,9 @@ const TodaysActivity = () => {
               <div key={idx} className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <Icon className={`w-4 h-4 ${item.color}`} />
-                  <p className="text-sm text-[#4A4A4A]">{item.label}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">{item.label}</p>
                 </div>
-                <p className="text-2xl font-bold text-[#1A1A1A]">{item.value}</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{item.value}</p>
               </div>
             );
           })}

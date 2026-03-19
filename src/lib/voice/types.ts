@@ -1,5 +1,5 @@
 export interface VoiceProviderConfig {
-  provider: "vapi" | "pipecat" | "retell" | "bland" | "elevenlabs" | "custom" | "recall";
+  provider: "recall" | "pipecat";
   apiKey: string;
   phoneNumberId?: string;
   publicKey?: string;
@@ -10,14 +10,14 @@ export interface VoiceProviderConfig {
  * providers are used. This is the single place to swap providers for cost optimization.
  *
  * Cost targets (per minute):
- *   Phase 1: $0.099 (swap TTS + LLM, keep Vapi)
- *   Phase 2: $0.058 (replace Vapi with Pipecat)
+ *   Phase 1.5: $0.074 (Recall self-hosted + Deepgram TTS + Claude Haiku)
+ *   Phase 2: $0.058 (replace Recall with Pipecat)
  *   Phase 3: $0.043 (Cartesia TTS + GPT-4o-mini routing)
  */
-export type TtsProvider = "elevenlabs" | "deepgram-aura" | "cartesia" | "recall-self-hosted";
+export type TtsProvider = "deepgram-aura" | "cartesia" | "recall-self-hosted";
 export type SttProvider = "deepgram";
 export type LlmProvider = "claude-sonnet" | "claude-haiku" | "gpt-4o-mini";
-export type OrchestrationProvider = "vapi" | "pipecat";
+export type OrchestrationProvider = "recall" | "pipecat";
 
 export interface VoiceStackConfig {
   orchestration: OrchestrationProvider;
@@ -36,18 +36,18 @@ export interface VoiceStackConfig {
 
 /** Current active voice stack — update this as we migrate through phases */
 export const ACTIVE_VOICE_STACK: VoiceStackConfig = {
-  // PHASE 1: Swap TTS + LLM, keep Vapi for now
-  orchestration: "vapi",
+  // PHASE 1.5: Recall self-hosted voice server
+  orchestration: "recall",
   tts: {
-    standard: "deepgram-aura", // Was: elevenlabs ($0.05 → $0.022/min)
-    premium: "elevenlabs", // Premium add-on only
+    standard: "deepgram-aura", // $0.022/min
+    premium: "deepgram-aura", // Use Deepgram for all for now
   },
   stt: "deepgram",
   llm: {
-    routine: "claude-haiku", // Was: claude-sonnet ($0.03 → $0.009/min)
+    routine: "claude-haiku", // $0.009/min
     complex: "claude-sonnet", // Keep Sonnet for complex calls
   },
-  estimatedCogsCentsPerMin: 10, // $0.099/min → round to 10¢
+  estimatedCogsCentsPerMin: 8, // $0.074/min (Recall ~$0.043 + Deepgram $0.022 + Claude Haiku $0.009)
 };
 
 /**
@@ -55,7 +55,7 @@ export const ACTIVE_VOICE_STACK: VoiceStackConfig = {
  *
  * export const ACTIVE_VOICE_STACK: VoiceStackConfig = {
  *   orchestration: "pipecat",
- *   tts: { standard: "deepgram-aura", premium: "elevenlabs" },
+ *   tts: { standard: "deepgram-aura", premium: "deepgram-aura" },
  *   stt: "deepgram",
  *   llm: { routine: "claude-haiku", complex: "claude-sonnet" },
  *   estimatedCogsCentsPerMin: 6, // $0.058/min

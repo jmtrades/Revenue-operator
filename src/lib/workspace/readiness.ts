@@ -59,7 +59,7 @@ export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
     { key: "business", label: "Set up your business profile", href: "/app/settings/business", completed: hasBusiness },
     { key: "agent", label: "Configure your first AI agent", href: "/app/agents", completed: hasAgent },
     { key: "phone", label: "Get a phone number", href: "/app/settings/phone", completed: hasPhone },
-    { key: "test_call", label: "Make a test call", href: "/app/onboarding", completed: hasTestCall },
+    { key: "test_call", label: "Make a test call", href: "/activate", completed: hasTestCall },
     { key: "contacts", label: "Import your contacts", href: "/app/contacts", completed: hasContacts },
     { key: "calendar", label: "Set up your calendar", href: "/app/settings/integrations", completed: hasCalendar },
     { key: "campaign", label: "Launch your first campaign", href: "/app/campaigns", completed: hasCampaign },

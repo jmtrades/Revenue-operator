@@ -134,7 +134,7 @@ export default function ActivationPage() {
 
           {!state?.activated_at && (
             <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-              Not connected yet? <Link href="/dashboard/onboarding" className="underline" style={{ color: "var(--accent)" }}>Start here</Link>
+              Not connected yet? <Link href="/activate" className="underline" style={{ color: "var(--accent)" }}>Start here</Link>
             </p>
           )}
         </div>

@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
         workspaceId: session.workspaceId ?? null,
         workspace_id: session.workspaceId ?? null,
         email,
+        emailVerified: session.emailVerified,
       },
     });
   } catch {

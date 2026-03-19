@@ -22,32 +22,32 @@ const COMPETITOR_DATA: Record<
   "smith-ai": {
     name: "Smith.ai",
     description:
-      "Human + AI virtual receptionists. Limited capacity, expensive ($300-$1,125/mo), no follow-up engine or revenue tracking.",
+      "Human + AI virtual receptionists offering call answering and scheduling. Starting at $300/mo. Focus on call handling without integrated follow-up automation or outcome tracking.",
     keywords: [
       "Smith.ai alternative",
       "AI receptionist",
       "vs Smith.ai",
-      "cheaper than Smith.ai",
+      "AI phone answering",
     ],
   },
   ruby: {
     name: "Ruby Receptionists",
     description:
-      "Premium live virtual receptionist service. Pure human cost model, no AI automation, no follow-up or booking capabilities.",
+      "Live virtual receptionist service providing phone coverage and appointment scheduling. Human-staffed model with traditional pricing. Call handling is the primary offering without integrated follow-up workflows.",
     keywords: [
       "Ruby Receptionists alternative",
       "virtual receptionist",
       "vs Ruby",
-      "cheaper than Ruby",
+      "AI receptionist service",
     ],
   },
   gohighlevel: {
     name: "GoHighLevel",
     description:
-      "All-in-one marketing platform. Voice AI is basic and an afterthought, not purpose-built for revenue execution.",
+      "All-in-one platform for agencies and businesses. Includes voice AI and calling features alongside marketing automation, CRM, and funnel building. Voice is one module among many.",
     keywords: [
       "GoHighLevel alternative",
-      "better than GoHighLevel",
+      "GoHighLevel phone system",
       "vs GoHighLevel",
       "AI phone answering",
     ],
@@ -55,11 +55,11 @@ const COMPETITOR_DATA: Record<
   "hiring-receptionist": {
     name: "Hiring a Receptionist",
     description:
-      "Traditional employment ($3,200-$4,500/mo salary + benefits). Single call capacity, sick days, turnover, no analytics.",
+      "Direct employment of a receptionist providing live call answering and scheduling. Typical cost $3,200-$4,500/mo with salary and benefits. Single availability window and traditional staffing constraints.",
     keywords: [
       "virtual receptionist vs hiring",
       "receptionist AI alternative",
-      "save on receptionist costs",
+      "phone answering service",
       "AI phone system",
     ],
   },
@@ -85,7 +85,7 @@ export async function generateMetadata({
   }
 
   const title = `Recall Touch vs ${data.name} — Recall Touch`;
-  const description = `${data.description} See how Recall Touch compares: 10x better capacity, 60-80% cheaper, automated follow-ups, and revenue attribution built in.`;
+  const description = `${data.description} Compare with Recall Touch: 24/7 AI phone system with automated follow-up workflows, appointment booking, and outcome tracking.`;
 
   return {
     title,
@@ -178,17 +178,17 @@ export default async function ComparePage({
           <section className="mt-12">
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-8">
               <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
-                See the proof (and the plan)
+                Ready to try Recall Touch?
               </h2>
               <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Want to validate outcomes and compare cost? Review real results and then match the right tier for your call volume.
+                Watch a live demo to see how Recall Touch handles inbound calls, qualifies intent, and executes follow-up workflows. Then start your free trial.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <Link
-                  href="/results"
+                  href="/demo"
                   className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline"
                 >
-                  View results →
+                  Watch demo →
                 </Link>
                 <Link
                   href="/pricing"

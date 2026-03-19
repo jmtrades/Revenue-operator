@@ -14,7 +14,6 @@ import type {
   WorkflowAppointment,
   StepExecutionResult,
   EnrollmentProcessResult,
-  TemplateContext,
   EventType,
 } from './types';
 
@@ -239,7 +238,7 @@ async function executeWorkflowStep(
         if (!contact.email) {
           throw new Error('Contact has no email address');
         }
-        const emailBody = renderTemplate(
+        const _emailBody = renderTemplate(
           step.emailBody || '',
           contact,
           workspace
@@ -309,7 +308,7 @@ async function executeWorkflowStep(
  */
 async function checkStopConditions(
   contact: WorkflowContact,
-  enrollment: WorkflowEnrollment
+  _enrollment: WorkflowEnrollment
 ): Promise<string | null> {
   // Check if contact replied recently (last activity within 24 hours)
   if (contact.lastReplyAt) {

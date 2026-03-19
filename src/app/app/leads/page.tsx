@@ -86,7 +86,7 @@ const SOURCE_TO_LABEL: Record<string, LeadSource> = {
   other: "Inbound Call",
 };
 
-function getStatusDisplay(
+function _getStatusDisplay(
   status: LeadStatus,
   t: (key: string) => string
 ): string {
@@ -101,7 +101,7 @@ function getStatusDisplay(
   return map[status] ?? status;
 }
 
-function getSourceDisplay(
+function _getSourceDisplay(
   source: LeadSource,
   t: (key: string) => string
 ): string {

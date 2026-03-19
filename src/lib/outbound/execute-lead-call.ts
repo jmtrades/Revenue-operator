@@ -5,7 +5,6 @@
 
 import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
-import { hasVapiServerKey } from "@/lib/vapi/env";
 import { getVoicemailConfigForBehavior } from "@/lib/vapi/voicemail-detection";
 import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
 import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
@@ -18,6 +17,20 @@ export async function executeLeadOutboundCall(
   options?: { campaignType?: CampaignType; campaignPromptOptions?: Parameters<typeof buildCampaignPrompt>[2] }
 ): Promise<{ ok: true; call_session_id: string } | { ok: false; error: string }> {
   const db = getDb();
+
+  // Hard gate: disable outbound calling once the trial is fully expired.
+  // - `trial_expired` grace window should still allow calls.
+  // - `expired` / `trial_ended` should block outbound calling.
+  const { data: ws } = await db
+    .from("workspaces")
+    .select("id, status, billing_status")
+    .eq("id", workspaceId)
+    .maybeSingle();
+
+  const workspace = ws as { id?: string; status?: string | null; billing_status?: string | null } | null;
+  if (workspace?.status === "expired" || workspace?.billing_status === "trial_ended") {
+    return { ok: false, error: "Workspace trial expired" };
+  }
 
   const orchestrationProvider = (process.env.VOICE_PROVIDER ?? "recall") as
     | "vapi"
@@ -41,10 +54,6 @@ export async function executeLeadOutboundCall(
   }
 
   // Outbound calling config differs by orchestration provider.
-  if (orchestrationProvider === "vapi" && !hasVapiServerKey()) {
-    return { ok: false, error: "Outbound calling not configured (vapi)" };
-  }
-
   if (orchestrationProvider === "pipecat") {
     const required = [
       "TWILIO_ACCOUNT_SID",
@@ -65,7 +74,7 @@ export async function executeLeadOutboundCall(
     db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
     db
       .from("agents")
-      .select("id, name, greeting, knowledge_base, rules, vapi_agent_id, purpose")
+      .select("id, name, greeting, knowledge_base, rules, purpose")
       .eq("workspace_id", workspaceId)
       .order("created_at", { ascending: false })
       .limit(20),
@@ -82,7 +91,6 @@ export async function executeLeadOutboundCall(
     greeting?: string;
     knowledge_base?: Record<string, unknown>;
     rules?: { learnedBehaviors?: string[] };
-    vapi_agent_id?: string | null;
     purpose?: string;
   }>;
   const agent =
@@ -192,7 +200,7 @@ YOUR GOAL:
       name: `${agent_name} – outbound ${leadId.slice(0, 8)}`,
       systemPrompt,
       voiceId: DEFAULT_VOICE_ID,
-      voiceProvider: "elevenlabs",
+      voiceProvider: "deepgram-aura",
       language: "en",
       tools: [],
       maxDuration: 600,

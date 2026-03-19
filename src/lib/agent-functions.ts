@@ -1,5 +1,5 @@
 /**
- * Tool/function definitions for Vapi (or other) voice agents.
+ * Tool/function definitions for voice agents (Recall, Vapi, or other providers).
  * Used when creating the assistant and when handling webhook function-calls.
  */
 

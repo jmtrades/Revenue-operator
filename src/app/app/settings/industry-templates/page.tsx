@@ -42,7 +42,7 @@ interface IndustryTemplate {
 }
 
 export default function IndustryTemplatesPage() {
-  const t = useTranslations("common");
+  const _t = useTranslations("common");
   const tNav = useTranslations("nav");
   const [templates, setTemplates] = useState<IndustryTemplate[]>([]);
   const [loading, setLoading] = useState(true);

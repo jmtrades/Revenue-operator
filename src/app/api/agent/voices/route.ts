@@ -1,6 +1,6 @@
 /**
- * GET /api/agent/voices — Return a curated, production-safe voice list.
- * When ElevenLabs is configured, we verify the curated voices still exist upstream.
+ * GET /api/agent/voices — Return curated voices from the Recall voice library.
+ * Voices are limited by billing tier.
  */
 
 export const dynamic = "force-dynamic";
@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
-import { CURATED_VOICES } from "@/lib/constants/curated-voices";
+import { RECALL_VOICES } from "@/lib/constants/recall-voices";
 
 const PLAN_LIMITS: Record<string, number> = {
   starter: 8,
@@ -42,37 +42,20 @@ export async function GET(req: NextRequest) {
   }
 
   const limit = PLAN_LIMITS[plan] ?? PLAN_LIMITS.starter;
-  const curated = CURATED_VOICES.slice(0, limit);
-  const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
+  const voices = RECALL_VOICES.slice(0, limit).map((voice) => ({
+    id: voice.id,
+    name: voice.name,
+    desc: voice.desc,
+    description: voice.description,
+    accent: voice.accent,
+    gender: voice.gender,
+    age: voice.age,
+    tone: voice.tone,
+    bestFor: voice.bestFor,
+  }));
 
-  if (!apiKey) {
-    return NextResponse.json({ voices: curated, plan });
-  }
-
-  try {
-    const res = await fetch("https://api.elevenlabs.io/v1/voices", {
-      headers: { "xi-api-key": apiKey },
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      return NextResponse.json({ voices: curated, plan });
-    }
-
-    const data = (await res.json()) as {
-      voices?: Array<{ voice_id?: string }>;
-    };
-    const upstreamIds = new Set(
-      (data.voices ?? [])
-        .map((voice) => voice.voice_id?.trim())
-        .filter((value): value is string => Boolean(value)),
-    );
-
-    const verified = curated.filter((voice) => upstreamIds.has(voice.id));
-    return NextResponse.json({
-      voices: verified.length > 0 ? verified : curated,
-      plan,
-    });
-  } catch {
-    return NextResponse.json({ voices: curated, plan });
-  }
+  return NextResponse.json({
+    voices,
+    plan,
+  });
 }

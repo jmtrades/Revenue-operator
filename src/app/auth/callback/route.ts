@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     } catch {
       // DB unavailable — still set session with userId only
     }
-    const redirectPath = isNewUser && (next === "/dashboard" || next === "/app" || next === "/app/activity") ? "/app/onboarding" : next;
+    const redirectPath = isNewUser && (next === "/dashboard" || next === "/app" || next === "/app/activity") ? "/activate" : next;
     const cookie = createSessionCookie({ userId, workspaceId });
     if (cookie) {
       const res = NextResponse.redirect(new URL(redirectPath, origin));

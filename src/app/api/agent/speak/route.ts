@@ -1,5 +1,5 @@
 /**
- * Text-to-speech via ElevenLabs when ELEVENLABS_API_KEY is set.
+ * Text-to-speech via Recall voice server.
  * Returns audio/mpeg stream. Client should fall back to browser TTS when 503 or error.
  */
 export const dynamic = "force-dynamic";
@@ -7,30 +7,29 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-const ELEVENLABS_VOICE_RACHEL = "21m00Tcm4TlvDq8ikWAM"; // Rachel — natural female
-const ELEVENLABS_MODEL = "eleven_turbo_v2_5"; // Same as live calls: fast, very human-like, 32 languages
+const DEFAULT_VOICE_ID = "us-female-warm-receptionist"; // Default Recall voice
 
 async function getHumanVoiceDefaults() {
   const { HUMAN_VOICE_DEFAULTS } = await import("@/lib/voice/human-voice-defaults");
   return HUMAN_VOICE_DEFAULTS;
 }
 
+function getVoiceServerUrl(): string {
+  const url = process.env.VOICE_SERVER_URL;
+  if (!url) {
+    return "http://localhost:8100";
+  }
+  return url;
+}
+
 export async function POST(req: NextRequest) {
-  // Rate limit: 10 TTS requests per minute per IP (expensive API)
+  // Rate limit: 10 TTS requests per minute per IP
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`agent-speak:${ip}`, 10, 60_000);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests", fallback: "browser" },
       { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
-    );
-  }
-
-  const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "ElevenLabs not configured", fallback: "browser" },
-      { status: 503 }
     );
   }
 
@@ -49,29 +48,27 @@ export async function POST(req: NextRequest) {
   const voiceId =
     typeof body?.voiceId === "string" && body.voiceId.trim()
       ? body.voiceId.trim()
-      : process.env.ELEVENLABS_VOICE_ID?.trim() || ELEVENLABS_VOICE_RACHEL;
+      : DEFAULT_VOICE_ID;
 
   const voiceDefaults = await getHumanVoiceDefaults();
+  const voiceServerUrl = getVoiceServerUrl();
 
   try {
     const res = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream`,
+      `${voiceServerUrl}/tts/stream`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "xi-api-key": apiKey,
           Accept: "audio/mpeg",
         },
         body: JSON.stringify({
+          voice_id: voiceId,
           text: text.slice(0, 5000),
-          model_id: ELEVENLABS_MODEL,
-          voice_settings: {
-            stability: voiceDefaults.stability,
-            similarity_boost: voiceDefaults.similarityBoost,
-            style: voiceDefaults.style,
-            use_speaker_boost: voiceDefaults.useSpeakerBoost,
-          },
+          stability: voiceDefaults.stability,
+          similarity_boost: voiceDefaults.similarityBoost,
+          style: voiceDefaults.style,
+          use_speaker_boost: voiceDefaults.useSpeakerBoost,
         }),
       }
     );

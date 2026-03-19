@@ -1,5 +1,5 @@
 /**
- * Human-sounding voice defaults for ElevenLabs TTS and Vapi.
+ * Human-sounding voice defaults for Recall voice server.
  * Tuned for natural, conversational quality: slightly lower stability for expressiveness,
  * moderate style, natural speed, and a brief response delay so the agent feels thoughtful.
  */

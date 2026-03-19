@@ -98,11 +98,11 @@ export default async function ResultsPage() {
               <div className="mt-16">
                 <div className="max-w-3xl mx-auto rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-6 md:p-8">
                   <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
-                    We&apos;re onboarding our first customers now.
+                    Expected ROI by Industry
                   </h2>
                   <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                    Here&apos;s what the system is designed to deliver when your calls and follow-ups are running end-to-end.
-                    These projections come from the same industry averages used in your problem statement.
+                    Based on industry averages and missed-call recovery data, here is the estimated annual revenue impact for businesses that miss 2-5 calls per day.
+                    Your actual results will vary based on call volume, conversion rate, and average transaction value.
                   </p>
 
                   <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -124,14 +124,14 @@ export default async function ResultsPage() {
                           ${p.annualLoss.toLocaleString()}
                         </p>
                         <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
-                          Projected revenue recovered from missed-call leakage
+                          Potential revenue from recovered missed calls
                         </p>
                       </Link>
                     ))}
                   </div>
 
                   <p className="mt-4 text-sm" style={{ color: "var(--text-tertiary)" }}>
-                    Once you&apos;re live, your dashboard converts these projections into real numbers from your actual calls.
+                    Your dashboard tracks your actual results: calls answered, leads qualified, appointments booked, and revenue impact over time.
                   </p>
                 </div>
               </div>
@@ -139,93 +139,28 @@ export default async function ResultsPage() {
           </Container>
         </section>
 
-        <section className="py-14 md:py-20">
+        <section className="py-14 md:py-20 border-t" style={{ borderColor: "var(--border-default)" }}>
           <Container>
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
-                Case Study Format (what you&apos;ll see after you go live)
+                Ready to see it in action?
               </h2>
-              <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                This is the format we use to document outcomes as soon as live calls and follow-ups produce measurable results.
-                We keep it structured so you can compare industries, understand what was recovered, and see exactly how the system executed.
+              <p className="mt-4" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                Watch a live demo of Recall Touch answering calls, qualifying leads, and automating follow-ups. Then start your free trial and see your own results on day one.
               </p>
 
-              <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-6 md:p-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                      Business name
-                    </p>
-                    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      Your business name
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                      Industry
-                    </p>
-                    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      HVAC / Dental / Legal / Real Estate and more
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                      Before
-                    </p>
-                    <ul className="list-disc pl-5 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      <li>Missed calls/month</li>
-                      <li>Estimated loss</li>
-                    </ul>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                      After
-                    </p>
-                    <ul className="list-disc pl-5 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      <li>Calls answered</li>
-                      <li>Revenue recovered</li>
-                      <li>Follow-ups sent</li>
-                    </ul>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                      Timeline
-                    </p>
-                    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      Setup → Live calls → Follow-up execution → Dashboard rollups
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                      Quote
-                    </p>
-                    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-                      Customer quote appears here after live calls and follow-ups
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
-                <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-                  Want to see the pricing and limits that make outcomes measurable? Review{" "}
-                  <Link href="/pricing" className="underline" style={{ color: "var(--accent-primary)" }}>
-                    pricing
-                  </Link>{" "}
-                  and{" "}
-                  <Link href="/demo" className="underline" style={{ color: "var(--accent-primary)" }}>
-                    the demo
-                  </Link>
-                  .
-                </p>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
-                  href="/activate"
+                  href="/demo"
                   className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
                 >
-                  Start Your Free Trial
+                  Watch Demo
+                </Link>
+                <Link
+                  href="/activate"
+                  className="inline-flex px-6 py-3 rounded-xl border border-zinc-300 font-semibold" style={{ color: "var(--text-primary)" }}
+                >
+                  Start Free Trial
                 </Link>
               </div>
             </div>

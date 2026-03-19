@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Volume2, Phone, Star, CheckCircle } from "lucide-react";
+import { Volume2, Phone, CheckCircle } from "lucide-react";
 
 const INDUSTRIES = [
   "HVAC",
@@ -62,7 +62,7 @@ const FOLLOW_UP_PROMPTS = [
 ];
 
 // Testimonials removed — will be added when real customer feedback is available
-const TESTIMONIALS: { industry: string; quote: string; name: string; company: string }[] = [];
+const _TESTIMONIALS: { industry: string; quote: string; name: string; company: string }[] = [];
 
 interface TranscriptMessage {
   speaker: "ai" | "customer";
