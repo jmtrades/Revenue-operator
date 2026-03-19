@@ -27,7 +27,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const { data: row, error } = await db
     .from("campaigns")
-    .select("id, workspace_id, status, type, target_filter")
+    .select("id, workspace_id, status, type, target_filter, sequence_steps")
     .eq("id", id)
     .maybeSingle();
 
@@ -71,6 +71,19 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     );
   }
 
+  // Safeguard: require at least one active phone number.
+  const { count: activePhoneCount } = await db
+    .from("phone_numbers")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", workspaceId)
+    .eq("status", "active");
+  if ((activePhoneCount ?? 0) < 1) {
+    return NextResponse.json(
+      { error: "Workspace has no active phone numbers. Connect a number before launching." },
+      { status: 400 },
+    );
+  }
+
   // Only launch from draft/paused into active
   if (campaign.status === "completed") {
     return NextResponse.json({ error: "Campaign already completed" }, { status: 400 });
@@ -78,7 +91,66 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const filter = (campaign.target_filter ?? {}) as TargetFilter;
 
-  // Build lead query based on simple, deterministic filters
+  // Safeguard: require at least one step template on the campaign sequence.
+  const sequenceSteps = Array.isArray(campaign.sequence_steps) ? campaign.sequence_steps : [];
+  const hasNonEmptyTemplate = sequenceSteps.some((s) => {
+    const messageOk = typeof s.message === "string" ? s.message.trim().length > 0 : false;
+    const subjectOk = typeof s.subject === "string" ? s.subject.trim().length > 0 : false;
+    return s.channel === "sms" ? messageOk : messageOk || subjectOk;
+  });
+  if (sequenceSteps.length < 1 || !hasNonEmptyTemplate) {
+    return NextResponse.json(
+      { error: "Campaign sequence is missing templates. Add at least one step before launching." },
+      { status: 400 },
+    );
+  }
+
+  // Safeguard: verify audience count > 0 and ensure opted-out contacts are excluded.
+  const buildLeadCountQuery = (excludeOptedOut: boolean) => {
+    let q = db
+      .from("leads")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId);
+
+    if (Array.isArray(filter.audience_statuses) && filter.audience_statuses.length > 0) {
+      q = q.in("state", filter.audience_statuses);
+    }
+    if (filter.audience_source) {
+      q = q.eq("source", filter.audience_source);
+    }
+    if (typeof filter.audience_min_score === "number" && filter.audience_min_score >= 0) {
+      q = q.gte("score", filter.audience_min_score);
+    }
+    if (typeof filter.audience_not_contacted_days === "number" && filter.audience_not_contacted_days > 0) {
+      const cutoff = new Date(Date.now() - filter.audience_not_contacted_days * 24 * 60 * 60 * 1000).toISOString();
+      q = q.or(`last_contact_at.is.null,last_contact_at.lt.${cutoff}`);
+    }
+
+    if (excludeOptedOut) {
+      q = q.neq("opt_out", true);
+    }
+
+    return q;
+  };
+
+  const leadCountQueryBase = buildLeadCountQuery(false);
+  const { count: audienceCount } = await leadCountQueryBase;
+
+  if ((audienceCount ?? 0) < 1) {
+    return NextResponse.json({ error: "Audience is empty for the selected campaign filters." }, { status: 400 });
+  }
+
+  const leadCountQueryAllowed = buildLeadCountQuery(true);
+  const { count: audienceAllowedCount } = await leadCountQueryAllowed;
+
+  if ((audienceAllowedCount ?? 0) !== (audienceCount ?? 0)) {
+    return NextResponse.json(
+      { error: "One or more audience contacts have opted out. Adjust your audience selection before launching." },
+      { status: 400 },
+    );
+  }
+
+  // Build lead query for enqueuing.
   let leadQuery = db
     .from("leads")
     .select("id, state, source, score, last_contact_at")
@@ -95,14 +167,19 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     leadQuery = leadQuery.gte("score", filter.audience_min_score);
   }
   if (typeof filter.audience_not_contacted_days === "number" && filter.audience_not_contacted_days > 0) {
-    const cutoff = new Date(Date.now() - filter.audience_not_contacted_days * 24 * 60 * 60 * 1000)
-      .toISOString();
+    const cutoff = new Date(Date.now() - filter.audience_not_contacted_days * 24 * 60 * 60 * 1000).toISOString();
     leadQuery = leadQuery.or(`last_contact_at.is.null,last_contact_at.lt.${cutoff}`);
   }
+
+  leadQuery = leadQuery.neq("opt_out", true);
 
   const { data: leads, error: leadsError } = await leadQuery;
   if (leadsError) {
     return NextResponse.json({ error: leadsError.message }, { status: 500 });
+  }
+
+  if (!leads || leads.length < 1) {
+    return NextResponse.json({ error: "Audience is empty for the selected campaign filters." }, { status: 400 });
   }
 
   const launchAt = new Date().toISOString();

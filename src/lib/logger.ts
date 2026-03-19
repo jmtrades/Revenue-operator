@@ -15,7 +15,7 @@ export function log(level: "info" | "warn" | "error", msg: string, meta?: Record
   const line = JSON.stringify(entry);
   if (level === "error") console.error(line);
   else if (level === "warn") console.warn(line);
-  else console.log(line);
+  else console.info(line);
 }
 
 export function withContext(requestId?: string, jobId?: string) {

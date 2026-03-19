@@ -8,8 +8,9 @@ import { Container } from "@/components/ui/Container";
 // Note: Dynamic metadata with translations requires generateMetadata.
 // Static metadata.title/description do not have access to i18n.
 export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: "Recall Touch privacy policy.",
+  title: "Privacy Policy — Recall Touch",
+  description:
+    "Recall Touch Privacy Policy covering data collection, usage, storage, and third parties (Stripe, Supabase, PostHog, Sentry). Contact support for rights requests",
 };
 
 export default async function PrivacyPage() {

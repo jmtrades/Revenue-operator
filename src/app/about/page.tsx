@@ -2,35 +2,69 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 
+const BASE = "https://www.recall-touch.com";
+
 export const metadata: Metadata = {
   title: "About — Recall Touch",
-  description: "Why Recall Touch exists and how to reach the team.",
+  description:
+    "Meet Recall Touch and founder Junior Martin. Learn why we built AI revenue operations, how it works, and where we're headed next. Start your trial today.",
+  alternates: { canonical: `${BASE}/about` },
+  openGraph: {
+    title: "About — Recall Touch",
+    description:
+      "Meet Recall Touch and founder Junior Martin. Learn why we built AI revenue operations, how it works, and where we're headed next. Start your trial today.",
+    url: `${BASE}/about`,
+    siteName: "Recall Touch",
+    type: "website",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About — Recall Touch",
+    description:
+      "Meet Recall Touch and founder Junior Martin. Learn why we built AI revenue operations, how it works, and where we're headed next. Start your trial today.",
+    images: ["/opengraph-image"],
+  },
 };
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-[#FAFAF8] text-[#1A1A1A]">
-      <section className="py-16 md:py-24 border-b border-[#E5E5E0]">
+    <main className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <section className="py-16 md:py-24 border-b" style={{ borderColor: "var(--border-default)" }}>
         <Container>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#0D6E6E]">About</p>
-            <h1 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">Why we built Recall Touch</h1>
-            <div className="mt-6 space-y-4 text-[#4A4A4A] text-sm md:text-base leading-relaxed rounded-xl border border-[#E5E5E0] bg-white p-6">
-              <p className="font-mono text-sm text-[#8A8A8A]">[FOUNDER: Write 2–3 paragraphs about why you built Recall Touch]</p>
+            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--accent-primary)" }}>About</p>
+            <h1 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">Building AI revenue operations for every business</h1>
+            <div className="mt-6 space-y-4 text-sm md:text-base leading-relaxed rounded-xl border p-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)", color: "var(--text-secondary)" }}>
+              <p>
+                I&apos;m Junior Martin, founder of Recall Touch. We built this company to solve a practical, expensive problem:
+                revenue opportunities enter businesses every day, but teams are too overloaded to respond, follow up, and execute
+                consistently.
+              </p>
+              <p>
+                Recall Touch runs the full loop. AI handles inbound conversations, qualifies intent, books the next step, launches
+                follow-up sequences, and keeps every action visible in one operating dashboard. Teams stay focused on high-value work
+                while the platform keeps execution moving.
+              </p>
+              <p>
+                The mission is simple: give every business enterprise-grade revenue operations without enterprise headcount. That means
+                reliable workflows, clear attribution, and a product designed for outcomes, not activity metrics.
+              </p>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="py-14 md:py-20 border-b border-[#E5E5E0]">
+      <section className="py-14 md:py-20 border-b" style={{ borderColor: "var(--border-default)" }}>
         <Container>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-6">Team</h2>
-          <div className="rounded-xl border border-[#E5E5E0] bg-white p-8 max-w-md">
-            <div className="aspect-square max-w-[200px] rounded-lg bg-[#F5F5F0] border border-[#E5E5E0] flex items-center justify-center text-xs text-[#8A8A8A] text-center px-4">
-              [FOUNDER: Add your photo here]
-            </div>
-            <p className="mt-4 font-semibold text-[#1A1A1A]">[FOUNDER: Add your name here]</p>
-            <p className="mt-2 text-sm text-[#4A4A4A]">[FOUNDER: Short role line]</p>
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-6">Founder</h2>
+          <div className="rounded-xl border p-8 max-w-md" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+            <p className="mt-1 font-semibold">Junior Martin</p>
+            <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)" }}>Founder, Recall Touch</p>
+            <p className="mt-4 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+              We&apos;re focused on helping operators recover revenue with reliable automation, stronger follow-up execution, and clearer
+              pipeline visibility across every channel.
+            </p>
           </div>
         </Container>
       </section>
@@ -38,15 +72,18 @@ export default function AboutPage() {
       <section className="py-14 md:py-20">
         <Container>
           <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-4">Contact</h2>
-          <p className="text-[#4A4A4A] text-sm md:text-base">
-            [FOUNDER: Add your email]
+          <p className="text-sm md:text-base" style={{ color: "var(--text-secondary)" }}>
+            Questions about implementation, partnerships, or enterprise rollout? Reach us directly at{" "}
+            <a href="mailto:support@recall-touch.com" className="underline">
+              support@recall-touch.com
+            </a>.
           </p>
           <p className="mt-6">
             <Link
-              href="/contact"
-              className="inline-flex rounded-lg bg-[#0D6E6E] px-6 py-3 text-sm font-medium text-white hover:bg-[#0A5A5A]"
+              href="/activate"
+              className="inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100"
             >
-              Contact form
+              Start free trial
             </Link>
           </p>
         </Container>

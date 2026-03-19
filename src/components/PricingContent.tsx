@@ -30,7 +30,7 @@ const TIERS = [
     annualMonthly: 39,
     annualTotal: 468,
     roi: "$2K–5K/mo",
-    description: "Never miss a call again",
+    description: "Automate your communication",
     features: [
       "1 phone number",
       "100 voice minutes/month",
@@ -52,7 +52,7 @@ const TIERS = [
     annualMonthly: 237,
     annualTotal: 2844,
     roi: "$5K–15K/mo",
-    description: "The complete revenue recovery system",
+    description: "Run full revenue operations",
     features: [
       "5 phone numbers",
       "500 voice minutes/month",
@@ -79,7 +79,7 @@ const TIERS = [
     annualMonthly: 797,
     annualTotal: 9564,
     roi: "$20K–50K/mo",
-    description: "For teams and agencies",
+    description: "Revenue operations at scale",
     features: [
       "20 phone numbers",
       "2,000 voice minutes/month",
@@ -103,7 +103,7 @@ const TIERS = [
 
 const ENTERPRISE = {
   name: "Enterprise",
-  description: "For organizations with 10+ locations",
+  description: "Custom revenue infrastructure",
   features: ["Custom volume", "SSO / SAML", "Multi-location", "Custom compliance", "Dedicated manager", "White label", "Custom integrations"],
 };
 
