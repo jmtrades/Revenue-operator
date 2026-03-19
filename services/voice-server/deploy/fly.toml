@@ -7,7 +7,6 @@ primary_region = "iad" # Northern Virginia, closest to Supabase us-east-2
 
 [build]
 dockerfile = "../Dockerfile.cpu"
-builder = "docker"
 
 [http_service]
 internal_port = 8100
