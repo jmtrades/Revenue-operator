@@ -30,16 +30,16 @@ export function HowItWorks() {
       {
         num: 2,
         icon: Zap,
-        title: "AI Captures Every Opportunity",
-        subtitle: "< 3 seconds",
-        desc: "The agent answers in under 3 seconds, qualifies intent, books appointments, and runs follow-up sequences so opportunities do not stall.",
+        title: "AI Runs Your Revenue Operations",
+        subtitle: "Automatically",
+        desc: "Inbound and outbound calls, follow-up sequences, appointment booking, lead qualification, and escalation to your team — all running without manual work.",
       },
       {
         num: 3,
         icon: MessageSquareText,
-        title: "Revenue Recovery Shows in Dashboard",
+        title: "Every Dollar Is Tracked",
         subtitle: "Live",
-        desc: "See recovered value, converted opportunities, and next actions in one place so your team can execute on what needs attention first.",
+        desc: "Revenue attributed to every call, every follow-up, and every booking. See exactly what the system is producing in real time.",
       },
     ],
     []

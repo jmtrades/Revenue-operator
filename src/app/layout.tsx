@@ -49,26 +49,26 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — AI Revenue Recovery for Service Businesses",
+    default: "Recall Touch — AI Revenue Operations Platform",
   },
   description:
-    "Run revenue operations on autopilot. Recall Touch answers calls, follows up, books appointments, and recovers no-shows with clear revenue attribution.",
+    "The AI platform that runs your revenue operations — inbound, outbound, follow-up, booking, and attribution — so every opportunity converts and every dollar is tracked.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://www.recall-touch.com",
     siteName: "Recall Touch",
-    title: "Recall Touch — AI Revenue Recovery for Service Businesses",
+    title: "Recall Touch — AI Revenue Operations Platform",
     description:
-      "Run revenue operations on autopilot with AI answering, follow-up automation, appointment booking, no-show recovery, and revenue attribution.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Revenue Recovery for Service Businesses" }],
+      "The AI platform that runs your revenue operations — inbound, outbound, follow-up, booking, and attribution — so every opportunity converts and every dollar is tracked.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Revenue Operations Platform" }],
   },
   icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — AI Revenue Recovery for Service Businesses",
+    title: "Recall Touch — AI Revenue Operations Platform",
     description:
-      "Run revenue operations on autopilot with AI answering, follow-up automation, appointment booking, no-show recovery, and revenue attribution.",
+      "The AI platform that runs your revenue operations — inbound, outbound, follow-up, booking, and attribution — so every opportunity converts and every dollar is tracked.",
   },
   robots: {
     index: true,
@@ -84,7 +84,7 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "Recall Touch",
   url: BASE_URL,
-  description: "AI phone system for every business. Answer every call 24/7, follow up with leads in 60 seconds, book appointments.",
+  description: "AI revenue operations platform. Automates inbound, outbound, follow-up, booking, and revenue attribution for every business.",
   sameAs: [
     // Add social profile URLs when they exist:
     // "https://twitter.com/recalltouch",
@@ -98,7 +98,7 @@ const softwareApplicationJsonLd = {
   name: "Recall Touch",
   applicationCategory: "BusinessApplication",
   description:
-    "AI phone system for every business. Answer every call 24/7, follow up with leads in 60 seconds, book appointments. Set up in 5 minutes.",
+    "AI revenue operations platform. Runs inbound and outbound communication, automated follow-up sequences, appointment booking, and revenue attribution.",
   url: BASE_URL,
   offers: {
     "@type": "AggregateOffer",

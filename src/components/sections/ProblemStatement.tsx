@@ -59,14 +59,14 @@ export function ProblemStatement() {
                 color: "var(--text-primary)",
               }}
             >
-              Revenue Leaks Cost You Money.{" "}
-              <span className="text-red-400">Here&apos;s How Much.</span>
+              Your Revenue Operations Have Gaps.{" "}
+              <span className="text-red-400">Here Is What They Cost.</span>
             </h2>
             <p
               className="text-base md:text-lg max-w-2xl mx-auto"
               style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}
             >
-              Every missed call and no-show is revenue walking out the door. Most service businesses lose{" "}
+              Unanswered inquiries, stalled follow-up, and broken workflows cost businesses{" "}
               <span className="text-red-400 font-semibold">$5K–$50K/month</span> from missed calls, no-shows, and dead follow-up.
             </p>
           </div>

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
@@ -10,44 +9,44 @@ type FaqItem = { q: string; a: string };
 
 const FAQS: FaqItem[] = [
   {
-    q: "How is this different from an AI receptionist?",
-    a: "An AI receptionist answers calls and takes messages. Recall Touch answers calls AND runs automated recovery sequences until the revenue is recovered — appointment booking, no-show recovery, reactivation campaigns, quote chasing, and ROI proof in your dashboard. The follow-up is what pays for itself.",
+    q: "What exactly does Recall Touch do?",
+    a: "Recall Touch is an AI revenue operations platform. It handles inbound and outbound communication, automated follow-up sequences, appointment booking, lead qualification, escalation to your team, and full revenue attribution. Think of it as the execution layer that runs your revenue operations automatically.",
+  },
+  {
+    q: "Who is this for?",
+    a: "Any business or team that generates revenue through conversations. Solo consultants, sales teams, agencies, service businesses, clinics, law firms, real estate teams, recruiters, multi-location operators, and more. If you have leads, appointments, or follow-up to manage, Recall Touch runs it.",
   },
   {
     q: "Do I need to replace my CRM?",
-    a: "No. Recall Touch is the execution layer. Keep your CRM; we focus on answering, booking, follow-ups, and proof of ROI.",
+    a: "No. Recall Touch is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record.",
   },
   {
     q: "How fast can I be live?",
-    a: "Most workspaces can be live in minutes: choose an industry, connect your number (or add one), and run a test call. You can refine scripts and follow-ups after you’ve seen it work.",
+    a: "Most teams are live within minutes. Connect your number, configure your workflows, run a test, and go live. You can refine sequences and agent behavior after you see it working.",
   },
   {
     q: "Is there a free trial?",
-    a: "Yes — 14 days. No credit card required.",
+    a: "Yes. 14 days. No credit card required. Full access to all features on your plan.",
   },
   {
     q: "Can I use my existing business number?",
-    a: "Yes. You can keep your number and forward calls, or add new numbers as needed.",
+    a: "Yes. Keep your current number and forward to Recall Touch, or provision new numbers directly.",
   },
   {
-    q: "How do you prevent spammy automation?",
-    a: "Guardrails: per-contact limits, quiet hours, opt-outs, and reviewable actions. You can require approval before anything sends.",
+    q: "How do you prevent bad automation?",
+    a: "Every agent has configurable guardrails: per-contact frequency limits, business hours enforcement, opt-out compliance, confidence thresholds, and human escalation rules. You can require approval before any action executes. Every action is logged and reviewable.",
   },
   {
-    q: "What industries do you support?",
-    a: "We ship industry packs (scripts + defaults) for common service verticals and can run a high-quality “Other” preset if you don’t see yours.",
+    q: "Does this work for outbound too?",
+    a: "Yes. Recall Touch supports 10 outbound campaign types including speed-to-lead, appointment setting, reactivation, quote follow-up, and cold outreach. Outbound runs with the same guardrails, compliance, and attribution as inbound.",
   },
   {
-    q: "Does it work after hours?",
-    a: "Yes. After-hours capture is one of the fastest ROI wins: answer, qualify, and book for next availability.",
+    q: "How is ROI measured?",
+    a: "Every call, follow-up, and booking is attributed to revenue outcomes. Your dashboard shows exactly what the system produced, broken down by workflow, campaign, and agent. Weekly digest emails summarize performance.",
   },
   {
-    q: "How do you measure ROI?",
-    a: "We estimate revenue recovered using your configured average booking value, plus outcomes like appointments booked, no-shows recovered, and reactivations — visible in your dashboard and digest emails.",
-  },
-  {
-    q: "What if the AI gets something wrong?",
-    a: "You can review transcripts/recordings, adjust scripts, and set approvals. We design for transparency, not mystery.",
+    q: "What if the AI makes a mistake?",
+    a: "Full transparency. Review transcripts and recordings for any call. Adjust agent behavior, scripts, and escalation rules in real time. Run agents in sandbox mode to preview before going live. Every action has an audit trail.",
   },
 ];
 
@@ -68,11 +67,8 @@ export function HomepageFAQ() {
               color: "var(--text-primary)",
             }}
           >
-            Questions, answered.
+            Common questions
           </h2>
-          <p className="mt-3 text-base max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            If you’re evaluating for your team, start with the demo — it shows the full flow in minutes.
-          </p>
         </div>
 
         <div className="max-w-3xl mx-auto space-y-3">
@@ -96,41 +92,7 @@ export function HomepageFAQ() {
                 </button>
                 {expanded && (
                   <div className="px-5 pb-5">
-                    <p className="text-sm text-white/70 leading-relaxed">
-                      {idx === 0 ? (
-                        <>
-                          An AI receptionist answers calls and takes messages.{" "}
-                          <span>
-                            Recall Touch answers calls AND runs automated recovery sequences until the revenue is recovered
-                          </span>{" "}
-                          — appointment booking, no-show recovery,{" "}
-                          <Link href="/outbound" className="underline">
-                            reactivation campaigns
-                          </Link>
-                          , quote chasing, and ROI proof in your dashboard. The follow-up is what pays for itself.
-                        </>
-                      ) : idx === 5 ? (
-                        <>
-                          Guardrails: per-contact limits, quiet hours, opt-outs, and reviewable actions.{" "}
-                          <Link href="/security" className="underline">
-                            Learn how security controls keep automation responsible
-                          </Link>
-                          . You can require approval before anything sends.
-                        </>
-                      ) : idx === 8 ? (
-                        <>
-                          We estimate revenue recovered using your configured average booking value, plus outcomes like appointments booked,
-                          no-shows recovered, and reactivations — visible in your dashboard and digest emails.{" "}
-                          For plan capacity and follow-up workload, see{" "}
-                          <Link href="/pricing" className="underline">
-                            pricing
-                          </Link>
-                          .
-                        </>
-                      ) : (
-                        item.a
-                      )}
-                    </p>
+                    <p className="text-sm text-white/70 leading-relaxed">{item.a}</p>
                   </div>
                 )}
               </div>
@@ -141,4 +103,3 @@ export function HomepageFAQ() {
     </section>
   );
 }
-

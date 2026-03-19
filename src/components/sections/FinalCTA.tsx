@@ -28,13 +28,13 @@ export function FinalCTA() {
           </div>
 
           <h2 className="font-bold text-3xl md:text-5xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.15, color: "var(--text-primary)" }}>
-            Every Day Without Recall Touch Is{" "}
-            <span className="text-zinc-200">Revenue Walking Out the Door.</span>
+            Your Revenue Operations Should Be Running{" "}
+            <span className="text-emerald-400">Right Now.</span>
           </h2>
 
           <p className="text-lg mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
             14 days free. No credit card required. Cancel anytime.
-            Your AI starts answering calls in under 3 minutes.
+            Your AI revenue operations are live in minutes.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
