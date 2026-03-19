@@ -103,6 +103,14 @@ def load_stt_env() -> bool:
     return os.getenv("LOAD_STT_ENGINE", "true").lower() in {"1", "true", "yes"}
 
 
+def huggingface_hub_token_configured() -> bool:
+    """True if HF hub auth env is set (needed for gated models like Orpheus)."""
+    return bool(
+        (os.getenv("HF_TOKEN") or "").strip()
+        or (os.getenv("HUGGINGFACE_HUB_TOKEN") or "").strip()
+    )
+
+
 # ---------------------------------------------------------------------------
 # Pydantic models
 # ---------------------------------------------------------------------------
@@ -149,6 +157,7 @@ async def health_check():
             if stt_engine and stt_engine.is_ready
             else ("disabled" if not load_stt_env() else "not_loaded")
         ),
+        "huggingface_hub_token_configured": huggingface_hub_token_configured(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -169,6 +178,7 @@ async def status():
             ),
             "ready": stt_engine.is_ready if stt_engine else False,
         },
+        "huggingface_hub_token_configured": huggingface_hub_token_configured(),
         "voices_available": len(voice_manager.list_voices()),
         "active_conversations": len(conversation_engines),
         "max_concurrent": MAX_CONCURRENT,
@@ -1232,6 +1242,10 @@ async def startup_event():
     logger.info("=" * 60)
     logger.info("Recall Touch Voice Server v2.0 starting")
     logger.info("=" * 60)
+    logger.info(
+        "Hugging Face hub token: %s",
+        "configured" if huggingface_hub_token_configured() else "not set (gated TTS models will 401)",
+    )
 
     # Initialize audio pipeline
     audio_pipeline = AudioPipeline(PipelineConfig(
