@@ -212,7 +212,7 @@ const { assistantId } = await provider.createAssistant({
 
 ### 4. Deploy to Production
 ```bash
-cd services/voice-server/deploy
+cd services/voice-server
 flyctl deploy
 ```
 

@@ -66,7 +66,7 @@ The self-hosted voice server is at `services/voice-server/`. It's a Python FastA
 - 30+ voice profiles
 
 **Deployment options** (all configs exist):
-- `services/voice-server/deploy/fly.toml` — Fly.io GPU (A10-large)
+- `services/voice-server/fly.toml` — Fly.io GPU (A10-large)
 - `services/voice-server/deploy/render.yaml` — Render
 - `services/voice-server/Dockerfile` — Any Docker host with NVIDIA GPU
 
@@ -298,7 +298,7 @@ Supabase Project: ucjbsftixnnbmuodholg (us-east-2)
 | Agents page | `src/app/app/agents/AgentsPageClient.tsx` |
 | Voice server (Python) | `services/voice-server/main.py` |
 | Voice server Dockerfile | `services/voice-server/Dockerfile` |
-| Fly.io config | `services/voice-server/deploy/fly.toml` |
+| Fly.io config | `services/voice-server/fly.toml` |
 
 ---
 

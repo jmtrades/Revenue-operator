@@ -20,13 +20,13 @@ User must have:
 cd services/voice-server
 
 # Launch the app (first time only)
-fly launch --config deploy/fly.toml --no-deploy
+fly launch --config fly.toml --no-deploy
 
 # Set secrets
 fly secrets set OPENAI_API_KEY=sk-your-openai-key-here
 
 # Deploy
-fly deploy --config deploy/fly.toml
+fly deploy --config fly.toml
 
 # Verify
 fly status
@@ -130,7 +130,7 @@ vercel env rm VAPI_DEMO_ASSISTANT_ID production
 
 When call volume increases and you need faster voice generation:
 
-1. Edit `services/voice-server/deploy/fly.toml`:
+1. Edit `services/voice-server/fly.toml`:
    - Change `dockerfile = "../Dockerfile.cpu"` → `dockerfile = "../Dockerfile"`
    - Uncomment the GPU VM config section
    - Comment out the shared CPU config
@@ -141,7 +141,7 @@ When call volume increases and you need faster voice generation:
 2. Deploy:
    ```bash
    fly scale vm gpu-a10-large --memory 16384
-   fly deploy --config deploy/fly.toml
+   fly deploy --config fly.toml
    ```
 
 3. Cost: ~$100-150/month for A10 GPU (vs $500+ for ElevenLabs equivalent)

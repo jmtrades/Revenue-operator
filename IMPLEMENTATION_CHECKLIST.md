@@ -78,7 +78,7 @@ Complete self-hosted voice synthesis system. Verify each component:
   - Troubleshooting
 
 ### Deployment Configs
-- [x] `services/voice-server/deploy/fly.toml`
+- [x] `services/voice-server/fly.toml`
   - Complete Fly.io configuration
   - GPU instance selection
   - Region selection

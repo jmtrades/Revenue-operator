@@ -24,8 +24,8 @@ flyctl auth login
 # Create a new app (choose a unique name)
 flyctl apps create voice-synthesis-server
 
-# Build and deploy
-flyctl deploy --dockerfile=Dockerfile
+# Build and deploy (uses fly.toml + Dockerfile.cpu in this directory)
+flyctl deploy --remote-only
 
 # Monitor logs
 flyctl logs

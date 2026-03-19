@@ -80,7 +80,12 @@ class STTEngine:
         start = time.time()
 
         try:
-            from faster_whisper import WhisperModel
+            # Some environments expose the package as `faster_whisper` but the
+            # top-level import path can still fail depending on install layout.
+            import importlib
+
+            fw = importlib.import_module("faster_whisper")
+            WhisperModel = getattr(fw, "WhisperModel")
 
             # Auto-detect device and compute type
             device = self._device
@@ -104,10 +109,15 @@ class STTEngine:
             )
             logger.info(f"Whisper {self.model_size} loaded on {device} ({compute_type})")
 
-        except ImportError:
+        except ImportError as e:
             logger.warning(
-                "faster-whisper not installed. STT will return empty transcriptions. "
-                "Install with: pip install faster-whisper"
+                "faster-whisper import failed (%s). STT will return empty transcriptions.",
+                e,
+            )
+            self.model = None
+        except Exception as e:
+            logger.exception(
+                "faster-whisper failed to initialize WhisperModel: %s", e
             )
             self.model = None
 

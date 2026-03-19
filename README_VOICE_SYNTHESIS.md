@@ -134,7 +134,7 @@ LLM Endpoint (Claude API or custom)
 
 ### 1. Deployment (20 minutes)
 ```bash
-cd services/voice-server/deploy
+cd services/voice-server
 flyctl deploy  # or use Render/AWS
 ```
 

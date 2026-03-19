@@ -502,6 +502,10 @@ class KokoroTTSEngine(BaseTTSEngine):
         logger.info("Loading Kokoro TTS (82M)...")
         start = time.time()
         try:
+            import importlib.util
+
+            if importlib.util.find_spec("kokoro") is None:
+                raise ImportError("kokoro package not installed")
             from kokoro import KPipeline
             self.pipeline = KPipeline(lang_code="a")  # American English
             self._loaded = True
@@ -585,9 +589,17 @@ class TTSManager:
             model_size=os.getenv("ORPHEUS_MODEL_SIZE", "3b")
         )
         self.engines["fish-speech"] = FishSpeechEngine()
-        self.engines["kokoro"] = KokoroTTSEngine()
 
-        self._fallback_order = ["orpheus", "fish-speech", "kokoro"]
+        enable_kokoro = os.getenv("ENABLE_KOKORO_FALLBACK", "false").lower() in {
+            "1",
+            "true",
+            "yes",
+        }
+        if enable_kokoro:
+            self.engines["kokoro"] = KokoroTTSEngine()
+            self._fallback_order = ["orpheus", "fish-speech", "kokoro"]
+        else:
+            self._fallback_order = ["orpheus", "fish-speech"]
 
     async def initialize(self):
         """Load the preferred engine, falling through on failure."""
@@ -660,6 +672,9 @@ class TTSManager:
 
     @property
     def is_ready(self) -> bool:
+        # Placeholder path is intentionally always available (silence audio).
+        if self._active_model == "placeholder":
+            return True
         return self._active_engine is not None and self._active_engine.is_loaded
 
 
