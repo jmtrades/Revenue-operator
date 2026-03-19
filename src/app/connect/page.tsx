@@ -300,7 +300,7 @@ function ConnectPageContent() {
                 </div>
                 <p className="text-center mt-3">
                   <Link
-                    href={workspaceId ? `/dashboard/onboarding?workspace_id=${encodeURIComponent(workspaceId)}` : "/dashboard/onboarding"}
+                    href={workspaceId ? `/activate?workspace_id=${encodeURIComponent(workspaceId)}` : "/activate"}
                     className="text-sm"
                     style={{ color: "var(--accent-primary)" }}
                   >

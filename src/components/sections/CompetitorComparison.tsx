@@ -121,7 +121,7 @@ const COMPETITOR_COLS = [
   { key: "recallTouch" as const, label: "Recall Touch", highlight: true },
   { key: "humanServices" as const, label: "Human Services", subtitle: "Smith.ai, Ruby" },
   { key: "basicAI" as const, label: "Basic AI", subtitle: "Goodcall, MyAIFrontDesk" },
-  { key: "diyPlatforms" as const, label: "DIY Platforms", subtitle: "Bland, Vapi, Retell" },
+  { key: "diyPlatforms" as const, label: "DIY Platforms", subtitle: "Bland, Retell, Others" },
 ];
 
 function CellValue({ value }: { value: string | boolean }) {

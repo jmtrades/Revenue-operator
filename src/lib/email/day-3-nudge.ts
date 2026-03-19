@@ -14,7 +14,7 @@ export function buildDay3NudgeEmail(params: {
     <p>Hi ${userName},</p>
     <p>Your Recall Touch agent is ${readinessPct}% configured but hasn't taken any calls yet.</p>
     <p>The fastest way to see it work: open the Test step in your agent setup and have a conversation with it.</p>
-    <p><a href="${appUrl}/app/onboarding" style="display: inline-block; padding: 12px 24px; background: #000; color: #fff; text-decoration: none; font-weight: 600; border-radius: 8px;">Test your agent →</a></p>
+    <p><a href="${appUrl}/activate" style="display: inline-block; padding: 12px 24px; background: #000; color: #fff; text-decoration: none; font-weight: 600; border-radius: 8px;">Test your agent →</a></p>
     <p>— Junior</p>
   `;
   return { subject, html };

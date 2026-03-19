@@ -12,7 +12,6 @@ import { getDb } from "@/lib/db/queries";
 import {
   enrollContact,
   getSequenceWithSteps,
-  getContactEnrollments,
 } from "@/lib/sequences/follow-up-engine";
 
 export async function GET(

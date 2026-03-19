@@ -1,7 +1,6 @@
 'use client';
 
 import { Phone } from 'lucide-react';
-import { useState, useEffect } from 'react';
 
 type CallOutcome = 'appointment' | 'lead' | 'message' | 'transferred' | 'spam';
 
@@ -14,25 +13,21 @@ interface Call {
 }
 
 const RecentCallsList = () => {
-  const [calls, setCalls] = useState<Call[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(false);
-  }, []);
+  // Placeholder: currently no backend wiring for this widget.
+  const calls: Call[] = [];
 
   const getOutcomeBadge = (outcome: CallOutcome) => {
     const badgeConfig = {
-      appointment: { bg: 'bg-green-100', text: 'text-green-700', label: 'Appointment booked' },
-      lead: { bg: 'bg-zinc-100', text: 'text-zinc-700', label: 'Lead captured' },
-      message: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Message taken' },
-      transferred: { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Transferred' },
-      spam: { bg: 'bg-red-100', text: 'text-red-700', label: 'Spam' },
+      appointment: { bg: 'bg-green-500/10', text: 'text-green-400', label: 'Appointment booked' },
+      lead: { bg: 'bg-zinc-500/10', text: 'text-zinc-300', label: 'Lead captured' },
+      message: { bg: 'bg-zinc-500/10', text: 'text-zinc-300', label: 'Message taken' },
+      transferred: { bg: 'bg-amber-500/10', text: 'text-amber-300', label: 'Transferred' },
+      spam: { bg: 'bg-red-500/10', text: 'text-red-300', label: 'Spam' },
     };
 
     const config = badgeConfig[outcome];
     return (
-      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border border-[var(--border-default)] ${config.bg} ${config.text}`}>
         {config.label}
       </span>
     );
@@ -41,14 +36,14 @@ const RecentCallsList = () => {
   const hasCalls = calls.length > 0;
 
   return (
-    <div className="bg-white rounded-lg border border-[#E5E5E0] p-6">
-      <h2 className="text-lg font-semibold text-[#1A1A1A] mb-4 flex items-center gap-2">
-        <Phone className="w-5 h-5 text-[#0D6E6E]" />
+    <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6">
+      <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+        <Phone className="w-4 h-4 text-[var(--accent-primary)]" />
         Recent Calls
       </h2>
 
       {!hasCalls ? (
-        <p className="text-[#4A4A4A] text-sm py-8 text-center">
+        <p className="text-[var(--text-secondary)] text-sm py-8 text-center">
           No calls yet. Once your AI starts handling calls, they will appear here.
         </p>
       ) : (

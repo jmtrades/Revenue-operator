@@ -29,7 +29,7 @@ export async function sendWelcomeEmail(email: string, nameOrBusiness?: string | 
       <li>Test your agent with a real conversation</li>
       <li>Connect your phone number</li>
     </ol>
-    <p><a href="${escapeHtml(APP_URL)}/app/onboarding" style="display: inline-block; padding: 12px 24px; background: #000; color: #fff; text-decoration: none; font-weight: 600; border-radius: 8px;">Start setup →</a></p>
+    <p><a href="${escapeHtml(APP_URL)}/activate" style="display: inline-block; padding: 12px 24px; background: #000; color: #fff; text-decoration: none; font-weight: 600; border-radius: 8px;">Start setup →</a></p>
     <p>Questions? Reply to this email — a human reads every one.</p>
     <p>— Junior, Founder of Recall Touch</p>
   `;

@@ -1,3 +1,9 @@
+/**
+ * ElevenLabs webhook handler.
+ * DEPRECATED: This webhook is kept for backwards compatibility in case ElevenLabs was used
+ * previously. New voice calls use the Recall voice provider instead.
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { getVoiceProvider } from "@/lib/voice";

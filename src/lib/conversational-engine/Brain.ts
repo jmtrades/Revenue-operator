@@ -60,7 +60,7 @@ export interface BrainFunctions {
 }
 
 /**
- * Build tool definitions for the LLM (e.g. OpenAI/Vapi function calling).
+ * Build tool definitions for the LLM (e.g. Recall voice server, OpenAI function calling).
  */
 export function getBrainToolDefinitions(): Array<{
   name: string;

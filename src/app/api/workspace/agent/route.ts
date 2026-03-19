@@ -1,6 +1,6 @@
 /**
  * GET /api/workspace/agent — Load agent config (greeting, voice, knowledge, etc.) for current workspace.
- * PATCH /api/workspace/agent — Update agent config and sync to ElevenLabs voice provider.
+ * PATCH /api/workspace/agent — Update agent config and sync to voice provider.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -44,12 +44,16 @@ export async function GET(req: NextRequest) {
       agent_template?: string | null;
     };
 
+    // For backwards compatibility, return elevenlabsVoiceId if it exists, otherwise empty string
+    const voiceId = row.elevenlabs_voice_id ?? "";
+
     return NextResponse.json({
       businessName: row.name ?? "",
       greeting: row.greeting ?? "",
       agentName: row.agent_name ?? "",
       preferredLanguage: row.preferred_language ?? "en",
-      elevenlabsVoiceId: row.elevenlabs_voice_id ?? "",
+      voiceId,
+      elevenlabsVoiceId: voiceId, // Deprecated: kept for backwards compatibility
       phone: row.phone ?? "",
       workingHours: row.working_hours ?? undefined,
       knowledgeItems: Array.isArray(row.knowledge_items) ? row.knowledge_items : [],
@@ -80,7 +84,8 @@ export async function PATCH(req: NextRequest) {
     greeting?: string;
     agentName?: string;
     preferredLanguage?: string;
-    elevenlabsVoiceId?: string;
+    voiceId?: string;
+    elevenlabsVoiceId?: string; // Deprecated but kept for backwards compatibility
     knowledgeItems?: Array<{ q?: string; a?: string }>;
     workingHours?: Record<string, unknown>;
   };
@@ -96,7 +101,9 @@ export async function PATCH(req: NextRequest) {
   if (typeof body.greeting === "string") update.greeting = body.greeting.trim();
   if (typeof body.agentName === "string") update.agent_name = body.agentName.trim();
   if (typeof body.preferredLanguage === "string") update.preferred_language = body.preferredLanguage.trim() || "en";
-  if (typeof body.elevenlabsVoiceId === "string") update.elevenlabs_voice_id = body.elevenlabsVoiceId.trim() || null;
+  // Accept both voiceId and elevenlabsVoiceId for backwards compatibility
+  const voiceIdValue = body.voiceId ?? body.elevenlabsVoiceId;
+  if (typeof voiceIdValue === "string") update.elevenlabs_voice_id = voiceIdValue.trim() || null;
   if (Array.isArray(body.knowledgeItems)) update.knowledge_items = body.knowledgeItems;
   if (body.workingHours && typeof body.workingHours === "object") update.working_hours = body.workingHours;
 

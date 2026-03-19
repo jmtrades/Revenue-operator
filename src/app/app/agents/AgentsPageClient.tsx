@@ -31,10 +31,10 @@ import {
   type AgentTemplateCategory,
 } from "@/lib/data/agent-templates";
 import {
-  CURATED_VOICES,
-  DEFAULT_VOICE_ID,
-  type CuratedVoice,
-} from "@/lib/constants/curated-voices";
+  RECALL_VOICES,
+  DEFAULT_RECALL_VOICE_ID,
+  type RecallVoice,
+} from "@/lib/constants/recall-voices";
 import { getTemplateVoiceId } from "@/lib/data/agent-templates";
 import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
 import { VOICEMAIL_DROP_TEMPLATES } from "@/lib/vapi/voicemail-detection";
@@ -83,7 +83,6 @@ export type Agent = {
   faq: Array<{ id: string; question: string; answer: string }>;
   specialInstructions: string;
   websiteUrl?: string;
-  vapiAgentId: string | null;
   test_call_completed?: boolean;
   stats: {
     avgRating: number;
@@ -178,9 +177,9 @@ function isStepComplete(stepId: StepId, agent: Agent): boolean {
         agent.transferRules.some((r) => (r.phrase ?? "").trim())
       );
     case "test":
-      return (agent.stats?.totalCalls ?? 0) > 0 || !!(agent.vapiAgentId?.trim());
+      return (agent.stats?.totalCalls ?? 0) > 0;
     case "golive":
-      return !!(agent.vapiAgentId?.trim());
+      return (agent.stats?.totalCalls ?? 0) > 0;
     default:
       return false;
   }
@@ -220,7 +219,6 @@ function agentToReadinessAgent(agent: Agent): ReadinessAgent {
     greeting: agent.greeting?.trim() || null,
     knowledge_base: { faq },
     rules: { alwaysTransfer: agent.alwaysTransfer, neverSay: agent.neverSay },
-    vapi_agent_id: agent.vapiAgentId?.trim() || null,
     tested_at: (agent.stats?.totalCalls ?? 0) > 0 ? "1" : null,
   };
 }
@@ -256,7 +254,7 @@ type InitialFallbackAgent = {
   businessName?: string;
   greeting?: string;
   agentName?: string;
-  elevenlabsVoiceId?: string;
+  voiceId?: string;
   knowledgeItems?: Array<{ q?: string; a?: string }>;
 } | null;
 
@@ -315,7 +313,7 @@ function defaultAgent(t?: (key: string) => string): Agent {
     primaryGoal: "answer_route",
     businessContext: "",
     targetAudience: "",
-    voice: DEFAULT_VOICE_ID,
+    voice: DEFAULT_RECALL_VOICE_ID,
     greeting: templateGreeting("receptionist", t),
     personality: 60,
     callStyle: "thorough",
@@ -324,7 +322,6 @@ function defaultAgent(t?: (key: string) => string): Agent {
     faq: [],
     specialInstructions: "",
     websiteUrl: "",
-    vapiAgentId: null,
     test_call_completed: false,
     stats: {
       avgRating: 0,
@@ -466,7 +463,7 @@ function mapAgentRow(row: Record<string, unknown>, tAgents: (key: string) => str
     businessContext: typeof knowledgeBase.businessContext === "string" ? knowledgeBase.businessContext : "",
     targetAudience: typeof knowledgeBase.targetAudience === "string" ? knowledgeBase.targetAudience : "",
     greeting: String(row.greeting ?? ""),
-    voice: String(row.voice_id ?? DEFAULT_VOICE_ID),
+    voice: String(row.voice_id ?? DEFAULT_RECALL_VOICE_ID),
     personality: mapPersonalityToSlider(row.personality),
     services: Array.isArray(knowledgeBase.services) ? knowledgeBase.services : [],
     faq: Array.isArray(knowledgeBase.faq)
@@ -482,7 +479,6 @@ function mapAgentRow(row: Record<string, unknown>, tAgents: (key: string) => str
         : "",
     websiteUrl:
       typeof knowledgeBase.websiteUrl === "string" ? knowledgeBase.websiteUrl : "",
-    vapiAgentId: typeof row.vapi_agent_id === "string" ? row.vapi_agent_id : null,
     test_call_completed:
       typeof row.test_call_completed === "boolean" ? row.test_call_completed : false,
     stats: {
@@ -600,7 +596,7 @@ function buildFallbackAgent(fallback: InitialFallbackAgent, t?: (key: string, va
     greeting:
       fallback.greeting?.trim() ||
       translate("defaultAgent.greeting", { business }),
-    voice: fallback.elevenlabsVoiceId?.trim() || DEFAULT_VOICE_ID,
+    voice: fallback.voiceId?.trim() || DEFAULT_RECALL_VOICE_ID,
     faq: Array.isArray(fallback.knowledgeItems)
       ? fallback.knowledgeItems.map((item, index) => ({
           id: `fallback-faq-${index}`,
@@ -861,8 +857,8 @@ export default function AppAgentsPageClient({
   const [showConfetti, setShowConfetti] = useState(false);
   const _isHearPlaying = hearPlaying && playingAgentId === selectedId;
 
-  const [elevenLabsVoices, setElevenLabsVoices] =
-    useState<CuratedVoice[]>(CURATED_VOICES);
+  const [recallVoices, _setRecallVoices] =
+    useState<RecallVoice[]>(RECALL_VOICES);
   const [workspaceNumbers, setWorkspaceNumbers] = useState<WorkspacePhoneNumber[]>([]);
 
   const fetchWorkspaceNumbers = useCallback(() => {
@@ -878,19 +874,6 @@ export default function AppAgentsPageClient({
   useEffect(() => {
     fetchWorkspaceNumbers();
   }, [fetchWorkspaceNumbers]);
-
-  useEffect(() => {
-    fetch("/api/agent/voices")
-      .then((r) => r.json())
-      .then((data: { voices?: CuratedVoice[] }) =>
-        setElevenLabsVoices(
-          Array.isArray(data.voices) && data.voices.length > 0
-            ? data.voices
-            : CURATED_VOICES,
-        ),
-      )
-      .catch(() => setElevenLabsVoices(CURATED_VOICES));
-  }, []);
 
   const _pathname = usePathname();
   const prevSelectedIdRef = useRef<string | null>(null);
@@ -1024,38 +1007,9 @@ export default function AppAgentsPageClient({
         return { patchOk: false };
       }
 
-      const syncRes = await fetch("/api/agent/create-vapi", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agent_id: agentToSave.id }),
-      });
-      const syncData = (await syncRes.json().catch(() => null)) as
-        | { vapi_agent_id?: string; error?: string }
-        | null;
-
-      if (syncRes.ok && syncData?.vapi_agent_id) {
-        setAgents((current) =>
-          current.map((agent) =>
-            agent.id === agentToSave.id
-              ? { ...agent, vapiAgentId: syncData!.vapi_agent_id ?? agent.vapiAgentId }
-              : agent,
-          ),
-        );
-        const successMsg = options?.successToast ?? tAgents("toastSavedSync");
-        if (options?.showToast !== false) setToast(successMsg);
-        return { patchOk: true, vapiId: syncData.vapi_agent_id };
-      }
-
-      if (options?.showToast !== false) {
-        setToast(
-          options?.successToast
-            ?? (syncRes.status === 503
-              ? tAgents("toastSavedVoiceFailed")
-              : tAgents("toastSavedVoiceFailed")),
-        );
-      }
-      return { patchOk: true, vapiId: null };
+      const successMsg = options?.successToast ?? tAgents("toast.changesSaved");
+      if (options?.showToast !== false) setToast(successMsg);
+      return { patchOk: true };
     } catch {
       if (options?.showToast !== false) setToast(tAgents("toast.saveFailed"));
       return { patchOk: false };
@@ -1142,12 +1096,11 @@ export default function AppAgentsPageClient({
       if (!createdRes.ok) throw new Error("create_failed");
       const created = (await createdRes.json()) as { id: string };
       const persisted = { ...agent, id: created.id };
-      const result = await persistAgent(persisted, { showToast: false });
-      const assistantId = result?.vapiId ?? null;
-      const next = [...agents, { ...persisted, vapiAgentId: assistantId }];
+      const _result = await persistAgent(persisted, { showToast: false });
+      const next = [...agents, persisted];
       setAgents(next);
       setSelectedId(persisted.id);
-      setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId }));
+      setActiveStep(getFirstIncompleteStep(persisted));
       setShowTemplateModal(false);
       setToast(tAgents("toast.created"));
     } catch {
@@ -1183,12 +1136,11 @@ export default function AppAgentsPageClient({
       if (!createdRes.ok) throw new Error("create_failed");
       const created = (await createdRes.json()) as { id: string };
       const persisted = { ...agent, id: created.id };
-      const result = await persistAgent(persisted, { showToast: false });
-      const assistantId = result?.vapiId ?? null;
-      const next = [...agents, { ...persisted, vapiAgentId: assistantId }];
+      const _result = await persistAgent(persisted, { showToast: false });
+      const next = [...agents, persisted];
       setAgents(next);
       setSelectedId(persisted.id);
-      setActiveStep(getFirstIncompleteStep({ ...persisted, vapiAgentId: assistantId }));
+      setActiveStep(getFirstIncompleteStep(persisted));
       setShowTemplateModal(false);
       setToast(tAgents("toast.created"));
     } catch {
@@ -1260,7 +1212,7 @@ export default function AppAgentsPageClient({
                 agent={selected}
                 activeStep={activeStep}
                 saving={saving}
-                elevenLabsVoices={elevenLabsVoices}
+                elevenLabsVoices={recallVoices}
                 workspaceName={initialWorkspaceName}
                 workspaceNumbers={workspaceNumbers}
                 getAgentReadiness={getAgentReadinessBound}
@@ -1288,7 +1240,7 @@ export default function AppAgentsPageClient({
                     <VoiceStepContent
                       agent={selected}
                       workspaceName={initialWorkspaceName}
-                      voices={elevenLabsVoices}
+                      voices={recallVoices}
                       onChange={updateSelected}
                       onVoicePreview={(voiceId) =>
                         void playAudioPreview({
@@ -1350,7 +1302,7 @@ export default function AppAgentsPageClient({
                 {activeStep === "golive" && (
                   <GoLiveStepContent
                     agent={selected}
-                    voices={elevenLabsVoices}
+                    voices={recallVoices}
                     workspaceNumbers={workspaceNumbers}
                     onAssignNumber={async (numberId, agentIdOrNull) => {
                       const res = await fetch(
@@ -1373,17 +1325,7 @@ export default function AppAgentsPageClient({
                       const result = await persistAgent(selected, {
                         showToast: true,
                       });
-                      if (result.vapiId) {
-                        setAgents((c) =>
-                          c.map((a) =>
-                            a.id === selected.id
-                              ? {
-                                  ...a,
-                                  vapiAgentId: result.vapiId ?? null,
-                                }
-                              : a,
-                          ),
-                        );
+                      if (result.patchOk) {
                         setToast(tAgents("toast.agentLive"));
                         setShowConfetti(true);
                         setTimeout(() => setShowConfetti(false), 4000);
@@ -1659,7 +1601,7 @@ function ProfileTab({
   previewingVoiceId,
 }: {
   agent: Agent;
-  voices: CuratedVoice[];
+  voices: RecallVoice[];
   workspaceName: string;
   onChange: (partial: Partial<Agent>) => void;
   onVoicePreview: (voiceId: string) => void;
@@ -2486,7 +2428,7 @@ function VoiceStepContent({
 }: {
   agent: Agent;
   workspaceName: string;
-  voices: CuratedVoice[];
+  voices: RecallVoice[];
   onChange: (p: Partial<Agent>) => void;
   onVoicePreview: (voiceId: string) => void;
   previewingVoiceId: string | null;

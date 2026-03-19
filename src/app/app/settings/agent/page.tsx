@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { RECALL_VOICES, DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
@@ -18,7 +18,7 @@ type AgentConfig = {
   greeting: string;
   agentName: string;
   preferredLanguage: string;
-  elevenlabsVoiceId: string;
+  voiceId: string;
   knowledgeItems: Array<{ q?: string; a?: string }>;
 };
 
@@ -62,7 +62,7 @@ export default function AppSettingsAgentPage() {
       greeting: "",
       agentName: tSettings("agent.defaultAgentName"),
       preferredLanguage: "en",
-      elevenlabsVoiceId: DEFAULT_VOICE_ID,
+      voiceId: DEFAULT_RECALL_VOICE_ID,
       knowledgeItems: [],
     },
   );
@@ -80,7 +80,7 @@ export default function AppSettingsAgentPage() {
           greeting: data.greeting ?? "",
           agentName: data.agentName ?? tSettings("agent.defaultAgentName"),
           preferredLanguage: data.preferredLanguage ?? "en",
-          elevenlabsVoiceId: data.elevenlabsVoiceId || DEFAULT_VOICE_ID,
+          voiceId: data.voiceId || DEFAULT_RECALL_VOICE_ID,
           knowledgeItems: Array.isArray(data.knowledgeItems) ? data.knowledgeItems : [],
         };
         setConfig(nextConfig);
@@ -115,7 +115,7 @@ export default function AppSettingsAgentPage() {
           greeting: config.greeting,
           agentName: config.agentName,
           preferredLanguage: config.preferredLanguage,
-          elevenlabsVoiceId: config.elevenlabsVoiceId || null,
+          voiceId: config.voiceId || null,
           knowledgeItems: config.knowledgeItems.filter((i) => (i.q ?? "").trim()),
         }),
       });
@@ -173,8 +173,8 @@ export default function AppSettingsAgentPage() {
     const text = config.greeting.trim() || tSettings("agent.defaultGreeting", { business: config.businessName || tSettings("agent.defaultBusiness") });
     setPreviewing(true);
     previewVoiceViaApi(text, {
-      voiceId: config.elevenlabsVoiceId || undefined,
-      gender: CURATED_VOICES.find((voice) => voice.id === config.elevenlabsVoiceId)?.gender ?? "female",
+      voiceId: config.voiceId || undefined,
+      gender: RECALL_VOICES.find((voice) => voice.id === config.voiceId)?.gender ?? "female",
       onEnd: () => setPreviewing(false),
     });
   };
@@ -243,20 +243,20 @@ export default function AppSettingsAgentPage() {
           <label htmlFor="agent-voice" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.voiceLabel")}</label>
           <select
             id="agent-voice"
-            value={config.elevenlabsVoiceId}
+            value={config.voiceId}
             onChange={(e) => {
               const nextVoiceId = e.target.value;
-              setConfig((c) => ({ ...c, elevenlabsVoiceId: nextVoiceId }));
+              setConfig((c) => ({ ...c, voiceId: nextVoiceId }));
               setPreviewing(true);
               previewVoiceViaApi(tSettings("agent.voicePreviewText"), {
                 voiceId: nextVoiceId,
-                gender: CURATED_VOICES.find((voice) => voice.id === nextVoiceId)?.gender ?? "female",
+                gender: RECALL_VOICES.find((voice) => voice.id === nextVoiceId)?.gender ?? "female",
                 onEnd: () => setPreviewing(false),
               });
             }}
             className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           >
-            {CURATED_VOICES.map((v) => (
+            {RECALL_VOICES.map((v) => (
               <option key={v.id} value={v.id}>{v.name} — {v.desc}</option>
             ))}
           </select>

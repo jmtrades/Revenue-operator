@@ -1,5 +1,7 @@
 /**
  * Vapi webhook: call-started, end-of-call-report, tool-calls.
+ * DEPRECATED: This webhook still handles callbacks from existing Vapi calls but no new calls
+ * will be sent to Vapi. New calls use the Recall voice provider instead.
  * Creates/updates call_sessions; handles capture_lead, book_appointment, send_sms.
  */
 

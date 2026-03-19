@@ -1,6 +1,6 @@
 /**
  * POST /api/agents/[id]/test-call — Trigger a test outbound call to the given phone number.
- * Body: { phone_number?: string }. If phone_number and Vapi are configured, places the call.
+ * Body: { phone_number?: string }. Uses the Recall voice provider for test calls.
  */
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoiceProvider } from "@/lib/voice";
-import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
@@ -32,8 +32,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ ok: true, message: "Add a phone number to receive a test call, or call from the Activity feed." });
   }
 
-  if (!process.env.ELEVENLABS_API_KEY) {
-    return NextResponse.json({ ok: true, message: "Voice is not configured yet. Set ELEVENLABS_API_KEY to enable test calls." });
+  if (!process.env.VOICE_SERVER_URL && !process.env.TWILIO_ACCOUNT_SID) {
+    return NextResponse.json({ ok: true, message: "Voice server is not configured yet. Set VOICE_SERVER_URL to enable test calls." });
   }
 
   const [ctxRes, agentRes] = await Promise.all([
@@ -70,26 +70,30 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const voice = getVoiceProvider();
 
-  let assistantId = a.vapi_agent_id ?? null;
+  // Create a temporary assistant for the test call
+  // NOTE: We don't store test assistant IDs in the agents table anymore
+  let assistantId: string | null = null;
+  try {
+    const { assistantId: aid } = await voice.createAssistant({
+      name: `${agent_name} – Test – ${workspaceId.slice(0, 8)}`,
+      systemPrompt,
+      voiceId: a.voice_id || DEFAULT_RECALL_VOICE_ID,
+      voiceProvider: "deepgram-aura",
+      language: "en",
+      tools: [],
+      maxDuration: undefined,
+      silenceTimeout: 30,
+      backgroundDenoising: true,
+      metadata: { workspace_id: workspaceId, greeting: a.greeting || "Hello, how can I help you?" },
+    });
+    assistantId = aid;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Failed to create voice assistant";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+
   if (!assistantId) {
-    try {
-      const { assistantId: aid } = await voice.createAssistant({
-        name: `${agent_name} – ${workspaceId.slice(0, 8)}`,
-        systemPrompt,
-        voiceId: a.voice_id || DEFAULT_VOICE_ID,
-        voiceProvider: "elevenlabs",
-        language: "en",
-        tools: [],
-        maxDuration: undefined,
-        silenceTimeout: undefined,
-        backgroundDenoising: true,
-        metadata: { workspace_id: workspaceId, greeting: a.greeting || "Hello, how can I help you?" },
-      });
-      assistantId = aid;
-      await db.from("agents").update({ vapi_agent_id: assistantId, updated_at: new Date().toISOString() }).eq("id", a.id);
-    } catch {
-      return NextResponse.json({ error: "Failed to create voice assistant" }, { status: 500 });
-    }
+    return NextResponse.json({ error: "Failed to create voice assistant" }, { status: 500 });
   }
 
   const { data: testLead } = await db
@@ -111,10 +115,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     .insert({
       workspace_id: workspaceId,
       lead_id: leadId,
-      provider: "elevenlabs",
+      provider: "recall",
       call_started_at: new Date().toISOString(),
       external_meeting_id: `test-${Date.now()}`,
-      // Used by /api/voice/webhook to flip agents.test_call_completed once the test finishes.
+      // Used by voice webhook to flip agents.tested_at once the test finishes.
       metadata: { test_call: true, agent_id: id },
     })
     .select("id")

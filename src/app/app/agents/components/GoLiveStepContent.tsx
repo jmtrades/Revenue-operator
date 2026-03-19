@@ -114,7 +114,7 @@ export function GoLiveStepContent({
               <span className={task.complete ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>
                 {t(`goLive.${readinessLabelKeys[task.key] ?? task.key}`)}
               </span>
-              {task.key === "launched" && !agent.vapiAgentId && allowActivate && (
+              {task.key === "launched" && allowActivate && (
                 <button
                   type="button"
                   onClick={() => void onActivate()}

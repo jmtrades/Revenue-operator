@@ -99,7 +99,7 @@ If something was confusing or didn't work, reply to this email and I'll help per
 
 If you're just busy, no worries — your trial doesn't start counting until you make your first call.
 
-Continue setup: ${APP_URL}/app/onboarding
+Continue setup: ${APP_URL}/activate
 
 — Junior`;
 

@@ -22,6 +22,10 @@
       "schedule": "0 9 * * *"
     },
     {
+      "path": "/api/cron/trial-expiry",
+      "schedule": "0 6 * * *"
+    },
+    {
       "path": "/api/cron/first-day-check",
       "schedule": "0 10 * * *"
     },

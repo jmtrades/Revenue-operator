@@ -8,7 +8,9 @@ import { getSessionFromCookie } from "./session";
 import { createClient } from "@/lib/supabase/server";
 import { getDb } from "@/lib/db/queries";
 
-export type SessionPayload = { userId: string; workspaceId?: string } | null;
+export type SessionPayload =
+  | { userId: string; workspaceId?: string; emailVerified: boolean }
+  | null;
 
 /**
  * Get session: tries Supabase Auth first (session in Supabase cookies), then revenue_session cookie.
@@ -23,7 +25,11 @@ export async function getSession(req: NextRequest): Promise<SessionPayload> {
       const db = getDb();
       const { data: ws } = await db.from("workspaces").select("id").eq("owner_id", user.id).limit(1).maybeSingle();
       const workspaceId = (ws as { id: string } | null)?.id ?? undefined;
-      return { userId: user.id, workspaceId };
+      return {
+        userId: user.id,
+        workspaceId,
+        emailVerified: Boolean((user as { email_confirmed_at?: string | null }).email_confirmed_at),
+      };
     }
   } catch {
     // Supabase not configured or error; fall through to cookie
@@ -33,5 +39,5 @@ export async function getSession(req: NextRequest): Promise<SessionPayload> {
   const cookieHeader = req.headers.get("cookie") ?? null;
   const session = getSessionFromCookie(cookieHeader);
   if (!session) return null;
-  return { userId: session.userId, workspaceId: session.workspaceId };
+  return { userId: session.userId, workspaceId: session.workspaceId, emailVerified: false };
 }

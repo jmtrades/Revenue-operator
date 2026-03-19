@@ -205,7 +205,7 @@ export default function AppOnboardingPage() {
           greeting: greetingToPlay,
           knowledgeItems: merged,
           preferredLanguage: "en",
-          elevenlabsVoiceId: voiceId,
+          voiceId: voiceId,
           businessHours: defaultHours,
           mode: mode ?? undefined,
           industry: industrySlug ?? undefined,

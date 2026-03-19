@@ -24,7 +24,6 @@ import {
   PanelLeftOpen,
   Command as CommandIcon,
   HelpCircle,
-  ListOrdered,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -76,7 +75,6 @@ export default function AppShellClient({
           { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
           { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
           { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
-          { href: "/app/follow-ups", label: t("nav.followUps"), icon: ListOrdered },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
@@ -101,7 +99,6 @@ export default function AppShellClient({
     () => [
       { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
       { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
-      { href: "/app/follow-ups", label: t("nav.followUps"), icon: ListOrdered },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
@@ -200,12 +197,12 @@ export default function AppShellClient({
   }, []);
 
   useEffect(() => {
-    if (!workspaceMetaLoaded || pathname === "/app/onboarding") return;
+    if (!workspaceMetaLoaded || pathname === "/activate") return;
     try {
       const serverOnboarded = Boolean(workspaceMeta?.onboardingCompletedAt);
       const localOnboarded = safeGetItem("rt_onboarded") === "true";
       if (!serverOnboarded && !localOnboarded) {
-        router.replace("/app/onboarding");
+        router.replace("/activate");
       }
     } catch {
       // ignore
@@ -356,7 +353,7 @@ export default function AppShellClient({
     pathname === href || (href !== "/app/activity" && pathname.startsWith(href));
 
   const isMoreActive = mobileMoreLinks.some(({ href }) => isActive(href));
-  const isOnboarding = pathname === "/app/onboarding";
+  const isOnboarding = pathname === "/activate";
 
   return (
     <WorkspaceProvider

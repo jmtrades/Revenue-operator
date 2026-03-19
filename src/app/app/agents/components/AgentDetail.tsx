@@ -125,23 +125,17 @@ export function AgentDetail(props: AgentDetailProps) {
             </span>
           </div>
           <p className="text-[11px] text-[var(--text-secondary)] flex items-center gap-2 flex-wrap">
-            {agent.vapiAgentId?.trim() ? (
-              <span className="text-green-500/80">
-                {t("status.live")}
-              </span>
-            ) : (
-              <span
-                className={
-                  readiness.percent >= 80
-                    ? "text-green-500/80"
-                    : readiness.percent >= 40
-                      ? "text-amber-500/80"
-                      : "text-[var(--text-secondary)]"
-                }
-              >
-                {readiness.percent}% {t("status.ready")}
-              </span>
-            )}
+            <span
+              className={
+                readiness.percent >= 80
+                  ? "text-green-500/80"
+                  : readiness.percent >= 40
+                    ? "text-amber-500/80"
+                    : "text-[var(--text-secondary)]"
+              }
+            >
+              {readiness.percent}% {t("status.ready")}
+            </span>
             <span>·</span>
             <Link
               href={`/app/agents/${agent.id}/analytics`}
@@ -205,9 +199,7 @@ export function AgentDetail(props: AgentDetailProps) {
           <div className="hidden lg:block space-y-1">
             {SETUP_STEPS.map((step, i) => {
               const complete =
-                step.id === "golive"
-                  ? Boolean(agent.vapiAgentId?.trim())
-                  : readiness.percent >= (i + 1) * 10;
+                readiness.percent >= (i + 1) * 10;
               const active = activeStep === step.id;
               const disableGoLiveNavigation = step.id === "golive" && !testCallCompleted;
               return (

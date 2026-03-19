@@ -1,6 +1,6 @@
 /**
  * Business Brain: compile workspace business context + agent into a system prompt
- * for voice agents (e.g. Vapi). Four layers: identity, business context, conversation skills, language.
+ * for voice agents (e.g. Recall). Four layers: identity, business context, conversation skills, language.
  */
 
 export interface BusinessBrainInput {

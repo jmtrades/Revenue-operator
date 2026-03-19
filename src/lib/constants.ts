@@ -14,7 +14,7 @@ export const ROUTES = {
   DOCS: "/docs",
   CONTACT: "/contact",
   DEMO: "/demo",
-  ONBOARDING: "/onboarding",
+  ONBOARDING: "/activate",
   BOOK_DEMO: "/demo",
 } as const;
 

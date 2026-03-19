@@ -8,11 +8,11 @@ import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { safeGetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 
 const ITEM_KEYS = [
-  { key: "business", href: "/app/onboarding" },
+  { key: "business", href: "/activate" },
   { key: "agent", href: "/app/agents" },
-  { key: "services", href: "/app/onboarding" },
+  { key: "services", href: "/activate" },
   { key: "phone", href: "/app/settings/phone" },
-  { key: "test_call", href: "/app/onboarding" },
+  { key: "test_call", href: "/activate" },
   { key: "first_call", href: "/app/activity" },
   { key: "calendar", href: "/app/settings/integrations" },
   { key: "team", href: "/app/settings/team" },

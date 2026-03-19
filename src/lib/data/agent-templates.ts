@@ -54,7 +54,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     behaviors: ["Greets with clear identification", "Keeps language precise and professional", "Escalates with context"],
     bestFor: "Offices that need a polished first impression",
     defaultGreeting: "Hello, thanks for calling. How may I help you today?",
-    voiceId: "EXAVITQu4vr4xnSDxMaL",
+    voiceId: "us-female-professional",
     capabilities: ["answer_calls", "take_messages", "route_calls"],
   },
   {
@@ -107,7 +107,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     behaviors: ["Confirms interest and timing", "Leaves clear next steps", "Respects opt-out and callback preferences"],
     bestFor: "Sales and lead-nurture teams",
     defaultGreeting: "Hi, this is a quick follow-up from our team. Do you have a moment?",
-    voiceId: "yoZ06aMxZJJ28mfd3POQ",
+    voiceId: "us-male-warm",
     capabilities: ["outbound_calls", "qualify_leads", "book_appointments"],
   },
   {
@@ -190,7 +190,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     behaviors: ["Answers common questions from knowledge", "Walks through simple fixes", "Escalates complex issues with context"],
     bestFor: "Customer support and help desks",
     defaultGreeting: "Hi, how can I help you today? I can answer questions or get you to the right person.",
-    voiceId: "TX3LPaxmHKxFdv7VOQHJ",
+    voiceId: "us-female-empathetic",
     capabilities: ["answer_calls", "take_messages", "transfer_calls"],
   },
   {

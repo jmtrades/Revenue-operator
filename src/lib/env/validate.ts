@@ -15,9 +15,9 @@ const REQUIRED_VARS = {
 
 /** Conditional checks — only warn when the related provider is active */
 const CONDITIONAL_VARS: Record<string, { condition: () => boolean; vars: string[] }> = {
-  ELEVENLABS: {
-    condition: () => (process.env.VOICE_PROVIDER ?? "elevenlabs") === "elevenlabs",
-    vars: ["ELEVENLABS_API_KEY", "ELEVENLABS_WEBHOOK_SECRET"],
+  RECALL: {
+    condition: () => (process.env.VOICE_PROVIDER ?? "recall") === "recall",
+    vars: ["VOICE_SERVER_URL"],
   },
 };
 

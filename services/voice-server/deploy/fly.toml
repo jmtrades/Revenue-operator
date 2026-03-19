@@ -1,8 +1,8 @@
 # Fly.io deployment configuration for voice synthesis server
 # Deploys to GPU instances for TTS/STT performance
 
-app = "voice-synthesis-server"
-primary_region = "sjc"  # San Jose, closest to US West
+app = "recall-voice"
+primary_region = "iad" # Northern Virginia, closest to most US East users
 
 [build]
 dockerfile = "../Dockerfile"
@@ -33,6 +33,10 @@ PORT = "8100"
 HOST = "0.0.0.0"
 LOG_LEVEL = "info"
 LLM_ENDPOINT = "https://YOUR_APP_NAME.fly.dev/api/agent/respond"
+
+# Required (set in Fly dashboard):
+# - OPENAI_API_KEY (for LLM calls, if your voice stack uses it)
+# - TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN (if Twilio validation is enabled in your stack)
 
 # Create a Fly Postgres for session persistence (optional)
 # [services]

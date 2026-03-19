@@ -138,7 +138,8 @@ export function UnifiedDashboard() {
         }),
       );
     })();
-  }, [workspaceId, data?.needs_attention]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceId]);
 
   useEffect(() => {
     if (!workspaceId) return;

@@ -1,7 +1,7 @@
 /**
  * RecallAgent: orchestrator for the conversational engine.
  * Composes Business Brain + Shadow-Prompt + Brain (function calling) + ResiliencyLayer.
- * Telephony (Vapi) remains separate; this layer produces assistant config and tools.
+ * Telephony (Recall voice server) remains separate; this layer produces assistant config and tools.
  */
 
 import { compileSystemPrompt } from "@/lib/business-brain/compile";
@@ -30,9 +30,9 @@ export interface RecallAgentBuildResult {
 }
 
 /**
- * RecallAgent: build assistant config for Vapi (or other telephony) from workspace/lead context.
+ * RecallAgent: build assistant config for Recall voice server (or other telephony) from workspace/lead context.
  * Uses Context Buffer, Business Brain, Shadow-Prompt, and Brain tool definitions.
- * Does not perform STT/TTS; that is the telephony provider's responsibility.
+ * Does not perform STT/TTS; that is the voice provider's responsibility.
  */
 export class RecallAgent {
   private config: RecallAgentConfig;

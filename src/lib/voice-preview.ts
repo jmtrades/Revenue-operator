@@ -1,10 +1,10 @@
 /**
  * Voice preview engine — SpeechSynthesis for demos and onboarding.
- * speakTextViaApi tries ElevenLabs /api/agent/speak first, then falls back to browser TTS.
+ * speakTextViaApi tries Recall voice server /api/agent/speak endpoint first, then falls back to browser TTS.
  */
 
 export type SpeakOptions = {
-  gender?: "female" | "male";
+  gender?: "female" | "male" | "neutral";
   rate?: number;
   pitch?: number;
   onStart?: () => void;
@@ -13,7 +13,7 @@ export type SpeakOptions = {
 };
 
 /**
- * Try ElevenLabs TTS via /api/agent/speak; on 503/502 or error, fall back to browser TTS.
+ * Try Recall voice server TTS via /api/agent/speak; on 503/502 or error, fall back to browser TTS.
  * Returns { usedFallback: true } when browser TTS was used (caller can show "Using basic voice").
  */
 export async function speakTextViaApi(
@@ -94,10 +94,10 @@ export function speakText(
   return () => synth.cancel();
 }
 
-/** Uses ElevenLabs via API when configured; otherwise browser TTS. Use for onboarding/activate previews. Pass voiceId for real ElevenLabs voice. */
+/** Uses Recall voice server via API when configured; otherwise browser TTS. Use for onboarding/activate previews. Pass voiceId for Recall voice. */
 export function previewVoiceViaApi(
   text: string,
-  genderOrOptions?: "female" | "male" | SpeakOptions
+  genderOrOptions?: "female" | "male" | "neutral" | SpeakOptions
 ): void {
   if (typeof window === "undefined") return;
   const options: SpeakOptions =
@@ -108,7 +108,7 @@ export function previewVoiceViaApi(
 }
 
 /** V25: Button-only voice preview (browser TTS fallback). Use ONLY when API is not desired. Never auto-play. */
-export function previewVoice(text: string, gender: "female" | "male") {
+export function previewVoice(text: string, gender: "female" | "male" | "neutral") {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);

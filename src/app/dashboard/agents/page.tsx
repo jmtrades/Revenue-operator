@@ -64,7 +64,7 @@ export default function AgentsPage() {
         <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
           <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>{t("empty.noAgentsYet")}</p>
           <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>{t("empty.noAgentsYetHint")}</p>
-          <Link href="/dashboard/onboarding" className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{t("empty.createFirstAgent")}</Link>
+          <Link href="/activate" className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{t("empty.createFirstAgent")}</Link>
         </div>
       ) : (
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>

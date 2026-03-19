@@ -8,13 +8,11 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { getDb } from "@/lib/db/queries";
 import {
   getVoiceUsage,
   recordVoiceUsage,
   calculateVoiceOverage,
   VOICE_TIER_LIMITS,
-  VOICE_OVERAGE_RATES,
   type VoiceUsageRecord,
 } from "@/lib/voice/billing";
 import { resolveBillingTier } from "@/lib/feature-gate/resolver";
@@ -33,7 +31,7 @@ export async function GET(req: NextRequest) {
     // Get usage and tier
     const usage = await getVoiceUsage(workspaceId);
     const tier = await resolveBillingTier(workspaceId);
-    const limits = VOICE_TIER_LIMITS[tier];
+    const _limits = VOICE_TIER_LIMITS[tier];
     const overage = await calculateVoiceOverage(workspaceId);
 
     // Build response with usage, limits, overage, and features

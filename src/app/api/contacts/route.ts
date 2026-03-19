@@ -1,8 +1,10 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { parseBody, emailSchema, phoneSchema, workspaceIdSchema } from "@/lib/api/validate";
 
 const GENERIC_ERROR = "An unexpected error occurred";
 
@@ -24,15 +26,19 @@ async function getContacts(req: NextRequest) {
   return NextResponse.json({ contacts: data ?? [] });
 }
 
+const createContactSchema = z.object({
+  workspace_id: workspaceIdSchema,
+  name: z.string().min(1, "Name required").max(255),
+  phone: phoneSchema.optional(),
+  email: emailSchema.optional(),
+  company: z.string().max(255).optional(),
+});
+
 async function postContact(req: NextRequest) {
-  let body: { workspace_id: string; name: string; phone?: string; email?: string; company?: string };
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+  const parsed = await parseBody(req, createContactSchema);
+  if ('error' in parsed) return parsed.error;
+  const body = parsed.data;
   const { workspace_id, name, phone, email, company } = body;
-  if (!workspace_id || !name) return NextResponse.json({ error: "workspace_id and name required" }, { status: 400 });
   const err = await requireWorkspaceAccess(req, workspace_id);
   if (err) return err;
   const db = getDb();

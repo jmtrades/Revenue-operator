@@ -197,7 +197,7 @@ export default function AppSettingsPage() {
           </p>
         </div>
         <Link
-          href="/app/onboarding"
+          href="/activate"
           className="px-4 py-2 bg-white text-black font-semibold rounded-xl text-xs hover:bg-zinc-100 transition-colors whitespace-nowrap"
         >
           {tSettings("openSetup")}

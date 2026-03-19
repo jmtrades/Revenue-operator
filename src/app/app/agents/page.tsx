@@ -10,7 +10,7 @@ type InitialFallbackAgent = {
   businessName?: string;
   greeting?: string;
   agentName?: string;
-  elevenlabsVoiceId?: string;
+  voiceId?: string;
   knowledgeItems?: Array<{ q?: string; a?: string }>;
 } | null;
 
@@ -96,7 +96,7 @@ async function getInitialAgentsPayload(): Promise<{
 
   const { data: workspaceAgent } = await db
     .from("workspaces")
-    .select("name, greeting, agent_name, elevenlabs_voice_id, knowledge_items")
+    .select("name, greeting, agent_name, voice_id, knowledge_items")
     .eq("id", resolvedWorkspaceId)
     .maybeSingle();
 
@@ -105,7 +105,7 @@ async function getInitialAgentsPayload(): Promise<{
         name?: string | null;
         greeting?: string | null;
         agent_name?: string | null;
-        elevenlabs_voice_id?: string | null;
+        voice_id?: string | null;
         knowledge_items?: Array<{ q?: string; a?: string }> | null;
       }
     | null;
@@ -119,7 +119,7 @@ async function getInitialAgentsPayload(): Promise<{
           businessName: fallbackRow.name ?? "",
           greeting: fallbackRow.greeting ?? "",
           agentName: fallbackRow.agent_name ?? "",
-          elevenlabsVoiceId: fallbackRow.elevenlabs_voice_id ?? "",
+          voiceId: fallbackRow.voice_id ?? "",
           knowledgeItems: Array.isArray(fallbackRow.knowledge_items)
             ? fallbackRow.knowledge_items
             : [],

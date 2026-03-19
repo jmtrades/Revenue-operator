@@ -241,7 +241,7 @@ export default function NewAgentWizardClient({
       return;
     }
     setStep((s) => Math.min(7, s + 1));
-  }, [step, agentId, state.name, workspaceId, validateStep, saveDraft, router, t, tAgents]);
+  }, [step, agentId, state.name, state.templateId, state.purpose, state.conversationStyle, state.voiceId, state.greeting, workspaceId, validateStep, saveDraft, router, t, tAgents]);
 
   const handleBack = useCallback(() => {
     setToast(null);

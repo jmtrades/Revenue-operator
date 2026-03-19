@@ -34,16 +34,26 @@ describe("GET /api/system/health", () => {
     vi.mocked(mod.getCronHeartbeats).mockResolvedValue({ core: new Date().toISOString() });
   });
 
-  it("returns 200 with exact keys: ok, core_recent, db_reachable, public_corridor_ok", async () => {
+  it("returns 200 with exact keys including voice server fields", async () => {
     const { GET } = await import("@/app/api/system/health/route");
     const res = await GET(new Request("http://localhost/api/system/health"));
     const data = await res.json();
 
     expect(res.status).toBe(200);
-    expect(Object.keys(data).sort()).toEqual(["core_recent", "db_reachable", "ok", "public_corridor_ok"]);
+    expect(Object.keys(data).sort()).toEqual([
+      "core_recent",
+      "db_reachable",
+      "ok",
+      "public_corridor_ok",
+      "voice_checked_at",
+      "voice_health",
+      "voice_latency_ms",
+      "voice_server_ok",
+      "voice_status",
+    ]);
   });
 
-  it("returns only boolean values for all keys", async () => {
+  it("returns booleans for readiness keys and safe types for voice fields", async () => {
     const { GET } = await import("@/app/api/system/health/route");
     const res = await GET(new Request("http://localhost/api/system/health"));
     const data = await res.json();
@@ -52,6 +62,11 @@ describe("GET /api/system/health", () => {
     expect(typeof data.core_recent).toBe("boolean");
     expect(typeof data.db_reachable).toBe("boolean");
     expect(typeof data.public_corridor_ok).toBe("boolean");
+    expect(typeof data.voice_server_ok).toBe("boolean");
+    expect(data.voice_checked_at === null || typeof data.voice_checked_at === "string").toBe(true);
+    expect(data.voice_latency_ms === null || typeof data.voice_latency_ms === "number").toBe(true);
+    expect(data.voice_health === null || typeof data.voice_health === "object").toBe(true);
+    expect(data.voice_status === null || typeof data.voice_status === "object").toBe(true);
   });
 
   it("returns ok true when core is recent and db is reachable", async () => {

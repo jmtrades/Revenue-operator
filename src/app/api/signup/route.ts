@@ -7,26 +7,44 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { getDb } from "@/lib/db/queries";
 import { getBaseUrl } from "@/lib/runtime/base-url";
+import { parseBody, emailSchema } from "@/lib/api/validate";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
+const signupSchema = z.object({
+  email: emailSchema,
+  name: z.string().max(255).optional(),
+  businessName: z.string().max(255).optional(),
+  phone: z.string().max(20).optional(),
+  industry: z.string().max(100).optional(),
+  businessType: z.string().max(100).optional(),
+  website: z.string().url("Invalid website URL").optional(),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const name = typeof body.name === "string" ? body.name.trim() : "";
-    const business_name = typeof body.businessName === "string" ? body.businessName.trim() : "";
-    const email = typeof body.email === "string" ? body.email.trim() : "";
-    const phone = typeof body.phone === "string" ? body.phone.trim() : null;
-    const industry =
-      (typeof body.industry === "string" ? body.industry.trim() : null) ||
-      (typeof body.businessType === "string" ? body.businessType.trim() : null) ||
-      null;
-    const website = typeof body.website === "string" ? body.website.trim() || null : null;
-
-    if (!email) {
-      return NextResponse.json({ ok: false, error: "Email required" }, { status: 400 });
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`signup:${ip}`, 5, 3600_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ ok: false, error: "Too many signup attempts. Please try again later." }, { status: 429 });
     }
+
+    const parsed = await parseBody(req, signupSchema);
+    if ('error' in parsed) return parsed.error;
+    const body = parsed.data;
+
+    const name = (body.name ?? "").trim();
+    const business_name = (body.businessName ?? "").trim();
+    const email = body.email.trim();
+    const phone = (body.phone ?? "").trim() || null;
+    const industry =
+      ((body.industry ?? "").trim()) ||
+      ((body.businessType ?? "").trim()) ||
+      null;
+    const website = (body.website ?? "").trim() || null;
 
     const db = getDb();
     await db.from("signups").insert({
@@ -42,7 +60,7 @@ export async function POST(req: NextRequest) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (supabaseUrl && supabaseAnon) {
-      const redirectTo = `${getBaseUrl(req.nextUrl?.origin ?? null)}/auth/callback?next=/dashboard/onboarding`;
+      const redirectTo = `${getBaseUrl(req.nextUrl?.origin ?? null)}/auth/callback?next=/activate`;
       const supabase = createClient(supabaseUrl, supabaseAnon);
       await supabase.auth.signInWithOtp({
         email,
@@ -57,7 +75,7 @@ export async function POST(req: NextRequest) {
       const welcomeHtml = `
         <p>Hi${name ? ` ${name.split(" ")[0]}` : ""},</p>
         <p>Welcome to Recall Touch. Set up your AI phone system in 5 minutes.</p>
-        <p><a href="${baseUrl}/dashboard/onboarding">Go to onboarding →</a></p>
+        <p><a href="${baseUrl}/activate">Go to onboarding →</a></p>
         <p>If you didn't request this, you can ignore this email.</p>
       `;
       fetch("https://api.resend.com/emails", {

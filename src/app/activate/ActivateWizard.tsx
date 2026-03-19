@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
-import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { RECALL_VOICES, DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
 import { getServicesForIndustry } from "@/lib/constants/industries";
 import type { ActivationState, ElevenLabsVoice, StepId } from "./steps/types";
 import { DEFAULT_HOURS, STEPS } from "./steps/types";
@@ -17,7 +17,11 @@ import { track } from "@/lib/analytics/posthog";
 
 export function ActivateWizard() {
   const t = useTranslations("activate");
+  const tTeam = useTranslations("team");
   const [step, setStep] = useState<StepId>(1);
+  const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
+  const [accountEmail, setAccountEmail] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
   const [state, setState] = useState<ActivationState>(() => ({
     businessName: "",
     industry: null,
@@ -33,8 +37,28 @@ export function ActivateWizard() {
     services: [],
     lastTestFeedback: null,
     preferredLanguage: "en",
-    elevenlabsVoiceId: DEFAULT_VOICE_ID,
+    voiceId: DEFAULT_RECALL_VOICE_ID,
   }));
+
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      try {
+        const res = await fetch("/api/auth/session", { credentials: "include" });
+        if (!active) return;
+        if (!res.ok) return;
+        const data = (await res.json().catch(() => null)) as { session?: { email?: string | null; emailVerified?: boolean } | null } | null;
+        const s = data?.session ?? null;
+        setAccountEmail(s?.email ?? null);
+        if (typeof s?.emailVerified === "boolean") setEmailVerified(s.emailVerified);
+      } catch {
+        // Ignore: banner is best-effort
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const currentIndex = useMemo(
     () => STEPS.findIndex((s) => s.id === step),
@@ -99,21 +123,11 @@ export function ActivateWizard() {
   const effectiveServices =
     state.services.length > 0 ? state.services : industryServices;
 
-  const curatedVoiceList = useMemo(
-    () => CURATED_VOICES.map((v) => ({ id: v.id, name: v.name, labels: {} as Record<string, string>, category: v.accent })),
+  const recallVoiceList = useMemo(
+    () => RECALL_VOICES.map((v) => ({ id: v.id, name: v.name, labels: {} as Record<string, string>, category: v.accent })),
     []
   );
-  const [voices, setVoices] = useState<ElevenLabsVoice[]>(() => curatedVoiceList);
-  useEffect(() => {
-    if (step !== 4) return;
-    fetch("/api/agent/voices")
-      .then((r) => r.json())
-      .then((data: { voices?: ElevenLabsVoice[] }) => {
-        const fromApi = data.voices ?? [];
-        setVoices(fromApi.length > 0 ? fromApi : curatedVoiceList);
-      })
-      .catch(() => setVoices(curatedVoiceList));
-  }, [step, curatedVoiceList]);
+  const [voices, _setVoices] = useState<ElevenLabsVoice[]>(() => recallVoiceList);
 
   const handlePlayTestGreeting = () => {
     const voiceText =
@@ -121,7 +135,7 @@ export function ActivateWizard() {
         ? state.greeting.trim()
         : t("greetingWithBusiness", { business: state.businessName || t("yourBusiness") });
     previewVoiceViaApi(voiceText, {
-      voiceId: state.elevenlabsVoiceId || undefined,
+      voiceId: state.voiceId || undefined,
       gender: "female",
     });
   };
@@ -159,7 +173,7 @@ export function ActivateWizard() {
           businessHours: hoursObj,
           knowledgeItems: state.services?.length ? state.services.map((s) => ({ type: "service", value: s })) : undefined,
           preferredLanguage: state.preferredLanguage || "en",
-          elevenlabsVoiceId: state.elevenlabsVoiceId || undefined,
+          voiceId: state.voiceId || undefined,
         }),
       });
       if (!res.ok) {
@@ -175,6 +189,37 @@ export function ActivateWizard() {
   return (
     <Container>
       <div className="max-w-4xl mx-auto">
+        {emailVerified === false && (
+          <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-5 py-4">
+            <p className="text-sm font-semibold text-slate-50">{t("emailNotVerifiedBannerTitle")}</p>
+            <p className="mt-1 text-sm text-slate-300">{t("emailNotVerifiedBannerBody")}</p>
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!accountEmail || resending) return;
+                  setResending(true);
+                  try {
+                    await fetch("/api/auth/resend-verification", {
+                      method: "POST",
+                      credentials: "include",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ email: accountEmail }),
+                    });
+                  } catch {
+                    // best-effort
+                  } finally {
+                    setResending(false);
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black font-semibold px-6 py-2 hover:bg-zinc-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={!accountEmail || resending}
+              >
+                {resending ? tTeam("sending") : t("resendVerificationCta")}
+              </button>
+            </div>
+          </div>
+        )}
         <header className="mb-10">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase text-sky-400">
             {t("wizardHeading")}

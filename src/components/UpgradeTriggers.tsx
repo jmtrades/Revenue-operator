@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { AlertCircle, Lock, Zap, X } from 'lucide-react';
 
@@ -28,7 +28,7 @@ export const UsageWallBanner: React.FC<UsageWallBannerProps> = ({
   type,
   used,
   limit,
-  planName,
+  planName: _planName,
 }) => {
   const percentage = Math.round((used / limit) * 100);
   const isAtLimit = percentage >= 100;
@@ -171,6 +171,7 @@ export const FeaturePreviewCard: React.FC<FeaturePreviewCardProps> = ({
         }}
       >
         {previewImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={previewImage}
             alt={featureName}

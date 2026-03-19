@@ -10,7 +10,6 @@ type WorkspaceAgentSeed = {
   agentName?: string | null;
   greeting?: string | null;
   voiceId?: string | null;
-  vapiAssistantId?: string | null;
   knowledgeItems?: KnowledgeItem[] | null;
 };
 
@@ -38,26 +37,15 @@ export async function syncPrimaryAgent(
     `Thanks for calling ${seed.businessName}. How can I help you today?`;
   const knowledgeBase = buildKnowledgeBase(seed);
 
-  const { data: existingByVapi } = seed.vapiAssistantId
-    ? await db
-        .from("agents")
-        .select("id")
-        .eq("workspace_id", seed.workspaceId)
-        .eq("vapi_agent_id", seed.vapiAssistantId)
-        .maybeSingle()
-    : { data: null };
-
-  const firstExisting =
-    existingByVapi ??
-    (
-      await db
-        .from("agents")
-        .select("id")
-        .eq("workspace_id", seed.workspaceId)
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle()
-    ).data;
+  const firstExisting = (
+    await db
+      .from("agents")
+      .select("id")
+      .eq("workspace_id", seed.workspaceId)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle()
+  ).data;
 
   const updates = {
     name,
@@ -72,7 +60,6 @@ export async function syncPrimaryAgent(
       escalationChain: [],
     },
     is_active: true,
-    vapi_agent_id: seed.vapiAssistantId?.trim() || null,
     updated_at: new Date().toISOString(),
   };
 

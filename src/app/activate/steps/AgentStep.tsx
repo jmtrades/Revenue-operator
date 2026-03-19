@@ -87,7 +87,7 @@ export function AgentStep({
                   agentTemplate: tpl.id,
                   agentName: prev.agentName || tpl.name.replace(/^The\s+/, ""),
                   greeting: tpl.defaultGreeting,
-                  ...((tpl as AgentTemplate).voiceId && { elevenlabsVoiceId: (tpl as AgentTemplate).voiceId! }),
+                  ...((tpl as AgentTemplate).voiceId && { voiceId: (tpl as AgentTemplate).voiceId! }),
                 }))
               }
               className={`flex flex-col items-start gap-2 rounded-2xl border px-4 py-4 text-left text-sm transition-colors ${

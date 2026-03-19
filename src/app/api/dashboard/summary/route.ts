@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
   let callsPrev = 0;
   let minutesUsed = 0;
   let appointmentsBooked = 0;
-  let appointmentsPrev = 0;
+  let _appointmentsPrev = 0;
   let followUpsSent = 0;
   let revenueCents = 0;
   const needsAttention: { id: string; name: string; reason: string; phone?: string | null }[] = [];
@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
       .gte("created_at", prevStart)
       .lt("created_at", prevEnd)
       .in("status", ["confirmed", "completed"]);
-    appointmentsPrev = ap2 ?? 0;
+    _appointmentsPrev = ap2 ?? 0;
   } catch { /* ignore */ }
 
   try {

@@ -9,7 +9,7 @@ export type CuratedVoice = {
   desc: string;
   description: string;
   accent: string;
-  gender: "female" | "male";
+  gender: "female" | "male" | "neutral";
   age: "young" | "middle-aged";
   tone: string;
   bestFor: string;

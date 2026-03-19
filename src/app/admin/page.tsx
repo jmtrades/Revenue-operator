@@ -8,7 +8,20 @@ interface AdminStats {
   signupsTotal?: number;
   mrr?: string;
   recentSignups?: { name: string; business_name: string; email: string; plan?: string; created_at?: string }[];
-  health?: { vapi?: string; twilio?: string; supabase?: string };
+  health?: {
+    voiceServer?: string;
+    twilio?: string;
+    supabase?: string;
+    voiceServerDetails?: {
+      ok?: boolean;
+      latency_ms?: number | null;
+      active_sessions?: number | null;
+      voices_available?: number | null;
+      max_concurrent?: number | null;
+      tts_engine?: string | null;
+      stt_engine?: string | null;
+    };
+  };
   activeCalls?: number;
   callsToday?: number;
   textsToday?: number;
@@ -33,6 +46,7 @@ export default function AdminDashboardPage() {
   const activeCalls = stats?.activeCalls ?? "—";
   const callsToday = stats?.callsToday ?? "—";
   const textsToday = stats?.textsToday ?? "—";
+  const voiceDetails = health.voiceServerDetails ?? {};
 
   return (
     <div className="max-w-4xl space-y-8">
@@ -90,7 +104,7 @@ export default function AdminDashboardPage() {
         <h2 className="text-lg font-medium mb-3">System health</h2>
         <div className="flex flex-wrap gap-4">
           <span className="inline-flex items-center gap-2 text-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Vapi: {health.vapi ?? "—"}
+            <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Voice Server: {health.voiceServer ?? "—"}
           </span>
           <span className="inline-flex items-center gap-2 text-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Twilio: {health.twilio ?? "—"}
@@ -98,6 +112,14 @@ export default function AdminDashboardPage() {
           <span className="inline-flex items-center gap-2 text-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Supabase: {health.supabase ?? "—"}
           </span>
+        </div>
+        <div className="mt-2 text-sm" style={{ color: "var(--text-tertiary)" }}>
+          Voice latency: {voiceDetails.latency_ms != null ? `${voiceDetails.latency_ms}ms` : "—"} · Active sessions:{" "}
+          {voiceDetails.active_sessions ?? "—"} · Voices available: {voiceDetails.voices_available ?? "—"}
+        </div>
+        <div className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+          TTS engine: {voiceDetails.tts_engine ?? "—"} · STT engine: {voiceDetails.stt_engine ?? "—"} · Max concurrent:{" "}
+          {voiceDetails.max_concurrent ?? "—"}
         </div>
         <p className="text-sm mt-2" style={{ color: "var(--text-tertiary)" }}>Active calls right now: {activeCalls}</p>
         <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>Calls today: {callsToday} · Texts today: {textsToday}</p>

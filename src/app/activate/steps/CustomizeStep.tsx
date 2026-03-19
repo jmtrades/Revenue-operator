@@ -68,8 +68,8 @@ export function CustomizeStep({
           <label htmlFor="agent_voice" className="block text-xs font-medium text-slate-300">{t("voiceLabel")}</label>
           <select
             id="agent_voice"
-            value={state.elevenlabsVoiceId}
-            onChange={(e) => setState((prev) => ({ ...prev, elevenlabsVoiceId: e.target.value }))}
+            value={state.voiceId}
+            onChange={(e) => setState((prev) => ({ ...prev, voiceId: e.target.value }))}
             className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
           >
             {voices.map((v) => (
