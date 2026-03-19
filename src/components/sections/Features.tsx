@@ -22,19 +22,19 @@ export function Features() {
         <AnimateOnScroll className="text-center mb-16">
           <SectionLabel>{t("label")}</SectionLabel>
           <h2 className="font-bold max-w-2xl mx-auto" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}>
-            Not Just Another AI Receptionist.
+            AI Revenue Operations that closes the loop.
           </h2>
           <p className="text-base mt-4 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
-            AI receptionists answer calls. Take messages. That’s it. Recall Touch answers calls and follows up until the revenue is recovered.
+            Message-only assistants answer calls and take messages. Recall Touch answers calls, books appointments, and runs follow-up until revenue is recovered.
           </p>
         </AnimateOnScroll>
         <StaggerChildren className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <motion.div variants={fadeUpVariants} className="card-marketing p-6 md:p-8">
             <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-              AI receptionists
+              Message-only answering
             </p>
             <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Answer calls. Take messages. Route basic requests.
+              Answers calls, takes messages, and stops.
             </p>
           </motion.div>
           <motion.div variants={fadeUpVariants} className="card-marketing p-6 md:p-8">

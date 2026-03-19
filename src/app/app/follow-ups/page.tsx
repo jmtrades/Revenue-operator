@@ -76,6 +76,7 @@ export default function AppFollowUpsPage() {
           <EmptyState
             title={t("empty.templatesTitle")}
             description={t("empty.templatesBody")}
+            primaryAction={{ label: t("create"), href: "/app/follow-ups/create" }}
           />
         ) : (
           <ul className="space-y-3">
@@ -104,6 +105,7 @@ export default function AppFollowUpsPage() {
         <EmptyState
           title={t("empty.activeTitle")}
           description={t("empty.activeBody")}
+          primaryAction={{ label: t("create"), href: "/app/follow-ups/create" }}
         />
       )}
     </div>

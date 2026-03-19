@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
@@ -9,16 +10,16 @@ type FaqItem = { q: string; a: string };
 
 const FAQS: FaqItem[] = [
   {
-    q: "How fast can I be live?",
-    a: "Most workspaces can be live in minutes: choose an industry, connect your number (or add one), and run a test call. You can refine scripts and follow-ups after you’ve seen it work.",
+    q: "How is this different from an AI receptionist?",
+    a: "An AI receptionist answers calls and takes messages. Recall Touch answers calls AND runs automated recovery sequences until the revenue is recovered — appointment booking, no-show recovery, reactivation campaigns, quote chasing, and ROI proof in your dashboard. The follow-up is what pays for itself.",
   },
   {
     q: "Do I need to replace my CRM?",
     a: "No. Recall Touch is the execution layer. Keep your CRM; we focus on answering, booking, follow-ups, and proof of ROI.",
   },
   {
-    q: "How is this different from an AI receptionist?",
-    a: "An AI receptionist answers calls and takes messages. Recall Touch answers calls AND runs automated follow-up sequences until the revenue is recovered — no-show recovery, reactivation campaigns, quote chasing, and proof of ROI in your dashboard. The follow-up is what pays for itself.",
+    q: "How fast can I be live?",
+    a: "Most workspaces can be live in minutes: choose an industry, connect your number (or add one), and run a test call. You can refine scripts and follow-ups after you’ve seen it work.",
   },
   {
     q: "Is there a free trial?",
@@ -95,7 +96,41 @@ export function HomepageFAQ() {
                 </button>
                 {expanded && (
                   <div className="px-5 pb-5">
-                    <p className="text-sm text-white/70 leading-relaxed">{item.a}</p>
+                    <p className="text-sm text-white/70 leading-relaxed">
+                      {idx === 0 ? (
+                        <>
+                          An AI receptionist answers calls and takes messages.{" "}
+                          <span>
+                            Recall Touch answers calls AND runs automated recovery sequences until the revenue is recovered
+                          </span>{" "}
+                          — appointment booking, no-show recovery,{" "}
+                          <Link href="/outbound" className="underline">
+                            reactivation campaigns
+                          </Link>
+                          , quote chasing, and ROI proof in your dashboard. The follow-up is what pays for itself.
+                        </>
+                      ) : idx === 5 ? (
+                        <>
+                          Guardrails: per-contact limits, quiet hours, opt-outs, and reviewable actions.{" "}
+                          <Link href="/security" className="underline">
+                            Learn how security controls keep automation responsible
+                          </Link>
+                          . You can require approval before anything sends.
+                        </>
+                      ) : idx === 8 ? (
+                        <>
+                          We estimate revenue recovered using your configured average booking value, plus outcomes like appointments booked,
+                          no-shows recovered, and reactivations — visible in your dashboard and digest emails.{" "}
+                          For plan capacity and follow-up workload, see{" "}
+                          <Link href="/pricing" className="underline">
+                            pricing
+                          </Link>
+                          .
+                        </>
+                      ) : (
+                        item.a
+                      )}
+                    </p>
                   </div>
                 )}
               </div>

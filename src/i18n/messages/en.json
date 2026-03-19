@@ -317,17 +317,18 @@
     "keepStarter": "Keep Starter",
     "sorryToSeeYouGo": "We're sorry to see you go",
     "sorryDesc": "Your data will be available for 30 days. You can reactivate from Settings.",
-    "cancelReasonTitle": "We're sorry to see you go. What's the main reason?",
+    "cancelReasonTitle": "What is the main reason?",
     "cancelReasonTooExpensive": "Too expensive",
-    "cancelReasonUnused": "Not using it enough",
+    "cancelReasonUnused": "Not using enough",
     "cancelReasonMissingFeatures": "Missing features",
-    "cancelReasonCompetitor": "Switching to competitor",
+    "cancelReasonCompetitor": "Switching",
     "cancelReasonOther": "Other",
-    "cancelOfferText": "Stay and get 1 month free.",
+    "cancelOfferText": "Stay and get next month free.",
     "cancelAcceptOffer": "Accept offer",
     "cancelContinueCancellation": "Continue cancellation",
     "cancelDataRetainedText": "Your data will be retained for 30 days. You can export your contacts before leaving.",
-    "cancelExportContacts": "Export Contacts",
+    "cancelExportHeading": "Export your contacts before leaving.",
+    "cancelExportContacts": "Export",
     "cancelCancelSubscription": "Cancel Subscription",
     "cancelSuccessTitle": "Your subscription has been cancelled.",
     "cancelSuccessBody": "Service continues until {endDate}.",
@@ -1556,8 +1557,8 @@
       "customRange": "Custom range"
     },
     "exportCsv": "Export CSV",
-    "emptyHeading": "Analytics populate as calls come in",
-    "emptyDescription": "Your first chart will appear after your first call.",
+    "emptyHeading": "Not enough data yet.",
+    "emptyDescription": "Analytics populate after your first week of calls.",
     "emptyAction": "Make a test call",
     "leadFunnel": "Lead funnel",
     "funnelStages": {
@@ -1752,7 +1753,7 @@
       "emergency": "Emergency",
       "review_request": "Review",
       "scratch": "Custom",
-      "receptionist": "Receptionist"
+      "receptionist": "Inbound Agent"
     },
     "links": {
       "analytics": "Analytics",
@@ -2130,7 +2131,7 @@
       },
       "templates": {
         "receptionist": {
-          "label": "Receptionist",
+          "label": "Inbound Agent",
           "desc": "Answer calls, take messages, and route cleanly.",
           "greeting": "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?"
         },
@@ -2176,7 +2177,7 @@
     },
     "profile": {
       "agentNameLabel": "Agent name",
-      "agentNamePlaceholder": "Receptionist",
+      "agentNamePlaceholder": "Inbound Agent",
       "openingGreetingLabel": "Opening greeting",
       "openingGreetingHint": "This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge and rules.",
       "greetingPlaceholder": "Thanks for calling. How can I help you today?",
@@ -2209,7 +2210,7 @@
       "all": "All"
     },
     "templateName": {
-      "receptionist": "Receptionist",
+      "receptionist": "Inbound Agent",
       "after_hours": "After-Hours",
       "emergency": "Emergency Line",
       "lead_qualifier": "Sales Caller",
@@ -2220,8 +2221,8 @@
       "scratch": "Custom Agent"
     },
     "greetings": {
-      "receptionist": "Hi, thanks for calling. I'm your AI receptionist — I'll get the right details and make sure nothing is missed.",
-      "after_hours": "Hi, this is your AI receptionist for Recall Touch, handling your calls after hours. How can I help today?",
+      "receptionist": "Hi, thanks for calling. I'm your AI inbound agent — I'll get the right details and make sure nothing is missed.",
+      "after_hours": "Hi, this is your AI inbound agent for Recall Touch, handling your calls after hours. How can I help today?",
       "emergency": "This is your emergency line. I'll move quickly, keep you calm, and make sure the right person is alerted.",
       "lead_qualifier": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step.",
       "follow_up": "Hi, this is your AI following up so nothing falls through the cracks. Can I check in on your last visit?",
@@ -2265,12 +2266,12 @@
       "receptionist": "Thanks for calling. How can I help you today?"
     },
     "defaultAgent": {
-      "name": "Receptionist",
+      "name": "Inbound Agent",
       "simpleGreeting": "Thanks for calling. How can I help you today?",
       "defaultHours": "Mon–Fri 9am–5pm",
       "yourBusiness": "your business",
       "greeting": "Thanks for calling {business}. How can I help you today?",
-      "receptionist": "Receptionist",
+      "receptionist": "Inbound Agent",
       "hasBudget": "Has budget",
       "hasTimeline": "Has timeline",
       "isDecisionMaker": "Is decision maker",
@@ -2592,9 +2593,9 @@
       "download": "Download"
     },
     "empty": {
-      "title": "No calls yet",
-      "description": "Connect your phone number to get started. Calls will appear here with transcripts and summaries.",
-      "connectNumber": "Connect number",
+      "title": "No calls yet. Connect a phone number to start.",
+      "description": "",
+      "connectNumber": "Connect Number",
       "testAgent": "Test your agent",
       "body": "Once your agents start handling calls, you'll see them all here."
     },
@@ -2822,8 +2823,8 @@
       "whatsapp": "WhatsApp"
     },
     "empty": {
-      "title": "Quiet for now",
-      "body": "As your calls, texts, and emails come in, you'll be able to manage every conversation from here.",
+      "title": "No conversations yet.",
+      "body": "Messages appear here after your first call.",
       "cta": "Enable SMS in settings"
     },
     "search": {
@@ -3267,9 +3268,9 @@
       "referral": "Referral"
     },
     "empty": {
-      "title": "No campaigns yet",
+      "title": "No campaigns yet.",
       "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar.",
-      "description": "Create your first campaign to follow up with leads, send appointment reminders, or reactivate old contacts."
+      "description": ""
     },
     "heading": "Campaigns",
     "description": "Reach your leads with automated outbound calls and messages.",
@@ -3307,7 +3308,7 @@
     "saving": "Saving…",
     "creating": "Creating…",
     "saveChanges": "Save changes",
-    "createCampaign": "Create campaign",
+    "createCampaign": "Create Campaign",
     "statusFilter": {
       "all": "All statuses",
       "draft": "Draft",
@@ -3468,12 +3469,12 @@
     },
     "agent": {
       "agentNameLabel": "Agent name",
-      "agentNamePlaceholder": "e.g. Receptionist",
+      "agentNamePlaceholder": "e.g. Inbound Agent",
       "answerPlaceholder": "Answer",
       "backToSettings": "← Back to Settings",
       "businessNameLabel": "Business name",
       "businessNamePlaceholder": "e.g. Acme Corp",
-      "defaultAgentName": "Receptionist",
+      "defaultAgentName": "Inbound Agent",
       "defaultBusiness": "your business",
       "defaultGreeting": "Thanks for calling {business}, how can I help you today?",
       "defaultWorkspaceName": "My Business",
@@ -3753,7 +3754,7 @@
     "agent.businessNameLabel": "Business name",
     "agent.businessNamePlaceholder": "Your business",
     "agent.agentNameLabel": "Agent name",
-    "agent.agentNamePlaceholder": "Receptionist",
+    "agent.agentNamePlaceholder": "Inbound Agent",
     "agent.openingGreetingLabel": "Opening greeting",
     "agent.openingGreetingHelp": "This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge.",
     "agent.greetingPlaceholderDefault": "Thanks for calling {business}. How can I help you today?",
@@ -3772,7 +3773,7 @@
     "agent.startLiveTest": "Start live test",
     "agent.endLiveTest": "End live test",
     "agent.removeAria": "Remove",
-    "agent.defaultAgentName": "Receptionist",
+    "agent.defaultAgentName": "Inbound Agent",
     "agent.defaultGreeting": "Thanks for calling {business}. How can I help?",
     "agent.voicePreviewText": "Thanks for calling. How can I help you today?",
     "agent.defaultBusiness": "your business",
@@ -3805,14 +3806,22 @@
     "notifications.events": {
       "call_received": "Call received",
       "call_receivedDesc": "Every time your AI answers a call",
+      "missed_call": "Missed calls",
+      "missed_callDesc": "When a lead reaches you but your AI cannot connect them to booking",
       "lead_captured": "Lead captured",
       "lead_capturedDesc": "When a caller is identified as a new lead",
       "appointment_booked": "Appointment booked",
       "appointment_bookedDesc": "When your AI books an appointment",
+      "campaign_completed": "Campaign completed",
+      "campaign_completedDesc": "When an outbound campaign finishes its sequence",
       "urgent_call": "Urgent call",
       "urgent_callDesc": "Emergency or high-priority calls",
       "voicemail": "Voicemail left",
-      "voicemailDesc": "When a caller leaves a voicemail"
+      "voicemailDesc": "When a caller leaves a voicemail",
+      "weekly_digest": "Weekly digest",
+      "weekly_digestDesc": "A weekly summary of calls, follow-ups, and outcomes",
+      "billing_alerts": "Billing alerts",
+      "billing_alertsDesc": "When your billing needs attention (failed payment or upcoming changes)"
     },
     "notifications.channels": {
       "push": "Push",
@@ -4664,7 +4673,7 @@
   "footer": {
     "tagline": "AI phone and text communication for businesses that depend on every call.",
     "founderPhotoAlt": "Junior, founder of Recall Touch",
-    "founderName": "Junior",
+    "founderName": "Built by Junior Martin",
     "founderBio": "Founder of Recall Touch. Building AI revenue recovery so businesses never miss revenue.",
     "product": "Product",
     "features": "Features",
@@ -5072,7 +5081,7 @@
     "stepsAria": "Onboarding steps",
     "templates": {
       "receptionist": {
-        "name": "Receptionist",
+        "name": "Inbound Agent",
         "description": "Answers calls, takes messages, and routes callers cleanly.",
         "agentName": "Sarah",
         "greeting": "Thanks for calling. I can help with questions, messages, and getting you to the right next step."
@@ -5887,8 +5896,10 @@
       "vip": "VIP"
     },
     "empty": {
-      "title": "No contacts yet.",
-      "subtitle": "Your AI adds contacts from every call. Manual contacts appear here too.",
+      "title": "No contacts yet. Import a list or wait for your first call.",
+      "subtitle": "",
+      "importCsv": "Import CSV",
+      "connectNumber": "Connect Number",
       "detail": "Select a contact to see call history and notes.",
       "noCallsForContact": "No calls logged yet for this contact."
     },
@@ -6203,7 +6214,7 @@
       "next": "Next →"
     },
     "agent": {
-      "defaultAgentName": "Receptionist",
+      "defaultAgentName": "Inbound Agent",
       "greetingTemplate": "Thanks for calling {business}, how can I help you today?",
       "yourBusiness": "your business",
       "previewVoice": "Preview voice ▶",
@@ -6884,16 +6895,16 @@
   },
   "followUps": {
     "title": "Follow-ups",
-    "create": "Create sequence",
+    "create": "Create Sequence",
     "tabs": {
       "templates": "Templates",
       "active": "Active enrollments"
     },
     "empty": {
-      "templatesTitle": "No follow-up templates yet",
-      "templatesBody": "Create a sequence to automate SMS, email, and call steps after missed calls or bookings.",
-      "activeTitle": "No active enrollments",
-      "activeBody": "When contacts enter a sequence, they appear here. Trigger from a call outcome or booking."
+      "templatesTitle": "No sequences yet.",
+      "templatesBody": "",
+      "activeTitle": "No sequences yet.",
+      "activeBody": ""
     },
     "createPage": {
       "back": "Back to follow-ups",

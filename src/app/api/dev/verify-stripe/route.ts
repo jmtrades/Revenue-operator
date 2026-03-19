@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
       .update({
         billing_status: "trial",
         protection_renewal_at: renewsAt?.toISOString() ?? null,
+        trial_ends_at: trialEndAt?.toISOString() ?? null,
         trial_end_at: trialEndAt?.toISOString() ?? null,
         renews_at: renewsAt?.toISOString() ?? null,
         stripe_subscription_id: subscription.id,
@@ -100,7 +101,7 @@ export async function POST(req: NextRequest) {
     // Verify state
     const { data: updated } = await db
       .from("workspaces")
-      .select("billing_status, trial_end_at, renews_at, stripe_subscription_id")
+      .select("billing_status, trial_ends_at, trial_end_at, renews_at, stripe_subscription_id")
       .eq("id", workspace_id)
       .maybeSingle();
 

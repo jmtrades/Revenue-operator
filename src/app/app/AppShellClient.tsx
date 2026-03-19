@@ -378,7 +378,7 @@ export default function AppShellClient({
           )}
           {mobileSidebarOpen && (
               <div
-                className="fixed inset-0 z-30 bg-black/50 md:hidden"
+                className="fixed inset-0 z-30 bg-[var(--bg-hover)] md:hidden"
                 onClick={() => setMobileSidebarOpen(false)}
                 aria-hidden
               />
@@ -618,7 +618,7 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
               {mobileMoreOpen && (
                 <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t("accessibility.moreMenu")}>
                   <div
-                    className="absolute inset-0 bg-black/60"
+                    className="absolute inset-0 bg-[var(--bg-hover)]"
                     onClick={() => setMobileMoreOpen(false)}
                     onKeyDown={(e) => e.key === "Escape" && setMobileMoreOpen(false)}
                   />
@@ -654,7 +654,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
               )}
               {showShortcuts && (
                 <div
-                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-hover)] backdrop-blur-sm"
                   onClick={() => setShowShortcuts(false)}
                 >
                   <div

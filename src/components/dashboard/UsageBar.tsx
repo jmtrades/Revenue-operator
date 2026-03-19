@@ -41,7 +41,7 @@ export function UsageBar({
       case "warning":
         return "bg-amber-500";
       default:
-        return "bg-white";
+        return "bg-green-500";
     }
   }, [alertLevel]);
 
@@ -51,19 +51,19 @@ export function UsageBar({
     return (
       <div className="space-y-1">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-white">{label}</span>
-          <span className="text-xs text-zinc-400">
+          <span className="text-xs font-medium text-[var(--text-secondary)]">{label}</span>
+          <span className="text-xs text-[var(--text-tertiary)]">
             {used}/{limit}
           </span>
         </div>
-        <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-[var(--bg-hover)] rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all ${barColor}`}
             style={{ width: `${barWidth}%` }}
           />
         </div>
         {alertLevel !== "normal" && (
-          <span className="text-[11px] text-zinc-500">
+          <span className="text-[11px] text-[var(--text-tertiary)]">
             {Math.round(percentage)}% used
           </span>
         )}
@@ -75,7 +75,7 @@ export function UsageBar({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-white">{label}</p>
+          <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
           {showOverage && overageUsed > 0 && (
             <p className="text-xs text-red-400 mt-0.5">
               +{overageUsed} in overage
@@ -83,18 +83,18 @@ export function UsageBar({
           )}
         </div>
         <div className="text-right">
-          <p className="text-sm font-medium text-white">
+          <p className="text-sm font-medium text-[var(--text-primary)]">
             {used}/{limit}
           </p>
           {showPercentage && (
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
               {Math.round(percentage)}% used
             </p>
           )}
         </div>
       </div>
 
-      <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+      <div className="w-full h-2 bg-[var(--bg-hover)] rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all ${barColor}`}
           style={{ width: `${barWidth}%` }}

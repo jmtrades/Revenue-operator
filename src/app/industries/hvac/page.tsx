@@ -4,15 +4,45 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
+const BASE = "https://www.recall-touch.com";
+
 export const metadata = {
   title: "HVAC AI Phone System — Recall Touch",
   description:
     "Capture urgent calls, book service windows, and follow up automatically with an AI phone system built for HVAC.",
+  alternates: { canonical: `${BASE}/industries/hvac` },
 };
 
 export default function HvacIndustryPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
+      { "@type": "ListItem", position: 3, name: "HVAC", item: `${BASE}/industries/hvac` },
+    ],
+  };
+
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "HVAC AI Phone Agent",
+    url: `${BASE}/industries/hvac`,
+    description: "AI phone agent for HVAC teams: answers calls, books service windows, and recovers missed revenue.",
+    address: { "@type": "PostalAddress", addressCountry: "US" },
+  };
+
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
       <Navbar />
       <main className="pt-28 pb-20">
         <Container>
@@ -114,6 +144,9 @@ export default function HvacIndustryPage() {
               </Link>
               <Link href="/demo" className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline">
                 Watch the demo →
+              </Link>
+              <Link href={ROUTES.PRICING} className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline">
+                View pricing →
               </Link>
             </div>
 

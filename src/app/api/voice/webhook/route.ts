@@ -99,20 +99,36 @@ export async function POST(req: NextRequest) {
     // 1. Find and update the call_session record
     const { data: callSession } = await db
       .from("call_sessions")
-      .select("id")
+      .select("id, metadata")
       .eq("workspace_id", payload.workspace_id)
       .eq("external_meeting_id", payload.call_sid)
       .maybeSingle();
 
     if (callSession) {
-      callSessionId = (callSession as { id: string }).id;
+      const callSessionRow = callSession as { id: string; metadata?: Record<string, unknown> | null };
+      callSessionId = callSessionRow.id;
+
+      const existingMetadata = (callSessionRow.metadata ?? {}) as Record<string, unknown>;
+      const isTestCall =
+        existingMetadata.test_call === true || existingMetadata.is_test_call === true;
+      const testAgentId = typeof existingMetadata.agent_id === "string" ? existingMetadata.agent_id : null;
 
       // Update call_sessions with duration, outcome, and transcript metadata
       const updateData: Record<string, unknown> = {
         call_ended_at: new Date().toISOString(),
         duration_seconds: payload.duration_seconds,
         outcome: payload.outcome,
+        // Quality metrics (best-effort from voice webhook payload)
+        answer_latency_ms: null,
+        avg_response_latency_ms: payload.quality_metrics.avg_ttfb_ms,
+        interruption_count: payload.quality_metrics.barge_in_count,
+        fallback_events: [],
+        cost_cents: null,
+        stt_model: null,
+        tts_model: payload.tts_model,
+        llm_model: null,
         metadata: {
+          ...existingMetadata,
           transcript: payload.transcript,
           quality_metrics: payload.quality_metrics,
           usage: payload.usage,
@@ -131,6 +147,14 @@ export async function POST(req: NextRequest) {
           "[voice-webhook] Failed to update call_session:",
           updateError
         );
+      }
+
+      // If this was a test call and it finished successfully, unblock agent go-live.
+      if (isTestCall && payload.outcome === "completed" && testAgentId) {
+        await db
+          .from("agents")
+          .update({ test_call_completed: true, updated_at: new Date().toISOString() })
+          .eq("id", testAgentId);
       }
     } else {
       console.warn(

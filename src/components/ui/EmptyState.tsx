@@ -48,7 +48,7 @@ export function EmptyState({
           <Icon className="h-6 w-6" />
         </div>
       )}
-      <h3 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
+      <h3 className="text-lg font-semibold text-[var(--text-secondary)]">{title}</h3>
       {desc && (
         <p className="mt-2 max-w-md text-sm text-[var(--text-secondary)]">{desc}</p>
       )}
@@ -60,6 +60,7 @@ export function EmptyState({
               size="md"
               onClick={primaryAction.onClick}
               asChild={Boolean(primaryAction.href)}
+              className="px-6 py-3 rounded-xl"
             >
               {primaryAction.href ? <a href={primaryAction.href}>{primaryAction.label}</a> : primaryAction.label}
             </Button>

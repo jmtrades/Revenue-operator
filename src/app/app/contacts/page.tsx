@@ -5,6 +5,8 @@ import { useTranslations } from "next-intl";
 import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Users } from "lucide-react";
 
 type ContactType = "lead" | "customer" | "vip";
 
@@ -283,24 +285,26 @@ export default function AppContactsPage() {
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={() => {
-          resetForm();
-          setShowAdd(true);
-        }}
-        className="sm:hidden mb-3 w-full bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
-      >
-        {t("addContactCta")}
-      </button>
+      {filtered.length > 0 ? (
+        <button
+          type="button"
+          onClick={() => {
+            resetForm();
+            setShowAdd(true);
+          }}
+          className="sm:hidden mb-3 w-full bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
+        >
+          {t("addContactCta")}
+        </button>
+      ) : null}
 
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] py-12 px-6 text-center">
-          <p className="text-sm text-[var(--text-tertiary)] mb-2">{t("empty.title")}</p>
-          <p className="text-xs text-[var(--text-secondary)]">
-            {t("empty.subtitle")}
-          </p>
-        </div>
+        <EmptyState
+          icon={Users}
+          title={t("empty.title")}
+          description={t("empty.subtitle")}
+          primaryAction={{ label: t("empty.importCsv"), href: "/app/leads" }}
+        />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)] gap-4 lg:gap-6 items-start">
           <ul className="space-y-3">

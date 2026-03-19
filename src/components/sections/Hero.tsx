@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
@@ -9,14 +8,14 @@ import { ROUTES } from "@/lib/constants";
 import { ArrowRight } from "lucide-react";
 
 export function Hero() {
-  const tHero = useTranslations("hero");
-
   return (
     <section className="min-h-[80vh] flex items-center pt-24 pb-16 md:pt-28 md:pb-24 bg-[var(--bg-primary)]">
       <Container className="relative z-10">
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
-            <SectionLabel>{tHero("trustLine")}</SectionLabel>
+            <SectionLabel>
+              AI Revenue Operations. Use your existing number. 2-min setup. No credit card.
+            </SectionLabel>
 
             <h1
               className="font-bold max-w-xl mt-4 mb-4"
@@ -26,46 +25,27 @@ export function Hero() {
                 lineHeight: 1.05,
               }}
             >
-              <span className="text-[var(--text-primary)]">
-                Stop Losing Revenue to Missed Calls
-              </span>
-              <br />
-              <span className="text-[var(--text-primary)]">
-                And Broken Follow-Up.
-              </span>
+              Stop Losing Revenue to Missed Calls and Broken Follow-Up.
             </h1>
 
             <p className="text-base md:text-lg max-w-xl mb-4 text-[var(--text-secondary)] leading-relaxed">
-              Recall Touch answers every call, books appointments, and runs automated follow-up
-              that recovers the revenue you&apos;re currently losing. See results in your first week.
+              Recall Touch answers every call, books appointments, and runs automated recovery sequences. See exactly how much revenue you recover — in your first week.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6 mt-6">
               <Link
                 href={ROUTES.START}
-                className="group bg-[var(--accent-primary)] text-white font-semibold rounded-lg px-7 py-3.5 hover:bg-[var(--accent-primary-hover)] transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center gap-2 shadow-[var(--shadow-glow-primary)]"
+                className="group bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center"
               >
-                Start Recovering Revenue — Free for 14 Days
+                Start Free Trial
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
                 href="#how-it-works"
-                className="border border-[var(--border-default)] text-[var(--accent-primary)] font-medium rounded-lg px-5 py-3 hover:bg-[var(--bg-hover)]/60 transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center gap-2"
+                className="border border-zinc-700 text-zinc-300 font-medium rounded-xl px-6 py-3 hover:bg-zinc-100 hover:text-white transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center gap-2"
               >
                 See How It Works
               </Link>
-            </div>
-
-            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-[var(--text-secondary)]">
-              <span>✓ {tHero("checkmark.existingNumber")}</span>
-              <span>✓ {tHero("checkmark.setup")}</span>
-              <span>✓ {tHero("checkmark.noCard")}</span>
-            </div>
-
-            <div className="flex flex-wrap gap-x-5 gap-y-2 mt-6 text-xs text-[var(--text-secondary)]">
-              <span><strong className="text-[var(--text-primary)]">&lt;3 sec</strong> answer time</span>
-              <span><strong className="text-[var(--text-primary)]">24/7</strong> availability</span>
-              <span><strong className="text-[var(--text-primary)]">14-day</strong> free trial</span>
             </div>
           </div>
 
@@ -80,7 +60,7 @@ export function Hero() {
               </p>
               <HeroRevenueWidget />
               <div className="mt-3 text-xs text-[var(--text-secondary)]">
-                {tHero("exampleDashboardLabel")}
+                Example dashboard
               </div>
             </div>
           </div>

@@ -86,6 +86,18 @@ export function Footer() {
             <Link href="/demo" className="block hover:opacity-80 transition-opacity">
               {t("demo")}
             </Link>
+            <Link href="/results" className="block hover:opacity-80 transition-opacity">
+              Results
+            </Link>
+            <Link href="/security" className="block hover:opacity-80 transition-opacity">
+              Security
+            </Link>
+            <Link href="/outbound" className="block hover:opacity-80 transition-opacity">
+              Outbound
+            </Link>
+            <Link href="/enterprise" className="block hover:opacity-80 transition-opacity">
+              Enterprise
+            </Link>
             <Link href={ROUTES.DOCS} className="block hover:opacity-80 transition-opacity">
               {t("docs")}
             </Link>
@@ -103,6 +115,38 @@ export function Footer() {
             <Link href="/contact" className="block hover:opacity-80 transition-opacity">
               {t("contact")}
             </Link>
+            <div className="pt-2">
+              <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
+                Top industries
+              </p>
+              <div className="mt-2 space-y-1">
+                <Link
+                  href="/industries/plumbing-hvac"
+                  className="block hover:opacity-80 transition-opacity"
+                >
+                  Plumbing & HVAC
+                </Link>
+                <Link href="/industries/dental" className="block hover:opacity-80 transition-opacity">
+                  Dental
+                </Link>
+                <Link href="/industries/legal" className="block hover:opacity-80 transition-opacity">
+                  Legal
+                </Link>
+              </div>
+            </div>
+            <div className="pt-2">
+              <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
+                Comparisons
+              </p>
+              <div className="mt-2 space-y-1">
+                <Link href="/compare/smith-ai" className="block hover:opacity-80 transition-opacity">
+                  Smith.ai
+                </Link>
+                <Link href="/compare/ruby" className="block hover:opacity-80 transition-opacity">
+                  Ruby
+                </Link>
+              </div>
+            </div>
           </div>
           <div className="space-y-2 text-sm">
             <p className="font-semibold" style={{ color: "var(--text-primary)" }}>

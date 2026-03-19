@@ -424,8 +424,7 @@ export default function CallsPage() {
             icon={PhoneCall}
             title={t("calls.empty.title")}
             description={t("calls.empty.description")}
-            primaryAction={{ label: `${t("calls.empty.connectNumber")} →`, href: "/app/settings/phone" }}
-            secondaryAction={{ label: `${t("calls.empty.testAgent")} →`, href: "/app/agents" }}
+            primaryAction={{ label: t("calls.empty.connectNumber"), href: "/app/settings/phone" }}
           />
         </div>
       ) : (

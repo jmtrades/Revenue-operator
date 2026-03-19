@@ -1,6 +1,6 @@
 /**
  * POST /api/billing/change-plan — Update subscription to a new plan, or start one (trial → checkout).
- * Body: { workspace_id, plan_id?: string, planId?: string } (plan_id or planId).
+ * Body: { workspace_id, plan_id: string }
  */
 
 export const dynamic = "force-dynamic";
@@ -35,13 +35,19 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
-  const planId = body.plan_id ?? body.planId;
+
+  // Spec: accept only `plan_id`. Reject `planId`.
+  if (Object.prototype.hasOwnProperty.call(body, "planId") && (body as { planId?: unknown }).planId !== undefined) {
+    return NextResponse.json({ ok: false, error: "Use plan_id, not planId" }, { status: 400 });
+  }
+
+  const planId = body.plan_id;
   const { workspace_id } = body;
   if (!workspace_id) return NextResponse.json({ ok: false, error: "workspace_id required" }, { status: 400 });
   const authErr = await requireWorkspaceAccess(req, workspace_id);
   if (authErr) return authErr;
 
-  if (!planId || typeof planId !== "string") return NextResponse.json({ ok: false, error: "plan_id or planId required" }, { status: 400 });
+  if (!planId || typeof planId !== "string") return NextResponse.json({ ok: false, error: "plan_id required" }, { status: 400 });
 
   const tier = PLAN_TO_TIER[planId.toLowerCase()];
   if (!tier) return NextResponse.json({ ok: false, error: "Invalid plan. Use starter, growth, or scale. For Enterprise contact us." }, { status: 400 });

@@ -32,7 +32,9 @@ export function GoLiveStepContent({
 }: GoLiveStepContentProps) {
   const t = useTranslations("agents");
   const r = getReadiness(agent);
+  const testCallCompleted = agent.test_call_completed === true;
   const canActivate =
+    testCallCompleted &&
     !!(agent.name?.trim() && agent.greeting?.trim()) &&
     !!agent.voice?.trim() &&
     (agent.faq?.length ?? 0) >= 3;
@@ -281,7 +283,8 @@ export function GoLiveStepContent({
           onClick={() => void onActivate()}
           disabled={!allowActivate || activating}
           aria-label={t("goLive.activateAgentAria")}
-          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          title={!testCallCompleted ? "Complete your test call to enable Go Live." : undefined}
+          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {activating ? t("goLive.activating") : t("goLive.activateAgent")}
         </button>

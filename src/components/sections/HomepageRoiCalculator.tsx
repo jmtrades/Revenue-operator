@@ -7,12 +7,21 @@ import { ROUTES } from "@/lib/constants";
 
 export function HomepageRoiCalculator() {
   const [monthlyCalls, setMonthlyCalls] = useState(220);
-  const [avgJobValue, setAvgJobValue] = useState(650);
+  const [avgJobValue, setAvgJobValue] = useState(1000);
   const [missedPct, setMissedPct] = useState(22);
+
+  const AVG_VALUE_OPTIONS = [
+    { label: "$200", value: 200 },
+    { label: "$500", value: 500 },
+    { label: "$1,000", value: 1000 },
+    { label: "$2,500", value: 2500 },
+    { label: "$5,000", value: 5000 },
+    { label: "$10,000+", value: 10000 },
+  ] as const;
 
   const { monthlyLost, monthlyRecovered, annualRecovered, paysForItself } = useMemo(() => {
     const calls = Math.max(0, Math.min(4000, monthlyCalls));
-    const value = Math.max(50, Math.min(5000, avgJobValue));
+    const value = Math.max(200, avgJobValue);
     const missed = Math.max(0, Math.min(80, missedPct)) / 100;
 
     const monthlyLostRaw = calls * missed * value;
@@ -64,7 +73,7 @@ export function HomepageRoiCalculator() {
                 lineHeight: 1.7,
               }}
             >
-              Drag the sliders. We estimate monthly revenue leak from missed calls — and what Recall Touch can recover with 24/7 answering and follow-up.
+              Drag the sliders. We estimate monthly revenue leak from missed calls, no-shows, and dead follow-up — and what Recall Touch can recover with 24/7 answering and recovery sequences.
             </p>
             <ul className="mt-6 space-y-2 text-sm">
               <li
@@ -121,7 +130,7 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Missed calls (%)
+                  Revenue leak (%)
                 </span>
                 <div className="flex items-center gap-3 mt-2">
                   <input
@@ -148,27 +157,27 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Average value of a booked job
+                  Average value of a recovered booking
                 </span>
-                <div className="flex items-center gap-3 mt-2">
-                  <input
-                    type="range"
-                    min={50}
-                    max={5000}
-                    step={50}
-                    value={avgJobValue}
-                    onChange={(event) =>
-                      setAvgJobValue(Number(event.target.value))
-                    }
-                    className="flex-1 h-2 rounded-lg cursor-pointer"
-                    style={{ accentColor: "var(--accent-primary)" }}
-                  />
-                  <span
-                    className="text-sm font-medium w-20 text-right tabular-nums"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    ${avgJobValue.toLocaleString()}
-                  </span>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {AVG_VALUE_OPTIONS.map((opt) => {
+                    const selected = avgJobValue === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                          selected
+                            ? "bg-white text-black"
+                            : "border border-zinc-700 text-zinc-300 hover:bg-[var(--bg-inset)]"
+                        }`}
+                        onClick={() => setAvgJobValue(opt.value)}
+                        aria-pressed={selected}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </label>
             </div>
@@ -185,18 +194,21 @@ export function HomepageRoiCalculator() {
                 >
                   losing about ${monthlyLost.toLocaleString()}/month
                 </span>{" "}
-                in missed-call revenue.
+                in revenue leak.
               </p>
               <p style={{ color: "var(--text-secondary)" }}>
-                With Recall Touch answering 24/7, you could recover around{" "}
+                With Recall Touch answering 24/7 and running recovery follow-up, you could recover around{" "}
                 <span
                   className="font-semibold"
                   style={{ color: "var(--accent-primary)" }}
                 >
                   ${monthlyRecovered.toLocaleString()}/month
                 </span>{" "}
-                and ${annualRecovered.toLocaleString()}/year in additional booked
-                work.
+                and ${annualRecovered.toLocaleString()}/year in recovered bookings
+                and no-show rescue.
+              </p>
+              <p style={{ color: "var(--text-secondary)" }}>
+                We base this on your average booking value, then estimate the share that slips away without automated follow-up.
               </p>
               <p style={{ color: "var(--text-primary)" }}>
                 Business plan pays for itself at{" "}

@@ -20,20 +20,22 @@ import {
 const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
-  title: "Outbound Campaigns",
-  description: "Outbound that actually works — built-in compliance, AI setters, and measurable analytics.",
+  title: "AI Outbound Campaigns — Recall Touch",
+  description:
+    "Automated outbound calling with compliance guardrails: suppression rules, business hours enforcement, DNC checks, and measurable revenue outcomes.",
   alternates: { canonical: `${BASE}/outbound` },
   openGraph: {
-    title: "Outbound Campaigns",
-    description: "Outbound that actually works — built-in compliance, AI setters, and measurable analytics.",
+    title: "AI Outbound Campaigns — Recall Touch",
+    description:
+      "Automated outbound calling with compliance guardrails: suppression rules, business hours enforcement, DNC checks, and measurable revenue outcomes.",
     url: `${BASE}/outbound`,
     siteName: "Recall Touch",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Outbound Campaigns",
-    description: "Outbound that actually works — built-in compliance, AI setters, and measurable analytics.",
+    title: "AI Outbound Campaigns — Recall Touch",
+    description: "Automated outbound calling with compliance guardrails and measurable revenue outcomes.",
   },
 };
 
@@ -76,7 +78,7 @@ export default function OutboundPage() {
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <SectionLabel>Outbound</SectionLabel>
-              <h1 className="font-bold text-4xl md:text-6xl leading-tight">Outbound That Actually Works — Without the Manual Grind</h1>
+              <h1 className="font-bold text-4xl md:text-6xl leading-tight">Outbound That Actually Works</h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Create outbound campaigns that call, text, qualify, and book appointments automatically — with compliance guardrails and measurable outcomes in your analytics.
               </p>
@@ -85,13 +87,7 @@ export default function OutboundPage() {
                   href="/activate"
                   className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
                 >
-                  Start Outbound Campaigns — Free for 14 Days
-                </Link>
-                <Link
-                  href="/app/campaigns"
-                  className="inline-flex px-6 py-3 rounded-xl border border-zinc-300 text-[var(--text-primary)] font-semibold hover:bg-[var(--bg-hover)] transition-colors"
-                >
-                  Go to campaigns
+                  Start Free Trial
                 </Link>
               </div>
             </div>
@@ -173,8 +169,9 @@ export default function OutboundPage() {
                 <ul className="mt-6 space-y-3" style={{ color: "var(--text-secondary)" }}>
                   {[
                     "Suppression rules to prevent over-contact and protect conversions",
-                    "Business hours controls to avoid calls at the wrong time",
+                    "Business hours enforcement so calls only happen in your approved window",
                     "DNC registry checks and opt-out handling before any sends",
+                    "Per-contact limits to prevent over-contact and protect conversion quality",
                   ].map((t) => (
                     <li key={t} className="flex gap-3 items-start">
                       <span className="mt-0.5 w-2 h-2 rounded-full" style={{ background: "var(--accent-primary)" }} />
@@ -200,7 +197,7 @@ export default function OutboundPage() {
           <Container>
             <div className="max-w-5xl mx-auto">
               <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
-                Analytics
+                Full Analytics
               </h2>
               <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Measure conversion rates, contact rates, and pipeline value across your outbound mix. Outcomes roll up into dashboards and drive smarter next actions.
@@ -217,21 +214,6 @@ export default function OutboundPage() {
                     <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>{card.v}</p>
                   </div>
                 ))}
-              </div>
-
-              <div className="mt-10 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                  <p className="font-semibold" style={{ color: "var(--text-primary)" }}>Ready to launch your first outbound?</p>
-                  <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                    Start outbound campaigns with a 14-day free trial and measure revenue impact immediately.
-                  </p>
-                </div>
-                <Link
-                  href="/activate"
-                  className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
-                >
-                  Start Outbound Campaigns — Free for 14 Days
-                </Link>
               </div>
             </div>
           </Container>

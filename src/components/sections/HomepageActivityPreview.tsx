@@ -4,15 +4,24 @@ import { useMemo, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
 const CARDS = [
-  { id: "1" as const, type: "lead" as const, name: "Alex Rivera", time: "9:14 AM" },
-  { id: "2" as const, type: "appointment" as const, name: "New patient", time: "9:31 AM" },
+  { id: "1" as const, type: "lead" as const, name: "Mike Johnson", time: "9:14 AM" },
+  { id: "2" as const, type: "appointment" as const, name: "Sarah Chen", time: "9:31 AM" },
   { id: "3" as const, type: "follow-up" as const, name: "James Wilson", time: "10:02 AM" },
 ];
 
 const CARD_STYLES: Record<string, { border: string; badge: string }> = {
-  lead: { border: "border-l-zinc-500", badge: "bg-zinc-800/60 text-blue-400 border-zinc-700" },
-  appointment: { border: "border-l-green-500", badge: "bg-zinc-800/60 text-green-400 border-green-500/20" },
-  "follow-up": { border: "border-l-zinc-500", badge: "bg-zinc-800/60 text-purple-400 border-zinc-700" },
+  lead: {
+    border: "border-l-blue-500",
+    badge: "bg-zinc-900/40 text-blue-300 border-blue-500/30",
+  },
+  appointment: {
+    border: "border-l-green-500",
+    badge: "bg-zinc-900/40 text-green-300 border-green-500/30",
+  },
+  "follow-up": {
+    border: "border-l-purple-500",
+    badge: "bg-zinc-900/40 text-purple-300 border-purple-500/30",
+  },
 };
 
 export function HomepageActivityPreview() {
@@ -30,7 +39,7 @@ export function HomepageActivityPreview() {
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     CARDS.forEach((_, i) => {
-      timers.push(setTimeout(() => setVisible((v) => [...v, i]), 400 + i * 600));
+      timers.push(setTimeout(() => setVisible((v) => [...v, i]), i * 600));
     });
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -51,9 +60,9 @@ export function HomepageActivityPreview() {
         style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)" }}
       >
         <div className="flex gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500/90" />
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-400/90" />
-          <span className="w-2.5 h-2.5 rounded-full bg-green-500/90" />
+          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "rgba(59,130,246,0.9)" }} />
+          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "rgba(34,197,94,0.9)" }} />
+          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "rgba(168,85,247,0.9)" }} />
         </div>
         <span className="text-xs flex-1 text-center" style={{ color: "var(--text-tertiary)" }}>
           {t("title")}
@@ -67,17 +76,23 @@ export function HomepageActivityPreview() {
         <ul className="space-y-3">
           {CARDS.map((card, i) => {
             const style = CARD_STYLES[card.type] ?? { border: "border-l-zinc-500", badge: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20" };
+            const outcomeColor =
+              card.type === "lead"
+                ? "text-blue-400"
+                : card.type === "appointment"
+                  ? "text-green-400"
+                  : "text-purple-400";
             return (
               <li
                 key={card.id}
                 className={`rounded-xl border-l-[3px] overflow-hidden transition-all duration-300 bg-zinc-900/80 border border-zinc-800/50 ${style.border} ${
-                  visible.includes(i) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+                  visible.includes(i) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                 }`}
                 style={{
-                  transitionDelay: visible.includes(i) ? `${i * 100}ms` : "0ms",
+                  transitionDelay: visible.includes(i) ? `${i * 600}ms` : "0ms",
                 }}
               >
-                <div className="p-3 sm:p-4 flex items-start justify-between gap-2">
+                <div className="p-3 flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[10px] text-zinc-500">{card.time}</span>
@@ -88,7 +103,9 @@ export function HomepageActivityPreview() {
                     <p className="text-sm font-semibold text-white mt-1 truncate">{card.name}</p>
                     <p className="text-xs text-zinc-500 truncate mt-0.5">{t(`cards.${card.id}.summary`)}</p>
                   </div>
-                  <span className="text-xs text-green-400 shrink-0 font-medium">{t(`cards.${card.id}.outcome`)}</span>
+                  <span className={`text-xs ${outcomeColor} shrink-0 font-medium`}>
+                    {t(`cards.${card.id}.outcome`)}
+                  </span>
                 </div>
               </li>
             );

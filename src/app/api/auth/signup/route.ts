@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseJsClient } from "@supabase/supabase-js";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import {
   validateEmail,
   validatePasswordForSignup,
@@ -24,6 +25,15 @@ export async function POST(req: NextRequest) {
   if (!url || !anonKey) {
     return NextResponse.json({ error: "Auth not configured", code: "auth_config" }, { status: 503 });
   }
+
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`signup:${ip}`, 5, 3600_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
+  }
+
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
+  const emailRedirectTo = `${origin}/app/onboarding`;
 
   let body: { email?: string; password?: string; businessName?: string };
   try {
@@ -53,7 +63,7 @@ export async function POST(req: NextRequest) {
       const { data: adminData, error: createErr } = await admin.auth.admin.createUser({
         email,
         password,
-        email_confirm: true,
+        email_confirm: false,
         user_metadata: { business_name: businessName },
       });
       if (createErr) {
@@ -101,7 +111,11 @@ export async function POST(req: NextRequest) {
   let data: { user?: { id: string } | null } | undefined;
   let error: { message?: string } | null = null;
   try {
-    const result = await supabase.auth.signUp({ email, password, options: { data: { business_name: businessName } } });
+    const result = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { business_name: businessName }, emailRedirectTo },
+    });
     data = result.data as { user?: { id: string } | null };
     error = result.error;
   } catch {

@@ -175,18 +175,12 @@ function ConversationList({
         {filtered.length === 0 ? (
           <div className="p-8 text-center">
             <MessageSquare className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
-            <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
+            <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               {t("inbox.empty.title")}
             </p>
             <p className="text-xs text-[var(--text-secondary)] mb-4">
               {t("inbox.empty.body")}
             </p>
-            <Link
-              href="/app/settings/integrations"
-              className="text-sm font-medium text-[var(--text-primary)] underline underline-offset-2 hover:no-underline"
-            >
-              {t("inbox.empty.cta")}
-            </Link>
           </div>
         ) : filtered.map((thread) => {
           const Icon = channelIcon(thread.channel);

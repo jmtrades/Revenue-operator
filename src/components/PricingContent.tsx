@@ -30,7 +30,7 @@ const TIERS = [
     annualMonthly: 39,
     annualTotal: 468,
     roi: "$2K–5K/mo",
-    description: "For solo operators who need every call answered and every follow-up sent.",
+    description: "Never miss a call again",
     features: [
       "1 phone number",
       "100 voice minutes/month",
@@ -49,10 +49,10 @@ const TIERS = [
     id: "business",
     name: "Business",
     monthlyPrice: 297,
-    annualMonthly: 247,
-    annualTotal: 2964,
+    annualMonthly: 237,
+    annualTotal: 2844,
     roi: "$5K–15K/mo",
-    description: "The complete revenue closer for a single-location business.",
+    description: "The complete revenue recovery system",
     features: [
       "5 phone numbers",
       "500 voice minutes/month",
@@ -76,10 +76,10 @@ const TIERS = [
     id: "scale",
     name: "Scale",
     monthlyPrice: 997,
-    annualMonthly: 847,
-    annualTotal: 10164,
+    annualMonthly: 797,
+    annualTotal: 9564,
     roi: "$20K–50K/mo",
-    description: "For teams, high volume, and multi-location businesses.",
+    description: "For teams and agencies",
     features: [
       "20 phone numbers",
       "2,000 voice minutes/month",
@@ -103,7 +103,7 @@ const TIERS = [
 
 const ENTERPRISE = {
   name: "Enterprise",
-  description: "Custom pricing, SSO, multi-location, custom voice, dedicated support.",
+  description: "For organizations with 10+ locations",
   features: ["Custom volume", "SSO / SAML", "Multi-location", "Custom compliance", "Dedicated manager", "White label", "Custom integrations"],
 };
 
@@ -136,7 +136,7 @@ const COMPARISON = [
 const FAQS = [
   { q: "Can I upgrade or downgrade anytime?", a: "Yes. Changes take effect on your next billing cycle. No penalties." },
   { q: "What if I exceed my call limit?", a: "Each plan includes its limit. Overage calls cost $0.30/call — or we pause new calls until next month (your choice in settings)." },
-  { q: "Do you offer discounts for annual billing?", a: "Yes. Annual plans save you ~17% vs. monthly. Plus, paying annually gives you priority support." },
+  { q: "Do you offer discounts for annual billing?", a: "Yes. Annual plans save you ~20% vs. monthly. Plus, paying annually gives you priority support." },
   { q: "Is there a setup fee?", a: "No setup fee. Your 14-day free trial gives you full access to all features." },
   { q: "Can I cancel anytime?", a: "Yes. No long-term contracts. Cancel in your dashboard or pause for 30 days. We'll ask why — your feedback matters." },
   { q: "Does Recall Touch integrate with my calendar/CRM?", a: "Yes. Business+ tiers get integrations with Google Calendar, Outlook, Zapier, and Make.com. Enterprise gets custom integrations." },
@@ -316,7 +316,7 @@ export function PricingContent() {
           >
             Annual
             <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              Save 17%
+              Save 20%
             </span>
           </span>
         </div>
@@ -363,6 +363,12 @@ export function PricingContent() {
                 <Calculator className="w-3 h-3" />
                 Expected ROI: {tier.roi}
               </div>
+
+              {tier.id === "business" && (
+                <p className="text-sm mb-6" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                  Business plan pays for itself if you recover just one <strong>$300</strong> appointment per month.
+                </p>
+              )}
 
               <ul className="space-y-2 mb-8 flex-1">
                 {tier.features.map((feat) => (

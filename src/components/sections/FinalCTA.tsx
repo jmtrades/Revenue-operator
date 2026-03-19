@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { Container } from "@/components/ui/Container";
@@ -8,8 +7,6 @@ import { ROUTES } from "@/lib/constants";
 import { ArrowRight, Shield, Clock, CreditCard } from "lucide-react";
 
 export function FinalCTA() {
-  const t = useTranslations("homepage.finalCta");
-
   return (
     <section
       className="marketing-section py-24 md:py-32 relative overflow-hidden"
@@ -17,7 +14,7 @@ export function FinalCTA() {
     >
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-emerald-500/[0.06] blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-white/[0.06] blur-[100px]" />
       </div>
 
       <Container>
@@ -32,7 +29,7 @@ export function FinalCTA() {
 
           <h2 className="font-bold text-3xl md:text-5xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.15, color: "var(--text-primary)" }}>
             Every Day Without Recall Touch Is{" "}
-            <span className="text-emerald-400">Revenue Walking Out the Door.</span>
+            <span className="text-zinc-200">Revenue Walking Out the Door.</span>
           </h2>
 
           <p className="text-lg mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
@@ -43,14 +40,14 @@ export function FinalCTA() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href={ROUTES.START}
-              className="group bg-emerald-500 text-black font-semibold rounded-xl px-8 py-4 hover:bg-emerald-400 transition-all no-underline inline-flex items-center gap-2 shadow-lg shadow-emerald-500/20 text-lg"
+              className="group bg-white text-black font-semibold rounded-xl px-8 py-4 hover:bg-zinc-100 transition-colors no-underline inline-flex items-center gap-2 text-lg"
             >
               Start Your Free Trial Now
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
               href={ROUTES.CONTACT}
-              className="btn-marketing-ghost btn-lg no-underline inline-block px-6 py-4 rounded-xl border border-[var(--border-default)] font-semibold"
+              className="no-underline inline-flex items-center justify-center px-6 py-4 rounded-xl border border-zinc-700 text-zinc-300 font-semibold hover:text-white hover:bg-[var(--bg-inset)] transition-colors"
             >
               Talk to Us
             </Link>

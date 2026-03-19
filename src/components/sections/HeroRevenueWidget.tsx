@@ -5,14 +5,6 @@ import Link from "next/link";
 import { ArrowUpRight, PhoneCall, CalendarCheck, Sparkles, Info } from "lucide-react";
 import { ROUTES } from "@/lib/constants";
 
-function formatCurrency(value: number) {
-  return value.toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
-}
-
 type HeroKpi = {
   label: string;
   value: string;
@@ -26,33 +18,31 @@ export function HeroRevenueWidget() {
     return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
   }, []);
 
-  const recovered = 4217;
-
   const kpis: HeroKpi[] = [
     {
-      label: "Calls answered (example)",
-      value: "127",
+      label: "Calls answered",
+      value: "—",
       icon: PhoneCall,
       tone: "lead",
     },
     {
-      label: "Appointments booked (example)",
-      value: "34",
+      label: "Appointments booked",
+      value: "—",
       icon: CalendarCheck,
       tone: "appointment",
     },
     {
-      label: "Follow-ups executed (example)",
-      value: "412",
+      label: "Follow-ups executed",
+      value: "—",
       icon: Sparkles,
       tone: "followup",
     },
   ];
 
   const toneStyles: Record<HeroKpi["tone"], { border: string; fg: string; bg: string }> = {
-    lead: { border: "border-[var(--border-default)]", fg: "text-blue-600", bg: "bg-blue-50" },
-    appointment: { border: "border-[var(--border-default)]", fg: "text-emerald-600", bg: "bg-emerald-50" },
-    followup: { border: "border-[var(--border-default)]", fg: "text-amber-600", bg: "bg-amber-50" },
+    lead: { border: "border-[var(--border-default)]", fg: "text-blue-500", bg: "bg-[var(--bg-inset)]" },
+    appointment: { border: "border-[var(--border-default)]", fg: "text-green-500", bg: "bg-[var(--bg-inset)]" },
+    followup: { border: "border-[var(--border-default)]", fg: "text-amber-500", bg: "bg-[var(--bg-inset)]" },
   };
 
   return (
@@ -61,15 +51,13 @@ export function HeroRevenueWidget() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]">
-              Example revenue recovered this month
+              Revenue recovered (preview)
             </p>
             <div className="mt-2 flex items-baseline gap-3">
-              <p className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] tabular-nums">
-                {formatCurrency(recovered)}
-              </p>
+              <p className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] tabular-nums">—</p>
               <span className="inline-flex items-center gap-1 text-sm text-[var(--accent-secondary)]">
                 <ArrowUpRight className="h-4 w-4" />
-                Live
+                Populates after your first test call
               </span>
             </div>
             {!prefersReducedMotion && <div className="mt-3 h-1.5 w-28 rounded-full bg-[var(--bg-inset)] overflow-hidden">
@@ -116,7 +104,7 @@ export function HeroRevenueWidget() {
             <Info className="h-3 w-3 text-[var(--text-secondary)]" />
           </span>
           <p className="text-xs text-[var(--text-secondary)]">
-            Illustration only — your real recovered revenue will appear once calls and follow-ups start running.
+            Your dashboard KPIs populate after your first live test call and recovery follow-ups run.
           </p>
         </div>
         <div className="hidden sm:block">

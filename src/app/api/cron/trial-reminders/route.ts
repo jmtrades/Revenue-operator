@@ -161,14 +161,14 @@ export async function GET(req: NextRequest) {
   }
 
   // Trial grace period:
-  // - day14 (trial ends): set workspace.status = 'grace' and keep answering for 3 days
-  // - day17: set workspace.status = 'expired', set billing_status = 'trial_ended', and send reactivation email
+  // - day14 (trial ends): set workspace.status = 'trial_expired' and keep answering for 3 days
+  // - day17: set workspace.status = 'expired', set billing_status = 'trial_ended', and stop answering calls
   // Notes:
   // - Never override paused workspaces (pause_reason present or status === 'paused')
   // - Never expire if the workspace has become active (upgraded during grace)
   const { data: trialStateCandidates } = await db
     .from("workspaces")
-    .select("id, owner_id, trial_end_at, protection_renewal_at, created_at, status, pause_reason, billing_status")
+    .select("id, owner_id, trial_ends_at, status, pause_reason, billing_status")
     .limit(500);
 
   let graceStarted = 0;
@@ -178,9 +178,7 @@ export async function GET(req: NextRequest) {
     const ws = row as {
       id: string;
       owner_id: string;
-      trial_end_at?: string | null;
-      protection_renewal_at?: string | null;
-      created_at?: string;
+      trial_ends_at?: string | null;
       status?: string | null;
       pause_reason?: string | null;
       billing_status?: string | null;
@@ -190,13 +188,8 @@ export async function GET(req: NextRequest) {
     if (ws.pause_reason) continue;
     if (ws.status === "paused") continue;
 
-    const trialEndMs = ws.trial_end_at
-      ? new Date(ws.trial_end_at).getTime()
-      : ws.protection_renewal_at
-        ? new Date(ws.protection_renewal_at).getTime()
-        : ws.created_at
-          ? new Date(new Date(ws.created_at).getTime() + 14 * 24 * 60 * 60 * 1000).getTime()
-          : null;
+    // Canonical trial end is stored at creation time (`trial_ends_at`).
+    const trialEndMs = ws.trial_ends_at ? new Date(ws.trial_ends_at).getTime() : null;
     if (!trialEndMs || Number.isNaN(trialEndMs)) continue;
 
     const inGraceWindow = nowMs >= trialEndMs && nowMs < trialEndMs + GRACE_MS;
@@ -204,7 +197,7 @@ export async function GET(req: NextRequest) {
 
     const isActiveBilling = ws.billing_status === "active";
 
-    if (ws.status === "grace") {
+    if (ws.status === "trial_expired") {
       if (pastGraceWindow && !isActiveBilling) {
         const ownerId = ws.owner_id;
         const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
@@ -231,10 +224,10 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    if (ws.status !== "grace" && ws.status !== "expired") {
+    if (ws.status !== "trial_expired" && ws.status !== "expired") {
       // Start grace on day14 when still not upgraded.
       if (inGraceWindow && !isActiveBilling) {
-        await db.from("workspaces").update({ status: "grace", updated_at: now.toISOString() }).eq("id", ws.id);
+        await db.from("workspaces").update({ status: "trial_expired", updated_at: now.toISOString() }).eq("id", ws.id);
         graceStarted++;
       }
     }

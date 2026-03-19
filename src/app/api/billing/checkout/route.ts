@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
     }
 
     const tier = (body.tier ?? "solo").toString().trim() || "solo";
@@ -52,18 +52,26 @@ export async function POST(req: NextRequest) {
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
       log("checkout_failed", { reason: "missing_stripe_key" });
-      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
     const origin = effectiveOrigin(req);
     if (!origin) {
       log("checkout_failed", { reason: "missing_app_url" });
-      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
 
     const priceResult = await getPriceId(tier, interval);
     if (!priceResult.ok) {
       log("checkout_failed", { reason: priceResult.reason, tier, interval });
-      return NextResponse.json({ ok: false, reason: priceResult.reason }, { status: 200 });
+      const status =
+        priceResult.reason === "invalid_tier" || priceResult.reason === "invalid_interval"
+          ? 400
+          : priceResult.reason === "stripe_unreachable"
+            ? 500
+            : priceResult.reason === "missing_price_id" || priceResult.reason === "wrong_price_mode"
+              ? 503
+              : 500;
+      return NextResponse.json({ ok: false, reason: priceResult.reason }, { status });
     }
     const stripePriceId = priceResult.price_id;
 
@@ -71,7 +79,7 @@ export async function POST(req: NextRequest) {
     const email = body.email?.trim();
     
     if (!workspaceId && !email) {
-      return NextResponse.json({ ok: false, reason: "workspace_id_or_email_required" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_id_or_email_required" }, { status: 400 });
     }
 
     if (workspaceId) {
@@ -106,6 +114,8 @@ export async function POST(req: NextRequest) {
           kill_switch: false,
           billing_status: "trial",
           protection_renewal_at: trialEnd.toISOString(),
+          trial_ends_at: trialEnd.toISOString(),
+          trial_end_at: trialEnd.toISOString(),
         });
         
         await db.from("settings").insert({
@@ -133,7 +143,7 @@ export async function POST(req: NextRequest) {
     
     if (!finalWorkspaceId) {
       log("checkout_failed", { reason: "workspace_not_found" });
-      return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 404 });
     }
 
     // Idempotency: check if workspace already has active/trial subscription
@@ -145,7 +155,7 @@ export async function POST(req: NextRequest) {
     
     if (!ws) {
       log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "workspace_not_found" });
-      return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 404 });
     }
 
     const wsData = ws as { billing_status?: string; stripe_subscription_id?: string | null };
@@ -198,7 +208,7 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         const message = err instanceof Error ? err.message : "unknown_error";
         log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed", error: message });
-        return NextResponse.json({ ok: false, reason: "customer_create_failed" }, { status: 502 });
+          return NextResponse.json({ ok: false, reason: "customer_create_failed" }, { status: 500 });
       }
     } else {
       await stripe.customers
@@ -237,11 +247,11 @@ export async function POST(req: NextRequest) {
     } catch (stripeError) {
       const errorMessage = stripeError instanceof Error ? stripeError.message : "Stripe checkout failed";
       log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "subscription_create_failed", error: errorMessage });
-      return NextResponse.json({ ok: false, reason: "subscription_create_failed" }, { status: 502 });
+      return NextResponse.json({ ok: false, reason: "subscription_create_failed" }, { status: 500 });
     }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     log("checkout_failed", { reason: "unexpected_error", error: errorMessage });
-    return NextResponse.json({ ok: false, reason: "unexpected_error" }, { status: 502 });
+    return NextResponse.json({ ok: false, reason: "unexpected_error" }, { status: 500 });
   }
 }

@@ -33,7 +33,7 @@ const SECTION_KEY_MAP: Record<(typeof SECTION_IDS)[number], { title: string; des
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("productPage");
   return {
-    title: t("metaTitle"),
+    title: `${t("metaTitle")} — Recall Touch`,
     description: t("metaDescription"),
   };
 }
@@ -49,6 +49,54 @@ const productJsonLd = {
 
 export default async function ProductPage() {
   const t = await getTranslations("productPage");
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 2, name: "Product", item: `${BASE}/product` },
+    ],
+  };
+
+  const howToJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "Go live with Recall Touch",
+    description: "Set up your AI phone agent in minutes. Answer calls, book appointments, and recover missed revenue with automated follow-up.",
+    totalTime: "PT5M",
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Choose your industry & configure defaults",
+        text: "Select an industry and configure your greeting, hours, and routing rules.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Connect your number",
+        text: "Forward your existing business number or buy a new one and make sure calls reach your agent.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Run a test call",
+        text: "Trigger a real test call. Verify the greeting and the outcomes the agent captures.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 4,
+        name: "Approve or adjust",
+        text: "Approve what the agent should say, and refine follow-up and booking behavior as needed.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 5,
+        name: "Go live",
+        text: "Enable live answering. Your AI runs 24/7 and books appointments with reminders and no-show recovery.",
+      },
+    ],
+  };
 
   return (
     <div
@@ -56,6 +104,14 @@ export default async function ProductPage() {
       style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
     >
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
       <Navbar />
       <main className="pt-28 pb-24">
         <Container>
