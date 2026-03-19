@@ -64,10 +64,18 @@ export default async function HomePage() {
             mainEntity: [
               {
                 "@type": "Question",
-                name: "How is this different from an AI receptionist?",
+                name: "What exactly does Recall Touch do?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "An AI receptionist answers calls and takes messages. Recall Touch answers calls AND runs automated recovery sequences until the revenue is recovered — appointment booking, no-show recovery, reactivation campaigns, quote chasing, and ROI proof in your dashboard. The follow-up is what pays for itself.",
+                  text: "Recall Touch is an AI revenue operations platform. It handles inbound and outbound communication, automated follow-up sequences, appointment booking, lead qualification, escalation to your team, and full revenue attribution.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Who is this for?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Any business or team that generates revenue through conversations. Solo consultants, sales teams, agencies, service businesses, clinics, law firms, real estate teams, recruiters, multi-location operators, and more.",
                 },
               },
               {
@@ -75,15 +83,7 @@ export default async function HomePage() {
                 name: "Do I need to replace my CRM?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "No. Recall Touch is the execution layer. Keep your CRM; we focus on answering, booking, follow-ups, and proof of ROI.",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "How fast can I be live?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "Most workspaces can be live in minutes: choose an industry, connect your number (or add one), and run a test call. You can refine scripts and follow-ups after you’ve seen it work.",
+                  text: "No. Recall Touch is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record.",
                 },
               },
               {
@@ -91,23 +91,23 @@ export default async function HomePage() {
                 name: "Is there a free trial?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Yes — 14 days. No credit card required.",
+                  text: "Yes. 14 days. No credit card required. Full access to all features on your plan.",
                 },
               },
               {
                 "@type": "Question",
-                name: "Can I use my existing business number?",
+                name: "Does this work for outbound too?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Yes. You can keep your number and forward calls, or add new numbers as needed.",
+                  text: "Yes. Recall Touch supports 10 outbound campaign types including speed-to-lead, appointment setting, reactivation, quote follow-up, and cold outreach with full compliance and attribution.",
                 },
               },
               {
                 "@type": "Question",
-                name: "How do you prevent spammy automation?",
+                name: "How do you prevent bad automation?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Guardrails: per-contact limits, quiet hours, opt-outs, and reviewable actions. You can require approval before anything sends.",
+                  text: "Every agent has configurable guardrails: per-contact frequency limits, business hours enforcement, opt-out compliance, confidence thresholds, and human escalation rules. Every action is logged and reviewable.",
                 },
               },
             ],

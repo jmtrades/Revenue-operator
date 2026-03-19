@@ -4491,8 +4491,8 @@
     },
     "industries": {
       "label": "Industries",
-      "heading": "See how it works across industries",
-      "subheading": "Recall Touch adapts to any business that takes phone calls. Here are a few examples.",
+      "heading": "Built for every business that generates revenue",
+      "subheading": "From solo consultants to enterprise sales teams. Recall Touch adapts to your workflows, your rules, and your revenue goals.",
       "industries": {
         "plumbing": {
           "name": "HVAC",
@@ -4514,21 +4514,21 @@
           "name": "Dental",
           "desc": "Book patients. Insurance verification. Recall reminders."
         },
-          "roofing": {
-            "name": "Roofing",
-            "desc": "Storm and inspection requests move fast. Miss the call and the next contractor gets the lead."
-          },
-          "medspa": {
-            "name": "Med Spa",
-            "desc": "When clients want results, speed wins. Missed calls lead to lost bookings and reactivation delays."
-          },
-          "recruiting": {
-            "name": "Recruiting",
-            "desc": "Top candidates expect instant responses. Delayed follow-up costs interviews, not just applicants."
-          },
+        "roofing": {
+          "name": "Roofing",
+          "desc": "Storm and inspection requests move fast. Miss the call and the next contractor gets the lead."
+        },
+        "medspa": {
+          "name": "Med Spa",
+          "desc": "When clients want results, speed wins. Missed calls lead to lost bookings and reactivation delays."
+        },
+        "recruiting": {
+          "name": "Recruiting",
+          "desc": "Top candidates expect instant responses. Delayed follow-up costs interviews, not just applicants."
+        },
         "custom": {
-          "name": "Your industry",
-          "desc": "Don't see your business? Recall Touch works for any company that answers a phone."
+          "name": "Every other business",
+          "desc": "If your business generates revenue through conversations, Recall Touch runs your operations. Any industry. Any size."
         }
       }
     },

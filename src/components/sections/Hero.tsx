@@ -29,7 +29,7 @@ export function Hero() {
             </h1>
 
             <p className="text-base md:text-lg max-w-xl mb-4 text-[var(--text-secondary)] leading-relaxed">
-              Recall Touch answers calls, follows up automatically, books appointments, and recovers no-shows so every revenue opportunity is captured and tracked.
+              Recall Touch runs your entire revenue operation — inbound, outbound, follow-up, booking, and attribution — so every opportunity converts and every dollar is accounted for.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6 mt-6">

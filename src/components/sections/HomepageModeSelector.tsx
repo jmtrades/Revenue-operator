@@ -19,23 +19,23 @@ const MODES: Array<{
   {
     key: "solo",
     name: "Solo",
-    description: "Stay on top of every callback, quote, and follow-up — without juggling tools.",
+    description: "Automate your communication and follow-up so nothing falls through the cracks.",
     icon: User,
-    bullets: ["Personal follow-ups", "Missed-call capture", "Simple ROI view"],
+    bullets: ["Automated follow-up sequences", "Opportunity capture", "Revenue dashboard"],
   },
   {
     key: "sales",
     name: "Sales",
-    description: "Systemize speed-to-lead and follow-up so your pipeline doesn’t stall.",
+    description: "Run outbound campaigns, qualify leads, and book meetings at scale.",
     icon: BriefcaseBusiness,
-    bullets: ["Lead routing + tasks", "Sequences + nudges", "Response-time visibility"],
+    bullets: ["Lead routing + qualification", "Outbound sequences", "Pipeline attribution"],
   },
   {
     key: "business",
     name: "Business",
-    description: "Answer every call, book appointments, reduce no-shows, and recover lost revenue.",
+    description: "Full revenue operations — inbound, outbound, booking, follow-up, and attribution.",
     icon: Building2,
-    bullets: ["AI revenue recovery engine", "Booking + reminders", "Recovery workflows"],
+    bullets: ["AI revenue operations engine", "Booking + reminders + escalation", "Full revenue attribution"],
   },
 ];
 

@@ -64,7 +64,7 @@ export function HomepageRoiCalculator() {
                 color: "var(--text-primary)",
               }}
             >
-              See how much revenue you can recover.
+              Calculate your revenue operations gap.
             </h2>
             <p
               className="text-sm md:text-base max-w-xl"
