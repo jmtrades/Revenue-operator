@@ -29,6 +29,22 @@ export interface HandleInboundCallParams {
   callerPhone: string;
 }
 
+const CONCURRENT_CALL_LIMITS: Record<string, number> = {
+  solo: 2,
+  business: 10,
+  growth: 10,
+  scale: 25,
+  team: 25,
+  enterprise: 100,
+};
+
+function normalizeTier(tier: string | null | undefined): string {
+  const value = (tier ?? "solo").toLowerCase();
+  if (value === "starter") return "solo";
+  if (value === "pro") return "business";
+  return value;
+}
+
 /**
  * Check if workspace has capacity for another voice call.
  * Returns { allowed: boolean, remaining: number }
@@ -45,21 +61,13 @@ async function checkVoiceTierLimits(
     .eq("id", workspaceId)
     .maybeSingle();
 
-  const tier = (workspace as { billing_tier?: string } | null)?.billing_tier ?? "free";
-
-  // Map billing tier to concurrent call limit
-  const tierLimits: Record<string, number> = {
-    free: 1,
-    pro: 5,
-    enterprise: 50,
-  };
-
-  const maxConcurrent = tierLimits[tier] ?? 1;
+  const tier = normalizeTier((workspace as { billing_tier?: string } | null)?.billing_tier);
+  const maxConcurrent = CONCURRENT_CALL_LIMITS[tier] ?? 2;
 
   // Check current concurrent calls
   const { count } = await db
     .from("call_sessions")
-    .select("id", { count: "exact" })
+    .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
     .is("call_ended_at", null);
 
@@ -284,22 +292,50 @@ export async function handleInboundCall(
   params: HandleInboundCallParams
 ): Promise<string> {
   const db = getDb();
+  const busyVoicemailTwiml =
+    '<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">All agents are busy. Please hold or leave a message after the tone.</Say><Record maxLength="120" playBeep="true" /></Response>';
+
+  // 0) Workspace guardrails before call processing.
+  const { data: workspace } = await db
+    .from("workspaces")
+    .select("billing_status, status, billing_tier")
+    .eq("id", params.workspaceId)
+    .maybeSingle();
+  const ws = workspace as {
+    billing_status?: string | null;
+    status?: string | null;
+    billing_tier?: string | null;
+  } | null;
+  const billingStatus = ws?.billing_status ?? "trial";
+  const workspaceStatus = ws?.status ?? "active";
+  const billingAllowed =
+    billingStatus === "active" ||
+    billingStatus === "trial" ||
+    billingStatus === "trial_expired";
+  const statusAllowed = workspaceStatus !== "paused" && workspaceStatus !== "payment_failed";
+  if (!billingAllowed || !statusAllowed) {
+    return busyVoicemailTwiml;
+  }
+
+  const { count: activeAgentCount } = await db
+    .from("agents")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", params.workspaceId);
+  if ((activeAgentCount ?? 0) < 1) {
+    return busyVoicemailTwiml;
+  }
 
   // 1. Check tier limits
   const tierCheck = await checkVoiceTierLimits(params.workspaceId);
   if (!tierCheck.allowed) {
-    console.warn(
-      `[call-flow] Workspace ${params.workspaceId} exceeds concurrent call limit`
-    );
-    // Return simple fallback TwiML
-    return `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Sorry, all lines are busy. Please call back later.</Say></Response>`;
+    return busyVoicemailTwiml;
   }
 
   // 2. Check for active A/B test and assign variant
   const voiceIdOverride = await getAbTestVariant(params.workspaceId);
 
   // 3. Get workspace voice config
-  const { data: workspace } = await db
+  const { data: workspaceVoiceConfig } = await db
     .from("workspaces")
     .select("default_voice_id")
     .eq("id", params.workspaceId)
@@ -307,7 +343,7 @@ export async function handleInboundCall(
 
   const voiceId =
     voiceIdOverride ||
-    (workspace as { default_voice_id?: string | null } | null)
+    (workspaceVoiceConfig as { default_voice_id?: string | null } | null)
       ?.default_voice_id ||
     process.env.DEFAULT_VOICE_ID ||
     "us-female-warm-receptionist";

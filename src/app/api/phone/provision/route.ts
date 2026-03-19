@@ -77,17 +77,31 @@ export async function POST(req: NextRequest) {
 
   let providerSid: string | null = null;
   if (telephonyProvider === "telnyx") {
-    const { providerSid: telnyxSid } = await purchaseTelnyxPhoneNumber({
-      phoneNumberE164: e164,
-      countryCode: country || "US",
-      phoneType: (number_type ?? "local") as "local" | "toll_free" | "mobile",
-    });
+    try {
+      const { providerSid: telnyxSid } = await purchaseTelnyxPhoneNumber({
+        phoneNumberE164: e164,
+        countryCode: country || "US",
+        phoneType: (number_type ?? "local") as "local" | "toll_free" | "mobile",
+      });
 
-    providerSid = telnyxSid;
-    if (!providerSid) {
+      providerSid = telnyxSid;
+      if (!providerSid) {
+        return NextResponse.json(
+          {
+            error: "Phone number purchase failed. This is temporary — try again in a few minutes.",
+            code: "TELNYX_TEMPORARY_FAILURE",
+          },
+          { status: 502 },
+        );
+      }
+    } catch (err) {
+      console.error("[provision] Telnyx purchase failed:", err instanceof Error ? err.message : err);
       return NextResponse.json(
-        { error: "Telnyx provisioning failed. Contact support or verify TELNYX_* env vars." },
-        { status: 502 }
+        {
+          error: "Phone number purchase failed. This is temporary — try again in a few minutes.",
+          code: "TELNYX_TEMPORARY_FAILURE",
+        },
+        { status: 502 },
       );
     }
   } else if (accountSid && authToken) {

@@ -212,6 +212,12 @@ async function handleStripeWebhookEvent(
           status: "active",
           paused_at: null,
           pause_reason: null,
+          pending_billing_tier: null,
+          pending_billing_effective_at: null,
+          dunning_amount_due_cents: null,
+          dunning_currency: null,
+          dunning_next_retry_at: null,
+          dunning_failure_count: 0,
           updated_at: new Date().toISOString(),
         };
         if (tierInterval) {
@@ -455,6 +461,17 @@ async function handleStripeWebhookEvent(
       if (workspaceId) {
         await resolvePaymentObligationsBySubject(workspaceId, "subscription", invoice.id, "paid");
         await resolvePaymentObligationsBySubject(workspaceId, "invoice", invoice.id, "paid");
+          const { data: ws } = await db
+            .from("workspaces")
+            .select("pending_billing_tier, pending_billing_effective_at")
+            .eq("id", workspaceId)
+            .maybeSingle();
+          const pendingTier = (ws as { pending_billing_tier?: string | null } | null)?.pending_billing_tier ?? null;
+          const pendingEffectiveAt = (ws as { pending_billing_effective_at?: string | null } | null)?.pending_billing_effective_at ?? null;
+          const shouldApplyPendingTier =
+            Boolean(pendingTier) &&
+            Boolean(pendingEffectiveAt) &&
+            new Date(pendingEffectiveAt as string).getTime() <= Date.now();
         if (subscriptionId) {
           const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
           const sub = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription & { current_period_end?: number };
@@ -465,6 +482,12 @@ async function handleStripeWebhookEvent(
               billing_status: "active",
               renews_at: periodEnd?.toISOString() ?? null,
               protection_renewal_at: periodEnd?.toISOString() ?? null,
+                ...(shouldApplyPendingTier ? { billing_tier: pendingTier } : {}),
+                ...(shouldApplyPendingTier ? { pending_billing_tier: null, pending_billing_effective_at: null } : {}),
+                dunning_amount_due_cents: null,
+                dunning_currency: null,
+                dunning_next_retry_at: null,
+                dunning_failure_count: 0,
               updated_at: new Date().toISOString(),
             })
             .eq("id", workspaceId);
@@ -511,6 +534,22 @@ async function handleStripeWebhookEvent(
         const dueAt = invoice.due_date
           ? new Date(invoice.due_date * 1000)
           : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        const nextRetryAt =
+          typeof (invoice as Stripe.Invoice & { next_payment_attempt?: number | null }).next_payment_attempt === "number"
+            ? new Date(
+                ((invoice as Stripe.Invoice & { next_payment_attempt?: number | null }).next_payment_attempt as number) * 1000,
+              ).toISOString()
+            : null;
+        await db
+          .from("workspaces")
+          .update({
+            dunning_amount_due_cents: invoice.amount_due ?? 0,
+            dunning_currency: (invoice.currency ?? "usd").toLowerCase(),
+            dunning_next_retry_at: nextRetryAt,
+            dunning_failure_count: failureNumber,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", workspaceId);
         createPaymentObligation({
           workspaceId,
           subjectType: "subscription",

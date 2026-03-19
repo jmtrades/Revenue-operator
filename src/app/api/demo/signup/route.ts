@@ -82,9 +82,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Log the conversion for analytics
-    console.log(`Voice demo signup: ${email} (${industry})`);
-
     return NextResponse.json({ ok: true, message: "Signup captured successfully" });
   } catch (error) {
     console.error("Signup endpoint error:", error);

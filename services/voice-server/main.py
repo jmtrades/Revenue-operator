@@ -12,6 +12,8 @@ Architecture:
   Audio: 24kHz internal → 8kHz mu-law for Twilio transport
 """
 
+# UNTESTED — requires GPU deployment and real call verification
+
 import asyncio
 import base64
 import io

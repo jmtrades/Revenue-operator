@@ -31,6 +31,15 @@ export default function AppSettingsBillingPage() {
   });
   const [billingStatus, setBillingStatus] = useState<string | null>(null);
   const [renewalAt, setRenewalAt] = useState<string | null>(null);
+  const [pendingTier, setPendingTier] = useState<string | null>(null);
+  const [pendingEffectiveAt, setPendingEffectiveAt] = useState<string | null>(null);
+  const [downgradeWarning, setDowngradeWarning] = useState<string | null>(null);
+  const [dunning, setDunning] = useState<{
+    amount_due_cents: number;
+    currency: string;
+    next_retry_at: string | null;
+    failure_count: number;
+  } | null>(null);
   const [currentPlanId, setCurrentPlanId] = useState<PlanId>("starter");
   const [planChangeOpen, setPlanChangeOpen] = useState(false);
   const [pausing, setPausing] = useState(false);
@@ -73,10 +82,38 @@ export default function AppSettingsBillingPage() {
         }
         return res.json();
       })
-      .then((data: { billing_status?: string; renewal_at?: string | null; billing_tier?: string; minutes_used?: number; minutes_limit?: number } | null) => {
+      .then((data: {
+        billing_status?: string;
+        renewal_at?: string | null;
+        billing_tier?: string;
+        minutes_used?: number;
+        minutes_limit?: number;
+        pending_billing_tier?: string | null;
+        pending_billing_effective_at?: string | null;
+        downgrade_warning?: string | null;
+        dunning?: {
+          amount_due_cents?: number;
+          currency?: string;
+          next_retry_at?: string | null;
+          failure_count?: number;
+        } | null;
+      } | null) => {
         if (!data || controller.signal.aborted) return;
         setBillingStatus(data?.billing_status ?? "trial");
         setRenewalAt(data?.renewal_at ?? null);
+        setPendingTier(data?.pending_billing_tier ?? null);
+        setPendingEffectiveAt(data?.pending_billing_effective_at ?? null);
+        setDowngradeWarning(data?.downgrade_warning ?? null);
+        setDunning(
+          data?.dunning
+            ? {
+                amount_due_cents: data.dunning.amount_due_cents ?? 0,
+                currency: (data.dunning.currency ?? "usd").toLowerCase(),
+                next_retry_at: data.dunning.next_retry_at ?? null,
+                failure_count: data.dunning.failure_count ?? 0,
+              }
+            : null,
+        );
         if (typeof data.minutes_used === "number") {
           setUsage((prev) => ({ ...prev, minutes_used: data.minutes_used ?? prev.minutes_used, minutes_limit: data.minutes_limit ?? prev.minutes_limit }));
         }
@@ -163,6 +200,52 @@ export default function AppSettingsBillingPage() {
           <Link href="/app/settings" className="inline-block mt-2 text-sm font-medium underline underline-offset-2">{tBilling("backToSettingsLink")}</Link>
         </div>
       )}
+      {billingStatus === "payment_failed" && dunning && (
+        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-100 text-sm mb-4">
+          <p className="font-semibold">Payment failed. Billing needs attention.</p>
+          <p className="mt-1">
+            Amount due: {(dunning.amount_due_cents / 100).toLocaleString(undefined, {
+              style: "currency",
+              currency: (dunning.currency || "usd").toUpperCase(),
+            })}.
+          </p>
+          <p className="mt-1">
+            Retry attempts: {dunning.failure_count}
+            {dunning.next_retry_at ? ` · Next retry: ${new Date(dunning.next_retry_at).toLocaleString()}` : ""}
+          </p>
+          <button
+            type="button"
+            onClick={async () => {
+              if (!workspaceId) return;
+              try {
+                const res = await fetch("/api/billing/portal", {
+                  method: "POST",
+                  credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ workspace_id: workspaceId, return_url: window.location.href }),
+                });
+                if (!res.ok) { setToast(tBilling("toast.paymentFailed")); return; }
+                const data = (await res.json().catch(() => null)) as { url?: string } | null;
+                if (data?.url) window.location.href = data.url;
+                else setToast(tBilling("toast.paymentFailed"));
+              } catch {
+                setToast(tBilling("toast.paymentFailed"));
+              }
+            }}
+            className="mt-3 px-4 py-2 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100"
+          >
+            Update Payment Method
+          </button>
+        </div>
+      )}
+      {pendingTier && (
+        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-100 text-sm mb-4">
+          <p className="font-medium">
+            Plan downgrade scheduled for {pendingEffectiveAt ? new Date(pendingEffectiveAt).toLocaleDateString() : "your next billing date"}.
+          </p>
+          {downgradeWarning && <p className="mt-1 text-amber-200/90">{downgradeWarning}</p>}
+        </div>
+      )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
         {billingStatus === null ? (
           <div className="animate-pulse space-y-2">
@@ -229,7 +312,7 @@ export default function AppSettingsBillingPage() {
         currentPlanId={currentPlanId}
         isOpen={planChangeOpen}
         onClose={() => setPlanChangeOpen(false)}
-        onSuccess={() => setToast(tBilling("toast.planUpdated"))}
+        onSuccess={(_, message) => setToast(message ?? tBilling("toast.planUpdated"))}
         workspaceId={workspaceId}
       />
         <p className="text-xs text-[var(--text-secondary)] mb-4">

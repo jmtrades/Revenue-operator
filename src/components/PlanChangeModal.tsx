@@ -29,7 +29,7 @@ type PlanChangeModalProps = {
   currentPlanId: PlanId;
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: (planName: string) => void;
+  onSuccess?: (planName: string, message?: string) => void;
   workspaceId: string | null;
 };
 
@@ -91,6 +91,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
         error?: string;
         checkout_url?: string;
         message?: string;
+        scheduled?: boolean;
       } | null;
       if (data?.checkout_url) {
         window.location.href = data.checkout_url;
@@ -105,7 +106,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
         );
         return;
       }
-      onSuccess?.(selectedPlan?.name ?? selected);
+      onSuccess?.(selectedPlan?.name ?? selected, data?.message);
       onClose();
       // Soft refresh — refetch data without full page reload
       if (typeof window !== "undefined" && "navigation" in window) {

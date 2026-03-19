@@ -60,6 +60,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/contact`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
     { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${BASE}/terms`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
+    { url: `${BASE}/terms/voice-cloning`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 },
   ];
   for (const slug of BLOG_SLUGS) {

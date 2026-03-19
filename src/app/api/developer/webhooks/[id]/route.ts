@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -92,6 +93,9 @@ export async function PATCH(
   req: NextRequest,
   ctx: { params: Promise<{ id: string }> }
 ) {
+  const csrfErr = assertSameOrigin(req);
+  if (csrfErr) return csrfErr;
+
   const { id } = await ctx.params;
   const ownership = await ensureOwnership(req, id);
   if (ownership instanceof NextResponse) return ownership;
@@ -142,6 +146,9 @@ export async function DELETE(
   _req: NextRequest,
   ctx: { params: Promise<{ id: string }> }
 ) {
+  const csrfErr = assertSameOrigin(_req);
+  if (csrfErr) return csrfErr;
+
   const { id } = await ctx.params;
   const ownership = await ensureOwnership(_req, id);
   if (ownership instanceof NextResponse) return ownership;

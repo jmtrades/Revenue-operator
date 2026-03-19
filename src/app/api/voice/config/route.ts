@@ -115,10 +115,13 @@ export async function PUT(req: NextRequest) {
       .update({ channel_rules: updatedRules, updated_at: new Date().toISOString() })
       .eq("workspace_id", workspaceId)
       .select("channel_rules")
-      .single();
+      .maybeSingle();
 
     if (updateError) {
       console.error("[API] voice config PUT error:", updateError);
+      return NextResponse.json({ error: "Failed to update config" }, { status: 500 });
+    }
+    if (!updatedSettings) {
       return NextResponse.json({ error: "Failed to update config" }, { status: 500 });
     }
 

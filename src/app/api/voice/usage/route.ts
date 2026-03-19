@@ -181,10 +181,13 @@ export async function POST(req: NextRequest) {
         },
       ])
       .select()
-      .single();
+      .maybeSingle();
 
     if (insertError) {
       console.error("[API] voice usage POST error:", insertError);
+      return NextResponse.json({ error: "Failed to record usage" }, { status: 500 });
+    }
+    if (!usage) {
       return NextResponse.json({ error: "Failed to record usage" }, { status: 500 });
     }
 

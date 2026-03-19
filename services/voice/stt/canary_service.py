@@ -11,6 +11,8 @@ pipeline step(s) later. For now, this module focuses on the underlying
 transcription functionality (including local fallback via faster-whisper).
 """
 
+# UNTESTED — requires GPU deployment and real call verification
+
 from __future__ import annotations
 
 import os

@@ -107,10 +107,13 @@ export async function POST(req: NextRequest) {
         },
       ])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("[API] voice voices POST error:", error);
+      return NextResponse.json({ error: "Failed to create voice" }, { status: 500 });
+    }
+    if (!voice) {
       return NextResponse.json({ error: "Failed to create voice" }, { status: 500 });
     }
 

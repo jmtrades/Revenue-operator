@@ -29,7 +29,7 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
 
   const clientId = getGoogleCalendarClientId();
   const clientSecret = getGoogleCalendarClientSecret();
-  if (!clientId || !clientSecret || !row.refresh_token) return row.access_token;
+  if (!clientId || !clientSecret || !row.refresh_token) return null;
 
   const body = new URLSearchParams({
     client_id: clientId,
@@ -42,7 +42,9 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: body.toString(),
   });
-  if (!res.ok) return null;
+  if (!res.ok) {
+    return null;
+  }
   const json = (await res.json()) as { access_token?: string; expires_in?: number };
   const newExpires = json.expires_in ? new Date(Date.now() + json.expires_in * 1000).toISOString() : null;
   await db
@@ -92,7 +94,13 @@ export async function POST(req: NextRequest) {
 
   const token = await getAccessToken(session.workspaceId);
   if (!token) {
-    return NextResponse.json({ error: "Google Calendar not connected" }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: "Calendar connection expired. Reconnect in Settings.",
+        code: "calendar_connection_expired",
+      },
+      { status: 401 },
+    );
   }
 
   const eventRes = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
@@ -109,9 +117,18 @@ export async function POST(req: NextRequest) {
     }),
   });
 
+  if (eventRes.status === 401 || eventRes.status === 403) {
+    return NextResponse.json(
+      {
+        error: "Calendar connection expired. Reconnect in Settings.",
+        code: "calendar_connection_expired",
+      },
+      { status: 401 },
+    );
+  }
   if (!eventRes.ok) {
     await eventRes.text();
-    return NextResponse.json({ error: "Calendar create failed" }, { status: 502 });
+    return NextResponse.json({ error: "Calendar create failed", code: "calendar_create_failed" }, { status: 502 });
   }
 
   const event = (await eventRes.json()) as { id?: string; htmlLink?: string };

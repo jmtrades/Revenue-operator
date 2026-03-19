@@ -51,6 +51,7 @@ export default function PhoneMarketplacePage() {
   const [loading, setLoading] = useState(false);
   const [provisioning, setProvisioning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [lastProvisionAttempt, setLastProvisionAttempt] = useState<AvailableNumber | null>(null);
 
   const search = async () => {
     setLoading(true);
@@ -85,6 +86,7 @@ export default function PhoneMarketplacePage() {
 
   const handleProvision = async (num: AvailableNumber) => {
     setProvisioning(num.phone_number);
+    setLastProvisionAttempt(num);
     try {
       const res = await fetch("/api/phone/provision", {
         method: "POST",
@@ -201,14 +203,26 @@ export default function PhoneMarketplacePage() {
       {error && (
         <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-200 text-sm flex flex-wrap items-center justify-between gap-2">
           <span>{error}</span>
-          <button
-            type="button"
-            onClick={() => { setError(null); search(); }}
-            disabled={loading}
-            className="text-xs font-medium underline underline-offset-2 hover:no-underline disabled:opacity-50"
-          >
-            {tPhone("marketplaceSearch")}
-          </button>
+          <div className="flex items-center gap-3">
+            {lastProvisionAttempt && (
+              <button
+                type="button"
+                onClick={() => { setError(null); void handleProvision(lastProvisionAttempt); }}
+                disabled={provisioning !== null}
+                className="text-xs font-medium underline underline-offset-2 hover:no-underline disabled:opacity-50"
+              >
+                {tPhone("tryAgain")}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => { setError(null); search(); }}
+              disabled={loading}
+              className="text-xs font-medium underline underline-offset-2 hover:no-underline disabled:opacity-50"
+            >
+              {tPhone("marketplaceSearch")}
+            </button>
+          </div>
         </div>
       )}
 

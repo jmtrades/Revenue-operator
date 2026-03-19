@@ -135,6 +135,7 @@ export default function VoicesSettingsPage() {
   const [cloneFile, setCloneFile] = useState<File | null>(null);
   const [cloneName, setCloneName] = useState("");
   const [cloneDescription, setCloneDescription] = useState("");
+  const [cloneError, setCloneError] = useState<string | null>(null);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [showTestModal, setShowTestModal] = useState(false);
   const [testVoiceAId, setTestVoiceAId] = useState<string>("voice_alex");
@@ -206,12 +207,53 @@ export default function VoicesSettingsPage() {
     setVoiceConfig((prev) => ({ ...prev, activeVoiceId: voiceId }));
   }, []);
 
+  const getAudioDurationSec = useCallback(async (file: File): Promise<number> => {
+    return await new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const audio = document.createElement("audio");
+      audio.preload = "metadata";
+      audio.onloadedmetadata = () => {
+        const duration = Number(audio.duration || 0);
+        URL.revokeObjectURL(url);
+        resolve(duration);
+      };
+      audio.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Invalid audio file."));
+      };
+      audio.src = url;
+    });
+  }, []);
+
   const handleCloneVoice = useCallback(async () => {
-    if (!cloneFile || !cloneName.trim() || !workspaceId) return;
+  if (!cloneFile || !cloneName.trim() || !workspaceId) return;
+    setCloneError(null);
     setIsCloning(true);
 
     try {
+      const allowedMime = new Set(["audio/wav", "audio/x-wav", "audio/mpeg", "audio/mp3"]);
+      const allowedExt = /\.(wav|mp3)$/i.test(cloneFile.name);
+      if (!allowedMime.has(cloneFile.type) && !allowedExt) {
+        setCloneError("Only WAV or MP3 files are supported.");
+        return;
+      }
+      if (cloneFile.size > 5 * 1024 * 1024) {
+        setCloneError("File must be under 5MB.");
+        return;
+      }
+      const durationSec = await getAudioDurationSec(cloneFile);
+      if (durationSec < 10 || durationSec > 30) {
+        setCloneError("Audio duration must be between 10 and 30 seconds.");
+        return;
+      }
+
       // 1. Record voice_clone consent before cloning
+      // Record explicit legal consent for voice cloning before uploading audio.
+      const consentText =
+        'I confirm that (a) this is my own voice or I have written authorization from the voice owner, ' +
+        '(b) I understand this voice will be used by an AI to make phone calls on my behalf, ' +
+        '(c) I accept the Voice Cloning Terms of Service.';
+
       await fetch(`/api/voice/consents?workspace_id=${encodeURIComponent(workspaceId)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -221,8 +263,13 @@ export default function VoicesSettingsPage() {
           consent_type: "voice_clone",
           consent_given: true,
           consent_method: "upload_ui",
-          consent_text: `Voice clone consent for "${cloneName}" via dashboard upload.`,
-          metadata: { file_name: cloneFile.name, file_size: cloneFile.size },
+          consent_text: consentText,
+          metadata: {
+            file_name: cloneFile.name,
+            file_size: cloneFile.size,
+            file_duration_sec: Math.round(durationSec),
+            consent_version: "voice-clone-v1",
+          },
         }),
       });
 
@@ -255,14 +302,15 @@ export default function VoicesSettingsPage() {
         setCloneFile(null);
         setCloneName("");
         setCloneDescription("");
+        setCloneError(null);
         setShowCloneModal(false);
       }
     } catch {
-      // Handle error silently, keep modal open for retry
+      setCloneError("Voice cloning failed. Please try again.");
     } finally {
       setIsCloning(false);
     }
-  }, [cloneFile, cloneName, cloneDescription, workspaceId]);
+  }, [cloneFile, cloneName, cloneDescription, workspaceId, getAudioDurationSec]);
 
   const handleDeleteClone = useCallback((voiceId: string) => {
     setVoices((prev) => prev.filter((v) => v.id !== voiceId));
@@ -858,7 +906,10 @@ export default function VoicesSettingsPage() {
                     input.accept = "audio/*";
                     input.onchange = (e) => {
                       const file = (e.target as HTMLInputElement).files?.[0];
-                      if (file) setCloneFile(file);
+                      if (file) {
+                        setCloneError(null);
+                        setCloneFile(file);
+                      }
                     };
                     input.click();
                   }}
@@ -913,6 +964,19 @@ export default function VoicesSettingsPage() {
                   }}
                 />
               </div>
+
+              <p className="text-xs" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                By cloning, you confirm voice rights and accept the{" "}
+                <a href="/terms/voice-cloning" className="underline">
+                  Voice Cloning Terms
+                </a>
+                .
+              </p>
+              {cloneError && (
+                <p className="text-xs" style={{ color: "#f87171" }}>
+                  {cloneError}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center gap-3 mt-6">

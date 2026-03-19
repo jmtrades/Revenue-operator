@@ -25,11 +25,11 @@ export function Hero() {
                 lineHeight: 1.05,
               }}
             >
-              Stop Losing Revenue to Missed Calls and Broken Follow-Up.
+              Your Revenue Operations Run on Autopilot.
             </h1>
 
             <p className="text-base md:text-lg max-w-xl mb-4 text-[var(--text-secondary)] leading-relaxed">
-              Recall Touch answers every call, books appointments, and runs automated recovery sequences. See exactly how much revenue you recover — in your first week.
+              Recall Touch answers calls, follows up automatically, books appointments, and recovers no-shows so every revenue opportunity is captured and tracked.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-6 mt-6">
@@ -42,7 +42,7 @@ export function Hero() {
               </Link>
               <Link
                 href="#how-it-works"
-                className="border border-zinc-700 text-zinc-300 font-medium rounded-xl px-6 py-3 hover:bg-zinc-100 hover:text-white transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center gap-2"
+                className="border border-white/20 text-white/90 font-medium rounded-xl px-6 py-3 hover:bg-white/10 transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center gap-2"
               >
                 See How It Works
               </Link>
@@ -55,8 +55,7 @@ export function Hero() {
                 Revenue Recovered This Month
               </h3>
               <p className="text-xs text-[var(--text-secondary)] mb-4">
-                Recall Touch answers every call, books appointments, and runs follow-up sequences
-                until the revenue is recovered — automatically.
+                Every call, follow-up, and booked outcome rolls into a single revenue operations dashboard.
               </p>
               <HeroRevenueWidget />
               <div className="mt-3 text-xs text-[var(--text-secondary)]">

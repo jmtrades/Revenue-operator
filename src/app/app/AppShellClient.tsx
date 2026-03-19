@@ -28,7 +28,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
-import { ProductTour } from "@/components/ui/ProductTour";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
 import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
@@ -558,7 +557,6 @@ export default function AppShellClient({
               <div className="flex-1 min-h-0">
                 <TranslatedErrorBoundary>
                   <PageTransition>{children}</PageTransition>
-                  <ProductTour />
                 </TranslatedErrorBoundary>
               </div>
             </main>

@@ -23,23 +23,23 @@ export function HowItWorks() {
       {
         num: 1,
         icon: PhoneForwarded,
-        title: "Forward Your Calls",
+        title: "Connect Your Number",
         subtitle: "90 seconds",
-        desc: "Point your business line to Recall Touch. Keep your existing number. Takes 90 seconds — no new phone system, no IT needed.",
+        desc: "Use your current business number or provision a new one. Setup takes about 90 seconds and does not require replacing your phone stack.",
       },
       {
         num: 2,
         icon: Zap,
-        title: "AI Picks Up 24/7",
+        title: "AI Captures Every Opportunity",
         subtitle: "< 3 seconds",
-        desc: "Answers in under 3 seconds. Asks about their need. Books your appointments. Learns your FAQs. Recovers no-shows. Sends follow-ups.",
+        desc: "The agent answers in under 3 seconds, qualifies intent, books appointments, and runs follow-up sequences so opportunities do not stall.",
       },
       {
         num: 3,
         icon: MessageSquareText,
-        title: "You Get Notified",
-        subtitle: "Instant",
-        desc: "Text or email notification with caller details, appointment booked, or follow-up action ready. You stay in control — always.",
+        title: "Revenue Recovery Shows in Dashboard",
+        subtitle: "Live",
+        desc: "See recovered value, converted opportunities, and next actions in one place so your team can execute on what needs attention first.",
       },
     ],
     []
@@ -54,7 +54,7 @@ export function HowItWorks() {
             className="font-bold max-w-2xl mx-auto"
             style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}
           >
-            Get live in three steps. Start collecting revenue immediately.
+            Get live in three steps. Start recovering revenue immediately.
           </h2>
           <p className="text-base mt-4 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
             No engineers. No complicated setup. No new phone number.

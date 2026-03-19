@@ -9,6 +9,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 import type { CampaignType } from "@/lib/campaigns/prompt";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 type TargetFilter = {
   audience_statuses?: string[];
@@ -18,6 +19,9 @@ type TargetFilter = {
 };
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const csrfErr = assertSameOrigin(req);
+  if (csrfErr) return csrfErr;
+
   const { id } = await ctx.params;
   const db = getDb();
 
@@ -42,6 +46,30 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     target_filter: TargetFilter | null;
     sequence_steps?: Array<{ channel: "sms" | "email"; message?: string; subject?: string | null }>;
   };
+
+  // Safeguard: only allow launch when workspace has an active subscription (not paused/expired).
+  const { data: ws, error: wsError } = await db
+    .from("workspaces")
+    .select("billing_status, stripe_subscription_id, pause_reason")
+    .eq("id", workspaceId)
+    .maybeSingle();
+  if (wsError) {
+    return NextResponse.json({ error: wsError.message }, { status: 500 });
+  }
+  if (!ws) {
+    return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+  }
+  const billing = ws as { billing_status?: string | null; stripe_subscription_id?: string | null; pause_reason?: string | null };
+  const isActive =
+    (billing.billing_status === "active" || billing.billing_status === "trial") &&
+    !billing.pause_reason &&
+    Boolean(billing.stripe_subscription_id);
+  if (!isActive) {
+    return NextResponse.json(
+      { error: "Workspace subscription inactive. Update billing to launch campaigns." },
+      { status: 402 },
+    );
+  }
 
   // Only launch from draft/paused into active
   if (campaign.status === "completed") {

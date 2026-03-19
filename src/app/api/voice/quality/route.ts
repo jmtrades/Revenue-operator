@@ -143,10 +143,13 @@ export async function POST(req: NextRequest) {
         },
       ])
       .select()
-      .single();
+      .maybeSingle();
 
     if (insertError) {
       console.error("[API] voice quality POST error:", insertError);
+      return NextResponse.json({ error: "Failed to record quality log" }, { status: 500 });
+    }
+    if (!log) {
       return NextResponse.json({ error: "Failed to record quality log" }, { status: 500 });
     }
 

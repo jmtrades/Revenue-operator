@@ -2593,8 +2593,8 @@
       "download": "Download"
     },
     "empty": {
-      "title": "No calls yet. Connect a phone number to start.",
-      "description": "",
+      "title": "Your AI is ready.",
+      "description": "Connect your number and it will answer every call within 3 seconds, 24/7.",
       "connectNumber": "Connect Number",
       "testAgent": "Test your agent",
       "body": "Once your agents start handling calls, you'll see them all here."
@@ -3848,8 +3848,8 @@
     "deleteAccountInfo": "Contact support to permanently delete your account."
   },
   "hero": {
-    "title": "Stop Losing Revenue to Missed Calls and Broken Follow-Up.",
-    "subtitle": "Recall Touch answers every call, books appointments, and runs automated recovery sequences — 24/7. See how much revenue you're leaving on the table.",
+    "title": "Your Revenue Operations Run on Autopilot.",
+    "subtitle": "Recall Touch answers calls, follows up automatically, books appointments, and recovers no-shows so every revenue opportunity is captured and tracked.",
     "primaryCta": "Try Free for 14 Days →",
     "secondaryCta": "See How It Works",
     "trustLine": "AI Revenue Recovery · Works with your number · 14-day free trial",
@@ -5424,7 +5424,7 @@
     "heroTagline": "Never miss a {customerType} again.",
     "problemLabel": "The problem",
     "howItWorks": "How it works",
-    "stepsHeading": "Three steps to an AI agent that answers every call.",
+    "stepsHeading": "Three steps to revenue operations on autopilot.",
     "capabilitiesLabel": "Key capabilities",
     "roiLabel": "ROI",
     "ctaStartFree": "Start free →",

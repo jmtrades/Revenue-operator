@@ -58,6 +58,9 @@ export default async function PrivacyPage() {
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                 We retain your account and usage data for as long as your account is active. Call recordings, transcripts, and compliance records are retained according to your plan settings and applicable legal or regulatory requirements; in some industries, longer retention is required and we will retain data accordingly. After account termination, we may retain certain data for a limited period for legal, security, or dispute-resolution purposes, after which it is deleted or anonymized. You may request deletion of your personal data subject to our retention obligations.
               </p>
+              <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                When you request workspace deletion, we move the workspace to a deletion-pending state and start a 30-day retention window. During that window, active subscriptions are cancelled, linked phone numbers are released, and recording/transcript purge work is queued. After the retention window, remaining workspace data is purged according to our retention jobs, while anonymized aggregate analytics may be retained for internal benchmarking.
+              </p>
             </section>
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Security</h2>

@@ -350,11 +350,30 @@ export async function advanceEnrollment(
     return null;
   }
 
+  let stepToExecute = nextStep;
+  if (nextStep.channel === "sms") {
+    const { data: lead } = await db
+      .from("leads")
+      .select("metadata")
+      .eq("workspace_id", e.workspace_id)
+      .eq("id", e.contact_id)
+      .maybeSingle();
+    const metadata = ((lead as { metadata?: Record<string, unknown> | null } | null)?.metadata ?? {}) as Record<
+      string,
+      unknown
+    >;
+    if (metadata.sms_undeliverable === true) {
+      stepToExecute = { ...nextStep, channel: "call" };
+    }
+  }
+
   // Execute the action (in a real system, this would trigger SMS/email/call)
   // For now, we just log the intention
-  console.log(
-    `[Sequence] Executing step ${nextStep.step_order} for enrollment ${enrollmentId}: ${nextStep.channel}`
-  );
+  if (process.env.NODE_ENV === "development") {
+    console.error(
+      `[Sequence] Executing step ${stepToExecute.step_order} for enrollment ${enrollmentId}: ${stepToExecute.channel}`
+    );
+  }
 
   // Calculate when the next step should execute
   const nextDueDate = new Date();
@@ -373,7 +392,7 @@ export async function advanceEnrollment(
     .maybeSingle();
 
   if (!updated) return null;
-  return { step: nextStep, enrollment: updated as SequenceEnrollment };
+  return { step: stepToExecute, enrollment: updated as SequenceEnrollment };
 }
 
 /**
