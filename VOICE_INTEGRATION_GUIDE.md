@@ -42,7 +42,7 @@ docker-compose up -d
 
 **Option B: Production (Fly.io)**
 ```bash
-cd services/voice-server/deploy
+cd services/voice-server
 flyctl deploy
 ```
 
@@ -471,7 +471,7 @@ A: Whisper supports 100+ languages. TTS support depends on model selection.
 
 ## Next Steps
 
-1. Deploy voice server: `cd services/voice-server/deploy && flyctl deploy`
+1. Deploy voice server: `cd services/voice-server && flyctl deploy`
 2. Configure environment variables
 3. Test with sample calls
 4. Monitor performance and costs

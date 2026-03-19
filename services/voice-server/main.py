@@ -97,6 +97,12 @@ conversation_engines: dict[str, ConversationEngine] = {}
 MAX_CONCURRENT = int(os.getenv("MAX_CONCURRENT_CONVERSATIONS", "10"))
 usage_records: list[dict] = []  # Track voice usage for analytics
 
+
+def load_stt_env() -> bool:
+    """Whether startup should load Faster-Whisper (heavy on small VMs)."""
+    return os.getenv("LOAD_STT_ENGINE", "true").lower() in {"1", "true", "yes"}
+
+
 # ---------------------------------------------------------------------------
 # Pydantic models
 # ---------------------------------------------------------------------------
@@ -138,7 +144,11 @@ async def health_check():
         "service": "recall-touch-voice-server",
         "version": "2.0.0",
         "tts_engine": tts_manager.active_model if tts_manager else "not_loaded",
-        "stt_engine": "whisper" if stt_engine and stt_engine.is_ready else "not_loaded",
+        "stt_engine": (
+            "whisper"
+            if stt_engine and stt_engine.is_ready
+            else ("disabled" if not load_stt_env() else "not_loaded")
+        ),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -152,7 +162,11 @@ async def status():
             "ready": tts_manager.is_ready if tts_manager else False,
         },
         "stt": {
-            "engine": f"whisper-{stt_engine.model_size}" if stt_engine else "none",
+            "engine": (
+                f"whisper-{stt_engine.model_size}"
+                if stt_engine
+                else ("disabled" if not load_stt_env() else "none")
+            ),
             "ready": stt_engine.is_ready if stt_engine else False,
         },
         "voices_available": len(voice_manager.list_voices()),
@@ -1230,7 +1244,8 @@ async def startup_event():
     logger.info("Audio pipeline initialized")
 
     # Initialize TTS
-    preferred_tts = os.getenv("TTS_MODEL", "orpheus").lower()
+    # Support both env names to avoid config drift across deploy targets.
+    preferred_tts = os.getenv("TTS_ENGINE", os.getenv("TTS_MODEL", "orpheus")).lower()
     if "fish" in preferred_tts:
         preferred_tts = "fish-speech"
     elif "kokoro" in preferred_tts:
@@ -1244,23 +1259,31 @@ async def startup_event():
     except Exception as e:
         logger.error(f"TTS initialization failed: {e}")
 
-    # Initialize STT
+    # Initialize STT (optional — skip on tiny VMs to avoid OOM during model load)
+    load_stt = load_stt_env()
     stt_model = os.getenv("STT_MODEL", "base")
     if "whisper-" in stt_model:
         stt_model = stt_model.replace("whisper-", "")
 
-    stt_engine = STTEngine(model_size=stt_model)
-    try:
-        await stt_engine.load()
-    except Exception as e:
-        logger.error(f"STT initialization failed: {e}")
+    if load_stt:
+        stt_engine = STTEngine(model_size=stt_model)
+        try:
+            await stt_engine.load()
+        except Exception as e:
+            logger.error(f"STT initialization failed: {e}")
+    else:
+        logger.warning("LOAD_STT_ENGINE=false — STT disabled (no whisper load)")
+        stt_engine = None
 
     # Initialize A/B test manager and cost tracker
     logger.info(f"A/B test manager initialized: {len(ab_test_manager.tests)} active tests")
     logger.info(f"Cost tracker initialized")
 
     logger.info(f"TTS engine: {tts_manager.active_model}")
-    logger.info(f"STT engine: whisper-{stt_model}")
+    if stt_engine:
+        logger.info(f"STT engine: whisper-{stt_engine.model_size}")
+    else:
+        logger.info("STT engine: disabled")
     logger.info(f"Voices loaded: {len(voice_manager.list_voices())}")
     logger.info("Voice server ready")
 
