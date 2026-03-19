@@ -13,7 +13,7 @@ internal_port = 8100
 force_https = true
 auto_stop_machines = true    # Stop when idle (saves money)
 auto_start_machines = true   # Start on first request
-min_machines_running = 0     # Allow full shutdown when idle
+min_machines_running = 1     # Keep one warm machine to avoid cold-start gaps
 
 [http_service.concurrency]
 type = "connections"
