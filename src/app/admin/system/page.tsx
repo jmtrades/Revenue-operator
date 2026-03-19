@@ -8,6 +8,9 @@ interface HealthState {
   db_reachable?: boolean;
   core_recent?: boolean;
   public_corridor_ok?: boolean;
+  voice_server_ok?: boolean;
+  /** From voice server /health when VOICE_SERVER_URL is set */
+  voice_hf_hub_token_configured?: boolean | null;
 }
 
 export default function AdminSystemPage() {
@@ -41,6 +44,24 @@ export default function AdminSystemPage() {
               <li>DB reachable: {health.db_reachable ? "Yes" : "No"}</li>
               <li>Core recent: {health.core_recent ? "Yes" : "No"}</li>
               <li>Public corridor: {health.public_corridor_ok ? "OK" : "—"}</li>
+              <li>
+                Voice server:{" "}
+                {health.voice_server_ok === undefined
+                  ? "—"
+                  : health.voice_server_ok
+                    ? "Reachable"
+                    : "Unreachable / not configured"}
+              </li>
+              <li>
+                Voice HF token:{" "}
+                {health.voice_server_ok
+                  ? health.voice_hf_hub_token_configured === true
+                    ? "Set"
+                    : health.voice_hf_hub_token_configured === false
+                      ? "Not set (gated TTS will fail)"
+                      : "Unknown"
+                  : "—"}
+              </li>
             </ul>
           </>
         )}
