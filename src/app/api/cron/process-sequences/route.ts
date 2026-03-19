@@ -49,8 +49,8 @@ export async function GET(request: NextRequest) {
         results[workspaceId] = processed;
         totalProcessed += processed;
 
-        if (processed > 0) {
-          console.log(
+        if (processed > 0 && process.env.NODE_ENV === "development") {
+          console.error(
             `[Cron] Workspace ${workspaceId}: processed ${processed} enrollments`
           );
         }

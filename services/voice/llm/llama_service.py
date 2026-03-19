@@ -1,3 +1,5 @@
+# UNTESTED — requires GPU deployment and real call verification
+
 import os
 from typing import Optional
 

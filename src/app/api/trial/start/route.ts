@@ -11,6 +11,7 @@ import { getDb } from "@/lib/db/queries";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getPriceId } from "@/lib/stripe-prices";
 import { randomUUID } from "crypto";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 function log(_event: string, _data: Record<string, unknown>): void {
   if (process.env.NODE_ENV === "development") {
@@ -39,6 +40,9 @@ function jsonWithSession(
 
 export async function POST(req: NextRequest) {
   try {
+    const csrfErr = assertSameOrigin(req);
+    if (csrfErr) return csrfErr;
+
     let body: { email: string; hired_roles?: string[]; business_type?: string; tier?: string; interval?: string };
     try {
       body = await req.json();

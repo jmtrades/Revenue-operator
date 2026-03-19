@@ -9,7 +9,7 @@
  */
 
 const logger = {
-  info: (...args: unknown[]) => console.log("[shadow-mode]", ...args),
+  info: (...args: unknown[]) => console.error("[shadow-mode]", ...args),
   warn: (...args: unknown[]) => console.warn("[shadow-mode]", ...args),
   error: (...args: unknown[]) => console.error("[shadow-mode]", ...args),
   debug: (...args: unknown[]) => console.debug("[shadow-mode]", ...args),

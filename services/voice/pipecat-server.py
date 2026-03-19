@@ -9,6 +9,8 @@ This server is responsible for:
 Phase 2 keeps Deepgram + Claude as providers while replacing Vapi with Pipecat.
 """
 
+# UNTESTED — requires GPU deployment and real call verification
+
 import os
 import asyncio
 import json

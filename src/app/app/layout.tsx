@@ -176,14 +176,25 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Auth guard: redirect to sign-in if no session (replaces middleware.ts)
+  // Auth guard: redirect to sign-in if session cookie is missing or invalid (replaces middleware.ts)
   const cookieStore = await cookies();
-  const hasSession =
-    cookieStore.has("revenue_session") ||
-    cookieStore.getAll().some((c) => c.name.startsWith("sb-"));
-  if (!hasSession) {
+  const rawSessionCookie = cookieStore.get("revenue_session")?.value;
+
+  if (!rawSessionCookie) {
     const { redirect } = await import("next/navigation");
     redirect("/sign-in");
+  } else {
+    // Build a Cookie header string for HMAC/session verification.
+    const cookieHeader = cookieStore
+      .getAll()
+      .map(({ name, value }) => `${name}=${value}`)
+      .join("; ");
+
+    const session = getSessionFromCookie(cookieHeader);
+    if (!session?.userId) {
+      const { redirect } = await import("next/navigation");
+      redirect("/sign-in");
+    }
   }
 
   // If a user session exists but email is not verified, route them to verification.

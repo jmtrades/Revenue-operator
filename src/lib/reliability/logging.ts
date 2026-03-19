@@ -27,7 +27,7 @@ export function logWebhookFailure(webhookType: string, error: unknown, workspace
 export function logRetry(endpoint: string, attempt: number, workspaceId?: string): void {
   if (typeof window !== "undefined") return;
   if (process.env.NODE_ENV === "production") return;
-  console.log("[retry]", {
+  console.error("[retry]", {
     endpoint,
     attempt,
     workspaceId,
@@ -51,7 +51,7 @@ export function logQueueDelay(jobType: string, delayMs: number, workspaceId?: st
 export function logSessionRestore(userId: string, workspaceId: string): void {
   // Server-side only - but allow client-side calls (they just won't log)
   if (typeof window === "undefined" && process.env.NODE_ENV !== "production") {
-    console.log("[session-restore]", {
+    console.error("[session-restore]", {
       userId,
       workspaceId,
       timestamp: new Date().toISOString(),

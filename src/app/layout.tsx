@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     default: "Recall Touch — AI Revenue Recovery for Service Businesses",
   },
   description:
-    "Recover lost revenue from missed calls, no-shows, and broken follow-up. AI answers every call, books appointments, and runs automated recovery sequences. See results in your first week.",
+    "Run revenue operations on autopilot. Recall Touch answers calls, follows up, books appointments, and recovers no-shows with clear revenue attribution.",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     siteName: "Recall Touch",
     title: "Recall Touch — AI Revenue Recovery for Service Businesses",
     description:
-      "Recover lost revenue from missed calls, no-shows, and broken follow-up. AI answers every call, books appointments, and runs automated recovery sequences.",
+      "Run revenue operations on autopilot with AI answering, follow-up automation, appointment booking, no-show recovery, and revenue attribution.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Revenue Recovery for Service Businesses" }],
   },
   icons: { icon: "/icon" },
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Recall Touch — AI Revenue Recovery for Service Businesses",
     description:
-      "Recover lost revenue from missed calls, no-shows, and broken follow-up. AI answers every call, books appointments, and runs automated recovery sequences.",
+      "Run revenue operations on autopilot with AI answering, follow-up automation, appointment booking, no-show recovery, and revenue attribution.",
   },
   robots: {
     index: true,

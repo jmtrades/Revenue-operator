@@ -16,8 +16,6 @@ import { getPriceId } from "@/lib/stripe-prices";
 function log(event: string, data: Record<string, unknown>): void {
   if (data.reason || data.error) {
     console.error(`[billing/checkout] ${event}:`, JSON.stringify(data));
-  } else if (process.env.NODE_ENV === "development") {
-    console.log(`[billing/checkout] ${event}:`, JSON.stringify(data));
   }
 }
 

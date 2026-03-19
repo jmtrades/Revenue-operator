@@ -6,6 +6,7 @@ import type {
   WebhookEvent,
 } from "../types";
 import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
+import { log } from "@/lib/logger";
 
 function getVoiceServerUrl(): string {
   const url = process.env.VOICE_SERVER_URL;
@@ -93,7 +94,7 @@ export class RecallVoiceProvider implements VoiceProvider {
       throw error;
     }
 
-    console.log(`Created assistant ${assistantId} with voice ${params.voiceId}`);
+    log("info", "recall_voice.assistant_created", { assistantId, voiceId: params.voiceId });
     return { assistantId };
   }
 
@@ -113,7 +114,7 @@ export class RecallVoiceProvider implements VoiceProvider {
     if (params.metadata) config.metadata = params.metadata;
 
     this.assistantConfigs.set(assistantId, config);
-    console.log(`Updated assistant ${assistantId}`);
+    log("info", "recall_voice.assistant_updated", { assistantId });
   }
 
   async deleteAssistant(assistantId: string): Promise<void> {
@@ -121,7 +122,7 @@ export class RecallVoiceProvider implements VoiceProvider {
       throw new Error(`Assistant ${assistantId} not found`);
     }
     this.assistantConfigs.delete(assistantId);
-    console.log(`Deleted assistant ${assistantId}`);
+    log("info", "recall_voice.assistant_deleted", { assistantId });
   }
 
   async createOutboundCall(params: CreateCallParams): Promise<CallResult> {
@@ -181,7 +182,7 @@ export class RecallVoiceProvider implements VoiceProvider {
       }
 
       const data = await response.json() as { sid: string };
-      console.log(`Outbound call placed: ${data.sid} → ${params.phoneNumber}`);
+      log("info", "recall_voice.outbound_call_placed", { callSid: data.sid });
 
       return {
         callId: data.sid,
@@ -218,10 +219,7 @@ export class RecallVoiceProvider implements VoiceProvider {
   </Connect>
 </Response>`;
 
-    console.log(
-      `Created inbound TwiML for call ${twilioCallSid} ` +
-      `streaming to ${wsUrl}/ws/conversation`
-    );
+    log("info", "recall_voice.inbound_twiml_created", { callSid: twilioCallSid });
 
     return twiml;
   }

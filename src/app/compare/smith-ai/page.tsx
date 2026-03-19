@@ -64,6 +64,18 @@ export default function SmithAiComparisonPage() {
               Smith.ai is built for answering calls. Recall Touch is built for revenue execution: follow-up until the next outcome,
               outbound campaigns when the funnel needs it, and dashboards that attribute recovered value.
             </p>
+            <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
+              Pricing as of March 2026. Visit{" "}
+              <a
+                href="https://smith.ai/pricing"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="underline underline-offset-2"
+              >
+                smith.ai/pricing
+              </a>{" "}
+              for current pricing.
+            </p>
           </div>
 
           <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">

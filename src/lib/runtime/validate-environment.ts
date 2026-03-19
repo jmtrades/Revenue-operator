@@ -85,7 +85,6 @@ function logStructured(level: string, event: string, data: Record<string, unknow
      
     console.warn(line);
   } else {
-     
-    console.log(line);
+    console.error(line);
   }
 }

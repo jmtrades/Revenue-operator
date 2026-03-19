@@ -12,6 +12,8 @@ Manages real-time bidirectional audio conversations with:
   - Configurable silence thresholds and backchannel timing
 """
 
+# UNTESTED — requires GPU deployment and real call verification
+
 import asyncio
 import logging
 import random

@@ -29,7 +29,6 @@ export default function VoiceSelector() {
   };
 
   const handlePreviewGreeting = () => {
-    console.log('Playing preview with greeting for voice:', selectedVoice);
     setIsPlaying(selectedVoice);
   };
 

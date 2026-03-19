@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(req: NextRequest) {
   try {
@@ -54,6 +55,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const csrfErr = assertSameOrigin(req);
+    if (csrfErr) return csrfErr;
+
     const workspaceId = req.nextUrl.searchParams.get("workspace_id");
     if (!workspaceId) {
       return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
@@ -76,6 +80,29 @@ export async function POST(req: NextRequest) {
 
     const db = getDb();
 
+    // Hard cap voice_clone consents at 3 per calendar day per workspace to limit clone upload abuse.
+    if (consent_type === "voice_clone") {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      const { count, error: countError } = await db
+        .from("voice_consents")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", workspaceId)
+        .eq("consent_type", "voice_clone")
+        .gte("recorded_at", startOfDay.toISOString());
+      if (countError) {
+        console.error("[API] voice consents POST rate-limit error:", countError);
+      } else if ((count ?? 0) >= 3) {
+        return NextResponse.json(
+          { error: "Voice cloning limit reached for today. Try again tomorrow or contact support.", code: "clone_rate_limited" },
+          { status: 429 },
+        );
+      }
+    }
+
+    const forwardedFor = req.headers.get("x-forwarded-for") ?? "";
+    const inferredIp = forwardedFor.split(",")[0]?.trim() || null;
+
     const { data: consent, error: insertError } = await db
       .from("voice_consents")
       .insert([
@@ -87,16 +114,19 @@ export async function POST(req: NextRequest) {
           consent_given: consent_given ?? true,
           consent_method: consent_method ?? null,
           consent_text: consent_text ?? null,
-          ip_address: ip_address ?? null,
+          ip_address: ip_address ?? inferredIp,
           expires_at: expires_at ?? null,
           metadata: metadata ?? {},
         },
       ])
       .select()
-      .single();
+      .maybeSingle();
 
     if (insertError) {
       console.error("[API] voice consents POST error:", insertError);
+      return NextResponse.json({ error: "Failed to record consent" }, { status: 500 });
+    }
+    if (!consent) {
       return NextResponse.json({ error: "Failed to record consent" }, { status: 500 });
     }
 

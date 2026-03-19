@@ -82,10 +82,13 @@ export async function POST(req: NextRequest) {
         },
       ])
       .select()
-      .single();
+      .maybeSingle();
 
     if (insertError) {
       console.error("[API] voice ab-tests POST error:", insertError);
+      return NextResponse.json({ error: "Failed to create A/B test" }, { status: 500 });
+    }
+    if (!test) {
       return NextResponse.json({ error: "Failed to create A/B test" }, { status: 500 });
     }
 
@@ -133,7 +136,7 @@ export async function PATCH(req: NextRequest) {
       .eq("id", id)
       .eq("workspace_id", workspaceId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (updateError) {
       console.error("[API] voice ab-tests PATCH error:", updateError);

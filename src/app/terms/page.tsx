@@ -77,6 +77,9 @@ export default async function TermsPage() {
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                 You may cancel your account at any time through your account settings or by contacting us. We may suspend or terminate your account or access to the service for breach of these terms, non-payment, or for any other reason with notice where practicable. Upon termination, your right to use the service ceases. We may retain and use your data as described in our Privacy Policy. Sections that by their nature should survive (including liability limitations, indemnification, and governing law) will survive termination.
               </p>
+              <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                Workspace deletion follows a defined lifecycle: deletion request, 30-day retention window, then purge. On request, we cancel active subscriptions, release connected phone numbers, and queue recordings/transcripts for deletion. After the retention window, service data is removed according to system retention jobs; anonymized aggregate analytics may be retained for service benchmarking.
+              </p>
             </section>
 
             <section className="mb-10">

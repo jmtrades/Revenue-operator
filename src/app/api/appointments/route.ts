@@ -161,6 +161,19 @@ export async function POST(req: NextRequest) {
           externalCalendarId = bookJson.eventId;
           await db.from("appointments").update({ external_calendar_id: externalCalendarId, updated_at: new Date().toISOString() }).eq("id", apt.id);
         }
+      } else {
+        const bookErr = (await bookRes.json().catch(() => null)) as { code?: string } | null;
+        if (bookErr?.code === "calendar_connection_expired") {
+          return NextResponse.json(
+            {
+              ...(appointment as object),
+              external_calendar_id: null,
+              warning: "Calendar connection expired. Reconnect in Settings.",
+              warning_code: "calendar_connection_expired",
+            },
+            { status: 200 },
+          );
+        }
       }
     }
   } catch {

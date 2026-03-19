@@ -11,6 +11,7 @@ import { getDb } from "@/lib/db/queries";
 import { getPriceId } from "@/lib/stripe-prices";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import type { BillingTier } from "@/lib/feature-gate/types";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const PLAN_TO_TIER: Record<string, BillingTier> = {
   solo: "solo",
@@ -21,6 +22,13 @@ const PLAN_TO_TIER: Record<string, BillingTier> = {
   team: "scale", // legacy alias
 };
 
+const TIER_RANK: Record<BillingTier, number> = {
+  solo: 1,
+  business: 2,
+  scale: 3,
+  enterprise: 4,
+};
+
 function getOrigin(req: NextRequest): string | null {
   const url = new URL(req.url);
   const o = url.origin;
@@ -29,6 +37,9 @@ function getOrigin(req: NextRequest): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfErr = assertSameOrigin(req);
+  if (csrfErr) return csrfErr;
+
   let body: { workspace_id?: string; plan_id?: string; planId?: string };
   try {
     body = await req.json();
@@ -71,12 +82,17 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const { data: ws } = await db
     .from("workspaces")
-    .select("id, stripe_subscription_id, stripe_customer_id, owner_id")
+    .select("id, stripe_subscription_id, stripe_customer_id, owner_id, billing_tier")
     .eq("id", workspace_id)
     .maybeSingle();
   if (!ws) return NextResponse.json({ ok: false, error: "Workspace not found" }, { status: 404 });
 
-  const row = ws as { stripe_subscription_id?: string | null; stripe_customer_id?: string | null; owner_id?: string };
+  const row = ws as {
+    stripe_subscription_id?: string | null;
+    stripe_customer_id?: string | null;
+    owner_id?: string;
+    billing_tier?: BillingTier | null;
+  };
   const Stripe = (await import("stripe")).default;
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -169,11 +185,36 @@ export async function POST(req: NextRequest) {
     if (currentPriceId === priceResult.price_id) {
       return NextResponse.json({ ok: true, message: "Already on this plan" }, { status: 200 });
     }
-    // Prorate on all changes — Stripe handles credit/debit correctly
+    const currentTier = (row.billing_tier ?? "solo") as BillingTier;
+    const isDowngrade = TIER_RANK[tier] < TIER_RANK[currentTier];
+    const currentPeriodEnd = (sub as { current_period_end?: number }).current_period_end;
+    const effectiveAt = currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null;
+
     await stripe.subscriptions.update(row.stripe_subscription_id, {
       items: [{ id: itemId, price: priceResult.price_id }],
-      proration_behavior: "always_invoice",
+      proration_behavior: isDowngrade ? "none" : "always_invoice",
+      billing_cycle_anchor: "unchanged",
     });
+
+    if (isDowngrade) {
+      await db
+        .from("workspaces")
+        .update({
+          pending_billing_tier: tier,
+          pending_billing_effective_at: effectiveAt,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", workspace_id);
+
+      return NextResponse.json({
+        ok: true,
+        scheduled: true,
+        message: `Downgrade scheduled for ${effectiveAt ? new Date(effectiveAt).toLocaleDateString() : "the next billing date"}.`,
+        plan_id: planId,
+        tier,
+        effective_at: effectiveAt,
+      });
+    }
   } catch (err) {
     console.error("[change-plan] Stripe subscription update failed:", err instanceof Error ? err.message : err);
     return NextResponse.json(
@@ -182,7 +223,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  await db.from("workspaces").update({ billing_tier: tier }).eq("id", workspace_id);
+  await db
+    .from("workspaces")
+    .update({
+      billing_tier: tier,
+      pending_billing_tier: null,
+      pending_billing_effective_at: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", workspace_id);
 
   return NextResponse.json({
     ok: true,

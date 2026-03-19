@@ -108,7 +108,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    console.log(`[billing/overage] Processed ${processed} workspaces for overage charges`);
+    if (process.env.NODE_ENV === "development") {
+      console.error(`[billing/overage] Processed ${processed} workspaces for overage charges`);
+    }
     if (errors.length > 0) {
       console.error(`[billing/overage] Errors:`, errors);
     }

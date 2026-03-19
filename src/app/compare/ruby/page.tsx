@@ -65,6 +65,18 @@ export default function RubyComparisonPage() {
               Ruby Receptionists can cover your calls with humans. Recall Touch adds AI-driven qualification, automated follow-up,
               outbound campaigns, and revenue attribution — so coverage turns into recovered revenue.
             </p>
+            <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
+              Pricing as of March 2026. Visit{" "}
+              <a
+                href="https://www.ruby.com/pricing/"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="underline underline-offset-2"
+              >
+                ruby.com/pricing
+              </a>{" "}
+              for current pricing.
+            </p>
           </div>
 
           <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">

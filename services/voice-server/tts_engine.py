@@ -12,6 +12,8 @@ Architecture:
   All models output 24kHz audio, resampled to target rate as needed.
 """
 
+# UNTESTED — requires GPU deployment and real call verification
+
 import asyncio
 import io
 import logging

@@ -9,6 +9,8 @@ Features:
   - Optimized for phone audio (8kHz mu-law → 16kHz PCM)
 """
 
+# UNTESTED — requires GPU deployment and real call verification
+
 import asyncio
 import io
 import logging
