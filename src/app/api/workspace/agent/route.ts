@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     const db = getDb();
     const { data, error } = await db
       .from("workspaces")
-      .select("id, name, greeting, agent_name, preferred_language, elevenlabs_voice_id, phone, working_hours, knowledge_items, agent_template")
+      .select("id, name, greeting, agent_name, preferred_language, voice_id, phone, working_hours, knowledge_items, agent_template")
       .eq("id", session.workspaceId)
       .maybeSingle();
 
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
       greeting?: string | null;
       agent_name?: string | null;
       preferred_language?: string | null;
-      elevenlabs_voice_id?: string | null;
+      voice_id?: string | null;
       phone?: string | null;
       working_hours?: unknown;
       knowledge_items?: unknown;
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     };
 
     // For backwards compatibility, return elevenlabsVoiceId if it exists, otherwise empty string
-    const voiceId = row.elevenlabs_voice_id ?? "";
+    const voiceId = row.voice_id ?? "";
 
     return NextResponse.json({
       businessName: row.name ?? "",
@@ -103,7 +103,7 @@ export async function PATCH(req: NextRequest) {
   if (typeof body.preferredLanguage === "string") update.preferred_language = body.preferredLanguage.trim() || "en";
   // Accept both voiceId and elevenlabsVoiceId for backwards compatibility
   const voiceIdValue = body.voiceId ?? body.elevenlabsVoiceId;
-  if (typeof voiceIdValue === "string") update.elevenlabs_voice_id = voiceIdValue.trim() || null;
+  if (typeof voiceIdValue === "string") update.voice_id = voiceIdValue.trim() || null;
   if (Array.isArray(body.knowledgeItems)) update.knowledge_items = body.knowledgeItems;
   if (body.workingHours && typeof body.workingHours === "object") update.working_hours = body.workingHours;
 
@@ -111,7 +111,7 @@ export async function PATCH(req: NextRequest) {
     const db = getDb();
     const { error } = await db.from("workspaces").update(update).eq("id", session.workspaceId);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    const voiceId = typeof update.elevenlabs_voice_id === "string" ? update.elevenlabs_voice_id : null;
+    const voiceId = typeof update.voice_id === "string" ? update.voice_id : null;
     const agentName = typeof update.agent_name === "string" ? update.agent_name : null;
     const greeting = typeof update.greeting === "string" ? update.greeting : null;
     const businessName = typeof update.name === "string" ? update.name : "My Workspace";

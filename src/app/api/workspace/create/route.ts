@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
     if (businessHours !== null) update.working_hours = businessHours;
     if (knowledgeItems !== null) update.knowledge_items = knowledgeItems;
     if (preferredLanguage !== null) update.preferred_language = preferredLanguage;
-    if (voiceId !== null) update.elevenlabs_voice_id = voiceId;
+    if (voiceId !== null) update.voice_id = voiceId;
 
     const { error: updateErr } = await db.from("workspaces").update(update).eq("id", workspaceId);
     if (updateErr) {
