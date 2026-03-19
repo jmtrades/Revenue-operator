@@ -11,6 +11,7 @@ python-multipart>=0.0.6
 # Audio processing
 numpy==1.26.4
 soundfile==0.12.1
+scipy>=1.11.0
 
 # ML / TTS / STT
 torch>=2.1.0
@@ -22,7 +23,9 @@ transformers>=4.40.0
 snac>=0.2.0
 
 # Fish Speech (multilingual fallback)
-fishspeech>=1.5.0
+# CPU free-tier deploys skip this package because compatible wheels are not
+# available in the Fly remote builder environment.
+# fishspeech>=1.5.0
 
 # STT — Faster-Whisper (4x faster than OpenAI Whisper)
 faster-whisper==1.0.3
