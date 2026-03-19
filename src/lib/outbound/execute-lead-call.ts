@@ -5,7 +5,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
-import { getVoicemailConfigForBehavior } from "@/lib/vapi/voicemail-detection";
+import { getVoicemailConfigForBehavior } from "@/lib/voice/voicemail-detection";
 import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
 import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
 import { getVoiceProvider } from "@/lib/voice";
