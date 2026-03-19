@@ -5979,6 +5979,9 @@
     "lastContactYesterday": "Last contact: yesterday",
     "lastContactDaysAgo": "Last contact: {count} days ago",
     "filtersAria": "Contact filters",
+    "exportCta": "Export contacts",
+    "exporting": "Exporting…",
+    "exportError": "Could not export contacts. Try again.",
     "addedManually": "Added manually from dashboard.",
     "inbound": "Inbound",
     "outbound": "Outbound"

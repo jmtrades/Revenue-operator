@@ -95,7 +95,7 @@ export function DemoPageContent() {
       <div className="max-w-5xl mx-auto px-4 mt-8 text-center">
         <p className="text-sm text-zinc-500 mb-2">{t("voiceWidgetHint")}</p>
         <p className="text-xs text-zinc-500 mb-4">
-          You are hearing Recall Touch's real AI assistant responding live, not a recording.
+          You are hearing Recall Touch&apos;s real AI assistant responding live, not a recording.
         </p>
         <Link href={ROUTES.START} className="text-sm font-medium text-zinc-300 hover:text-white transition-colors" aria-label={t("getThisForYourNumber")}>
           {t("getThisForYourNumber")}

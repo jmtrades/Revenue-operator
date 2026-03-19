@@ -8,8 +8,9 @@ import { Container } from "@/components/ui/Container";
 // Note: Dynamic metadata with translations requires generateMetadata.
 // Static metadata.title/description do not have access to i18n.
 export const metadata: Metadata = {
-  title: "Terms of Service",
-  description: "Recall Touch terms of service. Acceptance, service description, and legal terms.",
+  title: "Terms of Service — Recall Touch",
+  description:
+    "Recall Touch Terms of Service: service description, billing/refunds, acceptable use, and data handling. Start free or contact support for questions today.",
 };
 
 export default async function TermsPage() {

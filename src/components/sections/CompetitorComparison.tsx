@@ -157,7 +157,7 @@ export function CompetitorComparison() {
     >
       <Container>
         <AnimateOnScroll className="text-center mb-12 md:mb-16">
-          <SectionLabel>Not Just Another AI Receptionist</SectionLabel>
+          <SectionLabel>The Full Revenue Operations Stack</SectionLabel>
           <h2
             className="font-bold max-w-3xl mx-auto"
             style={{
@@ -167,15 +167,15 @@ export function CompetitorComparison() {
               color: "var(--text-primary)",
             }}
           >
-            Not Just Another AI Receptionist.
+            Not Just Another Point Solution.
           </h2>
           <p
             className="text-base mt-4 max-w-2xl mx-auto"
             style={{ color: "var(--text-secondary)" }}
           >
-            Others answer calls. We answer calls, book appointments, recover
-            no-shows, run follow-up campaigns, and show you exactly how much
-            money we put back in your pocket.
+            Most tools handle one step. Recall Touch runs the full execution loop:
+            qualification, booking, follow-up, reactivation, and clear attribution
+            so teams can measure outcomes in one system.
           </p>
         </AnimateOnScroll>
 

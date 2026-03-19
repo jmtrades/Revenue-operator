@@ -213,7 +213,7 @@ async function executeWorkflowStep(
           workspace
         );
         // Provider integration point: SMS send is not wired in this build.
-        console.log(`[SMS] To ${contact.phone}: ${smsContent}`);
+        console.info(`[SMS] To ${contact.phone}: ${smsContent}`);
         eventType = 'sms_sent';
         costCents = 50; // ~$0.50 per SMS
         success = true;
@@ -229,7 +229,7 @@ async function executeWorkflowStep(
           workspace
         );
         // Provider integration point: voice call send is not wired in this build.
-        console.log(`[CALL] To ${contact.phone}: ${callScript}`);
+        console.info(`[CALL] To ${contact.phone}: ${callScript}`);
         eventType = 'voice_minute';
         costCents = 150; // ~$0.15 per minute (estimated)
         success = true;
@@ -245,7 +245,7 @@ async function executeWorkflowStep(
           workspace
         );
         // Provider integration point: email send is not wired in this build.
-        console.log(`[EMAIL] To ${contact.email}: ${step.emailSubject}`);
+        console.info(`[EMAIL] To ${contact.email}: ${step.emailSubject}`);
         eventType = 'email_sent';
         costCents = 10; // ~$0.10 per email
         success = true;
@@ -527,11 +527,11 @@ export async function processWorkflowEnrollments(): Promise<{
     }
 
     if (!enrollments || enrollments.length === 0) {
-      console.log('No enrollments to process');
+      console.info('No enrollments to process');
       return results;
     }
 
-    console.log(`Processing ${enrollments.length} enrollments`);
+    console.info(`Processing ${enrollments.length} enrollments`);
 
     // Process each enrollment
     for (const enrollment of enrollments) {
@@ -552,7 +552,7 @@ export async function processWorkflowEnrollments(): Promise<{
       }
     }
 
-    console.log(`Processing complete:`, results);
+    console.info(`Processing complete:`, results);
     return results;
   } catch (error) {
     console.error('Fatal error in processWorkflowEnrollments:', error);

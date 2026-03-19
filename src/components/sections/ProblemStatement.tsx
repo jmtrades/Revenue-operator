@@ -66,8 +66,8 @@ export function ProblemStatement() {
               className="text-base md:text-lg max-w-2xl mx-auto"
               style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}
             >
-              Unanswered inquiries, stalled follow-up, and broken workflows cost businesses{" "}
-              <span className="text-red-400 font-semibold">$5K–$50K/month</span> from missed calls, no-shows, and dead follow-up.
+              Unanswered inquiries, stalled pipelines, and inconsistent execution cost businesses{" "}
+              <span className="text-red-400 font-semibold">$5K–$50K/month</span> from broken follow-up, manual outreach delays, and no attribution.
             </p>
           </div>
 
@@ -75,18 +75,18 @@ export function ProblemStatement() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
             <div className="rounded-xl border border-red-500/20 bg-red-500/[0.05] p-5 text-center">
               <PhoneOff className="w-8 h-8 text-red-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">Calls go unanswered</p>
-              <p className="text-xs text-white/50 mt-1">62% of callers never reach the right person</p>
+              <p className="text-sm font-medium text-white">Opportunities go unresponded</p>
+              <p className="text-xs text-white/50 mt-1">Inbound demand waits too long for a useful next step</p>
             </div>
             <div className="rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-5 text-center">
               <Calendar className="w-8 h-8 text-orange-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">No booking made</p>
-              <p className="text-xs text-white/50 mt-1">Lost opportunity — follow-up never runs</p>
+              <p className="text-sm font-medium text-white">Follow-up never happens</p>
+              <p className="text-xs text-white/50 mt-1">Leads cool off while manual outreach stalls</p>
             </div>
             <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/[0.05] p-5 text-center">
               <UserX className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">They pick the next option</p>
-              <p className="text-xs text-white/50 mt-1">Competitor captures the lead first</p>
+              <p className="text-sm font-medium text-white">Revenue is untracked</p>
+              <p className="text-xs text-white/50 mt-1">Teams cannot attribute recovered value to execution</p>
             </div>
           </div>
 

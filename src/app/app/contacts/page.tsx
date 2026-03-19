@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
+import { Download } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Users } from "lucide-react";
 
@@ -104,6 +105,7 @@ export default function AppContactsPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   const [formFirstName, setFormFirstName] = useState("");
   const [formLastName, setFormLastName] = useState("");
@@ -268,6 +270,37 @@ export default function AppContactsPage() {
             <option value="name">{t("sort.name")}</option>
           </select>
         </div>
+        <button
+          type="button"
+          onClick={async () => {
+            try {
+              setExporting(true);
+              const res = await fetch("/api/contacts/export", { credentials: "include" });
+              if (!res.ok) {
+                setToast(t("exportError"));
+                return;
+              }
+              const blob = await res.blob();
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "contacts.csv";
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              URL.revokeObjectURL(url);
+            } catch {
+              setToast(t("exportError"));
+            } finally {
+              setExporting(false);
+            }
+          }}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-input)]"
+          disabled={exporting}
+        >
+          <Download className="w-3.5 h-3.5" />
+          {exporting ? t("exporting") : t("exportCta")}
+        </button>
       </div>
 
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1" aria-label={t("filtersAria")}>

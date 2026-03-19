@@ -6,9 +6,9 @@ import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
 export function HomepageRoiCalculator() {
-  const [monthlyCalls, setMonthlyCalls] = useState(220);
-  const [avgJobValue, setAvgJobValue] = useState(1000);
-  const [missedPct, setMissedPct] = useState(22);
+  const [monthlyOpportunities, setMonthlyOpportunities] = useState(220);
+  const [avgDealValue, setAvgDealValue] = useState(1000);
+  const [revenueGapPct, setRevenueGapPct] = useState(22);
 
   const AVG_VALUE_OPTIONS = [
     { label: "$200", value: 200 },
@@ -20,11 +20,11 @@ export function HomepageRoiCalculator() {
   ] as const;
 
   const { monthlyLost, monthlyRecovered, annualRecovered, paysForItself } = useMemo(() => {
-    const calls = Math.max(0, Math.min(4000, monthlyCalls));
-    const value = Math.max(200, avgJobValue);
-    const missed = Math.max(0, Math.min(80, missedPct)) / 100;
+    const opportunities = Math.max(0, Math.min(4000, monthlyOpportunities));
+    const value = Math.max(200, avgDealValue);
+    const missed = Math.max(0, Math.min(80, revenueGapPct)) / 100;
 
-    const monthlyLostRaw = calls * missed * value;
+    const monthlyLostRaw = opportunities * missed * value;
     const monthlyRecoveredRaw = monthlyLostRaw * 0.7;
     const annualRecoveredRaw = monthlyRecoveredRaw * 12;
 
@@ -37,7 +37,7 @@ export function HomepageRoiCalculator() {
       annualRecovered: annualRecoveredRaw,
       paysForItself: pays,
     };
-  }, [avgJobValue, missedPct, monthlyCalls]);
+  }, [avgDealValue, revenueGapPct, monthlyOpportunities]);
 
   return (
     <section
@@ -73,7 +73,7 @@ export function HomepageRoiCalculator() {
                 lineHeight: 1.7,
               }}
             >
-              Drag the sliders. We estimate monthly revenue leak from missed calls, no-shows, and dead follow-up — and what Recall Touch can recover with 24/7 answering and recovery sequences.
+              Drag the sliders. We estimate your monthly revenue operations gap, then show what Recall Touch can recover with consistent automation and follow-up execution.
             </p>
             <ul className="mt-6 space-y-2 text-sm">
               <li
@@ -106,7 +106,7 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Monthly calls
+                  Monthly opportunities
                 </span>
                 <div className="flex items-center gap-3 mt-2">
                   <input
@@ -114,13 +114,13 @@ export function HomepageRoiCalculator() {
                     min={0}
                     max={2000}
                     step={10}
-                    value={monthlyCalls}
-                    onChange={(event) => setMonthlyCalls(Number(event.target.value))}
+                    value={monthlyOpportunities}
+                    onChange={(event) => setMonthlyOpportunities(Number(event.target.value))}
                     className="flex-1 h-2 rounded-lg cursor-pointer"
                     style={{ accentColor: "var(--accent-primary)" }}
                   />
                   <span className="text-sm font-medium w-16 text-right tabular-nums" style={{ color: "var(--text-primary)" }}>
-                    {monthlyCalls}
+                    {monthlyOpportunities}
                   </span>
                 </div>
               </label>
@@ -130,7 +130,7 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Revenue leak (%)
+                  Revenue gap (%)
                 </span>
                 <div className="flex items-center gap-3 mt-2">
                   <input
@@ -138,8 +138,8 @@ export function HomepageRoiCalculator() {
                     min={0}
                     max={60}
                     step={1}
-                    value={missedPct}
-                    onChange={(event) => setMissedPct(Number(event.target.value))}
+                    value={revenueGapPct}
+                    onChange={(event) => setRevenueGapPct(Number(event.target.value))}
                     className="flex-1 h-2 rounded-lg cursor-pointer"
                     style={{ accentColor: "var(--accent-primary)" }}
                   />
@@ -147,7 +147,7 @@ export function HomepageRoiCalculator() {
                     className="text-sm font-medium w-12 text-right tabular-nums"
                     style={{ color: "var(--text-primary)" }}
                   >
-                    {missedPct}%
+                    {revenueGapPct}%
                   </span>
                 </div>
               </label>
@@ -157,11 +157,11 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Average value of a recovered booking
+                  Average deal value
                 </span>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {AVG_VALUE_OPTIONS.map((opt) => {
-                    const selected = avgJobValue === opt.value;
+                  const selected = avgDealValue === opt.value;
                     return (
                       <button
                         key={opt.value}
@@ -171,7 +171,7 @@ export function HomepageRoiCalculator() {
                             ? "bg-white text-black"
                             : "border border-zinc-700 text-zinc-300 hover:bg-[var(--bg-inset)]"
                         }`}
-                        onClick={() => setAvgJobValue(opt.value)}
+                        onClick={() => setAvgDealValue(opt.value)}
                         aria-pressed={selected}
                       >
                         {opt.label}

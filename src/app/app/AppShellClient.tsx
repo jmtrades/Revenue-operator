@@ -82,6 +82,10 @@ export default function AppShellClient({
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
         ],
       },
+      {
+        label: t("contactSupport"),
+        items: [{ href: "/app/help", label: t("contactSupport"), icon: HelpCircle }],
+      },
     ],
     [t]
   );
@@ -101,6 +105,7 @@ export default function AppShellClient({
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+      { href: "/app/help", label: t("contactSupport"), icon: HelpCircle },
     ],
     [t]
   );
