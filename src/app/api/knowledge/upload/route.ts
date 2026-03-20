@@ -1,6 +1,6 @@
 /**
- * POST /api/knowledge/upload — Upload a document file for knowledge base
- * Accepts multipart form data with a file and stores metadata in the database
+ * POST /api/knowledge/upload — Upload a document file for the knowledge base.
+ * Extracts text (PDF/DOCX/TXT), stores document + token chunks for future RAG.
  */
 
 export const dynamic = "force-dynamic";
@@ -10,6 +10,38 @@ import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
+function normalizeText(text: string): string {
+  return text.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function tokenizeApprox(text: string): string[] {
+  // Simple whitespace token approximation for chunking (RAG-friendly; avoids extra deps).
+  return text.split(/\s+/).map((t) => t.trim()).filter(Boolean);
+}
+
+function chunkByTokens({ text, chunkSize, overlap }: { text: string; chunkSize: number; overlap: number }) {
+  const tokens = tokenizeApprox(text);
+  const chunks: Array<{ chunk_index: number; content: string; token_count: number }> = [];
+
+  let start = 0;
+  let chunkIndex = 0;
+  while (start < tokens.length) {
+    const end = Math.min(start + chunkSize, tokens.length);
+    const partTokens = tokens.slice(start, end);
+    const content = partTokens.join(" ");
+    chunks.push({
+      chunk_index: chunkIndex,
+      content,
+      token_count: partTokens.length,
+    });
+    chunkIndex += 1;
+    if (end >= tokens.length) break;
+    start = Math.max(0, end - overlap);
+  }
+
+  return chunks;
+}
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -38,50 +70,93 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Validate file type (accept common document types)
-    const validTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
+    const validTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+    ];
     if (!validTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Invalid file type. Supported: PDF, DOC, DOCX, TXT" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid file type. Supported: PDF, DOCX/DOC, TXT" }, { status: 400 });
     }
 
-    // Validate file size (max 10MB)
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
       return NextResponse.json({ error: "File too large. Max size: 10MB" }, { status: 400 });
     }
 
-    // Read file content
-    const buffer = await file.arrayBuffer();
-    const _fileContent = Buffer.from(buffer).toString("base64");
+    const ab = await file.arrayBuffer();
+    const buffer = Buffer.from(ab);
 
-    // For now, store metadata in a knowledge_uploads table (simple approach)
-    // In production, you would extract text from PDF/DOC and index it
+    let extractedText = "";
+    if (file.type === "application/pdf") {
+      const pdfParseMod = await import("pdf-parse");
+      const pdfParse = (pdfParseMod as any).default ?? pdfParseMod;
+      const data = await pdfParse(buffer);
+      extractedText = (data?.text as string) ?? "";
+    } else if (
+      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      file.type === "application/msword"
+    ) {
+      const mammothMod = await import("mammoth");
+      const result = await (mammothMod as any).extractRawText({ buffer });
+      extractedText = (result?.value as string) ?? "";
+    } else if (file.type === "text/plain") {
+      extractedText = buffer.toString("utf8");
+    } else {
+      return NextResponse.json({ error: "Unsupported file type" }, { status: 400 });
+    }
+
+    extractedText = normalizeText(extractedText);
+    if (!extractedText || extractedText.length < 50) {
+      return NextResponse.json({ error: "Could not extract enough text from the file." }, { status: 400 });
+    }
+
+    const chunkSizeTokens = 512;
+    const overlapTokens = 50;
+    const chunks = chunkByTokens({ text: extractedText, chunkSize: chunkSizeTokens, overlap: overlapTokens });
+
     const db = getDb();
-    const { data: upload, error: uploadErr } = await db
-      .from("knowledge_uploads")
+
+    const { data: documentRow, error: documentErr } = await db
+      .from("knowledge_documents")
       .insert({
         workspace_id: workspaceId,
-        file_name: file.name,
+        filename: file.name,
         file_type: file.type,
-        file_size: file.size,
-        status: "processing",
-        metadata: {
-          uploadedAt: new Date().toISOString(),
-          mimeType: file.type,
-        },
+        content_text: extractedText,
+        chunk_count: chunks.length,
       })
       .select("id")
       .maybeSingle();
 
-    if (uploadErr || !upload) {
-      return NextResponse.json({ error: "Failed to save file metadata" }, { status: 500 });
+    if (documentErr || !documentRow) {
+      return NextResponse.json({ error: "Failed to save document" }, { status: 500 });
+    }
+
+    const documentId = (documentRow as { id: string }).id;
+
+    if (chunks.length > 0) {
+      const rows = chunks.map((c) => ({
+        document_id: documentId,
+        workspace_id: workspaceId,
+        chunk_index: c.chunk_index,
+        content: c.content,
+        token_count: c.token_count,
+      }));
+
+      const { error: chunksErr } = await db.from("knowledge_chunks").insert(rows);
+      if (chunksErr) {
+        return NextResponse.json({ error: "Failed to save chunks" }, { status: 500 });
+      }
     }
 
     return NextResponse.json({
       ok: true,
-      uploadId: (upload as { id: string }).id,
+      uploadId: documentId,
       fileName: file.name,
-      message: "File uploaded successfully and is being processed",
+      chunkCount: chunks.length,
+      message: "File uploaded successfully and chunked for analysis",
     });
   } catch (error) {
     console.error("Knowledge upload error:", error);
