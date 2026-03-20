@@ -24,7 +24,7 @@ import {
  */
 export async function POST(req: NextRequest) {
   const body = await req.text();
-  const signature = req.headers.get("x-telnyx-signature-ed25519");
+  const signature = req.headers.get("x-telnyx-signature-ed25519") ?? undefined;
 
   // Verify webhook signature — rejects if key missing or sig invalid
   if (!verifyTelnyxWebhook(body, signature)) {
