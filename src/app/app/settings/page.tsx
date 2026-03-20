@@ -217,14 +217,14 @@ export default function AppSettingsPage() {
             onClick={() => setConfirm("data")}
             className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded text-left"
           >
-            {tSettings("deleteData")}
+            {tSettings("requestDeleteData")}
           </button>
           <button
             type="button"
             onClick={() => setConfirm("account")}
             className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded text-left"
           >
-            {tSettings("deleteAccount")}
+            {tSettings("requestDeleteAccount")}
           </button>
         </div>
         <button
@@ -246,7 +246,7 @@ export default function AppSettingsPage() {
           message={tSettings("deleteAllDataMessage")}
           confirmLabel={tSettings("deleteAllDataConfirmLabel")}
           variant="danger"
-          onConfirm={() => toast.info(tSettings("deleteDataInfo"))}
+          onConfirm={() => toast.error("Please contact support@recall-touch.com to delete your account.")}
           onClose={() => setConfirm(null)}
         />
       )}
@@ -257,7 +257,7 @@ export default function AppSettingsPage() {
           message={tSettings("deleteAccountMessage")}
           confirmLabel={tSettings("deleteAccountConfirmLabel")}
           variant="danger"
-          onConfirm={() => toast.info(tSettings("deleteAccountInfo"))}
+          onConfirm={() => toast.error("Please contact support@recall-touch.com to delete your account.")}
           onClose={() => setConfirm(null)}
         />
       )}

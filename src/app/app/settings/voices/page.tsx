@@ -51,6 +51,7 @@ interface WorkspaceVoiceConfig {
   industryPreset: string;
 }
 
+/* TODO: Replace with real API data — demo fixtures for development only */
 const DEMO_VOICES: Voice[] = [
   {
     id: "voice_alex",
@@ -94,6 +95,7 @@ const DEMO_VOICES: Voice[] = [
   },
 ];
 
+/* TODO: Replace with real API data — demo fixtures for development only */
 const DEMO_AB_TESTS: ABTest[] = [
   {
     id: "test_1",
