@@ -1,6 +1,37 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import {
+  Stethoscope,
+  Syringe,
+  Activity,
+  PawPrint,
+  Pill,
+  Dumbbell,
+  Thermometer,
+  Wrench,
+  Zap,
+  HardHat,
+  Hammer,
+  Sun,
+  Sparkles,
+  TreePine,
+  Home,
+  Scale,
+  BarChart3,
+  DollarSign,
+  Shield,
+  Building2,
+  Users,
+  UtensilsCrossed,
+  Scissors,
+  Car,
+  Camera,
+  Plane,
+  ShoppingCart,
+  GraduationCap,
+  Briefcase,
+} from "lucide-react";
 
 /**
  * Complete industry list for onboarding.
@@ -9,46 +40,46 @@ import { useState, useMemo } from "react";
  */
 const INDUSTRIES = [
   // Healthcare & Wellness
-  { slug: "dental", name: "Dental", icon: "🦷", category: "Health" },
-  { slug: "healthcare", name: "Healthcare", icon: "🏥", category: "Health" },
-  { slug: "medspa", name: "Med Spa", icon: "💉", category: "Health" },
-  { slug: "chiropractor", name: "Chiropractic", icon: "🦴", category: "Health" },
-  { slug: "veterinary", name: "Veterinary", icon: "🐾", category: "Health" },
-  { slug: "pharmacy", name: "Pharmacy", icon: "💊", category: "Health" },
-  { slug: "fitness", name: "Fitness / Gym", icon: "💪", category: "Health" },
+  { slug: "dental", name: "Dental", icon: Stethoscope, category: "Health" },
+  { slug: "healthcare", name: "Healthcare", icon: Stethoscope, category: "Health" },
+  { slug: "medspa", name: "Med Spa", icon: Syringe, category: "Health" },
+  { slug: "chiropractor", name: "Chiropractic", icon: Activity, category: "Health" },
+  { slug: "veterinary", name: "Veterinary", icon: PawPrint, category: "Health" },
+  { slug: "pharmacy", name: "Pharmacy", icon: Pill, category: "Health" },
+  { slug: "fitness", name: "Fitness / Gym", icon: Dumbbell, category: "Health" },
 
   // Home Services
-  { slug: "hvac", name: "HVAC", icon: "❄️", category: "Home" },
-  { slug: "plumbing", name: "Plumbing", icon: "🔧", category: "Home" },
-  { slug: "electrical", name: "Electrical", icon: "⚡", category: "Home" },
-  { slug: "roofing", name: "Roofing", icon: "🏗️", category: "Home" },
-  { slug: "contractor", name: "General Contractor", icon: "🔨", category: "Home" },
-  { slug: "solar", name: "Solar", icon: "☀️", category: "Home" },
-  { slug: "cleaning", name: "Cleaning Service", icon: "🧹", category: "Home" },
-  { slug: "landscaping", name: "Landscaping", icon: "🌿", category: "Home" },
-  { slug: "home_services", name: "Home Services (Other)", icon: "🏠", category: "Home" },
+  { slug: "hvac", name: "HVAC", icon: Thermometer, category: "Home" },
+  { slug: "plumbing", name: "Plumbing", icon: Wrench, category: "Home" },
+  { slug: "electrical", name: "Electrical", icon: Zap, category: "Home" },
+  { slug: "roofing", name: "Roofing", icon: HardHat, category: "Home" },
+  { slug: "contractor", name: "General Contractor", icon: Hammer, category: "Home" },
+  { slug: "solar", name: "Solar", icon: Sun, category: "Home" },
+  { slug: "cleaning", name: "Cleaning Service", icon: Sparkles, category: "Home" },
+  { slug: "landscaping", name: "Landscaping", icon: TreePine, category: "Home" },
+  { slug: "home_services", name: "Home Services (Other)", icon: Home, category: "Home" },
 
   // Professional Services
-  { slug: "legal", name: "Legal", icon: "⚖️", category: "Professional" },
-  { slug: "accounting", name: "Accounting / CPA", icon: "📊", category: "Professional" },
-  { slug: "financial_services", name: "Financial Services", icon: "💰", category: "Professional" },
-  { slug: "insurance", name: "Insurance", icon: "🛡️", category: "Professional" },
-  { slug: "real_estate", name: "Real Estate", icon: "🏡", category: "Professional" },
-  { slug: "property_management", name: "Property Management", icon: "🏢", category: "Professional" },
-  { slug: "recruiting", name: "Recruiting / Staffing", icon: "👥", category: "Professional" },
+  { slug: "legal", name: "Legal", icon: Scale, category: "Professional" },
+  { slug: "accounting", name: "Accounting / CPA", icon: BarChart3, category: "Professional" },
+  { slug: "financial_services", name: "Financial Services", icon: DollarSign, category: "Professional" },
+  { slug: "insurance", name: "Insurance", icon: Shield, category: "Professional" },
+  { slug: "real_estate", name: "Real Estate", icon: Home, category: "Professional" },
+  { slug: "property_management", name: "Property Management", icon: Building2, category: "Professional" },
+  { slug: "recruiting", name: "Recruiting / Staffing", icon: Users, category: "Professional" },
 
   // Consumer & Retail
-  { slug: "restaurant", name: "Restaurant / Food", icon: "🍽️", category: "Consumer" },
-  { slug: "beauty_salon", name: "Beauty Salon / Spa", icon: "💇", category: "Consumer" },
-  { slug: "auto_repair", name: "Auto Repair", icon: "🚗", category: "Consumer" },
-  { slug: "photography", name: "Photography", icon: "📸", category: "Consumer" },
-  { slug: "pet_grooming", name: "Pet Grooming", icon: "🐕", category: "Consumer" },
-  { slug: "travel", name: "Travel Agency", icon: "✈️", category: "Consumer" },
-  { slug: "ecommerce", name: "E-Commerce", icon: "🛒", category: "Consumer" },
-  { slug: "education", name: "Education / Tutoring", icon: "📚", category: "Consumer" },
+  { slug: "restaurant", name: "Restaurant / Food", icon: UtensilsCrossed, category: "Consumer" },
+  { slug: "beauty_salon", name: "Beauty Salon / Spa", icon: Scissors, category: "Consumer" },
+  { slug: "auto_repair", name: "Auto Repair", icon: Car, category: "Consumer" },
+  { slug: "photography", name: "Photography", icon: Camera, category: "Consumer" },
+  { slug: "pet_grooming", name: "Pet Grooming", icon: PawPrint, category: "Consumer" },
+  { slug: "travel", name: "Travel Agency", icon: Plane, category: "Consumer" },
+  { slug: "ecommerce", name: "E-Commerce", icon: ShoppingCart, category: "Consumer" },
+  { slug: "education", name: "Education / Tutoring", icon: GraduationCap, category: "Consumer" },
 
   // General
-  { slug: "general", name: "Other / General", icon: "💼", category: "General" },
+  { slug: "general", name: "Other / General", icon: Briefcase, category: "General" },
 ] as const;
 
 const CATEGORIES = ["Health", "Home", "Professional", "Consumer", "General"] as const;
@@ -123,7 +154,9 @@ export default function IndustrySelector({ onSelect, selected, disabled }: Indus
                     ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
                   `}
                 >
-                  <div className="text-lg mb-0.5">{ind.icon}</div>
+                  <div className="mb-0.5">
+                    <ind.icon className="w-5 h-5 text-white" />
+                  </div>
                   <h3 className="text-white font-medium text-xs leading-tight">{ind.name}</h3>
                 </button>
               );

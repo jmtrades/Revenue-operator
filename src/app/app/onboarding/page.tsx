@@ -11,6 +11,8 @@ import {
   MoonStar,
   PhoneCall,
   Sparkles,
+  Play,
+  X,
 } from "lucide-react";
 import { useOnboardingStep } from "../OnboardingStepContext";
 import IndustrySelector from "@/components/onboarding/IndustrySelector";
@@ -158,10 +160,10 @@ export default function AppOnboardingPage() {
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); void speakTextViaApi(v.preview, { gender: v.gender, voiceId: v.id }); }}
-              className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-primary)] text-xs"
+              className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-hover)] hover:bg-[var(--bg-active)] text-[var(--text-primary)]"
               aria-label={t("previewVoiceAria", { name: v.name })}
             >
-              ▶
+              <Play className="w-4 h-4" />
             </button>
           </div>
           <p className="text-xs text-[var(--text-tertiary)] mt-0.5">{v.desc}</p>
@@ -530,7 +532,7 @@ export default function AppOnboardingPage() {
                 }}
                 className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl border border-[var(--border-default)] text-zinc-300 hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
               >
-                {greetingPlaying ? <Waveform isPlaying /> : <span>▶</span>}
+                {greetingPlaying ? <Waveform isPlaying /> : <Play className="w-4 h-4" />}
                 {t("hearIt")}
               </button>
             </div>
@@ -694,7 +696,7 @@ export default function AppOnboardingPage() {
                           className="text-xs text-[var(--text-tertiary)] hover:text-red-400"
                           aria-label={t("remove")}
                         >
-                          ✕
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
                     </>

@@ -277,7 +277,7 @@ After voice server deployment, run this test sequence:
 
 Domains: recall-touch.com, www.recall-touch.com
 DB Schema: revenue_operator
-Supabase Project: ucjbsftixnnbmuodholg (us-east-2)
+Supabase Project: (see Supabase dashboard)
 ```
 
 ---

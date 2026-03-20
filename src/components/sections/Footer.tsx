@@ -190,8 +190,8 @@ export function Footer() {
             </Link>
             <div className="flex flex-wrap gap-2 mt-3">
               {[
-                { label: "256-bit SSL", icon: "🔒" },
-                { label: "GDPR-ready", icon: "🔐" },
+                { label: "256-bit SSL", icon: "" },
+                { label: "GDPR-ready", icon: "" },
               ].map((badge) => (
                 <span
                   key={badge.label}

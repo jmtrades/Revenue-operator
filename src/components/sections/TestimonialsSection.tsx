@@ -73,7 +73,7 @@ export function TestimonialsSection() {
   const prev = useCallback(() => setCurrent((c) => (c - 1 + count) % count), [count]);
 
   useEffect(() => {
-    const id = setInterval(next, 6000);
+    const id = setInterval(next, 10000);
     return () => clearInterval(id);
   }, [next]);
 
@@ -96,10 +96,10 @@ export function TestimonialsSection() {
               color: "var(--text-primary, #1A1A1A)",
             }}
           >
-            12,400+ businesses trust Recall Touch with their phones
+            Real Results from Real Businesses
           </h2>
           <p className="text-sm mt-3 mx-auto max-w-lg" style={{ color: "var(--text-secondary)" }}>
-            $340M+ in revenue recovered. 8.7M+ calls handled. Hear what our customers have to say.
+            See how businesses like yours are using Recall Touch.
           </p>
         </AnimateOnScroll>
 

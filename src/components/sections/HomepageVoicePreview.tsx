@@ -23,10 +23,10 @@ export function HomepageVoicePreview() {
               color: "var(--text-primary, #1A1A1A)",
             }}
           >
-            This isn&apos;t your grandma&apos;s phone tree
+            The Voice Your Callers Will Trust
           </h2>
           <p className="text-base md:text-lg max-w-xl mx-auto mt-3" style={{ color: "var(--text-secondary)" }}>
-            Our AI sounds indistinguishable from a real human. Don&apos;t take our word for it — listen to a live demo call across 5 industries.
+            Hear how Recall Touch handles real conversations — from first ring to booked appointment.
           </p>
         </AnimateOnScroll>
 
@@ -40,7 +40,7 @@ export function HomepageVoicePreview() {
             className="inline-flex items-center gap-2 border border-[var(--border-default)] text-[var(--text-primary)] font-semibold rounded-xl px-6 py-3 no-underline hover:bg-white/5 transition-all"
           >
             <Headphones className="w-4 h-4" />
-            Try the full interactive demo
+            Experience the full demo
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

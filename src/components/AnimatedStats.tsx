@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Phone, Building2, Clock, DollarSign, Globe, Shield } from "lucide-react";
+import { Phone, Building2, Clock, Star, Globe, Shield } from "lucide-react";
 
 /* ─── Animated Number Counter ─── */
 function AnimatedNumber({ target, duration = 2000, prefix = "", suffix = "", decimals = 0 }: {
@@ -81,13 +81,14 @@ const STATS = [
     raw: true,
   },
   {
-    icon: DollarSign,
-    value: 340,
-    prefix: "$",
-    suffix: "M+",
-    label: "Revenue Recovered",
-    sublabel: "For our customers",
+    icon: Star,
+    value: 4.9,
+    prefix: "",
+    suffix: "",
+    label: "Customer Rating",
+    sublabel: "From 3,200+ verified reviews",
     color: "amber",
+    decimals: 1,
     raw: true,
   },
   {

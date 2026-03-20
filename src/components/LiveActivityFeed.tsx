@@ -97,9 +97,8 @@ export function LiveActivityFeed() {
   return (
     <div className="rounded-2xl border border-white/10 bg-black/30 p-5 max-w-sm w-full">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
         <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
-          Live Right Now
+          What businesses are doing with Recall Touch
         </span>
       </div>
 
