@@ -422,13 +422,13 @@ export default function CallsPage() {
         <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <EmptyState
             icon={PhoneCall}
-            title={t("calls.empty.title")}
-            description={t("calls.empty.description")}
-            primaryAction={{ label: t("calls.empty.connectNumber"), href: "/app/settings/phone" }}
+            title="Make your first test call"
+            description="Choose a primary agent and place a quick test call to unlock call intelligence."
+            primaryAction={{ label: "Test Call", href: "/app/settings/phone" }}
           />
         </div>
       ) : (
-      <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
+      <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
             <tr>

@@ -1338,18 +1338,18 @@ export default function AppAgentsPageClient({
             ) : agents.length === 0 ? (
               <div className="py-12 text-center">
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-                  {tAgents("emptyTitle")}
+                  Create your first AI agent
                 </p>
                 <p className="text-xs text-[var(--text-secondary)] mb-6 max-w-sm mx-auto">
-                  {tAgents("emptySubtitle")}
+                  Set up your voice, knowledge, and behavior so your AI can answer calls and book appointments 24/7.
                 </p>
                 <button
                   type="button"
                   onClick={() => void createAgentFromTemplate("scratch")}
                   className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                  aria-label={tAgents("createFirstAria")}
+                  aria-label="Create Agent"
                 >
-                  {tAgents("createAgentButton")}
+                  Create Agent
                 </button>
               </div>
             ) : (

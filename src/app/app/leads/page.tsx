@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { getClientOrNull } from "@/lib/supabase/client";
 import { useDebounce } from "@/hooks/useDebounce";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LeadsList } from "./components/LeadsList";
 import { LeadsKanban } from "./components/LeadsKanban";
 import { LeadDetail } from "./components/LeadDetail";
@@ -189,6 +190,8 @@ export default function LeadsPage() {
   const t = useTranslations();
   const tToast = useTranslations("toast");
   const { workspaceId } = useWorkspace();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId =
     workspaceId || workspaceSnapshot?.id?.trim() || "default";
@@ -230,6 +233,28 @@ export default function LeadsPage() {
     document.title = t("leads.pageTitle");
     return () => { document.title = ""; };
   }, [t]);
+
+  // Deep-link support for empty-state CTAs:
+  // - ?add=1 opens the manual add-lead modal
+  // - ?import=1 opens the same modal and surfaces the CSV upload UI
+  useEffect(() => {
+    const add = searchParams.get("add");
+    const imp = searchParams.get("import");
+
+    if (add === "1" || imp === "1") {
+      setAddLeadOpen(true);
+
+      // Remove query params so closing the modal doesn't immediately re-open it.
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("add");
+        url.searchParams.delete("import");
+        router.replace(`${url.pathname}${url.search}`, { scroll: false });
+      } catch {
+        // If URL manipulation fails, the modal still opens.
+      }
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     if (!workspaceId) return;
