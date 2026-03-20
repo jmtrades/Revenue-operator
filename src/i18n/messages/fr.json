@@ -3997,13 +3997,13 @@
       "badge": "Populaire",
       "period": "/mois",
       "tierRoi": {
-        "starter": "Moins d'un appel manqué",
-        "growth": "Un lead récupéré paie le mois",
+        "solo": "Moins d'un appel manqué",
+        "business": "Un lead récupéré paie le mois",
         "scale": "Équipe communication IA pour une fraction d'un recrutement",
         "enterprise": "ROI et support dédié sur mesure"
       },
       "tiers": {
-        "starter": {
+        "solo": {
           "name": "Starter",
           "description": "Répondez à chaque appel. Un numéro, un agent.",
           "features": [
@@ -4016,7 +4016,7 @@
           ],
           "cta": "Commencer gratuit"
         },
-        "growth": {
+        "business": {
           "name": "Growth",
           "description": "Un lead récupéré paie le mois.",
           "features": [

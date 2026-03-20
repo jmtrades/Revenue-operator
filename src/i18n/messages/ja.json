@@ -4001,13 +4001,13 @@
       "badge": "人気",
       "period": "/月",
       "tierRoi": {
-        "starter": "取りこぼし1件未満",
-        "growth": "1件のリード回収で月額回収",
+        "solo": "取りこぼし1件未満",
+        "business": "1件のリード回収で月額回収",
         "scale": "1人採用の一部でフルAI通信チーム",
         "enterprise": "カスタムROI・専任サポート"
       },
       "tiers": {
-        "starter": {
+        "solo": {
           "name": "Starter",
           "description": "すべての通話に応答。1番号、1エージェント。",
           "features": [
@@ -4020,7 +4020,7 @@
           ],
           "cta": "無料で始める"
         },
-        "growth": {
+        "business": {
           "name": "Growth",
           "description": "1件のリード回収で月額回収。",
           "features": [

@@ -4003,13 +4003,13 @@
       "badge": "Beliebt",
       "period": "/Monat",
       "tierRoi": {
-        "starter": "Weniger als ein verpasster Anruf",
-        "growth": "Ein zurückgewonnener Lead zahlt den Monat",
+        "solo": "Weniger als ein verpasster Anruf",
+        "business": "Ein zurückgewonnener Lead zahlt den Monat",
         "scale": "Volles KI-Kommunikationsteam für einen Bruchteil einer Stelle",
         "enterprise": "Individueller ROI und dedizierter Support"
       },
       "tiers": {
-        "starter": {
+        "solo": {
           "name": "Starter",
           "description": "Jeden Anruf beantworten. Eine Nummer, ein Agent.",
           "features": [
@@ -4022,7 +4022,7 @@
           ],
           "cta": "Kostenlos starten"
         },
-        "growth": {
+        "business": {
           "name": "Growth",
           "description": "Ein zurückgewonnener Lead zahlt den Monat.",
           "features": [
