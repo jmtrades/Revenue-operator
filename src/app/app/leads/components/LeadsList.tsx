@@ -116,22 +116,22 @@ export function LeadsList({
           aria-hidden
         />
         <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-          {tLeads("empty.subtitle")}
+          Import contacts or add manually
         </p>
         <p className="text-xs text-[var(--text-secondary)] mb-4">
-          {tLeads("empty.hint")}
+          Import contacts or add manually
         </p>
         <EmptyState
           icon={Users}
-          title={tLeads("empty.title")}
-          description={tLeads("empty.description")}
+          title="Import contacts or add manually"
+          description="Import a CSV to bulk add leads, or add a contact manually to start qualifying and booking appointments."
           primaryAction={{
-            label: tLeads("addLead"),
-            href: "/app/leads?add=1",
+            label: "Import CSV",
+            href: "/app/leads?import=1",
           }}
           secondaryAction={{
-            label: tLeads("empty.connectCrm"),
-            href: "/app/settings/integrations",
+            label: "Add Contact",
+            href: "/app/leads?add=1",
           }}
         />
       </div>
@@ -140,7 +140,7 @@ export function LeadsList({
 
   return (
     <>
-      <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
+      <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-default)] bg-[var(--bg-card)]">
             <tr>

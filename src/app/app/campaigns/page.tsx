@@ -365,9 +365,9 @@ export default function CampaignsPage() {
             ) : filtered.length === 0 ? (
               <EmptyState
                 icon={Megaphone}
-                title={t("empty.title")}
-                description={t("empty.description")}
-                primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
+                title="Create your first campaign"
+                description="Launch an AI follow-up campaign to convert leads into appointments."
+                primaryAction={{ label: "Create Campaign", href: "/app/campaigns/create" }}
               />
             ) : (
               filtered.map((campaign) => (
