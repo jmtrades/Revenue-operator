@@ -12,6 +12,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import { getPriceId } from "@/lib/stripe-prices";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function log(event: string, data: Record<string, unknown>): void {
   if (data.reason || data.error) {
@@ -142,6 +143,15 @@ export async function POST(req: NextRequest) {
     if (!finalWorkspaceId) {
       log("checkout_failed", { reason: "workspace_not_found" });
       return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 404 });
+    }
+
+    const rl = await checkRateLimit(`checkout:${finalWorkspaceId}`, 5, 60_000);
+    if (!rl.allowed) {
+      const retryAfterSeconds = Math.ceil((rl.resetAt - Date.now()) / 1000);
+      return NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429, headers: { "Retry-After": String(Math.max(0, retryAfterSeconds)) } }
+      );
     }
 
     // Idempotency: check if workspace already has active/trial subscription

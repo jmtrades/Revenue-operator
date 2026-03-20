@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 
@@ -89,6 +90,16 @@ export async function POST(req: NextRequest) {
   if (!workspace_id || !name) return NextResponse.json({ error: "workspace_id and name required" }, { status: 400 });
   const err = await requireWorkspaceAccess(req, workspace_id);
   if (err) return err;
+
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`create-agent:${workspace_id}`, 10, 60_000);
+  if (!rl.allowed) {
+    const retryAfterSeconds = Math.ceil((rl.resetAt - Date.now()) / 1000);
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(Math.max(0, retryAfterSeconds)) } }
+    );
+  }
   const validPurpose = ["inbound", "outbound", "both"];
   const validPersonality = ["friendly", "professional", "casual", "empathetic"];
   const db = getDb();

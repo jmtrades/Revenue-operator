@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const ANALYSIS_PROMPT = `Analyze this call transcript and extract behavioral patterns. Focus on what the agent/caller does WELL — tone, opening, discovery, objection handling, qualification, closing, empathy, persistence, pacing, recovery.
 
@@ -31,6 +32,16 @@ export async function POST(req: NextRequest) {
   }
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
+
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`analyze:${session.workspaceId}`, 10, 60_000);
+  if (!rl.allowed) {
+    const retryAfterSeconds = Math.ceil((rl.resetAt - Date.now()) / 1000);
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(Math.max(0, retryAfterSeconds)) } }
+    );
+  }
 
   let body: { transcript?: string; title?: string; call_type?: string };
   try {
