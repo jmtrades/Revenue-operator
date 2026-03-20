@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Check } from "lucide-react";
+
+function CheckIcon() {
+  return <Check className="w-4 h-4 text-emerald-400 shrink-0" />;
+}
 import { Confetti } from "@/components/Confetti";
 
 export function ActivateStep({
@@ -44,11 +48,11 @@ export function ActivateStep({
       </div>
 
       <ul className="space-y-2 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm text-slate-300">
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistBusiness")}</li>
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistPhone")}</li>
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistTemplate")}</li>
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistGreeting")}</li>
-        <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> {t("checklistForward")}</li>
+        <li className="flex items-center gap-2"><CheckIcon /> {t("checklistBusiness")}</li>
+        <li className="flex items-center gap-2"><CheckIcon /> {t("checklistPhone")}</li>
+        <li className="flex items-center gap-2"><CheckIcon /> {t("checklistTemplate")}</li>
+        <li className="flex items-center gap-2"><CheckIcon /> {t("checklistGreeting")}</li>
+        <li className="flex items-center gap-2"><CheckIcon /> {t("checklistForward")}</li>
       </ul>
 
       <div className="flex items-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">

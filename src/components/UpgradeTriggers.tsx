@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { AlertCircle, Lock, Zap, X } from 'lucide-react';
+import { AlertCircle, Lock, Zap, X, Check, Minus } from 'lucide-react';
 
 // CSS variable definitions for theming
 const themeVars = {
@@ -569,7 +569,7 @@ const FeatureRow: React.FC<FeatureRowProps> = ({ label, value }) => {
       </span>
       {typeof value === 'boolean' ? (
         <span style={{ color: themeVars.accentPrimary, fontWeight: 600 }}>
-          {value ? '✓' : '–'}
+          {value ? <Check className="w-4 h-4 inline-block" /> : <Minus className="w-4 h-4 inline-block" />}
         </span>
       ) : (
         <span style={{ color: themeVars.textPrimary, fontWeight: 600 }}>

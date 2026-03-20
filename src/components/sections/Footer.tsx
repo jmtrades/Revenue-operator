@@ -185,9 +185,9 @@ export function Footer() {
             <Link href="/terms" className="block hover:opacity-80 transition-opacity">
               {t("termsOfService")}
             </Link>
-            <Link href="/status" className="block hover:opacity-80 transition-opacity">
+            <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
               System Status
-            </Link>
+            </a>
             <div className="flex flex-wrap gap-2 mt-3">
               {[
                 { label: "256-bit SSL", icon: "" },

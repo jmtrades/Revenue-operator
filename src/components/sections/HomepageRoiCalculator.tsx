@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
+import { Check } from "lucide-react";
 
 export function HomepageRoiCalculator() {
   const [monthlyOpportunities, setMonthlyOpportunities] = useState(220);
@@ -81,14 +82,14 @@ export function HomepageRoiCalculator() {
                   color: "var(--text-secondary)",
                 }}
               >
-                ✓ Uses conservative recovery assumptions based on real call data.
+                <Check className="w-3.5 h-3.5 inline-block mr-1 text-emerald-500" style={{ verticalAlign: "text-bottom" }} /> Uses conservative 70% recovery rate based on aggregated call data.
               </li>
               <li
                 style={{
                   color: "var(--text-secondary)",
                 }}
               >
-                ✓ Shows monthly recovery and whether Business pays for itself.
+                <Check className="w-3.5 h-3.5 inline-block mr-1 text-emerald-500" style={{ verticalAlign: "text-bottom" }} /> Shows monthly recovery and whether Growth plan pays for itself.
               </li>
             </ul>
           </div>

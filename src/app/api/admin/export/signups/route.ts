@@ -1,54 +1,74 @@
 /**
- * Admin CSV export: signups. Allowed only when session user email === ADMIN_EMAIL.
+ * Admin export route for users/signups
+ * GET route requiring admin authentication
+ * Returns CSV with id, email, created_at
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/request-session";
+import { isAdmin, forbidden } from "@/lib/admin/auth";
 import { getDb } from "@/lib/db/queries";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-
-async function isAdmin(req: NextRequest): Promise<boolean> {
-  if (!ADMIN_EMAIL) return false;
-  const session = await getSession(req);
-  if (!session?.userId) return false;
-  try {
-    const db = getDb();
-    const { data } = await db.from("users").select("email").eq("id", session.userId).maybeSingle();
-    const email = (data as { email?: string } | null)?.email ?? null;
-    return !!email && email.trim().toLowerCase() === ADMIN_EMAIL;
-  } catch {
-    return false;
+function convertToCSV(data: any[]): string {
+  if (data.length === 0) {
+    return "id,email,created_at\n";
   }
-}
 
-function escapeCsvCell(s: string): string {
-  if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-  return s;
+  const headers = ["id", "email", "created_at"];
+  const rows = data.map((row) =>
+    headers
+      .map((header) => {
+        const value = row[header];
+        // Escape quotes and wrap in quotes if contains comma or quotes
+        if (value === null || value === undefined) {
+          return "";
+        }
+        const stringValue = String(value);
+        if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
+          return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+        return stringValue;
+      })
+      .join(",")
+  );
+
+  return [headers.join(","), ...rows].join("\n");
 }
 
 export async function GET(req: NextRequest) {
-  if (!(await isAdmin(req))) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-  const headers = ["name", "business_name", "email", "phone", "industry", "website", "status", "created_at"];
-  let rows: string[][] = [];
   try {
+    // Check admin authentication
+    if (!(await isAdmin(req))) {
+      return forbidden();
+    }
+
     const db = getDb();
-    const { data } = await db.from("signups").select("name, business_name, email, phone, industry, website, status, created_at").order("created_at", { ascending: false });
-    rows = (data ?? []).map((r: Record<string, unknown>) =>
-      headers.map((h) => escapeCsvCell(String(r[h] ?? "")))
+
+    // Query users table
+    const { data: users, error } = await db
+      .from("users")
+      .select("id, email, created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    const csvContent = convertToCSV(users || []);
+
+    return new NextResponse(csvContent, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": 'attachment; filename="signups-export.csv"',
+      },
+    });
+  } catch (error) {
+    console.error("[API] admin export signups error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
     );
-  } catch {
-    // table may not exist
   }
-  const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-  return new NextResponse(csv, {
-    headers: {
-      "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="recall-touch-signups-${new Date().toISOString().slice(0, 10)}.csv"`,
-    },
-  });
 }

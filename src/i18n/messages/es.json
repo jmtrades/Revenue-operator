@@ -1864,7 +1864,7 @@
       },
       "templates": {
         "receptionist": {
-          "label": "Recepcionista",
+          "label": "Agente IA",
           "desc": "Atiende llamadas, toma mensajes y deriva.",
           "greeting": "Gracias por llamar. Puedo ayudarte con preguntas, mensajes y a dirigirte. ¿En qué puedo ayudarte hoy?"
         },
@@ -1910,7 +1910,7 @@
     },
     "profile": {
       "agentNameLabel": "Nombre del agente",
-      "agentNamePlaceholder": "Recepcionista",
+      "agentNamePlaceholder": "Agente IA",
       "openingGreetingLabel": "Saludo de apertura",
       "openingGreetingHint": "Así contesta tu IA el teléfono. Después mantiene una conversación natural según tu conocimiento y reglas.",
       "greetingPlaceholder": "Gracias por llamar. ¿En qué puedo ayudarte hoy?",
@@ -1931,7 +1931,7 @@
       "title": "Crear agente",
       "subtitle": "Empieza con un patrón probado en lugar de configurar desde cero.",
       "closeAria": "Cerrar diálogo de crear agente",
-      "receptionistDesc": "Atiende llamadas, deriva y resuelve FAQs.",
+      "receptionistDesc": "Atiende llamadas, deriva y resuelve FAQs con tu Agente IA.",
       "salesCallerDesc": "Llama a leads, califica y presenta.",
       "appointmentSetterDesc": "Reserva reuniones, confirma y recuerda.",
       "supportDesc": "Triaje, responde y escala.",
@@ -1943,7 +1943,7 @@
       "all": "Todos"
     },
     "templateName": {
-      "receptionist": "Recepcionista",
+      "receptionist": "Agente IA",
       "after_hours": "Fuera de horario",
       "emergency": "Línea de emergencia",
       "lead_qualifier": "Vendedor",
@@ -1999,7 +1999,7 @@
       "receptionist": "Gracias por llamar. ¿En qué puedo ayudarle hoy?"
     },
     "defaultAgent": {
-      "name": "Receptionista",
+      "name": "Agente IA",
       "simpleGreeting": "Gracias por llamar. ¿En qué puedo ayudarle hoy?",
       "defaultHours": "Lun–Vie 9:00–17:00",
       "yourBusiness": "tu negocio",
@@ -2137,7 +2137,7 @@
       "emergency": "Emergencia",
       "review_request": "Revisión",
       "scratch": "Personalizado",
-      "receptionist": "Recepcionista"
+      "receptionist": "Agente IA"
     },
     "noCallsYet": "Sin llamadas aún",
     "callsCount": "{count} llamadas",
@@ -3606,6 +3606,7 @@
       "badgeEncryption": "Cifrado 256 bits",
       "badgeUptime": "",
       "ctaStartFree": "Empieza gratis →",
+      "complianceAndSecurity": "Cumplimiento y Seguridad",
       "optionalUpdates": "Opcional: recibe novedades del producto.",
       "notifyMe": "Avísame",
       "onList": "¡Estás en la lista! 🎉",
@@ -4764,7 +4765,7 @@
     "errorNameRequired": "Nombre y nombre del negocio son obligatorios.",
     "errorSomethingWentWrong": "Algo salió mal",
     "creating": "Creando…",
-    "step2Heading": "Tu recepcionista IA.",
+    "step2Heading": "Tu Agente IA.",
     "step2Subtitle": "Elige nombre y qué puede hacer.",
     "agentNameLabel": "Nombre del agente",
     "greetingLabelOptional": "Saludo (opcional)",

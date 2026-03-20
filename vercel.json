@@ -64,6 +64,10 @@
     {
       "path": "/api/cron/usage-milestones",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/benchmark-aggregation",
+      "schedule": "0 2 * * *"
     }
   ]
 }

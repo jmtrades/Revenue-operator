@@ -21,7 +21,9 @@ export function ScrollDepthCTA() {
     if (!mounted || typeof window === "undefined") return;
 
     if (sessionStorage.getItem(SESSION_KEY) === "1") return;
-    if (window.innerWidth < 768) return;
+
+    const isMobile = window.innerWidth < 768;
+    const scrollThreshold = isMobile ? 0.4 : 0.6; // 40% on mobile, 60% on desktop
 
     let ticking = false;
     const handleScroll = () => {
@@ -34,7 +36,7 @@ export function ScrollDepthCTA() {
           return;
         }
         const scrollPercent = window.scrollY / scrollHeight;
-        if (scrollPercent >= 0.6) {
+        if (scrollPercent >= scrollThreshold) {
           setVisible(true);
         }
         ticking = false;
@@ -55,19 +57,19 @@ export function ScrollDepthCTA() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between gap-4 px-4 py-3 border-t md:px-6"
+      className="fixed bottom-0 left-0 right-0 z-40 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 px-4 py-3 border-t sm:px-6"
       style={{
         background: "var(--bg-surface)",
         borderColor: "var(--border-default)",
-        height: 56,
+        minHeight: 56,
         animation: "slideUp 200ms ease-out",
       }}
     >
       <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
-      <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+      <p className="text-sm font-medium text-center sm:text-left flex-1" style={{ color: "var(--text-primary)" }}>
         {t("message")}
       </p>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         <Link
           href={ROUTES.START}
           className="btn-marketing-primary px-4 py-2 text-sm rounded-lg no-underline shrink-0"

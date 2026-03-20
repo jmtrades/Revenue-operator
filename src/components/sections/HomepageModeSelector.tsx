@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { BriefcaseBusiness, Building2, User } from "lucide-react";
+import { BriefcaseBusiness, Building2, User, Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { ROUTES } from "@/lib/constants";
@@ -98,7 +98,7 @@ export function HomepageModeSelector() {
 
             <ul className="mt-6 space-y-2 text-sm text-white/70">
               {active.bullets.map((b) => (
-                <li key={b}>✓ {b}</li>
+                <li key={b} className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> {b}</li>
               ))}
             </ul>
 

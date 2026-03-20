@@ -14,6 +14,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { SwCleanup } from "@/components/SwCleanup";
 import { StaleBuildBanner } from "@/components/StaleBuildBanner";
+import TrackPageView from "@/components/TrackPageView";
+import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 
 const dmSans = DM_Sans({
   variable: "--font-body-sans",
@@ -102,7 +104,7 @@ const softwareApplicationJsonLd = {
   url: BASE_URL,
   offers: {
     "@type": "AggregateOffer",
-    lowPrice: "49",
+    lowPrice: "77",
     highPrice: "997",
     priceCurrency: "USD",
     offerCount: "4",
@@ -147,6 +149,7 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SwCleanup />
           <StaleBuildBanner />
+          <ExitIntentPopup />
           <a href="#main" className="skip-link">
             {t("skipToContent")}
           </a>
@@ -166,6 +169,7 @@ export default async function RootLayout({
               },
             }}
           />
+          <TrackPageView />
           <SpeedInsights />
           <Analytics />
         </NextIntlClientProvider>
