@@ -144,11 +144,9 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
 
     // Try to play the AI greeting via voice API
     try {
-      const res = await fetch("/api/demo/voice-preview", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: scenario.greeting, voice_id: "sarah" }),
-      });
+      const res = await fetch(
+        `/api/demo/voice-preview?voice_id=sarah&text=${encodeURIComponent(scenario.greeting)}`
+      );
       if (res.ok) {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
@@ -175,11 +173,9 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
         }
         // Try to play AI lines via voice API
         if (line.role === "ai" && i > 0) {
-          fetch("/api/demo/voice-preview", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: line.text, voice_id: "sarah" }),
-          })
+          fetch(
+            `/api/demo/voice-preview?voice_id=sarah&text=${encodeURIComponent(line.text)}`
+          )
             .then((r) => (r.ok ? r.blob() : null))
             .then((blob) => {
               if (blob) {
