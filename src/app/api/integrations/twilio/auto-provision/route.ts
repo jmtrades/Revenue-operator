@@ -1,6 +1,8 @@
 /**
- * Auto-provision Twilio: Assign number automatically, no credential input required
- * Called when user clicks "Activate text handling" in onboarding
+ * Auto-provision phone number for text handling.
+ *
+ * Called when the user clicks "Activate text handling" in onboarding.
+ * Telnyx is the primary provider; this route uses the unified telephony interface.
  */
 
 export const dynamic = "force-dynamic";
@@ -9,34 +11,46 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
+import { getTelephonyService } from "@/lib/telephony";
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
   let workspaceId = session?.workspaceId;
   let body: { workspace_id?: string; area_code?: string } = {};
+
   try {
     body = (await req.json().catch(() => ({}))) as { workspace_id?: string; area_code?: string };
   } catch {
     // ignore
   }
+
   if (!workspaceId) workspaceId = body.workspace_id?.trim() ?? undefined;
   if (!workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
-  const areaCode = body.area_code?.replace(/\D/g, "").slice(0, 3);
+
+  const areaCode = body.area_code?.replace(/D/g, "").slice(0, 3);
 
   const db = getDb();
-  const { data: ws } = await db.from("workspaces").select("id, billing_status").eq("id", workspaceId).maybeSingle();
+  const { data: ws } = await db
+    .from("workspaces")
+    .select("id, billing_status")
+    .eq("id", workspaceId)
+    .maybeSingle();
+
   if (!ws) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
   }
+
   const billingStatus = (ws as { billing_status?: string }).billing_status;
   if (!billingStatus || !["trial", "active"].includes(billingStatus)) {
     return NextResponse.json(
       { error: "Active subscription required to provision phone numbers.", code: "SUBSCRIPTION_REQUIRED" },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
@@ -48,7 +62,10 @@ export async function POST(req: NextRequest) {
     .eq("status", "active")
     .maybeSingle();
 
-  if (existingNumber && (existingNumber as { phone_number: string; status: string }).status === "active") {
+  if (
+    existingNumber &&
+    (existingNumber as { phone_number: string; status: string }).status === "active"
+  ) {
     return NextResponse.json({
       success: true,
       phone_number: (existingNumber as { phone_number: string }).phone_number,
@@ -57,142 +74,37 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Use global Twilio account for auto-provisioning
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin ?? "";
-  const voiceWebhookUrl =
-    process.env.VOICE_PROVIDER === "pipecat"
-      ? `${baseUrl}/api/voice/connect`
-      : `${baseUrl}/api/webhooks/twilio/voice`;
+  const telephonyProvider = getTelephonyProvider();
+  const telephony = getTelephonyService();
 
-  if (!accountSid || !authToken) {
-    return NextResponse.json({
-      error: "Phone service is being configured. Enter your email and we will notify you when numbers are available.",
-      code: "NOT_CONFIGURED",
-    }, { status: 503 });
+  // Search the closest available number (prefer user's area code)
+  const numbers = await telephony.searchAvailableNumbers({ areaCode, limit: 1 });
+  if ("error" in numbers) {
+    return NextResponse.json({ error: numbers.error, code: "NO_INVENTORY" }, { status: 502 });
   }
-
-  const authHeader = "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64");
-
-  const purchaseNumber = async (phoneNumberToBuy: string): Promise<{ phone_number: string | null; sid: string | null }> => {
-    const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
-    const purchaseParams = new URLSearchParams({
-      PhoneNumber: phoneNumberToBuy,
-      VoiceUrl: voiceWebhookUrl,
-      VoiceMethod: "POST",
-      SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
-      SmsMethod: "POST",
-      StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
-      StatusCallbackMethod: "POST",
-    });
-    const purchaseRes = await fetch(purchaseUrl, {
-      method: "POST",
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "application/x-www-form-urlencoded",
+  if (numbers.length === 0) {
+    return NextResponse.json(
+      {
+        error:
+          "No numbers available in this region. Try a different area code or leave it blank for the nearest available.",
+        code: "NO_INVENTORY",
       },
-      body: purchaseParams.toString(),
-    });
-    if (!purchaseRes.ok) {
-      return { phone_number: null, sid: null };
-    }
-    const purchaseData = (await purchaseRes.json()) as { phone_number?: string; sid?: string };
-    return {
-      phone_number: purchaseData.phone_number ?? null,
-      sid: purchaseData.sid ?? null,
-    };
-  };
-
-  try {
-  let phoneNumber: string | null = null;
-  let phoneSid: string | null = null;
-
-  // 1) Try Local numbers (optionally in user's area code)
-  try {
-    const searchParams = new URLSearchParams({ SmsEnabled: "true", Limit: "1" });
-    if (areaCode && areaCode.length === 3) searchParams.set("AreaCode", areaCode);
-    const searchUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/Local.json?${searchParams.toString()}`;
-    const searchRes = await fetch(searchUrl, { headers: { Authorization: authHeader } });
-
-    if (searchRes.ok) {
-      const searchData = (await searchRes.json()) as { available_phone_numbers?: Array<{ phone_number: string }> };
-      const available = searchData.available_phone_numbers?.[0];
-      if (available) {
-        const result = await purchaseNumber(available.phone_number);
-        phoneNumber = result.phone_number;
-        phoneSid = result.sid;
-      }
-    }
-  } catch (error) {
-    // Local search/purchase failed; try toll-free
+      { status: 404 },
+    );
   }
 
-  // 2) If no Local availability, try Toll-Free (often has inventory)
-  if (!phoneNumber) {
-    try {
-      const tollFreeParams = new URLSearchParams({ Limit: "1" });
-      const tollFreeUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/TollFree.json?${tollFreeParams.toString()}`;
-      const tollFreeRes = await fetch(tollFreeUrl, { headers: { Authorization: authHeader } });
+  const selected = numbers[0];
+  const purchased = await telephony.purchaseNumber(selected.phone_number, {
+    connectionId: process.env.TELNYX_CONNECTION_ID,
+    messagingProfileId: process.env.TELNYX_MESSAGING_PROFILE_ID,
+  });
 
-      if (tollFreeRes.ok) {
-        const tollFreeData = (await tollFreeRes.json()) as { available_phone_numbers?: Array<{ phone_number: string }> };
-        const available = tollFreeData.available_phone_numbers?.[0];
-        if (available) {
-          const result = await purchaseNumber(available.phone_number);
-          phoneNumber = result.phone_number;
-          phoneSid = result.sid;
-        }
-      }
-    } catch (error) {
-      // Toll-free search/purchase failed
-    }
+  if ("error" in purchased) {
+    return NextResponse.json({ error: purchased.error, code: "PROVISION_ERROR" }, { status: 502 });
   }
 
-  // 3) Fallback: use proxy number if purchase failed
-  if (!phoneNumber) {
-    const proxyNumber = process.env.TWILIO_PROXY_NUMBER;
-    if (proxyNumber) {
-      phoneNumber = proxyNumber;
-      try {
-        const listUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json?PhoneNumber=${encodeURIComponent(proxyNumber.replace(/\s/g, ""))}`;
-        const listRes = await fetch(listUrl, {
-          headers: { Authorization: authHeader },
-        });
-        if (listRes.ok) {
-          const listData = (await listRes.json()) as { incoming_phone_numbers?: Array<{ sid: string }> };
-          const sid = listData.incoming_phone_numbers?.[0]?.sid;
-          if (sid) {
-            const updateUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers/${sid}.json`;
-            await fetch(updateUrl, {
-              method: "POST",
-              headers: {
-                Authorization: authHeader,
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
-              body: new URLSearchParams({
-                VoiceUrl: voiceWebhookUrl,
-                VoiceMethod: "POST",
-                SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
-                SmsMethod: "POST",
-                StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
-                StatusCallbackMethod: "POST",
-              }).toString(),
-            });
-          }
-        }
-      } catch {
-        // Proxy number may not be configurable, continue anyway
-      }
-    }
-  }
-
-  if (!phoneNumber) {
-    return NextResponse.json({
-      error: "No numbers available in this region. Try a different area code or leave it blank for the nearest available.",
-      code: "NO_INVENTORY",
-    }, { status: 404 });
-  }
+  const phoneNumber = purchased.phoneNumber;
+  const phoneSid = purchased.numberId;
 
   await db.from("phone_numbers").insert({
     workspace_id: workspaceId,
@@ -200,7 +112,7 @@ export async function POST(req: NextRequest) {
     friendly_name: phoneNumber,
     country_code: "US",
     number_type: "local",
-    provider: "twilio",
+    provider: telephonyProvider,
     provider_sid: phoneSid,
     status: "active",
     monthly_cost_cents: 300,
@@ -214,12 +126,12 @@ export async function POST(req: NextRequest) {
       workspace_id: workspaceId,
       mode: "direct",
       proxy_number: phoneNumber,
-      twilio_account_sid: accountSid,
-      twilio_phone_sid: phoneSid,
+      twilio_account_sid: telephonyProvider === "twilio" ? process.env.TWILIO_ACCOUNT_SID ?? null : null,
+      twilio_phone_sid: telephonyProvider === "twilio" ? phoneSid : null,
       status: "active",
       updated_at: new Date().toISOString(),
     },
-    { onConflict: "workspace_id" }
+    { onConflict: "workspace_id" },
   );
 
   return NextResponse.json({
@@ -228,19 +140,4 @@ export async function POST(req: NextRequest) {
     status: "active",
     message: "Text handling activated",
   });
-  } catch (error: unknown) {
-    // Error response below
-    const err = error as { code?: number; message?: string };
-    const msg = err?.message ?? (error instanceof Error ? error.message : "Unknown error");
-    if (err.code === 21422 || (typeof msg === "string" && msg.toLowerCase().includes("not available"))) {
-      return NextResponse.json({
-        error: "No numbers in that area code. Try a different one or leave blank.",
-        code: "PROVISION_ERROR",
-      }, { status: 502 });
-    }
-    return NextResponse.json({
-      error: "Phone service error. Please try again.",
-      code: "PROVISION_ERROR",
-    }, { status: 502 });
-  }
 }
