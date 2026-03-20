@@ -19,22 +19,14 @@ export function FinalCTA() {
 
       <Container>
         <AnimateOnScroll className="text-center max-w-2xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 rounded-full bg-red-500/10 border border-red-500/20 px-4 py-1.5 text-xs font-medium text-red-400 mb-6">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400" />
-            </span>
-            You&apos;re losing money right now
-          </div>
 
           <h2 className="font-bold text-3xl md:text-5xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.15, color: "var(--text-primary)" }}>
-            Your Revenue Operations Should Be Running{" "}
-            <span className="text-emerald-400">Right Now.</span>
+            Your Phones Should Never Go Unanswered.
           </h2>
 
           <p className="text-lg mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
             14 days free. No credit card required. Cancel anytime.
-            Your AI revenue operations are live in minutes.
+            Go live in minutes.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">

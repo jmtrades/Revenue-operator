@@ -267,7 +267,7 @@ export default function VoiceDemoPage() {
         <div className="flex flex-wrap items-center justify-center gap-4 mb-8 text-sm" style={{ color: "var(--text-tertiary)" }}>
           <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 12,400+ businesses live</span>
           <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 8.7M+ calls handled</span>
-          <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> $340M+ revenue recovered</span>
+          <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 99.97% uptime SLA</span>
         </div>
         <button
           onClick={() => document.getElementById("demo-section")?.scrollIntoView({ behavior: "smooth" })}

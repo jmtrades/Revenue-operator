@@ -3,16 +3,16 @@
 import { useState, useEffect } from "react";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
-import { PhoneOff, Calendar, UserX, Flame } from "lucide-react";
+import { PhoneOff, Calendar, UserX, Flame, Wrench, HeartPulse, Home, Scale, Sparkles, Droplet, Building2 } from "lucide-react";
 
 const INDUSTRY_DATA = [
-  { id: "hvac", label: "HVAC", icon: "🔧", avgJob: 450, missedPerWeek: 2, annualLoss: 46800 },
-  { id: "dental", label: "Multi-location Dental", icon: "🦷", avgJob: 1200, missedPerWeek: 3, annualLoss: 187200 },
-  { id: "realestate", label: "Real Estate", icon: "🏡", avgJob: 12000, missedPerWeek: 1, annualLoss: 624000 },
-  { id: "legal", label: "Legal", icon: "⚖️", avgJob: 4000, missedPerWeek: 2, annualLoss: 416000 },
-  { id: "medspa", label: "Med Spa", icon: "💅", avgJob: 600, missedPerWeek: 2, annualLoss: 62400 },
-  { id: "plumbing", label: "Plumbing", icon: "🚿", avgJob: 300, missedPerWeek: 4, annualLoss: 62400 },
-  { id: "roofing", label: "Roofing", icon: "🏘️", avgJob: 800, missedPerWeek: 2, annualLoss: 83200 },
+  { id: "hvac", label: "HVAC", icon: Wrench, avgJob: 450, missedPerWeek: 2, annualLoss: 46800 },
+  { id: "dental", label: "Multi-location Dental", icon: HeartPulse, avgJob: 1200, missedPerWeek: 3, annualLoss: 187200 },
+  { id: "realestate", label: "Real Estate", icon: Home, avgJob: 12000, missedPerWeek: 1, annualLoss: 624000 },
+  { id: "legal", label: "Legal", icon: Scale, avgJob: 4000, missedPerWeek: 2, annualLoss: 416000 },
+  { id: "medspa", label: "Med Spa", icon: Sparkles, avgJob: 600, missedPerWeek: 2, annualLoss: 62400 },
+  { id: "plumbing", label: "Plumbing", icon: Droplet, avgJob: 300, missedPerWeek: 4, annualLoss: 62400 },
+  { id: "roofing", label: "Roofing", icon: Building2, avgJob: 800, missedPerWeek: 2, annualLoss: 83200 },
 ] as const;
 
 function AnimatedNumber({ value, prefix = "$" }: { value: number; prefix?: string }) {
@@ -108,7 +108,7 @@ export function ProblemStatement() {
                     border: i === selectedIndustry ? "1px solid var(--accent-primary)" : "1px solid rgba(255,255,255,0.1)",
                   }}
                 >
-                  {ind.icon} {ind.label}
+                  <ind.icon className="w-4 h-4 inline mr-1" /> {ind.label}
                 </button>
               ))}
             </div>

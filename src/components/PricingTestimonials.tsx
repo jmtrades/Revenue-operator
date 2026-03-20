@@ -44,7 +44,7 @@ const TESTIMONIALS = [
     plan: "Agency",
   },
   {
-    quote: "Setup literally took 3 minutes. That's not marketing speak — I timed it. Our AI agent was taking calls before I finished my coffee. It paid for itself by lunch.",
+    quote: "Setup literally took 3 minutes. That's not marketing speak — I timed it. Our AI agent was taking calls before I finished my coffee. It paid for itself within the first day.",
     name: "Sarah Kim",
     role: "Owner",
     company: "AutoCare Express",

@@ -16,7 +16,7 @@ const USE_CASES = [
   "Reminds customers about appointments",
   "Handles support questions 24/7",
   "Runs outbound campaigns at scale",
-  "Recovers lost revenue while you sleep",
+  "Converts after-hours calls into booked appointments",
   "Gets smarter with every single call",
 ];
 
@@ -134,7 +134,7 @@ export function Hero() {
                   </div>
                   <div>
                     <p className="text-base font-bold" style={{ color: "var(--accent-primary)" }}>41</p>
-                    <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>AI Voices</p>
+                    <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>Human-Quality Voices</p>
                   </div>
                 </div>
               </div>
@@ -162,7 +162,7 @@ export function Hero() {
             </span>
           </div>
           <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-            Trusted by plumbing companies, dental offices, law firms, roofing contractors, real estate teams, medical practices, agencies, restaurants, and 200+ other industries.
+            Trusted across every industry that depends on the phone.
           </p>
         </div>
       </Container>

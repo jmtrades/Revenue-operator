@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Pause, Phone, Mic, Volume2, ChevronRight, Sparkles } from "lucide-react";
+import { Play, Pause, Phone, Mic, Volume2, ChevronRight, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed } from "lucide-react";
 
 /* ─── Conversation Scripts ─── */
 const SCENARIOS = [
@@ -9,7 +9,7 @@ const SCENARIOS = [
     id: "hvac",
     industry: "HVAC",
     label: "Emergency AC Repair",
-    icon: "🔧",
+    icon: Wrench,
     greeting: "Hi, thanks for calling Premier Comfort Heating and Air. This is Sarah, how can I help you today?",
     conversation: [
       { role: "ai" as const, text: "Hi, thanks for calling Premier Comfort Heating and Air. This is Sarah, how can I help you today?", delay: 0 },
@@ -23,7 +23,7 @@ const SCENARIOS = [
     id: "dental",
     industry: "Dental",
     label: "New Patient Booking",
-    icon: "🦷",
+    icon: HeartPulse,
     greeting: "Good morning, Bright Smile Dental, this is Emma. How can I make your day better?",
     conversation: [
       { role: "ai" as const, text: "Good morning, Bright Smile Dental, this is Emma. How can I make your day better?", delay: 0 },
@@ -39,7 +39,7 @@ const SCENARIOS = [
     id: "legal",
     industry: "Legal",
     label: "Personal Injury Intake",
-    icon: "⚖️",
+    icon: Scale,
     greeting: "Thank you for calling Roth and Associates. This is Alex. How may I assist you?",
     conversation: [
       { role: "ai" as const, text: "Thank you for calling Roth and Associates. This is Alex. How may I assist you?", delay: 0 },
@@ -55,7 +55,7 @@ const SCENARIOS = [
     id: "roofing",
     industry: "Roofing",
     label: "Storm Damage Estimate",
-    icon: "🏠",
+    icon: Home,
     greeting: "Apex Roofing Group, this is Sarah. Thanks for calling — how can I help?",
     conversation: [
       { role: "ai" as const, text: "Apex Roofing Group, this is Sarah. Thanks for calling — how can I help?", delay: 0 },
@@ -69,7 +69,7 @@ const SCENARIOS = [
     id: "restaurant",
     industry: "Restaurant",
     label: "Reservation & Catering",
-    icon: "🍽️",
+    icon: UtensilsCrossed,
     greeting: "Hi, thanks for calling Bella Notte Italian Kitchen. This is Emma, how can I help you?",
     conversation: [
       { role: "ai" as const, text: "Hi, thanks for calling Bella Notte Italian Kitchen. This is Emma, how can I help you?", delay: 0 },
@@ -274,7 +274,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
                   : "border-white/10 text-white/50 hover:bg-white/5 hover:text-white/70"
               }`}
             >
-              <span>{s.icon}</span>
+              <s.icon className="w-4 h-4" />
               {s.label}
             </button>
           ))}

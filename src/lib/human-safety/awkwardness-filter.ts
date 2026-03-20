@@ -13,7 +13,6 @@ const SAFE_FALLBACK = "Just following up — no rush at all. Let me know if you'
 
 const RISKY_PATTERNS: Array<{ pattern: RegExp; reason: string }> = [
   { pattern: /awesome!!|great news!!|excellent!!/gi, reason: "excitement_tone" },
-  { pattern: /😊|😄|🙂|👍|✨|🔥|💪/g, reason: "emoji" },
   { pattern: /just checking in/i, reason: "fake_familiarity" },
   { pattern: /\?\?\s*$|\!\!\s*$/g, reason: "exclamation_pressure" },
   { pattern: /(?:^|[.!?]\s+)[^.!?]*[!]{2,}[^.!?]*[.!?]?/g, reason: "exclamation_marks" },

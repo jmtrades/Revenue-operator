@@ -4502,7 +4502,7 @@
       "text": "Trusted by operators who can't afford to miss decisive calls."
     },
     "industries": {
-      "label": "Industries",
+      "label": "Works Across Every Industry",
       "heading": "Built for every business that generates revenue",
       "subheading": "From solo consultants to enterprise sales teams. Recall Touch adapts to your workflows, your rules, and your revenue goals.",
       "industries": {
@@ -4752,11 +4752,11 @@
     "plansDescription": "Plans for solo operators through to established businesses. Start free, no credit card.",
     "monthly": "Monthly",
     "annual": "Annual",
-    "save17": "Save 17%",
+    "save17": "Save 20%",
     "mostPopular": "Most popular",
     "toggle": {
       "monthly": "Monthly",
-      "annual": "Annual (save 17%)"
+      "annual": "Annual (save 20%)"
     },
     "tier": {
       "solo": {

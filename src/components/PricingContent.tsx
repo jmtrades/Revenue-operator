@@ -183,7 +183,7 @@ const FAQS = [
   { q: "Does Recall Touch integrate with my calendar/CRM?", a: "Yes. Growth+ tiers get integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business+ adds API access. Enterprise gets custom integrations." },
   { q: "What's included in your support?", a: "Starter: Email (24h response). Growth: Priority email + live chat. Business: Phone support. Agency+: Dedicated account manager." },
   { q: "Can I test Recall Touch free first?", a: "Absolutely. 14-day free trial. Full access to all features. No credit card required. Your AI agent will be answering calls in under 3 minutes." },
-  { q: "What makes Recall Touch different from competitors?", a: "Self-learning AI that gets smarter with every call, Revenue At Risk detection that finds money you're losing, and all-in-one pricing that bundles minutes instead of stacking per-minute fees." },
+  { q: "How does Recall Touch work?", a: "Recall Touch answers all your incoming calls as an AI receptionist, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
   { q: "Can I white-label this for my clients?", a: "Yes. Agency plan includes full white-label branding, multi-client dashboard, and client invitation flow. Enterprise adds custom domain support." },
 ];
 
@@ -216,11 +216,11 @@ function CostCalculator() {
       <div className="flex items-center gap-2 mb-2">
         <Flame className="w-5 h-5 text-red-400" />
         <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-          The True Cost of Voicemail
+          Calculate Your ROI
         </h3>
       </div>
       <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-        What are you losing right now?
+        See what Recall Touch can do for your business
       </p>
 
       <div className="grid gap-5 mb-6">
@@ -365,10 +365,10 @@ export function PricingContent() {
               <strong className="text-emerald-400">30-day money-back guarantee</strong>
             </p>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-amber-500/20 bg-amber-500/5">
-            <Award className="w-5 h-5 text-amber-400 shrink-0" />
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-500/20 bg-blue-500/5">
+            <Users className="w-5 h-5 text-blue-400 shrink-0" />
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              <strong className="text-amber-400">#1 AI Phone Platform 2026</strong>
+              <strong className="text-blue-400">Trusted by 12,400+ businesses</strong>
             </p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-500/20 bg-blue-500/5">
@@ -467,7 +467,7 @@ export function PricingContent() {
 
               {tier.id === "growth" && (
                 <p className="text-sm mb-6" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                  Growth plan pays for itself if you recover just one <strong>$300</strong> deal per month.
+                  Most teams see ROI within the first week.
                 </p>
               )}
 
@@ -526,16 +526,6 @@ export function PricingContent() {
           </div>
           <div className="lg:col-span-2 flex flex-col gap-4">
             <LiveActivityFeed />
-            {/* Urgency Banner */}
-            <div className="py-4 px-5 rounded-xl border border-amber-500/20 bg-amber-500/5">
-              <p className="text-sm text-center" style={{ color: "var(--text-secondary)" }}>
-                <Flame className="w-4 h-4 text-amber-400 inline-block mr-1 align-text-bottom" />
-                <strong className="text-amber-400">Limited time:</strong>{" "}
-                Lock in annual pricing before rates increase.
-                <br />
-                Save up to <strong className="text-white">$2,400/year</strong>.
-              </p>
-            </div>
           </div>
         </div>
 
@@ -647,10 +637,10 @@ export function PricingContent() {
 
           <div className="relative">
             <p className="text-xs font-semibold tracking-wider uppercase text-emerald-400 mb-3">
-              Ready to stop losing money?
+              Start recovering revenue today
             </p>
             <h2 className="text-2xl md:text-4xl font-bold mb-2" style={{ color: "var(--text-primary)", letterSpacing: "-0.03em" }}>
-              Your competitors are already using AI
+              Ready to Never Miss Another Call?
             </h2>
             <p className="text-base md:text-lg max-w-lg mx-auto mb-2" style={{ color: "var(--text-secondary)" }}>
               Join 12,400+ businesses that never miss a call, never lose a lead, and never sleep on revenue.

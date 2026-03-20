@@ -1,30 +1,44 @@
 "use client";
 
 import { useState } from "react";
+import { User, TrendingUp, Building2 } from "lucide-react";
 
 const MODES = [
   {
     id: "solo" as const,
     title: "Solo",
     description: "Personal follow-up, invoice recovery, relationship reminders",
-    icon: "👤",
+    icon: "user",
     examples: "Freelancers, consultants, creators, coaches",
   },
   {
     id: "sales" as const,
     title: "Sales Team",
     description: "Setters, closers, pipeline execution, deal follow-up",
-    icon: "📈",
+    icon: "trending-up",
     examples: "Sales teams, agencies, high-ticket orgs",
   },
   {
     id: "business" as const,
     title: "Service Business",
     description: "Inbound calls, booking, no-show recovery, reactivation",
-    icon: "🏢",
+    icon: "building2",
     examples: "Dental, HVAC, legal, med spa, real estate",
   },
 ] as const;
+
+const getIconComponent = (iconType: string) => {
+  switch (iconType) {
+    case "user":
+      return User;
+    case "trending-up":
+      return TrendingUp;
+    case "building2":
+      return Building2;
+    default:
+      return User;
+  }
+};
 
 type Mode = (typeof MODES)[number]["id"];
 
@@ -63,7 +77,12 @@ export default function ModeSelector({ onSelect, selected, disabled }: ModeSelec
                 ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
               `}
             >
-              <div className="text-2xl mb-2">{m.icon}</div>
+              <div className="mb-2">
+                {(() => {
+                  const IconComponent = getIconComponent(m.icon);
+                  return <IconComponent className="w-6 h-6 text-white" />;
+                })()}
+              </div>
               <h3 className="text-white font-semibold text-base mb-1">{m.title}</h3>
               <p className="text-sm text-zinc-400 mb-3">{m.description}</p>
               <p className="text-xs text-zinc-500">{m.examples}</p>

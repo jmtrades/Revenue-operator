@@ -5,7 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag, Brain, AlertCircle } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag, Brain, AlertCircle, Smile, Frown, Minus } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -458,7 +458,7 @@ export default function CallsPage() {
                 null;
               const _kind: Exclude<CallType, null> = "inbound";
               const outcomeKey = (c.outcome ?? "lead") as Exclude<CallOutcome, null>;
-              const sentimentEmoji = sentiment === "positive" ? "🙂" : sentiment === "negative" ? "😞" : sentiment === "neutral" ? "😐" : null;
+              const sentimentIcon = sentiment === "positive" ? <Smile className="w-4 h-4 text-emerald-400" /> : sentiment === "negative" ? <Frown className="w-4 h-4 text-red-400" /> : sentiment === "neutral" ? <Minus className="w-4 h-4 text-zinc-400" /> : null;
               const durationLabel = durSec > 0 ? `${durMin}m ${(durSec % 60).toString().padStart(2, "0")}s` : "—";
               return (
                 <tr
@@ -487,9 +487,9 @@ export default function CallsPage() {
                     </Badge>
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-200">
-                    {sentimentEmoji && <span aria-hidden>{sentimentEmoji}</span>}
-                    {!sentimentEmoji && sentiment && <span>{sentimentLabels[sentiment]}</span>}
-                    {!sentiment && !sentimentEmoji && <span className="text-[var(--text-secondary)]">—</span>}
+                    {sentimentIcon && <span aria-hidden className="flex items-center gap-1">{sentimentIcon}</span>}
+                    {!sentimentIcon && sentiment && <span>{sentimentLabels[sentiment]}</span>}
+                    {!sentiment && !sentimentIcon && <span className="text-[var(--text-secondary)]">—</span>}
                   </td>
                   <td className="py-3 px-4 text-xs text-zinc-300">
                     {c.matched_lead?.name ? t("calls.table.agent") : "—"}
@@ -673,8 +673,9 @@ export default function CallsPage() {
                 {(() => {
                   const s = (selectedCall.analysis_outcome as { sentiment?: CallSentiment })?.sentiment ?? null;
                   return s ? (
-                    <Badge variant={s === "positive" ? "success" : s === "negative" ? "error" : "neutral"}>
-                      {s === "positive" ? `🙂 ${sentimentLabels.positive}` : s === "negative" ? `😞 ${sentimentLabels.negative}` : `😐 ${sentimentLabels.neutral}`}
+                    <Badge variant={s === "positive" ? "success" : s === "negative" ? "error" : "neutral"} className="flex items-center gap-1">
+                      {s === "positive" ? <Smile className="w-3 h-3" /> : s === "negative" ? <Frown className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
+                      {s === "positive" ? sentimentLabels.positive : s === "negative" ? sentimentLabels.negative : sentimentLabels.neutral}
                     </Badge>
                   ) : null;
                 })()}

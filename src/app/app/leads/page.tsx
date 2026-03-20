@@ -1115,7 +1115,7 @@ export default function LeadsPage() {
             <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
               <p className="text-xs text-[var(--text-secondary)] mb-2">{t("leads.csvOr")}</p>
               <label className="flex items-center gap-2 text-sm text-zinc-300 hover:text-[var(--text-primary)] cursor-pointer">
-                <span className="text-base">📎</span>
+                <span className="text-base text-zinc-400">+</span>
                 {t("leads.importFromCsv")}
                 <input
                   type="file"

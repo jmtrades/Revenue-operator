@@ -18,7 +18,7 @@ export function HomepageTrustBar() {
           <span>·</span>
           <span>14-day free trial</span>
           <span>·</span>
-          <span><strong style={{ color: "var(--text-primary)" }}>$340M+</strong> revenue recovered</span>
+          <span>Enterprise-grade security</span>
         </div>
       </Container>
     </section>

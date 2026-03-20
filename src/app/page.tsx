@@ -33,9 +33,6 @@ const Industries = dynamic(
 const HomepageVoicePreview = dynamic(
   () => import("@/components/sections/HomepageVoicePreview").then((m) => m.HomepageVoicePreview),
 );
-const Differentiation = dynamic(
-  () => import("@/components/sections/CompetitorComparison").then((m) => m.CompetitorComparison),
-);
 const HomepageModeSelector = dynamic(
   () => import("@/components/sections/HomepageModeSelector").then((m) => m.HomepageModeSelector),
 );
@@ -134,7 +131,6 @@ export default async function HomePage() {
         <HowItWorks />
         <Industries />
         <HomepageVoicePreview />
-        <Differentiation />
         <HomepageModeSelector />
         <PricingPreview />
         <TestimonialsSection />
