@@ -20,6 +20,7 @@ import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
 import Stripe from "stripe";
 import { sendDunningEmail } from "@/lib/email/dunning";
+import { getTelephonyService } from "@/lib/telephony";
 
 // Structured logging for webhook events (errors only in production)
 function logWebhookEvent(type: string, workspaceId: string | null, status: "success" | "error", details?: unknown) {
@@ -324,22 +325,16 @@ async function handleStripeWebhookEvent(
           .eq("workspace_id", workspaceId)
           .eq("status", "active");
 
-        if (numbers && numbers.length > 0 && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-          const sid = process.env.TWILIO_ACCOUNT_SID;
-          const token = process.env.TWILIO_AUTH_TOKEN;
+        if (numbers && numbers.length > 0) {
+          const telephony = getTelephonyService();
           for (const num of numbers as Array<{ id: string; provider_sid: string | null }>) {
             if (num.provider_sid) {
               try {
-                await fetch(
-                  `https://api.twilio.com/2010-04-01/Accounts/${sid}/IncomingPhoneNumbers/${num.provider_sid}.json`,
-                  {
-                    method: "DELETE",
-                    headers: {
-                      Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
-                    },
-                  }
-                );
-              } catch (e) {
+                                const res = await telephony.releaseNumber(num.provider_sid);
+                if ("error" in res) {
+                  console.error("Failed to release number:", num.provider_sid, res.error);
+                }
+} catch (e) {
                 console.error("Failed to release number:", num.provider_sid, e);
               }
             }

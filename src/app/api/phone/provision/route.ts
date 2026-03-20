@@ -11,6 +11,7 @@ import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
+import { getTelephonyService } from "@/lib/telephony";
 import { purchaseTelnyxPhoneNumber } from "@/lib/telephony/telnyx/numbers";
 
 export const dynamic = "force-dynamic";
@@ -106,54 +107,31 @@ export async function POST(req: NextRequest) {
     }
   } else if (accountSid && authToken) {
     try {
-      const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
-      const purchaseParams = new URLSearchParams({
-        PhoneNumber: e164,
-        VoiceUrl: voiceWebhookUrl,
-        VoiceMethod: "POST",
-        SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
-        SmsMethod: "POST",
-        StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
-        StatusCallbackMethod: "POST",
-      });
-      const purchaseRes = await fetch(purchaseUrl, {
-        method: "POST",
-        headers: {
-          Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: purchaseParams.toString(),
-      });
-      if (!purchaseRes.ok) {
-        const errText = await purchaseRes.text().catch(() => "");
-        console.error(`[provision] Twilio purchase failed (${purchaseRes.status}):`, errText.slice(0, 500));
+      const telephony = getTelephonyService();
+      const digits = e164.replace(/\D/g, "");
+      // NANP: +1XXXXXXXXXX => area code is digits[1..3]
+      const areaCode = digits.startsWith("1") && digits.length >= 11 ? digits.slice(1, 4) : digits.slice(0, 3);
 
-        // Parse Twilio error for user-friendly messaging
-        let userMessage = "Could not provision number. It may already be in use or unavailable.";
-        let twilioCode = "";
-        try {
-          const errJson = JSON.parse(errText) as { code?: number; message?: string };
-          twilioCode = String(errJson.code ?? "");
-          if (errJson.code === 21422) userMessage = "This phone number is not available for purchase.";
-          else if (errJson.code === 21452) userMessage = "Your Twilio account is not authorized to purchase numbers in this country. Check your Twilio regulatory bundle.";
-          else if (errJson.code === 21606) userMessage = "This number is not available. Please try a different number.";
-          else if (errJson.code === 20003) userMessage = "Twilio authentication failed. Check TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN.";
-          else if (errJson.code === 20404) userMessage = "Twilio account not found. Verify your Account SID.";
-          else if (errJson.code === 21215 || errJson.code === 21218) userMessage = "Your Twilio account does not have permission to purchase phone numbers. You may need to upgrade from a trial account or complete identity verification.";
-          else if (errJson.message) userMessage = errJson.message;
-        } catch {
-          // Not JSON — use generic message
-        }
+      const available = await telephony.searchAvailableNumbers({
+        areaCode,
+        state: undefined,
+        limit: 5,
+      });
 
-        return NextResponse.json(
-          { error: userMessage, twilio_code: twilioCode, details: errText.slice(0, 300) },
-          { status: 400 }
-        );
+      if ("error" in available) {
+        return NextResponse.json({ error: available.error }, { status: 502 });
       }
-      const purchaseData = (await purchaseRes.json()) as { sid?: string };
-      providerSid = purchaseData.sid ?? null;
+
+      const selectedNumber = available.find((n) => n.phone_number === e164)?.phone_number ?? e164;
+      const purchased = await telephony.purchaseNumber(selectedNumber);
+
+      if ("error" in purchased) {
+        return NextResponse.json({ error: purchased.error }, { status: 502 });
+      }
+
+      providerSid = purchased.numberId;
     } catch (e) {
-      console.error("Twilio provisioning failed:", e);
+      console.error("Telephony provisioning failed:", e);
       return NextResponse.json({ error: "Provisioning failed. Try again later." }, { status: 500 });
     }
   }

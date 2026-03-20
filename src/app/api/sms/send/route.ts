@@ -11,6 +11,7 @@ import { getDb } from "@/lib/db/queries";
 import { parseBody, phoneSchema } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
+import { getTelephonyService } from "@/lib/telephony";
 import { sendSms as sendSmsTelnyx } from "@/lib/telephony/telnyx-sms";
 
 export const dynamic = "force-dynamic";
@@ -66,38 +67,26 @@ export async function POST(req: NextRequest) {
         ? { error: smsResult.error }
         : { messageId: smsResult.messageId, sid: smsResult.messageId };
     } else {
-      // Twilio
-      const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      // Legacy Twilio fallback via unified telephony service.
+      const telephony = getTelephonyService();
       const fromNumber = process.env.TWILIO_PHONE_NUMBER ?? process.env.TWILIO_MESSAGING_SERVICE_SID;
-      if (!accountSid || !authToken || !fromNumber) {
+      if (!fromNumber) {
         return NextResponse.json({ error: "SMS not configured" }, { status: 503 });
       }
 
-      const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-      const params = new URLSearchParams();
-      params.set("To", `+${to.length === 10 ? "1" : ""}${to}`);
-      params.set("From", fromNumber);
-      params.set("Body", text.slice(0, 1600));
+            const fromAddr = fromNumber.startsWith("+") ? fromNumber : "+" + fromNumber.replace(/\D/g, "");
+      const toAddr = "+" + (to.length === 10 ? "1" : "") + to;
 
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
-        },
-        body: params.toString(),
+      const smsResult = await telephony.sendSms({
+        from: fromAddr,
+        to: toAddr,
+        text: text.slice(0, 1600),
       });
 
-      const data = (await res.json()) as { sid?: string; error_message?: string; code?: number };
-      if (!res.ok) {
-        return NextResponse.json(
-          { error: data.error_message ?? "Twilio error", code: data.code },
-          { status: 502 }
-        );
-      }
-
-      result = { sid: data.sid };
+      result =
+        "error" in smsResult
+          ? { error: smsResult.error }
+          : { messageId: smsResult.messageId, sid: smsResult.messageId };
     }
 
     if ("error" in result) {

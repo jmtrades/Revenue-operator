@@ -82,75 +82,75 @@ async function sendViaTwilio(
     return { error: "Channel must be sms or whatsapp" };
   }
 
+  // Pick an outbound "from" number for this workspace (if we have one).
   const db = getDb();
-  let accountSid: string | null = null;
-  let authToken: string | null = null;
   let fromNumber: string | null = null;
 
-  // Try workspace-specific config first
   if (workspaceId) {
     const { data: phoneConfig } = await db
       .from("phone_configs")
-      .select("twilio_account_sid, proxy_number, twilio_phone_sid, outbound_from_number, whatsapp_enabled")
+      .select("outbound_from_number, proxy_number, twilio_phone_sid")
       .eq("workspace_id", workspaceId)
       .eq("status", "active")
       .maybeSingle();
 
     if (phoneConfig) {
       const config = phoneConfig as {
-        twilio_account_sid?: string | null;
+        outbound_from_number?: string | null;
         proxy_number?: string | null;
         twilio_phone_sid?: string | null;
-        outbound_from_number?: string | null;
-        whatsapp_enabled?: boolean | null;
       };
-      accountSid = config.twilio_account_sid ?? null;
-      // Outbound from personal/existing number when set; otherwise use connected number
-      fromNumber = config.outbound_from_number?.trim() || config.proxy_number || config.twilio_phone_sid || null;
-      if (accountSid === process.env.TWILIO_ACCOUNT_SID) {
-        authToken = process.env.TWILIO_AUTH_TOKEN ?? null;
-      }
-      // WhatsApp only if enabled for this workspace
-      if (channel === "whatsapp" && !config.whatsapp_enabled) {
-        return { error: "WhatsApp not enabled for this workspace" };
-      }
+
+      fromNumber =
+        config.outbound_from_number?.trim() ||
+        config.proxy_number ||
+        config.twilio_phone_sid ||
+        null;
     }
   }
 
-  if (!accountSid || !authToken || !fromNumber) {
-    accountSid = accountSid ?? process.env.TWILIO_ACCOUNT_SID ?? null;
-    authToken = authToken ?? process.env.TWILIO_AUTH_TOKEN ?? null;
-    fromNumber = fromNumber ?? process.env.TWILIO_PHONE_NUMBER ?? null;
+  // Fall back to env defaults.
+  if (!fromNumber) {
+    fromNumber = process.env.TWILIO_PHONE_NUMBER ?? null;
   }
 
-  if (!accountSid || !authToken || !fromNumber) {
+  if (!fromNumber) {
     return { error: "Twilio not configured" };
   }
 
-  // Twilio WhatsApp: From/To use whatsapp:+E164 format
+  // Twilio WhatsApp: From/To use whatsapp:+E164 format.
   const prefix = channel === "whatsapp" ? "whatsapp:" : "";
-  const toAddr = prefix + (to.startsWith("+") ? to : to.replace(/\D/g, "").length === 10 ? `+1${to.replace(/\D/g, "")}` : to);
-  const fromAddr = prefix + (fromNumber.startsWith("+") ? fromNumber : fromNumber.replace(/\D/g, "").length === 10 ? `+1${fromNumber.replace(/\D/g, "")}` : fromNumber);
+  const toAddr =
+    prefix +
+    (to.startsWith("+")
+      ? to
+      : to.replace(/\D/g, "").length === 10
+        ? "+1" + to.replace(/\D/g, "")
+        : to);
 
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-  const params = new URLSearchParams({
-    To: toAddr,
-    From: fromAddr,
-    Body: body,
+  const fromAddr =
+    prefix +
+    (fromNumber.startsWith("+")
+      ? fromNumber
+      : fromNumber.replace(/\D/g, "").length === 10
+        ? "+1" + fromNumber.replace(/\D/g, "")
+        : fromNumber);
+
+  // Unified interface: removes direct Twilio HTTP.
+  const { getTelephonyService } = await import("@/lib/telephony");
+  const telephony = getTelephonyService();
+
+  const smsResult = await telephony.sendSms({
+    from: fromAddr,
+    to: toAddr,
+    text: body,
   });
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: params.toString(),
-  });
+  if ("error" in smsResult) {
+    return { error: smsResult.error };
+  }
 
-  const json = (await res.json()) as { sid?: string; message?: string; error_message?: string };
-  if (json.sid) return { sid: json.sid };
-  return { error: json.error_message ?? json.message ?? "Unknown Twilio error" };
+  return { sid: smsResult.messageId };
 }
 
 /** Human-safety layer runs last before send. Can override content. */
