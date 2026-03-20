@@ -25,6 +25,14 @@ If the transcript is too short or unclear, return [].`;
 
 type InsightRow = { category: string; insight: string; example_from_transcript?: string | null; confidence: number };
 
+function redactPII(text: string): string {
+  return text
+    .replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{1,7}\b/g, "[REDACTED-CC]")
+    .replace(/\b\d{3}-\d{2}-\d{4}\b/g, "[REDACTED-SSN]")
+    .replace(/\brouting\s*(?:number|#|num)?\s*:?\s*\d{9}\b/gi, "[REDACTED-ROUTING]")
+    .replace(/\baccount\s*(?:number|#|num)?\s*:?\s*\d{8,17}\b/gi, "[REDACTED-ACCOUNT]");
+}
+
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
@@ -58,6 +66,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const sanitizedTranscript = redactPII(transcript);
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
@@ -81,7 +91,7 @@ export async function POST(req: NextRequest) {
         messages: [
           {
             role: "user",
-            content: `${ANALYSIS_PROMPT}\n\n---\nTranscript:\n${transcript.slice(0, 30000)}`,
+            content: `${ANALYSIS_PROMPT}\n\n---\nTranscript:\n${sanitizedTranscript.slice(0, 30000)}`,
           },
         ],
       }),
