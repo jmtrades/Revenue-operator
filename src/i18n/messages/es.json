@@ -4009,13 +4009,13 @@
       "badge": "Popular",
       "period": "/mes",
       "tierRoi": {
-        "starter": "Menos de una llamada perdida",
-        "growth": "Un lead recuperado paga el mes",
+        "solo": "Menos de una llamada perdida",
+        "business": "Un lead recuperado paga el mes",
         "scale": "Equipo de comunicación IA por una fracción de un contrato",
         "enterprise": "ROI y soporte dedicado a medida"
       },
       "tiers": {
-        "starter": {
+        "solo": {
           "name": "Starter",
           "description": "Responde cada llamada. Un número, un agente.",
           "features": [
@@ -4028,7 +4028,7 @@
           ],
           "cta": "Empieza gratis"
         },
-        "growth": {
+        "business": {
           "name": "Growth",
           "description": "Un lead recuperado paga el mes.",
           "features": [

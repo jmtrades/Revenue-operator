@@ -4002,13 +4002,13 @@
       "badge": "Popular",
       "period": "/mês",
       "tierRoi": {
-        "starter": "Menos de uma ligação perdida",
-        "growth": "Um lead recuperado paga o mês",
+        "solo": "Menos de uma ligação perdida",
+        "business": "Um lead recuperado paga o mês",
         "scale": "Equipe de comunicação IA por uma fração de um contratação",
         "enterprise": "ROI e suporte dedicado sob medida"
       },
       "tiers": {
-        "starter": {
+        "solo": {
           "name": "Starter",
           "description": "Atenda cada ligação. Um número, um agente.",
           "features": [
@@ -4021,7 +4021,7 @@
           ],
           "cta": "Começar grátis"
         },
-        "growth": {
+        "business": {
           "name": "Growth",
           "description": "Um lead recuperado paga o mês.",
           "features": [
